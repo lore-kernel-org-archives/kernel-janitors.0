@@ -1,121 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Jan 2015 21:01:07 +0000
-Subject: [patch 2/6] usb: gadget: uvc: cleanup __uvcg_fill_strm()
-Message-Id: <20150114210107.GB23203@mwanda>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Date: Fri, 16 Jan 2015 11:38:33 +0000
+Subject: Re: [patch 2/6] usb: gadget: uvc: cleanup __uvcg_fill_strm()
+Message-Id: <54B8F839.4070502@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150114210107.GB23203@mwanda>
+In-Reply-To: <20150114210107.GB23203@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Static checkers complain about this API:
+W dniu 14.01.2015 o 22:01, Dan Carpenter pisze:
+> Static checkers complain about this API:
+>
+> 	drivers/usb/gadget/function/uvc_configfs.c:2139
+> 		uvcg_streaming_class_allow_link()
+> 	warn: did you really mean to pass the address of 'data'?
+>
+> Indeed, the code is cleaner when we just pass the pointer instead of the
+> pointer to the pointer.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	drivers/usb/gadget/function/uvc_configfs.c:2139
-		uvcg_streaming_class_allow_link()
-	warn: did you really mean to pass the address of 'data'?
+I'm sorry but this patch breaks the code.
 
-Indeed, the code is cleaner when we just pass the pointer instead of the
-pointer to the pointer.
+You should look at the broader context in which the __uvcg_fill_strm()
+is called: it is used as a callback from __uvcg_iter_strm_cls().
+The purpose of the latter is to iterate over a hierarchy of streaming
+descriptors' config items built by the user with configfs.
+This function is generic, because it needs to be called twice:
+the first time to calculate the actual amount of memory needed for
+an array of descriptors which is to be created, and the second time
+to actually fill the said array - this is the purpose of __uvcg_fill_strm().
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Looks obvious enough to me, but I've only compiled this code and haven't
-tested it.
+__uvcg_iter_strm_cls() flow of control is more or less like this:
+"process" the header, then for each format that follows the header
+"process" the format itself and then for each frame inside
+a format "process" the frame.
 
-diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-index d112c99..2bd0688 100644
---- a/drivers/usb/gadget/function/uvc_configfs.c
-+++ b/drivers/usb/gadget/function/uvc_configfs.c
-@@ -2009,28 +2009,27 @@ static int __uvcg_cnt_strm(void *priv1, void *priv2, void *priv3, int n,
- 	return 0;
- }
- 
--static int __uvcg_fill_strm(void *priv1, void *priv2, void *priv3, int n,
-+static int __uvcg_fill_strm(void *priv1, void *dest, void *priv3, int n,
- 			    enum uvcg_strm_type type)
- {
--	void **dest = priv2;
- 	struct uvc_descriptor_header ***array = priv3;
- 	size_t sz;
- 
--	**array = *dest;
-+	**array = dest;
- 	++*array;
- 
- 	switch (type) {
- 	case UVCG_HEADER: {
--		struct uvc_input_header_descriptor *ihdr = *dest;
-+		struct uvc_input_header_descriptor *ihdr = dest;
- 		struct uvcg_streaming_header *h = priv1;
- 		struct uvcg_format_ptr *f;
- 
--		memcpy(*dest, &h->desc, sizeof(h->desc));
--		*dest += sizeof(h->desc);
-+		memcpy(dest, &h->desc, sizeof(h->desc));
-+		dest += sizeof(h->desc);
- 		sz = UVCG_STREAMING_CONTROL_SIZE;
- 		list_for_each_entry(f, &h->formats, entry) {
--			memcpy(*dest, f->fmt->bmaControls, sz);
--			*dest += sz;
-+			memcpy(dest, f->fmt->bmaControls, sz);
-+			dest += sz;
- 		}
- 		ihdr->bLength = sizeof(h->desc) + h->num_fmt * sz;
- 		ihdr->bNumFormats = h->num_fmt;
-@@ -2040,22 +2039,22 @@ static int __uvcg_fill_strm(void *priv1, void *priv2, void *priv3, int n,
- 		struct uvcg_format *fmt = priv1;
- 
- 		if (fmt->type = UVCG_UNCOMPRESSED) {
--			struct uvc_format_uncompressed *unc = *dest;
-+			struct uvc_format_uncompressed *unc = dest;
- 			struct uvcg_uncompressed *u  				container_of(fmt, struct uvcg_uncompressed,
- 					     fmt);
- 
--			memcpy(*dest, &u->desc, sizeof(u->desc));
--			*dest += sizeof(u->desc);
-+			memcpy(dest, &u->desc, sizeof(u->desc));
-+			dest += sizeof(u->desc);
- 			unc->bNumFrameDescriptors = fmt->num_frames;
- 			unc->bFormatIndex = n + 1;
- 		} else if (fmt->type = UVCG_MJPEG) {
--			struct uvc_format_mjpeg *mjp = *dest;
-+			struct uvc_format_mjpeg *mjp = dest;
- 			struct uvcg_mjpeg *m  				container_of(fmt, struct uvcg_mjpeg, fmt);
- 
--			memcpy(*dest, &m->desc, sizeof(m->desc));
--			*dest += sizeof(m->desc);
-+			memcpy(dest, &m->desc, sizeof(m->desc));
-+			dest += sizeof(m->desc);
- 			mjp->bNumFrameDescriptors = fmt->num_frames;
- 			mjp->bFormatIndex = n + 1;
- 		} else {
-@@ -2065,15 +2064,15 @@ static int __uvcg_fill_strm(void *priv1, void *priv2, void *priv3, int n,
- 	break;
- 	case UVCG_FRAME: {
- 		struct uvcg_frame *frm = priv1;
--		struct uvc_descriptor_header *h = *dest;
-+		struct uvc_descriptor_header *h = dest;
- 
- 		sz = sizeof(frm->frame);
--		memcpy(*dest, &frm->frame, sz);
--		*dest += sz;
-+		memcpy(dest, &frm->frame, sz);
-+		dest += sz;
- 		sz = frm->frame.b_frame_interval_type *
- 			sizeof(*frm->dw_frame_interval);
--		memcpy(*dest, frm->dw_frame_interval, sz);
--		*dest += sz;
-+		memcpy(dest, frm->dw_frame_interval, sz);
-+		dest += sz;
- 		if (frm->fmt_type = UVCG_UNCOMPRESSED)
- 			h->bLength = UVC_DT_FRAME_UNCOMPRESSED_SIZE(
- 				frm->frame.b_frame_interval_type);
-@@ -2136,7 +2135,7 @@ static int uvcg_streaming_class_allow_link(struct config_item *src,
- 		goto unlock;
- 	}
- 	cl_arr = *class_array;
--	ret = __uvcg_iter_strm_cls(target_hdr, &data, &cl_arr,
-+	ret = __uvcg_iter_strm_cls(target_hdr, data, &cl_arr,
- 				   __uvcg_fill_strm);
- 	if (ret) {
- 		kfree(*class_array);
+__uvcg_fill_stream(), which is used to "process", during its execution
+uses priv2 as a pointer to a pointer, because it advances the current
+position by the amount of data taken by each processed descriptor
+and the advanced position should be visible outside this function,
+so that the next time it is called, the current position corresponds
+to the place where it was the last time rather than again at
+the beginning of some block of data. In other words priv2
+is an "out" parameter.
+
+> ---
+> Looks obvious enough to me, but I've only compiled this code and haven't
+> tested it.
+>
+
+What I suggest is to revert this patch and then I will post another
+patch which adds comments to __uvcg_iterm_strm_cls(), __uvcg_cnt_strm()
+and __uvcg_fill_strm() so that their purpose and meaning of parameters
+is clear.
+
+AP
