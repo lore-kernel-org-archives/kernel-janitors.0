@@ -1,39 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Jan 2015 10:43:42 +0000
-Subject: [patch] drm/tegra: gem: oops in error handling
-Message-Id: <20150116104342.GA4860@mwanda>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Fri, 16 Jan 2015 11:12:24 +0000
+Subject: Re: [patch] drm/tegra: gem: oops in error handling
+Message-Id: <20150116111222.GB4885@ulmo.nvidia.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="/NkBOFFp2J2Af1nK"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20150116104342.GA4860@mwanda>
+In-Reply-To: <20150116104342.GA4860@mwanda>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-kfree(ERR_PTR(-ENOMEM)) will not work very well.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--/NkBOFFp2J2Af1nK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 8777b7f..28215e4 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -244,10 +244,8 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
- 	for_each_sg(sgt->sgl, s, sgt->nents, i)
- 		sg_dma_address(s) = sg_phys(s);
- 
--	if (dma_map_sg(drm->dev, sgt->sgl, sgt->nents, DMA_TO_DEVICE) = 0) {
--		sgt = ERR_PTR(-ENOMEM);
-+	if (dma_map_sg(drm->dev, sgt->sgl, sgt->nents, DMA_TO_DEVICE) = 0)
- 		goto release_sgt;
--	}
- 
- 	bo->sgt = sgt;
- 
-@@ -256,6 +254,7 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
- release_sgt:
- 	sg_free_table(sgt);
- 	kfree(sgt);
-+	sgt = ERR_PTR(-ENOMEM);
- put_pages:
- 	drm_gem_put_pages(&bo->gem, bo->pages, false, false);
- 	return PTR_ERR(sgt);
+On Fri, Jan 16, 2015 at 01:43:42PM +0300, Dan Carpenter wrote:
+> kfree(ERR_PTR(-ENOMEM)) will not work very well.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Applied, thanks.
+
+Thierry
+
+--/NkBOFFp2J2Af1nK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUuPIWAAoJEN0jrNd/PrOhY+EP/RodiJ4aN2oiUR51X2RBwbk5
+epU+SxyG9PQ/qh3g47X7o3b1kUIoHtvxD7vKFupUrLqthCahtLY5lDqWJ6xGlMNs
+fohToLy7/Hs/eQWNorw/ccZYXpxy3VkhKFY+5wOfx/Ix+jbn5saZQbvNXtiF2mpR
+RK9xyoI/vHGGklD/QVp8XxwpOkHosbQ3NeQWlYdbLqeACKOKbaydC0L/EmHNWBKJ
+u7ywBlBpeIA/toXn+zz0Hips38aOv/NnTMTNYrIYQ1qckUYPPrQ1glBaUR6MafvI
+MrslwYqSG6aFxbQ5kRCb0x+/pV+kzKJOLv7AlyQkOyGvWYUar16ECCYR6xaUMjaT
+0dhR6OGQflY50rhWBZlN4G6J7aceseHvCLeb6Nx9NuxEG5TodL9p9p+a+DaJXWG9
+DTuCvlNywucldesDNTQeiVZItLGV5AC8Rz40LD0FyHEJvw0yOisX0UQG865qTUX3
+iLNZR0nBcvmuICjyMNz5f2dCC9Madbkin1zInJag4PuhYhGmjarKK1l/HaYHDQF7
+8eKhr9CVuMSGqyS13NrlIDLrF3mkBP4/seHk64CAIPQ/2dA446i+3Cw4JdQhHrl8
+s+CbXeVbuaAFsBcK5wXZs1U8wrV8V3sUkcKLbv33SVWkoAOtuDBjZCrNZQoGzZW4
+Bsn9erIc8nHWDfl1Q7lm
+=JSzl
+-----END PGP SIGNATURE-----
+
+--/NkBOFFp2J2Af1nK--
