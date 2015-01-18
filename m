@@ -1,47 +1,32 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 28 Jan 2015 10:22:08 +0000
-Subject: [PATCH] scsi: missing iounmap for mvi->regs_ex
-Message-Id: <20150128102208.GA16509@devel.8.8.4.4>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Jan 2015 19:00:34 +0000
+Subject: [PATCH 0/2] PCMCIA: Deletion of a few unnecessary checks
+Message-Id: <54BC02D2.8010008@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: JBottomley@parallels.com
-Cc: hch@lst.de, hare@suse.de, michaelc@cs.wisc.edu, martin.petersen@oracle.com, daeseok.youn@gmail.com, ben@decadent.org.uk, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-It also need to call iounmap() when it fails to get res_start and
-res_len from pci_resource_start{len}(pdev, bar).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Jan 2015 19:49:16 +0100
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- drivers/scsi/mvsas/mv_init.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
-index 53030b0..2508db2 100644
---- a/drivers/scsi/mvsas/mv_init.c
-+++ b/drivers/scsi/mvsas/mv_init.c
-@@ -348,15 +348,15 @@ int mvs_ioremap(struct mvs_info *mvi, int bar, int bar_ex)
- 	else
- 		mvi->regs = ioremap_nocache(res_start, res_len);
- 
--	if (!mvi->regs) {
--		if (mvi->regs_ex && (res_flag_ex & IORESOURCE_MEM))
--			iounmap(mvi->regs_ex);
--		mvi->regs_ex = NULL;
-+	if (!mvi->regs)
- 		goto err_out;
--	}
- 
- 	return 0;
- err_out:
-+	if (mvi->regs_ex && (res_flag_ex & IORESOURCE_MEM))
-+		iounmap(mvi->regs_ex);
-+	mvi->regs_ex = NULL;
-+
- 	return -1;
- }
- 
+Markus Elfring (2):
+  Deletion of checks before the function call "iounmap"
+  Less function calls in bcm63xx_drv_pcmcia_probe() after error detection
+
+ drivers/pcmcia/bcm63xx_pcmcia.c | 20 ++++++++++----------
+ drivers/pcmcia/cistpl.c         |  3 +--
+ drivers/pcmcia/electra_cf.c     |  6 ++----
+ drivers/pcmcia/yenta_socket.c   |  3 +--
+ 4 files changed, 14 insertions(+), 18 deletions(-)
+
 -- 
-1.7.1
+2.2.2
 
