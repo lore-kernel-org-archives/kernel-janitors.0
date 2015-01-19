@@ -1,34 +1,76 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 28 Jan 2015 07:38:21 +0000
-Subject: [PATCH 4/4] scsi: aic79xx: Use kzalloc instead of kmalloc/memset
-Message-Id: <20150128073821.GA13659@devel.8.8.4.4>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 19 Jan 2015 18:38:08 +0000
+Subject: [PATCH 5/9] video: Less function calls in trident_pci_probe() after error detection
+Message-Id: <54BD4F10.9040401@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54BD44F0.3040705@users.sourceforge.net>
+In-Reply-To: <54BD44F0.3040705@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hare@suse.de
-Cc: JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 19 Jan 2015 14:18:47 +0100
+
+The functions "iounmap" and "kfree" could be called in a few cases by the
+trident_pci_probe() function during error handling even if the passed data
+structure element contained still a null pointer.
+
+This implementation detail could be improved by adjustments for jump labels.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/aic7xxx/aic79xx_osm.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/tridentfb.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx_osm.c b/drivers/scsi/aic7xxx/aic79xx_osm.c
-index d5c7b19..ce96a0b 100644
---- a/drivers/scsi/aic7xxx/aic79xx_osm.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
-@@ -1326,10 +1326,9 @@ int
- ahd_platform_alloc(struct ahd_softc *ahd, void *platform_arg)
- {
- 	ahd->platform_data -	    kmalloc(sizeof(struct ahd_platform_data), GFP_ATOMIC);
-+	    kzalloc(sizeof(struct ahd_platform_data), GFP_ATOMIC);
- 	if (ahd->platform_data = NULL)
- 		return (ENOMEM);
--	memset(ahd->platform_data, 0, sizeof(struct ahd_platform_data));
- 	ahd->platform_data->irq = AHD_LINUX_NOIRQ;
- 	ahd_lockinit(ahd);
- 	ahd->seltime = (aic79xx_seltime & 0x3) << 4;
+diff --git a/drivers/video/fbdev/tridentfb.c b/drivers/video/fbdev/tridentfb.c
+index 71567401..86d4733 100644
+--- a/drivers/video/fbdev/tridentfb.c
++++ b/drivers/video/fbdev/tridentfb.c
+@@ -1436,7 +1436,7 @@ static int trident_pci_probe(struct pci_dev *dev,
+ 	if (!default_par->io_virt) {
+ 		debug("ioremap failed\n");
+ 		err = -1;
+-		goto out_unmap1;
++		goto release_memory_region_mmio;
+ 	}
+ 
+ 	enable_mmio(default_par);
+@@ -1459,7 +1459,7 @@ static int trident_pci_probe(struct pci_dev *dev,
+ 	if (!info->screen_base) {
+ 		debug("ioremap failed\n");
+ 		err = -1;
+-		goto out_unmap2;
++		goto release_memory_region_smem;
+ 	}
+ 
+ 	default_par->flatpanel = is_flatpanel(default_par);
+@@ -1485,7 +1485,7 @@ static int trident_pci_probe(struct pci_dev *dev,
+ 	info->pixmap.addr = kmalloc(4096, GFP_KERNEL);
+ 	if (!info->pixmap.addr) {
+ 		err = -ENOMEM;
+-		goto out_unmap2;
++		goto io_unmap_screenbase;
+ 	}
+ 
+ 	info->pixmap.size = 4096;
+@@ -1531,11 +1531,14 @@ static int trident_pci_probe(struct pci_dev *dev,
+ 
+ out_unmap2:
+ 	kfree(info->pixmap.addr);
++io_unmap_screenbase:
+ 	iounmap(info->screen_base);
++release_memory_region_smem:
+ 	release_mem_region(tridentfb_fix.smem_start, tridentfb_fix.smem_len);
+ 	disable_mmio(info->par);
+ out_unmap1:
+ 	iounmap(default_par->io_virt);
++release_memory_region_mmio:
+ 	release_mem_region(tridentfb_fix.mmio_start, tridentfb_fix.mmio_len);
+ 	framebuffer_release(info);
+ 	return err;
 -- 
-1.7.1
+2.2.2
 
