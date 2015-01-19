@@ -1,53 +1,57 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Wed, 07 Jan 2015 13:46:45 +0000
-Subject: Re: [patch] drm/tegra: bad irqsave/restore in tegra_dc_finish_page_flip()
-Message-Id: <20150107134644.GD6988@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="OROCMA9jn6tkzFBc"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Jan 2015 19:34:51 +0000
+Subject: [patch] s2io: use snprintf() as a safety feature
+Message-Id: <20150119193451.GB32634@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150107110126.GA14864@mwanda>
-In-Reply-To: <20150107110126.GA14864@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jon Mason <jdmason@kudzu.us>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+"sp->desc[i]" has 25 characters.  "dev->name" has 15 characters.  If we
+used all 15 characters then the sprintf() would overflow.
 
---OROCMA9jn6tkzFBc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I changed the "sprintf(sp->name, "%s Neterion %s"" to snprintf(), as
+well, even though it can't overflow just to be consistent.
 
-On Wed, Jan 07, 2015 at 02:01:26PM +0300, Dan Carpenter wrote:
-> We can't save two values to the IRQ flags at the same time so the IRQs
-> are not enabled at the end.  This kind of bug is easy to miss in testing
-> if the function is normally called with IRQs disabled so we wouldn't
-> enable IRQs anyway.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This driver is quite old.
 
-Good catch, applied.
-
-Thanks,
-Thierry
-
---OROCMA9jn6tkzFBc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUrTjEAAoJEN0jrNd/PrOhoFcP/02GScwL5lLhP5gUhEwKIuUx
-D82uVtOX62sq8BsXyd0nFqc2gT1XNE8LKe3h8WBvXY2Bw517PU4xMv9dGGl+EmvS
-ufLmT9g4vZSf7iNxcC/eOZJq7DBZSshjfMIyvzpjDmUETCbN7v+BdV+sqiq3dCaX
-G0KVHc79wKvvAeIn9TiZnYBt9A7Qt31Y0YmwihVPL46hQxsuKnYvmxFJf9NeNUS7
-4KvndK4P4NqOcWuCMbhpqM+fyE90mgtsTLrO4FuBPXAr2xR6e2yVW3HDnqHTf4N+
-1B/SmFeQVi0wsbAVYvJe10mLyIqAtRtqvxKGVPfxP+h66MX9senGVLmR1F9RfBhx
-HSNqhZrLy9Z738qMPrH9TAycGPGx+9yucNTWAqPj3/tIn42xog8Cqh+xsvtOxeAo
-8vcCS/tpK/8CHsk9DVMskfM+Dgi5uOlgJtpagjSIHrEJWb68GkTuNVBtAcoUy8H3
-NzrCAHGaaKTZ9OLYFvMyivD4mNbSbYnSwn8Ss/52lQN2ASA21AMxJozft8XTqhtP
-Bc8uAik2al+8drSracHTgsWw3eqQd1mw/sC82EeQSJT1PZyTuqSxC0g6enOxCz86
-Y3RglXrzd8uFRQ5q9MeHcWjTULL8INPLYW9iqsDTFUhrBaUbS0DNGI8l4Zdc0VOt
-WIE1+qy7VlFUut9hWfjQ
-=5ijO
------END PGP SIGNATURE-----
-
---OROCMA9jn6tkzFBc--
+diff --git a/drivers/net/ethernet/neterion/s2io.c b/drivers/net/ethernet/neterion/s2io.c
+ 0529cad..a4cdf2f 100644
+--- a/drivers/net/ethernet/neterion/s2io.c
++++ b/drivers/net/ethernet/neterion/s2io.c
+@@ -6987,7 +6987,9 @@ static int s2io_add_isr(struct s2io_nic *sp)
+ 			if (sp->s2io_entries[i].in_use = MSIX_FLG) {
+ 				if (sp->s2io_entries[i].type =
+ 				    MSIX_RING_TYPE) {
+-					sprintf(sp->desc[i], "%s:MSI-X-%d-RX",
++					snprintf(sp->desc[i],
++						sizeof(sp->desc[i]),
++						"%s:MSI-X-%d-RX",
+ 						dev->name, i);
+ 					err = request_irq(sp->entries[i].vector,
+ 							  s2io_msix_ring_handle,
+@@ -6996,7 +6998,9 @@ static int s2io_add_isr(struct s2io_nic *sp)
+ 							  sp->s2io_entries[i].arg);
+ 				} else if (sp->s2io_entries[i].type =
+ 					   MSIX_ALARM_TYPE) {
+-					sprintf(sp->desc[i], "%s:MSI-X-%d-TX",
++					snprintf(sp->desc[i],
++						sizeof(sp->desc[i]),
++						"%s:MSI-X-%d-TX",
+ 						dev->name, i);
+ 					err = request_irq(sp->entries[i].vector,
+ 							  s2io_msix_fifo_handle,
+@@ -8154,7 +8158,8 @@ s2io_init_nic(struct pci_dev *pdev, const struct pci_device_id *pre)
+ 			  "%s: UDP Fragmentation Offload(UFO) enabled\n",
+ 			  dev->name);
+ 	/* Initialize device name */
+-	sprintf(sp->name, "%s Neterion %s", dev->name, sp->product_name);
++	snprintf(sp->name, sizeof(sp->name), "%s Neterion %s", dev->name,
++		 sp->product_name);
+ 
+ 	if (vlan_tag_strip)
+ 		sp->vlan_strip_flag = 1;
