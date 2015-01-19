@@ -1,67 +1,97 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 13 Jan 2015 11:19:17 +0000
-Subject: Re: [patch] fbdev: off by one test (harmless)
-Message-Id: <54B4FF35.8050703@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nDhUMrfxW7g1o1J9WrdKI5rqLeuFgJDxt"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 19 Jan 2015 18:46:57 +0000
+Subject: [PATCH 8/9] video: Less function calls in valkyriefb_init() after error detection
+Message-Id: <54BD5121.8010801@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141226172657.GA14762@mwanda>
-In-Reply-To: <20141226172657.GA14762@mwanda>
-To: linux-fbdev@vger.kernel.org
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54BD44F0.3040705@users.sourceforge.net>
+In-Reply-To: <54BD44F0.3040705@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
---nDhUMrfxW7g1o1J9WrdKI5rqLeuFgJDxt
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 19 Jan 2015 17:01:25 +0100
 
-On 29/12/14 23:51, David Ung wrote:
->=20
->>> test is really a no-op.  But it's still off by one and upsets the
->>> static checkers so we may as well correct it.
->>
->> 'idx' should be 0~63, because cea_modes array is defined as
->> 'cea_modes[64]'.
->=20
-> According to CEA/EIA-861E, there are 64 defined modes, but idx is valid=
- for 1-64, 0 is reserved hence the check for=20
->=20
->         If (!idx || idx > 63) {
->=20
-> Think idx check really should be !idx || idx > 64 if following CEA/EIA-=
-861E
+The iounmap() function could be called in three cases by the valkyriefb_init()
+function during error handling even if the passed data structure element
+contained still a null pointer.
 
-In that case there's something funny with the code. The code indexes
-'cea_modes' using 'idx', and I _think_ cea_modes is already offset
-properly, i.e. there's no entry at 0. But its length is 64, which is not
-right, as there's the empty item in the beginning.
+This implementation detail could be improved by adjustments for jump labels
+(according also to current Linux coding style) and error messages.
 
-So maybe the correct fix is to increase the length of cea_modes to 65,
-and change the idx check as you mention above?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/valkyriefb.c | 32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
- Tomi
+diff --git a/drivers/video/fbdev/valkyriefb.c b/drivers/video/fbdev/valkyriefb.c
+index 2a9213b..a81a0f1 100644
+--- a/drivers/video/fbdev/valkyriefb.c
++++ b/drivers/video/fbdev/valkyriefb.c
+@@ -369,40 +369,50 @@ int __init valkyriefb_init(void)
+ 	}
+ 	p->total_vram = 0x100000;
+ 	p->frame_buffer_phys = frame_buffer_phys;
++	err = -ENOMEM;
+ 	p->frame_buffer = __ioremap(frame_buffer_phys, p->total_vram, flags);
++	if (p->frame_buffer = NULL) {
++		pr_err("%s: %s failed\n", __func__, "Frame buffer mapping");
++		goto free_memory;
++	}
+ 	p->cmap_regs_phys = cmap_regs_phys;
+ 	p->cmap_regs = ioremap(p->cmap_regs_phys, 0x1000);
++	if (p->cmap_regs = NULL) {
++		pr_err("%s: %s failed\n", __func__, "cmap");
++		goto io_unmap_framebuffer;
++	}
+ 	p->valkyrie_regs_phys = cmap_regs_phys+0x6000;
+ 	p->valkyrie_regs = ioremap(p->valkyrie_regs_phys, 0x1000);
+-	err = -ENOMEM;
+-	if (p->frame_buffer = NULL || p->cmap_regs = NULL
+-	    || p->valkyrie_regs = NULL) {
+-		printk(KERN_ERR "valkyriefb: couldn't map resources\n");
+-		goto out_free;
++	if (p->valkyrie_regs = NULL) {
++		pr_err("%s: %s failed\n", __func__, "ioremap");
++		goto io_unmap_cmap;
+ 	}
+ 
+ 	valkyrie_choose_mode(p);
+ 	mac_vmode_to_var(default_vmode, default_cmode, &p->info.var);
+ 	err = valkyrie_init_info(&p->info, p);
+ 	if (err < 0)
+-		goto out_free;
++		goto io_unmap_valkyrie;
+ 	valkyrie_init_fix(&p->info.fix, p);
+ 	if (valkyriefb_set_par(&p->info))
+ 		/* "can't happen" */
+ 		printk(KERN_ERR "valkyriefb: can't set default video mode\n");
+ 
+ 	if ((err = register_framebuffer(&p->info)) != 0)
+-		goto out_cmap_free;
++		goto dealloc_cmap;
+ 
+ 	fb_info(&p->info, "valkyrie frame buffer device\n");
+ 	return 0;
+ 
+- out_cmap_free:
++dealloc_cmap:
+ 	fb_dealloc_cmap(&p->info.cmap);
+- out_free:
+-	iounmap(p->frame_buffer);
+-	iounmap(p->cmap_regs);
++io_unmap_valkyrie:
+ 	iounmap(p->valkyrie_regs);
++io_unmap_cmap:
++	iounmap(p->cmap_regs);
++io_unmap_framebuffer:
++	iounmap(p->frame_buffer);
++free_memory:
+ 	kfree(p);
+ 	return err;
+ }
+-- 
+2.2.2
 
-
-
---nDhUMrfxW7g1o1J9WrdKI5rqLeuFgJDxt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUtP81AAoJEPo9qoy8lh71QkYQAKTxwE2bhtXKzZgXxeFuNNFk
-EjB04GV3ULmqkiooq855mpHiAeUgcAMewfvF8PNdtaSYF1Lww+vopUZFhHiWKitr
-vW31Plqk183kRJOTqiP6nkgrdWV7VwWjFZDU8xdTrHT0SlFE52SJoaF8lgYRs9v+
-oV7dtcP30Wstyh+rbi6ucdXGCGvp6RNMysT9JK7T6+6F/hjrFSCmuO9IKLu9/YOQ
-UzBb7g307ydW8RRq9ORAsIceJrW1ND1CNL5YCDThFBRnbNwmPqhRf31RGxVQlW6l
-05pPYRDkNxY1r7/UmbcqBE65BDHaVQUuQyhMVELM7ykaN49fmn/DAi/E8kR7hoRf
-TRoDQSKGw/2zmbOEFNwIK51maUh5hHkoef7LFWBOQ361qFacPpeq39J/XaCYn9Vr
-tdiSW2c0FjRaknHLfHtBgQ7bBQT7O8MI32D6HVpS9Oo2uVGB1dWOcz7U35VGQhHh
-4D1kmhHHnwvqajpB+NE3DZsZmf83yUc2rS+MOp0v6XsSdY/trF7u7hHp4PIkoROZ
-p42WnCxGJ3T0EuHd4MsE6hkaFqALfCR4tzL7a7NA6CF2b9vFTOa++HinS6NV7Pi6
-H8l4fjEKcrcP/wrRq5L2Qb2CBpddqIoLaQJy/BzMCB2Fx9axGHQ/CZ2sJxQVL4hz
-sYfSf8KWaHU+FXa458A1
-=NOqy
------END PGP SIGNATURE-----
-
---nDhUMrfxW7g1o1J9WrdKI5rqLeuFgJDxt--
