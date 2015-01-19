@@ -1,52 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:52 +0000
-Subject: [PATCH 22/27] usb: sl811-hcd: Use setup_timer
-Message-Id: <1419604558-29743-22-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Jan 2015 19:33:19 +0000
+Subject: [patch -next] eventfd: type bug in eventfd_poll()
+Message-Id: <20150119193319.GA32634@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+Since "count" is an unsigned int, then these conditions are never true:
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+        if (count = ULLONG_MAX)
+                events |= POLLERR;
+        if (ULLONG_MAX - 1 > count)
+                events |= POLLOUT;
 
-// <smpl>
-@@
-expression t,f,d;
-@@
+It should be a u64, because that's what ctx->count is.  Also GCC
+complains that "flags" is unused.
 
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.function = f;
--t.data = d;
-// </smpl>
+Fixes: a90de8a54127 ('eventfd: don't take the spinlock in eventfd_poll')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/usb/host/sl811-hcd.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/usb/host/sl811-hcd.c b/drivers/usb/host/sl811-hcd.c
-index 25fb1da..cef3140 100644
---- a/drivers/usb/host/sl811-hcd.c
-+++ b/drivers/usb/host/sl811-hcd.c
-@@ -1691,9 +1691,7 @@ sl811h_probe(struct platform_device *dev)
- 	spin_lock_init(&sl811->lock);
- 	INIT_LIST_HEAD(&sl811->async);
- 	sl811->board = dev_get_platdata(&dev->dev);
--	init_timer(&sl811->timer);
--	sl811->timer.function = sl811h_timer;
--	sl811->timer.data = (unsigned long) sl811;
-+	setup_timer(&sl811->timer, sl811h_timer, (unsigned long)sl811);
- 	sl811->addr_reg = addr_reg;
- 	sl811->data_reg = data_reg;
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 439e6f0..8d0c0df 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -118,8 +118,7 @@ static unsigned int eventfd_poll(struct file *file, poll_table *wait)
+ {
+ 	struct eventfd_ctx *ctx = file->private_data;
+ 	unsigned int events = 0;
+-	unsigned long flags;
+-	unsigned int count;
++	u64 count;
  
-
+ 	poll_wait(file, &ctx->wqh, wait);
+ 	smp_rmb();
