@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Jan 2015 18:43:36 +0000
-Subject: [PATCH 7/9] video: One function call less in tgafb_register() after, error detection
-Message-Id: <54BD5058.1090809@users.sourceforge.net>
+Date: Mon, 19 Jan 2015 18:49:39 +0000
+Subject: [PATCH 9/9] video: Less function calls in w100fb_probe() after error detection
+Message-Id: <54BD51C3.8000507@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54BD44F0.3040705@users.sourceforge.net>
 In-Reply-To: <54BD44F0.3040705@users.sourceforge.net>
@@ -12,83 +12,115 @@ To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <to
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Jan 2015 15:30:45 +0100
+Date: Mon, 19 Jan 2015 17:56:11 +0100
 
-The iounmap() function could be called in one case by the tgafb_register()
-function during error handling even if the passed variable "mem_base"
+The iounmap() function could be called in three cases by the w100fb_probe()
+function during error handling even if the passed data structure element
 contained still a null pointer.
 
-This implementation detail could be improved by adjustments for jump labels
-(according also to current Linux coding style).
+* This implementation detail could be improved by adjustments for
+  jump labels.
+
+* Let us also delete two unnecessary null pointer checks for the
+  variable "info".
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/tgafb.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/video/fbdev/w100fb.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/video/fbdev/tgafb.c b/drivers/video/fbdev/tgafb.c
-index b6fb7e8..a3cd0ef 100644
---- a/drivers/video/fbdev/tgafb.c
-+++ b/drivers/video/fbdev/tgafb.c
-@@ -1436,14 +1436,14 @@ static int tgafb_register(struct device *dev)
+diff --git a/drivers/video/fbdev/w100fb.c b/drivers/video/fbdev/w100fb.c
+index aeb53eb..67ddc57 100644
+--- a/drivers/video/fbdev/w100fb.c
++++ b/drivers/video/fbdev/w100fb.c
+@@ -645,12 +645,12 @@ int w100fb_probe(struct platform_device *pdev)
+ 	/* Remap the chip base address */
+ 	remapped_base = ioremap_nocache(mem->start+W100_CFG_BASE, W100_CFG_LEN);
+ 	if (remapped_base = NULL)
+-		goto out;
++		goto exit;
+ 
+ 	/* Map the register space */
+ 	remapped_regs = ioremap_nocache(mem->start+W100_REG_BASE, W100_REG_LEN);
+ 	if (remapped_regs = NULL)
+-		goto out;
++		goto io_unmap_base;
+ 
+ 	/* Identify the chip */
+ 	printk("Found ");
+@@ -662,19 +662,19 @@ int w100fb_probe(struct platform_device *pdev)
+ 		default:
+ 			printk("Unknown imageon chip ID\n");
+ 			err = -ENODEV;
+-			goto out;
++			goto io_unmap_regs;
  	}
- 	if (!request_mem_region (bar0_start, bar0_len, "tgafb")) {
- 		printk(KERN_ERR "tgafb: cannot reserve FB region\n");
--		goto err0;
+ 	printk(" at 0x%08lx.\n", (unsigned long) mem->start+W100_CFG_BASE);
+ 
+ 	/* Remap the framebuffer */
+ 	remapped_fbuf = ioremap_nocache(mem->start+MEM_WINDOW_BASE, MEM_WINDOW_SIZE);
+ 	if (remapped_fbuf = NULL)
+-		goto out;
++		goto io_unmap_regs;
+ 
+ 	info=framebuffer_alloc(sizeof(struct w100fb_par), &pdev->dev);
+ 	if (!info) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto io_unmap_framebuffer;
+ 	}
+ 
+ 	par = info->par;
+@@ -690,13 +690,13 @@ int w100fb_probe(struct platform_device *pdev)
+ 	if (!par->pll_table) {
+ 		printk(KERN_ERR "No matching Xtal definition found\n");
+ 		err = -EINVAL;
+-		goto out;
 +		goto release_framebuffer;
  	}
  
- 	/* Map the framebuffer.  */
- 	mem_base = ioremap_nocache(bar0_start, bar0_len);
- 	if (!mem_base) {
- 		printk(KERN_ERR "tgafb: Cannot map MMIO\n");
--		goto err1;
-+		goto release_memory_region;
+ 	info->pseudo_palette = kmalloc(sizeof (u32) * MAX_PALETTES, GFP_KERNEL);
+ 	if (!info->pseudo_palette) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto release_framebuffer;
  	}
  
- 	/* Grab info about the card.  */
-@@ -1484,13 +1484,13 @@ static int tgafb_register(struct device *dev)
- 	if (ret = 0 || ret = 4) {
- 		printk(KERN_ERR "tgafb: Could not find valid video mode\n");
- 		ret = -EINVAL;
--		goto err1;
-+		goto io_unmap;
+ 	info->fbops = &w100fb_ops;
+@@ -716,7 +716,7 @@ int w100fb_probe(struct platform_device *pdev)
+ 
+ 	if (fb_alloc_cmap(&info->cmap, 256, 0) < 0) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto free_palette;
  	}
  
- 	if (fb_alloc_cmap(&info->cmap, 256, 0)) {
- 		printk(KERN_ERR "tgafb: Could not allocate color map\n");
- 		ret = -ENOMEM;
--		goto err1;
-+		goto io_unmap;
- 	}
- 
- 	tgafb_set_par(info);
-@@ -1498,7 +1498,7 @@ static int tgafb_register(struct device *dev)
- 	if (register_framebuffer(info) < 0) {
- 		printk(KERN_ERR "tgafb: Could not register framebuffer\n");
- 		ret = -EINVAL;
--		goto err2;
-+		goto dealloc_cmap;
- 	}
- 
- 	if (tga_bus_pci) {
-@@ -1517,12 +1517,13 @@ static int tgafb_register(struct device *dev)
- 
+ 	par->mode = &inf->modelist[0];
+@@ -766,15 +766,18 @@ int w100fb_probe(struct platform_device *pdev)
+ 	fb_info(info, "%s frame buffer device\n", info->fix.id);
  	return 0;
- 
-- err2:
-+dealloc_cmap:
- 	fb_dealloc_cmap(&info->cmap);
-- err1:
-+io_unmap:
- 	iounmap(mem_base);
-+release_memory_region:
- 	release_mem_region(bar0_start, bar0_len);
-- err0:
+ out:
+-	if (info) {
+-		fb_dealloc_cmap(&info->cmap);
+-		kfree(info->pseudo_palette);
+-	}
++	fb_dealloc_cmap(&info->cmap);
++free_palette:
++	kfree(info->pseudo_palette);
 +release_framebuffer:
- 	framebuffer_release(info);
- 	return ret;
++	framebuffer_release(info);
++io_unmap_framebuffer:
+ 	iounmap(remapped_fbuf);
++io_unmap_regs:
+ 	iounmap(remapped_regs);
++io_unmap_base:
+ 	iounmap(remapped_base);
+-	if (info)
+-		framebuffer_release(info);
++exit:
+ 	return err;
  }
+ 
 -- 
 2.2.2
 
