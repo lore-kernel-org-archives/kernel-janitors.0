@@ -1,72 +1,94 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 04 Jan 2015 12:53:10 +0000
-Subject: [PATCH 2/13] ALSA: oss: Deletion of unnecessary checks before the function call "vfree"
-Message-Id: <54A937B6.6000302@users.sourceforge.net>
+Date: Mon, 19 Jan 2015 18:43:36 +0000
+Subject: [PATCH 7/9] video: One function call less in tgafb_register() after, error detection
+Message-Id: <54BD5058.1090809@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
-In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54BD44F0.3040705@users.sourceforge.net>
+In-Reply-To: <54BD44F0.3040705@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jan 2015 15:10:52 +0100
+Date: Mon, 19 Jan 2015 15:30:45 +0100
 
-The vfree() function performs also input parameter validation. Thus the test
-around the call is not needed.
+The iounmap() function could be called in one case by the tgafb_register()
+function during error handling even if the passed variable "mem_base"
+contained still a null pointer.
 
-This issue was detected by using the Coccinelle software.
+This implementation detail could be improved by adjustments for jump labels
+(according also to current Linux coding style).
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/oss/pss.c  | 2 +-
- sound/oss/trix.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/tgafb.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/sound/oss/pss.c b/sound/oss/pss.c
-index ca0d6e9..81314f9 100644
---- a/sound/oss/pss.c
-+++ b/sound/oss/pss.c
-@@ -1228,7 +1228,7 @@ static void __exit cleanup_pss(void)
- {
- 	if(!pss_no_sound)
- 	{
--		if(fw_load && pss_synth)
-+		if (fw_load)
- 			vfree(pss_synth);
- 		if(pssmss)
- 			unload_pss_mss(&cfg2);
-diff --git a/sound/oss/trix.c b/sound/oss/trix.c
-index 944e0c0..3c494dc 100644
---- a/sound/oss/trix.c
-+++ b/sound/oss/trix.c
-@@ -487,7 +487,7 @@ static int __init init_trix(void)
+diff --git a/drivers/video/fbdev/tgafb.c b/drivers/video/fbdev/tgafb.c
+index b6fb7e8..a3cd0ef 100644
+--- a/drivers/video/fbdev/tgafb.c
++++ b/drivers/video/fbdev/tgafb.c
+@@ -1436,14 +1436,14 @@ static int tgafb_register(struct device *dev)
+ 	}
+ 	if (!request_mem_region (bar0_start, bar0_len, "tgafb")) {
+ 		printk(KERN_ERR "tgafb: cannot reserve FB region\n");
+-		goto err0;
++		goto release_framebuffer;
+ 	}
  
- static void __exit cleanup_trix(void)
- {
--	if (fw_load && trix_boot)
-+	if (fw_load)
- 		vfree(trix_boot);
- 	if (sb)
- 		unload_trix_sb(&cfg2);
+ 	/* Map the framebuffer.  */
+ 	mem_base = ioremap_nocache(bar0_start, bar0_len);
+ 	if (!mem_base) {
+ 		printk(KERN_ERR "tgafb: Cannot map MMIO\n");
+-		goto err1;
++		goto release_memory_region;
+ 	}
+ 
+ 	/* Grab info about the card.  */
+@@ -1484,13 +1484,13 @@ static int tgafb_register(struct device *dev)
+ 	if (ret = 0 || ret = 4) {
+ 		printk(KERN_ERR "tgafb: Could not find valid video mode\n");
+ 		ret = -EINVAL;
+-		goto err1;
++		goto io_unmap;
+ 	}
+ 
+ 	if (fb_alloc_cmap(&info->cmap, 256, 0)) {
+ 		printk(KERN_ERR "tgafb: Could not allocate color map\n");
+ 		ret = -ENOMEM;
+-		goto err1;
++		goto io_unmap;
+ 	}
+ 
+ 	tgafb_set_par(info);
+@@ -1498,7 +1498,7 @@ static int tgafb_register(struct device *dev)
+ 	if (register_framebuffer(info) < 0) {
+ 		printk(KERN_ERR "tgafb: Could not register framebuffer\n");
+ 		ret = -EINVAL;
+-		goto err2;
++		goto dealloc_cmap;
+ 	}
+ 
+ 	if (tga_bus_pci) {
+@@ -1517,12 +1517,13 @@ static int tgafb_register(struct device *dev)
+ 
+ 	return 0;
+ 
+- err2:
++dealloc_cmap:
+ 	fb_dealloc_cmap(&info->cmap);
+- err1:
++io_unmap:
+ 	iounmap(mem_base);
++release_memory_region:
+ 	release_mem_region(bar0_start, bar0_len);
+- err0:
++release_framebuffer:
+ 	framebuffer_release(info);
+ 	return ret;
+ }
 -- 
-2.2.1
+2.2.2
 
