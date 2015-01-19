@@ -1,94 +1,74 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Jan 2015 19:02:49 +0000
-Subject: [PATCH 1/2] PCMCIA: Deletion of checks before the function call "iounmap"
-Message-Id: <54BC0359.3090508@users.sourceforge.net>
+Date: Mon, 19 Jan 2015 18:41:01 +0000
+Subject: [PATCH 6/9] video: One function call less in pvr2fb_common_init() after error detection
+Message-Id: <54BD4FBD.3020308@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54BC02D2.8010008@users.sourceforge.net>
-In-Reply-To: <54BC02D2.8010008@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54BD44F0.3040705@users.sourceforge.net>
+In-Reply-To: <54BD44F0.3040705@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Jan 2015 18:48:09 +0100
+Date: Mon, 19 Jan 2015 14:50:44 +0100
 
-The iounmap() function performs also input parameter validation.
-Thus the test around the call is not needed.
+The iounmap() function could be called in two cases by the pvr2fb_common_init()
+function during error handling even if the passed data structure element
+contained still a null pointer.
 
-This issue was detected by using the Coccinelle software.
+This implementation detail could be improved by adjustments for jump labels.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pcmcia/bcm63xx_pcmcia.c | 6 ++----
- drivers/pcmcia/cistpl.c         | 3 +--
- drivers/pcmcia/electra_cf.c     | 6 ++----
- drivers/pcmcia/yenta_socket.c   | 3 +--
- 4 files changed, 6 insertions(+), 12 deletions(-)
+ drivers/video/fbdev/pvr2fb.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pcmcia/bcm63xx_pcmcia.c b/drivers/pcmcia/bcm63xx_pcmcia.c
-index 0802e0b..9e7ad1b 100644
---- a/drivers/pcmcia/bcm63xx_pcmcia.c
-+++ b/drivers/pcmcia/bcm63xx_pcmcia.c
-@@ -426,10 +426,8 @@ static int bcm63xx_drv_pcmcia_probe(struct platform_device *pdev)
+diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
+index 7aa4ef1..9fb8bbf 100644
+--- a/drivers/video/fbdev/pvr2fb.c
++++ b/drivers/video/fbdev/pvr2fb.c
+@@ -773,14 +773,14 @@ static int pvr2fb_common_init(void)
+ 
+ 	if (!fb_info->screen_base) {
+ 		printk(KERN_ERR "pvr2fb: Failed to remap smem space\n");
+-		goto out_err;
++		return -ENXIO;
+ 	}
+ 
+ 	par->mmio_base = (unsigned long)ioremap_nocache(pvr2_fix.mmio_start,
+ 							pvr2_fix.mmio_len);
+ 	if (!par->mmio_base) {
+ 		printk(KERN_ERR "pvr2fb: Failed to remap mmio space\n");
+-		goto out_err;
++		goto io_unmap_screen;
+ 	}
+ 
+ 	fb_memset(fb_info->screen_base, 0, pvr2_fix.smem_len);
+@@ -807,7 +807,7 @@ static int pvr2fb_common_init(void)
+ 	fb_alloc_cmap(&fb_info->cmap, 256, 0);
+ 
+ 	if (register_framebuffer(fb_info) < 0)
+-		goto out_err;
++		goto io_unmap_mmio;
+ 	/*Must write PIXDEPTH to register before anything is displayed - so force init */
+ 	pvr2_init_display(fb_info);
+ 
+@@ -840,10 +840,10 @@ static int pvr2fb_common_init(void)
+ 
  	return 0;
  
- err:
--	if (skt->io_base)
--		iounmap(skt->io_base);
--	if (skt->base)
--		iounmap(skt->base);
-+	iounmap(skt->io_base);
-+	iounmap(skt->base);
- 	if (skt->reg_res)
- 		release_mem_region(skt->reg_res->start, regmem_size);
- 	kfree(skt);
-diff --git a/drivers/pcmcia/cistpl.c b/drivers/pcmcia/cistpl.c
-index 884a984..662462e 100644
---- a/drivers/pcmcia/cistpl.c
-+++ b/drivers/pcmcia/cistpl.c
-@@ -115,8 +115,7 @@ static void __iomem *set_cis_map(struct pcmcia_socket *s,
- 	}
+-out_err:
++io_unmap_mmio:
++	iounmap((void *)par->mmio_base);
++io_unmap_screen:
+ 	iounmap(fb_info->screen_base);
+-	if (par->mmio_base)
+-		iounmap((void *)par->mmio_base);
  
- 	if (s->features & SS_CAP_STATIC_MAP) {
--		if (s->cis_virt)
--			iounmap(s->cis_virt);
-+		iounmap(s->cis_virt);
- 		s->cis_virt = ioremap(mem->static_start, s->map_size);
- 	}
- 
-diff --git a/drivers/pcmcia/electra_cf.c b/drivers/pcmcia/electra_cf.c
-index 7f9950d..3fb78d6 100644
---- a/drivers/pcmcia/electra_cf.c
-+++ b/drivers/pcmcia/electra_cf.c
-@@ -316,10 +316,8 @@ fail1:
- 
- 	if (cf->io_virt)
- 		__iounmap_at(cf->io_virt, cf->io_size);
--	if (cf->mem_base)
--		iounmap(cf->mem_base);
--	if (cf->gpio_base)
--		iounmap(cf->gpio_base);
-+	iounmap(cf->mem_base);
-+	iounmap(cf->gpio_base);
- 	device_init_wakeup(&ofdev->dev, 0);
- 	kfree(cf);
- 	return status;
-diff --git a/drivers/pcmcia/yenta_socket.c b/drivers/pcmcia/yenta_socket.c
-index 8a23ccb..5ea1d49 100644
---- a/drivers/pcmcia/yenta_socket.c
-+++ b/drivers/pcmcia/yenta_socket.c
-@@ -802,8 +802,7 @@ static void yenta_close(struct pci_dev *dev)
- 	else
- 		del_timer_sync(&sock->poll_timer);
- 
--	if (sock->base)
--		iounmap(sock->base);
-+	iounmap(sock->base);
- 	yenta_free_resources(sock);
- 
- 	pci_release_regions(dev);
+ 	return -ENXIO;
+ }
 -- 
 2.2.2
 
