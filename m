@@ -1,64 +1,29 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Tue, 20 Jan 2015 10:30:40 +0000
-Subject: Re: [PATCH] s390: char: Free memory on error path.
-Message-Id: <20150120103040.GA3928@osiris>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Jan 2015 07:48:01 +0000
+Subject: [patch] Input: cyapa - off by on in cyapa_update_fw_store()
+Message-Id: <20150122074801.GA11491@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1421704920-29820-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1421704920-29820-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: schwidefsky@de.ibm.com, rhoppe@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Henrik Rydberg <rydberg@bitmath.org>, Dudley Du <dudl@cypress.com>, Jingoo Han <jg1.han@samsung.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jan 19, 2015 at 11:02:00PM +0100, Christophe Jaillet wrote:
-> Free allocated page in case of error returned by hmcdrv_ftp_startup.
-> 
-> Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+If "(count = NAME_MAX)" then we could end up putting the NUL terminator
+one space beyond the end of the fw_name[] array.
 
-Thanks, I applied the version below.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-From e38409df9fdbe8b4667cc2ee0e44ff5825ed7049 Mon Sep 17 00:00:00 2001
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Date: Mon, 19 Jan 2015 23:02:00 +0100
-Subject: [PATCH] s390/hmcdrv: free memory on error path
-
-Free allocated page in case of error returned by hmcdrv_ftp_startup.
-
-[heiko.carstens@de.ibm.com]: slightly changed Christophe's patch
-
-Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
----
- drivers/s390/char/hmcdrv_ftp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/s390/char/hmcdrv_ftp.c b/drivers/s390/char/hmcdrv_ftp.c
-index 4bd63322fc29..d4b61d9088fb 100644
---- a/drivers/s390/char/hmcdrv_ftp.c
-+++ b/drivers/s390/char/hmcdrv_ftp.c
-@@ -200,10 +200,9 @@ int hmcdrv_ftp_probe(void)
- 	rc = hmcdrv_ftp_startup();
+diff --git a/drivers/input/mouse/cyapa.c b/drivers/input/mouse/cyapa.c
+index 64c6128..58f4f6f 100644
+--- a/drivers/input/mouse/cyapa.c
++++ b/drivers/input/mouse/cyapa.c
+@@ -1013,7 +1013,7 @@ static ssize_t cyapa_update_fw_store(struct device *dev,
+ 	char fw_name[NAME_MAX];
+ 	int ret, error;
  
- 	if (rc)
--		return rc;
-+		goto out;
- 
- 	rc = hmcdrv_ftp_do(&ftp);
--	free_page((unsigned long) ftp.buf);
- 	hmcdrv_ftp_shutdown();
- 
- 	switch (rc) {
-@@ -216,7 +215,8 @@ int hmcdrv_ftp_probe(void)
- 			rc = 0; /* clear length (success) */
- 		break;
- 	} /* switch */
--
-+out:
-+	free_page((unsigned long) ftp.buf);
- 	return rc;
- }
- EXPORT_SYMBOL(hmcdrv_ftp_probe);
--- 
-2.1.4
-
+-	if (count > NAME_MAX) {
++	if (count >= NAME_MAX) {
+ 		dev_err(dev, "File name too long\n");
+ 		return -EINVAL;
+ 	}
