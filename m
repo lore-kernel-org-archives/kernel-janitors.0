@@ -1,23 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 24 Jan 2015 09:26:24 +0000
-Subject: Re: [patch] KVM: always initialize *pdata in get_msr()
-Message-Id: <20150124092624.GN6456@mwanda>
+Date: Fri, 23 Jan 2015 14:20:25 +0000
+Subject: [patch] staging: fbtft: fix allyesconfig build
+Message-Id: <20150123142025.GA9974@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150123143232.GA4298@mwanda>
- <20150123160803.GA3267@potion.brq.redhat.com>
-In-Reply-To: <20150123160803.GA3267@potion.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: Gleb Natapov <gleb@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Jan 23, 2015 at 05:08:03PM +0100, Radim Krčmář wrote:
-> This patch will prevent future detection of functional bugs :(
+There are two functions call reset() so the allyesconfig breaks.  Let's
+make this one static.
 
-Hm.  You're right.  Smatch should be able to follow the logic.  The code
-to handle this is pretty new.  I'll look into why it wasn't working.
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Hi Jim, can you test this patch and see if it fixes the build issue?
 
-regards,
-dan carpenter
-
+diff --git a/drivers/staging/fbtft/fb_agm1264k-fl.c b/drivers/staging/fbtft/fb_agm1264k-fl.c
+index 7fe4fa0..9cc7d25 100644
+--- a/drivers/staging/fbtft/fb_agm1264k-fl.c
++++ b/drivers/staging/fbtft/fb_agm1264k-fl.c
+@@ -89,7 +89,7 @@ static int init_display(struct fbtft_par *par)
+ 	return 0;
+ }
+ 
+-void reset(struct fbtft_par *par)
++static void reset(struct fbtft_par *par)
+ {
+ 	if (par->gpio.reset = -1)
+ 		return;
