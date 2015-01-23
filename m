@@ -1,32 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Jan 2015 17:14:48 +0000
-Subject: re: csiostor:T5 Firmware fix and cleanup.
-Message-Id: <20150129171448.GA30639@mwanda>
+Date: Fri, 23 Jan 2015 11:24:21 +0000
+Subject: [patch] ocfs2: o2net: silence uninitialized variable warning
+Message-Id: <20150123112421.GA14552@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-Hello Praveen Madhavan,
+Smatch complains that, if o2net_tx_can_proceed() returns false, then
+"sc" and "ret" are uninialized or maybe we are re-using the data from
+previous iteration.  I do not know if we can hit this bug in real life
+but checking the return value is harmless and we may as well silence the
+static checker warning.
 
-The patch 216ce69c7ff5: "csiostor:T5 Firmware fix and cleanup." from
-Jan 27, 2015, leads to the following static checker warning:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	drivers/scsi/csiostor/csio_hw.c:1780 csio_hw_use_fwconfig()
-	warn: missing error code here? 'csio_hw_validate_caps()' failed.
-
-drivers/scsi/csiostor/csio_hw.c
-  1776          }
-  1777  
-  1778          /* Validate device capabilities */
-  1779          if (csio_hw_validate_caps(hw, mbp))
-
-We should probably preserve the error code here instead of returning
-success.
-
-  1780                  goto bye;
-  1781          /*
-
-regards,
-dan carpenter
+diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+index 2e355e0..56c403a 100644
+--- a/fs/ocfs2/cluster/tcp.c
++++ b/fs/ocfs2/cluster/tcp.c
+@@ -1016,7 +1016,8 @@ void o2net_fill_node_map(unsigned long *map, unsigned bytes)
+ 
+ 	memset(map, 0, bytes);
+ 	for (node = 0; node < O2NM_MAX_NODES; ++node) {
+-		o2net_tx_can_proceed(o2net_nn_from_num(node), &sc, &ret);
++		if (!o2net_tx_can_proceed(o2net_nn_from_num(node), &sc, &ret))
++			continue;
+ 		if (!ret) {
+ 			set_bit(node, map);
+ 			sc_put(sc);
