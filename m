@@ -1,42 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 28 Jan 2015 11:36:48 +0000
-Subject: Re: [patch] ASoC: Intel: remove an unused struct member
-Message-Id: <20150128113648.GW21293@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="YHX+EHVZpmeyURU8"
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Mon, 26 Jan 2015 16:47:32 +0000
+Subject: [PATCH] drivers: gpu: drm: i915: intel_fifo_underrun.c: Fix a typo in comment
+Message-Id: <1422290852-4060-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150128064210.GA30893@mwanda>
-In-Reply-To: <20150128064210.GA30893@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Christian Engelmayer <cengelma@gmx.at>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, =?utf-8?B?UGF3ZcWC?= Piskorski <pawel.piskorski@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: daniel.vetter@intel.com
+Cc: jani.nikula@linux.intel.com, airlied@linux.ie, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+The comment for intel_cpu_fifo_underrun_irq_handler() is not consistent
+with the code and the rest of the comment for this routine. This patch
+fixes this typo in comment.
 
---YHX+EHVZpmeyURU8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/gpu/drm/i915/intel_fifo_underrun.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Jan 28, 2015 at 09:42:10AM +0300, Dan Carpenter wrote:
-> We never set the ->scratch pointer, so let's delete it.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/drivers/gpu/drm/i915/intel_fifo_underrun.c b/drivers/gpu/drm/i915/intel_fifo_underrun.c
+index 77af512..04e248d 100644
+--- a/drivers/gpu/drm/i915/intel_fifo_underrun.c
++++ b/drivers/gpu/drm/i915/intel_fifo_underrun.c
+@@ -341,7 +341,7 @@ bool intel_set_pch_fifo_underrun_reporting(struct drm_i915_private *dev_priv,
+ }
+ 
+ /**
+- * intel_pch_fifo_underrun_irq_handler - handle PCH fifo underrun interrupt
++ * intel_cpu_fifo_underrun_irq_handler - handle CPU fifo underrun interrupt
+  * @dev_priv: i915 device instance
+  * @pipe: (CPU) pipe to set state for
+  *
+-- 
+2.1.0
 
-Applied, thanks.
-
---YHX+EHVZpmeyURU8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJUyMnQAAoJECTWi3JdVIfQkxoH/iOg3ABNPkiX0llPpsyWK2Gc
-1tMTJbMwlg6XIvCMl3F30MYlO3383BCGb1zn7QuY7b0NHN3feKOGjdIWIOd4c+6c
-/pCFZJV90XJ+GMnKYanel0bfe7ao0CC97uastQsyUnr7UPRgbuvPdyrUaFBPvPcD
-JN5X10Z0X64i3wXlI43Fly0885IBxjxKWZS/o2UDMXtrZrTNnWrVCt0t7tQSW0/n
-Oj1AiRr0hE6mF7UE1zEmCdlPag6LNEuhZe8jd+wIxYRJ5H/X4uO34ZEndoXbeYzA
-1lXIDbv+zGtbOyOxmcybT7SENbZRxB0kkdRBrHAyOnVTOwQvRixOh26IMftBzcw=
-=57S1
------END PGP SIGNATURE-----
-
---YHX+EHVZpmeyURU8--
