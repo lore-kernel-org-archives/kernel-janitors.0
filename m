@@ -1,58 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Jan 2015 17:54:56 +0000
-Subject: [PATCH 0/9] video: fbdev: Deletion of some unnecessary checks
-Message-Id: <54BD44F0.3040705@users.sourceforge.net>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Mon, 26 Jan 2015 15:44:53 +0000
+Subject: [PATCH] staging: lustre: lustre: mdc: lproc_mdc.c: Fix for potential NULL pointer dereference
+Message-Id: <1422287093-3241-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonino Daplas <adaplas@gmail.com>, Ferenc Bakonyi <fero@drama.obuda.kando.hu>, Hans de Goede <hdegoede@redhat.com>, Helge Deller <deller@gmx.de>, "James E. J. Bottomley" <jejb@parisc-linux.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Peter Jones <pjones@redhat.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-nvidia@lists.surfsouth.com, linux-parisc@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: oleg.drokin@intel.com, andreas.dilger@intel.com
+Cc: gregkh@linuxfoundation.org, srikrishanmalik@gmail.com, rd@radekdostal.com, tristan@lelong.xyz, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Jan 2015 17:57:25 +0100
+In mdc_kuc_write(), OBD_ALLOC(lh, len) may leave 'lh' to NULL as kmalloc
+may fail to allocate memory. This fix adds a check to avoid, dereferencing
+a NULL pointer.
 
-Further update suggestions were taken into account after a patch was applied
-from static source code analysis.
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/lustre/lustre/mdc/lproc_mdc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Markus Elfring (9):
-  fbdev: Deletion of checks before the function call "iounmap"
-  One function call less in tdfxfb_probe() after error detection
-  One function call less in vesafb_probe() after error detection
-  Add check for return value of ioremap() in cirrusfb_pci_register()
-  Less function calls in trident_pci_probe() after error detection
-  One function call less in pvr2fb_common_init() after error detection
-  One function call less in tgafb_register() after error detection
-  Less function calls in valkyriefb_init() after error detection
-  Less function calls in w100fb_probe() after error detection
-
- drivers/video/fbdev/aty/atyfb_base.c   | 15 +++++--------
- drivers/video/fbdev/cirrusfb.c         | 10 ++++++---
- drivers/video/fbdev/controlfb.c        |  6 ++---
- drivers/video/fbdev/efifb.c            |  3 +--
- drivers/video/fbdev/hgafb.c            |  3 +--
- drivers/video/fbdev/hpfb.c             |  3 +--
- drivers/video/fbdev/i810/i810_main.c   |  6 ++---
- drivers/video/fbdev/macfb.c            | 15 +++++--------
- drivers/video/fbdev/offb.c             |  3 +--
- drivers/video/fbdev/pvr2fb.c           | 15 ++++++-------
- drivers/video/fbdev/s1d13xxxfb.c       |  3 +--
- drivers/video/fbdev/s3fb.c             |  6 ++---
- drivers/video/fbdev/sh_mobile_hdmi.c   |  6 ++---
- drivers/video/fbdev/sh_mobile_lcdcfb.c |  3 +--
- drivers/video/fbdev/simplefb.c         |  3 +--
- drivers/video/fbdev/stifb.c            |  3 +--
- drivers/video/fbdev/tdfxfb.c           | 22 +++++++++----------
- drivers/video/fbdev/tgafb.c            | 20 ++++++++---------
- drivers/video/fbdev/tridentfb.c        | 15 +++++++------
- drivers/video/fbdev/valkyriefb.c       | 37 ++++++++++++++++++-------------
- drivers/video/fbdev/vesafb.c           | 11 +++++-----
- drivers/video/fbdev/w100fb.c           | 40 +++++++++++++++++-----------------
- 22 files changed, 116 insertions(+), 132 deletions(-)
-
+diff --git a/drivers/staging/lustre/lustre/mdc/lproc_mdc.c b/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
+index c420219..c791941 100644
+--- a/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
++++ b/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
+@@ -106,6 +106,8 @@ static ssize_t mdc_kuc_write(struct file *file,
+ 		/* for mockup below */ 2 * cfs_size_round(sizeof(*hai));
+ 
+ 	OBD_ALLOC(lh, len);
++	if (!lh)
++		return -ENOMEM;
+ 
+ 	lh->kuc_magic = KUC_MAGIC;
+ 	lh->kuc_transport = KUC_TRANSPORT_HSM;
 -- 
-2.2.2
+2.1.0
 
