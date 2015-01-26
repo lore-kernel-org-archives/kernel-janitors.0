@@ -1,49 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Jan 2015 08:29:33 +0000
-Subject: [patch] dmaengine: s3c24xx: missing unlock on an error path
-Message-Id: <20150130082933.GC21357@mwanda>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Mon, 26 Jan 2015 15:39:14 +0000
+Subject: [PATCH] staging: rtl8188eu: core: rtw_wlan_util.c: Fix for NULL dereference
+Message-Id: <1422286754-3039-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: navin.patidar@gmail.com, Larry.Finger@lwfinger.net, dan.carpenter@oracle.com, tapaswenipathak@gmail.com, abelmoyo.ab@gmail.com, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should unlock here before returning -EINVAL.
+In rtw_check_bcn_info(), check the return value of kzalloc() before
+dereferencing it, to avoid NULL pointer dereference.
 
-Fixes: 39ad46009654 ('dmaengine: s3c24xx: Split device_control')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-index 4d5a848..2f91da3 100644
---- a/drivers/dma/s3c24xx-dma.c
-+++ b/drivers/dma/s3c24xx-dma.c
-@@ -718,13 +718,15 @@ static int s3c24xx_dma_terminate_all(struct dma_chan *chan)
- 	struct s3c24xx_dma_chan *s3cchan = to_s3c24xx_dma_chan(chan);
- 	struct s3c24xx_dma_engine *s3cdma = s3cchan->host;
- 	unsigned long flags;
-+	int ret = 0;
- 
- 	spin_lock_irqsave(&s3cchan->vc.lock, flags);
- 
- 	if (!s3cchan->phy && !s3cchan->at) {
- 		dev_err(&s3cdma->pdev->dev, "trying to terminate already stopped channel %d\n",
- 			s3cchan->id);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto unlock;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+index 3e9b6e9..a3ffc69 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+@@ -931,6 +931,8 @@ int rtw_check_bcn_info(struct adapter  *Adapter, u8 *pframe, u32 packet_len)
  	}
  
- 	s3cchan->state = S3C24XX_DMA_CHAN_IDLE;
-@@ -741,10 +743,10 @@ static int s3c24xx_dma_terminate_all(struct dma_chan *chan)
+ 	bssid = kzalloc(sizeof(struct wlan_bssid_ex), GFP_ATOMIC);
++	if (!bssid)
++		return _FAIL;
  
- 	/* Dequeue jobs not yet fired as well */
- 	s3c24xx_dma_free_txd_list(s3cdma, s3cchan);
--
-+unlock:
- 	spin_unlock_irqrestore(&s3cchan->vc.lock, flags);
+ 	subtype = GetFrameSubType(pframe) >> 4;
  
--	return 0;
-+	return ret;
- }
- 
- static int s3c24xx_dma_alloc_chan_resources(struct dma_chan *chan)
+-- 
+2.1.0
+
