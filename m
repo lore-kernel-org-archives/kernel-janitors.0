@@ -1,59 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 04 Jan 2015 13:28:17 +0000
-Subject: [PATCH 10/13] ALSA: sb: Delete an unnecessary check before the function call "snd_emux_free"
-Message-Id: <54A93FF1.3050108@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 28 Jan 2015 07:38:21 +0000
+Subject: [PATCH 4/4] scsi: aic79xx: Use kzalloc instead of kmalloc/memset
+Message-Id: <20150128073821.GA13659@devel.8.8.4.4>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
-In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: hare@suse.de
+Cc: JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jan 2015 21:02:32 +0100
-
-The snd_emux_free() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- sound/isa/sb/emu8000_synth.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/aic7xxx/aic79xx_osm.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/sound/isa/sb/emu8000_synth.c b/sound/isa/sb/emu8000_synth.c
-index 95b39be..72332df 100644
---- a/sound/isa/sb/emu8000_synth.c
-+++ b/sound/isa/sb/emu8000_synth.c
-@@ -103,8 +103,7 @@ static int snd_emu8000_delete_device(struct snd_seq_device *dev)
- 	hw = dev->driver_data;
- 	if (hw->pcm)
- 		snd_device_free(dev->card, hw->pcm);
--	if (hw->emu)
--		snd_emux_free(hw->emu);
-+	snd_emux_free(hw->emu);
- 	snd_util_memhdr_free(hw->memhdr);
- 	hw->emu = NULL;
- 	hw->memhdr = NULL;
+diff --git a/drivers/scsi/aic7xxx/aic79xx_osm.c b/drivers/scsi/aic7xxx/aic79xx_osm.c
+index d5c7b19..ce96a0b 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_osm.c
++++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
+@@ -1326,10 +1326,9 @@ int
+ ahd_platform_alloc(struct ahd_softc *ahd, void *platform_arg)
+ {
+ 	ahd->platform_data -	    kmalloc(sizeof(struct ahd_platform_data), GFP_ATOMIC);
++	    kzalloc(sizeof(struct ahd_platform_data), GFP_ATOMIC);
+ 	if (ahd->platform_data = NULL)
+ 		return (ENOMEM);
+-	memset(ahd->platform_data, 0, sizeof(struct ahd_platform_data));
+ 	ahd->platform_data->irq = AHD_LINUX_NOIRQ;
+ 	ahd_lockinit(ahd);
+ 	ahd->seltime = (aic79xx_seltime & 0x3) << 4;
 -- 
-2.2.1
+1.7.1
 
