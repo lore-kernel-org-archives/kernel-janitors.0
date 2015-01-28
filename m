@@ -1,23 +1,23 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
-Date: Wed, 28 Jan 2015 06:52:45 +0000
+From: Stephen Smalley <sds@tycho.nsa.gov>
+Date: Wed, 28 Jan 2015 15:14:18 +0000
 Subject: Re: [patch] SELinux: fix error code in policydb_init()
-Message-Id: <20150128065245.GB13794@mail.hallyn.com>
+Message-Id: <54C8FCCA.9010706@tycho.nsa.gov>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150128064239.GB30893@mwanda>
 In-Reply-To: <20150128064239.GB30893@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-security-module@vger.kernel.org, Himangi Saraogi <himangi774@gmail.com>, James Morris <james.l.morris@oracle.com>, Namhyung Kim <namhyung@kernel.org>, Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov
+To: Dan Carpenter <dan.carpenter@oracle.com>, Paul Moore <paul@paul-moore.com>
+Cc: James Morris <james.l.morris@oracle.com>, kernel-janitors@vger.kernel.org, linux-security-module@vger.kernel.org, Himangi Saraogi <himangi774@gmail.com>, selinux@tycho.nsa.gov, Namhyung Kim <namhyung@kernel.org>
 
-Quoting Dan Carpenter (dan.carpenter@oracle.com):
+On 01/28/2015 01:42 AM, Dan Carpenter wrote:
 > If hashtab_create() returns a NULL pointer then we should return -ENOMEM
 > but instead the current code returns success.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Serge Hallyn <serge.hallyn@canonical.com>
+Acked-by:  Stephen Smalley <sds@tycho.nsa.gov>
 
 > 
 > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
@@ -43,3 +43,9 @@ Acked-by: Serge Hallyn <serge.hallyn@canonical.com>
 >  
 >  	ebitmap_init(&p->filename_trans_ttypes);
 >  	ebitmap_init(&p->policycaps);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
