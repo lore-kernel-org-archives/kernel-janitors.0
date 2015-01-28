@@ -1,30 +1,34 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 27 Jan 2015 09:30:19 +0000
-Subject: Re: [Intel-gfx] [PATCH] drivers: gpu: drm: i915: intel_fifo_underrun.c: Fix a typo in comment
-Message-Id: <20150127093019.GM10113@phenom.ffwll.local>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 28 Jan 2015 07:36:56 +0000
+Subject: [PATCH 1/4] scsi: aic7xxx: use kzalloc instead of kmalloc/memset
+Message-Id: <20150128073656.GA13526@devel.8.8.4.4>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1422290852-4060-1-git-send-email-gmate.amit@gmail.com>
- <87siewfygu.fsf@intel.com>
-In-Reply-To: <87siewfygu.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Kumar Amit Mehta <gmate.amit@gmail.com>, airlied@linux.ie, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, daniel.vetter@intel.com
+To: hare@suse.de
+Cc: JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 27, 2015 at 09:56:49AM +0200, Jani Nikula wrote:
-> On Mon, 26 Jan 2015, Kumar Amit Mehta <gmate.amit@gmail.com> wrote:
-> > The comment for intel_cpu_fifo_underrun_irq_handler() is not consistent
-> > with the code and the rest of the comment for this routine. This patch
-> > fixes this typo in comment.
-> >
-> > Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
-> 
-> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/scsi/aic7xxx/aic7xxx_osm.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-Queued for -next, thanks for the patch.
--Daniel
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm.c b/drivers/scsi/aic7xxx/aic7xxx_osm.c
+index 8836011..a2f2c77 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_osm.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_osm.c
+@@ -1214,10 +1214,9 @@ ahc_platform_alloc(struct ahc_softc *ahc, void *platform_arg)
+ {
+ 
+ 	ahc->platform_data -	    kmalloc(sizeof(struct ahc_platform_data), GFP_ATOMIC);
++	    kzalloc(sizeof(struct ahc_platform_data), GFP_ATOMIC);
+ 	if (ahc->platform_data = NULL)
+ 		return (ENOMEM);
+-	memset(ahc->platform_data, 0, sizeof(struct ahc_platform_data));
+ 	ahc->platform_data->irq = AHC_LINUX_NOIRQ;
+ 	ahc_lockinit(ahc);
+ 	ahc->seltime = (aic7xxx_seltime & 0x3) << 4;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+1.7.1
+
