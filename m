@@ -1,49 +1,39 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Thu, 15 Jan 2015 10:56:06 +0000
-Subject: Re: [patch] [media] gspca: underflow in vidioc_s_parm()
-Message-Id: <54B79CC6.1050705@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Jan 2015 06:42:39 +0000
+Subject: [patch] SELinux: fix error code in policydb_init()
+Message-Id: <20150128064239.GB30893@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150107110421.GB14864@mwanda>
-In-Reply-To: <20150107110421.GB14864@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@tycho.nsa.gov, kernel-janitors@vger.kernel.org, linux-security-module@vger.kernel.org, Himangi Saraogi <himangi774@gmail.com>, James Morris <james.l.morris@oracle.com>, Namhyung Kim <namhyung@kernel.org>, Stephen Smalley <sds@tycho.nsa.gov>
 
-Hi,
+If hashtab_create() returns a NULL pointer then we should return -ENOMEM
+but instead the current code returns success.
 
-On 07-01-15 12:04, Dan Carpenter wrote:
-> "n" is a user controlled integer.  The code here doesn't handle the case
-> where "n" is negative and this causes a static checker warning.
->
-> 	drivers/media/usb/gspca/gspca.c:1571 vidioc_s_parm()
-> 	warn: no lower bound on 'n'
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I haven't followed through to see if this is a real problem.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks for the report, it is a real problem, but since
-parm->parm.capture.readbuffers is unsigned I've chosen to fix it
-by making n unsigned too instead.
-
-Regards,
-
-Hans
-
->
-> diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
-> index 43d6505..27f7da1 100644
-> --- a/drivers/media/usb/gspca/gspca.c
-> +++ b/drivers/media/usb/gspca/gspca.c
-> @@ -1565,6 +1565,8 @@ static int vidioc_s_parm(struct file *filp, void *priv,
->   	int n;
->
->   	n = parm->parm.capture.readbuffers;
-> +	if (n < 0)
-> +		return -EINVAL;
->   	if (n = 0 || n >= GSPCA_MAX_FRAMES)
->   		parm->parm.capture.readbuffers = gspca_dev->nbufread;
->   	else
->
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index bc2a586..74aa224 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -289,12 +289,16 @@ static int policydb_init(struct policydb *p)
+ 		goto out;
+ 
+ 	p->filename_trans = hashtab_create(filenametr_hash, filenametr_cmp, (1 << 10));
+-	if (!p->filename_trans)
++	if (!p->filename_trans) {
++		rc = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	p->range_tr = hashtab_create(rangetr_hash, rangetr_cmp, 256);
+-	if (!p->range_tr)
++	if (!p->range_tr) {
++		rc = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	ebitmap_init(&p->filename_trans_ttypes);
+ 	ebitmap_init(&p->policycaps);
