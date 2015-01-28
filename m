@@ -1,32 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 19 Jan 2015 14:43:27 +0000
-Subject: [patch] NVMe: return an error code if blk_mq_alloc_tag_set() fails
-Message-Id: <20150119144327.GE19086@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 28 Jan 2015 07:37:50 +0000
+Subject: [PATCH 3/4] scsi: aic7xxx: Use kzalloc instead of kmalloc/memset
+Message-Id: <20150128073750.GA13646@devel.8.8.4.4>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: hare@suse.de
+Cc: JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In the current code, if blk_mq_alloc_tag_set() fails then it returns
-zero (success) instead of preserving the error code.  The caller is not
-expecting that and the kernel could be left in an inconsistent state.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
-Static analysis stuff.  Not tested.
+ drivers/scsi/aic7xxx/aic7xxx_core.c |    9 +++------
+ 1 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/block/nvme-core.c b/drivers/block/nvme-core.c
-index cb529e9..2ff5efc 100644
---- a/drivers/block/nvme-core.c
-+++ b/drivers/block/nvme-core.c
-@@ -2152,7 +2152,8 @@ static int nvme_dev_add(struct nvme_dev *dev)
- 	dev->tagset.flags = BLK_MQ_F_SHOULD_MERGE;
- 	dev->tagset.driver_data = dev;
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
+index 10172a3..7f34d25 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_core.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
+@@ -4464,10 +4464,9 @@ ahc_softc_init(struct ahc_softc *ahc)
+ 	ahc->pause = ahc->unpause | PAUSE; 
+ 	/* XXX The shared scb data stuff should be deprecated */
+ 	if (ahc->scb_data = NULL) {
+-		ahc->scb_data = kmalloc(sizeof(*ahc->scb_data), GFP_ATOMIC);
++		ahc->scb_data = kzalloc(sizeof(*ahc->scb_data), GFP_ATOMIC);
+ 		if (ahc->scb_data = NULL)
+ 			return (ENOMEM);
+-		memset(ahc->scb_data, 0, sizeof(*ahc->scb_data));
+ 	}
  
--	if (blk_mq_alloc_tag_set(&dev->tagset))
-+	res = blk_mq_alloc_tag_set(&dev->tagset);
-+	if (res)
- 		goto out;
+ 	return (0);
+@@ -4780,10 +4779,9 @@ ahc_init_scbdata(struct ahc_softc *ahc)
+ 	SLIST_INIT(&scb_data->sg_maps);
  
- 	id_ns = mem;
+ 	/* Allocate SCB resources */
+-	scb_data->scbarray = kmalloc(sizeof(struct scb) * AHC_SCB_MAX_ALLOC, GFP_ATOMIC);
++	scb_data->scbarray = kzalloc(sizeof(struct scb) * AHC_SCB_MAX_ALLOC, GFP_ATOMIC);
+ 	if (scb_data->scbarray = NULL)
+ 		return (ENOMEM);
+-	memset(scb_data->scbarray, 0, sizeof(struct scb) * AHC_SCB_MAX_ALLOC);
+ 
+ 	/* Determine the number of hardware SCBs and initialize them */
+ 
+@@ -7558,14 +7556,13 @@ ahc_handle_en_lun(struct ahc_softc *ahc, struct cam_sim *sim, union ccb *ccb)
+ 				return;
+ 			}
+ 		}
+-		lstate = kmalloc(sizeof(*lstate), GFP_ATOMIC);
++		lstate = kzalloc(sizeof(*lstate), GFP_ATOMIC);
+ 		if (lstate = NULL) {
+ 			xpt_print_path(ccb->ccb_h.path);
+ 			printk("Couldn't allocate lstate\n");
+ 			ccb->ccb_h.status = CAM_RESRC_UNAVAIL;
+ 			return;
+ 		}
+-		memset(lstate, 0, sizeof(*lstate));
+ 		status = xpt_create_path(&lstate->path, /*periph*/NULL,
+ 					 xpt_path_path_id(ccb->ccb_h.path),
+ 					 xpt_path_target_id(ccb->ccb_h.path),
+-- 
+1.7.1
+
