@@ -1,30 +1,29 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 05 Jan 2015 09:34:22 +0000
-Subject: Re: [patch] ALSA: asihpi: fix an information leak in asihpi_hpi_ioctl()
-Message-Id: <s5hegr9371d.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Jan 2015 06:43:35 +0000
+Subject: [patch] drm/bridge: checking the wrong variable
+Message-Id: <20150128064335.GC30893@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141222074946.GA9737@mwanda>
-	<s5hmw6ais9g.wl-tiwai@suse.de>
-	<54A25D49.4000502@blennerhassett.gen.nz>
-	<54A3972B.5010703@blennerhassett.gen.nz>
-	<20150105093322.GA15033@mwanda>
-In-Reply-To: <20150105093322.GA15033@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eliot Blennerhassett <eliot@blennerhassett.gen.nz>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-At Mon, 5 Jan 2015 12:33:22 +0300,
-Dan Carpenter wrote:
-> 
-> On Wed, Dec 31, 2014 at 07:26:51PM +1300, Eliot Blennerhassett wrote:
-> > Add missing limits to keep copied data within allocated buffer.
-> > 
-> 
-> Could you give me a Reported-by tag for this?
+We were supposed to check "fmts" here instead of "formats".  I suppose
+it eventually leads to a NULL dereference.
 
-Already done.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index 98fb640..8ae239f 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -783,7 +783,7 @@ int drm_display_info_set_bus_formats(struct drm_display_info *info,
+ 	if (formats && num_formats) {
+ 		fmts = kmemdup(formats, sizeof(*formats) * num_formats,
+ 			       GFP_KERNEL);
+-		if (!formats)
++		if (!fmts)
+ 			return -ENOMEM;
+ 	}
+ 
