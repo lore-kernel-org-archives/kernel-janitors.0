@@ -1,32 +1,102 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Jan 2015 10:23:38 +0000
-Subject: Re: [patch] iio: imu: adis16400: Fix sign extension
-Message-Id: <20150130102338.GW6456@mwanda>
+Date: Wed, 28 Jan 2015 06:46:09 +0000
+Subject: [patch] dm cache: fix up IS_ERR vs NULL confusion
+Message-Id: <20150128064609.GD30893@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150130083058.GD21357@mwanda>
- <54CB41F9.1060800@metafoo.de>
- <20150130092250.GK6507@mwanda>
- <87r3ucty0k.fsf@rasmusvillemoes.dk>
-In-Reply-To: <87r3ucty0k.fsf@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Joe Thornber <ejt@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 30, 2015 at 10:31:55AM +0100, Rasmus Villemoes wrote:
-> On Fri, Jan 30 2015, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > Rasmus, are you using a static checker?  Which one?
-> 
-> Sort of:
-> 
-> https://github.com/Villemoes/linux-cocci/blob/master/misc/sign_extend.cocci
-> 
+It used to be that this code used ERR_PTRs consistently, but a recent
+change mixed it up.  The code sometimes returns NULL, sometimes an
+ERR_PTR, some code assumes everything is an ERR_PTR and some assumes it
+returns NULL on error.  I've changed it back so that now everything is
+an ERR_PTR again.
 
-Did you find the bug in fm10k_update_xc_addr_pf()?  That's the other bug
-I found.
+These new bugs were caught by static checking:
 
-regards,
-dan carpenter
+drivers/md/dm-cache-target.c:2409 cache_create() warn: 'cmd' isn't an ERR_PTR
+drivers/md/dm-cache-metadata.c:754 lookup_or_open() error: 'cmd' dereferencing possible ERR_PTR()
+drivers/md/dm-cache-metadata.c:757 lookup_or_open() error: 'cmd' dereferencing possible ERR_PTR()
 
+I also reversed some tests for failure so that it was more clear and had
+fewer indent levels.
+
+Fixes: 9b1cc9f251af ('dm cache: share cache-metadata object across inactive and active DM tables')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The one question I have is that I made dm_cache_metadata_open() either
+preserve the error code or return -EINVAL.  I haven't tested this so I
+guess review carefully.  This patch should probably be back ported to
+stable or folded into Joe's.
+
+diff --git a/drivers/md/dm-cache-metadata.c b/drivers/md/dm-cache-metadata.c
+index 21b1562..3b08cdf 100644
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -681,10 +681,8 @@ static struct dm_cache_metadata *metadata_open(struct block_device *bdev,
+ 	struct dm_cache_metadata *cmd;
+ 
+ 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
+-	if (!cmd) {
+-		DMERR("could not allocate metadata struct");
+-		return NULL;
+-	}
++	if (!cmd)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	atomic_set(&cmd->ref_count, 1);
+ 	init_rwsem(&cmd->root_lock);
+@@ -745,18 +743,19 @@ static struct dm_cache_metadata *lookup_or_open(struct block_device *bdev,
+ 		return cmd;
+ 
+ 	cmd = metadata_open(bdev, data_block_size, may_format_device, policy_hint_size);
+-	if (cmd) {
+-		mutex_lock(&table_lock);
+-		cmd2 = lookup(bdev);
+-		if (cmd2) {
+-			mutex_unlock(&table_lock);
+-			__destroy_persistent_data_objects(cmd);
+-			kfree(cmd);
+-			return cmd2;
+-		}
+-		list_add(&cmd->list, &table);
++	if (IS_ERR(cmd))
++		return cmd;
++
++	mutex_lock(&table_lock);
++	cmd2 = lookup(bdev);
++	if (cmd2) {
+ 		mutex_unlock(&table_lock);
++		__destroy_persistent_data_objects(cmd);
++		kfree(cmd);
++		return cmd2;
+ 	}
++	list_add(&cmd->list, &table);
++	mutex_unlock(&table_lock);
+ 
+ 	return cmd;
+ }
+@@ -778,11 +777,16 @@ struct dm_cache_metadata *dm_cache_metadata_open(struct block_device *bdev,
+ 						 bool may_format_device,
+ 						 size_t policy_hint_size)
+ {
+-	struct dm_cache_metadata *cmd = lookup_or_open(bdev, data_block_size,
+-						       may_format_device, policy_hint_size);
+-	if (cmd && !same_params(cmd, data_block_size)) {
++	struct dm_cache_metadata *cmd;
++
++	cmd = lookup_or_open(bdev, data_block_size,
++			     may_format_device, policy_hint_size);
++	if (IS_ERR(cmd))
++		return cmd;
++
++	if (!same_params(cmd, data_block_size)) {
+ 		dm_cache_metadata_close(cmd);
+-		return NULL;
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	return cmd;
