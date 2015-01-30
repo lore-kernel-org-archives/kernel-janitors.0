@@ -1,59 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 04 Jan 2015 13:00:22 +0000
-Subject: [PATCH 4/13] ALSA: oxygen: Delete an unnecessary check before the function call "snd_pcm_suspend"
-Message-Id: <54A93966.7050900@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jan 2015 10:55:07 +0000
+Subject: [patch] [SCSI] mvumi: shift wrapping bug in mvumi_delete_internal_cmd()
+Message-Id: <20150130105507.GA14842@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
-In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "James E.J. Bottomley" <JBottomley@parallels.com>, Jianyun Li <jyli@marvell.com>
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Jan 2015 17:37:28 +0100
+"m_sg->baseaddr_h" is a u32.  We shift it 32 bits before casting it to
+dma_addr_t so the cast is too late.
 
-The snd_pcm_suspend() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Fixes: f0c568a478f0 ('[SCSI] mvumi: Add Marvell UMI driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/pci/oxygen/oxygen_lib.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/sound/pci/oxygen/oxygen_lib.c b/sound/pci/oxygen/oxygen_lib.c
-index b67e306..61a62c0 100644
---- a/sound/pci/oxygen/oxygen_lib.c
-+++ b/sound/pci/oxygen/oxygen_lib.c
-@@ -736,8 +736,7 @@ static int oxygen_pci_suspend(struct device *dev)
- 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
+diff --git a/drivers/scsi/mvumi.c b/drivers/scsi/mvumi.c
+index 3e6b866..e7f5485 100644
+--- a/drivers/scsi/mvumi.c
++++ b/drivers/scsi/mvumi.c
+@@ -322,7 +322,7 @@ static void mvumi_delete_internal_cmd(struct mvumi_hba *mhba,
+ 			sgd_getsz(mhba, m_sg, size);
  
- 	for (i = 0; i < PCM_COUNT; ++i)
--		if (chip->streams[i])
--			snd_pcm_suspend(chip->streams[i]);
-+		snd_pcm_suspend(chip->streams[i]);
+ 			phy_addr = (dma_addr_t) m_sg->baseaddr_l |
+-				(dma_addr_t) ((m_sg->baseaddr_h << 16) << 16);
++				   (((dma_addr_t)m_sg->baseaddr_h << 16) << 16);
  
- 	if (chip->model.suspend)
- 		chip->model.suspend(chip);
--- 
-2.2.1
-
+ 			pci_free_consistent(mhba->pdev, size, cmd->data_buf,
+ 								phy_addr);
