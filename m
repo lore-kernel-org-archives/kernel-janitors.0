@@ -1,49 +1,36 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 29 Jan 2015 20:51:58 +0000
-Subject: Re: [patch] SELinux: fix error code in policydb_init()
-Message-Id: <7695856.AHEhuF5Iz1@sifl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jan 2015 08:30:59 +0000
+Subject: [patch] iio: imu: adis16400: Fix sign extension
+Message-Id: <20150130083058.GD21357@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150128064239.GB30893@mwanda>
-In-Reply-To: <20150128064239.GB30893@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: selinux@tycho.nsa.gov, kernel-janitors@vger.kernel.org, linux-security-module@vger.kernel.org, Himangi Saraogi <himangi774@gmail.com>, James Morris <james.l.morris@oracle.com>, Namhyung Kim <namhyung@kernel.org>, Stephen Smalley <sds@tycho.nsa.gov>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-On Wednesday, January 28, 2015 09:42:39 AM Dan Carpenter wrote:
-> If hashtab_create() returns a NULL pointer then we should return -ENOMEM
-> but instead the current code returns success.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Because of C's type promotion rules, the code shifts in
+"((val16 & 0xFFF) << 4) >> 4;" cancel each other out and they're a
+no-op.
 
-Merged.  Nice catch, thanks for submitting.
+The intention here was to sign-extend then 11th bit so we can use the
+sign_extend32() function.
 
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index bc2a586..74aa224 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -289,12 +289,16 @@ static int policydb_init(struct policydb *p)
->  		goto out;
-> 
->  	p->filename_trans = hashtab_create(filenametr_hash, filenametr_cmp, (1 <<
-> 10)); -	if (!p->filename_trans)
-> +	if (!p->filename_trans) {
-> +		rc = -ENOMEM;
->  		goto out;
-> +	}
-> 
->  	p->range_tr = hashtab_create(rangetr_hash, rangetr_cmp, 256);
-> -	if (!p->range_tr)
-> +	if (!p->range_tr) {
-> +		rc = -ENOMEM;
->  		goto out;
-> +	}
-> 
->  	ebitmap_init(&p->filename_trans_ttypes);
->  	ebitmap_init(&p->policycaps);
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Please review this carefully.  I'm pretty sure it's correct but this is
+the first time I've ever used the sign_extend32() function.
 
--- 
-paul moore
-www.paul-moore.com
-
+diff --git a/drivers/iio/imu/adis16400_core.c b/drivers/iio/imu/adis16400_core.c
+index b70873d..ed636c9 100644
+--- a/drivers/iio/imu/adis16400_core.c
++++ b/drivers/iio/imu/adis16400_core.c
+@@ -414,7 +414,7 @@ static int adis16400_read_raw(struct iio_dev *indio_dev,
+ 		mutex_unlock(&indio_dev->mlock);
+ 		if (ret)
+ 			return ret;
+-		val16 = ((val16 & 0xFFF) << 4) >> 4;
++		val16 = sign_extend32(val16, 11);
+ 		*val = val16;
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_OFFSET:
