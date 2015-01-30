@@ -1,34 +1,43 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Jan 2015 14:31:07 +0000
-Subject: [PATCH 0/3] block: Deletion of checks before three function calls
-Message-Id: <54BBC3AB.6040207@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Jan 2015 08:49:40 +0000
+Subject: [patch] bnx2fc: fix test of "err_warn_bit_map"
+Message-Id: <20150130084940.GF21357@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Don Brace <don.brace@pmcs.com>, iss_storagedev@hp.com, storagedev@pmcs.com, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: QLogic-Storage-Upstream@qlogic.com
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Jan 2015 14:50:06 +0100
+The bug in this code is "if (err_warn_bit_map & (u64) (1 << i)) {".
+The cast to u64 happens after we have already shift wrapped so it's too
+late.  Presumably this means some warnings are ignored.
 
-Functions which release a system resource are occasionally documented in the way
-that they tolerate the passing of a null pointer for example. I do not see a need
-because of this fact that a function caller repeats a corresponding check.
+I also cleanup the other err_warn_bit_map check.
 
-Markus Elfring (3):
-  cciss: Deletion of an unnecessary check before the function call "put_disk"
-  z2ram: Delete an unnecessary check before the function call "kfree"
-  Deletion of checks before the function call "iounmap"
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
- drivers/block/cciss.c    | 18 ++++++------------
- drivers/block/mg_disk.c  |  3 +--
- drivers/block/skd_main.c |  6 ++----
- 3 files changed, 9 insertions(+), 18 deletions(-)
-
--- 
-2.2.2
-
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_hwi.c b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+index c6688d7..a0cb702 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_hwi.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+@@ -734,7 +734,7 @@ static void bnx2fc_process_unsol_compl(struct bnx2fc_rport *tgt, u16 wqe)
+ 			((u64)err_entry->data.err_warn_bitmap_hi << 32) |
+ 			(u64)err_entry->data.err_warn_bitmap_lo;
+ 		for (i = 0; i < BNX2FC_NUM_ERR_BITS; i++) {
+-			if (err_warn_bit_map & (u64)((u64)1 << i)) {
++			if (err_warn_bit_map & 1ULL << i) {
+ 				err_warn = i;
+ 				break;
+ 			}
+@@ -829,7 +829,7 @@ ret_err_rqe:
+ 			((u64)err_entry->data.err_warn_bitmap_hi << 32) |
+ 			(u64)err_entry->data.err_warn_bitmap_lo;
+ 		for (i = 0; i < BNX2FC_NUM_ERR_BITS; i++) {
+-			if (err_warn_bit_map & (u64) (1 << i)) {
++			if (err_warn_bit_map & 1ULL << i) {
+ 				err_warn = i;
+ 				break;
+ 			}
