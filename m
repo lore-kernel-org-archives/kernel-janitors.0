@@ -1,36 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Jan 2015 08:07:36 +0000
-Subject: Re: [PATCH 1/8] fs/9p: Deletion of unnecessary checks before the function call "p9_client_clunk"
-Message-Id: <20150106080736.GB14982@mwanda>
+Date: Fri, 30 Jan 2015 08:29:33 +0000
+Subject: [patch] dmaengine: s3c24xx: missing unlock on an error path
+Message-Id: <20150130082933.GC21357@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54A01326.3050306@users.sourceforge.net>
- <54A06AB9.4020505@users.sourceforge.net>
- <20150105112206.GC15033@mwanda>
- <54AB02F3.5020308@users.sourceforge.net>
-In-Reply-To: <54AB02F3.5020308@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, v9fs-developer@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 05, 2015 at 10:32:35PM +0100, SF Markus Elfring wrote:
-> > I assume this patch adds a bug.  You have tried to introduce several of these
-> > kinds of bugs.
-> 
-> Do any other contributors want to reject my update suggestions
-> around software components for "fs/9p"?
+We should unlock here before returning -EINVAL.
 
-Some of the 9p patches actually seem like bug fixes so I like those
-ones.  It would be better if the bug fixes had a correct changelog, of
-course.
+Fixes: 39ad46009654 ('dmaengine: s3c24xx: Split device_control')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
+index 4d5a848..2f91da3 100644
+--- a/drivers/dma/s3c24xx-dma.c
++++ b/drivers/dma/s3c24xx-dma.c
+@@ -718,13 +718,15 @@ static int s3c24xx_dma_terminate_all(struct dma_chan *chan)
+ 	struct s3c24xx_dma_chan *s3cchan = to_s3c24xx_dma_chan(chan);
+ 	struct s3c24xx_dma_engine *s3cdma = s3cchan->host;
+ 	unsigned long flags;
++	int ret = 0;
+ 
+ 	spin_lock_irqsave(&s3cchan->vc.lock, flags);
+ 
+ 	if (!s3cchan->phy && !s3cchan->at) {
+ 		dev_err(&s3cdma->pdev->dev, "trying to terminate already stopped channel %d\n",
+ 			s3cchan->id);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto unlock;
+ 	}
+ 
+ 	s3cchan->state = S3C24XX_DMA_CHAN_IDLE;
+@@ -741,10 +743,10 @@ static int s3c24xx_dma_terminate_all(struct dma_chan *chan)
+ 
+ 	/* Dequeue jobs not yet fired as well */
+ 	s3c24xx_dma_free_txd_list(s3cdma, s3cchan);
+-
++unlock:
+ 	spin_unlock_irqrestore(&s3cchan->vc.lock, flags);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int s3c24xx_dma_alloc_chan_resources(struct dma_chan *chan)
