@@ -1,40 +1,95 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 28 Jan 2015 19:43:51 +0000
-Subject: Re: [patch] regulator: qcom-rpm: signedness bug in probe()
-Message-Id: <20150128194351.GM21293@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="jaKl7zOFrmg1nrKt"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Jan 2015 16:34:54 +0000
+Subject: [PATCH] net: sched: One function call less in em_meta_change() after error detection
+Message-Id: <54CD042E.6030606@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150128191531.GD10259@mwanda>
-In-Reply-To: <20150128191531.GD10259@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Jan 2015 17:18:48 +0100
 
---jaKl7zOFrmg1nrKt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The meta_delete() function could be called in four cases by the
+em_meta_change() function during error handling even if the passed
+variable "meta" contained still a null pointer.
 
-On Wed, Jan 28, 2015 at 10:15:31PM +0300, Dan Carpenter wrote:
-> "force_mode" is a u32 so it is never "< 0", but because of type
-> promotion then comparing "== -1" will do what we want.
+* This implementation detail could be improved by adjustments for jump labels.
 
-Applied, thanks.
+* Let us return immediately after the first failed function call according to
+  the current Linux coding style convention.
 
---jaKl7zOFrmg1nrKt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+* Let us delete also unnecessary checks for the variables "err" and
+  "meta" there.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/sched/em_meta.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-iQEcBAEBCAAGBQJUyTv3AAoJECTWi3JdVIfQE54H/RbZSD2k43VaX8u003oWAN0r
-aL8LZ/3qXCxrRUa5ZSQe77HhDNk3YZSAEcVyOkjjPW3QzNcJxdhYpbfEs2fIf85L
-zCoyqv5nAKWhz577EhsxzqQIntWLk4T5ryGe5XaVAr45ZvsqjNeRCHsQsWge9yeu
-tyjK8yEm5+xe0swpXkhJeG7Nx/lfzDEmKfjR8iRWlCAe9aosmYAnmx1w5LiAjOMd
-RLfetl2LWYKqF70YWZZ5sk85qWD6obJc3u8A8OM9EVhguIvPTqcdT9DU38mj8E2E
-M/8DX/rsr6YPsBnO2al/h6RVX13hUortwKNM6ueRfGgKa1urZzwCJ95BdNC3STU=
-=fdCS
------END PGP SIGNATURE-----
+diff --git a/net/sched/em_meta.c b/net/sched/em_meta.c
+index b5294ce..2aa67b1 100644
+--- a/net/sched/em_meta.c
++++ b/net/sched/em_meta.c
+@@ -866,23 +866,23 @@ static int em_meta_change(struct net *net, void *data, int len,
+ 
+ 	err = nla_parse(tb, TCA_EM_META_MAX, data, len, meta_policy);
+ 	if (err < 0)
+-		goto errout;
++		return err;
+ 
+ 	err = -EINVAL;
+ 	if (tb[TCA_EM_META_HDR] = NULL)
+-		goto errout;
++		goto exit;
+ 	hdr = nla_data(tb[TCA_EM_META_HDR]);
+ 
+ 	if (TCF_META_TYPE(hdr->left.kind) != TCF_META_TYPE(hdr->right.kind) ||
+ 	    TCF_META_TYPE(hdr->left.kind) > TCF_META_TYPE_MAX ||
+ 	    TCF_META_ID(hdr->left.kind) > TCF_META_ID_MAX ||
+ 	    TCF_META_ID(hdr->right.kind) > TCF_META_ID_MAX)
+-		goto errout;
++		goto exit;
+ 
+ 	meta = kzalloc(sizeof(*meta), GFP_KERNEL);
+ 	if (meta = NULL) {
+ 		err = -ENOMEM;
+-		goto errout;
++		goto exit;
+ 	}
+ 
+ 	memcpy(&meta->lvalue.hdr, &hdr->left, sizeof(hdr->left));
+@@ -891,20 +891,20 @@ static int em_meta_change(struct net *net, void *data, int len,
+ 	if (!meta_is_supported(&meta->lvalue) ||
+ 	    !meta_is_supported(&meta->rvalue)) {
+ 		err = -EOPNOTSUPP;
+-		goto errout;
++		goto delete_meta;
+ 	}
+ 
+ 	if (meta_change_data(&meta->lvalue, tb[TCA_EM_META_LVALUE]) < 0 ||
+ 	    meta_change_data(&meta->rvalue, tb[TCA_EM_META_RVALUE]) < 0)
+-		goto errout;
++		goto delete_meta;
+ 
+ 	m->datalen = sizeof(*meta);
+ 	m->data = (unsigned long) meta;
+ 
+-	err = 0;
+-errout:
+-	if (err && meta)
+-		meta_delete(meta);
++	return 0;
++delete_meta:
++	meta_delete(meta);
++exit:
+ 	return err;
+ }
+ 
+-- 
+2.2.2
 
---jaKl7zOFrmg1nrKt--
