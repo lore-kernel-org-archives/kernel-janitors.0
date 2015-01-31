@@ -1,26 +1,28 @@
-From: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Date: Sat, 31 Jan 2015 22:15:32 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Jan 2015 22:20:25 +0000
 Subject: Re: [PATCH] net: sched: One function call less in em_meta_change() after error detection
-Message-Id: <54CD5404.1010004@gmx.de>
+Message-Id: <54CD5529.5060209@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54CD042E.6030606@users.sourceforge.net> <54CD115C.8070801@gmx.de> <54CD4D91.9080801@users.sourceforge.net>
-In-Reply-To: <54CD4D91.9080801@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54CD042E.6030606@users.sourceforge.net> <54CD115C.8070801@gmx.de> <54CD4D91.9080801@users.sourceforge.net> <54CD5404.1010004@gmx.de>
+In-Reply-To: <54CD5404.1010004@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, netdev@vger.kernel.org
+To: Lino Sanfilippo <LinoSanfilippo@gmx.de>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, netdev@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 31.01.2015 22:48, SF Markus Elfring wrote:
-
+>> I find that all these cases correspond to the current Linux coding
+>> style documentation, doesn't it?
 > 
-> I find that all these cases correspond to the current Linux coding
-> style documentation, doesn't it?
-> 
+> Sure, I think it does.
 
-Sure, I think it does. But it was not coding style violation what I was
-reffering to.
+Thanks for your acknowledgement.
+
+
+> But it was not coding style violation what I was reffering to.
+
+Do you suggest any fine-tuning for the affected documentation
+so that I would tweak my update suggestion once more?
 
 Regards,
-Lino
-
+Markus
