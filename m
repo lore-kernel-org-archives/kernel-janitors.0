@@ -1,50 +1,43 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Date: Thu, 15 Jan 2015 11:06:22 +0000
-Subject: Re: [patch 5/6] usb: gadget: uvc: make a bunch of stuff static
-Message-Id: <54B79F2E.2070608@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Jan 2015 17:15:59 +0000
+Subject: [PATCH] net: sctp: Deletion of an unnecessary check before the function call "kfree"
+Message-Id: <54CD0DCF.9020804@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150114210352.GE23203@mwanda>
-In-Reply-To: <20150114210352.GE23203@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Vlad Yasevich <vyasevich@gmail.com>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-W dniu 14.01.2015 o 23:45, Felipe Balbi pisze:
-> On Thu, Jan 15, 2015 at 12:03:52AM +0300, Dan Carpenter wrote:
->> Sparse rightly complains that these things should be static since they
->> are only used in the one .c file.
->>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Jan 2015 18:10:03 +0100
 
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-There has already been a patch for this:
+This issue was detected by using the Coccinelle software.
 
-http://www.spinics.net/lists/linux-usb/msg119646.html
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/sctp/associola.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> fails to apply on top of my testing/next
->
-> checking file drivers/usb/gadget/function/uvc_configfs.c
-> Hunk #1 FAILED at 43.
-> Hunk #2 FAILED at 135.
-> Hunk #3 FAILED at 161.
-> Hunk #4 FAILED at 718.
-> Hunk #5 FAILED at 795.
-> Hunk #6 FAILED at 947.
-> Hunk #7 FAILED at 973.
-> Hunk #8 FAILED at 1017.
-> Hunk #9 FAILED at 1260.
-> Hunk #10 FAILED at 1311.
-> Hunk #11 FAILED at 1334.
-> Hunk #12 FAILED at 1544.
-> Hunk #13 FAILED at 1582.
-> Hunk #14 FAILED at 1606.
-> Hunk #15 FAILED at 1757.
-> Hunk #16 FAILED at 1789.
-> 16 out of 16 hunks FAILED
->
-> please rebase on that branch.
->
+diff --git a/net/sctp/associola.c b/net/sctp/associola.c
+index f791edd..3c2aefc 100644
+--- a/net/sctp/associola.c
++++ b/net/sctp/associola.c
+@@ -391,8 +391,7 @@ void sctp_association_free(struct sctp_association *asoc)
+ 	sctp_asconf_queue_teardown(asoc);
+ 
+ 	/* Free pending address space being deleted */
+-	if (asoc->asconf_addr_del_pending != NULL)
+-		kfree(asoc->asconf_addr_del_pending);
++	kfree(asoc->asconf_addr_del_pending);
+ 
+ 	/* AUTH - Free the endpoint shared keys */
+ 	sctp_auth_destroy_keys(&asoc->endpoint_shared_keys);
+-- 
+2.2.2
 
