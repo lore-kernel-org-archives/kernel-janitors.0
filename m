@@ -1,46 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Feb 2015 14:10:20 +0000
-Subject: [PATCH] [media] sp2: Delete an unnecessary check before the function call "kfree"
-Message-Id: <54D0D6CC.1050708@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 01 Feb 2015 20:50:47 +0000
+Subject: [patch] CacheFiles: delete unused code in cachefiles_cook_key()
+Message-Id: <20150201205047.GA29298@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Olli Salonen <olli.salonen@iki.fi>, linux-media@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Feb 2015 15:05:26 +0100
+This code was presumably left over from previuos unpublished versions.
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+We set "len" twice to 0 and then to 5 a couple lines below.  We set
+"seg" to 250 or 252, then check if it is less than zero (it isn't) so
+I have deleted all the "seg" related code.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/dvb-frontends/sp2.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/sp2.c b/drivers/media/dvb-frontends/sp2.c
-index cc1ef96..8fd4276 100644
---- a/drivers/media/dvb-frontends/sp2.c
-+++ b/drivers/media/dvb-frontends/sp2.c
-@@ -413,11 +413,8 @@ static int sp2_remove(struct i2c_client *client)
- 	struct sp2 *s = i2c_get_clientdata(client);
+diff --git a/fs/cachefiles/key.c b/fs/cachefiles/key.c
+index 33b58c6..a163723 100644
+--- a/fs/cachefiles/key.c
++++ b/fs/cachefiles/key.c
+@@ -39,7 +39,7 @@ char *cachefiles_cook_key(const u8 *raw, int keylen, uint8_t type)
+ 	unsigned char csum, ch;
+ 	unsigned int acc;
+ 	char *key;
+-	int loop, len, max, seg, mark, print;
++	int loop, len, max, mark, print;
  
- 	dev_dbg(&client->dev, "\n");
--
- 	sp2_exit(client);
--	if (s != NULL)
--		kfree(s);
--
-+	kfree(s);
- 	return 0;
- }
+ 	_enter(",%d", keylen);
  
--- 
-2.2.2
-
+@@ -82,8 +82,6 @@ char *cachefiles_cook_key(const u8 *raw, int keylen, uint8_t type)
+ 	if (!key)
+ 		return NULL;
+ 
+-	len = 0;
+-
+ 	/* build the cooked key */
+ 	sprintf(key, "@%02x%c+", (unsigned) csum, 0);
+ 	len = 5;
+@@ -98,15 +96,7 @@ char *cachefiles_cook_key(const u8 *raw, int keylen, uint8_t type)
+ 		key[len] = cachefiles_charmap[acc & 63];
+ 		len += 2;
+ 
+-		seg = 250;
+ 		for (loop = keylen; loop > 0; loop--) {
+-			if (seg <= 0) {
+-				key[len++] = '\0';
+-				mark = len;
+-				key[len++] = '+';
+-				seg = 252;
+-			}
+-
+ 			key[len++] = *raw++;
+ 			ASSERT(len < max);
+ 		}
+@@ -117,15 +107,7 @@ char *cachefiles_cook_key(const u8 *raw, int keylen, uint8_t type)
+ 		default:				type = 'S';	break;
+ 		}
+ 	} else {
+-		seg = 252;
+ 		for (loop = keylen; loop > 0; loop--) {
+-			if (seg <= 0) {
+-				key[len++] = '\0';
+-				mark = len;
+-				key[len++] = '+';
+-				seg = 252;
+-			}
+-
+ 			acc = *raw++;
+ 			acc |= *raw++ << 8;
+ 			acc |= *raw++ << 16;
