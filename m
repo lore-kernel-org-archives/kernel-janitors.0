@@ -1,32 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 06 Feb 2015 17:20:31 +0000
-Subject: [PATCH 0/3] SCSI-debug: Deletion of a few unnecessary checks
-Message-Id: <54D4F7DF.8070008@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 01 Feb 2015 20:54:25 +0000
+Subject: [patch] isdn: off by one in connect_res()
+Message-Id: <20150201205425.GC29298@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Armin Schindler <mac@melware.de>
+Cc: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 6 Feb 2015 18:08:53 +0100
+The bug here is that we use "Reject" as the index into the cau_t[] array
+in the else path.  Since the cau_t[] has 9 elements if Reject = 9 then
+we are reading beyond the end of the array.
 
-Further update suggestions were taken into account after a patch was applied
-from static source code analysis.
+My understanding of the code is that it's saying that if Reject is 1 or
+too high then that's invalid and we should hang up.
 
-Markus Elfring (3):
-  Deletion of unnecessary checks before the function call "vfree"
-  Less function calls in scsi_debug_init() after error detection
-  Fix exception handling for an alignment/granularity mismatch
-    in scsi_debug_init()
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Please review this one a bit carefully.  I think it's correct, but I'm
+not terribly familiar with this code.
 
- drivers/scsi/scsi_debug.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
-
--- 
-2.2.2
-
+diff --git a/drivers/isdn/hardware/eicon/message.c b/drivers/isdn/hardware/eicon/message.c
+index 0b38060..d7c2866 100644
+--- a/drivers/isdn/hardware/eicon/message.c
++++ b/drivers/isdn/hardware/eicon/message.c
+@@ -1474,7 +1474,7 @@ static byte connect_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
+ 					add_ai(plci, &parms[5]);
+ 					sig_req(plci, REJECT, 0);
+ 				}
+-				else if (Reject = 1 || Reject > 9)
++				else if (Reject = 1 || Reject >= 9)
+ 				{
+ 					add_ai(plci, &parms[5]);
+ 					sig_req(plci, HANGUP, 0);
