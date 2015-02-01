@@ -1,62 +1,72 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Feb 2015 19:42:48 +0000
-Subject: [PATCH 2/7] ocfs2: Less function calls in ocfs2_convert_inline_data_to_extents() after error detecti
-Message-Id: <54E8DFB8.7030604@users.sourceforge.net>
+Date: Sun, 01 Feb 2015 19:18:15 +0000
+Subject: [PATCH 2/2] [media] mn88472: One function call less in mn88472_init() after error detection
+Message-Id: <54CE7BF7.20204@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <5455FC05.4010606@users.sourceforge.net> <alpine.DEB.2.02.1411021150540.2239@localhost6.localdomain6> <54E8DDDB.9020902@users.sourceforge.net>
-In-Reply-To: <54E8DDDB.9020902@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54CE7A6E.104@users.sourceforge.net>
+In-Reply-To: <54CE7A6E.104@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Feb 2015 18:19:04 +0100
+Date: Sun, 1 Feb 2015 19:34:37 +0100
 
-The kfree() function was called in a few cases by the
-ocfs2_convert_inline_data_to_extents() function during error handling
-even if the passed variable "pages" contained a null pointer.
+The release_firmware() function was called in three cases by the mn88472_init()
+function during error handling even if the passed variable "fw" contained still
+a null pointer.
 
-* Return from this implementation directly after failure detection for
-  the function call "kcalloc".
-
-* Corresponding details could be improved by the introduction of another
-  jump label.
+This implementation detail could be improved by the introduction of another
+jump label.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/ocfs2/alloc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/staging/media/mn88472/mn88472.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index fdab27c..bf806e5 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -6853,13 +6853,13 @@ int ocfs2_convert_inline_data_to_extents(struct inode *inode,
- 		if (pages = NULL) {
- 			ret = -ENOMEM;
- 			mlog_errno(ret);
--			goto out;
-+			return ret;
- 		}
+diff --git a/drivers/staging/media/mn88472/mn88472.c b/drivers/staging/media/mn88472/mn88472.c
+index e7874ae..3975a57 100644
+--- a/drivers/staging/media/mn88472/mn88472.c
++++ b/drivers/staging/media/mn88472/mn88472.c
+@@ -286,7 +286,7 @@ static int mn88472_init(struct dvb_frontend *fe)
  
- 		ret = ocfs2_reserve_clusters(osb, 1, &data_ac);
+ 	ret = regmap_write(dev->regmap[0], 0xf5, 0x03);
+ 	if (ret)
+-		goto err;
++		goto firmware_release;
+ 
+ 	for (remaining = fw->size; remaining > 0;
+ 			remaining -= (dev->i2c_wr_max - 1)) {
+@@ -299,13 +299,13 @@ static int mn88472_init(struct dvb_frontend *fe)
  		if (ret) {
- 			mlog_errno(ret);
--			goto out;
-+			goto free_pages;
+ 			dev_err(&client->dev,
+ 					"firmware download failed=%d\n", ret);
+-			goto err;
++			goto firmware_release;
  		}
  	}
  
-@@ -6991,6 +6991,7 @@ out_commit:
- out:
- 	if (data_ac)
- 		ocfs2_free_alloc_context(data_ac);
-+free_pages:
- 	kfree(pages);
+ 	ret = regmap_write(dev->regmap[0], 0xf5, 0x00);
+ 	if (ret)
+-		goto err;
++		goto firmware_release;
+ 
+ 	release_firmware(fw);
+ 	fw = NULL;
+@@ -314,9 +314,9 @@ static int mn88472_init(struct dvb_frontend *fe)
+ 	dev->warm = true;
+ 
+ 	return 0;
+-err:
++firmware_release:
+ 	release_firmware(fw);
+-
++err:
+ 	dev_dbg(&client->dev, "failed=%d\n", ret);
  	return ret;
  }
 -- 
-2.3.0
+2.2.2
 
