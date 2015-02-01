@@ -1,72 +1,71 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 01 Feb 2015 19:18:15 +0000
-Subject: [PATCH 2/2] [media] mn88472: One function call less in mn88472_init() after error detection
-Message-Id: <54CE7BF7.20204@users.sourceforge.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 01 Feb 2015 02:20:54 +0000
+Subject: Re: [PATCH 1/3] netlabel: Deletion of an unnecessary check before the function call "cipso_v4_doi_pu
+Message-Id: <CAHC9VhRqhQwh2Qx3V37z++KL-v2r0ssNWiuR2uBOL7bvm5F3_A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54CE7A6E.104@users.sourceforge.net>
-In-Reply-To: <54CE7A6E.104@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+	<530A086E.8010901@users.sourceforge.net>
+	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+	<530A72AA.3000601@users.sourceforge.net>
+	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+	<530B5FB6.6010207@users.sourceforge.net>
+	<alpine.DEB.2.10.1402241710370.2074@hadrien>
+	<530C5E18.1020800@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251014170.2080@hadrien>
+	<530CD2C4.4050903@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251840450.7035@hadrien>
+	<530CF8FF.8080600@users.sourceforge.net>
+	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+	<530DD06F.4090703@users.sourceforge.net>
+	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<54CD45B6.6010703@users.sourceforge.net>
+	<54CD4A7D.8000802@users.sourceforge.net>
+In-Reply-To: <54CD4A7D.8000802@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 1 Feb 2015 19:34:37 +0100
+On Sat, Jan 31, 2015 at 4:34 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 31 Jan 2015 19:09:50 +0100
+>
+> The cipso_v4_doi_putdef() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  net/netlabel/netlabel_mgmt.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-The release_firmware() function was called in three cases by the mn88472_init()
-function during error handling even if the passed variable "fw" contained still
-a null pointer.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-This implementation detail could be improved by the introduction of another
-jump label.
+> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
+> index 8b3b789..f5807f5 100644
+> --- a/net/netlabel/netlabel_mgmt.c
+> +++ b/net/netlabel/netlabel_mgmt.c
+> @@ -242,8 +242,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>         return 0;
+>
+>  add_failure:
+> -       if (cipsov4)
+> -               cipso_v4_doi_putdef(cipsov4);
+> +       cipso_v4_doi_putdef(cipsov4);
+>         if (entry)
+>                 kfree(entry->domain);
+>         kfree(addrmap);
+> --
+> 2.2.2
+>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/staging/media/mn88472/mn88472.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/media/mn88472/mn88472.c b/drivers/staging/media/mn88472/mn88472.c
-index e7874ae..3975a57 100644
---- a/drivers/staging/media/mn88472/mn88472.c
-+++ b/drivers/staging/media/mn88472/mn88472.c
-@@ -286,7 +286,7 @@ static int mn88472_init(struct dvb_frontend *fe)
- 
- 	ret = regmap_write(dev->regmap[0], 0xf5, 0x03);
- 	if (ret)
--		goto err;
-+		goto firmware_release;
- 
- 	for (remaining = fw->size; remaining > 0;
- 			remaining -= (dev->i2c_wr_max - 1)) {
-@@ -299,13 +299,13 @@ static int mn88472_init(struct dvb_frontend *fe)
- 		if (ret) {
- 			dev_err(&client->dev,
- 					"firmware download failed=%d\n", ret);
--			goto err;
-+			goto firmware_release;
- 		}
- 	}
- 
- 	ret = regmap_write(dev->regmap[0], 0xf5, 0x00);
- 	if (ret)
--		goto err;
-+		goto firmware_release;
- 
- 	release_firmware(fw);
- 	fw = NULL;
-@@ -314,9 +314,9 @@ static int mn88472_init(struct dvb_frontend *fe)
- 	dev->warm = true;
- 
- 	return 0;
--err:
-+firmware_release:
- 	release_firmware(fw);
--
-+err:
- 	dev_dbg(&client->dev, "failed=%d\n", ret);
- 	return ret;
- }
+
 -- 
-2.2.2
-
+paul moore
+www.paul-moore.com
