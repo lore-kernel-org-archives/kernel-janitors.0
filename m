@@ -1,59 +1,53 @@
-From: "Kwok, WingMan" <w-kwok2@ti.com>
-Date: Thu, 05 Feb 2015 15:50:49 +0000
-Subject: RE: [PATCH] NetCP: Deletion of unnecessary checks before two function calls
-Message-Id: <230CBA6E4B6B6B418E8730AC28E6FC7E041CFA70@DFLE11.ent.ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 01 Feb 2015 20:49:02 +0000
+Subject: [patch] ALSA: riptide: off by one in snd_riptide_joystick_probe()
+Message-Id: <20150201204902.GA29129@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54D11FEF.10804@users.sourceforge.net>
- <20150205120138.GD5336@mwanda>
-In-Reply-To: <20150205120138.GD5336@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, "Karicheri, Muralidharan" <m-karicheri2@ti.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Benoit Taine <benoit.taine@lip6.fr>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Hans Wennborg <hans@hanshq.net>, Bjorn Helgaas <bhelgaas@google.com>
 
-RGFuLA0KDQpUaGFua3MuICBXZSdsbCBsb29rIGludG8gaXQgYW5kIHNlbmQgYSBwYXRjaCBzb29u
-Lg0KDQpSZWdhcmRzLA0KV2luZ01hbg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
-IEZyb206IERhbiBDYXJwZW50ZXIgW21haWx0bzpkYW4uY2FycGVudGVyQG9yYWNsZS5jb21dDQo+
-IFNlbnQ6IFRodXJzZGF5LCBGZWJydWFyeSAwNSwgMjAxNSA3OjAyIEFNDQo+IFRvOiBLd29rLCBX
-aW5nTWFuDQo+IENjOiBTRiBNYXJrdXMgRWxmcmluZzsgS2FyaWNoZXJpLCBNdXJhbGlkaGFyYW47
-IEt3b2ssIFdpbmdNYW47DQo+IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IExLTUw7IGtlcm5lbC1q
-YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IEp1bGlhIExhd2FsbA0KPiBTdWJqZWN0OiBSZTogW1BB
-VENIXSBOZXRDUDogRGVsZXRpb24gb2YgdW5uZWNlc3NhcnkgY2hlY2tzIGJlZm9yZSB0d28NCj4g
-ZnVuY3Rpb24gY2FsbHMNCj4gDQo+IEhpIFdpbmdtYW4sDQo+IA0KPiBUaGVyZSBhcmUgc29tZSBi
-dWdzIGluIHRoaXMgZXJyb3IgaGFuZGxpbmcuDQo+IA0KPiBPbiBUdWUsIEZlYiAwMywgMjAxNSBh
-dCAwODoyMjoyM1BNICswMTAwLCBTRiBNYXJrdXMgRWxmcmluZyB3cm90ZToNCj4gPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvdGkvbmV0Y3BfZXRoc3MuYw0KPiBiL2RyaXZlcnMv
-bmV0L2V0aGVybmV0L3RpL25ldGNwX2V0aHNzLmMNCj4gPiBpbmRleCBmYTEwNDFhLi5jYmQ2ZGRl
-IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3RpL25ldGNwX2V0aHNzLmMN
-Cj4gPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC90aS9uZXRjcF9ldGhzcy5jDQo+ID4gQEAg
-LTIwMTAsMTIgKzIwMTAsMTAgQEAgc3RhdGljIGludCBnYmVfcHJvYmUoc3RydWN0IG5ldGNwX2Rl
-dmljZQ0KPiAqbmV0Y3BfZGV2aWNlLCBzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ID4gIHF1aXQ6DQo+
-ID4gIAlpZiAoZ2JlX2Rldi0+aHdfc3RhdHMpDQo+ID4gIAkJZGV2bV9rZnJlZShkZXYsIGdiZV9k
-ZXYtPmh3X3N0YXRzKTsNCj4gPiAtCWlmIChnYmVfZGV2LT5hbGUpDQo+ID4gLQkJY3Bzd19hbGVf
-ZGVzdHJveShnYmVfZGV2LT5hbGUpOw0KPiA+ICsJY3Bzd19hbGVfZGVzdHJveShnYmVfZGV2LT5h
-bGUpOw0KPiA+ICAJaWYgKGdiZV9kZXYtPnNzX3JlZ3MpDQo+ID4gIAkJZGV2bV9pb3VubWFwKGRl
-diwgZ2JlX2Rldi0+c3NfcmVncyk7DQo+ID4gLQlpZiAoaW50ZXJmYWNlcykNCj4gPiAtCQlvZl9u
-b2RlX3B1dChpbnRlcmZhY2VzKTsNCj4gPiArCW9mX25vZGVfcHV0KGludGVyZmFjZXMpOw0KPiAg
-ICAgICAgICAgICAgICAgICAgIF5eXl5eXl5eXl4NCj4gImludGVyZmFjZXMiIGlzIHNvbWV0aW1l
-cyB1bmludGlhbGl6ZWQgaW4gdGhpcyBjb2RlLiAgSSBkb24ndCBrbm93IHdoeQ0KPiBHQ0MgZG9l
-c24ndCBjYXRjaCB0aGlzLi4uICA6KA0KPiANCj4gVGhpcyBpcyBhICJvbmUgcnJyIGJ1ZyIsIHdo
-aWNoIGlzIGNhdXNlZCBiZWNhdXNlIHlvdSBqdXN0IGhhdmUgb25lIGVycm9yDQo+IGxhYmVsICJx
-dWl0IiB3aGljaCBoYW5kbGVzIGFsbCB0aGUgZXJyb3IgaGFuZGxpbmcuICBQbGVhc2UgcmVhZCBt
-eQ0KPiBHb29nbGUrIGNvbW1lbnQgb24gZXJyb3IgaGFuZGxpbmcuDQo+IA0KPiBodHRwczovL3Bs
-dXMuZ29vZ2xlLmNvbS8xMDYzNzg3MTYwMDI0MDY4NDk0NTgvcG9zdHMvZG5hbmZoUTRtSFENCj4g
-DQo+ID4gIAlkZXZtX2tmcmVlKGRldiwgZ2JlX2Rldik7DQo+ICAgICAgICAgXl5eXl5eXl5eXl5e
-Xl5eXl5eXl5eXl5eDQo+IFRoaXMgaXMgbm90IHRoZSByaWdodCB3YXkgdG8gdXNlIHRoZSBkZXZt
-XyBpbnRlcmZhY2UuICBUaGVzZSB0aGluZ3MgYXJlDQo+IGZyZWVkIGF1dG9tYXRpY2FsbHkgb24g
-ZXJyb3Igb3Igd2hlbiB3ZSBhcmUgZG9uZSB3aXRoIHRoZW0uICBUaGlzIGRyaXZlcg0KPiBpcyBk
-b3VibGUgZnJlZWluZyBwcmV0dHkgbXVjaCBldmVyeXRoaW5nLiAgR3JlcCBmb3IgZGV2bV9rZnJl
-ZSgpIGFuZA0KPiBmaXggZXZlcnl0aGluZy4NCj4gDQo+IEkgZG9uJ3Qga25vdyB3aHkga2J1aWxk
-IGRpZG4ndCBjYXRjaCB0aGlzLi4uDQo+IA0KPiByZWdhcmRzDQo+IGRhbiBjYXJwZW50ZXINCg0K
+There is an off by one bug in snd_riptide_joystick_probe() because we
+do the "dev++" toward the start of the function instead of waiting until
+the end.
+
+The impact of this bug is:
+1) A static checker warning.
+2) If you connect 32 joysticks to your computer they will fail to load
+   with a different error message than intended.
+3) If you pass a module option to specify a non-default joystick port
+   then the parameter array has to be shifted one element.
+
+The first two are not serious.  For the third one, it's probably too
+late to change it since the bug was introduced in 2009.  Either no one
+noticed and we can leave it alone, or if they did notice, they probably
+have implemented work arounds so we can't change it now without
+confusing them.
+
+So instead of fixing it the "theoretically correct way", I have decided
+to just work around it by making the joystick_port[] one element
+larger.  This silences the static checker warning and doesn't affect
+user space.
+
+Fixes: db1005ec6ff8 ('ALSA: riptide - Fix joystick resource handling')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
+index 29f2827..324e34c 100644
+--- a/sound/pci/riptide/riptide.c
++++ b/sound/pci/riptide/riptide.c
+@@ -125,7 +125,11 @@ static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;
+ static bool enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE;
+ 
+ #ifdef SUPPORT_JOYSTICK
+-static int joystick_port[SNDRV_CARDS] = { [0 ... (SNDRV_CARDS - 1)] = 0x200 };
++/*
++ * The joystick_port accounting is off by one but I'm afraid to change it for
++ * fear of breaking userspace.
++ */
++static int joystick_port[SNDRV_CARDS + 1] = { [0 ... (SNDRV_CARDS)] = 0x200 };
+ #endif
+ static int mpu_port[SNDRV_CARDS] = { [0 ... (SNDRV_CARDS - 1)] = 0x330 };
+ static int opl3_port[SNDRV_CARDS] = { [0 ... (SNDRV_CARDS - 1)] = 0x388 };
