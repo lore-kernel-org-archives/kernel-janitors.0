@@ -1,85 +1,56 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Thu, 26 Feb 2015 20:40:46 +0000
-Subject: Re: [patch v2] sunrpc: integer underflow in rsc_parse()
-Message-Id: <20150226204046.GH20495@fieldses.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Date: Sun, 01 Feb 2015 10:26:33 +0000
+Subject: Re: [patch] dmaengine: s3c24xx: missing unlock on an error path
+Message-Id: <20150201102633.GA4827@lukather>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="yrj/dFKFPuw6o+aM"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150224153401.GA12218@mwanda>
- <1424836484.13431.36.camel@willson.usersys.redhat.com>
-In-Reply-To: <1424836484.13431.36.camel@willson.usersys.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Simo Sorce <simo@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S. Miller" <davem@davemloft.net>, Jeff Layton <jlayton@primarydata.com>, Kinglong Mee <kinglongmee@gmail.com>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@amacapital.net>, Wang YanQing <udknight@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20150130082933.GC21357@mwanda>
+In-Reply-To: <20150130082933.GC21357@mwanda>
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 24, 2015 at 10:54:44PM -0500, Simo Sorce wrote:
-> On Tue, 2015-02-24 at 18:34 +0300, Dan Carpenter wrote:
-> > If we call groups_alloc() with invalid values then it's might lead to
-> > memory corruption.  For example, with a negative value then we might not
-> > allocate enough for sizeof(struct group_info).
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2:  In v1, I changed groups_alloc().  The other places which call
-> > groups_alloc() check the value before calling.  Eric wanted that, either
-> > have all the callers check, or all the callers rely on groups_alloc().
-> > In the end, Bruce Fields said adding the check here was probably
-> > reasonable.
-> > 
-> > diff --git a/net/sunrpc/auth_gss/svcauth_gss.c b/net/sunrpc/auth_gss/svcauth_gss.c
-> > index 224a82f..1095be9 100644
-> > --- a/net/sunrpc/auth_gss/svcauth_gss.c
-> > +++ b/net/sunrpc/auth_gss/svcauth_gss.c
-> > @@ -463,6 +463,8 @@ static int rsc_parse(struct cache_detail *cd,
-> >  		/* number of additional gid's */
-> >  		if (get_int(&mesg, &N))
-> >  			goto out;
-> > +		if (N < 0 || N > NGROUPS_MAX)
-> > +			goto out;
-> >  		status = -ENOMEM;
-> >  		rsci.cred.cr_group_info = groups_alloc(N);
-> >  		if (rsci.cred.cr_group_info = NULL)
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> I touched this code relatively recently, and this check looks correct.
-> Feel free to add Reviewed-by: Simo Sorce <simo@redhat.com>
 
-Thanks!  I thought your below-the-line context was useful, so pulled a
-version of it into the commit.
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---b.
+On Fri, Jan 30, 2015 at 11:29:33AM +0300, Dan Carpenter wrote:
+> We should unlock here before returning -EINVAL.
+>=20
+> Fixes: 39ad46009654 ('dmaengine: s3c24xx: Split device_control')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 76cb4be993c0
-Author: Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Tue Feb 24 18:34:01 2015 +0300
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-    sunrpc: integer underflow in rsc_parse()
-    
-    If we call groups_alloc() with invalid values then it's might lead to
-    memory corruption.  For example, with a negative value then we might not
-    allocate enough for sizeof(struct group_info).
-    
-    (We're doing this in the caller for consistency with other callers of
-    groups_alloc().  The other alternative might be to move the check out of
-    all the callers into groups_alloc().)
-    
-    Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-    Reviewed-by: Simo Sorce <simo@redhat.com>
-    Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Thanks!
+Maxime
 
-diff --git a/net/sunrpc/auth_gss/svcauth_gss.c b/net/sunrpc/auth_gss/svcauth_gss.c
-index 224a82f24d3c..1095be9c80ab 100644
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -463,6 +463,8 @@ static int rsc_parse(struct cache_detail *cd,
- 		/* number of additional gid's */
- 		if (get_int(&mesg, &N))
- 			goto out;
-+		if (N < 0 || N > NGROUPS_MAX)
-+			goto out;
- 		status = -ENOMEM;
- 		rsci.cred.cr_group_info = groups_alloc(N);
- 		if (rsci.cred.cr_group_info = NULL)
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUzf9ZAAoJEBx+YmzsjxAg8P4QAJzCmbEDySYBTyRB96JWYzzk
+0AqJPNAe5m9WFfPhdQBwoC/pslBGS8C5kvt7PcsAFCXSVP0uUH2XU3SGVsnKPwvg
+kTogYZpXZ9kvRAWmYlQt3AnAVFi06i3AKa3ltyCctY5H2ArvWi0lDmj6hFXizpDO
+xwrnGJk6QXaLF7r86XJt6Jlcv8Wlwk2gCvOWzNHPV4j1eaFTIl/9TMINfVrSpqUV
+/x6+fFZaWDgCI5gbOLojVz3UPWcXMWuYKkvuHwORw680zMJrFtJ+20WUfiy3xlfk
+DJ+pJrzjJ5+PPtD+eYYnMOqp1lJ+szIVQ69BnxlLjBh6xPbg+iyQihv7IntZu137
+rnrMwOCi+dBtPZ+PDdTJ2hACn06Ivxw/MmDleto7VOc2JQIYK3qYJBTeJvwqYOX1
+X4EV97dnxWN6Ns8tjw7Cl9LcrNd+AiI/o/2FqSUGUxySjoURmJn0JH+nXpNsKW4F
+8V7ocfNG9JdKeWNTW+b5tvjZnQTURkLgeHEGI964DaO1tNZrXlEedcvmgf6+KOyD
+HQ5949dDxAEkNpRZ5TzyVhr0FPR2RgRm15DQt9n21aqaN3ldlI2ylWLqyztaf4Av
+/biYIoAzANnNI+3pDFI/zWPaeoQGcI0tiY8MG4nnGikhNn7weVoqTLYCW/EYvsAH
+RVluDg9Kb9DPVCH57hQz
+=RvNE
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
