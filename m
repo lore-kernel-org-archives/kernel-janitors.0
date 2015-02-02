@@ -1,61 +1,64 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 11 Feb 2015 15:46:33 +0000
-Subject: Re: [alsa-devel] [patch] ALSA: seq: potential out of bounds in	do_control()
-Message-Id: <s5h8ug4o3hi.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 02 Feb 2015 15:17:40 +0000
+Subject: [PATCH 1/3] dm snapshot: Deletion of unnecessary checks before the function call "vfree"
+Message-Id: <54CF9514.70502@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150211151054.GA30155@mwanda>
-	<54DB76D6.3090803@ladisch.de>
-In-Reply-To: <54DB76D6.3090803@ladisch.de>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <54CF93BB.40206@users.sourceforge.net>
+In-Reply-To: <54CF93BB.40206@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Neil Brown <neilb@suse.de>, dm-devel@redhat.com, linux-raid@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-At Wed, 11 Feb 2015 16:35:50 +0100,
-Clemens Ladisch wrote:
-> 
-> Dan Carpenter wrote:
-> > Smatch complains that "control" is user specifigy and needs to be
-> > capped.  The call tree to understand this warning is quite long.
-> >
-> > snd_seq_write()  <-- get the event from the user
-> >   snd_seq_client_enqueue_event()
-> >     snd_seq_deliver_event()
-> >       deliver_to_subscribers()
-> >         snd_seq_deliver_single_event()
-> >           snd_opl3_oss_event_input()
-> >             snd_midi_process_event()
-> >               do_control()
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > I have spent some time reviewing this code, but I may have missed
-> > something where we verify that control is in bounds.  I'm not very
-> > familiar with this code and the call tree is fairly long.
-> 
-> BTW, there are other ways to deliver events.  In any case, events are
-> pretty much opaque blobs, and most fields are not checked.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Feb 2015 14:38:29 +0100
 
-Right.
+The vfree() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
+This issue was detected by using the Coccinelle software.
 
-> > diff --git a/sound/core/seq/seq_midi_emul.c b/sound/core/seq/seq_midi_emul.c
-> > index 9b6470c..7ba9373 100644
-> > --- a/sound/core/seq/seq_midi_emul.c
-> > +++ b/sound/core/seq/seq_midi_emul.c
-> > @@ -269,6 +269,9 @@ do_control(struct snd_midi_op *ops, void *drv, struct snd_midi_channel_set *chse
-> >  {
-> >  	int  i;
-> >
-> > +	if (control >= ARRAY_SIZE(chan->control))
-> > +		return;
-> 
-> Is this correct for an unsigned int converted to an int?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/dm-snap-persistent.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-That should be OK.  ARRAY_SIZE() is size_t (i.e. unsigned long), so
-the comparison is done in unsigned.  When control is negative, it's
-beyond ARRAY_SIZE() and handled as an error here, too.
+diff --git a/drivers/md/dm-snap-persistent.c b/drivers/md/dm-snap-persistent.c
+index d6e8817..808b841 100644
+--- a/drivers/md/dm-snap-persistent.c
++++ b/drivers/md/dm-snap-persistent.c
+@@ -200,16 +200,11 @@ err_area:
+ 
+ static void free_area(struct pstore *ps)
+ {
+-	if (ps->area)
+-		vfree(ps->area);
++	vfree(ps->area);
+ 	ps->area = NULL;
+-
+-	if (ps->zero_area)
+-		vfree(ps->zero_area);
++	vfree(ps->zero_area);
+ 	ps->zero_area = NULL;
+-
+-	if (ps->header_area)
+-		vfree(ps->header_area);
++	vfree(ps->header_area);
+ 	ps->header_area = NULL;
+ }
+ 
+@@ -605,8 +600,7 @@ static void persistent_dtr(struct dm_exception_store *store)
+ 	free_area(ps);
+ 
+ 	/* Allocated in persistent_read_metadata */
+-	if (ps->callbacks)
+-		vfree(ps->callbacks);
++	vfree(ps->callbacks);
+ 
+ 	kfree(ps);
+ }
+-- 
+2.2.2
 
-
-Takashi
