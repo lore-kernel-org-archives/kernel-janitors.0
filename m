@@ -1,68 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Feb 2015 20:40:46 +0000
-Subject: [patch] regulator: core: remove some unneeded conditions
-Message-Id: <20150226204046.GE6820@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 02 Feb 2015 15:11:55 +0000
+Subject: [PATCH 0/3] md: Deletion of a few unnecessary checks
+Message-Id: <54CF93BB.40206@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-These always true or always false conditions cause static checker
-warnings.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Feb 2015 15:51:43 +0100
 
-The check prior to checking "if (pin->enable_count <= 1) {" is
-"if (pin->enable_count > 1) ", so we know that ->enable_count is <= 1
-already and can delete the check.
+Further update suggestions were taken into account together with results
+from static source code analysis.
 
-The queue_delayed_work() function is type bool so the return value can
-never be less than zero.
+Markus Elfring (3):
+  dm snapshot: Deletion of unnecessary checks before the function call "vfree"
+  md/bitmap: Delete an unnecessary check before the function call "kfree"
+  dm ioctl: Delete an unnecessary check before the function call "dm_table_destroy"
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+ drivers/md/bitmap.c             | 10 +++++-----
+ drivers/md/dm-ioctl.c           |  3 +--
+ drivers/md/dm-snap-persistent.c | 14 ++++----------
+ 3 files changed, 10 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index f245214..9606bb7 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1758,11 +1758,9 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
- 		}
- 
- 		/* Disable GPIO if not used */
--		if (pin->enable_count <= 1) {
--			gpiod_set_value_cansleep(pin->gpiod,
--						 pin->ena_gpio_invert);
--			pin->enable_count = 0;
--		}
-+		gpiod_set_value_cansleep(pin->gpiod,
-+					 pin->ena_gpio_invert);
-+		pin->enable_count = 0;
- 	}
- 
- 	return 0;
-@@ -2146,7 +2144,6 @@ static void regulator_disable_work(struct work_struct *work)
- int regulator_disable_deferred(struct regulator *regulator, int ms)
- {
- 	struct regulator_dev *rdev = regulator->rdev;
--	int ret;
- 
- 	if (regulator->always_on)
- 		return 0;
-@@ -2158,13 +2155,10 @@ int regulator_disable_deferred(struct regulator *regulator, int ms)
- 	rdev->deferred_disables++;
- 	mutex_unlock(&rdev->mutex);
- 
--	ret = queue_delayed_work(system_power_efficient_wq,
--				 &rdev->disable_work,
--				 msecs_to_jiffies(ms));
--	if (ret < 0)
--		return ret;
--	else
--		return 0;
-+	queue_delayed_work(system_power_efficient_wq,
-+			   &rdev->disable_work,
-+			   msecs_to_jiffies(ms));
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(regulator_disable_deferred);
- 
+-- 
+2.2.2
+
