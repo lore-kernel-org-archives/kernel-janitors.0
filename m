@@ -1,56 +1,55 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Wed, 25 Feb 2015 13:29:05 +0000
-Subject: Re: [patch] drm/i915: cleanup some indenting
-Message-Id: <87oaoinmqm.fsf@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Feb 2015 08:36:01 +0000
+Subject: [PATCH 2/2] sata_mv: More error handling for phy_power_off() in mv_platform_remove()
+Message-Id: <54D08871.6030304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225131748.GE19745@mwanda>
-In-Reply-To: <20150225131748.GE19745@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <54D08732.4050601@users.sourceforge.net>
+In-Reply-To: <54D08732.4050601@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel.vetter@intel.com>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 25 Feb 2015, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Static checkers complain that we should probably add curly braces
-> because, from the indenting, it looks like seq_printf() should be inside
-> the list_for_each_entry() loop.  But the code is actually correct, it's
-> just the indenting which is off.
->
-> Besides fixing the indenting on seq_printf(), I did add curly braces,
-> because generally mult-line indents should have curly braces to make
-> them more readable.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Feb 2015 23:30:34 +0100
 
-The unintended indent was left behind and not unindented in
+The return value from the phy_power_off() function was not used by the
+mv_platform_remove() function.
 
-commit d7f46fc4e7323887494db13f063a8e59861fefb0
-Author: Ben Widawsky <benjamin.widawsky@intel.com>
-Date:   Fri Dec 6 14:10:55 2013 -0800
+Let us improve error detection and eventually return a corresponding
+failure code.
 
-    drm/i915: Make pin count per VMA
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/sata_mv.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-
-> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
-> index 26e9c7b..a76b2ed 100644
-> --- a/drivers/gpu/drm/i915/i915_debugfs.c
-> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
-> @@ -139,10 +139,11 @@ describe_obj(struct seq_file *m, struct drm_i915_gem_object *obj)
->  		   obj->madv = I915_MADV_DONTNEED ? " purgeable" : "");
->  	if (obj->base.name)
->  		seq_printf(m, " (name: %d)", obj->base.name);
-> -	list_for_each_entry(vma, &obj->vma_list, vma_link)
-> +	list_for_each_entry(vma, &obj->vma_list, vma_link) {
->  		if (vma->pin_count > 0)
->  			pin_count++;
-> -		seq_printf(m, " (pinned x %d)", pin_count);
-> +	}
-> +	seq_printf(m, " (pinned x %d)", pin_count);
->  	if (obj->pin_display)
->  		seq_printf(m, " (display)");
->  	if (obj->fence_reg != I915_FENCE_REG_NONE)
-
+diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
+index f8c33e3..4f9bc33 100644
+--- a/drivers/ata/sata_mv.c
++++ b/drivers/ata/sata_mv.c
+@@ -4203,7 +4203,7 @@ static int mv_platform_remove(struct platform_device *pdev)
+ {
+ 	struct ata_host *host = platform_get_drvdata(pdev);
+ 	struct mv_host_priv *hpriv = host->private_data;
+-	int port;
++	int port, rc;
+ 	ata_host_detach(host);
+ 
+ 	if (!IS_ERR(hpriv->clk)) {
+@@ -4215,7 +4215,9 @@ static int mv_platform_remove(struct platform_device *pdev)
+ 			clk_disable_unprepare(hpriv->port_clks[port]);
+ 			clk_put(hpriv->port_clks[port]);
+ 		}
+-		phy_power_off(hpriv->port_phys[port]);
++		rc = phy_power_off(hpriv->port_phys[port]);
++		if (rc)
++			return rc;
+ 	}
+ 	return 0;
+ }
 -- 
-Jani Nikula, Intel Open Source Technology Center
+2.2.2
+
