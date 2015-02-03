@@ -1,29 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 20 Feb 2015 22:35:26 +0000
-Subject: Re: [patch] caif: fix a signedness bug in cfpkt_iterate()
-Message-Id: <20150220.173526.1527625915242269739.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Feb 2015 10:58:29 +0000
+Subject: [PATCH] pwm: Delete an unnecessary check before the function call "of_node_put"
+Message-Id: <54D0A9D5.6020603@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150219091313.GA29358@mwanda>
-In-Reply-To: <20150219091313.GA29358@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: dmitry.tarnyagin@lockless.no, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 19 Feb 2015 12:13:13 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Feb 2015 11:54:28 +0100
 
-> The cfpkt_iterate() function can return -EPROTO on error, but the
-> function is a u16 so the negative value gets truncated to a positive
-> unsigned short.  This causes a static checker warning.
-> 
-> The only caller which might care is cffrml_receive(), when it's checking
-> the frame checksum.  I modified cffrml_receive() so that it never says
-> -EPROTO is a valid checksum.
-> 
-> Also this isn't ever going to be inlined so I removed the "inline".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The of_node_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Applied, thanks Dan.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pwm/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 966497d..810aef3 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -192,7 +192,7 @@ static void of_pwmchip_add(struct pwm_chip *chip)
+ 
+ static void of_pwmchip_remove(struct pwm_chip *chip)
+ {
+-	if (chip->dev && chip->dev->of_node)
++	if (chip->dev)
+ 		of_node_put(chip->dev->of_node);
+ }
+ 
+-- 
+2.2.2
+
