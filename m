@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Feb 2015 21:27:51 +0000
-Subject: [PATCH] SCSI-aic7...: Delete unnecessary checks before the function call "kfree"
-Message-Id: <54D3E057.9030600@users.sourceforge.net>
+Date: Tue, 03 Feb 2015 08:30:42 +0000
+Subject: [PATCH 0/2] sata_mv: Deletion of a few unnecessary checks
+Message-Id: <54D08732.4050601@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
  urceforge.net>
@@ -9,69 +9,22 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.de>, "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Feb 2015 22:23:48 +0100
+Date: Tue, 3 Feb 2015 09:12:22 +0100
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  Delete unnecessary checks before the function call "phy_power_off"
+  More error handling for phy_power_off() in mv_platform_remove()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/scsi/aic7xxx/aic7xxx_core.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ drivers/ata/sata_mv.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-index 10172a3..98a5ed1 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -2200,8 +2200,7 @@ ahc_free_tstate(struct ahc_softc *ahc, u_int scsi_id, char channel, int force)
- 	if (channel = 'B')
- 		scsi_id += 8;
- 	tstate = ahc->enabled_targets[scsi_id];
--	if (tstate != NULL)
--		kfree(tstate);
-+	kfree(tstate);
- 	ahc->enabled_targets[scsi_id] = NULL;
- }
- #endif
-@@ -4482,8 +4481,7 @@ ahc_set_unit(struct ahc_softc *ahc, int unit)
- void
- ahc_set_name(struct ahc_softc *ahc, char *name)
- {
--	if (ahc->name != NULL)
--		kfree(ahc->name);
-+	kfree(ahc->name);
- 	ahc->name = name;
- }
- 
-@@ -4550,10 +4548,8 @@ ahc_free(struct ahc_softc *ahc)
- 		kfree(ahc->black_hole);
- 	}
- #endif
--	if (ahc->name != NULL)
--		kfree(ahc->name);
--	if (ahc->seep_config != NULL)
--		kfree(ahc->seep_config);
-+	kfree(ahc->name);
-+	kfree(ahc->seep_config);
- #ifndef __FreeBSD__
- 	kfree(ahc);
- #endif
-@@ -4958,8 +4954,7 @@ ahc_fini_scbdata(struct ahc_softc *ahc)
- 	case 0:
- 		break;
- 	}
--	if (scb_data->scbarray != NULL)
--		kfree(scb_data->scbarray);
-+	kfree(scb_data->scbarray);
- }
- 
- static void
 -- 
 2.2.2
 
