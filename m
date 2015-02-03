@@ -1,56 +1,48 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Thu, 12 Feb 2015 14:56:07 +0000
-Subject: [PATCH 1/1] staging: lustre: llite: Remove unnecessary OOM message
-Message-Id: <20150212145607.GA12973@sloth>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Feb 2015 18:03:37 +0000
+Subject: [PATCH] [media] au0828: Delete unnecessary checks before the function call "video_unregister_device"
+Message-Id: <54D10D79.4020409@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This patch reduces the kernel size by removing error messages that duplicate
-the normal OOM message.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Feb 2015 19:00:25 +0100
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+The video_unregister_device() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/lustre/lustre/llite/llite_close.c | 4 +---
- drivers/staging/lustre/lustre/llite/xattr_cache.c | 5 +----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ drivers/media/usb/au0828/au0828-video.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/llite_close.c b/drivers/staging/lustre/lustre/llite/llite_close.c
-index 21b4a50..a94ba02 100644
---- a/drivers/staging/lustre/lustre/llite/llite_close.c
-+++ b/drivers/staging/lustre/lustre/llite/llite_close.c
-@@ -284,10 +284,8 @@ static void ll_done_writing(struct inode *inode)
- 	LASSERT(exp_connect_som(ll_i2mdexp(inode)));
+diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
+index 5f337b1..e593fb5 100644
+--- a/drivers/media/usb/au0828/au0828-video.c
++++ b/drivers/media/usb/au0828/au0828-video.c
+@@ -870,12 +870,8 @@ void au0828_analog_unregister(struct au0828_dev *dev)
+ {
+ 	dprintk(1, "au0828_release_resources called\n");
+ 	mutex_lock(&au0828_sysfs_lock);
+-
+-	if (dev->vdev)
+-		video_unregister_device(dev->vdev);
+-	if (dev->vbi_dev)
+-		video_unregister_device(dev->vbi_dev);
+-
++	video_unregister_device(dev->vdev);
++	video_unregister_device(dev->vbi_dev);
+ 	mutex_unlock(&au0828_sysfs_lock);
+ }
  
- 	op_data = kzalloc(sizeof(*op_data), GFP_NOFS);
--	if (!op_data) {
--		CERROR("can't allocate op_data\n");
-+	if (!op_data)
- 		return;
--	}
- 
- 	ll_prepare_done_writing(inode, op_data, &och);
- 	/* If there is no @och, we do not do D_W yet. */
-diff --git a/drivers/staging/lustre/lustre/llite/xattr_cache.c b/drivers/staging/lustre/lustre/llite/xattr_cache.c
-index e2badf1..7e2fcfe 100644
---- a/drivers/staging/lustre/lustre/llite/xattr_cache.c
-+++ b/drivers/staging/lustre/lustre/llite/xattr_cache.c
-@@ -133,11 +133,8 @@ static int ll_xattr_cache_add(struct list_head *cache,
- 		goto err_name;
- 	}
- 	xattr->xe_value = kzalloc(xattr_val_len, GFP_NOFS);
--	if (!xattr->xe_value) {
--		CDEBUG(D_CACHE, "failed to alloc xattr value %d\n",
--		       xattr_val_len);
-+	if (!xattr->xe_value)
- 		goto err_value;
--	}
- 
- 	memcpy(xattr->xe_value, xattr_val, xattr_val_len);
- 	xattr->xe_vallen = xattr_val_len;
 -- 
-1.9.1
+2.2.2
 
