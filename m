@@ -1,45 +1,43 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 25 Feb 2015 13:54:53 +0000
-Subject: Re: [Intel-gfx] [patch] drm/i915: cleanup some indenting
-Message-Id: <20150225135453.GP24485@phenom.ffwll.local>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Feb 2015 16:22:14 +0000
+Subject: [PATCH 1/2] [media] DVB: Delete an unnecessary check before the function call "dvb_unregister_device
+Message-Id: <54D0F5B6.7010608@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225131748.GE19745@mwanda>
- <87oaoinmqm.fsf@intel.com>
-In-Reply-To: <87oaoinmqm.fsf@intel.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54D0F4F3.1040405@users.sourceforge.net>
+In-Reply-To: <54D0F4F3.1040405@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Feb 25, 2015 at 03:29:05PM +0200, Jani Nikula wrote:
-> On Wed, 25 Feb 2015, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > Static checkers complain that we should probably add curly braces
-> > because, from the indenting, it looks like seq_printf() should be inside
-> > the list_for_each_entry() loop.  But the code is actually correct, it's
-> > just the indenting which is off.
-> >
-> > Besides fixing the indenting on seq_printf(), I did add curly braces,
-> > because generally mult-line indents should have curly braces to make
-> > them more readable.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> The unintended indent was left behind and not unindented in
-> 
-> commit d7f46fc4e7323887494db13f063a8e59861fefb0
-> Author: Ben Widawsky <benjamin.widawsky@intel.com>
-> Date:   Fri Dec 6 14:10:55 2013 -0800
-> 
->     drm/i915: Make pin count per VMA
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Feb 2015 16:01:40 +0100
 
-Added to the commit message.
-> 
-> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+The dvb_unregister_device() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-Queued for -next, thanks for the patch.
--Daniel
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/dvb-core/dvb_ca_en50221.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb-core/dvb_ca_en50221.c b/drivers/media/dvb-core/dvb_ca_en50221.c
+index 0aac309..b999689 100644
+--- a/drivers/media/dvb-core/dvb_ca_en50221.c
++++ b/drivers/media/dvb-core/dvb_ca_en50221.c
+@@ -1726,8 +1726,7 @@ int dvb_ca_en50221_init(struct dvb_adapter *dvb_adapter,
+ 
+ error:
+ 	if (ca != NULL) {
+-		if (ca->dvbdev != NULL)
+-			dvb_unregister_device(ca->dvbdev);
++		dvb_unregister_device(ca->dvbdev);
+ 		kfree(ca->slot_info);
+ 		kfree(ca);
+ 	}
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.2.2
+
