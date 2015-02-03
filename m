@@ -1,78 +1,29 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 25 Feb 2015 19:09:19 +0000
-Subject: Re: [patch] sound: sys_timer: indent poll_def_tmr() correctly
-Message-Id: <s5hzj813j1c.wl-tiwai@suse.de>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 03 Feb 2015 03:30:12 +0000
+Subject: Re: [PATCH] net: sctp: Deletion of an unnecessary check before the function call "kfree"
+Message-Id: <20150202.193012.1930991920361082218.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225132709.GN19745@mwanda>
-In-Reply-To: <20150225132709.GN19745@mwanda>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<54CD0DCF.9020804@users.sourceforge.net>
+In-Reply-To: <54CD0DCF.9020804@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: elfring@users.sourceforge.net
+Cc: nhorman@tuxdriver.com, vyasevich@gmail.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
 
-At Wed, 25 Feb 2015 16:27:10 +0300,
-Dan Carpenter wrote:
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Jan 2015 18:15:59 +0100
+
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 31 Jan 2015 18:10:03 +0100
 > 
-> The indenting here was really whacky and not consistent from one line to
-> the next.  I also reverse the "if (opened)" and "if (tmr_running)" tests
-> so that I could remove two indent levels.
+> The kfree() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied, thanks.
-
-
-Takashi
-
+> This issue was detected by using the Coccinelle software.
 > 
-> diff --git a/sound/oss/sys_timer.c b/sound/oss/sys_timer.c
-> index 9f03983..2226dda 100644
-> --- a/sound/oss/sys_timer.c
-> +++ b/sound/oss/sys_timer.c
-> @@ -50,29 +50,24 @@ tmr2ticks(int tmr_value)
->  static void
->  poll_def_tmr(unsigned long dummy)
->  {
-> +	if (!opened)
-> +		return;
-> +	def_tmr.expires = (1) + jiffies;
-> +	add_timer(&def_tmr);
->  
-> -	if (opened)
-> -	  {
-> +	if (!tmr_running)
-> +		return;
->  
-> -		  {
-> -			  def_tmr.expires = (1) + jiffies;
-> -			  add_timer(&def_tmr);
-> -		  }
-> +	spin_lock(&lock);
-> +	tmr_ctr++;
-> +	curr_ticks = ticks_offs + tmr2ticks(tmr_ctr);
->  
-> -		  if (tmr_running)
-> -		    {
-> -				spin_lock(&lock);
-> -			    tmr_ctr++;
-> -			    curr_ticks = ticks_offs + tmr2ticks(tmr_ctr);
-> -
-> -			    if (curr_ticks >= next_event_time)
-> -			      {
-> -				      next_event_time = (unsigned long) -1;
-> -				      sequencer_timer(0);
-> -			      }
-> -				spin_unlock(&lock);
-> -		    }
-> -	  }
-> +	if (curr_ticks >= next_event_time) {
-> +		next_event_time = (unsigned long) -1;
-> +		sequencer_timer(0);
-> +	}
-> +
-> +	spin_unlock(&lock);
->  }
->  
->  static void
-> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Applied to net-next, thanks.
