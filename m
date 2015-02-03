@@ -1,35 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Feb 2015 16:53:54 +0000
-Subject: [patch -next] drm/i915: fix a printk format
-Message-Id: <20150226165354.GA6820@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Feb 2015 17:45:44 +0000
+Subject: [PATCH] [media] stk-webcam: Delete an unnecessary check before the function call "vfree"
+Message-Id: <54D10948.8080309@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Vetter <daniel.vetter@intel.com>
-Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This printk leads to the following Smatch warning:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Feb 2015 18:36:35 +0100
 
-	drivers/gpu/drm/i915/i915_gem_gtt.c:336 alloc_pt_range()
-		error: '%pa' expects argument of type 'phys_addr_t*',
-		argument 5 has type 'struct i915_page_table_entry*'
+The vfree() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-It looks like a simple typo to me where "%p" was intended instead of
-"%pa".
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/stkwebcam/stk-webcam.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_gem_gtt.c b/drivers/gpu/drm/i915/i915_gem_gtt.c
-index e05488e..48eff65 100644
---- a/drivers/gpu/drm/i915/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
-@@ -334,7 +334,7 @@ static int alloc_pt_range(struct i915_page_directory_entry *pd, uint16_t pde, si
- 			goto err_out;
- 		}
- 		WARN(pd->page_table[i],
--		     "Leaking page directory entry %d (%pa)\n",
-+		     "Leaking page directory entry %d (%p)\n",
- 		     i, pd->page_table[i]);
- 		pd->page_table[i] = pt;
- 	}
+diff --git a/drivers/media/usb/stkwebcam/stk-webcam.c b/drivers/media/usb/stkwebcam/stk-webcam.c
+index 3588dc3..3686c4e 100644
+--- a/drivers/media/usb/stkwebcam/stk-webcam.c
++++ b/drivers/media/usb/stkwebcam/stk-webcam.c
+@@ -556,10 +556,8 @@ static int stk_free_sio_buffers(struct stk_camera *dev)
+ 	nbufs = dev->n_sbufs;
+ 	dev->n_sbufs = 0;
+ 	spin_unlock_irqrestore(&dev->spinlock, flags);
+-	for (i = 0; i < nbufs; i++) {
+-		if (dev->sio_bufs[i].buffer != NULL)
+-			vfree(dev->sio_bufs[i].buffer);
+-	}
++	for (i = 0; i < nbufs; i++)
++		vfree(dev->sio_bufs[i].buffer);
+ 	kfree(dev->sio_bufs);
+ 	dev->sio_bufs = NULL;
+ 	return 0;
+-- 
+2.2.2
+
