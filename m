@@ -1,40 +1,54 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 11 Feb 2015 17:36:34 +0000
-Subject: Re: [patch] Input: pxa27x_keypad - remove an unneeded NULL check
-Message-Id: <20150211173634.GA29440@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Feb 2015 08:33:53 +0000
+Subject: [PATCH 1/2] sata_mv: Delete unnecessary checks before the function call "phy_power_off"
+Message-Id: <54D087F1.8090502@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150211102802.GD18515@mwanda>
-In-Reply-To: <20150211102802.GD18515@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <54D08732.4050601@users.sourceforge.net>
+In-Reply-To: <54D08732.4050601@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chao Xie <chao.xie@marvell.com>, Rob Herring <robh@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Pramod Gurav <pramod.gurav@smartplayin.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Feb 11, 2015 at 01:28:02PM +0300, Dan Carpenter wrote:
-> Static checkers complain about this NULL check because we dereference it
-> without checking a couple lines later.  This function is only called
-> when "keypad->pdata" is non-NULL so we can just delete the NULL test.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Feb 2015 22:55:53 +0100
 
-Applied in a modified form - removed the temp altogether.
+The phy_power_off() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-> 
-> diff --git a/drivers/input/keyboard/pxa27x_keypad.c b/drivers/input/keyboard/pxa27x_keypad.c
-> index a89488a..385abf8 100644
-> --- a/drivers/input/keyboard/pxa27x_keypad.c
-> +++ b/drivers/input/keyboard/pxa27x_keypad.c
-> @@ -346,7 +346,7 @@ static int pxa27x_keypad_build_keycode(struct pxa27x_keypad *keypad)
->  	const struct pxa27x_keypad_platform_data *pdata = keypad->pdata;
->  	struct input_dev *input_dev = keypad->input_dev;
->  	const struct matrix_keymap_data *keymap_data > -				pdata ? pdata->matrix_keymap_data : NULL;
-> +						pdata->matrix_keymap_data;
->  	unsigned short keycode;
->  	int i;
->  	int error;
+This issue was detected by using the Coccinelle software.
 
-Thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ata/sata_mv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
+index f9a0e34..f8c33e3 100644
+--- a/drivers/ata/sata_mv.c
++++ b/drivers/ata/sata_mv.c
+@@ -4185,8 +4185,7 @@ err:
+ 			clk_disable_unprepare(hpriv->port_clks[port]);
+ 			clk_put(hpriv->port_clks[port]);
+ 		}
+-		if (hpriv->port_phys[port])
+-			phy_power_off(hpriv->port_phys[port]);
++		phy_power_off(hpriv->port_phys[port]);
+ 	}
+ 
+ 	return rc;
+@@ -4216,8 +4215,7 @@ static int mv_platform_remove(struct platform_device *pdev)
+ 			clk_disable_unprepare(hpriv->port_clks[port]);
+ 			clk_put(hpriv->port_clks[port]);
+ 		}
+-		if (hpriv->port_phys[port])
+-			phy_power_off(hpriv->port_phys[port]);
++		phy_power_off(hpriv->port_phys[port]);
+ 	}
+ 	return 0;
+ }
 -- 
-Dmitry
+2.2.2
+
