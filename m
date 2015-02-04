@@ -1,29 +1,124 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Feb 2015 08:07:02 +0000
-Subject: Re: [PATCH] cxgb4: Delete an unnecessary check before the function call "release_firmware"
-Message-Id: <20150205.000702.1696491862930980641.davem@davemloft.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Wed, 04 Feb 2015 10:40:07 +0000
+Subject: [PATCH 1/1] iommu/amd: Convert non-returned local variable to boolean when relevant
+Message-Id: <20150204104007.GA20468@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54D1F6AF.2090408@users.sourceforge.net>
-In-Reply-To: <54D1F6AF.2090408@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: hariprasad@chelsio.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: Joerg Roedel <joro@8bytes.org>
+Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Feb 2015 11:38:39 +0100
+This patch was produced using Coccinelle. A simplified version of the
+semantic patch is:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 11:28:43 +0100
-> 
-> The release_firmware() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@r exists@
+identifier f;
+local idexpression u8 x;
+identifier xname;
+@@
 
-Applied.
+f(...) {
+...when any
+(
+  x@xname = 1;
+|
+  x@xname = 0;
+)
+...when any
+}
+
+@bad exists@
+identifier r.f;
+local idexpression u8 r.x
+expression e1 != {0, 1}, e2;
+@@
+
+f(...) {
+...when any
+(
+  x = e1;
+|
+  x + e2
+)
+...when any
+}
+
+@depends on !bad@
+identifier r.f;
+local idexpression u8 r.x;
+identifier r.xname;
+@@
+
+f(...) {
+...
+++ bool xname;
+- int xname;
+<...
+(
+  x - 1
++ true
+|
+  x - -1
++ false
+)
+...>
+
+}
+
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/iommu/amd_iommu.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 59de636..92f9b47 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -843,10 +843,10 @@ static void build_inv_iommu_pages(struct iommu_cmd *cmd, u64 address,
+ 				  size_t size, u16 domid, int pde)
+ {
+ 	u64 pages;
+-	int s;
++	bool s;
+ 
+ 	pages = iommu_num_pages(address, size, PAGE_SIZE);
+-	s     = 0;
++	s     = false;
+ 
+ 	if (pages > 1) {
+ 		/*
+@@ -854,7 +854,7 @@ static void build_inv_iommu_pages(struct iommu_cmd *cmd, u64 address,
+ 		 * TLB entries for this domain
+ 		 */
+ 		address = CMD_INV_IOMMU_ALL_PAGES_ADDRESS;
+-		s = 1;
++		s = true;
+ 	}
+ 
+ 	address &= PAGE_MASK;
+@@ -874,10 +874,10 @@ static void build_inv_iotlb_pages(struct iommu_cmd *cmd, u16 devid, int qdep,
+ 				  u64 address, size_t size)
+ {
+ 	u64 pages;
+-	int s;
++	bool s;
+ 
+ 	pages = iommu_num_pages(address, size, PAGE_SIZE);
+-	s     = 0;
++	s     = false;
+ 
+ 	if (pages > 1) {
+ 		/*
+@@ -885,7 +885,7 @@ static void build_inv_iotlb_pages(struct iommu_cmd *cmd, u16 devid, int qdep,
+ 		 * TLB entries for this domain
+ 		 */
+ 		address = CMD_INV_IOMMU_ALL_PAGES_ADDRESS;
+-		s = 1;
++		s = true;
+ 	}
+ 
+ 	address &= PAGE_MASK;
+-- 
+1.9.1
+
