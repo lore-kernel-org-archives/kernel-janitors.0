@@ -1,51 +1,70 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 28 Feb 2015 10:02:27 +0000
-Subject: [PATCH 4/7] mtd: nand: fixup bounds checks for nand_{lock,unlock}()
-Message-Id: <1425117750-22298-5-git-send-email-computersforpeace@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Feb 2015 18:33:56 +0000
+Subject: [PATCH] ath10k: Delete unnecessary checks before the function call "release_firmware"
+Message-Id: <54D26614.2080708@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
-In-Reply-To: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org
-Cc: Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Coverity noticed that these 'ret' assignments weren't being used. Let's
-use them.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Feb 2015 19:30:23 +0100
 
-Note that nand_lock() and nand_unlock() are still not officially used by
-any drivers.
+The release_firmware() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Coverity CIDs #1227054 and #1227037
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/nand/nand_base.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/ath/ath10k/core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
-index df7eb4ff07d1..5488a7ad63e7 100644
---- a/drivers/mtd/nand/nand_base.c
-+++ b/drivers/mtd/nand/nand_base.c
-@@ -968,7 +968,7 @@ int nand_unlock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
- 			__func__, (unsigned long long)ofs, len);
+diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+index 2d0671e..45171ad 100644
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -393,16 +393,16 @@ static int ath10k_download_fw(struct ath10k *ar, enum ath10k_firmware_mode mode)
  
- 	if (check_offs_len(mtd, ofs, len))
--		ret = -EINVAL;
-+		return -EINVAL;
+ static void ath10k_core_free_firmware_files(struct ath10k *ar)
+ {
+-	if (ar->board && !IS_ERR(ar->board))
++	if (!IS_ERR(ar->board))
+ 		release_firmware(ar->board);
  
- 	/* Align to last block address if size addresses end of the device */
- 	if (ofs + len = mtd->size)
-@@ -1031,7 +1031,7 @@ int nand_lock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
- 			__func__, (unsigned long long)ofs, len);
+-	if (ar->otp && !IS_ERR(ar->otp))
++	if (!IS_ERR(ar->otp))
+ 		release_firmware(ar->otp);
  
- 	if (check_offs_len(mtd, ofs, len))
--		ret = -EINVAL;
-+		return -EINVAL;
+-	if (ar->firmware && !IS_ERR(ar->firmware))
++	if (!IS_ERR(ar->firmware))
+ 		release_firmware(ar->firmware);
  
- 	nand_get_device(mtd, FL_LOCKING);
+-	if (ar->cal_file && !IS_ERR(ar->cal_file))
++	if (!IS_ERR(ar->cal_file))
+ 		release_firmware(ar->cal_file);
  
+ 	ar->board = NULL;
 -- 
-2.1.0
+2.2.2
 
