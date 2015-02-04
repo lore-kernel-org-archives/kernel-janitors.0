@@ -1,48 +1,59 @@
-From: Silvan Jegen <s.jegen@gmail.com>
-Date: Sun, 15 Feb 2015 12:11:05 +0000
-Subject: [PATCH 2/2] [media] mantis: Use correct goto labels for cleanup on error
-Message-Id: <1424002265-16865-3-git-send-email-s.jegen@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Feb 2015 20:36:00 +0000
+Subject: [PATCH] macintosh: Delete an unnecessary check before the function call "of_node_put"
+Message-Id: <54D282B0.90907@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1424002265-16865-1-git-send-email-s.jegen@gmail.com>
-In-Reply-To: <1424002265-16865-1-git-send-email-s.jegen@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
-Cc: Silvan Jegen <s.jegen@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-After calling mantis_pci_init we have to jump to fail2 in order to call
-the corresponding mantis_pci_exit. Similarly, after calling mantis_get_mac
-we have already called mantis_pci_init and mantis_i2c_init so we need
-to jump to fail3 if we want to call the corresponding exit functions.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Feb 2015 21:32:27 +0100
 
-Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
+The of_node_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/mantis/mantis_cards.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/macintosh/smu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/pci/mantis/mantis_cards.c b/drivers/media/pci/mantis/mantis_cards.c
-index e566061..71497d8 100644
---- a/drivers/media/pci/mantis/mantis_cards.c
-+++ b/drivers/media/pci/mantis/mantis_cards.c
-@@ -183,7 +183,7 @@ static int mantis_pci_probe(struct pci_dev *pdev,
- 	err = mantis_pci_init(mantis);
- 	if (err) {
- 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis PCI initialization failed <%d>", err);
--		goto fail1;
-+		goto fail2;
- 	}
+diff --git a/drivers/macintosh/smu.c b/drivers/macintosh/smu.c
+index 10ae69b..d531f80 100644
+--- a/drivers/macintosh/smu.c
++++ b/drivers/macintosh/smu.c
+@@ -557,8 +557,7 @@ int __init smu_init (void)
+ 	return 0;
  
- 	err = mantis_stream_control(mantis, STREAM_TO_HIF);
-@@ -201,7 +201,7 @@ static int mantis_pci_probe(struct pci_dev *pdev,
- 	err = mantis_get_mac(mantis);
- 	if (err < 0) {
- 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis MAC address read failed <%d>", err);
--		goto fail2;
-+		goto fail3;
- 	}
- 
- 	err = mantis_dma_init(mantis);
+ fail_msg_node:
+-	if (smu->msg_node)
+-		of_node_put(smu->msg_node);
++	of_node_put(smu->msg_node);
+ fail_db_node:
+ 	of_node_put(smu->db_node);
+ fail_bootmem:
 -- 
 2.2.2
 
