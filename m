@@ -1,34 +1,43 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 28 Feb 2015 10:23:24 +0000
-Subject: [PATCH 0/5] UBI: Coverity-inspired fixes
-Message-Id: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Feb 2015 11:36:02 +0000
+Subject: [PATCH] myri10ge: Delete an unnecessary check before the function call "kfree"
+Message-Id: <54D20422.5050703@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Hyong-Youb Kim <hykim@myri.com>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Except for the last one, these were inspired by Coverity Scan results.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Feb 2015 12:32:14 +0100
 
-These fixes have barely been tested, but they are pretty straightforward
-logically. As they've been sitting in my dust pile too long, I thought I'd at
-least get them out there.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Brian Norris (5):
-  UBI: account for bitflips in both the VID header and data
-  UBI: fix out of bounds write
-  UBI: initialize LEB number variable
-  UBI: fix check for "too many bytes"
-  UBI: align comment for readability
+This issue was detected by using the Coccinelle software.
 
- drivers/mtd/ubi/attach.c | 2 +-
- drivers/mtd/ubi/cdev.c   | 2 +-
- drivers/mtd/ubi/eba.c    | 3 ++-
- drivers/mtd/ubi/ubi.h    | 2 +-
- drivers/mtd/ubi/wl.c     | 2 +-
- 5 files changed, 6 insertions(+), 5 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+index 71af98b..1412f5a 100644
+--- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
++++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+@@ -4226,8 +4226,7 @@ static void myri10ge_remove(struct pci_dev *pdev)
+ 		mtrr_del(mgp->mtrr, mgp->iomem_base, mgp->board_span);
+ #endif
+ 	myri10ge_free_slices(mgp);
+-	if (mgp->msix_vectors != NULL)
+-		kfree(mgp->msix_vectors);
++	kfree(mgp->msix_vectors);
+ 	dma_free_coherent(&pdev->dev, sizeof(*mgp->cmd),
+ 			  mgp->cmd, mgp->cmd_bus);
+ 
 -- 
-2.1.0
+2.2.2
 
