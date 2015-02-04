@@ -1,44 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Feb 2015 11:15:16 +0000
-Subject: Re: [PATCH 1/1] staging: ozwpan: Move code from success handling to error handling
-Message-Id: <20150210111516.GB5155@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Feb 2015 12:00:46 +0000
+Subject: [PATCH] net: fec: Delete unnecessary checks before the function call "kfree"
+Message-Id: <54D209EE.2000404@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150210104208.GA16539@sloth>
- <20150210110441.GH5206@mwanda>
- <54D9E69E.9030400@gmail.com>
-In-Reply-To: <54D9E69E.9030400@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Shigekatsu Tateno <shigekatsu.tateno@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Feb 10, 2015 at 12:08:14PM +0100, Quentin Lambert wrote:
-> 
-> On 10/02/2015 12:04, Dan Carpenter wrote:
-> >On Tue, Feb 10, 2015 at 11:42:08AM +0100, Quentin Lambert wrote:
-> >>The original version was success handling rather than error handling,
-> >>therefore this patch reduces nesting.
-> >>
-> >>Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
-> >Fantastic.  :)  Thanks!
-> >
-> >regards,
-> >dan carpenter
-> >
-> I am working on a second version to highlight the dependency with
-> the previous patch.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Feb 2015 12:56:42 +0100
 
-Please don't resend.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-> 
-> I don't know where the best place to signal it is though.
-> Should I specify it in the comment section linking the patch
-> via lkml mailing list?
->
+This issue was detected by using the Coccinelle software.
 
-Greg applies patches in the order they arrive so it should work
-automatically.  Next time maybe add a comment under the --- cut off.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 1c7a7e4..29fd7e3 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -2584,12 +2584,9 @@ static void fec_enet_free_queue(struct net_device *ndev)
+ 		}
+ 
+ 	for (i = 0; i < fep->num_rx_queues; i++)
+-		if (fep->rx_queue[i])
+-			kfree(fep->rx_queue[i]);
+-
++		kfree(fep->rx_queue[i]);
+ 	for (i = 0; i < fep->num_tx_queues; i++)
+-		if (fep->tx_queue[i])
+-			kfree(fep->tx_queue[i]);
++		kfree(fep->tx_queue[i]);
+ }
+ 
+ static int fec_enet_alloc_queue(struct net_device *ndev)
+-- 
+2.2.2
+
