@@ -1,28 +1,65 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 08 Feb 2015 10:51:18 +0000
-Subject: Re: thunderbolt: Deletion of unnecessary checks before the function call "ring_free"
-Message-Id: <54D73FA6.4090703@users.sourceforge.net>
+Date: Wed, 04 Feb 2015 21:00:32 +0000
+Subject: [PATCH] GPU-DRM-Exynos: Delete unnecessary checks before two function calls
+Message-Id: <54D28870.3060400@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546F16A5.8030405@users.sourceforge.net> <CAMxnaaVLhKHjbzUJy5p_0n8BUprzSQ=A3sdF6iQzW_wqmq8N4A@mail.gmail.com> <546F2E50.5040804@users.sourceforge.net> <1416593688.6651.39.camel@perches.com> <5471EBAC.40903@users.sourceforge.net> <1416756022.6651.45.camel@perches.com> <CAMxnaaVb0253q7V-M7089Et+bfnmgN1E+Ttne4MFG8_U+CTbOA@mail.gmail.com>
-In-Reply-To: <CAMxnaaVb0253q7V-M7089Et+bfnmgN1E+Ttne4MFG8_U+CTbOA@mail.gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Noever <andreas.noever@gmail.com>, Joe Perches <joe@perches.com>
+To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> Do symbols which are not exported (no EXPORT_SYMBOL_(GPL)) cause conflicts?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Feb 2015 21:54:45 +0100
 
-How do you think about to mark more functions from your software module
-as static?
+The functions phy_power_on() and vunmap() perform also input
+parameter validation. Thus the test around their calls is not needed.
 
+This issue was detected by using the Coccinelle software.
 
-> I was under the impression that those are module private.
-> If they are indeed private then I would prefer to not rename them.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/exynos/exynos_dp_core.c   | 6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 2 +-
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-Would you like to help in avoiding difficulties around name space issues?
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index 34d46aa..306cf1d 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -1057,14 +1057,12 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
+ 
+ static void exynos_dp_phy_init(struct exynos_dp_device *dp)
+ {
+-	if (dp->phy)
+-		phy_power_on(dp->phy);
++	phy_power_on(dp->phy);
+ }
+ 
+ static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
+ {
+-	if (dp->phy)
+-		phy_power_off(dp->phy);
++	phy_power_off(dp->phy);
+ }
+ 
+ static void exynos_dp_poweron(struct exynos_drm_display *display)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index e12ea90..0dd448a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -313,7 +313,7 @@ static void exynos_drm_fbdev_destroy(struct drm_device *dev,
+ 	struct exynos_drm_gem_obj *exynos_gem_obj = exynos_fbd->exynos_gem_obj;
+ 	struct drm_framebuffer *fb;
+ 
+-	if (is_drm_iommu_supported(dev) && exynos_gem_obj->buffer->kvaddr)
++	if (is_drm_iommu_supported(dev))
+ 		vunmap(exynos_gem_obj->buffer->kvaddr);
+ 
+ 	/* release drm framebuffer and real buffer */
+-- 
+2.2.2
 
-Will specific prefixes make understanding a bit easier?
-
-Regards,
-Markus
