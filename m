@@ -1,42 +1,56 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Feb 2015 20:43:35 +0000
-Subject: [patch] IB/ipath: remove some left over code
-Message-Id: <20150226204335.GG6820@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Feb 2015 22:28:12 +0000
+Subject: [PATCH 2/2] SCSI-lpfc: One function call less in lpfc_bsg_hba_set_event() after error detection
+Message-Id: <54D3EE7C.8010005@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <54D3EDDB.1050905@users.sourceforge.net>
+In-Reply-To: <54D3EDDB.1050905@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marciniszyn <infinipath@intel.com>, Dave Olson <dave.olson@qlogic.com>
-Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@emulex.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-"ret" is always zero here after commit c4bce8032ef4 ('IB/ipath: Add new
-chip-specific functions to older chips, consistent init').
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Feb 2015 23:03:52 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The kfree() function was called in two cases by the lpfc_bsg_hba_set_event()
+function during error handling even if the passed variable "dd_data" contained
+still a null pointer.
+
+This implementation detail could be improved by the introduction of another
+jump label.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-I just happened to spot this dead code when I was reviewing a different
-static checker warning:
+ drivers/scsi/lpfc/lpfc_bsg.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-	drivers/infiniband/hw/ipath/ipath_verbs.c:2266 show_hca()
-	warn: bool is not less than zero.
-
-It looks to me that this code returns 0 on success and 1 on failure so
-the warning is correct.  This is very strange.  The documentation
-doesn't say anything about what the return codes mean so it is all very
-puzzling.
-
-diff --git a/drivers/infiniband/hw/ipath/ipath_iba6110.c b/drivers/infiniband/hw/ipath/ipath_iba6110.c
-index 7cc3054..3de90e9 100644
---- a/drivers/infiniband/hw/ipath/ipath_iba6110.c
-+++ b/drivers/infiniband/hw/ipath/ipath_iba6110.c
-@@ -721,10 +721,6 @@ static int ipath_ht_boardname(struct ipath_devdata *dd, char *name,
- 	if (n)
- 		snprintf(name, namelen, "%s", n);
+diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
+index 1af783a..b8074cf 100644
+--- a/drivers/scsi/lpfc/lpfc_bsg.c
++++ b/drivers/scsi/lpfc/lpfc_bsg.c
+@@ -1240,7 +1240,7 @@ lpfc_bsg_hba_set_event(struct fc_bsg_job *job)
+ 					"2617 Failed allocation of event "
+ 					"waiter\n");
+ 			rc = -ENOMEM;
+-			goto job_error;
++			goto free_data;
+ 		}
+ 		dd_data->type = TYPE_EVT;
+ 		dd_data->set_job = NULL;
+@@ -1260,8 +1260,9 @@ lpfc_bsg_hba_set_event(struct fc_bsg_job *job)
+ 	spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
+ 	return 0; /* call job done later */
  
--	if (ret) {
--		ipath_dev_err(dd, "Unsupported InfiniPath board %s!\n", name);
--		goto bail;
--	}
- 	if (dd->ipath_majrev != 3 || (dd->ipath_minrev < 2 ||
- 		dd->ipath_minrev > 4)) {
- 		/*
+-job_error:
++free_data:
+ 	kfree(dd_data);
++job_error:
+ 	job->dd_data = NULL;
+ 	return rc;
+ }
+-- 
+2.2.2
+
