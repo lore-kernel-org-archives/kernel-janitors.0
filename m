@@ -1,90 +1,44 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 01 Feb 2015 02:40:50 +0000
-Subject: Re: [PATCH 3/3] netlabel: Less function calls in netlbl_mgmt_add_common() after error detection
-Message-Id: <CAHC9VhQ5C32zRqG0emVUoMmuvBsV+TXvdNn+54iVyCPBNk9dDQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Feb 2015 17:00:25 +0000
+Subject: [PATCH] IOMMU-Tegra: gart: Delete an unnecessary check before the function call "vfree"
+Message-Id: <54D3A1A9.9040709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54CD45B6.6010703@users.sourceforge.net>
-	<54CD4B5F.9010502@users.sourceforge.net>
-In-Reply-To: <54CD4B5F.9010502@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?windows-1252?Q?J=F6rg_R=F6del?= <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-On Sat, Jan 31, 2015 at 4:38 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 31 Jan 2015 21:55:48 +0100
->
-> The functions "cipso_v4_doi_putdef" and "kfree" could be called in some cases
-> by the netlbl_mgmt_add_common() function during error handling even if the
-> passed variables contained still a null pointer.
->
-> * This implementation detail could be improved by adjustments for jump labels.
->
-> * Let us return immediately after the first failed function call according to
->   the current Linux coding style convention.
->
-> * Let us delete also an unnecessary check for the variable "entry" there.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  net/netlabel/netlabel_mgmt.c | 46 ++++++++++++++++++++++----------------------
->  1 file changed, 23 insertions(+), 23 deletions(-)
->
-> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
-> index f5807f5..17f1ed5 100644
-> --- a/net/netlabel/netlabel_mgmt.c
-> +++ b/net/netlabel/netlabel_mgmt.c
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Feb 2015 17:54:16 +0100
 
-...
+The vfree() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-> @@ -237,15 +235,17 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->
->         ret_val = netlbl_domhsh_add(entry, audit_info);
->         if (ret_val != 0)
-> -               goto add_failure;
-> +               goto free_address_map;
->
->         return 0;
->
-> -add_failure:
-> -       cipso_v4_doi_putdef(cipsov4);
-> -       if (entry)
-> -               kfree(entry->domain);
-> +free_address_map:
->         kfree(addrmap);
-> +doi_put_def:
-> +       cipso_v4_doi_putdef(cipsov4);
-> +free_domain:
-> +       kfree(entry->domain);
-> +free_entry:
->         kfree(entry);
->         return ret_val;
->  }
+This issue was detected by using the Coccinelle software.
 
-It would be nice if you could stick with the goto label naming style
-in the rest of the file, e.g.
-"add_free_addrmap"/"add_put_doi_def"/"add_free_domain"/"add_free_entry".
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iommu/tegra-gart.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index f722a0c..07a795a 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -404,8 +404,7 @@ static int tegra_gart_remove(struct platform_device *pdev)
+ 	struct gart_device *gart = platform_get_drvdata(pdev);
+ 
+ 	writel(0, gart->regs + GART_CONFIG);
+-	if (gart->savedata)
+-		vfree(gart->savedata);
++	vfree(gart->savedata);
+ 	gart_handle = NULL;
+ 	return 0;
+ }
 -- 
-paul moore
-www.paul-moore.com
+2.2.2
+
