@@ -1,28 +1,21 @@
-From: Eli Cohen <eli@dev.mellanox.co.il>
-Date: Wed, 04 Feb 2015 14:59:11 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 05 Feb 2015 08:34:04 +0000
 Subject: Re: [PATCH] net: Mellanox: Delete unnecessary checks before the function call "vunmap"
-Message-Id: <20150204145911.GA5152@mtldesk30>
+Message-Id: <20150205.003404.261962007607296519.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54D22B29.3020200@users.sourceforge.net>
-In-Reply-To: <54D22B29.3020200@users.sourceforge.net>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<54D22B29.3020200@users.sourceforge.net>
+In-Reply-To: <54D22B29.3020200-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Cc: eli-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, julia.lawall-L2FTfq7BK8M@public.gmane.org
 
-Acked-by: Eli Cohen <eli@mellanox.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Feb 2015 15:22:33 +0100
 
-On Wed, Feb 04, 2015 at 03:22:33PM +0100, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Wed, 4 Feb 2015 15:17:00 +0100
 > 
@@ -32,3 +25,5 @@ On Wed, Feb 04, 2015 at 03:22:33PM +0100, SF Markus Elfring wrote:
 > This issue was detected by using the Coccinelle software.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+This does not apply cleanly to the net-next tree, please respin.
