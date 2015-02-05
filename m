@@ -1,45 +1,43 @@
-From: Trond Myklebust <trond.myklebust@primarydata.com>
-Date: Tue, 10 Feb 2015 13:42:36 +0000
-Subject: Re: [patch] pnfs: delete an unintended goto
-Message-Id: <1423575756.4226.0.camel@primarydata.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Feb 2015 09:20:58 +0000
+Subject: [PATCH] GPU-DRM-Tegra: Delete an unnecessary check before the function call "vunmap"
+Message-Id: <54D335FA.6020101@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150210080322.GA8762@mwanda>
-In-Reply-To: <20150210080322.GA8762@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, =?windows-1252?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, 2015-02-10 at 11:03 +0300, Dan Carpenter wrote:
-> There was an extra goto here where it shouldn't be, because of a merge
-> error.
-> 
-> Fixes: e2c63e091e29 ('Merge branch 'flexfiles'')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
-> index 107b321..4f802b02 100644
-> --- a/fs/nfs/pnfs.c
-> +++ b/fs/nfs/pnfs.c
-> @@ -1078,7 +1078,6 @@ bool pnfs_roc(struct inode *ino)
->  			goto out_noroc;
->  	}
->  
-> -		goto out_noroc;
->  	pnfs_clear_retry_layoutget(lo);
->  	list_for_each_entry_safe(lseg, tmp, &lo->plh_segs, pls_list)
->  		if (test_bit(NFS_LSEG_ROC, &lseg->pls_flags)) {
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Feb 2015 10:12:51 +0100
 
-Thanks Dan! Applied to linux-next.
+The vunmap() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-Cheers
-  Trond
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/tegra/fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index e9c715d..803598e 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -66,7 +66,7 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
+ 		struct tegra_bo *bo = fb->planes[i];
+ 
+ 		if (bo) {
+-			if (bo->pages && bo->vaddr)
++			if (bo->pages)
+ 				vunmap(bo->vaddr);
+ 
+ 			drm_gem_object_unreference_unlocked(&bo->gem);
 -- 
-Trond Myklebust
-Linux NFS client maintainer, PrimaryData
-trond.myklebust@primarydata.com
-
-
-
+2.2.2
 
