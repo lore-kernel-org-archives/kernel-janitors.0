@@ -1,58 +1,55 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 11 Feb 2015 15:50:24 +0000
-Subject: Re: [patch] ALSA: seq: potential out of bounds in do_control()
-Message-Id: <s5h61b8o3b3.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Feb 2015 07:37:33 +0000
+Subject: [patch] vhost/scsi: potential memory corruption
+Message-Id: <20150205073733.GA27855@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150211151054.GA30155@mwanda>
-In-Reply-To: <20150211151054.GA30155@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>, Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
 
-At Wed, 11 Feb 2015 18:10:54 +0300,
-Dan Carpenter wrote:
-> 
-> Smatch complains that "control" is user specifigy and needs to be
-> capped.  The call tree to understand this warning is quite long.
-> 
-> snd_seq_write()  <-- get the event from the user
->   snd_seq_client_enqueue_event()
->     snd_seq_deliver_event()
->       deliver_to_subscribers()
->         snd_seq_deliver_single_event()
->           snd_opl3_oss_event_input()
->             snd_midi_process_event()
->               do_control()
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I have spent some time reviewing this code, but I may have missed
-> something where we verify that control is in bounds.  I'm not very
-> familiar with this code and the call tree is fairly long.
+This code in vhost_scsi_make_tpg() is confusing because we limit "tpgt"
+to UINT_MAX but the data type of "tpg->tport_tpgt" and that is a u16.
 
-I applied locally now and will merge it later once when the current
-pull request is resolved.
+I looked at the context and it turns out that in
+vhost_scsi_set_endpoint(), "tpg->tport_tpgt" is used as an offset into
+the vs_tpg[] array which has VHOST_SCSI_MAX_TARGET (256) elements so
+anything higher than 255 then it is invalid.  I have made that the limit
+now.
 
+In vhost_scsi_send_evt() we mask away values higher than 255, but now
+that the limit has changed, we don't need the mask.
 
-thanks,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Compile tested only.
 
-Takashi
-
-> 
-> diff --git a/sound/core/seq/seq_midi_emul.c b/sound/core/seq/seq_midi_emul.c
-> index 9b6470c..7ba9373 100644
-> --- a/sound/core/seq/seq_midi_emul.c
-> +++ b/sound/core/seq/seq_midi_emul.c
-> @@ -269,6 +269,9 @@ do_control(struct snd_midi_op *ops, void *drv, struct snd_midi_channel_set *chse
->  {
->  	int  i;
->  
-> +	if (control >= ARRAY_SIZE(chan->control))
-> +		return;
-> +
->  	/* Switches */
->  	if ((control >d && control <i) || (control >= 80 && control <= 83)) {
->  		/* These are all switches; either off or on so set to 0 or 127 */
-> 
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index 3e265ef..4339222 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -1278,7 +1278,7 @@ vhost_scsi_send_evt(struct vhost_scsi *vs,
+ 		 * lun[4-7] need to be zero according to virtio-scsi spec.
+ 		 */
+ 		evt->event.lun[0] = 0x01;
+-		evt->event.lun[1] = tpg->tport_tpgt & 0xFF;
++		evt->event.lun[1] = tpg->tport_tpgt;
+ 		if (lun->unpacked_lun >= 256)
+ 			evt->event.lun[2] = lun->unpacked_lun >> 8 | 0x40 ;
+ 		evt->event.lun[3] = lun->unpacked_lun & 0xFF;
+@@ -2149,12 +2149,12 @@ vhost_scsi_make_tpg(struct se_wwn *wwn,
+ 			struct vhost_scsi_tport, tport_wwn);
+ 
+ 	struct vhost_scsi_tpg *tpg;
+-	unsigned long tpgt;
++	u16 tpgt;
+ 	int ret;
+ 
+ 	if (strstr(name, "tpgt_") != name)
+ 		return ERR_PTR(-EINVAL);
+-	if (kstrtoul(name + 5, 10, &tpgt) || tpgt > UINT_MAX)
++	if (kstrtou16(name + 5, 10, &tpgt) || tpgt >= VHOST_SCSI_MAX_TARGET)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	tpg = kzalloc(sizeof(struct vhost_scsi_tpg), GFP_KERNEL);
