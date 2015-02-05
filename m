@@ -1,42 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Feb 2015 18:51:38 +0000
-Subject: [PATCH] IBM-EMAC: Delete an unnecessary check before the function call "of_dev_put"
-Message-Id: <54D118BA.3080001@users.sourceforge.net>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 05 Feb 2015 04:29:58 +0000
+Subject: Re: [PATCH] IBM-EMAC: Delete an unnecessary check before the function call "of_dev_put"
+Message-Id: <20150204.202958.1260717828060513191.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<54D118BA.3080001@users.sourceforge.net>
+In-Reply-To: <54D118BA.3080001@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: elfring@users.sourceforge.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Feb 2015 19:47:33 +0100
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Feb 2015 19:51:38 +0100
 
-The of_dev_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 3 Feb 2015 19:47:33 +0100
+> 
+> The of_dev_put() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/ibm/emac/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/ethernet/ibm/emac/core.c
-index 9388a83..162762d 100644
---- a/drivers/net/ethernet/ibm/emac/core.c
-+++ b/drivers/net/ethernet/ibm/emac/core.c
-@@ -2367,7 +2367,7 @@ static int emac_wait_deps(struct emac_instance *dev)
- 	err = emac_check_deps(dev, deps) ? 0 : -ENODEV;
- 	for (i = 0; i < EMAC_DEP_COUNT; i++) {
- 		of_node_put(deps[i].node);
--		if (err && deps[i].ofdev)
-+		if (err)
- 			of_dev_put(deps[i].ofdev);
- 	}
- 	if (err = 0) {
--- 
-2.2.2
-
+Applied.
