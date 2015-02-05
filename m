@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Feb 2015 12:01:38 +0000
-Subject: Re: [PATCH] NetCP: Deletion of unnecessary checks before two function calls
-Message-Id: <20150205120138.GD5336@mwanda>
+From: "Kwok, WingMan" <w-kwok2@ti.com>
+Date: Thu, 05 Feb 2015 15:50:49 +0000
+Subject: RE: [PATCH] NetCP: Deletion of unnecessary checks before two function calls
+Message-Id: <230CBA6E4B6B6B418E8730AC28E6FC7E041CFA70@DFLE11.ent.ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.10.1402251014170.2080@hadrien>
@@ -11,55 +11,49 @@ References: <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54D11FEF.10804@users.sourceforge.net>
-In-Reply-To: <54D11FEF.10804@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <54D11FEF.10804@users.sourceforge.net>
+ <20150205120138.GD5336@mwanda>
+In-Reply-To: <20150205120138.GD5336@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wingman Kwok <w-kwok2@ti.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Murali Karicheri <m-karicheri2@ti.com>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, "Karicheri, Muralidharan" <m-karicheri2@ti.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Wingman,
-
-There are some bugs in this error handling.
-
-On Tue, Feb 03, 2015 at 08:22:23PM +0100, SF Markus Elfring wrote:
-> diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-> index fa1041a..cbd6dde 100644
-> --- a/drivers/net/ethernet/ti/netcp_ethss.c
-> +++ b/drivers/net/ethernet/ti/netcp_ethss.c
-> @@ -2010,12 +2010,10 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
->  quit:
->  	if (gbe_dev->hw_stats)
->  		devm_kfree(dev, gbe_dev->hw_stats);
-> -	if (gbe_dev->ale)
-> -		cpsw_ale_destroy(gbe_dev->ale);
-> +	cpsw_ale_destroy(gbe_dev->ale);
->  	if (gbe_dev->ss_regs)
->  		devm_iounmap(dev, gbe_dev->ss_regs);
-> -	if (interfaces)
-> -		of_node_put(interfaces);
-> +	of_node_put(interfaces);
-                    ^^^^^^^^^^
-"interfaces" is sometimes unintialized in this code.  I don't know why
-GCC doesn't catch this...  :(
-
-This is a "one rrr bug", which is caused because you just have one error
-label "quit" which handles all the error handling.  Please read my
-Google+ comment on error handling.
-
-https://plus.google.com/106378716002406849458/posts/dnanfhQ4mHQ
-
->  	devm_kfree(dev, gbe_dev);
-        ^^^^^^^^^^^^^^^^^^^^^^^^
-This is not the right way to use the devm_ interface.  These things are
-freed automatically on error or when we are done with them.  This driver
-is double freeing pretty much everything.  Grep for devm_kfree() and
-fix everything.
-
-I don't know why kbuild didn't catch this...
-
-regards
-dan carpenter
-
+RGFuLA0KDQpUaGFua3MuICBXZSdsbCBsb29rIGludG8gaXQgYW5kIHNlbmQgYSBwYXRjaCBzb29u
+Lg0KDQpSZWdhcmRzLA0KV2luZ01hbg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
+IEZyb206IERhbiBDYXJwZW50ZXIgW21haWx0bzpkYW4uY2FycGVudGVyQG9yYWNsZS5jb21dDQo+
+IFNlbnQ6IFRodXJzZGF5LCBGZWJydWFyeSAwNSwgMjAxNSA3OjAyIEFNDQo+IFRvOiBLd29rLCBX
+aW5nTWFuDQo+IENjOiBTRiBNYXJrdXMgRWxmcmluZzsgS2FyaWNoZXJpLCBNdXJhbGlkaGFyYW47
+IEt3b2ssIFdpbmdNYW47DQo+IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IExLTUw7IGtlcm5lbC1q
+YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IEp1bGlhIExhd2FsbA0KPiBTdWJqZWN0OiBSZTogW1BB
+VENIXSBOZXRDUDogRGVsZXRpb24gb2YgdW5uZWNlc3NhcnkgY2hlY2tzIGJlZm9yZSB0d28NCj4g
+ZnVuY3Rpb24gY2FsbHMNCj4gDQo+IEhpIFdpbmdtYW4sDQo+IA0KPiBUaGVyZSBhcmUgc29tZSBi
+dWdzIGluIHRoaXMgZXJyb3IgaGFuZGxpbmcuDQo+IA0KPiBPbiBUdWUsIEZlYiAwMywgMjAxNSBh
+dCAwODoyMjoyM1BNICswMTAwLCBTRiBNYXJrdXMgRWxmcmluZyB3cm90ZToNCj4gPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvdGkvbmV0Y3BfZXRoc3MuYw0KPiBiL2RyaXZlcnMv
+bmV0L2V0aGVybmV0L3RpL25ldGNwX2V0aHNzLmMNCj4gPiBpbmRleCBmYTEwNDFhLi5jYmQ2ZGRl
+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3RpL25ldGNwX2V0aHNzLmMN
+Cj4gPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC90aS9uZXRjcF9ldGhzcy5jDQo+ID4gQEAg
+LTIwMTAsMTIgKzIwMTAsMTAgQEAgc3RhdGljIGludCBnYmVfcHJvYmUoc3RydWN0IG5ldGNwX2Rl
+dmljZQ0KPiAqbmV0Y3BfZGV2aWNlLCBzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ID4gIHF1aXQ6DQo+
+ID4gIAlpZiAoZ2JlX2Rldi0+aHdfc3RhdHMpDQo+ID4gIAkJZGV2bV9rZnJlZShkZXYsIGdiZV9k
+ZXYtPmh3X3N0YXRzKTsNCj4gPiAtCWlmIChnYmVfZGV2LT5hbGUpDQo+ID4gLQkJY3Bzd19hbGVf
+ZGVzdHJveShnYmVfZGV2LT5hbGUpOw0KPiA+ICsJY3Bzd19hbGVfZGVzdHJveShnYmVfZGV2LT5h
+bGUpOw0KPiA+ICAJaWYgKGdiZV9kZXYtPnNzX3JlZ3MpDQo+ID4gIAkJZGV2bV9pb3VubWFwKGRl
+diwgZ2JlX2Rldi0+c3NfcmVncyk7DQo+ID4gLQlpZiAoaW50ZXJmYWNlcykNCj4gPiAtCQlvZl9u
+b2RlX3B1dChpbnRlcmZhY2VzKTsNCj4gPiArCW9mX25vZGVfcHV0KGludGVyZmFjZXMpOw0KPiAg
+ICAgICAgICAgICAgICAgICAgIF5eXl5eXl5eXl4NCj4gImludGVyZmFjZXMiIGlzIHNvbWV0aW1l
+cyB1bmludGlhbGl6ZWQgaW4gdGhpcyBjb2RlLiAgSSBkb24ndCBrbm93IHdoeQ0KPiBHQ0MgZG9l
+c24ndCBjYXRjaCB0aGlzLi4uICA6KA0KPiANCj4gVGhpcyBpcyBhICJvbmUgcnJyIGJ1ZyIsIHdo
+aWNoIGlzIGNhdXNlZCBiZWNhdXNlIHlvdSBqdXN0IGhhdmUgb25lIGVycm9yDQo+IGxhYmVsICJx
+dWl0IiB3aGljaCBoYW5kbGVzIGFsbCB0aGUgZXJyb3IgaGFuZGxpbmcuICBQbGVhc2UgcmVhZCBt
+eQ0KPiBHb29nbGUrIGNvbW1lbnQgb24gZXJyb3IgaGFuZGxpbmcuDQo+IA0KPiBodHRwczovL3Bs
+dXMuZ29vZ2xlLmNvbS8xMDYzNzg3MTYwMDI0MDY4NDk0NTgvcG9zdHMvZG5hbmZoUTRtSFENCj4g
+DQo+ID4gIAlkZXZtX2tmcmVlKGRldiwgZ2JlX2Rldik7DQo+ICAgICAgICAgXl5eXl5eXl5eXl5e
+Xl5eXl5eXl5eXl5eDQo+IFRoaXMgaXMgbm90IHRoZSByaWdodCB3YXkgdG8gdXNlIHRoZSBkZXZt
+XyBpbnRlcmZhY2UuICBUaGVzZSB0aGluZ3MgYXJlDQo+IGZyZWVkIGF1dG9tYXRpY2FsbHkgb24g
+ZXJyb3Igb3Igd2hlbiB3ZSBhcmUgZG9uZSB3aXRoIHRoZW0uICBUaGlzIGRyaXZlcg0KPiBpcyBk
+b3VibGUgZnJlZWluZyBwcmV0dHkgbXVjaCBldmVyeXRoaW5nLiAgR3JlcCBmb3IgZGV2bV9rZnJl
+ZSgpIGFuZA0KPiBmaXggZXZlcnl0aGluZy4NCj4gDQo+IEkgZG9uJ3Qga25vdyB3aHkga2J1aWxk
+IGRpZG4ndCBjYXRjaCB0aGlzLi4uDQo+IA0KPiByZWdhcmRzDQo+IGRhbiBjYXJwZW50ZXINCg0K
