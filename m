@@ -1,45 +1,49 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Date: Wed, 04 Feb 2015 13:17:17 +0000
-Subject: Re: [patch] irqchip: mtk-sysirq: fix an error code
-Message-Id: <1423055837.31210.29.camel@mtksdaap41>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Feb 2015 21:07:43 +0000
+Subject: [PATCH] SCSI-bfa: Delete more unnecessary checks before the function call "vfree"
+Message-Id: <54D3DB9F.5040100@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150130082847.GB21357@mwanda>
-In-Reply-To: <20150130082847.GB21357@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, 2015-01-30 at 11:28 +0300, Dan Carpenter wrote:
-> "chip_data->intpol_base" used to be an ERR_PTR() but we recently changed
-> it to be NULL.  We need to update the error code as well because
-> "PTR_ERR(NULL)" means success where really we want to return -ENOMEM.
-> 
-> Fixes: cdb647a772e9 ('irqchip: mtk-sysirq: Get irq number from register resource size')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
-> index eaf0a71..22eb34c 100644
-> --- a/drivers/irqchip/irq-mtk-sysirq.c
-> +++ b/drivers/irqchip/irq-mtk-sysirq.c
-> @@ -144,7 +144,7 @@ static int __init mtk_sysirq_of_init(struct device_node *node,
->  	chip_data->intpol_base = ioremap(res.start, size);
->  	if (!chip_data->intpol_base) {
->  		pr_err("mtk_sysirq: unable to map sysirq register\n");
-> -		ret = PTR_ERR(chip_data->intpol_base);
-> +		ret = -ENOMEM;
->  		goto out_free;
->  	}
->  
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Feb 2015 22:02:16 +0100
 
-Dan,
+The vfree() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-Thanks for catching this.
-Acked-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+This issue was detected by using the Coccinelle software.
 
-I changed to use ioremap(), and remember to change the null pointer
-check but not the return type. Sorry for the mistake.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/bfa/bfad.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Joe.C
-
+diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
+index e90a374..05c8ca0 100644
+--- a/drivers/scsi/bfa/bfad.c
++++ b/drivers/scsi/bfa/bfad.c
+@@ -1810,11 +1810,11 @@ bfad_load_fwimg(struct pci_dev *pdev)
+ static void
+ bfad_free_fwimg(void)
+ {
+-	if (bfi_image_ct2_size && bfi_image_ct2)
++	if (bfi_image_ct2_size)
+ 		vfree(bfi_image_ct2);
+-	if (bfi_image_ct_size && bfi_image_ct)
++	if (bfi_image_ct_size)
+ 		vfree(bfi_image_ct);
+-	if (bfi_image_cb_size && bfi_image_cb)
++	if (bfi_image_cb_size)
+ 		vfree(bfi_image_cb);
+ }
+ 
+-- 
+2.2.2
 
