@@ -1,26 +1,43 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 06 Feb 2015 06:51:07 +0000
-Subject: Re: orinoco: Delete an unnecessary check before the function call "kfree"
-Message-Id: <20150206065107.6C81D140CDD@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Feb 2015 20:45:02 +0000
+Subject: [PATCH] uwb/whci: Delete an unnecessary check before the function call "umc_device_unregister"
+Message-Id: <54D3D64E.6060503@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <54D26B73.1050804@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-usb@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Feb 2015 21:40:29 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 19:53:11 +0100
-> 
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The umc_device_unregister() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-Thanks, applied to wireless-drivers-next.git.
+This issue was detected by using the Coccinelle software.
 
-Kalle Valo
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/uwb/whci.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/uwb/whci.c b/drivers/uwb/whci.c
+index 46b7cfc..c3ee39a 100644
+--- a/drivers/uwb/whci.c
++++ b/drivers/uwb/whci.c
+@@ -133,8 +133,7 @@ static void whci_del_cap(struct whci_card *card, int n)
+ {
+ 	struct umc_dev *umc = card->devs[n];
+ 
+-	if (umc != NULL)
+-		umc_device_unregister(umc);
++	umc_device_unregister(umc);
+ }
+ 
+ static int whci_n_caps(struct pci_dev *pci)
+-- 
+2.2.2
+
