@@ -1,43 +1,34 @@
-From: bfields@fieldses.org (J. Bruce Fields)
-Date: Mon, 23 Feb 2015 21:16:07 +0000
-Subject: Re: [patch] groups: integer underflow in groups_alloc()
-Message-Id: <20150223211607.GB28635@fieldses.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Feb 2015 07:38:19 +0000
+Subject: [patch] UBI: block: checking for NULL instead of IS_ERR()
+Message-Id: <20150205073819.GB27855@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150223154419.GA2542@mwanda>
- <87385w1rmd.fsf@x220.int.ebiederm.org>
- <20150223180326.GC5116@mwanda>
-In-Reply-To: <20150223180326.GC5116@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@amacapital.net>, Wang YanQing <udknight@gmail.com>, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
-On Mon, Feb 23, 2015 at 09:03:27PM +0300, Dan Carpenter wrote:
-> On Mon, Feb 23, 2015 at 11:10:02AM -0600, Eric W. Biederman wrote:
-> > Dan Carpenter <dan.carpenter@oracle.com> writes:
-> > 
-> > > This is called from rsc_parse() with a use controlled value.  Say for
-> > > example that "gidsetsize" is negative, then we could end up allocating
-> > > less than sizeof(struct group_info) leading to memory corruption.
-> > 
-> > Right now it is the responsibility of the caller of groups_alloc to make
-> > certain that gidsetsize is a valid value, and the callers of
-> > groups_alloc who know what they are doing already validate this value.
-> > 
-> > Either the pattern of caller validates the messages needs to continue,
-> > or groups_alloc needs to be changed and all of the callers need to be
-> > updated.
-> > 
-> > Changing groups_alloc for one particular caller is just going to cause
-> > maintenance problems.
-> > 
-> 
-> This only affects NFS so let's hear from them if this limit is correct
-> and decide from there.
+We recently switched from allocating ->rq using blk_init_queue() to
+use blk_mq_init_queue() so we need to update the error handling to
+check for IS_ERR() instead of NULL.
 
-I think that's probably the correct check, sure.
+Fixes: ff1f48ee3bb3 ('UBI: Block: Add blk-mq support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Putting it in rsc_parse sounds reasonable.
-
---b.
+diff --git a/drivers/mtd/ubi/block.c b/drivers/mtd/ubi/block.c
+index 995e61c..d0a9349 100644
+--- a/drivers/mtd/ubi/block.c
++++ b/drivers/mtd/ubi/block.c
+@@ -409,9 +409,9 @@ int ubiblock_create(struct ubi_volume_info *vi)
+ 	}
+ 
+ 	dev->rq = blk_mq_init_queue(&dev->tag_set);
+-	if (!dev->rq) {
++	if (IS_ERR(dev->rq)) {
+ 		dev_err(disk_to_dev(gd), "blk_mq_init_queue failed");
+-		ret = -ENODEV;
++		ret = PTR_ERR(dev->rq);
+ 		goto out_free_tags;
+ 	}
+ 	blk_queue_max_segments(dev->rq, UBI_MAX_SG_COUNT);
