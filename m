@@ -1,38 +1,82 @@
 From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 28 Feb 2015 10:23:29 +0000
-Subject: [PATCH 5/5] UBI: align comment for readability
-Message-Id: <1425119009-28634-6-git-send-email-computersforpeace@gmail.com>
+Date: Fri, 06 Feb 2015 11:28:45 +0000
+Subject: Re: [PATCH 1/20] mtd: s3c2410: fix misspelling of current function in string
+Message-Id: <20150206112845.GF4434@norris-Latitude-E6410>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
-In-Reply-To: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1417980062-25151-2-git-send-email-Julia.Lawall@lip6.fr>
+ <CAFLxGvyiqxQ6U6p-A-JW8Nv8OvXFGsna93afUu-Gek0EV3gATA@mail.gmail.com>
+ <alpine.DEB.2.02.1412080809400.2100@localhost6.localdomain6>
+ <54856C75.1050309@nod.at>
+In-Reply-To: <54856C75.1050309@nod.at>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The kerneldoc for @vid_hdr_aloffset continues onto a second line, but
-this is not obvious, because the second line isn't indented, and it
-begins with '@'.
+On Mon, Dec 08, 2014 at 10:16:37AM +0100, Richard Weinberger wrote:
+> Am 08.12.2014 um 08:11 schrieb Julia Lawall:
+> >>> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+> >>> index 35aef5e..0a9c41f 100644
+> >>> --- a/drivers/mtd/nand/s3c2410.c
+> >>> +++ b/drivers/mtd/nand/s3c2410.c
+> >>> @@ -948,7 +948,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+> >>>
+> >>>         cpu_type = platform_get_device_id(pdev)->driver_data;
+> >>>
+> >>> -       pr_debug("s3c2410_nand_probe(%p)\n", pdev);
+> >>> +       pr_debug("%s(%p)\n", __func__, pdev);
+> >>
+> >> I think we can drop the line completely.
+> >> We have ftrace to trace function calls...
+> > 
+> > Should the "initialised ok" at the end of the function be remove as well?
+> > 
+> > Will it be confusing if this cleanup is done in this function, but not in 
+> > others where it may be useful?  Perhaps s3c2410_nand_update_chip, for 
+> > example?
+> 
+> Hmm, this driver seems to have a lot of debugging printks().
+> IMHO we can remove them.
+> Let's see what Brain says.
 
+I'm a little late for this one, but I can apply this instead:
+
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Fri, 6 Feb 2015 03:25:28 -0800
+Subject: [PATCH] mtd: s3c2410: drop useless / misspelled debug prints
+
+s3c2410_nand_probe is not the name of the function.
+
+These prints have little utility, so let's just kill them.
+
+Reported-by: Julia Lawall <Julia.Lawall@lip6.fr>
 Signed-off-by: Brian Norris <computersforpeace@gmail.com>
 ---
- drivers/mtd/ubi/ubi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/nand/s3c2410.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
-index c5be82d9d345..2251a6c4c8fa 100644
---- a/drivers/mtd/ubi/ubi.h
-+++ b/drivers/mtd/ubi/ubi.h
-@@ -479,7 +479,7 @@ struct ubi_debug_info {
-  * @vid_hdr_offset: starting offset of the volume identifier header (might be
-  *                  unaligned)
-  * @vid_hdr_aloffset: starting offset of the VID header aligned to
-- * @hdrs_min_io_size
-+ *                    @hdrs_min_io_size
-  * @vid_hdr_shift: contains @vid_hdr_offset - @vid_hdr_aloffset
-  * @bad_allowed: whether the MTD device admits of bad physical eraseblocks or
-  *               not
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index 35aef5edb588..0e02be47ce1d 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -948,8 +948,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 
+ 	cpu_type = platform_get_device_id(pdev)->driver_data;
+ 
+-	pr_debug("s3c2410_nand_probe(%p)\n", pdev);
+-
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+ 	if (info = NULL) {
+ 		err = -ENOMEM;
+@@ -1045,7 +1043,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 		s3c2410_nand_clk_set_state(info, CLOCK_SUSPEND);
+ 	}
+ 
+-	pr_debug("initialised ok\n");
+ 	return 0;
+ 
+  exit_error:
 -- 
-2.1.0
+2.3.0
 
