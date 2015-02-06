@@ -1,27 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Feb 2015 13:11:48 +0000
-Subject: [patch] dma-mapping: replace spaces with a tab
-Message-Id: <20150225131148.GA19745@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 06 Feb 2015 06:53:32 +0000
+Subject: Re: brcm80211: Delete unnecessary checks before two function calls
+Message-Id: <20150206065332.BE03D140D11@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <54D275A7.3050701@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Arend van Spriel <arend@broadcom.com>, Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Tiny cleanup.  Just replace spaces with a tab.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 4 Feb 2015 20:28:49 +0100
+> 
+> The functions brcmu_pkt_buf_free_skb() and usb_free_urb() test whether
+> their argument is NULL and then return immediately. Thus the test around
+> the call is not needed.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-diff --git a/arch/x86/include/asm/dma-mapping.h b/arch/x86/include/asm/dma-mapping.h
-index 808dae6..d6e6da3 100644
---- a/arch/x86/include/asm/dma-mapping.h
-+++ b/arch/x86/include/asm/dma-mapping.h
-@@ -122,7 +122,7 @@ static inline gfp_t dma_alloc_coherent_gfp_flags(struct device *dev, gfp_t gfp)
- 	if (dma_mask <= DMA_BIT_MASK(32) && !(gfp & GFP_DMA))
- 		gfp |= GFP_DMA32;
- #endif
--       return gfp;
-+	return gfp;
- }
- 
- #define dma_alloc_coherent(d,s,h,f)	dma_alloc_attrs(d,s,h,f,NULL)
+Thanks, applied to wireless-drivers-next.git.
+
+Kalle Valo
