@@ -1,58 +1,191 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Feb 2015 13:15:58 +0000
-Subject: [patch] mtd: cfi: clean up some indenting
-Message-Id: <20150225131558.GD19745@mwanda>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 06 Feb 2015 09:59:53 +0000
+Subject: [PATCH 1/1] iommu/vt-d: Convert non-returned local variable to boolean when relevant
+Message-Id: <20150206095953.GA5780@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Jingoo Han <jg1.han@samsung.com>, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>
+Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 
-These lines were all indented one tab more than they should be.
+This patch was produced using Coccinelle. A simplified version of the
+semantic patch is:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+@r exists@
+identifier f;
+local idexpression u8 x;
+identifier xname;
+@@
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0020.c b/drivers/mtd/chips/cfi_cmdset_0020.c
-index 423666b..9a1a6ff 100644
---- a/drivers/mtd/chips/cfi_cmdset_0020.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0020.c
-@@ -206,23 +206,23 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
- 			mtd->eraseregions[(j*cfi->cfiq->NumEraseRegions)+i].numblocks = ernum;
+f(...) {
+...when any
+(
+  x@xname = 1;
+|
+  x@xname = 0;
+)
+...when any
+}
+
+@bad exists@
+identifier r.f;
+local idexpression u8 r.x
+expression e1 != {0, 1}, e2;
+@@
+
+f(...) {
+...when any
+(
+  x = e1;
+|
+  x + e2
+)
+...when any
+}
+
+@depends on !bad@
+identifier r.f;
+local idexpression u8 r.x;
+identifier r.xname;
+@@
+
+f(...) {
+...
+++ bool xname;
+- int xname;
+<...
+(
+  x - 1
++ true
+|
+  x - -1
++ false
+)
+...>
+
+}
+
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/iommu/intel-iommu.c         | 13 +++++++------
+ drivers/iommu/intel_irq_remapping.c | 12 ++++++------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index ae4c1a8..d25cc62 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -595,12 +595,13 @@ static void domain_update_iommu_coherency(struct dmar_domain *domain)
+ {
+ 	struct dmar_drhd_unit *drhd;
+ 	struct intel_iommu *iommu;
+-	int i, found = 0;
++	bool found = false;
++	int i;
+ 
+ 	domain->iommu_coherency = 1;
+ 
+ 	for_each_set_bit(i, domain->iommu_bmp, g_num_of_iommus) {
+-		found = 1;
++		found = true;
+ 		if (!ecap_coherent(g_iommus[i]->ecap)) {
+ 			domain->iommu_coherency = 0;
+ 			break;
+@@ -1267,7 +1268,7 @@ static struct device_domain_info *
+ iommu_support_dev_iotlb (struct dmar_domain *domain, struct intel_iommu *iommu,
+ 			 u8 bus, u8 devfn)
+ {
+-	int found = 0;
++	bool found = false;
+ 	unsigned long flags;
+ 	struct device_domain_info *info;
+ 	struct pci_dev *pdev;
+@@ -1282,7 +1283,7 @@ iommu_support_dev_iotlb (struct dmar_domain *domain, struct intel_iommu *iommu,
+ 	list_for_each_entry(info, &domain->devices, link)
+ 		if (info->iommu = iommu && info->bus = bus &&
+ 		    info->devfn = devfn) {
+-			found = 1;
++			found = true;
+ 			break;
  		}
- 		offset += (ersize * ernum);
--		}
-+	}
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
+@@ -4270,7 +4271,7 @@ static void domain_remove_one_dev_info(struct dmar_domain *domain,
+ 	struct device_domain_info *info, *tmp;
+ 	struct intel_iommu *iommu;
+ 	unsigned long flags;
+-	int found = 0;
++	bool found = false;
+ 	u8 bus, devfn;
  
--		if (offset != devsize) {
--			/* Argh */
--			printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
--			kfree(mtd->eraseregions);
--			kfree(cfi->cmdset_priv);
--			kfree(mtd);
--			return NULL;
--		}
-+	if (offset != devsize) {
-+		/* Argh */
-+		printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
-+		kfree(mtd->eraseregions);
-+		kfree(cfi->cmdset_priv);
-+		kfree(mtd);
-+		return NULL;
-+	}
+ 	iommu = device_to_iommu(dev, &bus, &devfn);
+@@ -4302,7 +4303,7 @@ static void domain_remove_one_dev_info(struct dmar_domain *domain,
+ 		 * update iommu count and coherency
+ 		 */
+ 		if (info->iommu = iommu)
+-			found = 1;
++			found = true;
+ 	}
  
--		for (i=0; i<mtd->numeraseregions;i++){
--			printk(KERN_DEBUG "%d: offset=0x%llx,size=0x%x,blocks=%d\n",
--			       i, (unsigned long long)mtd->eraseregions[i].offset,
--			       mtd->eraseregions[i].erasesize,
--			       mtd->eraseregions[i].numblocks);
--		}
-+	for (i=0; i<mtd->numeraseregions;i++){
-+		printk(KERN_DEBUG "%d: offset=0x%llx,size=0x%x,blocks=%d\n",
-+		       i, (unsigned long long)mtd->eraseregions[i].offset,
-+		       mtd->eraseregions[i].erasesize,
-+		       mtd->eraseregions[i].numblocks);
-+	}
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
+diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+index 14de1ab..6c25b3c 100644
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -631,7 +631,7 @@ static int __init intel_enable_irq_remapping(void)
+ {
+ 	struct dmar_drhd_unit *drhd;
+ 	struct intel_iommu *iommu;
+-	int setup = 0;
++	bool setup = false;
+ 	int eim = 0;
  
- 	/* Also select the correct geometry setup too */
- 	mtd->_erase = cfi_staa_erase_varsize;
+ 	if (x2apic_supported()) {
+@@ -697,7 +697,7 @@ static int __init intel_enable_irq_remapping(void)
+ 	 */
+ 	for_each_iommu(iommu, drhd) {
+ 		iommu_set_irq_remapping(iommu, eim);
+-		setup = 1;
++		setup = true;
+ 	}
+ 
+ 	if (!setup)
+@@ -856,7 +856,7 @@ static int __init parse_ioapics_under_ir(void)
+ {
+ 	struct dmar_drhd_unit *drhd;
+ 	struct intel_iommu *iommu;
+-	int ir_supported = 0;
++	bool ir_supported = false;
+ 	int ioapic_idx;
+ 
+ 	for_each_iommu(iommu, drhd)
+@@ -864,7 +864,7 @@ static int __init parse_ioapics_under_ir(void)
+ 			if (ir_parse_ioapic_hpet_scope(drhd->hdr, iommu))
+ 				return -1;
+ 
+-			ir_supported = 1;
++			ir_supported = true;
+ 		}
+ 
+ 	if (!ir_supported)
+@@ -917,7 +917,7 @@ static void disable_irq_remapping(void)
+ static int reenable_irq_remapping(int eim)
+ {
+ 	struct dmar_drhd_unit *drhd;
+-	int setup = 0;
++	bool setup = false;
+ 	struct intel_iommu *iommu = NULL;
+ 
+ 	for_each_iommu(iommu, drhd)
+@@ -933,7 +933,7 @@ static int reenable_irq_remapping(int eim)
+ 
+ 		/* Set up interrupt remapping for iommu.*/
+ 		iommu_set_irq_remapping(iommu, eim);
+-		setup = 1;
++		setup = true;
+ 	}
+ 
+ 	if (!setup)
+-- 
+1.9.1
+
