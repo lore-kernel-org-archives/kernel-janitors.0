@@ -1,44 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Feb 2015 13:24:19 +0000
-Subject: [patch] lpfc: missing curly brace in lpfc_online()
-Message-Id: <20150225132419.GK19745@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 06 Feb 2015 06:51:07 +0000
+Subject: Re: orinoco: Delete an unnecessary check before the function call "kfree"
+Message-Id: <20150206065107.6C81D140CDD@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <54D26B73.1050804@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@emulex.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This is harmless because we do the same thing either way but, from the
-indenting, then it seems like lpfc_destroy_vport_work_array() was meant
-to be inside the if statement.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-The static checker complains about some of the other indents as well.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 4 Feb 2015 19:53:11 +0100
+> 
+> The kfree() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-drivers/scsi/lpfc/lpfc_init.c:708 lpfc_hba_init_link_fc_topology() warn: bad indenting.
-drivers/scsi/lpfc/lpfc_init.c:1978 lpfc_parse_vpd() warn: bad indenting.
-drivers/scsi/lpfc/lpfc_init.c:8116 lpfc_sli4_pci_mem_setup() warn: bad indenting.
+Thanks, applied to wireless-drivers-next.git.
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 0b2c53a..f8fd364 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -2822,7 +2822,7 @@ lpfc_online(struct lpfc_hba *phba)
- 	}
- 
- 	vports = lpfc_create_vport_work_array(phba);
--	if (vports != NULL)
-+	if (vports != NULL) {
- 		for (i = 0; i <= phba->max_vports && vports[i] != NULL; i++) {
- 			struct Scsi_Host *shost;
- 			shost = lpfc_shost_from_vport(vports[i]);
-@@ -2840,6 +2840,7 @@ lpfc_online(struct lpfc_hba *phba)
- 			spin_unlock_irq(shost->host_lock);
- 		}
- 		lpfc_destroy_vport_work_array(phba, vports);
-+	}
- 
- 	lpfc_unblock_mgmt_io(phba);
- 	return 0;
+Kalle Valo
