@@ -1,64 +1,33 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 02 Feb 2015 15:17:40 +0000
-Subject: [PATCH 1/3] dm snapshot: Deletion of unnecessary checks before the function call "vfree"
-Message-Id: <54CF9514.70502@users.sourceforge.net>
+Date: Fri, 06 Feb 2015 22:10:44 +0000
+Subject: [PATCH 0/4] SCSI-QLA4...: Deletion of some unnecessary checks
+Message-Id: <54D53BE4.7010807@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <54CF93BB.40206@users.sourceforge.net>
-In-Reply-To: <54CF93BB.40206@users.sourceforge.net>
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Neil Brown <neilb@suse.de>, dm-devel@redhat.com, linux-raid@vger.kernel.org
+To: "James E. J. Bottomley" <JBottomley@parallels.com>, QLogic-Storage-Upstream@qlogic.com, linux-scsi@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Feb 2015 14:38:29 +0100
+Date: Fri, 6 Feb 2015 23:03:41 +0100
 
-The vfree() function performs also input parameter validation.
-Thus the test around the call is not needed.
+Further update suggestions were taken into account after a patch was applied
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (4):
+  Deletion of unnecessary checks before three function calls
+  Less function calls in qla4xxx_is_session_exists() after error detection
+  Less function calls in qla4xxx_is_flash_ddb_exists() after error detection
+  Less function calls in qla4xxx_sysfs_ddb_logout() after error detection
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/dm-snap-persistent.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/scsi/qla4xxx/ql4_mbx.c |  2 +-
+ drivers/scsi/qla4xxx/ql4_os.c  | 96 ++++++++++++++++++------------------------
+ 2 files changed, 42 insertions(+), 56 deletions(-)
 
-diff --git a/drivers/md/dm-snap-persistent.c b/drivers/md/dm-snap-persistent.c
-index d6e8817..808b841 100644
---- a/drivers/md/dm-snap-persistent.c
-+++ b/drivers/md/dm-snap-persistent.c
-@@ -200,16 +200,11 @@ err_area:
- 
- static void free_area(struct pstore *ps)
- {
--	if (ps->area)
--		vfree(ps->area);
-+	vfree(ps->area);
- 	ps->area = NULL;
--
--	if (ps->zero_area)
--		vfree(ps->zero_area);
-+	vfree(ps->zero_area);
- 	ps->zero_area = NULL;
--
--	if (ps->header_area)
--		vfree(ps->header_area);
-+	vfree(ps->header_area);
- 	ps->header_area = NULL;
- }
- 
-@@ -605,8 +600,7 @@ static void persistent_dtr(struct dm_exception_store *store)
- 	free_area(ps);
- 
- 	/* Allocated in persistent_read_metadata */
--	if (ps->callbacks)
--		vfree(ps->callbacks);
-+	vfree(ps->callbacks);
- 
- 	kfree(ps);
- }
 -- 
 2.2.2
 
