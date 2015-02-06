@@ -1,44 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 02 Feb 2015 10:26:57 +0000
-Subject: [PATCH v3 2/3] netlabel: Deletion of an unnecessary check before the function call "cipso_v4_doi_fre
-Message-Id: <54CF50F1.4080005@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 06 Feb 2015 06:50:07 +0000
+Subject: Re: ath9k: Delete an unnecessary check before the function call"relay_close"
+Message-Id: <20150206065007.0E82D140CC9@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54CD4B5F.9010502@users.sourceforge.net>	<CAHC9VhQ5C32zRqG0emVUoMmuvBsV+TXvdNn+54iVyCPBNk9dDQ@mail.gmail.com>	<54CDFCDA.9010802@users.sourceforge.net> <20150201.123054.366525761630045391.davem@davemloft.net> <54CF4FEC.2010906@users.sourceforge.net>
-In-Reply-To: <54CF4FEC.2010906@users.sourceforge.net>
+In-Reply-To: <54D25CDC.3040405@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: ath9k-devel@lists.ath9k.org, linux-wireless@vger.kernel.org, QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Feb 2015 10:40:30 +0100
 
-The cipso_v4_doi_free() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 4 Feb 2015 18:48:28 +0100
+> 
+> The relay_close() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Thanks, applied to wireless-drivers-next.git.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Paul Moore <paul@paul-moore.com>
----
- net/netlabel/netlabel_cipso_v4.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/net/netlabel/netlabel_cipso_v4.c b/net/netlabel/netlabel_cipso_v4.c
-index 1796253..7fd1104 100644
---- a/net/netlabel/netlabel_cipso_v4.c
-+++ b/net/netlabel/netlabel_cipso_v4.c
-@@ -324,8 +324,7 @@ static int netlbl_cipsov4_add_std(struct genl_info *info,
- 	return 0;
- 
- add_std_failure:
--	if (doi_def)
--		cipso_v4_doi_free(doi_def);
-+	cipso_v4_doi_free(doi_def);
- 	return ret_val;
- }
- 
--- 
-2.2.2
-
+Kalle Valo
