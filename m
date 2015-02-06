@@ -1,27 +1,101 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Feb 2015 12:20:37 +0000
-Subject: Re: [PATCH] fs: dlm: lockspace.c: removal of unnecessary check before calling kfree()
-Message-Id: <54DB4915.3090005@users.sourceforge.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 06 Feb 2015 15:39:12 +0000
+Subject: [PATCH 1/1] drivers/base: Remove unnecessary OOM message
+Message-Id: <20150206153912.GA8486@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1423646814-22720-1-git-send-email-baspeters93@gmail.com>	<54DB46BA.7020803@users.sourceforge.net> <CAOgR63ezgdSr0uR9=P8W886EHWiaCm-GxwF2_1RNY6c15pd+mQ@mail.gmail.com>
-In-Reply-To: <CAOgR63ezgdSr0uR9=P8W886EHWiaCm-GxwF2_1RNY6c15pd+mQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bas Peters <baspeters93@gmail.com>
-Cc: Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Ming Lei <ming.lei@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 
->> https://lkml.org/lkml/2014/11/29/88
->> http://article.gmane.org/gmane.linux.kernel/1840524
->> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg778279.html
-> 
-> I'll drop that too :)
+This patch fix checkpatch warnings concerning the possible
+duplication of an "out of memory" message.
 
-Would you like to add any tags to my update suggestion?
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr)
 
-Are you looking for more opportunities around clean-up of such safety checks
-in Linux source code?
+@@
+identifier f,print,l;
+expression e;
+constant char[] c;
+@@
 
-Regards,
-Markus
+e = \(kzalloc\|kmalloc\|devm_kzalloc\|devm_kmalloc\)(...);
+if (e = NULL) {
+  <+...
+-  print(...,c,...);
+  ... when any
+(
+  goto l;
+|
+  return ...;
+)
+  ...+> }
+
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/base/firmware_class.c  | 1 -
+ drivers/base/power/clock_ops.c | 4 +---
+ drivers/base/power/opp.c       | 8 ++------
+ 3 files changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index 58470c3..c3293f0 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -855,7 +855,6 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
+ 
+ 	fw_priv = kzalloc(sizeof(*fw_priv), GFP_KERNEL);
+ 	if (!fw_priv) {
+-		dev_err(device, "%s: kmalloc failed\n", __func__);
+ 		fw_priv = ERR_PTR(-ENOMEM);
+ 		goto exit;
+ 	}
+diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
+index d626576..7fdd017 100644
+--- a/drivers/base/power/clock_ops.c
++++ b/drivers/base/power/clock_ops.c
+@@ -81,10 +81,8 @@ static int __pm_clk_add(struct device *dev, const char *con_id,
+ 		return -EINVAL;
+ 
+ 	ce = kzalloc(sizeof(*ce), GFP_KERNEL);
+-	if (!ce) {
+-		dev_err(dev, "Not enough memory for clock entry.\n");
++	if (!ce)
+ 		return -ENOMEM;
+-	}
+ 
+ 	if (con_id) {
+ 		ce->con_id = kstrdup(con_id, GFP_KERNEL);
+diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
+index 15bf299..677fb28 100644
+--- a/drivers/base/power/opp.c
++++ b/drivers/base/power/opp.c
+@@ -474,10 +474,8 @@ static int _opp_add_dynamic(struct device *dev, unsigned long freq,
+ 
+ 	/* allocate new OPP node */
+ 	new_opp = kzalloc(sizeof(*new_opp), GFP_KERNEL);
+-	if (!new_opp) {
+-		dev_warn(dev, "%s: Unable to create new OPP node\n", __func__);
++	if (!new_opp)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/* Hold our list modification lock here */
+ 	mutex_lock(&dev_opp_list_lock);
+@@ -695,10 +693,8 @@ static int _opp_set_availability(struct device *dev, unsigned long freq,
+ 
+ 	/* keep the node allocated */
+ 	new_opp = kmalloc(sizeof(*new_opp), GFP_KERNEL);
+-	if (!new_opp) {
+-		dev_warn(dev, "%s: Unable to create OPP\n", __func__);
++	if (!new_opp)
+ 		return -ENOMEM;
+-	}
+ 
+ 	mutex_lock(&dev_opp_list_lock);
+ 
+-- 
+1.9.1
 
