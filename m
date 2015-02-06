@@ -1,40 +1,86 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Wed, 11 Feb 2015 14:02:40 +0000
-Subject: Re: [PATCH] fs: proc: inode.c: remove unnecessary type cast
-Message-Id: <878ug4k0lb.fsf@x220.int.ebiederm.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 06 Feb 2015 22:15:13 +0000
+Subject: [PATCH 2/4] SCSI-QLA4...: Less function calls in qla4xxx_is_session_exists() after error detection
+Message-Id: <54D53CF1.8050009@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1423655925-15853-1-git-send-email-baspeters93@gmail.com>
-In-Reply-To: <1423655925-15853-1-git-send-email-baspeters93@gmail.com> (Bas
-	Peters's message of "Wed, 11 Feb 2015 12:58:45 +0100")
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <54D53BE4.7010807@users.sourceforge.net>
+In-Reply-To: <54D53BE4.7010807@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bas Peters <baspeters93@gmail.com>
-Cc: akpm@linux-foundation.org, oleg@redhat.com, adobriyan@gmail.com, gorcunov@openvz.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E. J. Bottomley" <JBottomley@parallels.com>, QLogic-Storage-Upstream@qlogic.com, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Bas Peters <baspeters93@gmail.com> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Feb 2015 21:14:40 +0100
 
-> Issue was detected using Coccinelle.
+The vfree() function was called in two cases by the qla4xxx_is_session_exists()
+function during error handling even if the passed variables "fw_tddb" and
+"tmp_tddb" contained still a null pointer.
 
-I believe Al Viro wrote that deliberately.
+* This implementation detail could be improved by adjustments for jump labels.
 
-> Signed-off-by: Bas Peters <baspeters93@gmail.com>
-> ---
->  fs/proc/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index 8420a2f..e16ee87 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -57,7 +57,7 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
->  	struct proc_inode *ei;
->  	struct inode *inode;
->  
-> -	ei = (struct proc_inode *)kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
-> +	ei = kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
->  	if (!ei)
->  		return NULL;
->  	ei->pid = NULL;
+* Let us return immediately after the first failed function call according to
+  the current Linux coding style convention.
 
-Eric
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/qla4xxx/ql4_os.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index 2a00fd3..a7ca479 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -6327,17 +6327,15 @@ static int qla4xxx_is_session_exists(struct scsi_qla_host *ha,
+ 				     uint32_t *index)
+ {
+ 	struct ddb_entry *ddb_entry;
+-	struct ql4_tuple_ddb *fw_tddb = NULL;
+-	struct ql4_tuple_ddb *tmp_tddb = NULL;
+ 	int idx;
+ 	int ret = QLA_ERROR;
++	struct ql4_tuple_ddb *tmp_tddb;
++	struct ql4_tuple_ddb *fw_tddb = vzalloc(sizeof(*fw_tddb));
+ 
+-	fw_tddb = vzalloc(sizeof(*fw_tddb));
+ 	if (!fw_tddb) {
+ 		DEBUG2(ql4_printk(KERN_WARNING, ha,
+ 				  "Memory Allocation failed.\n"));
+-		ret = QLA_SUCCESS;
+-		goto exit_check;
++		return QLA_SUCCESS;
+ 	}
+ 
+ 	tmp_tddb = vzalloc(sizeof(*tmp_tddb));
+@@ -6345,7 +6343,7 @@ static int qla4xxx_is_session_exists(struct scsi_qla_host *ha,
+ 		DEBUG2(ql4_printk(KERN_WARNING, ha,
+ 				  "Memory Allocation failed.\n"));
+ 		ret = QLA_SUCCESS;
+-		goto exit_check;
++		goto free_fw;
+ 	}
+ 
+ 	qla4xxx_convert_param_ddb(fw_ddb_entry, fw_tddb, NULL);
+@@ -6360,13 +6358,14 @@ static int qla4xxx_is_session_exists(struct scsi_qla_host *ha,
+ 			ret = QLA_SUCCESS; /* found */
+ 			if (index != NULL)
+ 				*index = idx;
+-			goto exit_check;
++			goto free_tmp;
+ 		}
+ 	}
+ 
+-exit_check:
+-	vfree(fw_tddb);
++free_tmp:
+ 	vfree(tmp_tddb);
++free_fw:
++	vfree(fw_tddb);
+ 	return ret;
+ }
+ 
+-- 
+2.2.2
+
