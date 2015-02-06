@@ -1,29 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Feb 2015 10:52:01 +0000
-Subject: [patch] iommu/amd: small cleanup in mn_release()
-Message-Id: <20150220105201.GA7895@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 06 Feb 2015 06:49:01 +0000
+Subject: Re: [1/2] cw1200: Delete an unnecessary check before the function call "release_firmware"
+Message-Id: <20150206064901.1EFAE140CB9@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <54D24D1F.50001@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Solomon Peachy <pizza@shaftnet.org>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-"pasid_state->device_state" and "dev_state" are the same, but it's nicer
-to use dev_state consistently.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 4 Feb 2015 16:32:15 +0100
+> 
+> The release_firmware() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-diff --git a/drivers/iommu/amd_iommu_v2.c b/drivers/iommu/amd_iommu_v2.c
-index 6d5a5c4..a1cbba9 100644
---- a/drivers/iommu/amd_iommu_v2.c
-+++ b/drivers/iommu/amd_iommu_v2.c
-@@ -417,7 +417,7 @@ static void mn_release(struct mmu_notifier *mn, struct mm_struct *mm)
- 	dev_state      = pasid_state->device_state;
- 	run_inv_ctx_cb = !pasid_state->invalid;
- 
--	if (run_inv_ctx_cb && pasid_state->device_state->inv_ctx_cb)
-+	if (run_inv_ctx_cb && dev_state->inv_ctx_cb)
- 		dev_state->inv_ctx_cb(dev_state->pdev, pasid_state->pasid);
- 
- 	unbind_pasid(pasid_state);
+Thanks, 2 patches applied to wireless-drivers-next.git:
+
+df970d39b90e cw1200: Delete an unnecessary check before the function call "release_firmware"
+ee4ddad82356 cw1200: Less function calls in cw1200_load_firmware_cw1200() after error detection
+
+Kalle Valo
