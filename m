@@ -1,35 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 07 Feb 2015 10:24:36 +0000
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date: Sun, 08 Feb 2015 23:28:35 +0000
 Subject: Re: [PATCH 1/1] drivers/base: Remove unnecessary OOM message
-Message-Id: <20150207102436.GB5206@mwanda>
+Message-Id: <2675935.6VkJO9HMpc@vostro.rjw.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150206153912.GA8486@sloth>
- <20150206205852.GA14126@amd>
- <1423256670.4752.16.camel@perches.com>
- <20150206211708.GA25967@amd>
-In-Reply-To: <20150206211708.GA25967@amd>
+References: <20150206153912.GA8486@sloth> <20150206211708.GA25967@amd> <20150207102436.GB5206@mwanda>
+In-Reply-To: <20150207102436.GB5206@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Joe Perches <joe@perches.com>, Quentin Lambert <lambert.quentin@gmail.com>, Ming Lei <ming.lei@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Quentin Lambert <lambert.quentin@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Joe Perches <joe@perches.com>, Ming Lei <ming.lei@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 
-Facts:
-1) None of these four error messages will ever be printed.
-   http://lwn.net/Articles/627419/
-2) These messages are a waste of RAM.
+On Saturday, February 07, 2015 01:24:36 PM Dan Carpenter wrote:
+> Facts:
+> 1) None of these four error messages will ever be printed.
+>    http://lwn.net/Articles/627419/
+> 2) These messages are a waste of RAM.
 
-Debatable:
-1) These messages are bad style and distracting.  Simple code is better.
-2) The normal OOM message is enough to find which allocation failed.
+So this is what the changelog should be saying, not that it "fixes
+checkpatch warnings".
 
-Not everbody, but a lot of people write these kinds of error messages
-with their brain on auto-pilot because they think they *should* do it.
-It's quite common to do things like printk("dev is NULL.  %s",
-dev->name);.  I'm happy for this checkpatch warning because it hopefully
-bumps people out of mindless mode and makes them think about error
-messages.
+checkpatch warnings in *existing* code are meaningless, unless they
+uncover a *real* problem in it which quite arguably this one is.  But
+in those cases patch changelogs should talk about the *real* problems
+and they don't even need to mention checkpatch then as far as I'm
+concerned.
 
-regards,
-dan carpenter
+Send this one with a better changelog and I'll apply it.
 
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
