@@ -1,48 +1,57 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Thu, 12 Feb 2015 12:22:12 +0000
-Subject: Re: [PATCH 1/1] staging: unisys: Remove allocation from declaration line
-Message-Id: <54DC9AF4.8050805@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 09 Feb 2015 10:21:26 +0000
+Subject: [PATCH v2] net: Mellanox: Delete unnecessary checks before the function call "vunmap"
+Message-Id: <54D88A26.2060307@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150210130214.GA18429@sloth> <20150210222627.GC27072@kroah.com> <20150211102306.GB26542@mwanda>
-In-Reply-To: <20150211102306.GB26542@mwanda>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.sourceforge.net>	<54D22B29.3020200@users.sourceforge.net> <20150205.003404.261962007607296519.davem@davemloft.net>
+In-Reply-To: <20150205.003404.261962007607296519.davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, sparmaintainer@unisys.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Romer <benjamin.romer@unisys.com>, David Kershner <david.kershner@unisys.com>
+To: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Cc: Eli Cohen <eli-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-On 11/02/2015 11:23, Dan Carpenter wrote:
-> On Wed, Feb 11, 2015 at 06:26:27AM +0800, Greg Kroah-Hartman wrote:
->> On Tue, Feb 10, 2015 at 02:02:14PM +0100, Quentin Lambert wrote:
->>> This patch removes allocation from declaration line because
->>> people are known to gloss over declarations.
->> Again, who are these lazy people, and why are they reading kernel code?
->>
->  From my work with smatch:
-> 1) Probably 70-80% of inconsistent NULL checking is when done in the
->     initializer.  I'm sending a patch for one of these today.
-> 2) If there is an allocation in the initializer then it's more likely
->     that the NULL check will be missing.
-> Initializers are a blind spot that people do not read.  It's not just
-> one maintainer, it's consistent across the board.
->
-> Also if you put an allocation in the initializer then it almost always
-> has to be mangled to fit in 80 characters and it looks ugly.  But after
-> these patches then all the allocations fit naturally.
->
-> Plus you have to have that blank line to separate the initialization
-> paragraph from the paragraph with the check for allocation failure.
->
-> Really, it is fairly uncommon to put an allocation in the initalizer.
->
-> regards,
-> dan carpenter
-In the case this patch wasn't accepted what should I do with
-this one: https://lkml.org/lkml/2015/2/10/182 ?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 9 Feb 2015 11:10:41 +0100
 
-Do you want me to submit a non-dependent version?
+The vunmap() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-regards,
-Quentin
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Eli Cohen <eli@mellanox.com>
+---
+ drivers/net/ethernet/mellanox/mlx4/alloc.c      | 2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/alloc.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx4/alloc.c b/drivers/net/ethernet/mellanox/mlx4/alloc.c
+index a716c26..0c51c69 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/alloc.c
++++ b/drivers/net/ethernet/mellanox/mlx4/alloc.c
+@@ -662,7 +662,7 @@ void mlx4_buf_free(struct mlx4_dev *dev, int size, struct mlx4_buf *buf)
+ 				  buf->direct.buf,
+ 				  buf->direct.map);
+ 	else {
+-		if (BITS_PER_LONG = 64 && buf->direct.buf)
++		if (BITS_PER_LONG = 64)
+ 			vunmap(buf->direct.buf);
+ 
+ 		for (i = 0; i < buf->nbufs; ++i)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/alloc.c b/drivers/net/ethernet/mellanox/mlx5/core/alloc.c
+index 56779c1..201ca6d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/alloc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/alloc.c
+@@ -121,7 +121,7 @@ void mlx5_buf_free(struct mlx5_core_dev *dev, struct mlx5_buf *buf)
+ 		dma_free_coherent(&dev->pdev->dev, buf->size, buf->direct.buf,
+ 				  buf->direct.map);
+ 	else {
+-		if (BITS_PER_LONG = 64 && buf->direct.buf)
++		if (BITS_PER_LONG = 64)
+ 			vunmap(buf->direct.buf);
+ 
+ 		for (i = 0; i < buf->nbufs; i++)
+-- 
+2.2.2
 
