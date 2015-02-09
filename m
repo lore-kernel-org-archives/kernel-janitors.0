@@ -1,27 +1,36 @@
-From: Bas Peters <baspeters93@gmail.com>
-Date: Mon, 09 Feb 2015 10:55:27 +0000
-Subject: Simple question on the Kernel Janitors project.
-Message-Id: <CAOgR63fYNyn7ZJ=5EEPiRXTXKr0qUTvsUj0MFFnu6f0K6V1Lgg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Feb 2015 11:37:22 +0000
+Subject: Re: Simple question on the Kernel Janitors project.
+Message-Id: <20150209113722.GE5206@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAOgR63fYNyn7ZJ=5EEPiRXTXKr0qUTvsUj0MFFnu6f0K6V1Lgg@mail.gmail.com>
+In-Reply-To: <CAOgR63fYNyn7ZJ=5EEPiRXTXKr0qUTvsUj0MFFnu6f0K6V1Lgg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hey everyone,
+On Mon, Feb 09, 2015 at 11:55:27AM +0100, Bas Peters wrote:
+> Hey everyone,
+> 
+> I have  a very simple question: Why should I CC my patches to Kernel Janitors?
 
-I have  a very simple question: Why should I CC my patches to Kernel Janitors?
-Isn't it the responsibility of the maintainer to correct and merge
-patches? If so, what
-value does it add to CC the KJML as well? Do you maintain another
-branch that's merged
-into the kernel at every release?
+It's maybe a good idea to do it for the first patch if you are not sure
+it's correct.  Julia and I do it because otherwise we were fixing the
+same problems and maintainers were getting annoyed at the duplicates.
 
-Please don't take this question the wrong way! I try to keep up with
-the mailinglist
-to learn and I think it's a vary valuable resource for people who are
-learning, such as myself.
+> Isn't it the responsibility of the maintainer to correct and merge
+> patches?
 
-With kind regards,
+To review and merge patches, yes.
 
-Bas
+> If so, what
+> value does it add to CC the KJML as well? Do you maintain another
+> branch that's merged
+> into the kernel at every release?
+
+No.
+
+regards,
+dan carpenter
+
