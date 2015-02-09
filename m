@@ -1,37 +1,94 @@
-From: Roland Dreier <roland@kernel.org>
-Date: Tue, 17 Feb 2015 18:33:30 +0000
-Subject: Re: [PATCH 1/1] IB/mthca: remove deprecated use of pci api
-Message-Id: <CAL1RGDU7cnR=uszxLiACEc8rLUty2T6Z6bZVx+_YjSzb9WpsZQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Feb 2015 13:51:40 +0000
+Subject: [patch v2] ALSA: off by one bug in snd_riptide_joystick_probe()
+Message-Id: <20150209135139.GA26866@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150204140911.GA23076@sloth>
-In-Reply-To: <20150204140911.GA23076@sloth>
+References: <s5hy4ogfvc2.wl-tiwai@suse.de>
+In-Reply-To: <s5hy4ogfvc2.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Benoit Taine <benoit.taine@lip6.fr>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Wennborg <hans@hanshq.net>, Bjorn Helgaas <bhelgaas@google.com>
 
-On Wed, Feb 4, 2015 at 6:09 AM, Quentin Lambert
-<lambert.quentin@gmail.com> wrote:
-> -       dev->eq_table.icm_dma  = pci_map_page(dev->pdev, dev->eq_table.icm_page, 0,
-> -                                             PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
-> -       if (pci_dma_mapping_error(dev->pdev, dev->eq_table.icm_dma)) {
-> +       dev->eq_table.icm_dma  = dma_map_page(&dev->pdev->dev,
-> +                                             dev->eq_table.icm_page, 0,
-> +                                             PAGE_SIZE,
-> +                                             (enum dma_data_direction)PCI_DMA_BIDIRECTIONAL);
+The problem here is that we check:
 
-Surely this can't be right?  Shouldn't the direction just change to
-DMA_BIDIRECTIONAL?
+	if (dev >= SNDRV_CARDS)
 
-Are we really sweeping through the kernel and getting rid of pci_map_
-etc. calls?
+Then we increment "dev".
 
-If so please respin your semantic patch so that it doesn't add crazy stuff like
+       if (!joystick_port[dev++])
 
-    (enum dma_data_direction)PCI_DMA_BIDIRECTIONAL
+Then we use it as an offset into a array with SNDRV_CARDS elements.
 
-and resend the change.
+	if (!request_region(joystick_port[dev], 8, "Riptide gameport")) {
 
-Thanks,
-  Roland
+This has 3 effects:
+1) If you use the module option to specify the joystick port then it has
+   to be shifted one space over.
+2) The wrong error message will be printed on failure if you have over
+   32 cards.
+3) Static checkers will correctly complain that are off by one.
+
+Fixes: db1005ec6ff8 ('ALSA: riptide - Fix joystick resource handling')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: In the original patch I just made the array larger.
+
+diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
+index 29f2827..94639d6 100644
+--- a/sound/pci/riptide/riptide.c
++++ b/sound/pci/riptide/riptide.c
+@@ -2011,32 +2011,43 @@ snd_riptide_joystick_probe(struct pci_dev *pci, const struct pci_device_id *id)
+ {
+ 	static int dev;
+ 	struct gameport *gameport;
++	int ret;
+ 
+ 	if (dev >= SNDRV_CARDS)
+ 		return -ENODEV;
++
+ 	if (!enable[dev]) {
+-		dev++;
+-		return -ENOENT;
++		ret = -ENOENT;
++		goto inc_dev;
+ 	}
+ 
+-	if (!joystick_port[dev++])
+-		return 0;
++	if (!joystick_port[dev]) {
++		ret = 0;
++		goto inc_dev;
++	}
+ 
+ 	gameport = gameport_allocate_port();
+-	if (!gameport)
+-		return -ENOMEM;
++	if (!gameport) {
++		ret = -ENOMEM;
++		goto inc_dev;
++	}
+ 	if (!request_region(joystick_port[dev], 8, "Riptide gameport")) {
+ 		snd_printk(KERN_WARNING
+ 			   "Riptide: cannot grab gameport 0x%x\n",
+ 			   joystick_port[dev]);
+ 		gameport_free_port(gameport);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto inc_dev;
+ 	}
+ 
+ 	gameport->io = joystick_port[dev];
+ 	gameport_register_port(gameport);
+ 	pci_set_drvdata(pci, gameport);
+-	return 0;
++
++	ret = 0;
++inc_dev:
++	dev++;
++	return ret;
+ }
+ 
+ static void snd_riptide_joystick_remove(struct pci_dev *pci)
+
