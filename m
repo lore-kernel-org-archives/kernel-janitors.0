@@ -1,43 +1,70 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Feb 2015 09:20:58 +0000
-Subject: [PATCH] GPU-DRM-Tegra: Delete an unnecessary check before the function call "vunmap"
-Message-Id: <54D335FA.6020101@users.sourceforge.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Tue, 10 Feb 2015 08:55:03 +0000
+Subject: [PATCH 1/1] staging: ozwpan: Remove allocation from delaration line
+Message-Id: <20150210085503.GA10872@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, =?windows-1252?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Shigekatsu Tateno <shigekatsu.tateno@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Feb 2015 10:12:51 +0100
+This patch removes allocation from declaration line because
+people are known to gloss over declarations.
 
-The vunmap() function performs also input parameter validation.
-Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 ---
- drivers/gpu/drm/tegra/fb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ This patch was inspired by http://www.spinics.net/lists/linux-usb/msg44389.html
+ and https://lkml.org/lkml/2015/2/7/47 but I am not sure the argument is valid
+ in the case of a single declaration.
+ 
+ drivers/staging/ozwpan/ozhcd.c |  6 ++++--
+ drivers/staging/ozwpan/ozpd.c  | 10 +++++++---
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index e9c715d..803598e 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -66,7 +66,7 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
- 		struct tegra_bo *bo = fb->planes[i];
+diff --git a/drivers/staging/ozwpan/ozhcd.c b/drivers/staging/ozwpan/ozhcd.c
+index 8543bb2..230ba08 100644
+--- a/drivers/staging/ozwpan/ozhcd.c
++++ b/drivers/staging/ozwpan/ozhcd.c
+@@ -280,8 +280,10 @@ static void oz_free_urb_link(struct oz_urb_link *urbl)
+  */
+ static struct oz_endpoint *oz_ep_alloc(int buffer_size, gfp_t mem_flags)
+ {
+-	struct oz_endpoint *ep -		kzalloc(sizeof(struct oz_endpoint)+buffer_size, mem_flags);
++	struct oz_endpoint *ep;
++
++	ep = kzalloc(sizeof(struct oz_endpoint)+buffer_size, mem_flags);
++
+ 	if (ep) {
+ 		INIT_LIST_HEAD(&ep->urb_list);
+ 		INIT_LIST_HEAD(&ep->link);
+diff --git a/drivers/staging/ozwpan/ozpd.c b/drivers/staging/ozwpan/ozpd.c
+index 852c288..3cc5f14 100644
+--- a/drivers/staging/ozwpan/ozpd.c
++++ b/drivers/staging/ozwpan/ozpd.c
+@@ -102,7 +102,9 @@ void oz_pd_put(struct oz_pd *pd)
+  */
+ struct oz_pd *oz_pd_alloc(const u8 *mac_addr)
+ {
+-	struct oz_pd *pd = kzalloc(sizeof(struct oz_pd), GFP_ATOMIC);
++	struct oz_pd *pd;
++
++	pd = kzalloc(sizeof(struct oz_pd), GFP_ATOMIC);
  
- 		if (bo) {
--			if (bo->pages && bo->vaddr)
-+			if (bo->pages)
- 				vunmap(bo->vaddr);
- 
- 			drm_gem_object_unreference_unlocked(&bo->gem);
+ 	if (pd) {
+ 		int i;
+@@ -652,8 +654,10 @@ static struct oz_isoc_stream *pd_stream_find(struct oz_pd *pd, u8 ep_num)
+  */
+ int oz_isoc_stream_create(struct oz_pd *pd, u8 ep_num)
+ {
+-	struct oz_isoc_stream *st -		kzalloc(sizeof(struct oz_isoc_stream), GFP_ATOMIC);
++	struct oz_isoc_stream *st;
++
++	st = kzalloc(sizeof(struct oz_isoc_stream), GFP_ATOMIC);
++
+ 	if (!st)
+ 		return -ENOMEM;
+ 	st->ep_num = ep_num;
 -- 
-2.2.2
+1.9.1
 
