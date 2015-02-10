@@ -1,52 +1,71 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 25 Feb 2015 19:10:05 +0000
-Subject: Re: [patch] ALSA: azt3328: some indenting cleanups
-Message-Id: <s5htwy93j02.wl-tiwai@suse.de>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Tue, 10 Feb 2015 13:02:14 +0000
+Subject: [PATCH 1/1] staging: unisys: Remove allocation from declaration line
+Message-Id: <20150210130214.GA18429@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225133245.GR19745@mwanda>
-In-Reply-To: <20150225133245.GR19745@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Benoit Taine <benoit.taine@lip6.fr>, Bjorn Helgaas <bhelgaas@google.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Benjamin Romer <benjamin.romer@unisys.com>, David Kershner <david.kershner@unisys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, sparmaintainer@unisys.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-At Wed, 25 Feb 2015 16:32:45 +0300,
-Dan Carpenter wrote:
-> 
-> A few minor tweaks to make things line up correctly.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This patch removes allocation from declaration line because
+people are known to gloss over declarations.
 
-Applied, thanks.
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/staging/unisys/visorchipset/visorchipset_main.c | 6 +++---
+ drivers/staging/unisys/visorutil/charqueue.c            | 3 ++-
+ drivers/staging/unisys/visorutil/memregion_direct.c     | 5 +++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/staging/unisys/visorchipset/visorchipset_main.c b/drivers/staging/unisys/visorchipset/visorchipset_main.c
+index 82e259d..a6c6bb7 100644
+--- a/drivers/staging/unisys/visorchipset/visorchipset_main.c
++++ b/drivers/staging/unisys/visorchipset/visorchipset_main.c
+@@ -1604,9 +1604,9 @@ parahotplug_next_expiration(void)
+ static struct parahotplug_request *
+ parahotplug_request_create(struct controlvm_message *msg)
+ {
+-	struct parahotplug_request *req -	    kmalloc(sizeof(struct parahotplug_request),
+-		    GFP_KERNEL|__GFP_NORETRY);
++	struct parahotplug_request *req;
++
++	req = kmalloc(sizeof(struct parahotplug_request), GFP_KERNEL|__GFP_NORETRY);
+ 	if (req = NULL)
+ 		return NULL;
+ 
+diff --git a/drivers/staging/unisys/visorutil/charqueue.c b/drivers/staging/unisys/visorutil/charqueue.c
+index ac7acb7..e2ee5ee 100644
+--- a/drivers/staging/unisys/visorutil/charqueue.c
++++ b/drivers/staging/unisys/visorutil/charqueue.c
+@@ -36,8 +36,9 @@ struct charqueue {
+ struct charqueue *visor_charqueue_create(ulong nslots)
+ {
+ 	int alloc_size = sizeof(struct charqueue) + nslots + 1;
+-	struct charqueue *cq = kmalloc(alloc_size, GFP_KERNEL|__GFP_NORETRY);
++	struct charqueue *cq;
+ 
++	cq = kmalloc(alloc_size, GFP_KERNEL|__GFP_NORETRY);
+ 	if (cq = NULL) {
+ 		ERRDRV("visor_charqueue_create allocation failed (alloc_size=%d)",
+ 		       alloc_size);
+diff --git a/drivers/staging/unisys/visorutil/memregion_direct.c b/drivers/staging/unisys/visorutil/memregion_direct.c
+index 33522cc..f4ecac0 100644
+--- a/drivers/staging/unisys/visorutil/memregion_direct.c
++++ b/drivers/staging/unisys/visorutil/memregion_direct.c
+@@ -41,8 +41,9 @@ struct memregion *
+ visor_memregion_create(HOSTADDRESS physaddr, ulong nbytes)
+ {
+ 	struct memregion *rc = NULL;
+-	struct memregion *memregion = kzalloc(sizeof(*memregion),
+-					      GFP_KERNEL | __GFP_NORETRY);
++	struct memregion *memregion;
++
++	memregion = kzalloc(sizeof(*memregion), GFP_KERNEL | __GFP_NORETRY);
+ 	if (memregion = NULL) {
+ 		ERRDRV("visor_memregion_create allocation failed");
+ 		return NULL;
+-- 
+1.9.1
 
-Takashi
-
-> 
-> diff --git a/sound/pci/azt3328.c b/sound/pci/azt3328.c
-> index a40a2b4..33b2a0a 100644
-> --- a/sound/pci/azt3328.c
-> +++ b/sound/pci/azt3328.c
-> @@ -1385,8 +1385,8 @@ snd_azf3328_ctrl_codec_activity(struct snd_azf3328 *chip,
->  					.running)
->  			     &&  (!chip->codecs[peer_codecs[codec_type].other2]
->  					.running));
-> -		 }
-> -		 if (call_function)
-> +		}
-> +		if (call_function)
->  			snd_azf3328_ctrl_enable_codecs(chip, enable);
->  
->  		/* ...and adjust clock, too
-> @@ -2126,7 +2126,8 @@ static struct snd_pcm_ops snd_azf3328_i2s_out_ops = {
->  static int
->  snd_azf3328_pcm(struct snd_azf3328 *chip)
->  {
-> -enum { AZF_PCMDEV_STD, AZF_PCMDEV_I2S_OUT, NUM_AZF_PCMDEVS }; /* pcm devices */
-> +	/* pcm devices */
-> +	enum { AZF_PCMDEV_STD, AZF_PCMDEV_I2S_OUT, NUM_AZF_PCMDEVS };
->  
->  	struct snd_pcm *pcm;
->  	int err;
-> 
