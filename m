@@ -1,39 +1,29 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 25 Feb 2015 19:10:16 +0000
-Subject: Re: [patch] ALSA: cmipci: remove a stray space character
-Message-Id: <s5hsidt3izr.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 10 Feb 2015 08:03:22 +0000
+Subject: [patch] pnfs: delete an unintended goto
+Message-Id: <20150210080322.GA8762@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225133357.GS19745@mwanda>
-In-Reply-To: <20150225133357.GS19745@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Benoit Taine <benoit.taine@lip6.fr>, Bjorn Helgaas <bhelgaas@google.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Wed, 25 Feb 2015 16:33:57 +0300,
-Dan Carpenter wrote:
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There was an extra goto here where it shouldn't be, because of a merge
+error.
 
-Applied, thanks.
+Fixes: e2c63e091e29 ('Merge branch 'flexfiles'')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-
-> 
-> diff --git a/sound/pci/cmipci.c b/sound/pci/cmipci.c
-> index 1d0f2ca..6cf464d 100644
-> --- a/sound/pci/cmipci.c
-> +++ b/sound/pci/cmipci.c
-> @@ -2062,7 +2062,7 @@ static int snd_cmipci_get_volume(struct snd_kcontrol *kcontrol,
->  		val = (snd_cmipci_mixer_read(cm, reg.right_reg) >> reg.right_shift) & reg.mask;
->  		if (reg.invert)
->  			val = reg.mask - val;
-> -		 ucontrol->value.integer.value[1] = val;
-> +		ucontrol->value.integer.value[1] = val;
->  	}
->  	spin_unlock_irq(&cm->reg_lock);
->  	return 0;
-> 
+diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
+index 107b321..4f802b02 100644
+--- a/fs/nfs/pnfs.c
++++ b/fs/nfs/pnfs.c
+@@ -1078,7 +1078,6 @@ bool pnfs_roc(struct inode *ino)
+ 			goto out_noroc;
+ 	}
+ 
+-		goto out_noroc;
+ 	pnfs_clear_retry_layoutget(lo);
+ 	list_for_each_entry_safe(lseg, tmp, &lo->plh_segs, pls_list)
+ 		if (test_bit(NFS_LSEG_ROC, &lseg->pls_flags)) {
