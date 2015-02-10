@@ -1,85 +1,67 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Date: Thu, 05 Feb 2015 08:29:04 +0000
-Subject: Re: [PATCH] GPU-DRM-Exynos: Delete unnecessary checks before two function calls
-Message-Id: <54D329D0.7050006@samsung.com>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Tue, 10 Feb 2015 09:24:12 +0000
+Subject: [PATCH v2 1/1] staging: ozwpan: Remove allocation from delaration line
+Message-Id: <20150210092412.GA12753@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54D28870.3060400@users.sourceforge.net>
-In-Reply-To: <54D28870.3060400@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Shigekatsu Tateno <shigekatsu.tateno@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Hi,
+This patch removes allocation from declaration line because
+people are known to gloss over declarations.
 
-On 02/05/2015 06:00 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 21:54:45 +0100
-> 
-> The functions phy_power_on() and vunmap() perform also input
-> parameter validation. Thus the test around their calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/exynos/exynos_dp_core.c   | 6 ++----
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 2 +-
->  2 files changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> index 34d46aa..306cf1d 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> @@ -1057,14 +1057,12 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
->  
->  static void exynos_dp_phy_init(struct exynos_dp_device *dp)
->  {
-> -	if (dp->phy)
-> -		phy_power_on(dp->phy);
-> +	phy_power_on(dp->phy);
->  }
->  
->  static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
->  {
-> -	if (dp->phy)
-> -		phy_power_off(dp->phy);
-> +	phy_power_off(dp->phy);
->  }
->  
->  static void exynos_dp_poweron(struct exynos_drm_display *display)
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index e12ea90..0dd448a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -313,7 +313,7 @@ static void exynos_drm_fbdev_destroy(struct drm_device *dev,
->  	struct exynos_drm_gem_obj *exynos_gem_obj = exynos_fbd->exynos_gem_obj;
->  	struct drm_framebuffer *fb;
->  
-> -	if (is_drm_iommu_supported(dev) && exynos_gem_obj->buffer->kvaddr)
-> +	if (is_drm_iommu_supported(dev))
->  		vunmap(exynos_gem_obj->buffer->kvaddr);
->  
->  	/* release drm framebuffer and real buffer */
-> 
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ Changes since v1:
+ - Remove the blank line between allocation and NULL check
 
-Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
+ drivers/staging/ozwpan/ozhcd.c | 5 +++--
+ drivers/staging/ozwpan/ozpd.c  | 8 +++++---
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
-Thanks.
+diff --git a/drivers/staging/ozwpan/ozhcd.c b/drivers/staging/ozwpan/ozhcd.c
+index 8543bb2..96e95bf 100644
+--- a/drivers/staging/ozwpan/ozhcd.c
++++ b/drivers/staging/ozwpan/ozhcd.c
+@@ -280,8 +280,9 @@ static void oz_free_urb_link(struct oz_urb_link *urbl)
+  */
+ static struct oz_endpoint *oz_ep_alloc(int buffer_size, gfp_t mem_flags)
+ {
+-	struct oz_endpoint *ep -		kzalloc(sizeof(struct oz_endpoint)+buffer_size, mem_flags);
++	struct oz_endpoint *ep;
++
++	ep = kzalloc(sizeof(struct oz_endpoint)+buffer_size, mem_flags);
+ 	if (ep) {
+ 		INIT_LIST_HEAD(&ep->urb_list);
+ 		INIT_LIST_HEAD(&ep->link);
+diff --git a/drivers/staging/ozwpan/ozpd.c b/drivers/staging/ozwpan/ozpd.c
+index 852c288..1c95d57 100644
+--- a/drivers/staging/ozwpan/ozpd.c
++++ b/drivers/staging/ozwpan/ozpd.c
+@@ -102,8 +102,9 @@ void oz_pd_put(struct oz_pd *pd)
+  */
+ struct oz_pd *oz_pd_alloc(const u8 *mac_addr)
+ {
+-	struct oz_pd *pd = kzalloc(sizeof(struct oz_pd), GFP_ATOMIC);
++	struct oz_pd *pd;
+ 
++	pd = kzalloc(sizeof(struct oz_pd), GFP_ATOMIC);
+ 	if (pd) {
+ 		int i;
+ 
+@@ -652,8 +653,9 @@ static struct oz_isoc_stream *pd_stream_find(struct oz_pd *pd, u8 ep_num)
+  */
+ int oz_isoc_stream_create(struct oz_pd *pd, u8 ep_num)
+ {
+-	struct oz_isoc_stream *st -		kzalloc(sizeof(struct oz_isoc_stream), GFP_ATOMIC);
++	struct oz_isoc_stream *st;
++
++	st = kzalloc(sizeof(struct oz_isoc_stream), GFP_ATOMIC);
+ 	if (!st)
+ 		return -ENOMEM;
+ 	st->ep_num = ep_num;
+-- 
+1.9.1
+
