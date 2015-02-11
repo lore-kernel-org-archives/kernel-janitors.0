@@ -1,29 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Feb 2015 08:37:30 +0000
-Subject: Re: [PATCH] net: ep93xx_eth: Delete unnecessary checks before the function call "kfree"
-Message-Id: <20150205.003730.1411687823089677821.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Feb 2015 10:26:21 +0000
+Subject: [patch] watchdog: mtk_wdt: signedness bug in mtk_wdt_start()
+Message-Id: <20150211102621.GC18515@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54D23415.6070005@users.sourceforge.net>
-In-Reply-To: <54D23415.6070005@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: hsweeten@visionengravers.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Feb 2015 16:00:37 +0100
+"ret" should be signed for the error handling to work correctly.  This
+doesn't matter much in real life since mtk_wdt_set_timeout() always
+succeeds.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 15:56:58 +0100
-> 
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
+index a87f6df..938b987 100644
+--- a/drivers/watchdog/mtk_wdt.c
++++ b/drivers/watchdog/mtk_wdt.c
+@@ -133,7 +133,7 @@ static int mtk_wdt_start(struct watchdog_device *wdt_dev)
+ 	u32 reg;
+ 	struct mtk_wdt_dev *mtk_wdt = watchdog_get_drvdata(wdt_dev);
+ 	void __iomem *wdt_base = mtk_wdt->wdt_base;
+-	u32 ret;
++	int ret;
+ 
+ 	ret = mtk_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
+ 	if (ret < 0)
