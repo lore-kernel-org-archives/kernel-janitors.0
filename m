@@ -1,39 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Feb 2015 13:15:14 +0000
-Subject: [patch] memstick: mspro_block: add missing curly braces
-Message-Id: <20150225131514.GC19745@mwanda>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Wed, 11 Feb 2015 15:46:33 +0000
+Subject: Re: [alsa-devel] [patch] ALSA: seq: potential out of bounds in	do_control()
+Message-Id: <s5h8ug4o3hi.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150211151054.GA30155@mwanda>
+	<54DB76D6.3090803@ladisch.de>
+In-Reply-To: <54DB76D6.3090803@ladisch.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Dubov <oakad@yahoo.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From the indenting we can see the curly braces were obviously intended.
-This is a static checker fix, but my guess is that we don't read enough
-bytes, because we don't calculate "t_len" correctly.
+At Wed, 11 Feb 2015 16:35:50 +0100,
+Clemens Ladisch wrote:
+> 
+> Dan Carpenter wrote:
+> > Smatch complains that "control" is user specifigy and needs to be
+> > capped.  The call tree to understand this warning is quite long.
+> >
+> > snd_seq_write()  <-- get the event from the user
+> >   snd_seq_client_enqueue_event()
+> >     snd_seq_deliver_event()
+> >       deliver_to_subscribers()
+> >         snd_seq_deliver_single_event()
+> >           snd_opl3_oss_event_input()
+> >             snd_midi_process_event()
+> >               do_control()
+> >
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > I have spent some time reviewing this code, but I may have missed
+> > something where we verify that control is in bounds.  I'm not very
+> > familiar with this code and the call tree is fairly long.
+> 
+> BTW, there are other ways to deliver events.  In any case, events are
+> pretty much opaque blobs, and most fields are not checked.
 
-Fixes: f1d82698029b ('memstick: use fully asynchronous request processing')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Right.
 
-diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
-index fc145d2..922a750 100644
---- a/drivers/memstick/core/mspro_block.c
-+++ b/drivers/memstick/core/mspro_block.c
-@@ -758,7 +758,7 @@ static int mspro_block_complete_req(struct memstick_dev *card, int error)
- 
- 		if (error || (card->current_mrq.tpc = MSPRO_CMD_STOP)) {
- 			if (msb->data_dir = READ) {
--				for (cnt = 0; cnt < msb->current_seg; cnt++)
-+				for (cnt = 0; cnt < msb->current_seg; cnt++) {
- 					t_len += msb->req_sg[cnt].length
- 						 / msb->page_size;
- 
-@@ -766,6 +766,7 @@ static int mspro_block_complete_req(struct memstick_dev *card, int error)
- 						t_len += msb->current_page - 1;
- 
- 					t_len *= msb->page_size;
-+				}
- 			}
- 		} else
- 			t_len = blk_rq_bytes(msb->block_req);
+
+> > diff --git a/sound/core/seq/seq_midi_emul.c b/sound/core/seq/seq_midi_emul.c
+> > index 9b6470c..7ba9373 100644
+> > --- a/sound/core/seq/seq_midi_emul.c
+> > +++ b/sound/core/seq/seq_midi_emul.c
+> > @@ -269,6 +269,9 @@ do_control(struct snd_midi_op *ops, void *drv, struct snd_midi_channel_set *chse
+> >  {
+> >  	int  i;
+> >
+> > +	if (control >= ARRAY_SIZE(chan->control))
+> > +		return;
+> 
+> Is this correct for an unsigned int converted to an int?
+
+That should be OK.  ARRAY_SIZE() is size_t (i.e. unsigned long), so
+the comparison is done in unsigned.  When control is negative, it's
+beyond ARRAY_SIZE() and handled as an error here, too.
+
+
+Takashi
