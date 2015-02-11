@@ -1,34 +1,31 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Sun, 08 Feb 2015 23:28:35 +0000
-Subject: Re: [PATCH 1/1] drivers/base: Remove unnecessary OOM message
-Message-Id: <2675935.6VkJO9HMpc@vostro.rjw.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Feb 2015 13:08:32 +0000
+Subject: [patch] nfsd: fix comparison in fh_fsid_match()
+Message-Id: <20150211130832.GA25573@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150206153912.GA8486@sloth> <20150206211708.GA25967@amd> <20150207102436.GB5206@mwanda>
-In-Reply-To: <20150207102436.GB5206@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Joe Perches <joe@perches.com>, Ming Lei <ming.lei@canonical.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>, Christoph Hellwig <hch@lst.de>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Saturday, February 07, 2015 01:24:36 PM Dan Carpenter wrote:
-> Facts:
-> 1) None of these four error messages will ever be printed.
->    http://lwn.net/Articles/627419/
-> 2) These messages are a waste of RAM.
+We're supposed to be testing that the fh_fsid's match but because the
+parenthesis are in the wrong place, then we only check the first
+byte.
 
-So this is what the changelog should be saying, not that it "fixes
-checkpatch warnings".
+Fixes: 9558f2500a20 ('nfsd: add fh_fsid_match helper')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-checkpatch warnings in *existing* code are meaningless, unless they
-uncover a *real* problem in it which quite arguably this one is.  But
-in those cases patch changelogs should talk about the *real* problems
-and they don't even need to mention checkpatch then as far as I'm
-concerned.
-
-Send this one with a better changelog and I'll apply it.
-
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
+index 84cae20..f229204 100644
+--- a/fs/nfsd/nfsfh.h
++++ b/fs/nfsd/nfsfh.h
+@@ -200,7 +200,7 @@ static inline bool fh_fsid_match(struct knfsd_fh *fh1, struct knfsd_fh *fh2)
+ {
+ 	if (fh1->fh_fsid_type != fh2->fh_fsid_type)
+ 		return false;
+-	if (memcmp(fh1->fh_fsid, fh2->fh_fsid, key_len(fh1->fh_fsid_type) != 0))
++	if (memcmp(fh1->fh_fsid, fh2->fh_fsid, key_len(fh1->fh_fsid_type)) != 0)
+ 		return false;
+ 	return true;
+ }
