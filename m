@@ -1,29 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 03 Feb 2015 03:30:12 +0000
-Subject: Re: [PATCH] net: sctp: Deletion of an unnecessary check before the function call "kfree"
-Message-Id: <20150202.193012.1930991920361082218.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Feb 2015 10:25:09 +0000
+Subject: [patch] mtd: hisilicon: && vs & typo
+Message-Id: <20150211102509.GB18515@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54CD0DCF.9020804@users.sourceforge.net>
-In-Reply-To: <54CD0DCF.9020804@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: nhorman@tuxdriver.com, vyasevich@gmail.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 31 Jan 2015 18:15:59 +0100
+The intent was to mask away some bits here, not to test true or false.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 31 Jan 2015 18:10:03 +0100
-> 
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fix: 54f531f6e332 ('mtd: hisilicon: add a new NAND controller driver for hisilicon hip04 Soc')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to net-next, thanks.
+diff --git a/drivers/mtd/nand/hisi504_nand.c b/drivers/mtd/nand/hisi504_nand.c
+index 484e1db..289ad3a 100644
+--- a/drivers/mtd/nand/hisi504_nand.c
++++ b/drivers/mtd/nand/hisi504_nand.c
+@@ -495,7 +495,7 @@ static void hisi_nfc_cmdfunc(struct mtd_info *mtd, unsigned command, int column,
+ 		flag = hinfc_read(host, HINFC504_CON);
+ 		if (chip->ecc.mode = NAND_ECC_HW)
+ 			hinfc_write(host,
+-				    flag && ~(HINFC504_CON_ECCTYPE_MASK <<
++				    flag & ~(HINFC504_CON_ECCTYPE_MASK <<
+ 				    HINFC504_CON_ECCTYPE_SHIFT), HINFC504_CON);
+ 
+ 		host->offset = 0;
