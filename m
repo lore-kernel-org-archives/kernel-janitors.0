@@ -1,45 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Feb 2015 22:26:51 +0000
-Subject: [PATCH 1/2] SCSI-lpfc: Delete an unnecessary check before the function call "kfree"
-Message-Id: <54D3EE2B.50705@users.sourceforge.net>
+From: Bas Peters <baspeters93@gmail.com>
+Date: Wed, 11 Feb 2015 11:24:08 +0000
+Subject: [PATCH] fs: ufs: super.c: remove unnecessary casting of value.
+Message-Id: <1423653848-6684-1-git-send-email-baspeters93@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <54D3EDDB.1050905@users.sourceforge.net>
-In-Reply-To: <54D3EDDB.1050905@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@emulex.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: dushistov@mail.ru
+Cc: Bas Peters <baspeters93@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Feb 2015 22:45:02 +0100
+It is not necessary to cast the value returned by kmem_cache_alloc(),
+thus it can be deleted.
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+This issue was detected using Coccinelle.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Bas Peters <baspeters93@gmail.com>
 ---
- drivers/scsi/lpfc/lpfc_bsg.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/ufs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
-index a7bf359..1af783a 100644
---- a/drivers/scsi/lpfc/lpfc_bsg.c
-+++ b/drivers/scsi/lpfc/lpfc_bsg.c
-@@ -1261,9 +1261,7 @@ lpfc_bsg_hba_set_event(struct fc_bsg_job *job)
- 	return 0; /* call job done later */
- 
- job_error:
--	if (dd_data != NULL)
--		kfree(dd_data);
--
-+	kfree(dd_data);
- 	job->dd_data = NULL;
- 	return rc;
- }
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index da73801..1e4fbf7 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -1415,7 +1415,7 @@ static struct kmem_cache * ufs_inode_cachep;
+ static struct inode *ufs_alloc_inode(struct super_block *sb)
+ {
+ 	struct ufs_inode_info *ei;
+-	ei = (struct ufs_inode_info *)kmem_cache_alloc(ufs_inode_cachep, GFP_NOFS);
++	ei = kmem_cache_alloc(ufs_inode_cachep, GFP_NOFS);
+ 	if (!ei)
+ 		return NULL;
+ 	ei->vfs_inode.i_version = 1;
 -- 
-2.2.2
+2.1.0
 
