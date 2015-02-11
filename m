@@ -1,48 +1,38 @@
-From: Trond Myklebust <trond.myklebust@primarydata.com>
-Date: Wed, 11 Feb 2015 12:55:08 +0000
-Subject: Re: [patch] pnfs/flexfiles: move kfree() after the deference
-Message-Id: <CAHQdGtThcmrcCg8oRQuxc_a97Y4sLK9+LN2+wFwi-KwU5H-RTw@mail.gmail.com>
+From: Bas Peters <baspeters93@gmail.com>
+Date: Wed, 11 Feb 2015 09:26:54 +0000
+Subject: [PATCH] fs: dlm: lockspace.c: removal of unnecessary check before calling kfree()
+Message-Id: <1423646814-22720-1-git-send-email-baspeters93@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150211102240.GA18515@mwanda>
-In-Reply-To: <20150211102240.GA18515@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, Tao Peng <bergwolf@primarydata.com>, Weston Andros Adamson <dros@primarydata.com>, Tom Haynes <loghyr@primarydata.com>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, Kernel Janitors Mailing List <kernel-janitors@vger.kernel.org>
+To: ccaulfie@redhat.com, teigland@redhat.com
+Cc: Bas Peters <baspeters93@gmail.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+kfree() checks its argument. It is therefore unnecessary to do this
+twice.
 
-On Wed, Feb 11, 2015 at 5:22 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We dereference "err" in the the debug printk so we have to move the
-> kfree() down a couple lines.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/fs/nfs/flexfilelayout/flexfilelayoutdev.c b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
-> index 3bbb16b..e2c01f2 100644
-> --- a/fs/nfs/flexfilelayout/flexfilelayoutdev.c
-> +++ b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
-> @@ -515,10 +515,10 @@ int ff_layout_encode_ds_ioerr(struct nfs4_flexfile_layout *flo,
->                 *p++ = cpu_to_be32(err->opnum);
->                 *count += 1;
->                 list_del(&err->list);
-> -               kfree(err);
->                 dprintk("%s: offset %llu length %llu status %d op %d count %d\n",
->                         __func__, err->offset, err->length, err->status,
->                         err->opnum, *count);
-> +               kfree(err);
->         }
->
->         return 0;
+This issue was detected using Coccinelle.
 
-I believe this is a fix for the same bug that was reported by Julia
-Lawall a couple of days ago. There should be a fix for this already at
-http://git.linux-nfs.org/?p=trondmy/linux-nfs.git;a=commitdiff;hH0486b4733d5bc7d9fe765b34bc6c2b72d5c12e
+Signed-off-by: Bas Peters <baspeters93@gmail.com>
+---
+ fs/dlm/lockspace.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Cheers
-  Trond
+diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
+index f3e7278..b660b93 100644
+--- a/fs/dlm/lockspace.c
++++ b/fs/dlm/lockspace.c
+@@ -674,8 +674,7 @@ static int new_lockspace(const char *name, const char *cluster,
+  out_lkbidr:
+ 	idr_destroy(&ls->ls_lkbidr);
+ 	for (i = 0; i < DLM_REMOVE_NAMES_MAX; i++) {
+-		if (ls->ls_remove_names[i])
+-			kfree(ls->ls_remove_names[i]);
++		kfree(ls->ls_remove_names[i]);
+ 	}
+  out_rsbtbl:
+ 	vfree(ls->ls_rsbtbl);
 -- 
-Trond Myklebust
-Linux NFS client maintainer, PrimaryData
-trond.myklebust@primarydata.com
+2.1.0
+
