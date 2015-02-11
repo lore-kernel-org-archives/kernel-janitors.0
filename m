@@ -1,38 +1,26 @@
-From: Bas Peters <baspeters93@gmail.com>
-Date: Wed, 11 Feb 2015 09:26:54 +0000
-Subject: [PATCH] fs: dlm: lockspace.c: removal of unnecessary check before calling kfree()
-Message-Id: <1423646814-22720-1-git-send-email-baspeters93@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 11 Feb 2015 12:10:34 +0000
+Subject: Re: [PATCH] fs: dlm: lockspace.c: removal of unnecessary check before calling kfree()
+Message-Id: <54DB46BA.7020803@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1423646814-22720-1-git-send-email-baspeters93@gmail.com>
+In-Reply-To: <1423646814-22720-1-git-send-email-baspeters93@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ccaulfie@redhat.com, teigland@redhat.com
-Cc: Bas Peters <baspeters93@gmail.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bas Peters <baspeters93@gmail.com>, Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>
+Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-kfree() checks its argument. It is therefore unnecessary to do this
-twice.
+> kfree() checks its argument. It is therefore unnecessary to do this twice.
+> 
+> This issue was detected using Coccinelle.
 
-This issue was detected using Coccinelle.
+Would you like to integrate my update suggestion 'fs-DLM: Deletion of
+unnecessary checks before the function call "kfree"'?
+https://lkml.org/lkml/2014/11/29/88
+http://article.gmane.org/gmane.linux.kernel/1840524
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg778279.html
 
-Signed-off-by: Bas Peters <baspeters93@gmail.com>
----
- fs/dlm/lockspace.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
-index f3e7278..b660b93 100644
---- a/fs/dlm/lockspace.c
-+++ b/fs/dlm/lockspace.c
-@@ -674,8 +674,7 @@ static int new_lockspace(const char *name, const char *cluster,
-  out_lkbidr:
- 	idr_destroy(&ls->ls_lkbidr);
- 	for (i = 0; i < DLM_REMOVE_NAMES_MAX; i++) {
--		if (ls->ls_remove_names[i])
--			kfree(ls->ls_remove_names[i]);
-+		kfree(ls->ls_remove_names[i]);
- 	}
-  out_rsbtbl:
- 	vfree(ls->ls_rsbtbl);
--- 
-2.1.0
+Regards,
+Markus
 
