@@ -1,47 +1,33 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Tue, 10 Feb 2015 10:59:40 +0000
-Subject: Re: [patch] PM / devfreq: event: testing the wrong variable
-Message-Id: <54D9E49C.80105@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Date: Thu, 12 Feb 2015 09:00:45 +0000
+Subject: Re: Re: [patch] PM / devfreq: event: testing the wrong variable
+Message-Id: <808951994.1086901423731642675.JavaMail.weblogic@epmlwas01a>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150210103547.GA18481@mwanda>
 In-Reply-To: <20150210103547.GA18481@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On 02/10/2015 07:35 PM, Dan Carpenter wrote:
-> There is a typo here so we test "edev" but we intended to test
-> "edev[i]".
-> 
-> Fixes: f262f28c1470 ('PM / devfreq: event: Add devfreq_event class')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index 135be0a..ad83473 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -327,8 +327,8 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
->  
->  	for (i = 0; i < info->num_events; i++) {
->  		edev[i] = devm_devfreq_event_add_edev(&pdev->dev, &desc[i]);
-> -		if (IS_ERR(edev)) {
-> -			ret = PTR_ERR(edev);
-> +		if (IS_ERR(edev[i])) {
-> +			ret = PTR_ERR(edev[i]);
->  			dev_err(&pdev->dev,
->  				"failed to add devfreq-event device\n");
->  			goto err;
-> 
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-But,
-This patch has not yet merged to linux.git (http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git).
-After releasing Linux 3.20-rc1, this patch will be handled.
-
-Thanks,
-Chanwoo Choi
-
-
+PiAgIA0KPiAgT24gMDIvMTAvMjAxNSAwNzozNSBQTSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4g
+PiBUaGVyZSBpcyBhIHR5cG8gaGVyZSBzbyB3ZSB0ZXN0ICJlZGV2IiBidXQgd2UgaW50ZW5kZWQg
+dG8gdGVzdA0KPiA+ICJlZGV2W2ldIi4NCj4gPiANCj4gPiBGaXhlczogZjI2MmYyOGMxNDcwICgn
+UE0gLyBkZXZmcmVxOiBldmVudDogQWRkIGRldmZyZXFfZXZlbnQgY2xhc3MnKQ0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gPiAN
+Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMgYi9k
+cml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiA+IGluZGV4IDEzNWJlMGEuLmFk
+ODM0NzMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11
+LmMNCj4gPiArKysgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiA+IEBA
+IC0zMjcsOCArMzI3LDggQEAgc3RhdGljIGludCBleHlub3NfcHBtdV9wcm9iZShzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+IC0JCWlmIChJU19FUlIoZWRldikpIHsNCj4gPiAtCQkJ
+cmV0ID0gUFRSX0VSUihlZGV2KTsNCj4gPiArCQlpZiAoSVNfRVJSKGVkZXZbaV0pKSB7DQo+ID4g
+KwkJCXJldCA9IFBUUl9FUlIoZWRldltpXSk7DQo+IA0KPiBSZXZpZXdlZC1ieTogQ2hhbndvbyBD
+aG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+DQo+IA0KPiBCdXQsDQo+IFRoaXMgcGF0Y2ggaGFz
+IG5vdCB5ZXQgbWVyZ2VkIHRvIGxpbnV4LmdpdCAoaHR0cDovL2dpdC5rZXJuZWwub3JnL2NnaXQv
+bGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQpLg0KPiBBZnRlciByZWxlYXNpbmcg
+TGludXggMy4yMC1yYzEsIHRoaXMgcGF0Y2ggd2lsbCBiZSBoYW5kbGVkLg0KPiANCj4gVGhhbmtz
+LA0KPiBDaGFud29vIENob2kNCg0KQWNrZWQtYnk6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFt
+QHNhbXN1bmcuY29tPg0KDQo
 
