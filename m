@@ -1,27 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 28 Feb 2015 17:59:40 +0000
-Subject: Re: [patch -mainline] niu: fix error handling in niu_class_to_ethflow()
-Message-Id: <20150228.125940.2141368511096709635.davem@davemloft.net>
+From: Silvan Jegen <s.jegen@gmail.com>
+Date: Sun, 15 Feb 2015 12:11:04 +0000
+Subject: [PATCH 1/2] [media] mantis: Move jump label to activate dead code
+Message-Id: <1424002265-16865-2-git-send-email-s.jegen@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150226165656.GB6820@mwanda>
-In-Reply-To: <20150226165656.GB6820@mwanda>
+References: <1424002265-16865-1-git-send-email-s.jegen@gmail.com>
+In-Reply-To: <1424002265-16865-1-git-send-email-s.jegen@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: benoit.taine@lip6.fr, fabf@skynet.be, bhelgaas@google.com, edumazet@google.com, alexander.h.duyck@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
+Cc: Silvan Jegen <s.jegen@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Feb 2015 19:56:56 +0300
+Due to a misplaced goto label mantis_uart_exit is never called.  Adjusting
+the label position (while correcting its numbering) changes this.
 
-> There is a discrepancy here because the niu_class_to_ethflow() returns
-> zero on failure and one on success but the caller expected zero on
-> success and negative on failure.
-> 
-> The problem means that we allow the user to pass classes and flow_types
-> which we don't want.  I've looked at it a bit and I don't see it as a
-> very serious bug.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This issue was found using the smatch static checker.
 
-Applied, thanks Dan.
+Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
+---
+ drivers/media/pci/mantis/mantis_cards.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/pci/mantis/mantis_cards.c b/drivers/media/pci/mantis/mantis_cards.c
+index 801fc55..e566061 100644
+--- a/drivers/media/pci/mantis/mantis_cards.c
++++ b/drivers/media/pci/mantis/mantis_cards.c
+@@ -215,10 +215,11 @@ static int mantis_pci_probe(struct pci_dev *pdev,
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis DVB initialization failed <%d>", err);
+ 		goto fail4;
+ 	}
++
+ 	err = mantis_uart_init(mantis);
+ 	if (err < 0) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis UART initialization failed <%d>", err);
+-		goto fail6;
++		goto fail5;
+ 	}
+ 
+ 	devs++;
+@@ -226,10 +227,10 @@ static int mantis_pci_probe(struct pci_dev *pdev,
+ 	return err;
+ 
+ 
++fail5:
+ 	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis UART exit! <%d>", err);
+ 	mantis_uart_exit(mantis);
+ 
+-fail6:
+ fail4:
+ 	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis DMA exit! <%d>", err);
+ 	mantis_dma_exit(mantis);
+-- 
+2.2.2
+
