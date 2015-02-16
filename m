@@ -1,43 +1,31 @@
-From: Jonathan Woithe <jwoithe@just42.net>
-Date: Thu, 26 Feb 2015 22:16:03 +0000
-Subject: Re: [patch] fujitsu-laptop: simplify show_brightness_changed()
-Message-Id: <20150226220403.GA658@marvin.atrad.com.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 16 Feb 2015 10:01:36 +0000
+Subject: [patch] RDMA/ocrdma: off by one in ocrdma_query_gid()
+Message-Id: <20150216100136.GA5579@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150226204143.GF6820@mwanda>
-In-Reply-To: <20150226204143.GF6820@mwanda>
+References: <20120614183609.GE6383@elgon.mountain>
+In-Reply-To: <20120614183609.GE6383@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Devesh Sharma <devesh.sharma-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>, Selvin Xavier <selvin.xavier-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>, Mitesh Ahuja <mitesh.ahuja-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Thu, Feb 26, 2015 at 11:41:43PM +0300, Dan Carpenter wrote:
-> ->brightness_changed is either 0 or 1, and never a negative.  We can
-> just remove this code.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The ->sgid_tbl[] array has OCRDMA_MAX_SGID number of elements so this
+test is off by one.  ->sgid_tbl is allocated in ocrdma_alloc_resources().
 
-I agree.  Thanks for spotting this.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Jonathan Woithe <jwoithe@just42.net>
-
-> diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
-> index 2a9afa2..aa5ee98 100644
-> --- a/drivers/platform/x86/fujitsu-laptop.c
-> +++ b/drivers/platform/x86/fujitsu-laptop.c
-> @@ -444,14 +444,7 @@ static ssize_t
->  show_brightness_changed(struct device *dev,
->  			struct device_attribute *attr, char *buf)
->  {
-> -
-> -	int ret;
-> -
-> -	ret = fujitsu->brightness_changed;
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return sprintf(buf, "%i\n", ret);
-> +	return sprintf(buf, "%i\n", fujitsu->brightness_changed);
->  }
->  
->  static ssize_t show_lcd_level(struct device *dev,
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index fb8d8c4..18ea619 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -53,7 +53,7 @@ int ocrdma_query_gid(struct ib_device *ibdev, u8 port,
+ 
+ 	dev = get_ocrdma_dev(ibdev);
+ 	memset(sgid, 0, sizeof(*sgid));
+-	if (index > OCRDMA_MAX_SGID)
++	if (index >= OCRDMA_MAX_SGID)
+ 		return -EINVAL;
+ 
+ 	memcpy(sgid, &dev->sgid_tbl[index], sizeof(*sgid));
