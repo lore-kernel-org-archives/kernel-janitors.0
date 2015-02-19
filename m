@@ -1,94 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 04 Jan 2015 13:41:39 +0000
-Subject: [PATCH 13/13] ALSA: msnd: Fix centralized exiting from snd_msnd_attach()
-Message-Id: <54A94313.1070207@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Feb 2015 09:13:13 +0000
+Subject: [patch] caif: fix a signedness bug in cfpkt_iterate()
+Message-Id: <20150219091313.GA29358@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
-In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 4 Jan 2015 11:47:17 +0100
+The cfpkt_iterate() function can return -EPROTO on error, but the
+function is a u16 so the negative value gets truncated to a positive
+unsigned short.  This causes a static checker warning.
 
-Two return statements were used by the snd_msnd_attach() function at source
-code places where the Linux coding style recommends an alternative approach.
+The only caller which might care is cffrml_receive(), when it's checking
+the frame checksum.  I modified cffrml_receive() so that it never says
+-EPROTO is a valid checksum.
 
-Let us improve the affected implementation details with adjustments for
-corresponding jump targets.
+Also this isn't ever going to be inlined so I removed the "inline".
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/isa/msnd/msnd_pinnacle.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.c
-index e2e940d..0e66e5e 100644
---- a/sound/isa/msnd/msnd_pinnacle.c
-+++ b/sound/isa/msnd/msnd_pinnacle.c
-@@ -552,17 +552,16 @@ static int snd_msnd_attach(struct snd_card *card)
- 		return err;
- 	}
- 	if (request_region(chip->io, DSP_NUMIO, card->shortname) = NULL) {
--		free_irq(chip->irq, chip);
--		return -EBUSY;
-+		err = -EBUSY;
-+		goto free_an_irq;
- 	}
+diff --git a/include/net/caif/cfpkt.h b/include/net/caif/cfpkt.h
+index 1c1ad46..fe328c5 100644
+--- a/include/net/caif/cfpkt.h
++++ b/include/net/caif/cfpkt.h
+@@ -171,7 +171,7 @@ struct cfpkt *cfpkt_split(struct cfpkt *pkt, u16 pos);
+  * @return    Checksum of buffer.
+  */
  
- 	if (!request_mem_region(chip->base, BUFFSIZE, card->shortname)) {
- 		printk(KERN_ERR LOGNAME
- 			": unable to grab memory region 0x%lx-0x%lx\n",
- 			chip->base, chip->base + BUFFSIZE - 1);
--		release_region(chip->io, DSP_NUMIO);
--		free_irq(chip->irq, chip);
--		return -EBUSY;
-+		err = -EBUSY;
-+		goto release_resource_region;
- 	}
- 	chip->mappedbase = ioremap_nocache(chip->base, 0x8000);
- 	if (!chip->mappedbase) {
-@@ -570,7 +569,7 @@ static int snd_msnd_attach(struct snd_card *card)
- 			": unable to map memory region 0x%lx-0x%lx\n",
- 			chip->base, chip->base + BUFFSIZE - 1);
- 		err = -EIO;
--		goto err_release_region;
-+		goto release_memory_region;
- 	}
+-u16 cfpkt_iterate(struct cfpkt *pkt,
++int cfpkt_iterate(struct cfpkt *pkt,
+ 		u16 (*iter_func)(u16 chks, void *buf, u16 len),
+ 		u16 data);
  
- 	err = snd_msnd_dsp_full_reset(card);
-@@ -628,9 +627,11 @@ static int snd_msnd_attach(struct snd_card *card)
- 
- io_unmap:
- 	iounmap(chip->mappedbase);
--err_release_region:
-+release_memory_region:
- 	release_mem_region(chip->base, BUFFSIZE);
-+release_resource_region:
- 	release_region(chip->io, DSP_NUMIO);
-+free_an_irq:
- 	free_irq(chip->irq, chip);
- 	return err;
+diff --git a/net/caif/cfpkt_skbuff.c b/net/caif/cfpkt_skbuff.c
+index 1be0b52..f6c3b21 100644
+--- a/net/caif/cfpkt_skbuff.c
++++ b/net/caif/cfpkt_skbuff.c
+@@ -255,9 +255,9 @@ inline u16 cfpkt_getlen(struct cfpkt *pkt)
+ 	return skb->len;
  }
--- 
-2.2.1
-
+ 
+-inline u16 cfpkt_iterate(struct cfpkt *pkt,
+-			 u16 (*iter_func)(u16, void *, u16),
+-			 u16 data)
++int cfpkt_iterate(struct cfpkt *pkt,
++		  u16 (*iter_func)(u16, void *, u16),
++		  u16 data)
+ {
+ 	/*
+ 	 * Don't care about the performance hit of linearizing,
+diff --git a/net/caif/cffrml.c b/net/caif/cffrml.c
+index 8bc7caa..434ba85 100644
+--- a/net/caif/cffrml.c
++++ b/net/caif/cffrml.c
+@@ -84,7 +84,7 @@ static int cffrml_receive(struct cflayer *layr, struct cfpkt *pkt)
+ 	u16 tmp;
+ 	u16 len;
+ 	u16 hdrchks;
+-	u16 pktchks;
++	int pktchks;
+ 	struct cffrml *this;
+ 	this = container_obj(layr);
+ 
