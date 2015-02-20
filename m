@@ -1,36 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Feb 2015 10:10:23 +0000
-Subject: Re: [PATCH 1/1] staging: ozwpan: Remove allocation from delaration line
-Message-Id: <20150210101023.GF5206@mwanda>
+Date: Fri, 20 Feb 2015 10:54:05 +0000
+Subject: [patch] ethtool: use "ops" name consistenty in ethtool_set_rxfh()
+Message-Id: <20150220105405.GC7895@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150210085503.GA10872@sloth>
-In-Reply-To: <20150210085503.GA10872@sloth>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Shigekatsu Tateno <shigekatsu.tateno@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Ben Hutchings <ben@decadent.org.uk>, Amir Vadai <amirv@mellanox.com>, Eric Dumazet <edumazet@google.com>, Venkata Duvvuru <VenkatKumar.Duvvuru@Emulex.Com>, Ed Swierk <eswierk@skyportsystems.com>, Jiri Pirko <jiri@resnulli.us>, Govindarajulu Varadarajan <_govind@gmx.com>, Eyal Perry <eyalpe@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 10, 2015 at 09:55:03AM +0100, Quentin Lambert wrote:
->  static struct oz_endpoint *oz_ep_alloc(int buffer_size, gfp_t mem_flags)
->  {
-> -	struct oz_endpoint *ep > -		kzalloc(sizeof(struct oz_endpoint)+buffer_size, mem_flags);
-> +	struct oz_endpoint *ep;
-> +
-> +	ep = kzalloc(sizeof(struct oz_endpoint)+buffer_size, mem_flags);
-> +
->  	if (ep) {
+"dev->ethtool_ops" and "ops" are the same, but we should use "ops"
+everywhere to be consistent.
 
-Don't put a blank line between the function and the test.  They are part
-of the same thing.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Also in a later patch, could you reverse the "if (ep) " to
-
-	if (!ep)
-		return NULL;
-
-The original code is "success handling" not "error handling".
-
-regards,
-dan carpenter
-
+diff --git a/net/core/ethtool.c b/net/core/ethtool.c
+index 91f74f3..eb0c3ac 100644
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -789,7 +789,7 @@ static noinline_for_stack int ethtool_set_rxfh(struct net_device *dev,
+ 	if (ops->get_rxfh_indir_size)
+ 		dev_indir_size = ops->get_rxfh_indir_size(dev);
+ 	if (ops->get_rxfh_key_size)
+-		dev_key_size = dev->ethtool_ops->get_rxfh_key_size(dev);
++		dev_key_size = ops->get_rxfh_key_size(dev);
+ 
+ 	if (copy_from_user(&rxfh, useraddr, sizeof(rxfh)))
+ 		return -EFAULT;
