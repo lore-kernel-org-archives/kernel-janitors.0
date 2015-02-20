@@ -1,38 +1,29 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 28 Feb 2015 10:02:23 +0000
-Subject: [PATCH 0/7] mtd: various fixes caught by Coverity
-Message-Id: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Feb 2015 10:52:01 +0000
+Subject: [patch] iommu/amd: small cleanup in mn_release()
+Message-Id: <20150220105201.GA7895@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Masahiro Yamada <yamada.m@jp.panasonic.com>, Kyungmin Park <kyungmin.park@samsung.com>, Brian Norris <computersforpeace@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Several unrelated MTD fixes inspired by Coverity Scan results. I couldn't test
-all of them, but they're all pretty obvious.
+"pasid_state->device_state" and "dev_state" are the same, but it's nicer
+to use dev_state consistently.
 
-Brian Norris (7):
-  mtd: docg3: drop dead code
-  mtd: onenand: drop dead code
-  mtd: tests: fix more potential integer overflows
-  mtd: nand: fixup bounds checks for nand_{lock,unlock}()
-  mtd: nand: denali: drop dead code
-  mtd: blkdevs: remove dead code
-  mtd: nand: fully initialize mtd_oob_ops
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
- drivers/mtd/devices/docg3.c        |  2 --
- drivers/mtd/mtd_blkdevs.c          |  3 ---
- drivers/mtd/nand/denali.c          |  3 ---
- drivers/mtd/nand/nand_base.c       | 12 ++++++------
- drivers/mtd/onenand/onenand_base.c | 12 +++---------
- drivers/mtd/tests/oobtest.c        |  2 +-
- drivers/mtd/tests/speedtest.c      |  2 +-
- drivers/mtd/tests/stresstest.c     |  4 ++--
- drivers/mtd/tests/subpagetest.c    |  4 ++--
- drivers/mtd/tests/torturetest.c    |  8 ++++----
- 10 files changed, 19 insertions(+), 33 deletions(-)
-
--- 
-2.1.0
-
+diff --git a/drivers/iommu/amd_iommu_v2.c b/drivers/iommu/amd_iommu_v2.c
+index 6d5a5c4..a1cbba9 100644
+--- a/drivers/iommu/amd_iommu_v2.c
++++ b/drivers/iommu/amd_iommu_v2.c
+@@ -417,7 +417,7 @@ static void mn_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ 	dev_state      = pasid_state->device_state;
+ 	run_inv_ctx_cb = !pasid_state->invalid;
+ 
+-	if (run_inv_ctx_cb && pasid_state->device_state->inv_ctx_cb)
++	if (run_inv_ctx_cb && dev_state->inv_ctx_cb)
+ 		dev_state->inv_ctx_cb(dev_state->pdev, pasid_state->pasid);
+ 
+ 	unbind_pasid(pasid_state);
