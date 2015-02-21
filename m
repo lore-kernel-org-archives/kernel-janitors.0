@@ -1,38 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 28 Feb 2015 10:38:05 +0000
-Subject: [patch] paride: fix the "verbose" module param
-Message-Id: <20150228103805.GA1771@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Feb 2015 19:47:22 +0000
+Subject: [PATCH 5/7] ocfs2: One function call less in ocfs2_merge_rec_right() after error detection
+Message-Id: <54E8E0CA.9040801@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <5455FC05.4010606@users.sourceforge.net> <alpine.DEB.2.02.1411021150540.2239@localhost6.localdomain6> <54E8DDDB.9020902@users.sourceforge.net>
+In-Reply-To: <54E8DDDB.9020902@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tim Waugh <tim@cyberelk.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The verbose module parameter can be set to 2 for extremely verbose
-messages so the type should be int instead of bool.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Feb 2015 19:23:55 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The ocfs2_free_path() function was called by the ocfs2_merge_rec_right()
+function even if a call of the ocfs2_get_right_path() function failed.
 
-diff --git a/drivers/block/paride/pg.c b/drivers/block/paride/pg.c
-index 2ce3dfd..876d0c3 100644
---- a/drivers/block/paride/pg.c
-+++ b/drivers/block/paride/pg.c
-@@ -137,7 +137,7 @@
+Return from this implementation directly after corresponding
+exception handling.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/ocfs2/alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 4bdc19f..2d7f76e 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -3370,7 +3370,7 @@ static int ocfs2_merge_rec_right(struct ocfs2_path *left_path,
+ 		ret = ocfs2_get_right_path(et, left_path, &right_path);
+ 		if (ret) {
+ 			mlog_errno(ret);
+-			goto out;
++			return ret;
+ 		}
  
- */
- 
--static bool verbose = 0;
-+static int verbose;
- static int major = PG_MAJOR;
- static char *name = PG_NAME;
- static int disable = 0;
-@@ -168,7 +168,7 @@ enum {D_PRT, D_PRO, D_UNI, D_MOD, D_SLV, D_DLY};
- 
- #include <asm/uaccess.h>
- 
--module_param(verbose, bool, 0644);
-+module_param(verbose, int, 0644);
- module_param(major, int, 0);
- module_param(name, charp, 0);
- module_param_array(drive0, int, NULL, 0);
+ 		right_el = path_leaf_el(right_path);
+-- 
+2.3.0
+
