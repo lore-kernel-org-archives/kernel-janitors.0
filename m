@@ -1,191 +1,107 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 06 Feb 2015 09:59:53 +0000
-Subject: [PATCH 1/1] iommu/vt-d: Convert non-returned local variable to boolean when relevant
-Message-Id: <20150206095953.GA5780@sloth>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Feb 2015 19:40:14 +0000
+Subject: [PATCH 1/7] ocfs2: Deletion of unnecessary checks before three function calls
+Message-Id: <54E8DF1E.3060900@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <5455FC05.4010606@users.sourceforge.net> <alpine.DEB.2.02.1411021150540.2239@localhost6.localdomain6> <54E8DDDB.9020902@users.sourceforge.net>
+In-Reply-To: <54E8DDDB.9020902@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>
-Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+To: Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This patch was produced using Coccinelle. A simplified version of the
-semantic patch is:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Feb 2015 17:40:57 +0100
 
-@r exists@
-identifier f;
-local idexpression u8 x;
-identifier xname;
-@@
+The functions kfree(), ocfs2_free_path() and __ocfs2_free_slot_info() test
+whether their argument is NULL and then return immediately.
+Thus the test around their calls is not needed.
 
-f(...) {
-...when any
-(
-  x@xname = 1;
-|
-  x@xname = 0;
-)
-...when any
-}
+This issue was detected by using the Coccinelle software.
 
-@bad exists@
-identifier r.f;
-local idexpression u8 r.x
-expression e1 != {0, 1}, e2;
-@@
-
-f(...) {
-...when any
-(
-  x = e1;
-|
-  x + e2
-)
-...when any
-}
-
-@depends on !bad@
-identifier r.f;
-local idexpression u8 r.x;
-identifier r.xname;
-@@
-
-f(...) {
-...
-++ bool xname;
-- int xname;
-<...
-(
-  x - 1
-+ true
-|
-  x - -1
-+ false
-)
-...>
-
-}
-
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/iommu/intel-iommu.c         | 13 +++++++------
- drivers/iommu/intel_irq_remapping.c | 12 ++++++------
- 2 files changed, 13 insertions(+), 12 deletions(-)
+ fs/ocfs2/alloc.c      | 17 +++++------------
+ fs/ocfs2/slot_map.c   |  2 +-
+ fs/ocfs2/stack_user.c |  2 +-
+ 3 files changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index ae4c1a8..d25cc62 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -595,12 +595,13 @@ static void domain_update_iommu_coherency(struct dmar_domain *domain)
- {
- 	struct dmar_drhd_unit *drhd;
- 	struct intel_iommu *iommu;
--	int i, found = 0;
-+	bool found = false;
-+	int i;
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 044158b..fdab27c 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -3453,8 +3453,7 @@ static int ocfs2_merge_rec_right(struct ocfs2_path *left_path,
+ 					   subtree_index);
+ 	}
+ out:
+-	if (right_path)
+-		ocfs2_free_path(right_path);
++	ocfs2_free_path(right_path);
+ 	return ret;
+ }
  
- 	domain->iommu_coherency = 1;
+@@ -3647,8 +3646,7 @@ static int ocfs2_merge_rec_left(struct ocfs2_path *right_path,
+ 						   right_path, subtree_index);
+ 	}
+ out:
+-	if (left_path)
+-		ocfs2_free_path(left_path);
++	ocfs2_free_path(left_path);
+ 	return ret;
+ }
  
- 	for_each_set_bit(i, domain->iommu_bmp, g_num_of_iommus) {
--		found = 1;
-+		found = true;
- 		if (!ecap_coherent(g_iommus[i]->ecap)) {
- 			domain->iommu_coherency = 0;
- 			break;
-@@ -1267,7 +1268,7 @@ static struct device_domain_info *
- iommu_support_dev_iotlb (struct dmar_domain *domain, struct intel_iommu *iommu,
- 			 u8 bus, u8 devfn)
- {
--	int found = 0;
-+	bool found = false;
- 	unsigned long flags;
- 	struct device_domain_info *info;
- 	struct pci_dev *pdev;
-@@ -1282,7 +1283,7 @@ iommu_support_dev_iotlb (struct dmar_domain *domain, struct intel_iommu *iommu,
- 	list_for_each_entry(info, &domain->devices, link)
- 		if (info->iommu = iommu && info->bus = bus &&
- 		    info->devfn = devfn) {
--			found = 1;
-+			found = true;
- 			break;
- 		}
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
-@@ -4270,7 +4271,7 @@ static void domain_remove_one_dev_info(struct dmar_domain *domain,
- 	struct device_domain_info *info, *tmp;
- 	struct intel_iommu *iommu;
- 	unsigned long flags;
--	int found = 0;
-+	bool found = false;
- 	u8 bus, devfn;
- 
- 	iommu = device_to_iommu(dev, &bus, &devfn);
-@@ -4302,7 +4303,7 @@ static void domain_remove_one_dev_info(struct dmar_domain *domain,
- 		 * update iommu count and coherency
- 		 */
- 		if (info->iommu = iommu)
--			found = 1;
-+			found = true;
+@@ -4431,11 +4429,8 @@ ocfs2_figure_merge_contig_type(struct ocfs2_extent_tree *et,
  	}
  
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
-diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
-index 14de1ab..6c25b3c 100644
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -631,7 +631,7 @@ static int __init intel_enable_irq_remapping(void)
- {
- 	struct dmar_drhd_unit *drhd;
- 	struct intel_iommu *iommu;
--	int setup = 0;
-+	bool setup = false;
- 	int eim = 0;
+ out:
+-	if (left_path)
+-		ocfs2_free_path(left_path);
+-	if (right_path)
+-		ocfs2_free_path(right_path);
+-
++	ocfs2_free_path(left_path);
++	ocfs2_free_path(right_path);
+ 	return ret;
+ }
  
- 	if (x2apic_supported()) {
-@@ -697,7 +697,7 @@ static int __init intel_enable_irq_remapping(void)
- 	 */
- 	for_each_iommu(iommu, drhd) {
- 		iommu_set_irq_remapping(iommu, eim);
--		setup = 1;
-+		setup = true;
+@@ -6996,9 +6991,7 @@ out_commit:
+ out:
+ 	if (data_ac)
+ 		ocfs2_free_alloc_context(data_ac);
+-	if (pages)
+-		kfree(pages);
+-
++	kfree(pages);
+ 	return ret;
+ }
+ 
+diff --git a/fs/ocfs2/slot_map.c b/fs/ocfs2/slot_map.c
+index d5493e3..c5e530a 100644
+--- a/fs/ocfs2/slot_map.c
++++ b/fs/ocfs2/slot_map.c
+@@ -452,7 +452,7 @@ int ocfs2_init_slot_info(struct ocfs2_super *osb)
+ 
+ 	osb->slot_info = (struct ocfs2_slot_info *)si;
+ bail:
+-	if (status < 0 && si)
++	if (status < 0)
+ 		__ocfs2_free_slot_info(si);
+ 
+ 	return status;
+diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
+index 720aa38..c3b7807 100644
+--- a/fs/ocfs2/stack_user.c
++++ b/fs/ocfs2/stack_user.c
+@@ -1063,7 +1063,7 @@ static int user_cluster_connect(struct ocfs2_cluster_connection *conn)
  	}
  
- 	if (!setup)
-@@ -856,7 +856,7 @@ static int __init parse_ioapics_under_ir(void)
- {
- 	struct dmar_drhd_unit *drhd;
- 	struct intel_iommu *iommu;
--	int ir_supported = 0;
-+	bool ir_supported = false;
- 	int ioapic_idx;
- 
- 	for_each_iommu(iommu, drhd)
-@@ -864,7 +864,7 @@ static int __init parse_ioapics_under_ir(void)
- 			if (ir_parse_ioapic_hpet_scope(drhd->hdr, iommu))
- 				return -1;
- 
--			ir_supported = 1;
-+			ir_supported = true;
- 		}
- 
- 	if (!ir_supported)
-@@ -917,7 +917,7 @@ static void disable_irq_remapping(void)
- static int reenable_irq_remapping(int eim)
- {
- 	struct dmar_drhd_unit *drhd;
--	int setup = 0;
-+	bool setup = false;
- 	struct intel_iommu *iommu = NULL;
- 
- 	for_each_iommu(iommu, drhd)
-@@ -933,7 +933,7 @@ static int reenable_irq_remapping(int eim)
- 
- 		/* Set up interrupt remapping for iommu.*/
- 		iommu_set_irq_remapping(iommu, eim);
--		setup = 1;
-+		setup = true;
- 	}
- 
- 	if (!setup)
+ out:
+-	if (rc && lc)
++	if (rc)
+ 		kfree(lc);
+ 	return rc;
+ }
 -- 
-1.9.1
+2.3.0
 
