@@ -1,30 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 07 Feb 2015 17:23:42 +0000
-Subject: Re: [PATCH 2/4] SCSI-QLA4...: Less function calls in qla4xxx_is_session_exists() after error detecti
-Message-Id: <54D64A1E.40405@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 Feb 2015 15:44:19 +0000
+Subject: [patch] groups: integer underflow in groups_alloc()
+Message-Id: <20150223154419.GA2542@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54D53BE4.7010807@users.sourceforge.net> <54D53CF1.8050009@users.sourceforge.net> <20150207093322.GA5206@mwanda> <alpine.DEB.2.02.1502071110330.2241@localhost6.localdomain6> <20150207103249.GA5155@mwanda>
-In-Reply-To: <20150207103249.GA5155@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: "James E. J. Bottomley" <JBottomley@parallels.com>, QLogic-Storage-Upstream@qlogic.com, linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@amacapital.net>, Wang YanQing <udknight@gmail.com>, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> 1)  People gloss over initializers without reading them.
+This is called from rsc_parse() with a use controlled value.  Say for
+example that "gidsetsize" is negative, then we could end up allocating
+less than sizeof(struct group_info) leading to memory corruption.
 
-I would find such a habit strange.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I copied the NGROUPS_MAX limit from the surrounding code, I'm not
+absolutely that it's the correct limit to use.
 
-
->     You shouldn't put complicated code in initializers.
-
-Does the affected memory allocation fall into such a category?
-
-
-> 2)  It means you have to put a line of separation between the allocation
->     and the NULL check, but they should be next to each other.
-
-Would you like to extend the Linux coding style documentation?
-
-Regards,
-Markus
+diff --git a/kernel/groups.c b/kernel/groups.c
+index 664411f..e9341b3 100644
+--- a/kernel/groups.c
++++ b/kernel/groups.c
+@@ -18,6 +18,9 @@ struct group_info *groups_alloc(int gidsetsize)
+ 	int nblocks;
+ 	int i;
+ 
++	if ((unsigned)gidsetsize > NGROUPS_MAX)
++		return NULL;
++
+ 	nblocks = (gidsetsize + NGROUPS_PER_BLOCK - 1) / NGROUPS_PER_BLOCK;
+ 	/* Make sure we always allocate at least one indirect block pointer */
+ 	nblocks = nblocks ? : 1;
