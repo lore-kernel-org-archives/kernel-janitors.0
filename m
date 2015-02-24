@@ -1,44 +1,37 @@
-From: Selvin Xavier <Selvin.Xavier@Emulex.Com>
-Date: Tue, 17 Feb 2015 05:32:26 +0000
-Subject: RE: [patch] RDMA/ocrdma: off by one in ocrdma_query_gid()
-Message-Id: <f40073c5-7478-445e-b977-55a47396d60b@CMEXHTCAS2.ad.emulex.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Feb 2015 15:34:01 +0000
+Subject: [patch v2] sunrpc: integer underflow in rsc_parse()
+Message-Id: <20150224153401.GA12218@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150216100136.GA5579@mwanda>
-In-Reply-To: <20150216100136.GA5579@mwanda>
+In-Reply-To: <20150223211607.GB28635@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Devesh Sharma <Devesh.Sharma-iH1Dq9VlAzfQT0dZR+AlfA@public.gmane.org>, Mitesh Ahuja <Mitesh.Ahuja-iH1Dq9VlAzfQT0dZR+AlfA@public.gmane.org>, Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S. Miller" <davem@davemloft.net>, Jeff Layton <jlayton@primarydata.com>, Kinglong Mee <kinglongmee@gmail.com>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@amacapital.net>, Wang YanQing <udknight@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Selvin Xavier <selvin.xavier@emulex.com>
+If we call groups_alloc() with invalid values then it's might lead to
+memory corruption.  For example, with a negative value then we might not
+allocate enough for sizeof(struct group_info).
 
-Thanks !
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  In v1, I changed groups_alloc().  The other places which call
+groups_alloc() check the value before calling.  Eric wanted that, either
+have all the callers check, or all the callers rely on groups_alloc().
+In the end, Bruce Fields said adding the check here was probably
+reasonable.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Monday, February 16, 2015 3:32 PM
-> To: Roland Dreier
-> Cc: Sean Hefty; Hal Rosenstock; Devesh Sharma; Selvin Xavier; Mitesh Ahuja;
-> Yishai Hadas; linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch] RDMA/ocrdma: off by one in ocrdma_query_gid()
-> 
-> The ->sgid_tbl[] array has OCRDMA_MAX_SGID number of elements so this
-> test is off by one.  ->sgid_tbl is allocated in ocrdma_alloc_resources().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> index fb8d8c4..18ea619 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> @@ -53,7 +53,7 @@ int ocrdma_query_gid(struct ib_device *ibdev, u8 port,
-> 
->  	dev = get_ocrdma_dev(ibdev);
->  	memset(sgid, 0, sizeof(*sgid));
-> -	if (index > OCRDMA_MAX_SGID)
-> +	if (index >= OCRDMA_MAX_SGID)
->  		return -EINVAL;
-> 
->  	memcpy(sgid, &dev->sgid_tbl[index], sizeof(*sgid));
+diff --git a/net/sunrpc/auth_gss/svcauth_gss.c b/net/sunrpc/auth_gss/svcauth_gss.c
+index 224a82f..1095be9 100644
+--- a/net/sunrpc/auth_gss/svcauth_gss.c
++++ b/net/sunrpc/auth_gss/svcauth_gss.c
+@@ -463,6 +463,8 @@ static int rsc_parse(struct cache_detail *cd,
+ 		/* number of additional gid's */
+ 		if (get_int(&mesg, &N))
+ 			goto out;
++		if (N < 0 || N > NGROUPS_MAX)
++			goto out;
+ 		status = -ENOMEM;
+ 		rsci.cred.cr_group_info = groups_alloc(N);
+ 		if (rsci.cred.cr_group_info = NULL)
