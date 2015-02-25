@@ -1,24 +1,37 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 10 Feb 2015 22:24:12 +0000
-Subject: Re: [PATCH 1/1] staging: android: Remove allocation from declaration line
-Message-Id: <20150210222412.GA27072@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:21:03 +0000
+Subject: [patch] tcm_fc: missing curly braces in ft_invl_hw_context()
+Message-Id: <20150225132103.GH19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150210110945.GA17910@sloth>
-In-Reply-To: <20150210110945.GA17910@sloth>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Arve =?utf-8?B?SGrvv71ubmV277+9Zw==?= <arve@android.com>, Riley Andrews <riandrews@android.com>, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Kiran Patil <kiran.patil@intel.com>
+Cc: Vasu Dev <vasu.dev@linux.intel.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 10, 2015 at 12:09:45PM +0100, Quentin Lambert wrote:
-> This patch removes allocation from declaration line because
-> people are known to gloss over declarations.
+From the indenting, it looks like curly braces were intended here.
 
-Then those people should not be reviewing kernel code :)
+Fixes: dcd998ccdbf7 ('tcm_fc: Handle DDP/SW fc_frame_payload_get failures in ft_recv_write_data')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Seriously, this is unneeded churn, the code is fine as-is.
-
-thanks,
-
-greg k-h
+diff --git a/drivers/target/tcm_fc/tfc_io.c b/drivers/target/tcm_fc/tfc_io.c
+index 97b486c..583e755 100644
+--- a/drivers/target/tcm_fc/tfc_io.c
++++ b/drivers/target/tcm_fc/tfc_io.c
+@@ -359,7 +359,7 @@ void ft_invl_hw_context(struct ft_cmd *cmd)
+ 		ep = fc_seq_exch(seq);
+ 		if (ep) {
+ 			lport = ep->lp;
+-			if (lport && (ep->xid <= lport->lro_xid))
++			if (lport && (ep->xid <= lport->lro_xid)) {
+ 				/*
+ 				 * "ddp_done" trigger invalidation of HW
+ 				 * specific DDP context
+@@ -374,6 +374,7 @@ void ft_invl_hw_context(struct ft_cmd *cmd)
+ 				 * identified using ep->xid)
+ 				 */
+ 				cmd->was_ddp_setup = 0;
++			}
+ 		}
+ 	}
+ }
