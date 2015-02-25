@@ -1,49 +1,37 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 25 Feb 2015 19:09:53 +0000
-Subject: Re: [patch] sound/sb_midi: a couple indenting fixes
-Message-Id: <s5hvbip3j0e.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:30:36 +0000
+Subject: [patch] sound/oss/opl3: remove some stray whitespace
+Message-Id: <20150225133036.GO19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225133216.GQ19745@mwanda>
-In-Reply-To: <20150225133216.GQ19745@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Himangi Saraogi <himangi774@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-At Wed, 25 Feb 2015 16:32:16 +0300,
-Dan Carpenter wrote:
-> 
-> Let's make things line up a little bit better.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Removed an extra tab and a extra space character.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> diff --git a/sound/oss/sb_midi.c b/sound/oss/sb_midi.c
-> index f139028..551ee75 100644
-> --- a/sound/oss/sb_midi.c
-> +++ b/sound/oss/sb_midi.c
-> @@ -179,14 +179,14 @@ void sb_dsp_midi_init(sb_devc * devc, struct module *owner)
->  	{
->  		printk(KERN_WARNING "Sound Blaster:  failed to allocate MIDI memory.\n");
->  		sound_unload_mididev(dev);
-> -		  return;
-> +		return;
->  	}
->  	memcpy((char *) midi_devs[dev], (char *) &sb_midi_operations,
->  	       sizeof(struct midi_operations));
->  
->  	if (owner)
-> -			midi_devs[dev]->owner = owner;
-> -	
-> +		midi_devs[dev]->owner = owner;
-> +
->  	midi_devs[dev]->devc = devc;
->  
->  
-> 
+diff --git a/sound/oss/opl3.c b/sound/oss/opl3.c
+index 607cee4..b6d19ad 100644
+--- a/sound/oss/opl3.c
++++ b/sound/oss/opl3.c
+@@ -666,7 +666,7 @@ static int opl3_start_note (int dev, int voice, int note, int volume)
+ 	opl3_command(map->ioaddr, FNUM_LOW + map->voice_num, data);
+ 
+ 	data = 0x20 | ((block & 0x7) << 2) | ((fnum >> 8) & 0x3);
+-		 devc->voc[voice].keyon_byte = data;
++	devc->voc[voice].keyon_byte = data;
+ 	opl3_command(map->ioaddr, KEYON_BLOCK + map->voice_num, data);
+ 	if (voice_mode = 4)
+ 		opl3_command(map->ioaddr, KEYON_BLOCK + map->voice_num + 3, data);
+@@ -717,7 +717,7 @@ static void freq_to_fnum    (int freq, int *block, int *fnum)
+ 
+ static void opl3_command    (int io_addr, unsigned int addr, unsigned int val)
+ {
+-	 int i;
++	int i;
+ 
+ 	/*
+ 	 * The original 2-OP synth requires a quite long delay after writing to a
