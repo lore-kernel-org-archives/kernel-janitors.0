@@ -1,22 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 22 Feb 2015 02:59:25 +0000
-Subject: Re: [patch] ethtool: use "ops" name consistenty in ethtool_set_rxfh()
-Message-Id: <20150221.215925.91114669130700758.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:36:12 +0000
+Subject: [patch 2/2] rocker: silence shift wrapping warning
+Message-Id: <20150225133612.GV19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150220105405.GC7895@mwanda>
-In-Reply-To: <20150220105405.GC7895@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ben@decadent.org.uk, amirv@mellanox.com, edumazet@google.com, VenkatKumar.Duvvuru@Emulex.Com, eswierk@skyportsystems.com, jiri@resnulli.us, _govind@gmx.com, eyalpe@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Scott Feldman <sfeldma@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Feb 2015 13:54:05 +0300
+"val" is declared as a u64 so static checkers complain that this shift
+can wrap.  I don't have the hardware but probably it's doesn't have over
+31 ports.  Still we may as well silence the warning even if it's not a
+real bug.
 
-> "dev->ethtool_ops" and "ops" are the same, but we should use "ops"
-> everywhere to be consistent.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to net-next, thanks Dan.
+diff --git a/drivers/net/ethernet/rocker/rocker.c b/drivers/net/ethernet/rocker/rocker.c
+index 713a13c..9fb6948 100644
+--- a/drivers/net/ethernet/rocker/rocker.c
++++ b/drivers/net/ethernet/rocker/rocker.c
+@@ -1257,9 +1257,9 @@ static void rocker_port_set_enable(struct rocker_port *rocker_port, bool enable)
+ 	u64 val = rocker_read64(rocker_port->rocker, PORT_PHYS_ENABLE);
+ 
+ 	if (enable)
+-		val |= 1 << rocker_port->lport;
++		val |= 1ULL << rocker_port->lport;
+ 	else
+-		val &= ~(1 << rocker_port->lport);
++		val &= ~(1ULL << rocker_port->lport);
+ 	rocker_write64(rocker_port->rocker, PORT_PHYS_ENABLE, val);
+ }
+ 
