@@ -1,26 +1,31 @@
-From: Silvan Jegen <s.jegen@gmail.com>
-Date: Sun, 15 Feb 2015 12:11:03 +0000
-Subject: [PATCH 0/2] [media] mantis: Fix goto labels
-Message-Id: <1424002265-16865-1-git-send-email-s.jegen@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:25:20 +0000
+Subject: [patch] fbdev: pm3fb: cleanup some confusing indenting
+Message-Id: <20150225132520.GM19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
-Cc: Silvan Jegen <s.jegen@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-I found two issues regarding goto labels in the mantis driver
-when checking a smatch warning and addressed them in two separate
-patches. Please be aware that these patches have only been compile-tested
-since I do not have access to the corresponding hardware.
+This if statement should be pushed out one tab to line up with the rest.
 
-Silvan Jegen (2):
-  [media] mantis: Move jump label to activate dead code
-  [media] mantis: Use correct goto labels for cleanup on error
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
- drivers/media/pci/mantis/mantis_cards.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
--- 
-2.2.2
-
+diff --git a/drivers/video/fbdev/pm3fb.c b/drivers/video/fbdev/pm3fb.c
+index 4bf3273..77b99ed 100644
+--- a/drivers/video/fbdev/pm3fb.c
++++ b/drivers/video/fbdev/pm3fb.c
+@@ -1479,9 +1479,9 @@ static void pm3fb_remove(struct pci_dev *dev)
+ 		fb_dealloc_cmap(&info->cmap);
+ 
+ #ifdef CONFIG_MTRR
+-	if (par->mtrr_handle >= 0)
+-		mtrr_del(par->mtrr_handle, info->fix.smem_start,
+-			 info->fix.smem_len);
++		if (par->mtrr_handle >= 0)
++			mtrr_del(par->mtrr_handle, info->fix.smem_start,
++				 info->fix.smem_len);
+ #endif /* CONFIG_MTRR */
+ 		iounmap(info->screen_base);
+ 		release_mem_region(fix->smem_start, fix->smem_len);
