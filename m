@@ -1,31 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 06 Feb 2015 20:50:27 +0000
-Subject: Re: [patch] net: sxgbe: fix error handling in init_rx_ring()
-Message-Id: <20150206.125027.797640169824978113.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:17:48 +0000
+Subject: [patch] drm/i915: cleanup some indenting
+Message-Id: <20150225131748.GE19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150116071229.GH5520@mwanda>
-	<20150205080042.GC27855@mwanda>
-In-Reply-To: <20150205080042.GC27855@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: bh74.an@samsung.com, kgene@kernel.org, ks.giri@samsung.com, vipul.pandya@samsung.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@intel.com>
+Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 5 Feb 2015 11:00:42 +0300
+Static checkers complain that we should probably add curly braces
+because, from the indenting, it looks like seq_printf() should be inside
+the list_for_each_entry() loop.  But the code is actually correct, it's
+just the indenting which is off.
 
-> There are a couple bugs with the error handling in this function.
-> 
-> 1) If we can't allocate "rx_ring->rx_skbuff" then we should call
->    dma_free_coherent() but we don't.
-> 2) free_rx_ring() frees "rx_ring->rx_skbuff_dma" and "rx_ring->rx_skbuff"
->    so calling it in a loop causes a double free.
-> 
-> Also it was a bit confusing how we sometimes freed things before doing
-> the goto.  I've cleaned it up so it does error handling in normal kernel
-> style.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Besides fixing the indenting on seq_printf(), I did add curly braces,
+because generally mult-line indents should have curly braces to make
+them more readable.
 
-Looks good, applied, thanks Dan.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index 26e9c7b..a76b2ed 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -139,10 +139,11 @@ describe_obj(struct seq_file *m, struct drm_i915_gem_object *obj)
+ 		   obj->madv = I915_MADV_DONTNEED ? " purgeable" : "");
+ 	if (obj->base.name)
+ 		seq_printf(m, " (name: %d)", obj->base.name);
+-	list_for_each_entry(vma, &obj->vma_list, vma_link)
++	list_for_each_entry(vma, &obj->vma_list, vma_link) {
+ 		if (vma->pin_count > 0)
+ 			pin_count++;
+-		seq_printf(m, " (pinned x %d)", pin_count);
++	}
++	seq_printf(m, " (pinned x %d)", pin_count);
+ 	if (obj->pin_display)
+ 		seq_printf(m, " (display)");
+ 	if (obj->fence_reg != I915_FENCE_REG_NONE)
