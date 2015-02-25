@@ -1,42 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Feb 2015 09:50:06 +0000
-Subject: Re: [PATCH] net: Remove state argument from skb_find_text()
-Message-Id: <20150218095006.GA5206@mwanda>
+Date: Wed, 25 Feb 2015 13:23:22 +0000
+Subject: [patch] PCI: cpcihp: missing curly braces in cpci_configure_slot()
+Message-Id: <20150225132322.GJ19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1424184592-2441-1-git-send-email-prtvar.b@gmail.com>
-In-Reply-To: <1424184592-2441-1-git-send-email-prtvar.b@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Scott Murray <scott@spiteful.org>, Yijing Wang <wangyijing@huawei.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 17, 2015 at 03:49:52PM +0100, Bojan Prtvar wrote:
-> No need to pass textsearch state as argument to skb_find_text().
-> Instead, it can be local variable.
-> 
-> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
-> ---
-> This patch changes internal kernel API. I am sending it here first in hope to get some friendly review.
+I don't have this hardware but it looks like we weren't adding bridge
+devices as intended.  Maybe the bridge is always the last device?
 
-Hm...  That's odd.
+Fixes: 05b125004815 ('PCI: cpcihp: Iterate over all devices in slot, not functions 0-7')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This was added in commit 3fc7e8a6d842f ('[NET]: skb_find_text() -
-Find a text pattern in skb data') and it's pretty clear that we're
-deliberately passing an uninitialized struct.  Make sure that you CC
-Thomas Graf <tgraf@suug.ch> on your email.
-
-The only thing I can think of is that originally, we didn't do it your
-way because we thought this would be called recursively and didn't want
-to run out of stack space.  But it never has been called recursively so
-your patch seems ok.
-
-I hope you have tested this patch.  :)
-
-Anyway, it seems like it should work to me.  I say forward it to netdev.
-The worst that can happen is that you learn something.  :)
-
-Maybe flesh out the commit message a bit.
-
-regards,
-dan carpenter
-
+diff --git a/drivers/pci/hotplug/cpci_hotplug_pci.c b/drivers/pci/hotplug/cpci_hotplug_pci.c
+index 7d48eca..788db48 100644
+--- a/drivers/pci/hotplug/cpci_hotplug_pci.c
++++ b/drivers/pci/hotplug/cpci_hotplug_pci.c
+@@ -286,11 +286,12 @@ int cpci_configure_slot(struct slot *slot)
+ 	}
+ 	parent = slot->dev->bus;
+ 
+-	list_for_each_entry(dev, &parent->devices, bus_list)
++	list_for_each_entry(dev, &parent->devices, bus_list) {
+ 		if (PCI_SLOT(dev->devfn) != PCI_SLOT(slot->devfn))
+ 			continue;
+ 		if (pci_is_bridge(dev))
+ 			pci_hp_add_bridge(dev);
++	}
+ 
+ 
+ 	pci_assign_unassigned_bridge_resources(parent->self);
