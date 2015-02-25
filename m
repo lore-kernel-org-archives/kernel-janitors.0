@@ -1,56 +1,39 @@
-From: Sumit Saxena <sumit.saxena@avagotech.com>
-Date: Wed, 25 Feb 2015 13:58:15 +0000
-Subject: RE: [patch] megaraid_sas: harmless memory corruption in megasas_mgmt_fw_ioctl()
-Message-Id: <c3d45ec00aea189cf1cb5449fe41ae3f@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:20:36 +0000
+Subject: [patch] Staging: lustre: missing curly braces in ll_setattr_raw()
+Message-Id: <20150225132036.GG19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225132236.GI19745@mwanda>
-In-Reply-To: <20150225132236.GI19745@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Kashyap Desai <kashyap.desai@avagotech.com>
-Cc: Uday Lingala <uday.lingala@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@avagotech.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
->-----Original Message-----
->From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
->Sent: Wednesday, February 25, 2015 6:53 PM
->To: Kashyap Desai
->Cc: Sumit Saxena; Uday Lingala; James E.J. Bottomley;
->megaraidlinux.pdl@avagotech.com; linux-scsi@vger.kernel.org; kernel-
->janitors@vger.kernel.org
->Subject: [patch] megaraid_sas: harmless memory corruption in
->megasas_mgmt_fw_ioctl()
->
->The intent here was for the "kbuff_arr[i] = NULL;" to be inside the loop
-but,
->because the curly braces were missing, it's after the loop.
->This means we corrupt a little memory one step beyond the array.
->Fortunately, we weren't going to use that memory anyway so it's harmless.
->Also we aren't going to use kbuff_arr[] again so we don't need to set it
-to
->NULL.
->
->I have deleted that line of code.
->
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c
->b/drivers/scsi/megaraid/megaraid_sas_base.c
->index 890637f..834bfc0 100644
->--- a/drivers/scsi/megaraid/megaraid_sas_base.c
->+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
->@@ -6208,7 +6208,6 @@ megasas_mgmt_fw_ioctl(struct megasas_instance
->*instance,
->
-le32_to_cpu(kern_sge32[i].length),
-> 					  kbuff_arr[i],
->
->le32_to_cpu(kern_sge32[i].phys_addr));
->-			kbuff_arr[i] = NULL;
-> 	}
->
-> 	if (instance->ctrl_context && cmd->mpt_pthr_cmd_blocked)
+From the indenting, it looks like curly braces were intended here.
 
-Acked-by: Sumit Saxena <sumit.saxena@avagotech.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is not tested, and it changes how the code works.  Please review
+it a bit carefully.  Sometimes people just do weird indenting for no
+reason.
 
--Sumit
+diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/drivers/staging/lustre/lustre/llite/llite_lib.c
+index 0c1b583..ba97d9e 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_lib.c
++++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
+@@ -1432,7 +1432,7 @@ int ll_setattr_raw(struct dentry *dentry, struct iattr *attr, bool hsm_import)
+ 
+ 	if (attr->ia_valid & (ATTR_SIZE |
+ 			      ATTR_ATIME | ATTR_ATIME_SET |
+-			      ATTR_MTIME | ATTR_MTIME_SET))
++			      ATTR_MTIME | ATTR_MTIME_SET)) {
+ 		/* For truncate and utimes sending attributes to OSTs, setting
+ 		 * mtime/atime to the past will be performed under PW [0:EOF]
+ 		 * extent lock (new_size:EOF for truncate).  It may seem
+@@ -1444,6 +1444,7 @@ int ll_setattr_raw(struct dentry *dentry, struct iattr *attr, bool hsm_import)
+ 		rc = ll_setattr_ost(inode, attr);
+ 		if (attr->ia_valid & ATTR_SIZE)
+ 			up_write(&lli->lli_trunc_sem);
++	}
+ out:
+ 	if (op_data) {
+ 		if (op_data->op_ioepoch) {
