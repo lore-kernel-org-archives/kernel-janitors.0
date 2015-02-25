@@ -1,30 +1,27 @@
-From: Matteo Semenzato <mattew8898@gmail.com>
-Date: Sat, 21 Feb 2015 09:40:02 +0000
-Subject: [PATCH] Staging: vt6655 fix C99 style comments
-Message-Id: <1424511602-10037-1-git-send-email-mattew8898@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:19:18 +0000
+Subject: [patch] RDMA/nes: remove a stray indent
+Message-Id: <20150225131918.GF19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Matt <mattew8898@gmail.com>
+This line was indented two tabs too far so it looks weird.
 
-Signed-off-by: Matteo Semenzato <mattew8898@gmail.com>
----
- drivers/staging/vt6655/tmacro.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/vt6655/tmacro.h b/drivers/staging/vt6655/tmacro.h
-index 607b78f..597efef 100644
---- a/drivers/staging/vt6655/tmacro.h
-+++ b/drivers/staging/vt6655/tmacro.h
-@@ -55,4 +55,4 @@
- #define MAKEDWORD(lw, hw)   ((unsigned long)(((unsigned short)(lw)) | (((unsigned long)((unsigned short)(hw))) << 16)))
- #endif
- 
--#endif // __TMACRO_H__
-+#endif /* __TMACRO_H__ */
--- 
-2.3.0
-
+diff --git a/drivers/infiniband/hw/nes/nes_nic.c b/drivers/infiniband/hw/nes/nes_nic.c
+index 70acda9..1f74ae2 100644
+--- a/drivers/infiniband/hw/nes/nes_nic.c
++++ b/drivers/infiniband/hw/nes/nes_nic.c
+@@ -929,7 +929,7 @@ static void nes_netdev_set_multicast_list(struct net_device *netdev)
+ 				nesadapter->pft_mcast_map[mc_index] ! 					nesvnic->nic_index &&
+ 					mc_index < max_pft_entries_avaiable) {
+-						nes_debug(NES_DBG_NIC_RX,
++				nes_debug(NES_DBG_NIC_RX,
+ 					"mc_index=%d skipping nic_index=%d, "
+ 					"used for=%d \n", mc_index,
+ 					nesvnic->nic_index,
