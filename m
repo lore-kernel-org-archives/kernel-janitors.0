@@ -1,40 +1,58 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 28 Feb 2015 10:23:26 +0000
-Subject: [PATCH 2/5] UBI: fix out of bounds write
-Message-Id: <1425119009-28634-3-git-send-email-computersforpeace@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:15:58 +0000
+Subject: [patch] mtd: cfi: clean up some indenting
+Message-Id: <20150225131558.GD19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
-In-Reply-To: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Jingoo Han <jg1.han@samsung.com>, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-If aeb->len >= vol->reserved_pebs, we should not be writing aeb into the
-PEB->LEB mapping.
+These lines were all indented one tab more than they should be.
 
-Caught by Coverity, CID #711212.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
----
- drivers/mtd/ubi/eba.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/ubi/eba.c b/drivers/mtd/ubi/eba.c
-index da4c79259f67..6442d3fbcb73 100644
---- a/drivers/mtd/ubi/eba.c
-+++ b/drivers/mtd/ubi/eba.c
-@@ -1418,7 +1418,8 @@ int ubi_eba_init(struct ubi_device *ubi, struct ubi_attach_info *ai)
- 				 * during re-size.
- 				 */
- 				ubi_move_aeb_to_list(av, aeb, &ai->erase);
--			vol->eba_tbl[aeb->lnum] = aeb->pnum;
-+			else
-+				vol->eba_tbl[aeb->lnum] = aeb->pnum;
+diff --git a/drivers/mtd/chips/cfi_cmdset_0020.c b/drivers/mtd/chips/cfi_cmdset_0020.c
+index 423666b..9a1a6ff 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0020.c
++++ b/drivers/mtd/chips/cfi_cmdset_0020.c
+@@ -206,23 +206,23 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
+ 			mtd->eraseregions[(j*cfi->cfiq->NumEraseRegions)+i].numblocks = ernum;
  		}
- 	}
+ 		offset += (ersize * ernum);
+-		}
++	}
  
--- 
-2.1.0
-
+-		if (offset != devsize) {
+-			/* Argh */
+-			printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
+-			kfree(mtd->eraseregions);
+-			kfree(cfi->cmdset_priv);
+-			kfree(mtd);
+-			return NULL;
+-		}
++	if (offset != devsize) {
++		/* Argh */
++		printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
++		kfree(mtd->eraseregions);
++		kfree(cfi->cmdset_priv);
++		kfree(mtd);
++		return NULL;
++	}
+ 
+-		for (i=0; i<mtd->numeraseregions;i++){
+-			printk(KERN_DEBUG "%d: offset=0x%llx,size=0x%x,blocks=%d\n",
+-			       i, (unsigned long long)mtd->eraseregions[i].offset,
+-			       mtd->eraseregions[i].erasesize,
+-			       mtd->eraseregions[i].numblocks);
+-		}
++	for (i=0; i<mtd->numeraseregions;i++){
++		printk(KERN_DEBUG "%d: offset=0x%llx,size=0x%x,blocks=%d\n",
++		       i, (unsigned long long)mtd->eraseregions[i].offset,
++		       mtd->eraseregions[i].erasesize,
++		       mtd->eraseregions[i].numblocks);
++	}
+ 
+ 	/* Also select the correct geometry setup too */
+ 	mtd->_erase = cfi_staa_erase_varsize;
