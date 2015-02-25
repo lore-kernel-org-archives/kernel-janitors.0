@@ -1,38 +1,26 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 28 Feb 2015 10:02:24 +0000
-Subject: [PATCH 1/7] mtd: docg3: drop dead code
-Message-Id: <1425117750-22298-2-git-send-email-computersforpeace@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:33:57 +0000
+Subject: [patch] ALSA: cmipci: remove a stray space character
+Message-Id: <20150225133357.GS19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
-In-Reply-To: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org
-Cc: Joe Perches <joe@perches.com>, Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Benoit Taine <benoit.taine@lip6.fr>, Bjorn Helgaas <bhelgaas@google.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-If no devices were found, we would already have skipped over this code.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Detected by Coverity, CID #744270
-
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
----
- drivers/mtd/devices/docg3.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
-index 448ce42f951e..01eddea1f0d9 100644
---- a/drivers/mtd/devices/docg3.c
-+++ b/drivers/mtd/devices/docg3.c
-@@ -2079,8 +2079,6 @@ static int __init docg3_probe(struct platform_device *pdev)
- 	ret = doc_register_sysfs(pdev, cascade);
- 	if (ret)
- 		goto err_probe;
--	if (!found)
--		goto notfound;
- 
- 	platform_set_drvdata(pdev, cascade);
- 	doc_dbg_register(cascade->floors[0]->priv);
--- 
-2.1.0
-
+diff --git a/sound/pci/cmipci.c b/sound/pci/cmipci.c
+index 1d0f2ca..6cf464d 100644
+--- a/sound/pci/cmipci.c
++++ b/sound/pci/cmipci.c
+@@ -2062,7 +2062,7 @@ static int snd_cmipci_get_volume(struct snd_kcontrol *kcontrol,
+ 		val = (snd_cmipci_mixer_read(cm, reg.right_reg) >> reg.right_shift) & reg.mask;
+ 		if (reg.invert)
+ 			val = reg.mask - val;
+-		 ucontrol->value.integer.value[1] = val;
++		ucontrol->value.integer.value[1] = val;
+ 	}
+ 	spin_unlock_irq(&cm->reg_lock);
+ 	return 0;
