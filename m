@@ -1,29 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Feb 2015 08:34:04 +0000
-Subject: Re: [PATCH] net: Mellanox: Delete unnecessary checks before the function call "vunmap"
-Message-Id: <20150205.003404.261962007607296519.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:35:32 +0000
+Subject: [patch 1/2] rocker: add a check for NULL in rocker_probe_ports()
+Message-Id: <20150225133532.GU19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54D22B29.3020200@users.sourceforge.net>
-In-Reply-To: <54D22B29.3020200-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-Cc: eli-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, julia.lawall-L2FTfq7BK8M@public.gmane.org
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Scott Feldman <sfeldma@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Feb 2015 15:22:33 +0100
+Make sure kmalloc() succeeds.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 15:17:00 +0100
-> 
-> The vunmap() function performs also input parameter validation.
-> Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This does not apply cleanly to the net-next tree, please respin.
+diff --git a/drivers/net/ethernet/rocker/rocker.c b/drivers/net/ethernet/rocker/rocker.c
+index 34389b6a..713a13c 100644
+--- a/drivers/net/ethernet/rocker/rocker.c
++++ b/drivers/net/ethernet/rocker/rocker.c
+@@ -4201,6 +4201,8 @@ static int rocker_probe_ports(struct rocker *rocker)
+ 
+ 	alloc_size = sizeof(struct rocker_port *) * rocker->port_count;
+ 	rocker->ports = kmalloc(alloc_size, GFP_KERNEL);
++	if (!rocker->ports)
++		return -ENOMEM;
+ 	for (i = 0; i < rocker->port_count; i++) {
+ 		err = rocker_probe_port(rocker, i);
+ 		if (err)
