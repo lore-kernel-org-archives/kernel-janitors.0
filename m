@@ -1,39 +1,34 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Thu, 12 Feb 2015 20:29:44 +0000
-Subject: Re: [patch] nfsd: fix comparison in fh_fsid_match()
-Message-Id: <20150212202944.GA5370@fieldses.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Feb 2015 13:22:36 +0000
+Subject: [patch] megaraid_sas: harmless memory corruption in megasas_mgmt_fw_ioctl()
+Message-Id: <20150225132236.GI19745@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150211130832.GA25573@mwanda>
-In-Reply-To: <20150211130832.GA25573@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kashyap Desai <kashyap.desai@avagotech.com>
+Cc: Sumit Saxena <sumit.saxena@avagotech.com>, Uday Lingala <uday.lingala@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, megaraidlinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 11, 2015 at 04:08:32PM +0300, Dan Carpenter wrote:
-> We're supposed to be testing that the fh_fsid's match but because the
-> parenthesis are in the wrong place, then we only check the first
-> byte.
+The intent here was for the "kbuff_arr[i] = NULL;" to be inside the
+loop but, because the curly braces were missing, it's after the loop.
+This means we corrupt a little memory one step beyond the array.
+Fortunately, we weren't going to use that memory anyway so it's
+harmless.  Also we aren't going to use kbuff_arr[] again so we don't
+need to set it to NULL.
 
-Thanks, I'll pass this along!
+I have deleted that line of code.
 
---b.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> Fixes: 9558f2500a20 ('nfsd: add fh_fsid_match helper')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
-> index 84cae20..f229204 100644
-> --- a/fs/nfsd/nfsfh.h
-> +++ b/fs/nfsd/nfsfh.h
-> @@ -200,7 +200,7 @@ static inline bool fh_fsid_match(struct knfsd_fh *fh1, struct knfsd_fh *fh2)
->  {
->  	if (fh1->fh_fsid_type != fh2->fh_fsid_type)
->  		return false;
-> -	if (memcmp(fh1->fh_fsid, fh2->fh_fsid, key_len(fh1->fh_fsid_type) != 0))
-> +	if (memcmp(fh1->fh_fsid, fh2->fh_fsid, key_len(fh1->fh_fsid_type)) != 0)
->  		return false;
->  	return true;
->  }
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index 890637f..834bfc0 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -6208,7 +6208,6 @@ megasas_mgmt_fw_ioctl(struct megasas_instance *instance,
+ 					  le32_to_cpu(kern_sge32[i].length),
+ 					  kbuff_arr[i],
+ 					  le32_to_cpu(kern_sge32[i].phys_addr));
+-			kbuff_arr[i] = NULL;
+ 	}
+ 
+ 	if (instance->ctrl_context && cmd->mpt_pthr_cmd_blocked)
