@@ -1,29 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Feb 2015 08:33:31 +0000
-Subject: Re: [PATCH] qlogic: Deletion of unnecessary checks before two function calls
-Message-Id: <20150205.003331.1969979020399013915.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Feb 2015 20:37:55 +0000
+Subject: [patch] mmc: sdhci-esdhc-imx: silence a false curly braces warning
+Message-Id: <20150226203755.GD6820@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54D21B01.30802@users.sourceforge.net>
-In-Reply-To: <54D21B01.30802@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: shahed.shaikh@qlogic.com, Dept-GELinuxNICDev@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: Chris Ball <chris@printf.net>, Aisheng Dong <b29396@freescale.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Shawn Guo <shawn.guo@linaro.org>, Dirk Behme <dirk.behme@de.bosch.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Feb 2015 14:13:37 +0100
+Static checkers suggest that probably we intended to put curly braces
+around the writel() to make it part of the else path.  But, I think
+actually the indenting is off and the code works fine as is.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 14:07:56 +0100
-> 
-> The functions kfree() and vfree() perform also input parameter validation.
-> Thus the test around their calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The stray tab was introduced in 0322191e6298 ('mmc: sdhci-esdhc-imx: add
+sd3.0 SDR clock tuning support')
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+index 10ef824..9cce5cf 100644
+--- a/drivers/mmc/host/sdhci-esdhc-imx.c
++++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+@@ -416,7 +416,7 @@ static void esdhc_writew_le(struct sdhci_host *host, u16 val, int reg)
+ 			new_val |= ESDHC_VENDOR_SPEC_FRC_SDCLK_ON;
+ 		else
+ 			new_val &= ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON;
+-			writel(new_val, host->ioaddr + ESDHC_VENDOR_SPEC);
++		writel(new_val, host->ioaddr + ESDHC_VENDOR_SPEC);
+ 		return;
+ 	case SDHCI_HOST_CONTROL2:
+ 		new_val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
