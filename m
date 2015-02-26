@@ -1,70 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Feb 2015 18:33:56 +0000
-Subject: [PATCH] ath10k: Delete unnecessary checks before the function call "release_firmware"
-Message-Id: <54D26614.2080708@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Feb 2015 20:43:35 +0000
+Subject: [patch] IB/ipath: remove some left over code
+Message-Id: <20150226204335.GG6820@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mike Marciniszyn <infinipath@intel.com>, Dave Olson <dave.olson@qlogic.com>
+Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 4 Feb 2015 19:30:23 +0100
+"ret" is always zero here after commit c4bce8032ef4 ('IB/ipath: Add new
+chip-specific functions to older chips, consistent init').
 
-The release_firmware() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/wireless/ath/ath10k/core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I just happened to spot this dead code when I was reviewing a different
+static checker warning:
 
-diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-index 2d0671e..45171ad 100644
---- a/drivers/net/wireless/ath/ath10k/core.c
-+++ b/drivers/net/wireless/ath/ath10k/core.c
-@@ -393,16 +393,16 @@ static int ath10k_download_fw(struct ath10k *ar, enum ath10k_firmware_mode mode)
- 
- static void ath10k_core_free_firmware_files(struct ath10k *ar)
- {
--	if (ar->board && !IS_ERR(ar->board))
-+	if (!IS_ERR(ar->board))
- 		release_firmware(ar->board);
- 
--	if (ar->otp && !IS_ERR(ar->otp))
-+	if (!IS_ERR(ar->otp))
- 		release_firmware(ar->otp);
- 
--	if (ar->firmware && !IS_ERR(ar->firmware))
-+	if (!IS_ERR(ar->firmware))
- 		release_firmware(ar->firmware);
- 
--	if (ar->cal_file && !IS_ERR(ar->cal_file))
-+	if (!IS_ERR(ar->cal_file))
- 		release_firmware(ar->cal_file);
- 
- 	ar->board = NULL;
--- 
-2.2.2
+	drivers/infiniband/hw/ipath/ipath_verbs.c:2266 show_hca()
+	warn: bool is not less than zero.
 
+It looks to me that this code returns 0 on success and 1 on failure so
+the warning is correct.  This is very strange.  The documentation
+doesn't say anything about what the return codes mean so it is all very
+puzzling.
+
+diff --git a/drivers/infiniband/hw/ipath/ipath_iba6110.c b/drivers/infiniband/hw/ipath/ipath_iba6110.c
+index 7cc3054..3de90e9 100644
+--- a/drivers/infiniband/hw/ipath/ipath_iba6110.c
++++ b/drivers/infiniband/hw/ipath/ipath_iba6110.c
+@@ -721,10 +721,6 @@ static int ipath_ht_boardname(struct ipath_devdata *dd, char *name,
+ 	if (n)
+ 		snprintf(name, namelen, "%s", n);
+ 
+-	if (ret) {
+-		ipath_dev_err(dd, "Unsupported InfiniPath board %s!\n", name);
+-		goto bail;
+-	}
+ 	if (dd->ipath_majrev != 3 || (dd->ipath_minrev < 2 ||
+ 		dd->ipath_minrev > 4)) {
+ 		/*
