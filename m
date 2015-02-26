@@ -1,65 +1,68 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 28 Feb 2015 10:02:25 +0000
-Subject: [PATCH 2/7] mtd: onenand: drop dead code
-Message-Id: <1425117750-22298-3-git-send-email-computersforpeace@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Feb 2015 20:40:46 +0000
+Subject: [patch] regulator: core: remove some unneeded conditions
+Message-Id: <20150226204046.GE6820@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
-In-Reply-To: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-'ret' is always zero, so this is all dead code.
+These always true or always false conditions cause static checker
+warnings.
 
-This should quiet Coverity CID #1226739.
+The check prior to checking "if (pin->enable_count <= 1) {" is
+"if (pin->enable_count > 1) ", so we know that ->enable_count is <= 1
+already and can delete the check.
 
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/mtd/onenand/onenand_base.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+The queue_delayed_work() function is type bool so the return value can
+never be less than zero.
 
-diff --git a/drivers/mtd/onenand/onenand_base.c b/drivers/mtd/onenand/onenand_base.c
-index 635ee0027691..43b3392ffee7 100644
---- a/drivers/mtd/onenand/onenand_base.c
-+++ b/drivers/mtd/onenand/onenand_base.c
-@@ -1743,7 +1743,6 @@ static int onenand_panic_write(struct mtd_info *mtd, loff_t to, size_t len,
- 	struct onenand_chip *this = mtd->priv;
- 	int column, subpage;
- 	int written = 0;
--	int ret = 0;
- 
- 	if (this->state = FL_PM_SUSPENDED)
- 		return -EBUSY;
-@@ -1786,15 +1785,10 @@ static int onenand_panic_write(struct mtd_info *mtd, loff_t to, size_t len,
- 		onenand_panic_wait(mtd);
- 
- 		/* In partial page write we don't update bufferram */
--		onenand_update_bufferram(mtd, to, !ret && !subpage);
-+		onenand_update_bufferram(mtd, to, !subpage);
- 		if (ONENAND_IS_2PLANE(this)) {
- 			ONENAND_SET_BUFFERRAM1(this);
--			onenand_update_bufferram(mtd, to + this->writesize, !ret && !subpage);
--		}
--
--		if (ret) {
--			printk(KERN_ERR "%s: write failed %d\n", __func__, ret);
--			break;
-+			onenand_update_bufferram(mtd, to + this->writesize, !subpage);
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index f245214..9606bb7 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1758,11 +1758,9 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
  		}
  
- 		written += thislen;
-@@ -1808,7 +1802,7 @@ static int onenand_panic_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 		/* Disable GPIO if not used */
+-		if (pin->enable_count <= 1) {
+-			gpiod_set_value_cansleep(pin->gpiod,
+-						 pin->ena_gpio_invert);
+-			pin->enable_count = 0;
+-		}
++		gpiod_set_value_cansleep(pin->gpiod,
++					 pin->ena_gpio_invert);
++		pin->enable_count = 0;
  	}
  
- 	*retlen = written;
--	return ret;
+ 	return 0;
+@@ -2146,7 +2144,6 @@ static void regulator_disable_work(struct work_struct *work)
+ int regulator_disable_deferred(struct regulator *regulator, int ms)
+ {
+ 	struct regulator_dev *rdev = regulator->rdev;
+-	int ret;
+ 
+ 	if (regulator->always_on)
+ 		return 0;
+@@ -2158,13 +2155,10 @@ int regulator_disable_deferred(struct regulator *regulator, int ms)
+ 	rdev->deferred_disables++;
+ 	mutex_unlock(&rdev->mutex);
+ 
+-	ret = queue_delayed_work(system_power_efficient_wq,
+-				 &rdev->disable_work,
+-				 msecs_to_jiffies(ms));
+-	if (ret < 0)
+-		return ret;
+-	else
+-		return 0;
++	queue_delayed_work(system_power_efficient_wq,
++			   &rdev->disable_work,
++			   msecs_to_jiffies(ms));
 +	return 0;
  }
+ EXPORT_SYMBOL_GPL(regulator_disable_deferred);
  
- /**
--- 
-2.1.0
-
