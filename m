@@ -1,45 +1,38 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Fri, 27 Feb 2015 11:52:56 +0000
-Subject: Re: [patch] tcm_fc: missing curly braces in ft_invl_hw_context()
-Message-Id: <1425037976.30824.90.camel@haakon3.risingtidesystems.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 28 Feb 2015 10:02:24 +0000
+Subject: [PATCH 1/7] mtd: docg3: drop dead code
+Message-Id: <1425117750-22298-2-git-send-email-computersforpeace@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225132103.GH19745@mwanda>
-In-Reply-To: <20150225132103.GH19745@mwanda>
+References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kiran Patil <kiran.patil@intel.com>, Vasu Dev <vasu.dev@linux.intel.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-mtd@lists.infradead.org
+Cc: Joe Perches <joe@perches.com>, Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2015-02-25 at 16:21 +0300, Dan Carpenter wrote:
-> From the indenting, it looks like curly braces were intended here.
-> 
-> Fixes: dcd998ccdbf7 ('tcm_fc: Handle DDP/SW fc_frame_payload_get failures in ft_recv_write_data')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/target/tcm_fc/tfc_io.c b/drivers/target/tcm_fc/tfc_io.c
-> index 97b486c..583e755 100644
-> --- a/drivers/target/tcm_fc/tfc_io.c
-> +++ b/drivers/target/tcm_fc/tfc_io.c
-> @@ -359,7 +359,7 @@ void ft_invl_hw_context(struct ft_cmd *cmd)
->  		ep = fc_seq_exch(seq);
->  		if (ep) {
->  			lport = ep->lp;
-> -			if (lport && (ep->xid <= lport->lro_xid))
-> +			if (lport && (ep->xid <= lport->lro_xid)) {
->  				/*
->  				 * "ddp_done" trigger invalidation of HW
->  				 * specific DDP context
-> @@ -374,6 +374,7 @@ void ft_invl_hw_context(struct ft_cmd *cmd)
->  				 * identified using ep->xid)
->  				 */
->  				cmd->was_ddp_setup = 0;
-> +			}
->  		}
->  	}
->  }
+If no devices were found, we would already have skipped over this code.
 
-Thanks Dan.  Applied to target-pending/master.
+Detected by Coverity, CID #744270
 
---nab
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+---
+ drivers/mtd/devices/docg3.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+index 448ce42f951e..01eddea1f0d9 100644
+--- a/drivers/mtd/devices/docg3.c
++++ b/drivers/mtd/devices/docg3.c
+@@ -2079,8 +2079,6 @@ static int __init docg3_probe(struct platform_device *pdev)
+ 	ret = doc_register_sysfs(pdev, cascade);
+ 	if (ret)
+ 		goto err_probe;
+-	if (!found)
+-		goto notfound;
+ 
+ 	platform_set_drvdata(pdev, cascade);
+ 	doc_dbg_register(cascade->floors[0]->priv);
+-- 
+2.1.0
 
