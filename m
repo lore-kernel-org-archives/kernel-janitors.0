@@ -1,35 +1,34 @@
-From: Zhou Wang <wangzhou1@hisilicon.com>
-Date: Sat, 28 Feb 2015 04:47:13 +0000
-Subject: Re: [patch] mtd: hisilicon: && vs & typo
-Message-Id: <54F14851.5040209@hisilicon.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 28 Feb 2015 10:23:24 +0000
+Subject: [PATCH 0/5] UBI: Coverity-inspired fixes
+Message-Id: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150211102509.GB18515@mwanda>
- <20150215090711.GA8351@norris-Latitude-E6410>
-In-Reply-To: <20150215090711.GA8351@norris-Latitude-E6410>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 2015/2/15 17:07, Brian Norris wrote:
-> On Wed, Feb 11, 2015 at 01:25:09PM +0300, Dan Carpenter wrote:
->> The intent was to mask away some bits here, not to test true or false.
->>
->> Fix: 54f531f6e332 ('mtd: hisilicon: add a new NAND controller driver for hisilicon hip04 Soc')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Pushed to l2-mtd.git. Thanks.
+Except for the last one, these were inspired by Coverity Scan results.
 
-Hi Brian,
+These fixes have barely been tested, but they are pretty straightforward
+logically. As they've been sitting in my dust pile too long, I thought I'd at
+least get them out there.
 
-Thanks for the pushing.
+Brian Norris (5):
+  UBI: account for bitflips in both the VID header and data
+  UBI: fix out of bounds write
+  UBI: initialize LEB number variable
+  UBI: fix check for "too many bytes"
+  UBI: align comment for readability
 
-Zhou Wang
+ drivers/mtd/ubi/attach.c | 2 +-
+ drivers/mtd/ubi/cdev.c   | 2 +-
+ drivers/mtd/ubi/eba.c    | 3 ++-
+ drivers/mtd/ubi/ubi.h    | 2 +-
+ drivers/mtd/ubi/wl.c     | 2 +-
+ 5 files changed, 6 insertions(+), 5 deletions(-)
 
-> 
-> Brian
-> 
-> 
-
+-- 
+2.1.0
 
