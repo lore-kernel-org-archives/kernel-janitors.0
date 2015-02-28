@@ -1,26 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 06 Feb 2015 06:50:07 +0000
-Subject: Re: ath9k: Delete an unnecessary check before the function call"relay_close"
-Message-Id: <20150206065007.0E82D140CC9@smtp.codeaurora.org>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 28 Feb 2015 10:02:29 +0000
+Subject: [PATCH 6/7] mtd: blkdevs: remove dead code
+Message-Id: <1425117750-22298-7-git-send-email-computersforpeace@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <54D25CDC.3040405@users.sourceforge.net>
+References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: ath9k-devel@lists.ath9k.org, linux-wireless@vger.kernel.org, QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-mtd@lists.infradead.org
+Cc: Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+The only exit (break) from the preceding loop is nested within a
+condition which yields req = NULL. This code is dead.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 18:48:28 +0100
-> 
-> The relay_close() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Coverity CID #752669
 
-Thanks, applied to wireless-drivers-next.git.
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+---
+ drivers/mtd/mtd_blkdevs.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Kalle Valo
+diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
+index d08229eb44d8..2b0c52870999 100644
+--- a/drivers/mtd/mtd_blkdevs.c
++++ b/drivers/mtd/mtd_blkdevs.c
+@@ -171,9 +171,6 @@ static void mtd_blktrans_work(struct work_struct *work)
+ 		background_done = 0;
+ 	}
+ 
+-	if (req)
+-		__blk_end_request_all(req, -EIO);
+-
+ 	spin_unlock_irq(rq->queue_lock);
+ }
+ 
+-- 
+2.1.0
+
