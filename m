@@ -1,29 +1,38 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 06 Feb 2015 06:49:01 +0000
-Subject: Re: [1/2] cw1200: Delete an unnecessary check before the function call "release_firmware"
-Message-Id: <20150206064901.1EFAE140CB9@smtp.codeaurora.org>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 28 Feb 2015 10:23:29 +0000
+Subject: [PATCH 5/5] UBI: align comment for readability
+Message-Id: <1425119009-28634-6-git-send-email-computersforpeace@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <54D24D1F.50001@users.sourceforge.net>
+References: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Solomon Peachy <pizza@shaftnet.org>, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
+The kerneldoc for @vid_hdr_aloffset continues onto a second line, but
+this is not obvious, because the second line isn't indented, and it
+begins with '@'.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 16:32:15 +0100
-> 
-> The release_firmware() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+---
+ drivers/mtd/ubi/ubi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, 2 patches applied to wireless-drivers-next.git:
+diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
+index c5be82d9d345..2251a6c4c8fa 100644
+--- a/drivers/mtd/ubi/ubi.h
++++ b/drivers/mtd/ubi/ubi.h
+@@ -479,7 +479,7 @@ struct ubi_debug_info {
+  * @vid_hdr_offset: starting offset of the volume identifier header (might be
+  *                  unaligned)
+  * @vid_hdr_aloffset: starting offset of the VID header aligned to
+- * @hdrs_min_io_size
++ *                    @hdrs_min_io_size
+  * @vid_hdr_shift: contains @vid_hdr_offset - @vid_hdr_aloffset
+  * @bad_allowed: whether the MTD device admits of bad physical eraseblocks or
+  *               not
+-- 
+2.1.0
 
-df970d39b90e cw1200: Delete an unnecessary check before the function call "release_firmware"
-ee4ddad82356 cw1200: Less function calls in cw1200_load_firmware_cw1200() after error detection
-
-Kalle Valo
