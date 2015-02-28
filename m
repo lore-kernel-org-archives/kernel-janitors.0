@@ -1,47 +1,44 @@
 From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 28 Feb 2015 10:02:28 +0000
-Subject: [PATCH 5/7] mtd: nand: denali: drop dead code
-Message-Id: <1425117750-22298-6-git-send-email-computersforpeace@gmail.com>
+Date: Sat, 28 Feb 2015 10:23:27 +0000
+Subject: [PATCH 3/5] UBI: initialize LEB number variable
+Message-Id: <1425119009-28634-4-git-send-email-computersforpeace@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
-In-Reply-To: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
+References: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.m@jp.panasonic.com>, Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-TclsRising is always 1.
+In some of the 'out_not_moved' error paths, lnum may be used
+uninitialized. Don't ignore the warning; let's fix it.
 
-Caught by Coverity.
+This uninitialized variable doesn't have much visible effect in the end,
+since we just schedule the PEB for erasure, and its LEB number doesn't
+really matter (it just gets printed in debug messages). But let's get it
+straight anyway.
+
+Coverity CID #113449
 
 Signed-off-by: Brian Norris <computersforpeace@gmail.com>
-Cc: Masahiro Yamada <yamada.m@jp.panasonic.com>
 ---
- drivers/mtd/nand/denali.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/mtd/ubi/wl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/denali.c b/drivers/mtd/nand/denali.c
-index f44c6061536a..09f51395f2c0 100644
---- a/drivers/mtd/nand/denali.c
-+++ b/drivers/mtd/nand/denali.c
-@@ -225,7 +225,6 @@ static void nand_onfi_timing_set(struct denali_nand_info *denali,
- 	uint16_t Twhr[6] = {120, 80, 80, 60, 60, 60};
- 	uint16_t Tcs[6] = {70, 35, 25, 25, 20, 15};
- 
--	uint16_t TclsRising = 1;
- 	uint16_t data_invalid_rhoh, data_invalid_rloh, data_invalid;
- 	uint16_t dv_window = 0;
- 	uint16_t en_lo, en_hi;
-@@ -276,8 +275,6 @@ static void nand_onfi_timing_set(struct denali_nand_info *denali,
- 	re_2_re = CEIL_DIV(Trhz[mode], CLK_X);
- 	we_2_re = CEIL_DIV(Twhr[mode], CLK_X);
- 	cs_cnt = CEIL_DIV((Tcs[mode] - Trp[mode]), CLK_X);
--	if (!TclsRising)
--		cs_cnt = CEIL_DIV(Tcs[mode], CLK_X);
- 	if (cs_cnt = 0)
- 		cs_cnt = 1;
- 
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index 8f7bde6a85d6..0bd92d816391 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1002,7 +1002,7 @@ static int wear_leveling_worker(struct ubi_device *ubi, struct ubi_work *wrk,
+ 				int shutdown)
+ {
+ 	int err, scrubbing = 0, torture = 0, protect = 0, erroneous = 0;
+-	int vol_id = -1, uninitialized_var(lnum);
++	int vol_id = -1, lnum = -1;
+ #ifdef CONFIG_MTD_UBI_FASTMAP
+ 	int anchor = wrk->anchor;
+ #endif
 -- 
 2.1.0
 
