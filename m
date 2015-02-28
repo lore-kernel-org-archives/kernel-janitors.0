@@ -1,44 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 02 Feb 2015 10:25:30 +0000
-Subject: [PATCH v3 1/3] netlabel: Deletion of an unnecessary check before the function call "cipso_v4_doi_put
-Message-Id: <54CF509A.2000801@users.sourceforge.net>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 28 Feb 2015 10:02:23 +0000
+Subject: [PATCH 0/7] mtd: various fixes caught by Coverity
+Message-Id: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54CD4B5F.9010502@users.sourceforge.net>	<CAHC9VhQ5C32zRqG0emVUoMmuvBsV+TXvdNn+54iVyCPBNk9dDQ@mail.gmail.com>	<54CDFCDA.9010802@users.sourceforge.net> <20150201.123054.366525761630045391.davem@davemloft.net> <54CF4FEC.2010906@users.sourceforge.net>
-In-Reply-To: <54CF4FEC.2010906@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Masahiro Yamada <yamada.m@jp.panasonic.com>, Kyungmin Park <kyungmin.park@samsung.com>, Brian Norris <computersforpeace@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Feb 2015 10:01:45 +0100
+Several unrelated MTD fixes inspired by Coverity Scan results. I couldn't test
+all of them, but they're all pretty obvious.
 
-The cipso_v4_doi_putdef() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Brian Norris (7):
+  mtd: docg3: drop dead code
+  mtd: onenand: drop dead code
+  mtd: tests: fix more potential integer overflows
+  mtd: nand: fixup bounds checks for nand_{lock,unlock}()
+  mtd: nand: denali: drop dead code
+  mtd: blkdevs: remove dead code
+  mtd: nand: fully initialize mtd_oob_ops
 
-This issue was detected by using the Coccinelle software.
+ drivers/mtd/devices/docg3.c        |  2 --
+ drivers/mtd/mtd_blkdevs.c          |  3 ---
+ drivers/mtd/nand/denali.c          |  3 ---
+ drivers/mtd/nand/nand_base.c       | 12 ++++++------
+ drivers/mtd/onenand/onenand_base.c | 12 +++---------
+ drivers/mtd/tests/oobtest.c        |  2 +-
+ drivers/mtd/tests/speedtest.c      |  2 +-
+ drivers/mtd/tests/stresstest.c     |  4 ++--
+ drivers/mtd/tests/subpagetest.c    |  4 ++--
+ drivers/mtd/tests/torturetest.c    |  8 ++++----
+ 10 files changed, 19 insertions(+), 33 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Paul Moore <paul@paul-moore.com>
----
- net/netlabel/netlabel_mgmt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
-index 8b3b789..f5807f5 100644
---- a/net/netlabel/netlabel_mgmt.c
-+++ b/net/netlabel/netlabel_mgmt.c
-@@ -242,8 +242,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
- 	return 0;
- 
- add_failure:
--	if (cipsov4)
--		cipso_v4_doi_putdef(cipsov4);
-+	cipso_v4_doi_putdef(cipsov4);
- 	if (entry)
- 		kfree(entry->domain);
- 	kfree(addrmap);
 -- 
-2.2.2
+2.1.0
 
