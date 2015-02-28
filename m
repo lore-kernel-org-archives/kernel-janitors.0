@@ -1,42 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Feb 2015 17:54:36 +0000
-Subject: [PATCH] ath9k: Delete an unnecessary check before the function call "relay_close"
-Message-Id: <54D25CDC.3040405@users.sourceforge.net>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 28 Feb 2015 10:02:30 +0000
+Subject: [PATCH 7/7] mtd: nand: fully initialize mtd_oob_ops
+Message-Id: <1425117750-22298-8-git-send-email-computersforpeace@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>, ath9k-devel@lists.ath9k.org, linux-wireless@vger.kernel.org, QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-mtd@lists.infradead.org
+Cc: Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 4 Feb 2015 18:48:28 +0100
+We're not initializing the ooblen field. Our users don't care, since
+they check that oobbuf = NULL first, but it's good practice to zero
+unused fields out.
 
-The relay_close() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+We can drop the NULL initializations since we're memset()ing the whole
+thing.
 
-This issue was detected by using the Coccinelle software.
+Noticed by Coverity, CID #200821, #200822
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
 ---
- drivers/net/wireless/ath/ath9k/common-spectral.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/nand/nand_base.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/common-spectral.c b/drivers/net/wireless/ath/ath9k/common-spectral.c
-index ec93ddf..5cee231 100644
---- a/drivers/net/wireless/ath/ath9k/common-spectral.c
-+++ b/drivers/net/wireless/ath/ath9k/common-spectral.c
-@@ -582,7 +582,7 @@ static struct rchan_callbacks rfs_spec_scan_cb = {
+diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+index 5488a7ad63e7..d4cec2f8a016 100644
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -386,7 +386,7 @@ static int nand_default_block_markbad(struct mtd_info *mtd, loff_t ofs)
+ 	uint8_t buf[2] = { 0, 0 };
+ 	int ret = 0, res, i = 0;
  
- void ath9k_cmn_spectral_deinit_debug(struct ath_spec_scan_priv *spec_priv)
- {
--	if (config_enabled(CONFIG_ATH9K_DEBUGFS) && spec_priv->rfs_chan_spec_scan) {
-+	if (config_enabled(CONFIG_ATH9K_DEBUGFS)) {
- 		relay_close(spec_priv->rfs_chan_spec_scan);
- 		spec_priv->rfs_chan_spec_scan = NULL;
- 	}
+-	ops.datbuf = NULL;
++	memset(&ops, 0, sizeof(ops));
+ 	ops.oobbuf = buf;
+ 	ops.ooboffs = chip->badblockpos;
+ 	if (chip->options & NAND_BUSWIDTH_16) {
+@@ -1716,9 +1716,9 @@ static int nand_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 	int ret;
+ 
+ 	nand_get_device(mtd, FL_READING);
++	memset(&ops, 0, sizeof(ops));
+ 	ops.len = len;
+ 	ops.datbuf = buf;
+-	ops.oobbuf = NULL;
+ 	ops.mode = MTD_OPS_PLACE_OOB;
+ 	ret = nand_do_read_ops(mtd, from, &ops);
+ 	*retlen = ops.retlen;
+@@ -2508,9 +2508,9 @@ static int panic_nand_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 	/* Grab the device */
+ 	panic_nand_get_device(chip, mtd, FL_WRITING);
+ 
++	memset(&ops, 0, sizeof(ops));
+ 	ops.len = len;
+ 	ops.datbuf = (uint8_t *)buf;
+-	ops.oobbuf = NULL;
+ 	ops.mode = MTD_OPS_PLACE_OOB;
+ 
+ 	ret = nand_do_write_ops(mtd, to, &ops);
+@@ -2536,9 +2536,9 @@ static int nand_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 	int ret;
+ 
+ 	nand_get_device(mtd, FL_WRITING);
++	memset(&ops, 0, sizeof(ops));
+ 	ops.len = len;
+ 	ops.datbuf = (uint8_t *)buf;
+-	ops.oobbuf = NULL;
+ 	ops.mode = MTD_OPS_PLACE_OOB;
+ 	ret = nand_do_write_ops(mtd, to, &ops);
+ 	*retlen = ops.retlen;
 -- 
-2.2.2
+2.1.0
 
