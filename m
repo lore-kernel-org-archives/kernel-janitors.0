@@ -1,52 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 11 Mar 2015 16:56:27 +0000
-Subject: [PATCH 5/15] clockevents: don't export static symbol
-Message-Id: <1426092997-30605-6-git-send-email-Julia.Lawall@lip6.fr>
+From: =?koi8-r?B?5dfHxc7JyiDwz8zRy8/X?= <zbr@ioremap.net>
+Date: Sun, 01 Mar 2015 01:49:14 +0000
+Subject: Re: [patch] w1: small cleanup in w1_family_notify()
+Message-Id: <370051425174554@web4m.yandex.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20150220105302.GB7895@mwanda>
+In-Reply-To: <20150220105302.GB7895@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Dan
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+20.02.2015, 13:53, "Dan Carpenter" <dan.carpenter@oracle.com>:
+> "sl->family->fops" and "fops" are the same thing, but it's nicer to use
+> "fops" everywhere.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@r@
-type T;
-identifier f;
-@@
+Looks good to me, thank you
 
-static T f (...) { ... }
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
 
-@@
-identifier r.f;
-declarer name EXPORT_SYMBOL_GPL;
-@@
-
--EXPORT_SYMBOL_GPL(f);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- kernel/time/clockevents.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff -u -p a/kernel/time/clockevents.c b/kernel/time/clockevents.c
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -424,7 +424,6 @@ int clockevents_unbind_device(struct clo
- 	mutex_unlock(&clockevents_mutex);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(clockevents_unbind);
- 
- /* Sanity check of mode transition callbacks */
- static int clockevents_sanity_check(struct clock_event_device *dev)
-
+> diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+> index 181f41c..59f932f 100644
+> --- a/drivers/w1/w1.c
+> +++ b/drivers/w1/w1.c
+> @@ -649,7 +649,7 @@ static int w1_family_notify(unsigned long action, str=
+uct w1_slave *sl)
+> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Abreak;
+> =9A=9A=9A=9A=9A=9A=9A=9A=9Acase BUS_NOTIFY_DEL_DEVICE:
+> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Aif (fops->remove_slave)
+> - sl->family->fops->remove_slave(sl);
+> + fops->remove_slave(sl);
+> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Aif (fops->groups)
+> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=
+=9Asysfs_remove_groups(&sl->dev.kobj, fops->groups);
+> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Abreak;
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
