@@ -1,31 +1,31 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Date: Sun, 22 Mar 2015 19:01:09 +0000
-Subject: Re: [ibm-acpi-devel] [patch 2/2] thinkpad_acpi: off by one in adaptive_keyboard_hotkey_notify_hotkey
-Message-Id: <1427050869.3946795.243708250.7D9CBED0@webmail.messagingengine.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 02 Mar 2015 09:10:50 +0000
+Subject: Re: [PATCH 1/7] mtd: docg3: drop dead code
+Message-Id: <20150302091050.GC5386@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150311093607.GB3564@mwanda>
-In-Reply-To: <20150311093607.GB3564@mwanda>
+References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
+ <1425117750-22298-2-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1425117750-22298-2-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Bastien Nocera <hadess@hadess.net>
-Cc: Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 11, 2015, at 06:36, Dan Carpenter wrote:
-> This should be >= instead of > because otherwise we read one element
-> past the end of the hotkey_keycode_map[] array.
-> 
-> The hotkey_keycode_map[] array has TPACPI_HOTKEY_MAP_LEN elements.
-> 
-> Fixes: 6a68d8557084 ('thinkpad_acpi: Add support for more adaptive kbd
-> buttons')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Sat, Feb 28, 2015 at 02:02:24AM -0800, Brian Norris wrote:
+> diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+> index 448ce42f951e..01eddea1f0d9 100644
+> --- a/drivers/mtd/devices/docg3.c
+> +++ b/drivers/mtd/devices/docg3.c
+> @@ -2079,8 +2079,6 @@ static int __init docg3_probe(struct platform_device *pdev)
+>  	ret = doc_register_sysfs(pdev, cascade);
+>  	if (ret)
+>  		goto err_probe;
+> -	if (!found)
+> -		goto notfound;
 
-Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Just delete the "found" variable because there are no other uses.
 
+regards,
+dan carpenter
 
--- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
