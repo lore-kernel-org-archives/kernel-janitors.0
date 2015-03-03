@@ -1,58 +1,75 @@
-From: Michel von Czettritz <michel.von.czettritz@gmail.com>
-Date: Thu, 26 Mar 2015 22:27:25 +0000
-Subject: [PATCH v2 12/12] staging: sm750: move assignment out of if cond
-Message-Id: <1d869c193fc53160e5a2ef06bbb2b7ce9786bd2e.1427406762.git.michel.von.czettritz@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 03 Mar 2015 18:41:04 +0000
+Subject: Re: [patch] regulator: core: remove some unneeded conditions
+Message-Id: <20150303184104.GD21293@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="eL/3bkOpB8q3g/mM"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+References: <20150226204046.GE6820@mwanda>
+In-Reply-To: <20150226204046.GE6820@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch moves the assignments from the if conditions to the line before the condition.
-The 3 occurrence are return values and the checks for errors.
 
-Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
----
+--eL/3bkOpB8q3g/mM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2: remove double negation in if statments
----
- drivers/staging/sm750fb/sm750.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+On Thu, Feb 26, 2015 at 11:40:46PM +0300, Dan Carpenter wrote:
+> These always true or always false conditions cause static checker
+> warnings.
+>=20
+> The check prior to checking "if (pin->enable_count <=3D 1) {" is
+> "if (pin->enable_count > 1) ", so we know that ->enable_count is <=3D 1
+> already and can delete the check.
 
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index d363f55..25df813 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -477,7 +477,8 @@ static int lynxfb_resume(struct pci_dev *pdev)
- 
- 	console_lock();
- 
--	if ((ret = pci_set_power_state(pdev, PCI_D0)) != 0) {
-+	ret = pci_set_power_state(pdev, PCI_D0);
-+	if (ret) {
- 		pr_err("error:%d occured in pci_set_power_state\n", ret);
- 		return ret;
- 	}
-@@ -485,7 +486,8 @@ static int lynxfb_resume(struct pci_dev *pdev)
- 
- 	if (pdev->dev.power.power_state.event != PM_EVENT_FREEZE) {
- 		pci_restore_state(pdev);
--		if ((ret = pci_enable_device(pdev)) != 0) {
-+		ret = pci_enable_device(pdev);
-+		if (ret) {
- 			pr_err("error:%d occured in pci_enable_device\n", ret);
- 			return ret;
- 		}
-@@ -975,7 +977,8 @@ static int lynxfb_set_fbinfo(struct fb_info *info, int index)
- 		 info->cmap.red, info->cmap.green, info->cmap.blue,
- 		 info->cmap.transp);
- 
--	if ((ret = fb_alloc_cmap(&info->cmap, 256, 0)) < 0) {
-+	ret = fb_alloc_cmap(&info->cmap, 256, 0);
-+	if (ret < 0) {
- 		pr_err("Could not allcate memory for cmap.\n");
- 		goto exit;
- 	}
--- 
-2.3.3
+> The queue_delayed_work() function is type bool so the return value can
+> never be less than zero.
 
+Please don't submit multiple changes in a single patch, it makes it much
+harder to review things and means that problems with one part of the
+change block other bits.  Especially the second bit here looks wrong as
+is...
+
+> @@ -2158,13 +2155,10 @@ int regulator_disable_deferred(struct regulator *=
+regulator, int ms)
+>  	rdev->deferred_disables++;
+>  	mutex_unlock(&rdev->mutex);
+> =20
+> -	ret =3D queue_delayed_work(system_power_efficient_wq,
+> -				 &rdev->disable_work,
+> -				 msecs_to_jiffies(ms));
+> -	if (ret < 0)
+> -		return ret;
+> -	else
+> -		return 0;
+> +	queue_delayed_work(system_power_efficient_wq,
+> +			   &rdev->disable_work,
+> +			   msecs_to_jiffies(ms));
+> +	return 0;
+
+This doesn't look right - it looks like someone changed the return type
+at some point and failed to update all the callers.  Presumbly the
+return value means something (though a quick grep suggests the change is
+correct as the value says if the work was already queued).  It does mean
+that the changelog needs revision though, the point isn't that the
+return value can't be less than zero it's that the function can't fail.
+
+--eL/3bkOpB8q3g/mM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJU9gA/AAoJECTWi3JdVIfQJBQH/jk1UplmJWKVmNMDJBj+guEo
+r+QmVR4PfkpbqKCV12qheE8GzyWyUpo53ays/W322ThnhuU6nz0ypnyQrwfyzatg
+C/Vxiea4igcHQV2/NuKoVOfcQYkKTJ72c6nRxj58k1a19WLsgSwomGXU8S5NVSb8
+vkmPqWCne+d563wyQX5m1Nkol0xatb6r09D03Qir9HDHQ6GNSmXHWdkE6nHuyqXz
+Ifxv/1pMHDsjsfirRaJxzrjvB+n0ZP36ryxt0xCgI700Jhol9qu9C7BCnE14lBZp
+2H38LJY05JQAeuHtOxppqqdoFfLJkdWPQtaqIDODn7+7ywWWLDjciM7L1913owA=
+=A8lf
+-----END PGP SIGNATURE-----
+
+--eL/3bkOpB8q3g/mM--
