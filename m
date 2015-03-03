@@ -1,22 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Mar 2015 17:19:26 +0000
-Subject: Re: [patch 1/2] staging: dgnc: some off by one bugs
-Message-Id: <20150312171926.GM16501@mwanda>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Date: Tue, 03 Mar 2015 13:18:50 +0000
+Subject: Re: [alsa-devel] [PATCH] ASoC: simple-card: Add a NULL pointer check in asoc_simple_card_dai_link_of
+Message-Id: <54F5B4BA.7090408@metafoo.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150312170739.GA21911@mwanda>
-In-Reply-To: <20150312170739.GA21911@mwanda>
+References: <CAC3a_SBrJxS6x+qCwi0p5DcbEbVFX3AOP=-NxWbugY6bEvirLg@mail.gmail.com>
+In-Reply-To: <CAC3a_SBrJxS6x+qCwi0p5DcbEbVFX3AOP=-NxWbugY6bEvirLg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lidza Louina <lidza.louina@gmail.com>
-Cc: Mark Hounschell <markh@compro.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: vishal.thanki@gmail.com, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, broonie@kernel.org, lgirdwood@gmail.com
 
-On Thu, Mar 12, 2015 at 08:07:39PM +0300, Dan Carpenter wrote:
-> "dgnc_NumBoards" is the number of filled out elements in the
-> dgnc_Board[] array.  "->nasync" and "->maxports" are the value.
+On 03/03/2015 02:14 PM, Vishal Thanki wrote:
+[...]
+> + if (!name) {
+> + ret = -ENOMEM;
+> + goto dai_link_of_err;
+> + }
+> +
 
-I meant "the *same* value".  I'll resend.
-
-regards,
-dan carpenter
+The indention here is broken.
 
