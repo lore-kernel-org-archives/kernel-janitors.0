@@ -1,47 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Mar 2015 15:50:02 +0000
-Subject: Re: [PATCH 02/13] staging: sm750: add missing spaces after ','
-Message-Id: <20150326155002.GX10964@mwanda>
+Date: Tue, 03 Mar 2015 19:13:18 +0000
+Subject: [patch v2] ALSA: opl3: small array underflow
+Message-Id: <20150303191318.GA7569@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150322231131.GA17080@x230-arch.club.entropia.de>
-In-Reply-To: <20150322231131.GA17080@x230-arch.club.entropia.de>
+References: <54F5993E.7000109@ladisch.de>
+In-Reply-To: <54F5993E.7000109@ladisch.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 26, 2015 at 04:28:12PM +0100, Michel von Czettritz wrote:
-> >> ---
-> >>  drivers/staging/sm750fb/sm750.c | 264 ++++++++++++++++++++--------------------
-> >>  1 file changed, 132 insertions(+), 132 deletions(-)
-> > 
-> > As I didn't take your first patch, the rest of the patches in this
-> > series do not apply.
-> > 
-> > Please fix them up, rebase on my latest staging-testing branch of
-> > staging.git, and resend so that I can apply them.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> I am, as a newbie, a bit confused. 
-> Should i resend my fixes with RESEND or with a v2 flag?
+We don't check for negatives so "pitchbend" can be SHRT_MIN here.  It
+means that we can read up to 6 elements before the start of the
+opl3_note_table[] array.
 
-Send a v2 and under the --- cut off write:
+There are several ways we could fix this.  I have gone with what is
+maybe the lazier approach of just changing negative values to zero.
+Hopefully, people aren't passing negatives here anyway.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v2: rebased on top of latest staging-testing branch.
+v2: The first patch just chan->midi_pitchbend unsigned but Clemens
+Ladisch pointed out that that breaks the API.
 
-
-> As Sudip i applied Lorenzos conflicting patches on statging-testing and rebased my patches on them. 
-
-I don't understand this sentence.
-
-> Should i wait until Lorenzos patches are applied?
-
-If your patch doesn't apply when Greg gets to it, then you'll have to
-redo it.  Figure out how to make it work.
-
-regards,
-dan carpenter
-
+diff --git a/sound/drivers/opl3/opl3_midi.c b/sound/drivers/opl3/opl3_midi.c
+index f62780e..0cb91dc 100644
+--- a/sound/drivers/opl3/opl3_midi.c
++++ b/sound/drivers/opl3/opl3_midi.c
+@@ -105,6 +105,8 @@ static void snd_opl3_calc_pitch(unsigned char *fnum, unsigned char *blocknum,
+ 		int pitchbend = chan->midi_pitchbend;
+ 		int segment;
+ 
++		if (pitchbend < 0)
++			pitchbend = 0;
+ 		if (pitchbend > 0x1FFF)
+ 			pitchbend = 0x1FFF;
+ 
