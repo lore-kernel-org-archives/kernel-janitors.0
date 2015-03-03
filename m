@@ -1,37 +1,20 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Wed, 04 Mar 2015 10:28:52 +0000
-Subject: [PATCH 0/2] int to bool conversion
-Message-Id: <20150304102852.GA9410@sloth>
+From: Joerg Roedel <joro@8bytes.org>
+Date: Tue, 03 Mar 2015 14:00:58 +0000
+Subject: Re: [patch] iommu/amd: small cleanup in mn_release()
+Message-Id: <20150303140057.GF10502@8bytes.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150220105201.GA7895@mwanda>
+In-Reply-To: <20150220105201.GA7895@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-These patches convert int variables into boolean when relevant.
+On Fri, Feb 20, 2015 at 01:52:01PM +0300, Dan Carpenter wrote:
+> "pasid_state->device_state" and "dev_state" are the same, but it's nicer
+> to use dev_state consistently.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The first patch only deal with cases where the variable are local,
-not returned and not given as argument to a function.
-
-The second patch depends on the first one and deal with cases where
-the local variables are given as argument. It therefore propagates the
-conversion to the concerned parameters.
-
-Quentin Lambert (2):
-  staging: rts5208: Convert non-returned local variable to boolean when
-    relevant
-  staging: rts5208: Convert variable from int to bool and propagate the
-    change to function parameters
-
- drivers/staging/rts5208/ms.c        |  23 ++++---
- drivers/staging/rts5208/ms.h        |   2 +-
- drivers/staging/rts5208/rtsx_chip.c |  56 ++++++++--------
- drivers/staging/rts5208/rtsx_scsi.c |  45 +++++++------
- drivers/staging/rts5208/sd.c        | 124 ++++++++++++++++++------------------
- drivers/staging/rts5208/sd.h        |   2 +-
- 6 files changed, 133 insertions(+), 119 deletions(-)
-
--- 
-1.9.1
-
+Applied, thanks.
