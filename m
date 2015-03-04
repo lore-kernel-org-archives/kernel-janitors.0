@@ -1,43 +1,69 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Thu, 12 Mar 2015 06:03:44 +0000
-Subject: Re: [PATCH 9/15] clk: don't export static symbol
-Message-Id: <20150312060344.GA17325@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Mar 2015 15:06:49 +0000
+Subject: re: x86/intel/quark: Add Isolated Memory Regions for Quark X1000
+Message-Id: <20150304150648.GA26187@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
- <1426092997-30605-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1426092997-30605-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mike Turquette <mturquette@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
+To: kernel-janitors@vger.kernel.org
 
-On 03/11, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> type T;
-> identifier f;
-> @@
-> 
-> static T f (...) { ... }
-> 
-> @@
-> identifier r.f;
-> declarer name EXPORT_SYMBOL_GPL;
-> @@
-> 
-> -EXPORT_SYMBOL_GPL(f);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Bryan O'Donoghue,
 
-Applied to clk-fixes.
+The patch 28a375df16c2: "x86/intel/quark: Add Isolated Memory Regions
+for Quark X1000" from Jan 30, 2015, leads to the following static
+checker warning:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	arch/x86/platform/intel-quark/imr.c:229 imr_dbgfs_state_show()
+	warn: should '(imr.addr_lo) << 8' be a 64 bit type?
+
+arch/x86/platform/intel-quark/imr.c
+   205  static int imr_dbgfs_state_show(struct seq_file *s, void *unused)
+   206  {
+   207          phys_addr_t base;
+   208          phys_addr_t end;
+   209          int i;
+   210          struct imr_device *idev = s->private;
+   211          struct imr_regs imr;
+   212          size_t size;
+   213          int ret = -ENODEV;
+   214  
+   215          mutex_lock(&idev->lock);
+   216  
+   217          for (i = 0; i < idev->max_imr; i++) {
+   218  
+   219                  ret = imr_read(idev, i, &imr);
+   220                  if (ret)
+   221                          break;
+   222  
+   223                  /*
+   224                   * Remember to add IMR_ALIGN bytes to size to indicate the
+   225                   * inherent IMR_ALIGN size bytes contained in the masked away
+   226                   * lower ten bits.
+   227                   */
+   228                  if (imr_is_enabled(&imr)) {
+   229                          base = imr_to_phys(imr.addr_lo);
+
+The imr_to_phys() macro should probably include a cast to phys_addr_t if
+only to silence the static checker warnings.
+
+   230                          end = imr_to_phys(imr.addr_hi) + IMR_MASK;
+   231                  } else {
+   232                          base = 0;
+   233                          end = 0;
+   234                  }
+   235                  size = end - base;
+   236                  seq_printf(s, "imr%02i: base=%pa, end=%pa, size=0x%08zx "
+   237                             "rmask=0x%08x, wmask=0x%08x, %s, %s\n", i,
+   238                             &base, &end, size, imr.rmask, imr.wmask,
+   239                             imr_is_enabled(&imr) ? "enabled " : "disabled",
+   240                             imr.addr_lo & IMR_LOCK ? "locked" : "unlocked");
+   241          }
+   242  
+   243          mutex_unlock(&idev->lock);
+   244          return ret;
+   245  }
+
+
+regards,
+dan carpenter
