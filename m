@@ -1,79 +1,105 @@
-From: Michel von Czettritz <michel.von.czettritz@gmail.com>
-Date: Sun, 22 Mar 2015 23:13:18 +0000
-Subject: [PATCH 07/13] staging: sm750: no braces for single stmt if blocks
-Message-Id: <20150322231318.GA17203@x230-arch.club.entropia.de>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Thu, 05 Mar 2015 13:12:15 +0000
+Subject: [PATCH 1/1] staging: rtl8192e: Remove unnecessary OOM message
+Message-Id: <20150305131215.GA5607@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-This patches fixes checkpatch.pl warning:
-"WARNING: braces {} are not necessary for single statement blocks"
+This patch reduces the kernel size by removing error messages that duplicate
+the normal OOM message.
 
-Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr)
+
+@@
+identifier f,print,l;
+expression e;
+constant char[] c;
+@@
+
+e = \(kzalloc\|kmalloc\|devm_kzalloc\|devm_kmalloc\)(...);
+if (e = NULL) {
+  <+...
+-  print(...,c,...);
+  ... when any
+(
+  goto l;
+|
+  return ...;
+)
+  ...+> }
+
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 ---
- drivers/staging/sm750fb/sm750.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ drivers/staging/rtl8192e/rtllib_module.c | 10 +++-------
+ drivers/staging/rtl8192e/rtllib_rx.c     | 11 ++++-------
+ 2 files changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index a0a8db7..54857ba 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -62,18 +62,16 @@ static inline void myspin_lock(spinlock_t *sl)
- {
- 	struct lynx_share *share;
- 	share = container_of(sl, struct lynx_share, slock);
--	if (share->dual) {
-+	if (share->dual)
- 		spin_lock(sl);
--	}
- }
- 
- static inline void myspin_unlock(spinlock_t *sl)
- {
- 	struct lynx_share *share;
- 	share = container_of(sl, struct lynx_share, slock);
--	if (share->dual) {
-+	if (share->dual)
- 		spin_unlock(sl);
--	}
- }
- static const struct fb_videomode lynx750_ext[] = {
- 	/*  	1024x600-60 VESA 	[1.71:1]	*/
-@@ -149,9 +147,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
- 	}
- 
- 	cursor->disable(cursor);
--	if (fbcursor->set & FB_CUR_SETSIZE) {
-+	if (fbcursor->set & FB_CUR_SETSIZE)
- 		cursor->setSize(cursor, fbcursor->image.width, fbcursor->image.height);
--	}
- 
- 	if (fbcursor->set & FB_CUR_SETPOS) {
- 		cursor->setPos(cursor, fbcursor->image.dx - info->var.xoffset,
-@@ -180,9 +177,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
- 				fbcursor->mask);
- 	}
- 
--	if (fbcursor->enable) {
-+	if (fbcursor->enable)
- 		cursor->enable(cursor);
+diff --git a/drivers/staging/rtl8192e/rtllib_module.c b/drivers/staging/rtl8192e/rtllib_module.c
+index 248cc0d..32cc8df 100644
+--- a/drivers/staging/rtl8192e/rtllib_module.c
++++ b/drivers/staging/rtl8192e/rtllib_module.c
+@@ -72,11 +72,8 @@ static inline int rtllib_networks_allocate(struct rtllib_device *ieee)
+ 	ieee->networks = kzalloc(
+ 		MAX_NETWORK_COUNT * sizeof(struct rtllib_network),
+ 		GFP_KERNEL);
+-	if (!ieee->networks) {
+-		printk(KERN_WARNING "%s: Out of memory allocating beacons\n",
+-		       ieee->dev->name);
++	if (!ieee->networks)
+ 		return -ENOMEM;
 -	}
  
  	return 0;
  }
-@@ -194,9 +190,8 @@ static void lynxfb_ops_fillrect(struct fb_info *info, const struct fb_fillrect *
- 	unsigned int base, pitch, Bpp, rop;
- 	u32 color;
+@@ -161,10 +158,9 @@ struct net_device *alloc_rtllib(int sizeof_priv)
+ 	rtllib_softmac_init(ieee);
  
--	if (info->state != FBINFO_STATE_RUNNING) {
-+	if (info->state != FBINFO_STATE_RUNNING)
- 		return;
+ 	ieee->pHTInfo = kzalloc(sizeof(struct rt_hi_throughput), GFP_KERNEL);
+-	if (ieee->pHTInfo = NULL) {
+-		RTLLIB_DEBUG(RTLLIB_DL_ERR, "can't alloc memory for HTInfo\n");
++	if (ieee->pHTInfo = NULL)
+ 		return NULL;
 -	}
- 
- 	par = info->par;
- 	share = par->share;
++
+ 	HTUpdateDefaultSetting(ieee);
+ 	HTInitializeHTInfo(ieee);
+ 	TSInitialize(ieee);
+diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
+index 1664040..0a9cf44 100644
+--- a/drivers/staging/rtl8192e/rtllib_rx.c
++++ b/drivers/staging/rtl8192e/rtllib_rx.c
+@@ -394,10 +394,9 @@ static int is_duplicate_packet(struct rtllib_device *ieee,
+ 		}
+ 		if (p = &ieee->ibss_mac_hash[index]) {
+ 			entry = kmalloc(sizeof(struct ieee_ibss_seq), GFP_ATOMIC);
+-			if (!entry) {
+-				printk(KERN_WARNING "Cannot malloc new mac entry\n");
++			if (!entry)
+ 				return 0;
+-			}
++
+ 			memcpy(entry->mac, mac, ETH_ALEN);
+ 			entry->seq_num[tid] = seq;
+ 			entry->frag_num[tid] = frag;
+@@ -1345,11 +1344,9 @@ static int rtllib_rx_InfraAdhoc(struct rtllib_device *ieee, struct sk_buff *skb,
+ 	/* skb: hdr + (possible reassembled) full plaintext payload */
+ 	payload = skb->data + hdrlen;
+ 	rxb = kmalloc(sizeof(struct rtllib_rxb), GFP_ATOMIC);
+-	if (rxb = NULL) {
+-		RTLLIB_DEBUG(RTLLIB_DL_ERR,
+-			     "%s(): kmalloc rxb error\n", __func__);
++	if (rxb = NULL)
+ 		goto rx_dropped;
+-	}
++
+ 	/* to parse amsdu packets */
+ 	/* qos data packets & reserved bit is 1 */
+ 	if (parse_subframe(ieee, skb, rx_stats, rxb, src, dst) = 0) {
 -- 
-2.3.3
+1.9.1
 
