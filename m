@@ -1,40 +1,43 @@
-From: "Fujinaka, Todd" <todd.fujinaka@intel.com>
-Date: Tue, 31 Mar 2015 20:10:31 +0000
-Subject: RE: [E1000-devel] [patch] igb: cleanup igb_enable_mas() a bit
-Message-Id: <9B4A1B1917080E46B64F07F2989DADD6534FB15A@ORSMSX114.amr.corp.intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 05 Mar 2015 13:48:36 +0000
+Subject: Re: [patch] mmc: sdhci-esdhc-imx: silence a false curly braces warning
+Message-Id: <CAPDyKFp+sZBhwSWS_SWeBUJebOYMOU_hKTO1jA427Yo6X6GsNg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9B4A1B1917080E46B64F07F2989DADD6534E3B53@ORSMSX114.amr.corp.intel.com>
-In-Reply-To: <9B4A1B1917080E46B64F07F2989DADD6534E3B53@ORSMSX114.amr.corp.intel.com>
+References: <20150226203755.GD6820@mwanda>
+In-Reply-To: <20150226203755.GD6820@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Chris Ball <chris@printf.net>, Aisheng Dong <b29396@freescale.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Shawn Guo <shawn.guo@linaro.org>, Dirk Behme <dirk.behme@de.bosch.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-mmc <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-I have a fix for this already, if Dan doesn't mind.
+On 26 February 2015 at 21:37, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> Static checkers suggest that probably we intended to put curly braces
+> around the writel() to make it part of the else path.  But, I think
+> actually the indenting is off and the code works fine as is.
+>
+> The stray tab was introduced in 0322191e6298 ('mmc: sdhci-esdhc-imx: add
+> sd3.0 SDR clock tuning support')
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Todd Fujinaka
-Software Application Engineer
-Networking Division (ND)
-Intel Corporation
-todd.fujinaka@intel.com
-(503) 712-4565
+Applied, thanks!
 
------Original Message-----
-From: Wyborny, Carolyn 
-Sent: Tuesday, March 31, 2015 11:07 AM
-To: Fujinaka, Todd; Kirsher, Jeffrey T; Dan Carpenter
-Cc: e1000-devel@lists.sourceforge.net; kernel-janitors@vger.kernel.org; Allan, Bruce W; Brandeburg, Jesse; Linux NICS; Ronciak, John
-Subject: RE: [E1000-devel] [patch] igb: cleanup igb_enable_mas() a bit
+Kind regards
+Uffe
 
-[..]
-> I'm looking into this and while the code fix is correct, I'm not sure 
-> the underlying code is correct.
-> 
-> Unfortunately, the person who knows the most about this is out for 
-> spring break. Can we hold off on this patch?
 
-Yes, the intended fix is good.  In addition though, I think igb_enable_mas() should be changed to void and the call to it also modified, since there's no way to fail the enable.  A previous implementation had a way to fail, but the current does not.
-
-Thanks,
-
-Carolyn
+>
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index 10ef824..9cce5cf 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -416,7 +416,7 @@ static void esdhc_writew_le(struct sdhci_host *host, u16 val, int reg)
+>                         new_val |= ESDHC_VENDOR_SPEC_FRC_SDCLK_ON;
+>                 else
+>                         new_val &= ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON;
+> -                       writel(new_val, host->ioaddr + ESDHC_VENDOR_SPEC);
+> +               writel(new_val, host->ioaddr + ESDHC_VENDOR_SPEC);
+>                 return;
+>         case SDHCI_HOST_CONTROL2:
+>                 new_val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
