@@ -1,43 +1,83 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Fri, 06 Mar 2015 18:29:02 +0000
-Subject: Re: [patch] PCI: cpcihp: missing curly braces in cpci_configure_slot()
-Message-Id: <20150306182902.GF20077@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Mar 2015 10:21:49 +0000
+Subject: re: ALSA: line6: Fix volume calculation for big-endian
+Message-Id: <20150305102149.GA10971@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225132322.GJ19745@mwanda>
-In-Reply-To: <20150225132322.GJ19745@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Scott Murray <scott@spiteful.org>, Yijing Wang <wangyijing@huawei.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: tiwai@suse.de
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 25, 2015 at 04:23:22PM +0300, Dan Carpenter wrote:
-> I don't have this hardware but it looks like we weren't adding bridge
-> devices as intended.  Maybe the bridge is always the last device?
-> 
-> Fixes: 05b125004815 ('PCI: cpcihp: Iterate over all devices in slot, not functions 0-7')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hello Takashi Iwai,
 
-Applied with Yijing's ack to for-linus for v4.0, thanks!  Also marked for
-stable.
+The patch 0416980d0a2b: "ALSA: line6: Fix volume calculation for
+big-endian" from Jan 28, 2015, leads to the following static checker
+warning:
 
-I'm afraid this is probably my fault, sorry.
+	sound/usb/line6/playback.c:42 change_volume()
+		warn: always clamps to s16min
+	sound/usb/line6/playback.c:57 change_volume()
+		warn: always clamps to (-8388608)
+	sound/usb/line6/playback.c:129 add_monitor_signal()
+		warn: always clamps to s16min
 
-> diff --git a/drivers/pci/hotplug/cpci_hotplug_pci.c b/drivers/pci/hotplug/cpci_hotplug_pci.c
-> index 7d48eca..788db48 100644
-> --- a/drivers/pci/hotplug/cpci_hotplug_pci.c
-> +++ b/drivers/pci/hotplug/cpci_hotplug_pci.c
-> @@ -286,11 +286,12 @@ int cpci_configure_slot(struct slot *slot)
->  	}
->  	parent = slot->dev->bus;
->  
-> -	list_for_each_entry(dev, &parent->devices, bus_list)
-> +	list_for_each_entry(dev, &parent->devices, bus_list) {
->  		if (PCI_SLOT(dev->devfn) != PCI_SLOT(slot->devfn))
->  			continue;
->  		if (pci_is_bridge(dev))
->  			pci_hp_add_bridge(dev);
-> +	}
->  
->  
->  	pci_assign_unassigned_bridge_resources(parent->self);
+sound/usb/line6/playback.c
+    25  static void change_volume(struct urb *urb_out, int volume[],
+    26                            int bytes_per_frame)
+    27  {
+    28          int chn = 0;
+    29  
+    30          if (volume[0] = 256 && volume[1] = 256)
+    31                  return;         /* maximum volume - no change */
+    32  
+    33          if (bytes_per_frame = 4) {
+    34                  __le16 *p, *buf_end;
+    35  
+    36                  p = (__le16 *)urb_out->transfer_buffer;
+    37                  buf_end = p + urb_out->transfer_buffer_length / sizeof(*p);
+    38  
+    39                  for (; p < buf_end; ++p) {
+    40                          short pv = le16_to_cpu(*p);
+    41                          int val = (pv * volume[chn & 1]) >> 8;
+    42                          pv = clamp(val, 0x7fff, -0x8000);
+                                                ^^^^^^^^^^^^^^^^
+You didn't really add this, but you might know what was intended here.
+It is a complete mystery to me.  :)
+
+    43                          *p = cpu_to_le16(pv);
+    44                          ++chn;
+    45                  }
+    46          } else if (bytes_per_frame = 6) {
+    47                  unsigned char *p, *buf_end;
+    48  
+    49                  p = (unsigned char *)urb_out->transfer_buffer;
+    50                  buf_end = p + urb_out->transfer_buffer_length;
+    51  
+    52                  for (; p < buf_end; p += 3) {
+    53                          int val;
+    54  
+    55                          val = p[0] + (p[1] << 8) + ((signed char)p[2] << 16);
+    56                          val = (val * volume[chn & 1]) >> 8;
+    57                          val = clamp(val, 0x7fffff, -0x800000);
+                                                 ^^^^^^^^^^^^^^^^^^^^
+    58                          p[0] = val;
+    59                          p[1] = val >> 8;
+    60                          p[2] = val >> 16;
+    61                          ++chn;
+    62                  }
+    63          }
+    64  }
+
+	[snip]
+
+
+   127                          short piv = le16_to_cpu(*pi);
+   128                          int val = pov + ((piv * volume) >> 8);
+   129                          pov = clamp(val, 0x7fff, -0x8000);
+                                                 ^^^^^^^^^^^^^^^^
+   130                          *po = cpu_to_le16(pov);
+   131                  }
+
+regards,
+dan carpenter
