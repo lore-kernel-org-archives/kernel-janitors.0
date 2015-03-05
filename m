@@ -1,71 +1,57 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 23 Mar 2015 13:00:38 +0000
-Subject: Re: [patch] ALSA: echoaudio: read past end of array
-Message-Id: <s5hpp7z50nd.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Mar 2015 11:24:17 +0000
+Subject: [patch] xen/mce: fix up xen_late_init_mcelog() error handling
+Message-Id: <20150305112417.GA13378@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150323094131.GE558@mwanda>
-In-Reply-To: <20150323094131.GE558@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Sachin Kamat <sachin.kamat@samsung.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-At Mon, 23 Mar 2015 12:41:31 +0300,
-Dan Carpenter wrote:
-> 
-> We need to cap "ucontrol->id.index / num_busses_in(chip)" so the we
-> don't read beyond the end of the array.
-> 
-> I also adding a check on "in" and changing the type in
-> snd_echo_mixer_put() from short to unsigned int. Those changes are done
-> for symmetry and are cosmetic.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Static checkers complain about the missing call to misc_deregister() if
+bind_virq_for_mce() fails.
 
-Applied, thanks.
+Also I reversed the tests so that we do error handling instead of
+success handling.  That way we just have a series of function calls
+instead of the more complicated nested if statements in the original
+code.  Let's preserve the error codes as well.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Takashi
-
-> 
-> diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
-> index a962de0..862db9a 100644
-> --- a/sound/pci/echoaudio/echoaudio.c
-> +++ b/sound/pci/echoaudio/echoaudio.c
-> @@ -1283,12 +1283,14 @@ static int snd_echo_mixer_info(struct snd_kcontrol *kcontrol,
->  static int snd_echo_mixer_get(struct snd_kcontrol *kcontrol,
->  			      struct snd_ctl_elem_value *ucontrol)
->  {
-> -	struct echoaudio *chip;
-> +	struct echoaudio *chip = snd_kcontrol_chip(kcontrol);
-> +	unsigned int out = ucontrol->id.index / num_busses_in(chip);
-> +	unsigned int in = ucontrol->id.index % num_busses_in(chip);
->  
-> -	chip = snd_kcontrol_chip(kcontrol);
-> -	ucontrol->value.integer.value[0] > -		chip->monitor_gain[ucontrol->id.index / num_busses_in(chip)]
-> -			[ucontrol->id.index % num_busses_in(chip)];
-> +	if (out >= ECHO_MAXAUDIOOUTPUTS || in >= ECHO_MAXAUDIOINPUTS)
-> +		return -EINVAL;
-> +
-> +	ucontrol->value.integer.value[0] = chip->monitor_gain[out][in];
->  	return 0;
->  }
->  
-> @@ -1297,12 +1299,14 @@ static int snd_echo_mixer_put(struct snd_kcontrol *kcontrol,
->  {
->  	struct echoaudio *chip;
->  	int changed,  gain;
-> -	short out, in;
-> +	unsigned int out, in;
->  
->  	changed = 0;
->  	chip = snd_kcontrol_chip(kcontrol);
->  	out = ucontrol->id.index / num_busses_in(chip);
->  	in = ucontrol->id.index % num_busses_in(chip);
-> +	if (out >= ECHO_MAXAUDIOOUTPUTS || in >= ECHO_MAXAUDIOINPUTS)
-> +		return -EINVAL;
->  	gain = ucontrol->value.integer.value[0];
->  	if (gain < ECHOGAIN_MINOUT || gain > ECHOGAIN_MAXOUT)
->  		return -EINVAL;
-> 
+diff --git a/drivers/xen/mcelog.c b/drivers/xen/mcelog.c
+index 6ab6a79..a493c7315 100644
+--- a/drivers/xen/mcelog.c
++++ b/drivers/xen/mcelog.c
+@@ -393,14 +393,25 @@ static int bind_virq_for_mce(void)
+ 
+ static int __init xen_late_init_mcelog(void)
+ {
++	int ret;
++
+ 	/* Only DOM0 is responsible for MCE logging */
+-	if (xen_initial_domain()) {
+-		/* register character device /dev/mcelog for xen mcelog */
+-		if (misc_register(&xen_mce_chrdev_device))
+-			return -ENODEV;
+-		return bind_virq_for_mce();
+-	}
++	if (!xen_initial_domain())
++		return -ENODEV;
++
++	/* register character device /dev/mcelog for xen mcelog */
++	ret = misc_register(&xen_mce_chrdev_device);
++	if (ret)
++		return ret;
++
++	ret = bind_virq_for_mce();
++	if (ret)
++		goto deregister;
+ 
+-	return -ENODEV;
++	return 0;
++
++deregister:
++	misc_deregister(&xen_mce_chrdev_device);
++	return ret;
+ }
+ device_initcall(xen_late_init_mcelog);
