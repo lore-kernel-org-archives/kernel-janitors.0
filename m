@@ -1,72 +1,33 @@
-From: cascardo@linux.vnet.ibm.com
-Date: Tue, 17 Mar 2015 13:20:42 +0000
-Subject: Re: [patch 2/2 v2] serial: jsm: some off by one bugs
-Message-Id: <20150317132042.GA4083@oc0812247204.ltc.br.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Mar 2015 11:26:37 +0000
+Subject: [patch] ALSA: msnd: add some missing curly braces
+Message-Id: <20150305112637.GB13378@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150316174743.GB6037@oc0812247204.ltc.br.ibm.com>
- <20150317091728.GA19685@mwanda>
-In-Reply-To: <20150317091728.GA19685@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Tue, Mar 17, 2015 at 12:17:28PM +0300, Dan Carpenter wrote:
-> "brd->nasync" amd "brd->maxports" are the same.  They hold the number of
-> filled out channels in the brd->channels[] array.  These tests should
-> be ">=" instead of ">" so that we don't read one element past the end.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Thadeu Cascardo noticed another off by one that I missed.
-> 
+There were some curly braces intended here.
 
-Acked-by: Thadeu Lima de Souza Cascardo <cascardo@linux.vnet.ibm.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/tty/serial/jsm/jsm_cls.c b/drivers/tty/serial/jsm/jsm_cls.c
-> index bfb0681..4eb12a9 100644
-> --- a/drivers/tty/serial/jsm/jsm_cls.c
-> +++ b/drivers/tty/serial/jsm/jsm_cls.c
-> @@ -570,7 +570,7 @@ static inline void cls_parse_isr(struct jsm_board *brd, uint port)
->  	 * verified in the interrupt routine.
->  	 */
-> 
-> -	if (port > brd->nasync)
-> +	if (port >= brd->nasync)
->  		return;
-> 
->  	ch = brd->channels[port];
-> diff --git a/drivers/tty/serial/jsm/jsm_neo.c b/drivers/tty/serial/jsm/jsm_neo.c
-> index 7291c21..932b2ac 100644
-> --- a/drivers/tty/serial/jsm/jsm_neo.c
-> +++ b/drivers/tty/serial/jsm/jsm_neo.c
-> @@ -724,7 +724,7 @@ static inline void neo_parse_isr(struct jsm_board *brd, u32 port)
->  	if (!brd)
->  		return;
-> 
-> -	if (port > brd->maxports)
-> +	if (port >= brd->maxports)
->  		return;
-> 
->  	ch = brd->channels[port];
-> @@ -840,7 +840,7 @@ static inline void neo_parse_lsr(struct jsm_board *brd, u32 port)
->  	if (!brd)
->  		return;
-> 
-> -	if (port > brd->maxports)
-> +	if (port >= brd->maxports)
->  		return;
-> 
->  	ch = brd->channels[port];
-> @@ -1180,7 +1180,7 @@ static irqreturn_t neo_intr(int irq, void *voidbrd)
->  			 */
-> 
->  			/* Verify the port is in range. */
-> -			if (port > brd->nasync)
-> +			if (port >= brd->nasync)
->  				continue;
-> 
->  			ch = brd->channels[port];
-> 
-
+diff --git a/sound/isa/msnd/msnd_pinnacle_mixer.c b/sound/isa/msnd/msnd_pinnacle_mixer.c
+index 17e49a0..b408540 100644
+--- a/sound/isa/msnd/msnd_pinnacle_mixer.c
++++ b/sound/isa/msnd/msnd_pinnacle_mixer.c
+@@ -306,11 +306,12 @@ int snd_msndmix_new(struct snd_card *card)
+ 	spin_lock_init(&chip->mixer_lock);
+ 	strcpy(card->mixername, "MSND Pinnacle Mixer");
+ 
+-	for (idx = 0; idx < ARRAY_SIZE(snd_msnd_controls); idx++)
++	for (idx = 0; idx < ARRAY_SIZE(snd_msnd_controls); idx++) {
+ 		err = snd_ctl_add(card,
+ 				  snd_ctl_new1(snd_msnd_controls + idx, chip));
+ 		if (err < 0)
+ 			return err;
++	}
+ 
+ 	return 0;
+ }
