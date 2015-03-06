@@ -1,51 +1,43 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 23 Mar 2015 12:59:08 +0000
-Subject: Re: [patch] ALSA: ak411x: simplify snd_ak4113_create() a bit
-Message-Id: <s5hr3sf50pv.wl-tiwai@suse.de>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Date: Fri, 06 Mar 2015 18:29:02 +0000
+Subject: Re: [patch] PCI: cpcihp: missing curly braces in cpci_configure_slot()
+Message-Id: <20150306182902.GF20077@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150323093445.GA558@mwanda>
-In-Reply-To: <20150323093445.GA558@mwanda>
+References: <20150225132322.GJ19745@mwanda>
+In-Reply-To: <20150225132322.GJ19745@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Cc: Scott Murray <scott@spiteful.org>, Yijing Wang <wangyijing@huawei.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Mon, 23 Mar 2015 12:34:46 +0300,
-Dan Carpenter wrote:
+On Wed, Feb 25, 2015 at 04:23:22PM +0300, Dan Carpenter wrote:
+> I don't have this hardware but it looks like we weren't adding bridge
+> devices as intended.  Maybe the bridge is always the last device?
 > 
-> "err" is always a negative error code here, so there is no point in
-> checking.  Removing the check silences a static checker warning and
-> makes the code a bit more clear.  Also we don't need to initialize "err".
-> 
+> Fixes: 05b125004815 ('PCI: cpcihp: Iterate over all devices in slot, not functions 0-7')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+Applied with Yijing's ack to for-linus for v4.0, thanks!  Also marked for
+stable.
 
+I'm afraid this is probably my fault, sorry.
 
-Takashi
-
-> 
-> diff --git a/sound/i2c/other/ak4113.c b/sound/i2c/other/ak4113.c
-> index 8884488..2183e9e 100644
-> --- a/sound/i2c/other/ak4113.c
-> +++ b/sound/i2c/other/ak4113.c
-> @@ -73,7 +73,7 @@ int snd_ak4113_create(struct snd_card *card, ak4113_read_t *read,
->  		void *private_data, struct ak4113 **r_ak4113)
->  {
->  	struct ak4113 *chip;
-> -	int err = 0;
-> +	int err;
->  	unsigned char reg;
->  	static struct snd_device_ops ops = {
->  		.dev_free =     snd_ak4113_dev_free,
-> @@ -109,7 +109,7 @@ int snd_ak4113_create(struct snd_card *card, ak4113_read_t *read,
+> diff --git a/drivers/pci/hotplug/cpci_hotplug_pci.c b/drivers/pci/hotplug/cpci_hotplug_pci.c
+> index 7d48eca..788db48 100644
+> --- a/drivers/pci/hotplug/cpci_hotplug_pci.c
+> +++ b/drivers/pci/hotplug/cpci_hotplug_pci.c
+> @@ -286,11 +286,12 @@ int cpci_configure_slot(struct slot *slot)
+>  	}
+>  	parent = slot->dev->bus;
 >  
->  __fail:
->  	snd_ak4113_free(chip);
-> -	return err < 0 ? err : -EIO;
-> +	return err;
->  }
->  EXPORT_SYMBOL_GPL(snd_ak4113_create);
+> -	list_for_each_entry(dev, &parent->devices, bus_list)
+> +	list_for_each_entry(dev, &parent->devices, bus_list) {
+>  		if (PCI_SLOT(dev->devfn) != PCI_SLOT(slot->devfn))
+>  			continue;
+>  		if (pci_is_bridge(dev))
+>  			pci_hp_add_bridge(dev);
+> +	}
 >  
-> 
+>  
+>  	pci_assign_unassigned_bridge_resources(parent->self);
