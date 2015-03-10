@@ -1,38 +1,67 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 24 Mar 2015 09:21:07 +0000
-Subject: [patch 2/2] tpm, st33zp24: potential underflow in st33zp24_recv()
-Message-Id: <20150324092107.GB24154@mwanda>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Date: Tue, 10 Mar 2015 12:47:39 +0000
+Subject: Re: [patch] fbdev: pm3fb: cleanup some confusing indenting
+Message-Id: <54FEE7EB.8070402@ti.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Q56R8VaCa90KBVVU90lFe8bTCnGfXwaxJ"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-Static checkers don't like the min_t() casting because "count" can be
-negative when we cast it to int.  Fix the casting, and change the caller
-so that "count" can't be negative.
+--Q56R8VaCa90KBVVU90lFe8bTCnGfXwaxJ
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 25/02/15 15:25, Dan Carpenter wrote:
+> This if statement should be pushed out one tab to line up with the rest=
+=2E
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> diff --git a/drivers/video/fbdev/pm3fb.c b/drivers/video/fbdev/pm3fb.c
+> index 4bf3273..77b99ed 100644
+> --- a/drivers/video/fbdev/pm3fb.c
+> +++ b/drivers/video/fbdev/pm3fb.c
+> @@ -1479,9 +1479,9 @@ static void pm3fb_remove(struct pci_dev *dev)
+>  		fb_dealloc_cmap(&info->cmap);
+> =20
+>  #ifdef CONFIG_MTRR
+> -	if (par->mtrr_handle >=3D 0)
+> -		mtrr_del(par->mtrr_handle, info->fix.smem_start,
+> -			 info->fix.smem_len);
+> +		if (par->mtrr_handle >=3D 0)
+> +			mtrr_del(par->mtrr_handle, info->fix.smem_start,
+> +				 info->fix.smem_len);
+>  #endif /* CONFIG_MTRR */
+>  		iounmap(info->screen_base);
+>  		release_mem_region(fix->smem_start, fix->smem_len);
 
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index 03f2543..7712e31 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -350,7 +350,7 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
- 		burstcnt = get_burstcount(chip);
- 		if (burstcnt < 0)
- 			return burstcnt;
--		len = min_t(int, burstcnt, count - size);
-+		len = min_t(size_t, burstcnt, count - size);
- 		ret = tpm_dev->ops->recv(tpm_dev->phy_id, TPM_DATA_FIFO,
- 					 buf + size, len);
- 		if (ret < 0)
-@@ -492,7 +492,7 @@ static int st33zp24_recv(struct tpm_chip *chip, unsigned char *buf,
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
--	if (expected > count) {
-+	if (expected < TPM_HEADER_SIZE || expected > count) {
- 		size = -EIO;
- 		goto out;
- 	}
+Thanks, queued for 4.1.
+
+ Tomi
+
+
+
+--Q56R8VaCa90KBVVU90lFe8bTCnGfXwaxJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJU/ufrAAoJEPo9qoy8lh71lOAP/R0LVa4/t1snu2LwuqwBGCS/
+ooht8QJT8qL+CGbUW/Zmkd8XVo08VHjphenmDKhVXEcBC5awkiDB0Djfj+JR+lMd
+XwCGKsD2p8mTECwsBR5kPnFuqMJ5SOHpYc/74f44JXj9pLbz/ahKHPYP4jtDNhQh
+pD+fiZ21EdMCpyW4iNTVANh93dZPJYIahOqW7zrwETFhp8mtLqz/mtdvxcdqlTcS
+auG+PciFcCO4wjHr/vDlTw1Nghv3onRap7ftUvS1C7ps1u04PF4PvQnek4DQXg7b
+zqs6As/zlb7FIHp+x1wPd0PMR8rCWccc10Q8TlEgQOIrSg1FeV8HMzeVWnuPJvCy
+GFoGA4k1J0KdV2PSo+wlxHWy/yBougqEeTqxG5bT8ilR4RpKcG/X5ZKddN0tuuYr
+M5xJh2jjQRXBqJxa4hNihZRemVMZp03douKiHOMSj/lxqOKAtqHh6B+pUx9hlWPr
+mLDNLb5K2aYObFTKzOuqPjvw9DeGJSZO0FGsPR72bNTl+hDKClxCuQNpxn1a1wGH
+MrCy5KEaHLsjURmwABPjXq0k1Us0cmlSGXHkBPL9m+dhrt7Ea5NISiWdq+Jbeggg
+U2wtz2Sdpc2rTfu/rrQMd8sChYojoOhoQ7luCDJ2CP1wuDIWc+NO4ySZgWo9Hmyn
+VnZM9n6Ut2pAFPNgsn1Q
+=z6TZ
+-----END PGP SIGNATURE-----
+
+--Q56R8VaCa90KBVVU90lFe8bTCnGfXwaxJ--
