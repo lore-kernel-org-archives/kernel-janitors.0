@@ -1,33 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 31 Mar 2015 08:58:55 +0000
-Subject: [patch] Staging: rtl8192u: use correct array for debug output
-Message-Id: <20150331085855.GA13460@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 11 Mar 2015 16:56:22 +0000
+Subject: [PATCH 0/15] don't export static symbol
+Message-Id: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: alsa-devel@alsa-project.org, linux-nfs@vger.kernel.org, linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, target-devel@vger.kernel.org, linux-crypto@vger.kernel.org, netdev@vger.kernel.org, linux-media@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-edac@vger.kernel.org
 
-This is supposed to be ->rates_ex[] instead of ->rates[].  I found this
-because static checkers complain than ->rates is too small so we're
-reading beyond the end of the array.  It has 12 elements instead of 15.
+These patches remove EXPORT_SYMBOL or EXPORT_SYMBOL_GPL declarations on
+static functions.
 
-This bug was apparently copy and pasted from ipw2x00.  I fixed it before
-in that driver 428e3cf5f98c ('ipw2x00: printing the wrong array in
-debug code')
+This was done using the following semantic patch:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@r@
+type T;
+identifier f;
+@@
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-index 0a90450..cbed8e6 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
-@@ -1704,7 +1704,7 @@ int ieee80211_parse_info_param(struct ieee80211_device *ieee,
- #ifdef CONFIG_IEEE80211_DEBUG
- 				p += snprintf(p, sizeof(rates_str) -
- 					      (p - rates_str), "%02X ",
--					      network->rates[i]);
-+					      network->rates_ex[i]);
- #endif
- 				if (ieee80211_is_ofdm_rate
- 				    (info_element->data[i])) {
+static T f (...) { ... }
+
+@@
+identifier r.f;
+declarer name EXPORT_SYMBOL;
+@@
+
+-EXPORT_SYMBOL(f);
+
+@@
+identifier r.f;
+declarer name EXPORT_SYMBOL_GPL;
+@@
+
+-EXPORT_SYMBOL_GPL(f);
+// </smpl>
+
