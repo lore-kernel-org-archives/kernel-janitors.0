@@ -1,45 +1,52 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 05 Mar 2015 12:02:20 +0000
-Subject: Re: [patch] ALSA: msnd: add some missing curly braces
-Message-Id: <s5htwxz64ab.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 11 Mar 2015 16:56:25 +0000
+Subject: [PATCH 3/15] net/mlx5_core: don't export static symbol
+Message-Id: <1426092997-30605-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150305112637.GB13378@mwanda>
-In-Reply-To: <20150305112637.GB13378@mwanda>
+References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Eli Cohen <eli@mellanox.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
 
-At Thu, 5 Mar 2015 14:26:37 +0300,
-Dan Carpenter wrote:
-> 
-> There were some curly braces intended here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks, applied.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r@
+type T;
+identifier f;
+@@
 
-Takashi
+static T f (...) { ... }
 
-> 
-> diff --git a/sound/isa/msnd/msnd_pinnacle_mixer.c b/sound/isa/msnd/msnd_pinnacle_mixer.c
-> index 17e49a0..b408540 100644
-> --- a/sound/isa/msnd/msnd_pinnacle_mixer.c
-> +++ b/sound/isa/msnd/msnd_pinnacle_mixer.c
-> @@ -306,11 +306,12 @@ int snd_msndmix_new(struct snd_card *card)
->  	spin_lock_init(&chip->mixer_lock);
->  	strcpy(card->mixername, "MSND Pinnacle Mixer");
->  
-> -	for (idx = 0; idx < ARRAY_SIZE(snd_msnd_controls); idx++)
-> +	for (idx = 0; idx < ARRAY_SIZE(snd_msnd_controls); idx++) {
->  		err = snd_ctl_add(card,
->  				  snd_ctl_new1(snd_msnd_controls + idx, chip));
->  		if (err < 0)
->  			return err;
-> +	}
->  
->  	return 0;
->  }
-> 
+@@
+identifier r.f;
+declarer name EXPORT_SYMBOL;
+@@
+
+-EXPORT_SYMBOL(f);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/mellanox/mlx5/core/main.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff -u -p a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -697,7 +697,6 @@ err_dbg:
+ 	debugfs_remove(priv->dbg_root);
+ 	return err;
+ }
+-EXPORT_SYMBOL(mlx5_dev_init);
+ 
+ static void mlx5_dev_cleanup(struct mlx5_core_dev *dev)
+ {
+
