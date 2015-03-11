@@ -1,31 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Mar 2015 21:06:30 +0000
-Subject: Re: [alsa-devel] [patch v2] ALSA: opl3: small array underflow
-Message-Id: <20150303210630.GF5437@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 11 Mar 2015 16:56:34 +0000
+Subject: [PATCH 12/15] i82443bxgx_edac: don't export static symbol
+Message-Id: <1426092997-30605-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150303191318.GA7569@mwanda>
- <54F620A5.900@ladisch.de>
-In-Reply-To: <54F620A5.900@ladisch.de>
+References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Tim Small <tim@buttersideup.com>
+Cc: kernel-janitors@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>, Borislav Petkov <bp@alien8.de>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 03, 2015 at 09:59:17PM +0100, Clemens Ladisch wrote:
-> Dan Carpenter wrote:
-> > We don't check for negatives so "pitchbend" can be SHRT_MIN here.  It
-> > means that we can read up to 6 elements before the start of the
-> > opl3_note_table[] array.
-> >
-> > There are several ways we could fix this.  I have gone with what is
-> > maybe the lazier approach of just changing negative values to zero.
-> 
-> The lower bound is not zero but -8192.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Oh.  I should have understood that from your previous email.  Sorry for
-that.  Third time is lucky, I suppose.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@r@
+type T;
+identifier f;
+@@
+
+static T f (...) { ... }
+
+@@
+identifier r.f;
+declarer name EXPORT_SYMBOL_GPL;
+@@
+
+-EXPORT_SYMBOL_GPL(f);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/edac/i82443bxgx_edac.c |    4 ----
+ 1 file changed, 4 deletions(-)
+
+diff -u -p a/drivers/edac/i82443bxgx_edac.c b/drivers/edac/i82443bxgx_edac.c
+--- a/drivers/edac/i82443bxgx_edac.c
++++ b/drivers/edac/i82443bxgx_edac.c
+@@ -350,8 +350,6 @@ fail:
+ 	return -ENODEV;
+ }
+ 
+-EXPORT_SYMBOL_GPL(i82443bxgx_edacmc_probe1);
+-
+ /* returns count (>= 0), or negative on error */
+ static int i82443bxgx_edacmc_init_one(struct pci_dev *pdev,
+ 				      const struct pci_device_id *ent)
+@@ -384,8 +382,6 @@ static void i82443bxgx_edacmc_remove_one
+ 	edac_mc_free(mci);
+ }
+ 
+-EXPORT_SYMBOL_GPL(i82443bxgx_edacmc_remove_one);
+-
+ static const struct pci_device_id i82443bxgx_pci_tbl[] = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82443BX_0)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82443BX_2)},
 
