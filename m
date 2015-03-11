@@ -1,38 +1,60 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date: Sat, 14 Mar 2015 08:44:31 +0000
-Subject: Re: [PATCH v2] staging: panel: change struct bits to a bit array
-Message-Id: <20150314083231.GA4120@sudip-PC>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 11 Mar 2015 16:56:33 +0000
+Subject: [PATCH 11/15] ASoC: ab8500-codec: don't export static symbol
+Message-Id: <1426092997-30605-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426288836-25749-1-git-send-email-illeida@openaliasbox.org>
-In-Reply-To: <1426288836-25749-1-git-send-email-illeida@openaliasbox.org>
+References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Isaac Lleida <illeida@openaliasbox.org>
-Cc: willy@meta-x.org, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, daniel@iogearbox.net, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 
-On Sat, Mar 14, 2015 at 12:20:36AM +0100, Isaac Lleida wrote:
-> This path implements a bit array representing the LCD signal states instead of the old "struct bits", which used char to represent a single bit. This will reduce the memory usage.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit log should wrap at 72 char
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> 
-> Signed-off-by: Isaac Lleida <illeida@openaliasbox.org
+// <smpl>
+@r@
+type T;
+identifier f;
+@@
 
-missing '>'
+static T f (...) { ... }
 
-> ---
-> v2: fix some stupid errors from the first patch
-> 
-<snip>
-> +#define BIT_ON(b, m)	(b |= m)
-> +#define BIT_OFF(b, m)	(b &= ~m)
-> +#define BIT_CHK(b, m)	(b & m)
-> +#define BIT_MOD(b, m, v)				\
-> +	(((v) ? BIT_ON(b, m) : BIT_OFF(b, m))?1:0)	\
-missing ' ' around ? and :
+@@
+identifier r.f;
+declarer name EXPORT_SYMBOL_GPL;
+@@
 
-please test your patch by checkpatch.pl before sending
+-EXPORT_SYMBOL_GPL(f);
+// </smpl>
 
-regards
-sudip
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/codecs/ab8500-codec.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff -u -p a/sound/soc/codecs/ab8500-codec.c b/sound/soc/codecs/ab8500-codec.c
+--- a/sound/soc/codecs/ab8500-codec.c
++++ b/sound/soc/codecs/ab8500-codec.c
+@@ -2003,7 +2003,6 @@ static int ab8500_audio_setup_mics(struc
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(ab8500_audio_setup_mics);
+ 
+ static int ab8500_audio_set_ear_cmv(struct snd_soc_codec *codec,
+ 				enum ear_cm_voltage ear_cmv)
+@@ -2036,7 +2035,6 @@ static int ab8500_audio_set_ear_cmv(stru
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(ab8500_audio_set_ear_cmv);
+ 
+ static int ab8500_audio_set_bit_delay(struct snd_soc_dai *dai,
+ 				unsigned int delay)
+
