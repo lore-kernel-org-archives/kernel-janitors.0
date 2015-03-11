@@ -1,40 +1,39 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Date: Tue, 24 Mar 2015 08:18:42 +0000
-Subject: Re: [patch] watchdog: mtk_wdt: signedness bug in mtk_wdt_start()
-Message-Id: <20150324081842.GA1716@spo001.leaseweb.nl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Mar 2015 09:34:50 +0000
+Subject: [patch 1/2] thinkpad_acpi: signedness bugs getting current_mode
+Message-Id: <20150311093450.GA3564@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150211102621.GC18515@mwanda>
-In-Reply-To: <20150211102621.GC18515@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Bastien Nocera <hadess@hadess.net>
+Cc: Darren Hart <dvhart@infradead.org>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+This needs to be signed for the error handling to work.  Valid modes are
+small positive integers.
 
-> "ret" should be signed for the error handling to work correctly.  This
-> doesn't matter much in real life since mtk_wdt_set_timeout() always
-> succeeds.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
-> index a87f6df..938b987 100644
-> --- a/drivers/watchdog/mtk_wdt.c
-> +++ b/drivers/watchdog/mtk_wdt.c
-> @@ -133,7 +133,7 @@ static int mtk_wdt_start(struct watchdog_device *wdt_dev)
->  	u32 reg;
->  	struct mtk_wdt_dev *mtk_wdt = watchdog_get_drvdata(wdt_dev);
->  	void __iomem *wdt_base = mtk_wdt->wdt_base;
-> -	u32 ret;
-> +	int ret;
->  
->  	ret = mtk_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
->  	if (ret < 0)
+Fixes: b790ceeb0fd9 ('thinkpad_acpi: Add adaptive_kbd_mode sysfs attr')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Added to linux-watchdog-next. Will go upstream in 2 days.
-
-Kind regards,
-Wim.
-
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 56eaddc..024861d 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -2938,7 +2938,7 @@ static ssize_t adaptive_kbd_mode_show(struct device *dev,
+ 			   struct device_attribute *attr,
+ 			   char *buf)
+ {
+-	u32 current_mode;
++	int current_mode;
+ 
+ 	current_mode = adaptive_keyboard_get_mode();
+ 	if (current_mode < 0)
+@@ -3621,7 +3621,7 @@ static int adaptive_keyboard_get_next_mode(int mode)
+ 
+ static bool adaptive_keyboard_hotkey_notify_hotkey(unsigned int scancode)
+ {
+-	u32 current_mode = 0;
++	int current_mode = 0;
+ 	int new_mode = 0;
+ 	int keycode;
+ 
