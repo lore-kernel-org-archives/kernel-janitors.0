@@ -1,29 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 23 Mar 2015 21:02:30 +0000
-Subject: Re: [PATCH net-next] vxlan: simplify if clause in dev_close
-Message-Id: <20150323.170230.104062959694514151.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 11 Mar 2015 16:56:23 +0000
+Subject: [PATCH 1/15] NFSv4.1: don't export static symbol
+Message-Id: <1426092997-30605-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150323155612.GD24038@mwanda>
-	<e902446603472e4ec42118b60f90444b1755501e.1427137720.git.marcelo.leitner@gmail.com>
-In-Reply-To: <e902446603472e4ec42118b60f90444b1755501e.1427137720.git.marcelo.leitner@gmail.com>
+References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: marcelo.leitner@gmail.com
-Cc: netdev@vger.kernel.org, dan.carpenter@oracle.com, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: kernel-janitors@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
 
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Date: Mon, 23 Mar 2015 16:23:12 -0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> Dan Carpenter's static checker warned that in vxlan_stop we are checking
-> if 'vs' can be NULL while later we simply derreference it.
-> 
-> As after commit 56ef9c909b40 ("vxlan: Move socket initialization to
-> within rtnl scope") 'vs' just cannot be NULL in vxlan_stop() anymore, as
-> the interface won't go up if the socket initialization fails. So we are
-> good to just remove the check and make it consistent.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied, thanks.
+// <smpl>
+@r@
+type T;
+identifier f;
+@@
+
+static T f (...) { ... }
+
+@@
+identifier r.f;
+declarer name EXPORT_SYMBOL_GPL;
+@@
+
+-EXPORT_SYMBOL_GPL(f);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ fs/nfs/pnfs.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff -u -p a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
+--- a/fs/nfs/pnfs.c
++++ b/fs/nfs/pnfs.c
+@@ -1902,7 +1902,6 @@ static void pnfs_writehdr_free(struct nf
+ 	pnfs_put_lseg(hdr->lseg);
+ 	nfs_pgio_header_free(hdr);
+ }
+-EXPORT_SYMBOL_GPL(pnfs_writehdr_free);
+ 
+ int
+ pnfs_generic_pg_writepages(struct nfs_pageio_descriptor *desc)
+@@ -2032,7 +2031,6 @@ static void pnfs_readhdr_free(struct nfs
+ 	pnfs_put_lseg(hdr->lseg);
+ 	nfs_pgio_header_free(hdr);
+ }
+-EXPORT_SYMBOL_GPL(pnfs_readhdr_free);
+ 
+ int
+ pnfs_generic_pg_readpages(struct nfs_pageio_descriptor *desc)
+
