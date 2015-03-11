@@ -1,37 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Mar 2015 11:38:48 +0000
-Subject: Re: [alsa-devel] [patch] ALSA: seq_midi_emul: small array underflow
-Message-Id: <20150303113848.GD5437@mwanda>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Wed, 11 Mar 2015 23:46:30 +0000
+Subject: Re: [PATCH 0/7] mtd: various fixes caught by Coverity
+Message-Id: <20150311234630.GF32500@ld-irv-0074>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150303093829.GA7685@mwanda>
- <54F5993E.7000109@ladisch.de>
-In-Reply-To: <54F5993E.7000109@ladisch.de>
+References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Masahiro Yamada <yamada.m@jp.panasonic.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-On Tue, Mar 03, 2015 at 12:21:34PM +0100, Clemens Ladisch wrote:
-> Dan Carpenter wrote:
-> > In snd_opl3_calc_pitch() then the limit is:
-> >
-> > 	if (pitchbend > 0x1FFF)
-> > 		pitchbend = 0x1FFF;
-> >
-> > But it can underflow meaning that segment can be as low as
-> > SHORT_MIN / 0x1000 and we can read 6 elements before the start of the
-> > opl3_note_table[] array.
+On Sat, Feb 28, 2015 at 02:02:23AM -0800, Brian Norris wrote:
+> Several unrelated MTD fixes inspired by Coverity Scan results. I couldn't test
+> all of them, but they're all pretty obvious.
 > 
-> > -	short midi_pitchbend;		/* Pitch bend amount */
-> > +	unsigned short midi_pitchbend;	/* Pitch bend amount */
-> 
-> Pitch bend is a signed 14-bit value.  What is wrong is the missing
-> check for the lower bound.
-> 
+> Brian Norris (7):
+>   mtd: docg3: drop dead code
+>   mtd: onenand: drop dead code
+>   mtd: tests: fix more potential integer overflows
+>   mtd: nand: fixup bounds checks for nand_{lock,unlock}()
+>   mtd: nand: denali: drop dead code
+>   mtd: blkdevs: remove dead code
+>   mtd: nand: fully initialize mtd_oob_ops
 
-Thanks for the review.  I will resend.
+Pushed to l2-mtd.git, with v2 of patch 1.
 
-regards,
-dan carpenter
-
+Brian
