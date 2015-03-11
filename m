@@ -1,24 +1,52 @@
-From: Mark Fasheh <mfasheh@suse.de>
-Date: Mon, 09 Mar 2015 15:02:45 +0000
-Subject: Re: [patch 1/2] ocfs2: dereferencing freed pointers in ocfs2_reflink()
-Message-Id: <20150309150245.GJ23615@wotan.suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 11 Mar 2015 16:56:26 +0000
+Subject: [PATCH 4/15] crypto: don't export static symbol
+Message-Id: <1426092997-30605-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150124193124.GA18322@mwanda>
- <20150305174619.GA13294@mwanda>
-In-Reply-To: <20150305174619.GA13294@mwanda>
+References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
 
-On Thu, Mar 05, 2015 at 08:46:19PM +0300, Dan Carpenter wrote:
-> The code at the "out" label assumes that "default_acl" and "acl" are
-> NULL, but actually the pointers can be NULL, unitialized, or freed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Reviewed-by: Mark Fasheh <mfasheh@suse.de>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
---
-Mark Fasheh
+// <smpl>
+@r@
+type T;
+identifier f;
+@@
+
+static T f (...) { ... }
+
+@@
+identifier r.f;
+declarer name EXPORT_SYMBOL_GPL;
+@@
+
+-EXPORT_SYMBOL_GPL(f);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/x86/crypto/glue_helper.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff -u -p a/arch/x86/crypto/glue_helper.c b/arch/x86/crypto/glue_helper.c
+--- a/arch/x86/crypto/glue_helper.c
++++ b/arch/x86/crypto/glue_helper.c
+@@ -232,7 +232,6 @@ static void glue_ctr_crypt_final_128bit(
+ 
+ 	le128_to_be128((be128 *)walk->iv, &ctrblk);
+ }
+-EXPORT_SYMBOL_GPL(glue_ctr_crypt_final_128bit);
+ 
+ static unsigned int __glue_ctr_crypt_128bit(const struct common_glue_ctx *gctx,
+ 					    struct blkcipher_desc *desc,
+
