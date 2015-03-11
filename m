@@ -1,35 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Mar 2015 19:12:49 +0000
-Subject: [patch v2] mcb: request_mem_region() returns NULL on error
-Message-Id: <20150326191249.GA19563@mwanda>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Wed, 11 Mar 2015 14:02:47 +0000
+Subject: [PATCH 0/3] Introducing goto for error and lock handling
+Message-Id: <20150311140247.GA17012@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1422946459-25517-2-git-send-email-johannes.thumshirn@men.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Thumshirn <johannes.thumshirn@men.de>, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lidza Louina <lidza.louina@gmail.com>, Mark Hounschell <markh@compro.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-The code here is checking for IS_ERR() when request_mem_region() only
-returns NULL on error and never an ERR_PTR.
+The first patch fix a missing call to dgnc_tty_uninit.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: same as before but rebased on top of latest linux-next
+The other two patches focus on the TODO item:
+use goto statements for error handling when appropriate
 
-diff --git a/drivers/mcb/mcb-pci.c b/drivers/mcb/mcb-pci.c
-index 0af7361..de36237 100644
---- a/drivers/mcb/mcb-pci.c
-+++ b/drivers/mcb/mcb-pci.c
-@@ -56,9 +56,9 @@ static int mcb_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	res = request_mem_region(priv->mapbase, CHAM_HEADER_SIZE,
- 				 KBUILD_MODNAME);
--	if (IS_ERR(res)) {
-+	if (!res) {
- 		dev_err(&pdev->dev, "Failed to request PCI memory\n");
--		ret = PTR_ERR(res);
-+		ret = -EBUSY;
- 		goto out_disable;
- 	}
- 
+The second patch resolves cases where the improvement seems
+clear.
+
+The third patch deals with cases where the added value did
+not seem as important or the changes felt more complex.
+
+Quentin Lambert (3):
+  Staging: dgnc: dgnc_driver: Add a missing call to dgnc_tty_uninit
+  Staging: dgnc: Use goto for error handling
+  Staging: dgnc: Use goto for spinlock release before return
+
+ drivers/staging/dgnc/dgnc_cls.c    | 19 ++++++---------
+ drivers/staging/dgnc/dgnc_driver.c | 13 +++--------
+ drivers/staging/dgnc/dgnc_neo.c    | 30 ++++++++++--------------
+ drivers/staging/dgnc/dgnc_tty.c    | 48 ++++++++++++++++++--------------------
+ 4 files changed, 45 insertions(+), 65 deletions(-)
+
+-- 
+1.9.1
+
