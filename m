@@ -1,67 +1,68 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 10 Mar 2015 12:47:39 +0000
-Subject: Re: [patch] fbdev: pm3fb: cleanup some confusing indenting
-Message-Id: <54FEE7EB.8070402@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Q56R8VaCa90KBVVU90lFe8bTCnGfXwaxJ"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 11 Mar 2015 16:56:29 +0000
+Subject: [PATCH 7/15] media: pci: cx23885: don't export static symbol
+Message-Id: <1426092997-30605-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-fbdev@vger.kernel.org
+References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
 
---Q56R8VaCa90KBVVU90lFe8bTCnGfXwaxJ
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On 25/02/15 15:25, Dan Carpenter wrote:
-> This if statement should be pushed out one tab to line up with the rest=
-=2E
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/video/fbdev/pm3fb.c b/drivers/video/fbdev/pm3fb.c
-> index 4bf3273..77b99ed 100644
-> --- a/drivers/video/fbdev/pm3fb.c
-> +++ b/drivers/video/fbdev/pm3fb.c
-> @@ -1479,9 +1479,9 @@ static void pm3fb_remove(struct pci_dev *dev)
->  		fb_dealloc_cmap(&info->cmap);
-> =20
->  #ifdef CONFIG_MTRR
-> -	if (par->mtrr_handle >=3D 0)
-> -		mtrr_del(par->mtrr_handle, info->fix.smem_start,
-> -			 info->fix.smem_len);
-> +		if (par->mtrr_handle >=3D 0)
-> +			mtrr_del(par->mtrr_handle, info->fix.smem_start,
-> +				 info->fix.smem_len);
->  #endif /* CONFIG_MTRR */
->  		iounmap(info->screen_base);
->  		release_mem_region(fix->smem_start, fix->smem_len);
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks, queued for 4.1.
+// <smpl>
+@r@
+type T;
+identifier f;
+@@
 
- Tomi
+static T f (...) { ... }
 
+@@
+identifier r.f;
+declarer name EXPORT_SYMBOL;
+@@
 
+-EXPORT_SYMBOL(f);
+// </smpl>
 
---Q56R8VaCa90KBVVU90lFe8bTCnGfXwaxJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+---
+ drivers/media/pci/cx23885/altera-ci.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-iQIcBAEBAgAGBQJU/ufrAAoJEPo9qoy8lh71lOAP/R0LVa4/t1snu2LwuqwBGCS/
-ooht8QJT8qL+CGbUW/Zmkd8XVo08VHjphenmDKhVXEcBC5awkiDB0Djfj+JR+lMd
-XwCGKsD2p8mTECwsBR5kPnFuqMJ5SOHpYc/74f44JXj9pLbz/ahKHPYP4jtDNhQh
-pD+fiZ21EdMCpyW4iNTVANh93dZPJYIahOqW7zrwETFhp8mtLqz/mtdvxcdqlTcS
-auG+PciFcCO4wjHr/vDlTw1Nghv3onRap7ftUvS1C7ps1u04PF4PvQnek4DQXg7b
-zqs6As/zlb7FIHp+x1wPd0PMR8rCWccc10Q8TlEgQOIrSg1FeV8HMzeVWnuPJvCy
-GFoGA4k1J0KdV2PSo+wlxHWy/yBougqEeTqxG5bT8ilR4RpKcG/X5ZKddN0tuuYr
-M5xJh2jjQRXBqJxa4hNihZRemVMZp03douKiHOMSj/lxqOKAtqHh6B+pUx9hlWPr
-mLDNLb5K2aYObFTKzOuqPjvw9DeGJSZO0FGsPR72bNTl+hDKClxCuQNpxn1a1wGH
-MrCy5KEaHLsjURmwABPjXq0k1Us0cmlSGXHkBPL9m+dhrt7Ea5NISiWdq+Jbeggg
-U2wtz2Sdpc2rTfu/rrQMd8sChYojoOhoQ7luCDJ2CP1wuDIWc+NO4ySZgWo9Hmyn
-VnZM9n6Ut2pAFPNgsn1Q
-=z6TZ
------END PGP SIGNATURE-----
+diff -u -p a/drivers/media/pci/cx23885/altera-ci.c b/drivers/media/pci/cx23885/altera-ci.c
+--- a/drivers/media/pci/cx23885/altera-ci.c
++++ b/drivers/media/pci/cx23885/altera-ci.c
+@@ -483,7 +483,6 @@ static void altera_hw_filt_release(void
+ 	}
+ 
+ }
+-EXPORT_SYMBOL(altera_hw_filt_release);
+ 
+ void altera_ci_release(void *dev, int ci_nr)
+ {
+@@ -598,7 +597,6 @@ static int altera_pid_feed_control(void
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(altera_pid_feed_control);
+ 
+ static int altera_ci_start_feed(struct dvb_demux_feed *feed, int num)
+ {
+@@ -699,7 +697,6 @@ err:
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL(altera_hw_filt_init);
+ 
+ int altera_ci_init(struct altera_ci_config *config, int ci_nr)
+ {
 
---Q56R8VaCa90KBVVU90lFe8bTCnGfXwaxJ--
