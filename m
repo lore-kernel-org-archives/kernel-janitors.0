@@ -1,21 +1,35 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Tue, 31 Mar 2015 00:47:10 +0000
-Subject: Re: [patch] jffs2: remove an unneeded condition
-Message-Id: <20150331004710.GH32500@ld-irv-0074>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Mar 2015 09:36:07 +0000
+Subject: [patch 2/2] thinkpad_acpi: off by one in adaptive_keyboard_hotkey_notify_hotkey()
+Message-Id: <20150311093607.GB3564@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150323093519.GB558@mwanda>
-In-Reply-To: <20150323093519.GB558@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+To: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Bastien Nocera <hadess@hadess.net>
+Cc: Darren Hart <dvhart@infradead.org>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 23, 2015 at 12:35:19PM +0300, Dan Carpenter wrote:
-> We know "rc" is set so there is no need to check again.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This should be >= instead of > because otherwise we read one element
+past the end of the hotkey_keycode_map[] array.
 
-Pushed to l2-mtd.git.
+The hotkey_keycode_map[] array has TPACPI_HOTKEY_MAP_LEN elements.
 
-Brian
+Fixes: 6a68d8557084 ('thinkpad_acpi: Add support for more adaptive kbd buttons')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 024861d..7769575 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -3656,8 +3656,9 @@ static bool adaptive_keyboard_hotkey_notify_hotkey(unsigned int scancode)
+ 		return true;
+ 
+ 	default:
+-		if (scancode < FIRST_ADAPTIVE_KEY || scancode > FIRST_ADAPTIVE_KEY +
+-				TPACPI_HOTKEY_MAP_LEN - ADAPTIVE_KEY_OFFSET) {
++		if (scancode < FIRST_ADAPTIVE_KEY ||
++		    scancode >= FIRST_ADAPTIVE_KEY + TPACPI_HOTKEY_MAP_LEN -
++				ADAPTIVE_KEY_OFFSET) {
+ 			pr_info("Unhandled adaptive keyboard key: 0x%x\n",
+ 					scancode);
+ 			return false;
