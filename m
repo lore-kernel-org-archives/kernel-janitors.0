@@ -1,45 +1,102 @@
-From: =?koi8-r?B?5dfHxc7JyiDwz8zRy8/X?= <zbr@ioremap.net>
-Date: Sun, 01 Mar 2015 01:49:14 +0000
-Subject: Re: [patch] w1: small cleanup in w1_family_notify()
-Message-Id: <370051425174554@web4m.yandex.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Mar 2015 17:24:31 +0000
+Subject: [patch 1/2 v2] staging: dgnc: some off by one bugs
+Message-Id: <20150312172431.GN16501@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150220105302.GB7895@mwanda>
-In-Reply-To: <20150220105302.GB7895@mwanda>
+In-Reply-To: <20150312170739.GA21911@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lidza Louina <lidza.louina@gmail.com>
+Cc: Mark Hounschell <markh@compro.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan
+"dgnc_NumBoards" is the number of filled out elements in the
+dgnc_Board[] array.  "->nasync" and "->maxports" are the same value.
+They are the number of channels in the ->channels[] array so these tests
+should be ">=" instead of ">" so we avoid reading past the end of the
+arrays.
 
-20.02.2015, 13:53, "Dan Carpenter" <dan.carpenter@oracle.com>:
-> "sl->family->fops" and "fops" are the same thing, but it's nicer to use
-> "fops" everywhere.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I cleaned up the conditions in dgnc_mgmt_ioctl() a bit.  There was a
+work around for the off by one bug in the case where there were no
+boards which is no longer needed.  "channel" is unsigned so it can't be
+negative.
 
-Looks good to me, thank you
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: fix changelog
 
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-
-> diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-> index 181f41c..59f932f 100644
-> --- a/drivers/w1/w1.c
-> +++ b/drivers/w1/w1.c
-> @@ -649,7 +649,7 @@ static int w1_family_notify(unsigned long action, str=
-uct w1_slave *sl)
-> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Abreak;
-> =9A=9A=9A=9A=9A=9A=9A=9A=9Acase BUS_NOTIFY_DEL_DEVICE:
-> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Aif (fops->remove_slave)
-> - sl->family->fops->remove_slave(sl);
-> + fops->remove_slave(sl);
-> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Aif (fops->groups)
-> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=
-=9Asysfs_remove_groups(&sl->dev.kobj, fops->groups);
-> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Abreak;
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index bedc522..0d8f154 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -406,7 +406,7 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
+ 	 * verified in the interrupt routine.
+ 	 */
+ 
+-	if (port > brd->nasync)
++	if (port >= brd->nasync)
+ 		return;
+ 
+ 	ch = brd->channels[port];
+diff --git a/drivers/staging/dgnc/dgnc_mgmt.c b/drivers/staging/dgnc/dgnc_mgmt.c
+index 5544a8e..01b290e 100644
+--- a/drivers/staging/dgnc/dgnc_mgmt.c
++++ b/drivers/staging/dgnc/dgnc_mgmt.c
+@@ -196,11 +196,11 @@ long dgnc_mgmt_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		channel = ni.channel;
+ 
+ 		/* Verify boundaries on board */
+-		if ((board > dgnc_NumBoards) || (dgnc_NumBoards = 0))
++		if (board >= dgnc_NumBoards)
+ 			return -ENODEV;
+ 
+ 		/* Verify boundaries on channel */
+-		if ((channel < 0) || (channel > dgnc_Board[board]->nasync))
++		if (channel >= dgnc_Board[board]->nasync)
+ 			return -ENODEV;
+ 
+ 		ch = dgnc_Board[board]->channels[channel];
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index 1268aa9..921e463 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -407,7 +407,7 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
+ 	if (!brd || brd->magic != DGNC_BOARD_MAGIC)
+ 		return;
+ 
+-	if (port > brd->maxports)
++	if (port >= brd->maxports)
+ 		return;
+ 
+ 	ch = brd->channels[port];
+@@ -537,7 +537,7 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
+ 	if (!brd || brd->magic != DGNC_BOARD_MAGIC)
+ 		return;
+ 
+-	if (port > brd->maxports)
++	if (port >= brd->maxports)
+ 		return;
+ 
+ 	ch = brd->channels[port];
+@@ -1019,7 +1019,7 @@ static irqreturn_t neo_intr(int irq, void *voidbrd)
+ 			 */
+ 
+ 			/* Verify the port is in range. */
+-			if (port > brd->nasync)
++			if (port >= brd->nasync)
+ 				continue;
+ 
+ 			ch = brd->channels[port];
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 8179342..4507d4a 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1060,7 +1060,7 @@ static int dgnc_tty_open(struct tty_struct *tty, struct file *file)
+ 	spin_lock_irqsave(&brd->bd_lock, flags);
+ 
+ 	/* If opened device is greater than our number of ports, bail. */
+-	if (PORT_NUM(minor) > brd->nasync) {
++	if (PORT_NUM(minor) >= brd->nasync) {
+ 		spin_unlock_irqrestore(&brd->bd_lock, flags);
+ 		return -ENXIO;
+ 	}
