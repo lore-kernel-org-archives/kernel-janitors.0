@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Mar 2015 09:54:52 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 12 Mar 2015 09:58:54 +0000
 Subject: Re: [PATCH 2/3] Staging: dgnc: Use goto for error handling
-Message-Id: <20150312095452.GZ10964@mwanda>
+Message-Id: <20150312095854.GA3682@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150311140433.GA17051@sloth>
  <55006F4A.70805@gmail.com>
@@ -9,27 +9,30 @@ References: <20150311140433.GA17051@sloth>
  <55015D38.5060100@gmail.com>
 In-Reply-To: <55015D38.5060100@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Giedrius =?utf-8?Q?Statkevi=C4=8Dius?= <giedrius.statkevicius@gmail.com>, devel@driverdev.osuosl.org, Lidza Louina <lidza.louina@gmail.com>, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Giedrius =?utf-8?Q?Statkevi=C4=8Dius?= <giedrius.statkevicius@gmail.com>, Lidza Louina <lidza.louina@gmail.com>, Mark Hounschell <markh@compro.net>, devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 12, 2015 at 10:32:40AM +0100, Quentin Lambert wrote:
-> Should I wait these several weeks to send the second version or should
-> I send a second version fixing this issue a wait for someone to ask me
-> to solve the conflict ?
-
-Greg applies patches in the order they come.  It's normally straight
-forward which ones are going to be merged and which ones are not.  So
-you could just apply Giedrius's patch and put a note in the --- cut off
-the it depends on the earlier patch.
-
-If the patch doesn't apply, Greg won't take any time to figure out why.
-You'll just get a note to redo it.
-
-If you two plan on working on the same driver for a while then you could
-coordinate your patches and send them as a patchset.
-
-regards,
-dan carpenter
-
+T24gVGh1LCBNYXIgMTIsIDIwMTUgYXQgMTA6MzI6NDBBTSArMDEwMCwgUXVlbnRpbiBMYW1iZXJ0
+IHdyb3RlOgo+IAo+IAo+IE9uIDEyLzAzLzIwMTUgMTA6MjcsIERhbiBDYXJwZW50ZXIgd3JvdGU6
+Cj4gPk9uIFdlZCwgTWFyIDExLCAyMDE1IGF0IDA2OjM3OjMwUE0gKzAyMDAsIEdpZWRyaXVzIFN0
+YXRrZXZpxI1pdXMgd3JvdGU6Cj4gPj5JdCdzIHN0aWxsIG5vdCBpbiBzdGFnaW5nLXRlc3Rpbmcg
+Zm9yIHNvbWUgcmVhc29uIDooCj4gPj4KPiA+SXQgY2FuIHRha2Ugc2V2ZXJhbCB3ZWVrcyB0byBn
+ZXQgbWVyZ2VkLiAgUmVsYXguCj4gPgo+ID5yZWdhcmRzLAo+ID5kYW4gY2FycGVudGVyCj4gPgo+
+IFdoYXQgc2hvdWxkIGkgZG8gY29uY2VybmluZyB0aGF0ID8KPiBJIG5lZWQgdG8gc2VuZCBhIHNl
+Y29uZCB2ZXJzaW9uIG9mIHRoaXMgcGF0Y2ggYW55d2F5IHRvIGZpeCB0aGUKPiBmYWN0IHRoYXQg
+aSBpbnZlcnRlZCAyIHN0YXRlbWVudHMsIG5hbWVseToKPiAKPiArZXhpdF91bmxvY2s6Cj4gKwlp
+ZiAobGQpCj4gKwkJdHR5X2xkaXNjX2RlcmVmKGxkKTsKPiArCXNwaW5fdW5sb2NrX2lycXJlc3Rv
+cmUoJmNoLT5jaF9sb2NrLCBmbGFncyk7Cj4gCj4gc2hvdWxkIGJlCj4gCj4gK2V4aXRfdW5sb2Nr
+Ogo+ICsJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmY2gtPmNoX2xvY2ssIGZsYWdzKTsKPiArCWlm
+IChsZCkKPiArCQl0dHlfbGRpc2NfZGVyZWYobGQpOwo+IAo+IFNob3VsZCBJIHdhaXQgdGhlc2Ug
+c2V2ZXJhbCB3ZWVrcyB0byBzZW5kIHRoZSBzZWNvbmQgdmVyc2lvbiBvciBzaG91bGQKPiBJIHNl
+bmQgYSBzZWNvbmQgdmVyc2lvbiBmaXhpbmcgdGhpcyBpc3N1ZSBhIHdhaXQgZm9yIHNvbWVvbmUg
+dG8gYXNrIG1lCj4gdG8gc29sdmUgdGhlIGNvbmZsaWN0ID8KCkp1c3Qgd2FpdCBhIGJpdCwgSSBz
+aG91bGQgY2F0Y2ggdXAgb24gcGF0Y2hlcyBpbiB0aGlzIGFyZWEgc29vbiwgYW5kIEkKd2lsbCBs
+ZXQgZXZlcnlvbmUga25vdyBpZiBwYXRjaGVzIGRvIG5vdCBhcHBseS4KCnRoYW5rcywKCmdyZWcg
+ay1oCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1
+YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpv
+cmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2Vy
+Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
