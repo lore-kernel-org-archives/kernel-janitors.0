@@ -1,22 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Mar 2015 09:27:11 +0000
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Thu, 12 Mar 2015 09:32:40 +0000
 Subject: Re: [PATCH 2/3] Staging: dgnc: Use goto for error handling
-Message-Id: <20150312092711.GX10964@mwanda>
+Message-Id: <55015D38.5060100@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150311140433.GA17051@sloth>
- <55006F4A.70805@gmail.com>
-In-Reply-To: <55006F4A.70805@gmail.com>
+References: <20150311140433.GA17051@sloth> <55006F4A.70805@gmail.com> <20150312092711.GX10964@mwanda>
+In-Reply-To: <20150312092711.GX10964@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1254"
 Content-Transfer-Encoding: base64
-To: Giedrius =?utf-8?Q?Statkevi=C4=8Dius?= <giedrius.statkevicius@gmail.com>
-Cc: Quentin Lambert <lambert.quentin@gmail.com>, Lidza Louina <lidza.louina@gmail.com>, Mark Hounschell <markh@compro.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, =?UTF-8?B?R2llZHJpdXMgU3RhdA==?= =?UTF-8?B?a2V2acSNaXVz?= <giedrius.statkevicius@gmail.com>
+Cc: Lidza Louina <lidza.louina@gmail.com>, Mark Hounschell <markh@compro.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gV2VkLCBNYXIgMTEsIDIwMTUgYXQgMDY6Mzc6MzBQTSArMDIwMCwgR2llZHJpdXMgU3RhdGtl
-dmnEjWl1cyB3cm90ZToKPiBJdCdzIHN0aWxsIG5vdCBpbiBzdGFnaW5nLXRlc3RpbmcgZm9yIHNv
-bWUgcmVhc29uIDooCj4gCgpJdCBjYW4gdGFrZSBzZXZlcmFsIHdlZWtzIHRvIGdldCBtZXJnZWQu
-ICBSZWxheC4KCnJlZ2FyZHMsCmRhbiBjYXJwZW50ZXIKCi0tClRvIHVuc3Vic2NyaWJlIGZyb20g
-dGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGlu
-CnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUg
-bWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8u
-aHRtbA==
+CgpPbiAxMi8wMy8yMDE1IDEwOjI3LCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+IE9uIFdlZCwgTWFy
+IDExLCAyMDE1IGF0IDA2OjM3OjMwUE0gKzAyMDAsIEdpZWRyaXVzIFN0YXRrZXZpxI1pdXMgd3Jv
+dGU6Cj4+IEl0J3Mgc3RpbGwgbm90IGluIHN0YWdpbmctdGVzdGluZyBmb3Igc29tZSByZWFzb24g
+OigKPj4KPiBJdCBjYW4gdGFrZSBzZXZlcmFsIHdlZWtzIHRvIGdldCBtZXJnZWQuICBSZWxheC4K
+Pgo+IHJlZ2FyZHMsCj4gZGFuIGNhcnBlbnRlcgo+CldoYXQgc2hvdWxkIGkgZG8gY29uY2Vybmlu
+ZyB0aGF0ID8KSSBuZWVkIHRvIHNlbmQgYSBzZWNvbmQgdmVyc2lvbiBvZiB0aGlzIHBhdGNoIGFu
+eXdheSB0byBmaXggdGhlCmZhY3QgdGhhdCBpIGludmVydGVkIDIgc3RhdGVtZW50cywgbmFtZWx5
+OgoKK2V4aXRfdW5sb2NrOgorCWlmIChsZCkKKwkJdHR5X2xkaXNjX2RlcmVmKGxkKTsKKwlzcGlu
+X3VubG9ja19pcnFyZXN0b3JlKCZjaC0+Y2hfbG9jaywgZmxhZ3MpOwoKc2hvdWxkIGJlCgorZXhp
+dF91bmxvY2s6CisJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmY2gtPmNoX2xvY2ssIGZsYWdzKTsK
+KwlpZiAobGQpCisJCXR0eV9sZGlzY19kZXJlZihsZCk7CgpTaG91bGQgSSB3YWl0IHRoZXNlIHNl
+dmVyYWwgd2Vla3MgdG8gc2VuZCB0aGUgc2Vjb25kIHZlcnNpb24gb3Igc2hvdWxkCkkgc2VuZCBh
+IHNlY29uZCB2ZXJzaW9uIGZpeGluZyB0aGlzIGlzc3VlIGEgd2FpdCBmb3Igc29tZW9uZSB0byBh
+c2sgbWUKdG8gc29sdmUgdGhlIGNvbmZsaWN0ID8KClF1ZW50aW4KLS0KVG8gdW5zdWJzY3JpYmUg
+ZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9y
+cyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcK
+TW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8t
+aW5mby5odG1s
