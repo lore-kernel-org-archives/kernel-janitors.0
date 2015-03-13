@@ -1,47 +1,40 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Date: Wed, 04 Mar 2015 12:06:21 +0000
-Subject: Re: [PATCH] ath10k: Delete unnecessary checks before the function call "release_firmware"
-Message-Id: <87twy16k76.fsf@kamboji.qca.qualcomm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Mar 2015 10:48:25 +0000
+Subject: [patch] drm/i915/skl: cleanup an indenting issue
+Message-Id: <20150313104825.GA28907@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54D26614.2080708@users.sourceforge.net>
-In-Reply-To: <54D26614.2080708@users.sourceforge.net> (SF Markus Elfring's
- message of "Wed, 04 Feb 2015 19:33:56 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ath10k@lists.infradead.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Daniel Vetter <daniel.vetter@intel.com>
+Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-SF Markus Elfring <elfring@users.sourceforge.net> writes:
+This statement is indented an extra space.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Feb 2015 19:30:23 +0100
->
-> The release_firmware() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied to ath.git.
-
--- 
-Kalle Valo
+diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
+index 959058f..028c6d4 100644
+--- a/drivers/gpu/drm/i915/intel_pm.c
++++ b/drivers/gpu/drm/i915/intel_pm.c
+@@ -3905,13 +3905,13 @@ static void gen6_set_rps_thresholds(struct drm_i915_private *dev_priv, u8 val)
+ 	I915_WRITE(GEN6_RP_DOWN_THRESHOLD,
+ 		GT_INTERVAL_FROM_US(dev_priv, (ei_down * threshold_down / 100)));
+ 
+-	 I915_WRITE(GEN6_RP_CONTROL,
+-		    GEN6_RP_MEDIA_TURBO |
+-		    GEN6_RP_MEDIA_HW_NORMAL_MODE |
+-		    GEN6_RP_MEDIA_IS_GFX |
+-		    GEN6_RP_ENABLE |
+-		    GEN6_RP_UP_BUSY_AVG |
+-		    GEN6_RP_DOWN_IDLE_AVG);
++	I915_WRITE(GEN6_RP_CONTROL,
++		   GEN6_RP_MEDIA_TURBO |
++		   GEN6_RP_MEDIA_HW_NORMAL_MODE |
++		   GEN6_RP_MEDIA_IS_GFX |
++		   GEN6_RP_ENABLE |
++		   GEN6_RP_UP_BUSY_AVG |
++		   GEN6_RP_DOWN_IDLE_AVG);
+ 
+ 	dev_priv->rps.power = new_power;
+ 	dev_priv->rps.last_adj = 0;
