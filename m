@@ -1,20 +1,18 @@
-From: Alexander Aring <alex.aring@gmail.com>
-Date: Wed, 11 Mar 2015 18:17:04 +0000
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Sat, 14 Mar 2015 16:13:26 +0000
 Subject: Re: [PATCH 13/15] ieee802154: don't export static symbol
-Message-Id: <20150311181700.GA23342@omega>
+Message-Id: <9174D8D8-5176-4B98-8A3D-DE09B9C42612@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
- <1426092997-30605-14-git-send-email-Julia.Lawall@lip6.fr>
+References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr> <1426092997-30605-14-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1426092997-30605-14-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net, marcel@holtmann.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Alexander Aring <alex.aring@gmail.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-wpan@vger.kernel.org, netdev <netdev@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, daniel@iogearbox.net
 
-On Wed, Mar 11, 2015 at 05:56:35PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+Hi Julia,
+
 > The semantic patch that fixes this problem is as follows:
 > (http://coccinelle.lip6.fr/)
 > 
@@ -35,11 +33,14 @@ On Wed, Mar 11, 2015 at 05:56:35PM +0100, Julia Lawall wrote:
 > // </smpl>
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+> net/ieee802154/nl-mac.c |    1 -
+> 1 file changed, 1 deletion(-)
 
-Acked-by: Alexander Aring <alex.aring@gmail.com>
+patch has been applied to bluetooth-next tree.
 
-Marcel can you please queue this into bluetooth-next, or even bluetooth?
+Regards
 
-Thanks.
+Marcel
 
-- Alex
