@@ -1,60 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 11 Mar 2015 16:56:30 +0000
-Subject: [PATCH 8/15] libertas_tf: if_usb.c: don't export static symbol
-Message-Id: <1426092997-30605-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 15 Mar 2015 10:48:19 +0000
+Subject: [patch] mfd: max77843: fix an error code in max77843_chg_init()
+Message-Id: <20150315104819.GB20691@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
+To: Samuel Ortiz <sameo@linux.intel.com>, Jaewon Kim <jaewon02.kim@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+"max77843->i2c_chg" is NULL, not an error pointer.  Let's return -ENODEV
+instead.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@r@
-type T;
-identifier f;
-@@
-
-static T f (...) { ... }
-
-@@
-identifier r.f;
-declarer name EXPORT_SYMBOL_GPL;
-@@
-
--EXPORT_SYMBOL_GPL(f);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/wireless/libertas_tf/if_usb.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff -u -p a/drivers/net/wireless/libertas_tf/if_usb.c b/drivers/net/wireless/libertas_tf/if_usb.c
---- a/drivers/net/wireless/libertas_tf/if_usb.c
-+++ b/drivers/net/wireless/libertas_tf/if_usb.c
-@@ -365,7 +365,6 @@ static int if_usb_reset_device(struct if
+diff --git a/drivers/mfd/max77843.c b/drivers/mfd/max77843.c
+index a354ac6..1074a0d 100644
+--- a/drivers/mfd/max77843.c
++++ b/drivers/mfd/max77843.c
+@@ -79,7 +79,7 @@ static int max77843_chg_init(struct max77843 *max77843)
+ 	if (!max77843->i2c_chg) {
+ 		dev_err(&max77843->i2c->dev,
+ 				"Cannot allocate I2C device for Charger\n");
+-		return PTR_ERR(max77843->i2c_chg);
++		return -ENODEV;
+ 	}
+ 	i2c_set_clientdata(max77843->i2c_chg, max77843);
  
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(if_usb_reset_device);
- 
- /**
-  *  usb_tx_block - transfer data to the device
-@@ -907,7 +906,6 @@ restart:
- 	lbtf_deb_leave_args(LBTF_DEB_USB, "ret %d", ret);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(if_usb_prog_firmware);
- 
- 
- #define if_usb_suspend NULL
-
