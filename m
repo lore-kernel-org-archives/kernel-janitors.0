@@ -1,44 +1,73 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 11 Mar 2015 18:29:01 +0000
-Subject: Re: [PATCH 11/15] ASoC: ab8500-codec: don't export static symbol
-Message-Id: <20150311182901.GI28806@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="R34W7XFXM/Lcyq1t"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 15 Mar 2015 11:11:30 +0000
+Subject: re: ASoC: Intel: add function to load sound effect module waves
+Message-Id: <20150315111130.GA21169@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
- <1426092997-30605-12-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1426092997-30605-12-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+Hello Lu, Han,
 
---R34W7XFXM/Lcyq1t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The patch 8c43fc2fdda0: "ASoC: Intel: add function to load sound
+effect module waves" from Mar 10, 2015, leads to the following static
+checker warning:
 
-On Wed, Mar 11, 2015 at 05:56:33PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+	sound/soc/intel/sst-haswell-pcm.c:1017 hsw_pcm_probe()
+	error: buffer overflow 'hsw_dais' 4 <= 4
 
-Applied, thanks.
+sound/soc/intel/sst-haswell-pcm.c
+   979          /* allocate DSP buffer page tables */
+   980          for (i = 0; i < ARRAY_SIZE(hsw_dais); i++) {
+   981  
+   982                  /* playback */
+   983                  if (hsw_dais[i].playback.channels_min) {
+   984                          mutex_init(&priv_data->pcm[i][SNDRV_PCM_STREAM_PLAYBACK].mutex);
+   985                          ret = snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, dma_dev,
+   986                                  PAGE_SIZE, &priv_data->dmab[i][0]);
+   987                          if (ret < 0)
+   988                                  goto err;
+   989                  }
+   990  
+   991                  /* capture */
+   992                  if (hsw_dais[i].capture.channels_min) {
+   993                          mutex_init(&priv_data->pcm[i][SNDRV_PCM_STREAM_CAPTURE].mutex);
+   994                          ret = snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, dma_dev,
+   995                                  PAGE_SIZE, &priv_data->dmab[i][1]);
+   996                          if (ret < 0)
+   997                                  goto err;
+   998                  }
+   999          }
+  1000  
+  1001          /* allocate runtime modules */
+  1002          ret = hsw_pcm_create_modules(priv_data);
+  1003          if (ret < 0)
+  1004                  goto err;
+			^^^^^^^^
+i = ARRAY_SIZE(hsw_dais).
 
---R34W7XFXM/Lcyq1t
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  1005  
+  1006          /* enable runtime PM with auto suspend */
+  1007          pm_runtime_set_autosuspend_delay(platform->dev,
+  1008                  SST_RUNTIME_SUSPEND_DELAY);
+  1009          pm_runtime_use_autosuspend(platform->dev);
+  1010          pm_runtime_enable(platform->dev);
+  1011          pm_runtime_idle(platform->dev);
+  1012  
+  1013          return 0;
+  1014  
+  1015  err:
+  1016          for (;i >= 0; i--) {
+  1017                  if (hsw_dais[i].playback.channels_min)
+                            ^^^^^^^^^^^
+We're off by one.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+  1018                          snd_dma_free_pages(&priv_data->dmab[i][0]);
+  1019                  if (hsw_dais[i].capture.channels_min)
+  1020                          snd_dma_free_pages(&priv_data->dmab[i][1]);
+  1021          }
+  1022          return ret;
 
-iQEcBAEBCAAGBQJVAIlsAAoJECTWi3JdVIfQElAH/3K5krgP6p+mkXoy07eaiLAv
-lzJQ+xGcSM+FMWtrOMEmgnnzu0Nj/ePkQubi2JXXKLHbT8yq6G6i/n7AP34NZP+B
-CjxtPbIjXThehc87oxYd+ItXlPcRXW0TV+iQ92oK/lVfbeeGPR6YNBQp11JR3VRa
-BapZSaUnYm/Lbg53yR6TW5Map2qeW6DRlrmBiXrXRkmByijG7oxLtppPkhP87KNl
-wEXS+Md7cEUq9ZjMb3Kvpb0X91dAbnq59tSRiIHsqkqLHgRBHpCtCHltQeLr4PCe
-nyHe4YXz0Da2Cf+zM17lH2ig6Dw9XPKJEEaYE61f6nsFtrF70F01Ai06DnunoJ8=
-=0sA2
------END PGP SIGNATURE-----
-
---R34W7XFXM/Lcyq1t--
+regards,
+dan carpenter
