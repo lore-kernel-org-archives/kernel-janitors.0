@@ -1,31 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 02 Feb 2015 10:22:36 +0000
-Subject: [PATCH v3 0/3] netlabel: Deletion of a few unnecessary checks
-Message-Id: <54CF4FEC.2010906@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 15 Mar 2015 10:56:04 +0000
+Subject: [patch 2/2] extcon: max77843: fix an error code in max77843_init_muic_regmap()
+Message-Id: <20150315105604.GE20691@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54CD4B5F.9010502@users.sourceforge.net>	<CAHC9VhQ5C32zRqG0emVUoMmuvBsV+TXvdNn+54iVyCPBNk9dDQ@mail.gmail.com>	<54CDFCDA.9010802@users.sourceforge.net> <20150201.123054.366525761630045391.davem@davemloft.net>
-In-Reply-To: <20150201.123054.366525761630045391.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Feb 2015 11:15:56 +0100
+"max77843->i2c_muic" is NULL, not an error code.  Let's return -ENODEV
+here.
 
-Further update suggestions were taken into account after patches were applied
-from static source code analysis.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (3):
-  Deletion of an unnecessary check before the function call "cipso_v4_doi_putdef"
-  Deletion of an unnecessary check before the function call "cipso_v4_doi_free"
-  Less function calls in netlbl_mgmt_add_common() after error detection
-
- net/netlabel/netlabel_cipso_v4.c |  3 +--
- net/netlabel/netlabel_mgmt.c     | 50 +++++++++++++++++++---------------------
- 2 files changed, 25 insertions(+), 28 deletions(-)
-
--- 
-2.2.2
-
+diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
+index a3f80ca..6f0ed5a 100644
+--- a/drivers/extcon/extcon-max77843.c
++++ b/drivers/extcon/extcon-max77843.c
+@@ -715,7 +715,7 @@ static int max77843_init_muic_regmap(struct max77843 *max77843)
+ 	if (!max77843->i2c_muic) {
+ 		dev_err(&max77843->i2c->dev,
+ 				"Cannot allocate I2C device for MUIC\n");
+-		return PTR_ERR(max77843->i2c_muic);
++		return -ENODEV;
+ 	}
+ 
+ 	i2c_set_clientdata(max77843->i2c_muic, max77843);
