@@ -1,38 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Mar 2015 11:29:10 +0000
-Subject: Re: [PATCH 13/13] staging: sm750: move assignment out of if cond
-Message-Id: <20150323112910.GH10964@mwanda>
+Date: Sun, 15 Mar 2015 10:49:47 +0000
+Subject: [patch 1/2] extcon: max77843: signedness bug in max77843_muic_set_debounce_time()
+Message-Id: <20150315104947.GD20691@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150322231516.GA17336@x230-arch.club.entropia.de>
-In-Reply-To: <20150322231516.GA17336@x230-arch.club.entropia.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 23, 2015 at 12:15:16AM +0100, Michel von Czettritz wrote:
-> This patch moves the assignments from the if conditions to the line before the condition.
-> The 3 occurrence are return values and the checks for errors.
-> 
-> Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
-> ---
->  drivers/staging/sm750fb/sm750.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-> index c250882..a4a7fed 100644
-> --- a/drivers/staging/sm750fb/sm750.c
-> +++ b/drivers/staging/sm750fb/sm750.c
-> @@ -474,7 +474,8 @@ static int lynxfb_resume(struct pci_dev *pdev)
->  
->  	console_lock();
->  
-> -	if ((ret = pci_set_power_state(pdev, PCI_D0)) != 0) {
-> +	ret = pci_set_power_state(pdev, PCI_D0);
-> +	if (ret != 0) {
+"ret" holds negative error codes and zero so it should be signed.
 
-Use "if (ret) ".  The double negative is not not a waste of time.
+Fixes: 27a28d32b4f2 ('extcon: max77843: Add max77843 MUIC driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
+index 598a017..a3f80ca 100644
+--- a/drivers/extcon/extcon-max77843.c
++++ b/drivers/extcon/extcon-max77843.c
+@@ -682,7 +682,7 @@ static int max77843_muic_set_debounce_time(struct max77843_muic_info *info,
+ 		enum max77843_muic_adc_debounce_time time)
+ {
+ 	struct max77843 *max77843 = info->max77843;
+-	unsigned int ret;
++	int ret;
+ 
+ 	switch (time) {
+ 	case MAX77843_DEBOUNCE_TIME_5MS:
