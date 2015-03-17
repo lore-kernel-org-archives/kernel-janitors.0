@@ -1,38 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Mar 2015 11:22:05 +0000
-Subject: Re: [PATCH 08/13] staging: sm750: comment formating
-Message-Id: <20150323112205.GE10964@mwanda>
+Date: Tue, 17 Mar 2015 18:29:32 +0000
+Subject: re: kdbus: add connection, queue handling and message validation code
+Message-Id: <20150317182932.GB30354@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150322231340.GA17233@x230-arch.club.entropia.de>
-In-Reply-To: <20150322231340.GA17233@x230-arch.club.entropia.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 23, 2015 at 12:13:41AM +0100, Michel von Czettritz wrote:
-> diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-> index 54857ba..ab58987 100644
-> --- a/drivers/staging/sm750fb/sm750.c
-> +++ b/drivers/staging/sm750fb/sm750.c
-> @@ -74,19 +74,19 @@ static inline void myspin_unlock(spinlock_t *sl)
->  		spin_unlock(sl);
->  }
->  static const struct fb_videomode lynx750_ext[] = {
-> -	/*  	1024x600-60 VESA 	[1.71:1]	*/
-> +	/*	1024x600-60 VESA	[1.71:1]*/
+Hello Daniel Mack,
 
-Leave a space before the "*/"
+The patch 5fc8dd5c84fc: "kdbus: add connection, queue handling and
+message validation code" from Sep 11, 2014, leads to the following
+static checker warning:
 
-> @@ -610,7 +610,7 @@ static int lynxfb_ops_setcolreg(unsigned regno, unsigned red,
->  	var = &info->var;
->  	ret = 0;
->  
-> -	//pr_debug("regno=%d,red=%d,green=%d,blue=%d\n",regno,red,green,blue);
-> +	/*pr_debug("regno=%d,red=%d,green=%d,blue=%d\n",regno,red,green,blue);*/
+	ipc/kdbus/connection.c:2000 kdbus_cmd_send()
+	warn: 'cancel_fd' isn't an ERR_PTR
 
-Just delete these.  Also, missing spaces next to /* and */.
+ipc/kdbus/connection.c
+  1998          if (argv[1].item) {
+  1999                  cancel_fd = fget(argv[1].item->fds[0]);
+                                    ^^^^
+fget() returns NULL on error.
+
+  2000                  if (IS_ERR(cancel_fd)) {
+  2001                          ret = PTR_ERR(cancel_fd);
+  2002                          cancel_fd = NULL;
+  2003                          goto exit;
+  2004                  }
+  2005  
+  2006                  if (!cancel_fd->f_op->poll) {
+  2007                          ret = -EINVAL;
+  2008                          goto exit;
+  2009                  }
+  2010          }
 
 regards,
 dan carpenter
-
