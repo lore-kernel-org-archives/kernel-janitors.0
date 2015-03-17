@@ -1,38 +1,46 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Sun, 15 Mar 2015 11:01:54 +0000
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Date: Tue, 17 Mar 2015 15:39:19 +0000
 Subject: Re: [patch] rtc: at91rm9200: double locking bug in at91_rtc_interrupt()
-Message-Id: <20150315120154.30855516@bbrezillon>
+Message-Id: <55084AA7.3020007@atmel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150315104837.GC20691@mwanda>
 In-Reply-To: <20150315104837.GC20691@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Le 15/03/2015 12:01, Boris Brezillon a =E9crit :
+> Hi Dan,
+>=20
+> On Sun, 15 Mar 2015 13:48:37 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>=20
+>> There is a typo here so we deadlock.
+>>
+>> Fixes: dd1f1f391dd7 ('rtc: at91rm9200: rework wakeup and interrupt handl=
+ing')
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-On Sun, 15 Mar 2015 13:48:37 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-> There is a typo here so we deadlock.
-> 
-> Fixes: dd1f1f391dd7 ('rtc: at91rm9200: rework wakeup and interrupt handling')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> Thanks for fixing this bug.
+>=20
+> Alessandro, Nicolas, could you agree on who is taking this fix for
+> the next -rc cycle ?
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+I've just collected the tags and asked to Andrew if he can take it.
 
-Thanks for fixing this bug.
+Thanks for the fix and the "heads up"!
 
-Alessandro, Nicolas, could you agree on who is taking this fix for
-the next -rc cycle ?
-
-Best Regards,
-
-Boris
-
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Bye,
+--=20
+Nicolas Ferre
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
