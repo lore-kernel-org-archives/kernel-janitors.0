@@ -1,48 +1,24 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Date: Tue, 17 Mar 2015 15:38:10 +0000
-Subject: [PATCH] rtc: at91rm9200: double locking bug in at91_rtc_interrupt()
-Message-Id: <1426606690-18947-1-git-send-email-nicolas.ferre@atmel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Mar 2015 17:32:35 +0000
+Subject: Re: [PATCH] rtc: at91rm9200: double locking bug in at91_rtc_interrupt()
+Message-Id: <20150317173235.GM10964@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150315104837.GC20691@mwanda>
-In-Reply-To: <20150315104837.GC20691@mwanda>
+ <1426606690-18947-1-git-send-email-nicolas.ferre@atmel.com>
+In-Reply-To: <1426606690-18947-1-git-send-email-nicolas.ferre@atmel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+On Tue, Mar 17, 2015 at 04:38:10PM +0100, Nicolas Ferre wrote:
+> Reported-also-by: David Dueck <davidcdueck@googlemail.com>
 
-There is a typo here so we deadlock.
+The point of tags is that you collect them by doing:
+`git log | grep Reported-by: | sort | uniq -c | sort -rn` to see if you
+are the winner.  It gives me an unfair advantage if you get creative
+with David's tag.
 
-Fixes: dd1f1f391dd7 ('rtc: at91rm9200: rework wakeup and interrupt handling')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Reported-also-by: David Dueck <davidcdueck@googlemail.com>
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
----
-Hi Andrew,
-
-Can you please take care of this fix for 4.0?
-If you fee that I'd better take it myself please tell me.
-
-Thanks, bye.
-
- drivers/rtc/rtc-at91rm9200.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-at91rm9200.c b/drivers/rtc/rtc-at91rm9200.c
-index b4f7744f6751..b283a1a573b3 100644
---- a/drivers/rtc/rtc-at91rm9200.c
-+++ b/drivers/rtc/rtc-at91rm9200.c
-@@ -324,7 +324,7 @@ static irqreturn_t at91_rtc_interrupt(int irq, void *dev_id)
- 
- 		ret = IRQ_HANDLED;
- 	}
--	spin_lock(&suspended_lock);
-+	spin_unlock(&suspended_lock);
- 
- 	return ret;
- }
--- 
-2.1.3
+regards,
+dan carpenter
 
