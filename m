@@ -1,46 +1,48 @@
 From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Date: Tue, 17 Mar 2015 15:39:19 +0000
-Subject: Re: [patch] rtc: at91rm9200: double locking bug in at91_rtc_interrupt()
-Message-Id: <55084AA7.3020007@atmel.com>
+Date: Tue, 17 Mar 2015 15:38:10 +0000
+Subject: [PATCH] rtc: at91rm9200: double locking bug in at91_rtc_interrupt()
+Message-Id: <1426606690-18947-1-git-send-email-nicolas.ferre@atmel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150315104837.GC20691@mwanda>
 In-Reply-To: <20150315104837.GC20691@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-Le 15/03/2015 12:01, Boris Brezillon a =E9crit :
-> Hi Dan,
->=20
-> On Sun, 15 Mar 2015 13:48:37 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
->=20
->> There is a typo here so we deadlock.
->>
->> Fixes: dd1f1f391dd7 ('rtc: at91rm9200: rework wakeup and interrupt handl=
-ing')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+There is a typo here so we deadlock.
 
->=20
-> Thanks for fixing this bug.
->=20
-> Alessandro, Nicolas, could you agree on who is taking this fix for
-> the next -rc cycle ?
+Fixes: dd1f1f391dd7 ('rtc: at91rm9200: rework wakeup and interrupt handling')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Reported-also-by: David Dueck <davidcdueck@googlemail.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+---
+Hi Andrew,
 
-I've just collected the tags and asked to Andrew if he can take it.
+Can you please take care of this fix for 4.0?
+If you fee that I'd better take it myself please tell me.
 
-Thanks for the fix and the "heads up"!
+Thanks, bye.
 
-Bye,
---=20
-Nicolas Ferre
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/rtc/rtc-at91rm9200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-at91rm9200.c b/drivers/rtc/rtc-at91rm9200.c
+index b4f7744f6751..b283a1a573b3 100644
+--- a/drivers/rtc/rtc-at91rm9200.c
++++ b/drivers/rtc/rtc-at91rm9200.c
+@@ -324,7 +324,7 @@ static irqreturn_t at91_rtc_interrupt(int irq, void *dev_id)
+ 
+ 		ret = IRQ_HANDLED;
+ 	}
+-	spin_lock(&suspended_lock);
++	spin_unlock(&suspended_lock);
+ 
+ 	return ret;
+ }
+-- 
+2.1.3
+
