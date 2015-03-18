@@ -1,28 +1,44 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 24 Mar 2015 09:19:50 +0000
-Subject: [patch 1/2] tpm, tpm_tis: potential underflow bug in tpm_tis_recv()
-Message-Id: <20150324091950.GA24154@mwanda>
+Date: Wed, 18 Mar 2015 08:21:09 +0000
+Subject: [patch] scsi: silence an overflow warning
+Message-Id: <20150318082109.GA10434@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If "expected" is less than TPM_HEADER_SIZE (10) then it could mean we
-try to read a negative number of bytes.
+Static checkers complain that these sprintf() calls can overflow one
+character.  It's clear that the original author just forget to account
+for the NUL character.
+
+It is unlikely that we will have a billion SCSI hosts.  Even if we do,
+when you consider alignment, then the overflow is going to happen in
+padding and thus the overflow is not harmful.  But it costs us nothing
+to fix this and it silences a static checker warning.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index f2dffa7..aa96ecd 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -258,7 +258,7 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 	}
+diff --git a/drivers/scsi/scsi_proc.c b/drivers/scsi/scsi_proc.c
+index 251598e..a5d7464 100644
+--- a/drivers/scsi/scsi_proc.c
++++ b/drivers/scsi/scsi_proc.c
+@@ -138,7 +138,7 @@ void scsi_proc_host_add(struct Scsi_Host *shost)
+ {
+ 	struct scsi_host_template *sht = shost->hostt;
+ 	struct proc_dir_entry *p;
+-	char name[10];
++	char name[12];
  
- 	expected = be32_to_cpu(*(__be32 *) (buf + 2));
--	if (expected > count) {
-+	if (expected < TPM_HEADER_SIZE || expected > count) {
- 		size = -EIO;
- 		goto out;
- 	}
+ 	if (!sht->proc_dir)
+ 		return;
+@@ -158,7 +158,7 @@ void scsi_proc_host_add(struct Scsi_Host *shost)
+  */
+ void scsi_proc_host_rm(struct Scsi_Host *shost)
+ {
+-	char name[10];
++	char name[12];
+ 
+ 	if (!shost->hostt->proc_dir)
+ 		return;
