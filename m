@@ -1,31 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Mar 2015 16:32:39 +0000
-Subject: Re: [PATCH V3] [media] mantis: fix error handling
-Message-Id: <20150323163239.GT16501@mwanda>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Wed, 18 Mar 2015 08:41:06 +0000
+Subject: Re: [Intel-gfx] [patch] drm/i915: memory leak in __i915_gem_vma_create()
+Message-Id: <20150318084106.GE31422@phenom.ffwll.local>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150322224831.GF16501@mwanda>
- <1427127953-24716-1-git-send-email-s.jegen@gmail.com>
-In-Reply-To: <1427127953-24716-1-git-send-email-s.jegen@gmail.com>
+References: <20150318082158.GB10434@mwanda>
+ <87k2yepuqq.fsf@intel.com>
+In-Reply-To: <87k2yepuqq.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Silvan Jegen <s.jegen@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel.vetter@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Mon, Mar 23, 2015 at 05:25:53PM +0100, Silvan Jegen wrote:
-> Remove dead code, make goto label names more expressive and add a label
-> in order to call mantis_dvb_exit if mantis_uart_init fails.
+On Wed, Mar 18, 2015 at 10:36:45AM +0200, Jani Nikula wrote:
+> On Wed, 18 Mar 2015, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > In the original code then if WARN_ON(i915_is_ggtt(vm) != !!ggtt_view)
+> > was true then we leak "vma".  Presumably that doesn't happen often but
+> > static checkers complain and this bug is easy to fix.
+> >
+> > Fixes: c3bbb6f2825d ('drm/i915: Do not use ggtt_view with (aliasing) PPGTT')
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Also make sure that mantis_pci_exit is called if we fail the
-> mantis_stream_control call and that we call mantis_i2c_exit if
-> mantis_get_mac fails.
+> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+
+Queued for -next, thanks for the patch.
+-Daniel
+
 > 
-> Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
+> >
+> > diff --git a/drivers/gpu/drm/i915/i915_gem_gtt.c b/drivers/gpu/drm/i915/i915_gem_gtt.c
+> > index f1b9ea6..cbf013f 100644
+> > --- a/drivers/gpu/drm/i915/i915_gem_gtt.c
+> > +++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+> > @@ -2340,12 +2340,13 @@ __i915_gem_vma_create(struct drm_i915_gem_object *obj,
+> >  		      struct i915_address_space *vm,
+> >  		      const struct i915_ggtt_view *ggtt_view)
+> >  {
+> > -	struct i915_vma *vma = kzalloc(sizeof(*vma), GFP_KERNEL);
+> > -	if (vma = NULL)
+> > -		return ERR_PTR(-ENOMEM);
+> > +	struct i915_vma *vma;
+> >  
+> >  	if (WARN_ON(i915_is_ggtt(vm) != !!ggtt_view))
+> >  		return ERR_PTR(-EINVAL);
+> > +	vma = kzalloc(sizeof(*vma), GFP_KERNEL);
+> > +	if (vma = NULL)
+> > +		return ERR_PTR(-ENOMEM);
+> >  
+> >  	INIT_LIST_HEAD(&vma->vma_link);
+> >  	INIT_LIST_HEAD(&vma->mm_list);
+> 
+> -- 
+> Jani Nikula, Intel Open Source Technology Center
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/intel-gfx
 
-Looks great.  Thanks!
-
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-regards,
-dan carpenter
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
