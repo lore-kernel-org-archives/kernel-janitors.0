@@ -1,24 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Mar 2015 09:27:53 +0000
-Subject: Re: ASoC: Intel: add function to load sound effect module waves
-Message-Id: <20150316092753.GJ10964@mwanda>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Wed, 18 Mar 2015 12:51:52 +0000
+Subject: [PATCH] Staging: dgnc: release the lock before testing for nullity
+Message-Id: <1426683112-24182-1-git-send-email-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150315111130.GA21169@mwanda>
-In-Reply-To: <20150315111130.GA21169@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lidza Louina <lidza.louina@gmail.com>
+Cc: devel@driverdev.osuosl.org, Quentin Lambert <lambert.quentin@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2015 at 08:31:10AM +0000, Lu, Han wrote:
-> Hi Dan,
-> 
-> Thanks. I ignored this issue by simply ran sparse tool, and I'll fix it.
-> Could you please share which static check tool are you use if convenient?
-> 
+Fixes: c84a083b995b ("Staging: dgnc: Use goto for spinlock release before return")
 
-This is a Smatch warning.
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_tty.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 8445f84ddaa3..f1c4d07a0aaa 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -656,9 +656,9 @@ void dgnc_input(struct channel_t *ch)
+ 	return;
+ 
+ exit_unlock:
++	spin_unlock_irqrestore(&ch->ch_lock, flags);
+ 	if (ld)
+ 		tty_ldisc_deref(ld);
+-	spin_unlock_irqrestore(&ch->ch_lock, flags);
+ }
+ 
+ 
+-- 
+2.3.2.223.g7a9409c
 
