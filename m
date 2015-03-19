@@ -1,68 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 11 Mar 2015 16:56:29 +0000
-Subject: [PATCH 7/15] media: pci: cx23885: don't export static symbol
-Message-Id: <1426092997-30605-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Mar 2015 10:18:59 +0000
+Subject: [patch] vfs: remove an unneeded condition in show_vfsstat()
+Message-Id: <20150319101859.GB13330@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, daniel@iogearbox.net
+To: Alexander Viro <viro@zeniv.linux.org.uk>, "Dmitry V. Levin" <ldv@altlinux.org>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Static checkers complain that "err" is always zero here.  This check is
+not needed after we applied 9d4d65748a5c ('vfs: make mounts and
+mountstats honor root dir like mountinfo does').
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@r@
-type T;
-identifier f;
-@@
-
-static T f (...) { ... }
-
-@@
-identifier r.f;
-declarer name EXPORT_SYMBOL;
-@@
-
--EXPORT_SYMBOL(f);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/pci/cx23885/altera-ci.c |    3 ---
- 1 file changed, 3 deletions(-)
-
-diff -u -p a/drivers/media/pci/cx23885/altera-ci.c b/drivers/media/pci/cx23885/altera-ci.c
---- a/drivers/media/pci/cx23885/altera-ci.c
-+++ b/drivers/media/pci/cx23885/altera-ci.c
-@@ -483,7 +483,6 @@ static void altera_hw_filt_release(void
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 8db932d..97540a7 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -219,8 +219,7 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+ 	/* optional statistics */
+ 	if (sb->s_op->show_stats) {
+ 		seq_putc(m, ' ');
+-		if (!err)
+-			err = sb->s_op->show_stats(m, mnt_path.dentry);
++		err = sb->s_op->show_stats(m, mnt_path.dentry);
  	}
  
- }
--EXPORT_SYMBOL(altera_hw_filt_release);
- 
- void altera_ci_release(void *dev, int ci_nr)
- {
-@@ -598,7 +597,6 @@ static int altera_pid_feed_control(void
- 
- 	return 0;
- }
--EXPORT_SYMBOL(altera_pid_feed_control);
- 
- static int altera_ci_start_feed(struct dvb_demux_feed *feed, int num)
- {
-@@ -699,7 +697,6 @@ err:
- 
- 	return ret;
- }
--EXPORT_SYMBOL(altera_hw_filt_init);
- 
- int altera_ci_init(struct altera_ci_config *config, int ci_nr)
- {
-
+ 	seq_putc(m, '\n');
