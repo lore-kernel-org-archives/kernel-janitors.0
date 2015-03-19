@@ -1,27 +1,32 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Date: Sun, 22 Mar 2015 18:58:15 +0000
-Subject: Re: [ibm-acpi-devel] [patch 1/2] thinkpad_acpi: signedness bugs getting current_mode
-Message-Id: <1427050695.3946436.243707926.7D5B2C74@webmail.messagingengine.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Mar 2015 10:17:04 +0000
+Subject: [patch] drm/gma500: double free in psbfb_create()
+Message-Id: <20150319101704.GA13330@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150311093450.GA3564@mwanda>
-In-Reply-To: <20150311093450.GA3564@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Bastien Nocera <hadess@hadess.net>
-Cc: Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net
+To: David Airlie <airlied@linux.ie>, Alan Cox <alan@linux.intel.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Fabian Frederick <fabf@skynet.be>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>, Thierry Reding <treding@nvidia.com>
 
-On Wed, Mar 11, 2015, at 06:34, Dan Carpenter wrote:
-> This needs to be signed for the error handling to work.  Valid modes are
-> small positive integers.
-> 
-> Fixes: b790ceeb0fd9 ('thinkpad_acpi: Add adaptive_kbd_mode sysfs attr')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The psb_gtt_free_range() frees "backing" so calling it twice is a double
+free bug.  I have fixed this by removing the first call.
 
-Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Fixes: 4d8d096e9ae8  ('gma500: introduce the framebuffer support code')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index 2d42ce6..89d5646 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -479,9 +479,7 @@ static int psbfb_create(struct psb_fbdev *fbdev,
+ 	mutex_unlock(&dev->struct_mutex);
+ 	return 0;
+ out_unref:
+-	if (backing->stolen)
+-		psb_gtt_free_range(dev, backing);
+-	else
++	if (!backing->stolen)
+ 		drm_gem_object_unreference(&backing->gem);
+ out_err1:
+ 	mutex_unlock(&dev->struct_mutex);
