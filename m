@@ -1,43 +1,64 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 05 Mar 2015 13:48:36 +0000
-Subject: Re: [patch] mmc: sdhci-esdhc-imx: silence a false curly braces warning
-Message-Id: <CAPDyKFp+sZBhwSWS_SWeBUJebOYMOU_hKTO1jA427Yo6X6GsNg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Mar 2015 13:31:29 +0000
+Subject: [patch] igb: cleanup igb_enable_mas() a bit
+Message-Id: <20150319133129.GA15502@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150226203755.GD6820@mwanda>
-In-Reply-To: <20150226203755.GD6820@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Ball <chris@printf.net>, Aisheng Dong <b29396@freescale.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Shawn Guo <shawn.guo@linaro.org>, Dirk Behme <dirk.behme@de.bosch.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-mmc <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 26 February 2015 at 21:37, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Static checkers suggest that probably we intended to put curly braces
-> around the writel() to make it part of the else path.  But, I think
-> actually the indenting is off and the code works fine as is.
->
-> The stray tab was introduced in 0322191e6298 ('mmc: sdhci-esdhc-imx: add
-> sd3.0 SDR clock tuning support')
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Static checkers complain about this because we do:
 
-Applied, thanks!
+	if (!(connsw & E1000_CONNSW_SERDESD)) {
+		...
+	} else if (connsw & E1000_CONNSW_SERDESD) {
+		...
+	} else {
+		...
+	}
 
-Kind regards
-Uffe
+Once you eliminate that E1000_CONNSW_SERDESD is set and not set then
+there aren't any other possibilities so the else statement is dead
+code.
 
+This function always returns zero so if you delete the "ret_val"
+variable, the code is shorter and more clear.
 
->
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index 10ef824..9cce5cf 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -416,7 +416,7 @@ static void esdhc_writew_le(struct sdhci_host *host, u16 val, int reg)
->                         new_val |= ESDHC_VENDOR_SPEC_FRC_SDCLK_ON;
->                 else
->                         new_val &= ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON;
-> -                       writel(new_val, host->ioaddr + ESDHC_VENDOR_SPEC);
-> +               writel(new_val, host->ioaddr + ESDHC_VENDOR_SPEC);
->                 return;
->         case SDHCI_HOST_CONTROL2:
->                 new_val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index f366b3b..8dd581f 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -1840,11 +1840,10 @@ static s32 igb_enable_mas(struct igb_adapter *adapter)
+ {
+ 	struct e1000_hw *hw = &adapter->hw;
+ 	u32 connsw;
+-	s32 ret_val = 0;
+ 
+ 	connsw = rd32(E1000_CONNSW);
+-	if (!(hw->phy.media_type = e1000_media_type_copper))
+-		return ret_val;
++	if (hw->phy.media_type != e1000_media_type_copper)
++		return 0;
+ 
+ 	/* configure for SerDes media detect */
+ 	if (!(connsw & E1000_CONNSW_SERDESD)) {
+@@ -1852,15 +1851,8 @@ static s32 igb_enable_mas(struct igb_adapter *adapter)
+ 		connsw |= E1000_CONNSW_AUTOSENSE_EN;
+ 		wr32(E1000_CONNSW, connsw);
+ 		wrfl();
+-	} else if (connsw & E1000_CONNSW_SERDESD) {
+-		/* already SerDes, no need to enable anything */
+-		return ret_val;
+-	} else {
+-		netdev_info(adapter->netdev,
+-			"MAS: Unable to configure feature, disabling..\n");
+-		adapter->flags &= ~IGB_FLAG_MAS_ENABLE;
+ 	}
+-	return ret_val;
++	return 0;
+ }
+ 
+ void igb_reset(struct igb_adapter *adapter)
