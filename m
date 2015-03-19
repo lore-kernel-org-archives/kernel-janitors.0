@@ -1,64 +1,67 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 19 Mar 2015 13:31:29 +0000
-Subject: [patch] igb: cleanup igb_enable_mas() a bit
-Message-Id: <20150319133129.GA15502@mwanda>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Date: Thu, 19 Mar 2015 20:54:51 +0000
+Subject: Re: [patch] igb: cleanup igb_enable_mas() a bit
+Message-Id: <1426798491.2577.41.camel@jtkirshe-mobl>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-Sqn9tZiuM836eTE6ZE1f"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20150319133129.GA15502@mwanda>
+In-Reply-To: <20150319133129.GA15502@mwanda>
 To: kernel-janitors@vger.kernel.org
 
-Static checkers complain about this because we do:
 
-	if (!(connsw & E1000_CONNSW_SERDESD)) {
-		...
-	} else if (connsw & E1000_CONNSW_SERDESD) {
-		...
-	} else {
-		...
-	}
+--=-Sqn9tZiuM836eTE6ZE1f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Once you eliminate that E1000_CONNSW_SERDESD is set and not set then
-there aren't any other possibilities so the else statement is dead
-code.
+On Thu, 2015-03-19 at 16:31 +0300, Dan Carpenter wrote:
+> Static checkers complain about this because we do:
+>=20
+>         if (!(connsw & E1000_CONNSW_SERDESD)) {
+>                 ...
+>         } else if (connsw & E1000_CONNSW_SERDESD) {
+>                 ...
+>         } else {
+>                 ...
+>         }
+>=20
+> Once you eliminate that E1000_CONNSW_SERDESD is set and not set then
+> there aren't any other possibilities so the else statement is dead
+> code.
+>=20
+> This function always returns zero so if you delete the "ret_val"
+> variable, the code is shorter and more clear.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This function always returns zero so if you delete the "ret_val"
-variable, the code is shorter and more clear.
+Thanks Dan, surprised we did not see this earlier.  I have added your
+patch to my queue.
+--=20
+git://git.kernel.org/pub/scm/linux/kernel/git/jkirsher/next-queue.git
+dev-queue
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--=-Sqn9tZiuM836eTE6ZE1f
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index f366b3b..8dd581f 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -1840,11 +1840,10 @@ static s32 igb_enable_mas(struct igb_adapter *adapter)
- {
- 	struct e1000_hw *hw = &adapter->hw;
- 	u32 connsw;
--	s32 ret_val = 0;
- 
- 	connsw = rd32(E1000_CONNSW);
--	if (!(hw->phy.media_type = e1000_media_type_copper))
--		return ret_val;
-+	if (hw->phy.media_type != e1000_media_type_copper)
-+		return 0;
- 
- 	/* configure for SerDes media detect */
- 	if (!(connsw & E1000_CONNSW_SERDESD)) {
-@@ -1852,15 +1851,8 @@ static s32 igb_enable_mas(struct igb_adapter *adapter)
- 		connsw |= E1000_CONNSW_AUTOSENSE_EN;
- 		wr32(E1000_CONNSW, connsw);
- 		wrfl();
--	} else if (connsw & E1000_CONNSW_SERDESD) {
--		/* already SerDes, no need to enable anything */
--		return ret_val;
--	} else {
--		netdev_info(adapter->netdev,
--			"MAS: Unable to configure feature, disabling..\n");
--		adapter->flags &= ~IGB_FLAG_MAS_ENABLE;
- 	}
--	return ret_val;
-+	return 0;
- }
- 
- void igb_reset(struct igb_adapter *adapter)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCgAGBQJVCzebAAoJEOVv75VaS+3Oe5IP/R7Iz0Ei5ORHjNiFSJbLB0sD
+4qaEo5qPmbKg0UMUl4Af6qLL4wPcoILj/n9ZI3w3BpE0ExMO7trpCMWG+fqfjOX7
+CrN02wBDF/xdnwZvb4II761/k4wS3X9whJ6xJGJzCrrwgyQhYt+ZuVLNKmLpjTjh
+/QVfbzFDVPA/Y95CAzBsVunqZOaxOikeg5/c8AgLXxintIrGBk2Tn9gnZ7ioTbmM
+J2bD2o/vWcRVhpjqQVGyFzq/xufEmmS5v3yhNad6WGnuSD/TvreA2GfZ9AzRdfJd
+q6hFCn2gVMKN+eCXqtyozqG7Op8eQ8S2jeNO4NfmJ+mkKBKZasb5e4yEZLhn+TOX
++ZYoe0LarTc2Kd+vt+mLwzWP3F6qwaXnRgiC+9gut38SbHLQe6Pfg76393NyIZUy
+JwwvT8iyWaWJCmfgvArTYGtGqfbe0sUhgDJB3K+1rkw2+JDk9fNEXH8SmtfJ+6Ks
+p+fq/4c6Yg2jmR7habXpNuXByYYnmEYJQ3i9ceONpMvOrlYeb5R3qbRbFZYQ0V+k
+HoyJ80W5aFaqCvw37pnbNTB6M47x3e0buG8qceu01vtGiWBsvfXfh2h5ZFGeIXjO
+uuH8PnuixfCDAYn8Ah6aWteRNI8d6jcVOrCRO++j1Zd2HElLCqJOuuarrH6B14qS
+KEL6D9U+WEyzEfH/Lehe
+=+FgC
+-----END PGP SIGNATURE-----
+
+--=-Sqn9tZiuM836eTE6ZE1f--
+
