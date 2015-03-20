@@ -1,64 +1,29 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Date: Fri, 06 Mar 2015 18:30:05 +0000
-Subject: Re: [patch] xen/mce: fix up xen_late_init_mcelog() error handling
-Message-Id: <20150306183005.GB13360@l.oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Mar 2015 14:21:44 +0000
+Subject: [patch 2/2] crypto: img-hash - shift wrapping bug in img_hash_hw_init()
+Message-Id: <20150320142144.GB5108@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150305112417.GA13378@mwanda>
-In-Reply-To: <20150305112417.GA13378@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, James Hartley <james.hartley@imgtec.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 05, 2015 at 02:24:17PM +0300, Dan Carpenter wrote:
-> Static checkers complain about the missing call to misc_deregister() if
-> bind_virq_for_mce() fails.
-> 
-> Also I reversed the tests so that we do error handling instead of
-> success handling.  That way we just have a series of function calls
-> instead of the more complicated nested if statements in the original
-> code.  Let's preserve the error codes as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"hdev->req->nbytes" is an unsigned int so we so we lose the upper 3
+bytes to the shift wrap bug.
 
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-David, you want me to stash in devel for 4.1?
-> 
-> diff --git a/drivers/xen/mcelog.c b/drivers/xen/mcelog.c
-> index 6ab6a79..a493c7315 100644
-> --- a/drivers/xen/mcelog.c
-> +++ b/drivers/xen/mcelog.c
-> @@ -393,14 +393,25 @@ static int bind_virq_for_mce(void)
->  
->  static int __init xen_late_init_mcelog(void)
->  {
-> +	int ret;
-> +
->  	/* Only DOM0 is responsible for MCE logging */
-> -	if (xen_initial_domain()) {
-> -		/* register character device /dev/mcelog for xen mcelog */
-> -		if (misc_register(&xen_mce_chrdev_device))
-> -			return -ENODEV;
-> -		return bind_virq_for_mce();
-> -	}
-> +	if (!xen_initial_domain())
-> +		return -ENODEV;
-> +
-> +	/* register character device /dev/mcelog for xen mcelog */
-> +	ret = misc_register(&xen_mce_chrdev_device);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = bind_virq_for_mce();
-> +	if (ret)
-> +		goto deregister;
->  
-> -	return -ENODEV;
-> +	return 0;
-> +
-> +deregister:
-> +	misc_deregister(&xen_mce_chrdev_device);
-> +	return ret;
->  }
->  device_initcall(xen_late_init_mcelog);
+diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
+index 601ab35..ad47d0d 100644
+--- a/drivers/crypto/img-hash.c
++++ b/drivers/crypto/img-hash.c
+@@ -464,7 +464,7 @@ static int img_hash_hw_init(struct img_hash_dev *hdev)
+ 	img_hash_write(hdev, CR_RESET, CR_RESET_UNSET);
+ 	img_hash_write(hdev, CR_INTENAB, CR_INT_NEW_RESULTS_SET);
+ 
+-	nbits = (hdev->req->nbytes << 3);
++	nbits = (u64)hdev->req->nbytes << 3;
+ 	u = nbits >> 32;
+ 	l = nbits;
+ 	img_hash_write(hdev, CR_MESSAGE_LENGTH_H, u);
