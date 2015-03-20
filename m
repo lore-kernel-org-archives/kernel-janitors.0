@@ -1,60 +1,37 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 05 Mar 2015 12:01:39 +0000
-Subject: Re: ALSA: line6: Fix volume calculation for big-endian
-Message-Id: <s5hvbif64bg.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Mar 2015 14:21:12 +0000
+Subject: [patch 1/2] crypto: img-hash - fix some compile warnings
+Message-Id: <20150320142112.GA5108@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150305102149.GA10971@mwanda>
-In-Reply-To: <20150305102149.GA10971@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, James Hartley <james.hartley@imgtec.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 5 Mar 2015 13:21:49 +0300,
-Dan Carpenter wrote:
-> 
-> Hello Takashi Iwai,
-> 
-> The patch 0416980d0a2b: "ALSA: line6: Fix volume calculation for
-> big-endian" from Jan 28, 2015, leads to the following static checker
-> warning:
-> 
-> 	sound/usb/line6/playback.c:42 change_volume()
-> 		warn: always clamps to s16min
-> 	sound/usb/line6/playback.c:57 change_volume()
-> 		warn: always clamps to (-8388608)
-> 	sound/usb/line6/playback.c:129 add_monitor_signal()
-> 		warn: always clamps to s16min
-> 
-> sound/usb/line6/playback.c
->     25  static void change_volume(struct urb *urb_out, int volume[],
->     26                            int bytes_per_frame)
->     27  {
->     28          int chn = 0;
->     29  
->     30          if (volume[0] = 256 && volume[1] = 256)
->     31                  return;         /* maximum volume - no change */
->     32  
->     33          if (bytes_per_frame = 4) {
->     34                  __le16 *p, *buf_end;
->     35  
->     36                  p = (__le16 *)urb_out->transfer_buffer;
->     37                  buf_end = p + urb_out->transfer_buffer_length / sizeof(*p);
->     38  
->     39                  for (; p < buf_end; ++p) {
->     40                          short pv = le16_to_cpu(*p);
->     41                          int val = (pv * volume[chn & 1]) >> 8;
->     42                          pv = clamp(val, 0x7fff, -0x8000);
->                                                 ^^^^^^^^^^^^^^^^
-> You didn't really add this, but you might know what was intended here.
-> It is a complete mystery to me.  :)
+GCC complains about that %u is the wrong format string for size_t and
+also that "ret" is unused.
 
-No mystery, just left/right swapped.  It's a common mistake, and
-you'll feel the same when you go from Paris to London and look at a
-street.  I'll fix them (the code, not the street).
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-thanks,
-
-Takashi
+diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
+index fec61fc..601ab35 100644
+--- a/drivers/crypto/img-hash.c
++++ b/drivers/crypto/img-hash.c
+@@ -192,7 +192,7 @@ static int img_hash_xmit_cpu(struct img_hash_dev *hdev, const u8 *buf,
+ 	u32 count, len32;
+ 	const u32 *buffer = (const u32 *)buf;
+ 
+-	dev_dbg(hdev->dev, "xmit_cpu:  length: %u bytes\n", length);
++	dev_dbg(hdev->dev, "xmit_cpu:  length: %zu bytes\n", length);
+ 
+ 	if (final)
+ 		hdev->flags |= DRIVER_FLAGS_FINAL;
+@@ -459,7 +459,6 @@ static int img_hash_hw_init(struct img_hash_dev *hdev)
+ {
+ 	unsigned long long nbits;
+ 	u32 u, l;
+-	int ret;
+ 
+ 	img_hash_write(hdev, CR_RESET, CR_RESET_SET);
+ 	img_hash_write(hdev, CR_RESET, CR_RESET_UNSET);
