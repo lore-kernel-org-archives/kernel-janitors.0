@@ -1,62 +1,65 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Fri, 20 Mar 2015 18:42:12 +0000
-Subject: Re: [PATCH 15/15] iscsi-target: don't export static symbol
-Message-Id: <1426876932.16687.5.camel@haakon3.risingtidesystems.com>
+From: Michel von Czettritz <michel.von.czettritz@gmail.com>
+Date: Sun, 22 Mar 2015 23:14:17 +0000
+Subject: [PATCH 10/13] staging: sm750: blank line after declaration
+Message-Id: <20150322231416.GA17270@x230-arch.club.entropia.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1426092997-30605-16-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1426092997-30605-16-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-On Wed, 2015-03-11 at 17:56 +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> type T;
-> identifier f;
-> @@
-> 
-> static T f (...) { ... }
-> 
-> @@
-> identifier r.f;
-> declarer name EXPORT_SYMBOL;
-> @@
-> 
-> -EXPORT_SYMBOL(f);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/target/iscsi/iscsi_target.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff -u -p a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-> --- a/drivers/target/iscsi/iscsi_target.c
-> +++ b/drivers/target/iscsi/iscsi_target.c
-> @@ -2155,7 +2155,6 @@ reject:
->  	cmd->text_in_ptr = NULL;
->  	return iscsit_reject_cmd(cmd, ISCSI_REASON_PROTOCOL_ERROR, buf);
->  }
-> -EXPORT_SYMBOL(iscsit_handle_text_cmd);
->  
->  int iscsit_logout_closesession(struct iscsi_cmd *cmd, struct iscsi_conn *conn)
->  {
-> 
+This patch fixes "WARNING: Missing a blank line after declaration"
+checkpatch.pl warnings.
 
-Applied to target-pending/for-next.
+Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
+---
+ drivers/staging/sm750fb/sm750.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks Julia!
-
---nab
-
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 90dc801..870bf6f 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -61,6 +61,7 @@ static char *g_option = NULL;
+ static inline void myspin_lock(spinlock_t *sl)
+ {
+ 	struct lynx_share *share;
++	
+ 	share = container_of(sl, struct lynx_share, slock);
+ 	if (share->dual)
+ 		spin_lock(sl);
+@@ -69,6 +70,7 @@ static inline void myspin_lock(spinlock_t *sl)
+ static inline void myspin_unlock(spinlock_t *sl)
+ {
+ 	struct lynx_share *share;
++	
+ 	share = container_of(sl, struct lynx_share, slock);
+ 	if (share->dual)
+ 		spin_unlock(sl);
+@@ -172,6 +174,7 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
+ 	if (fbcursor->set & FB_CUR_SETCMAP) {
+ 		/* get the 16bit color of kernel means */
+ 		u16 fg, bg;
++		
+ 		fg = ((info->cmap.red[fbcursor->image.fg_color] & 0xf800))|
+ 			((info->cmap.green[fbcursor->image.fg_color] & 0xfc00) >> 5)|
+ 			((info->cmap.blue[fbcursor->image.fg_color] & 0xf800) >> 11);
+@@ -650,6 +653,7 @@ static int lynxfb_ops_setcolreg(unsigned regno, unsigned red,
+ 
+ 	if (info->fix.visual = FB_VISUAL_TRUECOLOR && regno < 256) {
+ 		u32 val;
++		
+ 		if (var->bits_per_pixel = 16 ||
+ 				var->bits_per_pixel = 32 ||
+ 				var->bits_per_pixel = 24) {
+@@ -1187,6 +1191,7 @@ ALLOC_FB:
+ 	} else {
+ 		struct lynxfb_par *par;
+ 		int errno;
++		
+ 		pr_info("framebuffer #%d alloc okay\n", fbidx);
+ 		share->fbinfo[fbidx] = info[fbidx];
+ 		par = info[fbidx]->par;
+-- 
+2.3.3
 
