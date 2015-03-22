@@ -1,38 +1,27 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Thu, 19 Mar 2015 03:42:03 +0000
-Subject: Re: [patch 1/2] thinkpad_acpi: signedness bugs getting current_mode
-Message-Id: <20150319034203.GA22993@fury.dvhart.com>
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Date: Sun, 22 Mar 2015 18:58:15 +0000
+Subject: Re: [ibm-acpi-devel] [patch 1/2] thinkpad_acpi: signedness bugs getting current_mode
+Message-Id: <1427050695.3946436.243707926.7D5B2C74@webmail.messagingengine.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150311093450.GA3564@mwanda>
- <20150314210612.GA26465@fury.dvhart.com>
- <20150315134612.46ca70c5@canb.auug.org.au>
- <20150315134813.1b0a5685@canb.auug.org.au>
-In-Reply-To: <20150315134813.1b0a5685@canb.auug.org.au>
+In-Reply-To: <20150311093450.GA3564@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, Bastien Nocera <hadess@hadess.net>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, Rafael Wysocki <rjw@rjwysocki.net>, "H. Peter Anvin" <hpa@zytor.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Bastien Nocera <hadess@hadess.net>
+Cc: Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net
 
-On Sun, Mar 15, 2015 at 01:48:13PM +1100, Stephen Rothwell wrote:
-> Hi Darren,
+On Wed, Mar 11, 2015, at 06:34, Dan Carpenter wrote:
+> This needs to be signed for the error handling to work.  Valid modes are
+> small positive integers.
 > 
-> On Sun, 15 Mar 2015 13:46:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > The people you will inconvenience more by rebasing are the developers
-> > who write patches that are based on your tree.  If you rebase under
-> > them, they may have to rebase and fix up the patches they have already
-> > tested and had reviewed before they can then submit them to you
-> > (hopefully before you rebase again).
-> 
-> This, of course, only applied to published trees (which includes
-> anything in linux-next) - what you do in your own (logically private)
-> development tree is your own business.
+> Fixes: b790ceeb0fd9 ('thinkpad_acpi: Add adaptive_kbd_mode sysfs attr')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks for the guidance Stephen. Unless a more compelling argument comes up,
-I'll stick to this going forward.
-
+Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
 
 -- 
-Darren Hart
-Intel Open Source Technology Center
+  "One disk to rule them all, One disk to find them. One disk to bring
+  them all and in the darkness grind them. In the Land of Redmond
+  where the shadows lie." -- The Silicon Valley Tarot
+  Henrique Holschuh
