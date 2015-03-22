@@ -1,60 +1,45 @@
 From: Michel von Czettritz <michel.von.czettritz@gmail.com>
-Date: Fri, 27 Mar 2015 18:42:48 +0000
-Subject: [PATCH v3 06/11] staging: sm750: no braces for single stmt if blocks
-Message-Id: <18b0d0362209fa2607d3bea2f642a0ec68feb98a.1427481390.git.michel.von.czettritz@gmail.com>
+Date: Sun, 22 Mar 2015 23:14:42 +0000
+Subject: [PATCH 12/13] staging: sm750: fix whitspace for cast to pointer
+Message-Id: <20150322231441.GA17306@x230-arch.club.entropia.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-fbdev@vger.kernel.org
 
-This patches fixes checkpatch.pl warning:
-"WARNING: braces {} are not necessary for single statement blocks"
+This patch fixes the checkpatch.pl warning:
+'ERROR: "(foo*)" should be "(foo *)"'
 
 Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
 ---
-v3: fix wrong merging
----
- drivers/staging/sm750fb/sm750.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/staging/sm750fb/sm750.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index d9a94d7..786679d 100644
+index 917e4b4..c250882 100644
 --- a/drivers/staging/sm750fb/sm750.c
 +++ b/drivers/staging/sm750fb/sm750.c
-@@ -131,9 +131,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
- 	}
+@@ -220,7 +220,7 @@ static void lynxfb_ops_fillrect(struct fb_info *info,
+ 	pitch = info->fix.line_length;
+ 	Bpp = info->var.bits_per_pixel >> 3;
  
- 	cursor->disable(cursor);
--	if (fbcursor->set & FB_CUR_SETSIZE) {
-+	if (fbcursor->set & FB_CUR_SETSIZE)
- 		cursor->setSize(cursor, fbcursor->image.width, fbcursor->image.height);
--	}
+-	color = (Bpp = 1)?region->color:((u32*)info->pseudo_palette)[region->color];
++	color = (Bpp = 1)?region->color:((u32 *)info->pseudo_palette)[region->color];
+ 	rop = (region->rop != ROP_COPY) ? HW_ROP2_XOR:HW_ROP2_COPY;
  
- 	if (fbcursor->set & FB_CUR_SETPOS) {
- 		cursor->setPos(cursor, fbcursor->image.dx - info->var.xoffset,
-@@ -162,9 +161,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
- 				fbcursor->mask);
- 	}
- 
--	if (fbcursor->enable) {
-+	if (fbcursor->enable)
- 		cursor->enable(cursor);
--	}
- 
- 	return 0;
- }
-@@ -176,9 +174,8 @@ static void lynxfb_ops_fillrect(struct fb_info *info, const struct fb_fillrect *
- 	unsigned int base, pitch, Bpp, rop;
- 	u32 color;
- 
--	if (info->state != FBINFO_STATE_RUNNING) {
-+	if (info->state != FBINFO_STATE_RUNNING)
- 		return;
--	}
- 
- 	par = info->par;
- 	share = par->share;
+ 	myspin_lock(&share->slock);
+@@ -275,8 +275,8 @@ static void lynxfb_ops_imageblit(struct fb_info *info,
+ 	if (image->depth = 1) {
+ 		if (info->fix.visual = FB_VISUAL_TRUECOLOR ||
+ 				info->fix.visual = FB_VISUAL_DIRECTCOLOR) {
+-			fgcol = ((u32*)info->pseudo_palette)[image->fg_color];
+-			bgcol = ((u32*)info->pseudo_palette)[image->bg_color];
++			fgcol = ((u32 *)info->pseudo_palette)[image->fg_color];
++			bgcol = ((u32 *)info->pseudo_palette)[image->bg_color];
+ 		} else {
+ 			fgcol = image->fg_color;
+ 			bgcol = image->bg_color;
 -- 
 2.3.3
 
