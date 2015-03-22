@@ -1,38 +1,20 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 22 Mar 2015 19:33:43 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 22 Mar 2015 22:48:32 +0000
 Subject: Re: [PATCH v2] [media] mantis: fix error handling
-Message-Id: <550F1917.1080602@bfs.de>
+Message-Id: <20150322224831.GF16501@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150216090408.GW5206@mwanda> <1427044578-16551-1-git-send-email-s.jegen@gmail.com>
+References: <20150216090408.GW5206@mwanda>
+ <1427044578-16551-1-git-send-email-s.jegen@gmail.com>
 In-Reply-To: <1427044578-16551-1-git-send-email-s.jegen@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Silvan Jegen <s.jegen@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Good, but still a couple nits.
 
-
-Am 22.03.2015 18:16, schrieb Silvan Jegen:
-> Remove dead code, make goto label names more expressive and add a label
-> in order to call mantis_dvb_exit if mantis_uart_init fails.
-> 
-> Also make sure that mantis_pci_exit is called if we fail the
-> mantis_stream_control call and that we call mantis_i2c_exit if
-> mantis_get_mac fails.
-> 
-> Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
-> ---
-> V2 Changes (due to Dan Carpenter's review):
-> 	- Remove dead code, do not activate it
-> 	- Make goto labels more expressive
-> 	- Add a call to mantis_dvb_exit
-> 
->  drivers/media/pci/mantis/mantis_cards.c | 33 ++++++++++++++++-----------------
->  1 file changed, 16 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/media/pci/mantis/mantis_cards.c b/drivers/media/pci/mantis/mantis_cards.c
-> index 801fc55..70df61e 100644
+On Sun, Mar 22, 2015 at 06:16:18PM +0100, Silvan Jegen wrote:
 > --- a/drivers/media/pci/mantis/mantis_cards.c
 > +++ b/drivers/media/pci/mantis/mantis_cards.c
 > @@ -170,7 +170,7 @@ static int mantis_pci_probe(struct pci_dev *pdev,
@@ -41,6 +23,11 @@ Am 22.03.2015 18:16, schrieb Silvan Jegen:
 >  		err = -ENOMEM;
 > -		goto fail0;
 > +		return err;
+
+Just:
+		return -ENOMEM;
+
+
 >  	}
 >  
 >  	mantis->num		= devs;
@@ -97,22 +84,12 @@ Am 22.03.2015 18:16, schrieb Silvan Jegen:
 >  	devs++;
 >  
 >  	return err;
+
+	return 0;
+
+That was in the original, but let's just clean it up as well.
+
 >  
-
-Hi Silvan Jegen,
-i found the dprintk() a bit confusing, if i understand the code correctly it will always print on error:
-
-the dprintf found in if (err<0) like :
- dprintk(MANTIS_ERROR, 1, "ERROR: Mantis DVB initialization failed <%d>", err);
-and then
-  dprintk(MANTIS_ERROR, 1, "ERROR: Mantis DVB exit! <%d>", err);
-
-maybe this is more a question for the maintainer, but this seems a bit useless.
-
-re,
- wh
-
-
 > +err_dvb_exit:
 > +	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis DVB exit! <%d>", err);
 > +	mantis_dvb_exit(mantis);
@@ -140,8 +117,10 @@ re,
 > +err_free_mantis:
 >  	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis free! <%d>", err);
 >  	kfree(mantis);
->  
-> -fail0:
->  	return err;
->  }
->  
+
+
+Remove all these dprintks in the error handling.
+
+regards,
+dan carpenter
+
