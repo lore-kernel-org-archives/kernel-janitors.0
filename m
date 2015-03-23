@@ -1,41 +1,137 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Mon, 02 Mar 2015 21:39:42 +0000
-Subject: Re: [PATCH 1/7] mtd: docg3: drop dead code
-Message-Id: <87mw3v13kx.fsf@free.fr>
+From: Silvan Jegen <s.jegen@gmail.com>
+Date: Mon, 23 Mar 2015 16:25:53 +0000
+Subject: [PATCH V3] [media] mantis: fix error handling
+Message-Id: <1427127953-24716-1-git-send-email-s.jegen@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1425117750-22298-1-git-send-email-computersforpeace@gmail.com>
- <1425117750-22298-2-git-send-email-computersforpeace@gmail.com>
- <20150302091050.GC5386@mwanda>
-In-Reply-To: <20150302091050.GC5386@mwanda> (Dan Carpenter's message of "Mon,
- 2 Mar 2015 12:10:50 +0300")
+References: <20150322224831.GF16501@mwanda>
+In-Reply-To: <20150322224831.GF16501@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Joe Perches <joe@perches.com>, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
+Cc: Silvan Jegen <s.jegen@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+Remove dead code, make goto label names more expressive and add a label
+in order to call mantis_dvb_exit if mantis_uart_init fails.
 
-> On Sat, Feb 28, 2015 at 02:02:24AM -0800, Brian Norris wrote:
->> diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
->> index 448ce42f951e..01eddea1f0d9 100644
->> --- a/drivers/mtd/devices/docg3.c
->> +++ b/drivers/mtd/devices/docg3.c
->> @@ -2079,8 +2079,6 @@ static int __init docg3_probe(struct platform_device *pdev)
->>  	ret = doc_register_sysfs(pdev, cascade);
->>  	if (ret)
->>  		goto err_probe;
->> -	if (!found)
->> -		goto notfound;
->
-> Just delete the "found" variable because there are no other uses.
-Yes, and yes.
+Also make sure that mantis_pci_exit is called if we fail the
+mantis_stream_control call and that we call mantis_i2c_exit if
+mantis_get_mac fails.
 
-For both changes (condition killing, found++ eradication and found variable
-declaration) :
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
+---
+V3 Changes (due to Dan Carpenter's and Walter Harms' reviews):
+	- return -ENOMEM/0 directly
+  - remove dprintk calls in the error handling part
 
-Cheers.
+V2 Changes (due to Dan Carpenter's review):
+	- Remove dead code, do not activate it
+	- Make goto labels more expressive
+	- Add a call to mantis_dvb_exit
 
+ drivers/media/pci/mantis/mantis_cards.c | 39 ++++++++++++++-------------------
+ 1 file changed, 16 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/media/pci/mantis/mantis_cards.c b/drivers/media/pci/mantis/mantis_cards.c
+index 801fc55..9861a8c 100644
+--- a/drivers/media/pci/mantis/mantis_cards.c
++++ b/drivers/media/pci/mantis/mantis_cards.c
+@@ -169,8 +169,7 @@ static int mantis_pci_probe(struct pci_dev *pdev,
+ 	mantis = kzalloc(sizeof(struct mantis_pci), GFP_KERNEL);
+ 	if (mantis = NULL) {
+ 		printk(KERN_ERR "%s ERROR: Out of memory\n", __func__);
+-		err = -ENOMEM;
+-		goto fail0;
++		return -ENOMEM;
+ 	}
+ 
+ 	mantis->num		= devs;
+@@ -183,70 +182,64 @@ static int mantis_pci_probe(struct pci_dev *pdev,
+ 	err = mantis_pci_init(mantis);
+ 	if (err) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis PCI initialization failed <%d>", err);
+-		goto fail1;
++		goto err_free_mantis;
+ 	}
+ 
+ 	err = mantis_stream_control(mantis, STREAM_TO_HIF);
+ 	if (err < 0) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis stream control failed <%d>", err);
+-		goto fail1;
++		goto err_pci_exit;
+ 	}
+ 
+ 	err = mantis_i2c_init(mantis);
+ 	if (err < 0) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis I2C initialization failed <%d>", err);
+-		goto fail2;
++		goto err_pci_exit;
+ 	}
+ 
+ 	err = mantis_get_mac(mantis);
+ 	if (err < 0) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis MAC address read failed <%d>", err);
+-		goto fail2;
++		goto err_i2c_exit;
+ 	}
+ 
+ 	err = mantis_dma_init(mantis);
+ 	if (err < 0) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis DMA initialization failed <%d>", err);
+-		goto fail3;
++		goto err_i2c_exit;
+ 	}
+ 
+ 	err = mantis_dvb_init(mantis);
+ 	if (err < 0) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis DVB initialization failed <%d>", err);
+-		goto fail4;
++		goto err_dma_exit;
+ 	}
++
+ 	err = mantis_uart_init(mantis);
+ 	if (err < 0) {
+ 		dprintk(MANTIS_ERROR, 1, "ERROR: Mantis UART initialization failed <%d>", err);
+-		goto fail6;
++		goto err_dvb_exit;
+ 	}
+ 
+ 	devs++;
+ 
+-	return err;
+-
++	return 0;
+ 
+-	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis UART exit! <%d>", err);
+-	mantis_uart_exit(mantis);
++err_dvb_exit:
++	mantis_dvb_exit(mantis);
+ 
+-fail6:
+-fail4:
+-	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis DMA exit! <%d>", err);
++err_dma_exit:
+ 	mantis_dma_exit(mantis);
+ 
+-fail3:
+-	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis I2C exit! <%d>", err);
++err_i2c_exit:
+ 	mantis_i2c_exit(mantis);
+ 
+-fail2:
+-	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis PCI exit! <%d>", err);
++err_pci_exit:
+ 	mantis_pci_exit(mantis);
+ 
+-fail1:
+-	dprintk(MANTIS_ERROR, 1, "ERROR: Mantis free! <%d>", err);
++err_free_mantis:
+ 	kfree(mantis);
+ 
+-fail0:
+ 	return err;
+ }
+ 
 -- 
-Robert
+2.3.3
+
