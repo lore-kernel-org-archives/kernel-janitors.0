@@ -1,51 +1,37 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 31 Mar 2015 08:49:57 +0000
-Subject: Re: [patch] spi: pxa2xx: missing break in pxa2xx_ssp_get_clk_div()
-Message-Id: <20150331084957.GJ2869@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6pbVDqbvGaUSA62x"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 Mar 2015 11:03:55 +0000
+Subject: [patch 2/2 v2] crypto: img-hash - shift wrapping bug in img_hash_hw_init()
+Message-Id: <20150323110355.GB10964@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150330103040.GB27144@mwanda>
- <1427712912.14897.441.camel@linux.intel.com>
-In-Reply-To: <1427712912.14897.441.camel@linux.intel.com>
-To: linux-arm-kernel@lists.infradead.org
+References: <72BC0C8BD7BB6F45988A99382E5FBAE54446CD50@hhmail02.hh.imgtec.org>
+In-Reply-To: <72BC0C8BD7BB6F45988A99382E5FBAE54446CD50@hhmail02.hh.imgtec.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Herbert Xu <herbert@gondor.apana.org.au>, James Hartley <james.hartley@imgtec.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+"hdev->req->nbytes" is an unsigned int so we so we lose the upper 3 bits
+to the shift wrap bug.
 
---6pbVDqbvGaUSA62x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: typo in changelog
 
-On Mon, Mar 30, 2015 at 01:55:12PM +0300, Andy Shevchenko wrote:
-> On Mon, 2015-03-30 at 13:30 +0300, Dan Carpenter wrote:
-
-> > @@ -791,6 +791,7 @@ static unsigned int pxa2xx_ssp_get_clk_div(struct driver_data *drv_data,
-> >  	switch (drv_data->ssp_type) {
-> >  	case QUARK_X1000_SSP:
-> >  		clk_div = quark_x1000_get_clk_div(rate, &chip->dds_rate);
-> > +		break;
-> >  	default:
-> >  		clk_div = ssp_get_clk_div(drv_data, rate);
-
-> It would be nice to have a break here as well, but I think we also may
-> change this to if-else-if construction.
-
-No.  Using if/else chains is an antipattern - think what happens when a
-new hardware variant needs slightly different handling again.
-
---6pbVDqbvGaUSA62x
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVGl+0AAoJECTWi3JdVIfQfVsH/0vwJKEXq+s3I+NEiMoJtPZl
-q+8NZMRmdP/IIzHtAh7+i2VmM7AhKGWk9SUrmE96hbvQlYedtV82GaCVnOuyxGx2
-GfpoPNwm8tuPlZjKyhegWZfUvsi1fu9DlPXm6Q/n3yNLCERNixTA1fvD3VMLoWCN
-CokTV3UBRqwgH+wFqtzwt/u+42RvZ2f66lqICJ/HJvvbJklQg0i7FQ1hBCZzC3w0
-JOuvNyiRmT63s/WR7AD4/wDNDvigH3rMOZxH1w452ckAxULP9bS2JEUI79yfhe0E
-+VcWEWFVsadmBOhcy8+SCEYLABPA5/ZMvlw3KwYCOxB77ddcavpRvwWCwb7BMtQ=
-=W4x0
------END PGP SIGNATURE-----
-
---6pbVDqbvGaUSA62x--
+diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
+index 601ab35..ad47d0d 100644
+--- a/drivers/crypto/img-hash.c
++++ b/drivers/crypto/img-hash.c
+@@ -464,7 +464,7 @@ static int img_hash_hw_init(struct img_hash_dev *hdev)
+ 	img_hash_write(hdev, CR_RESET, CR_RESET_UNSET);
+ 	img_hash_write(hdev, CR_INTENAB, CR_INT_NEW_RESULTS_SET);
+ 
+-	nbits = (hdev->req->nbytes << 3);
++	nbits = (u64)hdev->req->nbytes << 3;
+ 	u = nbits >> 32;
+ 	l = nbits;
+ 	img_hash_write(hdev, CR_MESSAGE_LENGTH_H, u);
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
