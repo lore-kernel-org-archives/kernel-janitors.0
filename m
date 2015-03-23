@@ -1,49 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Mar 2015 09:35:51 +0000
-Subject: [patch] mwifiex: remove an unneede NULL check in mwifiex_init_adapter()
-Message-Id: <20150323093551.GC558@mwanda>
+From: Amitkumar Karwar <akarwar@marvell.com>
+Date: Mon, 23 Mar 2015 11:28:44 +0000
+Subject: RE: [patch] mwifiex: remove an unneede NULL check in mwifiex_init_adapter()
+Message-Id: <5FF020A1CFFEEC49BD1E09530C4FF5951B16B5ECA2@SC-VEXCH1.marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150323093551.GC558@mwanda>
+In-Reply-To: <20150323093551.GC558@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <akarwar@marvell.com>
-Cc: Avinash Patil <patila@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Avinash Patil <patila@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-"adapter->sleep_cfm" is always non-NULL at this point.  Static checkers
-complain that we already dereference it at the start of the function
-when we do:
+Hi Dan,
 
-	skb_put(adapter->sleep_cfm, sizeof(struct mwifiex_opt_sleep_confirm));
+Thanks for the patch.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Subject: [patch] mwifiex: remove an unneede NULL check in
+> mwifiex_init_adapter()
+> 
+> "adapter->sleep_cfm" is always non-NULL at this point.  Static checkers
+> complain that we already dereference it at the start of the function
+> when we do:
+> 
+> 	skb_put(adapter->sleep_cfm, sizeof(struct
+> mwifiex_opt_sleep_confirm));
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
 
-diff --git a/drivers/net/wireless/mwifiex/init.c b/drivers/net/wireless/mwifiex/init.c
-index 6936de8..e12192f 100644
---- a/drivers/net/wireless/mwifiex/init.c
-+++ b/drivers/net/wireless/mwifiex/init.c
-@@ -266,18 +266,15 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
- 
- 	mwifiex_wmm_init(adapter);
- 
--	if (adapter->sleep_cfm) {
--		sleep_cfm_buf = (struct mwifiex_opt_sleep_confirm *)
--						adapter->sleep_cfm->data;
--		memset(sleep_cfm_buf, 0, adapter->sleep_cfm->len);
--		sleep_cfm_buf->command -				cpu_to_le16(HostCmd_CMD_802_11_PS_MODE_ENH);
--		sleep_cfm_buf->size -				cpu_to_le16(adapter->sleep_cfm->len);
--		sleep_cfm_buf->result = 0;
--		sleep_cfm_buf->action = cpu_to_le16(SLEEP_CONFIRM);
--		sleep_cfm_buf->resp_ctrl = cpu_to_le16(RESP_NEEDED);
--	}
-+	sleep_cfm_buf = (struct mwifiex_opt_sleep_confirm *)
-+					adapter->sleep_cfm->data;
-+	memset(sleep_cfm_buf, 0, adapter->sleep_cfm->len);
-+	sleep_cfm_buf->command = cpu_to_le16(HostCmd_CMD_802_11_PS_MODE_ENH);
-+	sleep_cfm_buf->size = cpu_to_le16(adapter->sleep_cfm->len);
-+	sleep_cfm_buf->result = 0;
-+	sleep_cfm_buf->action = cpu_to_le16(SLEEP_CONFIRM);
-+	sleep_cfm_buf->resp_ctrl = cpu_to_le16(RESP_NEEDED);
-+
- 	memset(&adapter->sleep_params, 0, sizeof(adapter->sleep_params));
- 	memset(&adapter->sleep_period, 0, sizeof(adapter->sleep_period));
- 	adapter->tx_lock_flag = false;
+Acked-by: Amitkumar Karwar <akarwar@marvell.com>
+
+Regards,
+Amit
