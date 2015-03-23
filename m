@@ -1,51 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Mar 2015 18:38:33 +0000
-Subject: Re: [patch 2/2] serial: jsm: some off by one bugs
-Message-Id: <20150316183833.GL10964@mwanda>
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Date: Mon, 23 Mar 2015 19:23:12 +0000
+Subject: [PATCH net-next] vxlan: simplify if clause in dev_close
+Message-Id: <e902446603472e4ec42118b60f90444b1755501e.1427137720.git.marcelo.leitner@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150312170823.GB21911@mwanda>
- <20150316174743.GB6037@oc0812247204.ltc.br.ibm.com>
-In-Reply-To: <20150316174743.GB6037@oc0812247204.ltc.br.ibm.com>
+References: <20150323155612.GD24038@mwanda>
+In-Reply-To: <20150323155612.GD24038@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cascardo@linux.vnet.ibm.com
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-serial@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: dan.carpenter@oracle.com, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 16, 2015 at 02:47:43PM -0300, cascardo@linux.vnet.ibm.com wrote:
-> On Thu, Mar 12, 2015 at 08:08:24PM +0300, Dan Carpenter wrote:
-> > "brd->nasync" amd "brd->maxports" are the same.  They hold the number of
-> > filled out channels in the brd->channels[] array.  These tests should
-> > be ">=" instead of ">" so that we don't read one element past the end.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/tty/serial/jsm/jsm_cls.c b/drivers/tty/serial/jsm/jsm_cls.c
-> > index bfb0681..4eb12a9 100644
-> > --- a/drivers/tty/serial/jsm/jsm_cls.c
-> > +++ b/drivers/tty/serial/jsm/jsm_cls.c
-> > @@ -570,7 +570,7 @@ static inline void cls_parse_isr(struct jsm_board *brd, uint port)
-> >  	 * verified in the interrupt routine.
-> >  	 */
-> > 
-> > -	if (port > brd->nasync)
-> > +	if (port >= brd->nasync)
-> >  		return;
-> > 
-> >  	ch = brd->channels[port];
-> > diff --git a/drivers/tty/serial/jsm/jsm_neo.c b/drivers/tty/serial/jsm/jsm_neo.c
-> > index 7291c21..f413ef0 100644
-> > --- a/drivers/tty/serial/jsm/jsm_neo.c
-> > +++ b/drivers/tty/serial/jsm/jsm_neo.c
-> 
-> Hi, Dan.
-> 
-> It looks like you missed the fix for neo_parse_isr.
-> 
-> Would you send a v2 fixing that as well?
+Dan Carpenter's static checker warned that in vxlan_stop we are checking
+if 'vs' can be NULL while later we simply derreference it.
 
-Yes.  Thanks for catching this.
+As after commit 56ef9c909b40 ("vxlan: Move socket initialization to
+within rtnl scope") 'vs' just cannot be NULL in vxlan_stop() anymore, as
+the interface won't go up if the socket initialization fails. So we are
+good to just remove the check and make it consistent.
 
-regards,
-dan carpenter
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+---
+ drivers/net/vxlan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index 94603ee742eaea4443d8a3de005a622961d1ce4f..6080f8e7b0cd893c3fc05b288a16e3b383f5a14f 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -2254,7 +2254,7 @@ static int vxlan_stop(struct net_device *dev)
+ 	struct vxlan_sock *vs = vxlan->vn_sock;
+ 	int ret = 0;
+ 
+-	if (vs && vxlan_addr_multicast(&vxlan->default_dst.remote_ip) &&
++	if (vxlan_addr_multicast(&vxlan->default_dst.remote_ip) &&
+ 	    !vxlan_group_used(vn, vxlan)) {
+ 		ret = vxlan_igmp_leave(vxlan);
+ 		if (ret)
+-- 
+2.3.3
 
