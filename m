@@ -1,36 +1,49 @@
-From: Daniel Mack <daniel@zonque.org>
-Date: Tue, 17 Mar 2015 18:49:38 +0000
-Subject: Re: kdbus: add connection, queue handling and message validation code
-Message-Id: <55087742.5020103@zonque.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 Mar 2015 09:35:51 +0000
+Subject: [patch] mwifiex: remove an unneede NULL check in mwifiex_init_adapter()
+Message-Id: <20150323093551.GC558@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150317182932.GB30354@mwanda>
-In-Reply-To: <20150317182932.GB30354@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: Avinash Patil <patila@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+"adapter->sleep_cfm" is always non-NULL at this point.  Static checkers
+complain that we already dereference it at the start of the function
+when we do:
 
-On 03/17/2015 07:29 PM, Dan Carpenter wrote:
-> Hello Daniel Mack,
-> 
-> The patch 5fc8dd5c84fc: "kdbus: add connection, queue handling and
-> message validation code" from Sep 11, 2014, leads to the following
-> static checker warning:
-> 
-> 	ipc/kdbus/connection.c:2000 kdbus_cmd_send()
-> 	warn: 'cancel_fd' isn't an ERR_PTR
-> 
-> ipc/kdbus/connection.c
->   1998          if (argv[1].item) {
->   1999                  cancel_fd = fget(argv[1].item->fds[0]);
->                                     ^^^^
-> fget() returns NULL on error.
+	skb_put(adapter->sleep_cfm, sizeof(struct mwifiex_opt_sleep_confirm));
 
-Thanks for reporting this! Should be fixed with the patch I just sent out.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Best regards,
-Daniel
-
+diff --git a/drivers/net/wireless/mwifiex/init.c b/drivers/net/wireless/mwifiex/init.c
+index 6936de8..e12192f 100644
+--- a/drivers/net/wireless/mwifiex/init.c
++++ b/drivers/net/wireless/mwifiex/init.c
+@@ -266,18 +266,15 @@ static void mwifiex_init_adapter(struct mwifiex_adapter *adapter)
+ 
+ 	mwifiex_wmm_init(adapter);
+ 
+-	if (adapter->sleep_cfm) {
+-		sleep_cfm_buf = (struct mwifiex_opt_sleep_confirm *)
+-						adapter->sleep_cfm->data;
+-		memset(sleep_cfm_buf, 0, adapter->sleep_cfm->len);
+-		sleep_cfm_buf->command -				cpu_to_le16(HostCmd_CMD_802_11_PS_MODE_ENH);
+-		sleep_cfm_buf->size -				cpu_to_le16(adapter->sleep_cfm->len);
+-		sleep_cfm_buf->result = 0;
+-		sleep_cfm_buf->action = cpu_to_le16(SLEEP_CONFIRM);
+-		sleep_cfm_buf->resp_ctrl = cpu_to_le16(RESP_NEEDED);
+-	}
++	sleep_cfm_buf = (struct mwifiex_opt_sleep_confirm *)
++					adapter->sleep_cfm->data;
++	memset(sleep_cfm_buf, 0, adapter->sleep_cfm->len);
++	sleep_cfm_buf->command = cpu_to_le16(HostCmd_CMD_802_11_PS_MODE_ENH);
++	sleep_cfm_buf->size = cpu_to_le16(adapter->sleep_cfm->len);
++	sleep_cfm_buf->result = 0;
++	sleep_cfm_buf->action = cpu_to_le16(SLEEP_CONFIRM);
++	sleep_cfm_buf->resp_ctrl = cpu_to_le16(RESP_NEEDED);
++
+ 	memset(&adapter->sleep_params, 0, sizeof(adapter->sleep_params));
+ 	memset(&adapter->sleep_period, 0, sizeof(adapter->sleep_period));
+ 	adapter->tx_lock_flag = false;
