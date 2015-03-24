@@ -1,75 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 03 Mar 2015 18:41:04 +0000
-Subject: Re: [patch] regulator: core: remove some unneeded conditions
-Message-Id: <20150303184104.GD21293@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="eL/3bkOpB8q3g/mM"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Mar 2015 09:21:07 +0000
+Subject: [patch 2/2] tpm, st33zp24: potential underflow in st33zp24_recv()
+Message-Id: <20150324092107.GB24154@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150226204046.GE6820@mwanda>
-In-Reply-To: <20150226204046.GE6820@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+Static checkers don't like the min_t() casting because "count" can be
+negative when we cast it to int.  Fix the casting, and change the caller
+so that "count" can't be negative.
 
---eL/3bkOpB8q3g/mM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Thu, Feb 26, 2015 at 11:40:46PM +0300, Dan Carpenter wrote:
-> These always true or always false conditions cause static checker
-> warnings.
->=20
-> The check prior to checking "if (pin->enable_count <=3D 1) {" is
-> "if (pin->enable_count > 1) ", so we know that ->enable_count is <=3D 1
-> already and can delete the check.
-
-> The queue_delayed_work() function is type bool so the return value can
-> never be less than zero.
-
-Please don't submit multiple changes in a single patch, it makes it much
-harder to review things and means that problems with one part of the
-change block other bits.  Especially the second bit here looks wrong as
-is...
-
-> @@ -2158,13 +2155,10 @@ int regulator_disable_deferred(struct regulator *=
-regulator, int ms)
->  	rdev->deferred_disables++;
->  	mutex_unlock(&rdev->mutex);
-> =20
-> -	ret =3D queue_delayed_work(system_power_efficient_wq,
-> -				 &rdev->disable_work,
-> -				 msecs_to_jiffies(ms));
-> -	if (ret < 0)
-> -		return ret;
-> -	else
-> -		return 0;
-> +	queue_delayed_work(system_power_efficient_wq,
-> +			   &rdev->disable_work,
-> +			   msecs_to_jiffies(ms));
-> +	return 0;
-
-This doesn't look right - it looks like someone changed the return type
-at some point and failed to update all the callers.  Presumbly the
-return value means something (though a quick grep suggests the change is
-correct as the value says if the work was already queued).  It does mean
-that the changelog needs revision though, the point isn't that the
-return value can't be less than zero it's that the function can't fail.
-
---eL/3bkOpB8q3g/mM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJU9gA/AAoJECTWi3JdVIfQJBQH/jk1UplmJWKVmNMDJBj+guEo
-r+QmVR4PfkpbqKCV12qheE8GzyWyUpo53ays/W322ThnhuU6nz0ypnyQrwfyzatg
-C/Vxiea4igcHQV2/NuKoVOfcQYkKTJ72c6nRxj58k1a19WLsgSwomGXU8S5NVSb8
-vkmPqWCne+d563wyQX5m1Nkol0xatb6r09D03Qir9HDHQ6GNSmXHWdkE6nHuyqXz
-Ifxv/1pMHDsjsfirRaJxzrjvB+n0ZP36ryxt0xCgI700Jhol9qu9C7BCnE14lBZp
-2H38LJY05JQAeuHtOxppqqdoFfLJkdWPQtaqIDODn7+7ywWWLDjciM7L1913owA=
-=A8lf
------END PGP SIGNATURE-----
-
---eL/3bkOpB8q3g/mM--
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index 03f2543..7712e31 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -350,7 +350,7 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
+ 		burstcnt = get_burstcount(chip);
+ 		if (burstcnt < 0)
+ 			return burstcnt;
+-		len = min_t(int, burstcnt, count - size);
++		len = min_t(size_t, burstcnt, count - size);
+ 		ret = tpm_dev->ops->recv(tpm_dev->phy_id, TPM_DATA_FIFO,
+ 					 buf + size, len);
+ 		if (ret < 0)
+@@ -492,7 +492,7 @@ static int st33zp24_recv(struct tpm_chip *chip, unsigned char *buf,
+ 	}
+ 
+ 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
+-	if (expected > count) {
++	if (expected < TPM_HEADER_SIZE || expected > count) {
+ 		size = -EIO;
+ 		goto out;
+ 	}
