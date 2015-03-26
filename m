@@ -1,417 +1,276 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Mar 2015 12:54:12 +0000
-Subject: [PATCH 1/4] staging: rtl8712: Drop unneeded cast on netdev_priv
-Message-Id: <1427633655-32103-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Michel von Czettritz <michel.von.czettritz@gmail.com>
+Date: Thu, 26 Mar 2015 22:26:23 +0000
+Subject: [PATCH v2 08/12] staging: sm750: 80 characters per line
+Message-Id: <b370d95b76f3ebf7a24f91eb44cacb81358ed282.1427406762.git.michel.von.czettritz@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: kernel-janitors@vger.kernel.org, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This patch inserts line breaks to make lines fit into 80 characters and increase readability.
 
-The result of netdev_priv is already implicitly cast to the type of the
-left side of the assignment.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-type T;
-T *x;
-@@
-
-x = 
-- (T *)
-  netdev_priv(...)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
 ---
- drivers/staging/rtl8712/os_intfs.c            |   10 +--
- drivers/staging/rtl8712/rtl871x_ioctl_linux.c |   70 +++++++++++++-------------
- drivers/staging/rtl8712/xmit_linux.c          |    2 
- 3 files changed, 41 insertions(+), 41 deletions(-)
+ drivers/staging/sm750fb/sm750.c | 110 ++++++++++++++++++++++++++--------------
+ 1 file changed, 72 insertions(+), 38 deletions(-)
 
-diff -u -p a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
---- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-+++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-@@ -363,7 +363,7 @@ static inline char *translate_scan(struc
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index e4cf08c..6887926 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -60,54 +60,66 @@ static char *g_option = NULL;
+ static const struct fb_videomode lynx750_ext[] = {
+ 	/*	1024x600-60 VESA	[1.71:1] */
+ 	{NULL,  60, 1024, 600, 20423, 144,  40, 18, 1, 104, 3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
- static int wpa_set_auth_algs(struct net_device *dev, u32 value)
- {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	int ret = 0;
+ 	/*	1024x600-70 VESA */
+ 	{NULL,  70, 1024, 600, 17211, 152,  48, 21, 1, 104, 3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
- 	if ((value & AUTH_ALG_SHARED_KEY) && (value & AUTH_ALG_OPEN_SYSTEM)) {
-@@ -395,7 +395,7 @@ static int wpa_set_encryption(struct net
- 	int ret = 0;
- 	u32 wep_key_idx, wep_key_len = 0;
- 	struct NDIS_802_11_WEP	 *pwep = NULL;
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct security_priv *psecuritypriv = &padapter->securitypriv;
+ 	/*	1024x600-75 VESA */
+ 	{NULL,  75, 1024, 600, 15822, 160,  56, 23, 1, 104, 3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
-@@ -629,7 +629,7 @@ static int r8711_wx_get_name(struct net_
- 			     struct iw_request_info *info,
- 			     union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	u32 ht_ielen = 0;
- 	char *p;
- 	u8 ht_cap = false;
-@@ -685,7 +685,7 @@ static int r8711_wx_set_freq(struct net_
- 			     struct iw_request_info *info,
- 			     union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_freq *fwrq = &wrqu->freq;
- 	int rc = 0;
+ 	/*	1024x600-85 VESA */
+ 	{NULL,  85, 1024, 600, 13730, 168,  56, 26, 1, 112, 3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
-@@ -721,7 +721,7 @@ static int r8711_wx_get_freq(struct net_
- 			     struct iw_request_info *info,
- 			     union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct ndis_wlan_bssid_ex *pcur_bss = &pmlmepriv->cur_network.network;
+ 	/*	720x480	*/
+ 	{NULL, 60,  720,  480,  37427, 88,   16, 13, 1,   72,  3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
-@@ -740,7 +740,7 @@ static int r8711_wx_set_mode(struct net_
- 			     struct iw_request_info *a,
- 			     union iwreq_data *wrqu, char *b)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	enum NDIS_802_11_NETWORK_INFRASTRUCTURE networkType;
+ 	/*	1280x720		[1.78:1]	*/
+ 	{NULL, 60,  1280,  720,  13426, 162, 86, 22, 1,  136, 3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
- 	switch (wrqu->mode) {
-@@ -771,7 +771,7 @@ static int r8711_wx_set_mode(struct net_
- static int r8711_wx_get_mode(struct net_device *dev, struct iw_request_info *a,
- 			     union iwreq_data *wrqu, char *b)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+ 	/*	1280x768@60 */
+ 	{NULL, 60, 1280, 768, 12579, 192, 64, 20, 3, 128, 7,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
- 	if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) = true)
-@@ -790,7 +790,7 @@ static int r871x_wx_set_pmkid(struct net
- 			     struct iw_request_info *a,
- 			     union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct security_priv *psecuritypriv = &padapter->securitypriv;
- 	struct iw_pmksa *pPMK = (struct iw_pmksa *) extra;
- 	u8 strZeroMacAddress[ETH_ALEN] = {0x00};
-@@ -1061,7 +1061,7 @@ static int r8711_wx_set_wap(struct net_d
- 			 char *extra)
- {
- 	int ret = -EINPROGRESS;
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct  __queue *queue = &pmlmepriv->scanned_queue;
- 	struct sockaddr *temp = (struct sockaddr *)awrq;
-@@ -1110,7 +1110,7 @@ static int r8711_wx_get_wap(struct net_d
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct ndis_wlan_bssid_ex *pcur_bss = &pmlmepriv->cur_network.network;
+ 	{NULL, 60, 1360, 768, 11804, 208, 64, 23, 1, 144, 3,
+ 	 FB_SYNC_HOR_HIGH_ACT|FB_VMODE_NONINTERLACED},
  
-@@ -1128,7 +1128,7 @@ static int r871x_wx_set_mlme(struct net_
- 			     union iwreq_data *wrqu, char *extra)
- {
- 	int ret = 0;
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_mlme *mlme = (struct iw_mlme *) extra;
+ 	/*	1360 x 768	[1.77083:1]	*/
+ 	{NULL,  60, 1360, 768, 11804, 208,  64, 23, 1, 144, 3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
- 	if (mlme = NULL)
-@@ -1160,7 +1160,7 @@ static int r8711_wx_set_scan(struct net_
- 			struct iw_request_info *a,
- 			union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	u8 status = true;
+ 	/*	1368 x 768      [1.78:1]	*/
+ 	{NULL, 60,  1368,  768,  11647, 216, 72, 23, 1,  144, 3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
-@@ -1209,7 +1209,7 @@ static int r8711_wx_get_scan(struct net_
- 				struct iw_request_info *a,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct  __queue *queue = &pmlmepriv->scanned_queue;
- 	struct wlan_network *pnetwork = NULL;
-@@ -1263,7 +1263,7 @@ static int r8711_wx_set_essid(struct net
- 				struct iw_request_info *a,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct  __queue *queue = &pmlmepriv->scanned_queue;
- 	struct wlan_network *pnetwork = NULL;
-@@ -1326,7 +1326,7 @@ static int r8711_wx_get_essid(struct net
- 				struct iw_request_info *a,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct ndis_wlan_bssid_ex *pcur_bss = &pmlmepriv->cur_network.network;
- 	u32 len, ret = 0;
-@@ -1346,7 +1346,7 @@ static int r8711_wx_set_rate(struct net_
- 				struct iw_request_info *a,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	u32 target_rate = wrqu->bitrate.value;
- 	u32 fixed = wrqu->bitrate.fixed;
- 	u32 ratevalue = 0;
-@@ -1418,7 +1418,7 @@ static int r8711_wx_get_rate(struct net_
- 			     struct iw_request_info *info,
- 			     union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct ndis_wlan_bssid_ex *pcur_bss = &pmlmepriv->cur_network.network;
- 	struct ieee80211_ht_cap *pht_capie;
-@@ -1475,7 +1475,7 @@ static int r8711_wx_get_rts(struct net_d
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
+ 	/*	1440 x 900		[16:10]	*/
+ 	{NULL, 60, 1440, 900, 9392, 232, 80, 28, 1, 152, 3,
+-	 FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
- 	wrqu->rts.value = padapter->registrypriv.rts_thresh;
- 	wrqu->rts.fixed = 0;	/* no auto select */
-@@ -1486,7 +1486,7 @@ static int r8711_wx_set_frag(struct net_
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
+ 	/*	1440x960		[15:10]	*/
+ 	{NULL, 60, 1440, 960, 8733, 240, 88, 30, 1, 152, 3,
+-	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
  
- 	if (wrqu->frag.disabled)
- 		padapter->xmitpriv.frag_len = MAX_FRAG_THRESHOLD;
-@@ -1503,7 +1503,7 @@ static int r8711_wx_get_frag(struct net_
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
+ 	/*	1920x1080	[16:9]	*/
+ 	{NULL, 60, 1920, 1080, 6734, 148, 88, 41, 1, 44, 3,
+-	 FB_SYNC_VERT_HIGH_ACT, FB_VMODE_NONINTERLACED},
++	 FB_SYNC_VERT_HIGH_ACT,
++	 FB_VMODE_NONINTERLACED},
+ };
  
- 	wrqu->frag.value = padapter->xmitpriv.frag_len;
- 	wrqu->frag.fixed = 0;	/* no auto select */
-@@ -1529,7 +1529,7 @@ static int r8711_wx_set_enc(struct net_d
- 	struct NDIS_802_11_WEP	 wep;
- 	enum NDIS_802_11_AUTHENTICATION_MODE authmode;
- 	struct iw_point *erq = &(wrqu->encoding);
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
  
- 	key = erq->flags & IW_ENCODE_INDEX;
- 	memset(&wep, 0, sizeof(struct NDIS_802_11_WEP));
-@@ -1621,7 +1621,7 @@ static int r8711_wx_get_enc(struct net_d
- 				union iwreq_data *wrqu, char *keybuf)
- {
- 	uint key, ret = 0;
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_point *erq = &(wrqu->encoding);
- 	struct	mlme_priv	*pmlmepriv = &(padapter->mlmepriv);
+@@ -132,12 +144,14 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
  
-@@ -1693,7 +1693,7 @@ static int r871x_wx_set_gen_ie(struct ne
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
+ 	cursor->disable(cursor);
+ 	if (fbcursor->set & FB_CUR_SETSIZE)
+-		cursor->setSize(cursor, fbcursor->image.width, fbcursor->image.height);
++		cursor->setSize(cursor,
++				fbcursor->image.width,
++				fbcursor->image.height);
  
- 	return r871x_set_wpa_ie(padapter, extra, wrqu->data.length);
+-	if (fbcursor->set & FB_CUR_SETPOS) {
+-		cursor->setPos(cursor, fbcursor->image.dx - info->var.xoffset,
++	if (fbcursor->set & FB_CUR_SETPOS)
++		cursor->setPos(cursor,
++			       fbcursor->image.dx - info->var.xoffset,
+ 			       fbcursor->image.dy - info->var.yoffset);
+-	}
+ 
+ 	if (fbcursor->set & FB_CUR_SETCMAP) {
+ 		/* get the 16bit color of kernel means */
+@@ -167,7 +181,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
+ 	return 0;
  }
-@@ -1702,7 +1702,7 @@ static int r871x_wx_set_auth(struct net_
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
+ 
+-static void lynxfb_ops_fillrect(struct fb_info *info, const struct fb_fillrect *region)
++static void lynxfb_ops_fillrect(struct fb_info *info,
++				const struct fb_fillrect *region)
  {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_param *param = (struct iw_param *)&(wrqu->param);
- 	int paramid;
- 	int paramval;
-@@ -1849,7 +1849,7 @@ static int r8711_wx_read32(struct net_de
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *keybuf)
+ 	struct lynxfb_par *par;
+ 	struct lynx_share *share;
+@@ -205,7 +220,8 @@ static void lynxfb_ops_fillrect(struct fb_info *info, const struct fb_fillrect *
+ 		spin_unlock(&share->slock);
+ }
+ 
+-static void lynxfb_ops_copyarea(struct fb_info *info, const struct fb_copyarea *region)
++static void lynxfb_ops_copyarea(struct fb_info *info,
++				const struct fb_copyarea *region)
  {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	u32 addr;
- 	u32 data32;
+ 	struct lynxfb_par *par;
+ 	struct lynx_share *share;
+@@ -235,7 +251,8 @@ static void lynxfb_ops_copyarea(struct fb_info *info, const struct fb_copyarea *
+ 		spin_unlock(&share->slock);
+ }
  
-@@ -1866,7 +1866,7 @@ static int r8711_wx_write32(struct net_d
- 				 struct iw_request_info *info,
- 				 union iwreq_data *wrqu, char *keybuf)
+-static void lynxfb_ops_imageblit(struct fb_info *info, const struct fb_image *image)
++static void lynxfb_ops_imageblit(struct fb_info *info,
++				 const struct fb_image *image)
  {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	u32 addr;
- 	u32 data32;
+ 	unsigned int base, pitch, Bpp;
+ 	unsigned int fgcol, bgcol;
+@@ -381,7 +398,8 @@ static int lynxfb_ops_set_par(struct fb_info *info)
+ 	return ret;
+ }
  
-@@ -1894,7 +1894,7 @@ static int r871x_mp_ioctl_hdl(struct net
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
+-static inline unsigned int chan_to_field(unsigned int chan, struct fb_bitfield *bf)
++static inline unsigned int chan_to_field(unsigned int chan,
++					 struct fb_bitfield *bf)
  {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_point *p = &wrqu->data;
- 	struct oid_par_priv oid_par;
- 	struct mp_ioctl_handler *phandler;
-@@ -1977,7 +1977,7 @@ static int r871x_get_ap_info(struct net_
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
+ 	chan &= 0xffff;
+ 	chan >>= 16 - bf->length;
+@@ -508,7 +526,8 @@ static int lynxfb_resume(struct pci_dev *pdev)
+ }
+ #endif
+ 
+-static int lynxfb_ops_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
++static int lynxfb_ops_check_var(struct fb_var_screeninfo *var,
++				struct fb_info *info)
  {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct  __queue *queue = &pmlmepriv->scanned_queue;
- 	struct iw_point *pdata = &wrqu->data;
-@@ -2048,7 +2048,7 @@ static int r871x_set_pid(struct net_devi
- 				struct iw_request_info *info,
- 				union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_point *pdata = &wrqu->data;
+ 	struct lynxfb_par *par;
+ 	struct lynxfb_crtc *crtc;
+@@ -582,7 +601,7 @@ static int lynxfb_ops_check_var(struct fb_var_screeninfo *var, struct fb_info *i
+ 	var->height = var->width = -1;
+ 	var->accel_flags = 0;/* FB_ACCELF_TEXT; */
  
- 	if ((padapter->bDriverStopped) || (pdata = NULL))
-@@ -2063,7 +2063,7 @@ static int r871x_set_chplan(struct net_d
- 				union iwreq_data *wrqu, char *extra)
- {
- 	int ret = 0;
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_point *pdata = &wrqu->data;
- 	int ch_plan = -1;
+-	/* check if current fb's video memory big enought to hold the onscreen */
++	/* check if current fb's video memory big enought to hold the onscreen*/
+ 	request = var->xres_virtual * (var->bits_per_pixel >> 3);
+ 	/* defaulty crtc->channel go with par->index */
  
-@@ -2083,7 +2083,7 @@ static int r871x_wps_start(struct net_de
- 			   struct iw_request_info *info,
- 			   union iwreq_data *wrqu, char *extra)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_point *pdata = &wrqu->data;
- 	u32   u32wps_start = 0;
+@@ -623,7 +642,8 @@ static int lynxfb_ops_setcolreg(unsigned regno, unsigned red,
+ 	if (info->var.grayscale)
+ 		red = green = blue = (red * 77 + green * 151 + blue * 28) >> 8;
  
-@@ -2107,7 +2107,7 @@ static int r871x_wps_start(struct net_de
- 
- static int wpa_set_param(struct net_device *dev, u8 name, u32 value)
- {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 
- 	switch (name) {
- 	case IEEE_PARAM_WPA_ENABLED:
-@@ -2159,7 +2159,7 @@ static int wpa_set_param(struct net_devi
- 
- static int wpa_mlme(struct net_device *dev, u32 command, u32 reason)
- {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 
- 	switch (command) {
- 	case IEEE_MLME_STA_DEAUTH:
-@@ -2180,7 +2180,7 @@ static int wpa_supplicant_ioctl(struct n
- {
- 	struct ieee_param *param;
- 	int ret = 0;
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 
- 	if (p->length < sizeof(struct ieee_param) || !p->pointer)
- 		return -EINVAL;
-@@ -2333,7 +2333,7 @@ static iw_handler r8711_private_handler[
- 
- static struct iw_statistics *r871x_get_wireless_stats(struct net_device *dev)
- {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(dev);
-+	struct _adapter *padapter = netdev_priv(dev);
- 	struct iw_statistics *piwstats = &padapter->iwstats;
- 	int tmp_level = 0;
- 	int tmp_qual = 0;
-diff -u -p a/drivers/staging/rtl8712/xmit_linux.c b/drivers/staging/rtl8712/xmit_linux.c
---- a/drivers/staging/rtl8712/xmit_linux.c
-+++ b/drivers/staging/rtl8712/xmit_linux.c
-@@ -162,7 +162,7 @@ void r8712_xmit_complete(struct _adapter
- int r8712_xmit_entry(_pkt *pkt, struct  net_device *pnetdev)
- {
- 	struct xmit_frame *pxmitframe = NULL;
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(pnetdev);
-+	struct _adapter *padapter = netdev_priv(pnetdev);
- 	struct xmit_priv *pxmitpriv = &(padapter->xmitpriv);
- 	int ret = 0;
- 
-diff -u -p a/drivers/staging/rtl8712/os_intfs.c b/drivers/staging/rtl8712/os_intfs.c
---- a/drivers/staging/rtl8712/os_intfs.c
-+++ b/drivers/staging/rtl8712/os_intfs.c
-@@ -177,7 +177,7 @@ static uint loadparam(struct _adapter *p
- 
- static int r871x_net_set_mac_address(struct net_device *pnetdev, void *p)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(pnetdev);
-+	struct _adapter *padapter = netdev_priv(pnetdev);
- 	struct sockaddr *addr = p;
- 
- 	if (padapter->bup = false)
-@@ -187,7 +187,7 @@ static int r871x_net_set_mac_address(str
- 
- static struct net_device_stats *r871x_net_get_stats(struct net_device *pnetdev)
- {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(pnetdev);
-+	struct _adapter *padapter = netdev_priv(pnetdev);
- 	struct xmit_priv *pxmitpriv = &(padapter->xmitpriv);
- 	struct recv_priv *precvpriv = &(padapter->recvpriv);
- 
-@@ -221,7 +221,7 @@ struct net_device *r8712_init_netdev(voi
- 		strcpy(ifname, "wlan%d");
- 		dev_alloc_name(pnetdev, ifname);
+-	if (var->bits_per_pixel = 8 && info->fix.visual = FB_VISUAL_PSEUDOCOLOR) {
++	if (var->bits_per_pixel = 8 &&
++	    info->fix.visual = FB_VISUAL_PSEUDOCOLOR) {
+ 		red >>= 8;
+ 		green >>= 8;
+ 		blue >>= 8;
+@@ -865,22 +885,30 @@ static int lynxfb_set_fbinfo(struct fb_info *info, int index)
+ 		} else if (ret = 4) {
+ 			pr_warn("fall back to any valid mode\n");
+ 		} else {
+-			pr_warn("ret = %d,fb_find_mode failed,with %s\n", ret, mdb_desc[i]);
++			pr_warn("ret = %d,fb_find_mode failed,with %s\n",
++				ret,
++				mdb_desc[i]);
+ 		}
  	}
--	padapter = (struct _adapter *) netdev_priv(pnetdev);
-+	padapter = netdev_priv(pnetdev);
- 	padapter->pnetdev = pnetdev;
- 	pr_info("r8712u: register rtl8712_netdev_ops to netdev_ops\n");
- 	pnetdev->netdev_ops = &rtl8712_netdev_ops;
-@@ -384,7 +384,7 @@ static void enable_video_mode(struct _ad
-  */
- static int netdev_open(struct net_device *pnetdev)
- {
--	struct _adapter *padapter = (struct _adapter *)netdev_priv(pnetdev);
-+	struct _adapter *padapter = netdev_priv(pnetdev);
  
- 	mutex_lock(&padapter->mutex_start);
- 	if (padapter->bup = false) {
-@@ -452,7 +452,7 @@ netdev_open_error:
-  */
- static int netdev_close(struct net_device *pnetdev)
- {
--	struct _adapter *padapter = (struct _adapter *) netdev_priv(pnetdev);
-+	struct _adapter *padapter = netdev_priv(pnetdev);
+ 	/* some member of info->var had been set by fb_find_mode */
  
- 	/* Close LED*/
- 	padapter->ledpriv.LedControlHandler(padapter, LED_CTL_POWER_OFF);
+ 	pr_info("Member of info->var is :\n\
+-			xres=%d\n\
+-			yres=%d\n\
+-			xres_virtual=%d\n\
+-			yres_virtual=%d\n\
+-			xoffset=%d\n\
+-			yoffset=%d\n\
+-			bits_per_pixel=%d\n \
+-			...\n", var->xres, var->yres, var->xres_virtual, var->yres_virtual,
+-			var->xoffset, var->yoffset, var->bits_per_pixel);
++		xres=%d\n\
++		yres=%d\n\
++		xres_virtual=%d\n\
++		yres_virtual=%d\n\
++		xoffset=%d\n\
++		yoffset=%d\n\
++		bits_per_pixel=%d\n \
++		...\n",
++		var->xres,
++		var->yres,
++		var->xres_virtual,
++		var->yres_virtual,
++		var->xoffset,
++		var->yoffset,
++		var->bits_per_pixel);
+ 
+ 	/* set par */
+ 	par->info = info;
+@@ -1026,7 +1054,9 @@ static void sm750fb_setup(struct lynx_share *share, char *src)
+ 		}
+ 	}
+ #ifdef CAP_EXPANSION
+-	if (getExpRes(exp_res, &spec_share->state.xLCD, &spec_share->state.yLCD)) {
++	if (getExpRes(exp_res,
++		      &spec_share->state.xLCD,
++		      &spec_share->state.yLCD)) {
+ 		/* seems exp_res is not valid */
+ 		spec_share->state.xLCD = spec_share->state.yLCD = 0;
+ 	}
+@@ -1100,8 +1130,8 @@ static int lynxfb_pci_probe(struct pci_dev *pdev,
+ 	if (!share->accel_off) {
+ 		/* hook deInit and 2d routines, notes that below hw_xxx
+ 		 * routine can work on most of lynx chips
+-		 * if some chip need specific function,please hook it in smXXX_set_drv
+-		 * routine */
++		 * if some chip need specific function,
++		 * please hook it in smXXX_set_drv routine */
+ 		share->accel.de_init = hw_de_init;
+ 		share->accel.de_fillrect = hw_fillrect;
+ 		share->accel.de_copyarea = hw_copyarea;
+@@ -1177,7 +1207,9 @@ ALLOC_FB:
+ 		pr_info("Ready to register framebuffer #%d.\n", fbidx);
+ 		errno = register_framebuffer(info[fbidx]);
+ 		if (errno < 0) {
+-			pr_err("Failed to register fb_info #%d. err %d\n", fbidx, errno);
++			pr_err("Failed to register fb_info #%d. err %d\n",
++				fbidx,
++				errno);
+ 			if (fbidx = 0)
+ 				goto err_register0;
+ 			else
+@@ -1235,7 +1267,9 @@ static void __exit lynxfb_pci_remove(struct pci_dev *pdev)
+ 	}
+ #ifdef CONFIG_MTRR
+ 	if (share->mtrr.vram_added)
+-		mtrr_del(share->mtrr.vram, share->vidmem_start, share->vidmem_size);
++		mtrr_del(share->mtrr.vram,
++			 share->vidmem_start,
++			 share->vidmem_size);
+ #endif
+ 
+ 	iounmap(share->pvReg);
+-- 
+2.3.3
 
