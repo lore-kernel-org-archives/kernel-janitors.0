@@ -1,30 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Mar 2015 09:13:12 +0000
-Subject: [patch -next] crypto: algif - signedness bug in skcipher_recvmsg_async()
-Message-Id: <20150326091312.GA21084@mwanda>
+From: Michel von Czettritz <michel.von.czettritz@gmail.com>
+Date: Thu, 26 Mar 2015 22:24:03 +0000
+Subject: [PATCH v2 00/12] reformat sm750.c
+Message-Id: <cover.1427406762.git.michel.von.czettritz@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, Tadeusz Struk <tadeusz.struk@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-This needs to be signed because af_alg_make_sg() returns negative error
-codes.
+As suggested by Dan Carpenter, I've rewritten my patch as a series of smaller patches.
 
-Fixes: a596999b7ddf ('crypto: algif - change algif_skcipher to be asynchronous')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Dan's Mail: http://marc.info/?l=kernel-janitors&m2679651624193&w=2
 
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index 506eb5f..142430f 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -537,7 +537,7 @@ static int skcipher_recvmsg_async(struct socket *sock, struct msghdr *msg,
- 
- 	while (iov_iter_count(&msg->msg_iter)) {
- 		struct skcipher_async_rsgl *rsgl;
--		unsigned long used;
-+		long used;
- 
- 		if (!ctx->used) {
- 			err = skcipher_wait_for_data(sk, flags);
+Patches 1-11 only reformat code. Patch 12 changes the code, by moving assignments out of if conditions.
+The module builds, but as I don't own a sm750 card, I can't test it.
+
+---
+v2:
+* rebase on top of staging-testing
+* delete original patch 6, as the original code was deleted by Lorenzo
+* fix formatting as proposed by Dan Carpenter
+
+Michel von Czettritz (12):
+  staging: sm750: Reindent
+  staging: sm750: add missing spaces after ','
+  staging: sm750: move '{' to previous line
+  staging: sm750: fix whitespace around braces
+  staging: sm750: fix whitespaces around pointers
+  staging: sm750: no braces for single stmt if blocks
+  staging: sm750: comment formating
+  staging: sm750: 80 characters per line
+  staging: sm750: blank line after declaration
+  staging: sm750: fix whitespace
+  staging: sm750: fix whitspace for cast to pointer
+  staging: sm750: move assignment out of if cond
+
+ drivers/staging/sm750fb/sm750.c | 1358 ++++++++++++++++++++-------------------
+ 1 file changed, 687 insertions(+), 671 deletions(-)
+
+-- 
+2.3.3
+
