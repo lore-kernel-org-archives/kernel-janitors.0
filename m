@@ -1,36 +1,69 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 05 Mar 2015 10:56:51 +0000
-Subject: Re: [PATCH 1/1] staging: io: Remove unnecessary OOM message
-Message-Id: <alpine.DEB.2.10.1503050556210.2601@hadrien>
+From: Michel von Czettritz <michel.von.czettritz@gmail.com>
+Date: Thu, 26 Mar 2015 22:25:50 +0000
+Subject: [PATCH v2 06/12] staging: sm750: no braces for single stmt if blocks
+Message-Id: <9b7d1ab21e735024fec2d2586fb1e0550eaa6369.1427406762.git.michel.von.czettritz@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150305102316.GA4389@sloth> <alpine.DEB.2.10.1503050528080.2601@hadrien> <54F835E3.9080407@gmail.com>
-In-Reply-To: <54F835E3.9080407@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-On Thu, 5 Mar 2015, Quentin Lambert wrote:
+This patches fixes checkpatch.pl warning:
+"WARNING: braces {} are not necessary for single statement blocks"
 
->
->
-> On 05/03/2015 11:28, Julia Lawall wrote:
-> > It's i2o, not io, and it is on the way out of the kernel.
-> sorry about that,
-> since it is on its way out I guess there is no need for me to submit a correct
-> version of this patch?
->
-> Are there resources to know whether or not a driver will be dropped or is it
-> enough to check if there is
-> a TODO file in its directory?
+Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
+---
+ drivers/staging/sm750fb/sm750.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-These are the staging drivers that I know of:
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index d9a94d7..5d3ee44 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -131,9 +131,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
+ 	}
+ 
+ 	cursor->disable(cursor);
+-	if (fbcursor->set & FB_CUR_SETSIZE) {
++	if (fbcursor->set & FB_CUR_SETSIZE)
+ 		cursor->setSize(cursor, fbcursor->image.width, fbcursor->image.height);
+-	}
+ 
+ 	if (fbcursor->set & FB_CUR_SETPOS) {
+ 		cursor->setPos(cursor, fbcursor->image.dx - info->var.xoffset,
+@@ -162,9 +161,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
+ 				fbcursor->mask);
+ 	}
+ 
+-	if (fbcursor->enable) {
++	if (fbcursor->enable)
+ 		cursor->enable(cursor);
+-	}
+ 
+ 	return 0;
+ }
+@@ -176,9 +174,8 @@ static void lynxfb_ops_fillrect(struct fb_info *info, const struct fb_fillrect *
+ 	unsigned int base, pitch, Bpp, rop;
+ 	u32 color;
+ 
+-	if (info->state != FBINFO_STATE_RUNNING) {
++	if (info->state != FBINFO_STATE_RUNNING)
+ 		return;
+-	}
+ 
+ 	par = info->par;
+ 	share = par->share;
+@@ -487,8 +484,8 @@ static int lynxfb_resume(struct pci_dev *pdev)
+ 		par = info->par;
+ 		crtc = &par->crtc;
+ 		cursor = &crtc->cursor;
+-		memset_io(cursor->vstart, 0x0, cursor->size);
+-		memset_io(crtc->vScreen, 0x0, crtc->vidmem_size);
++		memset(cursor->vstart, 0x0, cursor->size);
++		memset(crtc->vScreen, 0x0, crtc->vidmem_size);
+ 		lynxfb_ops_set_par(info);
+ 		fb_set_suspend(info, 0);
+ 	}
+-- 
+2.3.3
 
-i2o
-line6
-media/parport
-media/tlg2300
-media/vino
-
-julia
