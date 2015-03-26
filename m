@@ -1,76 +1,58 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 11 Mar 2015 16:56:24 +0000
-Subject: [PATCH 2/15] powerpc: don't export static symbol
-Message-Id: <1426092997-30605-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Michel von Czettritz <michel.von.czettritz@gmail.com>
+Date: Thu, 26 Mar 2015 22:27:25 +0000
+Subject: [PATCH v2 12/12] staging: sm750: move assignment out of if cond
+Message-Id: <1d869c193fc53160e5a2ef06bbb2b7ce9786bd2e.1427406762.git.michel.von.czettritz@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: daniel@iogearbox.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: linux-fbdev@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This patch moves the assignments from the if conditions to the line before the condition.
+The 3 occurrence are return values and the checks for errors.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-type T;
-identifier f;
-@@
-
-static T f (...) { ... }
-
-@@
-identifier r.f;
-declarer name EXPORT_SYMBOL;
-@@
-
--EXPORT_SYMBOL(f);
-// </smpl>
-
-Furthermore, the function is never used, so its definition is dropped as
-well.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
 ---
- arch/powerpc/sysdev/qe_lib/qe_io.c |   25 -------------------------
- 1 file changed, 25 deletions(-)
 
-diff --git a/arch/powerpc/sysdev/qe_lib/qe_io.c b/arch/powerpc/sysdev/qe_lib/qe_io.c
-index d099941..7ea0174 100644
---- a/arch/powerpc/sysdev/qe_lib/qe_io.c
-+++ b/arch/powerpc/sysdev/qe_lib/qe_io.c
-@@ -190,28 +190,3 @@ int par_io_of_config(struct device_node *np)
- 	return 0;
- }
- EXPORT_SYMBOL(par_io_of_config);
--
--#ifdef DEBUG
--static void dump_par_io(void)
--{
--	unsigned int i;
--
--	printk(KERN_INFO "%s: par_io=%p\n", __func__, par_io);
--	for (i = 0; i < num_par_io_ports; i++) {
--		printk(KERN_INFO "	cpodr[%u]=%08x\n", i,
--			in_be32(&par_io[i].cpodr));
--		printk(KERN_INFO "	cpdata[%u]=%08x\n", i,
--			in_be32(&par_io[i].cpdata));
--		printk(KERN_INFO "	cpdir1[%u]=%08x\n", i,
--			in_be32(&par_io[i].cpdir1));
--		printk(KERN_INFO "	cpdir2[%u]=%08x\n", i,
--			in_be32(&par_io[i].cpdir2));
--		printk(KERN_INFO "	cppar1[%u]=%08x\n", i,
--			in_be32(&par_io[i].cppar1));
--		printk(KERN_INFO "	cppar2[%u]=%08x\n", i,
--			in_be32(&par_io[i].cppar2));
--	}
--
--}
--EXPORT_SYMBOL(dump_par_io);
--#endif /* DEBUG */
+v2: remove double negation in if statments
+---
+ drivers/staging/sm750fb/sm750.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index d363f55..25df813 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -477,7 +477,8 @@ static int lynxfb_resume(struct pci_dev *pdev)
+ 
+ 	console_lock();
+ 
+-	if ((ret = pci_set_power_state(pdev, PCI_D0)) != 0) {
++	ret = pci_set_power_state(pdev, PCI_D0);
++	if (ret) {
+ 		pr_err("error:%d occured in pci_set_power_state\n", ret);
+ 		return ret;
+ 	}
+@@ -485,7 +486,8 @@ static int lynxfb_resume(struct pci_dev *pdev)
+ 
+ 	if (pdev->dev.power.power_state.event != PM_EVENT_FREEZE) {
+ 		pci_restore_state(pdev);
+-		if ((ret = pci_enable_device(pdev)) != 0) {
++		ret = pci_enable_device(pdev);
++		if (ret) {
+ 			pr_err("error:%d occured in pci_enable_device\n", ret);
+ 			return ret;
+ 		}
+@@ -975,7 +977,8 @@ static int lynxfb_set_fbinfo(struct fb_info *info, int index)
+ 		 info->cmap.red, info->cmap.green, info->cmap.blue,
+ 		 info->cmap.transp);
+ 
+-	if ((ret = fb_alloc_cmap(&info->cmap, 256, 0)) < 0) {
++	ret = fb_alloc_cmap(&info->cmap, 256, 0);
++	if (ret < 0) {
+ 		pr_err("Could not allcate memory for cmap.\n");
+ 		goto exit;
+ 	}
+-- 
+2.3.3
+
