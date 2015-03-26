@@ -1,208 +1,345 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Thu, 19 Mar 2015 13:18:56 +0000
-Subject: [PATCH] staging: vt6655: remove deprecated use of pci api
-Message-Id: <1426771136-17411-1-git-send-email-lambert.quentin@gmail.com>
+From: Michel von Czettritz <michel.von.czettritz@gmail.com>
+Date: Thu, 26 Mar 2015 22:25:37 +0000
+Subject: [PATCH v2 05/12] staging: sm750: fix whitespaces around pointers
+Message-Id: <4a5d3cfe7a4bf9811437d3746d10f6bca3b1a9da.1427406762.git.michel.von.czettritz@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Forest Bond <forest@alittletooquiet.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+To: linux-fbdev@vger.kernel.org
 
-Replace occurences of the pci api by appropriate call to the dma api.
+This patch fixes checkpatch.pl errors:
+- ERROR: "foo * bar" should be "foo *bar"
+- ERROR: "foo* bar" should be "foo *bar"
 
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr)
-
-@deprecated@
-idexpression id;
-position p;
-@@
-
-(
-  pci_dma_supported@p ( id, ...)
-|
-  pci_alloc_consistent@p ( id, ...)
-)
-
-@bad1@
-idexpression id;
-position deprecated.p;
-@@
-...when != &id->dev
-   when != pci_get_drvdata ( id )
-   when != pci_enable_device ( id )
-(
-  pci_dma_supported@p ( id, ...)
-|
-  pci_alloc_consistent@p ( id, ...)
-)
-
-@depends on !bad1@
-idexpression id;
-expression direction;
-position deprecated.p;
-@@
-
-(
-- pci_dma_supported@p ( id,
-+ dma_supported ( &id->dev,
-...
-+ , GFP_ATOMIC
-  )
-|
-- pci_alloc_consistent@p ( id,
-+ dma_alloc_coherent ( &id->dev,
-...
-+ , GFP_ATOMIC
-  )
-)
-
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
 ---
- drivers/staging/vt6655/device_main.c | 39 ++++++++++++++++++------------------
- drivers/staging/vt6655/dpc.c         |  4 ++--
- 2 files changed, 22 insertions(+), 21 deletions(-)
+ drivers/staging/sm750fb/sm750.c | 153 ++++++++++++++++++++--------------------
+ 1 file changed, 77 insertions(+), 76 deletions(-)
 
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
-index 14c935fed8a0..4bb4f8ee4132 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -530,12 +530,12 @@ static bool device_init_rings(struct vnt_private *pDevice)
- 	void *vir_pool;
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 6d148a5..d9a94d7 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -50,11 +50,12 @@ static int g_noaccel;
+ #ifdef CONFIG_MTRR
+ static int g_nomtrr;
+ #endif
+-static const char * g_fbmode[] = {NULL, NULL};
+-static const char * g_def_fbmode = "800x600-16@60";
+-static char * g_settings = NULL;
++static const char *g_fbmode[] = {NULL, NULL};
++static const char *g_def_fbmode = "800x600-16@60";
++static char *g_settings = NULL;
+ static int g_dualview;
+-static char * g_option = NULL;
++static char *g_option = NULL;
++
  
- 	/*allocate all RD/TD rings a single pool*/
--	vir_pool = pci_zalloc_consistent(pDevice->pcid,
-+	vir_pool = dma_zalloc_coherent(&pDevice->pcid->dev,
- 					 pDevice->sOpts.nRxDescs0 * sizeof(SRxDesc) +
- 					 pDevice->sOpts.nRxDescs1 * sizeof(SRxDesc) +
- 					 pDevice->sOpts.nTxDescs[0] * sizeof(STxDesc) +
- 					 pDevice->sOpts.nTxDescs[1] * sizeof(STxDesc),
--					 &pDevice->pool_dma);
-+					 &pDevice->pool_dma, GFP_ATOMIC);
- 	if (vir_pool = NULL) {
- 		dev_err(&pDevice->pcid->dev, "allocate desc dma memory failed\n");
- 		return false;
-@@ -549,16 +549,17 @@ static bool device_init_rings(struct vnt_private *pDevice)
- 	pDevice->rd1_pool_dma = pDevice->rd0_pool_dma +
- 		pDevice->sOpts.nRxDescs0 * sizeof(SRxDesc);
+ static const struct fb_videomode lynx750_ext[] = {
+ 	/*  	1024x600-60 VESA 	[1.71:1]	*/
+@@ -113,11 +114,11 @@ static const struct fb_videomode lynx750_ext[] = {
  
--	pDevice->tx0_bufs = pci_zalloc_consistent(pDevice->pcid,
-+	pDevice->tx0_bufs = dma_zalloc_coherent(&pDevice->pcid->dev,
- 						  pDevice->sOpts.nTxDescs[0] * PKT_BUF_SZ +
- 						  pDevice->sOpts.nTxDescs[1] * PKT_BUF_SZ +
- 						  CB_BEACON_BUF_SIZE +
- 						  CB_MAX_BUF_SIZE,
--						  &pDevice->tx_bufs_dma0);
-+						  &pDevice->tx_bufs_dma0,
-+						  GFP_ATOMIC);
- 	if (pDevice->tx0_bufs = NULL) {
- 		dev_err(&pDevice->pcid->dev, "allocate buf dma memory failed\n");
  
--		pci_free_consistent(pDevice->pcid,
-+		dma_free_coherent(&pDevice->pcid->dev,
- 				    pDevice->sOpts.nRxDescs0 * sizeof(SRxDesc) +
- 				    pDevice->sOpts.nRxDescs1 * sizeof(SRxDesc) +
- 				    pDevice->sOpts.nTxDescs[0] * sizeof(STxDesc) +
-@@ -604,7 +605,7 @@ static bool device_init_rings(struct vnt_private *pDevice)
- 
- static void device_free_rings(struct vnt_private *pDevice)
+ /* no hardware cursor supported under version 2.6.10, kernel bug */
+-static int lynxfb_ops_cursor(struct fb_info* info, struct fb_cursor* fbcursor)
++static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
  {
--	pci_free_consistent(pDevice->pcid,
-+	dma_free_coherent(&pDevice->pcid->dev,
- 			    pDevice->sOpts.nRxDescs0 * sizeof(SRxDesc) +
- 			    pDevice->sOpts.nRxDescs1 * sizeof(SRxDesc) +
- 			    pDevice->sOpts.nTxDescs[0] * sizeof(STxDesc) +
-@@ -614,7 +615,7 @@ static void device_free_rings(struct vnt_private *pDevice)
- 		);
+-	struct lynxfb_par * par;
+-	struct lynxfb_crtc * crtc;
+-	struct lynx_cursor * cursor;
++	struct lynxfb_par *par;
++	struct lynxfb_crtc *crtc;
++	struct lynx_cursor *cursor;
  
- 	if (pDevice->tx0_bufs)
--		pci_free_consistent(pDevice->pcid,
-+		dma_free_coherent(&pDevice->pcid->dev,
- 				    pDevice->sOpts.nTxDescs[0] * PKT_BUF_SZ +
- 				    pDevice->sOpts.nTxDescs[1] * PKT_BUF_SZ +
- 				    CB_BEACON_BUF_SIZE +
-@@ -679,8 +680,8 @@ static void device_free_rd0_ring(struct vnt_private *pDevice)
- 		PSRxDesc        pDesc = &(pDevice->aRD0Ring[i]);
- 		PDEVICE_RD_INFO  pRDInfo = pDesc->pRDInfo;
+ 	par = info->par;
+ 	crtc = &par->crtc;
+@@ -168,10 +169,10 @@ static int lynxfb_ops_cursor(struct fb_info* info, struct fb_cursor* fbcursor)
+ 	return 0;
+ }
  
--		pci_unmap_single(pDevice->pcid, pRDInfo->skb_dma,
--				 pDevice->rx_buf_sz, PCI_DMA_FROMDEVICE);
-+		dma_unmap_single(&pDevice->pcid->dev, pRDInfo->skb_dma,
-+				 pDevice->rx_buf_sz, DMA_FROM_DEVICE);
+-static void lynxfb_ops_fillrect(struct fb_info* info, const struct fb_fillrect* region)
++static void lynxfb_ops_fillrect(struct fb_info *info, const struct fb_fillrect *region)
+ {
+-	struct lynxfb_par * par;
+-	struct lynx_share * share;
++	struct lynxfb_par *par;
++	struct lynx_share *share;
+ 	unsigned int base, pitch, Bpp, rop;
+ 	u32 color;
  
- 		dev_kfree_skb(pRDInfo->skb);
+@@ -207,10 +208,10 @@ static void lynxfb_ops_fillrect(struct fb_info* info, const struct fb_fillrect*
+ 		spin_unlock(&share->slock);
+ }
  
-@@ -696,8 +697,8 @@ static void device_free_rd1_ring(struct vnt_private *pDevice)
- 		PSRxDesc        pDesc = &(pDevice->aRD1Ring[i]);
- 		PDEVICE_RD_INFO  pRDInfo = pDesc->pRDInfo;
+-static void lynxfb_ops_copyarea(struct fb_info * info, const struct fb_copyarea * region)
++static void lynxfb_ops_copyarea(struct fb_info *info, const struct fb_copyarea *region)
+ {
+-	struct lynxfb_par * par;
+-	struct lynx_share * share;
++	struct lynxfb_par *par;
++	struct lynx_share *share;
+ 	unsigned int base, pitch, Bpp;
  
--		pci_unmap_single(pDevice->pcid, pRDInfo->skb_dma,
--				 pDevice->rx_buf_sz, PCI_DMA_FROMDEVICE);
-+		dma_unmap_single(&pDevice->pcid->dev, pRDInfo->skb_dma,
-+				 pDevice->rx_buf_sz, DMA_FROM_DEVICE);
+ 	par = info->par;
+@@ -237,12 +238,12 @@ static void lynxfb_ops_copyarea(struct fb_info * info, const struct fb_copyarea
+ 		spin_unlock(&share->slock);
+ }
  
- 		dev_kfree_skb(pRDInfo->skb);
+-static void lynxfb_ops_imageblit(struct fb_info*info, const struct fb_image* image)
++static void lynxfb_ops_imageblit(struct fb_info *info, const struct fb_image *image)
+ {
+ 	unsigned int base, pitch, Bpp;
+ 	unsigned int fgcol, bgcol;
+-	struct lynxfb_par * par;
+-	struct lynx_share * share;
++	struct lynxfb_par *par;
++	struct lynx_share *share;
  
-@@ -765,8 +766,8 @@ static void device_free_td0_ring(struct vnt_private *pDevice)
- 		PDEVICE_TD_INFO  pTDInfo = pDesc->pTDInfo;
+ 	par = info->par;
+ 	share = par->share;
+@@ -285,8 +286,8 @@ _do_work:
+ static int lynxfb_ops_pan_display(struct fb_var_screeninfo *var,
+ 				  struct fb_info *info)
+ {
+-	struct lynxfb_par * par;
+-	struct lynxfb_crtc * crtc;
++	struct lynxfb_par *par;
++	struct lynxfb_crtc *crtc;
+ 	int ret;
  
- 		if (pTDInfo->skb_dma && (pTDInfo->skb_dma != pTDInfo->buf_dma))
--			pci_unmap_single(pDevice->pcid, pTDInfo->skb_dma,
--					 pTDInfo->skb->len, PCI_DMA_TODEVICE);
-+			dma_unmap_single(&pDevice->pcid->dev, pTDInfo->skb_dma,
-+					 pTDInfo->skb->len, DMA_TO_DEVICE);
  
- 		if (pTDInfo->skb)
- 			dev_kfree_skb(pTDInfo->skb);
-@@ -784,8 +785,8 @@ static void device_free_td1_ring(struct vnt_private *pDevice)
- 		PDEVICE_TD_INFO  pTDInfo = pDesc->pTDInfo;
+@@ -301,14 +302,14 @@ static int lynxfb_ops_pan_display(struct fb_var_screeninfo *var,
+ 	return ret;
+ }
  
- 		if (pTDInfo->skb_dma && (pTDInfo->skb_dma != pTDInfo->buf_dma))
--			pci_unmap_single(pDevice->pcid, pTDInfo->skb_dma,
--					 pTDInfo->skb->len, PCI_DMA_TODEVICE);
-+			dma_unmap_single(&pDevice->pcid->dev, pTDInfo->skb_dma,
-+					 pTDInfo->skb->len, DMA_TO_DEVICE);
+-static int lynxfb_ops_set_par(struct fb_info * info)
++static int lynxfb_ops_set_par(struct fb_info *info)
+ {
+-	struct lynxfb_par * par;
+-	struct lynx_share * share;
+-	struct lynxfb_crtc * crtc;
+-	struct lynxfb_output * output;
+-	struct fb_var_screeninfo * var;
+-	struct fb_fix_screeninfo * fix;
++	struct lynxfb_par *par;
++	struct lynx_share *share;
++	struct lynxfb_crtc *crtc;
++	struct lynxfb_output *output;
++	struct fb_var_screeninfo *var;
++	struct fb_fix_screeninfo *fix;
+ 	int ret;
+ 	unsigned int line_length;
  
- 		if (pTDInfo->skb)
- 			dev_kfree_skb(pTDInfo->skb);
-@@ -831,9 +832,9 @@ static bool device_alloc_rx_buf(struct vnt_private *pDevice, PSRxDesc pRD)
- 	ASSERT(pRDInfo->skb);
+@@ -383,7 +384,7 @@ static int lynxfb_ops_set_par(struct fb_info * info)
+ 	return ret;
+ }
  
- 	pRDInfo->skb_dma -		pci_map_single(pDevice->pcid,
-+		dma_map_single(&pDevice->pcid->dev,
- 			       skb_put(pRDInfo->skb, skb_tailroom(pRDInfo->skb)),
--			       pDevice->rx_buf_sz, PCI_DMA_FROMDEVICE);
-+			       pDevice->rx_buf_sz, DMA_FROM_DEVICE);
+-static inline unsigned int chan_to_field(unsigned int chan, struct fb_bitfield * bf)
++static inline unsigned int chan_to_field(unsigned int chan, struct fb_bitfield *bf)
+ {
+ 	chan &= 0xffff;
+ 	chan >>= 16 - bf->length;
+@@ -443,14 +444,14 @@ static int lynxfb_suspend(struct pci_dev *pdev, pm_message_t mesg)
+ 	return ret;
+ }
  
- 	*((unsigned int *)&(pRD->m_rd0RD0)) = 0; /* FIX cast */
+-static int lynxfb_resume(struct pci_dev* pdev)
++static int lynxfb_resume(struct pci_dev *pdev)
+ {
+-	struct fb_info * info;
+-	struct lynx_share * share;
++	struct fb_info *info;
++	struct lynx_share *share;
  
-@@ -984,8 +985,8 @@ static void device_free_tx_buf(struct vnt_private *pDevice, PSTxDesc pDesc)
+-	struct lynxfb_par * par;
+-	struct lynxfb_crtc * crtc;
+-	struct lynx_cursor * cursor;
++	struct lynxfb_par *par;
++	struct lynxfb_crtc *crtc;
++	struct lynx_cursor *cursor;
  
- 	/* pre-allocated buf_dma can't be unmapped. */
- 	if (pTDInfo->skb_dma && (pTDInfo->skb_dma != pTDInfo->buf_dma)) {
--		pci_unmap_single(pDevice->pcid, pTDInfo->skb_dma, skb->len,
--				 PCI_DMA_TODEVICE);
-+		dma_unmap_single(&pDevice->pcid->dev, pTDInfo->skb_dma,
-+				 skb->len, DMA_TO_DEVICE);
+ 	int ret;
+ 
+@@ -510,12 +511,12 @@ static int lynxfb_resume(struct pci_dev* pdev)
+ }
+ #endif
+ 
+-static int lynxfb_ops_check_var(struct fb_var_screeninfo* var, struct fb_info* info)
++static int lynxfb_ops_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
+ {
+-	struct lynxfb_par * par;
+-	struct lynxfb_crtc * crtc;
+-	struct lynxfb_output * output;
+-	struct lynx_share * share;
++	struct lynxfb_par *par;
++	struct lynxfb_crtc *crtc;
++	struct lynxfb_output *output;
++	struct lynx_share *share;
+ 	int ret;
+ 	resource_size_t request;
+ 
+@@ -605,11 +606,11 @@ exit:
+ 
+ static int lynxfb_ops_setcolreg(unsigned regno, unsigned red,
+ 				unsigned green, unsigned blue,
+-				unsigned transp, struct fb_info * info)
++				unsigned transp, struct fb_info *info)
+ {
+-	struct lynxfb_par * par;
+-	struct lynxfb_crtc * crtc;
+-	struct fb_var_screeninfo * var;
++	struct lynxfb_par *par;
++	struct lynxfb_crtc *crtc;
++	struct fb_var_screeninfo *var;
+ 	int ret;
+ 
+ 	par = info->par;
+@@ -654,10 +655,10 @@ exit:
+ 	return ret;
+ }
+ 
+-static int lynxfb_ops_blank(int blank, struct fb_info* info)
++static int lynxfb_ops_blank(int blank, struct fb_info *info)
+ {
+-	struct lynxfb_par * par;
+-	struct lynxfb_output * output;
++	struct lynxfb_par *par;
++	struct lynxfb_output *output;
+ 
+ 	pr_debug("blank = %d.\n", blank);
+ 	par = info->par;
+@@ -665,13 +666,13 @@ static int lynxfb_ops_blank(int blank, struct fb_info* info)
+ 	return output->proc_setBLANK(output, blank);
+ }
+ 
+-static int sm750fb_set_drv(struct lynxfb_par * par)
++static int sm750fb_set_drv(struct lynxfb_par *par)
+ {
+ 	int ret;
+-	struct lynx_share * share;
+-	struct sm750_share * spec_share;
+-	struct lynxfb_output * output;
+-	struct lynxfb_crtc * crtc;
++	struct lynx_share *share;
++	struct sm750_share *spec_share;
++	struct lynxfb_output *output;
++	struct lynxfb_crtc *crtc;
+ 
+ 	ret = 0;
+ 
+@@ -765,28 +766,28 @@ static struct fb_ops lynxfb_ops={
+ };
+ 
+ 
+-static int lynxfb_set_fbinfo(struct fb_info* info, int index)
++static int lynxfb_set_fbinfo(struct fb_info *info, int index)
+ {
+ 	int i;
+-	struct lynxfb_par * par;
+-	struct lynx_share * share;
+-	struct lynxfb_crtc * crtc;
+-	struct lynxfb_output * output;
+-	struct fb_var_screeninfo * var;
+-	struct fb_fix_screeninfo * fix;
+-
+-	const struct fb_videomode * pdb[] = {
++	struct lynxfb_par *par;
++	struct lynx_share *share;
++	struct lynxfb_crtc *crtc;
++	struct lynxfb_output *output;
++	struct fb_var_screeninfo *var;
++	struct fb_fix_screeninfo *fix;
++
++	const struct fb_videomode *pdb[] = {
+ 		lynx750_ext, NULL, vesa_modes,
+ 	};
+ 	int cdb[] = {ARRAY_SIZE(lynx750_ext), 0, VESA_MODEDB_SIZE};
+-	static const char * mdb_desc[] ={
++	static const char *mdb_desc[] ={
+ 		"driver prepared modes",
+ 		"kernel prepared default modedb",
+ 		"kernel HELPERS prepared vesa_modes",
+ 	};
+ 
+ 
+-	static const char * fixId[2] = {
++	static const char *fixId[2] = {
+ 		"sm750_fb1", "sm750_fb2",
+ 	};
+ 
+@@ -963,12 +964,12 @@ exit:
+ }
+ 
+ /*	chip specific g_option configuration routine */
+-static void sm750fb_setup(struct lynx_share * share, char * src)
++static void sm750fb_setup(struct lynx_share *share, char *src)
+ {
+-	struct sm750_share * spec_share;
+-	char * opt;
++	struct sm750_share *spec_share;
++	char *opt;
+ #ifdef CAP_EXPENSION
+-	char * exp_res;
++	char *exp_res;
+ #endif
+ 	int swap;
+ 
+@@ -1058,11 +1059,11 @@ NO_PARAM:
  	}
+ }
  
- 	if (pTDInfo->byFlags & TD_FLAGS_NETIF_SKB)
-diff --git a/drivers/staging/vt6655/dpc.c b/drivers/staging/vt6655/dpc.c
-index 3c5b87ffdcac..b25ee962558d 100644
---- a/drivers/staging/vt6655/dpc.c
-+++ b/drivers/staging/vt6655/dpc.c
-@@ -140,8 +140,8 @@ bool vnt_receive_frame(struct vnt_private *priv, PSRxDesc curr_rd)
+-static int lynxfb_pci_probe(struct pci_dev * pdev,
++static int lynxfb_pci_probe(struct pci_dev *pdev,
+ 			    const struct pci_device_id * ent)
+ {
+-	struct fb_info * info[] = {NULL, NULL};
+-	struct lynx_share * share = NULL;
++	struct fb_info *info[] = {NULL, NULL};
++	struct lynx_share *share = NULL;
  
- 	skb = rd_info->skb;
+ 	struct sm750_share *spec_share = NULL;
+ 	size_t spec_offset = 0;
+@@ -1162,7 +1163,7 @@ ALLOC_FB:
+ 		else
+ 			goto err_info1_alloc;
+ 	} else {
+-		struct lynxfb_par * par;
++		struct lynxfb_par *par;
+ 		int errno;
+ 		pr_info("framebuffer #%d alloc okay\n", fbidx);
+ 		share->fbinfo[fbidx] = info[fbidx];
+@@ -1214,12 +1215,12 @@ err_enable:
+ 	return -ENODEV;
+ }
  
--	pci_unmap_single(priv->pcid, rd_info->skb_dma,
--			 priv->rx_buf_sz, PCI_DMA_FROMDEVICE);
-+	dma_unmap_single(&priv->pcid->dev, rd_info->skb_dma,
-+			 priv->rx_buf_sz, DMA_FROM_DEVICE);
+-static void __exit lynxfb_pci_remove(struct pci_dev * pdev)
++static void __exit lynxfb_pci_remove(struct pci_dev *pdev)
+ {
+-	struct fb_info * info;
+-	struct lynx_share * share;
+-	void * spec_share;
+-	struct lynxfb_par * par;
++	struct fb_info *info;
++	struct lynx_share *share;
++	void *spec_share;
++	struct lynxfb_par *par;
+ 	int cnt;
  
- 	frame_size = le16_to_cpu(curr_rd->m_rd1RD1.wReqCount)
- 			- cpu_to_le16(curr_rd->m_rd0RD0.wResCount);
+ 	cnt = 2;
+@@ -1252,10 +1253,10 @@ static void __exit lynxfb_pci_remove(struct pci_dev * pdev)
+ 	pci_set_drvdata(pdev, NULL);
+ }
+ 
+-static int __init lynxfb_setup(char * options)
++static int __init lynxfb_setup(char *options)
+ {
+ 	int len;
+-	char * opt,*tmp;
++	char *opt, *tmp;
+ 
+ 
+ 	if (!options || !*options) {
 -- 
-2.3.2.223.g7a9409c
+2.3.3
 
