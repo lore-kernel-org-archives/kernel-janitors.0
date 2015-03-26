@@ -1,18 +1,45 @@
-From: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
-Date: Tue, 17 Mar 2015 01:09:30 +0000
-Subject: RE: [patch] IB/ipath: remove some left over code
-Message-Id: <32E1700B9017364D9B60AED9960492BC256D84CB@fmsmsx120.amr.corp.intel.com>
+From: Michel von Czettritz <michel.von.czettritz@gmail.com>
+Date: Thu, 26 Mar 2015 22:27:09 +0000
+Subject: [PATCH v2 11/12] staging: sm750: fix whitspace for cast to pointer
+Message-Id: <e393a67898500ef8668228e98a2ad4e1f21c4ade.1427406762.git.michel.von.czettritz@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150226204335.GG6820@mwanda>
-In-Reply-To: <20150226204335.GG6820@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, infinipath <infinipath@intel.com>, Dave Olson <dave.olson@qlogic.com>
-Cc: Roland Dreier <roland@kernel.org>, "Hefty, Sean" <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-fbdev@vger.kernel.org
 
-> Subject: [patch] IB/ipath: remove some left over code
+This patch fixes the checkpatch.pl warning:
+'ERROR: "(foo*)" should be "(foo *)"'
 
-Thanks for the patch!
+Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
+---
+ drivers/staging/sm750fb/sm750.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index ff2b26b..d363f55 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -202,7 +202,7 @@ static void lynxfb_ops_fillrect(struct fb_info *info,
+ 	pitch = info->fix.line_length;
+ 	Bpp = info->var.bits_per_pixel >> 3;
+ 
+-	color = (Bpp = 1)?region->color:((u32*)info->pseudo_palette)[region->color];
++	color = (Bpp = 1)?region->color:((u32 *)info->pseudo_palette)[region->color];
+ 	rop = (region->rop != ROP_COPY) ? HW_ROP2_XOR:HW_ROP2_COPY;
+ 
+ 	/*
+@@ -271,8 +271,8 @@ static void lynxfb_ops_imageblit(struct fb_info *info,
+ 	if (image->depth = 1) {
+ 		if (info->fix.visual = FB_VISUAL_TRUECOLOR ||
+ 		    info->fix.visual = FB_VISUAL_DIRECTCOLOR) {
+-			fgcol = ((u32*)info->pseudo_palette)[image->fg_color];
+-			bgcol = ((u32*)info->pseudo_palette)[image->bg_color];
++			fgcol = ((u32 *)info->pseudo_palette)[image->fg_color];
++			bgcol = ((u32 *)info->pseudo_palette)[image->bg_color];
+ 		} else {
+ 			fgcol = image->fg_color;
+ 			bgcol = image->bg_color;
+-- 
+2.3.3
+
