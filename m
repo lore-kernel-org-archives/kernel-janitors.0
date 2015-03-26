@@ -1,43 +1,35 @@
-From: Michel von Czettritz <michel.von.czettritz@gmail.com>
-Date: Thu, 26 Mar 2015 22:24:03 +0000
-Subject: [PATCH v2 00/12] reformat sm750.c
-Message-Id: <cover.1427406762.git.michel.von.czettritz@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Mar 2015 19:12:49 +0000
+Subject: [patch v2] mcb: request_mem_region() returns NULL on error
+Message-Id: <20150326191249.GA19563@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <1422946459-25517-2-git-send-email-johannes.thumshirn@men.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Johannes Thumshirn <johannes.thumshirn@men.de>, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-As suggested by Dan Carpenter, I've rewritten my patch as a series of smaller patches.
+The code here is checking for IS_ERR() when request_mem_region() only
+returns NULL on error and never an ERR_PTR.
 
-Dan's Mail: http://marc.info/?l=kernel-janitors&m2679651624193&w=2
-
-Patches 1-11 only reformat code. Patch 12 changes the code, by moving assignments out of if conditions.
-The module builds, but as I don't own a sm750 card, I can't test it.
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v2:
-* rebase on top of staging-testing
-* delete original patch 6, as the original code was deleted by Lorenzo
-* fix formatting as proposed by Dan Carpenter
+v2: same as before but rebased on top of latest linux-next
 
-Michel von Czettritz (12):
-  staging: sm750: Reindent
-  staging: sm750: add missing spaces after ','
-  staging: sm750: move '{' to previous line
-  staging: sm750: fix whitespace around braces
-  staging: sm750: fix whitespaces around pointers
-  staging: sm750: no braces for single stmt if blocks
-  staging: sm750: comment formating
-  staging: sm750: 80 characters per line
-  staging: sm750: blank line after declaration
-  staging: sm750: fix whitespace
-  staging: sm750: fix whitspace for cast to pointer
-  staging: sm750: move assignment out of if cond
-
- drivers/staging/sm750fb/sm750.c | 1358 ++++++++++++++++++++-------------------
- 1 file changed, 687 insertions(+), 671 deletions(-)
-
--- 
-2.3.3
-
+diff --git a/drivers/mcb/mcb-pci.c b/drivers/mcb/mcb-pci.c
+index 0af7361..de36237 100644
+--- a/drivers/mcb/mcb-pci.c
++++ b/drivers/mcb/mcb-pci.c
+@@ -56,9 +56,9 @@ static int mcb_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	res = request_mem_region(priv->mapbase, CHAM_HEADER_SIZE,
+ 				 KBUILD_MODNAME);
+-	if (IS_ERR(res)) {
++	if (!res) {
+ 		dev_err(&pdev->dev, "Failed to request PCI memory\n");
+-		ret = PTR_ERR(res);
++		ret = -EBUSY;
+ 		goto out_disable;
+ 	}
+ 
