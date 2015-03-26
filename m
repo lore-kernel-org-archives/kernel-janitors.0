@@ -1,45 +1,45 @@
-From: Michel von Czettritz <michel.von.czettritz@gmail.com>
-Date: Sun, 22 Mar 2015 23:13:06 +0000
-Subject: [PATCH 06/13] staging: sm750: newline before { in function decl.
-Message-Id: <20150322231306.GA17183@x230-arch.club.entropia.de>
+From: Richard Weinberger <richard@nod.at>
+Date: Thu, 26 Mar 2015 09:29:35 +0000
+Subject: Re: [PATCH 4/5] UBI: fix check for "too many bytes"
+Message-Id: <5513D17F.2080309@nod.at>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1425119009-28634-1-git-send-email-computersforpeace@gmail.com>
+ <1425119009-28634-5-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1425119009-28634-5-git-send-email-computersforpeace@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Brian Norris <computersforpeace@gmail.com>, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-This patch fixes checkpatch.pl error:
-"ERROR: open brace '{' following function declarations go on the next line"
+Am 28.02.2015 um 11:23 schrieb Brian Norris:
+> The comparison from the previous line seems to have been erroneously
+> (partially) copied-and-pasted onto the next. The second line should be
+> checking req.bytes, not req.lnum.
+> 
+> Coverity CID #139400
+> 
+> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+> ---
+>  drivers/mtd/ubi/cdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/ubi/cdev.c b/drivers/mtd/ubi/cdev.c
+> index d647e504f9b1..7691a2a015cb 100644
+> --- a/drivers/mtd/ubi/cdev.c
+> +++ b/drivers/mtd/ubi/cdev.c
+> @@ -455,7 +455,7 @@ static long vol_cdev_ioctl(struct file *file, unsigned int cmd,
+>  		/* Validate the request */
+>  		err = -EINVAL;
+>  		if (req.lnum < 0 || req.lnum >= vol->reserved_pebs ||
+> -		    req.bytes < 0 || req.lnum >= vol->usable_leb_size)
+> +		    req.bytes < 0 || req.bytes >= vol->usable_leb_size)
+>  			break;
 
-Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
----
- drivers/staging/sm750fb/sm750.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Testing uncovered an issue with that.
+The comparison should be "req.bytes > vol->usable_leb_size" as
+we're allowed to write with usable_leb_size.
+There is no need to re-send, I'll fix the patch myself.
 
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index ad0c663..a0a8db7 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -58,7 +58,8 @@ static char *g_option = NULL;
- 
- /* if not use spin_lock,system will die if user load driver
-  * and immediatly unload driver frequently (dual)*/
--static inline void myspin_lock(spinlock_t *sl) {
-+static inline void myspin_lock(spinlock_t *sl)
-+{
- 	struct lynx_share *share;
- 	share = container_of(sl, struct lynx_share, slock);
- 	if (share->dual) {
-@@ -66,7 +67,8 @@ static inline void myspin_lock(spinlock_t *sl) {
- 	}
- }
- 
--static inline void myspin_unlock(spinlock_t *sl) {
-+static inline void myspin_unlock(spinlock_t *sl)
-+{
- 	struct lynx_share *share;
- 	share = container_of(sl, struct lynx_share, slock);
- 	if (share->dual) {
--- 
-2.3.3
-
+Thanks,
+//richard
