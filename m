@@ -1,93 +1,30 @@
-From: Michel von Czettritz <michel.von.czettritz@gmail.com>
-Date: Thu, 26 Mar 2015 22:26:37 +0000
-Subject: [PATCH v2 09/12] staging: sm750: blank line after declaration
-Message-Id: <624153b59166fb9ee199d45a9ac5d57b56622592.1427406762.git.michel.von.czettritz@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Mar 2015 09:13:12 +0000
+Subject: [patch -next] crypto: algif - signedness bug in skcipher_recvmsg_async()
+Message-Id: <20150326091312.GA21084@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch fixes "WARNING: Missing a blank line after declaration"
-checkpatch.pl warnings.
+This needs to be signed because af_alg_make_sg() returns negative error
+codes.
 
-Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
----
+Fixes: a596999b7ddf ('crypto: algif - change algif_skcipher to be asynchronous')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-v2: fix ident
----
- drivers/staging/sm750fb/sm750.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index 6887926..c72d9d6 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -156,6 +156,7 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
- 	if (fbcursor->set & FB_CUR_SETCMAP) {
- 		/* get the 16bit color of kernel means */
- 		u16 fg, bg;
-+
- 		fg = ((info->cmap.red[fbcursor->image.fg_color] & 0xf800))|
- 		      ((info->cmap.green[fbcursor->image.fg_color] & 0xfc00) >> 5)|
- 		      ((info->cmap.blue[fbcursor->image.fg_color] & 0xf800) >> 11);
-@@ -269,7 +270,7 @@ static void lynxfb_ops_imageblit(struct fb_info *info,
+diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
+index 506eb5f..142430f 100644
+--- a/crypto/algif_skcipher.c
++++ b/crypto/algif_skcipher.c
+@@ -537,7 +537,7 @@ static int skcipher_recvmsg_async(struct socket *sock, struct msghdr *msg,
  
- 	if (image->depth = 1) {
- 		if (info->fix.visual = FB_VISUAL_TRUECOLOR ||
--				info->fix.visual = FB_VISUAL_DIRECTCOLOR) {
-+		    info->fix.visual = FB_VISUAL_DIRECTCOLOR) {
- 			fgcol = ((u32*)info->pseudo_palette)[image->fg_color];
- 			bgcol = ((u32*)info->pseudo_palette)[image->bg_color];
- 		} else {
-@@ -620,9 +621,12 @@ exit:
- }
+ 	while (iov_iter_count(&msg->msg_iter)) {
+ 		struct skcipher_async_rsgl *rsgl;
+-		unsigned long used;
++		long used;
  
- 
--static int lynxfb_ops_setcolreg(unsigned regno, unsigned red,
--				unsigned green, unsigned blue,
--				unsigned transp, struct fb_info *info)
-+static int lynxfb_ops_setcolreg(unsigned regno,
-+				unsigned red,
-+				unsigned green,
-+				unsigned blue,
-+				unsigned transp,
-+				struct fb_info *info)
- {
- 	struct lynxfb_par *par;
- 	struct lynxfb_crtc *crtc;
-@@ -654,9 +658,10 @@ static int lynxfb_ops_setcolreg(unsigned regno, unsigned red,
- 
- 	if (info->fix.visual = FB_VISUAL_TRUECOLOR && regno < 256) {
- 		u32 val;
-+
- 		if (var->bits_per_pixel = 16 ||
--		   var->bits_per_pixel = 32 ||
--		   var->bits_per_pixel = 24) {
-+		    var->bits_per_pixel = 32 ||
-+		    var->bits_per_pixel = 24) {
- 			val = chan_to_field(red, &var->red);
- 			val |= chan_to_field(green, &var->green);
- 			val |= chan_to_field(blue, &var->blue);
-@@ -1189,6 +1194,7 @@ ALLOC_FB:
- 	} else {
- 		struct lynxfb_par *par;
- 		int errno;
-+
- 		pr_info("framebuffer #%d alloc okay\n", fbidx);
- 		share->fbinfo[fbidx] = info[fbidx];
- 		par = info[fbidx]->par;
-@@ -1208,8 +1214,8 @@ ALLOC_FB:
- 		errno = register_framebuffer(info[fbidx]);
- 		if (errno < 0) {
- 			pr_err("Failed to register fb_info #%d. err %d\n",
--				fbidx,
--				errno);
-+			       fbidx,
-+			       errno);
- 			if (fbidx = 0)
- 				goto err_register0;
- 			else
--- 
-2.3.3
-
+ 		if (!ctx->used) {
+ 			err = skcipher_wait_for_data(sk, flags);
