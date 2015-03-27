@@ -1,60 +1,60 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 11 Mar 2015 16:56:28 +0000
-Subject: [PATCH 6/15] torture: don't export static symbol
-Message-Id: <1426092997-30605-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Michel von Czettritz <michel.von.czettritz@gmail.com>
+Date: Fri, 27 Mar 2015 18:42:48 +0000
+Subject: [PATCH v3 06/11] staging: sm750: no braces for single stmt if blocks
+Message-Id: <18b0d0362209fa2607d3bea2f642a0ec68feb98a.1427481390.git.michel.von.czettritz@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1426092997-30605-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, daniel@iogearbox.net
-Cc: kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This patches fixes checkpatch.pl warning:
+"WARNING: braces {} are not necessary for single statement blocks"
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-type T;
-identifier f;
-@@
-
-static T f (...) { ... }
-
-@@
-identifier r.f;
-declarer name EXPORT_SYMBOL_GPL;
-@@
-
--EXPORT_SYMBOL_GPL(f);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Michel von Czettritz <michel.von.czettritz@gmail.com>
 ---
- kernel/torture.c |    2 --
- 1 file changed, 2 deletions(-)
+v3: fix wrong merging
+---
+ drivers/staging/sm750fb/sm750.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff -u -p a/kernel/torture.c b/kernel/torture.c
---- a/kernel/torture.c
-+++ b/kernel/torture.c
-@@ -206,7 +206,6 @@ static void torture_onoff_cleanup(void)
- 	onoff_task = NULL;
- #endif /* #ifdef CONFIG_HOTPLUG_CPU */
- }
--EXPORT_SYMBOL_GPL(torture_onoff_cleanup);
- 
- /*
-  * Print online/offline testing statistics.
-@@ -392,7 +391,6 @@ static void torture_shuffle_cleanup(void
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index d9a94d7..786679d 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -131,9 +131,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
  	}
- 	shuffler_task = NULL;
- }
--EXPORT_SYMBOL_GPL(torture_shuffle_cleanup);
  
- /*
-  * Variables for auto-shutdown.  This allows "lights out" torture runs
+ 	cursor->disable(cursor);
+-	if (fbcursor->set & FB_CUR_SETSIZE) {
++	if (fbcursor->set & FB_CUR_SETSIZE)
+ 		cursor->setSize(cursor, fbcursor->image.width, fbcursor->image.height);
+-	}
+ 
+ 	if (fbcursor->set & FB_CUR_SETPOS) {
+ 		cursor->setPos(cursor, fbcursor->image.dx - info->var.xoffset,
+@@ -162,9 +161,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
+ 				fbcursor->mask);
+ 	}
+ 
+-	if (fbcursor->enable) {
++	if (fbcursor->enable)
+ 		cursor->enable(cursor);
+-	}
+ 
+ 	return 0;
+ }
+@@ -176,9 +174,8 @@ static void lynxfb_ops_fillrect(struct fb_info *info, const struct fb_fillrect *
+ 	unsigned int base, pitch, Bpp, rop;
+ 	u32 color;
+ 
+-	if (info->state != FBINFO_STATE_RUNNING) {
++	if (info->state != FBINFO_STATE_RUNNING)
+ 		return;
+-	}
+ 
+ 	par = info->par;
+ 	share = par->share;
+-- 
+2.3.3
 
