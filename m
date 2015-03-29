@@ -1,21 +1,57 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Tue, 31 Mar 2015 01:01:30 +0000
-Subject: Re: [patch] mtd: cfi: clean up some indenting
-Message-Id: <20150331010130.GL32500@ld-irv-0074>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Mar 2015 12:54:15 +0000
+Subject: [PATCH 4/4] cxgb4: Drop unneeded cast on netdev_priv
+Message-Id: <1427633655-32103-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150225131558.GD19745@mwanda>
-In-Reply-To: <20150225131558.GD19745@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, kernel-janitors@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+To: Steve Wise <swise@chelsio.com>
+Cc: kernel-janitors@vger.kernel.org, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 25, 2015 at 04:15:58PM +0300, Dan Carpenter wrote:
-> These lines were all indented one tab more than they should be.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Pushed to l2-mtd.git.
+The result of netdev_priv is already implicitly cast to the type of the
+left side of the assignment.
 
-Brian
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+type T;
+T *x;
+@@
+
+x = 
+- (T *)
+  netdev_priv(...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/infiniband/hw/cxgb4/cm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -3677,14 +3677,14 @@ static int rx_pkt(struct c4iw_dev *dev,
+ 		pdev = ip_dev_find(&init_net, iph->daddr);
+ 		e = cxgb4_l2t_get(dev->rdev.lldi.l2t, neigh,
+ 				    pdev, 0);
+-		pi = (struct port_info *)netdev_priv(pdev);
++		pi = netdev_priv(pdev);
+ 		tx_chan = cxgb4_port_chan(pdev);
+ 		dev_put(pdev);
+ 	} else {
+ 		pdev = get_real_dev(neigh->dev);
+ 		e = cxgb4_l2t_get(dev->rdev.lldi.l2t, neigh,
+ 					pdev, 0);
+-		pi = (struct port_info *)netdev_priv(pdev);
++		pi = netdev_priv(pdev);
+ 		tx_chan = cxgb4_port_chan(pdev);
+ 	}
+ 	neigh_release(neigh);
+
