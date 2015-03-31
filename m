@@ -1,20 +1,33 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Tue, 03 Mar 2015 14:00:58 +0000
-Subject: Re: [patch] iommu/amd: small cleanup in mn_release()
-Message-Id: <20150303140057.GF10502@8bytes.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 31 Mar 2015 08:58:55 +0000
+Subject: [patch] Staging: rtl8192u: use correct array for debug output
+Message-Id: <20150331085855.GA13460@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150220105201.GA7895@mwanda>
-In-Reply-To: <20150220105201.GA7895@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 20, 2015 at 01:52:01PM +0300, Dan Carpenter wrote:
-> "pasid_state->device_state" and "dev_state" are the same, but it's nicer
-> to use dev_state consistently.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This is supposed to be ->rates_ex[] instead of ->rates[].  I found this
+because static checkers complain than ->rates is too small so we're
+reading beyond the end of the array.  It has 12 elements instead of 15.
 
-Applied, thanks.
+This bug was apparently copy and pasted from ipw2x00.  I fixed it before
+in that driver 428e3cf5f98c ('ipw2x00: printing the wrong array in
+debug code')
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
+index 0a90450..cbed8e6 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
+@@ -1704,7 +1704,7 @@ int ieee80211_parse_info_param(struct ieee80211_device *ieee,
+ #ifdef CONFIG_IEEE80211_DEBUG
+ 				p += snprintf(p, sizeof(rates_str) -
+ 					      (p - rates_str), "%02X ",
+-					      network->rates[i]);
++					      network->rates_ex[i]);
+ #endif
+ 				if (ieee80211_is_ofdm_rate
+ 				    (info_element->data[i])) {
