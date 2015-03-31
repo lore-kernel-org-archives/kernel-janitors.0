@@ -1,53 +1,51 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Mon, 30 Mar 2015 10:55:12 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 31 Mar 2015 08:49:57 +0000
 Subject: Re: [patch] spi: pxa2xx: missing break in pxa2xx_ssp_get_clk_div()
-Message-Id: <1427712912.14897.441.camel@linux.intel.com>
+Message-Id: <20150331084957.GJ2869@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="6pbVDqbvGaUSA62x"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150330103040.GB27144@mwanda>
-In-Reply-To: <20150330103040.GB27144@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ <1427712912.14897.441.camel@linux.intel.com>
+In-Reply-To: <1427712912.14897.441.camel@linux.intel.com>
 To: linux-arm-kernel@lists.infradead.org
 
-On Mon, 2015-03-30 at 13:30 +0300, Dan Carpenter wrote:
-> We refactored this code but accidentally left out a break statement so
-> QUARK_X1000_SSP isn't handled correctly.
-> 
 
-Thanks for catching this!
-One comment below.
+--6pbVDqbvGaUSA62x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Mon, Mar 30, 2015 at 01:55:12PM +0300, Andy Shevchenko wrote:
+> On Mon, 2015-03-30 at 13:30 +0300, Dan Carpenter wrote:
 
-> Fixes: 025ffe88ee60 ('spi: pxa2xx: shift clk_div in one place')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-> index 60526a5..a081cfc 100644
-> --- a/drivers/spi/spi-pxa2xx.c
-> +++ b/drivers/spi/spi-pxa2xx.c
-> @@ -791,6 +791,7 @@ static unsigned int pxa2xx_ssp_get_clk_div(struct driver_data *drv_data,
->  	switch (drv_data->ssp_type) {
->  	case QUARK_X1000_SSP:
->  		clk_div = quark_x1000_get_clk_div(rate, &chip->dds_rate);
-> +		break;
->  	default:
->  		clk_div = ssp_get_clk_div(drv_data, rate);
+> > @@ -791,6 +791,7 @@ static unsigned int pxa2xx_ssp_get_clk_div(struct driver_data *drv_data,
+> >  	switch (drv_data->ssp_type) {
+> >  	case QUARK_X1000_SSP:
+> >  		clk_div = quark_x1000_get_clk_div(rate, &chip->dds_rate);
+> > +		break;
+> >  	default:
+> >  		clk_div = ssp_get_clk_div(drv_data, rate);
 
-It would be nice to have a break here as well, but I think we also may
-change this to if-else-if construction.
+> It would be nice to have a break here as well, but I think we also may
+> change this to if-else-if construction.
 
->  	}
+No.  Using if/else chains is an antipattern - think what happens when a
+new hardware variant needs slightly different handling again.
 
-Whatever solution you choose
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+--6pbVDqbvGaUSA62x
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-And actually 
-Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Now run with time to see the difference.
+iQEcBAEBCAAGBQJVGl+0AAoJECTWi3JdVIfQfVsH/0vwJKEXq+s3I+NEiMoJtPZl
+q+8NZMRmdP/IIzHtAh7+i2VmM7AhKGWk9SUrmE96hbvQlYedtV82GaCVnOuyxGx2
+GfpoPNwm8tuPlZjKyhegWZfUvsi1fu9DlPXm6Q/n3yNLCERNixTA1fvD3VMLoWCN
+CokTV3UBRqwgH+wFqtzwt/u+42RvZ2f66lqICJ/HJvvbJklQg0i7FQ1hBCZzC3w0
+JOuvNyiRmT63s/WR7AD4/wDNDvigH3rMOZxH1w452ckAxULP9bS2JEUI79yfhe0E
++VcWEWFVsadmBOhcy8+SCEYLABPA5/ZMvlw3KwYCOxB77ddcavpRvwWCwb7BMtQ=
+=W4x0
+-----END PGP SIGNATURE-----
 
--- 
-Andy Shevchenko <andriy.shevchenko@intel.com>
-Intel Finland Oy
-
+--6pbVDqbvGaUSA62x--
