@@ -1,35 +1,28 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 07:48:29 +0000
-Subject: [PATCH v2 10/15] lpfc: Remove unnessary cast
-Message-Id: <1429775314-4171-11-git-send-email-firogm@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 01 Apr 2015 08:12:15 +0000
+Subject: [patch 1/2] Staging: lustre: integer overflow in ioctl
+Message-Id: <20150401081215.GA21130@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-kzalloc() returns a void pointer - no need to cast it in
-drivers/scsi/lpfc/lpfc_init.c::lpfc_sli_driver_resource_setup()
+hdr->ioc_len is a user controlled u32 so the addition can overflow,
+especially on 32 bit systems.
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
----
- drivers/scsi/lpfc/lpfc_init.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index e8c8c1e..30b72da 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -4975,8 +4975,7 @@ lpfc_sli_driver_resource_setup(struct lpfc_hba *phba)
+diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
+index a5effcd..e962f89 100644
+--- a/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
++++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
+@@ -57,7 +57,7 @@ int libcfs_ioctl_getdata(char *buf, char *end, void *arg)
+ 		return -EINVAL;
  	}
  
- 	if (!phba->sli.ring)
--		phba->sli.ring = (struct lpfc_sli_ring *)
--			kzalloc(LPFC_SLI3_MAX_RING *
-+		phba->sli.ring = kzalloc(LPFC_SLI3_MAX_RING *
- 			sizeof(struct lpfc_sli_ring), GFP_KERNEL);
- 	if (!phba->sli.ring)
- 		return -ENOMEM;
--- 
-2.1.0
-
+-	if (hdr->ioc_len + buf >= end) {
++	if (hdr->ioc_len >= end - buf) {
+ 		CERROR("PORTALS: user buffer exceeds kernel buffer\n");
+ 		return -EINVAL;
+ 	}
