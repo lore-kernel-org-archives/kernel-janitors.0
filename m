@@ -1,26 +1,21 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Mon, 20 Apr 2015 17:14:23 +0000
-Subject: Re: [patch] Bluetooth: btusb: off by one in rtl8723b_parse_firmware()
-Message-Id: <D6EE667A-6BA5-487A-B98A-7D84A355CEEB@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 01 Apr 2015 07:57:09 +0000
+Subject: Re: [E1000-devel] [patch] igb: cleanup igb_enable_mas() a bit
+Message-Id: <20150401075709.GI16501@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150420155135.GB10518@mwanda>
-In-Reply-To: <20150420155135.GB10518@mwanda>
+References: <9B4A1B1917080E46B64F07F2989DADD6534E3B53@ORSMSX114.amr.corp.intel.com>
+In-Reply-To: <9B4A1B1917080E46B64F07F2989DADD6534E3B53@ORSMSX114.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Daniel Drake <drake@endlessm.com>, "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "bluez mailin list (linux-bluetooth@vger.kernel.org)" <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Tue, Mar 31, 2015 at 08:10:31PM +0000, Fujinaka, Todd wrote:
+> I have a fix for this already, if Dan doesn't mind.
+>
 
-> The ">" should be ">=" so that we don't read past the end of the array.
-> 
-> Fixes: 9d9a113e3695 ('Bluetooth: btusb: Add Realtek 8723A/8723B/8761A/8821A support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I don't mind.
 
-patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
+regards,
+dan carpenter
 
