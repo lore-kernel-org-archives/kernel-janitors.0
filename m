@@ -1,23 +1,32 @@
-From: "Mrs. Zhang Xiao" <egonzalez@reacciun.ve>
-Date: Fri, 10 Apr 2015 07:22:22 +0000
-Subject: Re.
-Message-Id: <20150410072235.D033A22321E@smtpa.reacciun.ve>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 Apr 2015 08:33:30 +0000
+Subject: [patch] ocfs2: double evaluation concerns in mlog_errno()
+Message-Id: <20150403083330.GA27007@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-Dear,
+It won't happen in real life, but for consistency etc then we should
+only evaluate the "st" parameter once.
 
-I seek for your sincerity and trust in a deal which involved a total sum of 60,000,000.00 United states dollars. I need to know you and know your location. This really matter to the success of this deal.If interested respond to me for more details. 
+Also, since not all callers use the new return, it causes at static
+checker warning:
+fs/ocfs2/export.c:138 ocfs2_get_dentry() warn: unchecked 'PTR_ERR'
 
-Yours Sincerely.
-Mrs. Zhang Xiao (Accounts book Keeper)
-Angang Steel Company Limited
-396 Nan Zhong Hua Lu, Tie Dong District Anshan, Liaoning 114021, China.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
-This email is free from viruses and malware because avast! Antivirus protection is active.
-http://www.avast.com
-
+diff --git a/fs/ocfs2/cluster/masklog.h b/fs/ocfs2/cluster/masklog.h
+index f96a51d..7fdc25a 100644
+--- a/fs/ocfs2/cluster/masklog.h
++++ b/fs/ocfs2/cluster/masklog.h
+@@ -202,7 +202,7 @@ extern struct mlog_bits mlog_and_bits, mlog_not_bits;
+ 	    _st != AOP_TRUNCATED_PAGE && _st != -ENOSPC &&		\
+ 	    _st != -EDQUOT)						\
+ 		mlog(ML_ERROR, "status = %lld\n", (long long)_st);	\
+-	st;								\
++	_st;								\
+ })
+ 
+ #define mlog_bug_on_msg(cond, fmt, args...) do {			\
