@@ -1,90 +1,31 @@
-From: "Jie, Yang" <yang.jie@intel.com>
-Date: Mon, 27 Apr 2015 07:52:28 +0000
-Subject: RE: [PATCH] ASoC: Intel: fix Coccinelle kfree warning
-Message-Id: <E7B1D079BA13FB44A978CC8F69C7D6A90552077E@SHSMSX101.ccr.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 Apr 2015 08:45:27 +0000
+Subject: [patch] spi: signedness bug in qspi_trigger_transfer_out_int()
+Message-Id: <20150403084527.GA27292@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430062932-26668-1-git-send-email-firogm@gmail.com>
- <E7B1D079BA13FB44A978CC8F69C7D6A905520746@SHSMSX101.ccr.corp.intel.com>
- <20150427074221.GA6979@firo.lan>
-In-Reply-To: <20150427074221.GA6979@firo.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Firo Yang <firogm@gmail.com>
-Cc: "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.de" <tiwai@suse.de>, "Lu, Han" <han.lu@intel.com>, "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>, "Piskorski, Pawel" <pawel.piskorski@intel.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "Jin, Yao" <yao.jin@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hiep Cao Minh <cm-hiep-HEF513clHfp3+QwDJ9on6Q@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-> -----Original Message-----
-> From: Firo Yang [mailto:firogm@gmail.com]
-> Sent: Monday, April 27, 2015 3:42 PM
-> To: Jie, Yang
-> Cc: lgirdwood@gmail.com; kernel-janitors@vger.kernel.org;
-> broonie@kernel.org; perex@perex.cz; tiwai@suse.de; Lu, Han;
-> jarkko.nikula@linux.intel.com; Piskorski, Pawel; alsa-devel@alsa-project.=
-org;
-> Jin, Yao
-> Subject: Re: [PATCH] ASoC: Intel: fix Coccinelle kfree warning
->=20
-> Thanks, Jie.
->=20
-> I find another simlar BUG in
-> ./sound/soc/intel/baytrail/sst-baytrail-ipc.c::sst_byt_dsp_init()
-> Does anyone fixed it, too?
-=20
-I guess so. You can refer to the for-next branch of git repo to
-confirm it:
-git://git.kernel.org/cgit/linux/kernel/git/broonie/sound.git
+We need "ret" to be unsigned for the error handling to work.  The
+signedness of "i" and "n" don't matter but qspi_set_send_trigger()
+returns an int so I've changed them to int as well.
 
-~Keyon
+Fixes: 4b6fe3edcbba ('spi: Using Trigger number to transmit/receive data')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->=20
-> Regards
-> Firo
->=20
-> On Mon, Apr 27, 2015 at 07:23:32AM +0000, Jie, Yang wrote:
-> >> -----Original Message-----
-> >> From: Firo Yang [mailto:firogm@gmail.com]
-> >> Sent: Sunday, April 26, 2015 11:42 PM
-> >> To: lgirdwood@gmail.com
-> >> Cc: kernel-janitors@vger.kernel.org; broonie@kernel.org;
-> >> perex@perex.cz; tiwai@suse.de; Jie, Yang; Lu, Han;
-> >> jarkko.nikula@linux.intel.com; Piskorski, Pawel;
-> >> alsa-devel@alsa-project.org; Firo Yang
-> >> Subject: [PATCH] ASoC: Intel: fix Coccinelle kfree warning
-> >>
-> >> It's not necessary to use kfree() to free memory allocated with
-> >> devm_kzalloc in a probe function and using kfree leads to a double fre=
-e.
-> >>
-> >> Signed-off-by: Firo Yang <firogm@gmail.com>
-> >> ---
-> >>  sound/soc/intel/haswell/sst-haswell-ipc.c | 1 -
-> >>  1 file changed, 1 deletion(-)
-> >>
-> >> diff --git a/sound/soc/intel/haswell/sst-haswell-ipc.c
-> >> b/sound/soc/intel/haswell/sst-haswell-ipc.c
-> >> index 344a1e9..324eceb 100644
-> >> --- a/sound/soc/intel/haswell/sst-haswell-ipc.c
-> >> +++ b/sound/soc/intel/haswell/sst-haswell-ipc.c
-> >> @@ -2201,7 +2201,6 @@ dma_err:
-> >>  dsp_new_err:
-> >>  	sst_ipc_fini(ipc);
-> >>  ipc_init_err:
-> >> -	kfree(hsw);
-> >
-> >It has been fixed by Jin Yao 2 weeks ago:
-> >http://git.kernel.org/cgit/linux/kernel/git/broonie/sound.git/commit/?h
-> >=3Dfor-next&id=AC98b4c015b50b1e452f8d55b612320be7f80825
-> >
-> >~Keyon
-> >
-> >>  	return ret;
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(sst_hsw_dsp_init);
-> >> --
-> >> 2.1.0
-> >
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index b3871d8..f6bac9e 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -727,7 +727,7 @@ static int rspi_rz_transfer_one(struct spi_master *master,
+ static int qspi_trigger_transfer_out_int(struct rspi_data *rspi, const u8 *tx,
+ 					u8 *rx, unsigned int len)
+ {
+-	unsigned int i, n, ret;
++	int i, n, ret;
+ 	int error;
+ 
+ 	while (len > 0) {
