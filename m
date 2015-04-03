@@ -1,20 +1,26 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Tue, 21 Apr 2015 09:43:08 +0000
-Subject: Re: [patch] drm/nouveau/platform: checking for IS_ERR() instead of NULL
-Message-Id: <55361BAC.3010503@nvidia.com>
+From: Ravi Kerur <rkerur@gmail.com>
+Date: Fri, 03 Apr 2015 20:40:35 +0000
+Subject: TODO list
+Message-Id: <551EFAC3.9000307@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150421092507.GB12098@mwanda>
-In-Reply-To: <20150421092507.GB12098@mwanda>
+References: <20100714100136.GA3583@albatros>
+In-Reply-To: <20100714100136.GA3583@albatros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>
-Cc: Ben Skeggs <bskeggs@redhat.com>, Vince Hsu <vinceh@nvidia.com>, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 04/21/2015 06:25 PM, Dan Carpenter wrote:
-> iommu_domain_alloc() returns NULL on error, it doesn't return error
-> pointers.
+Team,
 
-Oops, that's right.
+I am planning to take up following items from TODO list. If it's already picked please let me know. 
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+* pci_set_dma_mask() and friends should use DMA_BIT_MASK(nn) instead of
+
+DMA_nnBIT_MASK or 0xffff... This is not 2.4 compatible, so beware of drivers with same code. [D: http://marc.theaimsgroup.com/?t8001993000001] Don't forget to #include dma-mapping.h
+
+* check kmallocs for things like GFP_DMA without a memtype. 
+
+
+Thanks,
+
+Ravi
