@@ -1,41 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 06 Apr 2015 16:20:23 +0000
-Subject: Re: [patch] spi: signedness bug in qspi_trigger_transfer_out_int()
-Message-Id: <20150406162023.GK6023@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="qE0/TkNoJLLGUzs4"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 04 Apr 2015 14:59:30 +0000
+Subject: [PATCH 2/2] staging: emxx_udc: test returned value
+Message-Id: <1428159570-19467-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150403084527.GA27292@mwanda>
-In-Reply-To: <20150403084527.GA27292@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hiep Cao Minh <cm-hiep@jinso.co.jp>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
+Put NULL test on the result of the previous call instead on one of its
+arguments.  A simplified version of the semantic match that finds this
+problem is as follows (http://coccinelle.lip6.fr/):
 
---qE0/TkNoJLLGUzs4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+// <smpl>
+r@
+expression *e1;
+expression *e2;
+identifier f;
+statement S1,S2;
+@@
 
-On Fri, Apr 03, 2015 at 11:45:27AM +0300, Dan Carpenter wrote:
-> We need "ret" to be unsigned for the error handling to work.  The
-> signedness of "i" and "n" don't matter but qspi_set_send_trigger()
-> returns an int so I've changed them to int as well.
+e1 = f(...,e2,...);
+(
+if (e1 = NULL || ...) S1 else S2
+|
+*if (e2 = NULL || ...) S1 else S2
+)
+// </smpl>
 
-Applied, thanks.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---qE0/TkNoJLLGUzs4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+---
+ drivers/staging/emxx_udc/emxx_udc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
+index fbf82bc..7de1e9e 100644
+--- a/drivers/staging/emxx_udc/emxx_udc.c
++++ b/drivers/staging/emxx_udc/emxx_udc.c
+@@ -2998,7 +2998,7 @@ static void  nbu2ss_ep_fifo_flush(struct usb_ep *_ep)
+ 	}
+ 
+ 	ep = container_of(_ep, struct nbu2ss_ep, ep);
+-	if (!_ep) {
++	if (!ep) {
+ 		pr_err("udc: %s, bad ep\n", __func__);
+ 		return;
+ 	}
 
-iQEcBAEBCAAGBQJVIrJGAAoJECTWi3JdVIfQ2r4H/R27iq0VQzvUAkmAA5XpXwL5
-YCJWG0fp+mKwJtkMK/LMvI/CN6T17yzeAmR3SddVmVsTBObwC1f78fv5cfVIqMhg
-f6ZwD4GSH0NmSHiAPeCYFbd8EFXxzSkPtj36ZAZmN7Ujh5ez8ZXekxp2IA0dORpM
-3/DY0jvgBFYvXt8M0MSrIlHT+YPbevMvNg1FHqxpNz9iAuXaVa7n2qdD25JAMpE/
-0jdp1agr0p5W2rS0ZFAQmpr9TEmYEFHUgDcKofJaJGkV2/JcLaxQbmAh6vAl45fj
-4F4J5toBj82JxmgAsxx3CUOXTCcybQ+B3jI4UNBRXT2JLItf/ZK3Ura8bgTXXtI=
-=KAi4
------END PGP SIGNATURE-----
-
---qE0/TkNoJLLGUzs4--
