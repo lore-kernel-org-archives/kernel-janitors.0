@@ -1,21 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 01 Apr 2015 07:57:09 +0000
-Subject: Re: [E1000-devel] [patch] igb: cleanup igb_enable_mas() a bit
-Message-Id: <20150401075709.GI16501@mwanda>
+From: Andreas Theodosiou <andreasabu@gmail.com>
+Date: Sat, 04 Apr 2015 00:23:19 +0000
+Subject: [PATCH] staging: fbtft: 80 characters per line in fb_ili9163.c
+Message-Id: <1428106999-10067-1-git-send-email-andreasabu@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9B4A1B1917080E46B64F07F2989DADD6534E3B53@ORSMSX114.amr.corp.intel.com>
-In-Reply-To: <9B4A1B1917080E46B64F07F2989DADD6534E3B53@ORSMSX114.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: thomas.petazzoni@free-electrons.com, noralf@tronnes.org, gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andreas Theodosiou <andreasabu@gmail.com>
 
-On Tue, Mar 31, 2015 at 08:10:31PM +0000, Fujinaka, Todd wrote:
-> I have a fix for this already, if Dan doesn't mind.
->
+This is a patch to the fb_ili9163.c file that inserts a line break in
+line #92 to make the line fit into the 80 character limit.
 
-I don't mind.
+Signed-off-by: Andreas Theodosiou <andreasabu@gmail.com>
+---
+ drivers/staging/fbtft/fb_ili9163.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/staging/fbtft/fb_ili9163.c b/drivers/staging/fbtft/fb_ili9163.c
+index ed92a64..fc7568b 100644
+--- a/drivers/staging/fbtft/fb_ili9163.c
++++ b/drivers/staging/fbtft/fb_ili9163.c
+@@ -89,7 +89,8 @@
+ 
+ /*
+ This display:
+-http://www.ebay.com/itm/Replace-Nokia-5110-LCD-1-44-Red-Serial-128X128-SPI-Color-TFT-LCD-Display-Module-/271422122271
++http://www.ebay.com/itm/Replace-Nokia-5110-LCD-1-44-Red-Serial-128X128-SPI-
++Color-TFT-LCD-Display-Module-/271422122271
+ This particular display has a design error! The controller has 3 pins to
+ configure to constrain the memory and resolution to a fixed dimension (in
+ that case 128x128) but they leaved those pins configured for 128x160 so
+-- 
+2.3.5
 
