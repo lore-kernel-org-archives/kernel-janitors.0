@@ -1,7 +1,7 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 04 Apr 2015 00:32:40 +0000
+From: =?ISO-8859-2?Q?Giedrius_Statkevi=E8ius?=  <giedrius.statkevicius@gmail.com>
+Date: Sat, 04 Apr 2015 01:12:05 +0000
 Subject: Re: [PATCH] staging: fbtft: 80 characters per line in fb_ili9163.c
-Message-Id: <1428107560.2775.2.camel@perches.com>
+Message-Id: <alpine.LNX.2.03.1504040410110.8954@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1428106999-10067-1-git-send-email-andreasabu@gmail.com>
 In-Reply-To: <1428106999-10067-1-git-send-email-andreasabu@gmail.com>
@@ -9,14 +9,22 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Andreas Theodosiou <andreasabu@gmail.com>
-Cc: thomas.petazzoni@free-electrons.com, noralf@tronnes.org, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: thomas.petazzoni@free-electrons.com, noralf@tronnes.org, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 2015-04-04 at 03:23 +0300, Andreas Theodosiou wrote:
+On Sat, 4 Apr 2015, Andreas Theodosiou wrote:
+
 > This is a patch to the fb_ili9163.c file that inserts a line break in
 > line #92 to make the line fit into the 80 character limit.
-[]
+> 
+> Signed-off-by: Andreas Theodosiou <andreasabu@gmail.com>
+> ---
+>  drivers/staging/fbtft/fb_ili9163.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 > diff --git a/drivers/staging/fbtft/fb_ili9163.c b/drivers/staging/fbtft/fb_ili9163.c
-[]
+> index ed92a64..fc7568b 100644
+> --- a/drivers/staging/fbtft/fb_ili9163.c
+> +++ b/drivers/staging/fbtft/fb_ili9163.c
 > @@ -89,7 +89,8 @@
 >  
 >  /*
@@ -25,12 +33,11 @@ On Sat, 2015-04-04 at 03:23 +0300, Andreas Theodosiou wrote:
 > +http://www.ebay.com/itm/Replace-Nokia-5110-LCD-1-44-Red-Serial-128X128-SPI-
 > +Color-TFT-LCD-Display-Module-/271422122271
 
-Please don't do this to links.
+With this change the user won't be able to just simply click on the url and have
+it open for him. Thus I don't think this is a good change. Sometimes in the
+kernel people leave lines over 80 characters to make the code more grep-able,
+sometimes it's just more clear when it's over 80 characters or, probably, in
+cases like this.
 
-There are many real defects to fix and other code to improve.
-
-This isn't one of those.
-
-I doubt though that an ebay link is very long lasting.
-
-
+Su pagarba / Regards,
+Giedrius
