@@ -1,91 +1,48 @@
-From: "Zhen, Liang" <liang.zhen@intel.com>
-Date: Mon, 06 Apr 2015 06:41:46 +0000
-Subject: Re: [HPDD-discuss] [PATCH 15/16] staging: lustre: lnet: lnet: fix error return code
-Message-Id: <D1482EB4.2B614%liang.zhen@intel.com>
+From: Andreas Theodosiou <andreasabu@gmail.com>
+Date: Sat, 04 Apr 2015 23:09:30 +0000
+Subject: [PATCH] staging : unisys: Fix brace coding style issue
+Message-Id: <1428188970-30871-1-git-send-email-andreasabu@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
- <1428235596-4757-16-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428235596-4757-16-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@lip6.fr>, "Drokin, Oleg" <oleg.drokin@intel.com>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "HPDD-discuss@lists.01.org" <HPDD-discuss@ml01.01.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: benjamin.romer@unisys.com, david.kershner@unisys.com, gregkh@linuxfoundation.org, bryan.thompson@unisys.com, conflatulence@gmail.com
+Cc: sparmaintainer@unisys.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andreas Theodosiou <andreasabu@gmail.com>
 
-Julia, yes this is a bug that we have already fixed in the latest Lustre.
-Sorry we haven=B9t submitted this patch to kernel on time.
+This is a patch to visorchannel/visorchannel_funcs.c that fixes a couple
+of brace warnings found by checkpatch.pl.
 
-Thanks
-Liang
+Signed-off-by: Andreas Theodosiou <andreasabu@gmail.com>
+---
+ drivers/staging/unisys/visorchannel/visorchannel_funcs.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On 4/5/15, 8:06 PM, "Julia Lawall" <Julia.Lawall@lip6.fr> wrote:
+diff --git a/drivers/staging/unisys/visorchannel/visorchannel_funcs.c b/drivers/staging/unisys/visorchannel/visorchannel_funcs.c
+index 7a9a724..9ae5f75 100644
+--- a/drivers/staging/unisys/visorchannel/visorchannel_funcs.c
++++ b/drivers/staging/unisys/visorchannel/visorchannel_funcs.c
+@@ -405,9 +405,8 @@ signalremove_inner(struct visorchannel *channel, u32 queue, void *msg)
+ 		return FALSE;	/* no signals to remove */
+ 
+ 	sig_hdr.tail = (sig_hdr.tail + 1) % sig_hdr.max_slots;
+-	if (!sig_read_data(channel, queue, &sig_hdr, sig_hdr.tail, msg)) {
++	if (!sig_read_data(channel, queue, &sig_hdr, sig_hdr.tail, msg))
+ 		return FALSE;
+-	}
+ 	sig_hdr.num_received++;
+ 
+ 	/* For each data field in SIGNAL_QUEUE_HEADER that was modified,
+@@ -470,9 +469,8 @@ signalinsert_inner(struct visorchannel *channel, u32 queue, void *msg)
+ 	mb(); /* required for channel synch */
+ 	if (!SIG_WRITE_FIELD(channel, queue, &sig_hdr, head))
+ 		return FALSE;
+-	if (!SIG_WRITE_FIELD(channel, queue, &sig_hdr, num_sent)) {
++	if (!SIG_WRITE_FIELD(channel, queue, &sig_hdr, num_sent))
+ 		return FALSE;
+-	}
+ 
+ 	return TRUE;
+ }
+-- 
+2.3.5
 
->Return a negative error code on failure.
->
->A simplified version of the semantic match that finds this problem is as
->follows: (http://coccinelle.lip6.fr/)
->
->// <smpl>
->@@
->identifier ret; expression e1,e2;
->@@
->(
->if (\(ret < 0\|ret !=3D 0\))
-> { ... return ret; }
->|
->ret =3D 0
->)
->... when !=3D ret =3D e1
->    when !=3D &ret
->*if(...)
->{
->  ... when !=3D ret =3D e2
->      when forall
-> return ret;
->}
->// </smpl>
->
->Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
->---
-> drivers/staging/lustre/lnet/lnet/api-ni.c |    8 ++++++--
-> 1 file changed, 6 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c
->b/drivers/staging/lustre/lnet/lnet/api-ni.c
->index faceb95..4a14e51 100644
->--- a/drivers/staging/lustre/lnet/lnet/api-ni.c
->+++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
->@@ -650,15 +650,19 @@ lnet_prepare(lnet_pid_t requested_pid)
->=20
-> 	recs =3D lnet_res_containers_create(LNET_COOKIE_TYPE_ME, LNET_FL_MAX_MES,
-> 					  sizeof(lnet_me_t));
->-	if (recs =3D NULL)
->+	if (recs =3D NULL) {
->+		rc =3D -ENOMEM;
-> 		goto failed;
->+	}
->=20
-> 	the_lnet.ln_me_containers =3D recs;
->=20
-> 	recs =3D lnet_res_containers_create(LNET_COOKIE_TYPE_MD, LNET_FL_MAX_MDS,
-> 					  sizeof(lnet_libmd_t));
->-	if (recs =3D NULL)
->+	if (recs =3D NULL) {
->+		rc =3D -ENOMEM;
-> 		goto failed;
->+	}
->=20
-> 	the_lnet.ln_md_containers =3D recs;
->=20
->
->_______________________________________________
->HPDD-discuss mailing list
->HPDD-discuss@lists.01.org
->https://lists.01.org/mailman/listinfo/hpdd-discuss
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
