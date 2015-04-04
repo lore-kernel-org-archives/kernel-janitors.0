@@ -1,35 +1,87 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 07:48:28 +0000
-Subject: [PATCH v2 09/15] 9p: Remove unnessary void pointer cast
-Message-Id: <1429775314-4171-10-git-send-email-firogm@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 04 Apr 2015 14:59:28 +0000
+Subject: [PATCH 0/2] test returned value
+Message-Id: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
 
-kzalloc() returns a void pointer - no need to cast it in
-fs/9p/vfs_inode.c::v9fs_alloc_inode()
+Put NULL test on the result of the previous call instead on one of its
+arguments.  The complete semantic match that finds these problems is as
+follows (http://coccinelle.lip6.fr/):
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
----
- fs/9p/vfs_inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+// <smpl>
+@r@
+expression *e1;
+expression *e2;
+identifier f;
+statement S1,S2;
+position p,p2;
+@@
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 3662f1d..b6ade6f 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
- struct inode *v9fs_alloc_inode(struct super_block *sb)
- {
- 	struct v9fs_inode *v9inode;
--	v9inode = (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
--							GFP_KERNEL);
-+	v9inode = kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
- 	if (!v9inode)
- 		return NULL;
- #ifdef CONFIG_9P_FSCACHE
--- 
-2.1.0
+ e1 = f@p(...,e2,...);
+(
+if (e1 = NULL || ...) S1 else S2
+|
+if (e1 != NULL || ...) S1 else S2
+|
+if@p2 (e2 = NULL || ...) S1 else S2
+|
+if@p2  (e2 != NULL || ...) S1 else S2
+)
+
+@ok@
+expression e1,e2;
+identifier f;
+statement S1,S2;
+position r.p,r.p2;
+@@
+
+ e1 = f@p(...);
+(
+if@p2 (e2 = NULL || ...) S1 else S2
+|
+if@p2  (e2 != NULL || ...) S1 else S2
+)
+
+@ok1 depends on ok exists@
+position r.p;
+expression *r.e2;
+expression e3;
+identifier f,g;
+@@
+
+e2->g
+... when != e2 = e3
+    when != &e2
+f@p
+
+@ok2 depends on ok exists@
+position r.p;
+expression *r.e2;
+expression e,e3;
+statement S1,S2;
+identifier f;
+@@
+
+(
+if (e2 = NULL || ...) {... return ...;} else S2
+|
+if (e2 != NULL || ...) S1 else {... return ...;}
+)
+... when != e2 = e3
+    when != &e2
+e = f@p(...);
+
+@depends on ok1 || ok2@
+expression e1;
+identifier f;
+position r.p;
+@@
+
+* e1 = f@p(...);
+// </smpl>
 
