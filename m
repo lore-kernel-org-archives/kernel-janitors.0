@@ -1,21 +1,20 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sat, 04 Apr 2015 16:07:40 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sat, 04 Apr 2015 16:20:53 +0000
 Subject: Re: [PATCH 2/2] staging: emxx_udc: test returned value
-Message-Id: <20150404160740.GB19278@kroah.com>
+Message-Id: <alpine.DEB.2.02.1504041818180.2075@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr>
- <1428159570-19467-3-git-send-email-Julia.Lawall@lip6.fr>
- <20150404155958.GX10964@mwanda>
-In-Reply-To: <20150404155958.GX10964@mwanda>
+References: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr> <1428159570-19467-3-git-send-email-Julia.Lawall@lip6.fr> <20150404160712.GA19278@kroah.com>
+In-Reply-To: <20150404160712.GA19278@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 04, 2015 at 06:59:58PM +0300, Dan Carpenter wrote:
-> This is a clever Coccinelle check.  :)
-> 
+
+
+On Sat, 4 Apr 2015, Greg Kroah-Hartman wrote:
+
 > On Sat, Apr 04, 2015 at 04:59:30PM +0200, Julia Lawall wrote:
 > > Put NULL test on the result of the previous call instead on one of its
 > > arguments.  A simplified version of the semantic match that finds this
@@ -53,19 +52,28 @@ On Sat, Apr 04, 2015 at 06:59:58PM +0300, Dan Carpenter wrote:
 > >  	ep = container_of(_ep, struct nbu2ss_ep, ep);
 > > -	if (!_ep) {
 > > +	if (!ep) {
-> >  		pr_err("udc: %s, bad ep\n", __func__);
-> >  		return;
 > 
-> The better thing to do here is to remove the condition.  container_of()
-> takes an pointer and subtracts an offset so testing the return value
-> is normally meaningless.
-> 
-> Sometimes (and in this case) the offset is zero.  In that situation it
-> might make sense to check the return value but it's an ugly thing to
-> do because if we re-order the nbu2ss_ep struct layout so "ep" isn't the
-> first member then it breaks.
-> 
-> In this case we already verified that "_ep" is non-NULL so the check
-> isn't needed.
+> This is actually even worse, container_of() can't return NULL.  Or if it
+> does, something is really wrong (it can only happen if the field happens
+> to be the first field in the structure and the original pointer was
+> NULL).  So I would say that all tests for container_of (and
+> functions/macros that are just wrappers around container_of()) can just
+> be deleted as they will never be triggered.
 
-This will teach me to read ahead in an email thread... :)
+Couldn't one say:
+
+x = NULL;
+y = &x->whatever;
+z = container_of(y, struct blah, whatever);
+
+and end up with z being NULL?
+
+> Not to say that this patch is wrong at all, I'll go apply it, and you
+> should add it to the lists of tests in the kernel source, but you should
+> also consider making a test to catch container_of() results.
+> 
+> Hm, now that I know coccinelle, I guess I should be able to do this :)
+
+Yes indeed :)
+
+julia
