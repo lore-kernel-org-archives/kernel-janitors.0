@@ -1,43 +1,78 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 09 Apr 2015 10:00:54 +0000
-Subject: Re: [patch] ASoC: Intel: do cast earlier in sst_cdev_tstamp()
-Message-Id: <20150409100054.GQ6023@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="KAj9AL6usbKsxRUD"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:33 +0000
+Subject: [PATCH 13/16] ALSA: au1x00: fix error return code
+Message-Id: <1428235596-4757-14-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150409090239.GA17605@mwanda>
-In-Reply-To: <20150409090239.GA17605@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Jie Yang <yang.jie@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
+Return a negative error code on failure.
 
---KAj9AL6usbKsxRUD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-On Thu, Apr 09, 2015 at 12:02:39PM +0300, Dan Carpenter wrote:
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-> My static checker complains about these because it looks like the
-> multiply can overflow and then we cast to a larger data type.  I don't
-> think this is a problem, but it's also harmless to do the cast earlier
-> so let's silence the static checker warning.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied, thanks.
+---
+ sound/mips/au1x00.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---KAj9AL6usbKsxRUD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/sound/mips/au1x00.c b/sound/mips/au1x00.c
+index fbcaa54..1e30e84 100644
+--- a/sound/mips/au1x00.c
++++ b/sound/mips/au1x00.c
+@@ -633,19 +633,25 @@ static int au1000_ac97_probe(struct platform_device *pdev)
+ 
+ 	au1000->stream[PLAYBACK] = kmalloc(sizeof(struct audio_stream),
+ 					   GFP_KERNEL);
+-	if (!au1000->stream[PLAYBACK])
++	if (!au1000->stream[PLAYBACK]) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 	au1000->stream[PLAYBACK]->dma = -1;
+ 
+ 	au1000->stream[CAPTURE] = kmalloc(sizeof(struct audio_stream),
+ 					  GFP_KERNEL);
+-	if (!au1000->stream[CAPTURE])
++	if (!au1000->stream[CAPTURE]) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 	au1000->stream[CAPTURE]->dma = -1;
+ 
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r)
++	if (!r) {
++		err = -ENODEV;
+ 		goto out;
++	}
+ 
+ 	err = -EBUSY;
+ 	au1000->ac97_res_port = request_mem_region(r->start, resource_size(r),
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVJk3VAAoJECTWi3JdVIfQ0uIH/RXFJFHg+/YLdbQnm2Raf32J
-Fz1A7mMfiXBY2lkurdXR4by0+K8844zrzWYTqlPgzAqZn2/IIL5wUlaLVLKX+4kt
-s/DbcDGCMX40/1bKom3Pil2V7Ug3vdS95wZX99A5zwsm1nw0T0jMDnIximYrcaTA
-boglIHGN0yZ0Uuje3ACJXJTc2lkuPjmzn2OBn+b0cXeCWq+Ddou8Egpi07xYqx0U
-gxaI5X1N/0YjHNluvEShN4pFA+AbFpSOPaGE3dqTB237/O3mZsq3slYohJ/BcAeJ
-Bvrt8uSSpSFRumuJrz8oYfLCg6eXDrKCA//sO9bOWqdnkNr7NV/5oblk4l+p1uo=
-=5scd
------END PGP SIGNATURE-----
-
---KAj9AL6usbKsxRUD--
