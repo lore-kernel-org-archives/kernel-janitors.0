@@ -1,79 +1,171 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 11:38:31 +0000
-Subject: [PATCH 5/9] sound/atmel/ac97c.c: fix error return code
-Message-Id: <1428233914-4503-7-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:20 +0000
+Subject: [PATCH 0/16] fix error return code
+Message-Id: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: devel@driverdev.osuosl.org
+Cc: linux-wireless@vger.kernel.org, alsa-devel@alsa-project.org, linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, HPDD-discuss@lists.01.org, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-
-In the first case, the second test of whether retval is negative is
-redundant.  It is dropped and the previous and subsequent tests are
-combined.
-
-In the second case, add an initialization of retval on failure of ioremap.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The complate semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
+@ok exists@
+identifier f,ret,i;
+expression e;
+constant c;
+@@
+
+// identify a function that returns a negative return value at least once.
+f(...) {
+... when any
 (
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
+return -c@i;
 |
-ret@p1 = 0
+ret =3D -c@i;
+... when !=3D ret =3D e
+return ret;
+|
+if (ret < 0) { ... return ret; }
 )
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
+... when any
 }
 
+@r exists@
+identifier ret,ok.f,fn;
+expression e1,e2,e3,e4,e5,e6,x;
+statement S,S1;
+position p1,p2,p3;
+@@
+
+// identify a case where the return variable is set to a non-negative value
+// and then returned in error-handling code
+f(...) {
+... when any
+(
+if@p1 (\(ret < 0\|ret !=3D 0\))
+ { ... return ret; }
+|
+ret@p1 =3D 0
+)
+... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
+    when !=3D &ret
+    when any
+(
+ if (<+... ret =3D e5 ...+>) S1
+|
+ if (<+... &ret ...+>) S1
+|
+if@p2(<+...x =3D fn(...)...+>)
+ {
+  ... when !=3D ret =3D e6
+      when forall
+ return@p3 ret;
+}
+|
+break;
+|
+x =3D fn(...)
+... when !=3D \(ret =3D e4\|ret++\|ret--\|ret+=E4\|ret-=E4\)
+    when !=3D &ret
+(
+ if (<+... ret =3D e3 ...+>) S
+|
+ if (<+... &ret ...+>) S
+|
+if@p2(<+...\(x !=3D 0\|x < 0\|x =3D NULL\|IS_ERR(x)\)...+>)
+ {
+  ... when !=3D ret =3D e2
+      when forall
+ return@p3 ret;
+}
+)
+)
+... when any
+}
+
+@printer depends on r@
+position p;
+identifier ok.f,pr;
+constant char [] c;
+@@
+
+f(...) { <...pr@p(...,c,...)...> }
+
+@bad0 exists@
+identifier r.ret,ok.f,g !=3D {ERR_PTR,IS_ERR};
+position p !=3D printer.p;
+@@
+
+f(...) { ... when any
+g@p(...,ret,...)
+... when any
+ }
+
+@bad depends on !bad0 exists@
+position r.p1,r.p2;
+statement S1,S2;
+identifier r.ret;
+expression e1;
+@@
+
+// ignore the above if there is some path where the variable is set to
+// something else
+(
+if@p1 (\(ret < 0\|ret !=3D 0\)) S1
+|
+ret@p1 =3D 0
+)
+... when any
+ \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\|&ret\)
+... when any
+if@p2(...) S2
+
+@bad1 depends on !bad0 && !bad exists@
+position r.p2;
+statement S2;
+identifier r.ret;
+expression e1;
+constant c;
+@@
+
+ret =3D -c
+... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
+    when !=3D &ret
+    when any
+if@p2(...) S2
+
+@bad2 depends on !bad0 && !bad && !bad1 exists@
+position r.p1,r.p2;
+identifier r.ret;
+expression e1;
+statement S2;
+constant c;
+@@
+
+// likewise ignore it if there has been an intervening return
+ret@p1 =3D 0
+... when !=3D if (...) { ... ret =3D e1 ... return ret; }
+    when !=3D if (...) { ... return -c; }
+    when any
+if@p2(...) S2
+
+@script:python depends on !bad0 && !bad && !bad1 && !bad2@
+p1 << r.p1;
+p2 << r.p2;
+p3 << r.p3;
+@@
+
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+cocci.print_secs("",p3)
 // </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/atmel/ac97c.c |   12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/sound/atmel/ac97c.c b/sound/atmel/ac97c.c
-index 3c8d3ba..9052aff 100644
---- a/sound/atmel/ac97c.c
-+++ b/sound/atmel/ac97c.c
-@@ -278,14 +278,9 @@ static int atmel_ac97c_capture_hw_params(struct snd_pcm_substream *substream,
- 	if (retval < 0)
- 		return retval;
- 	/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
--	if (cpu_is_at32ap7000()) {
--		if (retval < 0)
--			return retval;
--		/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
--		if (retval = 1)
--			if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
--				dw_dma_cyclic_free(chip->dma.rx_chan);
--	}
-+	if (cpu_is_at32ap7000() && retval = 1)
-+		if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
-+			dw_dma_cyclic_free(chip->dma.rx_chan);
- 
- 	/* Set restrictions to params. */
- 	mutex_lock(&opened_mutex);
-@@ -980,6 +975,7 @@ static int __devinit atmel_ac97c_probe(struct platform_device *pdev)
- 
- 	if (!chip->regs) {
- 		dev_dbg(&pdev->dev, "could not remap register memory\n");
-+		retval = -ENOMEM;
- 		goto err_ioremap;
- 	}
- 
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
