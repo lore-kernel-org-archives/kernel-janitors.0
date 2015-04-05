@@ -1,35 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 17 Apr 2015 12:46:00 +0000
-Subject: Re: [patch] ALSA: hda - potential (but unlikely) uninitialized variable
-Message-Id: <20150417124600.GB16501@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:21 +0000
+Subject: [PATCH 1/16] wan: lmc: fix error return code
+Message-Id: <1428235596-4757-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150417123514.GA20476@mwanda>
- <s5h383zx6xu.wl-tiwai@suse.de>
-In-Reply-To: <s5h383zx6xu.wl-tiwai@suse.de>
+References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, David Henningsson <david.henningsson@canonical.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 17, 2015 at 02:42:05PM +0200, Takashi Iwai wrote:
-> At Fri, 17 Apr 2015 15:35:15 +0300,
-> Dan Carpenter wrote:
-> > 
-> > This function is a bit unusual because it accepts negative values as
-> > "conn_len".  It's theoretically possible for both "cache_len" and
-> > "conn_len" to be -ENOSPC and in that case we would oops trying to run
-> > memcmp() on the uninitialized "list" pointer.
-> 
-> Yes, that's a bug.  But the check should be rather:
-> 
-> 	if (cache_len >= 0 && (cache_len != conn_len ||
-> 		    memcmp(list, conn, conn_len) != 0))
-> 
-> Could you resend with this fix?
+Return a negative error code on failure.
 
-Sure.  Will do.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/wan/lmc/lmc_main.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/wan/lmc/lmc_main.c b/drivers/net/wan/lmc/lmc_main.c
+index bea0f31..317bc79 100644
+--- a/drivers/net/wan/lmc/lmc_main.c
++++ b/drivers/net/wan/lmc/lmc_main.c
+@@ -850,6 +850,7 @@ static int lmc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	dev = alloc_hdlcdev(sc);
+ 	if (!dev) {
+ 		printk(KERN_ERR "lmc:alloc_netdev for device failed\n");
++		err = -ENOMEM;
+ 		goto err_hdlcdev;
+ 	}
+ 
 
