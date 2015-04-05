@@ -1,34 +1,64 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 07:48:26 +0000
-Subject: [PATCH v2 07/15] efs: Remove unneeded cast
-Message-Id: <1429775314-4171-8-git-send-email-firogm@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:31 +0000
+Subject: [PATCH 11/16] drm/msm/dp: fix error return code
+Message-Id: <1428235596-4757-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-kmem_cache_alloc() returns a void pointer - no need to cast it in
-fs/efs/super.c::efs_alloc_inode().
+Return a negative error code on failure.
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- fs/efs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/edp/edp_ctrl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/efs/super.c b/fs/efs/super.c
-index 7fca462..c8411a3 100644
---- a/fs/efs/super.c
-+++ b/fs/efs/super.c
-@@ -67,7 +67,7 @@ static struct kmem_cache * efs_inode_cachep;
- static struct inode *efs_alloc_inode(struct super_block *sb)
- {
- 	struct efs_inode_info *ei;
--	ei = (struct efs_inode_info *)kmem_cache_alloc(efs_inode_cachep, GFP_KERNEL);
-+	ei = kmem_cache_alloc(efs_inode_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
- 	return &ei->vfs_inode;
--- 
-2.1.0
+diff --git a/drivers/gpu/drm/msm/edp/edp_ctrl.c b/drivers/gpu/drm/msm/edp/edp_ctrl.c
+index 0ec5abd..29e52d7 100644
+--- a/drivers/gpu/drm/msm/edp/edp_ctrl.c
++++ b/drivers/gpu/drm/msm/edp/edp_ctrl.c
+@@ -1149,12 +1149,13 @@ int msm_edp_ctrl_init(struct msm_edp *edp)
+ 	ctrl->aux = msm_edp_aux_init(dev, ctrl->base, &ctrl->drm_aux);
+ 	if (!ctrl->aux || !ctrl->drm_aux) {
+ 		pr_err("%s:failed to init aux\n", __func__);
+-		return ret;
++		return -ENOMEM;
+ 	}
+ 
+ 	ctrl->phy = msm_edp_phy_init(dev, ctrl->base);
+ 	if (!ctrl->phy) {
+ 		pr_err("%s:failed to init phy\n", __func__);
++		ret = -ENOMEM;
+ 		goto err_destory_aux;
+ 	}
+ 
 
