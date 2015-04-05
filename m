@@ -1,144 +1,61 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 12 Apr 2015 21:34:19 +0000
-Subject: [PATCH v2 0/1] drop uses of some OBD alloc and free functions
-Message-Id: <1428874460-15769-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:24 +0000
+Subject: [PATCH 3/16] [media] radio: fix error return code
+Message-Id: <1428235596-4757-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
-kzalloc or calloc, as appropriate.
+Return a negative error code on failure.
 
-Replace OBD_FREE and OBD_FREE_PTR by kfree.
-
-The complete semantic patch that makes these changes is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression ptr,e1,e2;
+identifier ret; expression e1,e2;
 @@
-
-- OBD_ALLOC(ptr,sizeof e1 * e2)
-+ ptr = kcalloc(e2, sizeof e1, GFP_NOFS)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC_WAIT(ptr,sizeof e1 * e2)
-+ ptr = kcalloc(sizeof e1, e2, GFP_KERNEL)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC(ptr,e2 * sizeof e1)
-+ ptr = kcalloc(e2, sizeof e1, GFP_NOFS)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e2 * sizeof e1)
-+ ptr = kcalloc(e2, sizeof e1, GFP_KERNEL)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC(ptr,sizeof (t) * e2)
-+ ptr = kcalloc(e2, sizeof (t), GFP_NOFS)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC_WAIT(ptr,sizeof (t) * e2)
-+ ptr = kcalloc(e2, sizeof (t), GFP_KERNEL)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC(ptr,e2 * sizeof (t))
-+ ptr = kcalloc(e2, sizeof (t), GFP_NOFS)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e2 * sizeof (t))
-+ ptr = kcalloc(e2, sizeof (t), GFP_KERNEL)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC(ptr,e1 * e2)
-+ ptr = kcalloc(e1, e2, GFP_NOFS)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e1 * e2)
-+ ptr = kcalloc(e1, e2, GFP_KERNEL)
-
-// -----------------------------------------------------------------------
-
-@@
-expression ptr,size;
-@@
-
-- OBD_ALLOC(ptr,size)
-+ ptr = kzalloc(size, GFP_NOFS)
-
-@@
-expression ptr,size;
-@@
-
-- OBD_ALLOC_WAIT(ptr,size)
-+ ptr = kzalloc(size, GFP_KERNEL)
-
-@@
-expression ptr;
-@@
-
-- OBD_ALLOC_PTR(ptr)
-+ ptr = kzalloc(sizeof(*ptr), GFP_NOFS)
-
-@@
-expression ptr;
-@@
-
-- OBD_ALLOC_PTR_WAIT(ptr)
-+ ptr = kzalloc(sizeof(*ptr), GFP_KERNEL)
-
-// ----------------------------------------------------------------------
-
-@@
-expression ptr, size;
-@@
-
-- OBD_FREE(ptr, size);
-+ kfree(ptr);
-
-@@
-expression ptr;
-@@
-
-- OBD_FREE_PTR(ptr);
-+ kfree(ptr);
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 // </smpl>
 
----
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-v2: put sequence number in [PATCH] subject
+---
+ drivers/media/radio/radio-timb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/radio/radio-timb.c b/drivers/media/radio/radio-timb.c
+index e6b55ed..04baafe 100644
+--- a/drivers/media/radio/radio-timb.c
++++ b/drivers/media/radio/radio-timb.c
+@@ -138,8 +138,10 @@ static int timbradio_probe(struct platform_device *pdev)
+ 		i2c_get_adapter(pdata->i2c_adapter), pdata->tuner, NULL);
+ 	tr->sd_dsp = v4l2_i2c_new_subdev_board(&tr->v4l2_dev,
+ 		i2c_get_adapter(pdata->i2c_adapter), pdata->dsp, NULL);
+-	if (tr->sd_tuner = NULL || tr->sd_dsp = NULL)
++	if (tr->sd_tuner = NULL || tr->sd_dsp = NULL) {
++		err = -ENODEV;
+ 		goto err_video_req;
++	}
+ 
+ 	tr->v4l2_dev.ctrl_handler = tr->sd_dsp->ctrl_handler;
+ 
+
