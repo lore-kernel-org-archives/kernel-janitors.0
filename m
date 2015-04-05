@@ -1,51 +1,62 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date: Tue, 07 Apr 2015 13:22:09 +0000
-Subject: Re: [patch] ima: cleanup ima_init_policy() a little
-Message-Id: <1428412929.6005.4.camel@dhcp-9-2-203-236.watson.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 11:38:30 +0000
+Subject: [PATCH 6/9] sound/pci/ctxfi/ctatc.c: fix error return code
+Message-Id: <1428233914-4503-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150407092211.GA24937@mwanda>
-In-Reply-To: <20150407092211.GA24937@mwanda>
+References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Tue, 2015-04-07 at 12:22 +0300, Dan Carpenter wrote: 
-> It's a bit easier to read this if we split it up into two for loops.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Agreed
+Initialize err before returning on failure, as done elsewhere in the
+function.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com> 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Mimi
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index d1eefb9..e86b58d 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -338,16 +338,12 @@ void __init ima_init_policy(void)
->  	appraise_entries = ima_use_appraise_tcb ?
->  			 ARRAY_SIZE(default_appraise_rules) : 0;
-> 
-> -	for (i = 0; i < measure_entries + appraise_entries; i++) {
-> -		if (i < measure_entries)
-> -			list_add_tail(&default_rules[i].list,
-> -				      &ima_default_rules);
-> -		else {
-> -			int j = i - measure_entries;
-> -
-> -			list_add_tail(&default_appraise_rules[j].list,
-> -				      &ima_default_rules);
-> -		}
-> +	for (i = 0; i < measure_entries; i++)
-> +		list_add_tail(&default_rules[i].list, &ima_default_rules);
-> +
-> +	for (i = 0; i < appraise_entries; i++) {
-> +		list_add_tail(&default_appraise_rules[i].list,
-> +			      &ima_default_rules);
->  	}
-> 
->  	ima_rules = &ima_default_rules;
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/ctxfi/ctatc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
+index 58b235c..a2f997a 100644
+--- a/sound/pci/ctxfi/ctatc.c
++++ b/sound/pci/ctxfi/ctatc.c
+@@ -1725,8 +1725,10 @@ int __devinit ct_atc_create(struct snd_card *card, struct pci_dev *pci,
+ 	atc_connect_resources(atc);
+ 
+ 	atc->timer = ct_timer_new(atc);
+-	if (!atc->timer)
++	if (!atc->timer) {
++		err = -ENOMEM;
+ 		goto error1;
++	}
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, atc, &ops);
+ 	if (err < 0)
 
