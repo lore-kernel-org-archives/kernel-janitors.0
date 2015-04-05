@@ -1,34 +1,65 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 05:33:56 +0000
-Subject: [PATCH 06/15]  hpfs:Remove explicit casts of kmem_cache_alloc() return value
-Message-Id: <1429767245-32453-7-git-send-email-firogm@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:25 +0000
+Subject: [PATCH 5/16] ufs: fix error return code
+Message-Id: <1428235596-4757-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Avoid a pointless kmem_cache_alloc() return value cast in
-fs/hpfs/super.c::hpfs_alloc_inode()
+Return a negative error code on failure.
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+This patch also changes the subsequent dev_err call to use err rather
+than recomputing PTR_ERR(hba->devfreq).  The format of the error value
+is changed from %ld to %d to reflect the type or err.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- fs/hpfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/ufs/ufshcd.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
-index 7cd00d3..ccace08 100644
---- a/fs/hpfs/super.c
-+++ b/fs/hpfs/super.c
-@@ -201,7 +201,7 @@ static struct kmem_cache * hpfs_inode_cachep;
- static struct inode *hpfs_alloc_inode(struct super_block *sb)
- {
- 	struct hpfs_inode_info *ei;
--	ei = (struct hpfs_inode_info *)kmem_cache_alloc(hpfs_inode_cachep, GFP_NOFS);
-+	ei = kmem_cache_alloc(hpfs_inode_cachep, GFP_NOFS);
- 	if (!ei)
- 		return NULL;
- 	ei->vfs_inode.i_version = 1;
--- 
-2.1.0
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 2aa85e3..8b802d1 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -5506,8 +5506,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 		hba->devfreq = devfreq_add_device(dev, &ufs_devfreq_profile,
+ 						   "simple_ondemand", NULL);
+ 		if (IS_ERR(hba->devfreq)) {
+-			dev_err(hba->dev, "Unable to register with devfreq %ld\n",
+-					PTR_ERR(hba->devfreq));
++			err = PTR_ERR(hba->devfreq);
++			dev_err(hba->dev, "Unable to register with devfreq %d\n",
++					err);
+ 			goto out_remove_scsi_host;
+ 		}
+ 		/* Suspend devfreq until the UFS device is detected */
 
