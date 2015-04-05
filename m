@@ -1,28 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Apr 2015 14:47:13 +0000
-Subject: Re: [patch] drm/i915: checking IS_ERR() instead of NULL
-Message-Id: <20150430144713.GD16501@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 11:38:29 +0000
+Subject: [PATCH 7/9] sound/pci/sis7019.c: fix error return code
+Message-Id: <1428233914-4503-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150430143050.GB22086@mwanda>
- <20150430144302.GB31838@nuc-i3427.alporthouse.com>
-In-Reply-To: <20150430144302.GB31838@nuc-i3427.alporthouse.com>
+References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 30, 2015 at 03:43:02PM +0100, Chris Wilson wrote:
-> On Thu, Apr 30, 2015 at 05:30:50PM +0300, Dan Carpenter wrote:
-> > We switched from calling i915_gem_alloc_context_obj() to calling
-> > i915_gem_alloc_object() so the error handling needs to be updated to
-> > check for NULL instead of IS_ERR().
-> 
-> I had a patch to change i915_gem_alloc_object() to report the correct
-> error rather than NULL - which can come in surprisingly handy at
-> times...
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-That also works, of course.  Send it.  :)
+Initialize rc before returning on failure, as done elsewhere in the
+function.
 
-regards,
-dan carpenter
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/sis7019.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/sis7019.c b/sound/pci/sis7019.c
+index 535efe2..51e4340 100644
+--- a/sound/pci/sis7019.c
++++ b/sound/pci/sis7019.c
+@@ -1377,8 +1377,9 @@ static int __devinit sis_chip_create(struct snd_card *card,
+ 	if (rc)
+ 		goto error_out_cleanup;
+ 
+-	if (request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
+-			sis)) {
++	rc = request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
++			 sis);
++	if (rc) {
+ 		dev_err(&pci->dev, "unable to allocate irq %d\n", sis->irq);
+ 		goto error_out_cleanup;
+ 	}
