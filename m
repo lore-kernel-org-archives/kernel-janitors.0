@@ -1,70 +1,79 @@
-From: kobello debor <barristerkobellodebor@gmail.com>
-Date: Thu, 23 Apr 2015 07:49:22 +0000
-Subject: FROM; Mr.BEN D DICKSON,\\\Hello my good friend
-Message-Id: <CADu4AgYV_R=f7D3OG-cCLLpDLZjgTj7r3Nx3Uvhd8zTRgQsRhA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 11:38:31 +0000
+Subject: [PATCH 5/9] sound/atmel/ac97c.c: fix error return code
+Message-Id: <1428233914-4503-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-Date: 23/04/2015
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Hello my good friend.
+In the first case, the second test of whether retval is negative is
+redundant.  It is dropped and the previous and subsequent tests are
+combined.
 
-How are you today? Hope all is well with you and your family?, You may not
-understand why this mail came to you.But if you do not remember me,  you
-might have receive an email from me in the past
+In the second case, add an initialization of retval on failure of ioremap.
 
-regarding a multi-million-dollar business proposal which we never
-concluded.I am  using this opportunity to inform you that this
-multi-million-dollar business has been concluded with the assistance of
-another partner from Thailand who financed the transaction to a logical
-conclusion.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-I thank you for your great effort to our unfinished  transfer of fund into
-your account due to one reason or the other best known to you.But I want
-to inform  you that I havesuccessfully transferred the fund out of my bank
-to my new partner's account in Thailand that was capable of
+// </smpl>
 
-assisting me in this great venture. Due to your effort, sincerity, courage
-and trust worthiness You  showed during the course of the transaction.I
-want to compensate you and show mygratitude to you with the sum of
-$1,200,000.00.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ sound/atmel/ac97c.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-I have left a certified international bank draft for you worth of
-$1,200,000.00 cashable anywhere in the  world. My dear friend I will  like
-you to contact my secretary  Mr. Foxton Richard, on his direct email
-address at:Mr; foxtonrichard@yandex.com for the
+diff --git a/sound/atmel/ac97c.c b/sound/atmel/ac97c.c
+index 3c8d3ba..9052aff 100644
+--- a/sound/atmel/ac97c.c
++++ b/sound/atmel/ac97c.c
+@@ -278,14 +278,9 @@ static int atmel_ac97c_capture_hw_params(struct snd_pcm_substream *substream,
+ 	if (retval < 0)
+ 		return retval;
+ 	/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
+-	if (cpu_is_at32ap7000()) {
+-		if (retval < 0)
+-			return retval;
+-		/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
+-		if (retval = 1)
+-			if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
+-				dw_dma_cyclic_free(chip->dma.rx_chan);
+-	}
++	if (cpu_is_at32ap7000() && retval = 1)
++		if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
++			dw_dma_cyclic_free(chip->dma.rx_chan);
+ 
+ 	/* Set restrictions to params. */
+ 	mutex_lock(&opened_mutex);
+@@ -980,6 +975,7 @@ static int __devinit atmel_ac97c_probe(struct platform_device *pdev)
+ 
+ 	if (!chip->regs) {
+ 		dev_dbg(&pdev->dev, "could not remap register memory\n");
++		retval = -ENOMEM;
+ 		goto err_ioremap;
+ 	}
+ 
 
-collection of your bank draft. I authorized her to release the Bank draft
-to you whenever you contact him regarding the draft. At the moment, I'm
-very busy here because of the investment projects, which I and the new
-partner are having at hand.
-
-Please I will like you to accept this with good  faith as this is from the
-bottom of my heart, Also  comply with Mr,Foxton Richard.directives so
-that she  will send the draft to youwithout any delay.
-
-
-
-CONTACT: Mr. Foxton Richard,My Secretary,
-
-Her email address: foxtonrichard@yandex.com
-
-Therefore, you should send her the followings:
-
-(1). Your full Name
-
-(2). Your addres where to deliver your cheque
-
-(3).Your telephone number/and fax
-
-(4). Your correct e-mail addres.
-
-
-Thanks and God bless you and your family. Hoping to hear from you after
-you received your cheque so that we can share the joy together.
-
-Mr;Ben,D,Dickson,
