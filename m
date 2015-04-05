@@ -1,40 +1,57 @@
-From: Tomas Henzl <thenzl@redhat.com>
-Date: Thu, 16 Apr 2015 12:22:15 +0000
-Subject: Re: [patch] csiostor: fix an error code in csio_hw_init()
-Message-Id: <552FA977.9070302@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:29 +0000
+Subject: [PATCH 9/16] HID: logitech-hidpp: fix error return code
+Message-Id: <1428235596-4757-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150414143219.GA30421@mwanda>
-In-Reply-To: <20150414143219.GA30421@mwanda>
+References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <JBottomley@odin.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Hariprasad Shenai <hariprasad@chelsio.com>, Praveen Madhavan <praveenm@chelsio.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/14/2015 04:32 PM, Dan Carpenter wrote:
-> We should return -ENOMEM if kzalloc() fails here instead of returning
-> success.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/scsi/csiostor/csio_hw.c b/drivers/scsi/csiostor/csio_hw.c
-> index 2e66f34..622bdab 100644
-> --- a/drivers/scsi/csiostor/csio_hw.c
-> +++ b/drivers/scsi/csiostor/csio_hw.c
-> @@ -3928,6 +3928,7 @@ csio_hw_init(struct csio_hw *hw)
->  
->  		evt_entry = kzalloc(sizeof(struct csio_evt_msg), GFP_KERNEL);
->  		if (!evt_entry) {
-> +			rv = -ENOMEM;
->  			csio_err(hw, "Failed to initialize eventq");
->  			goto err_evtq_cleanup;
->  		}
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Return a negative error code on failure.
 
-Reviewed-by: Tomas Henzl <thenzl@redhat.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Tomas
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/hid/hid-logitech-hidpp.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index e77658c..ce9819f 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -1210,6 +1210,7 @@ static int hidpp_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	connected = hidpp_is_connected(hidpp);
+ 	if (id->group != HID_GROUP_LOGITECH_DJ_DEVICE) {
+ 		if (!connected) {
++			ret = -ENODEV;
+ 			hid_err(hdev, "Device not connected");
+ 			hid_device_io_stop(hdev);
+ 			goto hid_parse_fail;
 
