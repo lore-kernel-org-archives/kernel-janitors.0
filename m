@@ -1,24 +1,56 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sun, 26 Apr 2015 06:50:39 +0000
-Subject: Re: [PATCH] crypto: sha1-mb - Remove pointless cast
-Message-Id: <20150426065039.GA13536@gondor.apana.org.au>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:34 +0000
+Subject: [PATCH 14/16] soc: ti: knav_qmss_queue: fix error return code
+Message-Id: <1428235596-4757-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1429783930-7318-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1429783930-7318-1-git-send-email-firogm@gmail.com>
+References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Firo Yang <firogm@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, tim.c.chen@linux.intel.com, smueller@chronox.de, minipli@googlemail.com, dan.carpenter@oracle.com, ameenali023@gmail.com, fengguang.wu@intel.com, linux-crypto@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Apr 23, 2015 at 06:12:10PM +0800, Firo Yang wrote:
-> Since kzalloc() returns a void pointer, we don't need to cast the
-> return value in arch/x86/crypto/sha-mb/sha1_mb.c::sha1_mb_mod_init().
-> 
-> Signed-off-by: Firo Yang <firogm@gmail.com>
+Return a negative error code on failure.
 
-Applied.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/soc/ti/knav_qmss_queue.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index 6d8646d..822ead8 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -1768,6 +1768,7 @@ static int knav_queue_probe(struct platform_device *pdev)
+ 	regions =  of_get_child_by_name(node, "descriptor-regions");
+ 	if (!regions) {
+ 		dev_err(dev, "descriptor-regions not specified\n");
++		ret = -ENODEV;
+ 		goto err;
+ 	}
+ 	ret = knav_queue_setup_regions(kdev, regions);
+
