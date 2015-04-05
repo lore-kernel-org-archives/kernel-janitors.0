@@ -1,47 +1,59 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 23 Apr 2015 05:48:50 +0000
-Subject: Re: [PATCH 14/15] arm: Remove pointless kmalloc() return value cast in kvm mmu.
-Message-Id: <alpine.DEB.2.10.1504230748440.2812@hadrien>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 11:38:28 +0000
+Subject: [PATCH 8/9] sound/pci/rme9652/hdspm.c: fix error return code
+Message-Id: <1428233914-4503-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1429767245-32453-15-git-send-email-firogm@gmail.com>
-In-Reply-To: <1429767245-32453-15-git-send-email-firogm@gmail.com>
+References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Thu, 23 Apr 2015, Firo Yang wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> No need to cast the void pointer returned by kmalloc() in
-> arch/arm/kvm/mmu.c::kvm_alloc_stage2_pgd().
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-arm in the subject line seems much too generic for this file.  Looking at
-git log --oneline arch/arm/kvm/mmu.c suggests that ARM: KVM: is popular.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-julia
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
->
-> Signed-off-by: Firo Yang <firogm@gmail.com>
-> ---
->  arch/arm/kvm/mmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/kvm/mmu.c b/arch/arm/kvm/mmu.c
-> index 1d5accb..ce0bce4 100644
-> --- a/arch/arm/kvm/mmu.c
-> +++ b/arch/arm/kvm/mmu.c
-> @@ -691,8 +691,8 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
->  		 * work.  This is not used by the hardware and we have no
->  		 * alignment requirement for this allocation.
->  		 */
-> -		pgd = (pgd_t *)kmalloc(PTRS_PER_S2_PGD * sizeof(pgd_t),
-> -				       GFP_KERNEL | __GFP_ZERO);
-> +		pgd = kmalloc(PTRS_PER_S2_PGD * sizeof(pgd_t),
-> +				GFP_KERNEL | __GFP_ZERO);
->
->  		if (!pgd) {
->  			kvm_free_hwpgd(hwpgd);
-> --
-> 2.1.0
->
->
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/rme9652/hdspm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
+index b8ac871..b12308b 100644
+--- a/sound/pci/rme9652/hdspm.c
++++ b/sound/pci/rme9652/hdspm.c
+@@ -6585,7 +6585,7 @@ static int __devinit snd_hdspm_create(struct snd_card *card,
+ 		snd_printk(KERN_ERR "HDSPM: "
+ 				"unable to kmalloc Mixer memory of %d Bytes\n",
+ 				(int)sizeof(struct hdspm_mixer));
+-		return err;
++		return -ENOMEM;
+ 	}
+ 
+ 	hdspm->port_names_in = NULL;
+
