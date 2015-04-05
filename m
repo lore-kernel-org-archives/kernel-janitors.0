@@ -1,93 +1,57 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 05 Apr 2015 16:06:37 +0000
-Subject: Re: [alsa-devel] [PATCH 13/16] ALSA: au1x00: fix error return code
-Message-Id: <s5h8ue6y2ya.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 12:06:23 +0000
+Subject: [PATCH 4/16] [media] as102: fix error return code
+Message-Id: <1428235596-4757-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1428235596-4757-14-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428235596-4757-14-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-At Sun,  5 Apr 2015 14:06:33 +0200,
-Julia Lawall wrote:
-> 
-> Return a negative error code on failure.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier ret; expression e1,e2;
-> @@
-> (
-> if (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Return a negative error code on failure.
 
-Applied, thanks.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-Takashi
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> 
-> ---
->  sound/mips/au1x00.c |   12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/mips/au1x00.c b/sound/mips/au1x00.c
-> index fbcaa54..1e30e84 100644
-> --- a/sound/mips/au1x00.c
-> +++ b/sound/mips/au1x00.c
-> @@ -633,19 +633,25 @@ static int au1000_ac97_probe(struct platform_device *pdev)
->  
->  	au1000->stream[PLAYBACK] = kmalloc(sizeof(struct audio_stream),
->  					   GFP_KERNEL);
-> -	if (!au1000->stream[PLAYBACK])
-> +	if (!au1000->stream[PLAYBACK]) {
-> +		err = -ENOMEM;
->  		goto out;
-> +	}
->  	au1000->stream[PLAYBACK]->dma = -1;
->  
->  	au1000->stream[CAPTURE] = kmalloc(sizeof(struct audio_stream),
->  					  GFP_KERNEL);
-> -	if (!au1000->stream[CAPTURE])
-> +	if (!au1000->stream[CAPTURE]) {
-> +		err = -ENOMEM;
->  		goto out;
-> +	}
->  	au1000->stream[CAPTURE]->dma = -1;
->  
->  	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!r)
-> +	if (!r) {
-> +		err = -ENODEV;
->  		goto out;
-> +	}
->  
->  	err = -EBUSY;
->  	au1000->ac97_res_port = request_mem_region(r->start, resource_size(r),
-> 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
-> 
+---
+ drivers/media/usb/as102/as102_drv.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/usb/as102/as102_drv.c b/drivers/media/usb/as102/as102_drv.c
+index 8be1474..9dd7c7c 100644
+--- a/drivers/media/usb/as102/as102_drv.c
++++ b/drivers/media/usb/as102/as102_drv.c
+@@ -337,6 +337,7 @@ int as102_dvb_register(struct as102_dev_t *as102_dev)
+ 				       &as102_dev->bus_adap,
+ 				       as102_dev->elna_cfg);
+ 	if (!as102_dev->dvb_fe) {
++		ret = -ENODEV;
+ 		dev_err(dev, "%s: as102_attach() failed: %d",
+ 		    __func__, ret);
+ 		goto efereg;
+
