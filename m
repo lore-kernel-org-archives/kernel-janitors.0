@@ -1,32 +1,59 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Wed, 22 Apr 2015 16:35:16 +0000
-Subject: [PATCH 02/16] Clean up unnecessary void* pointer cast.
-Message-Id: <1429720530-20044-2-git-send-email-firogm@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 11:38:34 +0000
+Subject: [PATCH 4/9] sound/soc/omap/am3517evm.c: fix error return code
+Message-Id: <1428233914-4503-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-omap@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+It was forgotten to initialize ret to the result of calling
+snd_soc_dai_set_sysclk, unlike at the other calls in the same function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- fs/reiserfs/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/omap/am3517evm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 68b5f18..36177d5 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -588,8 +588,7 @@ static struct kmem_cache *reiserfs_inode_cachep;
- static struct inode *reiserfs_alloc_inode(struct super_block *sb)
- {
- 	struct reiserfs_inode_info *ei;
--	ei = (struct reiserfs_inode_info *)
--	    kmem_cache_alloc(reiserfs_inode_cachep, GFP_KERNEL);
-+	ei = kmem_cache_alloc(reiserfs_inode_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
- 	atomic_set(&ei->openers, 0);
--- 
-2.1.0
+diff --git a/sound/soc/omap/am3517evm.c b/sound/soc/omap/am3517evm.c
+index 009533a..df65f98 100644
+--- a/sound/soc/omap/am3517evm.c
++++ b/sound/soc/omap/am3517evm.c
+@@ -59,7 +59,7 @@ static int am3517evm_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 	}
+ 
+-	snd_soc_dai_set_sysclk(cpu_dai, OMAP_MCBSP_FSR_SRC_FSX, 0,
++	ret = snd_soc_dai_set_sysclk(cpu_dai, OMAP_MCBSP_FSR_SRC_FSX, 0,
+ 				SND_SOC_CLOCK_IN);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "can't set CPU system clock OMAP_MCBSP_FSR_SRC_FSX\n");
 
