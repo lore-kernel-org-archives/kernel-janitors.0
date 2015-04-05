@@ -1,45 +1,112 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Apr 2015 16:51:32 +0000
-Subject: Re: [PATCH 01/16] Clean up unnecessary void* pointer cast.
-Message-Id: <20150422165132.GS16501@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Apr 2015 11:38:25 +0000
+Subject: [PATCH 0/10] fix error return code
+Message-Id: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1429720530-20044-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1429720530-20044-1-git-send-email-firogm@gmail.com>
+References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-The subject need to be written by hand and they need to be unique.
+These patches fix cases where the return code appears to be unintentially
+nonnegative.
 
-git log --oneline driver/file.c
-Copy and paste the patch prefix for each email you send.
+The complete semantic match that finds the problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-On Thu, Apr 23, 2015 at 12:35:15AM +0800, Firo Yang wrote:
-> Signed-off-by: Firo Yang <firogm@gmail.com>
-> ---
->  sound/pci/emu10k1/emufx.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
-> index 56fc47b..8a39a6f 100644
-> --- a/sound/pci/emu10k1/emufx.c
-> +++ b/sound/pci/emu10k1/emufx.c
-> @@ -1186,8 +1186,8 @@ static int _snd_emu10k1_audigy_init_efx(struct snd_emu10k1 *emu)
->  	if (!icode)
->  		return err;
->  
-> -	icode->gpr_map = (u_int32_t __user *) kcalloc(512 + 256 + 256 + 2 * 1024,
-> -						      sizeof(u_int32_t), GFP_KERNEL);
+// <smpl>
+@ok exists@
+identifier f,ret,i;
+expression e;
+constant c;
+@@
 
-This cast is special.  It's a Sparse thing.  Since I know you have
-Smatch installed you can do
+f(...) {
+<+...
+(
+return -c@i;
+|
+ret = -c@i;
+... when != ret = e
+return ret;
+|
+if (ret < 0) { ... return ret; }
+)
+...+> }
 
-	~/path/to/smatch/smatch_scripts/kchecker --sparse sound/pci/emu10k1/emufx.c
+@r exists@
+identifier ret,l,ok.f;
+expression e1,e2,e3;
+statement S;
+position p1,p2,p3;
+@@
 
-I'm not positive if you need a __force in there?
+f(...) {
+... when any
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+(
+ if (<+... ret = e3 ...+>) S
+|
+ if (<+... &ret ...+>) S
+|
+if@p2(...)
+ {
+  ... when != ret = e2
+      when forall
+ return@p3 ret;
+}
+)
+... when any
+}
 
-Anyway, don't remove this.
+@bad exists@
+position r.p1,r.p2;
+statement S1,S2;
+identifier r.ret;
+expression e1;
+@@
 
-regards,
-dan carpenter
+(
+if@p1 (\(ret < 0\|ret != 0\)) S1
+|
+ret@p1 = 0
+)
+... when any
+ret = e1
+... when any
+if@p2(...) S2
+
+@bad2@
+position r.p1,r.p2;
+identifier r.ret;
+expression e1;
+statement S2;
+@@
+
+ret@p1 = 0
+... when != if (...) { ... ret = e1 ... return ret; }
+    when any
+if@p2(...) S2
+
+
+@script:python depends on !bad && !bad2@
+p1 << r.p1;
+p2 << r.p2;
+p3 << r.p3;
+@@
+
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+cocci.print_secs("",p3)
+// </smpl>
+
