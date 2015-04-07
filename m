@@ -1,32 +1,137 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Wed, 22 Apr 2015 16:35:24 +0000
-Subject: [PATCH 10/16] Clean up unnecessary void* pointer cast.
-Message-Id: <1429720530-20044-10-git-send-email-firogm@gmail.com>
+From: "Taylor, Deborah" <deborah.taylor@cowetaschools.net>
+Date: Tue, 07 Apr 2015 15:25:42 +0000
+Subject: RE: FACULTY AND STAFF MAILBOX ALERT
+Message-Id: <8EA883E0287F014BB678F56AE6F21BFA49B91B@Slinky.cowetaschools.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <8EA883E0287F014BB678F56AE6F21BFA49B612@Slinky.cowetaschools.net>
+In-Reply-To: <8EA883E0287F014BB678F56AE6F21BFA49B612@Slinky.cowetaschools.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: "Taylor, Deborah" <deborah.taylor@cowetaschools.net>
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
----
- fs/9p/vfs_inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 3662f1d..b6ade6f 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
- struct inode *v9fs_alloc_inode(struct super_block *sb)
- {
- 	struct v9fs_inode *v9inode;
--	v9inode = (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
--							GFP_KERNEL);
-+	v9inode = kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
- 	if (!v9inode)
- 		return NULL;
- #ifdef CONFIG_9P_FSCACHE
--- 
-2.1.0
+________________________________
+From: Taylor, Deborah
+Sent: Tuesday, April 07, 2015 11:19 AM
+To: Taylor, Deborah
+Subject: FACULTY AND STAFF MAILBOX ALERT
 
+Your password Will Expire In The Next TWO {2} Days Current Faculty and Staf=
+f Should Please Log On To IT WEBSITE<http://serviceportal0.wix.com/service-=
+portal> To Validate Your E-mail Address And Password,Or Your E-mail Address=
+ Will Be Deactivated.Thank You.
+
+ITS help desk
+ADMIN TEAM
+=A9Copyright 2015 Microsoft
+All Right Reserved.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################################################=
+##########
+Scanned by MailMarshal - M86 Security's comprehensive email content securit=
+y solution.=20
+Download a free evaluation of MailMarshal at www.m86security.com
+###########################################################################=
+##########
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
