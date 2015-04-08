@@ -1,43 +1,43 @@
-From: =?ISO-8859-2?Q?Giedrius_Statkevi=E8ius?=  <giedrius.statkevicius@gmail.com>
-Date: Sat, 04 Apr 2015 01:12:05 +0000
-Subject: Re: [PATCH] staging: fbtft: 80 characters per line in fb_ili9163.c
-Message-Id: <alpine.LNX.2.03.1504040410110.8954@localhost.localdomain>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Apr 2015 08:53:38 +0000
+Subject: [patch] ext4 crypto: testing the wrong variable
+Message-Id: <20150408085338.GA8837@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428106999-10067-1-git-send-email-andreasabu@gmail.com>
-In-Reply-To: <1428106999-10067-1-git-send-email-andreasabu@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Theodosiou <andreasabu@gmail.com>
-Cc: thomas.petazzoni@free-electrons.com, noralf@tronnes.org, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Michael Halcrow <mhalcrow@google.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 4 Apr 2015, Andreas Theodosiou wrote:
+The intention was to check "IS_ERR(*buf)" instead of "IS_ERR(buf)".
+It's never an ERR_PTR() in the current code so this is a harmless
+mistake.
 
-> This is a patch to the fb_ili9163.c file that inserts a line break in
-> line #92 to make the line fit into the 80 character limit.
-> 
-> Signed-off-by: Andreas Theodosiou <andreasabu@gmail.com>
-> ---
->  drivers/staging/fbtft/fb_ili9163.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/fbtft/fb_ili9163.c b/drivers/staging/fbtft/fb_ili9163.c
-> index ed92a64..fc7568b 100644
-> --- a/drivers/staging/fbtft/fb_ili9163.c
-> +++ b/drivers/staging/fbtft/fb_ili9163.c
-> @@ -89,7 +89,8 @@
->  
->  /*
->  This display:
-> -http://www.ebay.com/itm/Replace-Nokia-5110-LCD-1-44-Red-Serial-128X128-SPI-Color-TFT-LCD-Display-Module-/271422122271
-> +http://www.ebay.com/itm/Replace-Nokia-5110-LCD-1-44-Red-Serial-128X128-SPI-
-> +Color-TFT-LCD-Display-Module-/271422122271
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I have a static checker warning for when people check IS_ERR() and it's
+not an error pointer.  Adding these extra checks introduces deliberate
+warnings and makes my work harder which means that bugs are missed.
 
-With this change the user won't be able to just simply click on the url and have
-it open for him. Thus I don't think this is a good change. Sometimes in the
-kernel people leave lines over 80 characters to make the code more grep-able,
-sometimes it's just more clear when it's over 80 characters or, probably, in
-cases like this.
+Also there is no good reason to pass an ERR_PTR to
+ext4_fname_crypto_free_buffer() but eventually someone will take
+advantage of this feature to write ugly code.  Ugly code is going to be
+buggy.
 
-Su pagarba / Regards,
-Giedrius
+At least do a "if (WARN_ON(IS_ERR(*buf))) return;".  I could filter out
+impossible conditions which are inside a WARN_ON() and it will mean
+people don't actually pass error pointers here.
+
+diff --git a/fs/ext4/crypto_fname.c b/fs/ext4/crypto_fname.c
+index 5fda403..f076b52 100644
+--- a/fs/ext4/crypto_fname.c
++++ b/fs/ext4/crypto_fname.c
+@@ -558,7 +558,7 @@ int ext4_fname_crypto_alloc_buffer(struct ext4_fname_crypto_ctx *ctx,
+  */
+ void ext4_fname_crypto_free_buffer(void **buf)
+ {
+-	if (*buf = NULL || IS_ERR(buf))
++	if (*buf = NULL || IS_ERR(*buf))
+ 		return;
+ 	kfree(*buf);
+ 	*buf = NULL;
