@@ -1,31 +1,24 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Wed, 22 Apr 2015 16:35:29 +0000
-Subject: [PATCH 15/16] Clean up unnecessary void* pointer cast.
-Message-Id: <1429720530-20044-15-git-send-email-firogm@gmail.com>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Thu, 09 Apr 2015 11:46:26 +0000
+Subject: [PATCH 0/2] pci to dma
+Message-Id: <1428579988-10167-1-git-send-email-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
+The first patch removes deprecated use of the pci api.
+
+The second patch depends on the first, it replaces uses of GFP_ATOMIC
+with GFP_KERNEL. I could not find evidence that the concerned functions
+were called from a context were sleep is not allowed.
+
+
 ---
- arch/x86/crypto/sha-mb/sha1_mb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/crypto/sha-mb/sha1_mb.c b/arch/x86/crypto/sha-mb/sha1_mb.c
-index e510b1c..77357fb 100644
---- a/arch/x86/crypto/sha-mb/sha1_mb.c
-+++ b/arch/x86/crypto/sha-mb/sha1_mb.c
-@@ -885,7 +885,7 @@ static int __init sha1_mb_mod_init(void)
- 		INIT_DELAYED_WORK(&cpu_state->flush, mcryptd_flusher);
- 		cpu_state->cpu = cpu;
- 		cpu_state->alg_state = &sha1_mb_alg_state;
--		cpu_state->mgr = (struct sha1_ctx_mgr *) kzalloc(sizeof(struct sha1_ctx_mgr), GFP_KERNEL);
-+		cpu_state->mgr = kzalloc(sizeof(struct sha1_ctx_mgr), GFP_KERNEL);
- 		if (!cpu_state->mgr)
- 			goto err2;
- 		sha1_ctx_mgr_init(cpu_state->mgr);
--- 
-2.1.0
+ cs5520.c    |    2 +-
+ pmac.c      |    7 +++----
+ setup-pci.c |    2 +-
+ sgiioc4.c   |    6 +++---
+ 4 files changed, 8 insertions(+), 9 deletions(-)
 
