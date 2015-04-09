@@ -1,71 +1,51 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:13:10 +0000
-Subject: Re: [PATCH 6/9] sound/pci/ctxfi/ctatc.c: fix error return code
-Message-Id: <alpine.DEB.2.02.1504051413070.2038@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Apr 2015 09:07:12 +0000
+Subject: [patch 2/2] leds: netxbig: clean up a data type issue
+Message-Id: <20150409090712.GF17605@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr> <1428233914-4503-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428233914-4503-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Please ignore. Wrong patch set.
+This driver is pretty hardware specific so it's unlikely that we're
+going to be using it on 64 big endian systems.  Still, the current code
+causes a static checker warning so we may as well change the type from
+"unsigned long" to "u32" and remove the casting.
 
-On Sun, 5 Apr 2015, Julia Lawall wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Initialize err before returning on failure, as done elsewhere in the
-> function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  sound/pci/ctxfi/ctatc.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
-> index 58b235c..a2f997a 100644
-> --- a/sound/pci/ctxfi/ctatc.c
-> +++ b/sound/pci/ctxfi/ctatc.c
-> @@ -1725,8 +1725,10 @@ int __devinit ct_atc_create(struct snd_card *card, struct pci_dev *pci,
->  	atc_connect_resources(atc);
->  
->  	atc->timer = ct_timer_new(atc);
-> -	if (!atc->timer)
-> +	if (!atc->timer) {
-> +		err = -ENOMEM;
->  		goto error1;
-> +	}
->  
->  	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, atc, &ops);
->  	if (err < 0)
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/include/linux/platform_data/leds-kirkwood-netxbig.h b/include/linux/platform_data/leds-kirkwood-netxbig.h
+index d2be19a..bbd1d99 100644
+--- a/include/linux/platform_data/leds-kirkwood-netxbig.h
++++ b/include/linux/platform_data/leds-kirkwood-netxbig.h
+@@ -29,9 +29,9 @@ enum netxbig_led_mode {
+ #define NETXBIG_LED_INVALID_MODE NETXBIG_LED_MODE_NUM
+ 
+ struct netxbig_led_timer {
+-	unsigned long		delay_on;
+-	unsigned long		delay_off;
+-	enum netxbig_led_mode	mode;
++	u32 delay_on;
++	u32 delay_off;
++	enum netxbig_led_mode mode;
+ };
+ 
+ struct netxbig_led {
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index d0b743c..3da87be 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -447,9 +447,9 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
+ 			of_property_read_u32_index(np, "timers", 3 * i,
+ 						&timers[i].mode);
+ 			of_property_read_u32_index(np, "timers", 3 * i + 1,
+-						(u32 *) &timers[i].delay_on);
++						   &timers[i].delay_on);
+ 			of_property_read_u32_index(np, "timers", 3 * i + 2,
+-						(u32 *) &timers[i].delay_off);
++						   &timers[i].delay_off);
+ 		}
+ 		pdata->timer = timers;
+ 		pdata->num_timer = num_timers;
