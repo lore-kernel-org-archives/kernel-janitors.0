@@ -1,32 +1,67 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Wed, 22 Apr 2015 16:35:28 +0000
-Subject: [PATCH 14/16] Clean up unnecessary void* pointer cast.
-Message-Id: <1429720530-20044-14-git-send-email-firogm@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Apr 2015 09:03:31 +0000
+Subject: [patch 2/2] dmaengine: xgene: devm_ioremap() returns NULL on error
+Message-Id: <20150409090331.GC17605@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
----
- drivers/block/cciss_scsi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The code here is checking for IS_ERR() but devm_ioremap() returns NULL
+on error and not an error pointer.
 
-diff --git a/drivers/block/cciss_scsi.c b/drivers/block/cciss_scsi.c
-index ecd845c..6e17d47 100644
---- a/drivers/block/cciss_scsi.c
-+++ b/drivers/block/cciss_scsi.c
-@@ -704,8 +704,7 @@ cciss_scsi_setup(ctlr_info_t *h)
- 	struct cciss_scsi_adapter_data_t * shba;
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/dma/xgene-dma.c b/drivers/dma/xgene-dma.c
+index 06d4042..8a36946 100755
+--- a/drivers/dma/xgene-dma.c
++++ b/drivers/dma/xgene-dma.c
+@@ -1895,9 +1895,9 @@ static int xgene_dma_get_resources(struct platform_device *pdev,
  
- 	ccissscsi[h->ctlr].ndevices = 0;
--	shba = (struct cciss_scsi_adapter_data_t *)
--		kmalloc(sizeof(*shba), GFP_KERNEL);	
-+	shba = kmalloc(sizeof(*shba), GFP_KERNEL);
- 	if (shba = NULL)
- 		return;
- 	shba->scsi_host = NULL;
--- 
-2.1.0
-
+ 	pdma->csr_dma = devm_ioremap(&pdev->dev, res->start,
+ 				     resource_size(res));
+-	if (IS_ERR(pdma->csr_dma)) {
++	if (!pdma->csr_dma) {
+ 		dev_err(&pdev->dev, "Failed to ioremap csr region");
+-		return PTR_ERR(pdma->csr_dma);
++		return -ENOMEM;
+ 	}
+ 
+ 	/* Get DMA ring csr region */
+@@ -1909,9 +1909,9 @@ static int xgene_dma_get_resources(struct platform_device *pdev,
+ 
+ 	pdma->csr_ring =  devm_ioremap(&pdev->dev, res->start,
+ 				       resource_size(res));
+-	if (IS_ERR(pdma->csr_ring)) {
++	if (!pdma->csr_ring) {
+ 		dev_err(&pdev->dev, "Failed to ioremap ring csr region");
+-		return PTR_ERR(pdma->csr_ring);
++		return -ENOMEM;
+ 	}
+ 
+ 	/* Get DMA ring cmd csr region */
+@@ -1923,9 +1923,9 @@ static int xgene_dma_get_resources(struct platform_device *pdev,
+ 
+ 	pdma->csr_ring_cmd = devm_ioremap(&pdev->dev, res->start,
+ 					  resource_size(res));
+-	if (IS_ERR(pdma->csr_ring_cmd)) {
++	if (!pdma->csr_ring_cmd) {
+ 		dev_err(&pdev->dev, "Failed to ioremap ring cmd csr region");
+-		return PTR_ERR(pdma->csr_ring_cmd);
++		return -ENOMEM;
+ 	}
+ 
+ 	/* Get efuse csr region */
+@@ -1937,9 +1937,9 @@ static int xgene_dma_get_resources(struct platform_device *pdev,
+ 
+ 	pdma->csr_efuse = devm_ioremap(&pdev->dev, res->start,
+ 				       resource_size(res));
+-	if (IS_ERR(pdma->csr_efuse)) {
++	if (!pdma->csr_efuse) {
+ 		dev_err(&pdev->dev, "Failed to ioremap efuse csr region");
+-		return PTR_ERR(pdma->csr_efuse);
++		return -ENOMEM;
+ 	}
+ 
+ 	/* Get DMA error interrupt */
