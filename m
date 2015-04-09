@@ -1,43 +1,46 @@
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Date: Mon, 06 Apr 2015 02:03:15 +0000
-Subject: Re: [PATCH 14/16] soc: ti: knav_qmss_queue: fix error return code
-Message-Id: <5521E963.5080903@oracle.com>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Thu, 09 Apr 2015 11:46:28 +0000
+Subject: [PATCH 2/2] ide: replace GFP_ATOMIC by GFP_KERNEL
+Message-Id: <1428579988-10167-3-git-send-email-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
- <1428235596-4757-15-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428235596-4757-15-git-send-email-Julia.Lawall@lip6.fr>
+References: <1428579988-10167-1-git-send-email-lambert.quentin@gmail.com>
+In-Reply-To: <1428579988-10167-1-git-send-email-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "David S. Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-On 4/5/15 5:06 AM, Julia Lawall wrote:
-> Return a negative error code on failure.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> identifier ret; expression e1,e2;
-> @@
-> (
-> if (\(ret < 0\|ret != 0\))
->   { ... return ret; }
-> |
-> ret = 0
-> )
-> ... when != ret = e1
->      when != &ret
-> *if(...)
-> {
->    ... when != ret = e2
->        when forall
->   return ret;
-> }
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Both pmac_ide_init_dma and ide_dma_sgiioc4 are stored in the init_dma field of
+an ide_port_info structure. This field seems to only be called from contexts
+where sleep is allowed. Therefore, this patch replaces uses of GFP_ATOMIC by
+GFP_KERNEL.
+
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/ide/pmac.c    |    2 +-
+ drivers/ide/sgiioc4.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/ide/pmac.c
++++ b/drivers/ide/pmac.c
+@@ -1691,7 +1691,7 @@ static int pmac_ide_init_dma(ide_hwif_t
+ 	 */
+ 	pmif->dma_table_cpu = dma_alloc_coherent(&dev->dev,
+ 		(MAX_DCMDS + 2) * sizeof(struct dbdma_cmd),
+-		&hwif->dmatable_dma, GFP_ATOMIC);
++		&hwif->dmatable_dma, GFP_KERNEL);
+ 	if (pmif->dma_table_cpu = NULL) {
+ 		printk(KERN_ERR "%s: unable to allocate DMA command list\n",
+ 		       hwif->name);
+--- a/drivers/ide/sgiioc4.c
++++ b/drivers/ide/sgiioc4.c
+@@ -335,7 +335,7 @@ static int ide_dma_sgiioc4(ide_hwif_t *h
+ 		goto dma_pci_alloc_failure;
+ 
+ 	pad = dma_alloc_coherent(&dev->dev, IOC4_IDE_CACHELINE_SIZE,
+-				   (dma_addr_t *)&hwif->extra_base, GFP_ATOMIC);
++				   (dma_addr_t *)&hwif->extra_base, GFP_KERNEL);
+ 	if (pad) {
+ 		ide_set_hwifdata(hwif, pad);
+ 		return 0;
