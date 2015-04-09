@@ -1,31 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Apr 2015 09:02:39 +0000
-Subject: [patch] ASoC: Intel: do cast earlier in sst_cdev_tstamp()
-Message-Id: <20150409090239.GA17605@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 09 Apr 2015 10:00:54 +0000
+Subject: Re: [patch] ASoC: Intel: do cast earlier in sst_cdev_tstamp()
+Message-Id: <20150409100054.GQ6023@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="KAj9AL6usbKsxRUD"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+References: <20150409090239.GA17605@mwanda>
+In-Reply-To: <20150409090239.GA17605@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Jie Yang <yang.jie@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker complains about these because it looks like the
-multiply can overflow and then we cast to a larger data type.  I don't
-think this is a problem, but it's also harmless to do the cast earlier
-so let's silence the static checker warning.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--KAj9AL6usbKsxRUD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/sound/soc/intel/atom/sst/sst_drv_interface.c b/sound/soc/intel/atom/sst/sst_drv_interface.c
-index 718838b..7b50a9d 100644
---- a/sound/soc/intel/atom/sst/sst_drv_interface.c
-+++ b/sound/soc/intel/atom/sst/sst_drv_interface.c
-@@ -381,7 +381,7 @@ static int sst_cdev_tstamp(struct device *dev, unsigned int str_id,
- 	tstamp->copied_total = fw_tstamp.ring_buffer_counter;
- 	tstamp->pcm_frames = fw_tstamp.frames_decoded;
- 	tstamp->pcm_io_frames = div_u64(fw_tstamp.hardware_counter,
--			(u64)((stream->num_ch) * SST_GET_BYTES_PER_SAMPLE(24)));
-+			(u64)stream->num_ch * SST_GET_BYTES_PER_SAMPLE(24));
- 	tstamp->sampling_rate = fw_tstamp.sampling_frequency;
- 
- 	dev_dbg(dev, "PCM  = %u\n", tstamp->pcm_io_frames);
+On Thu, Apr 09, 2015 at 12:02:39PM +0300, Dan Carpenter wrote:
+
+> My static checker complains about these because it looks like the
+> multiply can overflow and then we cast to a larger data type.  I don't
+> think this is a problem, but it's also harmless to do the cast earlier
+> so let's silence the static checker warning.
+
+Applied, thanks.
+
+--KAj9AL6usbKsxRUD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVJk3VAAoJECTWi3JdVIfQ0uIH/RXFJFHg+/YLdbQnm2Raf32J
+Fz1A7mMfiXBY2lkurdXR4by0+K8844zrzWYTqlPgzAqZn2/IIL5wUlaLVLKX+4kt
+s/DbcDGCMX40/1bKom3Pil2V7Ug3vdS95wZX99A5zwsm1nw0T0jMDnIximYrcaTA
+boglIHGN0yZ0Uuje3ACJXJTc2lkuPjmzn2OBn+b0cXeCWq+Ddou8Egpi07xYqx0U
+gxaI5X1N/0YjHNluvEShN4pFA+AbFpSOPaGE3dqTB237/O3mZsq3slYohJ/BcAeJ
+Bvrt8uSSpSFRumuJrz8oYfLCg6eXDrKCA//sO9bOWqdnkNr7NV/5oblk4l+p1uo=
+=5scd
+-----END PGP SIGNATURE-----
+
+--KAj9AL6usbKsxRUD--
