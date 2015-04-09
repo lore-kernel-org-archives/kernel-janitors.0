@@ -1,64 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:06:31 +0000
-Subject: [PATCH 11/16] drm/msm/dp: fix error return code
-Message-Id: <1428235596-4757-12-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Apr 2015 09:05:46 +0000
+Subject: [patch 1/2] leds: netxbig: off by one in netxbig_leds_get_of_pdata()
+Message-Id: <20150409090546.GE17605@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Return a negative error code on failure.
+The mode_val[] array has NETXBIG_LED_MODE_NUM (5) elements so the ">"
+here should be ">=".
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/gpu/drm/msm/edp/edp_ctrl.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/edp/edp_ctrl.c b/drivers/gpu/drm/msm/edp/edp_ctrl.c
-index 0ec5abd..29e52d7 100644
---- a/drivers/gpu/drm/msm/edp/edp_ctrl.c
-+++ b/drivers/gpu/drm/msm/edp/edp_ctrl.c
-@@ -1149,12 +1149,13 @@ int msm_edp_ctrl_init(struct msm_edp *edp)
- 	ctrl->aux = msm_edp_aux_init(dev, ctrl->base, &ctrl->drm_aux);
- 	if (!ctrl->aux || !ctrl->drm_aux) {
- 		pr_err("%s:failed to init aux\n", __func__);
--		return ret;
-+		return -ENOMEM;
- 	}
- 
- 	ctrl->phy = msm_edp_phy_init(dev, ctrl->base);
- 	if (!ctrl->phy) {
- 		pr_err("%s:failed to init phy\n", __func__);
-+		ret = -ENOMEM;
- 		goto err_destory_aux;
- 	}
- 
-
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index 028686f2..d0b743c 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -512,7 +512,7 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
+ 						   "mode-val", 2 * i, &mode);
+ 			of_property_read_u32_index(child,
+ 						   "mode-val", 2 * i + 1, &val);
+-			if (mode > NETXBIG_LED_MODE_NUM)
++			if (mode >= NETXBIG_LED_MODE_NUM)
+ 				return -EINVAL;
+ 			mode_val[mode] = val;
+ 		}
