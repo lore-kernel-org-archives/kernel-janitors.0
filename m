@@ -1,48 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 24 Apr 2015 13:00:29 +0000
-Subject: Re: [PATCH] fs/compat: remove redundant 'less than zero' check
-Message-Id: <20150424130029.GD16501@mwanda>
+From: DingXiang <dingxiang@huawei.com>
+Date: Fri, 10 Apr 2015 08:45:58 +0000
+Subject: [PATCH] Bluetooth:deltele some unuseful comments
+Message-Id: <1428655558-6300-1-git-send-email-dingxiang@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1429870070-30310-1-git-send-email-firogm@gmail.com>
- <20150424120453.GO14154@mwanda>
- <alpine.DEB.2.10.1504241423060.2949@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1504241423060.2949@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Firo Yang <firogm@gmail.com>, viro@zeniv.linux.org.uk, kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: dingxiang <dingxiang@huawei.com>
 
-On Fri, Apr 24, 2015 at 02:23:23PM +0200, Julia Lawall wrote:
-> On Fri, 24 Apr 2015, Dan Carpenter wrote:
-> 
-> > On Fri, Apr 24, 2015 at 06:07:50PM +0800, Firo Yang wrote:
-> >
-> > > -	if (nr_segs > UIO_MAXIOV || nr_segs < 0)
-> > > +	if (nr_segs > UIO_MAXIOV)
-> >
-> > Linus said at kernel summit that he thinks this kind of checks are ok.
-> >
-> > Smatch already ignores checks like:
-> >
-> > 	if (nr_segs < 0 || nr_segs > UIO_MAXIOV)
-> >
-> > So making it ignore this one as well shouldn't be hard...  I'll change
-> > Smatch to ignore this one as well.
-> 
-> It is unsigned.  What is the point of cluttering the code?
+From: dingxiang <dingxiang@huawei.com>
 
-I guess I don't feel strongly either way.  It was Linus who said
-something like "the intent is clear from the code" so he isn't a fan of
-these particular static checker fixes.
+I think the comments are used to debug, and we don't need them in
+mainline code
 
-These are easy enough for me to filter out so they needn't cause a false
-positive.
+Signed-off-by: DingXiang <dingxiang@huawei.com>
+---
+ drivers/bluetooth/bt3c_cs.c |    3 ---
+ 1 files changed, 0 insertions(+), 3 deletions(-)
 
-They're more of a style issue than anything else.  With coccinelle, it's
-easier to care about style issues because you can fix them automatically.
-In Smatch caring about style issues is a time suck.
+diff --git a/drivers/bluetooth/bt3c_cs.c b/drivers/bluetooth/bt3c_cs.c
+index 4f7e8d4..6de97b3 100644
+--- a/drivers/bluetooth/bt3c_cs.c
++++ b/drivers/bluetooth/bt3c_cs.c
+@@ -227,7 +227,6 @@ static void bt3c_receive(struct bt3c_info *info)
+ 	iobase = info->p_dev->resource[0]->start;
+ 
+ 	avail = bt3c_read(iobase, 0x7006);
+-	//printk("bt3c_cs: receiving %d bytes\n", avail);
+ 
+ 	bt3c_address(iobase, 0x7480);
+ 	while (size < avail) {
+@@ -250,7 +249,6 @@ static void bt3c_receive(struct bt3c_info *info)
+ 
+ 			bt_cb(info->rx_skb)->pkt_type = inb(iobase + DATA_L);
+ 			inb(iobase + DATA_H);
+-			//printk("bt3c: PACKET_TYPE=%02x\n", bt_cb(info->rx_skb)->pkt_type);
+ 
+ 			switch (bt_cb(info->rx_skb)->pkt_type) {
+ 
+@@ -364,7 +362,6 @@ static irqreturn_t bt3c_interrupt(int irq, void *dev_inst)
+ 			if (stat & 0x0001)
+ 				bt3c_receive(info);
+ 			if (stat & 0x0002) {
+-				//BT_ERR("Ack (stat=0x%04x)", stat);
+ 				clear_bit(XMIT_SENDING, &(info->tx_state));
+ 				bt3c_write_wakeup(info);
+ 			}
+-- 
+1.7.1
 
-regards,
-dan carpenter
 
