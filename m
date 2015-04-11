@@ -1,40 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Apr 2015 09:03:08 +0000
-Subject: [patch] ext4 crypto: fix an error code in ext4_init_crypto()
-Message-Id: <20150409090308.GB17605@mwanda>
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Sat, 11 Apr 2015 11:55:44 +0000
+Subject: Re: [patch] ext4 crypto: fix an error code in ext4_init_crypto()
+Message-Id: <20150411115544.GB6540@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150409090308.GB17605@mwanda>
+In-Reply-To: <20150409090308.GB17605@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>, Michael Halcrow <mhalcrow@google.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Michael Halcrow <mhalcrow@google.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The callers don't care about the error so it doesn't make a difference,
-but static checkers complain so let's return an error code here.
+On Thu, Apr 09, 2015 at 12:03:08PM +0300, Dan Carpenter wrote:
+> The callers don't care about the error so it doesn't make a difference,
+> but static checkers complain so let's return an error code here.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks for pointing this out!  I will merge this with the next version
+of the ext4 crypto patches.
 
-diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
-index 226e07f..6110ccd 100644
---- a/fs/ext4/crypto.c
-+++ b/fs/ext4/crypto.c
-@@ -233,7 +233,7 @@ void ext4_exit_crypto(void)
-  */
- int ext4_init_crypto(void)
- {
--	int i, res = 0;
-+	int i, res;
- 
- 	mutex_lock(&crypto_init);
- 	if (ext4_read_workqueue)
-@@ -257,8 +257,10 @@ int ext4_init_crypto(void)
- 
- 	ext4_bounce_page_pool  		mempool_create_page_pool(num_prealloc_crypto_pages, 0);
--	if (!ext4_bounce_page_pool)
-+	if (!ext4_bounce_page_pool) {
-+		res = -ENOMEM;
- 		goto fail;
-+	}
- already_initialized:
- 	mutex_unlock(&crypto_init);
- 	return 0;
+						- Ted
