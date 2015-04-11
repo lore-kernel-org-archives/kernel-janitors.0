@@ -1,7 +1,7 @@
-From: Ingo Molnar <mingo@kernel.org>
-Date: Sat, 11 Apr 2015 08:37:14 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 11 Apr 2015 11:03:05 +0000
 Subject: Re: [patch] perf/x86/intel/pt: cleanup error handling in pt_pmu_hw_init()
-Message-Id: <20150411083714.GB16060@gmail.com>
+Message-Id: <20150411110305.GR10964@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150409090805.GG17605@mwanda>
 In-Reply-To: <20150409090805.GG17605@mwanda>
@@ -10,42 +10,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+I used to use out: and err: labels but for the past few years my job has
+been to look at error handling every day.  I now believe very strongly
+that do-nothing gotos are harmful.  It's going to be my contribution to
+computer engineering to persuade people to hate exit labels.
 
-* Dan Carpenter <dan.carpenter@oracle.com> wrote:
+https://plus.google.com/106378716002406849458/posts/dnanfhQ4mHQ
 
-> On Thu, Apr 09, 2015 at 04:54:40PM +0200, Ingo Molnar wrote:
-> > > [...]  If you unwind like:
-> > > 
-> > > err_free_bar:
-> > > 	kfree(foo->bar);
-> > > err_free_foo:
-> > > 	kfree(foo);
-> > > 	return ret;
-> > > 
-> > > That is less error prone.
-> > 
-> > That's how I name and structure unwind labels as well, and my 
-> > suggestion is to use something similar here in this code too, in 
-> > arch/x86/kernel/cpu/perf_event_intel_pt.c.
-> > 
-> > Agreed?
-> 
-> I don't understand what you want me to do here.  I think you are saying
-> I should do this:
-> 
-> err_attrs:
-> 	kfree(attrs);
-> err:
-> 	return ret;
+1) "goto err;" is annoying to read because the name is meaningless.
 
-Yeah, that looks cleaner.
+2) Exit labels bad associations because code which uses err: or out:
+   labels is often buggy as we have seen in pt_event_add().
 
-> 
-> That's not the style that the rest of this file uses. [...]
+3) They don't do anything for return in the middle bugs.  They only
+   discourage people from returning at the start of the function where
+   direct returns are fine.
 
-That might have slipped through review, but it's not a reason to 
-continue the bad practice.
+   In theory, one place where they might be useful is if we added
+   locking to a function later on.  First of all, when we add locking no
+   one ever changes the out: label to out_unlock:.  It never happens.
 
-Thanks,
+   Also missing unlocks on error paths is sort of a sloppy/newbie
+   mistake.  I have looked through the git log and newbies are just as
+   likely to get locking wrong when there is an exit label as when there
+   is not.
 
-	Ingo
+   https://plus.google.com/106378716002406849458/posts/DfuAkt8szf2
+
+4) Exit labels introduce a whole new class of "forgot to set the error
+   code" bugs which don't happen with direct returns.
+
+regards,
+dan carpenter
+
