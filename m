@@ -1,29 +1,141 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Apr 2015 09:05:46 +0000
-Subject: [patch 1/2] leds: netxbig: off by one in netxbig_leds_get_of_pdata()
-Message-Id: <20150409090546.GE17605@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 12 Apr 2015 21:19:48 +0000
+Subject: [PATCH] drop uses of some OBD alloc and free functions
+Message-Id: <1428873589-15241-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
 
-The mode_val[] array has NETXBIG_LED_MODE_NUM (5) elements so the ">"
-here should be ">=".
+Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
+kzalloc or calloc, as appropriate.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Replace OBD_FREE and OBD_FREE_PTR by kfree.
 
-diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-index 028686f2..d0b743c 100644
---- a/drivers/leds/leds-netxbig.c
-+++ b/drivers/leds/leds-netxbig.c
-@@ -512,7 +512,7 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
- 						   "mode-val", 2 * i, &mode);
- 			of_property_read_u32_index(child,
- 						   "mode-val", 2 * i + 1, &val);
--			if (mode > NETXBIG_LED_MODE_NUM)
-+			if (mode >= NETXBIG_LED_MODE_NUM)
- 				return -EINVAL;
- 			mode_val[mode] = val;
- 		}
+The complete semantic patch that makes these changes is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ptr,e1,e2;
+@@
+
+- OBD_ALLOC(ptr,sizeof e1 * e2)
++ ptr = kcalloc(e2, sizeof e1, GFP_NOFS)
+
+@@
+expression ptr,e1,e2;
+@@
+
+- OBD_ALLOC_WAIT(ptr,sizeof e1 * e2)
++ ptr = kcalloc(sizeof e1, e2, GFP_KERNEL)
+
+@@
+expression ptr,e1,e2;
+@@
+
+- OBD_ALLOC(ptr,e2 * sizeof e1)
++ ptr = kcalloc(e2, sizeof e1, GFP_NOFS)
+
+@@
+expression ptr,e1,e2;
+@@
+
+- OBD_ALLOC_WAIT(ptr,e2 * sizeof e1)
++ ptr = kcalloc(e2, sizeof e1, GFP_KERNEL)
+
+@@
+expression ptr,e2;
+type t;
+@@
+
+- OBD_ALLOC(ptr,sizeof (t) * e2)
++ ptr = kcalloc(e2, sizeof (t), GFP_NOFS)
+
+@@
+expression ptr,e2;
+type t;
+@@
+
+- OBD_ALLOC_WAIT(ptr,sizeof (t) * e2)
++ ptr = kcalloc(e2, sizeof (t), GFP_KERNEL)
+
+@@
+expression ptr,e2;
+type t;
+@@
+
+- OBD_ALLOC(ptr,e2 * sizeof (t))
++ ptr = kcalloc(e2, sizeof (t), GFP_NOFS)
+
+@@
+expression ptr,e2;
+type t;
+@@
+
+- OBD_ALLOC_WAIT(ptr,e2 * sizeof (t))
++ ptr = kcalloc(e2, sizeof (t), GFP_KERNEL)
+
+@@
+expression ptr,e1,e2;
+@@
+
+- OBD_ALLOC(ptr,e1 * e2)
++ ptr = kcalloc(e1, e2, GFP_NOFS)
+
+@@
+expression ptr,e1,e2;
+@@
+
+- OBD_ALLOC_WAIT(ptr,e1 * e2)
++ ptr = kcalloc(e1, e2, GFP_KERNEL)
+
+// -----------------------------------------------------------------------
+
+@@
+expression ptr,size;
+@@
+
+- OBD_ALLOC(ptr,size)
++ ptr = kzalloc(size, GFP_NOFS)
+
+@@
+expression ptr,size;
+@@
+
+- OBD_ALLOC_WAIT(ptr,size)
++ ptr = kzalloc(size, GFP_KERNEL)
+
+@@
+expression ptr;
+@@
+
+- OBD_ALLOC_PTR(ptr)
++ ptr = kzalloc(sizeof(*ptr), GFP_NOFS)
+
+@@
+expression ptr;
+@@
+
+- OBD_ALLOC_PTR_WAIT(ptr)
++ ptr = kzalloc(sizeof(*ptr), GFP_KERNEL)
+
+// ----------------------------------------------------------------------
+
+@@
+expression ptr, size;
+@@
+
+- OBD_FREE(ptr, size);
++ kfree(ptr);
+
+@@
+expression ptr;
+@@
+
+- OBD_FREE_PTR(ptr);
++ kfree(ptr);
+// </smpl>
+
