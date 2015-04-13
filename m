@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 11 Apr 2015 05:17:19 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Apr 2015 22:02:34 +0000
 Subject: Re: TODO list
-Message-Id: <alpine.DEB.2.02.1504110715350.2077@localhost6.localdomain6>
+Message-Id: <20150413220234.GV16501@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100714100136.GA3583@albatros>
 In-Reply-To: <20100714100136.GA3583@albatros>
@@ -10,67 +10,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-
-On Fri, 10 Apr 2015, Ravi Kerur wrote:
-
+On Mon, Apr 13, 2015 at 02:46:53PM -0700, Ravi Kerur wrote:
+> Team,
 > 
+> I will take up net/sched files and get a clean checkpatch run on them. I am working on a project which involves this piece of code and as part of learning the code I can clean-up the files. I ran checkpatch on some of them and I do see that it needs cleaning. For e.g.
 > 
-> On 4/9/2015 10:34 PM, Julia Lawall wrote:
-> > 
-> > 
-> > On Thu, 9 Apr 2015, Ravi Kerur wrote:
-> > 
-> >>
-> >>
-> >> On 4/9/2015 1:48 AM, Dan Carpenter wrote:
-> >>> On Wed, Apr 08, 2015 at 05:36:01PM -0700, Ravi Kerur wrote:
-> >>>>
-> >>>>
-> >>>> On 4/7/2015 12:49 AM, Dan Carpenter wrote:
-> >>>>> On Fri, Apr 03, 2015 at 01:40:35PM -0700, Ravi Kerur wrote:
-> >>>>>> Team,
-> >>>>>>
-> >>>>>> I am planning to take up following items from TODO list. If it's already picked please let me know. 
-> >>>>>>
-> >>>>>> * pci_set_dma_mask() and friends should use DMA_BIT_MASK(nn) instead of
-> >>>>>>
-> >>>>>> DMA_nnBIT_MASK or 0xffff... This is not 2.4 compatible, so beware of drivers with same code. [D: http://marc.theaimsgroup.com/?t8001993000001] Don't forget to #include dma-mapping.h
-> >>>>>>
-> >>>>>> * check kmallocs for things like GFP_DMA without a memtype. 
-> >>>>>>
-> >>>>>
-> >>>>> The TODO is desperately out of date.  No one cares about 2.4 at all.
-> >>>>> These days we don't really allow drivers to have backwards compatability
-> >>>>> code so they compile on old kernels.  That stuff has to be stored out of
-> >>>>> the main kernel tree.  We also have the compat-wireless and other
-> >>>>> similar ways of backporting drivers.
-> >>>>
-> >>>> Thanks Dan. Do you recommend anything else for contribution? I am not a
-> >>>> newbie to kernel but never contributed to kernel before so any inputs
-> >>>> appreciated.
-> >>>
-> >>> There is always stuff to fix in staging.  It's at all levels of
-> >>> difficulty.
-> >>
-> >> Can you please point me to the link or anything which lists what needs to be done. I can pick some of it.
-> > 
-> > You can run checkpatch, or other tools and fix the things that they 
-> > highlight.  Once you start really looking at the code, you are likely to 
-> > see other things that can be improved as well.  Some staging drivers also 
-> > have TODO lists.
-> > 
+> #:~/git/kernels/staging$ perl scripts/checkpatch.pl -f net/sched/act_api.c
+> WARNING: networking block comments don't use an empty /* line, use /* Comment...
+> #41: FILE: net/sched/act_api.c:41:
+> +	/*
+> +	 * gen_estimator est_timer() might access p->tcfc_locki
 > 
-> My question was which subsystem or specific area to start? Should I pick some random subsystem of my interest and start working on it? 
+> CHECK: Comparison to NULL could be written "!nest"
+> #95: FILE: net/sched/act_api.c:95:
+> +			if (nest = NULL)
+> ...
+> [...]
 
-Dan suggested staging.  In terms of learning, it doesn't matter what you 
-choose to get started.  You should avoid the following drivers, though, as 
-they are on the way out of the kernel:
+No one cares about either of those things.  If it's a drivers/staging
+patch then we would merge it, but if it's a patch to net/sched/act_api.c
+they will probably just get annoyed with you.
 
-i2o
-line6
-media/parport
-media/tlg2300
-media/vino
+regards,
+dan carpenter
 
-julia
