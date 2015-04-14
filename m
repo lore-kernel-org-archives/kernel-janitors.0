@@ -1,45 +1,28 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Mon, 20 Apr 2015 08:32:07 +0000
-Subject: Re: [PATCH] s390: char: con3215: Free memory in error path
-Message-Id: <20150420103207.7491723c@mschwide>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Apr 2015 14:32:19 +0000
+Subject: [patch] csiostor: fix an error code in csio_hw_init()
+Message-Id: <20150414143219.GA30421@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1429449456-4050-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1429449456-4050-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@odin.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Hariprasad Shenai <hariprasad@chelsio.com>, Praveen Madhavan <praveenm@chelsio.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 19 Apr 2015 15:17:36 +0200
-Christophe Jaillet <christophe.jaillet@wanadoo.fr> wrote:
+We should return -ENOMEM if kzalloc() fails here instead of returning
+success.
 
-> If one memory allocation fails, there is a memory leak.
-> 
-> Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/s390/char/con3215.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/s390/char/con3215.c b/drivers/s390/char/con3215.c
-> index c43aca6..0fc3fe5 100644
-> --- a/drivers/s390/char/con3215.c
-> +++ b/drivers/s390/char/con3215.c
-> @@ -667,6 +667,8 @@ static struct raw3215_info *raw3215_alloc_info(void)
->  	info->buffer = kzalloc(RAW3215_BUFFER_SIZE, GFP_KERNEL | GFP_DMA);
->  	info->inbuf = kzalloc(RAW3215_INBUF_SIZE, GFP_KERNEL | GFP_DMA);
->  	if (!info->buffer || !info->inbuf) {
-> +		kfree(info->inbuf);
-> +		kfree(info->buffer);
->  		kfree(info);
->  		return NULL;
->  	}
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+diff --git a/drivers/scsi/csiostor/csio_hw.c b/drivers/scsi/csiostor/csio_hw.c
+index 2e66f34..622bdab 100644
+--- a/drivers/scsi/csiostor/csio_hw.c
++++ b/drivers/scsi/csiostor/csio_hw.c
+@@ -3928,6 +3928,7 @@ csio_hw_init(struct csio_hw *hw)
+ 
+ 		evt_entry = kzalloc(sizeof(struct csio_evt_msg), GFP_KERNEL);
+ 		if (!evt_entry) {
++			rv = -ENOMEM;
+ 			csio_err(hw, "Failed to initialize eventq");
+ 			goto err_evtq_cleanup;
+ 		}
