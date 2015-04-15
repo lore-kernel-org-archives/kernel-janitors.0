@@ -1,62 +1,29 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Sat, 25 Apr 2015 07:15:47 +0000
-Subject: Re: [PATCH] x86/efi: fix potential NULL pointer dereference
-Message-Id: <20150425071547.GA12818@firo>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 15 Apr 2015 09:21:33 +0000
+Subject: [patch] ext4 crypto: type bug with encrypted symlinks
+Message-Id: <20150415092133.GA9264@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1429855639-14706-1-git-send-email-firogm@gmail.com>
- <1429889609.2182.25.camel@HansenPartnership.com>
-In-Reply-To: <1429889609.2182.25.camel@HansenPartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: matt.fleming@intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 24, 2015 at 08:33:29AM -0700, James Bottomley wrote:
-<On Fri, 2015-04-24 at 14:07 +0800, Firo Yang wrote:
-<> In this patch, I add error-handing code for kmalloc() in
-<> arch/x86/platform/efi/efi_64.c::efi_call_phys_prolog().
-<> 
-<> If kmalloc() failed to alloc memroy, save_pgd will be a NULL
-<> pointer dereferenced by subsequent codes.
-<> 
-<> Signed-off-by: Firo Yang <firogm@gmail.com>
-<> ---
-<>  arch/x86/platform/efi/efi_64.c | 2 ++
-<>  1 file changed, 2 insertions(+)
-<> 
-<> diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
-<> index a0ac0f9..62326c4 100644
-<> --- a/arch/x86/platform/efi/efi_64.c
-<> +++ b/arch/x86/platform/efi/efi_64.c
-<> @@ -90,6 +90,8 @@ pgd_t * __init efi_call_phys_prolog(void)
-<>  
-<>  	n_pgds = DIV_ROUND_UP((max_pfn << PAGE_SHIFT), PGDIR_SIZE);
-<>  	save_pgd = kmalloc(n_pgds * sizeof(pgd_t), GFP_KERNEL);
-<> +	if (unlikely(!save_pgd))
-<> +		return NULL;
-<>  
-<>  	for (pgd = 0; pgd < n_pgds; pgd++) {
-<>  		save_pgd[pgd] = *pgd_offset_k(pgd * PGDIR_SIZE);
-<
-<First explain what you're trying to achieve?  I'm asking because the
-<code you've introduced is actively harmful: the return from
-<efi_call_phys_prolog() isn't checked for errors, so the error you return
-<won't be handled and we'll likely trigger a much harder to detect error
-<if the allocation you're checking fails.  Effectively the prolog/epilog
-<do nothing and we never restore the pgds we hijacked, yet the system
-<continues on with the memory map in an unexpected state.
-<
-<In my opinion the NULL deref we get further down in the prolog code is
-<actually a far better indicator of failure than what you're proposing.
-<
-<James
-<
-I feel sorry for introducing this problematic and harmful patch.
-I will do more checks and tests before submitting patch next time.
+sd->len is an __le16 and not an __le32.
 
-The deep reason is that I did not fully understand these code and
-add the error-handing code roughly.
+Fixes: f1195c72c951 ('ext4 crypto: Add symlink encryption')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards
-Firo
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 69e12ee..5c82a3c 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3256,7 +3256,7 @@ static int ext4_symlink(struct inode *dir,
+ 		ext4_put_fname_crypto_ctx(&ctx);
+ 		if (err < 0)
+ 			goto err_drop_inode;
+-		sd->len = cpu_to_le32(ostr.len);
++		sd->len = cpu_to_le16(ostr.len);
+ 		disk_link.name = (char *) sd;
+ 	}
+ 
