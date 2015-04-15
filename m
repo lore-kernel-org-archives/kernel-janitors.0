@@ -1,37 +1,30 @@
-From: Andreas Dilger <adilger@dilger.ca>
-Date: Wed, 15 Apr 2015 15:14:17 +0000
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Wed, 15 Apr 2015 16:45:36 +0000
 Subject: Re: [patch] ext4 crypto: type bug with encrypted symlinks
-Message-Id: <1591C866-F48B-4F82-B2D1-7F7180E3EE2A@dilger.ca>
+Message-Id: <20150415164536.GA25331@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150415092133.GA9264@mwanda>
-In-Reply-To: <20150415092133.GA9264@mwanda>
+ <1591C866-F48B-4F82-B2D1-7F7180E3EE2A@dilger.ca>
+In-Reply-To: <1591C866-F48B-4F82-B2D1-7F7180E3EE2A@dilger.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Andreas Dilger <adilger@dilger.ca>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Andreas Dilger <adilger.kernel@dilger.ca>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Nak.  ostr.len is the variable being swabbed, and it is a __u32.
+On Wed, Apr 15, 2015 at 09:14:17AM -0600, Andreas Dilger wrote:
+> Nak.  ostr.len is the variable being swabbed, and it is a __u32.
 
-Cheers, Andreas
+No, Dan is right; sd->len has been changed to be 16 bits on disk, per
+Andreas' suggestion, and I missed changing the cpu_to_le32() to be
+cpu_to_le16() here.  The fact that the in-memory representation
+happens to be 32-bits doesn't matter, it's the fact that on-disk
+representation is 16-bits which is important here.
 
-> On Apr 15, 2015, at 03:21, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> sd->len is an __le16 and not an __le32.
-> 
-> Fixes: f1195c72c951 ('ext4 crypto: Add symlink encryption')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index 69e12ee..5c82a3c 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -3256,7 +3256,7 @@ static int ext4_symlink(struct inode *dir,
->        ext4_put_fname_crypto_ctx(&ctx);
->        if (err < 0)
->            goto err_drop_inode;
-> -        sd->len = cpu_to_le32(ostr.len);
-> +        sd->len = cpu_to_le16(ostr.len);
->        disk_link.name = (char *) sd;
->    }
-> 
+In practice the filename length can never be larger
+i_sb->s_blocksize(), so we could probably change struct ext4_str to
+use an __u16 --- but at least at one point RISC architectues can
+sometimes handle 32-bit values more efficiently than 16-bit values,
+and it's probably not worth the effort to make the change.
+
+    	 	      	    	- Ted
