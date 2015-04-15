@@ -1,48 +1,29 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 17 Apr 2015 13:32:28 +0000
-Subject: Re: [patch v2] ALSA: hda - potential (but unlikely) uninitialized variable
-Message-Id: <s5htwwex4lv.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 15 Apr 2015 19:12:18 +0000
+Subject: [media] i2c: ov2659: signedness bug inov2659_set_fmt()
+Message-Id: <20150415191218.GC32654@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <s5h383zx6xu.wl-tiwai@suse.de>
-	<20150417131946.GA24502@mwanda>
-In-Reply-To: <20150417131946.GA24502@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Benoit Parrot <bparrot@ti.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Fri, 17 Apr 2015 16:19:46 +0300,
-Dan Carpenter wrote:
-> 
-> This function is a bit unusual because it accepts negative values as
-> "conn_len".  It's theoretically possible for both "cache_len" and
-> "conn_len" to be -ENOSPC and in that case we would oops trying to run
-> memcmp() on the uninitialized "list" pointer.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Don't print a negative error code as "In-driver Connection."
+This needs to be signed or there is a risk of hitting a forever loop.
 
-Applied, thanks.
+Fixes: c4c0283ab3cd ('[media] media: i2c: add support for omnivision's ov2659 sensor')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> diff --git a/sound/pci/hda/hda_proc.c b/sound/pci/hda/hda_proc.c
-> index ee62307..2f00886 100644
-> --- a/sound/pci/hda/hda_proc.c
-> +++ b/sound/pci/hda/hda_proc.c
-> @@ -582,8 +582,8 @@ static void print_conn_list(struct snd_info_buffer *buffer,
->  
->  	/* Get Cache connections info */
->  	cache_len = snd_hda_get_conn_list(codec, nid, &list);
-> -	if (cache_len != conn_len
-> -			|| memcmp(list, conn, conn_len)) {
-> +	if (cache_len >= 0 && (cache_len != conn_len ||
-> +			      memcmp(list, conn, conn_len) != 0)) {
->  		snd_iprintf(buffer, "  In-driver Connection: %d\n", cache_len);
->  		if (cache_len > 0) {
->  			snd_iprintf(buffer, "    ");
-> 
+diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+index edebd11..d700a1d 100644
+--- a/drivers/media/i2c/ov2659.c
++++ b/drivers/media/i2c/ov2659.c
+@@ -1102,7 +1102,7 @@ static int ov2659_set_fmt(struct v4l2_subdev *sd,
+ 			  struct v4l2_subdev_format *fmt)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+-	unsigned int index = ARRAY_SIZE(ov2659_formats);
++	int index = ARRAY_SIZE(ov2659_formats);
+ 	struct v4l2_mbus_framefmt *mf = &fmt->format;
+ 	const struct ov2659_framesize *size = NULL;
+ 	struct ov2659 *ov2659 = to_ov2659(sd);
