@@ -1,27 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Apr 2015 14:28:58 +0000
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Thu, 16 Apr 2015 12:23:28 +0000
 Subject: Re: [patch] sd: fix an error return in probe()
-Message-Id: <20150414142858.GH10964@mwanda>
+Message-Id: <552FA9C0.7020109@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150119144112.GB19086@mwanda>
 In-Reply-To: <20150119144112.GB19086@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <JBottomley@parallels.com>
 Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I almost accidentally sent this one again.  I still think it's correct.
-
-regards,
-dan carpenter
-
-On Mon, Jan 19, 2015 at 05:41:12PM +0300, Dan Carpenter wrote:
+On 01/19/2015 03:41 PM, Dan Carpenter wrote:
 > If device_add() fails then it should return the error code but instead
 > the current code returns success.
-> 
+>
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+>
 > diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
 > index ebf35cb6..75a0b55 100644
 > --- a/drivers/scsi/sd.c
@@ -37,6 +32,11 @@ On Mon, Jan 19, 2015 at 05:41:12PM +0300, Dan Carpenter wrote:
 >  
 >  	get_device(dev);
 > --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Reviewed-by: Tomas Henzl <thenzl@redhat.com>
+
+Tomas
+
