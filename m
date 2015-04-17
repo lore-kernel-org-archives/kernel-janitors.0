@@ -1,70 +1,37 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Tue, 28 Apr 2015 07:25:46 +0000
-Subject: Re: [PATCH v2] drm: fix a memleak on mutex failure path
-Message-Id: <87h9s0btol.fsf@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Apr 2015 13:19:46 +0000
+Subject: [patch v2] ALSA: hda - potential (but unlikely) uninitialized variable
+Message-Id: <20150417131946.GA24502@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430149006-3753-1-git-send-email-green@linuxhacker.ru>
-In-Reply-To: <1430149006-3753-1-git-send-email-green@linuxhacker.ru>
+References: <s5h383zx6xu.wl-tiwai@suse.de>
+In-Reply-To: <s5h383zx6xu.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Oleg Drokin <green@linuxhacker.ru>, Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Mon, 27 Apr 2015, green@linuxhacker.ru wrote:
-> From: Oleg Drokin <green@linuxhacker.ru>
->
-> Need to free just allocated ctx allocation if we cannot
-> get our config mutex.
->
-> This one has been flagged by kbuild bot all the way back in August,
-> but somehow nobody picked it up:
-> https://lists.01.org/pipermail/kbuild/2014-August/001691.html
->
-> In addition there is another failure path that leaks the same
-> ctx reference that is fixed.
->
-> Found with smatch.
->
-> Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
-> CC: Daniel Vetter <daniel.vetter@ffwll.ch>
+This function is a bit unusual because it accepts negative values as
+"conn_len".  It's theoretically possible for both "cache_len" and
+"conn_len" to be -ENOSPC and in that case we would oops trying to run
+memcmp() on the uninitialized "list" pointer.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Don't print a negative error code as "In-driver Connection."
 
-
-> ---
->  drivers/gpu/drm/drm_modeset_lock.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_modeset_lock.c b/drivers/gpu/drm/drm_modeset_lock.c
-> index 51cc47d..c0a5cd8 100644
-> --- a/drivers/gpu/drm/drm_modeset_lock.c
-> +++ b/drivers/gpu/drm/drm_modeset_lock.c
-> @@ -80,8 +80,10 @@ int __drm_modeset_lock_all(struct drm_device *dev,
->  		return -ENOMEM;
->  
->  	if (trylock) {
-> -		if (!mutex_trylock(&config->mutex))
-> -			return -EBUSY;
-> +		if (!mutex_trylock(&config->mutex)) {
-> +			ret = -EBUSY;
-> +			goto out;
-> +		}
->  	} else {
->  		mutex_lock(&config->mutex);
->  	}
-> @@ -114,6 +116,8 @@ fail:
->  		goto retry;
->  	}
->  
-> +out:
-> +	kfree(ctx);
->  	return ret;
->  }
->  EXPORT_SYMBOL(__drm_modeset_lock_all);
-> -- 
-> 2.1.0
->
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+diff --git a/sound/pci/hda/hda_proc.c b/sound/pci/hda/hda_proc.c
+index ee62307..2f00886 100644
+--- a/sound/pci/hda/hda_proc.c
++++ b/sound/pci/hda/hda_proc.c
+@@ -582,8 +582,8 @@ static void print_conn_list(struct snd_info_buffer *buffer,
+ 
+ 	/* Get Cache connections info */
+ 	cache_len = snd_hda_get_conn_list(codec, nid, &list);
+-	if (cache_len != conn_len
+-			|| memcmp(list, conn, conn_len)) {
++	if (cache_len >= 0 && (cache_len != conn_len ||
++			      memcmp(list, conn, conn_len) != 0)) {
+ 		snd_iprintf(buffer, "  In-driver Connection: %d\n", cache_len);
+ 		if (cache_len > 0) {
+ 			snd_iprintf(buffer, "    ");
