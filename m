@@ -1,45 +1,43 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 23 Apr 2015 05:54:42 +0000
-Subject: Re: [PATCH 12/15] gpu:No need to cast kmalloc() return values in AMD kfd driver
-Message-Id: <alpine.DEB.2.10.1504230750470.2812@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 21 Apr 2015 09:31:10 +0000
+Subject: [patch] [media] v4l: xilinx: harmless buffer overflow
+Message-Id: <20150421093110.GD12098@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1429767245-32453-13-git-send-email-firogm@gmail.com>
-In-Reply-To: <1429767245-32453-13-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Hyun Kwon <hyun.kwon@xilinx.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Again, gpu does not seem like the right information for the subject line.
-git log --oneline for this file shows multiple uses of amdkfd.
+My static checker warns that the name of the port can be 15 characters
+when you consider the NUL terminator and that's one more than the 14
+characters in name[].  Maybe it's an off-by-one?
 
-julia
+It's unlikely that we hit the limit and even if we do the overflow will
+only affect one of the two bytes of padding so it's harmless.  Still
+let's fix it and also change the sprintf() to snprintf().
 
-On Thu, 23 Apr 2015, Firo Yang wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> kmalloc() returns a void pointer - no need to cast it in
-> drivers/gpu/drm/amd/amdkfd/kfd_process.c::kfd_process_destroy_delayed()
->
-> Signed-off-by: Firo Yang <firogm@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_process.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> index 945d622..4d7bc95 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-> @@ -203,8 +203,7 @@ static void kfd_process_destroy_delayed(struct rcu_head *rcu)
->
->  	mmdrop(p->mm);
->
-> -	work = (struct kfd_process_release_work *)
-> -		kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
-> +	work = kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
->
->  	if (work) {
->  		INIT_WORK((struct work_struct *) work, kfd_process_wq_release);
-> --
-> 2.1.0
->
->
+diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
+index efde88a..98e50e4 100644
+--- a/drivers/media/platform/xilinx/xilinx-dma.c
++++ b/drivers/media/platform/xilinx/xilinx-dma.c
+@@ -653,7 +653,7 @@ static const struct v4l2_file_operations xvip_dma_fops = {
+ int xvip_dma_init(struct xvip_composite_device *xdev, struct xvip_dma *dma,
+ 		  enum v4l2_buf_type type, unsigned int port)
+ {
+-	char name[14];
++	char name[16];
+ 	int ret;
+ 
+ 	dma->xdev = xdev;
+@@ -725,7 +725,7 @@ int xvip_dma_init(struct xvip_composite_device *xdev, struct xvip_dma *dma,
+ 	}
+ 
+ 	/* ... and the DMA channel. */
+-	sprintf(name, "port%u", port);
++	snprintf(name, sizeof(name), "port%u", port);
+ 	dma->dma = dma_request_slave_channel(dma->xdev->dev, name);
+ 	if (dma->dma = NULL) {
+ 		dev_err(dma->xdev->dev, "no VDMA channel found\n");
