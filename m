@@ -1,48 +1,62 @@
-From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date: Fri, 17 Apr 2015 12:56:02 +0000
-Subject: Re: [patch] drm/gma500: missing error codes in psb_driver_load()
-Message-Id: <CAMeQTsYx5BUFk53haxiqKpf8NKAQUf4YuUZo26i9-kJGsJciww@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 21 Apr 2015 09:21:53 +0000
+Subject: [patch] efi: efivar_create_sysfs_entry() should return negative error codes
+Message-Id: <20150421092153.GA12098@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150417122408.GA19623@mwanda>
-In-Reply-To: <20150417122408.GA19623@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, Benoit Taine <benoit.taine@lip6.fr>, Dave Airlie <airlied@redhat.com>, Thierry Reding <treding@nvidia.com>
+To: Matt Fleming <matt.fleming-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Fri, Apr 17, 2015 at 2:24 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We should return an error code here.  In the current code they can only
-> fail if there is an allocation error so -ENOMEM is appropriate.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's not very normal to return 1 on failure and 0 on success.  There
+isn't a reason for it here, the callers don't care so long as it's
+non-zero on failure.
 
-Reviewed-by: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
-> index 92e7e57..4eff0d6 100644
-> --- a/drivers/gpu/drm/gma500/psb_drv.c
-> +++ b/drivers/gpu/drm/gma500/psb_drv.c
-> @@ -326,12 +326,16 @@ static int psb_driver_load(struct drm_device *dev, unsigned long flags)
->                 goto out_err;
->
->         dev_priv->mmu = psb_mmu_driver_init(dev, 1, 0, 0);
-> -       if (!dev_priv->mmu)
-> +       if (!dev_priv->mmu) {
-> +               ret = -ENOMEM;
->                 goto out_err;
-> +       }
->
->         dev_priv->pf_pd = psb_mmu_alloc_pd(dev_priv->mmu, 1, 0);
-> -       if (!dev_priv->pf_pd)
-> +       if (!dev_priv->pf_pd) {
-> +               ret = -ENOMEM;
->                 goto out_err;
-> +       }
->
->         ret = psb_do_init(dev);
->         if (ret)
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/firmware/efi/efivars.c b/drivers/firmware/efi/efivars.c
+index 7b2e049..756eca8 100644
+--- a/drivers/firmware/efi/efivars.c
++++ b/drivers/firmware/efi/efivars.c
+@@ -535,7 +535,7 @@ static ssize_t efivar_delete(struct file *filp, struct kobject *kobj,
+  * efivar_create_sysfs_entry - create a new entry in sysfs
+  * @new_var: efivar entry to create
+  *
+- * Returns 1 on failure, 0 on success
++ * Returns 0 on success, negative error code on failure
+  */
+ static int
+ efivar_create_sysfs_entry(struct efivar_entry *new_var)
+@@ -544,6 +544,7 @@ efivar_create_sysfs_entry(struct efivar_entry *new_var)
+ 	char *short_name;
+ 	unsigned long variable_name_size;
+ 	efi_char16_t *variable_name;
++	int ret;
+ 
+ 	variable_name = new_var->var.VariableName;
+ 	variable_name_size = ucs2_strlen(variable_name) * sizeof(efi_char16_t);
+@@ -558,7 +559,7 @@ efivar_create_sysfs_entry(struct efivar_entry *new_var)
+ 	short_name = kzalloc(short_name_size, GFP_KERNEL);
+ 
+ 	if (!short_name)
+-		return 1;
++		return -ENOMEM;
+ 
+ 	/* Convert Unicode to normal chars (assume top bits are 0),
+ 	   ala UTF-8 */
+@@ -574,11 +575,11 @@ efivar_create_sysfs_entry(struct efivar_entry *new_var)
+ 
+ 	new_var->kobj.kset = efivars_kset;
+ 
+-	i = kobject_init_and_add(&new_var->kobj, &efivar_ktype,
++	ret = kobject_init_and_add(&new_var->kobj, &efivar_ktype,
+ 				   NULL, "%s", short_name);
+ 	kfree(short_name);
+-	if (i)
+-		return 1;
++	if (ret)
++		return ret;
+ 
+ 	kobject_uevent(&new_var->kobj, KOBJ_ADD);
+ 	efivar_entry_add(new_var, &efivar_sysfs_list);
