@@ -1,24 +1,31 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Thu, 09 Apr 2015 11:46:26 +0000
-Subject: [PATCH 0/2] pci to dma
-Message-Id: <1428579988-10167-1-git-send-email-lambert.quentin@gmail.com>
+From: Firo Yang <firogm@gmail.com>
+Date: Wed, 22 Apr 2015 16:35:20 +0000
+Subject: [PATCH 06/16] Clean up unnecessary void* pointer cast.
+Message-Id: <1429720530-20044-6-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The first patch removes deprecated use of the pci api.
-
-The second patch depends on the first, it replaces uses of GFP_ATOMIC
-with GFP_KERNEL. I could not find evidence that the concerned functions
-were called from a context were sleep is not allowed.
-
-
+Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- cs5520.c    |    2 +-
- pmac.c      |    7 +++----
- setup-pci.c |    2 +-
- sgiioc4.c   |    6 +++---
- 4 files changed, 8 insertions(+), 9 deletions(-)
+ fs/minix/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index 3f57af1..8898633 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -62,7 +62,7 @@ static struct kmem_cache * minix_inode_cachep;
+ static struct inode *minix_alloc_inode(struct super_block *sb)
+ {
+ 	struct minix_inode_info *ei;
+-	ei = (struct minix_inode_info *)kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
+-- 
+2.1.0
 
