@@ -1,35 +1,32 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 05:34:00 +0000
-Subject: [PATCH 10/15] scsi: kzalloc() returns void pointer, no need to cast
-Message-Id: <1429767245-32453-11-git-send-email-firogm@gmail.com>
+Date: Wed, 22 Apr 2015 16:35:28 +0000
+Subject: [PATCH 14/16] Clean up unnecessary void* pointer cast.
+Message-Id: <1429720530-20044-14-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-kzalloc() returns a void pointer - no need to cast it in
-drivers/scsi/lpfc/lpfc_init.c::lpfc_sli_driver_resource_setup()
-
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/scsi/lpfc/lpfc_init.c | 3 +--
+ drivers/block/cciss_scsi.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index e8c8c1e..30b72da 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -4975,8 +4975,7 @@ lpfc_sli_driver_resource_setup(struct lpfc_hba *phba)
- 	}
+diff --git a/drivers/block/cciss_scsi.c b/drivers/block/cciss_scsi.c
+index ecd845c..6e17d47 100644
+--- a/drivers/block/cciss_scsi.c
++++ b/drivers/block/cciss_scsi.c
+@@ -704,8 +704,7 @@ cciss_scsi_setup(ctlr_info_t *h)
+ 	struct cciss_scsi_adapter_data_t * shba;
  
- 	if (!phba->sli.ring)
--		phba->sli.ring = (struct lpfc_sli_ring *)
--			kzalloc(LPFC_SLI3_MAX_RING *
-+		phba->sli.ring = kzalloc(LPFC_SLI3_MAX_RING *
- 			sizeof(struct lpfc_sli_ring), GFP_KERNEL);
- 	if (!phba->sli.ring)
- 		return -ENOMEM;
+ 	ccissscsi[h->ctlr].ndevices = 0;
+-	shba = (struct cciss_scsi_adapter_data_t *)
+-		kmalloc(sizeof(*shba), GFP_KERNEL);	
++	shba = kmalloc(sizeof(*shba), GFP_KERNEL);
+ 	if (shba = NULL)
+ 		return;
+ 	shba->scsi_host = NULL;
 -- 
 2.1.0
 
