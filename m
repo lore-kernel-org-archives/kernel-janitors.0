@@ -1,21 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 23 Apr 2015 08:06:31 +0000
-Subject: Re: [PATCH v2 0/15] Remove unneeded casts of void pointer
-Message-Id: <20150423080631.GJ14154@mwanda>
+From: Firo Yang <firogm@gmail.com>
+Date: Wed, 22 Apr 2015 13:10:50 +0000
+Subject: [PATCH] Drivers: V4L2: Clean up unused variable 'fileio' in vb2_thread_stop()
+Message-Id: <1429708250-23243-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1429775314-4171-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1429775314-4171-1-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-These look ok.  Resend them to the individual maintainers from
-get_maintainers.pl.
+From: Firo Yang <firogm@gmail.com>
 
-Some maintainers will apply them, some won't.  That's sort of how it
-goes.
+Local variable struct vb2_fileio_data *fileio was not used
+in this function. So just remove it.
 
-regards,
-dan carpenter
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ drivers/media/v4l2-core/videobuf2-core.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index cc16e76..471b171 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -3225,7 +3225,6 @@ EXPORT_SYMBOL_GPL(vb2_thread_start);
+ int vb2_thread_stop(struct vb2_queue *q)
+ {
+ 	struct vb2_threadio_data *threadio = q->threadio;
+-	struct vb2_fileio_data *fileio = q->fileio;
+ 	int err;
+ 
+ 	if (threadio = NULL)
+-- 
+2.1.0
 
