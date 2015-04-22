@@ -1,70 +1,31 @@
-From: kobello debor <barristerkobellodebor@gmail.com>
-Date: Thu, 23 Apr 2015 07:49:43 +0000
-Subject: FROM; Mr.BEN D DICKSON,\\\Hello my good friend
-Message-Id: <CADu4AgY+K0JbK48D3skUsVq6C5tRu0ZLo5ebWy_d+GVtSf9nnQ@mail.gmail.com>
+From: Firo Yang <firogm@gmail.com>
+Date: Wed, 22 Apr 2015 16:35:29 +0000
+Subject: [PATCH 15/16] Clean up unnecessary void* pointer cast.
+Message-Id: <1429720530-20044-15-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Date: 23/04/2015
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ arch/x86/crypto/sha-mb/sha1_mb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hello my good friend.
+diff --git a/arch/x86/crypto/sha-mb/sha1_mb.c b/arch/x86/crypto/sha-mb/sha1_mb.c
+index e510b1c..77357fb 100644
+--- a/arch/x86/crypto/sha-mb/sha1_mb.c
++++ b/arch/x86/crypto/sha-mb/sha1_mb.c
+@@ -885,7 +885,7 @@ static int __init sha1_mb_mod_init(void)
+ 		INIT_DELAYED_WORK(&cpu_state->flush, mcryptd_flusher);
+ 		cpu_state->cpu = cpu;
+ 		cpu_state->alg_state = &sha1_mb_alg_state;
+-		cpu_state->mgr = (struct sha1_ctx_mgr *) kzalloc(sizeof(struct sha1_ctx_mgr), GFP_KERNEL);
++		cpu_state->mgr = kzalloc(sizeof(struct sha1_ctx_mgr), GFP_KERNEL);
+ 		if (!cpu_state->mgr)
+ 			goto err2;
+ 		sha1_ctx_mgr_init(cpu_state->mgr);
+-- 
+2.1.0
 
-How are you today? Hope all is well with you and your family?, You may not
-understand why this mail came to you.But if you do not remember me,  you
-might have receive an email from me in the past
-
-regarding a multi-million-dollar business proposal which we never
-concluded.I am  using this opportunity to inform you that this
-multi-million-dollar business has been concluded with the assistance of
-another partner from Thailand who financed the transaction to a logical
-conclusion.
-
-
-I thank you for your great effort to our unfinished  transfer of fund into
-your account due to one reason or the other best known to you.But I want
-to inform  you that I havesuccessfully transferred the fund out of my bank
-to my new partner's account in Thailand that was capable of
-
-assisting me in this great venture. Due to your effort, sincerity, courage
-and trust worthiness You  showed during the course of the transaction.I
-want to compensate you and show mygratitude to you with the sum of
-$1,200,000.00.
-
-
-I have left a certified international bank draft for you worth of
-$1,200,000.00 cashable anywhere in the  world. My dear friend I will  like
-you to contact my secretary  Mr. Foxton Richard, on his direct email
-address at:Mr; foxtonrichard@yandex.com for the
-
-collection of your bank draft. I authorized her to release the Bank draft
-to you whenever you contact him regarding the draft. At the moment, I'm
-very busy here because of the investment projects, which I and the new
-partner are having at hand.
-
-Please I will like you to accept this with good  faith as this is from the
-bottom of my heart, Also  comply with Mr,Foxton Richard.directives so
-that she  will send the draft to youwithout any delay.
-
-
-
-CONTACT: Mr. Foxton Richard,My Secretary,
-
-Her email address: foxtonrichard@yandex.com
-
-Therefore, you should send her the followings:
-
-(1). Your full Name
-
-(2). Your addres where to deliver your cheque
-
-(3).Your telephone number/and fax
-
-(4). Your correct e-mail addres.
-
-
-Thanks and God bless you and your family. Hoping to hear from you after
-you received your cheque so that we can share the joy together.
-
-Mr;Ben,D,Dickson,
