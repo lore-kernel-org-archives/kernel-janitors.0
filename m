@@ -1,39 +1,32 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Sun, 26 Apr 2015 08:37:18 +0000
-Subject: [PATCH] NFC: st21nfcb: Remove inappropriate kfree on a devm_kzalloc pointer
-Message-Id: <1430037438-11617-1-git-send-email-firogm@gmail.com>
+Date: Wed, 22 Apr 2015 16:35:25 +0000
+Subject: [PATCH 11/16] Clean up unnecessary void* pointer cast.
+Message-Id: <1429720530-20044-11-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lauro.venancio@openbossa.org
-Cc: aloisio.almeida@openbossa.org, sameo@linux.intel.com, christophe.ricard@gmail.com, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Firo Yang <firogm@gmail.com>
-
-Since ndev->driver_data is alloced by devm_kzalloc(), we do not
-need the inappropriate kfree to free it in driver's remove function.
-Freeing will trigger when driver unloads, so I remove it.
+To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/nfc/st21nfcb/st21nfcb.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/scsi/lpfc/lpfc_init.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/nfc/st21nfcb/st21nfcb.c b/drivers/nfc/st21nfcb/st21nfcb.c
-index ca9871a..c7dc282 100644
---- a/drivers/nfc/st21nfcb/st21nfcb.c
-+++ b/drivers/nfc/st21nfcb/st21nfcb.c
-@@ -131,11 +131,8 @@ EXPORT_SYMBOL_GPL(st21nfcb_nci_probe);
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index e8c8c1e..30b72da 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -4975,8 +4975,7 @@ lpfc_sli_driver_resource_setup(struct lpfc_hba *phba)
+ 	}
  
- void st21nfcb_nci_remove(struct nci_dev *ndev)
- {
--	struct st21nfcb_nci_info *info = nci_get_drvdata(ndev);
--
- 	nci_unregister_device(ndev);
- 	nci_free_device(ndev);
--	kfree(info);
- }
- EXPORT_SYMBOL_GPL(st21nfcb_nci_remove);
- 
+ 	if (!phba->sli.ring)
+-		phba->sli.ring = (struct lpfc_sli_ring *)
+-			kzalloc(LPFC_SLI3_MAX_RING *
++		phba->sli.ring = kzalloc(LPFC_SLI3_MAX_RING *
+ 			sizeof(struct lpfc_sli_ring), GFP_KERNEL);
+ 	if (!phba->sli.ring)
+ 		return -ENOMEM;
 -- 
 2.1.0
 
