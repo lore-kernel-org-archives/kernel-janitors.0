@@ -1,68 +1,29 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:13:24 +0000
-Subject: Re: [PATCH 8/9] sound/pci/rme9652/hdspm.c: fix error return code
-Message-Id: <alpine.DEB.2.02.1504051413210.2038@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 22 Apr 2015 13:39:00 +0000
+Subject: [patch] kdbus: checking for IS_ERR() instead of NULL
+Message-Id: <20150422133900.GB29383@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr> <1428233914-4503-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428233914-4503-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Daniel Mack <daniel@zonque.org>, David Herrmann <dh.herrmann@googlemail.com>, Djalal Harouni <tixxdz@opendz.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Please ignore. Wrong patch set.
+"e->user" is never assigned an ERR_PTR().  It can be set to NULL so I
+assume that is what is intended here.
 
-On Sun, 5 Apr 2015, Julia Lawall wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  sound/pci/rme9652/hdspm.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
-> index b8ac871..b12308b 100644
-> --- a/sound/pci/rme9652/hdspm.c
-> +++ b/sound/pci/rme9652/hdspm.c
-> @@ -6585,7 +6585,7 @@ static int __devinit snd_hdspm_create(struct snd_card *card,
->  		snd_printk(KERN_ERR "HDSPM: "
->  				"unable to kmalloc Mixer memory of %d Bytes\n",
->  				(int)sizeof(struct hdspm_mixer));
-> -		return err;
-> +		return -ENOMEM;
->  	}
->  
->  	hdspm->port_names_in = NULL;
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/ipc/kdbus/queue.c b/ipc/kdbus/queue.c
+index a449464..21fce62 100644
+--- a/ipc/kdbus/queue.c
++++ b/ipc/kdbus/queue.c
+@@ -637,7 +637,7 @@ int kdbus_queue_entry_move(struct kdbus_queue_entry *e,
+ 	lockdep_assert_held(&src->lock);
+ 	lockdep_assert_held(&dst->lock);
+ 
+-	if (WARN_ON(IS_ERR(e->user)) || WARN_ON(list_empty(&e->entry)))
++	if (WARN_ON(!e->user) || WARN_ON(list_empty(&e->entry)))
+ 		return -EINVAL;
+ 	if (src = dst)
+ 		return 0;
