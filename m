@@ -1,15 +1,12 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 05:33:57 +0000
-Subject: [PATCH 07/15] efs:Remove unneeded kmem_cache_alloc() return value casts
-Message-Id: <1429767245-32453-8-git-send-email-firogm@gmail.com>
+Date: Wed, 22 Apr 2015 16:35:22 +0000
+Subject: [PATCH 08/16] Clean up unnecessary void* pointer cast.
+Message-Id: <1429720530-20044-8-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-
-kmem_cache_alloc() returns a void pointer - no need to cast it in
-fs/efs/super.c::efs_alloc_inode().
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
