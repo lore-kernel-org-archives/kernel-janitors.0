@@ -1,36 +1,31 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 07:48:33 +0000
-Subject: [PATCH v2 14/15] ARM: KVM: Remove pointless void pointer cast
-Message-Id: <1429775314-4171-15-git-send-email-firogm@gmail.com>
+Date: Wed, 22 Apr 2015 16:35:21 +0000
+Subject: [PATCH 07/16] Clean up unnecessary void* pointer cast.
+Message-Id: <1429720530-20044-7-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-No need to cast the void pointer returned by kmalloc() in
-arch/arm/kvm/mmu.c::kvm_alloc_stage2_pgd().
-
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- arch/arm/kvm/mmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/hpfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/kvm/mmu.c b/arch/arm/kvm/mmu.c
-index 1d5accb..ce0bce4 100644
---- a/arch/arm/kvm/mmu.c
-+++ b/arch/arm/kvm/mmu.c
-@@ -691,8 +691,8 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
- 		 * work.  This is not used by the hardware and we have no
- 		 * alignment requirement for this allocation.
- 		 */
--		pgd = (pgd_t *)kmalloc(PTRS_PER_S2_PGD * sizeof(pgd_t),
--				       GFP_KERNEL | __GFP_ZERO);
-+		pgd = kmalloc(PTRS_PER_S2_PGD * sizeof(pgd_t),
-+				GFP_KERNEL | __GFP_ZERO);
- 
- 		if (!pgd) {
- 			kvm_free_hwpgd(hwpgd);
+diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
+index 7cd00d3..ccace08 100644
+--- a/fs/hpfs/super.c
++++ b/fs/hpfs/super.c
+@@ -201,7 +201,7 @@ static struct kmem_cache * hpfs_inode_cachep;
+ static struct inode *hpfs_alloc_inode(struct super_block *sb)
+ {
+ 	struct hpfs_inode_info *ei;
+-	ei = (struct hpfs_inode_info *)kmem_cache_alloc(hpfs_inode_cachep, GFP_NOFS);
++	ei = kmem_cache_alloc(hpfs_inode_cachep, GFP_NOFS);
+ 	if (!ei)
+ 		return NULL;
+ 	ei->vfs_inode.i_version = 1;
 -- 
 2.1.0
 
