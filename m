@@ -1,29 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 15 Apr 2015 09:26:00 +0000
-Subject: Re: [patch] ext4 crypto: testing the wrong variable
-Message-Id: <20150415092600.GY16501@mwanda>
+From: Firo Yang <firogm@gmail.com>
+Date: Wed, 22 Apr 2015 16:35:15 +0000
+Subject: [PATCH 01/16] Clean up unnecessary void* pointer cast.
+Message-Id: <1429720530-20044-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150408085338.GA8837@mwanda>
- <alpine.DEB.2.10.1504081150401.9503@hadrien>
- <5525162C.3020808@bfs.de>
- <20150408122251.GJ10964@mwanda>
- <20150411134811.GI6540@thunk.org>
-In-Reply-To: <20150411134811.GI6540@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: walter harms <wharms@bfs.de>, Julia Lawall <julia.lawall@lip6.fr>, Michael Halcrow <mhalcrow@google.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, Apr 11, 2015 at 09:48:11AM -0400, Theodore Ts'o wrote:
-> (And BTW, this isn't appropriate for kernel-janitors since this code
-> isn't upstream yet)
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ sound/pci/emu10k1/emufx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Julia and I keep tabs on each other through kernel janitors.  It used to
-be more of an issue when Vasiliy Kulikov was around because we were
-always sending duplicate fixes and maintainers were getting annoyed with
-us.  I miss Vasiliy, he's off doing open wall stuff now.
-
-regards,
-dan carpenter
+diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
+index 56fc47b..8a39a6f 100644
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -1186,8 +1186,8 @@ static int _snd_emu10k1_audigy_init_efx(struct snd_emu10k1 *emu)
+ 	if (!icode)
+ 		return err;
+ 
+-	icode->gpr_map = (u_int32_t __user *) kcalloc(512 + 256 + 256 + 2 * 1024,
+-						      sizeof(u_int32_t), GFP_KERNEL);
++	icode->gpr_map = kcalloc(512 + 256 + 256 + 2 * 1024,
++				sizeof(u_int32_t), GFP_KERNEL);
+ 	if (!icode->gpr_map)
+ 		goto __err_gpr;
+ 	controls = kcalloc(SND_EMU10K1_GPR_CONTROLS,
+@@ -1824,8 +1824,8 @@ static int _snd_emu10k1_init_efx(struct snd_emu10k1 *emu)
+ 	if (!icode)
+ 		return err;
+ 
+-	icode->gpr_map = (u_int32_t __user *) kcalloc(256 + 160 + 160 + 2 * 512,
+-						      sizeof(u_int32_t), GFP_KERNEL);
++	icode->gpr_map = kcalloc(256 + 160 + 160 + 2 * 512,
++				sizeof(u_int32_t), GFP_KERNEL);
+ 	if (!icode->gpr_map)
+ 		goto __err_gpr;
+ 
+-- 
+2.1.0
 
