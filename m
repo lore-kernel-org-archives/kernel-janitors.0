@@ -1,35 +1,34 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 07:48:30 +0000
-Subject: [PATCH v2 11/15] hpsa: Remove unnessary cast
-Message-Id: <1429775314-4171-12-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:33:53 +0000
+Subject: [PATCH 03/15] nfs: Remove unneeded kmem_cache_alloc() return value casts in nfs
+Message-Id: <1429767245-32453-4-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-kmalloc() returns a void pointer - no need to cast it in
-drivers/scsi/hpsa.c::hpsa_big_passthru_ioctl()
+Don't unnecessarily cast allocation return value in
+fs/nfs/inode.c::nfs_alloc_inode().
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/scsi/hpsa.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/nfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 8eab107..e7d3444b 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -4992,8 +4992,7 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
- 		return -EINVAL;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
--	ioc = (BIG_IOCTL_Command_struct *)
--	    kmalloc(sizeof(*ioc), GFP_KERNEL);
-+	ioc = kmalloc(sizeof(*ioc), GFP_KERNEL);
- 	if (!ioc) {
- 		status = -ENOMEM;
- 		goto cleanup1;
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index d42dff6..fc47d55 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -1819,7 +1819,7 @@ static int nfs_update_inode(struct inode *inode, struct nfs_fattr *fattr)
+ struct inode *nfs_alloc_inode(struct super_block *sb)
+ {
+ 	struct nfs_inode *nfsi;
+-	nfsi = (struct nfs_inode *)kmem_cache_alloc(nfs_inode_cachep, GFP_KERNEL);
++	nfsi = kmem_cache_alloc(nfs_inode_cachep, GFP_KERNEL);
+ 	if (!nfsi)
+ 		return NULL;
+ 	nfsi->flags = 0UL;
 -- 
 2.1.0
 
