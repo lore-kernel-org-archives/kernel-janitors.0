@@ -1,65 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:06:25 +0000
-Subject: [PATCH 5/16] ufs: fix error return code
-Message-Id: <1428235596-4757-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 07:48:31 +0000
+Subject: [PATCH v2 12/15] amdkfd: Remove unessary void pointer cast
+Message-Id: <1429775314-4171-13-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinayak Holikatti <vinholikatti@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Return a negative error code on failure.
+kmalloc() returns a void pointer - no need to cast it in
+drivers/gpu/drm/amd/amdkfd/kfd_process.c::kfd_process_destroy_delayed()
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-This patch also changes the subsequent dev_err call to use err rather
-than recomputing PTR_ERR(hba->devfreq).  The format of the error value
-is changed from %ld to %d to reflect the type or err.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/scsi/ufs/ufshcd.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 2aa85e3..8b802d1 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -5506,8 +5506,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 		hba->devfreq = devfreq_add_device(dev, &ufs_devfreq_profile,
- 						   "simple_ondemand", NULL);
- 		if (IS_ERR(hba->devfreq)) {
--			dev_err(hba->dev, "Unable to register with devfreq %ld\n",
--					PTR_ERR(hba->devfreq));
-+			err = PTR_ERR(hba->devfreq);
-+			dev_err(hba->dev, "Unable to register with devfreq %d\n",
-+					err);
- 			goto out_remove_scsi_host;
- 		}
- 		/* Suspend devfreq until the UFS device is detected */
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+index 945d622..4d7bc95 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -203,8 +203,7 @@ static void kfd_process_destroy_delayed(struct rcu_head *rcu)
+ 
+ 	mmdrop(p->mm);
+ 
+-	work = (struct kfd_process_release_work *)
+-		kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
++	work = kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
+ 
+ 	if (work) {
+ 		INIT_WORK((struct work_struct *) work, kfd_process_wq_release);
+-- 
+2.1.0
 
