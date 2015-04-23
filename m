@@ -1,35 +1,35 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 07:48:31 +0000
-Subject: [PATCH v2 12/15] amdkfd: Remove unessary void pointer cast
-Message-Id: <1429775314-4171-13-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 09:49:54 +0000
+Subject: [PATCH] 9p: Remove unnessary void pointer cast
+Message-Id: <1429782594-6589-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-kmalloc() returns a void pointer - no need to cast it in
-drivers/gpu/drm/amd/amdkfd/kfd_process.c::kfd_process_destroy_delayed()
+kzalloc() returns a void pointer - no need to cast it in
+fs/9p/vfs_inode.c::v9fs_alloc_inode()
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_process.c | 3 +--
+ fs/9p/vfs_inode.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-index 945d622..4d7bc95 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-@@ -203,8 +203,7 @@ static void kfd_process_destroy_delayed(struct rcu_head *rcu)
- 
- 	mmdrop(p->mm);
- 
--	work = (struct kfd_process_release_work *)
--		kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
-+	work = kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
- 
- 	if (work) {
- 		INIT_WORK((struct work_struct *) work, kfd_process_wq_release);
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 3662f1d..b6ade6f 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
+ struct inode *v9fs_alloc_inode(struct super_block *sb)
+ {
+ 	struct v9fs_inode *v9inode;
+-	v9inode = (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
+-							GFP_KERNEL);
++	v9inode = kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
+ 	if (!v9inode)
+ 		return NULL;
+ #ifdef CONFIG_9P_FSCACHE
 -- 
 2.1.0
 
