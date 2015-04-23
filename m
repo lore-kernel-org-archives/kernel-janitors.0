@@ -1,21 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 28 Apr 2015 17:21:39 +0000
-Subject: Re: [PATCH] KVM: x86: drop unneeded null test
-Message-Id: <553FC1A3.70206@users.sourceforge.net>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 10:12:10 +0000
+Subject: [PATCH] crypto: sha1-mb - Remove pointless cast
+Message-Id: <1429783930-7318-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430166934-30834-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430166934-30834-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Gleb Natapov <gleb@kernel.org>, "Michael S . Tsirkin" <mst@redhat.com>, zhanghy@sangfor.com, jasowang@redhat.com, kernel-janitors@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: herbert@gondor.apana.org.au
+Cc: kernel-janitors@vger.kernel.org, davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, tim.c.chen@linux.intel.com, smueller@chronox.de, minipli@googlemail.com, dan.carpenter@oracle.com, ameenali023@gmail.com, fengguang.wu@intel.com, linux-crypto@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-> If the null test is needed, the call to cancel_delayed_work_sync would have
-> already crashed.  Normally, the destroy function should only be called
-> if the init functoin has succeeded, in which case ioapic is not null.
+Since kzalloc() returns a void pointer, we don't need to cast the
+return value in arch/x86/crypto/sha-mb/sha1_mb.c::sha1_mb_mod_init().
 
-Does your commit message need a small fix?
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ arch/x86/crypto/sha-mb/sha1_mb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/arch/x86/crypto/sha-mb/sha1_mb.c b/arch/x86/crypto/sha-mb/sha1_mb.c
+index e510b1c..0cb5149 100644
+--- a/arch/x86/crypto/sha-mb/sha1_mb.c
++++ b/arch/x86/crypto/sha-mb/sha1_mb.c
+@@ -885,7 +885,8 @@ static int __init sha1_mb_mod_init(void)
+ 		INIT_DELAYED_WORK(&cpu_state->flush, mcryptd_flusher);
+ 		cpu_state->cpu = cpu;
+ 		cpu_state->alg_state = &sha1_mb_alg_state;
+-		cpu_state->mgr = (struct sha1_ctx_mgr *) kzalloc(sizeof(struct sha1_ctx_mgr), GFP_KERNEL);
++		cpu_state->mgr = kzalloc(sizeof(struct sha1_ctx_mgr),
++					GFP_KERNEL);
+ 		if (!cpu_state->mgr)
+ 			goto err2;
+ 		sha1_ctx_mgr_init(cpu_state->mgr);
+-- 
+2.1.0
+
