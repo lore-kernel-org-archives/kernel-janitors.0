@@ -1,28 +1,31 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Wed, 22 Apr 2015 16:35:22 +0000
-Subject: [PATCH 08/16] Clean up unnecessary void* pointer cast.
-Message-Id: <1429720530-20044-8-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:33:55 +0000
+Subject: [PATCH 05/15] minix: No need to cast kmem_cache_alloc() return value in minix
+Message-Id: <1429767245-32453-6-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Remove unneeded kmem_cache_alloc() return value casts in
+fs/minix/inode.c::minix_alloc_inode().
+
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- fs/efs/super.c | 2 +-
+ fs/minix/inode.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/efs/super.c b/fs/efs/super.c
-index 7fca462..c8411a3 100644
---- a/fs/efs/super.c
-+++ b/fs/efs/super.c
-@@ -67,7 +67,7 @@ static struct kmem_cache * efs_inode_cachep;
- static struct inode *efs_alloc_inode(struct super_block *sb)
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index 3f57af1..8898633 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -62,7 +62,7 @@ static struct kmem_cache * minix_inode_cachep;
+ static struct inode *minix_alloc_inode(struct super_block *sb)
  {
- 	struct efs_inode_info *ei;
--	ei = (struct efs_inode_info *)kmem_cache_alloc(efs_inode_cachep, GFP_KERNEL);
-+	ei = kmem_cache_alloc(efs_inode_cachep, GFP_KERNEL);
+ 	struct minix_inode_info *ei;
+-	ei = (struct minix_inode_info *)kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
  	if (!ei)
  		return NULL;
  	return &ei->vfs_inode;
