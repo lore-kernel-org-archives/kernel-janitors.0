@@ -1,35 +1,34 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 05:33:59 +0000
-Subject: [PATCH 09/15] 9p:kzalloc() returns void pointer, no need to cast
-Message-Id: <1429767245-32453-10-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 09:45:46 +0000
+Subject: [PATCH] adfs: Remove unneeded cast
+Message-Id: <1429782346-6467-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-kzalloc() returns a void pointer - no need to cast it in
-fs/9p/vfs_inode.c::v9fs_alloc_inode()
+kmem_cache_alloc() returns a void pointer - no need to cast it in
+fs/adfs/super.c::adfs_alloc_inode()
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- fs/9p/vfs_inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/adfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 3662f1d..b6ade6f 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
- struct inode *v9fs_alloc_inode(struct super_block *sb)
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index a19c31d..4d4a0df 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -242,7 +242,7 @@ static struct kmem_cache *adfs_inode_cachep;
+ static struct inode *adfs_alloc_inode(struct super_block *sb)
  {
- 	struct v9fs_inode *v9inode;
--	v9inode = (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
--							GFP_KERNEL);
-+	v9inode = kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
- 	if (!v9inode)
+ 	struct adfs_inode_info *ei;
+-	ei = (struct adfs_inode_info *)kmem_cache_alloc(adfs_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(adfs_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
  		return NULL;
- #ifdef CONFIG_9P_FSCACHE
+ 	return &ei->vfs_inode;
 -- 
 2.1.0
 
