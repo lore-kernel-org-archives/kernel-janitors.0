@@ -1,12 +1,15 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Wed, 22 Apr 2015 16:35:21 +0000
-Subject: [PATCH 07/16] Clean up unnecessary void* pointer cast.
-Message-Id: <1429720530-20044-7-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 07:48:25 +0000
+Subject: [PATCH v2 06/15]  hpfs: Remove explicit casts of allocation.
+Message-Id: <1429775314-4171-7-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+
+Avoid a pointless kmem_cache_alloc() return value cast in
+fs/hpfs/super.c::hpfs_alloc_inode()
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
