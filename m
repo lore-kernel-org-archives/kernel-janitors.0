@@ -1,143 +1,34 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Tue, 14 Apr 2015 12:26:33 +0000
-Subject: [PATCH] memstick: remove deprecated use of pci api
-Message-Id: <1429014393-21590-1-git-send-email-lambert.quentin@gmail.com>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 09:37:44 +0000
+Subject: [PATCH] efs: Remove unneeded cast
+Message-Id: <1429781864-6283-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Replace occurences of the pci api by appropriate call to the dma api.
+kmem_cache_alloc() returns a void pointer - no need to cast it in
+fs/efs/super.c::efs_alloc_inode().
 
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr)
-
-@deprecated@
-idexpression id;
-position p;
-@@
-
-(
-  pci_dma_supported@p ( id, ...)
-|
-  pci_alloc_consistent@p ( id, ...)
-)
-
-@bad1@
-idexpression id;
-position deprecated.p;
-@@
-...when != &id->dev
-   when != pci_get_drvdata ( id )
-   when != pci_enable_device ( id )
-(
-  pci_dma_supported@p ( id, ...)
-|
-  pci_alloc_consistent@p ( id, ...)
-)
-
-@depends on !bad1@
-idexpression id;
-expression direction;
-position deprecated.p;
-@@
-
-(
-- pci_dma_supported@p ( id,
-+ dma_supported ( &id->dev,
-...
-+ , GFP_ATOMIC
-  )
-|
-- pci_alloc_consistent@p ( id,
-+ dma_alloc_coherent ( &id->dev,
-...
-+ , GFP_ATOMIC
-  )
-)
-
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/memstick/host/jmb38x_ms.c |   12 ++++++------
- drivers/memstick/host/r592.c      |   10 +++++-----
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ fs/efs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/memstick/host/jmb38x_ms.c
-+++ b/drivers/memstick/host/jmb38x_ms.c
-@@ -419,10 +419,10 @@ static int jmb38x_ms_issue_cmd(struct me
- 	}
- 
- 	if (host->cmd_flags & DMA_DATA) {
--		if (1 != pci_map_sg(host->chip->pdev, &host->req->sg, 1,
-+		if (1 != dma_map_sg(&host->chip->pdev->dev, &host->req->sg, 1,
- 				    host->req->data_dir = READ
--				    ? PCI_DMA_FROMDEVICE
--				    : PCI_DMA_TODEVICE)) {
-+				    ? DMA_FROM_DEVICE
-+				    : DMA_TO_DEVICE)) {
- 			host->req->error = -ENOMEM;
- 			return host->req->error;
- 		}
-@@ -487,9 +487,9 @@ static void jmb38x_ms_complete_cmd(struc
- 	writel(0, host->addr + DMA_CONTROL);
- 
- 	if (host->cmd_flags & DMA_DATA) {
--		pci_unmap_sg(host->chip->pdev, &host->req->sg, 1,
-+		dma_unmap_sg(&host->chip->pdev->dev, &host->req->sg, 1,
- 			     host->req->data_dir = READ
--			     ? PCI_DMA_FROMDEVICE : PCI_DMA_TODEVICE);
-+			     ? DMA_FROM_DEVICE : DMA_TO_DEVICE);
- 	} else {
- 		t_val = readl(host->addr + INT_STATUS_ENABLE);
- 		if (host->req->data_dir = READ)
-@@ -925,7 +925,7 @@ static int jmb38x_ms_probe(struct pci_de
- 	int pci_dev_busy = 0;
- 	int rc, cnt;
- 
--	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+	rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
- 	if (rc)
- 		return rc;
- 
---- a/drivers/memstick/host/r592.c
-+++ b/drivers/memstick/host/r592.c
-@@ -754,7 +754,7 @@ static int r592_probe(struct pci_dev *pd
- 		goto error2;
- 
- 	pci_set_master(pdev);
--	error = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-+	error = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
- 	if (error)
- 		goto error3;
- 
-@@ -787,8 +787,8 @@ static int r592_probe(struct pci_dev *pd
- 	}
- 
- 	/* This is just a precation, so don't fail */
--	dev->dummy_dma_page = pci_alloc_consistent(pdev, PAGE_SIZE,
--		&dev->dummy_dma_page_physical_address);
-+	dev->dummy_dma_page = dma_alloc_coherent(&pdev->dev, PAGE_SIZE,
-+		&dev->dummy_dma_page_physical_address, GFP_KERNEL);
- 	r592_stop_dma(dev , 0);
- 
- 	if (request_irq(dev->irq, &r592_irq, IRQF_SHARED,
-@@ -805,7 +805,7 @@ error7:
- 	free_irq(dev->irq, dev);
- error6:
- 	if (dev->dummy_dma_page)
--		pci_free_consistent(pdev, PAGE_SIZE, dev->dummy_dma_page,
-+		dma_free_coherent(&pdev->dev, PAGE_SIZE, dev->dummy_dma_page,
- 			dev->dummy_dma_page_physical_address);
- 
- 	kthread_stop(dev->io_thread);
-@@ -845,7 +845,7 @@ static void r592_remove(struct pci_dev *
- 	memstick_free_host(dev->host);
- 
- 	if (dev->dummy_dma_page)
--		pci_free_consistent(pdev, PAGE_SIZE, dev->dummy_dma_page,
-+		dma_free_coherent(&pdev->dev, PAGE_SIZE, dev->dummy_dma_page,
- 			dev->dummy_dma_page_physical_address);
- }
- 
+diff --git a/fs/efs/super.c b/fs/efs/super.c
+index 7fca462..c8411a3 100644
+--- a/fs/efs/super.c
++++ b/fs/efs/super.c
+@@ -67,7 +67,7 @@ static struct kmem_cache * efs_inode_cachep;
+ static struct inode *efs_alloc_inode(struct super_block *sb)
+ {
+ 	struct efs_inode_info *ei;
+-	ei = (struct efs_inode_info *)kmem_cache_alloc(efs_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(efs_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
+-- 
+2.1.0
+
