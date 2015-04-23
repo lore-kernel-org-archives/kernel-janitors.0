@@ -1,59 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 11:38:34 +0000
-Subject: [PATCH 4/9] sound/soc/omap/am3517evm.c: fix error return code
-Message-Id: <1428233914-4503-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 07:48:34 +0000
+Subject: [PATCH v2 15/15] crypto: sha1-mb - Remove pointless cast
+Message-Id: <1429775314-4171-16-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-omap@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Since kzalloc() returns a void pointer, we don't need to cast the
+return value in arch/x86/crypto/sha-mb/sha1_mb.c::sha1_mb_mod_init().
 
-It was forgotten to initialize ret to the result of calling
-snd_soc_dai_set_sysclk, unlike at the other calls in the same function.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- sound/soc/omap/am3517evm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/crypto/sha-mb/sha1_mb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/omap/am3517evm.c b/sound/soc/omap/am3517evm.c
-index 009533a..df65f98 100644
---- a/sound/soc/omap/am3517evm.c
-+++ b/sound/soc/omap/am3517evm.c
-@@ -59,7 +59,7 @@ static int am3517evm_hw_params(struct snd_pcm_substream *substream,
- 		return ret;
- 	}
- 
--	snd_soc_dai_set_sysclk(cpu_dai, OMAP_MCBSP_FSR_SRC_FSX, 0,
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, OMAP_MCBSP_FSR_SRC_FSX, 0,
- 				SND_SOC_CLOCK_IN);
- 	if (ret < 0) {
- 		printk(KERN_ERR "can't set CPU system clock OMAP_MCBSP_FSR_SRC_FSX\n");
+diff --git a/arch/x86/crypto/sha-mb/sha1_mb.c b/arch/x86/crypto/sha-mb/sha1_mb.c
+index e510b1c..0cb5149 100644
+--- a/arch/x86/crypto/sha-mb/sha1_mb.c
++++ b/arch/x86/crypto/sha-mb/sha1_mb.c
+@@ -885,7 +885,8 @@ static int __init sha1_mb_mod_init(void)
+ 		INIT_DELAYED_WORK(&cpu_state->flush, mcryptd_flusher);
+ 		cpu_state->cpu = cpu;
+ 		cpu_state->alg_state = &sha1_mb_alg_state;
+-		cpu_state->mgr = (struct sha1_ctx_mgr *) kzalloc(sizeof(struct sha1_ctx_mgr), GFP_KERNEL);
++		cpu_state->mgr = kzalloc(sizeof(struct sha1_ctx_mgr),
++					GFP_KERNEL);
+ 		if (!cpu_state->mgr)
+ 			goto err2;
+ 		sha1_ctx_mgr_init(cpu_state->mgr);
+-- 
+2.1.0
 
