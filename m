@@ -1,68 +1,36 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:13:32 +0000
-Subject: Re: [PATCH 4/9] sound/soc/omap/am3517evm.c: fix error return code
-Message-Id: <alpine.DEB.2.02.1504051413280.2038@localhost6.localdomain6>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:34:04 +0000
+Subject: [PATCH 14/15] arm: Remove pointless kmalloc() return value cast in kvm mmu.
+Message-Id: <1429767245-32453-15-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr> <1428233914-4503-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428233914-4503-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, kernel-janitors@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-omap@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Please ignore. Wrong patch set.
+No need to cast the void pointer returned by kmalloc() in
+arch/arm/kvm/mmu.c::kvm_alloc_stage2_pgd().
 
-On Sun, 5 Apr 2015, Julia Lawall wrote:
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ arch/arm/kvm/mmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> It was forgotten to initialize ret to the result of calling
-> snd_soc_dai_set_sysclk, unlike at the other calls in the same function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  sound/soc/omap/am3517evm.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/omap/am3517evm.c b/sound/soc/omap/am3517evm.c
-> index 009533a..df65f98 100644
-> --- a/sound/soc/omap/am3517evm.c
-> +++ b/sound/soc/omap/am3517evm.c
-> @@ -59,7 +59,7 @@ static int am3517evm_hw_params(struct snd_pcm_substream *substream,
->  		return ret;
->  	}
->  
-> -	snd_soc_dai_set_sysclk(cpu_dai, OMAP_MCBSP_FSR_SRC_FSX, 0,
-> +	ret = snd_soc_dai_set_sysclk(cpu_dai, OMAP_MCBSP_FSR_SRC_FSX, 0,
->  				SND_SOC_CLOCK_IN);
->  	if (ret < 0) {
->  		printk(KERN_ERR "can't set CPU system clock OMAP_MCBSP_FSR_SRC_FSX\n");
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/arch/arm/kvm/mmu.c b/arch/arm/kvm/mmu.c
+index 1d5accb..ce0bce4 100644
+--- a/arch/arm/kvm/mmu.c
++++ b/arch/arm/kvm/mmu.c
+@@ -691,8 +691,8 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
+ 		 * work.  This is not used by the hardware and we have no
+ 		 * alignment requirement for this allocation.
+ 		 */
+-		pgd = (pgd_t *)kmalloc(PTRS_PER_S2_PGD * sizeof(pgd_t),
+-				       GFP_KERNEL | __GFP_ZERO);
++		pgd = kmalloc(PTRS_PER_S2_PGD * sizeof(pgd_t),
++				GFP_KERNEL | __GFP_ZERO);
+ 
+ 		if (!pgd) {
+ 			kvm_free_hwpgd(hwpgd);
+-- 
+2.1.0
+
