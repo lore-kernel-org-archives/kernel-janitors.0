@@ -1,68 +1,37 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:13:02 +0000
-Subject: Re: [PATCH 2/10] sound/soc/fsl/imx-sgtl5000.c: fix error return code
-Message-Id: <alpine.DEB.2.02.1504051412590.2038@localhost6.localdomain6>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 10:07:40 +0000
+Subject: [PATCH] ARM: KVM: Remove pointless void pointer cast
+Message-Id: <1429783660-7222-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr> <1428233914-4503-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428233914-4503-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Liam Girdwood <lrg@ti.com>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: gleb@kernel.org
+Cc: kernel-janitors@vger.kernel.org, pbonzini@redhat.com, christoffer.dall@linaro.org, marc.zyngier@arm.com, linux@arm.linux.org.uk, kvm@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-Please ignore. Wrong patch set.
+No need to cast the void pointer returned by kmalloc() in
+arch/arm/kvm/mmu.c::kvm_alloc_stage2_pgd().
 
-On Sun, 5 Apr 2015, Julia Lawall wrote:
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ arch/arm/kvm/mmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Initialize ret on the second call to imx_audmux_v2_configure_port so that
-> the subsequent test checks that result and not the previous one.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  sound/soc/fsl/imx-sgtl5000.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/fsl/imx-sgtl5000.c b/sound/soc/fsl/imx-sgtl5000.c
-> index fb21b17..199408e 100644
-> --- a/sound/soc/fsl/imx-sgtl5000.c
-> +++ b/sound/soc/fsl/imx-sgtl5000.c
-> @@ -94,7 +94,7 @@ static int __devinit imx_sgtl5000_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev, "audmux internal port setup failed\n");
->  		return ret;
->  	}
-> -	imx_audmux_v2_configure_port(ext_port,
-> +	ret = imx_audmux_v2_configure_port(ext_port,
->  			IMX_AUDMUX_V2_PTCR_SYN,
->  			IMX_AUDMUX_V2_PDCR_RXDSEL(int_port));
->  	if (ret) {
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/arch/arm/kvm/mmu.c b/arch/arm/kvm/mmu.c
+index 1d5accb..ce0bce4 100644
+--- a/arch/arm/kvm/mmu.c
++++ b/arch/arm/kvm/mmu.c
+@@ -691,8 +691,8 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
+ 		 * work.  This is not used by the hardware and we have no
+ 		 * alignment requirement for this allocation.
+ 		 */
+-		pgd = (pgd_t *)kmalloc(PTRS_PER_S2_PGD * sizeof(pgd_t),
+-				       GFP_KERNEL | __GFP_ZERO);
++		pgd = kmalloc(PTRS_PER_S2_PGD * sizeof(pgd_t),
++				GFP_KERNEL | __GFP_ZERO);
+ 
+ 		if (!pgd) {
+ 			kvm_free_hwpgd(hwpgd);
+-- 
+2.1.0
+
