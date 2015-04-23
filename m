@@ -1,32 +1,35 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Wed, 22 Apr 2015 16:35:27 +0000
-Subject: [PATCH 13/16] Clean up unnecessary void* pointer cast.
-Message-Id: <1429720530-20044-13-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:34:01 +0000
+Subject: [PATCH 11/15] scsi: kzalloc() returns void pointer, no need to cast in hpsa driver
+Message-Id: <1429767245-32453-12-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+kmalloc() returns a void pointer - no need to cast it in
+drivers/scsi/hpsa.c::hpsa_big_passthru_ioctl()
+
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_process.c | 3 +--
+ drivers/scsi/hpsa.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-index 945d622..4d7bc95 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-@@ -203,8 +203,7 @@ static void kfd_process_destroy_delayed(struct rcu_head *rcu)
- 
- 	mmdrop(p->mm);
- 
--	work = (struct kfd_process_release_work *)
--		kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
-+	work = kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
- 
- 	if (work) {
- 		INIT_WORK((struct work_struct *) work, kfd_process_wq_release);
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 8eab107..e7d3444b 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -4992,8 +4992,7 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
+ 		return -EINVAL;
+ 	if (!capable(CAP_SYS_RAWIO))
+ 		return -EPERM;
+-	ioc = (BIG_IOCTL_Command_struct *)
+-	    kmalloc(sizeof(*ioc), GFP_KERNEL);
++	ioc = kmalloc(sizeof(*ioc), GFP_KERNEL);
+ 	if (!ioc) {
+ 		status = -ENOMEM;
+ 		goto cleanup1;
 -- 
 2.1.0
 
