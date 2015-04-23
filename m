@@ -1,36 +1,34 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 09:56:37 +0000
-Subject: [PATCH] hpsa: Remove unnessary cast
-Message-Id: <1429782997-6794-1-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:33:57 +0000
+Subject: [PATCH 07/15] efs:Remove unneeded kmem_cache_alloc() return value casts
+Message-Id: <1429767245-32453-8-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: don.brace@pmcs.com, JBottomley@odin.com
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Firo Yang <firogm@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-kmalloc() returns a void pointer - no need to cast it in
-drivers/scsi/hpsa.c::hpsa_big_passthru_ioctl()
+kmem_cache_alloc() returns a void pointer - no need to cast it in
+fs/efs/super.c::efs_alloc_inode().
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/scsi/hpsa.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/efs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 8eab107..e7d3444b 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -4992,8 +4992,7 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
- 		return -EINVAL;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
--	ioc = (BIG_IOCTL_Command_struct *)
--	    kmalloc(sizeof(*ioc), GFP_KERNEL);
-+	ioc = kmalloc(sizeof(*ioc), GFP_KERNEL);
- 	if (!ioc) {
- 		status = -ENOMEM;
- 		goto cleanup1;
+diff --git a/fs/efs/super.c b/fs/efs/super.c
+index 7fca462..c8411a3 100644
+--- a/fs/efs/super.c
++++ b/fs/efs/super.c
+@@ -67,7 +67,7 @@ static struct kmem_cache * efs_inode_cachep;
+ static struct inode *efs_alloc_inode(struct super_block *sb)
+ {
+ 	struct efs_inode_info *ei;
+-	ei = (struct efs_inode_info *)kmem_cache_alloc(efs_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(efs_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
 -- 
 2.1.0
 
