@@ -1,31 +1,31 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 07:48:24 +0000
-Subject: [PATCH v2 05/15] minix: No need to cast alloction return value in minix
-Message-Id: <1429775314-4171-6-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 07:48:23 +0000
+Subject: [PATCH v2 04/15] ncpfs: Get rid of some pointless allocation cast
+Message-Id: <1429775314-4171-5-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Remove unneeded kmem_cache_alloc() return value casts in
-fs/minix/inode.c::minix_alloc_inode().
+Remove explicit casts of kmem_cache_alloc return values in
+fs/ncpfs/inode.c::ncp_alloc_inode().
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- fs/minix/inode.c | 2 +-
+ fs/ncpfs/inode.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index 3f57af1..8898633 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -62,7 +62,7 @@ static struct kmem_cache * minix_inode_cachep;
- static struct inode *minix_alloc_inode(struct super_block *sb)
+diff --git a/fs/ncpfs/inode.c b/fs/ncpfs/inode.c
+index 01a9e16..a3aab17 100644
+--- a/fs/ncpfs/inode.c
++++ b/fs/ncpfs/inode.c
+@@ -52,7 +52,7 @@ static struct kmem_cache * ncp_inode_cachep;
+ static struct inode *ncp_alloc_inode(struct super_block *sb)
  {
- 	struct minix_inode_info *ei;
--	ei = (struct minix_inode_info *)kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
-+	ei = kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
+ 	struct ncp_inode_info *ei;
+-	ei = (struct ncp_inode_info *)kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(ncp_inode_cachep, GFP_KERNEL);
  	if (!ei)
  		return NULL;
  	return &ei->vfs_inode;
