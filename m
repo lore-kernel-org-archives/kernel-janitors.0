@@ -1,12 +1,15 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Wed, 22 Apr 2015 16:35:17 +0000
-Subject: [PATCH 03/16] Clean up unnecessary void* pointer cast.
-Message-Id: <1429720530-20044-3-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:33:52 +0000
+Subject: [PATCH 02/15] proc: Remove unnecessary cast of allocation return value
+Message-Id: <1429767245-32453-3-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+
+Remove unnecessary cast of allocation return value in
+fs/proc/inode.c::proc_alloc_inode().
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
