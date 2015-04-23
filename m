@@ -1,141 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 12 Apr 2015 21:19:48 +0000
-Subject: [PATCH] drop uses of some OBD alloc and free functions
-Message-Id: <1428873589-15241-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:34:03 +0000
+Subject: [PATCH 13/15] block: Do not do pointless kmalloc return value cast in cciss driver.
+Message-Id: <1429767245-32453-14-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
+To: kernel-janitors@vger.kernel.org
 
-Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
-kzalloc or calloc, as appropriate.
+There's no need to cast the, void *, return value of kmalloc() when
+assigning to a pointer variable in drivers/block/cciss_scsi.c::
+cciss_scsi_setup.
 
-Replace OBD_FREE and OBD_FREE_PTR by kfree.
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ drivers/block/cciss_scsi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The complete semantic patch that makes these changes is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC(ptr,sizeof e1 * e2)
-+ ptr = kcalloc(e2, sizeof e1, GFP_NOFS)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC_WAIT(ptr,sizeof e1 * e2)
-+ ptr = kcalloc(sizeof e1, e2, GFP_KERNEL)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC(ptr,e2 * sizeof e1)
-+ ptr = kcalloc(e2, sizeof e1, GFP_NOFS)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e2 * sizeof e1)
-+ ptr = kcalloc(e2, sizeof e1, GFP_KERNEL)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC(ptr,sizeof (t) * e2)
-+ ptr = kcalloc(e2, sizeof (t), GFP_NOFS)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC_WAIT(ptr,sizeof (t) * e2)
-+ ptr = kcalloc(e2, sizeof (t), GFP_KERNEL)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC(ptr,e2 * sizeof (t))
-+ ptr = kcalloc(e2, sizeof (t), GFP_NOFS)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e2 * sizeof (t))
-+ ptr = kcalloc(e2, sizeof (t), GFP_KERNEL)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC(ptr,e1 * e2)
-+ ptr = kcalloc(e1, e2, GFP_NOFS)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e1 * e2)
-+ ptr = kcalloc(e1, e2, GFP_KERNEL)
-
-// -----------------------------------------------------------------------
-
-@@
-expression ptr,size;
-@@
-
-- OBD_ALLOC(ptr,size)
-+ ptr = kzalloc(size, GFP_NOFS)
-
-@@
-expression ptr,size;
-@@
-
-- OBD_ALLOC_WAIT(ptr,size)
-+ ptr = kzalloc(size, GFP_KERNEL)
-
-@@
-expression ptr;
-@@
-
-- OBD_ALLOC_PTR(ptr)
-+ ptr = kzalloc(sizeof(*ptr), GFP_NOFS)
-
-@@
-expression ptr;
-@@
-
-- OBD_ALLOC_PTR_WAIT(ptr)
-+ ptr = kzalloc(sizeof(*ptr), GFP_KERNEL)
-
-// ----------------------------------------------------------------------
-
-@@
-expression ptr, size;
-@@
-
-- OBD_FREE(ptr, size);
-+ kfree(ptr);
-
-@@
-expression ptr;
-@@
-
-- OBD_FREE_PTR(ptr);
-+ kfree(ptr);
-// </smpl>
+diff --git a/drivers/block/cciss_scsi.c b/drivers/block/cciss_scsi.c
+index ecd845c..6e17d47 100644
+--- a/drivers/block/cciss_scsi.c
++++ b/drivers/block/cciss_scsi.c
+@@ -704,8 +704,7 @@ cciss_scsi_setup(ctlr_info_t *h)
+ 	struct cciss_scsi_adapter_data_t * shba;
+ 
+ 	ccissscsi[h->ctlr].ndevices = 0;
+-	shba = (struct cciss_scsi_adapter_data_t *)
+-		kmalloc(sizeof(*shba), GFP_KERNEL);	
++	shba = kmalloc(sizeof(*shba), GFP_KERNEL);
+ 	if (shba = NULL)
+ 		return;
+ 	shba->scsi_host = NULL;
+-- 
+2.1.0
 
