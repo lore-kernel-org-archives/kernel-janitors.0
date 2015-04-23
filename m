@@ -1,34 +1,34 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 05:33:52 +0000
-Subject: [PATCH 02/15] proc: Remove unnecessary cast of allocation return value
-Message-Id: <1429767245-32453-3-git-send-email-firogm@gmail.com>
+Date: Thu, 23 Apr 2015 07:48:24 +0000
+Subject: [PATCH v2 05/15] minix: No need to cast alloction return value in minix
+Message-Id: <1429775314-4171-6-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Remove unnecessary cast of allocation return value in
-fs/proc/inode.c::proc_alloc_inode().
+Remove unneeded kmem_cache_alloc() return value casts in
+fs/minix/inode.c::minix_alloc_inode().
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- fs/proc/inode.c | 2 +-
+ fs/minix/inode.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 7697b66..08a7235 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -58,7 +58,7 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
- 	struct proc_inode *ei;
- 	struct inode *inode;
- 
--	ei = (struct proc_inode *)kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
-+	ei = kmem_cache_alloc(proc_inode_cachep, GFP_KERNEL);
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index 3f57af1..8898633 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -62,7 +62,7 @@ static struct kmem_cache * minix_inode_cachep;
+ static struct inode *minix_alloc_inode(struct super_block *sb)
+ {
+ 	struct minix_inode_info *ei;
+-	ei = (struct minix_inode_info *)kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
  	if (!ei)
  		return NULL;
- 	ei->pid = NULL;
+ 	return &ei->vfs_inode;
 -- 
 2.1.0
 
