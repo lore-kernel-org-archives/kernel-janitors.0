@@ -1,35 +1,45 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 05:34:02 +0000
-Subject: [PATCH 12/15] gpu:No need to cast kmalloc() return values in AMD kfd driver
-Message-Id: <1429767245-32453-13-git-send-email-firogm@gmail.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Thu, 23 Apr 2015 05:54:42 +0000
+Subject: Re: [PATCH 12/15] gpu:No need to cast kmalloc() return values in AMD kfd driver
+Message-Id: <alpine.DEB.2.10.1504230750470.2812@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1429767245-32453-13-git-send-email-firogm@gmail.com>
+In-Reply-To: <1429767245-32453-13-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-kmalloc() returns a void pointer - no need to cast it in
-drivers/gpu/drm/amd/amdkfd/kfd_process.c::kfd_process_destroy_delayed()
+Again, gpu does not seem like the right information for the subject line.
+git log --oneline for this file shows multiple uses of amdkfd.
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
----
- drivers/gpu/drm/amd/amdkfd/kfd_process.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+julia
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-index 945d622..4d7bc95 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-@@ -203,8 +203,7 @@ static void kfd_process_destroy_delayed(struct rcu_head *rcu)
- 
- 	mmdrop(p->mm);
- 
--	work = (struct kfd_process_release_work *)
--		kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
-+	work = kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
- 
- 	if (work) {
- 		INIT_WORK((struct work_struct *) work, kfd_process_wq_release);
--- 
-2.1.0
+On Thu, 23 Apr 2015, Firo Yang wrote:
 
+> kmalloc() returns a void pointer - no need to cast it in
+> drivers/gpu/drm/amd/amdkfd/kfd_process.c::kfd_process_destroy_delayed()
+>
+> Signed-off-by: Firo Yang <firogm@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_process.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+> index 945d622..4d7bc95 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+> @@ -203,8 +203,7 @@ static void kfd_process_destroy_delayed(struct rcu_head *rcu)
+>
+>  	mmdrop(p->mm);
+>
+> -	work = (struct kfd_process_release_work *)
+> -		kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
+> +	work = kmalloc(sizeof(struct kfd_process_release_work), GFP_ATOMIC);
+>
+>  	if (work) {
+>  		INIT_WORK((struct work_struct *) work, kfd_process_wq_release);
+> --
+> 2.1.0
+>
+>
