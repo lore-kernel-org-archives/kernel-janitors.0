@@ -1,87 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 04 Apr 2015 14:59:28 +0000
-Subject: [PATCH 0/2] test returned value
-Message-Id: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 09:54:11 +0000
+Subject: [PATCH] lpfc: Remove unnessary cast
+Message-Id: <1429782851-6716-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+To: james.smart@emulex.com, JBottomley@odin.com
+Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-Put NULL test on the result of the previous call instead on one of its
-arguments.  The complete semantic match that finds these problems is as
-follows (http://coccinelle.lip6.fr/):
+kzalloc() returns a void pointer - no need to cast it in
+drivers/scsi/lpfc/lpfc_init.c::lpfc_sli_driver_resource_setup()
 
-// <smpl>
-@r@
-expression *e1;
-expression *e2;
-identifier f;
-statement S1,S2;
-position p,p2;
-@@
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ drivers/scsi/lpfc/lpfc_init.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- e1 = f@p(...,e2,...);
-(
-if (e1 = NULL || ...) S1 else S2
-|
-if (e1 != NULL || ...) S1 else S2
-|
-if@p2 (e2 = NULL || ...) S1 else S2
-|
-if@p2  (e2 != NULL || ...) S1 else S2
-)
-
-@ok@
-expression e1,e2;
-identifier f;
-statement S1,S2;
-position r.p,r.p2;
-@@
-
- e1 = f@p(...);
-(
-if@p2 (e2 = NULL || ...) S1 else S2
-|
-if@p2  (e2 != NULL || ...) S1 else S2
-)
-
-@ok1 depends on ok exists@
-position r.p;
-expression *r.e2;
-expression e3;
-identifier f,g;
-@@
-
-e2->g
-... when != e2 = e3
-    when != &e2
-f@p
-
-@ok2 depends on ok exists@
-position r.p;
-expression *r.e2;
-expression e,e3;
-statement S1,S2;
-identifier f;
-@@
-
-(
-if (e2 = NULL || ...) {... return ...;} else S2
-|
-if (e2 != NULL || ...) S1 else {... return ...;}
-)
-... when != e2 = e3
-    when != &e2
-e = f@p(...);
-
-@depends on ok1 || ok2@
-expression e1;
-identifier f;
-position r.p;
-@@
-
-* e1 = f@p(...);
-// </smpl>
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index e8c8c1e..30b72da 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -4975,8 +4975,7 @@ lpfc_sli_driver_resource_setup(struct lpfc_hba *phba)
+ 	}
+ 
+ 	if (!phba->sli.ring)
+-		phba->sli.ring = (struct lpfc_sli_ring *)
+-			kzalloc(LPFC_SLI3_MAX_RING *
++		phba->sli.ring = kzalloc(LPFC_SLI3_MAX_RING *
+ 			sizeof(struct lpfc_sli_ring), GFP_KERNEL);
+ 	if (!phba->sli.ring)
+ 		return -ENOMEM;
+-- 
+2.1.0
 
