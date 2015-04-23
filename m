@@ -1,171 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:06:20 +0000
-Subject: [PATCH 0/16] fix error return code
-Message-Id: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:33:51 +0000
+Subject: [PATCH 01/15] reiserfs: Avoid pointless casts of kmem_cache_alloc() return value.
+Message-Id: <1429767245-32453-2-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: devel@driverdev.osuosl.org
-Cc: linux-wireless@vger.kernel.org, alsa-devel@alsa-project.org, linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, HPDD-discuss@lists.01.org, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-The complate semantic patch that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Get rid of pointless cast of kmem_cache_alloc() return value in
+fs/reiserfs/super.c::reiserfs_alloc_inode().
 
-// <smpl>
-@ok exists@
-identifier f,ret,i;
-expression e;
-constant c;
-@@
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ fs/reiserfs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-// identify a function that returns a negative return value at least once.
-f(...) {
-... when any
-(
-return -c@i;
-|
-ret =3D -c@i;
-... when !=3D ret =3D e
-return ret;
-|
-if (ret < 0) { ... return ret; }
-)
-... when any
-}
-
-@r exists@
-identifier ret,ok.f,fn;
-expression e1,e2,e3,e4,e5,e6,x;
-statement S,S1;
-position p1,p2,p3;
-@@
-
-// identify a case where the return variable is set to a non-negative value
-// and then returned in error-handling code
-f(...) {
-... when any
-(
-if@p1 (\(ret < 0\|ret !=3D 0\))
- { ... return ret; }
-|
-ret@p1 =3D 0
-)
-... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
-    when !=3D &ret
-    when any
-(
- if (<+... ret =3D e5 ...+>) S1
-|
- if (<+... &ret ...+>) S1
-|
-if@p2(<+...x =3D fn(...)...+>)
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 68b5f18..36177d5 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -588,8 +588,7 @@ static struct kmem_cache *reiserfs_inode_cachep;
+ static struct inode *reiserfs_alloc_inode(struct super_block *sb)
  {
-  ... when !=3D ret =3D e6
-      when forall
- return@p3 ret;
-}
-|
-break;
-|
-x =3D fn(...)
-... when !=3D \(ret =3D e4\|ret++\|ret--\|ret+=E4\|ret-=E4\)
-    when !=3D &ret
-(
- if (<+... ret =3D e3 ...+>) S
-|
- if (<+... &ret ...+>) S
-|
-if@p2(<+...\(x !=3D 0\|x < 0\|x =3D NULL\|IS_ERR(x)\)...+>)
- {
-  ... when !=3D ret =3D e2
-      when forall
- return@p3 ret;
-}
-)
-)
-... when any
-}
+ 	struct reiserfs_inode_info *ei;
+-	ei = (struct reiserfs_inode_info *)
+-	    kmem_cache_alloc(reiserfs_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(reiserfs_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	atomic_set(&ei->openers, 0);
+-- 
+2.1.0
 
-@printer depends on r@
-position p;
-identifier ok.f,pr;
-constant char [] c;
-@@
-
-f(...) { <...pr@p(...,c,...)...> }
-
-@bad0 exists@
-identifier r.ret,ok.f,g !=3D {ERR_PTR,IS_ERR};
-position p !=3D printer.p;
-@@
-
-f(...) { ... when any
-g@p(...,ret,...)
-... when any
- }
-
-@bad depends on !bad0 exists@
-position r.p1,r.p2;
-statement S1,S2;
-identifier r.ret;
-expression e1;
-@@
-
-// ignore the above if there is some path where the variable is set to
-// something else
-(
-if@p1 (\(ret < 0\|ret !=3D 0\)) S1
-|
-ret@p1 =3D 0
-)
-... when any
- \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\|&ret\)
-... when any
-if@p2(...) S2
-
-@bad1 depends on !bad0 && !bad exists@
-position r.p2;
-statement S2;
-identifier r.ret;
-expression e1;
-constant c;
-@@
-
-ret =3D -c
-... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
-    when !=3D &ret
-    when any
-if@p2(...) S2
-
-@bad2 depends on !bad0 && !bad && !bad1 exists@
-position r.p1,r.p2;
-identifier r.ret;
-expression e1;
-statement S2;
-constant c;
-@@
-
-// likewise ignore it if there has been an intervening return
-ret@p1 =3D 0
-... when !=3D if (...) { ... ret =3D e1 ... return ret; }
-    when !=3D if (...) { ... return -c; }
-    when any
-if@p2(...) S2
-
-@script:python depends on !bad0 && !bad && !bad1 && !bad2@
-p1 << r.p1;
-p2 << r.p2;
-p3 << r.p3;
-@@
-
-cocci.print_main("",p1)
-cocci.print_secs("",p2)
-cocci.print_secs("",p3)
-// </smpl>
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
