@@ -1,48 +1,35 @@
-From: Andreas Theodosiou <andreasabu@gmail.com>
-Date: Sat, 04 Apr 2015 23:09:30 +0000
-Subject: [PATCH] staging : unisys: Fix brace coding style issue
-Message-Id: <1428188970-30871-1-git-send-email-andreasabu@gmail.com>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 23 Apr 2015 05:34:00 +0000
+Subject: [PATCH 10/15] scsi: kzalloc() returns void pointer, no need to cast
+Message-Id: <1429767245-32453-11-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benjamin.romer@unisys.com, david.kershner@unisys.com, gregkh@linuxfoundation.org, bryan.thompson@unisys.com, conflatulence@gmail.com
-Cc: sparmaintainer@unisys.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andreas Theodosiou <andreasabu@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-This is a patch to visorchannel/visorchannel_funcs.c that fixes a couple
-of brace warnings found by checkpatch.pl.
+kzalloc() returns a void pointer - no need to cast it in
+drivers/scsi/lpfc/lpfc_init.c::lpfc_sli_driver_resource_setup()
 
-Signed-off-by: Andreas Theodosiou <andreasabu@gmail.com>
+Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/staging/unisys/visorchannel/visorchannel_funcs.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/scsi/lpfc/lpfc_init.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/unisys/visorchannel/visorchannel_funcs.c b/drivers/staging/unisys/visorchannel/visorchannel_funcs.c
-index 7a9a724..9ae5f75 100644
---- a/drivers/staging/unisys/visorchannel/visorchannel_funcs.c
-+++ b/drivers/staging/unisys/visorchannel/visorchannel_funcs.c
-@@ -405,9 +405,8 @@ signalremove_inner(struct visorchannel *channel, u32 queue, void *msg)
- 		return FALSE;	/* no signals to remove */
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index e8c8c1e..30b72da 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -4975,8 +4975,7 @@ lpfc_sli_driver_resource_setup(struct lpfc_hba *phba)
+ 	}
  
- 	sig_hdr.tail = (sig_hdr.tail + 1) % sig_hdr.max_slots;
--	if (!sig_read_data(channel, queue, &sig_hdr, sig_hdr.tail, msg)) {
-+	if (!sig_read_data(channel, queue, &sig_hdr, sig_hdr.tail, msg))
- 		return FALSE;
--	}
- 	sig_hdr.num_received++;
- 
- 	/* For each data field in SIGNAL_QUEUE_HEADER that was modified,
-@@ -470,9 +469,8 @@ signalinsert_inner(struct visorchannel *channel, u32 queue, void *msg)
- 	mb(); /* required for channel synch */
- 	if (!SIG_WRITE_FIELD(channel, queue, &sig_hdr, head))
- 		return FALSE;
--	if (!SIG_WRITE_FIELD(channel, queue, &sig_hdr, num_sent)) {
-+	if (!SIG_WRITE_FIELD(channel, queue, &sig_hdr, num_sent))
- 		return FALSE;
--	}
- 
- 	return TRUE;
- }
+ 	if (!phba->sli.ring)
+-		phba->sli.ring = (struct lpfc_sli_ring *)
+-			kzalloc(LPFC_SLI3_MAX_RING *
++		phba->sli.ring = kzalloc(LPFC_SLI3_MAX_RING *
+ 			sizeof(struct lpfc_sli_ring), GFP_KERNEL);
+ 	if (!phba->sli.ring)
+ 		return -ENOMEM;
 -- 
-2.3.5
+2.1.0
 
