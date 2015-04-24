@@ -1,70 +1,39 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:13:17 +0000
-Subject: Re: [PATCH 7/9] sound/pci/sis7019.c: fix error return code
-Message-Id: <alpine.DEB.2.02.1504051413140.2038@localhost6.localdomain6>
+From: Firo Yang <firogm@gmail.com>
+Date: Fri, 24 Apr 2015 10:07:50 +0000
+Subject: [PATCH] fs/compat: remove redundant 'less than zero' check
+Message-Id: <1429870070-30310-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr> <1428233914-4503-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428233914-4503-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: viro@zeniv.linux.org.uk
+Cc: kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-Please ignore. Wrong patch set.
+Smatch complains about the check in compat.c.
+fs/compat.c:565 compat_rw_copy_check_uvector() warn:
+unsigned 'nr_segs' is never less than zero.
 
-On Sun, 5 Apr 2015, Julia Lawall wrote:
+I think, there is no reason to check if the value nr_segs
+is less than zero. So I removed it.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Initialize rc before returning on failure, as done elsewhere in the
-> function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  sound/pci/sis7019.c |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/sis7019.c b/sound/pci/sis7019.c
-> index 535efe2..51e4340 100644
-> --- a/sound/pci/sis7019.c
-> +++ b/sound/pci/sis7019.c
-> @@ -1377,8 +1377,9 @@ static int __devinit sis_chip_create(struct snd_card *card,
->  	if (rc)
->  		goto error_out_cleanup;
->  
-> -	if (request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
-> -			sis)) {
-> +	rc = request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
-> +			 sis);
-> +	if (rc) {
->  		dev_err(&pci->dev, "unable to allocate irq %d\n", sis->irq);
->  		goto error_out_cleanup;
->  	}
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ fs/compat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/compat.c b/fs/compat.c
+index 6fd272d..beaf15b 100644
+--- a/fs/compat.c
++++ b/fs/compat.c
+@@ -562,7 +562,7 @@ ssize_t compat_rw_copy_check_uvector(int type,
+ 		goto out;
+ 
+ 	ret = -EINVAL;
+-	if (nr_segs > UIO_MAXIOV || nr_segs < 0)
++	if (nr_segs > UIO_MAXIOV)
+ 		goto out;
+ 	if (nr_segs > fast_segs) {
+ 		ret = -ENOMEM;
+-- 
+2.1.0
+
