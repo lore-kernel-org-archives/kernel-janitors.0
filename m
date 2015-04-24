@@ -1,67 +1,38 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Tue, 21 Apr 2015 13:20:00 +0000
-Subject: Re: [patch] [media] v4l: xilinx: harmless buffer overflow
-Message-Id: <1496059.xVrMZN3Nsa@avalon>
+From: Firo Yang <firogm@gmail.com>
+Date: Fri, 24 Apr 2015 06:07:19 +0000
+Subject: [PATCH] x86/efi: fix potential NULL pointer dereference
+Message-Id: <1429855639-14706-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150421093110.GD12098@mwanda>
-In-Reply-To: <20150421093110.GD12098@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hyun Kwon <hyun.kwon@xilinx.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Michal Simek <michal.simek@xilinx.com>, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: matt.fleming-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Cc: tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Firo Yang <firogm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Hi Dan,
+In this patch, I add error-handing code for kmalloc() in
+arch/x86/platform/efi/efi_64.c::efi_call_phys_prolog().
 
-Thank you for the patch.
+If kmalloc() failed to alloc memroy, save_pgd will be a NULL
+pointer dereferenced by subsequent codes.
 
-On Tuesday 21 April 2015 12:31:10 Dan Carpenter wrote:
-> My static checker warns that the name of the port can be 15 characters
-> when you consider the NUL terminator and that's one more than the 14
-> characters in name[].  Maybe it's an off-by-one?
->
-> It's unlikely that we hit the limit and even if we do the overflow will
-> only affect one of the two bytes of padding so it's harmless.  Still
-> let's fix it and also change the sprintf() to snprintf().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/media/platform/xilinx/xilinx-dma.c
-> b/drivers/media/platform/xilinx/xilinx-dma.c index efde88a..98e50e4 100644
-> --- a/drivers/media/platform/xilinx/xilinx-dma.c
-> +++ b/drivers/media/platform/xilinx/xilinx-dma.c
-> @@ -653,7 +653,7 @@ static const struct v4l2_file_operations xvip_dma_fops > { int xvip_dma_init(struct xvip_composite_device *xdev, struct xvip_dma
-> *dma, enum v4l2_buf_type type, unsigned int port)
->  {
-> -	char name[14];
-> +	char name[16];
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ arch/x86/platform/efi/efi_64.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Being pedantic we could use name[15], but it wouldn't make any difference.
-
->  	int ret;
-> 
->  	dma->xdev = xdev;
-> @@ -725,7 +725,7 @@ int xvip_dma_init(struct xvip_composite_device *xdev,
-> struct xvip_dma *dma, }
-> 
->  	/* ... and the DMA channel. */
-> -	sprintf(name, "port%u", port);
-> +	snprintf(name, sizeof(name), "port%u", port);
-
-Nitpicking again, I'd say that sprintf is enough as we know it won't overflow. 
-However, as the sprintf implementation is a wrapper around vsnprintf with size 
-set to INT_MAX, using snprintf won't incur any runtime performance penalty.
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
->  	dma->dma = dma_request_slave_channel(dma->xdev->dev, name);
->  	if (dma->dma = NULL) {
->  		dev_err(dma->xdev->dev, "no VDMA channel found\n");
-
+diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+index a0ac0f9..62326c4 100644
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -90,6 +90,8 @@ pgd_t * __init efi_call_phys_prolog(void)
+ 
+ 	n_pgds = DIV_ROUND_UP((max_pfn << PAGE_SHIFT), PGDIR_SIZE);
+ 	save_pgd = kmalloc(n_pgds * sizeof(pgd_t), GFP_KERNEL);
++	if (unlikely(!save_pgd))
++		return NULL;
+ 
+ 	for (pgd = 0; pgd < n_pgds; pgd++) {
+ 		save_pgd[pgd] = *pgd_offset_k(pgd * PGDIR_SIZE);
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.0
 
