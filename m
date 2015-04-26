@@ -1,23 +1,34 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Sat, 11 Apr 2015 11:55:44 +0000
-Subject: Re: [patch] ext4 crypto: fix an error code in ext4_init_crypto()
-Message-Id: <20150411115544.GB6540@thunk.org>
+From: Firo Yang <firogm@gmail.com>
+Date: Sun, 26 Apr 2015 15:42:12 +0000
+Subject: [PATCH] ASoC: Intel: fix Coccinelle kfree warning
+Message-Id: <1430062932-26668-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150409090308.GB17605@mwanda>
-In-Reply-To: <20150409090308.GB17605@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Michael Halcrow <mhalcrow@google.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lgirdwood@gmail.com
+Cc: kernel-janitors@vger.kernel.org, broonie@kernel.org, perex@perex.cz, tiwai@suse.de, yang.jie@intel.com, han.lu@intel.com, jarkko.nikula@linux.intel.com, pawel.piskorski@intel.com, alsa-devel@alsa-project.org, Firo Yang <firogm@gmail.com>
 
-On Thu, Apr 09, 2015 at 12:03:08PM +0300, Dan Carpenter wrote:
-> The callers don't care about the error so it doesn't make a difference,
-> but static checkers complain so let's return an error code here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's not necessary to use kfree() to free memory allocated with
+devm_kzalloc in a probe function and using kfree leads to a double free.
 
-Thanks for pointing this out!  I will merge this with the next version
-of the ext4 crypto patches.
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ sound/soc/intel/haswell/sst-haswell-ipc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-						- Ted
+diff --git a/sound/soc/intel/haswell/sst-haswell-ipc.c b/sound/soc/intel/haswell/sst-haswell-ipc.c
+index 344a1e9..324eceb 100644
+--- a/sound/soc/intel/haswell/sst-haswell-ipc.c
++++ b/sound/soc/intel/haswell/sst-haswell-ipc.c
+@@ -2201,7 +2201,6 @@ dma_err:
+ dsp_new_err:
+ 	sst_ipc_fini(ipc);
+ ipc_init_err:
+-	kfree(hsw);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(sst_hsw_dsp_init);
+-- 
+2.1.0
+
