@@ -1,71 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:06:35 +0000
-Subject: [PATCH 15/16] staging: lustre: lnet: lnet: fix error return code
-Message-Id: <1428235596-4757-16-git-send-email-Julia.Lawall@lip6.fr>
+From: green@linuxhacker.ru
+Date: Sun, 26 Apr 2015 05:28:43 +0000
+Subject: [PATCH] drbd: fix memory leak in drbd_adm_resize
+Message-Id: <1430026123-26329-1-git-send-email-green@linuxhacker.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428235596-4757-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, drbd-dev@lists.linbit.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Oleg Drokin <green@linuxhacker.ru>
 
-Return a negative error code on failure.
+From: Oleg Drokin <green@linuxhacker.ru>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+new_disk_conf could be leaked if the follow on checks fail,
+so make sure to free it on error if it was not assigned yet.
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+Found with smatch.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
 ---
- drivers/staging/lustre/lnet/lnet/api-ni.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+I thought about just moving the allocation around so that
+there is is no failure path after allocation, but looking
+at the history of changes in that file, people tend to insert
+extra checks at random places and that's how we ended up
+with the current bug, so better let it fail and handle the failure.
 
-diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
-index faceb95..4a14e51 100644
---- a/drivers/staging/lustre/lnet/lnet/api-ni.c
-+++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
-@@ -650,15 +650,19 @@ lnet_prepare(lnet_pid_t requested_pid)
+
+ drivers/block/drbd/drbd_nl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index 74df8cf..87fa774 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -2585,6 +2585,7 @@ int drbd_adm_resize(struct sk_buff *skb, struct genl_info *info)
+ 		mutex_unlock(&device->resource->conf_update);
+ 		synchronize_rcu();
+ 		kfree(old_disk_conf);
++		new_disk_conf = NULL;
+ 	}
  
- 	recs = lnet_res_containers_create(LNET_COOKIE_TYPE_ME, LNET_FL_MAX_MES,
- 					  sizeof(lnet_me_t));
--	if (recs = NULL)
-+	if (recs = NULL) {
-+		rc = -ENOMEM;
- 		goto failed;
-+	}
+ 	ddsf = (rs.resize_force ? DDSF_FORCED : 0) | (rs.no_resync ? DDSF_NO_RESYNC : 0);
+@@ -2618,6 +2619,7 @@ int drbd_adm_resize(struct sk_buff *skb, struct genl_info *info)
  
- 	the_lnet.ln_me_containers = recs;
+  fail_ldev:
+ 	put_ldev(device);
++	kfree(new_disk_conf);
+ 	goto fail;
+ }
  
- 	recs = lnet_res_containers_create(LNET_COOKIE_TYPE_MD, LNET_FL_MAX_MDS,
- 					  sizeof(lnet_libmd_t));
--	if (recs = NULL)
-+	if (recs = NULL) {
-+		rc = -ENOMEM;
- 		goto failed;
-+	}
- 
- 	the_lnet.ln_md_containers = recs;
- 
+-- 
+2.1.0
 
