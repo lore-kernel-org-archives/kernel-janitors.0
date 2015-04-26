@@ -1,35 +1,39 @@
 From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 09:49:54 +0000
-Subject: [PATCH] 9p: Remove unnessary void pointer cast
-Message-Id: <1429782594-6589-1-git-send-email-firogm@gmail.com>
+Date: Sun, 26 Apr 2015 10:46:06 +0000
+Subject: [PATCH] ARM: meson: serial: convert iounmap to devm_iounmap
+Message-Id: <1430045166-21701-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: kernel-janitors@vger.kernel.org, jslaby@suse.cz, linux-serial@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-kzalloc() returns a void pointer - no need to cast it in
-fs/9p/vfs_inode.c::v9fs_alloc_inode()
+The function meson_uart_release_port() inappropriately try to
+iounmap() a resource managed by devm_ioremap_nocache().
+The function meson_uart_release_port() maybe called by uart_ioctl()
+that means meson_uart_release_port() is not called from within a
+probe or remove function, for safety, I convert iounmap() to
+devm_iounmap().
 
 Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- fs/9p/vfs_inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/serial/meson_uart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 3662f1d..b6ade6f 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -238,8 +238,7 @@ v9fs_blank_wstat(struct p9_wstat *wstat)
- struct inode *v9fs_alloc_inode(struct super_block *sb)
+diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
+index 67c0367..0fc83c9 100644
+--- a/drivers/tty/serial/meson_uart.c
++++ b/drivers/tty/serial/meson_uart.c
+@@ -370,7 +370,7 @@ static int meson_uart_verify_port(struct uart_port *port,
+ static void meson_uart_release_port(struct uart_port *port)
  {
- 	struct v9fs_inode *v9inode;
--	v9inode = (struct v9fs_inode *)kmem_cache_alloc(v9fs_inode_cache,
--							GFP_KERNEL);
-+	v9inode = kmem_cache_alloc(v9fs_inode_cache, GFP_KERNEL);
- 	if (!v9inode)
- 		return NULL;
- #ifdef CONFIG_9P_FSCACHE
+ 	if (port->flags & UPF_IOREMAP) {
+-		iounmap(port->membase);
++		devm_iounmap(port->dev, port->membase);
+ 		port->membase = NULL;
+ 	}
+ }
 -- 
 2.1.0
 
