@@ -1,67 +1,60 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 05 Apr 2015 12:12:37 +0000
-Subject: Re: [PATCH 9/9] sound/ppc/snd_ps3.c: fix error return code
-Message-Id: <alpine.DEB.2.02.1504051412330.2038@localhost6.localdomain6>
+From: green@linuxhacker.ru
+Date: Mon, 27 Apr 2015 15:36:46 +0000
+Subject: [PATCH v2] drm: fix a memleak on mutex failure path
+Message-Id: <1430149006-3753-1-git-send-email-green@linuxhacker.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1428233914-4503-1-git-send-email-Julia.Lawall@lip6.fr> <1428233914-4503-9-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1428233914-4503-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Geoff Levand <geoff@infradead.org>, kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linuxppc-dev@lists.ozlabs.org, cbe-oss-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>, Oleg Drokin <green@linuxhacker.ru>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Please ignore. Wrong patch set.
+From: Oleg Drokin <green@linuxhacker.ru>
 
-On Sun, 5 Apr 2015, Julia Lawall wrote:
+Need to free just allocated ctx allocation if we cannot
+get our config mutex.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Initialize ret before returning on failure, as done elsewhere in the
-> function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  sound/ppc/snd_ps3.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/ppc/snd_ps3.c b/sound/ppc/snd_ps3.c
-> index 1aa52ef..9b18b52 100644
-> --- a/sound/ppc/snd_ps3.c
-> +++ b/sound/ppc/snd_ps3.c
-> @@ -1040,6 +1040,7 @@ static int __devinit snd_ps3_driver_probe(struct ps3_system_bus_device *dev)
->  				   GFP_KERNEL);
->  	if (!the_card.null_buffer_start_vaddr) {
->  		pr_info("%s: nullbuffer alloc failed\n", __func__);
-> +		ret = -ENOMEM;
->  		goto clean_preallocate;
->  	}
->  	pr_debug("%s: null vaddr=%p dma=%#llx\n", __func__,
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+This one has been flagged by kbuild bot all the way back in August,
+but somehow nobody picked it up:
+https://lists.01.org/pipermail/kbuild/2014-August/001691.html
+
+In addition there is another failure path that leaks the same
+ctx reference that is fixed.
+
+Found with smatch.
+
+Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
+CC: Daniel Vetter <daniel.vetter@ffwll.ch>
+---
+ drivers/gpu/drm/drm_modeset_lock.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_modeset_lock.c b/drivers/gpu/drm/drm_modeset_lock.c
+index 51cc47d..c0a5cd8 100644
+--- a/drivers/gpu/drm/drm_modeset_lock.c
++++ b/drivers/gpu/drm/drm_modeset_lock.c
+@@ -80,8 +80,10 @@ int __drm_modeset_lock_all(struct drm_device *dev,
+ 		return -ENOMEM;
+ 
+ 	if (trylock) {
+-		if (!mutex_trylock(&config->mutex))
+-			return -EBUSY;
++		if (!mutex_trylock(&config->mutex)) {
++			ret = -EBUSY;
++			goto out;
++		}
+ 	} else {
+ 		mutex_lock(&config->mutex);
+ 	}
+@@ -114,6 +116,8 @@ fail:
+ 		goto retry;
+ 	}
+ 
++out:
++	kfree(ctx);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(__drm_modeset_lock_all);
+-- 
+2.1.0
+
