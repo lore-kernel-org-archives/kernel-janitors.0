@@ -1,43 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 13 Apr 2015 17:39:03 +0000
-Subject: Re: [PATCH 1/2] ide: remove deprecated use of pci api
-Message-Id: <20150413.133903.354139524800441054.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 27 Apr 2015 20:35:34 +0000
+Subject: [PATCH] KVM: x86: drop unneeded null test
+Message-Id: <1430166934-30834-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150413132530.210f1d3b@lxorguk.ukuu.org.uk>
-	<20150413.130813.2058573928379941715.davem@davemloft.net>
-	<20150413172324.GZ10964@mwanda>
-In-Reply-To: <20150413172324.GZ10964@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: gnomes@lxorguk.ukuu.org.uk, lambert.quentin@gmail.com, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Gleb Natapov <gleb@kernel.org>, "Michael S . Tsirkin" <mst@redhat.com>, zhanghy@sangfor.com, jasowang@redhat.com
+Cc: kernel-janitors@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Apr 2015 20:23:24 +0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> On Mon, Apr 13, 2015 at 01:08:13PM -0400, David Miller wrote:
->> From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
->> Date: Mon, 13 Apr 2015 13:25:30 +0100
->> 
->> > On Thu,  9 Apr 2015 13:46:27 +0200
->> > Quentin Lambert <lambert.quentin@gmail.com> wrote:
->> > 
->> >> Replace occurences of the pci api by appropriate call to the dma api.
->> >> 
->> > 
->> > Drivers/ide is obsolete. It probably ought to go at this point but even
->> > so it exists solely in case of a problem or compatibility issue with
->> > drivers/ata. Cleaning it up without testing all the drivers makes no
->> > sense IMHO. Cleaning it up and testing them doesn't make much sense
->> > either.
->> 
->> It's a straightforward transformation, that actually evaluates to what
->> the definitions of the deprecated pci DMA interfaces are defined to.
-> 
-> Almost, except that it uses GFP_KERNEL instead of GFP_DMA.  But I
-> reviewed it and I think it's fine. Quentin sent a GFP_ATOMIC patch as
-> the first version and I asked him to redo it.  Maybe I shouldn't have
-> done that...
+If the null test is needed, the call to cancel_delayed_work_sync would have
+already crashed.  Normally, the destroy function should only be called
+if the init functoin has succeeded, in which case ioapic is not null.
 
-No, I'm fine with that part too, don't worry.
+Problem found using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/x86/kvm/ioapic.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/kvm/ioapic.c b2/arch/x86/kvm/ioapic.c
+index 28146f0..09828e2 100644
+--- a/arch/x86/kvm/ioapic.c
++++ b2/arch/x86/kvm/ioapic.c
+@@ -637,11 +637,9 @@ void kvm_ioapic_destroy(struct kvm *kvm)
+ 	struct kvm_ioapic *ioapic = kvm->arch.vioapic;
+ 
+ 	cancel_delayed_work_sync(&ioapic->eoi_inject);
+-	if (ioapic) {
+-		kvm_io_bus_unregister_dev(kvm, KVM_MMIO_BUS, &ioapic->dev);
+-		kvm->arch.vioapic = NULL;
+-		kfree(ioapic);
+-	}
++	kvm_io_bus_unregister_dev(kvm, KVM_MMIO_BUS, &ioapic->dev);
++	kvm->arch.vioapic = NULL;
++	kfree(ioapic);
+ }
+ 
+ int kvm_get_ioapic(struct kvm *kvm, struct kvm_ioapic_state *state)
+
