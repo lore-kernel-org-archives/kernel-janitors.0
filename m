@@ -1,17 +1,19 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Mon, 27 Apr 2015 20:50:07 +0000
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 28 Apr 2015 09:57:22 +0000
 Subject: Re: [PATCH] KVM: x86: drop unneeded null test
-Message-Id: <20150427225001-mutt-send-email-mst@redhat.com>
+Message-Id: <553F5982.4010405@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430166934-30834-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1430166934-30834-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Gleb Natapov <gleb@kernel.org>, zhanghy@sangfor.com, jasowang@redhat.com, kernel-janitors@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Gleb Natapov <gleb@kernel.org>, "Michael S . Tsirkin" <mst@redhat.com>, zhanghy@sangfor.com, jasowang@redhat.com
+Cc: kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 27, 2015 at 10:35:34PM +0200, Julia Lawall wrote:
+
+
+On 27/04/2015 22:35, Julia Lawall wrote:
 > From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
 > If the null test is needed, the call to cancel_delayed_work_sync would have
@@ -22,9 +24,10 @@ On Mon, Apr 27, 2015 at 10:35:34PM +0200, Julia Lawall wrote:
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Applied, thanks.
 
-> 
+Paolo
+
 > ---
 >  arch/x86/kvm/ioapic.c |    8 +++-----
 >  1 file changed, 3 insertions(+), 5 deletions(-)
@@ -48,3 +51,4 @@ Acked-by: Michael S. Tsirkin <mst@redhat.com>
 >  }
 >  
 >  int kvm_get_ioapic(struct kvm *kvm, struct kvm_ioapic_state *state)
+> 
