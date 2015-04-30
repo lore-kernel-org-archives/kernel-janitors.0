@@ -1,34 +1,36 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Thu, 23 Apr 2015 05:33:55 +0000
-Subject: [PATCH 05/15] minix: No need to cast kmem_cache_alloc() return value in minix
-Message-Id: <1429767245-32453-6-git-send-email-firogm@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Apr 2015 14:30:24 +0000
+Subject: [patch] CIFS: remove an unneeded NULL check
+Message-Id: <20150430143024.GA22086@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steve French <sfrench@samba.org>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org
 
-Remove unneeded kmem_cache_alloc() return value casts in
-fs/minix/inode.c::minix_alloc_inode().
+Smatch complains because we dereference "ses->server" without checking
+some lines earlier inside the call to get_next_mid(ses->server).
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
----
- fs/minix/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	fs/cifs/cifssmb.c:4921 CIFSGetDFSRefer()
+	warn: variable dereferenced before check 'ses->server' (see line 4899)
 
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index 3f57af1..8898633 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -62,7 +62,7 @@ static struct kmem_cache * minix_inode_cachep;
- static struct inode *minix_alloc_inode(struct super_block *sb)
- {
- 	struct minix_inode_info *ei;
--	ei = (struct minix_inode_info *)kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
-+	ei = kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
- 	return &ei->vfs_inode;
--- 
-2.1.0
+There is only one caller for this function get_dfs_path() and it always
+passes a non-null "ses->server" pointer so this NULL check can be
+removed.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index 1091aff..f26ffbf 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -4918,7 +4918,7 @@ getDFSRetry:
+ 		strncpy(pSMB->RequestFileName, search_name, name_len);
+ 	}
+ 
+-	if (ses->server && ses->server->sign)
++	if (ses->server->sign)
+ 		pSMB->hdr.Flags2 |= SMBFLG2_SECURITY_SIGNATURE;
+ 
+ 	pSMB->hdr.Uid = ses->Suid;
