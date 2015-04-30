@@ -1,43 +1,36 @@
-From: Oleg Drokin <green@linuxhacker.ru>
-Date: Mon, 27 Apr 2015 15:36:33 +0000
-Subject: Re: [PATCH 2/2] drm: fix a memleak on mutex failure path
-Message-Id: <B7EF1F38-A474-4E07-95A6-252787D21A06@linuxhacker.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Apr 2015 14:30:50 +0000
+Subject: [patch] drm/i915: checking IS_ERR() instead of NULL
+Message-Id: <20150430143050.GB22086@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430025269-26243-1-git-send-email-green@linuxhacker.ru> <1430025269-26243-3-git-send-email-green@linuxhacker.ru> <87d22qc5lr.fsf@intel.com>
-In-Reply-To: <87d22qc5lr.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, "<kernel-janitors@vger.kernel.org>" <kernel-janitors@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hello!
+We switched from calling i915_gem_alloc_context_obj() to calling
+i915_gem_alloc_object() so the error handling needs to be updated to
+check for NULL instead of IS_ERR().
 
-On Apr 27, 2015, at 4:56 AM, Jani Nikula wrote:
+Fixes: 149c86e74fe4 ('drm/i915: Allocate context objects from stolen')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> On Sun, 26 Apr 2015, green@linuxhacker.ru wrote:
->> From: Oleg Drokin <green@linuxhacker.ru>
->> 
->> Need to free just allocated ctx allocation if we cannot
->> get our config mutex.
->> 
->> This one has been flagged by kbuild bot all the way back in August,
->> but somehow nobody picked it up:
->> https://lists.01.org/pipermail/kbuild/2014-August/001691.html
->> 
->> Found with smatch.
->> 
->> Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
->> CC: Daniel Vetter <daniel.vetter@ffwll.ch>
-> 
-> The function has another leaking failure path, would be nice to have
-> that fixed too. Maybe with a common out label.
-
-Hm, you are right, there's another path, though it's less obvious since
-what is done with ctx inside of those other calls, but apparently nothing
-if there is an error, so it's also a leak.
-
-I'll do an updated patch in a moment.
-
-Bye,
-    Oleg
+diff --git a/drivers/gpu/drm/i915/intel_lrc.c b/drivers/gpu/drm/i915/intel_lrc.c
+index 732fd63..0fa9209 100644
+--- a/drivers/gpu/drm/i915/intel_lrc.c
++++ b/drivers/gpu/drm/i915/intel_lrc.c
+@@ -1895,10 +1895,9 @@ int intel_lr_context_deferred_create(struct intel_context *ctx,
+ 	context_size = round_up(get_lr_context_size(ring), 4096);
+ 
+ 	ctx_obj = i915_gem_alloc_object(dev, context_size);
+-	if (IS_ERR(ctx_obj)) {
+-		ret = PTR_ERR(ctx_obj);
+-		DRM_DEBUG_DRIVER("Alloc LRC backing obj failed: %d\n", ret);
+-		return ret;
++	if (!ctx_obj) {
++		DRM_DEBUG_DRIVER("Alloc LRC backing obj failed.\n");
++		return -ENOMEM;
+ 	}
+ 
+ 	if (is_global_default_ctx) {
