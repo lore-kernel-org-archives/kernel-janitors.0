@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:38:03 +0000
-Subject: [PATCH 4/20] staging: lustre: libcfs: linux: remove unneeded null test before free
-Message-Id: <1430509086-22132-18-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 01 May 2015 19:38:00 +0000
+Subject: [PATCH 7/20] Staging: lustre: llite: llite_lib: remove unneeded null test before free
+Message-Id: <1430509086-22132-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -19,36 +19,44 @@ The semantic patch that makes this change is as follows:
 // <smpl>
 @@ expression ptr; @@
 
-- if (ptr != NULL) {
+- if (ptr != NULL)
   kfree(ptr);
-  ptr = NULL;
-- }
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/libcfs/linux/linux-tracefile.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/staging/lustre/lustre/llite/llite_lib.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-tracefile.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-tracefile.c
-index c8e2930..483cbc8 100644
---- a/drivers/staging/lustre/lustre/libcfs/linux/linux-tracefile.c
-+++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-tracefile.c
-@@ -102,11 +102,10 @@ void cfs_tracefile_fini_arch(void)
- 	int    j;
+diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/drivers/staging/lustre/lustre/llite/llite_lib.c
+index e5bac94..c6611b1 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_lib.c
++++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
+@@ -574,10 +574,8 @@ static int client_common_fill_super(struct super_block *sb, char *md, char *dt,
+ 		get_uuid2fsid(uuid->uuid, strlen(uuid->uuid), &sbi->ll_fsid);
+ 	}
  
- 	for (i = 0; i < num_possible_cpus(); i++)
--		for (j = 0; j < 3; j++)
--			if (cfs_trace_console_buffers[i][j] != NULL) {
--				kfree(cfs_trace_console_buffers[i][j]);
--				cfs_trace_console_buffers[i][j] = NULL;
--			}
-+		for (j = 0; j < 3; j++) {
-+			kfree(cfs_trace_console_buffers[i][j]);
-+			cfs_trace_console_buffers[i][j] = NULL;
-+		}
+-	if (data != NULL)
+-		kfree(data);
+-	if (osfs != NULL)
+-		kfree(osfs);
++	kfree(data);
++	kfree(osfs);
  
- 	for (i = 0; cfs_trace_data[i] != NULL; i++) {
- 		kfree(cfs_trace_data[i]);
+ 	return err;
+ out_root:
+@@ -595,10 +593,8 @@ out_md:
+ 	obd_disconnect(sbi->ll_md_exp);
+ 	sbi->ll_md_exp = NULL;
+ out:
+-	if (data != NULL)
+-		kfree(data);
+-	if (osfs != NULL)
+-		kfree(osfs);
++	kfree(data);
++	kfree(osfs);
+ 	lprocfs_unregister_mountpoint(sbi);
+ 	return err;
+ }
 
