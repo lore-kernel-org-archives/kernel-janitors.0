@@ -1,46 +1,46 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Fri, 08 May 2015 08:59:26 +0000
-Subject: Re: [PATCH v2] dmaengine: pl08x: Suppress spaces in indentation
-Message-Id: <20150508090000.GA3521@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 01 May 2015 19:37:48 +0000
+Subject: [PATCH 19/20] staging: lustre: ptlrpc: sec_plain: remove unneeded null test before free
+Message-Id: <1430509086-22132-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150505234052.GA22311@leo-Inspiron-N5110>
-In-Reply-To: <20150505234052.GA22311@leo-Inspiron-N5110>
+References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leonardo Carreras <leocarreras89@gmail.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Tue, May 05, 2015 at 07:40:52PM -0400, Leonardo Carreras wrote:
-> Removed checkpatch reported spaces in indentation:
-> ERROR: code indent should use tabs where possible
-> +^I         PL080_CONFIG_TC_IRQ_MASK);$
-> 
-Applied, thanks
+Kfree can cope with a null argument, so drop null tests.
 
--- 
-~Vinod
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-> Signed-off-by: Leonardo Carreras <leocarreras89@gmail.com>
-> ---
->  drivers/dma/amba-pl08x.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-> index 49d396e..5de3cf4 100644
-> --- a/drivers/dma/amba-pl08x.c
-> +++ b/drivers/dma/amba-pl08x.c
-> @@ -474,7 +474,7 @@ static void pl08x_terminate_phy_chan(struct pl08x_driver_data *pl08x,
->  	u32 val = readl(ch->reg_config);
->  
->  	val &= ~(PL080_CONFIG_ENABLE | PL080_CONFIG_ERR_IRQ_MASK |
-> -	         PL080_CONFIG_TC_IRQ_MASK);
-> +		 PL080_CONFIG_TC_IRQ_MASK);
->  
->  	writel(val, ch->reg_config);
->  
-> -- 
-> 1.7.9.5
-> 
+// <smpl>
+@@ expression ptr; @@
 
--- 
+- if (ptr != NULL)
+  kfree(ptr);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/lustre/lustre/ptlrpc/sec_plain.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec_plain.c b/drivers/staging/lustre/lustre/ptlrpc/sec_plain.c
+index 604e511..989cdcd 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/sec_plain.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/sec_plain.c
+@@ -384,8 +384,7 @@ struct ptlrpc_cli_ctx *plain_sec_install_ctx(struct plain_sec *plsec)
+ 	if (ctx) {
+ 		atomic_inc(&ctx->cc_refcount);
+ 
+-		if (ctx_new)
+-			kfree(ctx_new);
++		kfree(ctx_new);
+ 	} else if (ctx_new) {
+ 		ctx = ctx_new;
+ 
+
