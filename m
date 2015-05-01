@@ -1,59 +1,47 @@
-From: "Simmons, James A." <simmonsja@ornl.gov>
-Date: Fri, 01 May 2015 20:36:05 +0000
-Subject: RE: [HPDD-discuss] [PATCH 2/11] Staging: lustre: fld: Use kzalloc and kfree
-Message-Id: <9f81478864bc422c9a59cddbaa723052@EXCHCS32.ornl.gov>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 01 May 2015 20:47:29 +0000
+Subject: Re: [HPDD-discuss] [PATCH 2/11] Staging: lustre: fld: Use kzalloc and kfree
+Message-Id: <20150501204729.GA2265@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
  <1430495482-933-11-git-send-email-Julia.Lawall@lip6.fr>
  <a650e757977e491b816c34e7780c1a08@EXCHCS32.ornl.gov>
- <20150501200221.GF14154@mwanda>
-In-Reply-To: <20150501200221.GF14154@mwanda>
+ <alpine.DEB.2.02.1505011945350.2092@localhost6.localdomain6>
+ <524505df3433441494cf082a425f2ee7@EXCHCS32.ornl.gov>
+In-Reply-To: <524505df3433441494cf082a425f2ee7@EXCHCS32.ornl.gov>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter@oracle.com>
-Cc: 'Julia Lawall' <Julia.Lawall@lip6.fr>, Oleg Drokin <oleg.drokin@intel.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "HPDD-discuss@lists.01.org" <HPDD-discuss@ml01.01.org>
+To: "Simmons, James A." <simmonsja@ornl.gov>
+Cc: 'Julia Lawall' <julia.lawall@lip6.fr>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, "HPDD-discuss@lists.01.org" <HPDD-discuss@ml01.01.org>
 
->We are hopefully going to get rid of OBD_ALLOC_LARGE() as well, though.
->
->It's simple enough to write a function:
->
->void *obd_zalloc(size_t size)
->{
->	if (size > 4 * PAGE_CACHE_SIZE)
->		return vzalloc(size);
->	else
->		return kmalloc(size, GFP_NOFS);
->}
->
->Except, huh?  Shouldn't we be using GFP_NOFS for the vzalloc() side?
->There was some discussion of that GFP_NOFS was a bit buggy back in 2010
->(http://marc.info/?l=linux-mm&m8942194520631&w=4) but the current
->lustre code doesn't try to pass GFP_NOFS.
+On Fri, May 01, 2015 at 08:18:56PM +0000, Simmons, James A. wrote:
+> >> >From: Julia Lawall <Julia.Lawall@lip6.fr>
+> >> >
+> >> >Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
+> >> >kalloc/kcalloc, and OBD_FREE and OBD_FREE_PTR by kfree.
+> >> 
+> >> Nak: James Simmons <jsimmons@infradead.org>
+> >> 
+> >> A simple replace will not work. The OBD_ALLOC and OBD_FREE functions allocate memory
+> >> anywhere from one page to 4MB in size. You can't use kmalloc for the 4MB allocations.
+> >> Currently lustre uses  a 4 page water mark to determine if we allocate using vmalloc. Even
+> >> using kmalloc for 4 pages has shown high failure rates on some systems. It gets even more
+> >> messy with 64K page systems like ppc64 boxes. Now I'm not suggesting to port the larger
+> >> allocations to vmalloc either since issues have been founded with using vmalloc. For example
+> >> when using large stripe count files the MDS rpc generated crosses the 4 page line and vmalloc
+> >> is used. Using vmalloc caused a global spinlock to be taken which causes meta data operations
+> >> to serialized on the MDS servers.
+> >
+> >It's not the LARGE functions that do the switching?  For example OBD_ALLOC 
+> >ends up at  __OBD_MALLOC_VERBOSE, which as far as I can see calls kmalloc 
+> >(with __GFP_ZERO, and hance the use of kzalloc).
+> 
+> Yes the LARGE functions do the switching. I was expecting also patches to remove the 
+> OBD_ALLOC_LARGE functions as well which is not the case here.  I do have one question still. The
+> macro __OBD_MALLOC_VERBOSE allowed the ability to simulate memory allocation failures at
+> a certain percentage rate. Does something exist in the kernel to duplicate that functionality?
 
-The version in the upstream client is out of date. The current macro in the Intel master
-Branch is:
+Yes, no need for lustre to duplicate yet-another-thing the kernel
+already provides :)
 
-#define __OBD_VMALLOC_VERBOSE(ptr, cptab, cpt, size)                          \
-do {                                                                          \
-        (ptr) = cptab = NULL ?                                               \
-                __vmalloc(size, GFP_NOFS | __GFP_HIGHMEM | __GFP_ZERO,        \
-                          PAGE_KERNEL) :                                      \
-                cfs_cpt_vzalloc(cptab, cpt, size);                            \
-        if (unlikely((ptr) = NULL)) {                                        \
-                CERROR("vmalloc of '" #ptr "' (%d bytes) failed\n",           \
-                       (int)(size));                                          \
-                CERROR(LPU64" total bytes allocated by Lustre, %d by LNET\n", \
-                       obd_memory_sum(), atomic_read(&libcfs_kmemory));       \
-        } else {                                                              \
-                OBD_ALLOC_POST(ptr, size, "vmalloced");                       \
-        }                                                                     \
-} while(0)
- 
->Then it's simple enough to change OBD_FREE_LARGE() to kvfree().
->
->Also it's weird that only the lustre people have thought of this trick
->to allocate big chunks of RAM and no one else has.  What would happen if
->we just change vmalloc() so it worked this way for everyone?
-
-Do we really want to encourage vmalloc usages?
