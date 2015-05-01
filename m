@@ -1,24 +1,46 @@
-From: Adir Kuhn <adirkuhn@gmail.com>
-Date: Tue, 05 May 2015 01:51:28 +0000
-Subject: [PATCH 0/4] fs: ext4: dir: Fixed some coding style issues
-Message-Id: <1430790692-5679-1-git-send-email-adirkuhn@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 01 May 2015 19:37:50 +0000
+Subject: [PATCH 17/20] Staging: lustre: osc: remove unneeded null test before free
+Message-Id: <1430509086-22132-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Fixed some coding style issues
+Kfree can cope with a null argument, so drop null tests.
 
-Adir Kuhn (4):
-  fs: ext4: dir: Removed unnecessary braces
-  fs: ext4: dir: Added a blank line after declaration
-  fs: ext4: dir: Added a blank line after declaration
-  fs: ext4: dir: Removing indent on label
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
- fs/ext4/dir.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+// <smpl>
+@@ expression ptr; @@
 
---
-2.1.4
+- if (ptr != NULL)
+  kfree(ptr);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/lustre/lustre/osc/osc_request.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
+index 7ddf46b..ded184e 100644
+--- a/drivers/staging/lustre/lustre/osc/osc_request.c
++++ b/drivers/staging/lustre/lustre/osc/osc_request.c
+@@ -2064,8 +2064,7 @@ out:
+ 
+ 		if (oa)
+ 			OBDO_FREE(oa);
+-		if (pga)
+-			kfree(pga);
++		kfree(pga);
+ 		/* this should happen rarely and is pretty bad, it makes the
+ 		 * pending list not follow the dirty order */
+ 		while (!list_empty(ext_list)) {
 
