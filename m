@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:37:47 +0000
-Subject: [PATCH 20/20] staging: lustre: ptlrpc: service: remove unneeded null test before free
-Message-Id: <1430509086-22132-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 01 May 2015 19:38:01 +0000
+Subject: [PATCH 6/20] Staging: lustre: llite: file: remove unneeded null test before free
+Message-Id: <1430509086-22132-16-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -13,7 +13,7 @@ Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, 
 
 Kfree can cope with a null argument, so drop null tests.
 
-The semantic patch that makes this change is as follows:
+The semantic patch that finds this issue is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
@@ -21,102 +21,78 @@ The semantic patch that makes this change is as follows:
 
 - if (ptr != NULL)
   kfree(ptr);
-
-@@ expression ptr; @@
-
-- if (ptr != NULL) {
-  kfree(ptr);
-  ptr = NULL;
-- }
 // </smpl>
 
-In the first case, specific labels are introduced to free only what is needed.
+In the first case, llss can never be null at the point of the kfree anyway.
+
+In the second set of changes, the gotos are either eliminated, when no
+freeing is needed (hss failure case), or rewritten so that there is no call
+to free on data that has not yet been allocated (free_hss goto case).
+There is no goto at which attr is not null, so the out label is simply
+dropped.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/ptlrpc/service.c |   39 ++++++++-----------------
- 1 file changed, 14 insertions(+), 25 deletions(-)
+ drivers/staging/lustre/lustre/llite/file.c |   23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/service.c b/drivers/staging/lustre/lustre/ptlrpc/service.c
-index d0758ab..d85db06 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/service.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/service.c
-@@ -641,7 +641,7 @@ ptlrpc_service_part_init(struct ptlrpc_service *svc,
- 	OBD_CPT_ALLOC(array->paa_reqs_count,
- 		      svc->srv_cptable, cpt, sizeof(__u32) * size);
- 	if (array->paa_reqs_count = NULL)
--		goto failed;
-+		goto free_reqs_array;
+diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
+index 6e50b35..702f62d 100644
+--- a/drivers/staging/lustre/lustre/llite/file.c
++++ b/drivers/staging/lustre/lustre/llite/file.c
+@@ -2109,8 +2109,7 @@ putgl:
+ 	}
  
- 	cfs_timer_init(&svcpt->scp_at_timer, ptlrpc_at_timer, svcpt);
- 	/* At SOW, service time should be quick; 10s seems generous. If client
-@@ -655,20 +655,16 @@ ptlrpc_service_part_init(struct ptlrpc_service *svc,
- 	/* We shouldn't be under memory pressure at startup, so
- 	 * fail if we can't allocate all our buffers at this time. */
- 	if (rc != 0)
--		goto failed;
-+		goto free_reqs_count;
+ free:
+-	if (llss != NULL)
+-		kfree(llss);
++	kfree(llss);
  
- 	return 0;
- 
-- failed:
--	if (array->paa_reqs_count != NULL) {
--		kfree(array->paa_reqs_count);
--		array->paa_reqs_count = NULL;
--	}
--
--	if (array->paa_reqs_array != NULL) {
--		kfree(array->paa_reqs_array);
--		array->paa_reqs_array = NULL;
--	}
-+free_reqs_count:
-+	kfree(array->paa_reqs_count);
-+	array->paa_reqs_count = NULL;
-+free_reqs_array:
-+	kfree(array->paa_reqs_array);
-+	array->paa_reqs_array = NULL;
- 
- 	return -ENOMEM;
+ 	return rc;
  }
-@@ -722,8 +718,7 @@ ptlrpc_register_service(struct ptlrpc_service_conf *conf,
- 			if (rc <= 0) {
- 				CERROR("%s: failed to parse CPT array %s: %d\n",
- 				       conf->psc_name, cconf->cc_pattern, rc);
--				if (cpts != NULL)
--					kfree(cpts);
-+				kfree(cpts);
- 				return ERR_PTR(rc < 0 ? rc : -EINVAL);
- 			}
- 			ncpts = rc;
-@@ -733,8 +728,7 @@ ptlrpc_register_service(struct ptlrpc_service_conf *conf,
- 	service = kzalloc(offsetof(struct ptlrpc_service, srv_parts[ncpts]),
- 			  GFP_NOFS);
- 	if (service = NULL) {
--		if (cpts != NULL)
--			kfree(cpts);
-+		kfree(cpts);
- 		return ERR_PTR(-ENOMEM);
+@@ -2152,22 +2151,20 @@ static int ll_hsm_import(struct inode *inode, struct file *file,
+ 
+ 	/* set HSM flags */
+ 	hss = kzalloc(sizeof(*hss), GFP_NOFS);
+-	if (!hss) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
++	if (!hss)
++		return -ENOMEM;
+ 
+ 	hss->hss_valid = HSS_SETMASK | HSS_ARCHIVE_ID;
+ 	hss->hss_archive_id = hui->hui_archive_id;
+ 	hss->hss_setmask = HS_ARCHIVED | HS_EXISTS | HS_RELEASED;
+ 	rc = ll_hsm_state_set(inode, hss);
+ 	if (rc != 0)
+-		goto out;
++		goto free_hss;
+ 
+ 	attr = kzalloc(sizeof(*attr), GFP_NOFS);
+ 	if (!attr) {
+ 		rc = -ENOMEM;
+-		goto out;
++		goto free_hss;
  	}
  
-@@ -2997,15 +2991,10 @@ ptlrpc_service_free(struct ptlrpc_service *svc)
- 		cfs_timer_disarm(&svcpt->scp_at_timer);
- 		array = &svcpt->scp_at_array;
+ 	attr->ia_mode = hui->hui_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+@@ -2193,13 +2190,9 @@ static int ll_hsm_import(struct inode *inode, struct file *file,
  
--		if (array->paa_reqs_array != NULL) {
--			kfree(array->paa_reqs_array);
--			array->paa_reqs_array = NULL;
--		}
+ 	mutex_unlock(&inode->i_mutex);
+ 
+-out:
+-	if (hss != NULL)
+-		kfree(hss);
 -
--		if (array->paa_reqs_count != NULL) {
--			kfree(array->paa_reqs_count);
--			array->paa_reqs_count = NULL;
--		}
-+		kfree(array->paa_reqs_array);
-+		array->paa_reqs_array = NULL;
-+		kfree(array->paa_reqs_count);
-+		array->paa_reqs_count = NULL;
- 	}
+-	if (attr != NULL)
+-		kfree(attr);
+-
++	kfree(attr);
++free_hss:
++	kfree(hss);
+ 	return rc;
+ }
  
- 	ptlrpc_service_for_each_part(svcpt, i, svc)
 
