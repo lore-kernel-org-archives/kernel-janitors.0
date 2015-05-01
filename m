@@ -1,51 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 28 May 2015 21:02:22 +0000
-Subject: [PATCH 7/9] drivers/media/tuners/e4000.c: drop unneeded goto
-Message-Id: <1432846944-7122-8-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 01 May 2015 19:37:46 +0000
+Subject: [PATCH 0/20] remove unneeded null test before free
+Message-Id: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Delete jump to a label on the next line, when that label is not
-used elsewhere.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-identifier l;
-@@
-
--if (...) goto l;
--l:
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/tuners/e4000.c |    3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/media/tuners/e4000.c b/drivers/media/tuners/e4000.c
-index 510239f..50c0f0d 100644
---- a/drivers/media/tuners/e4000.c
-+++ b/drivers/media/tuners/e4000.c
-@@ -103,9 +103,6 @@ static int e4000_sleep(struct dvb_frontend *fe)
- 
- 	ret = regmap_write(s->regmap, 0x00, 0x00);
- 	if (ret)
--		goto err;
--err:
--	if (ret)
- 		dev_dbg(&s->client->dev, "failed=%d\n", ret);
- 
- 	return ret;
+These patches are motivated by the preceding patch series that converts
+uses of OBD_FREE and OBD_FREE_PTR to kfree.  These patches should thus be
+applied after that previous patch series (subject: Use kzalloc and kfree).
 
