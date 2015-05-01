@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:38:04 +0000
-Subject: [PATCH 3/20] staging: lustre: ldlm: ldlm_resource: remove unneeded null test before free
-Message-Id: <1430509086-22132-19-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 01 May 2015 19:37:58 +0000
+Subject: [PATCH 9/20] staging: lustre: lmv: remove unneeded null test before free
+Message-Id: <1430509086-22132-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -19,33 +19,38 @@ The semantic patch that makes this change is as follows:
 // <smpl>
 @@ expression ptr; @@
 
-- if (ptr != NULL) {
+- if (ptr != NULL)
   kfree(ptr);
-  ptr = NULL;
-- }
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |    6 ++----
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c |    6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
-index 5922069..7149eda 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
-@@ -1137,10 +1137,8 @@ ldlm_resource_get(struct ldlm_namespace *ns, struct ldlm_resource *parent,
- 			CERROR("%s: lvbo_init failed for resource %#llx:%#llx: rc = %d\n",
- 			       ns->ns_obd->obd_name, name->name[0],
- 			       name->name[1], rc);
--			if (res->lr_lvb_data) {
--				kfree(res->lr_lvb_data);
--				res->lr_lvb_data = NULL;
--			}
-+			kfree(res->lr_lvb_data);
-+			res->lr_lvb_data = NULL;
- 			res->lr_lvb_len = rc;
- 			mutex_unlock(&res->lr_lvb_mutex);
- 			ldlm_resource_putref(res);
+diff --git a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+index 59b8fac..8e05852 100644
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -504,8 +504,7 @@ static int lmv_add_target(struct obd_device *obd, struct obd_uuid *uuidp,
+ 		lmv->tgts = newtgts;
+ 		lmv->tgts_size = newsize;
+ 		smp_rmb();
+-		if (old)
+-			kfree(old);
++		kfree(old);
+ 
+ 		CDEBUG(D_CONFIG, "tgts: %p size: %d\n", lmv->tgts,
+ 		       lmv->tgts_size);
+@@ -780,8 +779,7 @@ repeat_fid2path:
+ 	goto repeat_fid2path;
+ 
+ out_fid2path:
+-	if (remote_gf != NULL)
+-		kfree(remote_gf);
++	kfree(remote_gf);
+ 	return rc;
+ }
+ 
 
