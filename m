@@ -1,41 +1,33 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 05 May 2015 07:27:14 +0000
-Subject: Re: [PATCH v2] drm: fix a memleak on mutex failure path
-Message-Id: <20150505072714.GY30184@phenom.ffwll.local>
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Fri, 01 May 2015 12:29:06 +0000
+Subject: [PATCH 2/2] gpio: x-gene: Remove a useless memset
+Message-Id: <1430483346-10583-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430149006-3753-1-git-send-email-green@linuxhacker.ru>
- <87h9s0btol.fsf@intel.com>
-In-Reply-To: <87h9s0btol.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, green@linuxhacker.ru
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
-On Tue, Apr 28, 2015 at 10:25:46AM +0300, Jani Nikula wrote:
-> On Mon, 27 Apr 2015, green@linuxhacker.ru wrote:
-> > From: Oleg Drokin <green@linuxhacker.ru>
-> >
-> > Need to free just allocated ctx allocation if we cannot
-> > get our config mutex.
-> >
-> > This one has been flagged by kbuild bot all the way back in August,
-> > but somehow nobody picked it up:
-> > https://lists.01.org/pipermail/kbuild/2014-August/001691.html
-> >
-> > In addition there is another failure path that leaks the same
-> > ctx reference that is fixed.
-> >
-> > Found with smatch.
-> >
-> > Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
-> > CC: Daniel Vetter <daniel.vetter@ffwll.ch>
-> 
-> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+priv->irq is allocated using devm_kzalloc so there is no need to memset it.
 
-Applied to topic/drm-misc, thanks.
--Daniel
+Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpio/gpio-xgene-sb.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
+index fb9d29a..a7b8f8f 100644
+--- a/drivers/gpio/gpio-xgene-sb.c
++++ b/drivers/gpio/gpio-xgene-sb.c
+@@ -112,7 +112,6 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
+ 				   GFP_KERNEL);
+ 	if (!priv->irq)
+ 		return -ENOMEM;
+-	memset(priv->irq, 0, sizeof(u32) * XGENE_MAX_GPIO_DS);
+ 
+ 	for (i = 0; i < priv->nirq; i++) {
+ 		priv->irq[default_lines[i]] = platform_get_irq(pdev, i);
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.1.0
+
