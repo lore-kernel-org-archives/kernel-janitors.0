@@ -1,31 +1,45 @@
-From: "Drokin, Oleg" <oleg.drokin@intel.com>
-Date: Fri, 01 May 2015 20:49:26 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 01 May 2015 20:49:30 +0000
 Subject: Re: [HPDD-discuss] [PATCH 2/11] Staging: lustre: fld: Use kzalloc and kfree
-Message-Id: <DCD755EC-27E3-47CB-9016-D76CBA27AB6C@intel.com>
+Message-Id: <20150501204930.GB2265@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
  <1430495482-933-11-git-send-email-Julia.Lawall@lip6.fr>
  <a650e757977e491b816c34e7780c1a08@EXCHCS32.ornl.gov>
- <alpine.DEB.2.02.1505011945350.2092@localhost6.localdomain6>
- <524505df3433441494cf082a425f2ee7@EXCHCS32.ornl.gov>
-In-Reply-To: <524505df3433441494cf082a425f2ee7@EXCHCS32.ornl.gov>
+ <20150501200221.GF14154@mwanda>
+ <9f81478864bc422c9a59cddbaa723052@EXCHCS32.ornl.gov>
+In-Reply-To: <9f81478864bc422c9a59cddbaa723052@EXCHCS32.ornl.gov>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: "Simmons, James A." <simmonsja@ornl.gov>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "HPDD-discuss@lists.01.org" <HPDD-discuss@ml01.01.org>
+Cc: 'Dan Carpenter' <dan.carpenter@oracle.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, 'Julia Lawall' <Julia.Lawall@lip6.fr>, "HPDD-discuss@lists.01.org" <HPDD-discuss@ml01.01.org>
 
+On Fri, May 01, 2015 at 08:36:05PM +0000, Simmons, James A. wrote:
+> >We are hopefully going to get rid of OBD_ALLOC_LARGE() as well, though.
+> >
+> >It's simple enough to write a function:
+> >
+> >void *obd_zalloc(size_t size)
+> >{
+> >	if (size > 4 * PAGE_CACHE_SIZE)
+> >		return vzalloc(size);
+> >	else
+> >		return kmalloc(size, GFP_NOFS);
+> >}
+> >
+> >Except, huh?  Shouldn't we be using GFP_NOFS for the vzalloc() side?
+> >There was some discussion of that GFP_NOFS was a bit buggy back in 2010
+> >(http://marc.info/?l=linux-mm&m8942194520631&w=4) but the current
+> >lustre code doesn't try to pass GFP_NOFS.
+> 
+> The version in the upstream client is out of date. The current macro in the Intel master
+> Branch is:
 
-On May 1, 2015, at 4:18 PM, Simmons, James A. wrote:
+That's not helpful at all, why do we even have an in-kernel version of
+this code if you don't do your development in the kernel?
 
-> Yes the LARGE functions do the switching. I was expecting also patches to remove the 
-> OBD_ALLOC_LARGE functions as well which is not the case here.  I do have one question still. The
-> macro __OBD_MALLOC_VERBOSE allowed the ability to simulate memory allocation failures at
-> a certain percentage rate. Does something exist in the kernel to duplicate that functionality?
-> Once these macros are gone we lose the ability to simulate high memory allocation failures.
+Please sync with the kernel tree very soon, or I'm just going to delete
+this whole thing.  This is getting _really_ frustrating.
 
-Yes, there are things like https://lkml.org/lkml/2014/12/25/64
-So I think the API is even riher compared to what our old wrapper code was able to do.
-
-Bye,
-    Oleg
+greg k-h
