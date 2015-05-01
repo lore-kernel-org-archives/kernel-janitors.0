@@ -1,31 +1,31 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 18 May 2015 09:24:18 +0000
-Subject: Re: [patch] HID: i2c-hid: fix harmless test_bit() issue
-Message-Id: <alpine.LNX.2.00.1505181124110.8186@pobox.suse.cz>
+From: "Simmons, James A." <simmonsja@ornl.gov>
+Date: Fri, 01 May 2015 17:38:49 +0000
+Subject: RE: [HPDD-discuss] [PATCH 2/11] Staging: lustre: fld: Use kzalloc and kfree
+Message-Id: <a650e757977e491b816c34e7780c1a08@EXCHCS32.ornl.gov>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150514083330.GB1665@mwanda>
-In-Reply-To: <20150514083330.GB1665@mwanda>
+References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1430495482-933-11-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1430495482-933-11-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Antonio Borneo <borneo.antonio@gmail.com>, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Andrew Duggan <aduggan@synaptics.com>, Gwendal Grignou <gwendal@chromium.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
+To: 'Julia Lawall' <Julia.Lawall@lip6.fr>, Oleg Drokin <oleg.drokin@intel.com>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "HPDD-discuss@lists.01.org" <HPDD-discuss@ml01.01.org>
 
-On Thu, 14 May 2015, Dan Carpenter wrote:
+>From: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+>Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
+>kalloc/kcalloc, and OBD_FREE and OBD_FREE_PTR by kfree.
 
-> These defines are used like this:
-> 
-> 	if (test_bit(I2C_HID_STARTED, &ihid->flags))
-> 
-> The intent was to use bits 0, 1, and 2 but because of the extra shifts
-> we're using bits 1, 2, and 4.  It's harmless becuase it's done
-> consistently but it's not the intent and static checkers will complain.
-> 
-> Fixes: 4a200c3b9a40 ('HID: i2c-hid: introduce HID over i2c specification implementation')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Nak: James Simmons <jsimmons@infradead.org>
 
-Applied to for-4.2/upstream, thanks Dan.
+A simple replace will not work. The OBD_ALLOC and OBD_FREE functions allocate memory
+anywhere from one page to 4MB in size. You can't use kmalloc for the 4MB allocations.
+Currently lustre uses  a 4 page water mark to determine if we allocate using vmalloc. Even
+using kmalloc for 4 pages has shown high failure rates on some systems. It gets even more
+messy with 64K page systems like ppc64 boxes. Now I'm not suggesting to port the larger
+allocations to vmalloc either since issues have been founded with using vmalloc. For example
+when using large stripe count files the MDS rpc generated crosses the 4 page line and vmalloc
+is used. Using vmalloc caused a global spinlock to be taken which causes meta data operations
+to serialized on the MDS servers.
 
--- 
-Jiri Kosina
-SUSE Labs
