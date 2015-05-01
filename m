@@ -1,32 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 23 May 2015 18:21:23 +0000
-Subject: Re: [PATCH] checkpatch: Categorize some long line length checks
-Message-Id: <20150523182123.GA22558@mwanda>
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Fri, 01 May 2015 13:58:19 +0000
+Subject: [PATCH] cris: arch-v32: gpio: Use kzalloc instead of kmalloc/memset
+Message-Id: <1430488699-10878-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
- <1432237849-53947-11-git-send-email-shuey@purdue.edu>
- <1432242004.20840.68.camel@perches.com>
- <1432362494.29657.40.camel@perches.com>
- <alpine.DEB.2.10.1505231331050.2554@hadrien>
- <1432402012.29657.52.camel@perches.com>
- <20150523180729.GZ22558@mwanda>
- <1432404811.2846.4.camel@perches.com>
-In-Reply-To: <1432404811.2846.4.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Andrew Morton <akpm@linux-foundation.org>, oleg.drokin@intel.com, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org, Mike Shuey <shuey@purdue.edu>
+To: starvik@axis.com, jesper.nilsson@axis.com
+Cc: linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
-On Sat, May 23, 2015 at 11:13:31AM -0700, Joe Perches wrote:
-> On Sat, 2015-05-23 at 21:07 +0300, Dan Carpenter wrote:
-> > No one uses the complicated options on checkpatch anyway, they just grep
-> > away the warnings they don't like.
-> 
-> That'd be false.  Other projects like u-boot do.
+Turn a kmalloc/memset into an equivalent kzalloc.
+Doing so also move the zero'ing of the memory outside of a mutex.
 
-Ah.  Ok.
+Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+---
+ arch/cris/arch-v32/drivers/mach-fs/gpio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/arch/cris/arch-v32/drivers/mach-fs/gpio.c b/arch/cris/arch-v32/drivers/mach-fs/gpio.c
+index 009f4ee..72968fb 100644
+--- a/arch/cris/arch-v32/drivers/mach-fs/gpio.c
++++ b/arch/cris/arch-v32/drivers/mach-fs/gpio.c
+@@ -425,12 +425,11 @@ gpio_open(struct inode *inode, struct file *filp)
+ 	if (p > GPIO_MINOR_LAST)
+ 		return -EINVAL;
+ 
+-	priv = kmalloc(sizeof(struct gpio_private), GFP_KERNEL);
++	priv = kzalloc(sizeof(struct gpio_private), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+ 	mutex_lock(&gpio_mutex);
+-	memset(priv, 0, sizeof(*priv));
+ 
+ 	priv->minor = p;
+ 
+-- 
+2.1.0
 
