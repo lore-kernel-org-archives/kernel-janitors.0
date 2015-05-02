@@ -1,47 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 19 May 2015 15:39:58 +0000
-Subject: Re: Breaking lines in function headers
-Message-Id: <20150519153958.GD4150@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 02 May 2015 21:16:48 +0000
+Subject: [PATCH] staging: lustre: obd_support: Add obd_cpt_alloc function
+Message-Id: <1430601408-12847-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <555B3901.3090707@wimdewith.com>
-In-Reply-To: <555B3901.3090707@wimdewith.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Tue, May 19, 2015 at 05:26:21PM +0200, Wim de With wrote:
-> On 19-5-2015 17:20, Dan Carpenter wrote:
-> > On Tue, May 19, 2015 at 05:14:49PM +0200, Wim de With wrote:
-> >> On 19-5-2015 16:08, Dan Carpenter wrote:
-> >>> First of gmail always marks your emails as spam so I only see the
-> >>> replies.
-> >>
-> >> That might be because of my SPF/DMARC configuration. I think it's fixed now.
-> >>
-> >>> Both declaration formats are acceptable.
-> >>>
-> >>> These days instead of "substantially to the right" most people
-> >>> insist that they be aligned.  I think checkpatch.pl --strict enforces
-> >>> this.
-> >>
-> >> So as long as I use the same style consistently in a source file, I'm good?
-> >>
-> > 
-> > I'm slightly confused what you mean.  If you're asking if you should
-> > redo the visorchipset.c patch then don't bother with that.  The original
-> > code is fine.
-> > 
-> > regards,
-> > dan carpenter 
-> 
-> Yeah, I realized that already, but I saw some other files in
-> drivers/staging that had lines over 80 characters long, so I just wanted
-> to know how to do it correctly the next time I submit a patch like that.
+Summarize OBD_CPT_ALLOC_GFP, OBD_CPT_ALLOC, and OBD_CPT_ALLOC_PTR as a
+function, obd_cpt_alloc.
 
-Sure.  Go for it.  Even if you mess up, staging is basically a friendly
-place and we are used to newbies.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-regards,
-dan carpenter
+---
+
+Some questions: Is the name OK?  Is the NULL test needed?  If not, should
+the call to kzalloc_node with the call to cfs_cpt_spread_node just be
+inlined into the call sites?
+
+ drivers/staging/lustre/lustre/include/obd_support.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/staging/lustre/lustre/include/obd_support.h b/drivers/staging/lustre/lustre/include/obd_support.h
+index 2991d2e..3d380f0 100644
+--- a/drivers/staging/lustre/lustre/include/obd_support.h
++++ b/drivers/staging/lustre/lustre/include/obd_support.h
+@@ -655,6 +655,15 @@ do {									      \
+ #define OBD_CPT_ALLOC_PTR(ptr, cptab, cpt)				      \
+ 	OBD_CPT_ALLOC(ptr, cptab, cpt, sizeof(*(ptr)))
+ 
++static inline void *obd_cpt_alloc(struct cfs_cpt_table *cptab, int cpt,
++				  size_t size, gfp_t flags)
++{
++	return (cptab) = NULL ?
++		kzalloc(size, flags) :
++		kzalloc_node(size, flags, cfs_cpt_spread_node(cptab, cpt));
++}
++
++
+ # define __OBD_VMALLOC_VEROBSE(ptr, cptab, cpt, size)			      \
+ do {									      \
+ 	(ptr) = cptab = NULL ?						      \
 
