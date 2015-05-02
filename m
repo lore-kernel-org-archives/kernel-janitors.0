@@ -1,57 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 28 May 2015 21:02:18 +0000
-Subject: [PATCH 3/9] NFS: drop unneeded goto
-Message-Id: <1432846944-7122-4-git-send-email-Julia.Lawall@lip6.fr>
+From: "ABBEY Credit Union Inc" <hr@astuteconsulting.com>
+Date: Sat, 02 May 2015 07:01:39 +0000
+Subject: DARLEHEN !
+Message-Id: <20150502070037.A70F0C2E1F4@zimbra105.megavelocity.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@primarydata.com>
-Cc: kernel-janitors@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Recipients <hr@astuteconsulting.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+ Sind Sie ben=F6tigen eine dringende Darlehen? Ben=F6tigen Sie ein Darlehen=
+ zu zahlen Sie Rechnungen oder ein Haus kaufen? Wenn ja, bitte e-Mail uns f=
+=FCr Darlehensantrag zur=FCck.
 
-Delete jump to a label on the next line, when that label is not
-used elsewhere.
+ In Zusammenarbeit mit ABBEY SANTANDER BANK, ABBEY Credit Union Inc. bietet=
+ langfristige Darlehen 2.29 % bis 4.5 % verzinst, der Suite auch solche mit=
+ schlechten Kredit-Scores und niedrigem Einkommen. Unser B=FCro befindet si=
+ch hier in 1341 Wayne Street, Troy, Ohio, USA.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+Wir bieten die folgenden Arten von Darlehen:
 
-// <smpl>
-@r@
-identifier l;
-@@
+* Pers=F6nliche Darlehen (Gesicherte Und Ungesicherte) $5,000.00 USD bis zu=
+ $100,000.00 USD 2.29 % verzinst.
+* Auto-Kredit
+* Bildung Darlehen
+* Schuldenkonsolidierung
+* Kreditlinie
+* Business-Darlehen
+* Konsolidierung Darlehen
+* Internationale Kredite
+* Refinanzierung
+* Investitionsdarlehen
 
--if (...) goto l;
--l:
-// </smpl>
-
-Also drop the unnecessary ret variable.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- fs/nfs/nfs4idmap.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
-index 2e1737c..535dfc6 100644
---- a/fs/nfs/nfs4idmap.c
-+++ b/fs/nfs/nfs4idmap.c
-@@ -494,12 +494,7 @@ nfs_idmap_delete(struct nfs_client *clp)
- 
- int nfs_idmap_init(void)
- {
--	int ret;
--	ret = nfs_idmap_init_keyring();
--	if (ret != 0)
--		goto out;
--out:
--	return ret;
-+	return nfs_idmap_init_keyring();
- }
- 
- void nfs_idmap_quit(void)
-
+Hinweis: Antworten uns jetzt auf E-Mail: abbey_troy@aim.com
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
