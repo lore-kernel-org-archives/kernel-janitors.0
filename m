@@ -1,65 +1,41 @@
-From: "Simmons, James A." <simmonsja@ornl.gov>
-Date: Sat, 02 May 2015 01:18:48 +0000
-Subject: RE: [HPDD-discuss] [PATCH 2/11] Staging: lustre: fld: Use kzalloc and kfree
-Message-Id: <656a59e6fdb043df94afda4683cd23d1@EXCHCS32.ornl.gov>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sat, 02 May 2015 06:02:02 +0000
+Subject: Re: [HPDD-discuss] [PATCH 2/11] Staging: lustre: fld: Use kzalloc and kfree
+Message-Id: <alpine.DEB.2.02.1505020800570.2073@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a650e757977e491b816c34e7780c1a08@EXCHCS32.ornl.gov>
-In-Reply-To: <a650e757977e491b816c34e7780c1a08@EXCHCS32.ornl.gov>
+References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr> <1430495482-933-11-git-send-email-Julia.Lawall@lip6.fr> <a650e757977e491b816c34e7780c1a08@EXCHCS32.ornl.gov> <20150501200221.GF14154@mwanda> <9f81478864bc422c9a59cddbaa723052@EXCHCS32.ornl.gov>
+ <20150501204930.GB2265@kroah.com> <CA8D4D3B-39CB-4DE4-835D-047692A7E5DE@intel.com> <20150501205835.GA2692@kroah.com> <C4CA2C71-C25D-42EB-AC52-963405EFE353@intel.com>
+In-Reply-To: <C4CA2C71-C25D-42EB-AC52-963405EFE353@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Drokin, Oleg" <oleg.drokin@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, "HPDD-discuss@lists.01.org" <HPDD-discuss@ml01.01.org>, "Simmons, James A." <simmonsja@ornl.gov>, Dan Carpenter <dan.carpenter@oracle.com>
 
->> >We are hopefully going to get rid of OBD_ALLOC_LARGE() as well, though.
->> >
->> >It's simple enough to write a function:
->> >
->> >void *obd_zalloc(size_t size)
->> >{
->> >	if (size > 4 * PAGE_CACHE_SIZE)
->> >		return vzalloc(size);
->> >	else
->> >		return kmalloc(size, GFP_NOFS);
->> >}
->> >
->> >Except, huh?  Shouldn't we be using GFP_NOFS for the vzalloc() side?
->> >There was some discussion of that GFP_NOFS was a bit buggy back in 2010
->> >(http://marc.info/?l=linux-mm&m8942194520631&w=4) but the current
->> >lustre code doesn't try to pass GFP_NOFS.
->> 
->> The version in the upstream client is out of date. The current macro in the Intel master
->> Branch is:
->
->That's not helpful at all, why do we even have an in-kernel version of
->this code if you don't do your development in the kernel?
->
->Please sync with the kernel tree very soon, or I'm just going to delete
->this whole thing.  This is getting _really_ frustrating.
+> Yes, I imagine Julia will include that as the new lustre_kvzalloc() define
+> to be used in all OBD_ALLOC_LARGE instances.
+> I can provide the desired code if necessary (it's actually a bit less than trivial
+> because in some cases we also have that numa-aware node thing).
 
-First I want to make it clear I am here to help clean up the upstream client. I agree in the long run
-it is important to move the development to what is in the upstream kernel but their is reason why
-current development is not focus in the upstream client. 
+Oleg,
 
-       As the primary engineer responsible for the deployment of Lustre at ORNL I have to ensure
-Lustre runs flawlessly. There is zero tolerance of problems or even the slightest performance
-degradation. Trust me the users scream even when 1% performance is lost. The amazing 
-thing is we have less then 1% down time during the year. To do this I have to perform hundreds
-of hours of testing at various scales for various versions of Lustre. This includes taking time on Titan.
-So what does this have to do with upstream testing. Well no super computer in the world runs the 
-latest and greatest linux kernel so the focus is just not there. Luckily the lab does see it is in its interest
-to support the upstream client work otherwise I wouldn't be here :-)
-      Second and far more importantly the upstream lustre code currently does not have the same 
-level of QA with what the Intel branch gets.  The bar is very very high to get any patch merged for the
-Intel branch. Each patch has to first pass a regression test suite besides the normal review process.
-Besides that sites like ORNL have to evaluated all the changes at all the scales present on site. This
-means doing testing on Titan because unique problems only show up at that scale. Because of this
-the work that will soon come your way has to be first evaluated on the Intel branch since this is the
-current path for QA. You can think of the intel branch as a lustre-next branch that needs to be feed back
-too your branch. Eventually your branch will have to under go this level of QA but we are not quite
-their yet.
+If you could send a patch with the proper definition, that would be very
+helpful, thanks.  When that is in place, I can update the uses.
 
-     Now I like to see the current situation change and Greg you have know me for a while so you 
-can expect a lot of changes are coming.  In fact I already have rallied people from vendors outside Intel
-as well as universities which have done some excellent work which you will soon see. Now I hope this
-is the last email I do like this. Instead I just want to send you patches. Greg I think the changes you will
-see soon will remove your frustration.
+thanks,
+julia
+
+> though if we are ok to review that later, then almost a copy of ext4 one would do like this:
+> void *lustre_kvzalloc(size_t size, gfp_t flags)
+> {
+>        void *ret;
+> 
+>        ret = kzalloc(size, flags | __GFP_NOWARN);
+>        if (!ret)
+>                ret = __vmalloc(size, flags | __GFP_ZERO, PAGE_KERNEL);
+>        return ret;
+> }
+> 
+> 
+> Bye,
+>     Oleg
