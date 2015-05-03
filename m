@@ -1,81 +1,44 @@
-From: Alexei Starovoitov <ast@plumgrid.com>
-Date: Tue, 26 May 2015 16:30:46 +0000
-Subject: Re: bpf: allow bpf programs to tail-call other bpf programs
-Message-Id: <55649FB6.9030900@plumgrid.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 03 May 2015 14:07:16 +0000
+Subject: [PATCH 0/3 v2] Replace OBD_CPT_ALLOC etc by kzalloc_node
+Message-Id: <1430662039-26557-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150523173328.GB31663@mwanda>
-In-Reply-To: <20150523173328.GB31663@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
 
-On 5/26/15 9:16 AM, Daniel Borkmann wrote:
-> On 05/26/2015 06:01 PM, Alexei Starovoitov wrote:
->> On 5/23/15 10:33 AM, Dan Carpenter wrote:
->>> Hello Alexei Starovoitov,
->>>
->>> This is a semi-automatic email about new static checker warnings.
->>>
->>> The patch 04fd61ab36ec: "bpf: allow bpf programs to tail-call other
->>> bpf programs" from May 19, 2015, leads to the following Smatch
->>> complaint:
->>>
->>> kernel/bpf/verifier.c:921 check_call()
->>>      error: we previously assumed 'map' could be null (see line 911)
->>>
->>> kernel/bpf/verifier.c
->>>     910
->>>     911        if (map && map->map_type = BPF_MAP_TYPE_PROG_ARRAY &&
->>>                      ^^^
->>> Patch introduces a check for NULL.
->>>
->>>     912            func_id != BPF_FUNC_tail_call)
->>>     913            /* prog_array map type needs extra care:
->>>     914             * only allow to pass it into bpf_tail_call() for
->>> now.
->>>     915             * bpf_map_delete_elem() can be allowed in the
->>> future,
->>>     916             * while bpf_map_update_elem() must only be done
->>> via syscall
->>>     917             */
->>>     918            return -EINVAL;
->>>     919
->>>     920        if (func_id = BPF_FUNC_tail_call &&
->>>     921            map->map_type != BPF_MAP_TYPE_PROG_ARRAY)
->>>                      ^^^^^^^^^^^^^
->>> New unchecked dereference.
->>
->> that is false positive.
->> See that 'if (func_id = BPF_FUNC_tail_call ...)' is done before
->> map->map_type dereference.
->> tail_call_proto has:
->> .arg2_type = ARG_CONST_MAP_PTR
->> so call at line 869:
->> check_func_arg(env, BPF_REG_2, fn->arg2_type, &map);
->> will check that arg2 is map_ptr and will assign valid map pointer
->> into map variable.
->> So if line 920 is true, then line 869 was ok as well and map
->> pointer is valid. No need for extra check at line 921.
->
-> A bit hard to parse, perhaps. The control flow might have been easier
-> to understand, if it would have looked like:
->
-> if (!map)
->      /* Nothing to check further. */
->      return 0;
-> if (map->map_type = BPF_MAP_TYPE_PROG_ARRAY &&
->      func_id != BPF_FUNC_tail_call)
->      return -EINVAL;
->
-> if (map->map_type != BPF_MAP_TYPE_PROG_ARRAY &&
->      func_id = BPF_FUNC_tail_call)
->      return -EINVAL;
+The complete semantic patch used to make this transformation is as follows:
+(http://coccinelle.lip6.fr/).
 
-not really. map = NULL is valid case.
-Currently the existing two 'if' are logically checking two
-different conditions. Splitting them into 3 like above
-makes me cringe a little, since the checking logic is not
-contained. I agree that the above _looks_ nicer, but it
-feels wrong to me, since checks are split up this way.
+// <smpl>
+@@
+expression ptr,cptab,cpt,size,gfp;
+@@
 
+- OBD_CPT_ALLOC_GFP(ptr, cptab, cpt, size, gfp)
++ ptr = kzalloc_node(size, gfp, cfs_cpt_spread_node(cptab, cpt))
+
+@@
+expression ptr,cptab,cpt,size;
+@@
+
+- OBD_CPT_ALLOC(ptr, cptab, cpt, size)
++ ptr = kzalloc_node(size, GFP_NOFS, cfs_cpt_spread_node(cptab, cpt))
+
+@@
+expression ptr,cptab,cpt;
+@@
+
+- OBD_CPT_ALLOC_PTR(ptr, cptab, cpt)
++ ptr = kzalloc_node(sizeof(*ptr), GFP_NOFS, cfs_cpt_spread_node(cptab,cpt))
+// </smpl>
+
+Note that the previously proposed patch "Add obd_cpt_alloc function" is not
+needed, as the transformation is done without adding a new function.
+
+These patches should be applied after the patches with subjects "Use
+kzalloc and kfree" and "remove unneeded null test before free".
+
+v2 makes the subject lines more uniform.
