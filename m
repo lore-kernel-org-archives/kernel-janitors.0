@@ -1,30 +1,100 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Wed, 13 May 2015 19:52:29 +0000
-Subject: Re: [patch] ARM: pxa: pxa_cplds: signedness bug in probe
-Message-Id: <87lhgsl0g2.fsf@belgarion.home>
+From: green@linuxhacker.ru
+Date: Sun, 03 May 2015 03:10:06 +0000
+Subject: [PATCH 1/3] staging/lustre: Generic helpers for sysfs
+Message-Id: <1430622608-30402-2-git-send-email-green@linuxhacker.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150513113239.GA31617@mwanda>
-In-Reply-To: <20150513113239.GA31617@mwanda> (Dan Carpenter's message of "Wed,
- 13 May 2015 14:32:39 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Oleg Drokin <green@linuxhacker.ru>
 
-> "base_irq" needs to be signed for the error handling to work.  Also we
-> can remove the initialization because we re-assign it later.
-Indeed.
+Add generic helpers to allow displaying oof lustre-specific values
+in /sys/fs/lustre
 
-I suppose smatch found this one with :
-   arch/arm/mach-pxa/pxa_cplds_irqs.c:126 cplds_probe() warn: unsigned
-   'base_irq' is never less than zero.
-I still don't see which tool found the "re-assign" part ...
+Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
+---
+ .../staging/lustre/lustre/include/lprocfs_status.h | 26 ++++++++++++++++++++++
+ .../lustre/lustre/obdclass/lprocfs_status.c        | 24 ++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
 
-Anyway, thanks for this, I'll queue it in pxa/fixes.
+diff --git a/drivers/staging/lustre/lustre/include/lprocfs_status.h b/drivers/staging/lustre/lustre/include/lprocfs_status.h
+index d030847..03500a8 100644
+--- a/drivers/staging/lustre/lustre/include/lprocfs_status.h
++++ b/drivers/staging/lustre/lustre/include/lprocfs_status.h
+@@ -350,6 +350,8 @@ enum {
+ /* class_obd.c */
+ extern struct proc_dir_entry *proc_lustre_root;
+ 
++extern struct kobject lustre_kobj;
++
+ struct obd_device;
+ struct obd_histogram;
+ 
+@@ -742,6 +744,30 @@ static struct file_operations name##_fops = {				\
+ 		.release = lprocfs_single_release,			\
+ 	}
+ 
++struct lustre_attr {
++	struct attribute attr;
++	ssize_t (*show)(struct kobject *kobj, char *);
++	ssize_t (*store)(struct kobject *kobj, const char *, size_t);
++};
++
++#define LUSTRE_ATTR(name, mode, show, store) \
++static struct lustre_attr lustre_attr_##name = __ATTR(name, mode, show, store)
++
++#define LUSTRE_ATTR_VALUE(name, mode, show, store, value) \
++static struct lustre_attr lustre_attr_##name = \
++			{ __ATTR(name, mode, show, store), value }
++
++#define LUSTRE_RO_ATTR(name) LUSTRE_ATTR(name, 0444, name##_show, NULL)
++#define LUSTRE_RW_ATTR(name) LUSTRE_ATTR(name, 0644, name##_show, name##_store)
++#define LUSTRE_ATTR_LIST(name) &lustre_attr_##name.attr
++
++ssize_t lustre_attr_show(struct kobject *kobj,
++			 struct attribute *attr, char *buf);
++ssize_t lustre_attr_store(struct kobject *kobj, struct attribute *attr,
++			 const char *buf, size_t len);
++
++extern const struct sysfs_ops lustre_sysfs_ops;
++
+ /* lproc_ptlrpc.c */
+ struct ptlrpc_request;
+ extern void target_print_req(void *seq_file, struct ptlrpc_request *req);
+diff --git a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
+index c171c6c..bdfd652 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
++++ b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
+@@ -2057,3 +2057,27 @@ int lprocfs_obd_rd_max_pages_per_rpc(struct seq_file *m, void *data)
+ EXPORT_SYMBOL(lprocfs_obd_rd_max_pages_per_rpc);
+ 
+ #endif
++
++ssize_t lustre_attr_show(struct kobject *kobj,
++			 struct attribute *attr, char *buf)
++{
++	struct lustre_attr *a = container_of(attr, struct lustre_attr, attr);
++
++	return a->show ? a->show(kobj, buf) : 0;
++}
++EXPORT_SYMBOL(lustre_attr_show);
++
++ssize_t lustre_attr_store(struct kobject *kobj, struct attribute *attr,
++			  const char *buf, size_t len)
++{
++	struct lustre_attr *a = container_of(attr, struct lustre_attr, attr);
++
++	return a->store ? a->store(kobj, buf, len) : 0;
++}
++EXPORT_SYMBOL(lustre_attr_store);
++
++const struct sysfs_ops lustre_sysfs_ops = {
++	.show   = lustre_attr_show,
++	.store  = lustre_attr_store,
++};
++EXPORT_SYMBOL(lustre_sysfs_ops);
+-- 
+2.1.0
 
-Cheers.
-
---
-Robert
