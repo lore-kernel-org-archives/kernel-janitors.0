@@ -1,101 +1,72 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 15 May 2015 13:36:29 +0000
-Subject: Re: [PATCH] staging: wlan-ng: fix checkpatch warnings
-Message-Id: <5555F65D.2040407@bfs.de>
+From: green@linuxhacker.ru
+Date: Sun, 03 May 2015 03:10:05 +0000
+Subject: [RFC PATCH 0/3] Moving lustre procfs stuff to sysfs & questions.
+Message-Id: <1430622608-30402-1-git-send-email-green@linuxhacker.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1431695623-17909-1-git-send-email-chaehyun.lim@gmail.com>
-In-Reply-To: <1431695623-17909-1-git-send-email-chaehyun.lim@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+From: Oleg Drokin <green@linuxhacker.ru>
 
+Greg, I wonder if you can take at least a brief look and tell me if this
+is the direction you were envisioning wrt this particular cleanup.
 
-Am 15.05.2015 15:13, schrieb chaehyun lim:
-> clean up checkpatch.pl in prism2sta.c
->  WARNING : line over 80 characters
-> 
-> Signed-off-by: chaehyun lim <chaehyun.lim@gmail.com>
-> ---
->  drivers/staging/wlan-ng/prism2sta.c | 23 ++++++++++++++---------
->  1 file changed, 14 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/staging/wlan-ng/prism2sta.c b/drivers/staging/wlan-ng/prism2sta.c
-> index ddb294e..0329c52 100644
-> --- a/drivers/staging/wlan-ng/prism2sta.c
-> +++ b/drivers/staging/wlan-ng/prism2sta.c
-> @@ -428,7 +428,8 @@ u32 prism2sta_ifstate(wlandevice_t *wlandev, u32 ifstate)
->  			result = hfa384x_drvr_start(hw);
->  			if (result) {
->  				netdev_err(wlandev->netdev,
-> -				       "hfa384x_drvr_start() failed,result=%d\n", (int)result);
-> +					   "hfa384x_drvr_start() failed,result=%d\n",
-> +					   (int)result);
->  				result >  				 P80211ENUM_resultcode_implementation_failure;
->  				wlandev->msdstate = WLAN_MSD_HWPRESENT;
-> @@ -471,7 +472,8 @@ u32 prism2sta_ifstate(wlandevice_t *wlandev, u32 ifstate)
->  			result = hfa384x_drvr_start(hw);
->  			if (result) {
->  				netdev_err(wlandev->netdev,
-> -				       "hfa384x_drvr_start() failed,result=%d\n", (int)result);
-> +					   "hfa384x_drvr_start() failed,result=%d\n",
-> +					   (int)result);
->  				result >  				  P80211ENUM_resultcode_implementation_failure;
->  				wlandev->msdstate = WLAN_MSD_HWPRESENT;
-> @@ -481,7 +483,8 @@ u32 prism2sta_ifstate(wlandevice_t *wlandev, u32 ifstate)
->  			result = prism2sta_getcardinfo(wlandev);
->  			if (result) {
->  				netdev_err(wlandev->netdev,
-> -				       "prism2sta_getcardinfo() failed,result=%d\n", (int)result);
-> +					   "prism2sta_getcardinfo() failed,result=%d\n",
-> +					   (int)result);
->  				result >  				  P80211ENUM_resultcode_implementation_failure;
->  				hfa384x_drvr_stop(hw);
-> @@ -491,7 +494,8 @@ u32 prism2sta_ifstate(wlandevice_t *wlandev, u32 ifstate)
->  			result = prism2sta_globalsetup(wlandev);
->  			if (result) {
->  				netdev_err(wlandev->netdev,
-> -				       "prism2sta_globalsetup() failed,result=%d\n", (int)result);
-> +					   "prism2sta_globalsetup() failed,result=%d\n",
-> +					   (int)result);
->  				result >  				  P80211ENUM_resultcode_implementation_failure;
->  				hfa384x_drvr_stop(hw);
+It's not all-inclusive, but I have a long flight tomorrow so
+if the direction is right, I can convert more of this stuff.
 
-hello chaehyun lim,
+This does not touch some of the multi-value stuff that would probably
+need to move to debugfs or other places, that would be a next step.
 
-my conclusion:
-i do not believe that this improves readability.
-An idea would be to detangle the case statements and create a helperfunctions
-for thew states in prism2sta_ifstate.
+Additionally some questions:
+I know sysfs is supposedly 1 file 1 value, though I see some exceptions, e.g.:
+# cat /sys/kernel/vmcoreinfo 
+2b57500 1024
 
+So we have this /proc/fs/lustre/devices that prints status of all
+"lustre internal devices (or obd for short)" like this:
+# cat /proc/fs/lustre/devices 
+  0 UP mgc MGC192.168.10.226@tcp d6815182-b36d-c4ba-6aa6-065aeb9e9769 5
+  1 UP lov lustre-clilov-ffff8800bd617800 32be3f55-891e-ed82-cae9-6add0770d503 4
+...
 
-just my 2 cents,
-re,
- wh
+Obviously I cannot retain it as a single file, but do I really need to
+create a tree that would look like:
+/sys/fs/lustre/obd/[1...]/{status,name,type,uuid,refcount}
+(or possibly even /sys/devices/virtual/lustre_obd/... )
+or can I get away with just
+/sys/fs/lustre/obd/[1...] files where there's one line per obd like:
+  0 UP mgc MGC192.168.10.226@tcp d6815182-b36d-c4ba-6aa6-065aeb9e9769 5
+(frankly, I have not figured out yet how to dynamically add files
+to sysfs dir).
 
-> @@ -1244,9 +1248,9 @@ void prism2sta_processing_defer(struct work_struct *data)
->  				     HFA384x_RID_CURRENTSSID, result);
->  				return;
->  			}
-> -			prism2mgmt_bytestr2pstr((struct hfa384x_bytestr *) &ssid,
-> -						(p80211pstrd_t *) &
-> -						wlandev->ssid);
-> +			prism2mgmt_bytestr2pstr(
-> +					(struct hfa384x_bytestr *) &ssid,
-> +					(p80211pstrd_t *) &wlandev->ssid);
->  
->  			/* Collect the port status */
->  			result = hfa384x_drvr_getconfig16(hw,
-> @@ -1658,8 +1662,9 @@ static void prism2sta_inf_authreq_defer(wlandevice_t *wlandev,
->  			if (hw->authlist.cnt >= WLAN_AUTH_MAX) {
->  				rec.status = P80211ENUM_status_ap_full;
->  			} else {
-> -				ether_addr_copy(hw->authlist.addr[hw->authlist.cnt],
-> -						rec.address);
-> +				ether_addr_copy(
-> +					hw->authlist.addr[hw->authlist.cnt],
-> +					rec.address);
->  				hw->authlist.cnt++;
->  				added = 1;
->  			}
+What about /proc/sys stuff - /proc/sys/lustre and /proc/sys/lnet?
+Hopefully it's ok to leave those where they are?
+
+Also I found that cgroup does calls into kernfs directly, gaining
+ability to register seq_file files and otherwise do all sorts of
+stuff that would be cool to do from lustre too ;)
+
+These patches compile and run, but I imagine it's not a great idea
+to merge them yet.
+
+Thanks.
+
+Oleg Drokin (3):
+  staging/lustre: Generic helpers for sysfs
+  staging/lustre: Move /proc/fs/lustre root level files to sysfs
+  staging/lustre/llite: move some procfs files to sysfs
+
+ .../staging/lustre/lustre/include/lprocfs_status.h |  26 +++
+ .../staging/lustre/lustre/llite/llite_internal.h   |   4 +
+ drivers/staging/lustre/lustre/llite/llite_lib.c    |   7 +-
+ drivers/staging/lustre/lustre/llite/lproc_llite.c  | 190 ++++++++++++---------
+ drivers/staging/lustre/lustre/llite/super25.c      |  11 +-
+ .../lustre/lustre/obdclass/linux/linux-module.c    | 116 ++++++++-----
+ .../lustre/lustre/obdclass/lprocfs_status.c        |  24 +++
+ 7 files changed, 246 insertions(+), 132 deletions(-)
+
+-- 
+2.1.0
+
