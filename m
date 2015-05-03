@@ -1,138 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 15:51:11 +0000
-Subject: [PATCH 0/11] Use kzalloc and kfree
-Message-Id: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sun, 03 May 2015 18:17:10 +0000
+Subject: Re: [PATCH 0/11] Use kzalloc and kfree
+Message-Id: <20150503181710.GA24621@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, kernel-janitors@vger.kernel.org, HPDD-discuss@ml01.01.org
 
-Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
-kalloc/kcalloc, and OBD_FREE and OBD_FREE_PTR by kfree.  The complete
-semantic patch that makes these changes is as follows:
-(http://coccinelle.lip6.fr/)
+On Fri, May 01, 2015 at 05:51:11PM +0200, Julia Lawall wrote:
+> Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
+> kalloc/kcalloc, and OBD_FREE and OBD_FREE_PTR by kfree.  The complete
+> semantic patch that makes these changes is as follows:
+> (http://coccinelle.lip6.fr/)
 
-// <smpl>
-@@
-expression ptr,e1,e2;
-@@
+<snip>
 
-- OBD_ALLOC(ptr,sizeof e1 * e2)
-+ ptr = kcalloc(e2, sizeof e1, GFP_NOFS)
+You lost the leading '0' on the early patches here, did you use git
+send-email for these?  I'll just sort them by hand, but in the future,
+please fix it up to make it easier to apply things.
 
-@@
-expression ptr,e1,e2;
-@@
+thanks,
 
-- OBD_ALLOC_WAIT(ptr,sizeof e1 * e2)
-+ ptr = kcalloc(sizeof e1, e2, GFP_KERNEL)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC(ptr,e2 * sizeof e1)
-+ ptr = kcalloc(e2, sizeof e1, GFP_NOFS)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e2 * sizeof e1)
-+ ptr = kcalloc(e2, sizeof e1, GFP_KERNEL)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC(ptr,sizeof (t) * e2)
-+ ptr = kcalloc(e2, sizeof (t), GFP_NOFS)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC_WAIT(ptr,sizeof (t) * e2)
-+ ptr = kcalloc(e2, sizeof (t), GFP_KERNEL)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC(ptr,e2 * sizeof (t))
-+ ptr = kcalloc(e2, sizeof (t), GFP_NOFS)
-
-@@
-expression ptr,e2;
-type t;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e2 * sizeof (t))
-+ ptr = kcalloc(e2, sizeof (t), GFP_KERNEL)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC(ptr,e1 * e2)
-+ ptr = kcalloc(e1, e2, GFP_NOFS)
-
-@@
-expression ptr,e1,e2;
-@@
-
-- OBD_ALLOC_WAIT(ptr,e1 * e2)
-+ ptr = kcalloc(e1, e2, GFP_KERNEL)
-
-// -----------------------------------------------------------------------
-
-@@
-expression ptr,size;
-@@
-
-- OBD_ALLOC(ptr,size)
-+ ptr = kzalloc(size, GFP_NOFS)
-
-@@
-expression ptr,size;
-@@
-
-- OBD_ALLOC_WAIT(ptr,size)
-+ ptr = kzalloc(size, GFP_KERNEL)
-
-@@
-expression ptr;
-@@
-
-- OBD_ALLOC_PTR(ptr)
-+ ptr = kzalloc(sizeof(*ptr), GFP_NOFS)
-
-@@
-expression ptr;
-@@
-
-- OBD_ALLOC_PTR_WAIT(ptr)
-+ ptr = kzalloc(sizeof(*ptr), GFP_KERNEL)
-
-// ----------------------------------------------------------------------
-
-@@
-expression ptr, size;
-@@
-
-- OBD_FREE(ptr, size);
-+ kfree(ptr);
-
-@@
-expression ptr;
-@@
-
-- OBD_FREE_PTR(ptr);
-+ kfree(ptr);
-// </smpl>
-
+greg k-h
