@@ -1,46 +1,54 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:37:59 +0000
-Subject: [PATCH 8/20] staging: lustre: llite: statahead: remove unneeded null test before free
-Message-Id: <1430509086-22132-14-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 03 May 2015 14:07:18 +0000
+Subject: [PATCH 2/3 v2] staging: lustre: ptlrpc: nrs_fifo: Replace OBD_CPT_ALLOC etc by kzalloc_node
+Message-Id: <1430662039-26557-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1430662039-26557-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1430662039-26557-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Oleg Drokin <oleg.drokin@intel.com>
 Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Kfree can cope with a null argument, so drop null tests.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Replace OBD_CPT_ALLOC, OBD_CPT_ALLOC_PTR, and OBD_CPT_ALLOC_GFP by
+corresponding calls to kzalloc_node.  The semantic patch for the
+OBD_CPT_ALLOC case is as follows: (http://coccinelle.lip6.fr/).
 
 // <smpl>
-@@ expression ptr; @@
-
-- if (ptr != NULL)
-  kfree(ptr);
+@@ expression ptr,cptab,cpt,size; @@
+- OBD_CPT_ALLOC(ptr, cptab, cpt, size)
++ ptr = kzalloc_node(size, GFP_NOFS, cfs_cpt_spread_node(cptab, cpt))
 // </smpl>
+
+Note that the original OBD macros would check if the cptab argument was
+NULL and fall back on kzalloc in that case.  Oleg Drokin argues that this
+test is not needed because the code containing these calls is only invoked
+after initialization has been completed, in which case the possible cptab
+arguments are not NULL.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/llite/statahead.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/statahead.c b/drivers/staging/lustre/lustre/llite/statahead.c
-index fdf953f..f97371d 100644
---- a/drivers/staging/lustre/lustre/llite/statahead.c
-+++ b/drivers/staging/lustre/lustre/llite/statahead.c
-@@ -1719,8 +1719,7 @@ int do_statahead_enter(struct inode *dir, struct dentry **dentryp,
- 	return -EAGAIN;
+v2: improve the subject line
+
+ drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c b/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
+index 2eefa25..6a61c85 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
+@@ -80,7 +80,9 @@ static int nrs_fifo_start(struct ptlrpc_nrs_policy *policy)
+ {
+ 	struct nrs_fifo_head *head;
  
- out:
--	if (sai != NULL)
--		kfree(sai);
-+	kfree(sai);
- 	spin_lock(&lli->lli_sa_lock);
- 	lli->lli_opendir_key = NULL;
- 	lli->lli_opendir_pid = 0;
+-	OBD_CPT_ALLOC_PTR(head, nrs_pol2cptab(policy), nrs_pol2cptid(policy));
++	head = kzalloc_node(sizeof(*head), GFP_NOFS,
++			    cfs_cpt_spread_node(nrs_pol2cptab(policy),
++						nrs_pol2cptid(policy)));
+ 	if (head = NULL)
+ 		return -ENOMEM;
+ 
 
