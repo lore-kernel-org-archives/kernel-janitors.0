@@ -1,69 +1,51 @@
-From: Mike Shuey <shuey@purdue.edu>
-Date: Thu, 21 May 2015 19:50:39 +0000
-Subject: [PATCH 03/13] staging: lustre: lnet: dead code - remove LNetSetAsync
-Message-Id: <1432237849-53947-17-git-send-email-shuey@purdue.edu>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 03 May 2015 13:21:43 +0000
+Subject: [PATCH 2/3] drivers: staging: lustre: lustre: Replace OBD_CPT_ALLOC etc by kzalloc_node
+Message-Id: <1430659304-26354-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
-In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+References: <1430659304-26354-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1430659304-26354-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oleg.drokin@intel.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org, Mike Shuey <shuey@purdue.edu>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-LNetSetAsync() returns 0, and is never called.  Doesn't exist in the Intel
-tree, either.  Remove it.
+Replace OBD_CPT_ALLOC, OBD_CPT_ALLOC_PTR, and OBD_CPT_ALLOC_GFP by
+corresponding calls to kzalloc_node.  The semantic patch for the
+OBD_CPT_ALLOC case is as follows: (http://coccinelle.lip6.fr/).
 
-Signed-off-by: Mike Shuey <shuey@purdue.edu>
+// <smpl>
+@@ expression ptr,cptab,cpt,size; @@
+- OBD_CPT_ALLOC(ptr, cptab, cpt, size)
++ ptr = kzalloc_node(size, GFP_NOFS, cfs_cpt_spread_node(cptab, cpt))
+// </smpl>
+
+Note that the original OBD macros would check if the cptab argument was
+NULL and fall back on kzalloc in that case.  Oleg Drokin argues that this
+test is not needed because the code containing these calls is only invoked
+after initialization has been completed, in which case the possible cptab
+arguments are not NULL.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/lustre/include/linux/lnet/api.h |    1 -
- drivers/staging/lustre/lnet/lnet/lib-move.c     |   24 -----------------------
- 2 files changed, 0 insertions(+), 25 deletions(-)
+ drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/include/linux/lnet/api.h b/drivers/staging/lustre/include/linux/lnet/api.h
-index cd86517..c4dc1b2 100644
---- a/drivers/staging/lustre/include/linux/lnet/api.h
-+++ b/drivers/staging/lustre/include/linux/lnet/api.h
-@@ -209,7 +209,6 @@ int LNetGet(lnet_nid_t	self,
- int LNetSetLazyPortal(int portal);
- int LNetClearLazyPortal(int portal);
- int LNetCtl(unsigned int cmd, void *arg);
--int LNetSetAsync(lnet_process_id_t id, int nasync);
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c b/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
+index 2eefa25..6a61c85 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
+@@ -80,7 +80,9 @@ static int nrs_fifo_start(struct ptlrpc_nrs_policy *policy)
+ {
+ 	struct nrs_fifo_head *head;
  
- /** @} lnet_misc */
+-	OBD_CPT_ALLOC_PTR(head, nrs_pol2cptab(policy), nrs_pol2cptid(policy));
++	head = kzalloc_node(sizeof(*head), GFP_NOFS,
++			    cfs_cpt_spread_node(nrs_pol2cptab(policy),
++						nrs_pol2cptid(policy)));
+ 	if (head = NULL)
+ 		return -ENOMEM;
  
-diff --git a/drivers/staging/lustre/lnet/lnet/lib-move.c b/drivers/staging/lustre/lnet/lnet/lib-move.c
-index ba59fe7..433faae 100644
---- a/drivers/staging/lustre/lnet/lnet/lib-move.c
-+++ b/drivers/staging/lustre/lnet/lnet/lib-move.c
-@@ -2434,27 +2434,3 @@ LNetDist(lnet_nid_t dstnid, lnet_nid_t *srcnidp, __u32 *orderp)
- 	return -EHOSTUNREACH;
- }
- EXPORT_SYMBOL(LNetDist);
--
--/**
-- * Set the number of asynchronous messages expected from a target process.
-- *
-- * This function is only meaningful for userspace callers. It's a no-op when
-- * called from kernel.
-- *
-- * Asynchronous messages are those that can come from a target when the
-- * userspace process is not waiting for IO to complete; e.g., AST callbacks
-- * from Lustre servers. Specifying the expected number of such messages
-- * allows them to be eagerly received when user process is not running in
-- * LNet; otherwise network errors may occur.
-- *
-- * \param id Process ID of the target process.
-- * \param nasync Number of asynchronous messages expected from the target.
-- *
-- * \return 0 on success, and an error code otherwise.
-- */
--int
--LNetSetAsync(lnet_process_id_t id, int nasync)
--{
--	return 0;
--}
--EXPORT_SYMBOL(LNetSetAsync);
--- 
-1.7.1
 
