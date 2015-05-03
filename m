@@ -1,30 +1,247 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 03 May 2015 18:39:35 +0000
-Subject: Re: [PATCH 0/11] Use kzalloc and kfree
-Message-Id: <alpine.DEB.2.02.1505032039190.2221@localhost6.localdomain6>
+From: green@linuxhacker.ru
+Date: Sun, 03 May 2015 03:10:07 +0000
+Subject: [PATCH 2/3] staging/lustre: Move /proc/fs/lustre root level files to sysfs
+Message-Id: <1430622608-30402-3-git-send-email-green@linuxhacker.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr> <20150503181710.GA24621@kroah.com>
-In-Reply-To: <20150503181710.GA24621@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, kernel-janitors@vger.kernel.org, HPDD-discuss@ml01.01.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, 3 May 2015, Greg Kroah-Hartman wrote:
+From: Oleg Drokin <green@linuxhacker.ru>
 
-> On Fri, May 01, 2015 at 05:51:11PM +0200, Julia Lawall wrote:
-> > Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
-> > kalloc/kcalloc, and OBD_FREE and OBD_FREE_PTR by kfree.  The complete
-> > semantic patch that makes these changes is as follows:
-> > (http://coccinelle.lip6.fr/)
-> 
-> <snip>
-> 
-> You lost the leading '0' on the early patches here, did you use git
-> send-email for these?  I'll just sort them by hand, but in the future,
-> please fix it up to make it easier to apply things.
+except devices, for now.
 
-I will fix it.
+Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
+---
+ .../lustre/lustre/obdclass/linux/linux-module.c    | 116 +++++++++++++--------
+ 1 file changed, 72 insertions(+), 44 deletions(-)
 
-julia
+diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+index 06944b8..abfb671 100644
+--- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
++++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+@@ -64,6 +64,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/miscdevice.h>
+ #include <linux/seq_file.h>
++#include <linux/kobject.h>
+ 
+ #include "../../../include/linux/libcfs/libcfs.h"
+ #include "../../../include/linux/lnet/lnetctl.h"
+@@ -216,29 +217,26 @@ struct miscdevice obd_psdev = {
+ };
+ 
+ 
+-#if defined (CONFIG_PROC_FS)
+-static int obd_proc_version_seq_show(struct seq_file *m, void *v)
++static ssize_t version_show(struct kobject *kobj, char *buf)
+ {
+-	seq_printf(m, "lustre: %s\nkernel: %s\nbuild:  %s\n",
+-		   LUSTRE_VERSION_STRING, "patchless_client", BUILD_VERSION);
+-	return 0;
++	return snprintf(buf, PAGE_SIZE, "lustre: %s\nkernel: %s\nbuild:  %s\n",
++			LUSTRE_VERSION_STRING, "patchless_client",
++			BUILD_VERSION);
+ }
+-LPROC_SEQ_FOPS_RO(obd_proc_version);
+ 
+-int obd_proc_pinger_seq_show(struct seq_file *m, void *v)
++static ssize_t pinger_show(struct kobject *kobj, char *buf)
+ {
+-	seq_printf(m, "%s\n", "on");
+-	return 0;
++	return snprintf(buf, PAGE_SIZE, "%s\n", "on");
+ }
+-LPROC_SEQ_FOPS_RO(obd_proc_pinger);
+ 
+-static int obd_proc_health_seq_show(struct seq_file *m, void *v)
++static ssize_t health_show(struct kobject *kobj, char *buf)
+ {
+ 	bool healthy = true;
+ 	int i;
++	size_t offset = 0;
+ 
+ 	if (libcfs_catastrophe)
+-		seq_printf(m, "LBUG\n");
++		offset = snprintf(buf, PAGE_SIZE, "LBUG\n");
+ 
+ 	read_lock(&obd_dev_lock);
+ 	for (i = 0; i < class_devno_max(); i++) {
+@@ -256,8 +254,9 @@ static int obd_proc_health_seq_show(struct seq_file *m, void *v)
+ 		read_unlock(&obd_dev_lock);
+ 
+ 		if (obd_health_check(NULL, obd)) {
+-			seq_printf(m, "device %s reported unhealthy\n",
+-				   obd->obd_name);
++			offset += snprintf(buf + offset, PAGE_SIZE - offset,
++					   "device %s reported unhealthy\n",
++					   obd->obd_name);
+ 			healthy = false;
+ 		}
+ 		class_decref(obd, __func__, current);
+@@ -266,32 +265,30 @@ static int obd_proc_health_seq_show(struct seq_file *m, void *v)
+ 	read_unlock(&obd_dev_lock);
+ 
+ 	if (healthy)
+-		seq_puts(m, "healthy\n");
++		offset += snprintf(buf + offset, PAGE_SIZE - offset,
++				   "healthy\n");
+ 	else
+-		seq_puts(m, "NOT HEALTHY\n");
++		offset += snprintf(buf + offset, PAGE_SIZE - offset,
++				   "NOT HEALTHY\n");
+ 
+-	return 0;
++	return offset;
+ }
+-LPROC_SEQ_FOPS_RO(obd_proc_health);
+ 
+-static int obd_proc_jobid_var_seq_show(struct seq_file *m, void *v)
++static ssize_t jobid_var_show(struct kobject *kobj, char *buf)
+ {
+-	seq_printf(m, "%s\n", obd_jobid_var);
+-	return 0;
++	return snprintf(buf, PAGE_SIZE, "%s\n", obd_jobid_var);
+ }
+ 
+-static ssize_t obd_proc_jobid_var_seq_write(struct file *file,
+-				const char __user *buffer,
+-				size_t count, loff_t *off)
++static ssize_t jobid_var_store(struct kobject *kobj,
++			       const char *buffer,
++			       size_t count)
+ {
+ 	if (!count || count > JOBSTATS_JOBID_VAR_MAX_LEN)
+ 		return -EINVAL;
+ 
+ 	memset(obd_jobid_var, 0, JOBSTATS_JOBID_VAR_MAX_LEN + 1);
+ 
+-	/* This might leave the var invalid on error, which is probably fine.*/
+-	if (copy_from_user(obd_jobid_var, buffer, count))
+-		return -EFAULT;
++	memcpy(obd_jobid_var, buffer, count);
+ 
+ 	/* Trim the trailing '\n' if any */
+ 	if (obd_jobid_var[count - 1] = '\n')
+@@ -299,23 +296,20 @@ static ssize_t obd_proc_jobid_var_seq_write(struct file *file,
+ 
+ 	return count;
+ }
+-LPROC_SEQ_FOPS(obd_proc_jobid_var);
+ 
+-static int obd_proc_jobid_name_seq_show(struct seq_file *m, void *v)
++static ssize_t jobid_name_show(struct kobject *kobj, char *buf)
+ {
+-	seq_printf(m, "%s\n", obd_jobid_var);
+-	return 0;
++	return snprintf(buf, PAGE_SIZE, "%s\n", obd_jobid_node);
+ }
+ 
+-static ssize_t obd_proc_jobid_name_seq_write(struct file *file,
+-					     const char __user *buffer,
+-					     size_t count, loff_t *off)
++static ssize_t jobid_name_store(struct kobject *kobj,
++				const char *buffer,
++				size_t count)
+ {
+ 	if (!count || count > JOBSTATS_JOBID_SIZE)
+ 		return -EINVAL;
+ 
+-	if (copy_from_user(obd_jobid_node, buffer, count))
+-		return -EFAULT;
++	memcpy(obd_jobid_node, buffer, count);
+ 
+ 	obd_jobid_node[count] = 0;
+ 
+@@ -325,22 +319,31 @@ static ssize_t obd_proc_jobid_name_seq_write(struct file *file,
+ 
+ 	return count;
+ }
+-LPROC_SEQ_FOPS(obd_proc_jobid_name);
+ 
++#if defined(CONFIG_PROC_FS)
+ /* Root for /proc/fs/lustre */
+ struct proc_dir_entry *proc_lustre_root = NULL;
+ EXPORT_SYMBOL(proc_lustre_root);
+ 
+ struct lprocfs_vars lprocfs_base[] = {
+-	{ "version", &obd_proc_version_fops },
+-	{ "pinger", &obd_proc_pinger_fops },
+-	{ "health_check", &obd_proc_health_fops },
+-	{ "jobid_var", &obd_proc_jobid_var_fops },
+-	{ .name =	"jobid_name",
+-	  .fops =	&obd_proc_jobid_name_fops},
+ 	{ NULL }
+ };
+ 
++LUSTRE_RO_ATTR(version);
++LUSTRE_RO_ATTR(pinger);
++LUSTRE_RO_ATTR(health);
++LUSTRE_RW_ATTR(jobid_var);
++LUSTRE_RW_ATTR(jobid_name);
++
++static struct attribute *lustre_attrs[] = {
++	LUSTRE_ATTR_LIST(version),
++	LUSTRE_ATTR_LIST(pinger),
++	LUSTRE_ATTR_LIST(health),
++	LUSTRE_ATTR_LIST(jobid_name),
++	LUSTRE_ATTR_LIST(jobid_var),
++	NULL,
++};
++
+ static void *obd_device_list_seq_start(struct seq_file *p, loff_t *pos)
+ {
+ 	if (*pos >= class_devno_max())
+@@ -419,15 +422,36 @@ struct file_operations obd_device_list_fops = {
+ 	.release = seq_release,
+ };
+ 
++struct kobject lustre_kobj;
++EXPORT_SYMBOL(lustre_kobj);
++
++static DECLARE_COMPLETION(lustre_kobj_unregister);
++static void lustre_sysfs_release(struct kobject *kobj)
++{
++	complete(&lustre_kobj_unregister);
++}
++
++static struct kobj_type lustre_fsroot_ktype = {
++	.default_attrs	= lustre_attrs,
++	.sysfs_ops	= &lustre_sysfs_ops,
++	.release	= lustre_sysfs_release,
++};
++
+ int class_procfs_init(void)
+ {
+ 	int rc = 0;
+ 
++	rc = kobject_init_and_add(&lustre_kobj, &lustre_fsroot_ktype,
++				  fs_kobj, "lustre");
++	if (rc)
++		goto out;
++
+ 	proc_lustre_root = lprocfs_register("fs/lustre", NULL,
+-					    lprocfs_base, NULL);
++					    NULL, NULL);
+ 	if (IS_ERR(proc_lustre_root)) {
+ 		rc = PTR_ERR(proc_lustre_root);
+ 		proc_lustre_root = NULL;
++		kobject_put(&lustre_kobj);
+ 		goto out;
+ 	}
+ 
+@@ -444,6 +468,10 @@ int class_procfs_clean(void)
+ 	if (proc_lustre_root) {
+ 		lprocfs_remove(&proc_lustre_root);
+ 	}
++
++	kobject_put(&lustre_kobj);
++	wait_for_completion(&lustre_kobj_unregister);
++
+ 	return 0;
+ }
+ #endif /* CONFIG_PROC_FS */
+-- 
+2.1.0
+
