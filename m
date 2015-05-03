@@ -1,105 +1,65 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:37:49 +0000
-Subject: [PATCH 18/20] Staging: lustre: ptlrpc: lproc_ptlrpc: remove unneeded null test before free
-Message-Id: <1430509086-22132-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 03 May 2015 13:21:42 +0000
+Subject: [PATCH 1/3] staging: lustre: ptlrpc: Replace OBD_CPT_ALLOC etc by kzalloc_node
+Message-Id: <1430659304-26354-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1430659304-26354-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1430659304-26354-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Oleg Drokin <oleg.drokin@intel.com>
 Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Kfree can cope with a null argument, so drop null tests.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Replace OBD_CPT_ALLOC, OBD_CPT_ALLOC_PTR, and OBD_CPT_ALLOC_GFP by
+corresponding calls to kzalloc_node.  The semantic patch for the
+OBD_CPT_ALLOC case is as follows: (http://coccinelle.lip6.fr/).
 
 // <smpl>
-@@ expression ptr; @@
-
-- if (ptr != NULL)
-  kfree(ptr);
+@@ expression ptr,cptab,cpt,size; @@
+- OBD_CPT_ALLOC(ptr, cptab, cpt, size)
++ ptr = kzalloc_node(size, GFP_NOFS, cfs_cpt_spread_node(cptab, cpt))
 // </smpl>
 
-In the first case, the only cleanup needed is the unlock, so jump to that
-directly.
-
-Likewise, in the first two failure cases of ptlrpc_lprocfs_nrs_seq_write,
-no cleanup is needed, so just drop the goto and return directly.
+Note that the original OBD macros would check if the cptab argument was
+NULL and fall back on kzalloc in that case.  Oleg Drokin argues that this
+test is not needed because the code containing these calls is only invoked
+after initialization has been completed, in which case the possible cptab
+arguments are not NULL.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c |   26 ++++++--------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+ drivers/staging/lustre/lustre/ptlrpc/nrs.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c b/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
-index 1391784..aeceef5 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
-@@ -510,7 +510,7 @@ static int ptlrpc_lprocfs_nrs_seq_show(struct seq_file *m, void *n)
- 	infos = kcalloc(num_pols, sizeof(*infos), GFP_NOFS);
- 	if (infos = NULL) {
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/nrs.c b/drivers/staging/lustre/lustre/ptlrpc/nrs.c
+index 68c754f..63a05f4 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/nrs.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/nrs.c
+@@ -746,8 +746,9 @@ static int nrs_policy_register(struct ptlrpc_nrs *nrs,
+ 	LASSERT(desc->pd_ops->op_req_dequeue != NULL);
+ 	LASSERT(desc->pd_compat != NULL);
+ 
+-	OBD_CPT_ALLOC_GFP(policy, svcpt->scp_service->srv_cptable,
+-			  svcpt->scp_cpt, sizeof(*policy), GFP_NOFS);
++	policy = kzalloc_node(sizeof(*policy), GFP_NOFS,
++			cfs_cpt_spread_node(svcpt->scp_service->srv_cptable,
++					    svcpt->scp_cpt));
+ 	if (policy = NULL)
+ 		return -ENOMEM;
+ 
+@@ -961,9 +962,10 @@ static int nrs_svcpt_setup_locked(struct ptlrpc_service_part *svcpt)
+ 	if (svcpt->scp_service->srv_ops.so_hpreq_handler = NULL)
+ 		goto out;
+ 
+-	OBD_CPT_ALLOC_PTR(svcpt->scp_nrs_hp,
+-			  svcpt->scp_service->srv_cptable,
+-			  svcpt->scp_cpt);
++	svcpt->scp_nrs_hp +		kzalloc_node(sizeof(*svcpt->scp_nrs_hp), GFP_NOFS,
++			cfs_cpt_spread_node(svcpt->scp_service->srv_cptable,
++					    svcpt->scp_cpt));
+ 	if (svcpt->scp_nrs_hp = NULL) {
  		rc = -ENOMEM;
--		goto out;
-+		goto unlock;
- 	}
- again:
- 
-@@ -617,10 +617,8 @@ again:
- 		goto again;
- 	}
- 
--out:
--	if (infos)
--		kfree(infos);
--
-+	kfree(infos);
-+unlock:
- 	mutex_unlock(&nrs_core.nrs_mutex);
- 
- 	return rc;
-@@ -650,16 +648,12 @@ static ssize_t ptlrpc_lprocfs_nrs_seq_write(struct file *file,
- 	char			       *token;
- 	int				rc = 0;
- 
--	if (count >= LPROCFS_NRS_WR_MAX_CMD) {
--		rc = -EINVAL;
--		goto out;
--	}
-+	if (count >= LPROCFS_NRS_WR_MAX_CMD)
-+		return -EINVAL;
- 
- 	cmd = kzalloc(LPROCFS_NRS_WR_MAX_CMD, GFP_NOFS);
--	if (cmd = NULL) {
--		rc = -ENOMEM;
--		goto out;
--	}
-+	if (cmd = NULL)
-+		return -ENOMEM;
- 	/**
- 	 * strsep() modifies its argument, so keep a copy
- 	 */
-@@ -716,8 +710,7 @@ default_queue:
- 
- 	mutex_unlock(&nrs_core.nrs_mutex);
- out:
--	if (cmd_copy)
--		kfree(cmd_copy);
-+	kfree(cmd_copy);
- 
- 	return rc < 0 ? rc : count;
- }
-@@ -860,8 +853,7 @@ ptlrpc_lprocfs_svc_req_history_stop(struct seq_file *s, void *iter)
- {
- 	struct ptlrpc_srh_iterator *srhi = iter;
- 
--	if (srhi != NULL)
--		kfree(srhi);
-+	kfree(srhi);
- }
- 
- static void *
+ 		goto out;
 
