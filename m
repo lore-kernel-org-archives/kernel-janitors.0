@@ -1,7 +1,7 @@
-From: Greg KH <greg@kroah.com>
-Date: Sun, 03 May 2015 19:44:03 +0000
-Subject: Re: [PATCH] staging/lustre: Always try kmalloc first for OBD_ALLOC_LARGE
-Message-Id: <20150503194403.GA24491@kroah.com>
+From: green@linuxhacker.ru
+Date: Mon, 04 May 2015 16:48:09 +0000
+Subject: [PATCH] staging/lustre: Always try kmalloc first for OBD_ALLOC_LARGE
+Message-Id: <1430758089-5427-1-git-send-email-green@linuxhacker.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430625501-1069-1-git-send-email-green@linuxhacker.ru>
 In-Reply-To: <1430625501-1069-1-git-send-email-green@linuxhacker.ru>
@@ -10,46 +10,164 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, May 03, 2015 at 03:14:58PM -0400, Oleg Drokin wrote:
-> Hello!
-> 
-> On May 3, 2015, at 2:31 PM, Greg KH wrote:
-> 
-> >> -/* Allocations above this size are considered too big and could not be done
-> >> - * atomically.
-> >> - *
-> >> - * Be very careful when changing this value, especially when decreasing it,
-> >> - * since vmalloc in Linux doesn't perform well on multi-cores system, calling
-> >> - * vmalloc in critical path would hurt performance badly. See LU-66.
-> >> - */
-> >> -#define OBD_ALLOC_BIG (4 * PAGE_CACHE_SIZE)
-> >> -
-> >> #define OBD_ALLOC_LARGE(ptr, size)					    \
-> >> do {									  \
-> >> -	if (size > OBD_ALLOC_BIG)					     \
-> >> -		OBD_VMALLOC(ptr, size);				       \
-> >> -	else								  \
-> >> -		OBD_ALLOC(ptr, size);					 \
-> >> +	ptr = libcfs_kvzalloc(size, GFP_NOFS);				  \
-> >> } while (0)
-> > 
-> > Just fix up all callers of these functions, if there are any anymore.
-> 
-> This is what Julia is doing. I am providing the stub for her wonderful scripts to unwrap per her request.
-> 
-> >> + */
-> >> +/*
-> >> + * Copyright (c) 2015, Oleg Drokin <green@linuxhacker.ru>
-> > 
-> > I think your employer would like a different line here...
-> 
-> Only on stuff that I do at work when I am getting paid.
-> 
-> Stuff that I do on my own uncompensated, I own all the rights to, I hope.
+From: Oleg Drokin <green@linuxhacker.ru>
 
-I wouldn't be so sure about this, please read your employment contract,
-almost no companies allow this, it is very rare.
+Create libcfs_kvzalloc and libcfs_kvzalloc_cpt that
+are designed to replace OBD_ALLOC_LARGE and OBD_CPT_ALLOC_LARGE.
 
-thanks,
+Not a drop-in replacement as they also take gfp flags armument
+for more flexibility.
 
-greg k-h
+Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
+---
+
+Greg, I have addressed your comments wrt the copyright header.
+Since I do not have the patches that replace OBD_ALLOC_LARGE with
+this new function and Julia does, do you think you can accept this as is and
+she'll follow with the replacement then or what is best to do here you think?
+
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |  4 ++
+ .../staging/lustre/lustre/include/obd_support.h    | 24 ++-------
+ drivers/staging/lustre/lustre/libcfs/Makefile      |  1 +
+ .../staging/lustre/lustre/libcfs/linux/linux-mem.c | 59 ++++++++++++++++++++++
+ 4 files changed, 67 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/staging/lustre/lustre/libcfs/linux/linux-mem.c
+
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+index 4410d7f..947df7e 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+@@ -184,4 +184,8 @@ static inline void *__container_of(void *ptr, unsigned long shift)
+ 
+ #define _LIBCFS_H
+ 
++void *libcfs_kvzalloc(size_t size, gfp_t flags);
++void *libcfs_kvzalloc_cpt(struct cfs_cpt_table *cptab, int cpt, size_t size,
++			  gfp_t flags);
++
+ #endif /* _LIBCFS_H */
+diff --git a/drivers/staging/lustre/lustre/include/obd_support.h b/drivers/staging/lustre/lustre/include/obd_support.h
+index 2991d2e..379266d 100644
+--- a/drivers/staging/lustre/lustre/include/obd_support.h
++++ b/drivers/staging/lustre/lustre/include/obd_support.h
+@@ -676,37 +676,19 @@ do {									      \
+ 	 __OBD_VMALLOC_VEROBSE(ptr, cptab, cpt, size)
+ 
+ 
+-/* Allocations above this size are considered too big and could not be done
+- * atomically.
+- *
+- * Be very careful when changing this value, especially when decreasing it,
+- * since vmalloc in Linux doesn't perform well on multi-cores system, calling
+- * vmalloc in critical path would hurt performance badly. See LU-66.
+- */
+-#define OBD_ALLOC_BIG (4 * PAGE_CACHE_SIZE)
+-
+ #define OBD_ALLOC_LARGE(ptr, size)					    \
+ do {									  \
+-	if (size > OBD_ALLOC_BIG)					     \
+-		OBD_VMALLOC(ptr, size);				       \
+-	else								  \
+-		OBD_ALLOC(ptr, size);					 \
++	ptr = libcfs_kvzalloc(size, GFP_NOFS);				  \
+ } while (0)
+ 
+ #define OBD_CPT_ALLOC_LARGE(ptr, cptab, cpt, size)			      \
+ do {									      \
+-	if (size > OBD_ALLOC_BIG)					      \
+-		OBD_CPT_VMALLOC(ptr, cptab, cpt, size);			      \
+-	else								      \
+-		OBD_CPT_ALLOC(ptr, cptab, cpt, size);			      \
++	ptr = libcfs_kvzalloc_cpt(cptab, cpt, size, GFP_NOFS);		      \
+ } while (0)
+ 
+ #define OBD_FREE_LARGE(ptr, size)					     \
+ do {									  \
+-	if (size > OBD_ALLOC_BIG)					     \
+-		OBD_VFREE(ptr, size);					 \
+-	else								  \
+-		OBD_FREE(ptr, size);					  \
++	kvfree(ptr);							  \
+ } while (0)
+ 
+ 
+diff --git a/drivers/staging/lustre/lustre/libcfs/Makefile b/drivers/staging/lustre/lustre/libcfs/Makefile
+index 2996a48..fabdd3e 100644
+--- a/drivers/staging/lustre/lustre/libcfs/Makefile
++++ b/drivers/staging/lustre/lustre/libcfs/Makefile
+@@ -7,6 +7,7 @@ libcfs-linux-objs += linux-curproc.o
+ libcfs-linux-objs += linux-module.o
+ libcfs-linux-objs += linux-crypto.o
+ libcfs-linux-objs += linux-crypto-adler.o
++libcfs-linux-objs += linux-mem.o
+ 
+ libcfs-linux-objs := $(addprefix linux/,$(libcfs-linux-objs))
+ 
+diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-mem.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-mem.c
+new file mode 100644
+index 0000000..025e2f0
+--- /dev/null
++++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-mem.c
+@@ -0,0 +1,59 @@
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 only,
++ * as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License version 2 for more details (a copy is included
++ * in the LICENSE file that accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License
++ * version 2 along with this program; If not, see
++ * http://www.sun.com/software/products/lustre/docs/GPLv2.pdf
++ *
++ */
++/*
++ * This file creates a memory allocation primitive for Lustre, that
++ * allows to fallback to vmalloc allocations should regular kernel allocations
++ * fail due to size or system memory fragmentation.
++ *
++ * Author: Oleg Drokin <green@linuxhacker.ru>
++ *
++ */
++/*
++ * This file is part of Lustre, http://www.lustre.org/
++ * Lustre is a trademark of Seagate Technology.
++ */
++#include <linux/slab.h>
++#include <linux/vmalloc.h>
++
++#include "../../../include/linux/libcfs/libcfs.h"
++
++void *libcfs_kvzalloc(size_t size, gfp_t flags)
++{
++	void *ret;
++
++	ret = kzalloc(size, flags | __GFP_NOWARN);
++	if (!ret)
++		ret = __vmalloc(size, flags | __GFP_ZERO, PAGE_KERNEL);
++	return ret;
++}
++EXPORT_SYMBOL(libcfs_kvzalloc);
++
++void *libcfs_kvzalloc_cpt(struct cfs_cpt_table *cptab, int cpt, size_t size,
++			  gfp_t flags)
++{
++	void *ret;
++
++	ret = kzalloc_node(size, flags | __GFP_NOWARN,
++			   cfs_cpt_spread_node(cptab, cpt));
++	if (!ret) {
++		WARN_ON(!(flags & (__GFP_FS|__GFP_HIGH)));
++		ret = vmalloc_node(size, cfs_cpt_spread_node(cptab, cpt));
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(libcfs_kvzalloc_cpt);
+-- 
+2.1.0
+
