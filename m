@@ -1,52 +1,33 @@
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 20 May 2015 16:36:47 +0000
-Subject: Re: [patch] CIFS: remove an unneeded NULL check
-Message-Id: <CAH2r5muFQ_LySLM8bCr1fDqw+NWhT=pSU1Nr8v8e5jxVeULyZA@mail.gmail.com>
+From: Adir Kuhn <adirkuhn@gmail.com>
+Date: Tue, 05 May 2015 00:43:19 +0000
+Subject: [PATCH 5/5] fs: ext4: balloc: Added required space after comma
+Message-Id: <1430786599-3843-6-git-send-email-adirkuhn@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150430143024.GA22086@mwanda>
-In-Reply-To: <20150430143024.GA22086@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Steve French <sfrench@samba.org>, "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git
+Added required space after comma
 
-On Thu, Apr 30, 2015 at 9:30 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Smatch complains because we dereference "ses->server" without checking
-> some lines earlier inside the call to get_next_mid(ses->server).
->
->         fs/cifs/cifssmb.c:4921 CIFSGetDFSRefer()
->         warn: variable dereferenced before check 'ses->server' (see line 4899)
->
-> There is only one caller for this function get_dfs_path() and it always
-> passes a non-null "ses->server" pointer so this NULL check can be
-> removed.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-> index 1091aff..f26ffbf 100644
-> --- a/fs/cifs/cifssmb.c
-> +++ b/fs/cifs/cifssmb.c
-> @@ -4918,7 +4918,7 @@ getDFSRetry:
->                 strncpy(pSMB->RequestFileName, search_name, name_len);
->         }
->
-> -       if (ses->server && ses->server->sign)
-> +       if (ses->server->sign)
->                 pSMB->hdr.Flags2 |= SMBFLG2_SECURITY_SIGNATURE;
->
->         pSMB->hdr.Uid = ses->Suid;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Adir Kuhn <adirkuhn@gmail.com>
+---
+ fs/ext4/balloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
+index d45d43b..1d07c02 100644
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -802,7 +802,7 @@ unsigned long ext4_bg_num_gdb(struct super_block *sb, ext4_group_t group)
+ 			metagroup < first_meta_bg)
+ 		return ext4_bg_num_gdb_nometa(sb, group);
 
+-	return ext4_bg_num_gdb_meta(sb,group);
++	return ext4_bg_num_gdb_meta(sb, group);
 
--- 
-Thanks,
+ }
 
-Steve
+--
+2.1.4
+
