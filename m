@@ -1,45 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 May 2015 08:58:23 +0000
+From: Leonardo Carreras <leocarreras89@gmail.com>
+Date: Tue, 05 May 2015 11:18:11 +0000
 Subject: Re: [PATCH] drivers: dma: amba-pl08x: Supress spaces in indentation
-Message-Id: <20150505085823.GR14154@mwanda>
+Message-Id: <CAE9EGjPoueRAcAbQ7-PUXesJuqAY-t5WjCP5_imkXRajNJsY_A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150505013227.GA11053@leo-Inspiron-N5110>
-In-Reply-To: <20150505013227.GA11053@leo-Inspiron-N5110>
+	<20150505033226.GK3521@localhost>
+In-Reply-To: <20150505033226.GK3521@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leonardo Carreras <leocarreras89@gmail.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, May 04, 2015 at 09:32:27PM -0400, Leonardo Carreras wrote:
-> Removed checkpatch reported spaces in indentation.
-> 
-> Signed-off-by: Leonardo Carreras <leocarreras89@gmail.com>
-> ---
->  drivers/dma/amba-pl08x.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-> index 49d396e..a76df61 100644
-> --- a/drivers/dma/amba-pl08x.c
-> +++ b/drivers/dma/amba-pl08x.c
-> @@ -474,7 +474,7 @@ static void pl08x_terminate_phy_chan(struct pl08x_driver_data *pl08x,
->  	u32 val = readl(ch->reg_config);
->  
->  	val &= ~(PL080_CONFIG_ENABLE | PL080_CONFIG_ERR_IRQ_MASK |
-> -	         PL080_CONFIG_TC_IRQ_MASK);
-> +		PL080_CONFIG_TC_IRQ_MASK);
+Dear Vinod,
 
-Yeah, but now it doesn't line up correctly.
+On Mon, May 4, 2015 at 11:32 PM, Vinod Koul <vinod.koul@intel.com> wrote:
+> On Mon, May 04, 2015 at 09:32:27PM -0400, Leonardo Carreras wrote:
+>> Removed checkpatch reported spaces in indentation.
+>>
+> You should look at git log to come up with patch tags for a subsystem, if
+> you had done that you would have noticed that we use dmaengine:....
+>
+> Also you should have run checkpatch and that would have told you a typo in
+> changelog
+>
 
-Do it like this:
+As this was my first attempt, I have to say sorry for the inconveniences. I will
+definitely take this in account.
 
-	val &= ~(PL080_CONFIG_ENABLE | PL080_CONFIG_ERR_IRQ_MASK |
-		 PL080_CONFIG_TC_IRQ_MASK);
+> Lastly, you should mention which error/warn your are fixing in log.
+>
 
-In other words:
+It was an error in line 477, sorry for that too.
 
-[tab][space]PL080_CONFIG_TC_IRQ_MASK);
-
-regards,
-dan carpenter
+> I have fixed first two and applied this
+>
+> --
+> ~Vinod
+>
+>> Signed-off-by: Leonardo Carreras <leocarreras89@gmail.com>
+>> ---
+>>  drivers/dma/amba-pl08x.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+>> index 49d396e..a76df61 100644
+>> --- a/drivers/dma/amba-pl08x.c
+>> +++ b/drivers/dma/amba-pl08x.c
+>> @@ -474,7 +474,7 @@ static void pl08x_terminate_phy_chan(struct pl08x_driver_data *pl08x,
+>>       u32 val = readl(ch->reg_config);
+>>
+>>       val &= ~(PL080_CONFIG_ENABLE | PL080_CONFIG_ERR_IRQ_MASK |
+>> -              PL080_CONFIG_TC_IRQ_MASK);
+>> +             PL080_CONFIG_TC_IRQ_MASK);
+>>
+>>       writel(val, ch->reg_config);
+>>
+>> --
+>> 1.7.9.5
+>>
+>
+> --
