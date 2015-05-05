@@ -1,43 +1,23 @@
 From: Leonardo Carreras <leocarreras89@gmail.com>
-Date: Tue, 05 May 2015 11:18:11 +0000
+Date: Tue, 05 May 2015 11:31:40 +0000
 Subject: Re: [PATCH] drivers: dma: amba-pl08x: Supress spaces in indentation
-Message-Id: <CAE9EGjPoueRAcAbQ7-PUXesJuqAY-t5WjCP5_imkXRajNJsY_A@mail.gmail.com>
+Message-Id: <CAE9EGjO-qS+i1SEV1nqLTx6s9t34g-JmBOfpmtK8RgCxRHU3gA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150505013227.GA11053@leo-Inspiron-N5110>
-	<20150505033226.GK3521@localhost>
-In-Reply-To: <20150505033226.GK3521@localhost>
+	<20150505085823.GR14154@mwanda>
+In-Reply-To: <20150505085823.GR14154@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dear Vinod,
+Dear Dan,
 
-On Mon, May 4, 2015 at 11:32 PM, Vinod Koul <vinod.koul@intel.com> wrote:
+On Tue, May 5, 2015 at 4:58 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > On Mon, May 04, 2015 at 09:32:27PM -0400, Leonardo Carreras wrote:
 >> Removed checkpatch reported spaces in indentation.
 >>
-> You should look at git log to come up with patch tags for a subsystem, if
-> you had done that you would have noticed that we use dmaengine:....
->
-> Also you should have run checkpatch and that would have told you a typo in
-> changelog
->
-
-As this was my first attempt, I have to say sorry for the inconveniences. I will
-definitely take this in account.
-
-> Lastly, you should mention which error/warn your are fixing in log.
->
-
-It was an error in line 477, sorry for that too.
-
-> I have fixed first two and applied this
->
-> --
-> ~Vinod
->
 >> Signed-off-by: Leonardo Carreras <leocarreras89@gmail.com>
 >> ---
 >>  drivers/dma/amba-pl08x.c |    2 +-
@@ -53,11 +33,25 @@ It was an error in line 477, sorry for that too.
 >>       val &= ~(PL080_CONFIG_ENABLE | PL080_CONFIG_ERR_IRQ_MASK |
 >> -              PL080_CONFIG_TC_IRQ_MASK);
 >> +             PL080_CONFIG_TC_IRQ_MASK);
->>
->>       writel(val, ch->reg_config);
->>
->> --
->> 1.7.9.5
->>
 >
-> --
+> Yeah, but now it doesn't line up correctly.
+>
+> Do it like this:
+>
+>         val &= ~(PL080_CONFIG_ENABLE | PL080_CONFIG_ERR_IRQ_MASK |
+>                  PL080_CONFIG_TC_IRQ_MASK);
+>
+> In other words:
+>
+> [tab][space]PL080_CONFIG_TC_IRQ_MASK);
+>
+
+I will check this, but may I ask if that would be marked as an error
+by checkpatch.
+
+Regards,
+
+Leo
+
+> regards,
+> dan carpenter
