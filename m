@@ -1,29 +1,41 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 26 May 2015 10:55:27 +0000
-Subject: Re: rndis_wlan: harmless issue calling set_bit()
-Message-Id: <20150526105527.B1B371416EC@smtp.codeaurora.org>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Tue, 05 May 2015 07:27:14 +0000
+Subject: Re: [PATCH v2] drm: fix a memleak on mutex failure path
+Message-Id: <20150505072714.GY30184@phenom.ffwll.local>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20150514083750.GD1665@mwanda>
-References: <20150514083750.GD1665@mwanda>
-In-Reply-To: <20150514083750.GD1665@mwanda>
+References: <1430149006-3753-1-git-send-email-green@linuxhacker.ru>
+ <87h9s0btol.fsf@intel.com>
+In-Reply-To: <87h9s0btol.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jussi Kivilinna <jussi.kivilinna@iki.fi>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, green@linuxhacker.ru
 
-
-> These are used like:
+On Tue, Apr 28, 2015 at 10:25:46AM +0300, Jani Nikula wrote:
+> On Mon, 27 Apr 2015, green@linuxhacker.ru wrote:
+> > From: Oleg Drokin <green@linuxhacker.ru>
+> >
+> > Need to free just allocated ctx allocation if we cannot
+> > get our config mutex.
+> >
+> > This one has been flagged by kbuild bot all the way back in August,
+> > but somehow nobody picked it up:
+> > https://lists.01.org/pipermail/kbuild/2014-August/001691.html
+> >
+> > In addition there is another failure path that leaks the same
+> > ctx reference that is fixed.
+> >
+> > Found with smatch.
+> >
+> > Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
+> > CC: Daniel Vetter <daniel.vetter@ffwll.ch>
 > 
-> 	set_bit(WORK_LINK_UP, &priv->work_pending);
-> 
-> The problem is that set_bit() takes the actual bit number and not a mask
-> so static checkers get upset.  It doesn't affect run time because we do
-> it consistently, but we may as well clean it up.
-> 
-> Fixes: 6010ce07a66c ('rndis_wlan: do link-down state change in worker thread')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 
-Thanks, applied to wireless-drivers-next.git.
-
-Kalle Valo
+Applied to topic/drm-misc, thanks.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
