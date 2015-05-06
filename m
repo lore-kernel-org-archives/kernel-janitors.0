@@ -1,54 +1,34 @@
-From: David Matlack <dmatlack@google.com>
-Date: Tue, 26 May 2015 16:59:51 +0000
-Subject: Re: [patch] staging: slicoss: restore IRQs correctly after slic_cmdq_reset()
-Message-Id: <CALzav=c1=FPjMF0c5evHXOBe0Q2WrVNh2Tb1YR5Qe1oxJpZMrg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 May 2015 13:45:23 +0000
+Subject: Re: [patch 119/197] scripts/coccinelle/free: Delete NULL test before freeing functions
+Message-Id: <554A1AF3.9010802@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150519122524.GA2989@mwanda>
-In-Reply-To: <20150519122524.GA2989@mwanda>
+References: <53e53fd1.zO3IbUqJ421c7VXf%akpm@linux-foundation.org>
+ <53E5DA60.90902@users.sourceforge.net>
+ <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-On Tue, May 19, 2015 at 5:25 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We can't save two different values in "flags" so it means that IRQs are
-> not enabled properly at the end of this function.  This isn't a problem
-> in the current code because it's always called with IRQs disabled so we
-> don't want to enable them at the end.
+>>> +@r depends on context || report || org @
+>>> +expression E;
+>>> +position p;
+>>> +@@
+>>> +
+>>> +* if (E)
+>>> +*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
+>>
+>> How do you think about to add the construct "@p" also behind the function name
+>> "usb_free_urb"?
+> 
+> Yes, that would be needed, thanks.  Also, it was recently suggested to add 
+> of_node_put to the list of things that are checked for.
 
-Nice find. Thanks for fixing it!
+Would you like to achieve further improvements for this approach?
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/scripts/coccinelle/free/ifnullfree.cocci?id=refs/tags/v4.0.1#n34
 
->
-> This bug is old but it's thanks to David Matlack's recent cleanups that
-> Smatch can detect it.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Regards,
+Markus
 
-Reviewed-by: David Matlack <dmatlack@google.com>
-
-> ---
-> The code prior to David Matlack's change was way worse because everyone
-> shared the same IRQ flags.  It's hard to imagine how it worked at all.
->
-> diff --git a/drivers/staging/slicoss/slicoss.c b/drivers/staging/slicoss/slicoss.c
-> index 5f34ebbf..a609f3e 100644
-> --- a/drivers/staging/slicoss/slicoss.c
-> +++ b/drivers/staging/slicoss/slicoss.c
-> @@ -1392,7 +1392,7 @@ static void slic_cmdq_reset(struct adapter *adapter)
->         unsigned long flags;
->
->         spin_lock_irqsave(&adapter->cmdq_free.lock, flags);
-> -       spin_lock_irqsave(&adapter->cmdq_done.lock, flags);
-> +       spin_lock(&adapter->cmdq_done.lock);
->         outstanding = adapter->cmdq_all.count - adapter->cmdq_done.count;
->         outstanding -= adapter->cmdq_free.count;
->         hcmd = adapter->cmdq_all.head;
-> @@ -1423,7 +1423,7 @@ static void slic_cmdq_reset(struct adapter *adapter)
->                         "free_count %d != all count %d\n",
->                         adapter->cmdq_free.count, adapter->cmdq_all.count);
->         }
-> -       spin_unlock_irqrestore(&adapter->cmdq_done.lock, flags);
-> +       spin_unlock(&adapter->cmdq_done.lock);
->         spin_unlock_irqrestore(&adapter->cmdq_free.lock, flags);
->  }
->
