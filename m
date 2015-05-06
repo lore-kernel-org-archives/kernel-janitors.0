@@ -1,7 +1,7 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date: Wed, 06 May 2015 12:48:45 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 May 2015 13:52:35 +0000
 Subject: Re: [PATCH] staging: lustre: code cleanup - variable declaration spacing
-Message-Id: <20150506123645.GA18568@sudip-PC>
+Message-Id: <20150506135235.GC14154@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430913775-28350-1-git-send-email-shuey@purdue.edu>
 In-Reply-To: <1430913775-28350-1-git-send-email-shuey@purdue.edu>
@@ -17,11 +17,12 @@ On Wed, May 06, 2015 at 08:02:55AM -0400, Mike Shuey wrote:
 > It's small, but I need to start somewhere.  Please let me know if I'm not
 > adhering to proper procedure for trivial cleanups.
 
-these comments should not come here. It has to go below --- (below your
-Signed-off-by:
+Don't put these "aside" comments in the permanent kernel changelog.
 
-regards
-sudip
-> 
-> Signed-off-by: Mike Shuey <shuey@purdue.edu>
-> ---
+Otherwise I like this patch, lining up the variables can look ok in
+struct definitions in headers but in functions we can never keep it
+consistent so it just looks whacky.
+
+regards,
+dan carpenter
+
