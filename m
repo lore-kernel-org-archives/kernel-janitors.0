@@ -1,27 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 06 May 2015 13:52:35 +0000
+Date: Wed, 06 May 2015 15:05:42 +0000
 Subject: Re: [PATCH] staging: lustre: code cleanup - variable declaration spacing
-Message-Id: <20150506135235.GC14154@mwanda>
+Message-Id: <20150506150542.GR16501@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430913775-28350-1-git-send-email-shuey@purdue.edu>
-In-Reply-To: <1430913775-28350-1-git-send-email-shuey@purdue.edu>
+ <20150506135235.GC14154@mwanda>
+ <CABqvwjsia7nqfZtAP4T_DSKRTjdaNZa=7RxXJuZeVxHK7Y2z_Q@mail.gmail.com>
+In-Reply-To: <CABqvwjsia7nqfZtAP4T_DSKRTjdaNZa=7RxXJuZeVxHK7Y2z_Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Shuey <shuey@purdue.edu>
-Cc: oleg.drokin@intel.com, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org
+To: Michael Shuey <shuey@purdue.edu>
+Cc: "oleg.drokin@intel.com" <oleg.drokin@intel.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "HPDD-discuss@ml01.01.org" <HPDD-discuss@ml01.01.org>
 
-On Wed, May 06, 2015 at 08:02:55AM -0400, Mike Shuey wrote:
-> Clean up spacing in some variable declarations, to be more consistent.
+On Wed, May 06, 2015 at 10:47:56AM -0400, Michael Shuey wrote:
+> Sudip, Dan, thanks for your feedback.  I'll see what I can do to clean up
+> the trimmings in my next iteration (and add more files' worth of cleanup as
+> well).
 > 
-> It's small, but I need to start somewhere.  Please let me know if I'm not
-> adhering to proper procedure for trivial cleanups.
+> While editing these 4 files, I found two more (non-white space) clean ups
+> needed.  Should I build a patch series, with those fixes in it, or email
+> those as a separate patch?
 
-Don't put these "aside" comments in the permanent kernel changelog.
-
-Otherwise I like this patch, lining up the variables can look ok in
-struct definitions in headers but in functions we can never keep it
-consistent so it just looks whacky.
+They probably have to be applied in order so it needs to be a patch
+series.
 
 regards,
 dan carpenter
