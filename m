@@ -1,85 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 28 May 2015 21:02:19 +0000
-Subject: [PATCH 4/9] RDMA/ocrdma: drop unneeded goto
-Message-Id: <1432846944-7122-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 06 May 2015 07:15:56 +0000
+Subject: Re: [PATCH RFC] Coccinelle: Check for return not matching function signature
+Message-Id: <5549BFAC.2010609@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1430820761-28122-1-git-send-email-hofrat@osadl.org>
+In-Reply-To: <1430820761-28122-1-git-send-email-hofrat@osadl.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Selvin Xavier <selvin.xavier@emulex.com>
-Cc: kernel-janitors@vger.kernel.org, Devesh Sharma <devesh.sharma@emulex.com>, Mitesh Ahuja <mitesh.ahuja@emulex.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+> +virtual context
+> +virtual org
+> +virtual report
 
-Delete jump to a label on the next line, when that label is not
-used elsewhere.
+Where do you want to reuse these variables in your SmPL scripts?
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
 
-// <smpl>
-@r@
-identifier l;
-@@
+> +@match@
+> +identifier f,ret;
+> +position p;
+> +type T1,T2;
+> +@@
+> +
+> +T1 f(...) {
+> + T2 ret;
 
--if (...) goto l;
--l:
-// </smpl>
+Will it be more helpful to mark only such variable declarations
+where the specified data type should be reconsidered
+by a minus character or an asterisk (instead of the following
+return statement)?
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> +<+...
+> +* return@p ret
+> +;
+> +...+>
+> +}
 
----
- drivers/infiniband/hw/ocrdma/ocrdma_hw.c |   15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-index 47615ff..0f3b5ea 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-@@ -1884,9 +1884,7 @@ int ocrdma_mbx_dealloc_lkey(struct ocrdma_dev *dev, int fr_mr, u32 lkey)
- 	cmd->lkey = lkey;
- 	cmd->rsvd_frmr = fr_mr ? 1 : 0;
- 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
--	if (status)
--		goto mbx_err;
--mbx_err:
-+
- 	kfree(cmd);
- 	return status;
- }
-@@ -1965,9 +1963,7 @@ static int ocrdma_mbx_reg_mr_cont(struct ocrdma_dev *dev,
- 		    upper_32_bits(hwmr->pbl_table[i + pbl_offset].pa);
- 	}
- 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
--	if (status)
--		goto mbx_err;
--mbx_err:
-+
- 	kfree(cmd);
- 	return status;
- }
-@@ -2648,10 +2644,7 @@ int ocrdma_mbx_destroy_qp(struct ocrdma_dev *dev, struct ocrdma_qp *qp)
- 		return status;
- 	cmd->qp_id = qp->id;
- 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
--	if (status)
--		goto mbx_err;
- 
--mbx_err:
- 	kfree(cmd);
- 	if (qp->sq.va)
- 		dma_free_coherent(&pdev->dev, qp->sq.len, qp->sq.va, qp->sq.pa);
-@@ -3061,9 +3054,7 @@ static int ocrdma_mbx_modify_eqd(struct ocrdma_dev *dev, struct ocrdma_eq *eq,
- 				(eq[i].aic_obj.prev_eqd * 65)/100;
- 	}
- 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
--	if (status)
--		goto mbx_err;
--mbx_err:
-+
- 	kfree(cmd);
- 	return status;
- }
+Regards,
+Markus
 
