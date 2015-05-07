@@ -1,20 +1,29 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 10 May 2015 13:04:41 +0000
-Subject: Re: [PATCH] Staging: lustre: llite: Drop unneeded variables
-Message-Id: <20150510130441.GA22189@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 May 2015 09:59:19 +0000
+Subject: [patch] brcmfmac: cleanup a sizeof()
+Message-Id: <20150507095919.GB17996@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430924383-30791-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430924383-30791-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Oleg Drokin <oleg.drokin@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org
+To: Brett Rudley <brudley@broadcom.com>
+Cc: Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, Kalle Valo <kvalo@codeaurora.org>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
 
-On Wed, May 06, 2015 at 04:59:42PM +0200, Julia Lawall wrote:
-> Drop variables made unnecessary by conversion of obd free functions
-> to kfree.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+"flowrings" and "*flowrings" are both pointers so this always returns
+sizeof(void *) and the current code works fine.  But "*flowrings" is
+intended here and static checkers complain, so lets change it.
 
-Someone else sent this a few hours before you did :(
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
+index 1831ecd..d371f1e 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
+@@ -1609,7 +1609,7 @@ static void brcmf_pcie_setup(struct device *dev, const struct firmware *fw,
+ 		bus->msgbuf->commonrings[i]  				&devinfo->shared.commonrings[i]->commonring;
+ 
+-	flowrings = kcalloc(devinfo->shared.nrof_flowrings, sizeof(flowrings),
++	flowrings = kcalloc(devinfo->shared.nrof_flowrings, sizeof(*flowrings),
+ 			    GFP_KERNEL);
+ 	if (!flowrings)
+ 		goto fail;
