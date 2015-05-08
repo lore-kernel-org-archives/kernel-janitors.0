@@ -1,31 +1,46 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 May 2015 09:35:28 +0000
-Subject: Re: [patch] iio: light: signedness bug in stk3310_write_raw()
-Message-Id: <20150527093528.GG11734@mwanda>
+Date: Fri, 08 May 2015 06:19:02 +0000
+Subject: [patch] virtio_console: use snprintf() for safety
+Message-Id: <20150508061902.GA14769@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150527082425.GB19423@mwanda>
- <CAEnQRZABSZh+XtoufmS2n_oFeEgB6z0bx+CxXEk+f6=tOcSXDA@mail.gmail.com>
-In-Reply-To: <CAEnQRZABSZh+XtoufmS2n_oFeEgB6z0bx+CxXEk+f6=tOcSXDA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, May 27, 2015 at 12:31:26PM +0300, Daniel Baluta wrote:
-> On Wed, May 27, 2015 at 11:24 AM, Dan Carpenter
-> <dan.carpenter@oracle.com> wrote:
-> > "index" needs to be signed for the error handling to work.
-> >
-> > Fixes: be9e6229d676 ('iio: light: Add support for Sensortek STK3310')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Hi Dan,
-> 
-> Did you find this with a tool?
+My static checker complains that this sprintf() can overflow.
 
-Yeah.  This is a Smatch thing.
+vdev->index is selected by ida_simple_get() in register_virtio_device()
+so my reading of the code is that this overflow is theoretically
+possible.  The max value of "id" is configurable and I'm not sure what
+typical values are.
 
-regards,
-dan carpenter
+Anyway, it's simple enough to make the buffer larger and I changed it to
+snprintf() as well.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 50754d20..8283989 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1389,7 +1389,7 @@ static void send_sigio_to_port(struct port *port)
+ 
+ static int add_port(struct ports_device *portdev, u32 id)
+ {
+-	char debugfs_name[16];
++	char debugfs_name[28];
+ 	struct port *port;
+ 	struct port_buffer *buf;
+ 	dev_t devt;
+@@ -1492,8 +1492,8 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 		 * Finally, create the debugfs file that we can use to
+ 		 * inspect a port's state at any time
+ 		 */
+-		sprintf(debugfs_name, "vport%up%u",
+-			port->portdev->vdev->index, id);
++		snprintf(debugfs_name, sizeof(debugfs_name), "vport%up%u",
++			 port->portdev->vdev->index, id);
+ 		port->debugfs_file = debugfs_create_file(debugfs_name, 0444,
+ 							 pdrvdata.debugfs_dir,
+ 							 port,
