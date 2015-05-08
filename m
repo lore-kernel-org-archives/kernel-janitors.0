@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 May 2015 09:47:35 +0000
+From: Amit Shah <amit.shah@redhat.com>
+Date: Fri, 08 May 2015 09:56:38 +0000
 Subject: Re: [patch v2] virtio_console: silence a static checker warning
-Message-Id: <20150508094735.GD16501@mwanda>
+Message-Id: <20150508095616.GB5527@grmbl.mre>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150508091624.GS14154@mwanda>
 In-Reply-To: <20150508091624.GS14154@mwanda>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, May 08, 2015 at 11:30:09AM +0200, walter harms wrote:
+On (Fri) 08 May 2015 [11:30:09], walter harms wrote:
 > 
 > 
 > Am 08.05.2015 11:16, schrieb Dan Carpenter:
@@ -41,8 +41,11 @@ On Fri, May 08, 2015 at 11:30:09AM +0200, walter harms wrote:
 > Note: i prefer a leading 0 in my programms to make it more easy
 > to work with grep and friends. you may thing otherwise.
 
-That's an user API change so it's probably a bad idea.
+Well we've been exposing names like /dev/vport0p0, /dev/vport2p15,
+etc., and there might be scripts relying on such names, so that's one
+argument against it.
 
-regards,
-dan carpenter
+However we do have pretty names that map to these ports via udev
+rules, but not sure if we should change the name just to prepend 0s.
 
+		Amit
