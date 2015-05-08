@@ -1,98 +1,101 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:38:01 +0000
-Subject: [PATCH 6/20] Staging: lustre: llite: file: remove unneeded null test before free
-Message-Id: <1430509086-22132-16-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 08 May 2015 21:36:46 +0000
+Subject: [PATCH 2/2] staging: lustre: cl_page: delete empty macros
+Message-Id: <1431121006-23857-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1431121006-23857-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1431121006-23857-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Oleg Drokin <oleg.drokin@intel.com>
 Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Kfree can cope with a null argument, so drop null tests.
+CS_PAGE_INC etc. do nothing, so remove them.
 
-The semantic patch that finds this issue is as follows:
+The semantic patch that performs this transformation is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@ expression ptr; @@
-
-- if (ptr != NULL)
-  kfree(ptr);
+@@ expression o,item,state; @@
+(
+- CS_PAGE_INC(o, item);
+|
+- CS_PAGE_DEC(o, item);
+|
+- CS_PAGESTATE_INC(o, state);
+|
+- CS_PAGESTATE_DEC(o, state);
+)
 // </smpl>
-
-In the first case, llss can never be null at the point of the kfree anyway.
-
-In the second set of changes, the gotos are either eliminated, when no
-freeing is needed (hss failure case), or rewritten so that there is no call
-to free on data that has not yet been allocated (free_hss goto case).
-There is no goto at which attr is not null, so the out label is simply
-dropped.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/llite/file.c |   23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/staging/lustre/lustre/obdclass/cl_page.c |   17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
-index 6e50b35..702f62d 100644
---- a/drivers/staging/lustre/lustre/llite/file.c
-+++ b/drivers/staging/lustre/lustre/llite/file.c
-@@ -2109,8 +2109,7 @@ putgl:
+diff --git a/drivers/staging/lustre/lustre/obdclass/cl_page.c b/drivers/staging/lustre/lustre/obdclass/cl_page.c
+index 59d338a..a7f3032 100644
+--- a/drivers/staging/lustre/lustre/obdclass/cl_page.c
++++ b/drivers/staging/lustre/lustre/obdclass/cl_page.c
+@@ -62,12 +62,6 @@ static void cl_page_delete0(const struct lu_env *env, struct cl_page *pg,
+ # define PINVRNT(env, page, exp) \
+ 	((void)sizeof(env), (void)sizeof(page), (void)sizeof !!(exp))
+ 
+-/* Disable page statistic by default due to huge performance penalty. */
+-#define CS_PAGE_INC(o, item)
+-#define CS_PAGE_DEC(o, item)
+-#define CS_PAGESTATE_INC(o, state)
+-#define CS_PAGESTATE_DEC(o, state)
+-
+ /**
+  * Internal version of cl_page_top, it should be called if the page is
+  * known to be not freed, says with page referenced, or radix tree lock held,
+@@ -264,8 +258,6 @@ static void cl_page_free(const struct lu_env *env, struct cl_page *page)
+ 		list_del_init(page->cp_layers.next);
+ 		slice->cpl_ops->cpo_fini(env, slice);
+ 	}
+-	CS_PAGE_DEC(obj, total);
+-	CS_PAGESTATE_DEC(obj, page->cp_state);
+ 	lu_object_ref_del_at(&obj->co_lu, &page->cp_obj_ref, "cl_page", page);
+ 	cl_object_put(env, obj);
+ 	lu_ref_fini(&page->cp_reference);
+@@ -323,11 +315,6 @@ static struct cl_page *cl_page_alloc(const struct lu_env *env,
+ 				}
+ 			}
+ 		}
+-		if (result = 0) {
+-			CS_PAGE_INC(o, total);
+-			CS_PAGE_INC(o, create);
+-			CS_PAGESTATE_DEC(o, CPS_CACHED);
+-		}
+ 	} else {
+ 		page = ERR_PTR(-ENOMEM);
+ 	}
+@@ -360,7 +347,6 @@ static struct cl_page *cl_page_find0(const struct lu_env *env,
+ 	might_sleep();
+ 
+ 	hdr = cl_object_header(o);
+-	CS_PAGE_INC(o, lookup);
+ 
+ 	CDEBUG(D_PAGE, "%lu@"DFID" %p %lx %d\n",
+ 	       idx, PFID(&hdr->coh_lu.loh_fid), vmpage, vmpage->private, type);
+@@ -387,7 +373,6 @@ static struct cl_page *cl_page_find0(const struct lu_env *env,
  	}
  
- free:
--	if (llss != NULL)
--		kfree(llss);
-+	kfree(llss);
- 
- 	return rc;
- }
-@@ -2152,22 +2151,20 @@ static int ll_hsm_import(struct inode *inode, struct file *file,
- 
- 	/* set HSM flags */
- 	hss = kzalloc(sizeof(*hss), GFP_NOFS);
--	if (!hss) {
--		rc = -ENOMEM;
--		goto out;
--	}
-+	if (!hss)
-+		return -ENOMEM;
- 
- 	hss->hss_valid = HSS_SETMASK | HSS_ARCHIVE_ID;
- 	hss->hss_archive_id = hui->hui_archive_id;
- 	hss->hss_setmask = HS_ARCHIVED | HS_EXISTS | HS_RELEASED;
- 	rc = ll_hsm_state_set(inode, hss);
- 	if (rc != 0)
--		goto out;
-+		goto free_hss;
- 
- 	attr = kzalloc(sizeof(*attr), GFP_NOFS);
- 	if (!attr) {
- 		rc = -ENOMEM;
--		goto out;
-+		goto free_hss;
+ 	if (page != NULL) {
+-		CS_PAGE_INC(o, hit);
+ 		return page;
  	}
  
- 	attr->ia_mode = hui->hui_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
-@@ -2193,13 +2190,9 @@ static int ll_hsm_import(struct inode *inode, struct file *file,
+@@ -554,8 +539,6 @@ static void cl_page_state_set0(const struct lu_env *env,
+ 		PASSERT(env, page,
+ 			equi(state = CPS_OWNED, page->cp_owner != NULL));
  
- 	mutex_unlock(&inode->i_mutex);
- 
--out:
--	if (hss != NULL)
--		kfree(hss);
--
--	if (attr != NULL)
--		kfree(attr);
--
-+	kfree(attr);
-+free_hss:
-+	kfree(hss);
- 	return rc;
+-		CS_PAGESTATE_DEC(page->cp_obj, page->cp_state);
+-		CS_PAGESTATE_INC(page->cp_obj, state);
+ 		cl_page_state_set_trust(page, state);
+ 	}
  }
- 
 
