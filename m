@@ -1,32 +1,36 @@
-From: Adir Kuhn <adirkuhn@gmail.com>
-Date: Tue, 05 May 2015 01:51:30 +0000
-Subject: [PATCH 2/4] fs: ext4: dir: Added a blank line after declaration
-Message-Id: <1430790692-5679-3-git-send-email-adirkuhn@gmail.com>
+From: Mike Shuey <shuey@purdue.edu>
+Date: Fri, 08 May 2015 12:00:58 +0000
+Subject: [PATCH v2 6/8] staging: lustre: lnet: lnet: Module is LNet, not Portals
+Message-Id: <1431086460-22455-14-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1431086460-22455-9-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1431086460-22455-9-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, Mike Shuey <shuey@purdue.edu>
 
-Added a blank line after declaration
+Fix the module version to match upstream development.
 
-Signed-off-by: Adir Kuhn <adirkuhn@gmail.com>
+Signed-off-by: Mike Shuey <shuey@purdue.edu>
 ---
- fs/ext4/dir.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/lustre/lnet/lnet/module.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index b81ffae..89fa42b 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -128,6 +128,7 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
-
- 	if (ext4_has_inline_data(inode)) {
- 		int has_inline_data = 1;
-+
- 		err = ext4_read_inline_dir(file, ctx,
- 					   &has_inline_data);
- 		if (has_inline_data)
---
-2.1.4
+diff --git a/drivers/staging/lustre/lnet/lnet/module.c b/drivers/staging/lustre/lnet/lnet/module.c
+index ff3f831..f73d644 100644
+--- a/drivers/staging/lustre/lnet/lnet/module.c
++++ b/drivers/staging/lustre/lnet/lnet/module.c
+@@ -147,7 +147,7 @@ fini_lnet(void)
+ }
+ 
+ MODULE_AUTHOR("Peter J. Braam <braam@clusterfs.com>");
+-MODULE_DESCRIPTION("Portals v3.1");
++MODULE_DESCRIPTION("LNet v3.1");
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION("1.0.0");
+ 
+-- 
+1.7.1
 
