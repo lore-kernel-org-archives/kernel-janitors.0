@@ -1,30 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 31 May 2015 06:49:03 +0000
-Subject: Re: [PATCH 2/9] ipv6: drop unneeded goto
-Message-Id: <20150530.234903.1472680085573416428.davem@davemloft.net>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sun, 10 May 2015 13:20:14 +0000
+Subject: type mismatch
+Message-Id: <alpine.DEB.2.10.1505101517100.2645@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1432846944-7122-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1432846944-7122-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 28 May 2015 23:02:17 +0200
+I came across the following code
+(drivers/gpu/drm/nouveau/nvkm/subdev/i2c/pad.h):
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Delete jump to a label on the next line, when that label is not
-> used elsewhere.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Also remove the unnecessary ret variable.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+struct nvkm_i2c_pad {
+        struct nvkm_object base;
+        int index;
+        struct nvkm_i2c_port *port;
+        struct nvkm_i2c_port *next;
+};
 
-Applied, thanks Julia.
+static inline struct nvkm_i2c_pad *
+nvkm_i2c_pad(struct nvkm_i2c_port *port)
+{
+ 	struct nvkm_object *pad = nv_object(port);
+	while (!nv_iclass(pad->parent, NV_SUBDEV_CLASS))
+		pad = pad->parent;
+	return (void *)pad;
+}
+
+Would it be better for the return to use container_of, rather than a cast
+that happens to work because of the position of the nvkm_object field?
+
+julia
