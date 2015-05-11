@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 11 May 2015 07:32:57 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 May 2015 08:14:17 +0000
 Subject: Re: type mismatch
-Message-Id: <alpine.DEB.2.02.1505110931540.2010@localhost6.localdomain6>
+Message-Id: <20150511081417.GH14154@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.DEB.2.10.1505101517100.2645@hadrien>
 In-Reply-To: <alpine.DEB.2.10.1505101517100.2645@hadrien>
@@ -10,65 +10,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hm...  You're right.  I'm going to retract some things.
 
+1) I didn't end up adding a special case handling for this, I only
+   wanted to but never got around to it.
 
-On Mon, 11 May 2015, Nicholas Mc Guire wrote:
+2) Also these aren't *that* common as I was thinking.  They're mostly
+   limitted to emulex.
 
-> On Sun, 10 May 2015, Dan Carpenter wrote:
-> 
-> > I don't really have a strong opinion either way...  It's unlikely that
-> > we will introduce a bug here and if we did, I think it would be caught
-> > immediately in testing.
-> > 
-> > It's pretty common to treat the first member of a struct as special.
-> > What annoys me is when people do
-> > 
-> > struct foo {
-> > 	int one, two, three;
-> > 	whatever;
-> > };
-> > 
-> > memcpy(&foo.one, src, sizoef(struct foo));
-> > 
-> > Argh!?  These triger buffer overflows warnings in Smatch and I don't
-> > see the point since &foo.one is less readable than &foo!  Oh well, I
-> > think these were common enough, I had to treat it as idiomatic and add a
-> > special case for them.
-> >
-> just ran a naive scanner for that pattern but only could find this one instance
-> 
-> ./net/sctp/sm_make_chunk.c:3103 ugly memset 
-> 3102          if (af->is_any(&addr))
-> 3103                  memcpy(&addr.v4, sctp_source(asconf), sizeof(addr));
-> 
-> my scanner ist:
-> 
-> @uses_first@
-> identifier f;
-> idexpression s;
+drivers/net/ethernet/emulex/benet/be_cmds.c
+  3173  
+  3174          be_wrb_cmd_hdr_prepare(&req->hdr, CMD_SUBSYSTEM_COMMON,
+                                       ^^^^^^^^^
+First element.
 
-Maybe generalize s (ie expression) and the size (ie, don't specify 
-anything)?  The sizeof could be a type also.
+  3175                                 OPCODE_COMMON_SET_HSW_CONFIG, sizeof(*req), wrb,
+                                                                     ^^^^^^^^^^^^
+Here is the sizeof().
 
-julia
+  3176                                 NULL);
+  3177  
 
-> identifier e;
-> position p;                                                                     
-> @@
-> 
-> f(...){
-> <+...
-> * memcpy@p(&s.e,...,sizeof(s));
-> ...+>
-> }
-> 
-> @script:python@
-> p << uses_first.p;
-> @@
-> print "%s:%s ugly memset" % (p[0].file,p[0].line)
-> 
-> so is my scanner broken/incomplete or has this pattern lost its popularity ?
-> 
-> thx!
-> hofrat
-> 
+3) It's also obvious why emulex would do this because the req struct
+   could be defined a lot of different ways so long as the first element
+   is a header.  It's like a union.
+
+Sorry for the misinformation.  My bad.
+
+regards,
+dan carpenter
+
