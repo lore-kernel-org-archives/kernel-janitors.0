@@ -1,54 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 May 2015 18:15:24 +0000
-Subject: [patch -next] net: macb: OR vs AND typos
-Message-Id: <20150512181524.GE5672@mwanda>
+From: Harini Katakam <harinikatakamlinux@gmail.com>
+Date: Tue, 12 May 2015 18:40:17 +0000
+Subject: Re: [patch -next] net: macb: OR vs AND typos
+Message-Id: <CAFcVECKzDsO9kFD8R0NvAb0aQErpopQ7jf0DP35x3iGpZedRdw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150512181524.GE5672@mwanda>
+In-Reply-To: <20150512181524.GE5672@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Ferre <nicolas.ferre@atmel.com>, Harini Katakam <harini.katakam@xilinx.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Harini Katakam <harini.katakam@xilinx.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The bitwise tests are always true here because it uses '|' where '&' is
-intended.
+Hi,
 
-Fixes: 98b5a0f4a228 ('net: macb: Add support for jumbo frames')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Tue, May 12, 2015 at 11:45 PM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
+> The bitwise tests are always true here because it uses '|' where '&' is
+> intended.
 
-diff --git a/drivers/net/ethernet/cadence/macb.c b/drivers/net/ethernet/cadence/macb.c
-index e7c10b0..5fca309 100644
---- a/drivers/net/ethernet/cadence/macb.c
-+++ b/drivers/net/ethernet/cadence/macb.c
-@@ -1644,7 +1644,7 @@ static void macb_init_hw(struct macb *bp)
- 	config |= MACB_BF(RBOF, NET_IP_ALIGN);	/* Make eth data aligned */
- 	config |= MACB_BIT(PAE);		/* PAuse Enable */
- 	config |= MACB_BIT(DRFCS);		/* Discard Rx FCS */
--	if (bp->caps | MACB_CAPS_JUMBO)
-+	if (bp->caps & MACB_CAPS_JUMBO)
- 		config |= MACB_BIT(JFRAME);	/* Enable jumbo frames */
- 	else
- 		config |= MACB_BIT(BIG);	/* Receive oversized frames */
-@@ -1656,12 +1656,12 @@ static void macb_init_hw(struct macb *bp)
- 		config |= MACB_BIT(NBC);	/* No BroadCast */
- 	config |= macb_dbw(bp);
- 	macb_writel(bp, NCFGR, config);
--	if ((bp->caps | MACB_CAPS_JUMBO) && bp->jumbo_max_len)
-+	if ((bp->caps & MACB_CAPS_JUMBO) && bp->jumbo_max_len)
- 		gem_writel(bp, JML, bp->jumbo_max_len);
- 	bp->speed = SPEED_10;
- 	bp->duplex = DUPLEX_HALF;
- 	bp->rx_frm_len_mask = MACB_RX_FRMLEN_MASK;
--	if (bp->caps | MACB_CAPS_JUMBO)
-+	if (bp->caps & MACB_CAPS_JUMBO)
- 		bp->rx_frm_len_mask = MACB_RX_JFRMLEN_MASK;
- 
- 	macb_configure_dma(bp);
-@@ -1875,7 +1875,7 @@ static int macb_change_mtu(struct net_device *dev, int new_mtu)
- 		return -EBUSY;
- 
- 	max_mtu = ETH_DATA_LEN;
--	if (bp->caps | MACB_CAPS_JUMBO)
-+	if (bp->caps & MACB_CAPS_JUMBO)
- 		max_mtu = gem_readl(bp, JML) - ETH_HLEN - ETH_FCS_LEN;
- 
- 	if ((new_mtu > max_mtu) || (new_mtu < GEM_MTU_MIN_SIZE))
+Yes. I'm sorry about that.
+It slipped through my testing as well because I was using an SoC with
+jumbo support.
+
+Regards,
+Harini
