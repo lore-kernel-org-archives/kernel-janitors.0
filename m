@@ -1,24 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 12 May 2015 07:43:42 +0000
-Subject: Re: [PATCH 2/2] gpio: x-gene: Remove a useless memset
-Message-Id: <CACRpkdbmn0O4cDByE6pWjwcfs3hW7-jtori83L5oeTumpZYGVQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 May 2015 18:07:37 +0000
+Subject: [patch] drm/edid: fix a debug message
+Message-Id: <20150512180737.GA5672@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430483346-10583-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1430483346-10583-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@intel.com>, Todd Previte <tprevite@gmail.com>
+Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Fri, May 1, 2015 at 2:29 PM, Christophe Jaillet
-<christophe.jaillet@wanadoo.fr> wrote:
+There is an extra semi-colon on the if statement so the debug output
+always says "Failed to write EDID checksum" even when it didn't fail.
 
-> priv->irq is allocated using devm_kzalloc so there is no need to memset it.
->
-> Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Fixes: 559be30cb74d ('drm/i915: Implement the intel_dp_autotest_edid function for DP EDID complaince tests')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index eca82cf..75bccd6 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -4142,7 +4142,7 @@ static uint8_t intel_dp_autotest_edid(struct intel_dp *intel_dp)
+ 		if (!drm_dp_dpcd_write(&intel_dp->aux,
+ 					DP_TEST_EDID_CHECKSUM,
+ 					&intel_connector->detect_edid->checksum,
+-					1));
++					1))
+ 			DRM_DEBUG_KMS("Failed to write EDID checksum\n");
+ 
+ 		test_result = DP_TEST_ACK | DP_TEST_EDID_CHECKSUM_WRITE;
