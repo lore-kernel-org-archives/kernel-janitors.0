@@ -1,29 +1,54 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 May 2015 12:28:19 +0000
-Subject: Re: [PATCH v2 8/8] staging: lustre: code cleanup - normalize whitespace
-Message-Id: <20150508122819.GV14154@mwanda>
+Date: Tue, 12 May 2015 18:15:24 +0000
+Subject: [patch -next] net: macb: OR vs AND typos
+Message-Id: <20150512181524.GE5672@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1431086460-22455-9-git-send-email-shuey@purdue.edu>
- <1431086460-22455-16-git-send-email-shuey@purdue.edu>
-In-Reply-To: <1431086460-22455-16-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Shuey <shuey@purdue.edu>
-Cc: oleg.drokin@intel.com, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org
+To: Nicolas Ferre <nicolas.ferre@atmel.com>, Harini Katakam <harini.katakam@xilinx.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 08, 2015 at 08:01:00AM -0400, Mike Shuey wrote:
-> +	struct rdma_cm_id  *ibh_cmid;           /* listener cmid */
-> +	struct ib_device   *ibh_ibdev;          /* IB device */
-> +	int                ibh_page_shift       /* page shift of current HCA */
-> +	int                ibh_page_size        /* page size of current HCA */
-> +	__u64              ibh_page_mask;       /* page mask of current HCA */
+The bitwise tests are always true here because it uses '|' where '&' is
+intended.
 
-We give people who break the build a severe dressing down the first time
-so that they remember not to do it again...
+Fixes: 98b5a0f4a228 ('net: macb: Add support for jumbo frames')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-*ALWAYS DOUBLE CHECK*
-
-regards,
-dan carpenter
-
+diff --git a/drivers/net/ethernet/cadence/macb.c b/drivers/net/ethernet/cadence/macb.c
+index e7c10b0..5fca309 100644
+--- a/drivers/net/ethernet/cadence/macb.c
++++ b/drivers/net/ethernet/cadence/macb.c
+@@ -1644,7 +1644,7 @@ static void macb_init_hw(struct macb *bp)
+ 	config |= MACB_BF(RBOF, NET_IP_ALIGN);	/* Make eth data aligned */
+ 	config |= MACB_BIT(PAE);		/* PAuse Enable */
+ 	config |= MACB_BIT(DRFCS);		/* Discard Rx FCS */
+-	if (bp->caps | MACB_CAPS_JUMBO)
++	if (bp->caps & MACB_CAPS_JUMBO)
+ 		config |= MACB_BIT(JFRAME);	/* Enable jumbo frames */
+ 	else
+ 		config |= MACB_BIT(BIG);	/* Receive oversized frames */
+@@ -1656,12 +1656,12 @@ static void macb_init_hw(struct macb *bp)
+ 		config |= MACB_BIT(NBC);	/* No BroadCast */
+ 	config |= macb_dbw(bp);
+ 	macb_writel(bp, NCFGR, config);
+-	if ((bp->caps | MACB_CAPS_JUMBO) && bp->jumbo_max_len)
++	if ((bp->caps & MACB_CAPS_JUMBO) && bp->jumbo_max_len)
+ 		gem_writel(bp, JML, bp->jumbo_max_len);
+ 	bp->speed = SPEED_10;
+ 	bp->duplex = DUPLEX_HALF;
+ 	bp->rx_frm_len_mask = MACB_RX_FRMLEN_MASK;
+-	if (bp->caps | MACB_CAPS_JUMBO)
++	if (bp->caps & MACB_CAPS_JUMBO)
+ 		bp->rx_frm_len_mask = MACB_RX_JFRMLEN_MASK;
+ 
+ 	macb_configure_dma(bp);
+@@ -1875,7 +1875,7 @@ static int macb_change_mtu(struct net_device *dev, int new_mtu)
+ 		return -EBUSY;
+ 
+ 	max_mtu = ETH_DATA_LEN;
+-	if (bp->caps | MACB_CAPS_JUMBO)
++	if (bp->caps & MACB_CAPS_JUMBO)
+ 		max_mtu = gem_readl(bp, JML) - ETH_HLEN - ETH_FCS_LEN;
+ 
+ 	if ((new_mtu > max_mtu) || (new_mtu < GEM_MTU_MIN_SIZE))
