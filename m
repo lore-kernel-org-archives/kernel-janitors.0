@@ -1,28 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 01 May 2015 15:44:07 +0000
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 12 May 2015 07:43:42 +0000
 Subject: Re: [PATCH 2/2] gpio: x-gene: Remove a useless memset
-Message-Id: <20150501154407.GF16501@mwanda>
+Message-Id: <CACRpkdbmn0O4cDByE6pWjwcfs3hW7-jtori83L5oeTumpZYGVQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1430483346-10583-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <20150501141922.GE14154@mwanda>
- <554393A4.204@wanadoo.fr>
-In-Reply-To: <554393A4.204@wanadoo.fr>
+In-Reply-To: <1430483346-10583-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, May 01, 2015 at 04:54:28PM +0200, Marion & Christophe JAILLET wrote:
-> Hi,
-> 
-> yes, you are correct, it's a mistake.
-> Should I resubmit with an updated subject?
+On Fri, May 1, 2015 at 2:29 PM, Christophe Jaillet
+<christophe.jaillet@wanadoo.fr> wrote:
 
-No.
+> priv->irq is allocated using devm_kzalloc so there is no need to memset it.
+>
+> Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
-Also don't top post etc etc.
+Patch applied.
 
-regards,
-dan carpenter
-
+Yours,
+Linus Walleij
