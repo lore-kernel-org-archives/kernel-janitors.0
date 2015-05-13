@@ -1,46 +1,37 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 05 May 2015 05:15:17 +0000
-Subject: Re: [PATCH 4/5] fs: ext4: balloc: Added required space after comma
-Message-Id: <alpine.DEB.2.02.1505050714550.2044@localhost6.localdomain6>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Date: Wed, 13 May 2015 11:43:09 +0000
+Subject: [PATCH net-next] netns: fix unbalanced spin_lock on error
+Message-Id: <1431517389-19937-1-git-send-email-nicolas.dichtel@6wind.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430786599-3843-5-git-send-email-adirkuhn@gmail.com>
-In-Reply-To: <1430786599-3843-5-git-send-email-adirkuhn@gmail.com>
+References: <55533771.6080406@6wind.com>
+In-Reply-To: <55533771.6080406@6wind.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: davem@davemloft.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-On Tue, 5 May 2015, Adir Kuhn wrote:
+Unlock was missing on error path.
 
-> Added required space after comma
+Fixes: 95f38411df05 ("netns: use a spin_lock to protect nsid management")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+---
+ net/core/net_namespace.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patches 4 and 5 have the same subject, which is not allowed.
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index a665bf490c88..cb32c0378c10 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -565,6 +565,7 @@ static int rtnl_net_newid(struct sk_buff *skb, struct nlmsghdr *nlh)
+ 
+ 	spin_lock_irqsave(&nsid_lock, flags);
+ 	if (__peernet2id(net, peer) >= 0) {
++		spin_unlock_irqrestore(&nsid_lock, flags);
+ 		err = -EEXIST;
+ 		goto out;
+ 	}
+-- 
+2.2.2
 
-julia
-
-> Signed-off-by: Adir Kuhn <adirkuhn@gmail.com>
-> ---
->  fs/ext4/balloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-> index 023457e..d45d43b 100644
-> --- a/fs/ext4/balloc.c
-> +++ b/fs/ext4/balloc.c
-> @@ -798,7 +798,7 @@ unsigned long ext4_bg_num_gdb(struct super_block *sb, ext4_group_t group)
->  			le32_to_cpu(EXT4_SB(sb)->s_es->s_first_meta_bg);
->  	unsigned long metagroup = group / EXT4_DESC_PER_BLOCK(sb);
-> 
-> -	if (!EXT4_HAS_INCOMPAT_FEATURE(sb,EXT4_FEATURE_INCOMPAT_META_BG) ||
-> +	if (!EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_META_BG) ||
->  			metagroup < first_meta_bg)
->  		return ext4_bg_num_gdb_nometa(sb, group);
-> 
-> --
-> 2.1.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
