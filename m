@@ -1,43 +1,42 @@
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Tue, 12 May 2015 19:16:30 +0000
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Date: Wed, 13 May 2015 11:37:21 +0000
 Subject: Re: netns: use a spin_lock to protect nsid management
-Message-Id: <CAM_iQpUSgpeL_Dy+U+KrBd=h3bhm03vASupdO-9dSs+CKYjNeg@mail.gmail.com>
+Message-Id: <55533771.6080406@6wind.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150512175227.GA19020@mwanda>
 In-Reply-To: <20150512175227.GA19020@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Nicolas Dichtel <nicolas.dichtel@6wind.com>, kernel-janitors@vger.kernel.org, Linux Kernel Network Developers <netdev@vger.kernel.org>
+Cc: kernel-janitors@vger.kernel.org, netdev <netdev@vger.kernel.org>
 
-(Please always Cc netdev for networking bugs)
-
-On Tue, May 12, 2015 at 10:52 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
+Le 12/05/2015 19:52, Dan Carpenter a =E9crit :
 > Hello Nicolas Dichtel,
 >
 > The patch 95f38411df05: "netns: use a spin_lock to protect nsid
 > management" from May 7, 2015, leads to the following static checker
 > warning:
 >
->         net/core/net_namespace.c:580 rtnl_net_newid()
->         warn: inconsistent returns 'spin_lock:&nsid_lock'.
+> 	net/core/net_namespace.c:580 rtnl_net_newid()
+> 	warn: inconsistent returns 'spin_lock:&nsid_lock'.
 >
 > net/core/net_namespace.c
->    565
->    566          spin_lock_irqsave(&nsid_lock, flags);
->    567          if (__peernet2id(net, peer) >= 0) {
->    568                  err = -EEXIST;
->    569                  goto out;
+>     565
+>     566          spin_lock_irqsave(&nsid_lock, flags);
+>     567          if (__peernet2id(net, peer) >=3D 0) {
+>     568                  err =3D -EEXIST;
+>     569                  goto out;
 >
 > I don't know if __peernet2id() unlocks on error but it can't possibly
 > restore flags so this isn't right.
->
+It's a bug. I will send a patch.
 
-Yes it is a bug.
+Thank you for the report.
 
-Also why do we have to disable IRQ when holding the spinlock?
-IOW, which case takes the spin lock in IRQ context?
-
-Thanks.
+Nicolas
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
