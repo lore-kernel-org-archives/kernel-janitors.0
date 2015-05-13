@@ -1,29 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 May 2015 11:32:39 +0000
-Subject: [patch] ARM: pxa: pxa_cplds: signedness bug in probe
-Message-Id: <20150513113239.GA31617@mwanda>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Date: Wed, 13 May 2015 19:52:29 +0000
+Subject: Re: [patch] ARM: pxa: pxa_cplds: signedness bug in probe
+Message-Id: <87lhgsl0g2.fsf@belgarion.home>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150513113239.GA31617@mwanda>
+In-Reply-To: <20150513113239.GA31617@mwanda> (Dan Carpenter's message of "Wed,
+ 13 May 2015 14:32:39 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-"base_irq" needs to be signed for the error handling to work.  Also we
-can remove the initialization because we re-assign it later.
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-Fixes: aa8d6b73ea33 ('ARM: pxa: pxa_cplds: add lubbock and mainstone IO')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> "base_irq" needs to be signed for the error handling to work.  Also we
+> can remove the initialization because we re-assign it later.
+Indeed.
 
-diff --git a/arch/arm/mach-pxa/pxa_cplds_irqs.c b/arch/arm/mach-pxa/pxa_cplds_irqs.c
-index f1aeb54..2385052 100644
---- a/arch/arm/mach-pxa/pxa_cplds_irqs.c
-+++ b/arch/arm/mach-pxa/pxa_cplds_irqs.c
-@@ -107,7 +107,7 @@ static int cplds_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct cplds *fpga;
- 	int ret;
--	unsigned int base_irq = 0;
-+	int base_irq;
- 	unsigned long irqflags = 0;
- 
- 	fpga = devm_kzalloc(&pdev->dev, sizeof(*fpga), GFP_KERNEL);
+I suppose smatch found this one with :
+   arch/arm/mach-pxa/pxa_cplds_irqs.c:126 cplds_probe() warn: unsigned
+   'base_irq' is never less than zero.
+I still don't see which tool found the "re-assign" part ...
+
+Anyway, thanks for this, I'll queue it in pxa/fixes.
+
+Cheers.
+
+--
+Robert
