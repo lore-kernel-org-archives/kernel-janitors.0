@@ -1,31 +1,29 @@
-From: Oleg Drokin <green@linuxhacker.ru>
-Date: Sun, 03 May 2015 19:43:41 +0000
-Subject: Re: [RFC PATCH 0/3] Moving lustre procfs stuff to sysfs & questions.
-Message-Id: <A11961F9-BEF3-4B4E-BE89-5B7418373FCD@linuxhacker.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 May 2015 11:32:39 +0000
+Subject: [patch] ARM: pxa: pxa_cplds: signedness bug in probe
+Message-Id: <20150513113239.GA31617@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430622608-30402-1-git-send-email-green@linuxhacker.ru>
-In-Reply-To: <1430622608-30402-1-git-send-email-green@linuxhacker.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+"base_irq" needs to be signed for the error handling to work.  Also we
+can remove the initialization because we re-assign it later.
 
-On May 3, 2015, at 2:15 PM, Greg Kroah-Hartman wrote:
+Fixes: aa8d6b73ea33 ('ARM: pxa: pxa_cplds: add lubbock and mainstone IO')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->> Also I found that cgroup does calls into kernfs directly, gaining
->> ability to register seq_file files and otherwise do all sorts of
->> stuff that would be cool to do from lustre too ;)
-> If you want to make lustrefs, be my guest, you can do whatever you want
-> in that, using kernfs, but that's not ok for sysfs, sorry.
-
-If only __kernfs_create_file was exported=85 ;)
-
-Otherwise you cannot really do that from modules.
-
-Bye,
-    Oleg--
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-pxa/pxa_cplds_irqs.c b/arch/arm/mach-pxa/pxa_cplds_irqs.c
+index f1aeb54..2385052 100644
+--- a/arch/arm/mach-pxa/pxa_cplds_irqs.c
++++ b/arch/arm/mach-pxa/pxa_cplds_irqs.c
+@@ -107,7 +107,7 @@ static int cplds_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	struct cplds *fpga;
+ 	int ret;
+-	unsigned int base_irq = 0;
++	int base_irq;
+ 	unsigned long irqflags = 0;
+ 
+ 	fpga = devm_kzalloc(&pdev->dev, sizeof(*fpga), GFP_KERNEL);
