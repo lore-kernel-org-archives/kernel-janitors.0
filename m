@@ -1,173 +1,75 @@
-From: green@linuxhacker.ru
-Date: Mon, 04 May 2015 16:48:09 +0000
-Subject: [PATCH] staging/lustre: Always try kmalloc first for OBD_ALLOC_LARGE
-Message-Id: <1430758089-5427-1-git-send-email-green@linuxhacker.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 May 2015 10:05:00 +0000
+Subject: [patch -next] clk: h8300: fix error handling in h8s2678_pll_clk_setup()
+Message-Id: <20150514100500.GA19426@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430625501-1069-1-git-send-email-green@linuxhacker.ru>
-In-Reply-To: <1430625501-1069-1-git-send-email-green@linuxhacker.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, uclinux-h8-devel@lists.sourceforge.jp, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Oleg Drokin <green@linuxhacker.ru>
+The error handling was a bit messy and buggy.  It freed "pll_clock" then
+dereferenced it, and then freed it again.  I've re-written it in normal
+kernel style.
 
-Create libcfs_kvzalloc and libcfs_kvzalloc_cpt that
-are designed to replace OBD_ALLOC_LARGE and OBD_CPT_ALLOC_LARGE.
+Fixes: 42ff8e8008c8 ('h8300: clock driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Not a drop-in replacement as they also take gfp flags armument
-for more flexibility.
-
-Signed-off-by: Oleg Drokin <green@linuxhacker.ru>
----
-
-Greg, I have addressed your comments wrt the copyright header.
-Since I do not have the patches that replace OBD_ALLOC_LARGE with
-this new function and Julia does, do you think you can accept this as is and
-she'll follow with the replacement then or what is best to do here you think?
-
- .../staging/lustre/include/linux/libcfs/libcfs.h   |  4 ++
- .../staging/lustre/lustre/include/obd_support.h    | 24 ++-------
- drivers/staging/lustre/lustre/libcfs/Makefile      |  1 +
- .../staging/lustre/lustre/libcfs/linux/linux-mem.c | 59 ++++++++++++++++++++++
- 4 files changed, 67 insertions(+), 21 deletions(-)
- create mode 100644 drivers/staging/lustre/lustre/libcfs/linux/linux-mem.c
-
-diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
-index 4410d7f..947df7e 100644
---- a/drivers/staging/lustre/include/linux/libcfs/libcfs.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
-@@ -184,4 +184,8 @@ static inline void *__container_of(void *ptr, unsigned long shift)
+diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
+index 4de7ee5..4701b093 100644
+--- a/drivers/clk/h8300/clk-h8s2678.c
++++ b/drivers/clk/h8300/clk-h8s2678.c
+@@ -107,13 +107,13 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+ 	pll_clock->sckcr = of_iomap(node, 0);
+ 	if (pll_clock->sckcr = NULL) {
+ 		pr_err("%s: failed to map divide register", clk_name);
+-		goto error;
++		goto free_clock;
+ 	}
  
- #define _LIBCFS_H
+ 	pll_clock->pllcr = of_iomap(node, 1);
+ 	if (pll_clock->pllcr = NULL) {
+ 		pr_err("%s: failed to map multiply register", clk_name);
+-		goto error;
++		goto unmap_sckcr;
+ 	}
  
-+void *libcfs_kvzalloc(size_t size, gfp_t flags);
-+void *libcfs_kvzalloc_cpt(struct cfs_cpt_table *cptab, int cpt, size_t size,
-+			  gfp_t flags);
+ 	parent_name = of_clk_get_parent_name(node, 0);
+@@ -125,22 +125,21 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+ 	pll_clock->hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &pll_clock->hw);
+-	if (IS_ERR(clk))
+-		kfree(pll_clock);
+-	if (!IS_ERR(clk)) {
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+-		return;
+-	}
+-	pr_err("%s: failed to register %s div clock (%ld)\n",
+-	       __func__, clk_name, PTR_ERR(clk));
+-error:
+-	if (pll_clock) {
+-		if (pll_clock->sckcr)
+-			iounmap(pll_clock->sckcr);
+-		if (pll_clock->pllcr)
+-			iounmap(pll_clock->pllcr);
+-		kfree(pll_clock);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register %s div clock (%ld)\n",
++		       __func__, clk_name, PTR_ERR(clk));
++		goto unmap_pllcr;
+ 	}
 +
- #endif /* _LIBCFS_H */
-diff --git a/drivers/staging/lustre/lustre/include/obd_support.h b/drivers/staging/lustre/lustre/include/obd_support.h
-index 2991d2e..379266d 100644
---- a/drivers/staging/lustre/lustre/include/obd_support.h
-+++ b/drivers/staging/lustre/lustre/include/obd_support.h
-@@ -676,37 +676,19 @@ do {									      \
- 	 __OBD_VMALLOC_VEROBSE(ptr, cptab, cpt, size)
- 
- 
--/* Allocations above this size are considered too big and could not be done
-- * atomically.
-- *
-- * Be very careful when changing this value, especially when decreasing it,
-- * since vmalloc in Linux doesn't perform well on multi-cores system, calling
-- * vmalloc in critical path would hurt performance badly. See LU-66.
-- */
--#define OBD_ALLOC_BIG (4 * PAGE_CACHE_SIZE)
--
- #define OBD_ALLOC_LARGE(ptr, size)					    \
- do {									  \
--	if (size > OBD_ALLOC_BIG)					     \
--		OBD_VMALLOC(ptr, size);				       \
--	else								  \
--		OBD_ALLOC(ptr, size);					 \
-+	ptr = libcfs_kvzalloc(size, GFP_NOFS);				  \
- } while (0)
- 
- #define OBD_CPT_ALLOC_LARGE(ptr, cptab, cpt, size)			      \
- do {									      \
--	if (size > OBD_ALLOC_BIG)					      \
--		OBD_CPT_VMALLOC(ptr, cptab, cpt, size);			      \
--	else								      \
--		OBD_CPT_ALLOC(ptr, cptab, cpt, size);			      \
-+	ptr = libcfs_kvzalloc_cpt(cptab, cpt, size, GFP_NOFS);		      \
- } while (0)
- 
- #define OBD_FREE_LARGE(ptr, size)					     \
- do {									  \
--	if (size > OBD_ALLOC_BIG)					     \
--		OBD_VFREE(ptr, size);					 \
--	else								  \
--		OBD_FREE(ptr, size);					  \
-+	kvfree(ptr);							  \
- } while (0)
- 
- 
-diff --git a/drivers/staging/lustre/lustre/libcfs/Makefile b/drivers/staging/lustre/lustre/libcfs/Makefile
-index 2996a48..fabdd3e 100644
---- a/drivers/staging/lustre/lustre/libcfs/Makefile
-+++ b/drivers/staging/lustre/lustre/libcfs/Makefile
-@@ -7,6 +7,7 @@ libcfs-linux-objs += linux-curproc.o
- libcfs-linux-objs += linux-module.o
- libcfs-linux-objs += linux-crypto.o
- libcfs-linux-objs += linux-crypto-adler.o
-+libcfs-linux-objs += linux-mem.o
- 
- libcfs-linux-objs := $(addprefix linux/,$(libcfs-linux-objs))
- 
-diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-mem.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-mem.c
-new file mode 100644
-index 0000000..025e2f0
---- /dev/null
-+++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-mem.c
-@@ -0,0 +1,59 @@
-+/*
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 only,
-+ * as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License version 2 for more details (a copy is included
-+ * in the LICENSE file that accompanied this code).
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * version 2 along with this program; If not, see
-+ * http://www.sun.com/software/products/lustre/docs/GPLv2.pdf
-+ *
-+ */
-+/*
-+ * This file creates a memory allocation primitive for Lustre, that
-+ * allows to fallback to vmalloc allocations should regular kernel allocations
-+ * fail due to size or system memory fragmentation.
-+ *
-+ * Author: Oleg Drokin <green@linuxhacker.ru>
-+ *
-+ */
-+/*
-+ * This file is part of Lustre, http://www.lustre.org/
-+ * Lustre is a trademark of Seagate Technology.
-+ */
-+#include <linux/slab.h>
-+#include <linux/vmalloc.h>
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	return;
 +
-+#include "../../../include/linux/libcfs/libcfs.h"
-+
-+void *libcfs_kvzalloc(size_t size, gfp_t flags)
-+{
-+	void *ret;
-+
-+	ret = kzalloc(size, flags | __GFP_NOWARN);
-+	if (!ret)
-+		ret = __vmalloc(size, flags | __GFP_ZERO, PAGE_KERNEL);
-+	return ret;
-+}
-+EXPORT_SYMBOL(libcfs_kvzalloc);
-+
-+void *libcfs_kvzalloc_cpt(struct cfs_cpt_table *cptab, int cpt, size_t size,
-+			  gfp_t flags)
-+{
-+	void *ret;
-+
-+	ret = kzalloc_node(size, flags | __GFP_NOWARN,
-+			   cfs_cpt_spread_node(cptab, cpt));
-+	if (!ret) {
-+		WARN_ON(!(flags & (__GFP_FS|__GFP_HIGH)));
-+		ret = vmalloc_node(size, cfs_cpt_spread_node(cptab, cpt));
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(libcfs_kvzalloc_cpt);
--- 
-2.1.0
-
++unmap_pllcr:
++	iounmap(pll_clock->pllcr);
++unmap_sckcr:
++	iounmap(pll_clock->sckcr);
++free_clock:
++	kfree(pll_clock);
+ }
+ 
+ CLK_OF_DECLARE(h8s2678_div_clk, "renesas,h8s2678-pll-clock",
