@@ -1,44 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 29 May 2015 09:37:11 +0000
-Subject: Re: [PATCH 9/9] regmap: drop unneeded goto
-Message-Id: <20150529093711.GJ21577@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="hXQ6vCYkRASBxN6g"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 May 2015 08:33:30 +0000
+Subject: [patch] HID: i2c-hid: fix harmless test_bit() issue
+Message-Id: <20150514083330.GB1665@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
- <1432846944-7122-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1432846944-7122-10-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Kosina <jkosina@suse.cz>, Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Antonio Borneo <borneo.antonio@gmail.com>, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Andrew Duggan <aduggan@synaptics.com>, Gwendal Grignou <gwendal@chromium.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
 
+These defines are used like this:
 
---hXQ6vCYkRASBxN6g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	if (test_bit(I2C_HID_STARTED, &ihid->flags))
 
-On Thu, May 28, 2015 at 11:02:24PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Delete jump to a label on the next line, when that label is not
-> used elsewhere.
+The intent was to use bits 0, 1, and 2 but because of the extra shifts
+we're using bits 1, 2, and 4.  It's harmless becuase it's done
+consistently but it's not the intent and static checkers will complain.
 
-Applied, thanks.
+Fixes: 4a200c3b9a40 ('HID: i2c-hid: introduce HID over i2c specification implementation')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---hXQ6vCYkRASBxN6g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEbBAEBCAAGBQJVaDNGAAoJECTWi3JdVIfQjKQH9isiKkkbAJHj6eqCznskU76G
-SSwsJaEOajv5zSlvN0dckzABz1bg6ecKGk03f2COBkrnZPwwhobvxFerQeogdBw3
-QX3kSvV2+rhvkZqu2LuDEybrrbY33eCA5+WRAz+0T+qDSf4uTQ+MoMuK2gSogVAF
-c8wGbbsRJzlSdVsyGecV5wizpKZMKSgUKRAYBBnUKndf600F2x6L9FsDNv5jgx23
-aHN0tTGezwNUqXMv21YunEZnecgg9hjuX18GIx18XfR2NJTMzbGwiaORawRV4W96
-aXUcpiG4YPx69OJF2/74UiGM7zPGCtMpmHhhA81gXTWHjlPLe218u/JbBhBPTw==
-=MXat
------END PGP SIGNATURE-----
-
---hXQ6vCYkRASBxN6g--
+diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+index 92d6cdf..cadec6a 100644
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -42,9 +42,9 @@
+ #include <linux/i2c/i2c-hid.h>
+ 
+ /* flags */
+-#define I2C_HID_STARTED		(1 << 0)
+-#define I2C_HID_RESET_PENDING	(1 << 1)
+-#define I2C_HID_READ_PENDING	(1 << 2)
++#define I2C_HID_STARTED		0
++#define I2C_HID_RESET_PENDING	1
++#define I2C_HID_READ_PENDING	2
+ 
+ #define I2C_HID_PWR_ON		0x00
+ #define I2C_HID_PWR_SLEEP	0x01
