@@ -1,75 +1,88 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 May 2015 10:05:00 +0000
-Subject: [patch -next] clk: h8300: fix error handling in h8s2678_pll_clk_setup()
-Message-Id: <20150514100500.GA19426@mwanda>
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+Date: Thu, 14 May 2015 15:53:58 +0000
+Subject: Re: [patch -next] clk: h8300: fix error handling in h8s2678_pll_clk_setup()
+Message-Id: <87zj57kve1.wl-ysato@users.sourceforge.jp>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150514100500.GA19426@mwanda>
+In-Reply-To: <20150514100500.GA19426@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, uclinux-h8-devel@lists.sourceforge.jp, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The error handling was a bit messy and buggy.  It freed "pll_clock" then
-dereferenced it, and then freed it again.  I've re-written it in normal
-kernel style.
+At Thu, 14 May 2015 13:05:00 +0300,
+Dan Carpenter wrote:
+> 
+> The error handling was a bit messy and buggy.  It freed "pll_clock" then
+> dereferenced it, and then freed it again.  I've re-written it in normal
+> kernel style.
+> 
+> Fixes: 42ff8e8008c8 ('h8300: clock driver')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
+> index 4de7ee5..4701b093 100644
+> --- a/drivers/clk/h8300/clk-h8s2678.c
+> +++ b/drivers/clk/h8300/clk-h8s2678.c
+> @@ -107,13 +107,13 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+>  	pll_clock->sckcr = of_iomap(node, 0);
+>  	if (pll_clock->sckcr = NULL) {
+>  		pr_err("%s: failed to map divide register", clk_name);
+> -		goto error;
+> +		goto free_clock;
+>  	}
+>  
+>  	pll_clock->pllcr = of_iomap(node, 1);
+>  	if (pll_clock->pllcr = NULL) {
+>  		pr_err("%s: failed to map multiply register", clk_name);
+> -		goto error;
+> +		goto unmap_sckcr;
+>  	}
+>  
+>  	parent_name = of_clk_get_parent_name(node, 0);
+> @@ -125,22 +125,21 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+>  	pll_clock->hw.init = &init;
+>  
+>  	clk = clk_register(NULL, &pll_clock->hw);
+> -	if (IS_ERR(clk))
+> -		kfree(pll_clock);
+> -	if (!IS_ERR(clk)) {
+> -		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> -		return;
+> -	}
+> -	pr_err("%s: failed to register %s div clock (%ld)\n",
+> -	       __func__, clk_name, PTR_ERR(clk));
+> -error:
+> -	if (pll_clock) {
+> -		if (pll_clock->sckcr)
+> -			iounmap(pll_clock->sckcr);
+> -		if (pll_clock->pllcr)
+> -			iounmap(pll_clock->pllcr);
+> -		kfree(pll_clock);
+> +	if (IS_ERR(clk)) {
+> +		pr_err("%s: failed to register %s div clock (%ld)\n",
+> +		       __func__, clk_name, PTR_ERR(clk));
+> +		goto unmap_pllcr;
+>  	}
+> +
+> +	of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> +	return;
+> +
+> +unmap_pllcr:
+> +	iounmap(pll_clock->pllcr);
+> +unmap_sckcr:
+> +	iounmap(pll_clock->sckcr);
+> +free_clock:
+> +	kfree(pll_clock);
+>  }
+>  
+>  CLK_OF_DECLARE(h8s2678_div_clk, "renesas,h8s2678-pll-clock",
 
-Fixes: 42ff8e8008c8 ('h8300: clock driver')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Looks good.
+Applied in my tree.
+Thanks.
 
-diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
-index 4de7ee5..4701b093 100644
---- a/drivers/clk/h8300/clk-h8s2678.c
-+++ b/drivers/clk/h8300/clk-h8s2678.c
-@@ -107,13 +107,13 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
- 	pll_clock->sckcr = of_iomap(node, 0);
- 	if (pll_clock->sckcr = NULL) {
- 		pr_err("%s: failed to map divide register", clk_name);
--		goto error;
-+		goto free_clock;
- 	}
- 
- 	pll_clock->pllcr = of_iomap(node, 1);
- 	if (pll_clock->pllcr = NULL) {
- 		pr_err("%s: failed to map multiply register", clk_name);
--		goto error;
-+		goto unmap_sckcr;
- 	}
- 
- 	parent_name = of_clk_get_parent_name(node, 0);
-@@ -125,22 +125,21 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
- 	pll_clock->hw.init = &init;
- 
- 	clk = clk_register(NULL, &pll_clock->hw);
--	if (IS_ERR(clk))
--		kfree(pll_clock);
--	if (!IS_ERR(clk)) {
--		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		return;
--	}
--	pr_err("%s: failed to register %s div clock (%ld)\n",
--	       __func__, clk_name, PTR_ERR(clk));
--error:
--	if (pll_clock) {
--		if (pll_clock->sckcr)
--			iounmap(pll_clock->sckcr);
--		if (pll_clock->pllcr)
--			iounmap(pll_clock->pllcr);
--		kfree(pll_clock);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register %s div clock (%ld)\n",
-+		       __func__, clk_name, PTR_ERR(clk));
-+		goto unmap_pllcr;
- 	}
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	return;
-+
-+unmap_pllcr:
-+	iounmap(pll_clock->pllcr);
-+unmap_sckcr:
-+	iounmap(pll_clock->sckcr);
-+free_clock:
-+	kfree(pll_clock);
- }
- 
- CLK_OF_DECLARE(h8s2678_div_clk, "renesas,h8s2678-pll-clock",
+-- 
+Yoshinori Sato
+<ysato@users.sourceforge.jp>
