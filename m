@@ -1,25 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 May 2015 11:35:30 +0000
-Subject: Re: [PATCH] drivers: dma: amba-pl08x: Supress spaces in indentation
-Message-Id: <20150505113530.GN16501@mwanda>
+From: Pawel Moll <pawel.moll@arm.com>
+Date: Thu, 14 May 2015 10:50:24 +0000
+Subject: [PATCH] bus: arm-ccn: Handle correctly no-more-cpus case
+Message-Id: <1431600624-10965-1-git-send-email-pawel.moll@arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150505013227.GA11053@leo-Inspiron-N5110>
- <20150505085823.GR14154@mwanda>
- <CAE9EGjO-qS+i1SEV1nqLTx6s9t34g-JmBOfpmtK8RgCxRHU3gA@mail.gmail.com>
-In-Reply-To: <CAE9EGjO-qS+i1SEV1nqLTx6s9t34g-JmBOfpmtK8RgCxRHU3gA@mail.gmail.com>
+References: <20150514101344.GA20531@mwanda>
+In-Reply-To: <20150514101344.GA20531@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leonardo Carreras <leocarreras89@gmail.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue, May 05, 2015 at 07:31:40AM -0400, Leonardo Carreras wrote:
+When migrating events the driver picks another cpu using
+cpumask_any_but() function, which returns value >= nr_cpu_ids
+when there is none available, not a negative value as the code
+assumed. Fixed now.
 
-> I will check this, but may I ask if that would be marked as an error
-> by checkpatch.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Pawel Moll <pawel.moll@arm.com>
+---
+Another day, another arm-ccn.c update...
 
-No, it won't.  It is the correct way.
+This time Dan's static checker spotted unsigned int target
+being expected to carry negative values. Fixed now.
 
-regards,
-dan carpenter
+Interestingly enough, cpumask_any_but() implementation (and its
+normal prototype) returns int, but version for NR_CPUS = 1 case,
+inlined in linux/cpumask.h returns unsigned int...
+
+ drivers/bus/arm-ccn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/bus/arm-ccn.c b/drivers/bus/arm-ccn.c
+index 7d9879e..cc322fb 100644
+--- a/drivers/bus/arm-ccn.c
++++ b/drivers/bus/arm-ccn.c
+@@ -1184,7 +1184,7 @@ static int arm_ccn_pmu_cpu_notifier(struct notifier_block *nb,
+ 		if (!cpumask_test_and_clear_cpu(cpu, &dt->cpu))
+ 			break;
+ 		target = cpumask_any_but(cpu_online_mask, cpu);
+-		if (target < 0)
++		if (target >= nr_cpu_ids)
+ 			break;
+ 		perf_pmu_migrate_context(&dt->pmu, cpu, target);
+ 		cpumask_set_cpu(target, &dt->cpu);
+-- 
+2.1.0
 
