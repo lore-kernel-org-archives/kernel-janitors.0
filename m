@@ -1,43 +1,31 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Mon, 18 May 2015 14:42:12 +0000
-Subject: Re: [patch] USB: devio: fix a condition in async_completed()
-Message-Id: <Pine.LNX.4.44L0.1505181027580.1579-100000@iolanthe.rowland.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 May 2015 09:24:15 +0000
+Subject: [patch] ata: ahci_xgene: potential NULL dereference in probe
+Message-Id: <20150515092415.GA21508@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20150518122951.GA32633@mwanda>
-References: <20150518122951.GA32633@mwanda>
-In-Reply-To: <20150518122951.GA32633@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Oliver Neukum <oneukum@suse.de>, Chase Metzger <chasemetzger15@gmail.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Suman Tripathi <stripathi@apm.com>
+Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 18 May 2015, Dan Carpenter wrote:
+Smatch complains about this potential NULL dereference of "acpi_id".
 
-> Static checkers complain that the current condition is never true.  It
-> seems pretty likely that it's a typo and "URB" was intended instead of
-> "USB".
-> 
-> Fixes: 3d97ff63f899 ('usbdevfs: Use scatter-gather lists for large bulk transfers')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-> index 4b0448c..986abde 100644
-> --- a/drivers/usb/core/devio.c
-> +++ b/drivers/usb/core/devio.c
-> @@ -513,7 +513,7 @@ static void async_completed(struct urb *urb)
->  	snoop(&urb->dev->dev, "urb complete\n");
->  	snoop_urb(urb->dev, as->userurb, urb->pipe, urb->actual_length,
->  			as->status, COMPLETE, NULL, 0);
-> -	if ((urb->transfer_flags & URB_DIR_MASK) = USB_DIR_IN)
-> +	if ((urb->transfer_flags & URB_DIR_MASK) = URB_DIR_IN)
->  		snoop_urb_data(urb, urb->actual_length);
->  
->  	if (as->status < 0 && as->bulk_addr && as->status != -ECONNRESET &&
+Fixes: c9802a4be661 ('ata: ahci_xgene: Add AHCI Support for 2nd HW version of APM X-Gene SoC AHCI SATA Host controller.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Yes, this most certainly is a typo.  Or rather, it is a copy of a typo 
-originally introduced in commit 0880aef49e40 (USB: usbfs_snoop: add 
-data logging back in).
-
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-
+diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+index 2add250..e2c6d9e 100644
+--- a/drivers/ata/ahci_xgene.c
++++ b/drivers/ata/ahci_xgene.c
+@@ -732,9 +732,7 @@ static int xgene_ahci_probe(struct platform_device *pdev)
+ 		if (!acpi_id) {
+ 			dev_warn(&pdev->dev, "No node entry in ACPI table. Assume version1\n");
+ 			version = XGENE_AHCI_V1;
+-		}
+-
+-		if (acpi_id->driver_data) {
++		} else if (acpi_id->driver_data) {
+ 			version = (enum xgene_ahci_version) acpi_id->driver_data;
+ 			status = acpi_get_object_info(ACPI_HANDLE(&pdev->dev), &info);
+ 			if (ACPI_FAILURE(status)) {
