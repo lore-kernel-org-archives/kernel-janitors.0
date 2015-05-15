@@ -1,38 +1,35 @@
-From: Aaron Tomlin <atomlin@redhat.com>
-Date: Wed, 20 May 2015 11:19:13 +0000
-Subject: Re: [patch] watchdog: double lock typo in watchdog_nmi_enable_all()
-Message-Id: <20150520111913.GF31237@atomlin.usersys.redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 May 2015 09:54:31 +0000
+Subject: re: flow_dissect: use programable dissector in skb_flow_dissect and friends
+Message-Id: <20150515095431.GA24328@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150520074408.GC18278@mwanda>
-In-Reply-To: <20150520074408.GC18278@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed 2015-05-20 10:44 +0300, Dan Carpenter wrote:
-> The mutex_lock() should obviously be mutex_unlock().
-> 
-> Fixes: ab992dc38f9a ('watchdog: Fix merge 'conflict'')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This bug is already in mainline.
-> 
-> diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-> index c57e67d..a6ffa43 100644
-> --- a/kernel/watchdog.c
-> +++ b/kernel/watchdog.c
-> @@ -628,7 +628,7 @@ void watchdog_nmi_enable_all(void)
->  	put_online_cpus();
->  
->  unlock:
-> -	mutex_lock(&watchdog_proc_mutex);
-> +	mutex_unlock(&watchdog_proc_mutex);
->  }
->  
->  void watchdog_nmi_disable_all(void)
+Hello Jiri Pirko,
 
-Acked-by: Aaron Tomlin <atomlin@redhat.com>
+The patch 06635a35d13d: "flow_dissect: use programable dissector in
+skb_flow_dissect and friends" from May 12, 2015, leads to the
+following static checker warning:
 
--- 
-Aaron Tomlin
+	net/core/flow_dissector.c:283 __skb_flow_dissect()
+	info: ignoring unreachable code.
+
+net/core/flow_dissector.c
+   279  
+   280                  if (skb_flow_dissector_uses_key(flow_dissector,
+   281                                                  FLOW_DISSECTOR_KEY_IPV6_HASH_ADDRS)) {
+   282                          return true;
+                                ^^^^^^^^^^^^
+   283                          key_addrs = skb_flow_dissector_target(flow_dissector,
+   284                                                                FLOW_DISSECTOR_KEY_IPV6_HASH_ADDRS,
+   285                                                                target_container);
+   286                          key_addrs->src = hdr->srcnode;
+   287                          key_addrs->dst = 0;
+   288                  }
+   289                  return true;
+
+regards,
+dan carpenter
