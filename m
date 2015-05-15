@@ -1,61 +1,86 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Date: Thu, 14 May 2015 11:26:09 +0000
-Subject: Re: [PATCH] bus: arm-ccn: Handle correctly no-more-cpus case
-Message-Id: <20150514112608.GC494@leverpostej>
+From: chaehyun lim <chaehyun.lim@gmail.com>
+Date: Fri, 15 May 2015 13:13:43 +0000
+Subject: [PATCH] staging: wlan-ng: fix checkpatch warnings
+Message-Id: <1431695623-17909-1-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150514101344.GA20531@mwanda>
- <1431600624-10965-1-git-send-email-pawel.moll@arm.com>
- <20150514110428.GA494@leverpostej>
-In-Reply-To: <20150514110428.GA494@leverpostej>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, May 14, 2015 at 12:04:28PM +0100, Mark Rutland wrote:
-> On Thu, May 14, 2015 at 11:50:24AM +0100, Pawel Moll wrote:
-> > When migrating events the driver picks another cpu using
-> > cpumask_any_but() function, which returns value >= nr_cpu_ids
-> > when there is none available, not a negative value as the code
-> > assumed. Fixed now.
-> 
-> The fix looks good to me:
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Does this need to be CC'd to stable? What does perf_pmu_migrate_context
-> do when passed a target >= nr_cpus?
+clean up checkpatch.pl in prism2sta.c
+ WARNING : line over 80 characters
 
-Never mind, it looks like we can never encounter that case anyway. In
-the case of kexec or reset we won't notify CPU_DOWN_PREPARE on the final
-CPU, and we can't hotplug the final CPU.
+Signed-off-by: chaehyun lim <chaehyun.lim@gmail.com>
+---
+ drivers/staging/wlan-ng/prism2sta.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-Which means that the target check is irrelevant as we should always get
-a valid cpu back from cpumask_any_but in the cases we'll call it. So we
-could just delete it entirely, assuming I haven't missed a
-CPU_DOWN_PREPARE notification path...
+diff --git a/drivers/staging/wlan-ng/prism2sta.c b/drivers/staging/wlan-ng/prism2sta.c
+index ddb294e..0329c52 100644
+--- a/drivers/staging/wlan-ng/prism2sta.c
++++ b/drivers/staging/wlan-ng/prism2sta.c
+@@ -428,7 +428,8 @@ u32 prism2sta_ifstate(wlandevice_t *wlandev, u32 ifstate)
+ 			result = hfa384x_drvr_start(hw);
+ 			if (result) {
+ 				netdev_err(wlandev->netdev,
+-				       "hfa384x_drvr_start() failed,result=%d\n", (int)result);
++					   "hfa384x_drvr_start() failed,result=%d\n",
++					   (int)result);
+ 				result  				 P80211ENUM_resultcode_implementation_failure;
+ 				wlandev->msdstate = WLAN_MSD_HWPRESENT;
+@@ -471,7 +472,8 @@ u32 prism2sta_ifstate(wlandevice_t *wlandev, u32 ifstate)
+ 			result = hfa384x_drvr_start(hw);
+ 			if (result) {
+ 				netdev_err(wlandev->netdev,
+-				       "hfa384x_drvr_start() failed,result=%d\n", (int)result);
++					   "hfa384x_drvr_start() failed,result=%d\n",
++					   (int)result);
+ 				result  				  P80211ENUM_resultcode_implementation_failure;
+ 				wlandev->msdstate = WLAN_MSD_HWPRESENT;
+@@ -481,7 +483,8 @@ u32 prism2sta_ifstate(wlandevice_t *wlandev, u32 ifstate)
+ 			result = prism2sta_getcardinfo(wlandev);
+ 			if (result) {
+ 				netdev_err(wlandev->netdev,
+-				       "prism2sta_getcardinfo() failed,result=%d\n", (int)result);
++					   "prism2sta_getcardinfo() failed,result=%d\n",
++					   (int)result);
+ 				result  				  P80211ENUM_resultcode_implementation_failure;
+ 				hfa384x_drvr_stop(hw);
+@@ -491,7 +494,8 @@ u32 prism2sta_ifstate(wlandevice_t *wlandev, u32 ifstate)
+ 			result = prism2sta_globalsetup(wlandev);
+ 			if (result) {
+ 				netdev_err(wlandev->netdev,
+-				       "prism2sta_globalsetup() failed,result=%d\n", (int)result);
++					   "prism2sta_globalsetup() failed,result=%d\n",
++					   (int)result);
+ 				result  				  P80211ENUM_resultcode_implementation_failure;
+ 				hfa384x_drvr_stop(hw);
+@@ -1244,9 +1248,9 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 				     HFA384x_RID_CURRENTSSID, result);
+ 				return;
+ 			}
+-			prism2mgmt_bytestr2pstr((struct hfa384x_bytestr *) &ssid,
+-						(p80211pstrd_t *) &
+-						wlandev->ssid);
++			prism2mgmt_bytestr2pstr(
++					(struct hfa384x_bytestr *) &ssid,
++					(p80211pstrd_t *) &wlandev->ssid);
+ 
+ 			/* Collect the port status */
+ 			result = hfa384x_drvr_getconfig16(hw,
+@@ -1658,8 +1662,9 @@ static void prism2sta_inf_authreq_defer(wlandevice_t *wlandev,
+ 			if (hw->authlist.cnt >= WLAN_AUTH_MAX) {
+ 				rec.status = P80211ENUM_status_ap_full;
+ 			} else {
+-				ether_addr_copy(hw->authlist.addr[hw->authlist.cnt],
+-						rec.address);
++				ether_addr_copy(
++					hw->authlist.addr[hw->authlist.cnt],
++					rec.address);
+ 				hw->authlist.cnt++;
+ 				added = 1;
+ 			}
+-- 
+1.9.1
 
-Mark.
-
-> > diff --git a/drivers/bus/arm-ccn.c b/drivers/bus/arm-ccn.c
-> > index 7d9879e..cc322fb 100644
-> > --- a/drivers/bus/arm-ccn.c
-> > +++ b/drivers/bus/arm-ccn.c
-> > @@ -1184,7 +1184,7 @@ static int arm_ccn_pmu_cpu_notifier(struct notifier_block *nb,
-> >  		if (!cpumask_test_and_clear_cpu(cpu, &dt->cpu))
-> >  			break;
-> >  		target = cpumask_any_but(cpu_online_mask, cpu);
-> > -		if (target < 0)
-> > +		if (target >= nr_cpu_ids)
-> >  			break;
-> >  		perf_pmu_migrate_context(&dt->pmu, cpu, target);
-> >  		cpumask_set_cpu(target, &dt->cpu);
-> > -- 
-> > 2.1.0
-> > 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
