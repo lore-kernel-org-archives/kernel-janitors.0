@@ -1,46 +1,40 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 13 May 2015 07:23:10 +0000
-Subject: Re: [patch] drm/edid: fix a debug message
-Message-Id: <20150513072310.GU15256@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 May 2015 09:25:01 +0000
+Subject: [patch] regulator: max77686: fix a shift wrapping bug
+Message-Id: <20150515092501.GB21508@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150512180737.GA5672@mwanda>
-In-Reply-To: <20150512180737.GA5672@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Todd Previte <tprevite@gmail.com>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 12, 2015 at 09:07:37PM +0300, Dan Carpenter wrote:
-> There is an extra semi-colon on the if statement so the debug output
-> always says "Failed to write EDID checksum" even when it didn't fail.
-> 
-> Fixes: 559be30cb74d ('drm/i915: Implement the intel_dp_autotest_edid function for DP EDID complaince tests')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We need to be able to handle more than 32 bits here because "id" can go
+up to MAX77686_BUCK9 (34).  ->gpio_enabled is a u64 so that's fine
+already.
 
-Oops, thanks a lot for catching this.
--Daniel
+Fixes: 3307e9025d29 ('regulator: max77686: Add GPIO control')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-> index eca82cf..75bccd6 100644
-> --- a/drivers/gpu/drm/i915/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/intel_dp.c
-> @@ -4142,7 +4142,7 @@ static uint8_t intel_dp_autotest_edid(struct intel_dp *intel_dp)
->  		if (!drm_dp_dpcd_write(&intel_dp->aux,
->  					DP_TEST_EDID_CHECKSUM,
->  					&intel_connector->detect_edid->checksum,
-> -					1));
-> +					1))
->  			DRM_DEBUG_KMS("Failed to write EDID checksum\n");
->  
->  		test_result = DP_TEST_ACK | DP_TEST_EDID_CHECKSUM_WRITE;
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+index 23b7c06..59b3210 100644
+--- a/drivers/regulator/max77686.c
++++ b/drivers/regulator/max77686.c
+@@ -121,7 +121,7 @@ static unsigned int max77686_map_normal_mode(struct max77686_data *max77686,
+ 	case MAX77686_BUCK8:
+ 	case MAX77686_BUCK9:
+ 	case MAX77686_LDO20 ... MAX77686_LDO22:
+-		if (max77686->gpio_enabled & (1 << id))
++		if (max77686->gpio_enabled & (1ULL << id))
+ 			return MAX77686_GPIO_CONTROL;
+ 	}
+ 
+@@ -277,7 +277,7 @@ static int max77686_of_parse_cb(struct device_node *np,
+ 	}
+ 
+ 	if (gpio_is_valid(config->ena_gpio)) {
+-		max77686->gpio_enabled |= (1 << desc->id);
++		max77686->gpio_enabled |= (1ULL << desc->id);
+ 
+ 		return regmap_update_bits(config->regmap, desc->enable_reg,
+ 					  desc->enable_mask,
