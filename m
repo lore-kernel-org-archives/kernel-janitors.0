@@ -1,7 +1,7 @@
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Thu, 14 May 2015 14:16:34 +0000
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Mon, 18 May 2015 09:24:07 +0000
 Subject: Re: [patch] HID: rmi: fix some harmless BIT() mistakes
-Message-Id: <20150514141634.GA23647@mail.corp.redhat.com>
+Message-Id: <alpine.LNX.2.00.1505181123570.8186@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150514083256.GA1665@mwanda>
 In-Reply-To: <20150514083256.GA1665@mwanda>
@@ -9,9 +9,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jiri Kosina <jkosina@suse.cz>, Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
 
-On May 14 2015 or thereabouts, Dan Carpenter wrote:
+On Thu, 14 May 2015, Dan Carpenter wrote:
+
 > These defines are used like this:
 > 
 > 	if (!(test_bit(RMI_STARTED, &hdata->flags)))
@@ -22,14 +23,6 @@ On May 14 2015 or thereabouts, Dan Carpenter wrote:
 > 
 > Fixes: 9fb6bf02e3ad ('HID: rmi: introduce RMI driver for Synaptics touchpads')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Oops. Looks good to me:
-
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-
-Cheers,
-Benjamin
-
 > 
 > diff --git a/drivers/hid/hid-rmi.c b/drivers/hid/hid-rmi.c
 > index 368ffdf..2f3e51d 100644
@@ -45,6 +38,9 @@ Benjamin
 > +#define RMI_READ_REQUEST_PENDING	0
 > +#define RMI_READ_DATA_PENDING		1
 > +#define RMI_STARTED			2
->  
->  /* device flags */
->  #define RMI_DEVICE			BIT(0)
+
+Applied to for-4.2/upstream, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
