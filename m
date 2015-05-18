@@ -1,7 +1,7 @@
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Thu, 14 May 2015 14:17:05 +0000
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Mon, 18 May 2015 09:24:18 +0000
 Subject: Re: [patch] HID: i2c-hid: fix harmless test_bit() issue
-Message-Id: <20150514141705.GB23647@mail.corp.redhat.com>
+Message-Id: <alpine.LNX.2.00.1505181124110.8186@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150514083330.GB1665@mwanda>
 In-Reply-To: <20150514083330.GB1665@mwanda>
@@ -9,9 +9,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jiri Kosina <jkosina@suse.cz>, Mika Westerberg <mika.westerberg@linux.intel.com>, Antonio Borneo <borneo.antonio@gmail.com>, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Andrew Duggan <aduggan@synaptics.com>, Gwendal Grignou <gwendal@chromium.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Antonio Borneo <borneo.antonio@gmail.com>, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Andrew Duggan <aduggan@synaptics.com>, Gwendal Grignou <gwendal@chromium.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
 
-On May 14 2015 or thereabouts, Dan Carpenter wrote:
+On Thu, 14 May 2015, Dan Carpenter wrote:
+
 > These defines are used like this:
 > 
 > 	if (test_bit(I2C_HID_STARTED, &ihid->flags))
@@ -23,31 +24,8 @@ On May 14 2015 or thereabouts, Dan Carpenter wrote:
 > Fixes: 4a200c3b9a40 ('HID: i2c-hid: introduce HID over i2c specification implementation')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Same as the other one: 
+Applied to for-4.2/upstream, thanks Dan.
 
-Oops. Looks good to me:
-
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-
-Cheers,
-Benjamin
-
-
-> 
-> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-> index 92d6cdf..cadec6a 100644
-> --- a/drivers/hid/i2c-hid/i2c-hid.c
-> +++ b/drivers/hid/i2c-hid/i2c-hid.c
-> @@ -42,9 +42,9 @@
->  #include <linux/i2c/i2c-hid.h>
->  
->  /* flags */
-> -#define I2C_HID_STARTED		(1 << 0)
-> -#define I2C_HID_RESET_PENDING	(1 << 1)
-> -#define I2C_HID_READ_PENDING	(1 << 2)
-> +#define I2C_HID_STARTED		0
-> +#define I2C_HID_RESET_PENDING	1
-> +#define I2C_HID_READ_PENDING	2
->  
->  #define I2C_HID_PWR_ON		0x00
->  #define I2C_HID_PWR_SLEEP	0x01
+-- 
+Jiri Kosina
+SUSE Labs
