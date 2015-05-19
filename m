@@ -1,42 +1,45 @@
-From: Daniel Baluta <daniel.baluta@intel.com>
-Date: Wed, 27 May 2015 08:37:45 +0000
-Subject: Re: [patch] iio: magnetometer: correct a harmless off by one check
-Message-Id: <CAEnQRZDZFSQ0E7_JUrx6CsSF6erg+USDAJyMFhhhz=Brbk-VPg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 May 2015 12:25:24 +0000
+Subject: [patch] staging: slicoss: restore IRQs correctly after slic_cmdq_reset()
+Message-Id: <20150519122524.GA2989@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150527082052.GA19423@mwanda>
-In-Reply-To: <20150527082052.GA19423@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, Daniel Baluta <daniel.baluta@intel.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, May 27, 2015 at 11:20 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> The line before limits i to 0-3 so the existing code works fine but the
-> check is still off by one and >= is intended instead of >.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We can't save two different values in "flags" so it means that IRQs are
+not enabled properly at the end of this function.  This isn't a problem
+in the current code because it's always called with IRQs disabled so we
+don't want to enable them at the end.
 
-Good catch.
+This bug is old but it's thanks to David Matlack's recent cleanups that
+Smatch can detect it.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The code prior to David Matlack's change was way worse because everyone
+shared the same IRQ flags.  It's hard to imagine how it worked at all.
 
->
-> diff --git a/drivers/iio/magnetometer/mmc35240.c b/drivers/iio/magnetometer/mmc35240.c
-> index aa6e25d..c71392c 100644
-> --- a/drivers/iio/magnetometer/mmc35240.c
-> +++ b/drivers/iio/magnetometer/mmc35240.c
-> @@ -308,7 +308,7 @@ static int mmc35240_read_raw(struct iio_dev *indio_dev,
->                         return ret;
->
->                 i = (reg & MMC35240_CTRL1_BW_MASK) >> MMC35240_CTRL1_BW_SHIFT;
-> -               if (i < 0 || i > ARRAY_SIZE(mmc35240_samp_freq))
-> +               if (i < 0 || i >= ARRAY_SIZE(mmc35240_samp_freq))
->                         return -EINVAL;
->
->                 *val = mmc35240_samp_freq[i];
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/slicoss/slicoss.c b/drivers/staging/slicoss/slicoss.c
+index 5f34ebbf..a609f3e 100644
+--- a/drivers/staging/slicoss/slicoss.c
++++ b/drivers/staging/slicoss/slicoss.c
+@@ -1392,7 +1392,7 @@ static void slic_cmdq_reset(struct adapter *adapter)
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&adapter->cmdq_free.lock, flags);
+-	spin_lock_irqsave(&adapter->cmdq_done.lock, flags);
++	spin_lock(&adapter->cmdq_done.lock);
+ 	outstanding = adapter->cmdq_all.count - adapter->cmdq_done.count;
+ 	outstanding -= adapter->cmdq_free.count;
+ 	hcmd = adapter->cmdq_all.head;
+@@ -1423,7 +1423,7 @@ static void slic_cmdq_reset(struct adapter *adapter)
+ 			"free_count %d != all count %d\n",
+ 			adapter->cmdq_free.count, adapter->cmdq_all.count);
+ 	}
+-	spin_unlock_irqrestore(&adapter->cmdq_done.lock, flags);
++	spin_unlock(&adapter->cmdq_done.lock);
+ 	spin_unlock_irqrestore(&adapter->cmdq_free.lock, flags);
+ }
+ 
