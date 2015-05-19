@@ -1,40 +1,34 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 20 May 2015 09:55:19 +0000
-Subject: Re: [patch] ASoC: wm8741: check for error returns from wm8741_set_pdata()
-Message-Id: <20150520095519.GA21577@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="2fHTh5uZTiUOsy+g"
+From: Wim de With <nauxuron@wimdewith.com>
+Date: Tue, 19 May 2015 13:22:09 +0000
+Subject: Breaking lines in function headers
+Message-Id: <555B3901.3090707@wimdewith.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150520074035.GB18278@mwanda>
-In-Reply-To: <20150520074035.GB18278@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Sergej Sawazki <ce3a@gmx.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Lars-Peter Clausen <lars@metafoo.de>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+
+What is the correct way to break lines in a function header? The coding
+style guide is not very clear about it. For example:
+
+1.
+static struct very_long_struct_name
+*do_something_interesting(struct *another_long_struct_name)
+
+2.
+static struct very_long_struct_name *do_something_interesting(
+				struct *another_long_struct_name)
+
+Which one of these is the correct way to do it? I see the second one
+used more often, and the coding style guide states "Descendants are
+always substantially shorter than the parent and are placed
+substantially to the right. The same applies to function headers with a
+long argument list.", so I am inclined to say it is the correct way of
+doing it. But if it is, how many tabs should I use? How should I align
+the arguments if the list is longer, and I need more line breaks?
+
+Thanks
+
+Wim
 
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, May 20, 2015 at 10:40:35AM +0300, Dan Carpenter wrote:
-> Static checkers complain that "ret" is always zero so the conditions are
-> never true.
-
-Applied, thanks.
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVXFoGAAoJECTWi3JdVIfQTSwH/0MpZcfzrsOvx6+hpYdxSMUJ
-rz8GcNBvXKRLxu18QcF6UlQrKPUBMIh1jdA8CZvy2d1HG7ApQMpWJ4cKCgO6KlH/
-2GTwFY67nPgLacyDnk/x+jvRsaka/65gryqBJbHLqFaIS6DwE+FhANOog+5Kdgf1
-iz7EBQ5Ba0OaYBvWKTweeDMgKU0PJI5ZPBvNxkO1hcT2ZNzbVZvH9C8+wrT2sice
-AMzovMfv+k6nPf775gJBP0+FlUXXrOavGHRhbp/pp24nSwrz6/E8gSIXxHUkZhLx
-ucmNh2jF/ub23l4daE5BMgPF/enuTdOYW8drcreoaROXFWs1XuwsudC089W51oI=
-=v+H8
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
