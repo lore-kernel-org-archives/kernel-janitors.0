@@ -1,54 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 28 May 2015 21:02:15 +0000
-Subject: [PATCH 0/9] drop unneeded goto
-Message-Id: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Mike Shuey <shuey@purdue.edu>
+Date: Tue, 19 May 2015 14:14:33 +0000
+Subject: [PATCH v3 2/8] staging: lustre: lnet: dead code - remove lnet_fini_locks
+Message-Id: <1432044879-28923-3-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1432044879-28923-1-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1432044879-28923-1-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org, HPDD-discuss@lists.01.org, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-nfs@vger.kernel.org, linux-wireless@vger.kernel.org
+To: oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, Mike Shuey <shuey@purdue.edu>
 
-These patches drop gotos that jump to a label that is at the next
-instruction, in the case that the label is not used elsewhere in the
-function.  The complete semantic patch that performs this transformation is
-as follows:
+lnet_fini_locks() does nothing.  Remove.
 
-// <smpl>
-@r@
-position p;
-identifier l;
-@@
+Signed-off-by: Mike Shuey <shuey@purdue.edu>
+---
+ drivers/staging/lustre/lnet/lnet/api-ni.c |    8 --------
+ 1 files changed, 0 insertions(+), 8 deletions(-)
 
-if (...) goto l@p;
-l:
-
-@script:ocaml s@
-p << r.p;
-nm;
-@@
-
-nm := (List.hd p).current_element
-
-@ok exists@
-identifier s.nm,l;
-position p != r.p;
-@@
-
-nm(...) {
-<+... goto l@p; ...+>
-}
-
-@depends on !ok@
-identifier s.nm;
-position r.p;
-identifier l;
-@@
-
-nm(...) {
-<...
-- if(...) goto l@p; l:
-...>
-}
-// </smpl>
+diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
+index 6910f56..1adc481 100644
+--- a/drivers/staging/lustre/lnet/lnet/api-ni.c
++++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
+@@ -98,12 +98,6 @@ lnet_init_locks(void)
+ 	mutex_init(&the_lnet.ln_api_mutex);
+ }
+ 
+-static void
+-lnet_fini_locks(void)
+-{
+-}
+-
+-
+ static int
+ lnet_create_remote_nets_table(void)
+ {
+@@ -153,8 +147,6 @@ lnet_destroy_locks(void)
+ 		cfs_percpt_lock_free(the_lnet.ln_net_lock);
+ 		the_lnet.ln_net_lock = NULL;
+ 	}
+-
+-	lnet_fini_locks();
+ }
+ 
+ static int
+-- 
+1.7.1
 
