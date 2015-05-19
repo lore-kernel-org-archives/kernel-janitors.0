@@ -1,905 +1,3062 @@
 From: Mike Shuey <shuey@purdue.edu>
-Date: Thu, 21 May 2015 19:50:36 +0000
-Subject: [PATCH v4 13/13] staging: lustre: lnet: selftest: checkpatch.pl fixes
-Message-Id: <1432237849-53947-14-git-send-email-shuey@purdue.edu>
+Date: Tue, 19 May 2015 14:14:32 +0000
+Subject: [PATCH v3 1/8] staging: lustre: lnet: lnet: code cleanups - variable declarations
+Message-Id: <1432044879-28923-2-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
-In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+References: <1432044879-28923-1-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1432044879-28923-1-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: oleg.drokin@intel.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org, Mike Shuey <shuey@purdue.edu>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, Mike Shuey <shuey@purdue.edu>
 
-Cleaning up more checkpatch.pl issues.
+Unify variable declarations to use a single space, and any other obvious
+spacing flaws.
 
 Signed-off-by: Mike Shuey <shuey@purdue.edu>
 ---
- drivers/staging/lustre/lnet/selftest/brw_test.c  |    3 +-
- drivers/staging/lustre/lnet/selftest/conctl.c    |    4 +-
- drivers/staging/lustre/lnet/selftest/conrpc.c    |   41 ++++++++--------
- drivers/staging/lustre/lnet/selftest/conrpc.h    |    7 ++-
- drivers/staging/lustre/lnet/selftest/console.c   |   33 ++++++------
- drivers/staging/lustre/lnet/selftest/console.h   |   14 +++--
- drivers/staging/lustre/lnet/selftest/framework.c |   46 ++++++++---------
- drivers/staging/lustre/lnet/selftest/module.c    |    3 +-
- drivers/staging/lustre/lnet/selftest/ping_test.c |    1 -
- drivers/staging/lustre/lnet/selftest/rpc.c       |   29 +++++------
- drivers/staging/lustre/lnet/selftest/selftest.h  |   58 ++++++++++------------
- drivers/staging/lustre/lnet/selftest/timer.h     |    2 +-
- 12 files changed, 119 insertions(+), 122 deletions(-)
+ drivers/staging/lustre/lnet/lnet/acceptor.c    |   32 ++--
+ drivers/staging/lustre/lnet/lnet/api-ni.c      |  198 ++++++++++----------
+ drivers/staging/lustre/lnet/lnet/config.c      |  238 ++++++++++++------------
+ drivers/staging/lustre/lnet/lnet/lib-eq.c      |   42 ++--
+ drivers/staging/lustre/lnet/lnet/lib-md.c      |   26 ++--
+ drivers/staging/lustre/lnet/lnet/lib-me.c      |   20 +-
+ drivers/staging/lustre/lnet/lnet/lib-move.c    |  240 ++++++++++++------------
+ drivers/staging/lustre/lnet/lnet/lib-msg.c     |   50 +++---
+ drivers/staging/lustre/lnet/lnet/lib-ptl.c     |  116 ++++++------
+ drivers/staging/lustre/lnet/lnet/lo.c          |    2 +-
+ drivers/staging/lustre/lnet/lnet/module.c      |    8 +-
+ drivers/staging/lustre/lnet/lnet/peer.c        |   50 +++---
+ drivers/staging/lustre/lnet/lnet/router.c      |  224 +++++++++++-----------
+ drivers/staging/lustre/lnet/lnet/router_proc.c |  210 +++++++++++-----------
+ 14 files changed, 728 insertions(+), 728 deletions(-)
 
-diff --git a/drivers/staging/lustre/lnet/selftest/brw_test.c b/drivers/staging/lustre/lnet/selftest/brw_test.c
-index de11f1b..fd3383f 100644
---- a/drivers/staging/lustre/lnet/selftest/brw_test.c
-+++ b/drivers/staging/lustre/lnet/selftest/brw_test.c
-@@ -463,7 +463,8 @@ brw_server_handle(struct srpc_server_rpc *rpc)
- 		npg = reqst->brw_len >> PAGE_CACHE_SHIFT;
+diff --git a/drivers/staging/lustre/lnet/lnet/acceptor.c b/drivers/staging/lustre/lnet/lnet/acceptor.c
+index 72fd1bf..69d4b19 100644
+--- a/drivers/staging/lustre/lnet/lnet/acceptor.c
++++ b/drivers/staging/lustre/lnet/lnet/acceptor.c
+@@ -143,10 +143,10 @@ lnet_connect(struct socket **sockp, lnet_nid_t peer_nid,
+ 	    __u32 local_ip, __u32 peer_ip, int peer_port)
+ {
+ 	lnet_acceptor_connreq_t cr;
+-	struct socket	   *sock;
+-	int		     rc;
+-	int		     port;
+-	int		     fatal;
++	struct socket *sock;
++	int rc;
++	int port;
++	int fatal;
+ 
+ 	CLASSERT(sizeof(cr) <= 16);	    /* not too big to be on the stack */
+ 
+@@ -211,12 +211,12 @@ static int
+ lnet_accept(struct socket *sock, __u32 magic)
+ {
+ 	lnet_acceptor_connreq_t cr;
+-	__u32		   peer_ip;
+-	int		     peer_port;
+-	int		     rc;
+-	int		     flip;
+-	lnet_ni_t	      *ni;
+-	char		   *str;
++	__u32 peer_ip;
++	int peer_port;
++	int rc;
++	int flip;
++	lnet_ni_t *ni;
++	char *str;
+ 
+ 	LASSERT(sizeof(cr) <= 16);	     /* not too big for the stack */
+ 
+@@ -333,11 +333,11 @@ static int
+ lnet_acceptor(void *arg)
+ {
+ 	struct socket *newsock;
+-	int	    rc;
+-	__u32	  magic;
+-	__u32	  peer_ip;
+-	int	    peer_port;
+-	int	    secure = (int)((long_ptr_t)arg);
++	int rc;
++	__u32 magic;
++	__u32 peer_ip;
++	int peer_port;
++	int secure = (int)((long_ptr_t)arg);
+ 
+ 	LASSERT(lnet_acceptor_state.pta_sock = NULL);
+ 
+@@ -444,7 +444,7 @@ accept2secure(const char *acc, long *sec)
+ int
+ lnet_acceptor_start(void)
+ {
+-	int  rc;
++	int rc;
+ 	long rc2;
+ 	long secure;
+ 
+diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
+index 4a14e51..6910f56 100644
+--- a/drivers/staging/lustre/lnet/lnet/api-ni.c
++++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
+@@ -41,7 +41,7 @@
+ 
+ #define D_LNI D_CONSOLE
+ 
+-lnet_t      the_lnet;			   /* THE state of the network */
++lnet_t the_lnet;			   /* THE state of the network */
+ EXPORT_SYMBOL(the_lnet);
+ 
+ 
+@@ -70,8 +70,8 @@ lnet_get_routes(void)
+ static char *
+ lnet_get_networks(void)
+ {
+-	char   *nets;
+-	int     rc;
++	char *nets;
++	int rc;
+ 
+ 	if (*networks != 0 && *ip2nets != 0) {
+ 		LCONSOLE_ERROR_MSG(0x101, "Please specify EITHER 'networks' or 'ip2nets' but not both at once\n");
+@@ -107,8 +107,8 @@ lnet_fini_locks(void)
+ static int
+ lnet_create_remote_nets_table(void)
+ {
+-	int		i;
+-	struct list_head	*hash;
++	int i;
++	struct list_head *hash;
+ 
+ 	LASSERT(the_lnet.ln_remote_nets_hash = NULL);
+ 	LASSERT(the_lnet.ln_remote_nets_hbits > 0);
+@@ -273,8 +273,8 @@ static void lnet_assert_wire_constants(void)
+ static lnd_t *
+ lnet_find_lnd_by_type(int type)
+ {
+-	lnd_t	      *lnd;
+-	struct list_head	 *tmp;
++	lnd_t *lnd;
++	struct list_head *tmp;
+ 
+ 	/* holding lnd mutex */
+ 	list_for_each(tmp, &the_lnet.ln_lnds) {
+@@ -325,7 +325,7 @@ void
+ lnet_counters_get(lnet_counters_t *counters)
+ {
+ 	lnet_counters_t *ctr;
+-	int		i;
++	int i;
+ 
+ 	memset(counters, 0, sizeof(*counters));
+ 
+@@ -353,7 +353,7 @@ void
+ lnet_counters_reset(void)
+ {
+ 	lnet_counters_t *counters;
+-	int		i;
++	int i;
+ 
+ 	lnet_net_lock(LNET_LOCK_EX);
+ 
+@@ -396,8 +396,8 @@ lnet_freelist_init(lnet_freelist_t *fl, int n, int size)
+ void
+ lnet_freelist_fini(lnet_freelist_t *fl)
+ {
+-	struct list_head       *el;
+-	int	       count;
++	struct list_head *el;
++	int count;
+ 
+ 	if (fl->fl_nobjs = 0)
+ 		return;
+@@ -441,7 +441,7 @@ lnet_res_type2str(int type)
+ static void
+ lnet_res_container_cleanup(struct lnet_res_container *rec)
+ {
+-	int	count = 0;
++	int count = 0;
+ 
+ 	if (rec->rec_type = 0) /* not set yet, it's uninitialized */
+ 		return;
+@@ -486,8 +486,8 @@ static int
+ lnet_res_container_setup(struct lnet_res_container *rec,
+ 			 int cpt, int type, int objnum, int objsz)
+ {
+-	int	rc = 0;
+-	int	i;
++	int rc = 0;
++	int i;
+ 
+ 	LASSERT(rec->rec_type = 0);
+ 
+@@ -525,8 +525,8 @@ out:
+ static void
+ lnet_res_containers_destroy(struct lnet_res_container **recs)
+ {
+-	struct lnet_res_container	*rec;
+-	int				i;
++	struct lnet_res_container *rec;
++	int i;
+ 
+ 	cfs_percpt_for_each(rec, i, recs)
+ 		lnet_res_container_cleanup(rec);
+@@ -537,10 +537,10 @@ lnet_res_containers_destroy(struct lnet_res_container **recs)
+ static struct lnet_res_container **
+ lnet_res_containers_create(int type, int objnum, int objsz)
+ {
+-	struct lnet_res_container	**recs;
+-	struct lnet_res_container	*rec;
+-	int				rc;
+-	int				i;
++	struct lnet_res_container **recs;
++	struct lnet_res_container *rec;
++	int rc;
++	int i;
+ 
+ 	recs = cfs_percpt_alloc(lnet_cpt_table(), sizeof(*rec));
+ 	if (recs = NULL) {
+@@ -564,9 +564,9 @@ lnet_libhandle_t *
+ lnet_res_lh_lookup(struct lnet_res_container *rec, __u64 cookie)
+ {
+ 	/* ALWAYS called with lnet_res_lock held */
+-	struct list_head		*head;
+-	lnet_libhandle_t	*lh;
+-	unsigned int		hash;
++	struct list_head *head;
++	lnet_libhandle_t *lh;
++	unsigned int hash;
+ 
+ 	if ((cookie & LNET_COOKIE_MASK) != rec->rec_type)
+ 		return NULL;
+@@ -586,8 +586,8 @@ void
+ lnet_res_lh_initialize(struct lnet_res_container *rec, lnet_libhandle_t *lh)
+ {
+ 	/* ALWAYS called with lnet_res_lock held */
+-	unsigned int	ibits = LNET_COOKIE_TYPE_BITS + LNET_CPT_BITS;
+-	unsigned int	hash;
++	unsigned int ibits = LNET_COOKIE_TYPE_BITS + LNET_CPT_BITS;
++	unsigned int hash;
+ 
+ 	lh->lh_cookie = rec->rec_lh_cookie;
+ 	rec->rec_lh_cookie += 1 << ibits;
+@@ -605,7 +605,7 @@ lnet_prepare(lnet_pid_t requested_pid)
+ {
+ 	/* Prepare to bring up the network */
+ 	struct lnet_res_container **recs;
+-	int			  rc = 0;
++	int rc = 0;
+ 
+ 	LASSERT(the_lnet.ln_refcount = 0);
+ 
+@@ -725,8 +725,8 @@ lnet_unprepare(void)
+ lnet_ni_t  *
+ lnet_net2ni_locked(__u32 net, int cpt)
+ {
+-	struct list_head	*tmp;
+-	lnet_ni_t	*ni;
++	struct list_head *tmp;
++	lnet_ni_t *ni;
+ 
+ 	LASSERT(cpt != LNET_LOCK_EX);
+ 
+@@ -758,8 +758,8 @@ EXPORT_SYMBOL(lnet_net2ni);
+ static unsigned int
+ lnet_nid_cpt_hash(lnet_nid_t nid, unsigned int number)
+ {
+-	__u64		key = nid;
+-	unsigned int	val;
++	__u64 key = nid;
++	unsigned int val;
+ 
+ 	LASSERT(number >= 1 && number <= LNET_CPT_NUMBER);
+ 
+@@ -801,8 +801,8 @@ lnet_cpt_of_nid_locked(lnet_nid_t nid)
+ int
+ lnet_cpt_of_nid(lnet_nid_t nid)
+ {
+-	int	cpt;
+-	int	cpt2;
++	int cpt;
++	int cpt2;
+ 
+ 	if (LNET_CPT_NUMBER = 1)
+ 		return 0; /* the only one */
+@@ -821,8 +821,8 @@ EXPORT_SYMBOL(lnet_cpt_of_nid);
+ int
+ lnet_islocalnet(__u32 net)
+ {
+-	struct lnet_ni	*ni;
+-	int		cpt;
++	struct lnet_ni *ni;
++	int cpt;
+ 
+ 	cpt = lnet_net_lock_current();
+ 
+@@ -838,8 +838,8 @@ lnet_islocalnet(__u32 net)
+ lnet_ni_t  *
+ lnet_nid2ni_locked(lnet_nid_t nid, int cpt)
+ {
+-	struct lnet_ni	*ni;
+-	struct list_head	*tmp;
++	struct lnet_ni *ni;
++	struct list_head *tmp;
+ 
+ 	LASSERT(cpt != LNET_LOCK_EX);
+ 
+@@ -858,8 +858,8 @@ lnet_nid2ni_locked(lnet_nid_t nid, int cpt)
+ int
+ lnet_islocalnid(lnet_nid_t nid)
+ {
+-	struct lnet_ni	*ni;
+-	int		cpt;
++	struct lnet_ni *ni;
++	int cpt;
+ 
+ 	cpt = lnet_net_lock_current();
+ 	ni = lnet_nid2ni_locked(nid, cpt);
+@@ -874,10 +874,10 @@ int
+ lnet_count_acceptor_nis(void)
+ {
+ 	/* Return the # of NIs that need the acceptor. */
+-	int		count = 0;
+-	struct list_head	*tmp;
+-	struct lnet_ni	*ni;
+-	int		cpt;
++	int count = 0;
++	struct list_head *tmp;
++	struct lnet_ni *ni;
++	int cpt;
+ 
+ 	cpt = lnet_net_lock_current();
+ 	list_for_each(tmp, &the_lnet.ln_nis) {
+@@ -895,7 +895,7 @@ lnet_count_acceptor_nis(void)
+ static int
+ lnet_ni_tq_credits(lnet_ni_t *ni)
+ {
+-	int	credits;
++	int credits;
+ 
+ 	LASSERT(ni->ni_ncpts >= 1);
+ 
+@@ -912,9 +912,9 @@ lnet_ni_tq_credits(lnet_ni_t *ni)
+ static void
+ lnet_shutdown_lndnis(void)
+ {
+-	int		i;
+-	int		islo;
+-	lnet_ni_t	 *ni;
++	int i;
++	int islo;
++	lnet_ni_t *ni;
+ 
+ 	/* NB called holding the global mutex */
+ 
+@@ -968,8 +968,8 @@ lnet_shutdown_lndnis(void)
+ 	 * and shut them down in guaranteed thread context */
+ 	i = 2;
+ 	while (!list_empty(&the_lnet.ln_nis_zombie)) {
+-		int	*ref;
+-		int	j;
++		int *ref;
++		int j;
+ 
+ 		ni = list_entry(the_lnet.ln_nis_zombie.next,
+ 				    lnet_ni_t, ni_list);
+@@ -1029,15 +1029,15 @@ lnet_shutdown_lndnis(void)
+ static int
+ lnet_startup_lndnis(void)
+ {
+-	lnd_t			*lnd;
+-	struct lnet_ni		*ni;
+-	struct lnet_tx_queue	*tq;
+-	struct list_head		nilist;
+-	int			i;
+-	int		rc = 0;
+-	int		lnd_type;
+-	int		nicount = 0;
+-	char	      *nets = lnet_get_networks();
++	lnd_t *lnd;
++	struct lnet_ni *ni;
++	struct lnet_tx_queue *tq;
++	struct list_head nilist;
++	int i;
++	int rc = 0;
++	int lnd_type;
++	int nicount = 0;
++	char *nets = lnet_get_networks();
+ 
+ 	INIT_LIST_HEAD(&nilist);
+ 
+@@ -1181,7 +1181,7 @@ lnet_startup_lndnis(void)
+ int
+ LNetInit(void)
+ {
+-	int	rc;
++	int rc;
+ 
+ 	lnet_assert_wire_constants();
+ 	LASSERT(!the_lnet.ln_init);
+@@ -1277,8 +1277,8 @@ EXPORT_SYMBOL(LNetFini);
+ int
+ LNetNIInit(lnet_pid_t requested_pid)
+ {
+-	int	 im_a_router = 0;
+-	int	 rc;
++	int im_a_router = 0;
++	int rc;
+ 
+ 	LNET_MUTEX_LOCK(&the_lnet.ln_api_mutex);
+ 
+@@ -1413,9 +1413,9 @@ int
+ LNetCtl(unsigned int cmd, void *arg)
+ {
+ 	struct libcfs_ioctl_data *data = arg;
+-	lnet_process_id_t	 id = {0};
+-	lnet_ni_t		*ni;
+-	int		       rc;
++	lnet_process_id_t id = {0};
++	lnet_ni_t *ni;
++	int rc;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -1531,10 +1531,10 @@ EXPORT_SYMBOL(LNetCtl);
+ int
+ LNetGetId(unsigned int index, lnet_process_id_t *id)
+ {
+-	struct lnet_ni	*ni;
+-	struct list_head	*tmp;
+-	int		cpt;
+-	int		rc = -ENOENT;
++	struct lnet_ni *ni;
++	struct list_head *tmp;
++	int cpt;
++	int rc = -ENOENT;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 
+@@ -1575,11 +1575,11 @@ EXPORT_SYMBOL(LNetSnprintHandle);
+ static int
+ lnet_create_ping_info(void)
+ {
+-	int	       i;
+-	int	       n;
+-	int	       rc;
+-	unsigned int      infosz;
+-	lnet_ni_t	*ni;
++	int i;
++	int n;
++	int rc;
++	unsigned int infosz;
++	lnet_ni_t *ni;
+ 	lnet_process_id_t id;
+ 	lnet_ping_info_t *pinfo;
+ 
+@@ -1633,7 +1633,7 @@ lnet_create_ping_info(void)
+ static void
+ lnet_destroy_ping_info(void)
+ {
+-	struct lnet_ni	*ni;
++	struct lnet_ni *ni;
+ 
+ 	lnet_net_lock(0);
+ 
+@@ -1654,12 +1654,12 @@ lnet_destroy_ping_info(void)
+ int
+ lnet_ping_target_init(void)
+ {
+-	lnet_md_t	 md = { NULL };
+-	lnet_handle_me_t  meh;
++	lnet_md_t md = { NULL };
++	lnet_handle_me_t meh;
+ 	lnet_process_id_t id;
+-	int	       rc;
+-	int	       rc2;
+-	int	       infosz;
++	int rc;
++	int rc2;
++	int infosz;
+ 
+ 	rc = lnet_create_ping_info();
+ 	if (rc != 0)
+@@ -1722,11 +1722,11 @@ lnet_ping_target_init(void)
+ void
+ lnet_ping_target_fini(void)
+ {
+-	lnet_event_t    event;
+-	int	     rc;
+-	int	     which;
+-	int	     timeout_ms = 1000;
+-	sigset_t    blocked = cfs_block_allsigs();
++	lnet_event_t event;
++	int rc;
++	int which;
++	int timeout_ms = 1000;
++	sigset_t blocked = cfs_block_allsigs();
+ 
+ 	LNetMDUnlink(the_lnet.ln_ping_target_md);
+ 	/* NB md could be busy; this just starts the unlink */
+@@ -1759,22 +1759,22 @@ lnet_ping_target_fini(void)
+ int
+ lnet_ping(lnet_process_id_t id, int timeout_ms, lnet_process_id_t *ids, int n_ids)
+ {
+-	lnet_handle_eq_t     eqh;
+-	lnet_handle_md_t     mdh;
+-	lnet_event_t	 event;
+-	lnet_md_t	    md = { NULL };
+-	int		  which;
+-	int		  unlinked = 0;
+-	int		  replied = 0;
+-	const int	    a_long_time = 60000; /* mS */
+-	int		  infosz = offsetof(lnet_ping_info_t, pi_ni[n_ids]);
+-	lnet_ping_info_t    *info;
+-	lnet_process_id_t    tmpid;
+-	int		  i;
+-	int		  nob;
+-	int		  rc;
+-	int		  rc2;
+-	sigset_t	 blocked;
++	lnet_handle_eq_t eqh;
++	lnet_handle_md_t mdh;
++	lnet_event_t event;
++	lnet_md_t md = { NULL };
++	int which;
++	int unlinked = 0;
++	int replied = 0;
++	const int a_long_time = 60000; /* mS */
++	int infosz = offsetof(lnet_ping_info_t, pi_ni[n_ids]);
++	lnet_ping_info_t *info;
++	lnet_process_id_t tmpid;
++	int i;
++	int nob;
++	int rc;
++	int rc2;
++	sigset_t blocked;
+ 
+ 	if (n_ids <= 0 ||
+ 	    id.nid = LNET_NID_ANY ||
+diff --git a/drivers/staging/lustre/lnet/lnet/config.c b/drivers/staging/lustre/lnet/lnet/config.c
+index 2dc4c4a..70bc809 100644
+--- a/drivers/staging/lustre/lnet/lnet/config.c
++++ b/drivers/staging/lustre/lnet/lnet/config.c
+@@ -38,9 +38,9 @@
+ #include "../../include/linux/lnet/lib-lnet.h"
+ 
+ struct lnet_text_buf_t {	    /* tmp struct for parsing routes */
+-	struct list_head	 ltb_list;	/* stash on lists */
+-	int		ltb_size;	/* allocated size */
+-	char	       ltb_text[0];     /* text buffer */
++	struct list_head ltb_list;	/* stash on lists */
++	int ltb_size;	/* allocated size */
++	char ltb_text[0];     /* text buffer */
+ };
+ 
+ static int lnet_tbnob;			/* track text buf allocation */
+@@ -80,8 +80,8 @@ lnet_issep(char c)
+ static int
+ lnet_net_unique(__u32 net, struct list_head *nilist)
+ {
+-	struct list_head       *tmp;
+-	lnet_ni_t	*ni;
++	struct list_head *tmp;
++	lnet_ni_t *ni;
+ 
+ 	list_for_each(tmp, nilist) {
+ 		ni = list_entry(tmp, lnet_ni_t, ni_list);
+@@ -111,10 +111,10 @@ lnet_ni_free(struct lnet_ni *ni)
+ static lnet_ni_t *
+ lnet_ni_alloc(__u32 net, struct cfs_expr_list *el, struct list_head *nilist)
+ {
+-	struct lnet_tx_queue	*tq;
+-	struct lnet_ni		*ni;
+-	int			rc;
+-	int			i;
++	struct lnet_tx_queue *tq;
++	struct lnet_ni *ni;
++	int rc;
++	int i;
+ 
+ 	if (!lnet_net_unique(net, nilist)) {
+ 		LCONSOLE_ERROR_MSG(0x111, "Duplicate network specified: %s\n",
+@@ -178,13 +178,13 @@ int
+ lnet_parse_networks(struct list_head *nilist, char *networks)
+ {
+ 	struct cfs_expr_list *el = NULL;
+-	int		tokensize = strlen(networks) + 1;
+-	char		*tokens;
+-	char		*str;
+-	char		*tmp;
+-	struct lnet_ni	*ni;
+-	__u32		net;
+-	int		nnets = 0;
++	int tokensize = strlen(networks) + 1;
++	char *tokens;
++	char *str;
++	char *tmp;
++	struct lnet_ni *ni;
++	__u32 net;
++	int nnets = 0;
+ 
+ 	if (strlen(networks) > LNET_SINGLE_TEXTBUF_NOB) {
+ 		/* _WAY_ conservative */
+@@ -210,12 +210,12 @@ lnet_parse_networks(struct list_head *nilist, char *networks)
+ 		goto failed;
+ 
+ 	while (str != NULL && *str != 0) {
+-		char	*comma = strchr(str, ',');
+-		char	*bracket = strchr(str, '(');
+-		char	*square = strchr(str, '[');
+-		char	*iface;
+-		int	niface;
+-		int	rc;
++		char *comma = strchr(str, ',');
++		char *bracket = strchr(str, '(');
++		char *square = strchr(str, '[');
++		char *iface;
++		int niface;
++		int rc;
+ 
+ 		/* NB we don't check interface conflicts here; it's the LNDs
+ 		 * responsibility (if it cares at all) */
+@@ -369,7 +369,7 @@ static struct lnet_text_buf_t *
+ lnet_new_text_buf(int str_len)
+ {
+ 	struct lnet_text_buf_t *ltb;
+-	int	      nob;
++	int nob;
+ 
+ 	/* NB allocate space for the terminating 0 */
+ 	nob = offsetof(struct lnet_text_buf_t, ltb_text[str_len + 1]);
+@@ -404,7 +404,7 @@ lnet_free_text_buf(struct lnet_text_buf_t *ltb)
+ static void
+ lnet_free_text_bufs(struct list_head *tbs)
+ {
+-	struct lnet_text_buf_t  *ltb;
++	struct lnet_text_buf_t *ltb;
+ 
+ 	while (!list_empty(tbs)) {
+ 		ltb = list_entry(tbs->next, struct lnet_text_buf_t, ltb_list);
+@@ -417,11 +417,11 @@ lnet_free_text_bufs(struct list_head *tbs)
+ static int
+ lnet_str2tbs_sep(struct list_head *tbs, char *str)
+ {
+-	struct list_head	pending;
+-	char	     *sep;
+-	int	       nob;
+-	int	       i;
+-	struct lnet_text_buf_t  *ltb;
++	struct list_head pending;
++	char *sep;
++	int nob;
++	int i;
++	struct lnet_text_buf_t *ltb;
+ 
+ 	INIT_LIST_HEAD(&pending);
+ 
+@@ -477,8 +477,8 @@ lnet_expand1tb(struct list_head *list,
+ 	       char *str, char *sep1, char *sep2,
+ 	       char *item, int itemlen)
+ {
+-	int	      len1 = (int)(sep1 - str);
+-	int	      len2 = strlen(sep2 + 1);
++	int len1 = (int)(sep1 - str);
++	int len2 = strlen(sep2 + 1);
+ 	struct lnet_text_buf_t *ltb;
+ 
+ 	LASSERT(*sep1 = '[');
+@@ -500,18 +500,18 @@ lnet_expand1tb(struct list_head *list,
+ static int
+ lnet_str2tbs_expand(struct list_head *tbs, char *str)
+ {
+-	char	      num[16];
+-	struct list_head	pending;
+-	char	     *sep;
+-	char	     *sep2;
+-	char	     *parsed;
+-	char	     *enditem;
+-	int	       lo;
+-	int	       hi;
+-	int	       stride;
+-	int	       i;
+-	int	       nob;
+-	int	       scanned;
++	char num[16];
++	struct list_head pending;
++	char *sep;
++	char *sep2;
++	char *parsed;
++	char *enditem;
++	int lo;
++	int hi;
++	int stride;
++	int i;
++	int nob;
++	int scanned;
+ 
+ 	INIT_LIST_HEAD(&pending);
+ 
+@@ -584,8 +584,8 @@ lnet_str2tbs_expand(struct list_head *tbs, char *str)
+ static int
+ lnet_parse_hops(char *str, unsigned int *hops)
+ {
+-	int     len = strlen(str);
+-	int     nob = len;
++	int len = strlen(str);
++	int nob = len;
+ 
+ 	return (sscanf(str, "%u%n", hops, &nob) >= 1 &&
+ 		nob = len &&
+@@ -597,9 +597,9 @@ lnet_parse_hops(char *str, unsigned int *hops)
+ static int
+ lnet_parse_priority(char *str, unsigned int *priority, char **token)
+ {
+-	int   nob;
++	int nob;
+ 	char *sep;
+-	int   len;
++	int len;
+ 
+ 	sep = strchr(str, LNET_PRIORITY_SEPARATOR);
+ 	if (sep = NULL) {
+@@ -628,23 +628,23 @@ static int
+ lnet_parse_route(char *str, int *im_a_router)
+ {
+ 	/* static scratch buffer OK (single threaded) */
+-	static char       cmd[LNET_SINGLE_TEXTBUF_NOB];
+-
+-	struct list_head	nets;
+-	struct list_head	gateways;
+-	struct list_head       *tmp1;
+-	struct list_head       *tmp2;
+-	__u32	     net;
+-	lnet_nid_t	nid;
+-	struct lnet_text_buf_t  *ltb;
+-	int	       rc;
+-	char	     *sep;
+-	char	     *token = str;
+-	int	       ntokens = 0;
+-	int	       myrc = -1;
+-	unsigned int      hops;
+-	int	       got_hops = 0;
+-	unsigned int	  priority = 0;
++	static char cmd[LNET_SINGLE_TEXTBUF_NOB];
++
++	struct list_head nets;
++	struct list_head gateways;
++	struct list_head *tmp1;
++	struct list_head *tmp2;
++	__u32 net;
++	lnet_nid_t nid;
++	struct lnet_text_buf_t *ltb;
++	int rc;
++	char *sep;
++	char *token = str;
++	int ntokens = 0;
++	int myrc = -1;
++	unsigned int hops;
++	int got_hops = 0;
++	unsigned int priority = 0;
+ 
+ 	INIT_LIST_HEAD(&gateways);
+ 	INIT_LIST_HEAD(&nets);
+@@ -772,7 +772,7 @@ lnet_parse_route(char *str, int *im_a_router)
+ static int
+ lnet_parse_route_tbs(struct list_head *tbs, int *im_a_router)
+ {
+-	struct lnet_text_buf_t   *ltb;
++	struct lnet_text_buf_t *ltb;
+ 
+ 	while (!list_empty(tbs)) {
+ 		ltb = list_entry(tbs->next, struct lnet_text_buf_t, ltb_list);
+@@ -792,8 +792,8 @@ lnet_parse_route_tbs(struct list_head *tbs, int *im_a_router)
+ int
+ lnet_parse_routes(char *routes, int *im_a_router)
+ {
+-	struct list_head	tbs;
+-	int	       rc = 0;
++	struct list_head tbs;
++	int rc = 0;
+ 
+ 	*im_a_router = 0;
+ 
+@@ -814,8 +814,8 @@ static int
+ lnet_match_network_token(char *token, int len, __u32 *ipaddrs, int nip)
+ {
+ 	LIST_HEAD(list);
+-	int		rc;
+-	int		i;
++	int rc;
++	int i;
+ 
+ 	rc = cfs_ip_addr_parse(token, len, &list);
+ 	if (rc != 0)
+@@ -834,13 +834,13 @@ lnet_match_network_tokens(char *net_entry, __u32 *ipaddrs, int nip)
+ {
+ 	static char tokens[LNET_SINGLE_TEXTBUF_NOB];
+ 
+-	int   matched = 0;
+-	int   ntokens = 0;
+-	int   len;
++	int matched = 0;
++	int ntokens = 0;
++	int len;
+ 	char *net = NULL;
+ 	char *sep;
+ 	char *token;
+-	int   rc;
++	int rc;
+ 
+ 	LASSERT(strlen(net_entry) < sizeof(tokens));
+ 
+@@ -889,8 +889,8 @@ lnet_match_network_tokens(char *net_entry, __u32 *ipaddrs, int nip)
+ static __u32
+ lnet_netspec2net(char *netspec)
+ {
+-	char   *bracket = strchr(netspec, '(');
+-	__u32   net;
++	char *bracket = strchr(netspec, '(');
++	__u32 net;
+ 
+ 	if (bracket != NULL)
+ 		*bracket = 0;
+@@ -906,15 +906,15 @@ lnet_netspec2net(char *netspec)
+ static int
+ lnet_splitnets(char *source, struct list_head *nets)
+ {
+-	int	       offset = 0;
+-	int	       offset2;
+-	int	       len;
+-	struct lnet_text_buf_t  *tb;
+-	struct lnet_text_buf_t  *tb2;
+-	struct list_head       *t;
+-	char	     *sep;
+-	char	     *bracket;
+-	__u32	     net;
++	int offset = 0;
++	int offset2;
++	int len;
++	struct lnet_text_buf_t *tb;
++	struct lnet_text_buf_t *tb2;
++	struct list_head *t;
++	char *sep;
++	char *bracket;
++	__u32 net;
+ 
+ 	LASSERT(!list_empty(nets));
+ 	LASSERT(nets->next = nets->prev);     /* single entry */
+@@ -986,22 +986,22 @@ lnet_splitnets(char *source, struct list_head *nets)
+ static int
+ lnet_match_networks(char **networksp, char *ip2nets, __u32 *ipaddrs, int nip)
+ {
+-	static char	networks[LNET_SINGLE_TEXTBUF_NOB];
+-	static char	source[LNET_SINGLE_TEXTBUF_NOB];
+-
+-	struct list_head	  raw_entries;
+-	struct list_head	  matched_nets;
+-	struct list_head	  current_nets;
+-	struct list_head	 *t;
+-	struct list_head	 *t2;
+-	struct lnet_text_buf_t    *tb;
+-	struct lnet_text_buf_t    *tb2;
+-	__u32	       net1;
+-	__u32	       net2;
+-	int		 len;
+-	int		 count;
+-	int		 dup;
+-	int		 rc;
++	static char networks[LNET_SINGLE_TEXTBUF_NOB];
++	static char source[LNET_SINGLE_TEXTBUF_NOB];
++
++	struct list_head raw_entries;
++	struct list_head matched_nets;
++	struct list_head current_nets;
++	struct list_head *t;
++	struct list_head *t2;
++	struct lnet_text_buf_t *tb;
++	struct lnet_text_buf_t *tb2;
++	__u32 net1;
++	__u32 net2;
++	int len;
++	int count;
++	int dup;
++	int rc;
+ 
+ 	INIT_LIST_HEAD(&raw_entries);
+ 	if (lnet_str2tbs_sep(&raw_entries, ip2nets) < 0) {
+@@ -1112,15 +1112,15 @@ lnet_ipaddr_free_enumeration(__u32 *ipaddrs, int nip)
+ static int
+ lnet_ipaddr_enumerate(__u32 **ipaddrsp)
+ {
+-	int	up;
+-	__u32      netmask;
+-	__u32     *ipaddrs;
+-	__u32     *ipaddrs2;
+-	int	nip;
+-	char     **ifnames;
+-	int	nif = libcfs_ipif_enumerate(&ifnames);
+-	int	i;
+-	int	rc;
++	int up;
++	__u32 netmask;
++	__u32 *ipaddrs;
++	__u32 *ipaddrs2;
++	int nip;
++	char **ifnames;
++	int nif = libcfs_ipif_enumerate(&ifnames);
++	int i;
++	int rc;
+ 
+ 	if (nif <= 0)
+ 		return nif;
+@@ -1178,9 +1178,9 @@ lnet_ipaddr_enumerate(__u32 **ipaddrsp)
+ int
+ lnet_parse_ip2nets(char **networksp, char *ip2nets)
+ {
+-	__u32     *ipaddrs = NULL;
+-	int	nip = lnet_ipaddr_enumerate(&ipaddrs);
+-	int	rc;
++	__u32 *ipaddrs = NULL;
++	int nip = lnet_ipaddr_enumerate(&ipaddrs);
++	int rc;
+ 
+ 	if (nip < 0) {
+ 		LCONSOLE_ERROR_MSG(0x117,
+@@ -1215,14 +1215,14 @@ lnet_parse_ip2nets(char **networksp, char *ip2nets)
+ int
+ lnet_set_ip_niaddr(lnet_ni_t *ni)
+ {
+-	__u32  net = LNET_NIDNET(ni->ni_nid);
++	__u32 net = LNET_NIDNET(ni->ni_nid);
+ 	char **names;
+-	int    n;
+-	__u32  ip;
+-	__u32  netmask;
+-	int    up;
+-	int    i;
+-	int    rc;
++	int n;
++	__u32 ip;
++	__u32 netmask;
++	int up;
++	int i;
++	int rc;
+ 
+ 	/* Convenience for LNDs that use the IP address of a local interface as
+ 	 * the local address part of their NID */
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-eq.c b/drivers/staging/lustre/lnet/lnet/lib-eq.c
+index 5470148..368bde9 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-eq.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-eq.c
+@@ -70,7 +70,7 @@ int
+ LNetEQAlloc(unsigned int count, lnet_eq_handler_t callback,
+ 	    lnet_handle_eq_t *handle)
+ {
+-	lnet_eq_t     *eq;
++	lnet_eq_t *eq;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -151,13 +151,13 @@ EXPORT_SYMBOL(LNetEQAlloc);
+ int
+ LNetEQFree(lnet_handle_eq_t eqh)
+ {
+-	struct lnet_eq	*eq;
+-	lnet_event_t	*events = NULL;
+-	int		**refs = NULL;
+-	int		*ref;
+-	int		rc = 0;
+-	int		size = 0;
+-	int		i;
++	struct lnet_eq *eq;
++	lnet_event_t *events = NULL;
++	int **refs = NULL;
++	int *ref;
++	int rc = 0;
++	int size = 0;
++	int i;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -185,9 +185,9 @@ LNetEQFree(lnet_handle_eq_t eqh)
+ 	}
+ 
+ 	/* stash for free after lock dropped */
+-	events	= eq->eq_events;
+-	size	= eq->eq_size;
+-	refs	= eq->eq_refs;
++	events = eq->eq_events;
++	size = eq->eq_size;
++	refs = eq->eq_refs;
+ 
+ 	lnet_res_lh_invalidate(&eq->eq_lh);
+ 	list_del(&eq->eq_list);
+@@ -237,9 +237,9 @@ lnet_eq_enqueue_event(lnet_eq_t *eq, lnet_event_t *ev)
+ static int
+ lnet_eq_dequeue_event(lnet_eq_t *eq, lnet_event_t *ev)
+ {
+-	int		new_index = eq->eq_deq_seq & (eq->eq_size - 1);
+-	lnet_event_t	*new_event = &eq->eq_events[new_index];
+-	int		rc;
++	int new_index = eq->eq_deq_seq & (eq->eq_size - 1);
++	lnet_event_t *new_event = &eq->eq_events[new_index];
++	int rc;
+ 
+ 	/* must called with lnet_eq_wait_lock hold */
+ 	if (LNET_SEQ_GT(eq->eq_deq_seq, new_event->sequence))
+@@ -323,10 +323,10 @@ static int
+ lnet_eq_wait_locked(int *timeout_ms)
+ __must_hold(&the_lnet.ln_eq_wait_lock)
+ {
+-	int		tms = *timeout_ms;
+-	int		wait;
+-	wait_queue_t  wl;
+-	unsigned long      now;
++	int tms = *timeout_ms;
++	int wait;
++	wait_queue_t wl;
++	unsigned long now;
+ 
+ 	if (tms = 0)
+ 		return -1; /* don't want to wait and no new event */
+@@ -392,9 +392,9 @@ int
+ LNetEQPoll(lnet_handle_eq_t *eventqs, int neq, int timeout_ms,
+ 	   lnet_event_t *event, int *which)
+ {
+-	int	wait = 1;
+-	int	rc;
+-	int	i;
++	int wait = 1;
++	int rc;
++	int i;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-md.c b/drivers/staging/lustre/lnet/lnet/lib-md.c
+index 89d660f..5856c30 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-md.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-md.c
+@@ -74,7 +74,7 @@ lnet_md_unlink(lnet_libmd_t *md)
+ 	CDEBUG(D_NET, "Unlinking md %p\n", md);
+ 
+ 	if (md->md_eq != NULL) {
+-		int	cpt = lnet_cpt_of_cookie(md->md_lh.lh_cookie);
++		int cpt = lnet_cpt_of_cookie(md->md_lh.lh_cookie);
+ 
+ 		LASSERT(*md->md_eq->eq_refs[cpt] > 0);
+ 		(*md->md_eq->eq_refs[cpt])--;
+@@ -88,9 +88,9 @@ lnet_md_unlink(lnet_libmd_t *md)
+ static int
+ lnet_md_build(lnet_libmd_t *lmd, lnet_md_t *umd, int unlink)
+ {
+-	int	  i;
++	int i;
+ 	unsigned int niov;
+-	int	  total_length = 0;
++	int total_length = 0;
+ 
+ 	lmd->md_me = NULL;
+ 	lmd->md_start = umd->start;
+@@ -268,10 +268,10 @@ LNetMDAttach(lnet_handle_me_t meh, lnet_md_t umd,
+ {
+ 	LIST_HEAD(matches);
+ 	LIST_HEAD(drops);
+-	struct lnet_me		*me;
+-	struct lnet_libmd	*md;
+-	int			cpt;
+-	int			rc;
++	struct lnet_me *me;
++	struct lnet_libmd *md;
++	int cpt;
++	int rc;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -346,9 +346,9 @@ EXPORT_SYMBOL(LNetMDAttach);
+ int
+ LNetMDBind(lnet_md_t umd, lnet_unlink_t unlink, lnet_handle_md_t *handle)
+ {
+-	lnet_libmd_t	*md;
+-	int		cpt;
+-	int		rc;
++	lnet_libmd_t *md;
++	int cpt;
++	int rc;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -421,9 +421,9 @@ EXPORT_SYMBOL(LNetMDBind);
+ int
+ LNetMDUnlink(lnet_handle_md_t mdh)
+ {
+-	lnet_event_t	ev;
+-	lnet_libmd_t	*md;
+-	int		cpt;
++	lnet_event_t ev;
++	lnet_libmd_t *md;
++	int cpt;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-me.c b/drivers/staging/lustre/lnet/lnet/lib-me.c
+index a3f9292..09e9008 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-me.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-me.c
+@@ -80,8 +80,8 @@ LNetMEAttach(unsigned int portal,
+ 	     lnet_handle_me_t *handle)
+ {
+ 	struct lnet_match_table *mtable;
+-	struct lnet_me		*me;
+-	struct list_head		*head;
++	struct lnet_me *me;
++	struct list_head *head;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -151,10 +151,10 @@ LNetMEInsert(lnet_handle_me_t current_meh,
+ 	     lnet_unlink_t unlink, lnet_ins_pos_t pos,
+ 	     lnet_handle_me_t *handle)
+ {
+-	struct lnet_me		*current_me;
+-	struct lnet_me		*new_me;
+-	struct lnet_portal	*ptl;
+-	int			cpt;
++	struct lnet_me *current_me;
++	struct lnet_me *new_me;
++	struct lnet_portal *ptl;
++	int cpt;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -228,10 +228,10 @@ EXPORT_SYMBOL(LNetMEInsert);
+ int
+ LNetMEUnlink(lnet_handle_me_t meh)
+ {
+-	lnet_me_t	*me;
+-	lnet_libmd_t	*md;
+-	lnet_event_t	ev;
+-	int		cpt;
++	lnet_me_t *me;
++	lnet_libmd_t *md;
++	lnet_event_t ev;
++	int cpt;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-move.c b/drivers/staging/lustre/lnet/lnet/lib-move.c
+index c2fb70e..ba59fe7 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-move.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-move.c
+@@ -49,10 +49,10 @@ MODULE_PARM_DESC(local_nid_dist_zero, "Reserved");
+ int
+ lnet_fail_nid(lnet_nid_t nid, unsigned int threshold)
+ {
+-	lnet_test_peer_t  *tp;
+-	struct list_head	*el;
+-	struct list_head	*next;
+-	struct list_head	 cull;
++	lnet_test_peer_t *tp;
++	struct list_head *el;
++	struct list_head *next;
++	struct list_head cull;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 
+@@ -103,10 +103,10 @@ static int
+ fail_peer(lnet_nid_t nid, int outgoing)
+ {
+ 	lnet_test_peer_t *tp;
+-	struct list_head       *el;
+-	struct list_head       *next;
+-	struct list_head	cull;
+-	int	       fail = 0;
++	struct list_head *el;
++	struct list_head *next;
++	struct list_head cull;
++	int fail = 0;
+ 
+ 	INIT_LIST_HEAD(&cull);
+ 
+@@ -175,7 +175,7 @@ lnet_copy_iov2iov(unsigned int ndiov, struct kvec *diov, unsigned int doffset,
+ 		   unsigned int nob)
+ {
+ 	/* NB diov, siov are READ-ONLY */
+-	unsigned int  this_nob;
++	unsigned int this_nob;
+ 
+ 	if (nob = 0)
+ 		return;
+@@ -236,8 +236,8 @@ lnet_extract_iov(int dst_niov, struct kvec *dst,
+ 	/* Initialise 'dst' to the subset of 'src' starting at 'offset',
+ 	 * for exactly 'len' bytes, and return the number of entries.
+ 	 * NB not destructive to 'src' */
+-	unsigned int    frag_len;
+-	unsigned int    niov;
++	unsigned int frag_len;
++	unsigned int niov;
+ 
+ 	if (len = 0)			   /* no data => */
+ 		return 0;		     /* no frags */
+@@ -279,7 +279,7 @@ EXPORT_SYMBOL(lnet_extract_iov);
+ unsigned int
+ lnet_kiov_nob(unsigned int niov, lnet_kiov_t *kiov)
+ {
+-	unsigned int  nob = 0;
++	unsigned int nob = 0;
+ 
+ 	while (niov-- > 0)
+ 		nob += (kiov++)->kiov_len;
+@@ -294,9 +294,9 @@ lnet_copy_kiov2kiov(unsigned int ndiov, lnet_kiov_t *diov, unsigned int doffset,
+ 		    unsigned int nob)
+ {
+ 	/* NB diov, siov are READ-ONLY */
+-	unsigned int    this_nob;
+-	char	   *daddr = NULL;
+-	char	   *saddr = NULL;
++	unsigned int this_nob;
++	char *daddr = NULL;
++	char *saddr = NULL;
+ 
+ 	if (nob = 0)
+ 		return;
+@@ -376,8 +376,8 @@ lnet_copy_kiov2iov(unsigned int niov, struct kvec *iov, unsigned int iovoffset,
+ 		   unsigned int kiovoffset, unsigned int nob)
+ {
+ 	/* NB iov, kiov are READ-ONLY */
+-	unsigned int    this_nob;
+-	char	   *addr = NULL;
++	unsigned int this_nob;
++	char *addr = NULL;
+ 
+ 	if (nob = 0)
+ 		return;
+@@ -447,8 +447,8 @@ lnet_copy_iov2kiov(unsigned int nkiov, lnet_kiov_t *kiov,
+ 		   unsigned int nob)
+ {
+ 	/* NB kiov, iov are READ-ONLY */
+-	unsigned int    this_nob;
+-	char	   *addr = NULL;
++	unsigned int this_nob;
++	char *addr = NULL;
+ 
+ 	if (nob = 0)
+ 		return;
+@@ -518,8 +518,8 @@ lnet_extract_kiov(int dst_niov, lnet_kiov_t *dst,
+ 	/* Initialise 'dst' to the subset of 'src' starting at 'offset',
+ 	 * for exactly 'len' bytes, and return the number of entries.
+ 	 * NB not destructive to 'src' */
+-	unsigned int    frag_len;
+-	unsigned int    niov;
++	unsigned int frag_len;
++	unsigned int niov;
+ 
+ 	if (len = 0)			   /* no data => */
+ 		return 0;		     /* no frags */
+@@ -565,10 +565,10 @@ static void
+ lnet_ni_recv(lnet_ni_t *ni, void *private, lnet_msg_t *msg, int delayed,
+ 	     unsigned int offset, unsigned int mlen, unsigned int rlen)
+ {
+-	unsigned int  niov = 0;
++	unsigned int niov = 0;
+ 	struct kvec *iov = NULL;
+-	lnet_kiov_t  *kiov = NULL;
+-	int	   rc;
++	lnet_kiov_t *kiov = NULL;
++	int rc;
+ 
+ 	LASSERT(!in_interrupt());
+ 	LASSERT(mlen = 0 || msg != NULL);
+@@ -642,8 +642,8 @@ lnet_prep_send(lnet_msg_t *msg, int type, lnet_process_id_t target,
+ static void
+ lnet_ni_send(lnet_ni_t *ni, lnet_msg_t *msg)
+ {
+-	void   *priv = msg->msg_private;
+-	int     rc;
++	void *priv = msg->msg_private;
++	int rc;
+ 
+ 	LASSERT(!in_interrupt());
+ 	LASSERT(LNET_NETTYP(LNET_NIDNET(ni->ni_nid)) = LOLND ||
+@@ -657,7 +657,7 @@ lnet_ni_send(lnet_ni_t *ni, lnet_msg_t *msg)
+ static int
+ lnet_ni_eager_recv(lnet_ni_t *ni, lnet_msg_t *msg)
+ {
+-	int	rc;
++	int rc;
+ 
+ 	LASSERT(!msg->msg_sending);
+ 	LASSERT(msg->msg_receiving);
+@@ -700,7 +700,7 @@ lnet_ni_query_locked(lnet_ni_t *ni, lnet_peer_t *lp)
+ static inline int
+ lnet_peer_is_alive(lnet_peer_t *lp, unsigned long now)
+ {
+-	int	alive;
++	int alive;
+ 	unsigned long deadline;
+ 
+ 	LASSERT(lnet_peer_aliveness_enabled(lp));
+@@ -785,10 +785,10 @@ lnet_peer_alive_locked(lnet_peer_t *lp)
+ static int
+ lnet_post_send_locked(lnet_msg_t *msg, int do_send)
+ {
+-	lnet_peer_t		*lp = msg->msg_txpeer;
+-	lnet_ni_t		*ni = lp->lp_ni;
+-	int			cpt = msg->msg_tx_cpt;
+-	struct lnet_tx_queue	*tq = ni->ni_tx_queues[cpt];
++	lnet_peer_t *lp = msg->msg_txpeer;
++	lnet_ni_t *ni = lp->lp_ni;
++	int cpt = msg->msg_tx_cpt;
++	struct lnet_tx_queue *tq = ni->ni_tx_queues[cpt];
+ 
+ 	/* non-lnet_send() callers have checked before */
+ 	LASSERT(!do_send || msg->msg_tx_delayed);
+@@ -871,8 +871,8 @@ lnet_post_send_locked(lnet_msg_t *msg, int do_send)
+ static lnet_rtrbufpool_t *
+ lnet_msg2bufpool(lnet_msg_t *msg)
+ {
+-	lnet_rtrbufpool_t	*rbp;
+-	int			cpt;
++	lnet_rtrbufpool_t *rbp;
++	int cpt;
+ 
+ 	LASSERT(msg->msg_rx_committed);
+ 
+@@ -894,9 +894,9 @@ lnet_post_routed_recv_locked(lnet_msg_t *msg, int do_recv)
+ 	/* lnet_parse is going to lnet_net_unlock immediately after this, so it
+ 	 * sets do_recv FALSE and I don't do the unlock/send/lock bit.  I
+ 	 * return EAGAIN if msg blocked and 0 if received or OK to receive */
+-	lnet_peer_t	 *lp = msg->msg_rxpeer;
+-	lnet_rtrbufpool_t   *rbp;
+-	lnet_rtrbuf_t       *rb;
++	lnet_peer_t *lp = msg->msg_rxpeer;
++	lnet_rtrbufpool_t *rbp;
++	lnet_rtrbuf_t *rb;
+ 
+ 	LASSERT(msg->msg_iov = NULL);
+ 	LASSERT(msg->msg_kiov = NULL);
+@@ -967,11 +967,11 @@ lnet_post_routed_recv_locked(lnet_msg_t *msg, int do_recv)
+ void
+ lnet_return_tx_credits_locked(lnet_msg_t *msg)
+ {
+-	lnet_peer_t	*txpeer = msg->msg_txpeer;
+-	lnet_msg_t	*msg2;
++	lnet_peer_t *txpeer = msg->msg_txpeer;
++	lnet_msg_t *msg2;
+ 
+ 	if (msg->msg_txcredit) {
+-		struct lnet_ni	     *ni = txpeer->lp_ni;
++		struct lnet_ni *ni = txpeer->lp_ni;
+ 		struct lnet_tx_queue *tq = ni->ni_tx_queues[msg->msg_tx_cpt];
+ 
+ 		/* give back NI txcredits */
+@@ -1025,12 +1025,12 @@ lnet_return_tx_credits_locked(lnet_msg_t *msg)
+ void
+ lnet_return_rx_credits_locked(lnet_msg_t *msg)
+ {
+-	lnet_peer_t	*rxpeer = msg->msg_rxpeer;
+-	lnet_msg_t	*msg2;
++	lnet_peer_t *rxpeer = msg->msg_rxpeer;
++	lnet_msg_t *msg2;
+ 
+ 	if (msg->msg_rtrcredit) {
+ 		/* give back global router credits */
+-		lnet_rtrbuf_t     *rb;
++		lnet_rtrbuf_t *rb;
+ 		lnet_rtrbufpool_t *rbp;
+ 
+ 		/* NB If a msg ever blocks for a buffer in rbp_msgs, it stays
+@@ -1122,13 +1122,13 @@ lnet_compare_routes(lnet_route_t *r1, lnet_route_t *r2)
+ static lnet_peer_t *
+ lnet_find_route_locked(lnet_ni_t *ni, lnet_nid_t target, lnet_nid_t rtr_nid)
+ {
+-	lnet_remotenet_t	*rnet;
+-	lnet_route_t		*rtr;
+-	lnet_route_t		*rtr_best;
+-	lnet_route_t		*rtr_last;
+-	struct lnet_peer	*lp_best;
+-	struct lnet_peer	*lp;
+-	int			rc;
++	lnet_remotenet_t *rnet;
++	lnet_route_t *rtr;
++	lnet_route_t *rtr_best;
++	lnet_route_t *rtr_last;
++	struct lnet_peer *lp_best;
++	struct lnet_peer *lp;
++	int rc;
+ 
+ 	/* If @rtr_nid is not LNET_NID_ANY, return the gateway with
+ 	 * rtr_nid nid, otherwise find the best gateway I can use */
+@@ -1182,13 +1182,13 @@ lnet_find_route_locked(lnet_ni_t *ni, lnet_nid_t target, lnet_nid_t rtr_nid)
+ int
+ lnet_send(lnet_nid_t src_nid, lnet_msg_t *msg, lnet_nid_t rtr_nid)
+ {
+-	lnet_nid_t		dst_nid = msg->msg_target.nid;
+-	struct lnet_ni		*src_ni;
+-	struct lnet_ni		*local_ni;
+-	struct lnet_peer	*lp;
+-	int			cpt;
+-	int			cpt2;
+-	int			rc;
++	lnet_nid_t dst_nid = msg->msg_target.nid;
++	struct lnet_ni *src_ni;
++	struct lnet_ni *local_ni;
++	struct lnet_peer *lp;
++	int cpt;
++	int cpt2;
++	int rc;
+ 
+ 	/* NB: rtr_nid is set to LNET_NID_ANY for all current use-cases,
+ 	 * but we might want to use pre-determined router for ACK/REPLY
+@@ -1364,7 +1364,7 @@ lnet_drop_message(lnet_ni_t *ni, int cpt, void *private, unsigned int nob)
+ static void
+ lnet_recv_put(lnet_ni_t *ni, lnet_msg_t *msg)
+ {
+-	lnet_hdr_t	*hdr = &msg->msg_hdr;
++	lnet_hdr_t *hdr = &msg->msg_hdr;
+ 
+ 	if (msg->msg_wanted != 0)
+ 		lnet_setpayloadbuffer(msg);
+@@ -1383,9 +1383,9 @@ lnet_recv_put(lnet_ni_t *ni, lnet_msg_t *msg)
+ static int
+ lnet_parse_put(lnet_ni_t *ni, lnet_msg_t *msg)
+ {
+-	lnet_hdr_t		*hdr = &msg->msg_hdr;
+-	struct lnet_match_info	info;
+-	int			rc;
++	lnet_hdr_t *hdr = &msg->msg_hdr;
++	struct lnet_match_info info;
++	int rc;
+ 
+ 	/* Convert put fields to host byte order */
+ 	hdr->msg.put.match_bits	= le64_to_cpu(hdr->msg.put.match_bits);
+@@ -1433,24 +1433,24 @@ lnet_parse_put(lnet_ni_t *ni, lnet_msg_t *msg)
+ static int
+ lnet_parse_get(lnet_ni_t *ni, lnet_msg_t *msg, int rdma_get)
+ {
+-	struct lnet_match_info	info;
+-	lnet_hdr_t		*hdr = &msg->msg_hdr;
+-	lnet_handle_wire_t	reply_wmd;
+-	int			rc;
++	struct lnet_match_info info;
++	lnet_hdr_t *hdr = &msg->msg_hdr;
++	lnet_handle_wire_t reply_wmd;
++	int rc;
+ 
+ 	/* Convert get fields to host byte order */
+-	hdr->msg.get.match_bits	  = le64_to_cpu(hdr->msg.get.match_bits);
+-	hdr->msg.get.ptl_index	  = le32_to_cpu(hdr->msg.get.ptl_index);
+-	hdr->msg.get.sink_length  = le32_to_cpu(hdr->msg.get.sink_length);
+-	hdr->msg.get.src_offset	  = le32_to_cpu(hdr->msg.get.src_offset);
+-
+-	info.mi_id.nid	= hdr->src_nid;
+-	info.mi_id.pid	= hdr->src_pid;
+-	info.mi_opc	= LNET_MD_OP_GET;
+-	info.mi_portal	= hdr->msg.get.ptl_index;
+-	info.mi_rlength	= hdr->msg.get.sink_length;
+-	info.mi_roffset	= hdr->msg.get.src_offset;
+-	info.mi_mbits	= hdr->msg.get.match_bits;
++	hdr->msg.get.match_bits  = le64_to_cpu(hdr->msg.get.match_bits);
++	hdr->msg.get.ptl_index   = le32_to_cpu(hdr->msg.get.ptl_index);
++	hdr->msg.get.sink_length = le32_to_cpu(hdr->msg.get.sink_length);
++	hdr->msg.get.src_offset  = le32_to_cpu(hdr->msg.get.src_offset);
++
++	info.mi_id.nid  = hdr->src_nid;
++	info.mi_id.pid  = hdr->src_pid;
++	info.mi_opc     = LNET_MD_OP_GET;
++	info.mi_portal  = hdr->msg.get.ptl_index;
++	info.mi_rlength = hdr->msg.get.sink_length;
++	info.mi_roffset = hdr->msg.get.src_offset;
++	info.mi_mbits   = hdr->msg.get.match_bits;
+ 
+ 	rc = lnet_ptl_match_md(&info, msg);
+ 	if (rc = LNET_MATCHMD_DROP) {
+@@ -1497,13 +1497,13 @@ lnet_parse_get(lnet_ni_t *ni, lnet_msg_t *msg, int rdma_get)
+ static int
+ lnet_parse_reply(lnet_ni_t *ni, lnet_msg_t *msg)
+ {
+-	void	     *private = msg->msg_private;
+-	lnet_hdr_t       *hdr = &msg->msg_hdr;
++	void *private = msg->msg_private;
++	lnet_hdr_t *hdr = &msg->msg_hdr;
+ 	lnet_process_id_t src = {0};
+-	lnet_libmd_t     *md;
+-	int	       rlength;
+-	int	       mlength;
+-	int			cpt;
++	lnet_libmd_t *md;
++	int rlength;
++	int mlength;
++	int cpt;
+ 
+ 	cpt = lnet_cpt_of_cookie(hdr->msg.reply.dst_wmd.wh_object_cookie);
+ 	lnet_res_lock(cpt);
+@@ -1562,10 +1562,10 @@ lnet_parse_reply(lnet_ni_t *ni, lnet_msg_t *msg)
+ static int
+ lnet_parse_ack(lnet_ni_t *ni, lnet_msg_t *msg)
+ {
+-	lnet_hdr_t       *hdr = &msg->msg_hdr;
++	lnet_hdr_t *hdr = &msg->msg_hdr;
+ 	lnet_process_id_t src = {0};
+-	lnet_libmd_t     *md;
+-	int			cpt;
++	lnet_libmd_t *md;
++	int cpt;
+ 
+ 	src.nid = hdr->src_nid;
+ 	src.pid = hdr->src_pid;
+@@ -1612,7 +1612,7 @@ lnet_parse_ack(lnet_ni_t *ni, lnet_msg_t *msg)
+ static int
+ lnet_parse_forward_locked(lnet_ni_t *ni, lnet_msg_t *msg)
+ {
+-	int	rc = 0;
++	int rc = 0;
+ 
+ 	if (msg->msg_rxpeer->lp_rtrcredits <= 0 ||
+ 	    lnet_msg2bufpool(msg)->rbp_credits <= 0) {
+@@ -1713,15 +1713,15 @@ int
+ lnet_parse(lnet_ni_t *ni, lnet_hdr_t *hdr, lnet_nid_t from_nid,
+ 	   void *private, int rdma_req)
+ {
+-	int		rc = 0;
+-	int		cpt;
+-	int		for_me;
+-	struct lnet_msg	*msg;
+-	lnet_pid_t     dest_pid;
+-	lnet_nid_t     dest_nid;
+-	lnet_nid_t     src_nid;
+-	__u32	  payload_length;
+-	__u32	  type;
++	int rc = 0;
++	int cpt;
++	int for_me;
++	struct lnet_msg *msg;
++	lnet_pid_t dest_pid;
++	lnet_nid_t dest_nid;
++	lnet_nid_t src_nid;
++	__u32 payload_length;
++	__u32 type;
+ 
+ 	LASSERT(!in_interrupt());
+ 
+@@ -1945,8 +1945,8 @@ void
+ lnet_drop_delayed_msg_list(struct list_head *head, char *reason)
+ {
+ 	while (!list_empty(head)) {
+-		lnet_process_id_t	id = {0};
+-		lnet_msg_t		*msg;
++		lnet_process_id_t id = {0};
++		lnet_msg_t *msg;
+ 
+ 		msg = list_entry(head->next, lnet_msg_t, msg_list);
+ 		list_del(&msg->msg_list);
+@@ -1986,8 +1986,8 @@ void
+ lnet_recv_delayed_msg_list(struct list_head *head)
+ {
+ 	while (!list_empty(head)) {
+-		lnet_msg_t	  *msg;
+-		lnet_process_id_t  id;
++		lnet_msg_t *msg;
++		lnet_process_id_t id;
+ 
+ 		msg = list_entry(head->next, lnet_msg_t, msg_list);
+ 		list_del(&msg->msg_list);
+@@ -2063,10 +2063,10 @@ LNetPut(lnet_nid_t self, lnet_handle_md_t mdh, lnet_ack_req_t ack,
+ 	__u64 match_bits, unsigned int offset,
+ 	__u64 hdr_data)
+ {
+-	struct lnet_msg		*msg;
+-	struct lnet_libmd	*md;
+-	int			cpt;
+-	int			rc;
++	struct lnet_msg *msg;
++	struct lnet_libmd *md;
++	int cpt;
++	int rc;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -2153,10 +2153,10 @@ lnet_create_reply_msg(lnet_ni_t *ni, lnet_msg_t *getmsg)
+ 	 * CAVEAT EMPTOR: 'getmsg' is the original GET, which is freed when
+ 	 * lnet_finalize() is called on it, so the LND must call this first */
+ 
+-	struct lnet_msg		*msg = lnet_msg_alloc();
+-	struct lnet_libmd	*getmd = getmsg->msg_md;
+-	lnet_process_id_t	peer_id = getmsg->msg_target;
+-	int			cpt;
++	struct lnet_msg *msg = lnet_msg_alloc();
++	struct lnet_libmd *getmd = getmsg->msg_md;
++	lnet_process_id_t peer_id = getmsg->msg_target;
++	int cpt;
+ 
+ 	LASSERT(!getmsg->msg_target_is_router);
+ 	LASSERT(!getmsg->msg_routing);
+@@ -2263,10 +2263,10 @@ LNetGet(lnet_nid_t self, lnet_handle_md_t mdh,
+ 	lnet_process_id_t target, unsigned int portal,
+ 	__u64 match_bits, unsigned int offset)
+ {
+-	struct lnet_msg		*msg;
+-	struct lnet_libmd	*md;
+-	int			cpt;
+-	int			rc;
++	struct lnet_msg *msg;
++	struct lnet_libmd *md;
++	int cpt;
++	int rc;
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -2353,14 +2353,14 @@ EXPORT_SYMBOL(LNetGet);
+ int
+ LNetDist(lnet_nid_t dstnid, lnet_nid_t *srcnidp, __u32 *orderp)
+ {
+-	struct list_head		*e;
+-	struct lnet_ni		*ni;
+-	lnet_remotenet_t	*rnet;
+-	__u32			dstnet = LNET_NIDNET(dstnid);
+-	int			hops;
+-	int			cpt;
+-	__u32			order = 2;
+-	struct list_head		*rn_list;
++	struct list_head *e;
++	struct lnet_ni *ni;
++	lnet_remotenet_t *rnet;
++	__u32 dstnet = LNET_NIDNET(dstnid);
++	int hops;
++	int cpt;
++	__u32 order = 2;
++	struct list_head *rn_list;
+ 
+ 	/* if !local_nid_dist_zero, I don't return a distance of 0 ever
+ 	 * (when lustre sees a distance of 0, it substitutes 0@lo), so I
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-msg.c b/drivers/staging/lustre/lnet/lnet/lib-msg.c
+index a46ccbf..65d7595 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-msg.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-msg.c
+@@ -60,8 +60,8 @@ lnet_build_unlink_event(lnet_libmd_t *md, lnet_event_t *ev)
+ void
+ lnet_build_msg_event(lnet_msg_t *msg, lnet_event_kind_t ev_type)
+ {
+-	lnet_hdr_t	*hdr = &msg->msg_hdr;
+-	lnet_event_t	*ev  = &msg->msg_ev;
++	lnet_hdr_t *hdr = &msg->msg_hdr;
++	lnet_event_t *ev  = &msg->msg_ev;
+ 
+ 	LASSERT(!msg->msg_routing);
+ 
+@@ -73,7 +73,7 @@ lnet_build_msg_event(lnet_msg_t *msg, lnet_event_kind_t ev_type)
+ 		ev->target.pid    = le32_to_cpu(hdr->dest_pid);
+ 		ev->initiator.nid = LNET_NID_ANY;
+ 		ev->initiator.pid = the_lnet.ln_pid;
+-		ev->sender	  = LNET_NID_ANY;
++		ev->sender        = LNET_NID_ANY;
  
  	} else {
--		npg = (reqst->brw_len + PAGE_CACHE_SIZE - 1) >> PAGE_CACHE_SHIFT;
-+		npg = (reqst->brw_len + PAGE_CACHE_SIZE - 1) >>
-+		      PAGE_CACHE_SHIFT;
+ 		/* event for passive message */
+@@ -82,9 +82,9 @@ lnet_build_msg_event(lnet_msg_t *msg, lnet_event_kind_t ev_type)
+ 		ev->initiator.pid = hdr->src_pid;
+ 		ev->initiator.nid = hdr->src_nid;
+ 		ev->rlength       = hdr->payload_length;
+-		ev->sender	  = msg->msg_from;
+-		ev->mlength	  = msg->msg_wanted;
+-		ev->offset	  = msg->msg_offset;
++		ev->sender        = msg->msg_from;
++		ev->mlength       = msg->msg_wanted;
++		ev->offset        = msg->msg_offset;
  	}
  
- 	replymsg->msg_ses_feats = reqstmsg->msg_ses_feats;
-diff --git a/drivers/staging/lustre/lnet/selftest/conctl.c b/drivers/staging/lustre/lnet/selftest/conctl.c
-index 1a7870e..86cb031 100644
---- a/drivers/staging/lustre/lnet/selftest/conctl.c
-+++ b/drivers/staging/lustre/lnet/selftest/conctl.c
-@@ -752,7 +752,8 @@ static int lst_test_add_ioctl(lstio_test_args_t *args)
- 	/* have parameter, check if parameter length is valid */
- 	if (args->lstio_tes_param != NULL &&
- 	    (args->lstio_tes_param_len <= 0 ||
--	     args->lstio_tes_param_len > PAGE_CACHE_SIZE - sizeof(lstcon_test_t)))
-+	     args->lstio_tes_param_len > PAGE_CACHE_SIZE -
-+	     sizeof(lstcon_test_t)))
+ 	switch (ev_type) {
+@@ -137,7 +137,7 @@ void
+ lnet_msg_commit(lnet_msg_t *msg, int cpt)
+ {
+ 	struct lnet_msg_container *container = the_lnet.ln_msg_containers[cpt];
+-	lnet_counters_t		  *counters  = the_lnet.ln_counters[cpt];
++	lnet_counters_t *counters  = the_lnet.ln_counters[cpt];
+ 
+ 	/* routed message can be committed for both receiving and sending */
+ 	LASSERT(!msg->msg_tx_committed);
+@@ -170,7 +170,7 @@ static void
+ lnet_msg_decommit_tx(lnet_msg_t *msg, int status)
+ {
+ 	lnet_counters_t	*counters;
+-	lnet_event_t	*ev = &msg->msg_ev;
++	lnet_event_t *ev = &msg->msg_ev;
+ 
+ 	LASSERT(msg->msg_tx_committed);
+ 	if (status != 0)
+@@ -219,8 +219,8 @@ lnet_msg_decommit_tx(lnet_msg_t *msg, int status)
+ static void
+ lnet_msg_decommit_rx(lnet_msg_t *msg, int status)
+ {
+-	lnet_counters_t	*counters;
+-	lnet_event_t	*ev = &msg->msg_ev;
++	lnet_counters_t *counters;
++	lnet_event_t *ev = &msg->msg_ev;
+ 
+ 	LASSERT(!msg->msg_tx_committed); /* decommitted or never committed */
+ 	LASSERT(msg->msg_rx_committed);
+@@ -273,7 +273,7 @@ lnet_msg_decommit_rx(lnet_msg_t *msg, int status)
+ void
+ lnet_msg_decommit(lnet_msg_t *msg, int cpt, int status)
+ {
+-	int	cpt2 = cpt;
++	int cpt2 = cpt;
+ 
+ 	LASSERT(msg->msg_tx_committed || msg->msg_rx_committed);
+ 	LASSERT(msg->msg_onactivelist);
+@@ -335,8 +335,8 @@ lnet_msg_attach_md(lnet_msg_t *msg, lnet_libmd_t *md,
+ void
+ lnet_msg_detach_md(lnet_msg_t *msg, int status)
+ {
+-	lnet_libmd_t	*md = msg->msg_md;
+-	int		unlink;
++	lnet_libmd_t *md = msg->msg_md;
++	int unlink;
+ 
+ 	/* Now it's safe to drop my caller's ref */
+ 	md->md_refcount--;
+@@ -359,8 +359,8 @@ static int
+ lnet_complete_msg_locked(lnet_msg_t *msg, int cpt)
+ {
+ 	lnet_handle_wire_t ack_wmd;
+-	int		rc;
+-	int		status = msg->msg_ev.status;
++	int rc;
++	int status = msg->msg_ev.status;
+ 
+ 	LASSERT(msg->msg_onactivelist);
+ 
+@@ -434,11 +434,11 @@ lnet_complete_msg_locked(lnet_msg_t *msg, int cpt)
+ void
+ lnet_finalize(lnet_ni_t *ni, lnet_msg_t *msg, int status)
+ {
+-	struct lnet_msg_container	*container;
+-	int				my_slot;
+-	int				cpt;
+-	int				rc;
+-	int				i;
++	struct lnet_msg_container *container;
++	int my_slot;
++	int cpt;
++	int rc;
++	int i;
+ 
+ 	LASSERT(!in_interrupt());
+ 
+@@ -534,7 +534,7 @@ EXPORT_SYMBOL(lnet_finalize);
+ void
+ lnet_msg_container_cleanup(struct lnet_msg_container *container)
+ {
+-	int     count = 0;
++	int count = 0;
+ 
+ 	if (container->msc_init = 0)
+ 		return;
+@@ -568,7 +568,7 @@ lnet_msg_container_cleanup(struct lnet_msg_container *container)
+ int
+ lnet_msg_container_setup(struct lnet_msg_container *container, int cpt)
+ {
+-	int	rc;
++	int rc;
+ 
+ 	container->msc_init = 1;
+ 
+@@ -608,7 +608,7 @@ void
+ lnet_msg_containers_destroy(void)
+ {
+ 	struct lnet_msg_container *container;
+-	int     i;
++	int i;
+ 
+ 	if (the_lnet.ln_msg_containers = NULL)
+ 		return;
+@@ -624,8 +624,8 @@ int
+ lnet_msg_containers_create(void)
+ {
+ 	struct lnet_msg_container *container;
+-	int	rc;
+-	int	i;
++	int rc;
++	int i;
+ 
+ 	the_lnet.ln_msg_containers = cfs_percpt_alloc(lnet_cpt_table(),
+ 						      sizeof(*container));
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-ptl.c b/drivers/staging/lustre/lnet/lnet/lib-ptl.c
+index 3ba0da9..84707c5 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-ptl.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-ptl.c
+@@ -39,7 +39,7 @@
+ #include "../../include/linux/lnet/lib-lnet.h"
+ 
+ /* NB: add /proc interfaces in upcoming patches */
+-int	portal_rotor	= LNET_PTL_ROTOR_HASH_RT;
++int portal_rotor = LNET_PTL_ROTOR_HASH_RT;
+ module_param(portal_rotor, int, 0644);
+ MODULE_PARM_DESC(portal_rotor, "redirect PUTs to different cpu-partitions");
+ 
+@@ -47,8 +47,8 @@ static int
+ lnet_ptl_match_type(unsigned int index, lnet_process_id_t match_id,
+ 		    __u64 mbits, __u64 ignore_bits)
+ {
+-	struct lnet_portal	*ptl = the_lnet.ln_portals[index];
+-	int			unique;
++	struct lnet_portal *ptl = the_lnet.ln_portals[index];
++	int unique;
+ 
+ 	unique = ignore_bits = 0 &&
+ 		 match_id.nid != LNET_NID_ANY &&
+@@ -89,7 +89,7 @@ static void
+ lnet_ptl_enable_mt(struct lnet_portal *ptl, int cpt)
+ {
+ 	struct lnet_match_table	*mtable = ptl->ptl_mtables[cpt];
+-	int			i;
++	int i;
+ 
+ 	/* with hold of both lnet_res_lock(cpt) and lnet_ptl_lock */
+ 	LASSERT(lnet_ptl_is_wildcard(ptl));
+@@ -114,7 +114,7 @@ static void
+ lnet_ptl_disable_mt(struct lnet_portal *ptl, int cpt)
+ {
+ 	struct lnet_match_table	*mtable = ptl->ptl_mtables[cpt];
+-	int			i;
++	int i;
+ 
+ 	/* with hold of both lnet_res_lock(cpt) and lnet_ptl_lock */
+ 	LASSERT(lnet_ptl_is_wildcard(ptl));
+@@ -141,9 +141,9 @@ lnet_try_match_md(lnet_libmd_t *md,
+ {
+ 	/* ALWAYS called holding the lnet_res_lock, and can't lnet_res_unlock;
+ 	 * lnet_match_blocked_msg() relies on this to avoid races */
+-	unsigned int	offset;
+-	unsigned int	mlength;
+-	lnet_me_t	*me = md->md_me;
++	unsigned int offset;
++	unsigned int mlength;
++	lnet_me_t *me = md->md_me;
+ 
+ 	/* MD exhausted */
+ 	if (lnet_md_exhausted(md))
+@@ -227,7 +227,7 @@ struct lnet_match_table *
+ lnet_mt_of_attach(unsigned int index, lnet_process_id_t id,
+ 		  __u64 mbits, __u64 ignore_bits, lnet_ins_pos_t pos)
+ {
+-	struct lnet_portal	*ptl;
++	struct lnet_portal *ptl;
+ 	struct lnet_match_table	*mtable;
+ 
+ 	/* NB: called w/o lock */
+@@ -261,11 +261,11 @@ static struct lnet_match_table *
+ lnet_mt_of_match(struct lnet_match_info *info, struct lnet_msg *msg)
+ {
+ 	struct lnet_match_table	*mtable;
+-	struct lnet_portal	*ptl;
+-	unsigned int		nmaps;
+-	unsigned int		rotor;
+-	unsigned int		cpt;
+-	bool			routed;
++	struct lnet_portal *ptl;
++	unsigned int nmaps;
++	unsigned int rotor;
++	unsigned int cpt;
++	bool routed;
+ 
+ 	/* NB: called w/o lock */
+ 	LASSERT(info->mi_portal < the_lnet.ln_nportals);
+@@ -312,8 +312,8 @@ lnet_mt_of_match(struct lnet_match_info *info, struct lnet_msg *msg)
+ static int
+ lnet_mt_test_exhausted(struct lnet_match_table *mtable, int pos)
+ {
+-	__u64	*bmap;
+-	int	i;
++	__u64 *bmap;
++	int i;
+ 
+ 	if (!lnet_ptl_is_wildcard(the_lnet.ln_portals[mtable->mt_portal]))
+ 		return 0;
+@@ -337,7 +337,7 @@ lnet_mt_test_exhausted(struct lnet_match_table *mtable, int pos)
+ static void
+ lnet_mt_set_exhausted(struct lnet_match_table *mtable, int pos, int exhausted)
+ {
+-	__u64	*bmap;
++	__u64 *bmap;
+ 
+ 	LASSERT(lnet_ptl_is_wildcard(the_lnet.ln_portals[mtable->mt_portal]));
+ 	LASSERT(pos <= LNET_MT_HASH_IGNORE);
+@@ -373,11 +373,11 @@ int
+ lnet_mt_match_md(struct lnet_match_table *mtable,
+ 		 struct lnet_match_info *info, struct lnet_msg *msg)
+ {
+-	struct list_head		*head;
+-	lnet_me_t		*me;
+-	lnet_me_t		*tmp;
+-	int			exhausted = 0;
+-	int			rc;
++	struct list_head *head;
++	lnet_me_t *me;
++	lnet_me_t *tmp;
++	int exhausted = 0;
++	int rc;
+ 
+ 	/* any ME with ignore bits? */
+ 	if (!list_empty(&mtable->mt_mhash[LNET_MT_HASH_IGNORE]))
+@@ -428,7 +428,7 @@ lnet_mt_match_md(struct lnet_match_table *mtable,
+ static int
+ lnet_ptl_match_early(struct lnet_portal *ptl, struct lnet_msg *msg)
+ {
+-	int	rc;
++	int rc;
+ 
+ 	/* message arrived before any buffer posting on this portal,
+ 	 * simply delay or drop this message */
+@@ -461,9 +461,9 @@ static int
+ lnet_ptl_match_delay(struct lnet_portal *ptl,
+ 		     struct lnet_match_info *info, struct lnet_msg *msg)
+ {
+-	int	first = ptl->ptl_mt_maps[0]; /* read w/o lock */
+-	int	rc = 0;
+-	int	i;
++	int first = ptl->ptl_mt_maps[0]; /* read w/o lock */
++	int rc = 0;
++	int i;
+ 
+ 	/* steal buffer from other CPTs, and delay it if nothing to steal,
+ 	 * this function is more expensive than a regular match, but we
+@@ -472,7 +472,7 @@ lnet_ptl_match_delay(struct lnet_portal *ptl,
+ 
+ 	for (i = 0; i < LNET_CPT_NUMBER; i++) {
+ 		struct lnet_match_table *mtable;
+-		int			cpt;
++		int cpt;
+ 
+ 		cpt = (first + i) % LNET_CPT_NUMBER;
+ 		mtable = ptl->ptl_mtables[cpt];
+@@ -536,8 +536,8 @@ int
+ lnet_ptl_match_md(struct lnet_match_info *info, struct lnet_msg *msg)
+ {
+ 	struct lnet_match_table	*mtable;
+-	struct lnet_portal	*ptl;
+-	int			rc;
++	struct lnet_portal *ptl;
++	int rc;
+ 
+ 	CDEBUG(D_NET, "Request from %s of length %d into portal %d MB=%#llx\n",
+ 	       libcfs_id2str(info->mi_id), info->mi_rlength, info->mi_portal,
+@@ -622,13 +622,13 @@ void
+ lnet_ptl_attach_md(lnet_me_t *me, lnet_libmd_t *md,
+ 		   struct list_head *matches, struct list_head *drops)
+ {
+-	struct lnet_portal	*ptl = the_lnet.ln_portals[me->me_portal];
++	struct lnet_portal *ptl = the_lnet.ln_portals[me->me_portal];
+ 	struct lnet_match_table	*mtable;
+-	struct list_head		*head;
+-	lnet_msg_t		*tmp;
+-	lnet_msg_t		*msg;
+-	int			exhausted = 0;
+-	int			cpt;
++	struct list_head *head;
++	lnet_msg_t *tmp;
++	lnet_msg_t *msg;
++	int exhausted = 0;
++	int cpt;
+ 
+ 	LASSERT(md->md_refcount = 0); /* a brand new MD */
+ 
+@@ -647,20 +647,20 @@ lnet_ptl_attach_md(lnet_me_t *me, lnet_libmd_t *md,
+ 	head = &ptl->ptl_msg_stealing;
+  again:
+ 	list_for_each_entry_safe(msg, tmp, head, msg_list) {
+-		struct lnet_match_info	info;
+-		lnet_hdr_t		*hdr;
+-		int			rc;
++		struct lnet_match_info info;
++		lnet_hdr_t *hdr;
++		int rc;
+ 
+ 		LASSERT(msg->msg_rx_delayed || head = &ptl->ptl_msg_stealing);
+ 
+-		hdr   = &msg->msg_hdr;
+-		info.mi_id.nid	= hdr->src_nid;
+-		info.mi_id.pid	= hdr->src_pid;
+-		info.mi_opc	= LNET_MD_OP_PUT;
+-		info.mi_portal	= hdr->msg.put.ptl_index;
+-		info.mi_rlength	= hdr->payload_length;
+-		info.mi_roffset	= hdr->msg.put.offset;
+-		info.mi_mbits	= hdr->msg.put.match_bits;
++		hdr = &msg->msg_hdr;
++		info.mi_id.nid  = hdr->src_nid;
++		info.mi_id.pid  = hdr->src_pid;
++		info.mi_opc     = LNET_MD_OP_PUT;
++		info.mi_portal  = hdr->msg.put.ptl_index;
++		info.mi_rlength = hdr->payload_length;
++		info.mi_roffset = hdr->msg.put.offset;
++		info.mi_mbits   = hdr->msg.put.match_bits;
+ 
+ 		rc = lnet_try_match_md(md, &info, msg);
+ 
+@@ -715,7 +715,7 @@ static void
+ lnet_ptl_cleanup(struct lnet_portal *ptl)
+ {
+ 	struct lnet_match_table	*mtable;
+-	int			i;
++	int i;
+ 
+ 	if (ptl->ptl_mtables = NULL) /* uninitialized portal */
+ 		return;
+@@ -723,9 +723,9 @@ lnet_ptl_cleanup(struct lnet_portal *ptl)
+ 	LASSERT(list_empty(&ptl->ptl_msg_delayed));
+ 	LASSERT(list_empty(&ptl->ptl_msg_stealing));
+ 	cfs_percpt_for_each(mtable, i, ptl->ptl_mtables) {
+-		struct list_head	*mhash;
+-		lnet_me_t	*me;
+-		int		j;
++		struct list_head *mhash;
++		lnet_me_t *me;
++		int j;
+ 
+ 		if (mtable->mt_mhash = NULL) /* uninitialized match-table */
+ 			continue;
+@@ -753,9 +753,9 @@ static int
+ lnet_ptl_setup(struct lnet_portal *ptl, int index)
+ {
+ 	struct lnet_match_table	*mtable;
+-	struct list_head		*mhash;
+-	int			i;
+-	int			j;
++	struct list_head *mhash;
++	int i;
++	int j;
+ 
+ 	ptl->ptl_mtables = cfs_percpt_alloc(lnet_cpt_table(),
+ 					    sizeof(struct lnet_match_table));
+@@ -798,7 +798,7 @@ lnet_ptl_setup(struct lnet_portal *ptl, int index)
+ void
+ lnet_portals_destroy(void)
+ {
+-	int	i;
++	int i;
+ 
+ 	if (the_lnet.ln_portals = NULL)
+ 		return;
+@@ -813,8 +813,8 @@ lnet_portals_destroy(void)
+ int
+ lnet_portals_create(void)
+ {
+-	int	size;
+-	int	i;
++	int size;
++	int i;
+ 
+ 	size = offsetof(struct lnet_portal, ptl_mt_maps[LNET_CPT_NUMBER]);
+ 
+@@ -898,8 +898,8 @@ EXPORT_SYMBOL(LNetSetLazyPortal);
+ int
+ LNetClearLazyPortal(int portal)
+ {
+-	struct lnet_portal	*ptl;
+-	LIST_HEAD		(zombies);
++	struct lnet_portal *ptl;
++	LIST_HEAD(zombies);
+ 
+ 	if (portal < 0 || portal >= the_lnet.ln_nportals)
  		return -EINVAL;
- 
- 	LIBCFS_ALLOC(batch_name, args->lstio_tes_bat_nmlen + 1);
-@@ -925,5 +926,4 @@ out:
- 
- 	return rc;
- }
--
- EXPORT_SYMBOL(lstcon_ioctl_entry);
-diff --git a/drivers/staging/lustre/lnet/selftest/conrpc.c b/drivers/staging/lustre/lnet/selftest/conrpc.c
-index a1a4e08..c0ad353 100644
---- a/drivers/staging/lustre/lnet/selftest/conrpc.c
-+++ b/drivers/staging/lustre/lnet/selftest/conrpc.c
-@@ -455,14 +455,13 @@ lstcon_rpc_trans_stat(lstcon_rpc_trans_t *trans, lstcon_trans_stat_t *stat)
- 		      lstcon_session_feats_check(trans->tas_features);
- 	}
- 
--	CDEBUG(D_NET, "transaction %s : success %d, failure %d, total %d, RPC error(%d), Framework error(%d)\n",
-+	CDEBUG(D_NET,
-+	       "transaction %s : success %d, failure %d, total %d, RPC error(%d), Framework error(%d)\n",
- 	       lstcon_rpc_trans_name(trans->tas_opc),
- 	       lstcon_rpc_stat_success(stat, 0),
- 	       lstcon_rpc_stat_failure(stat, 0),
- 	       lstcon_rpc_stat_total(stat, 0),
- 	       stat->trs_rpc_errno, stat->trs_fwk_errno);
--
--	return;
- }
- 
- int
-@@ -564,10 +563,10 @@ lstcon_rpc_trans_destroy(lstcon_rpc_trans_t *trans)
- 			continue;
- 		}
- 
--		/* rpcs can be still not callbacked (even LNetMDUnlink is called)
--		 * because huge timeout for inaccessible network, don't make
--		 * user wait for them, just abandon them, they will be recycled
--		 * in callback */
-+		/* rpcs can be still not callbacked (even LNetMDUnlink is
-+		 * called) because huge timeout for inaccessible network,
-+		 * don't make user wait for them, just abandon them, they
-+		 * will be recycled in callback */
- 
- 		LASSERT(crpc->crp_status != 0);
- 
-@@ -591,8 +590,6 @@ lstcon_rpc_trans_destroy(lstcon_rpc_trans_t *trans)
- 	       lstcon_rpc_trans_name(trans->tas_opc), count);
- 
- 	LIBCFS_FREE(trans, sizeof(*trans));
--
--	return;
- }
- 
- int
-@@ -947,9 +944,10 @@ lstcon_sesnew_stat_reply(lstcon_rpc_trans_t *trans,
- 	}
- 
- 	if (reply->msg_ses_feats != trans->tas_features) {
--		CNETERR("Framework features %x from %s is different with features on this transaction: %x\n",
--			 reply->msg_ses_feats, libcfs_nid2str(nd->nd_id.nid),
--			 trans->tas_features);
-+		CNETERR(
-+			"Framework features %x from %s is different with features on this transaction: %x\n",
-+			reply->msg_ses_feats, libcfs_nid2str(nd->nd_id.nid),
-+			trans->tas_features);
- 		status = mksn_rep->mksn_status = EPROTO;
- 	}
- 
-@@ -1077,8 +1075,6 @@ lstcon_rpc_stat_reply(lstcon_rpc_trans_t *trans, srpc_msg_t *msg,
- 
- 	if (stat->trs_fwk_errno = 0)
- 		stat->trs_fwk_errno = rc;
--
--	return;
- }
- 
- int
-@@ -1111,8 +1107,9 @@ lstcon_rpc_trans_ndlist(struct list_head *ndlist,
- 			continue;
- 
- 		if (rc < 0) {
--			CDEBUG(D_NET, "Condition error while creating RPC for transaction %d: %d\n",
--					transop, rc);
-+			CDEBUG(D_NET,
-+			       "Condition error while creating RPC for transaction %d: %d\n",
-+			       transop, rc);
- 			break;
- 		}
- 
-@@ -1278,7 +1275,8 @@ lstcon_rpc_pinger(void *arg)
- 
- 	CDEBUG(D_NET, "Ping %d nodes in session\n", count);
- 
--	ptimer->stt_expires = (unsigned long)(get_seconds() + LST_PING_INTERVAL);
-+	ptimer->stt_expires = (unsigned long)(get_seconds() +
-+			      LST_PING_INTERVAL);
- 	stt_add_timer(ptimer);
- 
- 	mutex_unlock(&console_session.ses_mutex);
-@@ -1301,7 +1299,8 @@ lstcon_rpc_pinger_start(void)
- 	}
- 
- 	ptimer = &console_session.ses_ping_timer;
--	ptimer->stt_expires = (unsigned long)(get_seconds() + LST_PING_INTERVAL);
-+	ptimer->stt_expires = (unsigned long)(get_seconds() +
-+			      LST_PING_INTERVAL);
- 
- 	stt_add_timer(ptimer);
- 
-@@ -1349,7 +1348,8 @@ lstcon_rpc_cleanup_wait(void)
- 
- 		mutex_unlock(&console_session.ses_mutex);
- 
--		CWARN("Session is shutting down, waiting for termination of transactions\n");
-+		CWARN(
-+		      "Session is shutting down, waiting for termination of transactions\n");
- 		set_current_state(TASK_UNINTERRUPTIBLE);
- 		schedule_timeout(cfs_time_seconds(1));
- 
-@@ -1381,7 +1381,8 @@ lstcon_rpc_module_init(void)
+diff --git a/drivers/staging/lustre/lnet/lnet/lo.c b/drivers/staging/lustre/lnet/lnet/lo.c
+index f708c2e..2a137f4 100644
+--- a/drivers/staging/lustre/lnet/lnet/lo.c
++++ b/drivers/staging/lustre/lnet/lnet/lo.c
+@@ -111,7 +111,7 @@ lnd_t the_lolnd = {
+ 	/* .lnd_type       = */ LOLND,
+ 	/* .lnd_startup    = */ lolnd_startup,
+ 	/* .lnd_shutdown   = */ lolnd_shutdown,
+-	/* .lnt_ctl	= */ NULL,
++	/* .lnt_ctl        = */ NULL,
+ 	/* .lnd_send       = */ lolnd_send,
+ 	/* .lnd_recv       = */ lolnd_recv,
+ 	/* .lnd_eager_recv = */ NULL,
+diff --git a/drivers/staging/lustre/lnet/lnet/module.c b/drivers/staging/lustre/lnet/lnet/module.c
+index 72b7fbc..ff3f831 100644
+--- a/drivers/staging/lustre/lnet/lnet/module.c
++++ b/drivers/staging/lustre/lnet/lnet/module.c
+@@ -47,7 +47,7 @@ static int
+ lnet_configure(void *arg)
  {
- 	INIT_LIST_HEAD(&console_session.ses_ping_timer.stt_list);
- 	console_session.ses_ping_timer.stt_func = lstcon_rpc_pinger;
--	console_session.ses_ping_timer.stt_data = &console_session.ses_ping_timer;
-+	console_session.ses_ping_timer.stt_data +		&console_session.ses_ping_timer;
+ 	/* 'arg' only there so I can be passed to cfs_create_thread() */
+-	int    rc = 0;
++	int rc = 0;
  
- 	console_session.ses_ping = NULL;
+ 	LNET_MUTEX_LOCK(&lnet_config_mutex);
  
-diff --git a/drivers/staging/lustre/lnet/selftest/conrpc.h b/drivers/staging/lustre/lnet/selftest/conrpc.h
-index 7d33cf9..5afb679 100644
---- a/drivers/staging/lustre/lnet/selftest/conrpc.h
-+++ b/drivers/staging/lustre/lnet/selftest/conrpc.h
-@@ -54,7 +54,8 @@
- #define LST_TRANS_TIMEOUT       30
- #define LST_TRANS_MIN_TIMEOUT   3
- 
--#define LST_VALIDATE_TIMEOUT(t) min(max(t, LST_TRANS_MIN_TIMEOUT), LST_TRANS_TIMEOUT)
-+#define LST_VALIDATE_TIMEOUT(t) min(max(t, LST_TRANS_MIN_TIMEOUT), \
-+					LST_TRANS_TIMEOUT)
- 
- #define LST_PING_INTERVAL       8
- 
-@@ -105,8 +106,8 @@ typedef struct lstcon_rpc_trans {
- 
- #define LST_TRANS_STATQRY       0x21
- 
--typedef int (* lstcon_rpc_cond_func_t)(int, struct lstcon_node *, void *);
--typedef int (* lstcon_rpc_readent_func_t)(int, srpc_msg_t *, lstcon_rpc_ent_t *);
-+typedef int (*lstcon_rpc_cond_func_t)(int, struct lstcon_node *, void *);
-+typedef int (*lstcon_rpc_readent_func_t)(int, srpc_msg_t *, lstcon_rpc_ent_t *);
- 
- int  lstcon_sesrpc_prep(struct lstcon_node *nd, int transop,
- 			unsigned version, lstcon_rpc_t **crpc);
-diff --git a/drivers/staging/lustre/lnet/selftest/console.c b/drivers/staging/lustre/lnet/selftest/console.c
-index f47c8f2..ed9c38f 100644
---- a/drivers/staging/lustre/lnet/selftest/console.c
-+++ b/drivers/staging/lustre/lnet/selftest/console.c
-@@ -77,7 +77,8 @@ lstcon_node_find(lnet_process_id_t id, lstcon_node_t **ndpp, int create)
- 
- 	LASSERT(id.nid != LNET_NID_ANY);
- 
--	list_for_each_entry(ndl, &console_session.ses_ndl_hash[idx], ndl_hlink) {
-+	list_for_each_entry(ndl, &console_session.ses_ndl_hash[idx],
-+			    ndl_hlink) {
- 		if (ndl->ndl_node->nd_id.nid != id.nid ||
- 		    ndl->ndl_node->nd_id.pid != id.pid)
- 			continue;
-@@ -253,9 +254,8 @@ lstcon_group_decref(lstcon_group_t *grp)
- 
- 	lstcon_group_drain(grp, 0);
- 
--	for (i = 0; i < LST_NODE_HASHSIZE; i++) {
-+	for (i = 0; i < LST_NODE_HASHSIZE; i++)
- 		LASSERT(list_empty(&grp->grp_ndl_hash[i]));
--	}
- 
- 	LIBCFS_FREE(grp, offsetof(lstcon_group_t,
- 				  grp_ndl_hash[LST_NODE_HASHSIZE]));
-@@ -308,7 +308,7 @@ lstcon_group_ndlink_release(lstcon_group_t *grp, lstcon_ndlink_t *ndl)
- {
- 	list_del_init(&ndl->ndl_link);
- 	lstcon_ndlink_release(ndl);
--	grp->grp_nnode --;
-+	grp->grp_nnode--;
- }
- 
- static void
-@@ -320,13 +320,11 @@ lstcon_group_ndlink_move(lstcon_group_t *old,
- 
- 	list_del(&ndl->ndl_hlink);
- 	list_del(&ndl->ndl_link);
--	old->grp_nnode --;
-+	old->grp_nnode--;
- 
- 	list_add_tail(&ndl->ndl_hlink, &new->grp_ndl_hash[idx]);
- 	list_add_tail(&ndl->ndl_link, &new->grp_ndl_list);
- 	new->grp_nnode++;
--
--	return;
- }
- 
- static void
-@@ -527,7 +525,7 @@ lstcon_group_add(char *name)
- 	lstcon_group_t *grp;
- 	int rc;
- 
--	rc = (lstcon_group_find(name, &grp) = 0)? -EEXIST: 0;
-+	rc = (lstcon_group_find(name, &grp) = 0) ? -EEXIST : 0;
- 	if (rc != 0) {
- 		/* find a group with same name */
- 		lstcon_group_put(grp);
-@@ -816,7 +814,7 @@ lstcon_group_info(char *name, lstcon_ndlist_ent_t *gents_p,
- 		LST_NODE_STATE_COUNTER(ndl->ndl_node, gentp);
- 
- 	rc = copy_to_user(gents_p, gentp,
--			      sizeof(lstcon_ndlist_ent_t)) ? -EFAULT: 0;
-+			      sizeof(lstcon_ndlist_ent_t)) ? -EFAULT : 0;
- 
- 	LIBCFS_FREE(gentp, sizeof(lstcon_ndlist_ent_t));
- 
-@@ -847,7 +845,7 @@ lstcon_batch_add(char *name)
- 	int i;
- 	int rc;
- 
--	rc = (lstcon_batch_find(name, &bat) = 0)? -EEXIST: 0;
-+	rc = (lstcon_batch_find(name, &bat) = 0) ? -EEXIST : 0;
- 	if (rc != 0) {
- 		CDEBUG(D_NET, "Batch %s already exists\n", name);
- 		return rc;
-@@ -911,7 +909,7 @@ lstcon_batch_list(int index, int len, char *name_up)
- 	list_for_each_entry(bat, &console_session.ses_bat_list, bat_link) {
- 		if (index-- = 0) {
- 			return copy_to_user(name_up, bat->bat_name, len) ?
--			       -EFAULT: 0;
-+			       -EFAULT : 0;
- 		}
- 	}
- 
-@@ -956,7 +954,7 @@ lstcon_batch_info(char *name, lstcon_test_batch_ent_t *ent_up, int server,
- 				  &test->tes_dst_grp->grp_ndl_list;
- 
- 	if (dents_up != NULL) {
--		rc = lstcon_nodes_getent((server ? srvlst: clilst),
-+		rc = lstcon_nodes_getent((server ? srvlst : clilst),
- 					 index_p, ndent_p, dents_up);
- 		return rc;
- 	}
-@@ -1208,7 +1206,8 @@ again:
- 
- 		lstcon_rpc_trans_destroy(trans);
- 		/* return if any error */
--		CDEBUG(D_NET, "Failed to add test %s, RPC error %d, framework error %d\n",
-+		CDEBUG(D_NET,
-+		       "Failed to add test %s, RPC error %d, framework error %d\n",
- 		       transop = LST_TRANS_TSBCLIADD ? "client" : "server",
- 		       lstcon_trans_stat()->trs_rpc_errno,
- 		       lstcon_trans_stat()->trs_fwk_errno);
-@@ -1683,7 +1682,7 @@ int
- lstcon_session_match(lst_sid_t sid)
- {
- 	return (console_session.ses_id.ses_nid   = sid.ses_nid &&
--		console_session.ses_id.ses_stamp = sid.ses_stamp) ?  1: 0;
-+		console_session.ses_id.ses_stamp = sid.ses_stamp) ? 1 : 0;
- }
- 
- static void
-@@ -1884,7 +1883,8 @@ lstcon_session_feats_check(unsigned feats)
- 	spin_unlock(&console_session.ses_rpc_lock);
- 
- 	if (rc != 0) {
--		CERROR("remote features %x do not match with session features %x of console\n",
-+		CERROR(
-+		       "remote features %x do not match with session features %x of console\n",
- 		       feats, console_session.ses_features);
- 	}
- 
-@@ -2083,9 +2083,8 @@ lstcon_console_fini(void)
- 	LASSERT(list_empty(&console_session.ses_bat_list));
- 	LASSERT(list_empty(&console_session.ses_trans_list));
- 
--	for (i = 0; i < LST_NODE_HASHSIZE; i++) {
-+	for (i = 0; i < LST_NODE_HASHSIZE; i++)
- 		LASSERT(list_empty(&console_session.ses_ndl_hash[i]));
--	}
- 
- 	LIBCFS_FREE(console_session.ses_ndl_hash,
- 		    sizeof(struct list_head) * LST_GLOBAL_HASHSIZE);
-diff --git a/drivers/staging/lustre/lnet/selftest/console.h b/drivers/staging/lustre/lnet/selftest/console.h
-index c4cf0ae..7638042 100644
---- a/drivers/staging/lustre/lnet/selftest/console.h
-+++ b/drivers/staging/lustre/lnet/selftest/console.h
-@@ -116,9 +116,11 @@ typedef struct lstcon_test {
- 	int              tes_oneside;    /* one-sided test */
- 	int              tes_concur;     /* concurrency */
- 	int              tes_loop;       /* loop count */
--	int              tes_dist;       /* nodes distribution of target group */
-+	int              tes_dist;       /* nodes distribution of target
-+					  * group */
- 	int              tes_span;       /* nodes span of target group */
--	int              tes_cliidx;     /* client index, used for RPC creating */
-+	int              tes_cliidx;     /* client index, used for RPC
-+					  * creating */
- 
- 	struct list_head tes_trans_list; /* transaction list */
- 	lstcon_group_t   *tes_src_grp;   /* group run the test */
-@@ -177,7 +179,7 @@ lstcon_trans_stat(void)
- }
- 
- static inline struct list_head *
--lstcon_id2hash (lnet_process_id_t id, struct list_head *hash)
-+lstcon_id2hash(lnet_process_id_t id, struct list_head *hash)
- {
- 	unsigned int idx = LNET_NIDADDR(id.nid) % LST_NODE_HASHSIZE;
- 
-@@ -191,7 +193,8 @@ extern int lstcon_session_match(lst_sid_t sid);
- extern int lstcon_session_new(char *name, int key, unsigned version,
- 			      int timeout, int flags, lst_sid_t *sid_up);
- extern int lstcon_session_info(lst_sid_t *sid_up, int *key, unsigned *verp,
--			       lstcon_ndlist_ent_t *entp, char *name_up, int len);
-+			       lstcon_ndlist_ent_t *entp, char *name_up,
-+			       int len);
- extern int lstcon_session_end(void);
- extern int lstcon_session_debug(int timeout, struct list_head *result_up);
- extern int lstcon_session_feats_check(unsigned feats);
-@@ -210,7 +213,8 @@ extern int lstcon_nodes_add(char *name, int nnd, lnet_process_id_t *nds_up,
- extern int lstcon_nodes_remove(char *name, int nnd, lnet_process_id_t *nds_up,
- 			       struct list_head *result_up);
- extern int lstcon_group_info(char *name, lstcon_ndlist_ent_t *gent_up,
--			     int *index_p, int *ndent_p, lstcon_node_ent_t *ndents_up);
-+			     int *index_p, int *ndent_p,
-+			     lstcon_node_ent_t *ndents_up);
- extern int lstcon_group_list(int idx, int len, char *name_up);
- extern int lstcon_batch_add(char *name);
- extern int lstcon_batch_run(char *name, int timeout,
-diff --git a/drivers/staging/lustre/lnet/selftest/framework.c b/drivers/staging/lustre/lnet/selftest/framework.c
-index 7c5185a..8d948e2 100644
---- a/drivers/staging/lustre/lnet/selftest/framework.c
-+++ b/drivers/staging/lustre/lnet/selftest/framework.c
-@@ -173,7 +173,6 @@ sfw_add_session_timer(void)
- 	timer->stt_expires = cfs_time_add(sn->sn_timeout,
- 					  get_seconds());
- 	stt_add_timer(timer);
--	return;
- }
- 
+@@ -66,7 +66,7 @@ lnet_configure(void *arg)
  static int
-@@ -203,7 +202,8 @@ sfw_deactivate_session(void)
- 	sfw_batch_t *tsb;
- 	sfw_test_case_t *tsc;
+ lnet_unconfigure(void)
+ {
+-	int   refcount;
++	int refcount;
  
--	if (sn = NULL) return;
-+	if (sn = NULL)
-+		return;
+ 	LNET_MUTEX_LOCK(&lnet_config_mutex);
  
- 	LASSERT(!sn->sn_timer_active);
- 
-@@ -298,7 +298,6 @@ sfw_server_rpc_done(struct srpc_server_rpc *rpc)
- 
- 	if (rpc->srpc_bulk != NULL)
- 		sfw_free_pages(rpc);
--	return;
- }
- 
- static void
-@@ -573,7 +572,8 @@ sfw_load_test(struct sfw_test_instance *tsi)
- 
- 	rc = srpc_service_add_buffers(svc, nbuf);
- 	if (rc != 0) {
--		CWARN("Failed to reserve enough buffers: service %s, %d needed: %d\n",
-+		CWARN(
-+		      "Failed to reserve enough buffers: service %s, %d needed: %d\n",
- 		      svc->sv_name, nbuf, rc);
- 		/* NB: this error handler is not strictly correct, because
- 		 * it may release more buffers than already allocated,
-@@ -604,7 +604,6 @@ sfw_unload_test(struct sfw_test_instance *tsi)
- 	 * some buffers behind, but never mind... */
- 	srpc_service_remove_buffers(tsc->tsc_srv_service,
- 				    sfw_test_buffers(tsi));
--	return;
- }
- 
- static void
-@@ -613,7 +612,8 @@ sfw_destroy_test_instance(sfw_test_instance_t *tsi)
- 	srpc_client_rpc_t *rpc;
- 	sfw_test_unit_t *tsu;
- 
--	if (!tsi->tsi_is_client) goto clean;
-+	if (!tsi->tsi_is_client)
-+		goto clean;
- 
- 	tsi->tsi_ops->tso_fini(tsi);
- 
-@@ -638,7 +638,6 @@ sfw_destroy_test_instance(sfw_test_instance_t *tsi)
- clean:
- 	sfw_unload_test(tsi);
- 	LIBCFS_FREE(tsi, sizeof(*tsi));
--	return;
- }
- 
- static void
-@@ -657,7 +656,6 @@ sfw_destroy_batch(sfw_batch_t *tsb)
- 	}
- 
- 	LIBCFS_FREE(tsb, sizeof(sfw_batch_t));
--	return;
- }
- 
- void
-@@ -677,7 +675,6 @@ sfw_destroy_session(sfw_session_t *sn)
- 
- 	LIBCFS_FREE(sn, sizeof(*sn));
- 	atomic_dec(&sfw_data.fw_nzombies);
--	return;
- }
- 
- static void
-@@ -722,7 +719,6 @@ sfw_unpack_addtest_req(srpc_msg_t *msg)
- 	}
- 
- 	LBUG();
--	return;
- }
- 
+@@ -86,7 +86,7 @@ lnet_unconfigure(void)
  static int
-@@ -785,7 +781,8 @@ sfw_add_test_instance(sfw_batch_t *tsb, srpc_server_rpc_t *rpc)
- 		lnet_process_id_packed_t id;
- 		int j;
+ lnet_ioctl(unsigned int cmd, struct libcfs_ioctl_data *data)
+ {
+-	int   rc;
++	int rc;
  
--		dests = page_address(bk->bk_iovs[i / SFW_ID_PER_PAGE].kiov_page);
-+		dests = page_address(bk->bk_iovs[i /
-+						 SFW_ID_PER_PAGE].kiov_page);
- 		LASSERT(dests != NULL);  /* my pages are within KVM always */
- 		id = dests[i % SFW_ID_PER_PAGE];
- 		if (msg->msg_magic != SRPC_MSG_MAGIC)
-@@ -860,7 +857,6 @@ sfw_test_unit_done(sfw_test_unit_t *tsu)
- 	spin_unlock(&sfw_data.fw_lock);
+ 	switch (cmd) {
+ 	case IOC_LIBCFS_CONFIGURE:
+@@ -113,7 +113,7 @@ static DECLARE_IOCTL_HANDLER(lnet_ioctl_handler, lnet_ioctl);
+ static int __init
+ init_lnet(void)
+ {
+-	int		  rc;
++	int rc;
  
- 	sfw_destroy_session(sn);
--	return;
- }
+ 	mutex_init(&lnet_config_mutex);
  
- static void
-@@ -896,7 +892,6 @@ sfw_test_rpc_done(srpc_client_rpc_t *rpc)
- 	}
- 
- 	sfw_test_unit_done(tsu);
--	return;
- }
- 
+diff --git a/drivers/staging/lustre/lnet/lnet/peer.c b/drivers/staging/lustre/lnet/lnet/peer.c
+index 45b5742..1fceed3 100644
+--- a/drivers/staging/lustre/lnet/lnet/peer.c
++++ b/drivers/staging/lustre/lnet/lnet/peer.c
+@@ -43,10 +43,10 @@
  int
-@@ -1019,7 +1014,7 @@ sfw_run_batch(sfw_batch_t *tsb)
- 			tsu->tsu_loop = tsi->tsi_loop;
- 			wi = &tsu->tsu_worker;
- 			swi_init_workitem(wi, tsu, sfw_run_test,
--					  lst_sched_test[\
-+					  lst_sched_test[
- 					  lnet_cpt_of_nid(tsu->tsu_dest.nid)]);
- 			swi_schedule_workitem(wi);
- 		}
-@@ -1268,7 +1263,8 @@ sfw_handle_server_rpc(struct srpc_server_rpc *rpc)
+ lnet_peer_tables_create(void)
+ {
+-	struct lnet_peer_table	*ptable;
+-	struct list_head		*hash;
+-	int			i;
+-	int			j;
++	struct lnet_peer_table *ptable;
++	struct list_head *hash;
++	int i;
++	int j;
  
- 		if (sn != NULL &&
- 		    sn->sn_features != request->msg_ses_feats) {
--			CNETERR("Features of framework RPC don't match features of current session: %x/%x\n",
-+			CNETERR(
-+				"Features of framework RPC don't match features of current session: %x/%x\n",
- 				request->msg_ses_feats, sn->sn_features);
- 			reply->msg_body.reply.status = EPROTO;
- 			reply->msg_body.reply.sid    = sn->sn_id;
-@@ -1345,7 +1341,8 @@ sfw_bulk_ready(struct srpc_server_rpc *rpc, int status)
- 	spin_lock(&sfw_data.fw_lock);
- 
- 	if (status != 0) {
--		CERROR("Bulk transfer failed for RPC: service %s, peer %s, status %d\n",
-+		CERROR(
-+		       "Bulk transfer failed for RPC: service %s, peer %s, status %d\n",
- 		       sv->sv_name, libcfs_id2str(rpc->srpc_peer), status);
- 		spin_unlock(&sfw_data.fw_lock);
- 		return -EIO;
-@@ -1556,7 +1553,6 @@ sfw_unpack_message(srpc_msg_t *msg)
- 	}
- 
- 	LBUG();
--	return;
- }
- 
+ 	the_lnet.ln_peer_tables = cfs_percpt_alloc(lnet_cpt_table(),
+ 						   sizeof(*ptable));
+@@ -77,10 +77,10 @@ lnet_peer_tables_create(void)
  void
-@@ -1568,7 +1564,6 @@ sfw_abort_rpc(srpc_client_rpc_t *rpc)
- 	spin_lock(&rpc->crpc_lock);
- 	srpc_abort_rpc(rpc, -EINTR);
- 	spin_unlock(&rpc->crpc_lock);
--	return;
- }
+ lnet_peer_tables_destroy(void)
+ {
+-	struct lnet_peer_table	*ptable;
+-	struct list_head		*hash;
+-	int			i;
+-	int			j;
++	struct lnet_peer_table *ptable;
++	struct list_head *hash;
++	int i;
++	int j;
  
+ 	if (the_lnet.ln_peer_tables = NULL)
+ 		return;
+@@ -106,9 +106,9 @@ lnet_peer_tables_destroy(void)
  void
-@@ -1585,7 +1580,6 @@ sfw_post_rpc(srpc_client_rpc_t *rpc)
- 	srpc_post_rpc(rpc);
+ lnet_peer_tables_cleanup(void)
+ {
+-	struct lnet_peer_table	*ptable;
+-	int			i;
+-	int			j;
++	struct lnet_peer_table *ptable;
++	int i;
++	int j;
  
- 	spin_unlock(&rpc->crpc_lock);
--	return;
- }
+ 	LASSERT(the_lnet.ln_shutdown);	/* i.e. no new peers */
  
- static srpc_service_t sfw_services[] = {
-@@ -1660,7 +1654,8 @@ sfw_startup(void)
+@@ -133,7 +133,7 @@ lnet_peer_tables_cleanup(void)
+ 
+ 	cfs_percpt_for_each(ptable, i, the_lnet.ln_peer_tables) {
+ 		LIST_HEAD(deathrow);
+-		lnet_peer_t	*lp;
++		lnet_peer_t *lp;
+ 
+ 		lnet_net_lock(i);
+ 
+@@ -186,8 +186,8 @@ lnet_destroy_peer_locked(lnet_peer_t *lp)
+ lnet_peer_t *
+ lnet_find_peer_locked(struct lnet_peer_table *ptable, lnet_nid_t nid)
+ {
+-	struct list_head	*peers;
+-	lnet_peer_t	*lp;
++	struct list_head *peers;
++	lnet_peer_t *lp;
+ 
+ 	LASSERT(!the_lnet.ln_shutdown);
+ 
+@@ -205,11 +205,11 @@ lnet_find_peer_locked(struct lnet_peer_table *ptable, lnet_nid_t nid)
+ int
+ lnet_nid2peer_locked(lnet_peer_t **lpp, lnet_nid_t nid, int cpt)
+ {
+-	struct lnet_peer_table	*ptable;
+-	lnet_peer_t		*lp = NULL;
+-	lnet_peer_t		*lp2;
+-	int			cpt2;
+-	int			rc = 0;
++	struct lnet_peer_table *ptable;
++	lnet_peer_t *lp = NULL;
++	lnet_peer_t *lp2;
++	int cpt2;
++	int rc = 0;
+ 
+ 	*lpp = NULL;
+ 	if (the_lnet.ln_shutdown) /* it's shutting down */
+@@ -287,8 +287,8 @@ lnet_nid2peer_locked(lnet_peer_t **lpp, lnet_nid_t nid, int cpt)
+ 		goto out;
  	}
  
- 	if (session_timeout = 0)
--		CWARN("Zero session_timeout specified - test sessions never expire.\n");
-+		CWARN(
-+		      "Zero session_timeout specified - test sessions never expire.\n");
+-	lp->lp_txcredits    -	lp->lp_mintxcredits = lp->lp_ni->ni_peertxcredits;
++	lp->lp_txcredits     +	lp->lp_mintxcredits  = lp->lp_ni->ni_peertxcredits;
+ 	lp->lp_rtrcredits     	lp->lp_minrtrcredits = lnet_peer_buffer_credits(lp->lp_ni);
  
- 	if (rpc_timeout = 0)
- 		CWARN("Zero rpc_timeout specified - test RPC never expire.\n");
-@@ -1700,7 +1695,8 @@ sfw_startup(void)
+@@ -308,10 +308,10 @@ out:
+ void
+ lnet_debug_peer(lnet_nid_t nid)
+ {
+-	char		*aliveness = "NA";
+-	lnet_peer_t	*lp;
+-	int		rc;
+-	int		cpt;
++	char *aliveness = "NA";
++	lnet_peer_t *lp;
++	int rc;
++	int cpt;
  
- 	for (i = 0; ; i++) {
- 		sv = &sfw_services[i];
--		if (sv->sv_name = NULL) break;
-+		if (sv->sv_name = NULL)
-+			break;
+ 	cpt = lnet_cpt_of_nid(nid);
+ 	lnet_net_lock(cpt);
+diff --git a/drivers/staging/lustre/lnet/lnet/router.c b/drivers/staging/lustre/lnet/lnet/router.c
+index 8510bae..96886a2 100644
+--- a/drivers/staging/lustre/lnet/lnet/router.c
++++ b/drivers/staging/lustre/lnet/lnet/router.c
+@@ -139,8 +139,8 @@ lnet_notify_locked(lnet_peer_t *lp, int notifylnd, int alive,
+ static void
+ lnet_ni_notify_locked(lnet_ni_t *ni, lnet_peer_t *lp)
+ {
+-	int	alive;
+-	int	notifylnd;
++	int alive;
++	int notifylnd;
  
- 		sv->sv_bulk_ready = NULL;
- 		sv->sv_handler    = sfw_handle_server_rpc;
-@@ -1717,11 +1713,13 @@ sfw_startup(void)
- 		}
+ 	/* Notify only in 1 thread at any time to ensure ordered notification.
+ 	 * NB individual events can be missed; the only guarantee is that you
+@@ -152,7 +152,7 @@ lnet_ni_notify_locked(lnet_ni_t *ni, lnet_peer_t *lp)
+ 	lp->lp_notifying = 1;
  
- 		/* about to sfw_shutdown, no need to add buffer */
--		if (error) continue;
-+		if (error)
-+			continue;
+ 	while (lp->lp_notify) {
+-		alive     = lp->lp_alive;
++		alive = lp->lp_alive;
+ 		notifylnd = lp->lp_notifylnd;
  
- 		rc = srpc_service_add_buffers(sv, sv->sv_wi_total);
- 		if (rc != 0) {
--			CWARN("Failed to reserve enough buffers: service %s, %d needed: %d\n",
-+			CWARN(
-+			      "Failed to reserve enough buffers: service %s, %d needed: %d\n",
- 			      sv->sv_name, sv->sv_wi_total, rc);
- 			error = -ENOMEM;
- 		}
-@@ -1799,6 +1797,4 @@ sfw_shutdown(void)
- 		list_del(&tsc->tsc_list);
- 		LIBCFS_FREE(tsc, sizeof(*tsc));
- 	}
--
--	return;
- }
-diff --git a/drivers/staging/lustre/lnet/selftest/module.c b/drivers/staging/lustre/lnet/selftest/module.c
-index 09b8f46..1afc581 100644
---- a/drivers/staging/lustre/lnet/selftest/module.c
-+++ b/drivers/staging/lustre/lnet/selftest/module.c
-@@ -118,7 +118,8 @@ lnet_selftest_init(void)
- 		rc = cfs_wi_sched_create("lst_t", lnet_cpt_table(), i,
- 					 nthrs, &lst_sched_test[i]);
- 		if (rc != 0) {
--			CERROR("Failed to create CPT affinity WI scheduler %d for LST\n",
-+			CERROR(
-+			       "Failed to create CPT affinity WI scheduler %d for LST\n",
- 			       i);
- 			goto error;
- 		}
-diff --git a/drivers/staging/lustre/lnet/selftest/ping_test.c b/drivers/staging/lustre/lnet/selftest/ping_test.c
-index 1dab998..6d48e06 100644
---- a/drivers/staging/lustre/lnet/selftest/ping_test.c
-+++ b/drivers/staging/lustre/lnet/selftest/ping_test.c
-@@ -165,7 +165,6 @@ ping_client_done_rpc(sfw_test_unit_t *tsu, srpc_client_rpc_t *rpc)
- 	CDEBUG(D_NET, "%d reply in %u usec\n", reply->pnr_seq,
- 		(unsigned)((tv.tv_sec - (unsigned)reqst->pnr_time_sec) * 1000000
- 			   + (tv.tv_usec - reqst->pnr_time_usec)));
--	return;
- }
+ 		lp->lp_notifylnd = 0;
+@@ -228,9 +228,9 @@ lnet_rtr_decref_locked(lnet_peer_t *lp)
+ lnet_remotenet_t *
+ lnet_find_net_locked(__u32 net)
+ {
+-	lnet_remotenet_t	*rnet;
+-	struct list_head		*tmp;
+-	struct list_head		*rn_list;
++	lnet_remotenet_t *rnet;
++	struct list_head *tmp;
++	struct list_head *rn_list;
  
+ 	LASSERT(!the_lnet.ln_shutdown);
+ 
+@@ -276,9 +276,9 @@ static void lnet_shuffle_seed(void)
+ static void
+ lnet_add_route_to_rnet(lnet_remotenet_t *rnet, lnet_route_t *route)
+ {
+-	unsigned int      len = 0;
+-	unsigned int      offset = 0;
+-	struct list_head       *e;
++	unsigned int len = 0;
++	unsigned int offset = 0;
++	struct list_head *e;
+ 
+ 	lnet_shuffle_seed();
+ 
+@@ -304,13 +304,13 @@ int
+ lnet_add_route(__u32 net, unsigned int hops, lnet_nid_t gateway,
+ 	       unsigned int priority)
+ {
+-	struct list_head	  *e;
+-	lnet_remotenet_t    *rnet;
+-	lnet_remotenet_t    *rnet2;
+-	lnet_route_t	*route;
+-	lnet_ni_t	   *ni;
+-	int		  add_route;
+-	int		  rc;
++	struct list_head *e;
++	lnet_remotenet_t *rnet;
++	lnet_remotenet_t *rnet2;
++	lnet_route_t *route;
++	lnet_ni_t *ni;
++	int add_route;
++	int rc;
+ 
+ 	CDEBUG(D_NET, "Add route: net %s hops %u priority %u gw %s\n",
+ 	       libcfs_net2str(net), hops, priority, libcfs_nid2str(gateway));
+@@ -416,14 +416,14 @@ lnet_add_route(__u32 net, unsigned int hops, lnet_nid_t gateway,
+ int
+ lnet_check_routes(void)
+ {
+-	lnet_remotenet_t	*rnet;
+-	lnet_route_t		*route;
+-	lnet_route_t		*route2;
+-	struct list_head		*e1;
+-	struct list_head		*e2;
+-	int			cpt;
+-	struct list_head		*rn_list;
+-	int			i;
++	lnet_remotenet_t *rnet;
++	lnet_route_t *route;
++	lnet_route_t *route2;
++	struct list_head *e1;
++	struct list_head *e2;
++	int cpt;
++	struct list_head *rn_list;
++	int i;
+ 
+ 	cpt = lnet_net_lock_current();
+ 
+@@ -434,9 +434,9 @@ lnet_check_routes(void)
+ 
+ 			route2 = NULL;
+ 			list_for_each(e2, &rnet->lrn_routes) {
+-				lnet_nid_t	nid1;
+-				lnet_nid_t	nid2;
+-				int		net;
++				lnet_nid_t nid1;
++				lnet_nid_t nid2;
++				int net;
+ 
+ 				route = list_entry(e2, lnet_route_t,
+ 						       lr_list);
+@@ -472,14 +472,14 @@ lnet_check_routes(void)
+ int
+ lnet_del_route(__u32 net, lnet_nid_t gw_nid)
+ {
+-	struct lnet_peer	*gateway;
+-	lnet_remotenet_t	*rnet;
+-	lnet_route_t		*route;
+-	struct list_head		*e1;
+-	struct list_head		*e2;
+-	int			rc = -ENOENT;
+-	struct list_head		*rn_list;
+-	int			idx = 0;
++	struct lnet_peer *gateway;
++	lnet_remotenet_t *rnet;
++	lnet_route_t *route;
++	struct list_head *e1;
++	struct list_head *e2;
++	int rc = -ENOENT;
++	struct list_head *rn_list;
++	int idx = 0;
+ 
+ 	CDEBUG(D_NET, "Del route: net %s : gw %s\n",
+ 	       libcfs_net2str(net), libcfs_nid2str(gw_nid));
+@@ -554,13 +554,13 @@ int
+ lnet_get_route(int idx, __u32 *net, __u32 *hops,
+ 	       lnet_nid_t *gateway, __u32 *alive, __u32 *priority)
+ {
+-	struct list_head		*e1;
+-	struct list_head		*e2;
+-	lnet_remotenet_t	*rnet;
+-	lnet_route_t		*route;
+-	int			cpt;
+-	int			i;
+-	struct list_head		*rn_list;
++	struct list_head *e1;
++	struct list_head *e2;
++	lnet_remotenet_t *rnet;
++	lnet_route_t *route;
++	int cpt;
++	int i;
++	struct list_head *rn_list;
+ 
+ 	cpt = lnet_net_lock_current();
+ 
+@@ -574,11 +574,11 @@ lnet_get_route(int idx, __u32 *net, __u32 *hops,
+ 						       lr_list);
+ 
+ 				if (idx-- = 0) {
+-					*net	  = rnet->lrn_net;
+-					*hops	  = route->lr_hops;
++					*net      = rnet->lrn_net;
++					*hops     = route->lr_hops;
+ 					*priority = route->lr_priority;
+ 					*gateway  = route->lr_gateway->lp_nid;
+-					*alive	  = route->lr_gateway->lp_alive;
++					*alive    = route->lr_gateway->lp_alive;
+ 					lnet_net_unlock(cpt);
+ 					return 0;
+ 				}
+@@ -593,7 +593,7 @@ lnet_get_route(int idx, __u32 *net, __u32 *hops,
+ void
+ lnet_swap_pinginfo(lnet_ping_info_t *info)
+ {
+-	int	       i;
++	int i;
+ 	lnet_ni_status_t *stat;
+ 
+ 	__swab32s(&info->pi_magic);
+@@ -614,9 +614,9 @@ lnet_swap_pinginfo(lnet_ping_info_t *info)
+ static void
+ lnet_parse_rc_info(lnet_rc_data_t *rcd)
+ {
+-	lnet_ping_info_t	*info = rcd->rcd_pinginfo;
+-	struct lnet_peer	*gw   = rcd->rcd_gateway;
+-	lnet_route_t		*rtr;
++	lnet_ping_info_t *info = rcd->rcd_pinginfo;
++	struct lnet_peer *gw = rcd->rcd_gateway;
++	lnet_route_t *rtr;
+ 
+ 	if (!gw->lp_alive)
+ 		return;
+@@ -643,14 +643,14 @@ lnet_parse_rc_info(lnet_rc_data_t *rcd)
+ 		return; /* can't carry NI status info */
+ 
+ 	list_for_each_entry(rtr, &gw->lp_routes, lr_gwlist) {
+-		int	ptl_status = LNET_NI_STATUS_INVALID;
+-		int	down = 0;
+-		int	up = 0;
+-		int	i;
++		int ptl_status = LNET_NI_STATUS_INVALID;
++		int down = 0;
++		int up = 0;
++		int i;
+ 
+ 		for (i = 0; i < info->pi_nnis && i < LNET_MAX_RTR_NIS; i++) {
+ 			lnet_ni_status_t *stat = &info->pi_ni[i];
+-			lnet_nid_t	 nid = stat->ns_nid;
++			lnet_nid_t nid = stat->ns_nid;
+ 
+ 			if (nid = LNET_NID_ANY) {
+ 				CDEBUG(D_NET, "%s: unexpected LNET_NID_ANY\n",
+@@ -699,8 +699,8 @@ lnet_parse_rc_info(lnet_rc_data_t *rcd)
+ static void
+ lnet_router_checker_event(lnet_event_t *event)
+ {
+-	lnet_rc_data_t		*rcd = event->md.user_ptr;
+-	struct lnet_peer	*lp;
++	lnet_rc_data_t *rcd = event->md.user_ptr;
++	struct lnet_peer *lp;
+ 
+ 	LASSERT(rcd != NULL);
+ 
+@@ -752,14 +752,14 @@ lnet_router_checker_event(lnet_event_t *event)
+ static void
+ lnet_wait_known_routerstate(void)
+ {
+-	lnet_peer_t	 *rtr;
+-	struct list_head	  *entry;
+-	int		  all_known;
++	lnet_peer_t *rtr;
++	struct list_head *entry;
++	int all_known;
+ 
+ 	LASSERT(the_lnet.ln_rc_state = LNET_RC_STATE_RUNNING);
+ 
+ 	for (;;) {
+-		int	cpt = lnet_net_lock_current();
++		int cpt = lnet_net_lock_current();
+ 
+ 		all_known = 1;
+ 		list_for_each(entry, &the_lnet.ln_routers) {
+@@ -799,9 +799,9 @@ lnet_router_ni_update_locked(lnet_peer_t *gw, __u32 net)
+ static void
+ lnet_update_ni_status_locked(void)
+ {
+-	lnet_ni_t	*ni;
+-	long		now;
+-	int		timeout;
++	lnet_ni_t *ni;
++	long now;
++	int timeout;
+ 
+ 	LASSERT(the_lnet.ln_routing);
+ 
+@@ -860,10 +860,10 @@ lnet_destroy_rc_data(lnet_rc_data_t *rcd)
+ static lnet_rc_data_t *
+ lnet_create_rc_data_locked(lnet_peer_t *gateway)
+ {
+-	lnet_rc_data_t		*rcd = NULL;
+-	lnet_ping_info_t	*pi;
+-	int			rc;
+-	int			i;
++	lnet_rc_data_t *rcd = NULL;
++	lnet_ping_info_t *pi;
++	int rc;
++	int i;
+ 
+ 	lnet_net_unlock(gateway->lp_cpt);
+ 
+@@ -943,8 +943,8 @@ static void
+ lnet_ping_router_locked(lnet_peer_t *rtr)
+ {
+ 	lnet_rc_data_t *rcd = NULL;
+-	unsigned long      now = cfs_time_current();
+-	int	     secs;
++	unsigned long now = cfs_time_current();
++	int secs;
+ 
+ 	lnet_peer_addref_locked(rtr);
+ 
+@@ -979,9 +979,9 @@ lnet_ping_router_locked(lnet_peer_t *rtr)
+ 	if (secs != 0 && !rtr->lp_ping_notsent &&
+ 	    cfs_time_after(now, cfs_time_add(rtr->lp_ping_timestamp,
+ 					     cfs_time_seconds(secs)))) {
+-		int	       rc;
++		int rc;
+ 		lnet_process_id_t id;
+-		lnet_handle_md_t  mdh;
++		lnet_handle_md_t mdh;
+ 
+ 		id.nid = rtr->lp_nid;
+ 		id.pid = LUSTRE_SRV_LNET_PID;
+@@ -1013,8 +1013,8 @@ lnet_ping_router_locked(lnet_peer_t *rtr)
+ int
+ lnet_router_checker_start(void)
+ {
+-	int	  rc;
+-	int	  eqsz;
++	int rc;
++	int eqsz;
+ 
+ 	LASSERT(the_lnet.ln_rc_state = LNET_RC_STATE_SHUTDOWN);
+ 
+@@ -1085,11 +1085,11 @@ lnet_router_checker_stop(void)
+ static void
+ lnet_prune_rc_data(int wait_unlink)
+ {
+-	lnet_rc_data_t		*rcd;
+-	lnet_rc_data_t		*tmp;
+-	lnet_peer_t		*lp;
+-	struct list_head		head;
+-	int			i = 2;
++	lnet_rc_data_t *rcd;
++	lnet_rc_data_t *tmp;
++	lnet_peer_t *lp;
++	struct list_head head;
++	int i = 2;
+ 
+ 	if (likely(the_lnet.ln_rc_state = LNET_RC_STATE_RUNNING &&
+ 		   list_empty(&the_lnet.ln_rcd_deathrow) &&
+@@ -1169,17 +1169,17 @@ lnet_prune_rc_data(int wait_unlink)
  static int
-diff --git a/drivers/staging/lustre/lnet/selftest/rpc.c b/drivers/staging/lustre/lnet/selftest/rpc.c
-index 59cf01f..41a09fa 100644
---- a/drivers/staging/lustre/lnet/selftest/rpc.c
-+++ b/drivers/staging/lustre/lnet/selftest/rpc.c
-@@ -118,7 +118,6 @@ srpc_free_bulk(srpc_bulk_t *bk)
- 	}
+ lnet_router_checker(void *arg)
+ {
+-	lnet_peer_t       *rtr;
+-	struct list_head	*entry;
++	lnet_peer_t *rtr;
++	struct list_head *entry;
  
- 	LIBCFS_FREE(bk, offsetof(srpc_bulk_t, bk_iovs[bk->bk_niov]));
--	return;
- }
+ 	cfs_block_allsigs();
  
- srpc_bulk_t *
-@@ -145,7 +144,8 @@ srpc_alloc_bulk(int cpt, unsigned bulk_npg, unsigned bulk_len, int sink)
- 		struct page *pg;
- 		int nob;
+ 	LASSERT(the_lnet.ln_rc_state = LNET_RC_STATE_RUNNING);
  
--		pg = alloc_pages_node(cfs_cpt_spread_node(lnet_cpt_table(), cpt),
-+		pg = alloc_pages_node(cfs_cpt_spread_node(lnet_cpt_table(),
-+							  cpt),
- 				      GFP_IOFS, 0);
- 		if (pg = NULL) {
- 			CERROR("Can't allocate page %d of %d\n", i, bulk_npg);
-@@ -680,7 +680,8 @@ srpc_finish_service(struct srpc_service *sv)
+ 	while (the_lnet.ln_rc_state = LNET_RC_STATE_RUNNING) {
+-		__u64	version;
+-		int	cpt;
+-		int	cpt2;
++		__u64 version;
++		int cpt;
++		int cpt2;
  
- 		rpc = list_entry(scd->scd_rpc_active.next,
- 				     struct srpc_server_rpc, srpc_list);
--		CNETERR("Active RPC %p on shutdown: sv %s, peer %s, wi %s scheduled %d running %d, ev fired %d type %d status %d lnet %d\n",
-+		CNETERR(
-+			"Active RPC %p on shutdown: sv %s, peer %s, wi %s scheduled %d running %d, ev fired %d type %d status %d lnet %d\n",
- 			rpc, sv->sv_name, libcfs_id2str(rpc->srpc_peer),
- 			swi_state2str(rpc->srpc_wi.swi_state),
- 			rpc->srpc_wi.swi_workitem.wi_scheduled,
-@@ -952,7 +953,6 @@ srpc_server_rpc_done(srpc_server_rpc_t *rpc, int status)
- 	}
+ 		cpt = lnet_net_lock_current();
+ rescan:
+@@ -1245,11 +1245,11 @@ lnet_destroy_rtrbuf(lnet_rtrbuf_t *rb, int npages)
+ static lnet_rtrbuf_t *
+ lnet_new_rtrbuf(lnet_rtrbufpool_t *rbp, int cpt)
+ {
+-	int	    npages = rbp->rbp_npages;
+-	int	    sz = offsetof(lnet_rtrbuf_t, rb_kiov[npages]);
+-	struct page   *page;
++	int npages = rbp->rbp_npages;
++	int sz = offsetof(lnet_rtrbuf_t, rb_kiov[npages]);
++	struct page *page;
+ 	lnet_rtrbuf_t *rb;
+-	int	    i;
++	int i;
  
- 	spin_unlock(&scd->scd_lock);
--	return;
- }
+ 	LIBCFS_CPT_ALLOC(rb, lnet_cpt_table(), cpt, sz);
+ 	if (rb = NULL)
+@@ -1280,9 +1280,9 @@ lnet_new_rtrbuf(lnet_rtrbufpool_t *rbp, int cpt)
+ static void
+ lnet_rtrpool_free_bufs(lnet_rtrbufpool_t *rbp)
+ {
+-	int		npages = rbp->rbp_npages;
+-	int		nbuffers = 0;
+-	lnet_rtrbuf_t	*rb;
++	int npages = rbp->rbp_npages;
++	int nbuffers = 0;
++	lnet_rtrbuf_t *rb;
  
- /* handles an incoming RPC */
-@@ -1103,7 +1103,6 @@ srpc_add_client_rpc_timer(srpc_client_rpc_t *rpc)
- 	timer->stt_expires = cfs_time_add(rpc->crpc_timeout,
- 					  get_seconds());
- 	stt_add_timer(timer);
--	return;
- }
+ 	if (rbp->rbp_nbuffers = 0) /* not initialized or already freed */
+ 		return;
+@@ -1310,7 +1310,7 @@ static int
+ lnet_rtrpool_alloc_bufs(lnet_rtrbufpool_t *rbp, int nbufs, int cpt)
+ {
+ 	lnet_rtrbuf_t *rb;
+-	int	    i;
++	int i;
  
- /*
-@@ -1166,7 +1165,6 @@ srpc_client_rpc_done(srpc_client_rpc_t *rpc, int status)
- 	spin_unlock(&rpc->crpc_lock);
+ 	if (rbp->rbp_nbuffers != 0) {
+ 		LASSERT(rbp->rbp_nbuffers = nbufs);
+@@ -1355,7 +1355,7 @@ void
+ lnet_rtrpools_free(void)
+ {
+ 	lnet_rtrbufpool_t *rtrp;
+-	int		  i;
++	int i;
  
- 	(*rpc->crpc_done)(rpc);
--	return;
- }
+ 	if (the_lnet.ln_rtrpools = NULL) /* uninitialized or freed */
+ 		return;
+@@ -1373,7 +1373,7 @@ lnet_rtrpools_free(void)
+ static int
+ lnet_nrb_tiny_calculate(int npages)
+ {
+-	int	nrbs = LNET_NRB_TINY;
++	int nrbs = LNET_NRB_TINY;
  
- /* sends an outgoing RPC */
-@@ -1244,7 +1242,8 @@ srpc_send_rpc(swi_workitem_t *wi)
- 		if (reply->msg_type != type ||
- 		    (reply->msg_magic != SRPC_MSG_MAGIC &&
- 		     reply->msg_magic != __swab32(SRPC_MSG_MAGIC))) {
--			CWARN("Bad message from %s: type %u (%d expected), magic %u (%d expected).\n",
-+			CWARN(
-+			      "Bad message from %s: type %u (%d expected), magic %u (%d expected).\n",
- 			      libcfs_id2str(rpc->crpc_dest),
- 			      reply->msg_type, type,
- 			      reply->msg_magic, SRPC_MSG_MAGIC);
-@@ -1253,7 +1252,8 @@ srpc_send_rpc(swi_workitem_t *wi)
+ 	if (tiny_router_buffers < 0) {
+ 		LCONSOLE_ERROR_MSG(0x10c,
+@@ -1392,7 +1392,7 @@ lnet_nrb_tiny_calculate(int npages)
+ static int
+ lnet_nrb_small_calculate(int npages)
+ {
+-	int	nrbs = LNET_NRB_SMALL;
++	int nrbs = LNET_NRB_SMALL;
+ 
+ 	if (small_router_buffers < 0) {
+ 		LCONSOLE_ERROR_MSG(0x10c,
+@@ -1411,7 +1411,7 @@ lnet_nrb_small_calculate(int npages)
+ static int
+ lnet_nrb_large_calculate(int npages)
+ {
+-	int	nrbs = LNET_NRB_LARGE;
++	int nrbs = LNET_NRB_LARGE;
+ 
+ 	if (large_router_buffers < 0) {
+ 		LCONSOLE_ERROR_MSG(0x10c,
+@@ -1431,13 +1431,13 @@ int
+ lnet_rtrpools_alloc(int im_a_router)
+ {
+ 	lnet_rtrbufpool_t *rtrp;
+-	int	large_pages;
+-	int	small_pages = 1;
+-	int	nrb_tiny;
+-	int	nrb_small;
+-	int	nrb_large;
+-	int	rc;
+-	int	i;
++	int large_pages;
++	int small_pages = 1;
++	int nrb_tiny;
++	int nrb_small;
++	int nrb_large;
++	int rc;
++	int i;
+ 
+ 	large_pages = (LNET_MTU + PAGE_CACHE_SIZE - 1) >> PAGE_CACHE_SHIFT;
+ 
+@@ -1507,9 +1507,9 @@ lnet_rtrpools_alloc(int im_a_router)
+ int
+ lnet_notify(lnet_ni_t *ni, lnet_nid_t nid, int alive, unsigned long when)
+ {
+-	struct lnet_peer	*lp = NULL;
+-	unsigned long		now = cfs_time_current();
+-	int			cpt = lnet_cpt_of_nid(nid);
++	struct lnet_peer *lp = NULL;
++	unsigned long now = cfs_time_current();
++	int cpt = lnet_cpt_of_nid(nid);
+ 
+ 	LASSERT(!in_interrupt ());
+ 
+@@ -1591,13 +1591,13 @@ void
+ lnet_router_checker(void)
+ {
+ 	static time_t last;
+-	static int    running;
++	static int running;
+ 
+-	time_t	    now = get_seconds();
+-	int	       interval = now - last;
+-	int	       rc;
+-	__u64	     version;
+-	lnet_peer_t      *rtr;
++	time_t now = get_seconds();
++	int interval = now - last;
++	int rc;
++	__u64 version;
++	lnet_peer_t *rtr;
+ 
+ 	/* It's no use to call me again within a sec - all intervals and
+ 	 * timeouts are measured in seconds */
+@@ -1625,7 +1625,7 @@ lnet_router_checker(void)
+ 
+ 	/* consume all pending events */
+ 	while (1) {
+-		int	  i;
++		int i;
+ 		lnet_event_t ev;
+ 
+ 		/* NB ln_rc_eqh must be the 1st in 'eventqs' otherwise the
+diff --git a/drivers/staging/lustre/lnet/lnet/router_proc.c b/drivers/staging/lustre/lnet/lnet/router_proc.c
+index c055afc..ee902dc 100644
+--- a/drivers/staging/lustre/lnet/lnet/router_proc.c
++++ b/drivers/staging/lustre/lnet/lnet/router_proc.c
+@@ -112,11 +112,11 @@ static int proc_call_handler(void *data, int write, loff_t *ppos,
+ static int __proc_lnet_stats(void *data, int write,
+ 			     loff_t pos, void __user *buffer, int nob)
+ {
+-	int	      rc;
++	int rc;
+ 	lnet_counters_t *ctrs;
+-	int	      len;
+-	char	    *tmpstr;
+-	const int	tmpsiz = 256; /* 7 %u and 4 %llu */
++	int len;
++	char *tmpstr;
++	const int tmpsiz = 256; /* 7 %u and 4 %llu */
+ 
+ 	if (write) {
+ 		lnet_counters_reset();
+@@ -167,13 +167,13 @@ static int proc_lnet_stats(struct ctl_table *table, int write,
+ static int proc_lnet_routes(struct ctl_table *table, int write,
+ 			    void __user *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	const int	tmpsiz = 256;
+-	char		*tmpstr;
+-	char		*s;
+-	int		rc = 0;
+-	int		len;
+-	int		ver;
+-	int		off;
++	const int tmpsiz = 256;
++	char *tmpstr;
++	char *s;
++	int rc = 0;
++	int len;
++	int ver;
++	int off;
+ 
+ 	CLASSERT(sizeof(loff_t) >= 4);
+ 
+@@ -205,13 +205,13 @@ static int proc_lnet_routes(struct ctl_table *table, int write,
+ 		lnet_net_unlock(0);
+ 		*ppos = LNET_PROC_POS_MAKE(0, ver, 0, off);
+ 	} else {
+-		struct list_head		*n;
+-		struct list_head		*r;
+-		lnet_route_t		*route = NULL;
+-		lnet_remotenet_t	*rnet  = NULL;
+-		int			skip  = off - 1;
+-		struct list_head		*rn_list;
+-		int			i;
++		struct list_head *n;
++		struct list_head *r;
++		lnet_route_t *route = NULL;
++		lnet_remotenet_t *rnet  = NULL;
++		int skip  = off - 1;
++		struct list_head *rn_list;
++		int i;
+ 
+ 		lnet_net_lock(0);
+ 
+@@ -251,11 +251,11 @@ static int proc_lnet_routes(struct ctl_table *table, int write,
  		}
  
- 		if (do_bulk && reply->msg_body.reply.status != 0) {
--			CWARN("Remote error %d at %s, unlink bulk buffer in case peer didn't initiate bulk transfer\n",
-+			CWARN(
-+			      "Remote error %d at %s, unlink bulk buffer in case peer didn't initiate bulk transfer\n",
- 			      reply->msg_body.reply.status,
- 			      libcfs_id2str(rpc->crpc_dest));
- 			LNetMDUnlink(rpc->crpc_bulk.bk_mdh);
-@@ -1336,7 +1336,6 @@ srpc_abort_rpc(srpc_client_rpc_t *rpc, int why)
- 	rpc->crpc_aborted = 1;
- 	rpc->crpc_status  = why;
- 	swi_schedule_workitem(&rpc->crpc_wi);
--	return;
- }
+ 		if (route != NULL) {
+-			__u32        net	= rnet->lrn_net;
+-			unsigned int hops	= route->lr_hops;
+-			unsigned int priority	= route->lr_priority;
+-			lnet_nid_t   nid	= route->lr_gateway->lp_nid;
+-			int          alive	= route->lr_gateway->lp_alive;
++			__u32 net = rnet->lrn_net;
++			unsigned int hops = route->lr_hops;
++			unsigned int priority = route->lr_priority;
++			lnet_nid_t nid = route->lr_gateway->lp_nid;
++			int alive = route->lr_gateway->lp_alive;
  
- /* called with rpc->crpc_lock held */
-@@ -1352,7 +1351,6 @@ srpc_post_rpc(srpc_client_rpc_t *rpc)
+ 			s += snprintf(s, tmpstr + tmpsiz - s,
+ 				      "%-8s %4u %8u %7s %s\n",
+@@ -293,13 +293,13 @@ static int proc_lnet_routes(struct ctl_table *table, int write,
+ static int proc_lnet_routers(struct ctl_table *table, int write,
+ 			     void __user *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	int	rc = 0;
+-	char      *tmpstr;
+-	char      *s;
+-	const int  tmpsiz = 256;
+-	int	len;
+-	int	ver;
+-	int	off;
++	int rc = 0;
++	char *tmpstr;
++	char *s;
++	const int tmpsiz = 256;
++	int len;
++	int ver;
++	int off;
  
- 	srpc_add_client_rpc_timer(rpc);
- 	swi_schedule_workitem(&rpc->crpc_wi);
--	return;
- }
+ 	off = LNET_PROC_HOFF_GET(*ppos);
+ 	ver = LNET_PROC_VER_GET(*ppos);
+@@ -328,9 +328,9 @@ static int proc_lnet_routers(struct ctl_table *table, int write,
+ 		lnet_net_unlock(0);
+ 		*ppos = LNET_PROC_POS_MAKE(0, ver, 0, off);
+ 	} else {
+-		struct list_head		*r;
+-		struct lnet_peer	*peer = NULL;
+-		int			skip = off - 1;
++		struct list_head *r;
++		struct lnet_peer *peer = NULL;
++		int skip = off - 1;
  
+ 		lnet_net_lock(0);
  
-@@ -1440,11 +1438,13 @@ srpc_lnet_ev_handler(lnet_event_t *ev)
- 		if (rpcev != &crpc->crpc_reqstev &&
- 		    rpcev != &crpc->crpc_replyev &&
- 		    rpcev != &crpc->crpc_bulkev) {
--			CERROR("rpcev %p, crpc %p, reqstev %p, replyev %p, bulkev %p\n",
-+			CERROR(
-+			       "rpcev %p, crpc %p, reqstev %p, replyev %p, bulkev %p\n",
- 			       rpcev, crpc, &crpc->crpc_reqstev,
- 			       &crpc->crpc_replyev, &crpc->crpc_bulkev);
- 			CERROR("Bad event: status %d, type %d, lnet %d\n",
--			       rpcev->ev_status, rpcev->ev_type, rpcev->ev_lnet);
-+			       rpcev->ev_status, rpcev->ev_type,
-+			       rpcev->ev_lnet);
- 			LBUG();
+@@ -360,14 +360,14 @@ static int proc_lnet_routers(struct ctl_table *table, int write,
+ 			lnet_nid_t nid = peer->lp_nid;
+ 			unsigned long now = cfs_time_current();
+ 			unsigned long deadline = peer->lp_ping_deadline;
+-			int nrefs     = peer->lp_refcount;
+-			int nrtrrefs  = peer->lp_rtr_refcount;
++			int nrefs = peer->lp_refcount;
++			int nrtrrefs = peer->lp_rtr_refcount;
+ 			int alive_cnt = peer->lp_alive_count;
+-			int alive     = peer->lp_alive;
+-			int pingsent  = !peer->lp_ping_notsent;
++			int alive = peer->lp_alive;
++			int pingsent = !peer->lp_ping_notsent;
+ 			int last_ping = cfs_duration_sec(cfs_time_sub(now,
+ 						     peer->lp_ping_timestamp));
+-			int down_ni   = 0;
++			int down_ni = 0;
+ 			lnet_route_t *rtr;
+ 
+ 			if ((peer->lp_ping_feats &
+@@ -428,16 +428,16 @@ static int proc_lnet_routers(struct ctl_table *table, int write,
+ static int proc_lnet_peers(struct ctl_table *table, int write,
+ 			   void __user *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	const int		tmpsiz  = 256;
+-	struct lnet_peer_table	*ptable;
+-	char			*tmpstr;
+-	char			*s;
+-	int			cpt  = LNET_PROC_CPT_GET(*ppos);
+-	int			ver  = LNET_PROC_VER_GET(*ppos);
+-	int			hash = LNET_PROC_HASH_GET(*ppos);
+-	int			hoff = LNET_PROC_HOFF_GET(*ppos);
+-	int			rc = 0;
+-	int			len;
++	const int tmpsiz  = 256;
++	struct lnet_peer_table *ptable;
++	char *tmpstr;
++	char *s;
++	int cpt  = LNET_PROC_CPT_GET(*ppos);
++	int ver  = LNET_PROC_VER_GET(*ppos);
++	int hash = LNET_PROC_HASH_GET(*ppos);
++	int hoff = LNET_PROC_HOFF_GET(*ppos);
++	int rc = 0;
++	int len;
+ 
+ 	CLASSERT(LNET_PROC_HASH_BITS >= LNET_PEER_HASH_BITS);
+ 	LASSERT(!write);
+@@ -465,9 +465,9 @@ static int proc_lnet_peers(struct ctl_table *table, int write,
+ 
+ 		hoff++;
+ 	} else {
+-		struct lnet_peer	*peer;
+-		struct list_head		*p;
+-		int			skip;
++		struct lnet_peer *peer;
++		struct list_head *p;
++		int skip;
+  again:
+ 		p = NULL;
+ 		peer = NULL;
+@@ -521,23 +521,23 @@ static int proc_lnet_peers(struct ctl_table *table, int write,
  		}
  
-@@ -1511,7 +1511,8 @@ srpc_lnet_ev_handler(lnet_event_t *ev)
- 		     msg->msg_type != __swab32(type)) ||
- 		    (msg->msg_magic != SRPC_MSG_MAGIC &&
- 		     msg->msg_magic != __swab32(SRPC_MSG_MAGIC))) {
--			CERROR("Dropping RPC (%s) from %s: status %d mlength %d type %u magic %u.\n",
-+			CERROR(
-+			       "Dropping RPC (%s) from %s: status %d mlength %d type %u magic %u.\n",
- 			       sv->sv_name, libcfs_id2str(ev->initiator),
- 			       ev->status, ev->mlength,
- 			       msg->msg_type, msg->msg_magic);
-@@ -1668,6 +1669,4 @@ srpc_shutdown(void)
- 	case SRPC_STATE_NI_INIT:
- 		LNetNIFini();
- 	}
--
--	return;
- }
-diff --git a/drivers/staging/lustre/lnet/selftest/selftest.h b/drivers/staging/lustre/lnet/selftest/selftest.h
-index 7939e4e..7a2b3d1 100644
---- a/drivers/staging/lustre/lnet/selftest/selftest.h
-+++ b/drivers/staging/lustre/lnet/selftest/selftest.h
-@@ -95,11 +95,11 @@ struct sfw_test_instance;
- #define SRPC_RDMA_PORTAL              52
+ 		if (peer != NULL) {
+-			lnet_nid_t nid       = peer->lp_nid;
+-			int	nrefs     = peer->lp_refcount;
+-			int	lastalive = -1;
+-			char      *aliveness = "NA";
+-			int	maxcr     = peer->lp_ni->ni_peertxcredits;
+-			int	txcr      = peer->lp_txcredits;
+-			int	mintxcr   = peer->lp_mintxcredits;
+-			int	rtrcr     = peer->lp_rtrcredits;
+-			int	minrtrcr  = peer->lp_minrtrcredits;
+-			int	txqnob    = peer->lp_txqnob;
++			lnet_nid_t nid = peer->lp_nid;
++			int nrefs = peer->lp_refcount;
++			int lastalive = -1;
++			char *aliveness = "NA";
++			int maxcr = peer->lp_ni->ni_peertxcredits;
++			int txcr = peer->lp_txcredits;
++			int mintxcr = peer->lp_mintxcredits;
++			int rtrcr = peer->lp_rtrcredits;
++			int minrtrcr = peer->lp_minrtrcredits;
++			int txqnob = peer->lp_txqnob;
  
- static inline srpc_msg_type_t
--srpc_service2request (int service)
-+srpc_service2request(int service)
+ 			if (lnet_isrouter(peer) ||
+ 			    lnet_peer_aliveness_enabled(peer))
+ 				aliveness = peer->lp_alive ? "up" : "down";
+ 
+ 			if (lnet_peer_aliveness_enabled(peer)) {
+-				unsigned long     now = cfs_time_current();
++				unsigned long now = cfs_time_current();
+ 				long delta;
+ 
+ 				delta = cfs_time_sub(now, peer->lp_last_alive);
+@@ -595,13 +595,13 @@ static int proc_lnet_peers(struct ctl_table *table, int write,
+ static int __proc_lnet_buffers(void *data, int write,
+ 			       loff_t pos, void __user *buffer, int nob)
  {
- 	switch (service) {
- 	default:
--		LBUG ();
-+		LBUG();
- 	case SRPC_SERVICE_DEBUG:
- 		return SRPC_MSG_DEBUG_REQST;
+-	char	    *s;
+-	char	    *tmpstr;
+-	int		tmpsiz;
+-	int		idx;
+-	int		len;
+-	int		rc;
+-	int		i;
++	char *s;
++	char *tmpstr;
++	int tmpsiz;
++	int idx;
++	int len;
++	int rc;
++	int i;
  
-@@ -130,7 +130,7 @@ srpc_service2request (int service)
- }
+ 	LASSERT(!write);
  
- static inline srpc_msg_type_t
--srpc_service2reply (int service)
-+srpc_service2reply(int service)
+@@ -660,11 +660,11 @@ static int proc_lnet_buffers(struct ctl_table *table, int write,
+ static int proc_lnet_nis(struct ctl_table *table, int write,
+ 			 void __user *buffer, size_t *lenp, loff_t *ppos)
  {
- 	return srpc_service2request(service) + 1;
+-	int	tmpsiz = 128 * LNET_CPT_NUMBER;
+-	int	rc = 0;
+-	char      *tmpstr;
+-	char      *s;
+-	int	len;
++	int tmpsiz = 128 * LNET_CPT_NUMBER;
++	int rc = 0;
++	char *tmpstr;
++	char *s;
++	int len;
+ 
+ 	LASSERT(!write);
+ 
+@@ -684,9 +684,9 @@ static int proc_lnet_nis(struct ctl_table *table, int write,
+ 			      "rtr", "max", "tx", "min");
+ 		LASSERT(tmpstr + tmpsiz - s > 0);
+ 	} else {
+-		struct list_head	*n;
+-		lnet_ni_t	 *ni   = NULL;
+-		int		skip = *ppos - 1;
++		struct list_head *n;
++		lnet_ni_t *ni   = NULL;
++		int skip = *ppos - 1;
+ 
+ 		lnet_net_lock(0);
+ 
+@@ -705,12 +705,12 @@ static int proc_lnet_nis(struct ctl_table *table, int write,
+ 		}
+ 
+ 		if (ni != NULL) {
+-			struct lnet_tx_queue	*tq;
+-			char	*stat;
+-			long	now = get_seconds();
+-			int	last_alive = -1;
+-			int	i;
+-			int	j;
++			struct lnet_tx_queue *tq;
++			char *stat;
++			long now = get_seconds();
++			int last_alive = -1;
++			int i;
++			int j;
+ 
+ 			if (the_lnet.ln_routing)
+ 				last_alive = now - ni->ni_last_alive;
+@@ -777,9 +777,9 @@ static int proc_lnet_nis(struct ctl_table *table, int write,
  }
-@@ -319,8 +319,8 @@ typedef struct srpc_service {
- 	 * - sv_handler: process incoming RPC request
- 	 * - sv_bulk_ready: notify bulk data
+ 
+ struct lnet_portal_rotors {
+-	int	     pr_value;
+-	const char      *pr_name;
+-	const char	*pr_desc;
++	int pr_value;
++	const char *pr_name;
++	const char *pr_desc;
+ };
+ 
+ static struct lnet_portal_rotors	portal_rotors[] = {
+@@ -815,11 +815,11 @@ extern int portal_rotor;
+ static int __proc_lnet_portal_rotor(void *data, int write,
+ 				    loff_t pos, void __user *buffer, int nob)
+ {
+-	const int	buf_len	= 128;
+-	char		*buf;
+-	char		*tmp;
+-	int		rc;
+-	int		i;
++	const int buf_len = 128;
++	char *buf;
++	char *tmp;
++	int rc;
++	int i;
+ 
+ 	LIBCFS_ALLOC(buf, buf_len);
+ 	if (buf = NULL)
+@@ -887,38 +887,38 @@ static struct ctl_table lnet_table[] = {
+ 	 * to go via /proc for portability.
  	 */
--	int                     (*sv_handler) (srpc_server_rpc_t *);
--	int                     (*sv_bulk_ready) (srpc_server_rpc_t *, int);
-+	int                     (*sv_handler)(srpc_server_rpc_t *);
-+	int                     (*sv_bulk_ready)(srpc_server_rpc_t *, int);
- } srpc_service_t;
- 
- typedef struct {
-@@ -416,7 +416,7 @@ typedef struct sfw_test_case {
- srpc_client_rpc_t *
- sfw_create_rpc(lnet_process_id_t peer, int service,
- 	       unsigned features, int nbulkiov, int bulklen,
--	       void (*done) (srpc_client_rpc_t *), void *priv);
-+	       void (*done)(srpc_client_rpc_t *), void *priv);
- int sfw_create_test_rpc(sfw_test_unit_t *tsu,
- 			lnet_process_id_t peer, unsigned features,
- 			int nblk, int blklen, srpc_client_rpc_t **rpc);
-@@ -428,7 +428,7 @@ void sfw_free_pages(srpc_server_rpc_t *rpc);
- void sfw_add_bulk_page(srpc_bulk_t *bk, struct page *pg, int i);
- int sfw_alloc_pages(srpc_server_rpc_t *rpc, int cpt, int npages, int len,
- 		    int sink);
--int sfw_make_session (srpc_mksn_reqst_t *request, srpc_mksn_reply_t *reply);
-+int sfw_make_session(srpc_mksn_reqst_t *request, srpc_mksn_reply_t *reply);
- 
- srpc_client_rpc_t *
- srpc_create_client_rpc(lnet_process_id_t peer, int service,
-@@ -504,26 +504,23 @@ void sfw_shutdown(void);
- void srpc_shutdown(void);
- 
- static inline void
--srpc_destroy_client_rpc (srpc_client_rpc_t *rpc)
-+srpc_destroy_client_rpc(srpc_client_rpc_t *rpc)
- {
- 	LASSERT(rpc != NULL);
- 	LASSERT(!srpc_event_pending(rpc));
- 	LASSERT(atomic_read(&rpc->crpc_refcount) = 0);
- 
--	if (rpc->crpc_fini = NULL) {
-+	if (rpc->crpc_fini = NULL)
- 		LIBCFS_FREE(rpc, srpc_client_rpc_size(rpc));
--	} else {
-+	else
- 		(*rpc->crpc_fini) (rpc);
--	}
--
--	return;
- }
- 
- static inline void
--srpc_init_client_rpc (srpc_client_rpc_t *rpc, lnet_process_id_t peer,
--		      int service, int nbulkiov, int bulklen,
--		      void (*rpc_done)(srpc_client_rpc_t *),
--		      void (*rpc_fini)(srpc_client_rpc_t *), void *priv)
-+srpc_init_client_rpc(srpc_client_rpc_t *rpc, lnet_process_id_t peer,
-+		     int service, int nbulkiov, int bulklen,
-+		     void (*rpc_done)(srpc_client_rpc_t *),
-+		     void (*rpc_fini)(srpc_client_rpc_t *), void *priv)
- {
- 	LASSERT(nbulkiov <= LNET_MAX_IOV);
- 
-@@ -555,24 +552,23 @@ srpc_init_client_rpc (srpc_client_rpc_t *rpc, lnet_process_id_t peer,
- 	rpc->crpc_reqstmsg.msg_magic   = SRPC_MSG_MAGIC;
- 	rpc->crpc_reqstmsg.msg_version = SRPC_MSG_VERSION;
- 	rpc->crpc_reqstmsg.msg_type    = srpc_service2request(service);
--	return;
- }
- 
- static inline const char *
--swi_state2str (int state)
-+swi_state2str(int state)
- {
- #define STATE2STR(x) case x: return #x
--	switch(state) {
--		default:
--			LBUG();
--		STATE2STR(SWI_STATE_NEWBORN);
--		STATE2STR(SWI_STATE_REPLY_SUBMITTED);
--		STATE2STR(SWI_STATE_REPLY_SENT);
--		STATE2STR(SWI_STATE_REQUEST_SUBMITTED);
--		STATE2STR(SWI_STATE_REQUEST_SENT);
--		STATE2STR(SWI_STATE_REPLY_RECEIVED);
--		STATE2STR(SWI_STATE_BULK_STARTED);
--		STATE2STR(SWI_STATE_DONE);
-+	switch (state) {
-+	default:
-+		LBUG();
-+	STATE2STR(SWI_STATE_NEWBORN);
-+	STATE2STR(SWI_STATE_REPLY_SUBMITTED);
-+	STATE2STR(SWI_STATE_REPLY_SENT);
-+	STATE2STR(SWI_STATE_REQUEST_SUBMITTED);
-+	STATE2STR(SWI_STATE_REQUEST_SENT);
-+	STATE2STR(SWI_STATE_REPLY_RECEIVED);
-+	STATE2STR(SWI_STATE_BULK_STARTED);
-+	STATE2STR(SWI_STATE_DONE);
- 	}
- #undef STATE2STR
- }
-@@ -607,7 +603,7 @@ srpc_wait_service_shutdown(srpc_service_t *sv)
- 
- 	while (srpc_finish_service(sv) = 0) {
- 		i++;
--		CDEBUG (((i & -i) = i) ? D_WARNING : D_NET,
-+		CDEBUG(((i & -i) = i) ? D_WARNING : D_NET,
- 			"Waiting for %s service to shutdown...\n",
- 			sv->sv_name);
- 		selftest_wait_events();
-diff --git a/drivers/staging/lustre/lnet/selftest/timer.h b/drivers/staging/lustre/lnet/selftest/timer.h
-index 2a8803d..e2b1a57 100644
---- a/drivers/staging/lustre/lnet/selftest/timer.h
-+++ b/drivers/staging/lustre/lnet/selftest/timer.h
-@@ -41,7 +41,7 @@
- typedef struct {
- 	struct list_head stt_list;
- 	unsigned long    stt_expires;
--	void             (*stt_func) (void *);
-+	void             (*stt_func)(void *);
- 	void             *stt_data;
- } stt_timer_t;
- 
+ 	{
+-		.procname = "stats",
+-		.mode     = 0644,
++		.procname     = "stats",
++		.mode         = 0644,
+ 		.proc_handler = &proc_lnet_stats,
+ 	},
+ 	{
+-		.procname = "routes",
+-		.mode     = 0444,
++		.procname     = "routes",
++		.mode         = 0444,
+ 		.proc_handler = &proc_lnet_routes,
+ 	},
+ 	{
+-		.procname = "routers",
+-		.mode     = 0444,
++		.procname     = "routers",
++		.mode         = 0444,
+ 		.proc_handler = &proc_lnet_routers,
+ 	},
+ 	{
+-		.procname = "peers",
+-		.mode     = 0444,
++		.procname     = "peers",
++		.mode         = 0444,
+ 		.proc_handler = &proc_lnet_peers,
+ 	},
+ 	{
+-		.procname = "buffers",
+-		.mode     = 0444,
++		.procname     = "buffers",
++		.mode         = 0444,
+ 		.proc_handler = &proc_lnet_buffers,
+ 	},
+ 	{
+-		.procname = "nis",
+-		.mode     = 0444,
++		.procname     = "nis",
++		.mode         = 0444,
+ 		.proc_handler = &proc_lnet_nis,
+ 	},
+ 	{
+-		.procname = "portal_rotor",
+-		.mode     = 0644,
++		.procname     = "portal_rotor",
++		.mode         = 0644,
+ 		.proc_handler = &proc_lnet_portal_rotor,
+ 	},
+ 	{
 -- 
 1.7.1
 
