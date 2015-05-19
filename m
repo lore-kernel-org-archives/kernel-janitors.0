@@ -1,190 +1,69 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 15:51:17 +0000
-Subject: [PATCH 6/11] staging: lustre: mdc: Use kzalloc and kfree
-Message-Id: <1430495482-933-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Mike Shuey <shuey@purdue.edu>
+Date: Tue, 19 May 2015 14:14:34 +0000
+Subject: [PATCH v3 3/8] staging: lustre: lnet: dead code - remove LNetSetAsync
+Message-Id: <1432044879-28923-4-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1432044879-28923-1-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1432044879-28923-1-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, Mike Shuey <shuey@purdue.edu>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+LNetSetAsync() returns 0, and is never called.  Doesn't exist in the Intel
+tree, either.  Remove it.
 
-Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
-kalloc/kcalloc, and OBD_FREE and OBD_FREE_PTR by kfree.
-
-A simplified version of the semantic patch that makes these changes is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@ expression ptr,size; @@
-- OBD_ALLOC(ptr,size)
-+ ptr = kzalloc(size, GFP_NOFS)
-
-@@ expression ptr, size; @@
-- OBD_FREE(ptr, size);
-+ kfree(ptr);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Mike Shuey <shuey@purdue.edu>
 ---
- drivers/staging/lustre/lustre/mdc/lproc_mdc.c   |    4 +--
- drivers/staging/lustre/lustre/mdc/mdc_locks.c   |    2 -
- drivers/staging/lustre/lustre/mdc/mdc_request.c |   30 ++++++++++++------------
- 3 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/staging/lustre/include/linux/lnet/api.h |    1 -
+ drivers/staging/lustre/lnet/lnet/lib-move.c     |   24 -----------------------
+ 2 files changed, 0 insertions(+), 25 deletions(-)
 
-diff -u -p a/drivers/staging/lustre/lustre/mdc/mdc_request.c b/drivers/staging/lustre/lustre/mdc/mdc_request.c
---- a/drivers/staging/lustre/lustre/mdc/mdc_request.c
-+++ b/drivers/staging/lustre/lustre/mdc/mdc_request.c
-@@ -1201,7 +1201,7 @@ static int mdc_ioc_fid2path(struct obd_e
+diff --git a/drivers/staging/lustre/include/linux/lnet/api.h b/drivers/staging/lustre/include/linux/lnet/api.h
+index cd86517..c4dc1b2 100644
+--- a/drivers/staging/lustre/include/linux/lnet/api.h
++++ b/drivers/staging/lustre/include/linux/lnet/api.h
+@@ -209,7 +209,6 @@ int LNetGet(lnet_nid_t	self,
+ int LNetSetLazyPortal(int portal);
+ int LNetClearLazyPortal(int portal);
+ int LNetCtl(unsigned int cmd, void *arg);
+-int LNetSetAsync(lnet_process_id_t id, int nasync);
  
- 	/* Key is KEY_FID2PATH + getinfo_fid2path description */
- 	keylen = cfs_size_round(sizeof(KEY_FID2PATH)) + sizeof(*gf);
--	OBD_ALLOC(key, keylen);
-+	key = kzalloc(keylen, GFP_NOFS);
- 	if (key = NULL)
- 		return -ENOMEM;
- 	memcpy(key, KEY_FID2PATH, sizeof(KEY_FID2PATH));
-@@ -1234,7 +1234,7 @@ static int mdc_ioc_fid2path(struct obd_e
- 	       PFID(&gf->gf_fid), gf->gf_recno, gf->gf_linkno, gf->gf_path);
+ /** @} lnet_misc */
  
- out:
--	OBD_FREE(key, keylen);
-+	kfree(key);
- 	return rc;
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-move.c b/drivers/staging/lustre/lnet/lnet/lib-move.c
+index ba59fe7..433faae 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-move.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-move.c
+@@ -2434,27 +2434,3 @@ LNetDist(lnet_nid_t dstnid, lnet_nid_t *srcnidp, __u32 *orderp)
+ 	return -EHOSTUNREACH;
  }
- 
-@@ -1604,7 +1604,7 @@ static int mdc_changelog_send_thread(voi
- 	CDEBUG(D_CHANGELOG, "changelog to fp=%p start %llu\n",
- 	       cs->cs_fp, cs->cs_startrec);
- 
--	OBD_ALLOC(cs->cs_buf, KUC_CHANGELOG_MSG_MAXSIZE);
-+	cs->cs_buf = kzalloc(KUC_CHANGELOG_MSG_MAXSIZE, GFP_NOFS);
- 	if (cs->cs_buf = NULL) {
- 		rc = -ENOMEM;
- 		goto out;
-@@ -1645,8 +1645,8 @@ out:
- 	if (ctxt)
- 		llog_ctxt_put(ctxt);
- 	if (cs->cs_buf)
--		OBD_FREE(cs->cs_buf, KUC_CHANGELOG_MSG_MAXSIZE);
--	OBD_FREE_PTR(cs);
-+		kfree(cs->cs_buf);
-+	kfree(cs);
- 	return rc;
- }
- 
-@@ -1657,7 +1657,7 @@ static int mdc_ioc_changelog_send(struct
- 	int rc;
- 
- 	/* Freed in mdc_changelog_send_thread */
--	OBD_ALLOC_PTR(cs);
-+	cs = kzalloc(sizeof(*cs), GFP_NOFS);
- 	if (!cs)
- 		return -ENOMEM;
- 
-@@ -1679,7 +1679,7 @@ static int mdc_ioc_changelog_send(struct
- 	}
- 
- 	CERROR("Failed to start changelog thread: %d\n", rc);
--	OBD_FREE_PTR(cs);
-+	kfree(cs);
- 	return rc;
- }
- 
-@@ -1937,7 +1937,7 @@ static int mdc_iocontrol(unsigned int cm
- 		struct if_quotactl *qctl = karg;
- 		struct obd_quotactl *oqctl;
- 
--		OBD_ALLOC_PTR(oqctl);
-+		oqctl = kzalloc(sizeof(*oqctl), GFP_NOFS);
- 		if (oqctl = NULL) {
- 			rc = -ENOMEM;
- 			goto out;
-@@ -1951,7 +1951,7 @@ static int mdc_iocontrol(unsigned int cm
- 			qctl->obd_uuid = obd->u.cli.cl_target_uuid;
- 		}
- 
--		OBD_FREE_PTR(oqctl);
-+		kfree(oqctl);
- 		goto out;
- 	}
- 	case LL_IOC_GET_CONNECT_FLAGS:
-@@ -2430,14 +2430,14 @@ static int mdc_setup(struct obd_device *
- 	struct lprocfs_static_vars lvars = { NULL };
- 	int rc;
- 
--	OBD_ALLOC(cli->cl_rpc_lock, sizeof(*cli->cl_rpc_lock));
-+	cli->cl_rpc_lock = kzalloc(sizeof(*cli->cl_rpc_lock), GFP_NOFS);
- 	if (!cli->cl_rpc_lock)
- 		return -ENOMEM;
- 	mdc_init_rpc_lock(cli->cl_rpc_lock);
- 
- 	ptlrpcd_addref();
- 
--	OBD_ALLOC(cli->cl_close_lock, sizeof(*cli->cl_close_lock));
-+	cli->cl_close_lock = kzalloc(sizeof(*cli->cl_close_lock), GFP_NOFS);
- 	if (!cli->cl_close_lock) {
- 		rc = -ENOMEM;
- 		goto err_rpc_lock;
-@@ -2465,9 +2465,9 @@ static int mdc_setup(struct obd_device *
- 	return rc;
- 
- err_close_lock:
--	OBD_FREE(cli->cl_close_lock, sizeof(*cli->cl_close_lock));
-+	kfree(cli->cl_close_lock);
- err_rpc_lock:
--	OBD_FREE(cli->cl_rpc_lock, sizeof(*cli->cl_rpc_lock));
-+	kfree(cli->cl_rpc_lock);
- 	ptlrpcd_decref();
- 	return rc;
- }
-@@ -2525,8 +2525,8 @@ static int mdc_cleanup(struct obd_device
- {
- 	struct client_obd *cli = &obd->u.cli;
- 
--	OBD_FREE(cli->cl_rpc_lock, sizeof(*cli->cl_rpc_lock));
--	OBD_FREE(cli->cl_close_lock, sizeof(*cli->cl_close_lock));
-+	kfree(cli->cl_rpc_lock);
-+	kfree(cli->cl_close_lock);
- 
- 	ptlrpcd_decref();
- 
-diff -u -p a/drivers/staging/lustre/lustre/mdc/mdc_locks.c b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
---- a/drivers/staging/lustre/lustre/mdc/mdc_locks.c
-+++ b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
-@@ -1251,7 +1251,7 @@ static int mdc_intent_getattr_async_inte
- 	rc = mdc_finish_intent_lock(exp, req, &minfo->mi_data, it, lockh);
- 
- out:
--	OBD_FREE_PTR(einfo);
-+	kfree(einfo);
- 	minfo->mi_cb(req, minfo, rc);
- 	return 0;
- }
-diff -u -p a/drivers/staging/lustre/lustre/mdc/lproc_mdc.c b/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
---- a/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
-+++ b/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
-@@ -106,7 +106,7 @@ static ssize_t mdc_kuc_write(struct file
- 	len = sizeof(*lh) + sizeof(*hal) + MTI_NAME_MAXLEN +
- 		/* for mockup below */ 2 * cfs_size_round(sizeof(*hai));
- 
--	OBD_ALLOC(lh, len);
-+	lh = kzalloc(len, GFP_NOFS);
- 	if (!lh)
- 		return -ENOMEM;
- 
-@@ -141,7 +141,7 @@ static ssize_t mdc_kuc_write(struct file
- 		rc = libcfs_kkuc_msg_put(fp, lh);
- 		fput(fp);
- 	}
--	OBD_FREE(lh, len);
-+	kfree(lh);
- 	if (rc < 0)
- 		return rc;
- 	return count;
+ EXPORT_SYMBOL(LNetDist);
+-
+-/**
+- * Set the number of asynchronous messages expected from a target process.
+- *
+- * This function is only meaningful for userspace callers. It's a no-op when
+- * called from kernel.
+- *
+- * Asynchronous messages are those that can come from a target when the
+- * userspace process is not waiting for IO to complete; e.g., AST callbacks
+- * from Lustre servers. Specifying the expected number of such messages
+- * allows them to be eagerly received when user process is not running in
+- * LNet; otherwise network errors may occur.
+- *
+- * \param id Process ID of the target process.
+- * \param nasync Number of asynchronous messages expected from the target.
+- *
+- * \return 0 on success, and an error code otherwise.
+- */
+-int
+-LNetSetAsync(lnet_process_id_t id, int nasync)
+-{
+-	return 0;
+-}
+-EXPORT_SYMBOL(LNetSetAsync);
+-- 
+1.7.1
 
