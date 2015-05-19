@@ -1,34 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 06 May 2015 13:45:23 +0000
-Subject: Re: [patch 119/197] scripts/coccinelle/free: Delete NULL test before freeing functions
-Message-Id: <554A1AF3.9010802@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 May 2015 12:04:19 +0000
+Subject: [patch -next] target: double locking typo in core_clear_lun_from_tpg()
+Message-Id: <20150519120419.GA12107@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53e53fd1.zO3IbUqJ421c7VXf%akpm@linux-foundation.org>
- <53E5DA60.90902@users.sourceforge.net>
- <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->>> +@r depends on context || report || org @
->>> +expression E;
->>> +position p;
->>> +@@
->>> +
->>> +* if (E)
->>> +*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
->>
->> How do you think about to add the construct "@p" also behind the function name
->> "usb_free_urb"?
-> 
-> Yes, that would be needed, thanks.  Also, it was recently suggested to add 
-> of_node_put to the list of things that are checked for.
+We accidentally deadlock instead of unlocking.
 
-Would you like to achieve further improvements for this approach?
-https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/scripts/coccinelle/free/ifnullfree.cocci?id=refs/tags/v4.0.1#n34
+Fixes: 08d20ff62cde ('target: Acquire lun_entry_mutex during core_disable_device_list_for_node')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
-
+diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
+index 2f4c8fa..20618df 100644
+--- a/drivers/target/target_core_device.c
++++ b/drivers/target/target_core_device.c
+@@ -433,7 +433,7 @@ void core_clear_lun_from_tpg(struct se_lun *lun, struct se_portal_group *tpg)
+ 
+ 			core_disable_device_list_for_node(lun, deve, nacl, tpg);
+ 		}
+-		mutex_lock(&nacl->lun_entry_mutex);
++		mutex_unlock(&nacl->lun_entry_mutex);
+ 	}
+ 	mutex_unlock(&tpg->acl_node_mutex);
+ }
