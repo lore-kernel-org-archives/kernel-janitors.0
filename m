@@ -1,23 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 14 May 2015 04:49:24 +0000
-Subject: Re: [patch -next] net: macb: OR vs AND typos
-Message-Id: <20150514.004924.1739796884775337118.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 May 2015 07:40:35 +0000
+Subject: [patch] ASoC: wm8741: check for error returns from wm8741_set_pdata()
+Message-Id: <20150520074035.GB18278@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150512181524.GE5672@mwanda>
-In-Reply-To: <20150512181524.GE5672@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: nicolas.ferre@atmel.com, harini.katakam@xilinx.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Sergej Sawazki <ce3a@gmx.de>
+Cc: alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 May 2015 21:15:24 +0300
+Static checkers complain that "ret" is always zero so the conditions are
+never true.
 
-> The bitwise tests are always true here because it uses '|' where '&' is
-> intended.
-> 
-> Fixes: 98b5a0f4a228 ('net: macb: Add support for jumbo frames')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The intention here was clearly to check for errors from
+wm8741_set_pdata().  Although, since wm8741_set_pdata() never returns
+errors, it doesn't affect runtime.
 
-Applied, thanks.
+Fixes: c354b54cfdf6 ('ASoC: wm8741: Add differential mono mode support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/soc/codecs/wm8741.c b/sound/soc/codecs/wm8741.c
+index c065ea1..09ff01f 100644
+--- a/sound/soc/codecs/wm8741.c
++++ b/sound/soc/codecs/wm8741.c
+@@ -613,7 +613,7 @@ static int wm8741_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
+-	wm8741_set_pdata(&i2c->dev, wm8741);
++	ret = wm8741_set_pdata(&i2c->dev, wm8741);
+ 	if (ret != 0) {
+ 		dev_err(&i2c->dev, "Failed to set pdata: %d\n", ret);
+ 		return ret;
+@@ -679,7 +679,7 @@ static int wm8741_spi_probe(struct spi_device *spi)
+ 		return ret;
+ 	}
+ 
+-	wm8741_set_pdata(&spi->dev, wm8741);
++	ret = wm8741_set_pdata(&spi->dev, wm8741);
+ 	if (ret != 0) {
+ 		dev_err(&spi->dev, "Failed to set pdata: %d\n", ret);
+ 		return ret;
