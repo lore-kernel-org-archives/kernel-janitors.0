@@ -1,42 +1,42 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Date: Tue, 19 May 2015 00:16:26 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 20 May 2015 18:10:20 +0000
 Subject: Re: [PATCH] regulator: max77686: fix gpio_enabled shift wrapping bug
-Message-Id: <555A80DA.5030700@samsung.com>
+Message-Id: <20150520181020.GO21577@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Iys0Un1O+0sigPHU"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150515092501.GB21508@mwanda> <5555C814.7030405@samsung.com>
+References: <20150515092501.GB21508@mwanda>
+ <5555C814.7030405@samsung.com>
  <1431968463.2870.34.camel@perches.com>
 In-Reply-To: <1431968463.2870.34.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 19.05.2015 02:01, Joe Perches wrote:
+
+--Iys0Un1O+0sigPHU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, May 18, 2015 at 10:01:03AM -0700, Joe Perches wrote:
 > The code should handle more than 32 bits here because "id"
 > can be a value up to MAX77686_REGULATORS (currently 34).
-> 
-> Convert the gpio_enabled type to DECLARE_BITMAP and use
-> test_bit/set_bit.
-> 
-> Fixes: 3307e9025d29 ("regulator: max77686: Add GPIO control")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Joe Perches <joe@perches.com>
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Applied, thanks.
 
-Again - why you do not add CC-stable? If you need observational bug
-effect to the commit message you can add:
+--Iys0Un1O+0sigPHU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-<<When max77686 regulator was configured to GPIO controlled mode, the
-overflow of 32 bit regulator ID could switch off completely different
-regulators. This could happen because for other regulators the value of
-"GPIO controlled mode" means "disabled".>>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Although I did not saw such effect of overflow in testing, it actually
-should happen looking at the code.
+iQEcBAEBCAAGBQJVXM4LAAoJECTWi3JdVIfQR4kH/RFotDAG5XgctIvcDgkifn2n
+I6A7CCqf5L+qkkhQ5O/OCSvacxynXjpHzKv2y7o3Lzim8gpCn4qbx6bSp/9+IbEm
+jSVa3UvxwJhaMpnPbSpkmx1Sm9kOyXm/2FsWi8XezO0VMes18a2T5fdixfm4/8zJ
+iNIDRDKrj6O1Wi7Pj7n6lb4HPH54HptwSHapGOjvihvHUvTjKVqH4EynTpQ88a+e
+KtK2q5lBWsfI+DfdeZaic/GG/OICgaddjmLmHkQO5MzB9X8QZ3Kq6kszNVacrgdQ
+3V4iC3PHkLyfCw6T5aY85K2+GmjT0rWLXeA5iqumtPRFnSJAKK9Kx7aNN1yjiho=
+=yj3z
+-----END PGP SIGNATURE-----
 
-Best regards,
-Krzysztof
-
+--Iys0Un1O+0sigPHU--
