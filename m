@@ -1,46 +1,36 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 05 May 2015 05:16:13 +0000
-Subject: Re: [PATCH 2/5] fs: ext4: balloc: Fixed code style
-Message-Id: <alpine.DEB.2.02.1505050715450.2044@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 May 2015 08:13:15 +0000
+Subject: [patch] udf: fix udf_load_pvoldesc()
+Message-Id: <20150520081315.GA21948@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430786599-3843-3-git-send-email-adirkuhn@gmail.com>
-In-Reply-To: <1430786599-3843-3-git-send-email-adirkuhn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jan Kara <jack@suse.cz>, Fabian Frederick <fabf@skynet.be>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"Fixed code style" does not say what you did.
+There are some missing braces here which means this function never
+succeeds.
 
-julia
+Fixes: e9d4cf411f75 ('udf: improve error management in udf_CS0toUTF8()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Tue, 5 May 2015, Adir Kuhn wrote:
-
-> Fixed code style
-> 
-> Signed-off-by: Adir Kuhn <adirkuhn@gmail.com>
-> ---
->  fs/ext4/balloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-> index 31a4152..7eb2b3d 100644
-> --- a/fs/ext4/balloc.c
-> +++ b/fs/ext4/balloc.c
-> @@ -274,7 +274,7 @@ unsigned ext4_free_clusters_after_init(struct super_block *sb,
->   * @bh:			pointer to the buffer head to store the block
->   *			group descriptor
->   */
-> -struct ext4_group_desc * ext4_get_group_desc(struct super_block *sb,
-> +struct ext4_group_desc *ext4_get_group_desc(struct super_block *sb,
->  					     ext4_group_t block_group,
->  					     struct buffer_head **bh)
->  {
-> --
-> 2.1.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index c6a8f5f..b96f190 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -937,12 +937,13 @@ static int udf_load_pvoldesc(struct super_block *sb, sector_t block)
+ 		udf_debug("volIdent[] = '%s'\n", UDF_SB(sb)->s_volume_ident);
+ 	}
+ 
+-	if (!udf_build_ustr(instr, pvoldesc->volSetIdent, 128))
++	if (!udf_build_ustr(instr, pvoldesc->volSetIdent, 128)) {
+ 		ret = udf_CS0toUTF8(outstr, instr);
+ 		if (ret < 0)
+ 			goto out_bh;
+ 
+ 		udf_debug("volSetIdent[] = '%s'\n", outstr->u_name);
++	}
+ 
+ 	ret = 0;
+ out_bh:
