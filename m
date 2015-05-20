@@ -1,7 +1,7 @@
-From: Ingo Molnar <mingo@kernel.org>
-Date: Wed, 20 May 2015 08:17:34 +0000
+From: Aaron Tomlin <atomlin@redhat.com>
+Date: Wed, 20 May 2015 11:19:13 +0000
 Subject: Re: [patch] watchdog: double lock typo in watchdog_nmi_enable_all()
-Message-Id: <20150520081734.GA25966@gmail.com>
+Message-Id: <20150520111913.GF31237@atomlin.usersys.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150520074408.GC18278@mwanda>
 In-Reply-To: <20150520074408.GC18278@mwanda>
@@ -10,9 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-* Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
+On Wed 2015-05-20 10:44 +0300, Dan Carpenter wrote:
 > The mutex_lock() should obviously be mutex_unlock().
 > 
 > Fixes: ab992dc38f9a ('watchdog: Fix merge 'conflict'')
@@ -34,8 +32,7 @@ To: kernel-janitors@vger.kernel.org
 >  
 >  void watchdog_nmi_disable_all(void)
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Aaron Tomlin <atomlin@redhat.com>
 
-Thanks,
-
-	Ingo
+-- 
+Aaron Tomlin
