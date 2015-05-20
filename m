@@ -1,68 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 03 May 2015 14:07:17 +0000
-Subject: [PATCH 1/3 v2] staging: lustre: ptlrpc: nrs: Replace OBD_CPT_ALLOC etc by kzalloc_node
-Message-Id: <1430662039-26557-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 20 May 2015 16:36:47 +0000
+Subject: Re: [patch] CIFS: remove an unneeded NULL check
+Message-Id: <CAH2r5muFQ_LySLM8bCr1fDqw+NWhT=pSU1Nr8v8e5jxVeULyZA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430662039-26557-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430662039-26557-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20150430143024.GA22086@mwanda>
+In-Reply-To: <20150430143024.GA22086@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Steve French <sfrench@samba.org>, "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-Replace OBD_CPT_ALLOC, OBD_CPT_ALLOC_PTR, and OBD_CPT_ALLOC_GFP by
-corresponding calls to kzalloc_node.  The semantic patch for the
-OBD_CPT_ALLOC case is as follows: (http://coccinelle.lip6.fr/).
+merged into cifs-2.6.git
 
-// <smpl>
-@@ expression ptr,cptab,cpt,size; @@
-- OBD_CPT_ALLOC(ptr, cptab, cpt, size)
-+ ptr = kzalloc_node(size, GFP_NOFS, cfs_cpt_spread_node(cptab, cpt))
-// </smpl>
+On Thu, Apr 30, 2015 at 9:30 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> Smatch complains because we dereference "ses->server" without checking
+> some lines earlier inside the call to get_next_mid(ses->server).
+>
+>         fs/cifs/cifssmb.c:4921 CIFSGetDFSRefer()
+>         warn: variable dereferenced before check 'ses->server' (see line 4899)
+>
+> There is only one caller for this function get_dfs_path() and it always
+> passes a non-null "ses->server" pointer so this NULL check can be
+> removed.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+> index 1091aff..f26ffbf 100644
+> --- a/fs/cifs/cifssmb.c
+> +++ b/fs/cifs/cifssmb.c
+> @@ -4918,7 +4918,7 @@ getDFSRetry:
+>                 strncpy(pSMB->RequestFileName, search_name, name_len);
+>         }
+>
+> -       if (ses->server && ses->server->sign)
+> +       if (ses->server->sign)
+>                 pSMB->hdr.Flags2 |= SMBFLG2_SECURITY_SIGNATURE;
+>
+>         pSMB->hdr.Uid = ses->Suid;
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Note that the original OBD macros would check if the cptab argument was
-NULL and fall back on kzalloc in that case.  Oleg Drokin argues that this
-test is not needed because the code containing these calls is only invoked
-after initialization has been completed, in which case the possible cptab
-arguments are not NULL.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
+-- 
+Thanks,
 
-v2: improve the subject line
-
- drivers/staging/lustre/lustre/ptlrpc/nrs.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/nrs.c b/drivers/staging/lustre/lustre/ptlrpc/nrs.c
-index 68c754f..63a05f4 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/nrs.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/nrs.c
-@@ -746,8 +746,9 @@ static int nrs_policy_register(struct ptlrpc_nrs *nrs,
- 	LASSERT(desc->pd_ops->op_req_dequeue != NULL);
- 	LASSERT(desc->pd_compat != NULL);
- 
--	OBD_CPT_ALLOC_GFP(policy, svcpt->scp_service->srv_cptable,
--			  svcpt->scp_cpt, sizeof(*policy), GFP_NOFS);
-+	policy = kzalloc_node(sizeof(*policy), GFP_NOFS,
-+			cfs_cpt_spread_node(svcpt->scp_service->srv_cptable,
-+					    svcpt->scp_cpt));
- 	if (policy = NULL)
- 		return -ENOMEM;
- 
-@@ -961,9 +962,10 @@ static int nrs_svcpt_setup_locked(struct ptlrpc_service_part *svcpt)
- 	if (svcpt->scp_service->srv_ops.so_hpreq_handler = NULL)
- 		goto out;
- 
--	OBD_CPT_ALLOC_PTR(svcpt->scp_nrs_hp,
--			  svcpt->scp_service->srv_cptable,
--			  svcpt->scp_cpt);
-+	svcpt->scp_nrs_hp +		kzalloc_node(sizeof(*svcpt->scp_nrs_hp), GFP_NOFS,
-+			cfs_cpt_spread_node(svcpt->scp_service->srv_cptable,
-+					    svcpt->scp_cpt));
- 	if (svcpt->scp_nrs_hp = NULL) {
- 		rc = -ENOMEM;
- 		goto out;
-
+Steve
