@@ -1,25 +1,30 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Mon, 18 May 2015 20:44:05 +0000
-Subject: Re: [patch] ata: ahci_xgene: potential NULL dereference in probe
-Message-Id: <20150518204405.GH24861@htj.duckdns.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 May 2015 07:44:08 +0000
+Subject: [patch] watchdog: double lock typo in watchdog_nmi_enable_all()
+Message-Id: <20150520074408.GC18278@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150515092415.GA21508@mwanda>
-In-Reply-To: <20150515092415.GA21508@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Suman Tripathi <stripathi@apm.com>, linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, May 15, 2015 at 12:24:15PM +0300, Dan Carpenter wrote:
-> Smatch complains about this potential NULL dereference of "acpi_id".
-> 
-> Fixes: c9802a4be661 ('ata: ahci_xgene: Add AHCI Support for 2nd HW version of APM X-Gene SoC AHCI SATA Host controller.')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The mutex_lock() should obviously be mutex_unlock().
 
-Applied to libata/for-4.2.
+Fixes: ab992dc38f9a ('watchdog: Fix merge 'conflict'')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This bug is already in mainline.
 
-Thanks.
-
--- 
-tejun
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index c57e67d..a6ffa43 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -628,7 +628,7 @@ void watchdog_nmi_enable_all(void)
+ 	put_online_cpus();
+ 
+ unlock:
+-	mutex_lock(&watchdog_proc_mutex);
++	mutex_unlock(&watchdog_proc_mutex);
+ }
+ 
+ void watchdog_nmi_disable_all(void)
