@@ -1,187 +1,191 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 15:51:18 +0000
-Subject: [PATCH 5/11] staging: lustre: lmv: Use kzalloc and kfree
-Message-Id: <1430495482-933-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Mike Shuey <shuey@purdue.edu>
+Date: Thu, 21 May 2015 19:50:44 +0000
+Subject: [PATCH 08/13] staging: lustre: lnet: remove LNET_MUTEX_LOCK macro
+Message-Id: <1432237849-53947-22-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org, Mike Shuey <shuey@purdue.edu>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+LNET_MUTEX_LOCK and LNET_MUTEX_UNLOCK are verbose wrappers to mutex_lock and
+mutex_unlock.  Get rid of these.
 
-Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
-kalloc/kcalloc, and OBD_FREE and OBD_FREE_PTR by kfree.
-
-A simplified version of the semantic patch that makes these changes is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@ expression ptr,size; @@
-- OBD_ALLOC(ptr,size)
-+ ptr = kzalloc(size, GFP_NOFS)
-
-@@ expression ptr, size; @@
-- OBD_FREE(ptr, size);
-+ kfree(ptr);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Mike Shuey <shuey@purdue.edu>
 ---
- drivers/staging/lustre/lustre/lmv/lmv_intent.c |    4 +--
- drivers/staging/lustre/lustre/lmv/lmv_obd.c    |   28 ++++++++++++-------------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+ .../staging/lustre/include/linux/lnet/lib-lnet.h   |    2 -
+ drivers/staging/lustre/lnet/lnet/api-ni.c          |   26 ++++++++++----------
+ drivers/staging/lustre/lnet/lnet/module.c          |   12 ++++----
+ 3 files changed, 19 insertions(+), 21 deletions(-)
 
-diff -u -p a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
---- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-+++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-@@ -442,7 +442,7 @@ static void lmv_del_target(struct lmv_ob
- 	if (lmv->tgts[index] = NULL)
- 		return;
+diff --git a/drivers/staging/lustre/include/linux/lnet/lib-lnet.h b/drivers/staging/lustre/include/linux/lnet/lib-lnet.h
+index 0038d29..d84aa9a 100644
+--- a/drivers/staging/lustre/include/linux/lnet/lib-lnet.h
++++ b/drivers/staging/lustre/include/linux/lnet/lib-lnet.h
+@@ -172,8 +172,6 @@ lnet_net_lock_current(void)
+ #define lnet_eq_wait_unlock()	spin_unlock(&the_lnet.ln_eq_wait_lock)
+ #define lnet_ni_lock(ni)	spin_lock(&(ni)->ni_lock)
+ #define lnet_ni_unlock(ni)	spin_unlock(&(ni)->ni_lock)
+-#define LNET_MUTEX_LOCK(m)	mutex_lock(m)
+-#define LNET_MUTEX_UNLOCK(m)	mutex_unlock(m)
  
--	OBD_FREE_PTR(lmv->tgts[index]);
-+	kfree(lmv->tgts[index]);
- 	lmv->tgts[index] = NULL;
- 	return;
+ #define MAX_PORTALS     64
+ 
+diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
+index 1adc481..2230eb0 100644
+--- a/drivers/staging/lustre/lnet/lnet/api-ni.c
++++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
+@@ -282,7 +282,7 @@ lnet_find_lnd_by_type(int type)
+ void
+ lnet_register_lnd(lnd_t *lnd)
+ {
+-	LNET_MUTEX_LOCK(&the_lnet.ln_lnd_mutex);
++	mutex_lock(&the_lnet.ln_lnd_mutex);
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(libcfs_isknown_lnd(lnd->lnd_type));
+@@ -293,14 +293,14 @@ lnet_register_lnd(lnd_t *lnd)
+ 
+ 	CDEBUG(D_NET, "%s LND registered\n", libcfs_lnd2str(lnd->lnd_type));
+ 
+-	LNET_MUTEX_UNLOCK(&the_lnet.ln_lnd_mutex);
++	mutex_unlock(&the_lnet.ln_lnd_mutex);
  }
-@@ -488,7 +488,7 @@ static int lmv_add_target(struct obd_dev
+ EXPORT_SYMBOL(lnet_register_lnd);
  
- 		while (newsize < index + 1)
- 			newsize <<= 1;
--		OBD_ALLOC(newtgts, sizeof(*newtgts) * newsize);
-+		newtgts = kcalloc(newsize, sizeof(*newtgts), GFP_NOFS);
- 		if (newtgts = NULL) {
- 			lmv_init_unlock(lmv);
- 			return -ENOMEM;
-@@ -505,13 +505,13 @@ static int lmv_add_target(struct obd_dev
- 		lmv->tgts_size = newsize;
- 		smp_rmb();
- 		if (old)
--			OBD_FREE(old, sizeof(*old) * oldsize);
-+			kfree(old);
+ void
+ lnet_unregister_lnd(lnd_t *lnd)
+ {
+-	LNET_MUTEX_LOCK(&the_lnet.ln_lnd_mutex);
++	mutex_lock(&the_lnet.ln_lnd_mutex);
  
- 		CDEBUG(D_CONFIG, "tgts: %p size: %d\n", lmv->tgts,
- 		       lmv->tgts_size);
- 	}
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(lnet_find_lnd_by_type(lnd->lnd_type) = lnd);
+@@ -309,7 +309,7 @@ lnet_unregister_lnd(lnd_t *lnd)
+ 	list_del(&lnd->lnd_list);
+ 	CDEBUG(D_NET, "%s LND unregistered\n", libcfs_lnd2str(lnd->lnd_type));
  
--	OBD_ALLOC_PTR(tgt);
-+	tgt = kzalloc(sizeof(*tgt), GFP_NOFS);
- 	if (!tgt) {
- 		lmv_init_unlock(lmv);
- 		return -ENOMEM;
-@@ -750,7 +750,7 @@ repeat_fid2path:
- 	/* sigh, has to go to another MDT to do path building further */
- 	if (remote_gf = NULL) {
- 		remote_gf_size = sizeof(*remote_gf) + PATH_MAX;
--		OBD_ALLOC(remote_gf, remote_gf_size);
-+		remote_gf = kzalloc(remote_gf_size, GFP_NOFS);
- 		if (remote_gf = NULL) {
- 			rc = -ENOMEM;
- 			goto out_fid2path;
-@@ -781,7 +781,7 @@ repeat_fid2path:
+-	LNET_MUTEX_UNLOCK(&the_lnet.ln_lnd_mutex);
++	mutex_unlock(&the_lnet.ln_lnd_mutex);
+ }
+ EXPORT_SYMBOL(lnet_unregister_lnd);
  
- out_fid2path:
- 	if (remote_gf != NULL)
--		OBD_FREE(remote_gf, remote_gf_size);
-+		kfree(remote_gf);
+@@ -1055,18 +1055,18 @@ lnet_startup_lndnis(void)
+ 			goto failed;
+ 		}
+ 
+-		LNET_MUTEX_LOCK(&the_lnet.ln_lnd_mutex);
++		mutex_lock(&the_lnet.ln_lnd_mutex);
+ 		lnd = lnet_find_lnd_by_type(lnd_type);
+ 
+ 		if (lnd = NULL) {
+-			LNET_MUTEX_UNLOCK(&the_lnet.ln_lnd_mutex);
++			mutex_unlock(&the_lnet.ln_lnd_mutex);
+ 			rc = request_module("%s",
+ 						libcfs_lnd2modname(lnd_type));
+-			LNET_MUTEX_LOCK(&the_lnet.ln_lnd_mutex);
++			mutex_lock(&the_lnet.ln_lnd_mutex);
+ 
+ 			lnd = lnet_find_lnd_by_type(lnd_type);
+ 			if (lnd = NULL) {
+-				LNET_MUTEX_UNLOCK(&the_lnet.ln_lnd_mutex);
++				mutex_unlock(&the_lnet.ln_lnd_mutex);
+ 				CERROR("Can't load LND %s, module %s, rc=%d\n",
+ 				       libcfs_lnd2str(lnd_type),
+ 				       libcfs_lnd2modname(lnd_type), rc);
+@@ -1082,7 +1082,7 @@ lnet_startup_lndnis(void)
+ 
+ 		rc = (lnd->lnd_startup)(ni);
+ 
+-		LNET_MUTEX_UNLOCK(&the_lnet.ln_lnd_mutex);
++		mutex_unlock(&the_lnet.ln_lnd_mutex);
+ 
+ 		if (rc != 0) {
+ 			LCONSOLE_ERROR_MSG(0x105, "Error %d starting up LNI %s\n",
+@@ -1272,7 +1272,7 @@ LNetNIInit(lnet_pid_t requested_pid)
+ 	int im_a_router = 0;
+ 	int rc;
+ 
+-	LNET_MUTEX_LOCK(&the_lnet.ln_api_mutex);
++	mutex_lock(&the_lnet.ln_api_mutex);
+ 
+ 	LASSERT(the_lnet.ln_init);
+ 	CDEBUG(D_OTHER, "refs %d\n", the_lnet.ln_refcount);
+@@ -1343,7 +1343,7 @@ LNetNIInit(lnet_pid_t requested_pid)
+  failed0:
+ 	LASSERT(rc < 0);
+  out:
+-	LNET_MUTEX_UNLOCK(&the_lnet.ln_api_mutex);
++	mutex_unlock(&the_lnet.ln_api_mutex);
  	return rc;
  }
+ EXPORT_SYMBOL(LNetNIInit);
+@@ -1360,7 +1360,7 @@ EXPORT_SYMBOL(LNetNIInit);
+ int
+ LNetNIFini(void)
+ {
+-	LNET_MUTEX_LOCK(&the_lnet.ln_api_mutex);
++	mutex_lock(&the_lnet.ln_api_mutex);
  
-@@ -984,7 +984,7 @@ static int lmv_iocontrol(unsigned int cm
- 			return -EAGAIN;
- 
- 		LASSERT(tgt && tgt->ltd_exp);
--		OBD_ALLOC_PTR(oqctl);
-+		oqctl = kzalloc(sizeof(*oqctl), GFP_NOFS);
- 		if (!oqctl)
- 			return -ENOMEM;
- 
-@@ -995,7 +995,7 @@ static int lmv_iocontrol(unsigned int cm
- 			qctl->qc_valid = QC_MDTIDX;
- 			qctl->obd_uuid = tgt->ltd_uuid;
- 		}
--		OBD_FREE_PTR(oqctl);
-+		kfree(oqctl);
- 		break;
- 	}
- 	case OBD_IOC_CHANGELOG_SEND:
-@@ -1327,7 +1327,7 @@ static int lmv_setup(struct obd_device *
- 		return -EINVAL;
+ 	LASSERT(the_lnet.ln_init);
+ 	LASSERT(the_lnet.ln_refcount > 0);
+@@ -1383,7 +1383,7 @@ LNetNIFini(void)
+ 		lnet_unprepare();
  	}
  
--	OBD_ALLOC(lmv->tgts, sizeof(*lmv->tgts) * 32);
-+	lmv->tgts = kcalloc(32, sizeof(*lmv->tgts), GFP_NOFS);
- 	if (lmv->tgts = NULL)
- 		return -ENOMEM;
- 	lmv->tgts_size = 32;
-@@ -1380,7 +1380,7 @@ static int lmv_cleanup(struct obd_device
- 				continue;
- 			lmv_del_target(lmv, i);
- 		}
--		OBD_FREE(lmv->tgts, sizeof(*lmv->tgts) * lmv->tgts_size);
-+		kfree(lmv->tgts);
- 		lmv->tgts_size = 0;
- 	}
+-	LNET_MUTEX_UNLOCK(&the_lnet.ln_api_mutex);
++	mutex_unlock(&the_lnet.ln_api_mutex);
  	return 0;
-@@ -1437,7 +1437,7 @@ static int lmv_statfs(const struct lu_en
- 	if (rc)
- 		return rc;
+ }
+ EXPORT_SYMBOL(LNetNIFini);
+diff --git a/drivers/staging/lustre/lnet/lnet/module.c b/drivers/staging/lustre/lnet/lnet/module.c
+index f73d644..6881b9c 100644
+--- a/drivers/staging/lustre/lnet/lnet/module.c
++++ b/drivers/staging/lustre/lnet/lnet/module.c
+@@ -49,7 +49,7 @@ lnet_configure(void *arg)
+ 	/* 'arg' only there so I can be passed to cfs_create_thread() */
+ 	int rc = 0;
  
--	OBD_ALLOC(temp, sizeof(*temp));
-+	temp = kzalloc(sizeof(*temp), GFP_NOFS);
- 	if (temp = NULL)
- 		return -ENOMEM;
+-	LNET_MUTEX_LOCK(&lnet_config_mutex);
++	mutex_lock(&lnet_config_mutex);
  
-@@ -1473,7 +1473,7 @@ static int lmv_statfs(const struct lu_en
+ 	if (!the_lnet.ln_niinit_self) {
+ 		rc = LNetNIInit(LUSTRE_SRV_LNET_PID);
+@@ -59,7 +59,7 @@ lnet_configure(void *arg)
+ 		}
  	}
  
- out_free_temp:
--	OBD_FREE(temp, sizeof(*temp));
-+	kfree(temp);
+-	LNET_MUTEX_UNLOCK(&lnet_config_mutex);
++	mutex_unlock(&lnet_config_mutex);
  	return rc;
  }
  
-@@ -1769,7 +1769,7 @@ lmv_enqueue_remote(struct obd_export *ex
- 		goto out;
+@@ -68,18 +68,18 @@ lnet_unconfigure(void)
+ {
+ 	int refcount;
+ 
+-	LNET_MUTEX_LOCK(&lnet_config_mutex);
++	mutex_lock(&lnet_config_mutex);
+ 
+ 	if (the_lnet.ln_niinit_self) {
+ 		the_lnet.ln_niinit_self = 0;
+ 		LNetNIFini();
  	}
  
--	OBD_ALLOC_PTR(rdata);
-+	rdata = kzalloc(sizeof(*rdata), GFP_NOFS);
- 	if (rdata = NULL) {
- 		rc = -ENOMEM;
- 		goto out;
-@@ -1780,7 +1780,7 @@ lmv_enqueue_remote(struct obd_export *ex
+-	LNET_MUTEX_LOCK(&the_lnet.ln_api_mutex);
++	mutex_lock(&the_lnet.ln_api_mutex);
+ 	refcount = the_lnet.ln_refcount;
+-	LNET_MUTEX_UNLOCK(&the_lnet.ln_api_mutex);
++	mutex_unlock(&the_lnet.ln_api_mutex);
  
- 	rc = md_enqueue(tgt->ltd_exp, einfo, it, rdata, lockh,
- 			lmm, lmmsize, NULL, extra_lock_flags);
--	OBD_FREE_PTR(rdata);
-+	kfree(rdata);
- out:
- 	ldlm_lock_decref(&plock, pmode);
- 	return rc;
-diff -u -p a/drivers/staging/lustre/lustre/lmv/lmv_intent.c b/drivers/staging/lustre/lustre/lmv/lmv_intent.c
---- a/drivers/staging/lustre/lustre/lmv/lmv_intent.c
-+++ b/drivers/staging/lustre/lustre/lmv/lmv_intent.c
-@@ -99,7 +99,7 @@ static int lmv_intent_remote(struct obd_
- 		goto out;
- 	}
+-	LNET_MUTEX_UNLOCK(&lnet_config_mutex);
++	mutex_unlock(&lnet_config_mutex);
+ 	return (refcount = 0) ? 0 : -EBUSY;
+ }
  
--	OBD_ALLOC_PTR(op_data);
-+	op_data = kzalloc(sizeof(*op_data), GFP_NOFS);
- 	if (op_data = NULL) {
- 		rc = -ENOMEM;
- 		goto out;
-@@ -142,7 +142,7 @@ static int lmv_intent_remote(struct obd_
- 	it->d.lustre.it_lock_mode = pmode;
- 
- out_free_op_data:
--	OBD_FREE_PTR(op_data);
-+	kfree(op_data);
- out:
- 	if (rc && pmode)
- 		ldlm_lock_decref(&plock, pmode);
+-- 
+1.7.1
 
