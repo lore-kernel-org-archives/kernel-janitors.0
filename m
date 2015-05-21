@@ -1,46 +1,14 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 18 May 2015 09:24:07 +0000
-Subject: Re: [patch] HID: rmi: fix some harmless BIT() mistakes
-Message-Id: <alpine.LNX.2.00.1505181123570.8186@pobox.suse.cz>
+From: Mike Shuey <shuey@purdue.edu>
+Date: Thu, 21 May 2015 19:50:23 +0000
+Subject: [PATCH v4 00/13] staging: lustre: lnet: code cleanups
+Message-Id: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150514083256.GA1665@mwanda>
-In-Reply-To: <20150514083256.GA1665@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
+To: oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org
 
-On Thu, 14 May 2015, Dan Carpenter wrote:
+This patch series cleans up code in staging/lustre/lnet - mostly spacing
+and dead function cleanup.  Should apply against linux-next 20150518.
 
-> These defines are used like this:
-> 
-> 	if (!(test_bit(RMI_STARTED, &hdata->flags)))
-> 
-> So the intent was to use bits 0, 1 and 2 but because of the extra BIT()
-> shifts we're actually using 1, 2 and 4.  It's harmless because it's done
-> consistently but static checkers will complain.
-> 
-> Fixes: 9fb6bf02e3ad ('HID: rmi: introduce RMI driver for Synaptics touchpads')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/hid/hid-rmi.c b/drivers/hid/hid-rmi.c
-> index 368ffdf..2f3e51d 100644
-> --- a/drivers/hid/hid-rmi.c
-> +++ b/drivers/hid/hid-rmi.c
-> @@ -29,9 +29,9 @@
->  #define RMI_SET_RMI_MODE_REPORT_ID	0x0f /* Feature Report */
->  
->  /* flags */
-> -#define RMI_READ_REQUEST_PENDING	BIT(0)
-> -#define RMI_READ_DATA_PENDING		BIT(1)
-> -#define RMI_STARTED			BIT(2)
-> +#define RMI_READ_REQUEST_PENDING	0
-> +#define RMI_READ_DATA_PENDING		1
-> +#define RMI_STARTED			2
-
-Applied to for-4.2/upstream, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
