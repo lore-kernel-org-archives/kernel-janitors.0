@@ -1,7 +1,7 @@
 From: Mike Shuey <shuey@purdue.edu>
-Date: Thu, 21 May 2015 19:50:44 +0000
-Subject: [PATCH 08/13] staging: lustre: lnet: remove LNET_MUTEX_LOCK macro
-Message-Id: <1432237849-53947-22-git-send-email-shuey@purdue.edu>
+Date: Thu, 21 May 2015 19:50:31 +0000
+Subject: [PATCH v4 08/13] staging: lustre: lnet: remove LNET_MUTEX_LOCK macro
+Message-Id: <1432237849-53947-9-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
 In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
