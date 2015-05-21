@@ -1,49 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:37:51 +0000
-Subject: [PATCH 16/20] staging: lustre: obdecho: remove unneeded null test before free
-Message-Id: <1430509086-22132-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Mike Shuey <shuey@purdue.edu>
+Date: Thu, 21 May 2015 19:50:32 +0000
+Subject: [PATCH v4 09/13] staging: lustre: lnet: lnet: remove dead code, fix checkpatch.pl issue
+Message-Id: <1432237849-53947-10-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org, Mike Shuey <shuey@purdue.edu>
 
-Kfree can cope with a null argument, so drop null tests.
+Some debug code was left in the tree, blocked by a #if 0.  Also kicked out
+checkpatch.pl warnings.  Remove it.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@ expression ptr; @@
-
-- if (ptr != NULL)
-  kfree(ptr);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Mike Shuey <shuey@purdue.edu>
 ---
- drivers/staging/lustre/lustre/obdecho/echo_client.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/staging/lustre/lnet/lnet/lib-msg.c |   17 -----------------
+ 1 files changed, 0 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdecho/echo_client.c b/drivers/staging/lustre/lustre/obdecho/echo_client.c
-index cf64538..5376178 100644
---- a/drivers/staging/lustre/lustre/obdecho/echo_client.c
-+++ b/drivers/staging/lustre/lustre/obdecho/echo_client.c
-@@ -1737,10 +1737,8 @@ static int echo_client_prep_commit(const struct lu_env *env,
- 	}
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-msg.c b/drivers/staging/lustre/lnet/lnet/lib-msg.c
+index 65d7595..55e6638 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-msg.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-msg.c
+@@ -444,23 +444,6 @@ lnet_finalize(lnet_ni_t *ni, lnet_msg_t *msg, int status)
  
- out:
--	if (lnb)
--		kfree(lnb);
--	if (rnb)
--		kfree(rnb);
-+	kfree(lnb);
-+	kfree(rnb);
- 	return ret;
- }
+ 	if (msg = NULL)
+ 		return;
+-#if 0
+-	CDEBUG(D_WARNING, "%s msg->%s Flags:%s%s%s%s%s%s%s%s%s%s%s txp %s rxp %s\n",
+-	       lnet_msgtyp2str(msg->msg_type), libcfs_id2str(msg->msg_target),
+-	       msg->msg_target_is_router ? "t" : "",
+-	       msg->msg_routing ? "X" : "",
+-	       msg->msg_ack ? "A" : "",
+-	       msg->msg_sending ? "S" : "",
+-	       msg->msg_receiving ? "R" : "",
+-	       msg->msg_delayed ? "d" : "",
+-	       msg->msg_txcredit ? "C" : "",
+-	       msg->msg_peertxcredit ? "c" : "",
+-	       msg->msg_rtrcredit ? "F" : "",
+-	       msg->msg_peerrtrcredit ? "f" : "",
+-	       msg->msg_onactivelist ? "!" : "",
+-	       msg->msg_txpeer = NULL ? "<none>" : libcfs_nid2str(msg->msg_txpeer->lp_nid),
+-	       msg->msg_rxpeer = NULL ? "<none>" : libcfs_nid2str(msg->msg_rxpeer->lp_nid));
+-#endif
+ 	msg->msg_ev.status = status;
  
+ 	if (msg->msg_md != NULL) {
+-- 
+1.7.1
 
