@@ -1,31 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 May 2015 08:52:28 +0000
-Subject: [patch] f2fs: cleanup a confusing indent
-Message-Id: <20150514085228.GA11265@mwanda>
+From: Mike Shuey <shuey@purdue.edu>
+Date: Thu, 21 May 2015 19:50:40 +0000
+Subject: [PATCH 04/13] staging: lustre: lnet: lnet: Module is LNet, not Portals
+Message-Id: <1432237849-53947-18-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Changman Lee <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org, Mike Shuey <shuey@purdue.edu>
 
-The return was not indented far enough so it looked like it was supposed
-to go with the other if statement.
+Fix the module version to match upstream development.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mike Shuey <shuey@purdue.edu>
+---
+ drivers/staging/lustre/lnet/lnet/module.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 17e89ba..741db3a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -554,8 +554,8 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+diff --git a/drivers/staging/lustre/lnet/lnet/module.c b/drivers/staging/lustre/lnet/lnet/module.c
+index ff3f831..f73d644 100644
+--- a/drivers/staging/lustre/lnet/lnet/module.c
++++ b/drivers/staging/lustre/lnet/lnet/module.c
+@@ -147,7 +147,7 @@ fini_lnet(void)
+ }
  
- 	if (!force) {
- 		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
--			SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
--		return;
-+		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
-+			return;
- 	}
+ MODULE_AUTHOR("Peter J. Braam <braam@clusterfs.com>");
+-MODULE_DESCRIPTION("Portals v3.1");
++MODULE_DESCRIPTION("LNet v3.1");
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION("1.0.0");
  
- 	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
+-- 
+1.7.1
+
