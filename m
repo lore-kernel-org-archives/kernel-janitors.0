@@ -1,46 +1,69 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:37:50 +0000
-Subject: [PATCH 17/20] Staging: lustre: osc: remove unneeded null test before free
-Message-Id: <1430509086-22132-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Mike Shuey <shuey@purdue.edu>
+Date: Thu, 21 May 2015 19:50:39 +0000
+Subject: [PATCH 03/13] staging: lustre: lnet: dead code - remove LNetSetAsync
+Message-Id: <1432237849-53947-17-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org, Mike Shuey <shuey@purdue.edu>
 
-Kfree can cope with a null argument, so drop null tests.
+LNetSetAsync() returns 0, and is never called.  Doesn't exist in the Intel
+tree, either.  Remove it.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@ expression ptr; @@
-
-- if (ptr != NULL)
-  kfree(ptr);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Mike Shuey <shuey@purdue.edu>
 ---
- drivers/staging/lustre/lustre/osc/osc_request.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/lustre/include/linux/lnet/api.h |    1 -
+ drivers/staging/lustre/lnet/lnet/lib-move.c     |   24 -----------------------
+ 2 files changed, 0 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
-index 7ddf46b..ded184e 100644
---- a/drivers/staging/lustre/lustre/osc/osc_request.c
-+++ b/drivers/staging/lustre/lustre/osc/osc_request.c
-@@ -2064,8 +2064,7 @@ out:
+diff --git a/drivers/staging/lustre/include/linux/lnet/api.h b/drivers/staging/lustre/include/linux/lnet/api.h
+index cd86517..c4dc1b2 100644
+--- a/drivers/staging/lustre/include/linux/lnet/api.h
++++ b/drivers/staging/lustre/include/linux/lnet/api.h
+@@ -209,7 +209,6 @@ int LNetGet(lnet_nid_t	self,
+ int LNetSetLazyPortal(int portal);
+ int LNetClearLazyPortal(int portal);
+ int LNetCtl(unsigned int cmd, void *arg);
+-int LNetSetAsync(lnet_process_id_t id, int nasync);
  
- 		if (oa)
- 			OBDO_FREE(oa);
--		if (pga)
--			kfree(pga);
-+		kfree(pga);
- 		/* this should happen rarely and is pretty bad, it makes the
- 		 * pending list not follow the dirty order */
- 		while (!list_empty(ext_list)) {
+ /** @} lnet_misc */
+ 
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-move.c b/drivers/staging/lustre/lnet/lnet/lib-move.c
+index ba59fe7..433faae 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-move.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-move.c
+@@ -2434,27 +2434,3 @@ LNetDist(lnet_nid_t dstnid, lnet_nid_t *srcnidp, __u32 *orderp)
+ 	return -EHOSTUNREACH;
+ }
+ EXPORT_SYMBOL(LNetDist);
+-
+-/**
+- * Set the number of asynchronous messages expected from a target process.
+- *
+- * This function is only meaningful for userspace callers. It's a no-op when
+- * called from kernel.
+- *
+- * Asynchronous messages are those that can come from a target when the
+- * userspace process is not waiting for IO to complete; e.g., AST callbacks
+- * from Lustre servers. Specifying the expected number of such messages
+- * allows them to be eagerly received when user process is not running in
+- * LNet; otherwise network errors may occur.
+- *
+- * \param id Process ID of the target process.
+- * \param nasync Number of asynchronous messages expected from the target.
+- *
+- * \return 0 on success, and an error code otherwise.
+- */
+-int
+-LNetSetAsync(lnet_process_id_t id, int nasync)
+-{
+-	return 0;
+-}
+-EXPORT_SYMBOL(LNetSetAsync);
+-- 
+1.7.1
 
