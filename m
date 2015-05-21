@@ -1,14 +1,69 @@
 From: Mike Shuey <shuey@purdue.edu>
-Date: Tue, 19 May 2015 14:14:31 +0000
-Subject: [PATCH v3 0/8] staging: lustre: lnet: code cleanups
-Message-Id: <1432044879-28923-1-git-send-email-shuey@purdue.edu>
+Date: Thu, 21 May 2015 19:50:26 +0000
+Subject: [PATCH v4 03/13] staging: lustre: lnet: dead code - remove LNetSetAsync
+Message-Id: <1432237849-53947-4-git-send-email-shuey@purdue.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: oleg.drokin@intel.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org, Mike Shuey <shuey@purdue.edu>
 
-This patch series cleans up code in staging/lustre/lnet - mostly spacing
-and dead function cleanup.  Should apply against linux-next 20150518.
+LNetSetAsync() returns 0, and is never called.  Doesn't exist in the Intel
+tree, either.  Remove it.
+
+Signed-off-by: Mike Shuey <shuey@purdue.edu>
+---
+ drivers/staging/lustre/include/linux/lnet/api.h |    1 -
+ drivers/staging/lustre/lnet/lnet/lib-move.c     |   24 -----------------------
+ 2 files changed, 0 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/staging/lustre/include/linux/lnet/api.h b/drivers/staging/lustre/include/linux/lnet/api.h
+index cd86517..c4dc1b2 100644
+--- a/drivers/staging/lustre/include/linux/lnet/api.h
++++ b/drivers/staging/lustre/include/linux/lnet/api.h
+@@ -209,7 +209,6 @@ int LNetGet(lnet_nid_t	self,
+ int LNetSetLazyPortal(int portal);
+ int LNetClearLazyPortal(int portal);
+ int LNetCtl(unsigned int cmd, void *arg);
+-int LNetSetAsync(lnet_process_id_t id, int nasync);
+ 
+ /** @} lnet_misc */
+ 
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-move.c b/drivers/staging/lustre/lnet/lnet/lib-move.c
+index ba59fe7..433faae 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-move.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-move.c
+@@ -2434,27 +2434,3 @@ LNetDist(lnet_nid_t dstnid, lnet_nid_t *srcnidp, __u32 *orderp)
+ 	return -EHOSTUNREACH;
+ }
+ EXPORT_SYMBOL(LNetDist);
+-
+-/**
+- * Set the number of asynchronous messages expected from a target process.
+- *
+- * This function is only meaningful for userspace callers. It's a no-op when
+- * called from kernel.
+- *
+- * Asynchronous messages are those that can come from a target when the
+- * userspace process is not waiting for IO to complete; e.g., AST callbacks
+- * from Lustre servers. Specifying the expected number of such messages
+- * allows them to be eagerly received when user process is not running in
+- * LNet; otherwise network errors may occur.
+- *
+- * \param id Process ID of the target process.
+- * \param nasync Number of asynchronous messages expected from the target.
+- *
+- * \return 0 on success, and an error code otherwise.
+- */
+-int
+-LNetSetAsync(lnet_process_id_t id, int nasync)
+-{
+-	return 0;
+-}
+-EXPORT_SYMBOL(LNetSetAsync);
+-- 
+1.7.1
 
