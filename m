@@ -1,82 +1,44 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 23 May 2015 00:18:05 +0000
+From: "Drokin, Oleg" <oleg.drokin@intel.com>
+Date: Sat, 23 May 2015 00:25:29 +0000
 Subject: Re: [PATCH v4 10/13] staging: lustre: lnet: lnet: checkpatch.pl fixes
-Message-Id: <1432340285.29657.26.camel@perches.com>
+Message-Id: <467D21EA-E5E8-4F16-AABD-31D79062FFF9@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
-	 <1432237849-53947-11-git-send-email-shuey@purdue.edu>
-	 <1432242004.20840.68.camel@perches.com>
-	 <alpine.DEB.2.10.1505212328500.5370@hadrien>
-	 <CABqvwjuKypiacf3336j-q450FGKaO4wh0Ld7PF8MGz0VPsYBbw@mail.gmail.com>
-	 <alpine.DEB.2.10.1505220704541.2672@hadrien>
-	 <15C0AFDB-CA69-40E5-B65E-C559A5B5CE47@intel.com>
-	 <1432309337.29657.16.camel@perches.com>
-	 <05DE4AF3-20A6-40F6-BAC6-79C140E490AF@intel.com>
-	 <1432339030.29657.20.camel@perches.com>
-	 <863F0D66-99B1-4658-8A99-E3A843E0E8FC@intel.com>
-In-Reply-To: <863F0D66-99B1-4658-8A99-E3A843E0E8FC@intel.com>
+ <1432237849-53947-11-git-send-email-shuey@purdue.edu>
+ <1432242004.20840.68.camel@perches.com>
+ <alpine.DEB.2.10.1505212328500.5370@hadrien>
+ <CABqvwjuKypiacf3336j-q450FGKaO4wh0Ld7PF8MGz0VPsYBbw@mail.gmail.com>
+ <alpine.DEB.2.10.1505220704541.2672@hadrien>
+ <15C0AFDB-CA69-40E5-B65E-C559A5B5CE47@intel.com>
+ <1432309337.29657.16.camel@perches.com>
+ <05DE4AF3-20A6-40F6-BAC6-79C140E490AF@intel.com>
+ <1432339030.29657.20.camel@perches.com>
+ <863F0D66-99B1-4658-8A99-E3A843E0E8FC@intel.com>
+ <1432340285.29657.26.camel@perches.com>
+In-Reply-To: <1432340285.29657.26.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Drokin, Oleg" <oleg.drokin@intel.com>
+To: Joe Perches <joe@perches.com>
 Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Michael Shuey <shuey@purdue.edu>, "<devel@driverdev.osuosl.org>" <devel@driverdev.osuosl.org>, "<gregkh@linuxfoundation.org>" <gregkh@linuxfoundation.org>, "<kernel-janitors@vger.kernel.org>" <kernel-janitors@vger.kernel.org>, "<linux-kernel@vger.kernel.org>" <linux-kernel@vger.kernel.org>, "<HPDD-discuss@ml01.01.org>" <HPDD-discuss@ml01.01.org>, "<lustre-devel@lists.lustre.org>" <lustre-devel@lists.lustre.org>
 
-On Sat, 2015-05-23 at 00:07 +0000, Drokin, Oleg wrote:
-> On May 22, 2015, at 7:57 PM, Joe Perches wrote:
-> > On Fri, 2015-05-22 at 21:16 +0000, Drokin, Oleg wrote:
-> >> On May 22, 2015, at 11:42 AM, Joe Perches wrote:
-> >>> On Fri, 2015-05-22 at 08:08 +0000, Drokin, Oleg wrote:
-> >>>> On May 22, 2015, at 1:06 AM, Julia Lawall wrote:
-> >>>>> On Thu, 21 May 2015, Michael Shuey wrote:
-> >>>>> 
-> >>>>>> That's a task (of many) I've been putting on the back burner until the code
-> >>>>>> is cleaner.  It's also a HUGE change, since there are debug macros
-> >>>>>> everywhere, and they all check a #define'd mask to see if they should fire,
-> >>>>>> and the behavior is likely governed by parts of the lustre user land tools
-> >>>>>> as well.
-> >>>>>> 
-> >>>>>> Suggestions are welcome.  Do other parts of the linux kernel define complex
-> >>>>>> debugging macros like these, or is this a lustre-ism?  Any suggestions on
-> >>>>>> how to handle this more in line with existing drivers?
-> >>>>> 
-> >>>>> Once you decide what to do, you can use Coccinelle to make the changes for
-> >>>>> you.  So you shouldn't be put off by the number of code sites to change.
-> >>>>> 
-> >>>>> The normal functions are pr_err, pr_warn, etc.  Perhaps you can follow
-> >>>>> Joe's suggestions if you really need something more complicated.
-> >>>> 
-> >>>> Ideally leaving CERROR/CDEBUG in Lustre would be desirable from my perspective.
-> >>> 
-> >>> My issue with CERROR is the name is little misleading.
-> >>> It's actually a debugging message.
-> >>> #define CERROR(format, ...)  CDEBUG_LIMIT(D_ERROR, format, ## __VA_ARGS__)
-> >> 
-> >> Except it's not a debugging message.
-> >> There is a clear distinction.
-> > 
-> > Not really.  If the first reading shows that the mechanism it
-> > goes through is called CDEBUG, a reasonable expectation should
-> > be that it's a debugging message.
+
+On May 22, 2015, at 8:18 PM, Joe Perches wrote:
+>>>> I wonder what is more clear about that in your opinion ve
+>>>> lustre_error/lustre_debug?
+>>> 
+>>> The fact that you have to explain this shows that it's
+>>> at least misleading unless you completely understand the
+>>> code.
+>> 
+>> Or you know, you might take the function name at the face value
+>> and assume that CERROR means it's an error and CDEBUG means it's a debug message?
 > 
-> Well, various pr_err/pr_dbg for example, go through printk in the end too.
-> Do that make them the same?
+> Maybe, but I think that it'd be better if the mechanism
+> it uses was more plainly named something like lustre_log.
 
-No, because each is labeled with the KERN_<level> that it uses.
+While the idea seems good, the biggest obstacle here is such that
+there's already a thing called lustre log (llog for short too) -
+it's kind of a distributed journal of operations.
 
-[]
-
-> >> I wonder what is more clear about that in your opinion ve
-> >> lustre_error/lustre_debug?
-> > 
-> > The fact that you have to explain this shows that it's
-> > at least misleading unless you completely understand the
-> > code.
-> 
-> Or you know, you might take the function name at the face value
-> and assume that CERROR means it's an error and CDEBUG means it's a debug message?
-
-Maybe, but I think that it'd be better if the mechanism
-it uses was more plainly named something like lustre_log.
-
-
-
+Its there a different synonym, I wonder?
