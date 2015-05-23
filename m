@@ -1,52 +1,30 @@
-From: Michael Shuey <shuey@purdue.edu>
-Date: Sat, 23 May 2015 12:09:54 +0000
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date: Sat, 23 May 2015 12:51:04 +0000
 Subject: Re: [PATCH v4 00/13] staging: lustre: lnet: code cleanups
-Message-Id: <CABqvwjvKg1yK2b=2+ASGvJ4xT3Sq4XMhY70makjwccj+duvAEQ@mail.gmail.com>
+Message-Id: <20150523123904.GA12407@sudip-PC>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
-	<20150522092142.GJ4150@mwanda>
-	<CABqvwjsJXJYciMDHqy9vEdL6dGLhx3+Pi0_ro6192Z5SGR9Q_w@mail.gmail.com>
-	<20150523101428.GX22558@mwanda>
-In-Reply-To: <20150523101428.GX22558@mwanda>
+ <20150522092142.GJ4150@mwanda>
+ <CABqvwjsJXJYciMDHqy9vEdL6dGLhx3+Pi0_ro6192Z5SGR9Q_w@mail.gmail.com>
+ <20150523101428.GX22558@mwanda>
+ <CABqvwjvKg1yK2b=2+ASGvJ4xT3Sq4XMhY70makjwccj+duvAEQ@mail.gmail.com>
+In-Reply-To: <CABqvwjvKg1yK2b=2+ASGvJ4xT3Sq4XMhY70makjwccj+duvAEQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Drokin, Oleg" <oleg.drokin@intel.com>, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-devel@lists.lustre.org
+To: Michael Shuey <shuey@purdue.edu>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, "Drokin, Oleg" <oleg.drokin@intel.com>, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-devel@lists.lustre.org
 
-Hm, that's unfortunate - but my own fault for lack of proper
-etiquette.  I'll give this a week or two to settle, and build up
-patches against other parts of lustre in the meantime.
+On Sat, May 23, 2015 at 08:09:54AM -0400, Michael Shuey wrote:
+> BTW, you keep mentioning a v5 that I sent.  Where is that, exactly?
+> The last round of patches I sent I've kept labeled as "PATCH v4", and
+> I only hit git send-email once.  Could you forward me something from
+> this v5 series, so I could see if anything is amiss on my end?
 
-BTW, you keep mentioning a v5 that I sent.  Where is that, exactly?
-The last round of patches I sent I've kept labeled as "PATCH v4", and
-I only hit git send-email once.  Could you forward me something from
-this v5 series, so I could see if anything is amiss on my end?
---
-Mike Shuey
+I think it was not a v5. But what happened is in your series some
+of the patches were marked as v4 and some were not having any version
+so it appeared like a fresh series again. Like 1/13,2/13,3/13 has v4
+but the others donot have a version.
 
-
-On Sat, May 23, 2015 at 6:14 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We would have applied the v3 patchset but now I don't know because we're
-> up to v5.  We can't apply v5 because there are problems with it.  No
-> one responded to v3 so Greg still might apply it or he might find these
-> email threads too scrambled and delete everything and ask for a resend.
->
-> It's pretty messed up so just wait for Greg to get to it before sending
-> more patches?
->
-> Basically you should only send patches which you assume will be applied.
-> If no one responds after 3 days then probably that means everyone from
-> the peanut gallery (Me, Sudip, Joe, the lustre devs), we don't have an
-> issue.  Then Greg does the last review (2-3 weeks later perhaps).  But
-> if it makes it past all the other reviews then generally Greg also will
-> be ok with it.
->
-> Greg applies patches in first come, first applied order.  If they don't
-> apply then you have to redo it.  He doesn't invest a lot of time into
-> figuring out why.  So you have to coordinate with the other devs, it's
-> up to you how you do that.
->
-> regards,
-> dan carpenter
->
+regards
+sudip
