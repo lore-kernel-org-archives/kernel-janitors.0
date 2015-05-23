@@ -1,31 +1,45 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 May 2015 09:01:26 +0000
-Subject: Re: some advices
-Message-Id: <20150505090126.GS14154@mwanda>
+Date: Sat, 23 May 2015 17:33:28 +0000
+Subject: re: bpf: allow bpf programs to tail-call other bpf programs
+Message-Id: <20150523173328.GB31663@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAPmfwEkA6GZLtmNHno3OYOG31cbDx_5kZpqho4f+KEb75XKGzg@mail.gmail.com>
-In-Reply-To: <CAPmfwEkA6GZLtmNHno3OYOG31cbDx_5kZpqho4f+KEb75XKGzg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, May 05, 2015 at 12:21:53AM -0300, Adir Kuhn wrote:
-> Hi everybody, I'm quite new here and I want to be a kernel developer
-> so where I can start? I dowloaded the linux kernel source and followed
-> the tips for the first patch on the kernelnewbies but sometimes these
-> patches are not acepted because is too simple (just cleaning code
-> style). So there is something else that I can study or some trivial
-> bug to fix to feel me more confident on linux development?
-> 
+Hello Alexei Starovoitov,
 
-If you send code style changes to staging they will accept anything.
+This is a semi-automatic email about new static checker warnings.
 
-But if you want to learn then stay on the same driver and just focus on
-sending patches for it until you understand it completely.
+The patch 04fd61ab36ec: "bpf: allow bpf programs to tail-call other 
+bpf programs" from May 19, 2015, leads to the following Smatch 
+complaint:
 
-You could also fix GCC warnings, cppcheck, or clang stuff.
+kernel/bpf/verifier.c:921 check_call()
+	 error: we previously assumed 'map' could be null (see line 911)
+
+kernel/bpf/verifier.c
+   910	
+   911		if (map && map->map_type = BPF_MAP_TYPE_PROG_ARRAY &&
+                    ^^^
+Patch introduces a check for NULL.
+
+   912		    func_id != BPF_FUNC_tail_call)
+   913			/* prog_array map type needs extra care:
+   914			 * only allow to pass it into bpf_tail_call() for now.
+   915			 * bpf_map_delete_elem() can be allowed in the future,
+   916			 * while bpf_map_update_elem() must only be done via syscall
+   917			 */
+   918			return -EINVAL;
+   919	
+   920		if (func_id = BPF_FUNC_tail_call &&
+   921		    map->map_type != BPF_MAP_TYPE_PROG_ARRAY)
+                    ^^^^^^^^^^^^^
+New unchecked dereference.
+
+   922			/* don't allow any other map type to be passed into
+   923			 * bpf_tail_call()
 
 regards,
-dan carpentr
-
+dan carpenter
