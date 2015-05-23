@@ -1,33 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 May 2015 09:21:42 +0000
+Date: Sat, 23 May 2015 10:14:28 +0000
 Subject: Re: [PATCH v4 00/13] staging: lustre: lnet: code cleanups
-Message-Id: <20150522092142.GJ4150@mwanda>
+Message-Id: <20150523101428.GX22558@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
-In-Reply-To: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+ <20150522092142.GJ4150@mwanda>
+ <CABqvwjsJXJYciMDHqy9vEdL6dGLhx3+Pi0_ro6192Z5SGR9Q_w@mail.gmail.com>
+In-Reply-To: <CABqvwjsJXJYciMDHqy9vEdL6dGLhx3+Pi0_ro6192Z5SGR9Q_w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Shuey <shuey@purdue.edu>
-Cc: oleg.drokin@intel.com, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-deve@lists.lustre.org
+To: Michael Shuey <shuey@purdue.edu>
+Cc: "Drokin, Oleg" <oleg.drokin@intel.com>, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-devel@lists.lustre.org
 
-On Thu, May 21, 2015 at 03:50:23PM -0400, Mike Shuey wrote:
-> This patch series cleans up code in staging/lustre/lnet - mostly spacing
-> and dead function cleanup.  Should apply against linux-next 20150518.
+We would have applied the v3 patchset but now I don't know because we're
+up to v5.  We can't apply v5 because there are problems with it.  No
+one responded to v3 so Greg still might apply it or he might find these
+email threads too scrambled and delete everything and ask for a resend.
 
-Why are you sending a v4 of this?  We don't actually enjoy reviewing the
-same patchset over and over...
+It's pretty messed up so just wait for Greg to get to it before sending
+more patches?
 
-Update:  I have investigated and it is because you add a few new patches
-to this set which were not in the original.  Just assume that the
-original patchset will be merge and send the additional patches as a new
-set.
+Basically you should only send patches which you assume will be applied.
+If no one responds after 3 days then probably that means everyone from
+the peanut gallery (Me, Sudip, Joe, the lustre devs), we don't have an
+issue.  Then Greg does the last review (2-3 weeks later perhaps).  But
+if it makes it past all the other reviews then generally Greg also will
+be ok with it.
 
-Also since no one replied to the v3 patchset and Greg has a 5000 patches
-in between v3 and v4 he will not seen v4 until days after he has applied
-v3 so it causes confusion.
-
-Also you sent a v5 of this patchset but without a v5 label...
+Greg applies patches in first come, first applied order.  If they don't
+apply then you have to redo it.  He doesn't invest a lot of time into
+figuring out why.  So you have to coordinate with the other devs, it's
+up to you how you do that.
 
 regards,
 dan carpenter
