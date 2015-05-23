@@ -1,51 +1,64 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 03 May 2015 13:21:43 +0000
-Subject: [PATCH 2/3] drivers: staging: lustre: lustre: Replace OBD_CPT_ALLOC etc by kzalloc_node
-Message-Id: <1430659304-26354-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Patrick Farrell <paf@cray.com>
+Date: Sat, 23 May 2015 03:13:42 +0000
+Subject: RE: [HPDD-discuss] [PATCH v4 10/13] staging: lustre: lnet: lnet: checkpatch.pl fixes
+Message-Id: <DB0C8A206669AC40B1C4E52A8584A6F614C88534@CFWEX01.americas.cray.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430659304-26354-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430659304-26354-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
+ <1432237849-53947-11-git-send-email-shuey@purdue.edu>
+ <1432242004.20840.68.camel@perches.com>
+ <alpine.DEB.2.10.1505212328500.5370@hadrien>
+ <CABqvwjuKypiacf3336j-q450FGKaO4wh0Ld7PF8MGz0VPsYBbw@mail.gmail.com>
+ <alpine.DEB.2.10.1505220704541.2672@hadrien>
+ <15C0AFDB-CA69-40E5-B65E-C559A5B5CE47@intel.com>
+ <1432309337.29657.16.camel@perches.com>
+ <05DE4AF3-20A6-40F6-BAC6-79C140E490AF@intel.com>
+ <1432339030.29657.20.camel@perches.com>
+ <863F0D66-99B1-4658-8A99-E3A843E0E8FC@intel.com>
+ <1432340285.29657.26.camel@perches.com>
+ <467D21EA-E5E8-4F16-AABD-31D79062FFF9@intel.com>,<1432341390.29657.29.camel@perches.com>
+In-Reply-To: <1432341390.29657.29.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Joe Perches <joe@perches.com>, "Drokin, Oleg" <oleg.drokin@intel.com>
+Cc: "<devel@driverdev.osuosl.org>" <devel@driverdev.osuosl.org>, "<gregkh@linuxfoundation.org>" <gregkh@linuxfoundation.org>, "<kernel-janitors@vger.kernel.org>" <kernel-janitors@vger.kernel.org>, "<linux-kernel@vger.kernel.org>" <linux-kernel@vger.kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, "<HPDD-discuss@ml01.01.org>" <HPDD-discuss@ml01.01.org>, "<lustre-devel@lists.lustre.org>" <lustre-devel@lists.lustre.org>
 
-Replace OBD_CPT_ALLOC, OBD_CPT_ALLOC_PTR, and OBD_CPT_ALLOC_GFP by
-corresponding calls to kzalloc_node.  The semantic patch for the
-OBD_CPT_ALLOC case is as follows: (http://coccinelle.lip6.fr/).
+Since it is not actually doing a printk - at least, not necessarily - I like lustre_logmsg.  lustre_output seems too vague.
 
-// <smpl>
-@@ expression ptr,cptab,cpt,size; @@
-- OBD_CPT_ALLOC(ptr, cptab, cpt, size)
-+ ptr = kzalloc_node(size, GFP_NOFS, cfs_cpt_spread_node(cptab, cpt))
-// </smpl>
+- Patrick
+________________________________________
+From: HPDD-discuss [hpdd-discuss-bounces@lists.01.org] on behalf of Joe Perches [joe@perches.com]
+Sent: Friday, May 22, 2015 7:36 PM
+To: Drokin, Oleg
+Cc: <devel@driverdev.osuosl.org>; <gregkh@linuxfoundation.org>; <kernel-janitors@vger.kernel.org>; <linux-kernel@vger.kernel.org>; Julia Lawall; <HPDD-discuss@ml01.01.org>; <lustre-devel@lists.lustre.org>
+Subject: Re: [HPDD-discuss] [PATCH v4 10/13] staging: lustre: lnet: lnet: checkpatch.pl fixes
 
-Note that the original OBD macros would check if the cptab argument was
-NULL and fall back on kzalloc in that case.  Oleg Drokin argues that this
-test is not needed because the code containing these calls is only invoked
-after initialization has been completed, in which case the possible cptab
-arguments are not NULL.
+On Sat, 2015-05-23 at 00:25 +0000, Drokin, Oleg wrote:
+> On May 22, 2015, at 8:18 PM, Joe Perches wrote:
+> >>>> I wonder what is more clear about that in your opinion ve
+> >>>> lustre_error/lustre_debug?
+> >>>
+> >>> The fact that you have to explain this shows that it's
+> >>> at least misleading unless you completely understand the
+> >>> code.
+> >>
+> >> Or you know, you might take the function name at the face value
+> >> and assume that CERROR means it's an error and CDEBUG means it's a debug message?
+> >
+> > Maybe, but I think that it'd be better if the mechanism
+> > it uses was more plainly named something like lustre_log.
+>
+> While the idea seems good, the biggest obstacle here is such that
+> there's already a thing called lustre log (llog for short too) -
+> it's kind of a distributed journal of operations.
+>
+> Its there a different synonym, I wonder?
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Maybe: lustre_printk, lustre_logmsg, lustre_output
 
----
- drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c b/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
-index 2eefa25..6a61c85 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/nrs_fifo.c
-@@ -80,7 +80,9 @@ static int nrs_fifo_start(struct ptlrpc_nrs_policy *policy)
- {
- 	struct nrs_fifo_head *head;
- 
--	OBD_CPT_ALLOC_PTR(head, nrs_pol2cptab(policy), nrs_pol2cptid(policy));
-+	head = kzalloc_node(sizeof(*head), GFP_NOFS,
-+			    cfs_cpt_spread_node(nrs_pol2cptab(policy),
-+						nrs_pol2cptid(policy)));
- 	if (head = NULL)
- 		return -ENOMEM;
- 
 
+_______________________________________________
+HPDD-discuss mailing list
+HPDD-discuss@lists.01.org
+https://lists.01.org/mailman/listinfo/hpdd-discuss
