@@ -1,81 +1,29 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Date: Mon, 11 May 2015 08:29:29 +0000
-Subject: Re: type mismatch
-Message-Id: <20150511082929.GA24018@opentech.at>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 May 2015 08:20:52 +0000
+Subject: [patch] iio: magnetometer: correct a harmless off by one check
+Message-Id: <20150527082052.GA19423@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1505101517100.2645@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1505101517100.2645@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, Daniel Baluta <daniel.baluta@intel.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 11 May 2015, Julia Lawall wrote:
+The line before limits i to 0-3 so the existing code works fine but the
+check is still off by one and >= is intended instead of >.
 
-> 
-> 
-> On Mon, 11 May 2015, Nicholas Mc Guire wrote:
-> 
-> > On Sun, 10 May 2015, Dan Carpenter wrote:
-> > 
-> > > I don't really have a strong opinion either way...  It's unlikely that
-> > > we will introduce a bug here and if we did, I think it would be caught
-> > > immediately in testing.
-> > > 
-> > > It's pretty common to treat the first member of a struct as special.
-> > > What annoys me is when people do
-> > > 
-> > > struct foo {
-> > > 	int one, two, three;
-> > > 	whatever;
-> > > };
-> > > 
-> > > memcpy(&foo.one, src, sizoef(struct foo));
-> > > 
-> > > Argh!?  These triger buffer overflows warnings in Smatch and I don't
-> > > see the point since &foo.one is less readable than &foo!  Oh well, I
-> > > think these were common enough, I had to treat it as idiomatic and add a
-> > > special case for them.
-> > >
-> > just ran a naive scanner for that pattern but only could find this one instance
-> > 
-> > ./net/sctp/sm_make_chunk.c:3103 ugly memset 
-> > 3102          if (af->is_any(&addr))
-> > 3103                  memcpy(&addr.v4, sctp_source(asconf), sizeof(addr));
-> > 
-> > my scanner ist:
-> > 
-> > @uses_first@
-> > identifier f;
-> > idexpression s;
-> 
-> Maybe generalize s (ie expression) and the size (ie, don't specify 
-> anything)?  The sizeof could be a type also.
->
-yup - adding the type check case finds two additional cases
-but generalizing s to an expression did not change results
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-@uses_first@
-identifier f;
-type T;
-idexpression T s;
-identifier e;
-position p;
-@@
-
-f(...){
-<+...
-(
-* memcpy@p(&s.e,...,sizeof(s));
-|
-* memcpy@p(&s.e,...,sizeof(T));
-)
-...+>
-}
-
-./drivers/infiniband/hw/ehca/ehca_mcast.c:80 ugly memset
-./drivers/infiniband/hw/ehca/ehca_mcast.c:117 ugly memset
-./net/sctp/sm_make_chunk.c:3103 ugly memset
-
-thx!
-hofrat
+diff --git a/drivers/iio/magnetometer/mmc35240.c b/drivers/iio/magnetometer/mmc35240.c
+index aa6e25d..c71392c 100644
+--- a/drivers/iio/magnetometer/mmc35240.c
++++ b/drivers/iio/magnetometer/mmc35240.c
+@@ -308,7 +308,7 @@ static int mmc35240_read_raw(struct iio_dev *indio_dev,
+ 			return ret;
+ 
+ 		i = (reg & MMC35240_CTRL1_BW_MASK) >> MMC35240_CTRL1_BW_SHIFT;
+-		if (i < 0 || i > ARRAY_SIZE(mmc35240_samp_freq))
++		if (i < 0 || i >= ARRAY_SIZE(mmc35240_samp_freq))
+ 			return -EINVAL;
+ 
+ 		*val = mmc35240_samp_freq[i];
