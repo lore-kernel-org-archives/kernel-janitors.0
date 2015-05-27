@@ -1,32 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 Apr 2015 08:33:30 +0000
-Subject: [patch] ocfs2: double evaluation concerns in mlog_errno()
-Message-Id: <20150403083330.GA27007@mwanda>
+Date: Wed, 27 May 2015 08:25:12 +0000
+Subject: [patch -next] ARM: BCM63xx: fix an error path in bcm63xx_pmb_power_on_cpu()
+Message-Id: <20150527082512.GC19423@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: linux-arm-kernel@lists.infradead.org
 
-It won't happen in real life, but for consistency etc then we should
-only evaluate the "st" parameter once.
+We need to unlock and unmap some resourses before returning.
 
-Also, since not all callers use the new return, it causes at static
-checker warning:
-fs/ocfs2/export.c:138 ocfs2_get_dentry() warn: unchecked 'PTR_ERR'
-
+Fixes: 3f2a43c98d72 ('ARM: BCM63xx: Add secondary CPU PMB initialization sequence')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/fs/ocfs2/cluster/masklog.h b/fs/ocfs2/cluster/masklog.h
-index f96a51d..7fdc25a 100644
---- a/fs/ocfs2/cluster/masklog.h
-+++ b/fs/ocfs2/cluster/masklog.h
-@@ -202,7 +202,7 @@ extern struct mlog_bits mlog_and_bits, mlog_not_bits;
- 	    _st != AOP_TRUNCATED_PAGE && _st != -ENOSPC &&		\
- 	    _st != -EDQUOT)						\
- 		mlog(ML_ERROR, "status = %lld\n", (long long)_st);	\
--	st;								\
-+	_st;								\
- })
+diff --git a/arch/arm/mach-bcm/bcm63xx_pmb.c b/arch/arm/mach-bcm/bcm63xx_pmb.c
+index c39752b..de061ec 100644
+--- a/arch/arm/mach-bcm/bcm63xx_pmb.c
++++ b/arch/arm/mach-bcm/bcm63xx_pmb.c
+@@ -150,7 +150,7 @@ int bcm63xx_pmb_power_on_cpu(struct device_node *dn)
+ 	 */
+ 	ret = bpcm_rd(base, addr, ARM_CONTROL, &ctrl);
+ 	if (ret)
+-		return ret;
++		goto out;
  
- #define mlog_bug_on_msg(cond, fmt, args...) do {			\
+ 	if (ctrl & CPU_RESET_N(cpu)) {
+ 		pr_info("PMB: CPU%d is already powered on\n", cpu);
