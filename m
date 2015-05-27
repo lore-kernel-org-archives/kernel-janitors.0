@@ -1,25 +1,29 @@
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Date: Wed, 13 May 2015 11:58:25 +0000
-Subject: Re: netns: use a spin_lock to protect nsid management
-Message-Id: <55533C61.2030206@6wind.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 May 2015 08:24:25 +0000
+Subject: [patch] iio: light: signedness bug in stk3310_write_raw()
+Message-Id: <20150527082425.GB19423@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150512175227.GA19020@mwanda> <CAM_iQpUSgpeL_Dy+U+KrBd=h3bhm03vASupdO-9dSs+CKYjNeg@mail.gmail.com>
-In-Reply-To: <CAM_iQpUSgpeL_Dy+U+KrBd=h3bhm03vASupdO-9dSs+CKYjNeg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Cong Wang <xiyou.wangcong@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Linux Kernel Network Developers <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, Tiberiu Breana <tiberiu.a.breana@intel.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le 12/05/2015 21:16, Cong Wang a =C3=A9crit :
-[snip]
-> Also why do we have to disable IRQ when holding the spinlock?
-> IOW, which case takes the spin lock in IRQ context?
-peernet2id() is called by do_one_broadcast() (net/netlink/af_netlink.c). So
-every callers of netlink_broadcast[_filtered]()/nlmsg_unicast()
-/nlmsg_multicast() may needs this lock.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+"index" needs to be signed for the error handling to work.
+
+Fixes: be9e6229d676 ('iio: light: Add support for Sensortek STK3310')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/iio/light/stk3310.c b/drivers/iio/light/stk3310.c
+index e79b9d8..fee4297 100644
+--- a/drivers/iio/light/stk3310.c
++++ b/drivers/iio/light/stk3310.c
+@@ -370,7 +370,7 @@ static int stk3310_write_raw(struct iio_dev *indio_dev,
+ 			     int val, int val2, long mask)
+ {
+ 	int ret;
+-	unsigned int index;
++	int index;
+ 	struct stk3310_data *data = iio_priv(indio_dev);
+ 
+ 	switch (mask) {
