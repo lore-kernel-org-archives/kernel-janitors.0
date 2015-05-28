@@ -1,33 +1,51 @@
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Date: Fri, 01 May 2015 12:05:39 +0000
-Subject: [PATCH] sparc: kernel: GRPCI2: Remove a useless memset
-Message-Id: <1430481939-10268-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 28 May 2015 21:02:22 +0000
+Subject: [PATCH 7/9] drivers/media/tuners/e4000.c: drop unneeded goto
+Message-Id: <1432846944-7122-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+To: Antti Palosaari <crope@iki.fi>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-grpci2priv is allocated using kzalloc, so there is no need to memset it.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Delete jump to a label on the next line, when that label is not
+used elsewhere.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier l;
+@@
+
+-if (...) goto l;
+-l:
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/sparc/kernel/leon_pci_grpci2.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/tuners/e4000.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/sparc/kernel/leon_pci_grpci2.c b/arch/sparc/kernel/leon_pci_grpci2.c
-index 94e392b..814fb17 100644
---- a/arch/sparc/kernel/leon_pci_grpci2.c
-+++ b/arch/sparc/kernel/leon_pci_grpci2.c
-@@ -723,7 +723,6 @@ static int grpci2_of_probe(struct platform_device *ofdev)
- 		err = -ENOMEM;
- 		goto err1;
- 	}
--	memset(grpci2priv, 0, sizeof(*grpci2priv));
- 	priv->regs = regs;
- 	priv->irq = ofdev->archdata.irqs[0]; /* BASE IRQ */
- 	priv->irq_mode = (capability & STS_IRQMODE) >> STS_IRQMODE_BIT;
--- 
-2.1.0
+diff --git a/drivers/media/tuners/e4000.c b/drivers/media/tuners/e4000.c
+index 510239f..50c0f0d 100644
+--- a/drivers/media/tuners/e4000.c
++++ b/drivers/media/tuners/e4000.c
+@@ -103,9 +103,6 @@ static int e4000_sleep(struct dvb_frontend *fe)
+ 
+ 	ret = regmap_write(s->regmap, 0x00, 0x00);
+ 	if (ret)
+-		goto err;
+-err:
+-	if (ret)
+ 		dev_dbg(&s->client->dev, "failed=%d\n", ret);
+ 
+ 	return ret;
 
