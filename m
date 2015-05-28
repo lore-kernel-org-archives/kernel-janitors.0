@@ -1,47 +1,57 @@
-From: Mike Shuey <shuey@purdue.edu>
-Date: Fri, 08 May 2015 12:00:54 +0000
-Subject: [PATCH v2 2/8] staging: lustre: remove lnet_fini_locks (dead code)
-Message-Id: <1431086460-22455-10-git-send-email-shuey@purdue.edu>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 28 May 2015 21:02:18 +0000
+Subject: [PATCH 3/9] NFS: drop unneeded goto
+Message-Id: <1432846944-7122-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1431086460-22455-9-git-send-email-shuey@purdue.edu>
-In-Reply-To: <1431086460-22455-9-git-send-email-shuey@purdue.edu>
+References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oleg.drokin@intel.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, Mike Shuey <shuey@purdue.edu>
+To: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: kernel-janitors@vger.kernel.org, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-lnet_fini_locks() does nothing.  Remove.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Delete jump to a label on the next line, when that label is not
+used elsewhere.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier l;
+@@
+
+-if (...) goto l;
+-l:
+// </smpl>
+
+Also drop the unnecessary ret variable.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/lustre/lnet/lnet/api-ni.c |    8 --------
- 1 files changed, 0 insertions(+), 8 deletions(-)
+ fs/nfs/nfs4idmap.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
-index 6910f56..1adc481 100644
---- a/drivers/staging/lustre/lnet/lnet/api-ni.c
-+++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
-@@ -98,12 +98,6 @@ lnet_init_locks(void)
- 	mutex_init(&the_lnet.ln_api_mutex);
- }
+diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
+index 2e1737c..535dfc6 100644
+--- a/fs/nfs/nfs4idmap.c
++++ b/fs/nfs/nfs4idmap.c
+@@ -494,12 +494,7 @@ nfs_idmap_delete(struct nfs_client *clp)
  
--static void
--lnet_fini_locks(void)
--{
--}
--
--
- static int
- lnet_create_remote_nets_table(void)
+ int nfs_idmap_init(void)
  {
-@@ -153,8 +147,6 @@ lnet_destroy_locks(void)
- 		cfs_percpt_lock_free(the_lnet.ln_net_lock);
- 		the_lnet.ln_net_lock = NULL;
- 	}
--
--	lnet_fini_locks();
+-	int ret;
+-	ret = nfs_idmap_init_keyring();
+-	if (ret != 0)
+-		goto out;
+-out:
+-	return ret;
++	return nfs_idmap_init_keyring();
  }
  
- static int
--- 
-1.7.1
+ void nfs_idmap_quit(void)
 
