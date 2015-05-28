@@ -1,20 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 18 May 2015 09:22:56 +0000
-Subject: Re: [patch] regulator: max77686: fix a shift wrapping bug
-Message-Id: <20150518092255.GI14154@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 28 May 2015 21:02:16 +0000
+Subject: [PATCH 1/9] drivers/media/usb/airspy/airspy.c: drop unneeded goto
+Message-Id: <1432846944-7122-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150515092501.GB21508@mwanda>
- <5555C814.7030405@samsung.com>
- <1431709826.15709.15.camel@perches.com>
-In-Reply-To: <1431709826.15709.15.camel@perches.com>
+References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-That looks ok to me.  Please add my Reported-by tag and resend.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-regards,
-dan carpenter
+Delete jump to a label on the next line, when that label is not
+used elsewhere.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier l;
+@@
+
+-if (...) goto l;
+-l:
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/usb/airspy/airspy.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/media/usb/airspy/airspy.c b/drivers/media/usb/airspy/airspy.c
+index 4069234..8f2e1c2 100644
+--- a/drivers/media/usb/airspy/airspy.c
++++ b/drivers/media/usb/airspy/airspy.c
+@@ -937,9 +937,6 @@ static int airspy_set_if_gain(struct airspy *s)
+ 	ret = airspy_ctrl_msg(s, CMD_SET_VGA_GAIN, 0, s->if_gain->val,
+ 			&u8tmp, 1);
+ 	if (ret)
+-		goto err;
+-err:
+-	if (ret)
+ 		dev_dbg(s->dev, "failed=%d\n", ret);
+ 
+ 	return ret;
 
