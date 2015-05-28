@@ -1,7 +1,7 @@
 From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Thu, 28 May 2015 13:59:50 +0000
+Date: Thu, 28 May 2015 13:59:57 +0000
 Subject: Re: [PATCH] ALSA: aoa: convert bus code to use dev_groups
-Message-Id: <55671F56.6080402@gmail.com>
+Message-Id: <55671F5D.6060807@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com> <s5hwpzs7qrz.wl-tiwai@suse.de>
 In-Reply-To: <s5hwpzs7qrz.wl-tiwai@suse.de>
