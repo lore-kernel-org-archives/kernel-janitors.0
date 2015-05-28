@@ -1,35 +1,62 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 08 May 2015 21:36:45 +0000
-Subject: [PATCH 1/2] staging: lustre: cl_page: drop unneeded variable
-Message-Id: <1431121006-23857-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 28 May 2015 21:02:21 +0000
+Subject: [PATCH 6/9] ssb: drop unneeded goto
+Message-Id: <1432846944-7122-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1431121006-23857-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1431121006-23857-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Michael Buesch <m@bues.ch>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Drop variable made unnecessary by conversion of obd free functions
-to kfree.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Delete jump to a label on the next line, when that label is not
+used elsewhere.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier l;
+@@
+
+-if (...) goto l;
+-l:
+// </smpl>
+
+Also drop the unneeded err variable.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/obdclass/cl_page.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/ssb/pci.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/cl_page.c b/drivers/staging/lustre/lustre/obdclass/cl_page.c
-index 8873553..59d338a 100644
---- a/drivers/staging/lustre/lustre/obdclass/cl_page.c
-+++ b/drivers/staging/lustre/lustre/obdclass/cl_page.c
-@@ -248,7 +248,6 @@ EXPORT_SYMBOL(cl_page_gang_lookup);
- static void cl_page_free(const struct lu_env *env, struct cl_page *page)
+diff --git a/drivers/ssb/pci.c b/drivers/ssb/pci.c
+index 0f28c08..d6ca4d3 100644
+--- a/drivers/ssb/pci.c
++++ b/drivers/ssb/pci.c
+@@ -1173,17 +1173,11 @@ void ssb_pci_exit(struct ssb_bus *bus)
+ int ssb_pci_init(struct ssb_bus *bus)
  {
- 	struct cl_object *obj  = page->cp_obj;
--	int pagesize = cl_object_header(obj)->coh_page_bufsize;
+ 	struct pci_dev *pdev;
+-	int err;
  
- 	PASSERT(env, page, list_empty(&page->cp_batch));
- 	PASSERT(env, page, page->cp_owner = NULL);
+ 	if (bus->bustype != SSB_BUSTYPE_PCI)
+ 		return 0;
+ 
+ 	pdev = bus->host_pci;
+ 	mutex_init(&bus->sprom_mutex);
+-	err = device_create_file(&pdev->dev, &dev_attr_ssb_sprom);
+-	if (err)
+-		goto out;
+-
+-out:
+-	return err;
++	return device_create_file(&pdev->dev, &dev_attr_ssb_sprom);
+ }
 
