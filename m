@@ -1,96 +1,76 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 28 May 2015 21:32:34 +0000
-Subject: Re: [PATCH 1/9] drivers/media/usb/airspy/airspy.c: drop unneeded goto
-Message-Id: <1432848754.1556.25.camel@perches.com>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Thu, 28 May 2015 12:48:27 +0000
+Subject: [PATCH] ALSA: aoa: convert bus code to use dev_groups
+Message-Id: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1432846944-7122-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1432846944-7122-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Antti Palosaari <crope@iki.fi>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
-On Thu, 2015-05-28 at 23:02 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Delete jump to a label on the next line, when that label is not
-> used elsewhere.
+You should use dev_groups instead of the dev_attrs field of struct
+bus_type. This converts the MDIO bus code to use the correct field.
 
-Seems sensible but:
+These modifications were made using Coccinelle.
 
-> diff --git a/drivers/media/usb/airspy/airspy.c b/drivers/media/usb/airspy/airspy.c
-[]
-> @@ -937,9 +937,6 @@ static int airspy_set_if_gain(struct airspy *s)
->  	ret = airspy_ctrl_msg(s, CMD_SET_VGA_GAIN, 0, s->if_gain->val,
->  			&u8tmp, 1);
->  	if (ret)
-> -		goto err;
-> -err:
-> -	if (ret)
->  		dev_dbg(s->dev, "failed=%d\n", ret);
->  
->  	return ret;
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ sound/aoa/soundbus/core.c     |    3 ++-
+ sound/aoa/soundbus/soundbus.h |    2 +-
+ sound/aoa/soundbus/sysfs.c    |   13 ++++++++-----
+ 3 files changed, 11 insertions(+), 7 deletions(-)
 
-Ideally the function above this should also be modified
-do drop the unnecessary double test of ret
-
-static int airspy_set_mixer_gain(struct airspy *s)
-{
-	int ret;
-	u8 u8tmp;
-
-	dev_dbg(s->dev, "mixer auto=%d->%d val=%d->%d\n",
-			s->mixer_gain_auto->cur.val, s->mixer_gain_auto->val,
-			s->mixer_gain->cur.val, s->mixer_gain->val);
-
-	ret = airspy_ctrl_msg(s, CMD_SET_MIXER_AGC, 0, s->mixer_gain_auto->val,
-			&u8tmp, 1);
-	if (ret)
-		goto err;
-
-	if (s->mixer_gain_auto->val = false) {
-		ret = airspy_ctrl_msg(s, CMD_SET_MIXER_GAIN, 0,
-				s->mixer_gain->val, &u8tmp, 1);
-		if (ret)
-			goto err;
-	}
-err:
-	if (ret)
-		dev_dbg(s->dev, "failed=%d\n", ret);
-
-	return ret;
-}
-
-These could become something like:
-
-static int airspy_set_mixer_gain(struct airspy *s)
-{
-	int ret;
-	u8 u8tmp;
-
-	dev_dbg(s->dev, "mixer auto=%d->%d val=%d->%d\n",
-			s->mixer_gain_auto->cur.val, s->mixer_gain_auto->val,
-			s->mixer_gain->cur.val, s->mixer_gain->val);
-
-	ret = airspy_ctrl_msg(s, CMD_SET_MIXER_AGC, 0, s->mixer_gain_auto->val,
-			&u8tmp, 1);
-	if (ret)
-		goto err;
-
-	if (s->mixer_gain_auto->val = false) {
-		ret = airspy_ctrl_msg(s, CMD_SET_MIXER_GAIN, 0,
-				s->mixer_gain->val, &u8tmp, 1);
-		if (ret)
-			goto err;
-	}
-
-	return 0;
-
-err:
-	dev_dbg(s->dev, "failed=%d\n", ret);
-	return ret;
-}
-
-
+--- a/sound/aoa/soundbus/core.c
++++ b/sound/aoa/soundbus/core.c
+@@ -150,6 +150,7 @@ static int soundbus_device_resume(struct
+ 
+ #endif /* CONFIG_PM */
+ 
++ATTRIBUTE_GROUPS(soundbus_dev);
+ static struct bus_type soundbus_bus_type = {
+ 	.name		= "aoa-soundbus",
+ 	.probe		= soundbus_probe,
+@@ -160,7 +161,7 @@ static struct bus_type soundbus_bus_type
+ 	.suspend	= soundbus_device_suspend,
+ 	.resume		= soundbus_device_resume,
+ #endif
+-	.dev_attrs	= soundbus_dev_attrs,
++	.dev_groups	= soundbus_dev_groups,
+ };
+ 
+ int soundbus_add_one(struct soundbus_dev *dev)
+--- a/sound/aoa/soundbus/soundbus.h
++++ b/sound/aoa/soundbus/soundbus.h
+@@ -199,6 +199,6 @@ struct soundbus_driver {
+ extern int soundbus_register_driver(struct soundbus_driver *drv);
+ extern void soundbus_unregister_driver(struct soundbus_driver *drv);
+ 
+-extern struct device_attribute soundbus_dev_attrs[];
++extern struct attribute *soundbus_dev_attrs[];
+ 
+ #endif /* __SOUNDBUS_H */
+--- a/sound/aoa/soundbus/sysfs.c
++++ b/sound/aoa/soundbus/sysfs.c
+@@ -30,13 +30,16 @@ static ssize_t modalias_show(struct devi
+ 
+ 	return length;
+ }
++static DEVICE_ATTR_RO(modalias);
+ 
+ soundbus_config_of_attr (name, "%s\n");
++static DEVICE_ATTR_RO(name);
+ soundbus_config_of_attr (type, "%s\n");
++static DEVICE_ATTR_RO(type);
+ 
+-struct device_attribute soundbus_dev_attrs[] = {
+-	__ATTR_RO(name),
+-	__ATTR_RO(type),
+-	__ATTR_RO(modalias),
+-	__ATTR_NULL
++struct attribute *soundbus_dev_attrs[] = {
++	&dev_attr_name.attr,
++	&dev_attr_type.attr,
++	&dev_attr_modalias.attr,
++	NULL,
+ };
