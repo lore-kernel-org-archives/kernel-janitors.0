@@ -1,63 +1,85 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 29 May 2015 15:02:39 +0000
-Subject: re: cxgb4/cxgb4vf: Add code to calculate T5 BAR2 Offsets for SGE Queue Registers
-Message-Id: <20150529150239.GC10313@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 28 May 2015 21:02:19 +0000
+Subject: [PATCH 4/9] RDMA/ocrdma: drop unneeded goto
+Message-Id: <1432846944-7122-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Selvin Xavier <selvin.xavier@emulex.com>
+Cc: kernel-janitors@vger.kernel.org, Devesh Sharma <devesh.sharma@emulex.com>, Mitesh Ahuja <mitesh.ahuja@emulex.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Hariprasad Shenai,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The patch e85c9a7abfa4: "cxgb4/cxgb4vf: Add code to calculate T5 BAR2
-Offsets for SGE Queue Registers" from Dec 3, 2014, leads to the
-following static checker warning:
+Delete jump to a label on the next line, when that label is not
+used elsewhere.
 
-	drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:5358 t4_bar2_sge_qregs()
-	warn: should '(qid >> qpp_shift) << page_shift' be a 64 bit type?
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-  5326  int t4_bar2_sge_qregs(struct adapter *adapter,
-  5327                        unsigned int qid,
-  5328                        enum t4_bar2_qtype qtype,
-  5329                        u64 *pbar2_qoffset,
-  5330                        unsigned int *pbar2_qid)
-  5331  {
-  5332          unsigned int page_shift, page_size, qpp_shift, qpp_mask;
-  5333          u64 bar2_page_offset, bar2_qoffset;
-  5334          unsigned int bar2_qid, bar2_qid_offset, bar2_qinferred;
-  5335  
-  5336          /* T4 doesn't support BAR2 SGE Queue registers.
-  5337           */
-  5338          if (is_t4(adapter->params.chip))
-  5339                  return -EINVAL;
-  5340  
-  5341          /* Get our SGE Page Size parameters.
-  5342           */
-  5343          page_shift = adapter->params.sge.hps + 10;
-  5344          page_size = 1 << page_shift;
-  5345  
-  5346          /* Get the right Queues per Page parameters for our Queue.
-  5347           */
-  5348          qpp_shift = (qtype = T4_BAR2_QTYPE_EGRESS
-  5349                       ? adapter->params.sge.eq_qpp
-  5350                       : adapter->params.sge.iq_qpp);
-  5351          qpp_mask = (1 << qpp_shift) - 1;
-  5352  
-  5353          /*  Calculate the basics of the BAR2 SGE Queue register area:
-  5354           *  o The BAR2 page the Queue registers will be in.
-  5355           *  o The BAR2 Queue ID.
-  5356           *  o The BAR2 Queue ID Offset into the BAR2 page.
-  5357           */
-  5358          bar2_page_offset = ((qid >> qpp_shift) << page_shift);
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The static checker is complaining that it can not use the high 32 bytes
-unless we add a cast.  This is using custom page sizes here so I'm not
-sure exactly what's going on or if declaring this as u64 was necessary.
+// <smpl>
+@r@
+identifier l;
+@@
 
-  5359          bar2_qid = qid & qpp_mask;
-  5360          bar2_qid_offset = bar2_qid * SGE_UDB_SIZE;
+-if (...) goto l;
+-l:
+// </smpl>
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c |   15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index 47615ff..0f3b5ea 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -1884,9 +1884,7 @@ int ocrdma_mbx_dealloc_lkey(struct ocrdma_dev *dev, int fr_mr, u32 lkey)
+ 	cmd->lkey = lkey;
+ 	cmd->rsvd_frmr = fr_mr ? 1 : 0;
+ 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
+-	if (status)
+-		goto mbx_err;
+-mbx_err:
++
+ 	kfree(cmd);
+ 	return status;
+ }
+@@ -1965,9 +1963,7 @@ static int ocrdma_mbx_reg_mr_cont(struct ocrdma_dev *dev,
+ 		    upper_32_bits(hwmr->pbl_table[i + pbl_offset].pa);
+ 	}
+ 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
+-	if (status)
+-		goto mbx_err;
+-mbx_err:
++
+ 	kfree(cmd);
+ 	return status;
+ }
+@@ -2648,10 +2644,7 @@ int ocrdma_mbx_destroy_qp(struct ocrdma_dev *dev, struct ocrdma_qp *qp)
+ 		return status;
+ 	cmd->qp_id = qp->id;
+ 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
+-	if (status)
+-		goto mbx_err;
+ 
+-mbx_err:
+ 	kfree(cmd);
+ 	if (qp->sq.va)
+ 		dma_free_coherent(&pdev->dev, qp->sq.len, qp->sq.va, qp->sq.pa);
+@@ -3061,9 +3054,7 @@ static int ocrdma_mbx_modify_eqd(struct ocrdma_dev *dev, struct ocrdma_eq *eq,
+ 				(eq[i].aic_obj.prev_eqd * 65)/100;
+ 	}
+ 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
+-	if (status)
+-		goto mbx_err;
+-mbx_err:
++
+ 	kfree(cmd);
+ 	return status;
+ }
+
