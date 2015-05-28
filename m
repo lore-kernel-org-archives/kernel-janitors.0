@@ -1,24 +1,58 @@
-From: Jesper Nilsson <jesper.nilsson@axis.com>
-Date: Mon, 11 May 2015 11:21:40 +0000
-Subject: Re: [PATCH] cris: arch-v32: gpio: Use kzalloc instead of kmalloc/memset
-Message-Id: <20150511112140.GY11161@axis.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 28 May 2015 21:02:17 +0000
+Subject: [PATCH 2/9] ipv6: drop unneeded goto
+Message-Id: <1432846944-7122-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430488699-10878-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1430488699-10878-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1432846944-7122-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jespern@axis.com>, linux-cris-kernel <linux-cris-kernel@axis.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, May 01, 2015 at 03:58:19PM +0200, Christophe Jaillet wrote:
-> Turn a kmalloc/memset into an equivalent kzalloc.
-> Doing so also move the zero'ing of the memory outside of a mutex.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Agreed, thanks!
+Delete jump to a label on the next line, when that label is not
+used elsewhere.
 
-> Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-/^JN - Jesper Nilsson
--- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+// <smpl>
+@r@
+identifier l;
+@@
+
+-if (...) goto l;
+-l:
+// </smpl>
+
+Also remove the unnecessary ret variable.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ net/ipv6/raw.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/net/ipv6/raw.c b/net/ipv6/raw.c
+index 484a5c1..ca4700c 100644
+--- a/net/ipv6/raw.c
++++ b/net/ipv6/raw.c
+@@ -1327,13 +1327,7 @@ static struct inet_protosw rawv6_protosw = {
+ 
+ int __init rawv6_init(void)
+ {
+-	int ret;
+-
+-	ret = inet6_register_protosw(&rawv6_protosw);
+-	if (ret)
+-		goto out;
+-out:
+-	return ret;
++	return inet6_register_protosw(&rawv6_protosw);
+ }
+ 
+ void rawv6_exit(void)
+
