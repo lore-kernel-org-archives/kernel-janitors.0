@@ -1,80 +1,63 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 15:51:22 +0000
-Subject: [PATCH 1/11] staging: lustre: fid: Use kzalloc and kfree
-Message-Id: <1430495482-933-12-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 29 May 2015 15:02:39 +0000
+Subject: re: cxgb4/cxgb4vf: Add code to calculate T5 BAR2 Offsets for SGE Queue Registers
+Message-Id: <20150529150239.GC10313@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430495482-933-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Hariprasad Shenai,
 
-Replace OBD_ALLOC, OBD_ALLOC_WAIT, OBD_ALLOC_PTR, and OBD_ALLOC_PTR_WAIT by
-kalloc/kcalloc, and OBD_FREE and OBD_FREE_PTR by kfree.
+The patch e85c9a7abfa4: "cxgb4/cxgb4vf: Add code to calculate T5 BAR2
+Offsets for SGE Queue Registers" from Dec 3, 2014, leads to the
+following static checker warning:
 
-A simplified version of the semantic patch that makes these changes is as
-follows: (http://coccinelle.lip6.fr/)
+	drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:5358 t4_bar2_sge_qregs()
+	warn: should '(qid >> qpp_shift) << page_shift' be a 64 bit type?
 
-// <smpl>
-@@ expression ptr,size; @@
-- OBD_ALLOC(ptr,size)
-+ ptr = kzalloc(size, GFP_NOFS)
+drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+  5326  int t4_bar2_sge_qregs(struct adapter *adapter,
+  5327                        unsigned int qid,
+  5328                        enum t4_bar2_qtype qtype,
+  5329                        u64 *pbar2_qoffset,
+  5330                        unsigned int *pbar2_qid)
+  5331  {
+  5332          unsigned int page_shift, page_size, qpp_shift, qpp_mask;
+  5333          u64 bar2_page_offset, bar2_qoffset;
+  5334          unsigned int bar2_qid, bar2_qid_offset, bar2_qinferred;
+  5335  
+  5336          /* T4 doesn't support BAR2 SGE Queue registers.
+  5337           */
+  5338          if (is_t4(adapter->params.chip))
+  5339                  return -EINVAL;
+  5340  
+  5341          /* Get our SGE Page Size parameters.
+  5342           */
+  5343          page_shift = adapter->params.sge.hps + 10;
+  5344          page_size = 1 << page_shift;
+  5345  
+  5346          /* Get the right Queues per Page parameters for our Queue.
+  5347           */
+  5348          qpp_shift = (qtype = T4_BAR2_QTYPE_EGRESS
+  5349                       ? adapter->params.sge.eq_qpp
+  5350                       : adapter->params.sge.iq_qpp);
+  5351          qpp_mask = (1 << qpp_shift) - 1;
+  5352  
+  5353          /*  Calculate the basics of the BAR2 SGE Queue register area:
+  5354           *  o The BAR2 page the Queue registers will be in.
+  5355           *  o The BAR2 Queue ID.
+  5356           *  o The BAR2 Queue ID Offset into the BAR2 page.
+  5357           */
+  5358          bar2_page_offset = ((qid >> qpp_shift) << page_shift);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The static checker is complaining that it can not use the high 32 bytes
+unless we add a cast.  This is using custom page sizes here so I'm not
+sure exactly what's going on or if declaring this as u64 was necessary.
 
-@@ expression ptr, size; @@
-- OBD_FREE(ptr, size);
-+ kfree(ptr);
-// </smpl>
+  5359          bar2_qid = qid & qpp_mask;
+  5360          bar2_qid_offset = bar2_qid * SGE_UDB_SIZE;
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/staging/lustre/lustre/fid/fid_request.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff -u -p a/drivers/staging/lustre/lustre/fid/fid_request.c b/drivers/staging/lustre/lustre/fid/fid_request.c
---- a/drivers/staging/lustre/lustre/fid/fid_request.c
-+++ b/drivers/staging/lustre/lustre/fid/fid_request.c
-@@ -505,11 +505,11 @@ int client_fid_init(struct obd_device *o
- 	char *prefix;
- 	int rc;
- 
--	OBD_ALLOC_PTR(cli->cl_seq);
-+	cli->cl_seq = kzalloc(sizeof(*cli->cl_seq), GFP_NOFS);
- 	if (cli->cl_seq = NULL)
- 		return -ENOMEM;
- 
--	OBD_ALLOC(prefix, MAX_OBD_NAME + 5);
-+	prefix = kzalloc(MAX_OBD_NAME + 5, GFP_NOFS);
- 	if (prefix = NULL) {
- 		rc = -ENOMEM;
- 		goto out_free_seq;
-@@ -519,13 +519,13 @@ int client_fid_init(struct obd_device *o
- 
- 	/* Init client side sequence-manager */
- 	rc = seq_client_init(cli->cl_seq, exp, type, prefix, NULL);
--	OBD_FREE(prefix, MAX_OBD_NAME + 5);
-+	kfree(prefix);
- 	if (rc)
- 		goto out_free_seq;
- 
- 	return rc;
- out_free_seq:
--	OBD_FREE_PTR(cli->cl_seq);
-+	kfree(cli->cl_seq);
- 	cli->cl_seq = NULL;
- 	return rc;
- }
-@@ -537,7 +537,7 @@ int client_fid_fini(struct obd_device *o
- 
- 	if (cli->cl_seq != NULL) {
- 		seq_client_fini(cli->cl_seq);
--		OBD_FREE_PTR(cli->cl_seq);
-+		kfree(cli->cl_seq);
- 		cli->cl_seq = NULL;
- 	}
- 
-
+regards,
+dan carpenter
