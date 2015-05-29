@@ -1,62 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 28 May 2015 15:01:28 +0000
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 29 May 2015 15:49:06 +0000
 Subject: Re: [PATCH] ALSA: aoa: convert bus code to use dev_groups
-Message-Id: <s5hh9qw7nlj.wl-tiwai@suse.de>
+Message-Id: <55688A72.7000306@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
-	<s5hwpzs7qrz.wl-tiwai@suse.de>
-	<55671F56.6080402@gmail.com>
-	<s5hsiag7q0p.wl-tiwai@suse.de>
-	<55672980.4010904@gmail.com>
-In-Reply-To: <55672980.4010904@gmail.com>
+References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>	<s5hwpzs7qrz.wl-tiwai@suse.de>	<55671F56.6080402@gmail.com>	<s5hsiag7q0p.wl-tiwai@suse.de>	<55672980.4010904@gmail.com> <s5hh9qw7nlj.wl-tiwai@suse.de>
+In-Reply-To: <s5hh9qw7nlj.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>
 Cc: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 28 May 2015 16:43:12 +0200,
-Quentin Lambert wrote:
-> 
-> On 28/05/2015 16:09, Takashi Iwai wrote:
-> > At Thu, 28 May 2015 15:59:50 +0200,
-> > Quentin Lambert wrote:
-> >>
-> >>
-> >> On 28/05/2015 15:52, Takashi Iwai wrote:
-> >>> At Thu, 28 May 2015 14:48:27 +0200,
-> >>> Quentin Lambert wrote:
-> >>>> You should use dev_groups instead of the dev_attrs field of struct
-> >>>> bus_type. This converts the MDIO bus code to use the correct field.
-> >>>>
-> >>>> These modifications were made using Coccinelle.
-> >>>>
-> >>>> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
-> >>> What's wrong with dev_attrs?
-> >>> (Not offending, I'm just curious where the preference for dev_groups
-> >>>    is referred...)
-> >> This patch is based on commit 4192c74940e23da727eb02b7b4ee779dde2f670,
-> >> its message indicates that dev_attrs is going away.
-> > OK, makes sense.  Then please keep such information in the changelog.
-> > BTW, the code in question isn't MDIO at all.
-> Sorry, about that!
-> >
-> > Also, it'd be better to move ATTRIBUTE_GROUPS(soundbus_dev) into
-> > soundbus/sysfs.c, and make it this global instead of
-> > soundbus_dev_attrs[].
-> Ok, I need to find a nice way to do that because ATTRIBUTE_GROUPS 
-> declares the
-> structure as static.
-
-Ah, right.  I fell to the same pintfall in the past, too :)
-
->I will send a second version with a better solution.
-
-If it results in an ungly code, it's fine with the original code,
-too.  But, maybe with a comment indicating that xxx_dev_attrs[] is
-defined in xxx.c.
 
 
-thanks,
+On 28/05/2015 17:01, Takashi Iwai wrote:
+>>> Also, it'd be better to move ATTRIBUTE_GROUPS(soundbus_dev) into
+>>> soundbus/sysfs.c, and make it this global instead of
+>>> soundbus_dev_attrs[].
+>> Ok, I need to find a nice way to do that because ATTRIBUTE_GROUPS
+>> declares the
+>> structure as static.
+>
+> If it results in an ungly code, it's fine with the original code,
+> too.  But, maybe with a comment indicating that xxx_dev_attrs[] is
+> defined in xxx.c.
+>
+>
+Since sound/aoa/soundbus/sysfs is small, a solution would be
+to merge sound/aoa/soundbus/sysfs.c and sound/aoa/soundus/core.c.
+Moreover all 172 other usages of the ATTRIBUTE_GROUPS macro
+define the struct attribute *xxx_attrs[] in the same file
+they assign the .dev_groups field.
 
-Takashi
+I'm not sure about this change as it seems way more important than
+adding a comment line as you suggested.
+
+Should I send a patch merging these two files?
+
+Quentin
