@@ -1,44 +1,40 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 31 May 2015 02:24:56 +0000
-Subject: Re: [PATCH v4 00/13] staging: lustre: lnet: code cleanups
-Message-Id: <20150531022456.GA30873@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 29 May 2015 15:04:44 +0000
+Subject: re: net: Adding support for Cavium ThunderX network controller
+Message-Id: <20150529150444.GD10313@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
- <20150522092142.GJ4150@mwanda>
- <CABqvwjsJXJYciMDHqy9vEdL6dGLhx3+Pi0_ro6192Z5SGR9Q_w@mail.gmail.com>
- <20150523101428.GX22558@mwanda>
- <CABqvwjvKg1yK2b=2+ASGvJ4xT3Sq4XMhY70makjwccj+duvAEQ@mail.gmail.com>
- <20150523123904.GA12407@sudip-PC>
- <CABqvwjtPdX4yfEob+LwurrT=ACdhNkwS8u9Zh9-gjBH6oo56Nw@mail.gmail.com>
-In-Reply-To: <CABqvwjtPdX4yfEob+LwurrT=ACdhNkwS8u9Zh9-gjBH6oo56Nw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Shuey <shuey@purdue.edu>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Drokin, Oleg" <oleg.drokin@intel.com>, HPDD-discuss@ml01.01.org, Dan Carpenter <dan.carpenter@oracle.com>, lustre-devel@lists.lustre.org
+To: kernel-janitors@vger.kernel.org
 
-A: No.
-Q: Should I include quotations after my reply?
+Hello Sunil Goutham,
 
-http://daringfireball.net/2007/07/on_top
+The patch 4863dea3fab0: "net: Adding support for Cavium ThunderX
+network controller" from May 26, 2015, leads to the following static
+checker warning:
 
-On Sat, May 23, 2015 at 10:05:27AM -0400, Michael Shuey wrote:
-> Ah - that explains it.  I added additional files to the series, but
-> simply re-applied the original round of patches.  They would've not
-> been tagged as v4, while the patches pertaining to the newly-modified
-> files had v4 in the subject.
+	drivers/net/ethernet/cavium/thunder/thunder_bgx.c:485 bgx_xaui_check_link()
+	warn: we tested 'lmac_type = 3' before and it was 'false'
 
-The way you sent these is a mess, I can't sort by subject and apply them
-properly.
+drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+   484  
+   485          if ((lmac_type = BGX_MODE_10G_KR) || (lmac_type = BGX_MODE_XFI) ||
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^      ^^^^^^^^^^^^^^^^^^^^^^^^^
+These are the both 3.  That seems like it could lead to bugs down the
+line.
 
-Either put the v4 at the front, for all patches, like this:
-	[PATCH v4 01/13]
-or at the end of the number:
-	[PATCH 01/13 v4]
-so I can sort them.
+   486              (lmac_type = BGX_MODE_40G_KR) || (lmac_type = BGX_MODE_XLAUI)) {
+                                  ^^^^^^^^^^^^^^^                   ^^^^^^^^^^^^^^
+These are both 4.
 
-Please fix up and resend this series, I've dropped it from my queue.
+   487                  if (bgx_poll_reg(bgx, lmacid, BGX_SPUX_BR_STATUS1,
+   488                                   SPU_BR_STATUS_BLK_LOCK, false)) {
+   489                          dev_err(&bgx->pdev->dev,
+   490                                  "SPU_BR_STATUS_BLK_LOCK not completed\n");
+   491                          return -1;
+   492                  }
+   493          } else {
 
-thanks,
-
-greg k-h
+regards,
+dan carpenter
