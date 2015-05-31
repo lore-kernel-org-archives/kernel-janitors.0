@@ -1,43 +1,44 @@
-From: Michael Shuey <shuey@purdue.edu>
-Date: Sat, 23 May 2015 14:05:27 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Sun, 31 May 2015 02:24:56 +0000
 Subject: Re: [PATCH v4 00/13] staging: lustre: lnet: code cleanups
-Message-Id: <CABqvwjtPdX4yfEob+LwurrT=ACdhNkwS8u9Zh9-gjBH6oo56Nw@mail.gmail.com>
+Message-Id: <20150531022456.GA30873@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1432237849-53947-1-git-send-email-shuey@purdue.edu>
-	<20150522092142.GJ4150@mwanda>
-	<CABqvwjsJXJYciMDHqy9vEdL6dGLhx3+Pi0_ro6192Z5SGR9Q_w@mail.gmail.com>
-	<20150523101428.GX22558@mwanda>
-	<CABqvwjvKg1yK2b=2+ASGvJ4xT3Sq4XMhY70makjwccj+duvAEQ@mail.gmail.com>
-	<20150523123904.GA12407@sudip-PC>
-In-Reply-To: <20150523123904.GA12407@sudip-PC>
+ <20150522092142.GJ4150@mwanda>
+ <CABqvwjsJXJYciMDHqy9vEdL6dGLhx3+Pi0_ro6192Z5SGR9Q_w@mail.gmail.com>
+ <20150523101428.GX22558@mwanda>
+ <CABqvwjvKg1yK2b=2+ASGvJ4xT3Sq4XMhY70makjwccj+duvAEQ@mail.gmail.com>
+ <20150523123904.GA12407@sudip-PC>
+ <CABqvwjtPdX4yfEob+LwurrT=ACdhNkwS8u9Zh9-gjBH6oo56Nw@mail.gmail.com>
+In-Reply-To: <CABqvwjtPdX4yfEob+LwurrT=ACdhNkwS8u9Zh9-gjBH6oo56Nw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "Drokin, Oleg" <oleg.drokin@intel.com>, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, HPDD-discuss@ml01.01.org, lustre-devel@lists.lustre.org
+To: Michael Shuey <shuey@purdue.edu>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "Drokin, Oleg" <oleg.drokin@intel.com>, HPDD-discuss@ml01.01.org, Dan Carpenter <dan.carpenter@oracle.com>, lustre-devel@lists.lustre.org
 
-Ah - that explains it.  I added additional files to the series, but
-simply re-applied the original round of patches.  They would've not
-been tagged as v4, while the patches pertaining to the newly-modified
-files had v4 in the subject.
+A: No.
+Q: Should I include quotations after my reply?
 
-I'll be more thorough in future patch revisions.  Thanks for the explanation.
---
-Mike Shuey
+http://daringfireball.net/2007/07/on_top
 
+On Sat, May 23, 2015 at 10:05:27AM -0400, Michael Shuey wrote:
+> Ah - that explains it.  I added additional files to the series, but
+> simply re-applied the original round of patches.  They would've not
+> been tagged as v4, while the patches pertaining to the newly-modified
+> files had v4 in the subject.
 
-On Sat, May 23, 2015 at 8:39 AM, Sudip Mukherjee
-<sudipm.mukherjee@gmail.com> wrote:
-> On Sat, May 23, 2015 at 08:09:54AM -0400, Michael Shuey wrote:
->> BTW, you keep mentioning a v5 that I sent.  Where is that, exactly?
->> The last round of patches I sent I've kept labeled as "PATCH v4", and
->> I only hit git send-email once.  Could you forward me something from
->> this v5 series, so I could see if anything is amiss on my end?
->
-> I think it was not a v5. But what happened is in your series some
-> of the patches were marked as v4 and some were not having any version
-> so it appeared like a fresh series again. Like 1/13,2/13,3/13 has v4
-> but the others donot have a version.
->
-> regards
-> sudip
+The way you sent these is a mess, I can't sort by subject and apply them
+properly.
+
+Either put the v4 at the front, for all patches, like this:
+	[PATCH v4 01/13]
+or at the end of the number:
+	[PATCH 01/13 v4]
+so I can sort them.
+
+Please fix up and resend this series, I've dropped it from my queue.
+
+thanks,
+
+greg k-h
