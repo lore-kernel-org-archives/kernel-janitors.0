@@ -1,35 +1,21 @@
-From: Maninder Singh <maninder1.s@samsung.com>
-Date: Mon, 15 Jun 2015 03:28:53 +0000
-Subject: [PATCH 1/1] arm64/hw_breakpoint.c: remove unnecessary header
-Message-Id: <"000101d0a719$bcab7a80$36026f80$@s"@samsung.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 01 Jun 2015 05:45:50 +0000
+Subject: Re: [PATCH] sparc: kernel: GRPCI2: Remove a useless memset
+Message-Id: <20150531.224550.513857798121431185.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1430481939-10268-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1430481939-10268-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: christophe.jaillet@wanadoo.fr
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Header <asm/kdebug.h> is not needed for arm64,
-removing the same.
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Date: Fri,  1 May 2015 14:05:39 +0200
 
-Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
-Reviewed-by: Vaneet Narang <v.narang@samsung.com>
----
- arch/arm64/kernel/hw_breakpoint.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+> grpci2priv is allocated using kzalloc, so there is no need to memset it.
+> 
+> Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
-diff --git a/arch/arm64/kernel/hw_breakpoint.c
-b/arch/arm64/kernel/hw_breakpoint.c
-index e7d934d..7a1a5da 100644
---- a/arch/arm64/kernel/hw_breakpoint.c
-+++ b/arch/arm64/kernel/hw_breakpoint.c
-@@ -31,7 +31,6 @@
- #include <asm/current.h>
- #include <asm/debug-monitors.h>
- #include <asm/hw_breakpoint.h>
--#include <asm/kdebug.h>
- #include <asm/traps.h>
- #include <asm/cputype.h>
- #include <asm/system_misc.h>
--- 
-1.7.1
-
+Applied.
