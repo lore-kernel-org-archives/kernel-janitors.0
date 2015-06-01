@@ -1,43 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 16:25:09 +0000
-Subject: [PATCH] eCryptfs: Delete a check before the function call "key_put"
-Message-Id: <558D7CE5.1090205@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Jun 2015 09:55:37 +0000
+Subject: [patch 1/2] w1: fix for loop exit condition in w1_seq_show()
+Message-Id: <20150601095537.GA897@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tyler Hicks <tyhicks@canonical.com>, ecryptfs@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Evgeniy Polyakov <zbr@ioremap.net>, Matt Campbell <mattrcampbell@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, David Fries <David@Fries.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 18:18:54 +0200
+The W1_42_FINISHED_BYTE is 0xFF so the cast means the condition is
+never true.
 
-The key_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around this call might not be needed.
+Fixes: d9411e57dc7f ('w1: Add support for DS28EA00 sequence to w1-therm')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/ecryptfs/crypto.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index 97315f2..80d6901 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -258,8 +258,7 @@ void ecryptfs_destroy_mount_crypt_stat(
- 				 &mount_crypt_stat->global_auth_tok_list,
- 				 mount_crypt_stat_list) {
- 		list_del(&auth_tok->mount_crypt_stat_list);
--		if (auth_tok->global_auth_tok_key
--		    && !(auth_tok->flags & ECRYPTFS_AUTH_TOK_INVALID))
-+		if (!(auth_tok->flags & ECRYPTFS_AUTH_TOK_INVALID))
- 			key_put(auth_tok->global_auth_tok_key);
- 		kmem_cache_free(ecryptfs_global_auth_tok_cache, auth_tok);
- 	}
--- 
-2.4.4
-
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index d21e686..3351be6 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -378,7 +378,7 @@ static ssize_t w1_seq_show(struct device *device,
+ 		w1_write_8(sl->master, W1_42_COND_READ);
+ 		rv = w1_read_block(sl->master, (u8 *)&rn, 8);
+ 		reg_num = (struct w1_reg_num *) &rn;
+-		if ((char)reg_num->family = W1_42_FINISHED_BYTE)
++		if (reg_num->family = W1_42_FINISHED_BYTE)
+ 			break;
+ 		if (sl->reg_num.id = reg_num->id)
+ 			seq = i;
