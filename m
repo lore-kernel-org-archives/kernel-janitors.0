@@ -1,22 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 25 Jun 2015 09:13:24 +0000
-Subject: Re: [patch -next] renesas: missing unlock on error path
-Message-Id: <20150625.021324.1080187390583121565.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Jun 2015 09:56:32 +0000
+Subject: [patch 2/2] w1: unlock correct lock on error in w1_seq_show()
+Message-Id: <20150601095632.GB897@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150624143254.GG1702@mwanda>
-In-Reply-To: <20150624143254.GG1702@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: masaru.nagai.vx@renesas.com, sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Evgeniy Polyakov <zbr@ioremap.net>, Matt Campbell <mattrcampbell@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, David Fries <David@Fries.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Jun 2015 17:32:54 +0300
+Smatch complains that we don't unlock "master->mutex" on this error
+path.  It looks like it is a typo and we unlock ->bus_mutext where
+->mutex was intended.
 
-> We need to unlock before returning here.
-> 
-> Fixes: a0d2f20650e8 ('Renesas Ethernet AVB PTP clock driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: d9411e57dc7f ('w1: Add support for DS28EA00 sequence to w1-therm')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index 3351be6..79ecaf8 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -412,7 +412,7 @@ static ssize_t w1_seq_show(struct device *device,
+ 	c -= snprintf(buf + PAGE_SIZE - c, c, "%d\n", seq);
+ 	return PAGE_SIZE - c;
+ error:
+-	mutex_unlock(&sl->master->bus_mutex);
++	mutex_unlock(&sl->master->mutex);
+ 	return -EIO;
+ }
+ 
