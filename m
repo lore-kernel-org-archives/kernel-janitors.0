@@ -1,60 +1,53 @@
-From: =?windows-1252?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
-Date: Thu, 11 Jun 2015 09:26:04 +0000
-Subject: Re: [patch] drm/amdgpu: remove an unnecessary condition
-Message-Id: <5579542C.1060003@amd.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Mon, 01 Jun 2015 15:56:10 +0000
+Subject: Re: [patch] iio: magnetometer: correct a harmless off by one check
+Message-Id: <556C809A.7000504@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150611081924.GA27090@mwanda>
-In-Reply-To: <20150611081924.GA27090@mwanda>
+References: <20150527082052.GA19423@mwanda> <CAEnQRZDZFSQ0E7_JUrx6CsSF6erg+USDAJyMFhhhz=Brbk-VPg@mail.gmail.com>
+In-Reply-To: <CAEnQRZDZFSQ0E7_JUrx6CsSF6erg+USDAJyMFhhhz=Brbk-VPg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>, Alex Deucher <alexander.deucher@amd.com>
-Cc: =?windows-1252?Q?Marek_Ol=9A=E1k?= <marek.olsak@amd.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, yanyang1 <young.yang@amd.com>, Ken Wang <Qingqing.Wang@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Daniel Baluta <daniel.baluta@intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 11.06.2015 10:19, Dan Carpenter wrote:
-> We already checked "if (r)" so there is no need to check again.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 27/05/15 09:37, Daniel Baluta wrote:
+> On Wed, May 27, 2015 at 11:20 AM, Dan Carpenter
+> <dan.carpenter@oracle.com> wrote:
+>> The line before limits i to 0-3 so the existing code works fine but the
+>> check is still off by one and >= is intended instead of >.
+>>
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Good catch.
+> 
+> Reviewed-by: Daniel Baluta <daniel.baluta@intel.com>
+Applied to the togreg branch of iio.git - initially pushed out as
+testing when I have a network that does anything other than https.
 
-Hi Dan,
+J
+> 
+>>
+>> diff --git a/drivers/iio/magnetometer/mmc35240.c b/drivers/iio/magnetometer/mmc35240.c
+>> index aa6e25d..c71392c 100644
+>> --- a/drivers/iio/magnetometer/mmc35240.c
+>> +++ b/drivers/iio/magnetometer/mmc35240.c
+>> @@ -308,7 +308,7 @@ static int mmc35240_read_raw(struct iio_dev *indio_dev,
+>>                         return ret;
+>>
+>>                 i = (reg & MMC35240_CTRL1_BW_MASK) >> MMC35240_CTRL1_BW_SHIFT;
+>> -               if (i < 0 || i > ARRAY_SIZE(mmc35240_samp_freq))
+>> +               if (i < 0 || i >= ARRAY_SIZE(mmc35240_samp_freq))
+>>                         return -EINVAL;
+>>
+>>                 *val = mmc35240_samp_freq[i];
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-thanks for taking a look into this. This patch and the other two you=20
-send today are Reviewed-by: Christian K=F6nig <christian.koenig@amd.com>
-
-That code was branched of from Radeon it is possible that the same=20
-changes apply there as well. Since it looks like you created those=20
-patches at least partially automatically could you run your tool on the=20
-Radeon code once more as well?
-
-Thanks in advance,
-Christian.
-
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/am=
-d/amdgpu/amdgpu_kms.c
-> index 5533434..b7d0425 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-> @@ -111,12 +111,9 @@ int amdgpu_driver_load_kms(struct drm_device *dev, u=
-nsigned long flags)
->   	/* Call ACPI methods: require modeset init
->   	 * but failure is not fatal
->   	 */
-> -	if (!r) {
-> -		acpi_status =3D amdgpu_acpi_init(adev);
-> -		if (acpi_status)
-> -		dev_dbg(&dev->pdev->dev,
-> -				"Error during ACPI methods call\n");
-> -	}
-> +	acpi_status =3D amdgpu_acpi_init(adev);
-> +	if (acpi_status)
-> +		dev_dbg(&dev->pdev->dev, "Error during ACPI methods call\n");
->  =20
->   	if (amdgpu_device_is_px(dev)) {
->   		pm_runtime_use_autosuspend(dev->dev);
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
