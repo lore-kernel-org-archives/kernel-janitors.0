@@ -1,47 +1,64 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 15:48:03 +0000
-Subject: Re: [osd-dev] [PATCH 1/1] exofs: Deletion of an unnecessary check before the function call "ore_put_
-Message-Id: <558D7433.6030304@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Jun 2015 10:09:58 +0000
+Subject: [patch] iommu/vt-d: unlock on error in intel_iommu_load_translation_tables()
+Message-Id: <20150602100958.GC11247@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>	<530A086E.8010901@users.sourceforge.net>	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>	<530A72AA.3000601@users.sourceforge.net>	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>	<530B5FB6.6010207@users.sourceforge.net>	<alpine.DEB.2.10.1402241710370.2074@hadrien>	<530C5E18.1020800@users.sourceforge.net>	<alpine.DEB.2.10.1402251014170.2080@hadrien>	<530CD2C4.4050903@users.sourceforge.net>	<alpine.DEB.2.10.1402251840450.7035@hadrien>	<530CF8FF.8080600@users.sourceforge.net>	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>	<530DD06F.4090703@users.sourceforge.net>	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.sourceforge.net> <546B0D08.2070305@users.sourceforge.net> <546B0DBB.7080000@gmail.com>
-In-Reply-To: <546B0DBB.7080000@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boaz Harrosh <openosd@gmail.com>, Benny Halevy <bhalevy@primarydata.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Boaz Harrosh <bharrosh@panasas.com>
+To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Li-p7QCHhHlqjPG026l+vzAeHxJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Zhen-Hua <zhen-hual-VXdhtT5mjnY@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Tue, 18 Nov 2014 10:05:19 +0100
->>
->> The ore_put_io_state() function tests whether its argument is NULL and then
->> returns immediately. Thus the test around the call is not needed.
->>
->> This issue was detected by using the Coccinelle software.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  fs/exofs/ore_raid.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
->> index 84529b8..5dc7c4c 100644
->> --- a/fs/exofs/ore_raid.c
->> +++ b/fs/exofs/ore_raid.c
->> @@ -716,6 +716,5 @@ void _ore_free_raid_stuff(struct ore_io_state *ios)
->>  		if (ios->extra_part_alloc)
->>  			kfree(ios->per_dev[0].sglist);
->>  	}
->> -	if (ios->ios_read_4_write)
->> -		ore_put_io_state(ios->ios_read_4_write);
->> +	ore_put_io_state(ios->ios_read_4_write);
->>  }
->>
-> 
-> Thanks will submit for next Kernel
+Smatch found some error paths that don't unlock.  Also we can return
+-ENOMEM instead of -1 if we don't have an old root entry.
 
-Is this small update suggestion still in the waiting queue
-for further software improvements?
+Fixes: 5908f10af4b9 ('iommu/vt-d: datatypes and functions used for kdump')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Releasing the lock is good, but we might need to do other error handling
+as well.  Presumably this function always succeeds anyway?  It seems
+like it might be essential for booting.
 
-Regards,
-Markus
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 2926907..0e2e635 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -5151,22 +5151,24 @@ static int intel_iommu_load_translation_tables(struct intel_iommu *iommu)
+ 		iommu->root_entry  			(struct root_entry *)alloc_pgtable_page(iommu->node);
+ 		if (!iommu->root_entry) {
+-			spin_unlock_irqrestore(&iommu->lock, flags);
+-			return -ENOMEM;
++			ret = -ENOMEM;
++			goto err_unlock;
+ 		}
+ 	}
+ 
+ 	iommu->root_entry_old_phys = q & VTD_PAGE_MASK;
+ 	if (!iommu->root_entry_old_phys) {
+ 		pr_err("Could not read old root entry address.");
+-		return -1;
++		ret = -ENOMEM;
++		goto err_unlock;
+ 	}
+ 
+ 	iommu->root_entry_old_virt = ioremap_cache(iommu->root_entry_old_phys,
+ 						VTD_PAGE_SIZE);
+ 	if (!iommu->root_entry_old_virt) {
+ 		pr_err("Could not map the old root entry.");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto err_unlock;
+ 	}
+ 
+ 	__iommu_load_old_root_entry(iommu);
+@@ -5179,6 +5181,10 @@ static int intel_iommu_load_translation_tables(struct intel_iommu *iommu)
+ 	__iommu_free_mapped_mem();
+ 
+ 	return ret;
++
++err_unlock:
++	spin_unlock_irqrestore(&iommu->lock, flags);
++	return ret;
+ }
+ 
+ static void unmap_device_dma(struct dmar_domain *domain,
