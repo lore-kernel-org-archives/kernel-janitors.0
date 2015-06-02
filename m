@@ -1,45 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 18:51:01 +0000
-Subject: [PATCH] drm/bridge: ps8622: Delete a check before backlight_device_unregister()
-Message-Id: <558EF095.8020106@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Jun 2015 10:03:15 +0000
+Subject: re: stmmac: add ipq806x glue layer
+Message-Id: <20150602100315.GB11247@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 20:44:49 +0200
+Hello Mathieu Olivari,
 
-The backlight_device_unregister() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+The patch b1c17215d718: "stmmac: add ipq806x glue layer" from May 27,
+2015, leads to the following static checker warning:
 
-This issue was detected by using the Coccinelle software.
+	drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c:297 ipq806x_gmac_setup()
+	warn: double left shift '1 << (1 << gmac->id)'
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/bridge/ps8622.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+   292          /* Configure the clock src according to the mode */
+   293          regmap_read(gmac->nss_common, NSS_COMMON_CLK_SRC_CTRL, &val);
+   294          val &= ~NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We are clearing a bit here, but it's not the same bit we set later.
 
-diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/drm/bridge/ps8622.c
-index 1a6607b..70dacb8 100644
---- a/drivers/gpu/drm/bridge/ps8622.c
-+++ b/drivers/gpu/drm/bridge/ps8622.c
-@@ -646,9 +646,7 @@ static int ps8622_remove(struct i2c_client *client)
- {
- 	struct ps8622_bridge *ps8622 = i2c_get_clientdata(client);
- 
--	if (ps8622->bl)
--		backlight_device_unregister(ps8622->bl);
--
-+	backlight_device_unregister(ps8622->bl);
- 	drm_bridge_remove(&ps8622->bridge);
- 
- 	return 0;
--- 
-2.4.4
+   295          switch (gmac->phy_mode) {
+   296          case PHY_INTERFACE_MODE_RGMII:
+   297                  val |= NSS_COMMON_CLK_SRC_CTRL_RGMII(gmac->id) <<
+   298                          NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
 
+NSS_COMMON_CLK_SRC_CTRL_RGMII(gmac->id) is always 1.
+NSS_COMMON_CLK_SRC_CTRL_OFFSET is "(1 << gmac->id)".
+gmac->id is a number in the 0-3 range so val is either 0x100, 0x10, 0x4
+or 0x2, which is kind of weird.
+
+Also the comments seem to imply that we read a number 1-4 for gmac->id
+but we map it to 0-3 so that counting starts at zero.  But I don't see
+that we subtract 1 from the number that we read in
+ipq806x_gmac_of_parse().
+
+   299                  break;
+   300          case PHY_INTERFACE_MODE_SGMII:
+   301                  val |= NSS_COMMON_CLK_SRC_CTRL_SGMII(gmac->id) <<
+   302                          NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
+   303                  break;
+   304          default:
+   305                  dev_err(&pdev->dev, "Unsupported PHY mode: \"%s\"\n",
+   306                          phy_modes(gmac->phy_mode));
+   307                  return NULL;
+   308          }
+   309          regmap_write(gmac->nss_common, NSS_COMMON_CLK_SRC_CTRL, val);
+
+
+
+regards,
+dan carpenter
