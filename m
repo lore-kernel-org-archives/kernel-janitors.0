@@ -1,42 +1,46 @@
-From: Michael Turquette <mturquette@linaro.org>
-Date: Wed, 03 Jun 2015 23:21:41 +0000
-Subject: Re: [patch] clk: socfpga: remove a stray tab
-Message-Id: <20150603232141.6017.18339@quantum>
+From: chaehyun lim <chaehyun.lim@gmail.com>
+Date: Wed, 03 Jun 2015 04:50:58 +0000
+Subject: [PATCH 6/8] staging : wilc1000 : remove WILC_Sint16
+Message-Id: <1433307058-30757-1-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150527082627.GD19423@mwanda> <5565C4F4.7090805@opensource.altera.com>
-In-Reply-To: <5565C4F4.7090805@opensource.altera.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dinh Nguyen <dinguyen@opensource.altera.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Quoting Dinh Nguyen (2015-05-27 06:21:56)
-> 
-> 
-> On 5/27/15 3:26 AM, Dan Carpenter wrote:
-> > This line was indented too far.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-> > index be3e998..83c6780 100644
-> > --- a/drivers/clk/socfpga/clk-gate-a10.c
-> > +++ b/drivers/clk/socfpga/clk-gate-a10.c
-> > @@ -39,7 +39,7 @@ static unsigned long socfpga_gate_clk_recalc_rate(struct clk_hw *hwclk,
-> >       else if (socfpgaclk->div_reg) {
-> >               val = readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
-> >               val &= div_mask(socfpgaclk->width);
-> > -                     div = (1 << val);
-> > +             div = (1 << val);
-> >       }
-> >  
-> >       return parent_rate / div;
-> > 
-> 
-> Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Use s16 in stead of WILC_Sint16.
 
-Applied.
+Signed-off-by: chaehyun lim <chaehyun.lim@gmail.com>
+---
+ drivers/staging/wilc1000/coreconfigurator.c | 2 +-
+ drivers/staging/wilc1000/wilc_oswrapper.h   | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-Regards,
-Mike
+diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
+index 50d184c..a060172 100644
+--- a/drivers/staging/wilc1000/coreconfigurator.c
++++ b/drivers/staging/wilc1000/coreconfigurator.c
+@@ -173,7 +173,7 @@ static tstrConfigPktInfo gstrConfigPktInfo;
+ 
+ static u8 g_seqno;
+ 
+-static WILC_Sint16 g_wid_num          = -1;
++static s16 g_wid_num          = -1;
+ 
+ static u16 Res_Len;
+ 
+diff --git a/drivers/staging/wilc1000/wilc_oswrapper.h b/drivers/staging/wilc1000/wilc_oswrapper.h
+index fc09416..dafcfec 100644
+--- a/drivers/staging/wilc1000/wilc_oswrapper.h
++++ b/drivers/staging/wilc1000/wilc_oswrapper.h
+@@ -14,7 +14,6 @@
+ #define WILC_OSW_INTERFACE_VER 2
+ 
+ /* Integer Types */
+-typedef signed short WILC_Sint16;
+ typedef signed int WILC_Sint32;
+ typedef signed long long WILC_Sint64;
+ 
+-- 
+1.9.1
+
