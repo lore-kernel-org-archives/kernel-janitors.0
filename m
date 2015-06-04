@@ -1,30 +1,42 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 Jun 2015 09:55:37 +0000
-Subject: [patch 1/2] w1: fix for loop exit condition in w1_seq_show()
-Message-Id: <20150601095537.GA897@mwanda>
+Date: Thu, 04 Jun 2015 08:56:38 +0000
+Subject: [patch -next] i40e: fix some bit tests
+Message-Id: <20150604085637.GB22838@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy Polyakov <zbr@ioremap.net>, Matt Campbell <mattrcampbell@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, David Fries <David@Fries.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The W1_42_FINISHED_BYTE is 0xFF so the cast means the condition is
-never true.
+These tests don't work as intended because __I40E_TESTING and
+I40E_VF_STAT_ACTIVE are bit numbers and not masks.
 
-Fixes: d9411e57dc7f ('w1: Add support for DS28EA00 sequence to w1-therm')
+Fixes: e17bc411aea8 ('i40e: Disable offline diagnostics if VFs are enabled')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
-index d21e686..3351be6 100644
---- a/drivers/w1/slaves/w1_therm.c
-+++ b/drivers/w1/slaves/w1_therm.c
-@@ -378,7 +378,7 @@ static ssize_t w1_seq_show(struct device *device,
- 		w1_write_8(sl->master, W1_42_COND_READ);
- 		rv = w1_read_block(sl->master, (u8 *)&rn, 8);
- 		reg_num = (struct w1_reg_num *) &rn;
--		if ((char)reg_num->family = W1_42_FINISHED_BYTE)
-+		if (reg_num->family = W1_42_FINISHED_BYTE)
- 			break;
- 		if (sl->reg_num.id = reg_num->id)
- 			seq = i;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 4653b6e..9fe6cd5 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -980,7 +980,7 @@ static int i40e_pci_sriov_enable(struct pci_dev *pdev, int num_vfs)
+ 	int pre_existing_vfs = pci_num_vf(pdev);
+ 	int err = 0;
+ 
+-	if (pf->state & __I40E_TESTING) {
++	if (test_bit(__I40E_TESTING, &pf->state)) {
+ 		dev_warn(&pdev->dev,
+ 			 "Cannot enable SR-IOV virtual functions while the device is undergoing diagnostic testing\n");
+ 		err = -EPERM;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+index 9a68c65..9ce4dc9 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+@@ -1555,7 +1555,7 @@ static inline bool i40e_active_vfs(struct i40e_pf *pf)
+ 	int i;
+ 
+ 	for (i = 0; i < pf->num_alloc_vfs; i++)
+-		if (vfs[i].vf_states & I40E_VF_STAT_ACTIVE)
++		if (test_bit(I40E_VF_STAT_ACTIVE, &vfs[i].vf_states))
+ 			return true;
+ 	return false;
+ }
