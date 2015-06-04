@@ -1,48 +1,62 @@
-From: Boaz Harrosh <ooo@electrozaur.com>
-Date: Sun, 28 Jun 2015 09:39:59 +0000
-Subject: Re: [PATCH] SCSI-OSD: Delete an unnecessary check before the function call "put_disk"
-Message-Id: <558FC0EF.1080904@electrozaur.com>
+From: chaehyun lim <chaehyun.lim@gmail.com>
+Date: Thu, 04 Jun 2015 00:01:35 +0000
+Subject: [PATCH V2 1/2] staging: wilc1000: remove UWORD8
+Message-Id: <1433376096-12532-1-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546E238A.5050606@users.sourceforge.net> <558ABBC2.8080304@users.sourceforge.net>
-In-Reply-To: <558ABBC2.8080304@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Benny Halevy <bhalevy@primarydata.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-On 06/24/2015 05:16 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 24 Jun 2015 16:06:21 +0200
-> 
-> The put_disk() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Use u8 instead of UWORD8.
 
-ACK-by: Boaz Harrosh <ooo@electrozaur.com>
+Signed-off-by: chaehyun lim <chaehyun.lim@gmail.com>
+---
+V2 : remove the defintion of UWORD8
 
-> ---
->  drivers/scsi/osd/osd_uld.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
-> index 243eab3..e2075522 100644
-> --- a/drivers/scsi/osd/osd_uld.c
-> +++ b/drivers/scsi/osd/osd_uld.c
-> @@ -407,9 +407,7 @@ static void __remove(struct device *dev)
->  
->  	OSD_INFO("osd_remove %s\n",
->  		 oud->disk ? oud->disk->disk_name : NULL);
-> -
-> -	if (oud->disk)
-> -		put_disk(oud->disk);
-> +	put_disk(oud->disk);
->  	ida_remove(&osd_minor_ida, oud->minor);
->  
->  	kfree(oud);
-> 
+ drivers/staging/wilc1000/coreconfigurator.c | 2 +-
+ drivers/staging/wilc1000/host_interface.c   | 2 +-
+ drivers/staging/wilc1000/itypes.h           | 1 -
+ 3 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
+index 01625bd..958cf0b 100644
+--- a/drivers/staging/wilc1000/coreconfigurator.c
++++ b/drivers/staging/wilc1000/coreconfigurator.c
+@@ -498,7 +498,7 @@ INLINE WILC_Uint32 get_beacon_timestamp_lo(WILC_Uint8 *data)
+ 	return time_stamp;
+ }
+ 
+-INLINE UWORD32 get_beacon_timestamp_hi(UWORD8 *data)
++INLINE UWORD32 get_beacon_timestamp_hi(u8 *data)
+ {
+ 	UWORD32 time_stamp = 0;
+ 	UWORD32 index    = (MAC_HDR_LEN + 4);
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index fcbadd1..8e00f71 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -3692,7 +3692,7 @@ static void Handle_DelAllSta(void *drvHandler, tstrHostIFDelAllSta *pstrDelAllSt
+ 	WILC_Uint8 *pu8CurrByte;
+ 	tstrWILC_WFIDrv *pstrWFIDrv = (tstrWILC_WFIDrv *)drvHandler;
+ 	WILC_Uint8 i;
+-	UWORD8 au8Zero_Buff[6] = {0};
++	u8 au8Zero_Buff[6] = {0};
+ 	strWID.u16WIDid = (WILC_Uint16)WID_DEL_ALL_STA;
+ 	strWID.enuWIDtype = WID_STR;
+ 	strWID.s32ValueSize = (pstrDelAllStaParam->u8Num_AssocSta * ETH_ALEN) + 1;
+diff --git a/drivers/staging/wilc1000/itypes.h b/drivers/staging/wilc1000/itypes.h
+index 6c2bd79..91c8f0d 100644
+--- a/drivers/staging/wilc1000/itypes.h
++++ b/drivers/staging/wilc1000/itypes.h
+@@ -46,7 +46,6 @@ typedef short WORD16;
+ typedef char WORD8;
+ typedef unsigned int UWORD32;
+ typedef unsigned short UWORD16;
+-typedef unsigned char UWORD8;
+ 
+ /*****************************************************************************/
+ /* Enums                                                                     */
+-- 
+1.9.1
 
