@@ -1,52 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 08 Jun 2015 12:53:20 +0000
-Subject: [PATCH 3/3] lustre: lov: Drop rq_buflen field
-Message-Id: <1433768000-30964-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 Jun 2015 09:23:31 +0000
+Subject: [patch] Staging: Lustre: lproc_fid: remove some dead code
+Message-Id: <20150605092331.GB24871@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433768000-30964-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1433768000-30964-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The rq_buflen field of the lov_request structure is never initialized.  It
-is only used in the free of req->rq_oi.oi_md in lov_finish_set.  But no
-oi_md field is ever initialized to the result of calling OBD_ALLOC_LARGE.
-So it seems that the call to OBD_FREE_LARGE in lov_finish_set and the
-rq_buflen in the lov_request structure are simply not needed.
+We know "rc = 0" so there is no need to check.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
- drivers/staging/lustre/lustre/lov/lov_internal.h |    1 -
- drivers/staging/lustre/lustre/lov/lov_request.c  |    2 --
- 2 files changed, 3 deletions(-)
-
-diff --git a/drivers/staging/lustre/lustre/lov/lov_internal.h b/drivers/staging/lustre/lustre/lov/lov_internal.h
-index e4e0cfd..dde9656 100644
---- a/drivers/staging/lustre/lustre/lov/lov_internal.h
-+++ b/drivers/staging/lustre/lustre/lov/lov_internal.h
-@@ -81,7 +81,6 @@ struct lov_request {
- 	int		      rq_stripe;     /* stripe number */
- 	int		      rq_complete;
- 	int		      rq_rc;
--	int		      rq_buflen;     /* length of sub_md */
+diff --git a/drivers/staging/lustre/lustre/fid/lproc_fid.c b/drivers/staging/lustre/lustre/fid/lproc_fid.c
+index 41ab2ee..cc2201c 100644
+--- a/drivers/staging/lustre/lustre/fid/lproc_fid.c
++++ b/drivers/staging/lustre/lustre/fid/lproc_fid.c
+@@ -157,10 +157,8 @@ ldebugfs_fid_width_seq_write(struct file *file,
+ 	if (val <= max && val > 0) {
+ 		seq->lcs_width = val;
  
- 	u32		      rq_oabufs;
- 	u32		      rq_pgaidx;
-diff --git a/drivers/staging/lustre/lustre/lov/lov_request.c b/drivers/staging/lustre/lustre/lov/lov_request.c
-index ada0a3c..f4f2058 100644
---- a/drivers/staging/lustre/lustre/lov/lov_request.c
-+++ b/drivers/staging/lustre/lustre/lov/lov_request.c
-@@ -68,8 +68,6 @@ void lov_finish_set(struct lov_request_set *set)
- 
- 		if (req->rq_oi.oi_oa)
- 			OBDO_FREE(req->rq_oi.oi_oa);
--		if (req->rq_oi.oi_md)
--			OBD_FREE_LARGE(req->rq_oi.oi_md, req->rq_buflen);
- 		kfree(req->rq_oi.oi_osfs);
- 		kfree(req);
+-		if (rc = 0) {
+-			CDEBUG(D_INFO, "%s: Sequence size: %llu\n",
+-			       seq->lcs_name, seq->lcs_width);
+-		}
++		CDEBUG(D_INFO, "%s: Sequence size: %llu\n", seq->lcs_name,
++		       seq->lcs_width);
  	}
-
+ 
+ 	mutex_unlock(&seq->lcs_mutex);
