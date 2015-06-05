@@ -1,56 +1,109 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 23 Jun 2015 18:19:33 +0000
-Subject: Re: [patch -next] drm/radeon: missing break statement
-Message-Id: <20150624041933.71f83cc7@canb.auug.org.au>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/azuQJ=8jkPsAccNxrpbzc/A"
+From: zhouqiao <zhouqiao@marvell.com>
+Date: Fri, 05 Jun 2015 07:53:24 +0000
+Subject: Re: [PATCH] mfd: 88pm80x: refine irq bit operation
+Message-Id: <55715574.9090808@marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150623115148.GA6302@mwanda>
-In-Reply-To: <20150623115148.GA6302@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+References: <1431688217-6960-1-git-send-email-zhouqiao@marvell.com>
+In-Reply-To: <1431688217-6960-1-git-send-email-zhouqiao@marvell.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
---Sig_/azuQJ=8jkPsAccNxrpbzc/A
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Dan,
-
-On Tue, 23 Jun 2015 14:51:48 +0300 Dan Carpenter <dan.carpenter@oracle.com>=
- wrote:
+On 05/15/2015 07:10 PM, Qiao Zhou wrote:
+> Set_bit/clear_bit for wu_flag may be corrupted if irq > 5(or 6 for
+> aarch64). The maximum irq number from 88pm80x chip series is 24.
+> Here we refine the code to protect the potential memory corruption.
 >
-> There was a merge problem in linux-next 4598d330d29e ('Merge
-> remote-tracking branch 'drm/drm-next'').  We need to add a break
-> statement.
+> Also change wu_flag to wakeup_flag for easier understanding.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Qiao Zhou <zhouqiao@marvell.com>
+> ---
+>   drivers/mfd/88pm80x.c       |    4 ++--
+>   include/linux/mfd/88pm80x.h |   19 ++++++++++++++++---
+>   2 files changed, 18 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mfd/88pm80x.c b/drivers/mfd/88pm80x.c
+> index 5e72f65..e1d803a 100644
+> --- a/drivers/mfd/88pm80x.c
+> +++ b/drivers/mfd/88pm80x.c
+> @@ -136,7 +136,7 @@ static int pm80x_suspend(struct device *dev)
+>   	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
+>   	struct pm80x_chip *chip = i2c_get_clientdata(client);
+>   
+> -	if (chip && chip->wu_flag)
+> +	if (chip && chip->wakeup_flag)
+>   		if (device_may_wakeup(chip->dev))
+>   			enable_irq_wake(chip->irq);
+>   
+> @@ -148,7 +148,7 @@ static int pm80x_resume(struct device *dev)
+>   	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
+>   	struct pm80x_chip *chip = i2c_get_clientdata(client);
+>   
+> -	if (chip && chip->wu_flag)
+> +	if (chip && chip->wakeup_flag)
+>   		if (device_may_wakeup(chip->dev))
+>   			disable_irq_wake(chip->irq);
+>   
+> diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
+> index 97cb283..1bca7eb 100644
+> --- a/include/linux/mfd/88pm80x.h
+> +++ b/include/linux/mfd/88pm80x.h
+> @@ -276,6 +276,9 @@ enum {
+>   #define PM805_EARPHONE_SETTING			(0x29)
+>   #define PM805_AUTO_SEQ_SETTING			(0x2A)
+>   
+> +/* supported 24 sub-irq */
+> +#define PM80x_MAX_IRQ			24
+> +
+>   struct pm80x_rtc_pdata {
+>   	int		vrtc;
+>   	int		rtc_wakeup;
+> @@ -301,7 +304,7 @@ struct pm80x_chip {
+>   	int type;
+>   	int irq;
+>   	int irq_mode;
+> -	unsigned long wu_flag;
+> +	unsigned long wakeup_flag;
+>   	spinlock_t lock;
+>   };
+>   
+> @@ -348,8 +351,13 @@ static inline int pm80x_dev_suspend(struct device *dev)
+>   	struct pm80x_chip *chip = dev_get_drvdata(pdev->dev.parent);
+>   	int irq = platform_get_irq(pdev, 0);
+>   
+> +	if (irq < 0 || irq >= PM80x_MAX_IRQ) {
+> +		dev_err(dev, "Invalid irq %d\n", irq);
+> +		return 0;
+> +	}
+> +
+>   	if (device_may_wakeup(dev))
+> -		set_bit((1 << irq), &chip->wu_flag);
+> +		set_bit(irq, &chip->wakeup_flag);
+>   
+>   	return 0;
+>   }
+> @@ -360,8 +368,13 @@ static inline int pm80x_dev_resume(struct device *dev)
+>   	struct pm80x_chip *chip = dev_get_drvdata(pdev->dev.parent);
+>   	int irq = platform_get_irq(pdev, 0);
+>   
+> +	if (irq < 0 || irq >= PM80x_MAX_IRQ) {
+> +		dev_err(dev, "Invalid irq %d\n", irq);
+> +		return 0;
+> +	}
+> +
+>   	if (device_may_wakeup(dev))
+> -		clear_bit((1 << irq), &chip->wu_flag);
+> +		clear_bit(irq, &chip->wakeup_flag);
+>   
+>   	return 0;
+>   }
+Hi Dan, Jones
 
-Thanks for noticing.  I have fixed my merge resolution for the next
-release and hopefully Linus will do it right when he merges the drm
-tree (if it is still necessary).
+could you help to review this patch?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+-- 
+Best Regards
+Qiao
 
---Sig_/azuQJ=8jkPsAccNxrpbzc/A
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJViaM6AAoJEMDTa8Ir7ZwVmz8P/2zFrb/u8hfw04cHH0HLZQeM
-lo1QEOMQry59Uz4bJ33Xipud3zqUQbMMOxtl2fVyvY4ilhisRaSw94DpqgNPccX+
-hKdBL48EwkwTvzH1B9JEVzKZ6s2RUu/MSAXorgIQAMcUn/Sx4eLCMP6/LNDmgVHw
-8f0mRIklOuYd9wBfGq5gbCOpiCci7h2JLEAs2XNpogtRgCWpq+2JhzTJPyb2/g/k
-WoQe9XZA2PP60I1w0a39gTUkfAEjkvjCfP4gbH+WRu3X+uMy/Q6+NEH4Wx6mzpVG
-3uhjIP7xPyiuBirVSrkr00c1f6i1GLv9lhMVoo8jvG84fbR4zVjpzNuxKqyhky1Y
-hVMp5XaKaNnVinAHP+haF9u5GthZsyRkIgKHge2uzzilrBtVgM3S9VH4sZ4Rv9jh
-ym1ymsKQRxDGymy2+hbKTW7Z/nyvGPXwNgoehDM/Xwo5F1HjarWj9XWDXE3FZ6hp
-qnkmjZFa2nDqcjqbEKdWivB/rL2CnyKz1cQfqi5vTH3lKxT/bmA+IO2bc7khU6hN
-9laldL2dJTASp09FB9qPbrV67Uac+UwzBkYljOgF0Tzqe5d9oimVOPVq6GyCrtXg
-BSiY3FP6gbHoBK2OOvPtzd0tTwaoqszX2sXkZo1NChtj1gWwTE0bqBqYn51GGNo5
-Iodtdn/Qm16weDdVgzSP
-=Rqfg
------END PGP SIGNATURE-----
-
---Sig_/azuQJ=8jkPsAccNxrpbzc/A--
