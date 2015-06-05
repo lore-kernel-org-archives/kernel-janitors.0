@@ -1,39 +1,60 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 18:06:57 +0000
-Subject: Re: platform: x86: Deletion of checks before backlight_device_unregister()
-Message-Id: <558EE641.7040404@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 Jun 2015 09:33:15 +0000
+Subject: [patch] ipvs: prevent some underflows
+Message-Id: <20150605093315.GD24871@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <5317A59D.4@users.sourceforge.net> <547389A6.9090106@users.sourceforge.net> <3842367.ojrMxTW2rH@path> <5473AD39.9010309@users.sourceforge.net> <alpine.DEB.2.10.1411271908590.2571@hadrien> <20150626230655.GB57818@vmdeb7> <20150627131603.GF28762@mwanda>
-In-Reply-To: <20150627131603.GF28762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Darren Hart <dvhart@infradead.org>, Julia Lawall <julia.lawall@lip6.fr>, Anisse Astier <anisse@astier.eu>, Corentin Chary <corentin.chary@gmail.com>, Ike Panhc <ike.pan@canonical.com>, Jonathan Woithe <jwoithe@just42.net>, Mattia Dongili <malattia@linux.it>, platform-driver-x86@vger.kernel.org, acpi4asus-user@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Wensong Zhang <wensong@linux-vs.org>
+Cc: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-> There is no way for a human being to remember the complete list of
-> functions with sanity checks and which don't have sanity checks.
+Quite a few drivers allow very low settings for dev->mtu.  My static
+checker complains this could cause some underflow problems when we do
+the subtractions in set_sync_mesg_maxlen().
 
-I understand also this software development challenge.
+I don't know that it's harmful necessarily, but it seems like an easy
+thing to prevent the underflows.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Please review this one carefully, because I'm not very sure of myself
+here.
 
-> Markus has introduced quite a few bugs as well
-
-I have only found other opinions about specific update suggestions.
-Which of such "bugs" are real mistakes?
-Are you looking for a better consensus?
-
-
-> (people have so far managed to catch his bugs before they were committed).
-
-Would you like to refer to any concrete software developers?
-
-
-> He so far has resisted any suggestion that he should manually review
-> his patches before sending them.
-
-I am performing source code review to some degree.
-My approach does partly not fit to your expectations.
-
-Regards,
-Markus
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index b08ba95..b4e148b 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -1352,7 +1352,7 @@ static int set_sync_mesg_maxlen(struct net *net, int sync_state)
+ {
+ 	struct netns_ipvs *ipvs = net_ipvs(net);
+ 	struct net_device *dev;
+-	int num;
++	unsigned int num;
+ 
+ 	if (sync_state = IP_VS_STATE_MASTER) {
+ 		dev = __dev_get_by_name(net, ipvs->master_mcast_ifn);
+@@ -1363,7 +1363,8 @@ static int set_sync_mesg_maxlen(struct net *net, int sync_state)
+ 		       sizeof(struct udphdr) -
+ 		       SYNC_MESG_HEADER_LEN - 20) / SIMPLE_CONN_SIZE;
+ 		ipvs->send_mesg_maxlen = SYNC_MESG_HEADER_LEN +
+-			SIMPLE_CONN_SIZE * min(num, MAX_CONNS_PER_SYNCBUFF);
++			SIMPLE_CONN_SIZE * min_t(uint, num,
++						 MAX_CONNS_PER_SYNCBUFF);
+ 		IP_VS_DBG(7, "setting the maximum length of sync sending "
+ 			  "message %d.\n", ipvs->send_mesg_maxlen);
+ 	} else if (sync_state = IP_VS_STATE_BACKUP) {
+@@ -1371,8 +1372,11 @@ static int set_sync_mesg_maxlen(struct net *net, int sync_state)
+ 		if (!dev)
+ 			return -ENODEV;
+ 
+-		ipvs->recv_mesg_maxlen = dev->mtu -
+-			sizeof(struct iphdr) - sizeof(struct udphdr);
++		if (dev->mtu < sizeof(struct iphdr) + sizeof(struct udphdr))
++			ipvs->recv_mesg_maxlen = 0;
++		else
++			ipvs->recv_mesg_maxlen = dev->mtu -
++				sizeof(struct iphdr) - sizeof(struct udphdr);
+ 		IP_VS_DBG(7, "setting the maximum length of sync receiving "
+ 			  "message %d.\n", ipvs->recv_mesg_maxlen);
+ 	}
