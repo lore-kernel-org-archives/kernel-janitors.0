@@ -1,38 +1,38 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 04 Jun 2015 08:59:34 +0000
-Subject: [patch] staging: wilc1000: prevent some overflows in debugfs
-Message-Id: <20150604085934.GC22838@mwanda>
+Date: Sat, 06 Jun 2015 16:55:22 +0000
+Subject: [PATCH] [media] dvb-core: prevent some corruption the legacy ioctl
+Message-Id: <20150606165521.GB28331@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Shuah Khan <shuah.kh@samsung.com>, Akihiro Tsukada <tskd08@gmail.com>, Antti Palosaari <crope@iki.fi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Add some limits here so we don't corrupt memory.
+Quite a few of the ->diseqc_send_master_cmd() implementations don't
+check cmd->msg_len so it can lead to memory corruption.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't think it ever makes sense for ->msg_len to be longer than ->msg
+but I am a newbie to this code.
 
-diff --git a/drivers/staging/wilc1000/wilc_debugfs.c b/drivers/staging/wilc1000/wilc_debugfs.c
-index 74b9fd5..c328208 100644
---- a/drivers/staging/wilc1000/wilc_debugfs.c
-+++ b/drivers/staging/wilc1000/wilc_debugfs.c
-@@ -53,6 +53,9 @@ static ssize_t wilc_debug_level_write(struct file *filp, const char *buf, size_t
- 	char buffer[128] = {};
- 	int flag = 0;
+diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
+index a894d4c..aa6b48f 100644
+--- a/drivers/media/dvb-core/dvb_frontend.c
++++ b/drivers/media/dvb-core/dvb_frontend.c
+@@ -2403,7 +2403,13 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
  
-+	if (count > sizeof(buffer))
-+		return -EINVAL;
+ 	case FE_DISEQC_SEND_MASTER_CMD:
+ 		if (fe->ops.diseqc_send_master_cmd) {
+-			err = fe->ops.diseqc_send_master_cmd(fe, (struct dvb_diseqc_master_cmd*) parg);
++			struct dvb_diseqc_master_cmd *cmd = parg;
 +
- 	if (copy_from_user(buffer, buf, count)) {
- 		return -EFAULT;
- 	}
-@@ -99,6 +102,9 @@ static ssize_t wilc_debug_region_write(struct file *filp, const char *buf, size_
- 	char buffer[128] = {};
- 	int flag;
- 
-+	if (count > sizeof(buffer))
-+		return -EINVAL;
-+
- 	if (copy_from_user(buffer, buf, count)) {
- 		return -EFAULT;
- 	}
++			if (cmd->msg_len > sizeof(cmd->msg)) {
++				err = -EINVAL;
++				break;
++			}
++			err = fe->ops.diseqc_send_master_cmd(fe, cmd);
+ 			fepriv->state = FESTATE_DISEQC;
+ 			fepriv->status = 0;
+ 		}
