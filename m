@@ -1,37 +1,43 @@
-From: "Dave Goodell (dgoodell)" <dgoodell@cisco.com>
-Date: Thu, 04 Jun 2015 16:14:44 +0000
-Subject: Re: [patch] IB/usnic: clean up some error handling code
-Message-Id: <A7405890-8794-4A04-A6B6-C84094BBD58A@cisco.com>
+From: Firo Yang <firogm@gmail.com>
+Date: Sat, 06 Jun 2015 11:35:53 +0000
+Subject: [PATCH] fib_trie: Fix potential null pointer dereference
+Message-Id: <1433590553-4672-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150604090218.GD22838@mwanda>
-In-Reply-To: <20150604090218.GD22838@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Upinder Malhi <umalhi-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: davem@davemloft.net
+Cc: kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-On Jun 4, 2015, at 4:02 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+A smatch warning.
+When kmem_cache_alloc() failed to alloc memory, a null pointer
+will be returned. Redeference null pointer will generate
+an unnecessary oops. So, use it after check.
 
-> This code causes a static checker warning:
-> 
-> 	drivers/infiniband/hw/usnic/usnic_uiom.c:476 usnic_uiom_alloc_pd()
-> 	warn: passing zero to 'PTR_ERR'
-> 
-> This code isn't buggy, but iommu_domain_alloc() doesn't return an error
-> pointer so we can simplify the error handling and silence the static
-> checker warning.
-> 
-> The static checker warning is to catch place which do:
-> 
-> 	if (!ptr)
-> 		return ERR_PTR(ptr);
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ net/ipv4/fib_trie.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Looks good to me, thanks.
-
-Reviewed-by: Dave Goodell <dgoodell@cisco.com>
-
--Dave
+diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+index 01bce15..34094c7 100644
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -326,12 +326,13 @@ static inline void empty_child_dec(struct key_vector *n)
+ static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
+ {
+ 	struct tnode *kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
+-	struct key_vector *l = kv->kv;
++	struct key_vector *l;
+ 
+ 	if (!kv)
+ 		return NULL;
+ 
+ 	/* initialize key vector */
++	l = kv->kv;
+ 	l->key = key;
+ 	l->pos = 0;
+ 	l->bits = 0;
+-- 
+2.4.2
 
