@@ -1,49 +1,71 @@
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
-Date: Tue, 30 Jun 2015 10:36:45 +0000
-Subject: Re: vfio: powerpc/spapr: One function call less in tce_iommu_attach_group() after kzalloc() failure
-Message-Id: <5592713D.10701@ozlabs.ru>
+From: Firo Yang <firogm@gmail.com>
+Date: Sat, 06 Jun 2015 03:55:19 +0000
+Subject: [PATCH v2] firmware: Fix memory leak in error path
+Message-Id: <1433562919-14325-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <55901E68.80205@users.sourceforge.net>
- <55901FAC.1090109@users.sourceforge.net> <5590862A.3010603@ozlabs.ru>
- <5590DF8A.8030503@users.sourceforge.net> <5591E355.1080708@ozlabs.ru>
- <55923251.7070306@users.sourceforge.net>
-In-Reply-To: <55923251.7070306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Michael Ellerman <mpe@ellerman.id.au>
+To: kernel-janitors@vger.kernel.org
 
-On 06/30/2015 04:08 PM, SF Markus Elfring wrote:
->>>> than the existing one should have been renamed to "free_exit" or "free_unlock_exit"
->>>> and new one would be "unlock_exit".
->>>
->>> I chose a smaller change at this place.
->>
->> I'd just drop this patch.
->
-> How do you think about to improve the affected jump labels
-> a bit more there?
+Eliminate a memory leak by unifying the error handling code
+at the end of the function.
 
-This branch is very unlikely to work ever so I cannot think of any 
-improvement here.
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ drivers/base/firmware_class.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-
-
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index 8c3aa3c..bf06fb2 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -1299,6 +1299,7 @@ request_firmware_nowait(
+ 	const char *name, struct device *device, gfp_t gfp, void *context,
+ 	void (*cont)(const struct firmware *fw, void *context))
+ {
++	int rc;
+ 	struct firmware_work *fw_work;
+ 
+ 	fw_work = kzalloc(sizeof(struct firmware_work), gfp);
+@@ -1307,8 +1308,11 @@ request_firmware_nowait(
+ 
+ 	fw_work->module = module;
+ 	fw_work->name = kstrdup_const(name, gfp);
+-	if (!fw_work->name)
+-		return -ENOMEM;
++	if (!fw_work->name) {
++		rc = -ENOMEM;
++		goto err_dup;
++	}
++
+ 	fw_work->device = device;
+ 	fw_work->context = context;
+ 	fw_work->cont = cont;
+@@ -1316,15 +1320,20 @@ request_firmware_nowait(
+ 		(uevent ? FW_OPT_UEVENT : FW_OPT_USERHELPER);
+ 
+ 	if (!try_module_get(module)) {
+-		kfree_const(fw_work->name);
+-		kfree(fw_work);
+-		return -EFAULT;
++		rc = -EFAULT;
++		goto err_module;
+ 	}
+ 
+ 	get_device(fw_work->device);
+ 	INIT_WORK(&fw_work->work, request_firmware_work_func);
+ 	schedule_work(&fw_work->work);
+ 	return 0;
++
++err_module:
++	kfree_const(fw_work->name);
++err_dup:
++	kfree(fw_work);
++	return rc;
+ }
+ EXPORT_SYMBOL(request_firmware_nowait);
+ 
 -- 
-Alexey
+2.4.2
+
