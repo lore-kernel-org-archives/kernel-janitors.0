@@ -1,32 +1,117 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Tue, 09 Jun 2015 17:42:06 +0000
-Subject: Re: [PATCH V3 1/2] staging: wilc1000: remove UWORD8
-Message-Id: <20150609174206.GA23140@kroah.com>
+From: Qiao Zhou <zhouqiao@marvell.com>
+Date: Sun, 07 Jun 2015 09:03:04 +0000
+Subject: [PATCH v2] mfd: 88pm80x: refine irq bit operation
+Message-Id: <1433667784-27869-1-git-send-email-zhouqiao@marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433805815-4659-1-git-send-email-chaehyun.lim@gmail.com>
-In-Reply-To: <1433805815-4659-1-git-send-email-chaehyun.lim@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 09, 2015 at 08:23:34AM +0900, Chaehyun Lim wrote:
-> Use u8 instead of UWORD8.
-> 
-> Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
-> ---
-> V3 : Capitalize the name on the From and the Signed-off-by
-> V2 : remove the defintion of UWORD8
-> 
->  drivers/staging/wilc1000/coreconfigurator.c | 2 +-
->  drivers/staging/wilc1000/host_interface.c   | 2 +-
->  drivers/staging/wilc1000/itypes.h           | 1 -
->  3 files changed, 2 insertions(+), 3 deletions(-)
+Set_bit/clear_bit for wu_flag may be corrupted if irq > 5(or 6 for
+aarch64). The maximum irq number from 88pm80x chip series is 24.
+Here we refine the code to protect the potential memory corruption.
 
-This patch does not apply to my staging-testing branch :(
+Also change wu_flag to wakeup_flag for easier understanding.
 
-I can't apply either of these, sorry, please rebase and resend.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Qiao Zhou <zhouqiao@marvell.com>
+---
+ drivers/input/misc/88pm80x_onkey.c | 2 +-
+ drivers/mfd/88pm80x.c              | 4 ++--
+ drivers/rtc/rtc-88pm80x.c          | 2 +-
+ include/linux/mfd/88pm80x.h        | 9 ++++++---
+ 4 files changed, 10 insertions(+), 7 deletions(-)
 
-thanks,
+diff --git a/drivers/input/misc/88pm80x_onkey.c b/drivers/input/misc/88pm80x_onkey.c
+index cf9908f..b1fd83c 100644
+--- a/drivers/input/misc/88pm80x_onkey.c
++++ b/drivers/input/misc/88pm80x_onkey.c
+@@ -76,7 +76,7 @@ static int pm80x_onkey_probe(struct platform_device *pdev)
+ 	info->pm80x = chip;
+ 
+ 	info->irq = platform_get_irq(pdev, 0);
+-	if (info->irq < 0) {
++	if (info->irq < 0 || info->irq >= PM80X_MAX_IRQ) {
+ 		dev_err(&pdev->dev, "No IRQ resource!\n");
+ 		err = -EINVAL;
+ 		goto out;
+diff --git a/drivers/mfd/88pm80x.c b/drivers/mfd/88pm80x.c
+index 5e72f65..e1d803a 100644
+--- a/drivers/mfd/88pm80x.c
++++ b/drivers/mfd/88pm80x.c
+@@ -136,7 +136,7 @@ static int pm80x_suspend(struct device *dev)
+ 	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
+ 	struct pm80x_chip *chip = i2c_get_clientdata(client);
+ 
+-	if (chip && chip->wu_flag)
++	if (chip && chip->wakeup_flag)
+ 		if (device_may_wakeup(chip->dev))
+ 			enable_irq_wake(chip->irq);
+ 
+@@ -148,7 +148,7 @@ static int pm80x_resume(struct device *dev)
+ 	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
+ 	struct pm80x_chip *chip = i2c_get_clientdata(client);
+ 
+-	if (chip && chip->wu_flag)
++	if (chip && chip->wakeup_flag)
+ 		if (device_may_wakeup(chip->dev))
+ 			disable_irq_wake(chip->irq);
+ 
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index 7df0579..d53fa18 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -268,7 +268,7 @@ static int pm80x_rtc_probe(struct platform_device *pdev)
+ 	if (!info)
+ 		return -ENOMEM;
+ 	info->irq = platform_get_irq(pdev, 0);
+-	if (info->irq < 0) {
++	if (info->irq < 0 || info->irq >= PM80X_MAX_IRQ) {
+ 		dev_err(&pdev->dev, "No IRQ resource!\n");
+ 		ret = -EINVAL;
+ 		goto out;
+diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
+index 97cb283..60cff11 100644
+--- a/include/linux/mfd/88pm80x.h
++++ b/include/linux/mfd/88pm80x.h
+@@ -276,6 +276,9 @@ enum {
+ #define PM805_EARPHONE_SETTING			(0x29)
+ #define PM805_AUTO_SEQ_SETTING			(0x2A)
+ 
++/* supported 24 sub-irq */
++#define PM80X_MAX_IRQ			24
++
+ struct pm80x_rtc_pdata {
+ 	int		vrtc;
+ 	int		rtc_wakeup;
+@@ -301,7 +304,7 @@ struct pm80x_chip {
+ 	int type;
+ 	int irq;
+ 	int irq_mode;
+-	unsigned long wu_flag;
++	unsigned long wakeup_flag;
+ 	spinlock_t lock;
+ };
+ 
+@@ -349,7 +352,7 @@ static inline int pm80x_dev_suspend(struct device *dev)
+ 	int irq = platform_get_irq(pdev, 0);
+ 
+ 	if (device_may_wakeup(dev))
+-		set_bit((1 << irq), &chip->wu_flag);
++		set_bit(irq, &chip->wakeup_flag);
+ 
+ 	return 0;
+ }
+@@ -361,7 +364,7 @@ static inline int pm80x_dev_resume(struct device *dev)
+ 	int irq = platform_get_irq(pdev, 0);
+ 
+ 	if (device_may_wakeup(dev))
+-		clear_bit((1 << irq), &chip->wu_flag);
++		clear_bit(irq, &chip->wakeup_flag);
+ 
+ 	return 0;
+ }
+-- 
+1.9.1
 
-greg k-h
