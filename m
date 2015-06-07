@@ -1,73 +1,101 @@
-From: Ray Jui <rjui@broadcom.com>
-Date: Mon, 29 Jun 2015 16:45:14 +0000
-Subject: Re: [PATCH] PCI-iproc: Delete unnecessary checks before two function calls
-Message-Id: <5591761A.9000607@broadcom.com>
+From: Firo Yang <firogm@gmail.com>
+Date: Sun, 07 Jun 2015 14:47:25 +0000
+Subject: [PATCH] fib_trie: coding style: Use pointer after check
+Message-Id: <1433688445-21341-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <55900A20.5070407@users.sourceforge.net>
-In-Reply-To: <55900A20.5070407@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Markus,
+As Alexander Duyck pointed out that:
+struct tnode {
+        ...
+        struct key_vector kv[1];
+}
+The kv[1] member of struct tnode is an arry that refernced by
+a null pointer will not crash the system, like this:
+struct tnode *p = NULL;
+struct key_vector *kv = p->kv;
+As such p->kv doesn't actually dereference anything, it is simply a
+means for getting the offset to the array from the pointer kv.
 
-On 6/28/2015 7:52 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 28 Jun 2015 16:42:04 +0200
-> 
-> The functions phy_exit() and phy_power_off() test whether their argument
-> is NULL and then return immediately.
-> Thus the test around the calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/pci/host/pcie-iproc.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
-> index d77481e..f875821 100644
-> --- a/drivers/pci/host/pcie-iproc.c
-> +++ b/drivers/pci/host/pcie-iproc.c
-> @@ -239,12 +239,9 @@ err_rm_root_bus:
->  	pci_remove_root_bus(bus);
->  
->  err_power_off_phy:
-> -	if (pcie->phy)
-> -		phy_power_off(pcie->phy);
-> +	phy_power_off(pcie->phy);
->  err_exit_phy:
-> -	if (pcie->phy)
-> -		phy_exit(pcie->phy);
-> -
-> +	phy_exit(pcie->phy);
->  	return ret;
->  }
->  EXPORT_SYMBOL(iproc_pcie_setup);
-> 
+This patch make the code more regular to avoid making people feel
+odd when they look at the code.
 
-Thanks for catching this. Could you please help to make similar changes
-to both phy_init and phy_power_on calls in the driver, to make it
-consistent?
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ net/ipv4/fib_trie.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-Thanks,
+diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+index 01bce15..2af2d07 100644
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -325,13 +325,15 @@ static inline void empty_child_dec(struct key_vector *n)
+ 
+ static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
+ {
+-	struct tnode *kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
+-	struct key_vector *l = kv->kv;
++	struct tnode *kv;
++	struct key_vector *l;
+ 
++	kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
+ 	if (!kv)
+ 		return NULL;
+ 
+ 	/* initialize key vector */
++	l = kv->kv;
+ 	l->key = key;
+ 	l->pos = 0;
+ 	l->bits = 0;
+@@ -346,24 +348,26 @@ static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
+ 
+ static struct key_vector *tnode_new(t_key key, int pos, int bits)
+ {
+-	struct tnode *tnode = tnode_alloc(bits);
++	struct tnode *tnode;
+ 	unsigned int shift = pos + bits;
+-	struct key_vector *tn = tnode->kv;
++	struct key_vector *tn;
+ 
+ 	/* verify bits and pos their msb bits clear and values are valid */
+ 	BUG_ON(!bits || (shift > KEYLENGTH));
+ 
+-	pr_debug("AT %p s=%zu %zu\n", tnode, TNODE_SIZE(0),
+-		 sizeof(struct key_vector *) << bits);
+-
++	tnode = tnode_alloc(bits);
+ 	if (!tnode)
+ 		return NULL;
+ 
++	pr_debug("AT %p s=%zu %zu\n", tnode, TNODE_SIZE(0),
++		 sizeof(struct key_vector *) << bits);
++
+ 	if (bits = KEYLENGTH)
+ 		tnode->full_children = 1;
+ 	else
+ 		tnode->empty_children = 1ul << bits;
+ 
++	tn = tnode->kv;
+ 	tn->key = (shift < KEYLENGTH) ? (key >> shift) << shift : 0;
+ 	tn->pos = pos;
+ 	tn->bits = bits;
+@@ -2054,11 +2058,12 @@ static struct key_vector *fib_trie_get_next(struct fib_trie_iter *iter)
+ static struct key_vector *fib_trie_get_first(struct fib_trie_iter *iter,
+ 					     struct trie *t)
+ {
+-	struct key_vector *n, *pn = t->kv;
++	struct key_vector *n, *pn;
+ 
+ 	if (!t)
+ 		return NULL;
+ 
++	pn = t->kv;
+ 	n = rcu_dereference(pn->tnode[0]);
+ 	if (!n)
+ 		return NULL;
+-- 
+2.4.2
 
-Ray
