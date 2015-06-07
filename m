@@ -1,84 +1,90 @@
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Sun, 07 Jun 2015 03:20:38 +0000
+From: Firo Yang <firogm@gmail.com>
+Date: Sun, 07 Jun 2015 04:46:35 +0000
 Subject: Re: [PATCH] fib_trie: Fix potential null pointer dereference
-Message-Id: <5573B886.5020600@gmail.com>
+Message-Id: <20150607044635.GA3515@firo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433590553-4672-1-git-send-email-firogm@gmail.com> <1433592304.1895.73.camel@edumazet-glaptop2.roam.corp.google.com>
-In-Reply-To: <1433592304.1895.73.camel@edumazet-glaptop2.roam.corp.google.com>
+References: <1433590553-4672-1-git-send-email-firogm@gmail.com>
+ <1433592304.1895.73.camel@edumazet-glaptop2.roam.corp.google.com>
+ <5573B7A2.4010607@gmail.com>
+In-Reply-To: <5573B7A2.4010607@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Dumazet <eric.dumazet@gmail.com>, Firo Yang <firogm@gmail.com>
-Cc: davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>, davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 06/06/2015 05:05 AM, Eric Dumazet wrote:
-> On Sat, 2015-06-06 at 19:35 +0800, Firo Yang wrote:
->> A smatch warning.
->> When kmem_cache_alloc() failed to alloc memory, a null pointer
->> will be returned. Redeference null pointer will generate
->
->
-> Dereferencing a null pointer will crash.
->
->> an unnecessary oops. So, use it after check.
+On Sat, Jun 06, 2015 at 08:16:50PM -0700, Alexander Duyck wrote:
+>On 06/06/2015 05:05 AM, Eric Dumazet wrote:
+>>On Sat, 2015-06-06 at 19:35 +0800, Firo Yang wrote:
+>>>A smatch warning.
+>>>When kmem_cache_alloc() failed to alloc memory, a null pointer
+>>>will be returned. Redeference null pointer will generate
 >>
->> Signed-off-by: Firo Yang <firogm@gmail.com>
->> ---
->>   net/ipv4/fib_trie.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>Dereferencing a null pointer will crash.
 >>
->> diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
->> index 01bce15..34094c7 100644
->> --- a/net/ipv4/fib_trie.c
->> +++ b/net/ipv4/fib_trie.c
->> @@ -326,12 +326,13 @@ static inline void empty_child_dec(struct key_vector *n)
->>   static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
->>   {
->>   	struct tnode *kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
->> -	struct key_vector *l = kv->kv;
->> +	struct key_vector *l;
+>>>an unnecessary oops. So, use it after check.
+>>>
+>>>Signed-off-by: Firo Yang <firogm@gmail.com>
+>>>---
+>>>  net/ipv4/fib_trie.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>>diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+>>>index 01bce15..34094c7 100644
+>>>--- a/net/ipv4/fib_trie.c
+>>>+++ b/net/ipv4/fib_trie.c
+>>>@@ -326,12 +326,13 @@ static inline void empty_child_dec(struct key_vector *n)
+>>>  static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
+>>>  {
+>>>  	struct tnode *kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
+>>>-	struct key_vector *l = kv->kv;
+>>>+	struct key_vector *l;
+>>>  	if (!kv)
+>>>  		return NULL;
+>>>  	/* initialize key vector */
+>>>+	l = kv->kv;
+>>>  	l->key = key;
+>>>  	l->pos = 0;
+>>>  	l->bits = 0;
+>>Fixes: dc35dbeda3e0 ("fib_trie: Add tnode struct as a container for fields not needed in key_vector")
+>>Acked-by: Eric Dumazet <edumazet@google.com>
 >>
->>   	if (!kv)
->>   		return NULL;
->>
->>   	/* initialize key vector */
->> +	l = kv->kv;
->>   	l->key = key;
->>   	l->pos = 0;
->>   	l->bits = 0;
+>>Thanks.
 >
-> Fixes: dc35dbeda3e0 ("fib_trie: Add tnode struct as a container for fields not needed in key_vector")
-> Acked-by: Eric Dumazet <edumazet@google.com>
+>kv->kv isn't a dereference.  kv is an array contained within the tnode.
+>Below is the layout of struct tnode:
 >
-> Thanks.
+>|
+>struct  tnode{
+>	struct  rcu_head rcu;
+>	t_key empty_children;		/* KEYLENGTH bits needed */
+>	t_key full_children;		/* KEYLENGTH bits needed */
+>	struct  key_vector __rcu*parent;
+>	struct  key_vector kv[1];
+>#define tn_bits kv[0].bits
+>};|
+>
+>
+>As such kv->kv doesn't actually dereference anything, it is simply a means
+>for getting the offset to the array from the pointer kv.  It should be
+>equivalent to &kv->kv[0] which last I knew was how the offsetof macro
+>basically worked and it uses a NULL pointer.  The first actual derference
+>occurs at "l->key = key" which should be safe since writing to a memory
+>location has side effects so the compiler cannot reorder the writes before
+>the !kv check.
+>
+>The patch itself is fine.  However what it is fixing is the smatch false
+>positive, not a null pointer deference.  As such you may need to update the
+>comments to reflect that.
 
-kv->kv isn't a dereference.  kv is an array contained within the tnode. 
-  Below is the layout of struct tnode:
+Thanks Alex for firguring out my false cognition!
+I will update the patch with new comments.
 
+Firo
 
-struct tnode {
-	struct rcu_head rcu;
-	t_key empty_children;		/* KEYLENGTH bits needed */
-	t_key full_children;		/* KEYLENGTH bits needed */
-	struct key_vector __rcu *parent;
-	struct key_vector kv[1];
-#define tn_bits kv[0].bits
-};
+>
+>- Alex
+>
+>
 
-
-As such kv->kv doesn't actually dereference anything, it is simply a 
-means for getting the offset to the array from the pointer kv.  It 
-should be equivalent to &kv->kv[0] which last I knew was how the 
-offsetof macro basically worked and it uses a NULL pointer.  The first 
-actual derference occurs at "l->key = key" which should be safe since 
-writing to a memory location has side effects so the compiler cannot 
-reorder the writes before the !kv check.
-
-The patch itself is fine.  However what it is fixing is the smatch false 
-positive, not a null pointer deference.  As such you may need to update 
-the comments to reflect that.
-
-- Alex
-
-
-
+-- 
