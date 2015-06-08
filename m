@@ -1,59 +1,57 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Thu, 25 Jun 2015 11:37:12 +0000
-Subject: Re: [PATCH] s390/process: Delete an unnecessary check before the function call "kfree"
-Message-Id: <20150625113712.GB4069@osiris>
+From: Firo Yang <firogm@gmail.com>
+Date: Mon, 08 Jun 2015 09:37:10 +0000
+Subject: [PATCH v3] ARM: pxa: ssp: remove unnessary free for devm_xxx
+Message-Id: <1433756230-31956-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <558B1799.8040003@users.sourceforge.net>
- <558BD1B4.4030209@bfs.de>
-In-Reply-To: <558BD1B4.4030209@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: davem@davemloft.net
+Cc: alexander.duyck@gmail.com, eric.dumazet@gmail.com, wharms@bfs.de, julia.lawall@lip6.fr, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-On Thu, Jun 25, 2015 at 12:02:28PM +0200, walter harms wrote:
-> 
-> Am 24.06.2015 22:48, schrieb SF Markus Elfring:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Wed, 24 Jun 2015 22:40:30 +0200
-> > 
-> > The kfree() function tests whether its argument is NULL and then
-> > returns immediately. Thus the test around the call is not needed.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  arch/s390/kernel/process.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/s390/kernel/process.c b/arch/s390/kernel/process.c
-> > index dc5edc2..22e6448 100644
-> > --- a/arch/s390/kernel/process.c
-> > +++ b/arch/s390/kernel/process.c
-> > @@ -81,8 +81,7 @@ void release_thread(struct task_struct *dead_task)
-> >  
-> >  void arch_release_task_struct(struct task_struct *tsk)
-> >  {
-> > -	if (tsk->thread.vxrs)
-> > -		kfree(tsk->thread.vxrs);
-> > +	kfree(tsk->thread.vxrs);
-> >  }
+A Coccinelle warning.
+It's not necessary to free memory allocated with devm_xxx
+and using these free functions maybe lead to a double free that
+will corrupt the resource subsys. So, I just remove them.
 
-This code will be changed soon anyway. So it would be rather pointless
-to apply your patch now. Thanks anyway!
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+In "[PATCH] ARM: pxa: ssp: remove unnessary free for devm_xxx", 
+I forgot to remove an unused variable struct resource *res.
 
-> >  int copy_thread(unsigned long clone_flags, unsigned long new_stackp,
-> maybe the intention was to check tsk != NULL ?
+ arch/arm/plat-pxa/ssp.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-No.
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index ad9529c..2b92a3b 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -232,25 +232,16 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+ 
+ static int pxa_ssp_remove(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct ssp_device *ssp;
+ 
+ 	ssp = platform_get_drvdata(pdev);
+ 	if (ssp = NULL)
+ 		return -ENODEV;
+ 
+-	iounmap(ssp->mmio_base);
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(res->start, resource_size(res));
+-
+-	clk_put(ssp->clk);
+-
+ 	mutex_lock(&ssp_lock);
+ 	list_del(&ssp->node);
+ 	mutex_unlock(&ssp_lock);
+ 
+-	kfree(ssp);
+ 	return 0;
+ }
+ 
+-- 
+2.4.2
 
