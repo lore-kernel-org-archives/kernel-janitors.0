@@ -1,7 +1,7 @@
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Sun, 07 Jun 2015 16:50:32 +0000
+From: Firo Yang <firogm@gmail.com>
+Date: Mon, 08 Jun 2015 03:43:59 +0000
 Subject: Re: [PATCH] fib_trie: coding style: Use pointer after check
-Message-Id: <55747658.5060403@gmail.com>
+Message-Id: <20150608034359.GA4962@firo>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1433688445-21341-1-git-send-email-firogm@gmail.com>
 In-Reply-To: <1433688445-21341-1-git-send-email-firogm@gmail.com>
@@ -10,106 +10,112 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 06/07/2015 07:47 AM, Firo Yang wrote:
-> As Alexander Duyck pointed out that:
-> struct tnode {
->          ...
->          struct key_vector kv[1];
-> }
-> The kv[1] member of struct tnode is an arry that refernced by
-> a null pointer will not crash the system, like this:
-> struct tnode *p = NULL;
-> struct key_vector *kv = p->kv;
-> As such p->kv doesn't actually dereference anything, it is simply a
-> means for getting the offset to the array from the pointer kv.
+On Sun, Jun 07, 2015 at 09:50:32AM -0700, Alexander Duyck wrote:
+>On 06/07/2015 07:47 AM, Firo Yang wrote:
+>>As Alexander Duyck pointed out that:
+>>struct tnode {
+>>         ...
+>>         struct key_vector kv[1];
+>>}
+>>The kv[1] member of struct tnode is an arry that refernced by
+>>a null pointer will not crash the system, like this:
+>>struct tnode *p = NULL;
+>>struct key_vector *kv = p->kv;
+>>As such p->kv doesn't actually dereference anything, it is simply a
+>>means for getting the offset to the array from the pointer kv.
+>>
+>>This patch make the code more regular to avoid making people feel
+>>odd when they look at the code.
+>>
+>>Signed-off-by: Firo Yang <firogm@gmail.com>
 >
-> This patch make the code more regular to avoid making people feel
-> odd when they look at the code.
->
-> Signed-off-by: Firo Yang <firogm@gmail.com>
+>Overall this patch looks good.  Just a few minor items called out below.
+>With those corrected you would probably be good to submit to netdev.
 
-Overall this patch looks good.  Just a few minor items called out below. 
-  With those corrected you would probably be good to submit to netdev.
+Thanks Alex for your kind advices.
+I will correct them.
+>
+>>---
+>>  net/ipv4/fib_trie.c | 21 +++++++++++++--------
+>>  1 file changed, 13 insertions(+), 8 deletions(-)
+>>
+>>diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+>>index 01bce15..2af2d07 100644
+>>--- a/net/ipv4/fib_trie.c
+>>+++ b/net/ipv4/fib_trie.c
+>>@@ -325,13 +325,15 @@ static inline void empty_child_dec(struct key_vector *n)
+>>
+>>  static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
+>>  {
+>>-	struct tnode *kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
+>>-	struct key_vector *l = kv->kv;
+>>+	struct tnode *kv;
+>>+	struct key_vector *l;
+>>
+>
+>Dave Miller usually prefers it if variables are ordered from longest to
+>shortest.  So you should probably have l defined first, and then kv.
+>
+>>+	kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
+>>  	if (!kv)
+>>  		return NULL;
+>>
+>>  	/* initialize key vector */
+>>+	l = kv->kv;
+>>  	l->key = key;
+>>  	l->pos = 0;
+>>  	l->bits = 0;
+>>@@ -346,24 +348,26 @@ static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
+>>
+>>  static struct key_vector *tnode_new(t_key key, int pos, int bits)
+>>  {
+>>-	struct tnode *tnode = tnode_alloc(bits);
+>>+	struct tnode *tnode;
+>>  	unsigned int shift = pos + bits;
+>>-	struct key_vector *tn = tnode->kv;
+>>+	struct key_vector *tn;
+>>
+>
+>Same here.  Since tnode is the shorter variable declaration it should be
+>declared at the end of the list instead of the start.
+>
+>>  	/* verify bits and pos their msb bits clear and values are valid */
+>>  	BUG_ON(!bits || (shift > KEYLENGTH));
+>>
+>>-	pr_debug("AT %p s=%zu %zu\n", tnode, TNODE_SIZE(0),
+>>-		 sizeof(struct key_vector *) << bits);
+>>-
+>>+	tnode = tnode_alloc(bits);
+>>  	if (!tnode)
+>>  		return NULL;
+>>
+>>+	pr_debug("AT %p s=%zu %zu\n", tnode, TNODE_SIZE(0),
+>>+		 sizeof(struct key_vector *) << bits);
+>>+
+>>  	if (bits = KEYLENGTH)
+>>  		tnode->full_children = 1;
+>>  	else
+>>  		tnode->empty_children = 1ul << bits;
+>>
+>>+	tn = tnode->kv;
+>>  	tn->key = (shift < KEYLENGTH) ? (key >> shift) << shift : 0;
+>>  	tn->pos = pos;
+>>  	tn->bits = bits;
+>>@@ -2054,11 +2058,12 @@ static struct key_vector *fib_trie_get_next(struct fib_trie_iter *iter)
+>>  static struct key_vector *fib_trie_get_first(struct fib_trie_iter *iter,
+>>  					     struct trie *t)
+>>  {
+>>-	struct key_vector *n, *pn = t->kv;
+>>+	struct key_vector *n, *pn;
+>>
+>>  	if (!t)
+>>  		return NULL;
+>>
+>>+	pn = t->kv;
+>>  	n = rcu_dereference(pn->tnode[0]);
+>>  	if (!n)
+>>  		return NULL;
+>>
+>
 
-> ---
->   net/ipv4/fib_trie.c | 21 +++++++++++++--------
->   1 file changed, 13 insertions(+), 8 deletions(-)
->
-> diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
-> index 01bce15..2af2d07 100644
-> --- a/net/ipv4/fib_trie.c
-> +++ b/net/ipv4/fib_trie.c
-> @@ -325,13 +325,15 @@ static inline void empty_child_dec(struct key_vector *n)
->
->   static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
->   {
-> -	struct tnode *kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
-> -	struct key_vector *l = kv->kv;
-> +	struct tnode *kv;
-> +	struct key_vector *l;
->
-
-Dave Miller usually prefers it if variables are ordered from longest to 
-shortest.  So you should probably have l defined first, and then kv.
-
-> +	kv = kmem_cache_alloc(trie_leaf_kmem, GFP_KERNEL);
->   	if (!kv)
->   		return NULL;
->
->   	/* initialize key vector */
-> +	l = kv->kv;
->   	l->key = key;
->   	l->pos = 0;
->   	l->bits = 0;
-> @@ -346,24 +348,26 @@ static struct key_vector *leaf_new(t_key key, struct fib_alias *fa)
->
->   static struct key_vector *tnode_new(t_key key, int pos, int bits)
->   {
-> -	struct tnode *tnode = tnode_alloc(bits);
-> +	struct tnode *tnode;
->   	unsigned int shift = pos + bits;
-> -	struct key_vector *tn = tnode->kv;
-> +	struct key_vector *tn;
->
-
-Same here.  Since tnode is the shorter variable declaration it should be 
-declared at the end of the list instead of the start.
-
->   	/* verify bits and pos their msb bits clear and values are valid */
->   	BUG_ON(!bits || (shift > KEYLENGTH));
->
-> -	pr_debug("AT %p s=%zu %zu\n", tnode, TNODE_SIZE(0),
-> -		 sizeof(struct key_vector *) << bits);
-> -
-> +	tnode = tnode_alloc(bits);
->   	if (!tnode)
->   		return NULL;
->
-> +	pr_debug("AT %p s=%zu %zu\n", tnode, TNODE_SIZE(0),
-> +		 sizeof(struct key_vector *) << bits);
-> +
->   	if (bits = KEYLENGTH)
->   		tnode->full_children = 1;
->   	else
->   		tnode->empty_children = 1ul << bits;
->
-> +	tn = tnode->kv;
->   	tn->key = (shift < KEYLENGTH) ? (key >> shift) << shift : 0;
->   	tn->pos = pos;
->   	tn->bits = bits;
-> @@ -2054,11 +2058,12 @@ static struct key_vector *fib_trie_get_next(struct fib_trie_iter *iter)
->   static struct key_vector *fib_trie_get_first(struct fib_trie_iter *iter,
->   					     struct trie *t)
->   {
-> -	struct key_vector *n, *pn = t->kv;
-> +	struct key_vector *n, *pn;
->
->   	if (!t)
->   		return NULL;
->
-> +	pn = t->kv;
->   	n = rcu_dereference(pn->tnode[0]);
->   	if (!n)
->   		return NULL;
->
-
+-- 
