@@ -1,41 +1,60 @@
-From: Julian Anastasov <ja@ssi.bg>
-Date: Tue, 16 Jun 2015 19:28:29 +0000
-Subject: Re: [patch] ipvs: prevent some underflows
-Message-Id: <alpine.LFD.2.11.1506162224510.1703@ja.home.ssi.bg>
+From: Firo Yang <firogm@gmail.com>
+Date: Mon, 08 Jun 2015 08:53:52 +0000
+Subject: [PATCH] ARM: pxa: ssp: Use devm_ioremap_resource instead of devm_ioremap
+Message-Id: <1433753632-28534-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150605093315.GD24871@mwanda> <alpine.LFD.2.11.1506082137420.1552@ja.home.ssi.bg> <20150609122630.GA4060@localhost.localdomain> <alpine.LFD.2.11.1506110811030.1827@ja.home.ssi.bg> <20150611125734.GL4049@localhost.localdomain>
-In-Reply-To: <20150611125734.GL4049@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcelo Ricardo Leitner <mleitner@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+Using devm_ioremap_resource() API to simplify the code.
 
-	Hello,
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+According to Julia's advices:
 
-On Thu, 11 Jun 2015, Marcelo Ricardo Leitner wrote:
+The patch "[PATCH v2] ARM: pxa: ssp: remove unnessary free for devm_xxx"
+submited by Firo Yang should be discard. It was obsoleted by
+"[PATCH] ARM: pxa: ssp: remove unnessary free for devm_xxx"
+and 
+"[PATCH] ARM: pxa: ssp: Use devm_ioremap_resource instead of devm_ioremap"
 
-> > > On Mon, Jun 08, 2015 at 10:16:23PM +0300, Julian Anastasov wrote:
-> > 
-> > 	Yes, without any configuration (eg. sysctl value),
-> > such defaults should reduce the chance for incompatibilities.
-> > I.e. we should not send more than 1500 and should be able to
-> > receive at least 1500.
-> 
-> I'm not sure we should anticipate bad networking setups like that.
-> Probably ipvs wouldn't be the only one to suffer from such bad config.
-> 
-> Anyway, then we should include that sysctl together with that min(),
-> because otherwise it will be impossible to send packets larger than
-> 1500 and this may be a regression to some users. Or maybe you don't
-> think that large packets are worth for the sync at all?
+I am not sure whether it was clear. If there is any doubt, please
+ email me.
 
-	Sorry for the delay. I'll try that in the
-following days. There should be benefits from large
-packets, so better to allow it.
+ arch/arm/plat-pxa/ssp.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-Regards
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index ad9529c..8fd5245 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -182,21 +182,12 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	res = devm_request_mem_region(dev, res->start, resource_size(res),
+-				      pdev->name);
+-	if (res = NULL) {
+-		dev_err(dev, "failed to request memory resource\n");
+-		return -EBUSY;
+-	}
++	ssp->mmio_base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(ssp->mmio_base))
++		return PTR_ERR(ssp->mmio_base);
+ 
+ 	ssp->phys_base = res->start;
+ 
+-	ssp->mmio_base = devm_ioremap(dev, res->start, resource_size(res));
+-	if (ssp->mmio_base = NULL) {
+-		dev_err(dev, "failed to ioremap() registers\n");
+-		return -ENODEV;
+-	}
+-
+ 	ssp->irq = platform_get_irq(pdev, 0);
+ 	if (ssp->irq < 0) {
+ 		dev_err(dev, "no IRQ resource defined\n");
+-- 
+2.4.2
 
---
-Julian Anastasov <ja@ssi.bg>
