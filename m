@@ -1,61 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jun 2015 17:28:53 +0000
-Subject: [PATCH] SCSI: Delete unnecessary checks before the function call "put_device"
-Message-Id: <558AE8D5.1020106@users.sourceforge.net>
+From: Chaehyun Lim <chaehyun.lim@gmail.com>
+Date: Mon, 08 Jun 2015 23:23:35 +0000
+Subject: [PATCH V3 2/2] staging: wilc1000: remove UWORD32
+Message-Id: <1433805815-4659-2-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546E2B02.5090902@users.sourceforge.net>
-In-Reply-To: <546E2B02.5090902@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jun 2015 19:24:01 +0200
+Use u32 instead of UWORD32
 
-The put_device() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
 ---
- drivers/scsi/hosts.c      | 4 +---
- drivers/scsi/scsi_sysfs.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+V3 : Capitalize the name on the From and the Signed-off-by
+V2 : remove the definition of UWORD32
 
-diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
-index 8bb173e..84c8565 100644
---- a/drivers/scsi/hosts.c
-+++ b/drivers/scsi/hosts.c
-@@ -336,9 +336,7 @@ static void scsi_host_dev_release(struct device *dev)
- 	}
- 
- 	kfree(shost->shost_data);
--
--	if (parent)
--		put_device(parent);
-+	put_device(parent);
- 	kfree(shost);
+ drivers/staging/wilc1000/coreconfigurator.c | 6 +++---
+ drivers/staging/wilc1000/itypes.h           | 1 -
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
+index 958cf0b..0dc4413 100644
+--- a/drivers/staging/wilc1000/coreconfigurator.c
++++ b/drivers/staging/wilc1000/coreconfigurator.c
+@@ -498,10 +498,10 @@ INLINE WILC_Uint32 get_beacon_timestamp_lo(WILC_Uint8 *data)
+ 	return time_stamp;
  }
  
-diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
-index 1ac38e7..9ed5391 100644
---- a/drivers/scsi/scsi_sysfs.c
-+++ b/drivers/scsi/scsi_sysfs.c
-@@ -425,9 +425,7 @@ static void scsi_device_dev_release_usercontext(struct work_struct *work)
- 	kfree(sdev->vpd_pg80);
- 	kfree(sdev->inquiry);
- 	kfree(sdev);
--
--	if (parent)
--		put_device(parent);
-+	put_device(parent);
- }
+-INLINE UWORD32 get_beacon_timestamp_hi(u8 *data)
++INLINE u32 get_beacon_timestamp_hi(u8 *data)
+ {
+-	UWORD32 time_stamp = 0;
+-	UWORD32 index    = (MAC_HDR_LEN + 4);
++	u32 time_stamp = 0;
++	u32 index    = (MAC_HDR_LEN + 4);
  
- static void scsi_device_dev_release(struct device *dev)
+ 	time_stamp |= data[index++];
+ 	time_stamp |= (data[index++] << 8);
+diff --git a/drivers/staging/wilc1000/itypes.h b/drivers/staging/wilc1000/itypes.h
+index 91c8f0d..c99f8ca 100644
+--- a/drivers/staging/wilc1000/itypes.h
++++ b/drivers/staging/wilc1000/itypes.h
+@@ -44,7 +44,6 @@
+ typedef int WORD32;
+ typedef short WORD16;
+ typedef char WORD8;
+-typedef unsigned int UWORD32;
+ typedef unsigned short UWORD16;
+ 
+ /*****************************************************************************/
 -- 
-2.4.4
+1.9.1
 
