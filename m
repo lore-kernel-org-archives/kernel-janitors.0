@@ -1,30 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 19 Jun 2015 07:46:08 +0000
-Subject: Re: hpsa static checker issues
-Message-Id: <20150619074608.GM28762@mwanda>
+From: Firo Yang <firogm@gmail.com>
+Date: Mon, 08 Jun 2015 09:16:57 +0000
+Subject: [PATCH v2] ARM: pxa: ssp: Use devm_ioremap_resource instead of devm_ioremap
+Message-Id: <1433755017-30159-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <07F70BBF6832E34FA1C923241E8833AB486B33CF@BBYEXM01.pmc-sierra.internal>
-In-Reply-To: <07F70BBF6832E34FA1C923241E8833AB486B33CF@BBYEXM01.pmc-sierra.internal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Don Brace <Don.Brace@pmcs.com>
-Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "iss_storagedev@hp.com" <iss_storagedev@hp.com>, dl Team ESD Storage Dev Support <storagedev@pmcs.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Jun 18, 2015 at 06:42:14PM +0000, Don Brace wrote:
-> Dan,
-> 
-> You had noted three concerns covering: mutex_unlock, decode sense data, and a goto label issue, that were detected during
-> your static checker run. 
-> 
-> I have patches that address these issues. 
-> 
-> I am thinking that I need to post these three patches linux-scsi.
-> 
-> Is that correct?
+Using devm_ioremap_resource() API to simplify the code.
 
-Yes.  That's right.
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+According to Julia's advices:
 
-regards,
-dan carpenter
+The patch "[PATCH v2] ARM: pxa: ssp: remove unnessary free for devm_xxx"
+submited by Firo Yang should be discard. It was obsoleted by
+"[PATCH] ARM: pxa: ssp: remove unnessary free for devm_xxx"
+and
+"[PATCH v2] ARM: pxa: ssp: Use devm_ioremap_resource instead of devm_ioremap"
+
+I am not sure whether it was clear. If there is any doubt, please
+ email me.
+ arch/arm/plat-pxa/ssp.c | 20 +++-----------------
+ 1 file changed, 3 insertions(+), 17 deletions(-)
+
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index ad9529c..d8f331c 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -177,26 +177,12 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res = NULL) {
+-		dev_err(dev, "no memory resource defined\n");
+-		return -ENODEV;
+-	}
+-
+-	res = devm_request_mem_region(dev, res->start, resource_size(res),
+-				      pdev->name);
+-	if (res = NULL) {
+-		dev_err(dev, "failed to request memory resource\n");
+-		return -EBUSY;
+-	}
++	ssp->mmio_base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(ssp->mmio_base))
++		return PTR_ERR(ssp->mmio_base);
+ 
+ 	ssp->phys_base = res->start;
+ 
+-	ssp->mmio_base = devm_ioremap(dev, res->start, resource_size(res));
+-	if (ssp->mmio_base = NULL) {
+-		dev_err(dev, "failed to ioremap() registers\n");
+-		return -ENODEV;
+-	}
+-
+ 	ssp->irq = platform_get_irq(pdev, 0);
+ 	if (ssp->irq < 0) {
+ 		dev_err(dev, "no IRQ resource defined\n");
+-- 
+2.4.2
 
