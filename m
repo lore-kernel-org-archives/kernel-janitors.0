@@ -1,53 +1,54 @@
-From: "Herr Martins D Weber" <test@fumeilaistone.cn>
-Date: Sat, 13 Jun 2015 12:04:41 +0000
-Subject: Lieber Freund!!!
-Message-Id: <4F635E4B-4D85-4A89-BE87-54354E647761@fumeilaistone.cn>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 08 Jun 2015 12:53:19 +0000
+Subject: [PATCH 2/3] lustre: lov: Drop unneeded set_oabufs and set_pga fields
+Message-Id: <1433768000-30964-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1433768000-30964-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1433768000-30964-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Lieber Freund!!!
+The fields set_oabufs and set_pga fields in the lov_request_set structure
+are never set, so drop them.  Drop also the corresponding test and free in
+lov_finish_set.
 
-Ich vermute das diese E-Mail eine ?berraschung f?r Sie sein wird, aber es i=
-st wahr.Ich bin bei einer routinen ?berpr?fung in meiner Bank (StandardBank=
- PLC von S?d Afrika) wo ich arbeite, auf einem Konto gesto?en, was nicht in=
- anspruch genommen worden ist, wo derzeit USD$18.5M (Achtzehn Million, F?nf=
- Hundert Tausend, US Dollar)  gutgeschrieben sind.Dieses Konto geh?rte Herr=
-n Manfred Becker, der ein Kunde in unsere Bank war, der leider verstorben i=
-st. Herrn Manfred Becker war ein geb?rtiger Deutscher.
-
-Damit es mir m?glich ist dieses Geld $18,500,000 inanspruch zunehmen,ben?ti=
-ge ich die zusammenarbeit eines Ausl?ndischen Partners wie Sie,den ich als =
-Verwandter und Erbe des verstorbenen Herrn Manfred Becker vorstellen kann,d=
-amit wir das Geld inanspruch nehmen k?nnen. F?r diese Unterst?tzung erhalte=
-n Sie 30% der Erbschaftsumme und die restlichen 70% teile ich mirmit meinen=
- zwei Arbeitskollegen, die mich bei dieser Transaktion ebenfalls unterst?tz=
-en.
-
-
-Wenn Sie interessiert sind, k?nnen Sie mir bitte eine E-Mail schicken, dami=
-t ich Ihnen mehr Details zukommen lassen kann. N.B.BITTE SENDEN SIE MIR Mar=
-tins D Weber ANTWORT ZU durch mein E-mail: ( martinsdweber@aim.com ) f?R VE=
-RTRAULICHEN GRUND. Schicken Sie keine POST ZU MEINEM B?RO-E-MAIL.(martinsdw=
-eber@aim.com )
-
-
-If you understand english,please  kindly reply with english ( martinsdweber=
-@aim.com )
-
-Mit freundlichen Gr=FC=DFen
-
-Herr Martins D Weber
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+ drivers/staging/lustre/lustre/lov/lov_internal.h |    2 --
+ drivers/staging/lustre/lustre/lov/lov_request.c  |    5 -----
+ 2 files changed, 7 deletions(-)
 
+diff --git a/drivers/staging/lustre/lustre/lov/lov_internal.h b/drivers/staging/lustre/lustre/lov/lov_internal.h
+index f52a90c..e4e0cfd 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_internal.h
++++ b/drivers/staging/lustre/lustre/lov/lov_internal.h
+@@ -102,8 +102,6 @@ struct lov_request_set {
+ 	struct llog_cookie		*set_cookies;
+ 	int				set_cookie_sent;
+ 	struct obd_trans_info		*set_oti;
+-	u32				set_oabufs;
+-	struct brw_page			*set_pga;
+ 	struct list_head			set_list;
+ 	wait_queue_head_t			set_waitq;
+ 	spinlock_t			set_lock;
+diff --git a/drivers/staging/lustre/lustre/lov/lov_request.c b/drivers/staging/lustre/lustre/lov/lov_request.c
+index 7769f14..ada0a3c 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_request.c
++++ b/drivers/staging/lustre/lustre/lov/lov_request.c
+@@ -73,11 +73,6 @@ void lov_finish_set(struct lov_request_set *set)
+ 		kfree(req->rq_oi.oi_osfs);
+ 		kfree(req);
+ 	}
+-
+-	if (set->set_pga) {
+-		int len = set->set_oabufs * sizeof(*set->set_pga);
+-		OBD_FREE_LARGE(set->set_pga, len);
+-	}
+ 	kfree(set);
+ }
+ 
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
