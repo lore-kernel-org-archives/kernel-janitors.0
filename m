@@ -1,48 +1,81 @@
-From: David Fries <david@fries.net>
-Date: Thu, 11 Jun 2015 23:41:33 +0000
-Subject: Re: [patch] [patch 2/2 v2] w1: use correct lock on error in w1_seq_show()
-Message-Id: <20150611234133.GM27260@spacedout.fries.net>
+From: Firo Yang <firogm@gmail.com>
+Date: Mon, 08 Jun 2015 08:06:43 +0000
+Subject: [PATCH v2] ARM: pxa: ssp: remove unnessary free for devm_xxx
+Message-Id: <1433750803-26439-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150602121255.GA20149@spacedout.fries.net>
- <20150604090412.GE22838@mwanda>
- <1064021434036660@web13o.yandex.ru>
-In-Reply-To: <1064021434036660@web13o.yandex.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Evgeniy Polyakov <zbr@ioremap.net>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matt Campbell <mattrcampbell@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Jun 11, 2015 at 06:31:00PM +0300, Evgeniy Polyakov wrote:
-> Hi
->=20
-> 04.06.2015, 12:04, "Dan Carpenter" <dan.carpenter@oracle.com>:
-> > I noticed there was a problem here because Smatch complained:
-> >
-> > =A0=A0=A0=A0=A0=A0=A0=A0drivers/w1/slaves/w1_therm.c:416 w1_seq_show() =
-warn:
-> > =A0=A0=A0=A0=A0=A0=A0=A0inconsistent returns 'mutex:&sl->master->mutex'.
-> > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0Locked on: line 416
-> > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0Unlocked on: line 413
-> >
-> > The problem is that we lock ->mutex but we unlock ->bus_mutex on error.
-> > David Fries says that ->bus_mutex is correct and ->mutex is incorrect.
-> >
-> > Fixes: d9411e57dc7f ('w1: Add support for DS28EA00 sequence to w1-therm=
-')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> Looks good to me, Greg please pull this serie into your tree, if you hadn=
-'t yet.
-> Am I right that this is a stable tree material too?
+A Coccinelle warning.
+It's not necessary to free memory allocated with devm_xxx
+and using these free functions maybe lead to a double free that
+will corrupt the resource subsys. So, I just remove them.
 
-I would expect the answer to be no.  This is a fix to a new feature
-that is in gregkh/char-misc but not yet in Linus's tree.
+By the way, I replace devm_request_mem_region and devm_ioremap with
+devm_ioremap_resource as Julia's suggestion.
 
---=20
-David Fries <david@fries.net>
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ arch/arm/plat-pxa/ssp.c | 24 +++---------------------
+ 1 file changed, 3 insertions(+), 21 deletions(-)
+
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index ad9529c..a278ea0 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -182,21 +182,12 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	res = devm_request_mem_region(dev, res->start, resource_size(res),
+-				      pdev->name);
+-	if (res = NULL) {
+-		dev_err(dev, "failed to request memory resource\n");
+-		return -EBUSY;
+-	}
++	ssp->mmio_base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(ssp->mmio_base))
++		return PTR_ERR(ssp->mmio_base);
+ 
+ 	ssp->phys_base = res->start;
+ 
+-	ssp->mmio_base = devm_ioremap(dev, res->start, resource_size(res));
+-	if (ssp->mmio_base = NULL) {
+-		dev_err(dev, "failed to ioremap() registers\n");
+-		return -ENODEV;
+-	}
+-
+ 	ssp->irq = platform_get_irq(pdev, 0);
+ 	if (ssp->irq < 0) {
+ 		dev_err(dev, "no IRQ resource defined\n");
+@@ -232,25 +223,16 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+ 
+ static int pxa_ssp_remove(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct ssp_device *ssp;
+ 
+ 	ssp = platform_get_drvdata(pdev);
+ 	if (ssp = NULL)
+ 		return -ENODEV;
+ 
+-	iounmap(ssp->mmio_base);
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(res->start, resource_size(res));
+-
+-	clk_put(ssp->clk);
+-
+ 	mutex_lock(&ssp_lock);
+ 	list_del(&ssp->node);
+ 	mutex_unlock(&ssp_lock);
+ 
+-	kfree(ssp);
+ 	return 0;
+ }
+ 
+-- 
+2.4.2
+
