@@ -1,43 +1,100 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 19:55:49 +0000
-Subject: [PATCH] staging: xgifb: Delete an unnecessary check before the function call "XGIfb_search_crt2type"
-Message-Id: <558DAE45.1030802@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 08 Jun 2015 12:53:18 +0000
+Subject: [PATCH 1/3] lustre: lov: Drop lov_lock_handles structure
+Message-Id: <1433768000-30964-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1433768000-30964-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1433768000-30964-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnaud Patard <arnaud.patard@rtp-net.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 21:50:41 +0200
+The lov_lock_handles structure is only used as the type of the field
+set_lockh in the lov_request_set structure, and this field is never set to
+any value.  Drop a test and free of this field in lov_finish_set.  This
+change enables also removing the functions lov_handle2llh and lov_llh_put
+that manipulate values of type lov_lock_handles, but are now never called.
 
-The XGIfb_search_crt2type() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/xgifb/XGI_main_26.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/lov/lov_internal.h |   34 -----------------------
+ drivers/staging/lustre/lustre/lov/lov_request.c  |    3 --
+ 2 files changed, 37 deletions(-)
 
-diff --git a/drivers/staging/xgifb/XGI_main_26.c b/drivers/staging/xgifb/XGI_main_26.c
-index 943d463..ee0906e 100644
---- a/drivers/staging/xgifb/XGI_main_26.c
-+++ b/drivers/staging/xgifb/XGI_main_26.c
-@@ -2090,8 +2090,7 @@ static int __init xgifb_init(void)
- {
- 	char *option = NULL;
+diff --git a/drivers/staging/lustre/lustre/lov/lov_internal.h b/drivers/staging/lustre/lustre/lov/lov_internal.h
+index 5e8bcc6..f52a90c 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_internal.h
++++ b/drivers/staging/lustre/lustre/lov/lov_internal.h
+@@ -71,13 +71,6 @@
+ })
+ #endif
  
--	if (forcecrt2type != NULL)
--		XGIfb_search_crt2type(forcecrt2type);
-+	XGIfb_search_crt2type(forcecrt2type);
- 	if (fb_get_options("xgifb", &option))
- 		return -ENODEV;
- 	XGIfb_setup(option);
--- 
-2.4.4
+-struct lov_lock_handles {
+-	struct portals_handle   llh_handle;
+-	atomic_t	    llh_refcount;
+-	int		     llh_stripe_count;
+-	struct lustre_handle    llh_handles[0];
+-};
+-
+ struct lov_request {
+ 	struct obd_info	  rq_oi;
+ 	struct lov_request_set  *rq_rqset;
+@@ -111,7 +104,6 @@ struct lov_request_set {
+ 	struct obd_trans_info		*set_oti;
+ 	u32				set_oabufs;
+ 	struct brw_page			*set_pga;
+-	struct lov_lock_handles		*set_lockh;
+ 	struct list_head			set_list;
+ 	wait_queue_head_t			set_waitq;
+ 	spinlock_t			set_lock;
+@@ -136,32 +128,6 @@ static inline void lov_put_reqset(struct lov_request_set *set)
+ 		lov_finish_set(set);
+ }
+ 
+-static inline struct lov_lock_handles *
+-lov_handle2llh(struct lustre_handle *handle)
+-{
+-	LASSERT(handle != NULL);
+-	return class_handle2object(handle->cookie);
+-}
+-
+-static inline void lov_llh_put(struct lov_lock_handles *llh)
+-{
+-	CDEBUG(D_INFO, "PUTting llh %p : new refcount %d\n", llh,
+-	       atomic_read(&llh->llh_refcount) - 1);
+-	LASSERT(atomic_read(&llh->llh_refcount) > 0 &&
+-		atomic_read(&llh->llh_refcount) < 0x5a5a);
+-	if (atomic_dec_and_test(&llh->llh_refcount)) {
+-		class_handle_unhash(&llh->llh_handle);
+-		/* The structure may be held by other threads because RCU.
+-		 *   -jxiong */
+-		if (atomic_read(&llh->llh_refcount))
+-			return;
+-
+-		OBD_FREE_RCU(llh, sizeof(*llh) +
+-			     sizeof(*llh->llh_handles) * llh->llh_stripe_count,
+-			     &llh->llh_handle);
+-	}
+-}
+-
+ #define lov_uuid2str(lv, index) \
+ 	(char *)((lv)->lov_tgts[index]->ltd_uuid.uuid)
+ 
+diff --git a/drivers/staging/lustre/lustre/lov/lov_request.c b/drivers/staging/lustre/lustre/lov/lov_request.c
+index f6e1314..7769f14 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_request.c
++++ b/drivers/staging/lustre/lustre/lov/lov_request.c
+@@ -78,9 +78,6 @@ void lov_finish_set(struct lov_request_set *set)
+ 		int len = set->set_oabufs * sizeof(*set->set_pga);
+ 		OBD_FREE_LARGE(set->set_pga, len);
+ 	}
+-	if (set->set_lockh)
+-		lov_llh_put(set->set_lockh);
+-
+ 	kfree(set);
+ }
+ 
 
