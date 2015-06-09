@@ -1,86 +1,57 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 20 Jun 2015 13:47:54 +0000
-Subject: Re: [PATCH] staging: wilc1000: remove unnecessary cast
-Message-Id: <55856F0A.4090203@bfs.de>
+From: Firo Yang <firogm@gmail.com>
+Date: Tue, 09 Jun 2015 07:49:56 +0000
+Subject: [PATCH v2] perf tools: Add error handling
+Message-Id: <1433836196-20647-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150615190459.GA7310@chengyihe-ThinkCentre-M82>
-In-Reply-To: <20150615190459.GA7310@chengyihe-ThinkCentre-M82>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Add error handling code for snprintf and rename in check_backup.
 
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+Since there is  no suitable error code snprintf, I just return the 
+value returned by snprintf.
 
-Am 15.06.2015 21:04, schrieb ChengYi He:
-> kmalloc() returns void pointer.
-> 
-> Signed-off-by: ChengYi He <chengyihetaipei@gmail.com>
-> ---
->  drivers/staging/wilc1000/linux_mon.c  | 2 +-
->  drivers/staging/wilc1000/linux_wlan.c | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/wilc1000/linux_mon.c b/drivers/staging/wilc1000/linux_mon.c
-> index d5860ce..bc7feb4 100644
-> --- a/drivers/staging/wilc1000/linux_mon.c
-> +++ b/drivers/staging/wilc1000/linux_mon.c
-> @@ -258,7 +258,7 @@ static int mon_mgmt_tx(struct net_device *dev, const u8 *buf, size_t len)
->  	len += sizeof(struct tx_complete_mon_data *);
->  	#endif
->  
-> -	mgmt_tx->buff = (char *)kmalloc(len, GFP_ATOMIC);
-> +	mgmt_tx->buff = kmalloc(len, GFP_ATOMIC);
->  	if (mgmt_tx->buff = NULL) {
->  		PRINT_ER("Failed to allocate memory for mgmt_tx buff\n");
->  		return WILC_FAIL;
-> diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
-> index 5f87148..c1e9272 100644
-> --- a/drivers/staging/wilc1000/linux_wlan.c
-> +++ b/drivers/staging/wilc1000/linux_wlan.c
-> @@ -580,7 +580,7 @@ static void linux_wlan_dbg(uint8_t *buff)
->  static void *linux_wlan_malloc_atomic(uint32_t sz)
->  {
->  	char *pntr = NULL;
-> -	pntr = (char *)kmalloc(sz, GFP_ATOMIC);
-> +	pntr = kmalloc(sz, GFP_ATOMIC);
->  	PRINT_D(MEM_DBG, "Allocating %d bytes at address %p\n", sz, pntr);
->  	return (void *)pntr;
->  
-> @@ -588,7 +588,7 @@ static void *linux_wlan_malloc_atomic(uint32_t sz)
->  static void *linux_wlan_malloc(uint32_t sz)
->  {
->  	char *pntr = NULL;
-> -	pntr = (char *)kmalloc(sz, GFP_KERNEL);
-> +	pntr = kmalloc(sz, GFP_KERNEL);
->  	PRINT_D(MEM_DBG, "Allocating %d bytes at address %p\n", sz, pntr);
->  	return (void *)pntr;
->  }
-> @@ -605,7 +605,7 @@ void linux_wlan_free(void *vp)
->  static void *internal_alloc(uint32_t size, uint32_t flag)
->  {
->  	char *pntr = NULL;
-> -	pntr = (char *)kmalloc(size, flag);
-> +	pntr = kmalloc(size, flag);
->  	PRINT_D(MEM_DBG, "Allocating %d bytes at address %p\n", size, pntr);
->  	return (void *)pntr;
->  }
+ tools/perf/util/data.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
+diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+index 1921942..26ab45a 100644
+--- a/tools/perf/util/data.c
++++ b/tools/perf/util/data.c
+@@ -32,15 +32,26 @@ static bool check_pipe(struct perf_data_file *file)
+ 
+ static int check_backup(struct perf_data_file *file)
+ {
++	int ret;
+ 	struct stat st;
+ 
+ 	if (!stat(file->path, &st) && st.st_size) {
+-		/* TODO check errors properly */
+ 		char oldname[PATH_MAX];
+-		snprintf(oldname, sizeof(oldname), "%s.old",
++		ret = snprintf(oldname, sizeof(oldname), "%s.old",
+ 			 file->path);
++		if (ret < 0) {
++			pr_err("failed to make name %s.old\n", file->path);
++			return ret;
++		}
++
+ 		unlink(oldname);
+-		rename(file->path, oldname);
++
++		ret = rename(file->path, oldname);
++		if (ret < 0) {
++			pr_err("failed to rename %s to %s\n", file->path,
++				oldname);
++			return -errno;
++		}
+ 	}
+ 
+ 	return 0;
+-- 
+2.4.2
 
-hi your fix is correct, but the code is strange.
-1. char *pntr = NULL; not needed
-2. you could collaps linux_wlan_malloc,linux_wlan_malloc_atomic into internal_alloc
-
-but why do this functions exists in the first place ?
-
-internal_alloc is kmalloc+PRINT_D, this looks like a left over from some debug session to me.
-why no replace the private alloc with a kmalloc ?
-
-
-just my to cents,
- wh
-
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
