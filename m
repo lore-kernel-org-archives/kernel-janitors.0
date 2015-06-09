@@ -1,57 +1,100 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 14:36:14 +0000
-Subject: [PATCH 1/2] staging: wilc1000: Delete unnecessary checks before two function calls
-Message-Id: <558EB4DE.3080406@users.sourceforge.net>
+From: Chaehyun Lim <chaehyun.lim@gmail.com>
+Date: Tue, 09 Jun 2015 00:19:35 +0000
+Subject: [PATCH V2 4/8] staging: wilc1000: remove WILC_Uint64.
+Message-Id: <1433809179-9769-4-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <558EB32E.6090003@users.sourceforge.net>
-In-Reply-To: <558EB32E.6090003@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 15:56:57 +0200
+Use u64 in stead of WILC_Uint64.
 
-The functions kfree() and release_firmware() test whether their argument
-is NULL and then return immediately.
-Thus the test around the calls is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
 ---
- drivers/staging/wilc1000/linux_wlan.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+V2 : remove the spaces on the subject
+     Capitalize the name on the From and the Signed-off-by
 
-diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
-index b352c50..2aa8d9b 100644
---- a/drivers/staging/wilc1000/linux_wlan.c
-+++ b/drivers/staging/wilc1000/linux_wlan.c
-@@ -2421,11 +2421,7 @@ int mac_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
- 	}
+ drivers/staging/wilc1000/coreconfigurator.c   | 2 +-
+ drivers/staging/wilc1000/coreconfigurator.h   | 2 +-
+ drivers/staging/wilc1000/host_interface.h     | 2 +-
+ drivers/staging/wilc1000/wilc_oswrapper.h     | 1 -
+ drivers/staging/wilc1000/wilc_wfi_netdevice.h | 4 ++--
+ 5 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
+index 3ba0a40..cf21466 100644
+--- a/drivers/staging/wilc1000/coreconfigurator.c
++++ b/drivers/staging/wilc1000/coreconfigurator.c
+@@ -846,7 +846,7 @@ WILC_Sint32 ParseNetworkInfo(u8 *pu8MsgBuffer, tstrNetworkInfo **ppstrNetworkInf
+ 		u32Tsf_Lo = get_beacon_timestamp_lo(pu8msa);
+ 		u32Tsf_Hi = get_beacon_timestamp_hi(pu8msa);
  
- done:
--
--	if (buff != NULL) {
--		kfree(buff);
--	}
--
-+	kfree(buff);
- 	return s32Error;
- }
+-		pstrNetworkInfo->u64Tsf = u32Tsf_Lo | ((WILC_Uint64)u32Tsf_Hi << 32);
++		pstrNetworkInfo->u64Tsf = u32Tsf_Lo | ((u64)u32Tsf_Hi << 32);
  
-@@ -2707,8 +2703,7 @@ static void __exit exit_wilc_driver(void)
- 		}
- 	}
+ 		/* Get SSID */
+ 		get_ssid(pu8msa, pstrNetworkInfo->au8ssid, &(pstrNetworkInfo->u8SsidLen));
+diff --git a/drivers/staging/wilc1000/coreconfigurator.h b/drivers/staging/wilc1000/coreconfigurator.h
+index d833ec9..969fcb7 100644
+--- a/drivers/staging/wilc1000/coreconfigurator.h
++++ b/drivers/staging/wilc1000/coreconfigurator.h
+@@ -429,7 +429,7 @@ typedef struct {
+ 	u16 u16IEsLen;
+ 	void *pJoinParams;
+ 	tstrRSSI strRssi;
+-	WILC_Uint64 u64Tsf; /* time-stamp [Low and High 64 bit] */
++	u64 u64Tsf; /* time-stamp [Low and High 64 bit] */
+ } tstrNetworkInfo;
  
--
--	if ((g_linux_wlan != NULL) && g_linux_wlan->wilc_firmware != NULL) {
-+	if (g_linux_wlan) {
- 		release_firmware(g_linux_wlan->wilc_firmware);
- 		g_linux_wlan->wilc_firmware = NULL;
- 	}
+ /* This structure is used to support parsing of the received Association Response frame */
+diff --git a/drivers/staging/wilc1000/host_interface.h b/drivers/staging/wilc1000/host_interface.h
+index cc28bba..864fa55 100644
+--- a/drivers/staging/wilc1000/host_interface.h
++++ b/drivers/staging/wilc1000/host_interface.h
+@@ -406,7 +406,7 @@ typedef struct {
+ 	/*Remain on channel struvture*/
+ 	tstrHostIfRemainOnChan strHostIfRemainOnChan;
+ 	u8 u8RemainOnChan_pendingreq;
+-	WILC_Uint64 u64P2p_MgmtTimeout;
++	u64 u64P2p_MgmtTimeout;
+ 	u8 u8P2PConnect;
+ 	#endif
+ 
+diff --git a/drivers/staging/wilc1000/wilc_oswrapper.h b/drivers/staging/wilc1000/wilc_oswrapper.h
+index 9db45a9..1060559 100644
+--- a/drivers/staging/wilc1000/wilc_oswrapper.h
++++ b/drivers/staging/wilc1000/wilc_oswrapper.h
+@@ -14,7 +14,6 @@
+ #define WILC_OSW_INTERFACE_VER 2
+ 
+ /* Integer Types */
+-typedef unsigned long long WILC_Uint64;
+ typedef signed char WILC_Sint8;
+ typedef signed short WILC_Sint16;
+ typedef signed int WILC_Sint32;
+diff --git a/drivers/staging/wilc1000/wilc_wfi_netdevice.h b/drivers/staging/wilc1000/wilc_wfi_netdevice.h
+index 32e707b..20822c9 100644
+--- a/drivers/staging/wilc1000/wilc_wfi_netdevice.h
++++ b/drivers/staging/wilc1000/wilc_wfi_netdevice.h
+@@ -123,7 +123,7 @@ struct wilc_wfi_p2pListenParams {
+ 	struct ieee80211_channel *pstrListenChan;
+ 	enum nl80211_channel_type tenuChannelType;
+ 	u32 u32ListenDuration;
+-	WILC_Uint64 u64ListenCookie;
++	u64 u64ListenCookie;
+ 	u32 u32ListenSessionID;
+ };
+ 
+@@ -135,7 +135,7 @@ struct WILC_WFI_priv {
+ 
+ 	#ifdef WILC_P2P
+ 	struct wilc_wfi_p2pListenParams strRemainOnChanParams;
+-	WILC_Uint64 u64tx_cookie;
++	u64 u64tx_cookie;
+ 
+ 	#endif
+ 
 -- 
-2.4.4
+1.9.1
 
