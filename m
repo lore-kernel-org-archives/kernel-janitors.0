@@ -1,40 +1,35 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Wed, 24 Jun 2015 21:57:52 +0000
-Subject: Re: [patch] ACPI / resources: free memory on error in add_region_before()
-Message-Id: <1965684.FcqIK5OKHD@vostro.rjw.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jun 2015 19:27:51 +0000
+Subject: [patch] drm/virtio: remove some dead code
+Message-Id: <20150610192751.GB10145@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150624143015.GD1702@mwanda>
-In-Reply-To: <20150624143015.GD1702@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
 
-On Wednesday, June 24, 2015 05:30:15 PM Dan Carpenter wrote:
-> There is a small memory leak on error.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The goto is correct, and we never reach the return statement so just
+delete the dead code.
 
-Applied, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
-> index fcb7807..10561ce 100644
-> --- a/drivers/acpi/resource.c
-> +++ b/drivers/acpi/resource.c
-> @@ -660,8 +660,10 @@ static int add_region_before(u64 start, u64 end, u8 space_id,
->  		return -ENOMEM;
->  
->  	error = request_range(start, end, space_id, flags, desc);
-> -	if (error)
-> +	if (error) {
-> +		kfree(reg);
->  		return error;
-> +	}
->  
->  	reg->start = start;
->  	reg->end = end;
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+index e0e74c6..b092d7b 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+@@ -443,14 +443,12 @@ int virtio_gpu_ttm_init(struct virtio_gpu_device *vgdev)
+ 	if (r) {
+ 		DRM_ERROR("failed initializing buffer object driver(%d).\n", r);
+ 		goto err_dev_init;
+-		return r;
+ 	}
+ 
+ 	r = ttm_bo_init_mm(&vgdev->mman.bdev, TTM_PL_TT, 0);
+ 	if (r) {
+ 		DRM_ERROR("Failed initializing GTT heap.\n");
+ 		goto err_mm_init;
+-		return r;
+ 	}
+ 	return 0;
+ 
