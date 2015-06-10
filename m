@@ -1,65 +1,48 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 21 Jun 2015 00:49:34 +0000
-Subject: Re: [PATCH 5/5] staging: lustre: osc: drop trivially useless initialization
-Message-Id: <alpine.DEB.2.02.1506210249180.2231@localhost6.localdomain6>
+From: Firo Yang <firogm@gmail.com>
+Date: Wed, 10 Jun 2015 15:20:58 +0000
+Subject: [PATCH] md: fix a build warning
+Message-Id: <1433949658-8455-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434827273-13929-1-git-send-email-Julia.Lawall@lip6.fr> <1434827273-13929-6-git-send-email-Julia.Lawall@lip6.fr> <CAGhQ9VwuaSdEFj_X2=_re=A2kHh8NqhmMVOLTc9X8LOifLAUWw@mail.gmail.com>
-In-Reply-To: <CAGhQ9VwuaSdEFj_X2=_re=A2kHh8NqhmMVOLTc9X8LOifLAUWw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Oleg Drokin <oleg.drokin@intel.com>, kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: neilb@suse.de
+Cc: linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-On Sat, 20 Jun 2015, Joachim Eastwood wrote:
+Warning like this:
 
-> On 20 June 2015 at 21:07, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> > Remove initialization of a variable that is immediately reassigned.
-> >
-> > The semantic patch that makes this change is as follows:
-> > (http://coccinelle.lip6.fr/)
-> >
-> > // <smpl>
-> > @@
-> > type T;
-> > identifier x;
-> > constant C;
-> > expression e;
-> > @@
-> >
-> > T x
-> > - = C
-> >  ;
-> > x = e;
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >  drivers/staging/lustre/lustre/osc/osc_page.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff -u -p a/drivers/staging/lustre/lustre/osc/osc_page.c b/drivers/staging/lustre/lustre/osc/osc_page.c
-> > --- a/drivers/staging/lustre/lustre/osc/osc_page.c
-> > +++ b/drivers/staging/lustre/lustre/osc/osc_page.c
-> > @@ -471,7 +471,7 @@ static int osc_page_flush(const struct l
-> >                           struct cl_io *io)
-> >  {
-> >         struct osc_page *opg = cl2osc_page(slice);
-> > -       int rc = 0;
-> > +       int rc;
-> >
-> >         rc = osc_flush_async_page(env, io, opg);
-> >         return rc;
-> >
-> 
-> The whole rc variable is kinda useless.
-> 
-> Why not make it just:
-> return osc_flush_async_page(env, io, opg);
+drivers/md/md.c: In function ‘update_array_info’:
+drivers/md/md.c:6394:26: warning: logical not is only applied
+to the left hand side of comparison [-Wlogical-not-parentheses]
+      !mddev->persistent  != info->not_persistent||
 
-Sure.  I'll fix that.
+I fix it by enclosing !mddev->persistent with parentheses
 
-julia
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+By the way, I also fixed a line over 80 characters warning outputed
+by ./scripts/checkpatch.pl
+
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ drivers/md/md.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index dd85be9..b420d82 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -6391,9 +6391,10 @@ static int update_array_info(struct mddev *mddev, mdu_array_info_t *info)
+ 	    mddev->ctime         != info->ctime         ||
+ 	    mddev->level         != info->level         ||
+ /*	    mddev->layout        != info->layout        || */
+-	    !mddev->persistent	 != info->not_persistent||
++	    (!mddev->persistent) != info->not_persistent ||
+ 	    mddev->chunk_sectors != info->chunk_size >> 9 ||
+-	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT to change */
++	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT
++		to change */
+ 	    ((state^info->state) & 0xfffffe00)
+ 		)
+ 		return -EINVAL;
+-- 
+2.4.2
+
