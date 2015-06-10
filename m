@@ -1,39 +1,57 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 29 Jun 2015 08:18:04 +0000
-Subject: Re: [PATCH] crypto-qat: Deletion of unnecessary checks before two function calls
-Message-Id: <20150629081804.GB12005@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jun 2015 10:59:27 +0000
+Subject: [patch -next] iommu: checking for NULL instead of IS_ERR
+Message-Id: <20150610105926.GA21772@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <558D9DC8.2000603@users.sourceforge.net>
-In-Reply-To: <558D9DC8.2000603@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "David S. Miller" <davem@davemloft.net>, Tadeusz Struk <tadeusz.struk@intel.com>, qat-linux@intel.com, linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 26, 2015 at 08:45:28PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 26 Jun 2015 20:30:11 +0200
-> 
-> The functions kfree() and release_firmware() test whether their argument
-> is NULL and then return immediately.
-> Thus the test around the calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The iommu_group_alloc() and iommu_group_get_for_dev() functions return
+error pointers, they never return NULL.
 
-Applied.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index c520c0c..9c25e6be 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -788,15 +788,16 @@ static struct iommu_group *iommu_group_get_for_pci_dev(struct pci_dev *pdev)
+ 
+ 	/* No shared group found, allocate new */
+ 	group = iommu_group_alloc();
+-	if (group) {
+-		/*
+-		 * Try to allocate a default domain - needs support from the
+-		 * IOMMU driver.
+-		 */
+-		group->default_domain = __iommu_domain_alloc(pdev->dev.bus,
+-							     IOMMU_DOMAIN_DMA);
+-		group->domain = group->default_domain;
+-	}
++	if (IS_ERR(group))
++		return NULL;
++
++	/*
++	 * Try to allocate a default domain - needs support from the
++	 * IOMMU driver.
++	 */
++	group->default_domain = __iommu_domain_alloc(pdev->dev.bus,
++						     IOMMU_DOMAIN_DMA);
++	group->domain = group->default_domain;
+ 
+ 	return group;
+ }
+@@ -1548,8 +1549,8 @@ int iommu_request_dm_for_dev(struct device *dev)
+ 
+ 	/* Device must already be in a group before calling this function */
+ 	group = iommu_group_get_for_dev(dev);
+-	if (!group)
+-		return -EINVAL;
++	if (IS_ERR(group))
++		return PTR_ERR(group);
+ 
+ 	mutex_lock(&group->mutex);
+ 
