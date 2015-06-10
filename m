@@ -1,40 +1,57 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 Jun 2015 10:20:00 +0000
-Subject: [patch] [media] m88ds3103: a couple missing error codes
-Message-Id: <20150602102000.GD11247@mwanda>
+Date: Wed, 10 Jun 2015 15:51:54 +0000
+Subject: re: dsa: add device tree bindings to register DSA switches
+Message-Id: <20150610155154.GL10549@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We need to set some error codes here.
+Hello Florian Fainelli,
 
-Fixes: f01919e8f54f ('[media] m88ds3103: add I2C client binding')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch 5e95329b701c: "dsa: add device tree bindings to register
+DSA switches" from Mar 22, 2013, leads to the following static
+checker warning:
 
-diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
-index 01b9ded..7b21f1a 100644
---- a/drivers/media/dvb-frontends/m88ds3103.c
-+++ b/drivers/media/dvb-frontends/m88ds3103.c
-@@ -1563,6 +1563,7 @@ static int m88ds3103_probe(struct i2c_client *client,
- 		u8tmp = 0x10;
- 		break;
- 	default:
-+		ret = -EINVAL;
- 		goto err_kfree;
- 	}
- 
-@@ -1590,8 +1591,10 @@ static int m88ds3103_probe(struct i2c_client *client,
- 	dev->i2c_adapter = i2c_add_mux_adapter(client->adapter, &client->dev,
- 					       dev, 0, 0, 0, m88ds3103_select,
- 					       m88ds3103_deselect);
--	if (dev->i2c_adapter = NULL)
-+	if (dev->i2c_adapter = NULL) {
-+		ret = -ENOMEM;
- 		goto err_kfree;
-+	}
- 
- 	/* create dvb_frontend */
- 	memcpy(&dev->fe.ops, &m88ds3103_ops, sizeof(struct dvb_frontend_ops));
+	net/dsa/dsa.c:669 dsa_of_probe()
+	error: testing array offset 'port_index' after use.
+
+net/dsa/dsa.c
+   644                          port_index = be32_to_cpup(port_reg);
+   645  
+   646                          port_name = of_get_property(port, "label", NULL);
+   647                          if (!port_name)
+   648                                  continue;
+   649  
+   650                          cd->port_dn[port_index] = port;
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Write.
+
+   651  
+   652                          cd->port_names[port_index] = kstrdup(port_name,
+   653                                          GFP_KERNEL);
+   654                          if (!cd->port_names[port_index]) {
+   655                                  ret = -ENOMEM;
+   656                                  goto out_free_chip;
+   657                          }
+   658  
+   659                          link = of_parse_phandle(port, "link", 0);
+   660  
+   661                          if (!strcmp(port_name, "dsa") && link &&
+   662                                          pd->nr_chips > 1) {
+   663                                  ret = dsa_of_setup_routing_table(pd, cd,
+   664                                                  chip_index, port_index, link);
+   665                                  if (ret)
+   666                                          goto out_free_chip;
+   667                          }
+   668  
+   669                          if (port_index = DSA_MAX_PORTS)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The write was out of bounds memory corruption.  Oops.  Too late.
+
+   670                                  break;
+   671                  }
+
+regards,
+dan carpenter
