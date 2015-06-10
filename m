@@ -1,40 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 11 Jun 2015 15:14:34 +0000
-Subject: [patch] ALSA: hdsp: silence a sprinft() overflow warning
-Message-Id: <20150611151434.GE12192@mwanda>
+Date: Wed, 10 Jun 2015 19:27:11 +0000
+Subject: [patch] drm/virtio: checking for NULL instead of IS_ERR
+Message-Id: <20150610192710.GA10145@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, Benoit Taine <benoit.taine@lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
 
-card->shortname is a 32 char string so the sprintf() can theoretically
-overflow.  snd_rawmidi_new() can accept strings up to 64 bytes long.
+virtio_gpu_alloc_object() returns an error pointer, it never returns
+NULL.
 
-I have made the temporay buf[] array 40 bytes long and changed the
-sprintf() to snprintf().
-
+Fixes: dc5698e80cf7 ('Add virtio gpu driver.')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
-index c19e021..c1fe1d3 100644
---- a/sound/pci/rme9652/hdsp.c
-+++ b/sound/pci/rme9652/hdsp.c
-@@ -1526,7 +1526,7 @@ static struct snd_rawmidi_ops snd_hdsp_midi_input  
- static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int id)
- {
--	char buf[32];
-+	char buf[40];
+diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
+index 25bf333..df198d9 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_fb.c
++++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
+@@ -299,8 +299,8 @@ static int virtio_gpufb_create(struct drm_fb_helper *helper,
  
- 	hdsp->midi[id].id = id;
- 	hdsp->midi[id].rmidi = NULL;
-@@ -1537,7 +1537,7 @@ static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int i
- 	hdsp->midi[id].pending = 0;
- 	spin_lock_init (&hdsp->midi[id].lock);
+ 	size = mode_cmd.pitches[0] * mode_cmd.height;
+ 	obj = virtio_gpu_alloc_object(dev, size, false, true);
+-	if (!obj)
+-		return -ENOMEM;
++	if (IS_ERR(obj))
++		return PTR_ERR(obj);
  
--	sprintf (buf, "%s MIDI %d", card->shortname, id+1);
-+	snprintf(buf, sizeof(buf), "%s MIDI %d", card->shortname, id + 1);
- 	if (snd_rawmidi_new (card, buf, id, 1, 1, &hdsp->midi[id].rmidi) < 0)
- 		return -1;
- 
+ 	virtio_gpu_resource_id_get(vgdev, &resid);
+ 	virtio_gpu_cmd_create_resource(vgdev, resid, format,
