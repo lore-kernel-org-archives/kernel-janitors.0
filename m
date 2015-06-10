@@ -1,58 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 17:42:13 +0000
-Subject: Re: [PATCH] fs-eventpoll: Deletion of unnecessary checks before the function call "__pm_stay_awake"
-Message-Id: <558D8EF5.9030701@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jun 2015 15:53:42 +0000
+Subject: re: mpls: Add MPLS entropy label in flow_keys
+Message-Id: <20150610155342.GM10549@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546B04E2.80000@users.sourceforge.net>
-In-Reply-To: <546B04E2.80000@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Nov 2014 09:27:16 +0100
-> 
-> The __pm_stay_awake() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/eventpoll.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 7bcfff9..eec2e85 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -555,8 +555,7 @@ static inline void ep_pm_stay_awake(struct epitem *epi)
->  {
->  	struct wakeup_source *ws = ep_wakeup_source(epi);
->  
-> -	if (ws)
-> -		__pm_stay_awake(ws);
-> +	__pm_stay_awake(ws);
->  }
->  
->  static inline bool ep_has_wakeup_source(struct epitem *epi)
-> @@ -571,8 +570,7 @@ static inline void ep_pm_stay_awake_rcu(struct epitem *epi)
->  
->  	rcu_read_lock();
->  	ws = rcu_dereference(epi->ws);
-> -	if (ws)
-> -		__pm_stay_awake(ws);
-> +	__pm_stay_awake(ws);
->  	rcu_read_unlock();
->  }
->  
-> 
+Hello Tom Herbert,
 
-How are the chances to integrate this update suggestion
-into another source code repository?
+The patch b3baa0fbd02a: "mpls: Add MPLS entropy label in flow_keys"
+from Jun 4, 2015, leads to the following static checker warning:
 
-Regards,
-Markus
+	net/core/flow_dissector.c:303 __skb_flow_dissect()
+	warn: masked condition '(() & 4294963200) = 7' is always false.
+
+net/core/flow_dissector.c
+   299                  if (!hdr)
+   300                          return false;
+   301  
+   302                  if ((ntohl(hdr[0].entry) & MPLS_LS_LABEL_MASK) =
+   303                       MPLS_LABEL_ENTROPY) {
+
+
+#define MPLS_LS_LABEL_MASK      0xFFFFF000
+#define MPLS_LABEL_ENTROPY              7 /* RFC6790 */
+
+This can never be true.  Not sure what was intended.
+
+   304                          if (skb_flow_dissector_uses_key(flow_dissector,
+   305                                                          FLOW_DISSECTOR_KEY_MPLS_ENTROPY)) {
+   306                                  key_keyid = skb_flow_dissector_target(flow_dissector,
+   307                                                                        FLOW_DISSECTOR_KEY_MPLS_ENTROPY,
+   308                                                                        target_container);
+   309                                  key_keyid->keyid = hdr[1].entry &
+   310                                          htonl(MPLS_LS_LABEL_MASK);
+   311                          }
+   312  
+   313                          key_basic->n_proto = proto;
+   314                          key_basic->ip_proto = ip_proto;
+   315                          key_control->thoff = (u16)nhoff;
+   316  
+   317                          return true;
+   318                  }
+   319  
+   320                  return true;
+   321          }
+
+regards,
+dan carpenter
