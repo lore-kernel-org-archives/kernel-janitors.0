@@ -1,50 +1,43 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Date: Wed, 10 Jun 2015 16:55:45 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 10 Jun 2015 17:33:22 +0000
 Subject: Re: [patch] ASoC: fsl: add an error check
-Message-Id: <20150610165544.GA8552@Asurada>
+Message-Id: <20150610173322.GN14071@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="6PH4sE4TNvTKzKhJ"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150610153723.GB10549@mwanda>
 In-Reply-To: <20150610153723.GB10549@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Timur Tabi <timur@tabi.org>, Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Cc: Timur Tabi <timur@tabi.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+
+
+--6PH4sE4TNvTKzKhJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 On Wed, Jun 10, 2015 at 06:37:23PM +0300, Dan Carpenter wrote:
 > My static checker complains that:
-> 
+>=20
 > 	sound/soc/fsl/imx-wm8962.c:196 imx_wm8962_probe() warn:
 > 	we tested 'ret' before and it was 'false'
-> 
-> The intent was that we use "ret" to check imx_audmux_v2_configure_port().
-> 
-> Fixes: 8de2ae2a7f1f ('ASoC: fsl: add imx-wm8962 machine driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Could you please use an subject like:
-ASoC: imx-wm8962: Add a missing error check
-(Since it only applies to this file)
+Applied, thanks.
 
-Otherwise, Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+--6PH4sE4TNvTKzKhJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Thank you indeed for the fix
-Nicolin
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> ---
-> I assume checking for an error here will not change anything but I have
-> not tested this patch.
-> 
-> diff --git a/sound/soc/fsl/imx-wm8962.c b/sound/soc/fsl/imx-wm8962.c
-> index cd146d4..b38b98c 100644
-> --- a/sound/soc/fsl/imx-wm8962.c
-> +++ b/sound/soc/fsl/imx-wm8962.c
-> @@ -190,7 +190,7 @@ static int imx_wm8962_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev, "audmux internal port setup failed\n");
->  		return ret;
->  	}
-> -	imx_audmux_v2_configure_port(ext_port,
-> +	ret = imx_audmux_v2_configure_port(ext_port,
->  			IMX_AUDMUX_V2_PTCR_SYN,
->  			IMX_AUDMUX_V2_PDCR_RXDSEL(int_port));
->  	if (ret) {
+iQEcBAEBCAAGBQJVeHThAAoJECTWi3JdVIfQSaUH/1tsyvDV53+1YCX/srzK2hrX
+iACRMxDjE/SUz/lPGaEkhGWT3a7Y40szgW6h2HnNVX9/RksSAHuTQeFHzvCgVgS2
+Scfdl6uNkzuwGTqTqV5j4wlE5ir966+D5uI0L5mhSjrnyEeIbPPT61PSY1O3OXIQ
+4g0Vac4AcCkWGGCdPlHBtrfsZO9KuIn1seR03hut1MmBrKiPfAr+f/crOCND+Sm6
+yQH9I1WSSpWPFlIlaVtL8TKt3ZSP5F73ReUc9PojIc4B2mif/4hM8gHkj2nXeRKH
+g6VpN2kwpUqI1VvCdJWxfNZlCk8HhYMzN1i0B3XZtB/wwhREkkZMyZeK6pIEcSI=
+=wzMN
+-----END PGP SIGNATURE-----
+
+--6PH4sE4TNvTKzKhJ--
