@@ -1,43 +1,31 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 10 Jun 2015 17:33:22 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jun 2015 19:17:32 +0000
 Subject: Re: [patch] ASoC: fsl: add an error check
-Message-Id: <20150610173322.GN14071@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6PH4sE4TNvTKzKhJ"
+Message-Id: <20150610191732.GC11734@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150610153723.GB10549@mwanda>
-In-Reply-To: <20150610153723.GB10549@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Timur Tabi <timur@tabi.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+ <20150610165544.GA8552@Asurada>
+In-Reply-To: <20150610165544.GA8552@Asurada>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: alsa-devel@alsa-project.org, Timur Tabi <timur@tabi.org>, Xiubo Li <Xiubo.Lee@gmail.com>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linuxppc-dev@lists.ozlabs.org
 
+> Could you please use an subject like:
+> ASoC: imx-wm8962: Add a missing error check
+> (Since it only applies to this file)
+> 
 
---6PH4sE4TNvTKzKhJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I have been meaning to say something about this.
 
-On Wed, Jun 10, 2015 at 06:37:23PM +0300, Dan Carpenter wrote:
-> My static checker complains that:
->=20
-> 	sound/soc/fsl/imx-wm8962.c:196 imx_wm8962_probe() warn:
-> 	we tested 'ret' before and it was 'false'
+This is sort of a recurrent problem for me because I'm often the first
+person to touch a driver after it's added.  I just copied your patch
+prefix from 8de2ae2a7f1f ('ASoC: fsl: add imx-wm8962 machine driver').
+Really you should also have used "ASoC: imx-wm8962:" as well.
 
-Applied, thanks.
+This is the third new driver today where I have faced this situation.
 
---6PH4sE4TNvTKzKhJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+regards,
+dan carpenter
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVeHThAAoJECTWi3JdVIfQSaUH/1tsyvDV53+1YCX/srzK2hrX
-iACRMxDjE/SUz/lPGaEkhGWT3a7Y40szgW6h2HnNVX9/RksSAHuTQeFHzvCgVgS2
-Scfdl6uNkzuwGTqTqV5j4wlE5ir966+D5uI0L5mhSjrnyEeIbPPT61PSY1O3OXIQ
-4g0Vac4AcCkWGGCdPlHBtrfsZO9KuIn1seR03hut1MmBrKiPfAr+f/crOCND+Sm6
-yQH9I1WSSpWPFlIlaVtL8TKt3ZSP5F73ReUc9PojIc4B2mif/4hM8gHkj2nXeRKH
-g6VpN2kwpUqI1VvCdJWxfNZlCk8HhYMzN1i0B3XZtB/wwhREkkZMyZeK6pIEcSI=
-=wzMN
------END PGP SIGNATURE-----
-
---6PH4sE4TNvTKzKhJ--
