@@ -1,69 +1,42 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 09 Jun 2015 05:56:41 +0000
-Subject: Re: [PATCH] perf tools: Add error handling
-Message-Id: <alpine.DEB.2.02.1506090755520.2069@localhost6.localdomain6>
+From: Firo Yang <firogm@gmail.com>
+Date: Thu, 11 Jun 2015 01:41:10 +0000
+Subject: [PATCH v2] md: fix a build warning
+Message-Id: <1433986870-7014-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433817301-15360-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1433817301-15360-1-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: neilb@suse.de
+Cc: linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-On Tue, 9 Jun 2015, Firo Yang wrote:
+Warning like this:
 
-> Add error handling code for snprintf and rename in check_backup.
-> 
-> Signed-off-by: Firo Yang <firogm@gmail.com>
-> ---
->  tools/perf/util/data.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-> index 1921942..d3a7363 100644
-> --- a/tools/perf/util/data.c
-> +++ b/tools/perf/util/data.c
-> @@ -32,15 +32,26 @@ static bool check_pipe(struct perf_data_file *file)
->  
->  static int check_backup(struct perf_data_file *file)
->  {
-> +	int ret;
->  	struct stat st;
->  
->  	if (!stat(file->path, &st) && st.st_size) {
-> -		/* TODO check errors properly */
->  		char oldname[PATH_MAX];
-> -		snprintf(oldname, sizeof(oldname), "%s.old",
-> +		ret = snprintf(oldname, sizeof(oldname), "%s.old",
->  			 file->path);
-> +		if (ret < 0) {
-> +			pr_err("failed to make name %s.old\n", file->path);
-> +			return -1;
+drivers/md/md.c: In function ‘update_array_info’:
+drivers/md/md.c:6394:26: warning: logical not is only applied
+to the left hand side of comparison [-Wlogical-not-parentheses]
+      !mddev->persistent  != info->not_persistent||
 
-Why -1?  See what error code is typically used for these functions and 
-return that.
+Fix it as Neil Brown said:
+mddev->persistent != !info->not_persistent ||
 
-julia
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+ drivers/md/md.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +		}
-> +
->  		unlink(oldname);
-> -		rename(file->path, oldname);
-> +
-> +		ret = rename(file->path, oldname);
-> +		if (ret < 0) {
-> +			pr_err("failed to rename %s to %s\n", file->path,
-> +				oldname);
-> +			return -1;
-> +		}
->  	}
->  
->  	return 0;
-> -- 
-> 2.4.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index dd85be9..a3528b9 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -6391,7 +6391,7 @@ static int update_array_info(struct mddev *mddev, mdu_array_info_t *info)
+ 	    mddev->ctime         != info->ctime         ||
+ 	    mddev->level         != info->level         ||
+ /*	    mddev->layout        != info->layout        || */
+-	    !mddev->persistent	 != info->not_persistent||
++	    mddev->persistent	 != !info->not_persistent ||
+ 	    mddev->chunk_sectors != info->chunk_size >> 9 ||
+ 	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT to change */
+ 	    ((state^info->state) & 0xfffffe00)
+-- 
+2.4.2
+
