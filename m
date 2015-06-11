@@ -1,71 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 17:17:35 +0000
-Subject: Re: [PATCH] GPU-DRM-Exynos: Delete unnecessary checks before two function calls
-Message-Id: <558EDAAF.30803@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Jun 2015 15:20:46 +0000
+Subject: [patch] clk: meson: add some error handling in meson_clk_register_cpu()
+Message-Id: <20150611152046.GG12192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <54D28870.3060400@users.sourceforge.net> <54D329D0.7050006@samsung.com>
-In-Reply-To: <54D329D0.7050006@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Wed, 4 Feb 2015 21:54:45 +0100
->>
->> The functions phy_power_on() and vunmap() perform also input
->> parameter validation. Thus the test around their calls is not needed.
->>
->> This issue was detected by using the Coccinelle software.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  drivers/gpu/drm/exynos/exynos_dp_core.c   | 6 ++----
->>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 2 +-
->>  2 files changed, 3 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> index 34d46aa..306cf1d 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> @@ -1057,14 +1057,12 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
->>  
->>  static void exynos_dp_phy_init(struct exynos_dp_device *dp)
->>  {
->> -	if (dp->phy)
->> -		phy_power_on(dp->phy);
->> +	phy_power_on(dp->phy);
->>  }
->>  
->>  static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
->>  {
->> -	if (dp->phy)
->> -		phy_power_off(dp->phy);
->> +	phy_power_off(dp->phy);
->>  }
->>  
->>  static void exynos_dp_poweron(struct exynos_drm_display *display)
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> index e12ea90..0dd448a 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> @@ -313,7 +313,7 @@ static void exynos_drm_fbdev_destroy(struct drm_device *dev,
->>  	struct exynos_drm_gem_obj *exynos_gem_obj = exynos_fbd->exynos_gem_obj;
->>  	struct drm_framebuffer *fb;
->>  
->> -	if (is_drm_iommu_supported(dev) && exynos_gem_obj->buffer->kvaddr)
->> +	if (is_drm_iommu_supported(dev))
->>  		vunmap(exynos_gem_obj->buffer->kvaddr);
->>  
->>  	/* release drm framebuffer and real buffer */
->>
-> 
-> Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
+This error handling hopefully isn't needed but it make the static
+checkers happy.
 
-Do the chances increase to integrate this update suggestion
-into another source code repository?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
+diff --git a/drivers/clk/meson/clk-cpu.c b/drivers/clk/meson/clk-cpu.c
+index 148e99f..71ad493 100644
+--- a/drivers/clk/meson/clk-cpu.c
++++ b/drivers/clk/meson/clk-cpu.c
+@@ -213,22 +213,30 @@ struct clk *meson_clk_register_cpu(const struct clk_conf *clk_conf,
+ 	if (!pclk) {
+ 		pr_err("%s: could not lookup parent clock %s\n",
+ 				__func__, clk_conf->clks_parent[0]);
+-		return ERR_PTR(-EINVAL);
++		ret = -EINVAL;
++		goto free_clk;
+ 	}
+ 
+ 	ret = clk_notifier_register(pclk, &clk_cpu->clk_nb);
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for %s\n",
+ 				__func__, clk_conf->clk_name);
+-		return ERR_PTR(-EINVAL);
++		goto free_clk;
+ 	}
+ 
+ 	clk = clk_register(NULL, &clk_cpu->hw);
+ 	if (IS_ERR(clk)) {
+-		clk_notifier_unregister(pclk, &clk_cpu->clk_nb);
+-		kfree(clk_cpu);
++		ret = PTR_ERR(clk);
++		goto unregister_clk_nb;
+ 	}
+ 
+ 	return clk;
++
++unregister_clk_nb:
++	clk_notifier_unregister(pclk, &clk_cpu->clk_nb);
++free_clk:
++	kfree(clk_cpu);
++
++	return ERR_PTR(ret);
+ }
+ 
