@@ -1,61 +1,58 @@
-From: Djalal Harouni <tixxdz@opendz.org>
-Date: Wed, 24 Jun 2015 12:45:33 +0000
-Subject: Re: [PATCH] kdbus: Delete an unnecessary check before the function call "kdbus_domain_unref"
-Message-Id: <20150624124533.GA9939@dztty>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Jun 2015 15:46:31 +0000
+Subject: [patch] pinctrl: samsung: don't truncate the last char of "-grp"
+Message-Id: <20150611154631.GA13202@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <558AA52B.1030809@users.sourceforge.net>
-In-Reply-To: <558AA52B.1030809@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Daniel Mack <daniel@zonque.org>, David Herrmann <dh.herrmann@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 24, 2015 at 02:40:11PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 24 Jun 2015 14:30:17 +0200
-> 
-> The kdbus_domain_unref() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  ipc/kdbus/fs.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/ipc/kdbus/fs.c b/ipc/kdbus/fs.c
-> index d01f33b..205a3ad 100644
-> --- a/ipc/kdbus/fs.c
-> +++ b/ipc/kdbus/fs.c
-> @@ -325,9 +325,7 @@ static void fs_super_kill(struct super_block *sb)
->  	}
->  
->  	kill_anon_super(sb);
-> -
-> -	if (domain)
-> -		kdbus_domain_unref(domain);
-> +	kdbus_domain_unref(domain);
->  }
->  
->  static int fs_super_set(struct super_block *sb, void *data)
-> -- 
-> 2.4.4
-> 
+We allocate sizeof("-grp") which is 5 bytes but then we pass 4 to the
+snprintf() so the last 'p' char is truncated away.
 
-Reviewed-by: Djalal Harouni <tixxdz@opendz.org>
+The kzalloc() can be made into kmalloc() since we are going to fill
+the whole buffer.  But I know that Walter Harms is going to grumble if I
+don't use kasprintf().  :P  And also checkpatch.pl these days complains
+that the "allocation failed" printks aren't needed so I removed them.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Djalal Harouni
-http://opendz.org
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index f5619fb..f804a61c 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -215,12 +215,9 @@ static int exynos5440_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	 * Allocate memory for pin group name. The pin group name is derived
+ 	 * from the node name from which these map entries are be created.
+ 	 */
+-	gname = kzalloc(strlen(np->name) + GSUFFIX_LEN, GFP_KERNEL);
+-	if (!gname) {
+-		dev_err(dev, "failed to alloc memory for group name\n");
++	gname = kasprintf(GFP_KERNEL, "%s%s", np->name, GROUP_SUFFIX);
++	if (!gname)
+ 		goto free_map;
+-	}
+-	snprintf(gname, strlen(np->name) + 4, "%s%s", np->name, GROUP_SUFFIX);
+ 
+ 	/*
+ 	 * don't have config options? then skip over to creating function
+@@ -710,14 +707,10 @@ static int exynos5440_pinctrl_parse_dt(struct platform_device *pdev,
+ 		}
+ 
+ 		/* derive pin group name from the node name */
+-		gname = devm_kzalloc(dev, strlen(cfg_np->name) + GSUFFIX_LEN,
+-					GFP_KERNEL);
+-		if (!gname) {
+-			dev_err(dev, "failed to alloc memory for group name\n");
++		gname = devm_kasprintf(dev, GFP_KERNEL,
++				       "%s%s", cfg_np->name, GROUP_SUFFIX);
++		if (!gname)
+ 			return -ENOMEM;
+-		}
+-		snprintf(gname, strlen(cfg_np->name) + 4, "%s%s", cfg_np->name,
+-			 GROUP_SUFFIX);
+ 
+ 		grp->name = gname;
+ 		grp->pins = pin_list;
