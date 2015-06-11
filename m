@@ -1,88 +1,97 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 21:23:10 +0000
-Subject: [PATCH 2/2] drm/msm/dsi: One function call less in dsi_init() after error detection
-Message-Id: <558F143E.60300@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 11 Jun 2015 12:02:53 +0000
+Subject: [PATCH 2/7] lustre: lmv: Replace uses of OBD_{ALLOC,FREE}_LARGE
+Message-Id: <1434024178-8785-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <558F12BA.60709@users.sourceforge.net>
-In-Reply-To: <558F12BA.60709@users.sourceforge.net>
+References: <1434024178-8785-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434024178-8785-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Hai Li <hali@codeaurora.org>, dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Rob Clark <robdclark@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 22:23:28 +0200
+Replace uses of OBD_ALLOC_LARGE by libcfs_kvzalloc and OBD_FREE_LARGE by
+kvfree.
 
-The dsi_destroy() function was called in two cases by the dsi_init() function
-during error handling even if the passed variable contained a null pointer.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-* This implementation detail could be improved by adjustments for jump
-  targets according to the Linux coding style convention.
+// <smpl>
+@@
+expression ptr,size;
+@@
 
-* Drop an unnecessary initialisation for the variable "msm_dsi" then.
+- OBD_ALLOC_LARGE(ptr,size)
++ ptr = libcfs_kvzalloc(size, GFP_NOFS)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@@
+expression ptr,size;
+@@
+
+- OBD_FREE_LARGE(ptr, size);
++ kvfree(ptr);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/gpu/drm/msm/dsi/dsi.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi.c b/drivers/gpu/drm/msm/dsi/dsi.c
-index dc4f38f..971f000 100644
---- a/drivers/gpu/drm/msm/dsi/dsi.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi.c
-@@ -74,19 +74,15 @@ static void dsi_destroy(struct msm_dsi *msm_dsi)
+diff --git a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+index aca686a..ac5053c 100644
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -1045,7 +1045,7 @@ static int lmv_iocontrol(unsigned int cmd, struct obd_export *exp,
+ 				reqlen = offsetof(typeof(*hur),
+ 						  hur_user_item[nr])
+ 					 + hur->hur_request.hr_data_len;
+-				OBD_ALLOC_LARGE(req, reqlen);
++				req = libcfs_kvzalloc(reqlen, GFP_NOFS);
+ 				if (req = NULL)
+ 					return -ENOMEM;
  
- static struct msm_dsi *dsi_init(struct platform_device *pdev)
- {
--	struct msm_dsi *msm_dsi = NULL;
-+	struct msm_dsi *msm_dsi;
- 	int ret;
+@@ -1055,7 +1055,7 @@ static int lmv_iocontrol(unsigned int cmd, struct obd_export *exp,
+ 						    reqlen, req, uarg);
+ 				if (rc1 != 0 && rc = 0)
+ 					rc = rc1;
+-				OBD_FREE_LARGE(req, reqlen);
++				kvfree(req);
+ 			}
+ 		}
+ 		break;
+@@ -2400,13 +2400,13 @@ static int lmv_packmd(struct obd_export *exp, struct lov_mds_md **lmmp,
+ 		return mea_size;
  
--	if (!pdev) {
--		ret = -ENXIO;
--		goto fail;
--	}
-+	if (!pdev)
-+		return -ENXIO;
+ 	if (*lmmp && !lsm) {
+-		OBD_FREE_LARGE(*lmmp, mea_size);
++		kvfree(*lmmp);
+ 		*lmmp = NULL;
+ 		return 0;
+ 	}
  
- 	msm_dsi = devm_kzalloc(&pdev->dev, sizeof(*msm_dsi), GFP_KERNEL);
--	if (!msm_dsi) {
--		ret = -ENOMEM;
--		goto fail;
--	}
-+	if (!msm_dsi)
-+		return -ENOMEM;
- 	DBG("dsi probed=%p", msm_dsi);
+ 	if (*lmmp = NULL) {
+-		OBD_ALLOC_LARGE(*lmmp, mea_size);
++		*lmmp = libcfs_kvzalloc(mea_size, GFP_NOFS);
+ 		if (*lmmp = NULL)
+ 			return -ENOMEM;
+ 	}
+@@ -2449,14 +2449,14 @@ static int lmv_unpackmd(struct obd_export *exp, struct lov_stripe_md **lsmp,
+ 		return mea_size;
  
- 	msm_dsi->pdev = pdev;
-@@ -95,21 +91,21 @@ static struct msm_dsi *dsi_init(struct platform_device *pdev)
- 	/* Init dsi host */
- 	ret = msm_dsi_host_init(msm_dsi);
- 	if (ret)
--		goto fail;
-+		goto destroy_dsi;
+ 	if (*lsmp != NULL && lmm = NULL) {
+-		OBD_FREE_LARGE(*tmea, mea_size);
++		kvfree(*tmea);
+ 		*lsmp = NULL;
+ 		return 0;
+ 	}
  
- 	/* GET dsi PHY */
- 	ret = dsi_get_phy(msm_dsi);
- 	if (ret)
--		goto fail;
-+		goto destroy_dsi;
+ 	LASSERT(mea_size = lmm_size);
  
- 	/* Register to dsi manager */
- 	ret = msm_dsi_manager_register(msm_dsi);
- 	if (ret)
--		goto fail;
-+		goto destroy_dsi;
+-	OBD_ALLOC_LARGE(*tmea, mea_size);
++	*tmea = libcfs_kvzalloc(mea_size, GFP_NOFS);
+ 	if (*tmea = NULL)
+ 		return -ENOMEM;
  
- 	return msm_dsi;
- 
--fail:
-+destroy_dsi:
- 	dsi_destroy(msm_dsi);
- 	return ERR_PTR(ret);
- }
--- 
-2.4.4
 
