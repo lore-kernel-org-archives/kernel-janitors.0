@@ -1,48 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 30 Jun 2015 12:52:35 +0000
-Subject: Re: [PATCH] SCSI-eata_pio: Deletion of an unnecessary check before the function call "pci_dev_put"
-Message-Id: <55929113.8070206@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Jun 2015 15:13:04 +0000
+Subject: [patch] drm/amdgpu: off by one check in dce_v8_0_hpd_irq()
+Message-Id: <20150611151304.GD12192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546E441B.7040004@users.sourceforge.net>
-In-Reply-To: <546E441B.7040004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: David Airlie <airlied@linux.ie>
+Cc: Chunming Zhou <david1.zhou@amd.com>, Marek =?utf-8?B?T2zFocOhaw==?= <marek.olsak@amd.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, yanyang1 <young.yang@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Nov 2014 20:37:30 +0100
-> 
-> The pci_dev_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/scsi/eata_pio.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/eata_pio.c b/drivers/scsi/eata_pio.c
-> index 8319d2b..707f64d 100644
-> --- a/drivers/scsi/eata_pio.c
-> +++ b/drivers/scsi/eata_pio.c
-> @@ -122,8 +122,7 @@ static int eata_pio_release(struct Scsi_Host *sh)
->  			release_region(sh->io_port, sh->n_io_port);
->  	}
->  	/* At this point the PCI reference can go */
-> -	if (hd->pdev)
-> -		pci_dev_put(hd->pdev);
-> +	pci_dev_put(hd->pdev);
->  	return 1;
->  }
->  
-> 
+It should be >= instead of > or we go beyond the end of the
+interrupt_status_offsets[] array.  Also I changed it to use
+ARRAY_SIZE().
 
-Would you like to integrate this update suggestion
-into another source code repository?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+index 9e8b9f1..0f70dc9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+@@ -3397,7 +3397,7 @@ static int dce_v8_0_hpd_irq(struct amdgpu_device *adev,
+ 	uint32_t disp_int, mask, int_control, tmp;
+ 	unsigned hpd;
+ 
+-	if (entry->src_data > 6) {
++	if (entry->src_data >= ARRAY_SIZE(interrupt_status_offsets)) {
+ 		DRM_DEBUG("Unhandled interrupt: %d %d\n", entry->src_id, entry->src_data);
+ 		return 0;
+ 	}
