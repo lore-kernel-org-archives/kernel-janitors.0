@@ -1,76 +1,35 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 09 Jun 2015 12:37:07 +0000
-Subject: Re: [PATCH v2] perf tools: Add error handling
-Message-Id: <5576DDF3.40909@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Jun 2015 08:19:24 +0000
+Subject: [patch] drm/amdgpu: remove an unnecessary condition
+Message-Id: <20150611081924.GA27090@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433836196-20647-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1433836196-20647-1-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Alex Deucher <alexander.deucher@amd.com>
+Cc: Marek =?utf-8?B?T2zFocOhaw==?= <marek.olsak@amd.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, yanyang1 <young.yang@amd.com>, Ken Wang <Qingqing.Wang@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
+We already checked "if (r)" so there is no need to check again.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am 09.06.2015 09:49, schrieb Firo Yang:
-> Add error handling code for snprintf and rename in check_backup.
-> 
-> Signed-off-by: Firo Yang <firogm@gmail.com>
-> ---
-> Since there is  no suitable error code snprintf, I just return the 
-> value returned by snprintf.
-> 
->  tools/perf/util/data.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-> index 1921942..26ab45a 100644
-> --- a/tools/perf/util/data.c
-> +++ b/tools/perf/util/data.c
-> @@ -32,15 +32,26 @@ static bool check_pipe(struct perf_data_file *file)
->  
->  static int check_backup(struct perf_data_file *file)
->  {
-> +	int ret;
->  	struct stat st;
->  
->  	if (!stat(file->path, &st) && st.st_size) {
-> -		/* TODO check errors properly */
->  		char oldname[PATH_MAX];
-> -		snprintf(oldname, sizeof(oldname), "%s.old",
-> +		ret = snprintf(oldname, sizeof(oldname), "%s.old",
->  			 file->path);
-
-
-i am a big fan of asprintf() since that allows you to have just the right size.
-Just do not forget to free the allocated buffer.
-
-
-> +		if (ret < 0) {
-> +			pr_err("failed to make name %s.old\n", file->path);
-> +			return ret;
-> +		}
-> +
->  		unlink(oldname);
-> -		rename(file->path, oldname);
-> +
-> +		ret = rename(file->path, oldname);
-> +		if (ret < 0) {
-> +			pr_err("failed to rename %s to %s\n", file->path,
-> +				oldname);
-> +			return -errno;
-> +		}
-
-short: it does not work this way. rename will return EXDEV if source
-and destination are on two file systems. (See man 2 rename)
-perfect recoverable.
-(on the other side: can this happen ? i do not know)
-
-
-just my 2 cents
-re,
- wh
-
->  	}
->  
->  	return 0;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+index 5533434..b7d0425 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+@@ -111,12 +111,9 @@ int amdgpu_driver_load_kms(struct drm_device *dev, unsigned long flags)
+ 	/* Call ACPI methods: require modeset init
+ 	 * but failure is not fatal
+ 	 */
+-	if (!r) {
+-		acpi_status = amdgpu_acpi_init(adev);
+-		if (acpi_status)
+-		dev_dbg(&dev->pdev->dev,
+-				"Error during ACPI methods call\n");
+-	}
++	acpi_status = amdgpu_acpi_init(adev);
++	if (acpi_status)
++		dev_dbg(&dev->pdev->dev, "Error during ACPI methods call\n");
+ 
+ 	if (amdgpu_device_is_px(dev)) {
+ 		pm_runtime_use_autosuspend(dev->dev);
