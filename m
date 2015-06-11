@@ -1,58 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 11:40:31 +0000
-Subject: [PATCH 2/2] ARM-OMAP2+: Delete an unnecessary check before the function call "of_node_put"
-Message-Id: <558BE8AF.5000709@users.sourceforge.net>
+From: Chaehyun Lim <chaehyun.lim@gmail.com>
+Date: Thu, 11 Jun 2015 05:35:58 +0000
+Subject: [PATCH V3 7/9] staging: wilc1000: remove WILC_Sint16
+Message-Id: <1434000960-16909-7-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <558BE713.1020409@users.sourceforge.net>
-In-Reply-To: <558BE713.1020409@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 13:05:28 +0200
+Use s16 instead of WILC_Sint16.
 
-The of_node_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
 ---
- arch/arm/mach-omap2/timer.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+V3: rebased on the top of staging-testing
+V2: remove the spaces on the subject
+    capitalize the name on the From and the Signed-off-by
 
-diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
-index cac46d8..15448221 100644
---- a/arch/arm/mach-omap2/timer.c
-+++ b/arch/arm/mach-omap2/timer.c
-@@ -208,8 +208,7 @@ static void __init omap_dmtimer_init(void)
- 	/* If we are a secure device, remove any secure timer nodes */
- 	if ((omap_type() != OMAP2_DEVICE_TYPE_GP)) {
- 		np = omap_get_timer_dt(omap_timer_match, "ti,timer-secure");
--		if (np)
--			of_node_put(np);
-+		of_node_put(np);
- 	}
- }
+ drivers/staging/wilc1000/coreconfigurator.c | 2 +-
+ drivers/staging/wilc1000/wilc_oswrapper.h   | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
+index f51bfa4..cff3ff8 100644
+--- a/drivers/staging/wilc1000/coreconfigurator.c
++++ b/drivers/staging/wilc1000/coreconfigurator.c
+@@ -174,7 +174,7 @@ static tstrConfigPktInfo gstrConfigPktInfo;
+ 
+ static u8 g_seqno;
+ 
+-static WILC_Sint16 g_wid_num          = -1;
++static s16 g_wid_num          = -1;
+ 
+ static u16 Res_Len;
+ 
+diff --git a/drivers/staging/wilc1000/wilc_oswrapper.h b/drivers/staging/wilc1000/wilc_oswrapper.h
+index 7e84475..6deec34 100644
+--- a/drivers/staging/wilc1000/wilc_oswrapper.h
++++ b/drivers/staging/wilc1000/wilc_oswrapper.h
+@@ -14,7 +14,6 @@
+ #define WILC_OSW_INTERFACE_VER 2
+ 
+ /* Integer Types */
+-typedef signed short WILC_Sint16;
+ typedef signed int WILC_Sint32;
+ typedef signed long long WILC_Sint64;
  
 -- 
-2.4.4
+1.9.1
 
