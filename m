@@ -1,104 +1,65 @@
-From: Neil Brown <neilb@suse.de>
-Date: Wed, 10 Jun 2015 20:38:26 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Jun 2015 11:48:28 +0000
 Subject: Re: [PATCH] md: fix a build warning
-Message-Id: <20150611063826.78ea7931@home.neil.brown.name>
+Message-Id: <20150611114828.GI28762@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1433949658-8455-1-git-send-email-firogm@gmail.com>
-	<557874B9.9010500@bfs.de>
-	<alpine.DEB.2.10.1506101935390.5463@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1506101935390.5463@hadrien>
+In-Reply-To: <1433949658-8455-1-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: walter harms <wharms@bfs.de>, Firo Yang <firogm@gmail.com>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Firo Yang <firogm@gmail.com>, Joe Perches <joe@perches.com>
+Cc: neilb@suse.de, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 10 Jun 2015 19:36:43 +0200 (CEST)
-Julia Lawall <julia.lawall@lip6.fr> wrote:
+Hey Joe,
 
+checkpatch.pl in linux-next is now encouraging people to make unrelated
+long line fixes like the below patch.  Reverting 0b4193c79c83
+('checkpatch: categorize some long line length checks') makes the new
+checkpatch.pl warning go away.
+
+regards,
+dan carpenter
+
+On Wed, Jun 10, 2015 at 11:20:58PM +0800, Firo Yang wrote:
+> Warning like this:
 > 
+> drivers/md/md.c: In function ‘update_array_info’:
+> drivers/md/md.c:6394:26: warning: logical not is only applied
+> to the left hand side of comparison [-Wlogical-not-parentheses]
+>       !mddev->persistent  != info->not_persistent||
 > 
-> On Wed, 10 Jun 2015, walter harms wrote:
+> I fix it by enclosing !mddev->persistent with parentheses
 > 
-> >
-> >
-> > Am 10.06.2015 17:20, schrieb Firo Yang:
-> > > Warning like this:
-> > >
-> > > drivers/md/md.c: In function ‘update_array_info’:
-> > > drivers/md/md.c:6394:26: warning: logical not is only applied
-> > > to the left hand side of comparison [-Wlogical-not-parentheses]
-> > >       !mddev->persistent  != info->not_persistent||
-> > >
-> > > I fix it by enclosing !mddev->persistent with parentheses
-> > >
-> > > By the way, I also fixed a line over 80 characters warning outputed
-> > > by ./scripts/checkpatch.pl
-> > >
-> > > Signed-off-by: Firo Yang <firogm@gmail.com>
-> > > ---
-> > >  drivers/md/md.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/md/md.c b/drivers/md/md.c
-> > > index dd85be9..b420d82 100644
-> > > --- a/drivers/md/md.c
-> > > +++ b/drivers/md/md.c
-> > > @@ -6391,9 +6391,10 @@ static int update_array_info(struct mddev *mddev, mdu_array_info_t *info)
-> > >  	    mddev->ctime         != info->ctime         ||
-> > >  	    mddev->level         != info->level         ||
-> > >  /*	    mddev->layout        != info->layout        || */
-> > > -	    !mddev->persistent	 != info->not_persistent||
-> > > +	    (!mddev->persistent) != info->not_persistent ||
-> >
-> >
-> > this looks odd,
-> > would it be possible the check for = instead (and drop the !) ?
-> > and it someone care for readability: It would be helpful to
-> > make some more ifs here.
+> By the way, I also fixed a line over 80 characters warning outputed
+> by ./scripts/checkpatch.pl
 > 
-> The original issue looks like a false positive.  If all of the other cases
-> have no parentheses on the left and use !=, isn't it better to leave the
-> code as is?
+> Signed-off-by: Firo Yang <firogm@gmail.com>
+> ---
+>  drivers/md/md.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-
-Leaving the code as it is would leave at least one compiler generating warnings.
-I don't like warnings.
-So if the compiler can be "fixed" that would be good.  But it seems unlikely.
-
-May we could do:
-
-> > > +	    mddev->persistent != !info->not_persistent ||
-
-That would keep the two "not"s together, avoid the need for parentheses, and
-probably avoid the compiler warning.
-(I think I had it the way it is because it almost reads 
-   " not ...peristent != ... not_persistent"
-but that isn't a strong reason)
-
-Firo: Can you confirm that this version doesn't upset the compiler?
-If if doesn't I'd definitely prefer this one. (and definitely leave out the
-comment change - just change the code)
-
-Thanks,
-NeilBrown
-
-
-> julia
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index dd85be9..b420d82 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -6391,9 +6391,10 @@ static int update_array_info(struct mddev *mddev, mdu_array_info_t *info)
+>  	    mddev->ctime         != info->ctime         ||
+>  	    mddev->level         != info->level         ||
+>  /*	    mddev->layout        != info->layout        || */
+> -	    !mddev->persistent	 != info->not_persistent||
+> +	    (!mddev->persistent) != info->not_persistent ||
+>  	    mddev->chunk_sectors != info->chunk_size >> 9 ||
+> -	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT to change */
+> +	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT
+> +		to change */
+>  	    ((state^info->state) & 0xfffffe00)
+>  		)
+>  		return -EINVAL;
+> -- 
+> 2.4.2
 > 
-> >
-> > re,
-> >  wh
-> >
-> > >  	    mddev->chunk_sectors != info->chunk_size >> 9 ||
-> > > -	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT to change */
-> > > +	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT
-> > > +		to change */
-> > >  	    ((state^info->state) & 0xfffffe00)
-> > >  		)
-> > >  		return -EINVAL;
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
