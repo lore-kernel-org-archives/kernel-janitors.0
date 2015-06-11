@@ -1,33 +1,160 @@
-From: Jiri Kosina <jkosina@suse.com>
-Date: Mon, 29 Jun 2015 12:05:20 +0000
-Subject: Re: [PATCH] HID-picoLCD: Deletion of unnecessary checks before three function calls
-Message-Id: <alpine.LNX.2.00.1506291404510.10183@pobox.suse.cz>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Thu, 11 Jun 2015 08:03:38 +0000
+Subject: [PATCH v2] ALSA: aoa: convert bus code to use dev_groups
+Message-Id: <1434009818-16711-1-git-send-email-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546CD595.3090508@users.sourceforge.net> <558FE090.8030307@users.sourceforge.net> <20150629083447.68b6cd0c@pluto.restena.lu>
-In-Reply-To: <20150629083447.68b6cd0c@pluto.restena.lu>
+References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
+In-Reply-To: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?ISO-8859-15?Q?Bruno_Pr=E9mont?= <bonbons@linux-vserver.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
-On Mon, 29 Jun 2015, Bruno Prémont wrote:
 
-> Sorry for forgetting about this patch.
-> 
-> Looks good to me:
->   Reviewed-by: Bruno Prémont <bonbons@linux-vserver.org>
-> 
-> Jiri, can you take it?
+The dev_attrs field of struct bus_type is going away, use dev_groups instead.
+This converts the soundbus code to use the correct field.
 
-Could either of you please bounce me the original patch? I don't think 
-I've seen in in my mailbox (or it's too long time ago).
+Given that all other usages of the macro define the struct attribute
+*xxx_attrs[] in the same file they assign the .dev_groups field, this patch
+merges sysfs.c into core.c.
 
-Thanks,
+These modifications were made using Coccinelle.
 
--- 
-Jiri Kosina
-SUSE Labs
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ Changes since v1:
+  - Fix the commit message to actually talk about soundbus rather than MDIO
+  - This version attempt to fix a problem resulting from the macro
+    ATTRIBUTE_GROUPS declaring the structure as static by merging sysfs.c into
+    core.c. I understand that this may not be the prefered solution since 
+    Takashi suggested that adding a comment line to the previous version could
+    be acceptable. 
+
+ sound/aoa/soundbus/Makefile   |    2 -
+ sound/aoa/soundbus/core.c     |   44 +++++++++++++++++++++++++++++++++++++++++-
+ sound/aoa/soundbus/soundbus.h |    2 -
+ sound/aoa/soundbus/sysfs.c    |   42 ----------------------------------------
+ 4 files changed, 44 insertions(+), 46 deletions(-)
+
+--- a/sound/aoa/soundbus/Makefile
++++ b/sound/aoa/soundbus/Makefile
+@@ -1,3 +1,3 @@
+ obj-$(CONFIG_SND_AOA_SOUNDBUS) += snd-aoa-soundbus.o
+-snd-aoa-soundbus-objs := core.o sysfs.o
++snd-aoa-soundbus-objs := core.o
+ obj-$(CONFIG_SND_AOA_SOUNDBUS_I2S) += i2sbus/
+--- a/sound/aoa/soundbus/core.c
++++ b/sound/aoa/soundbus/core.c
+@@ -150,6 +150,48 @@ static int soundbus_device_resume(struct
+ 
+ #endif /* CONFIG_PM */
+ 
++#define soundbus_config_of_attr(field, format_string)			\
++static ssize_t								\
++field##_show (struct device *dev, struct device_attribute *attr,	\
++              char *buf)						\
++{									\
++	struct soundbus_dev *mdev = to_soundbus_device (dev);		\
++	return sprintf (buf, format_string, mdev->ofdev.dev.of_node->field); \
++}
++
++static ssize_t modalias_show(struct device *dev, struct device_attribute *attr,
++			     char *buf)
++{
++	struct soundbus_dev *sdev = to_soundbus_device(dev);
++	struct platform_device *of = &sdev->ofdev;
++	int length;
++
++	if (*sdev->modalias) {
++		strlcpy(buf, sdev->modalias, sizeof(sdev->modalias) + 1);
++		strcat(buf, "\n");
++		length = strlen(buf);
++	} else {
++		length = sprintf(buf, "of:N%sT%s\n",
++				 of->dev.of_node->name, of->dev.of_node->type);
++	}
++
++	return length;
++}
++static DEVICE_ATTR_RO(modalias);
++
++soundbus_config_of_attr (name, "%s\n");
++static DEVICE_ATTR_RO(name);
++soundbus_config_of_attr (type, "%s\n");
++static DEVICE_ATTR_RO(type);
++
++struct attribute *soundbus_dev_attrs[] = {
++	&dev_attr_name.attr,
++	&dev_attr_type.attr,
++	&dev_attr_modalias.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(soundbus_dev);
++
+ static struct bus_type soundbus_bus_type = {
+ 	.name		= "aoa-soundbus",
+ 	.probe		= soundbus_probe,
+@@ -160,7 +202,7 @@ static struct bus_type soundbus_bus_type
+ 	.suspend	= soundbus_device_suspend,
+ 	.resume		= soundbus_device_resume,
+ #endif
+-	.dev_attrs	= soundbus_dev_attrs,
++	.dev_groups	= soundbus_dev_groups,
+ };
+ 
+ int soundbus_add_one(struct soundbus_dev *dev)
+--- a/sound/aoa/soundbus/soundbus.h
++++ b/sound/aoa/soundbus/soundbus.h
+@@ -199,6 +199,4 @@ struct soundbus_driver {
+ extern int soundbus_register_driver(struct soundbus_driver *drv);
+ extern void soundbus_unregister_driver(struct soundbus_driver *drv);
+ 
+-extern struct device_attribute soundbus_dev_attrs[];
+-
+ #endif /* __SOUNDBUS_H */
+--- a/sound/aoa/soundbus/sysfs.c
++++ /dev/null
+@@ -1,42 +0,0 @@
+-#include <linux/kernel.h>
+-#include <linux/stat.h>
+-/* FIX UP */
+-#include "soundbus.h"
+-
+-#define soundbus_config_of_attr(field, format_string)			\
+-static ssize_t								\
+-field##_show (struct device *dev, struct device_attribute *attr,	\
+-              char *buf)						\
+-{									\
+-	struct soundbus_dev *mdev = to_soundbus_device (dev);		\
+-	return sprintf (buf, format_string, mdev->ofdev.dev.of_node->field); \
+-}
+-
+-static ssize_t modalias_show(struct device *dev, struct device_attribute *attr,
+-			     char *buf)
+-{
+-	struct soundbus_dev *sdev = to_soundbus_device(dev);
+-	struct platform_device *of = &sdev->ofdev;
+-	int length;
+-
+-	if (*sdev->modalias) {
+-		strlcpy(buf, sdev->modalias, sizeof(sdev->modalias) + 1);
+-		strcat(buf, "\n");
+-		length = strlen(buf);
+-	} else {
+-		length = sprintf(buf, "of:N%sT%s\n",
+-				 of->dev.of_node->name, of->dev.of_node->type);
+-	}
+-
+-	return length;
+-}
+-
+-soundbus_config_of_attr (name, "%s\n");
+-soundbus_config_of_attr (type, "%s\n");
+-
+-struct device_attribute soundbus_dev_attrs[] = {
+-	__ATTR_RO(name),
+-	__ATTR_RO(type),
+-	__ATTR_RO(modalias),
+-	__ATTR_NULL
+-};
