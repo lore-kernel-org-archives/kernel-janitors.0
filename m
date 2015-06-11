@@ -1,21 +1,19 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 11 Jun 2015 10:02:45 +0000
-Subject: Re: [alsa-devel] [PATCH v2] ALSA: aoa: convert bus code to use	dev_groups
-Message-Id: <s5hlhfqlfzu.wl-tiwai@suse.de>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 11 Jun 2015 11:55:59 +0000
+Subject: Re: [PATCH v2] ALSA: aoa: convert bus code to use dev_groups
+Message-Id: <5579774F.4010706@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
-	<1434009818-16711-1-git-send-email-lambert.quentin@gmail.com>
+References: <1434009818-16711-1-git-send-email-lambert.quentin@gmail.com>
 In-Reply-To: <1434009818-16711-1-git-send-email-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Cc: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-At Thu, 11 Jun 2015 10:03:38 +0200,
-Quentin Lambert wrote:
-> 
-> 
+
+
+Am 11.06.2015 10:03, schrieb Quentin Lambert:
 > The dev_attrs field of struct bus_type is going away, use dev_groups instead.
 > This converts the soundbus code to use the correct field.
 > 
@@ -34,13 +32,6 @@ Quentin Lambert wrote:
 >     core.c. I understand that this may not be the prefered solution since 
 >     Takashi suggested that adding a comment line to the previous version could
 >     be acceptable. 
-
-Hmm, the patch doesn't look as mentioned here.
-It's rather bigger than the previous patch.  Is this intentional?
-
-
-Takashi
-
 > 
 >  sound/aoa/soundbus/Makefile   |    2 -
 >  sound/aoa/soundbus/core.c     |   44 +++++++++++++++++++++++++++++++++++++++++-
@@ -81,6 +72,15 @@ Takashi
 > +		strlcpy(buf, sdev->modalias, sizeof(sdev->modalias) + 1);
 > +		strcat(buf, "\n");
 > +		length = strlen(buf);
+
+
+for my curiosity:
+why not sprintf() ? almost any other code seems to use sprintf().
+
+re,
+ wh
+
+
 > +	} else {
 > +		length = sprintf(buf, "of:N%sT%s\n",
 > +				 of->dev.of_node->name, of->dev.of_node->type);
@@ -169,8 +169,8 @@ Takashi
 > -	__ATTR_RO(modalias),
 > -	__ATTR_NULL
 > -};
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
