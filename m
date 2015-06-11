@@ -1,36 +1,29 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 12 Jun 2015 18:50:53 +0000
-Subject: Re: [PATCH v3] ALSA: aoa: convert bus code to use dev_groups
-Message-Id: <s5hoakk69rm.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 11 Jun 2015 08:49:33 +0000
+Subject: [patch] drm/amdgpu: potential NULL dereference on error
+Message-Id: <20150611084933.GA27393@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
-	<1434098322-12178-1-git-send-email-lambert.quentin@gmail.com>
-	<87mw05w8kz.fsf@igel.home>
-	<557AAE06.7020002@gmail.com>
-In-Reply-To: <557AAE06.7020002@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Andreas Schwab <schwab@linux-m68k.org>, Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Jammy Zhou <Jammy.Zhou@amd.com>, yanyang1 <young.yang@amd.com>, Marek =?utf-8?B?T2zFocOhaw==?= <marek.olsak@amd.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-At Fri, 12 Jun 2015 12:01:42 +0200,
-Quentin Lambert wrote:
-> 
-> 
-> 
-> On 12/06/2015 11:59, Andreas Schwab wrote:
-> > Quentin Lambert <lambert.quentin@gmail.com> writes:
-> >
-> >> The dev_attrs field of struct bus_type is going away, sue dev_groups instead.
-> > s/sue/use/
-> I meant use do you need to fix something else or should I resend with 
-> the typo correction ?
+debugfs_create_file() can return an error pointer if debugfs is disabled
+or it can return NULL on error.
 
-I applied the corrected patch, so that you won't need to start lawsuit
-:)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-thanks,
-
-
-Takashi
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 36be03c..adba2a1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1980,6 +1980,8 @@ static int amdgpu_debugfs_regs_init(struct amdgpu_device *adev)
+ 				  adev, &amdgpu_debugfs_regs_fops);
+ 	if (IS_ERR(ent))
+ 		return PTR_ERR(ent);
++	if (!ent)
++		return -ENOMEM;
+ 	i_size_write(ent->d_inode, adev->rmmio_size);
+ 	adev->debugfs_regs = ent;
+ 
