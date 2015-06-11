@@ -1,43 +1,64 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Jun 2015 13:09:00 +0000
-Subject: [PATCH] USB-mxuport: Delete an unnecessary check before the function call "release_firmware"
-Message-Id: <558FF1EC.2060605@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 11 Jun 2015 12:02:57 +0000
+Subject: [PATCH 6/7] lustre: obdclass: linux: Replace uses of OBD_{ALLOC,FREE}_LARGE
+Message-Id: <1434024178-8785-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1434024178-8785-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434024178-8785-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Jun 2015 14:59:04 +0200
+Replace uses of OBD_ALLOC_LARGE by libcfs_kvzalloc and OBD_FREE_LARGE by
+kvfree.
 
-The release_firmware() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+expression ptr,size;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+- OBD_ALLOC_LARGE(ptr,size)
++ ptr = libcfs_kvzalloc(size, GFP_NOFS)
+
+@@
+expression ptr,size;
+@@
+
+- OBD_FREE_LARGE(ptr, size);
++ kvfree(ptr);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/usb/serial/mxuport.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/obdclass/linux/linux-module.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/serial/mxuport.c b/drivers/usb/serial/mxuport.c
-index 460a406..92f7aee 100644
---- a/drivers/usb/serial/mxuport.c
-+++ b/drivers/usb/serial/mxuport.c
-@@ -1101,8 +1101,7 @@ static int mxuport_probe(struct usb_serial *serial,
- 	 */
- 	usb_set_serial_data(serial, (void *)id->driver_info);
- out:
--	if (fw_p)
--		release_firmware(fw_p);
-+	release_firmware(fw_p);
+diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+index e3c6dcb..84f75dc 100644
+--- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
++++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+@@ -107,7 +107,7 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
+ 	 * system, the high lock contention will hurt performance badly,
+ 	 * obdfilter-survey is an example, which relies on ioctl. So we'd
+ 	 * better avoid vmalloc on ioctl path. LU-66 */
+-	OBD_ALLOC_LARGE(*buf, hdr.ioc_len);
++	*buf = libcfs_kvzalloc(hdr.ioc_len, GFP_NOFS);
+ 	if (*buf = NULL) {
+ 		CERROR("Cannot allocate control buffer of len %d\n",
+ 		       hdr.ioc_len);
+@@ -153,7 +153,7 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
+ 	return 0;
+ 
+ free_buf:
+-	OBD_FREE_LARGE(*buf, hdr.ioc_len);
++	kvfree(*buf);
  	return err;
  }
- 
--- 
-2.4.4
+ EXPORT_SYMBOL(obd_ioctl_getdata);
 
