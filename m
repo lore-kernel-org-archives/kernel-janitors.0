@@ -1,53 +1,105 @@
-From: chaehyun lim <chaehyun.lim@gmail.com>
-Date: Thu, 04 Jun 2015 00:01:36 +0000
-Subject: [PATCH V2 2/2] staging: wilc1000: remove UWORD32
-Message-Id: <1433376096-12532-2-git-send-email-chaehyun.lim@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 11 Jun 2015 12:02:56 +0000
+Subject: [PATCH 5/7] lustre: obdclass: Replace uses of OBD_{ALLOC,FREE}_LARGE
+Message-Id: <1434024178-8785-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1434024178-8785-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434024178-8785-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Use u32 instead of UWORD32
+Replace uses of OBD_ALLOC_LARGE by libcfs_kvzalloc and OBD_FREE_LARGE by
+kvfree.
 
-Signed-off-by: chaehyun lim <chaehyun.lim@gmail.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ptr,size;
+@@
+
+- OBD_ALLOC_LARGE(ptr,size)
++ ptr = libcfs_kvzalloc(size, GFP_NOFS)
+
+@@
+expression ptr,size;
+@@
+
+- OBD_FREE_LARGE(ptr, size);
++ kvfree(ptr);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-V2 : remove the defintion of UWORD32
+ drivers/staging/lustre/lustre/obdclass/lu_object.c      |    8 ++++----
+ drivers/staging/lustre/lustre/obdclass/lustre_handles.c |    5 +++--
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
- drivers/staging/wilc1000/coreconfigurator.c | 6 +++---
- drivers/staging/wilc1000/itypes.h           | 1 -
- 2 files changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
-index 958cf0b..0dc4413 100644
---- a/drivers/staging/wilc1000/coreconfigurator.c
-+++ b/drivers/staging/wilc1000/coreconfigurator.c
-@@ -498,10 +498,10 @@ INLINE WILC_Uint32 get_beacon_timestamp_lo(WILC_Uint8 *data)
- 	return time_stamp;
+diff --git a/drivers/staging/lustre/lustre/obdclass/lustre_handles.c b/drivers/staging/lustre/lustre/obdclass/lustre_handles.c
+index 1cfaabf..35a94a8 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lustre_handles.c
++++ b/drivers/staging/lustre/lustre/obdclass/lustre_handles.c
+@@ -198,7 +198,8 @@ int class_handle_init(void)
+ 
+ 	LASSERT(handle_hash = NULL);
+ 
+-	OBD_ALLOC_LARGE(handle_hash, sizeof(*bucket) * HANDLE_HASH_SIZE);
++	handle_hash = libcfs_kvzalloc(sizeof(*bucket) * HANDLE_HASH_SIZE,
++				      GFP_NOFS);
+ 	if (handle_hash = NULL)
+ 		return -ENOMEM;
+ 
+@@ -249,7 +250,7 @@ void class_handle_cleanup(void)
+ 
+ 	count = cleanup_all_handles();
+ 
+-	OBD_FREE_LARGE(handle_hash, sizeof(*handle_hash) * HANDLE_HASH_SIZE);
++	kvfree(handle_hash);
+ 	handle_hash = NULL;
+ 
+ 	if (count != 0)
+diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+index eae6606..4d9b633 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
++++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+@@ -2121,7 +2121,7 @@ void lu_buf_free(struct lu_buf *buf)
+ 	LASSERT(buf);
+ 	if (buf->lb_buf) {
+ 		LASSERT(buf->lb_len > 0);
+-		OBD_FREE_LARGE(buf->lb_buf, buf->lb_len);
++		kvfree(buf->lb_buf);
+ 		buf->lb_buf = NULL;
+ 		buf->lb_len = 0;
+ 	}
+@@ -2133,7 +2133,7 @@ void lu_buf_alloc(struct lu_buf *buf, int size)
+ 	LASSERT(buf);
+ 	LASSERT(buf->lb_buf = NULL);
+ 	LASSERT(buf->lb_len = 0);
+-	OBD_ALLOC_LARGE(buf->lb_buf, size);
++	buf->lb_buf = libcfs_kvzalloc(size, GFP_NOFS);
+ 	if (likely(buf->lb_buf))
+ 		buf->lb_len = size;
  }
+@@ -2171,14 +2171,14 @@ int lu_buf_check_and_grow(struct lu_buf *buf, int len)
+ 	if (len <= buf->lb_len)
+ 		return 0;
  
--INLINE UWORD32 get_beacon_timestamp_hi(u8 *data)
-+INLINE u32 get_beacon_timestamp_hi(u8 *data)
- {
--	UWORD32 time_stamp = 0;
--	UWORD32 index    = (MAC_HDR_LEN + 4);
-+	u32 time_stamp = 0;
-+	u32 index    = (MAC_HDR_LEN + 4);
+-	OBD_ALLOC_LARGE(ptr, len);
++	ptr = libcfs_kvzalloc(len, GFP_NOFS);
+ 	if (ptr = NULL)
+ 		return -ENOMEM;
  
- 	time_stamp |= data[index++];
- 	time_stamp |= (data[index++] << 8);
-diff --git a/drivers/staging/wilc1000/itypes.h b/drivers/staging/wilc1000/itypes.h
-index 91c8f0d..c99f8ca 100644
---- a/drivers/staging/wilc1000/itypes.h
-+++ b/drivers/staging/wilc1000/itypes.h
-@@ -44,7 +44,6 @@
- typedef int WORD32;
- typedef short WORD16;
- typedef char WORD8;
--typedef unsigned int UWORD32;
- typedef unsigned short UWORD16;
+ 	/* Free the old buf */
+ 	if (buf->lb_buf != NULL) {
+ 		memcpy(ptr, buf->lb_buf, buf->lb_len);
+-		OBD_FREE_LARGE(buf->lb_buf, buf->lb_len);
++		kvfree(buf->lb_buf);
+ 	}
  
- /*****************************************************************************/
--- 
-1.9.1
+ 	buf->lb_buf = ptr;
 
