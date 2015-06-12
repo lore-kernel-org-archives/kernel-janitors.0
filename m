@@ -1,57 +1,58 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 11 Jun 2015 12:25:49 +0000
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 12 Jun 2015 07:55:17 +0000
 Subject: Re: [alsa-devel] [PATCH v2] ALSA: aoa: convert bus code to use dev_groups
-Message-Id: <s5heglil9de.wl-tiwai@suse.de>
+Message-Id: <557A9065.5020608@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
- <1434009818-16711-1-git-send-email-lambert.quentin@gmail.com>
- <s5hlhfqlfzu.wl-tiwai@suse.de> <5579795D.9080109@gmail.com>
-In-Reply-To: <5579795D.9080109@gmail.com>
+References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>	<1434009818-16711-1-git-send-email-lambert.quentin@gmail.com>	<s5hlhfqlfzu.wl-tiwai@suse.de>	<5579795D.9080109@gmail.com> <s5heglil9de.wl-tiwai@suse.de>
+In-Reply-To: <s5heglil9de.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, linuxppc-dev@lists.ozlabs.org
-
-At Thu, 11 Jun 2015 14:04:45 +0200,
-Quentin Lambert wrote:
-> 
-> 
-> 
-> On 11/06/2015 12:02, Takashi Iwai wrote:
-> > At Thu, 11 Jun 2015 10:03:38 +0200,
-> > Quentin Lambert wrote:
-> >>
-> >> The dev_attrs field of struct bus_type is going away, use dev_groups instead.
-> >> This converts the soundbus code to use the correct field.
-> >>
-> >> Given that all other usages of the macro define the struct attribute
-> >> *xxx_attrs[] in the same file they assign the .dev_groups field, this patch
-> >> merges sysfs.c into core.c.
-> >>
-> >> These modifications were made using Coccinelle.
-> >>
-> >> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
-> >> ---
-> >>   Changes since v1:
-> >>    - Fix the commit message to actually talk about soundbus rather than MDIO
-> >>    - This version attempt to fix a problem resulting from the macro
-> >>      ATTRIBUTE_GROUPS declaring the structure as static by merging sysfs.c into
-> >>      core.c. I understand that this may not be the prefered solution since
-> >>      Takashi suggested that adding a comment line to the previous version could
-> >>      be acceptable.
-> > Hmm, the patch doesn't look as mentioned here.
-> > It's rather bigger than the previous patch.  Is this intentional?
-> >
-> Well as mentionned in the change log it is bigger because it moves the 
-> code from sysfs.c to
-> core.c. I realise as I am writing this that this patch should have 
-> really been two patches.
-> The first one removing sysfs.c and the second one removing the use of 
-> the dev_attrs.
-
-Yes, that'd be better.  OTOH, do we really need to copy many codes at
-all?  I really prefer shorter changes, if possible.
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
 
-Takashi
+
+On 11/06/2015 14:25, Takashi Iwai wrote:
+> At Thu, 11 Jun 2015 14:04:45 +0200,
+> Quentin Lambert wrote:
+>>
+>>
+>> On 11/06/2015 12:02, Takashi Iwai wrote:
+>>> At Thu, 11 Jun 2015 10:03:38 +0200,
+>>> Quentin Lambert wrote:
+>>>> The dev_attrs field of struct bus_type is going away, use dev_groups instead.
+>>>> This converts the soundbus code to use the correct field.
+>>>>
+>>>> Given that all other usages of the macro define the struct attribute
+>>>> *xxx_attrs[] in the same file they assign the .dev_groups field, this patch
+>>>> merges sysfs.c into core.c.
+>>>>
+>>>> These modifications were made using Coccinelle.
+>>>>
+>>>> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+>>>> ---
+>>>>    Changes since v1:
+>>>>     - Fix the commit message to actually talk about soundbus rather than MDIO
+>>>>     - This version attempt to fix a problem resulting from the macro
+>>>>       ATTRIBUTE_GROUPS declaring the structure as static by merging sysfs.c into
+>>>>       core.c. I understand that this may not be the prefered solution since
+>>>>       Takashi suggested that adding a comment line to the previous version could
+>>>>       be acceptable.
+>>> Hmm, the patch doesn't look as mentioned here.
+>>> It's rather bigger than the previous patch.  Is this intentional?
+>>>
+>> Well as mentionned in the change log it is bigger because it moves the
+>> code from sysfs.c to
+>> core.c. I realise as I am writing this that this patch should have
+>> really been two patches.
+>> The first one removing sysfs.c and the second one removing the use of
+>> the dev_attrs.
+> Yes, that'd be better.  OTOH, do we really need to copy many codes at
+> all?  I really prefer shorter changes, if possible.
+All right, I will send a third version following the comments you made 
+on the fist version. I just wanted to propose this idea in case it 
+suited you.
+
+Quentin
+
