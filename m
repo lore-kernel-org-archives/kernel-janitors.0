@@ -1,50 +1,83 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 03 Jun 2015 07:14:37 +0000
-Subject: Re: [PATCH 2/2] staging : wilc1000 : remove UWORD32
-Message-Id: <556EA95D.3030502@bfs.de>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 12 Jun 2015 08:38:41 +0000
+Subject: [PATCH v3] ALSA: aoa: convert bus code to use dev_groups
+Message-Id: <1434098322-12178-1-git-send-email-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433294221-12123-1-git-send-email-chaehyun.lim@gmail.com>
-In-Reply-To: <1433294221-12123-1-git-send-email-chaehyun.lim@gmail.com>
+References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
+In-Reply-To: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
+The dev_attrs field of struct bus_type is going away, sue dev_groups instead.
+This converts the soundbus code to use the correct field.
 
-hi,
-some remark for you patch:
+These modifications were made using Coccinelle.
 
-1. where is the definition of UWORD32 ?
-2. can it be removed also ?
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ Changes since v2:
+  - Revert to the version of the patch where the files weren't merge.
+  - Add a comment line to explain where xxx_attrs is defined as suggested by
+    Takashi. 
+ sound/aoa/soundbus/core.c     |    4 +++-
+ sound/aoa/soundbus/soundbus.h |    2 +-
+ sound/aoa/soundbus/sysfs.c    |   13 ++++++++-----
+ 3 files changed, 12 insertions(+), 7 deletions(-)
 
-hope that helps,
-re,
- wh
-
-
-Am 03.06.2015 03:17, schrieb chaehyun lim:
-> Use u32 instead of UWORD32
-> 
-> Signed-off-by: chaehyun lim <chaehyun.lim@gmail.com>
-> ---
->  drivers/staging/wilc1000/coreconfigurator.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
-> index 958cf0b..0dc4413 100644
-> --- a/drivers/staging/wilc1000/coreconfigurator.c
-> +++ b/drivers/staging/wilc1000/coreconfigurator.c
-> @@ -498,10 +498,10 @@ INLINE WILC_Uint32 get_beacon_timestamp_lo(WILC_Uint8 *data)
->  	return time_stamp;
->  }
->  
-> -INLINE UWORD32 get_beacon_timestamp_hi(u8 *data)
-> +INLINE u32 get_beacon_timestamp_hi(u8 *data)
->  {
-> -	UWORD32 time_stamp = 0;
-> -	UWORD32 index    = (MAC_HDR_LEN + 4);
-> +	u32 time_stamp = 0;
-> +	u32 index    = (MAC_HDR_LEN + 4);
->  
->  	time_stamp |= data[index++];
->  	time_stamp |= (data[index++] << 8);
+--- a/sound/aoa/soundbus/core.c
++++ b/sound/aoa/soundbus/core.c
+@@ -150,6 +150,8 @@ static int soundbus_device_resume(struct
+ 
+ #endif /* CONFIG_PM */
+ 
++/* soundbus_dev_attrs is declared in sysfs.c */
++ATTRIBUTE_GROUPS(soundbus_dev);
+ static struct bus_type soundbus_bus_type = {
+ 	.name		= "aoa-soundbus",
+ 	.probe		= soundbus_probe,
+@@ -160,7 +162,7 @@ static struct bus_type soundbus_bus_type
+ 	.suspend	= soundbus_device_suspend,
+ 	.resume		= soundbus_device_resume,
+ #endif
+-	.dev_attrs	= soundbus_dev_attrs,
++	.dev_groups	= soundbus_dev_groups,
+ };
+ 
+ int soundbus_add_one(struct soundbus_dev *dev)
+--- a/sound/aoa/soundbus/soundbus.h
++++ b/sound/aoa/soundbus/soundbus.h
+@@ -199,6 +199,6 @@ struct soundbus_driver {
+ extern int soundbus_register_driver(struct soundbus_driver *drv);
+ extern void soundbus_unregister_driver(struct soundbus_driver *drv);
+ 
+-extern struct device_attribute soundbus_dev_attrs[];
++extern struct attribute *soundbus_dev_attrs[];
+ 
+ #endif /* __SOUNDBUS_H */
+--- a/sound/aoa/soundbus/sysfs.c
++++ b/sound/aoa/soundbus/sysfs.c
+@@ -30,13 +30,16 @@ static ssize_t modalias_show(struct devi
+ 
+ 	return length;
+ }
++static DEVICE_ATTR_RO(modalias);
+ 
+ soundbus_config_of_attr (name, "%s\n");
++static DEVICE_ATTR_RO(name);
+ soundbus_config_of_attr (type, "%s\n");
++static DEVICE_ATTR_RO(type);
+ 
+-struct device_attribute soundbus_dev_attrs[] = {
+-	__ATTR_RO(name),
+-	__ATTR_RO(type),
+-	__ATTR_RO(modalias),
+-	__ATTR_NULL
++struct attribute *soundbus_dev_attrs[] = {
++	&dev_attr_name.attr,
++	&dev_attr_type.attr,
++	&dev_attr_modalias.attr,
++	NULL,
+ };
