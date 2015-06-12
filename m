@@ -1,7 +1,7 @@
-From: Lukasz Pawelczyk <l.pawelczyk@samsung.com>
-Date: Thu, 11 Jun 2015 09:11:59 +0000
+From: Casey Schaufler <casey@schaufler-ca.com>
+Date: Fri, 12 Jun 2015 20:00:05 +0000
 Subject: Re: [patch] Smack: freeing an error pointer in smk_write_revoke_subj()
-Message-Id: <1434013919.1854.0.camel@samsung.com>
+Message-Id: <557B3A45.2090908@schaufler-ca.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150611085116.GC27393@mwanda>
 In-Reply-To: <20150611085116.GC27393@mwanda>
@@ -10,20 +10,20 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On czw, 2015-06-11 at 11:51 +0300, Dan Carpenter wrote:
+On 6/11/2015 1:51 AM, Dan Carpenter wrote:
 > This code used to rely on the fact that kfree(NULL) was a no-op, but
 > then we changed smk_parse_smack() to return error pointers on failure
 > instead of NULL.  Calling kfree() on an error pointer will oops.
-> 
+>
 > I have re-arranged things a bit so that we only free things if they
 > have been allocated.
-> 
+>
 > Fixes: e774ad683f42 ('smack: pass error code through pointers')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Looks good to me.
+Applied to https://github.com/cschaufler/smack-next.git#smack-for-4.2-stacked
 
-> 
+>
 > diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
 > index 6beac42..2716d02 100644
 > --- a/security/smack/smackfs.c
@@ -79,11 +79,5 @@ Looks good to me.
 > To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
-Lukasz Pawelczyk
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
+>
 
