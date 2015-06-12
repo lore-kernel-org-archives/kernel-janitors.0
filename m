@@ -1,63 +1,434 @@
-From: Vasu Dev <vasu.dev@linux.intel.com>
-Date: Thu, 25 Jun 2015 17:44:25 +0000
-Subject: Re: [PATCH] SCSI-libfc: Delete an unnecessary check before the function call "fc_fcp_ddp_done"
-Message-Id: <1435254265.20022.0.camel@lin-nd1-054.jf.intel.com>
+From: Firo Yang <firogm@gmail.com>
+Date: Fri, 12 Jun 2015 04:57:57 +0000
+Subject: [PATCH v2] net: Add sock_common_listen for TCP and DCCP
+Message-Id: <1434085077-4938-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546E3DDB.5040508@users.sourceforge.net>
- <558AD2D0.6000501@users.sourceforge.net>
-In-Reply-To: <558AD2D0.6000501-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "James E. J. Bottomley" <JBottomley-bzQdu9zFT3WakBO8gow8eQ@public.gmane.org>, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, fcoe-devel-s9riP+hp16TNLxjTenLetw@public.gmane.org
+To: davem@davemloft.net
+Cc: eric.dumazet@gmail.com, gerrit@erg.abdn.ac.uk, yoshfuji@linux-ipv6.org, jmorris@namei.org, kuznet@ms2.inr.ac.ru, herbert@gondor.apana.org.au, ast@plumgrid.com, ebiederm@xmission.com, dan.carpenter@oracle.com, Julia.Lawall@lip6.fr, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Firo Yang <firogm@gmail.com>
 
-On Wed, 2015-06-24 at 17:54 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 24 Jun 2015 17:50:32 +0200
-> 
-> The fc_fcp_ddp_done() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/scsi/libfc/fc_exch.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
-> index 1b3a094..aad6f48 100644
-> --- a/drivers/scsi/libfc/fc_exch.c
-> +++ b/drivers/scsi/libfc/fc_exch.c
-> @@ -2120,8 +2120,7 @@ static struct fc_seq *fc_exch_seq_send(struct fc_lport *lport,
->  	spin_unlock_bh(&ep->ex_lock);
->  	return sp;
->  err:
-> -	if (fsp)
-> -		fc_fcp_ddp_done(fsp);
-> +	fc_fcp_ddp_done(fsp);
->  	rc = fc_exch_done_locked(ep);
->  	spin_unlock_bh(&ep->ex_lock);
->  	if (!rc)
+Code refactoring:
+1. Move the common code of inet_listen() and inet_dccp_listen() to
+sock_common_listen().
 
-Looks good.
+2. Modify and rename inet_listen() to tcp_listen().
 
-Acked-by: Vasu Dev <vasu.dev@intel.com>
+3. Modify and rename inet_dccp_listen() to dccp_listen().
+
+4. Add new callback pointer listen in struct proto for
+tcp_listen() and dccp_listen().
+
+This patch makes codes more modularized and removes redudant codes.
+
+Signed-off-by: Firo Yang <firogm@gmail.com>
+---
+v2: 
+In according to the advices of Eric Dumazet, sock_common_listen() keep 
+using TCP_xxx state instead of introducing new aliases.
+
+Test info:
+I test it on my x86 PC.
+
+ include/net/sock.h  |  3 +++
+ include/net/tcp.h   |  1 +
+ net/core/sock.c     | 39 +++++++++++++++++++++++++++++++++
+ net/dccp/dccp.h     |  2 +-
+ net/dccp/ipv4.c     |  4 ++--
+ net/dccp/ipv6.c     |  3 ++-
+ net/dccp/proto.c    | 62 ++++++++++++++++-------------------------------------
+ net/ipv4/af_inet.c  | 58 +------------------------------------------------
+ net/ipv4/tcp.c      | 35 ++++++++++++++++++++++++++++++
+ net/ipv4/tcp_ipv4.c |  1 +
+ net/ipv6/af_inet6.c |  2 +-
+ net/ipv6/tcp_ipv6.c |  1 +
+ 12 files changed, 106 insertions(+), 105 deletions(-)
+
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 26c1c31..8066a4c 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -934,6 +934,7 @@ struct proto {
+ 	int			(*connect)(struct sock *sk,
+ 					struct sockaddr *uaddr,
+ 					int addr_len);
++	int			(*listen)(struct sock *sk, int backlog);
+ 	int			(*disconnect)(struct sock *sk, int flags);
+ 
+ 	struct sock *		(*accept)(struct sock *sk, int flags, int *err);
+@@ -1587,6 +1588,8 @@ int compat_sock_common_setsockopt(struct socket *sock, int level,
+ 
+ void sk_common_release(struct sock *sk);
+ 
++int sock_common_listen(struct socket *sock, int backlog);
++
+ /*
+  *	Default socket callbacks and setup code
+  */
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 978cebe..70d3f64 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -434,6 +434,7 @@ int compat_tcp_setsockopt(struct sock *sk, int level, int optname,
+ 			  char __user *optval, unsigned int optlen);
+ void tcp_set_keepalive(struct sock *sk, int val);
+ void tcp_syn_ack_timeout(const struct request_sock *req);
++int tcp_listen(struct sock *sk, int backlog);
+ int tcp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len, int nonblock,
+ 		int flags, int *addr_len);
+ void tcp_parse_options(const struct sk_buff *skb,
+diff --git a/net/core/sock.c b/net/core/sock.c
+index e72633c..e839721 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2559,6 +2559,45 @@ int sock_common_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ EXPORT_SYMBOL(sock_common_recvmsg);
+ 
+ /*
++ *	Move a socket into listening state.
++ */
++int sock_common_listen(struct socket *sock, int backlog)
++{
++	struct sock *sk = sock->sk;
++	unsigned char old_state;
++	int err;
++
++	lock_sock(sk);
++
++	err = -EINVAL;
++	if (sock->state != SS_UNCONNECTED)
++		goto out;
++
++	old_state = sk->sk_state;
++	/* Since DCCP used the same state value as TCP, here we
++	 * just check the TCP version state.
++	 */
++	if (!((1 << old_state) & (TCPF_CLOSE | TCPF_LISTEN)))
++		goto out;
++
++	/* Really, if the socket is already in listen state
++	 * we can only allow the backlog to be adjusted.
++	 */
++	if (old_state != TCP_LISTEN) {
++		err = sk->sk_prot->listen(sk, backlog);
++		if (err)
++			goto out;
++	}
++	sk->sk_max_ack_backlog = backlog;
++	err = 0;
++
++out:
++	release_sock(sk);
++	return err;
++}
++EXPORT_SYMBOL(sock_common_listen);
++
++/*
+  *	Set socket options on an inet socket.
+  */
+ int sock_common_setsockopt(struct socket *sock, int level, int optname,
+diff --git a/net/dccp/dccp.h b/net/dccp/dccp.h
+index bebc735..5a5acbb 100644
+--- a/net/dccp/dccp.h
++++ b/net/dccp/dccp.h
+@@ -313,7 +313,7 @@ int dccp_sendmsg(struct sock *sk, struct msghdr *msg, size_t size);
+ int dccp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len, int nonblock,
+ 		 int flags, int *addr_len);
+ void dccp_shutdown(struct sock *sk, int how);
+-int inet_dccp_listen(struct socket *sock, int backlog);
++int dccp_listen(struct sock *sk, int backlog);
+ unsigned int dccp_poll(struct file *file, struct socket *sock,
+ 		       poll_table *wait);
+ int dccp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len);
+diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+index ccf4c56..339f253 100644
+--- a/net/dccp/ipv4.c
++++ b/net/dccp/ipv4.c
+@@ -952,6 +952,7 @@ static struct proto dccp_v4_prot = {
+ 	.name			= "DCCP",
+ 	.owner			= THIS_MODULE,
+ 	.close			= dccp_close,
++	.listen			= dccp_listen,
+ 	.connect		= dccp_v4_connect,
+ 	.disconnect		= dccp_disconnect,
+ 	.ioctl			= dccp_ioctl,
+@@ -1000,8 +1001,7 @@ static const struct proto_ops inet_dccp_ops = {
+ 	/* FIXME: work on tcp_poll to rename it to inet_csk_poll */
+ 	.poll		   = dccp_poll,
+ 	.ioctl		   = inet_ioctl,
+-	/* FIXME: work on inet_listen to rename it to sock_common_listen */
+-	.listen		   = inet_dccp_listen,
++	.listen		   = sock_common_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+ 	.getsockopt	   = sock_common_getsockopt,
+diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+index 5165571..1a96194 100644
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -1011,6 +1011,7 @@ static struct proto dccp_v6_prot = {
+ 	.name		   = "DCCPv6",
+ 	.owner		   = THIS_MODULE,
+ 	.close		   = dccp_close,
++	.listen		   = dccp_listen,
+ 	.connect	   = dccp_v6_connect,
+ 	.disconnect	   = dccp_disconnect,
+ 	.ioctl		   = dccp_ioctl,
+@@ -1056,7 +1057,7 @@ static const struct proto_ops inet6_dccp_ops = {
+ 	.getname	   = inet6_getname,
+ 	.poll		   = dccp_poll,
+ 	.ioctl		   = inet6_ioctl,
+-	.listen		   = inet_dccp_listen,
++	.listen		   = sock_common_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+ 	.getsockopt	   = sock_common_getsockopt,
+diff --git a/net/dccp/proto.c b/net/dccp/proto.c
+index 52a9401..097edab 100644
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -231,17 +231,31 @@ void dccp_destroy_sock(struct sock *sk)
+ 
+ EXPORT_SYMBOL_GPL(dccp_destroy_sock);
+ 
+-static inline int dccp_listen_start(struct sock *sk, int backlog)
++int dccp_listen(struct sock *sk, int backlog)
+ {
+-	struct dccp_sock *dp = dccp_sk(sk);
++	struct socket *sock = sk->sk_socket;
++	struct dccp_sock *dp;
++	int err;
+ 
++	err = -EINVAL;
++	if (sock->type != SOCK_DCCP)
++		goto out;
++
++	dp = dccp_sk(sk);
+ 	dp->dccps_role = DCCP_ROLE_LISTEN;
+ 	/* do not start to listen if feature negotiation setup fails */
+-	if (dccp_feat_finalise_settings(dp))
+-		return -EPROTO;
+-	return inet_csk_listen_start(sk, backlog);
++	if (dccp_feat_finalise_settings(dp)) {
++		err = -EPROTO;
++		goto out;
++	}
++	err = inet_csk_listen_start(sk, backlog);
++
++out:
++	return err;
+ }
+ 
++EXPORT_SYMBOL_GPL(dccp_listen);
++
+ static inline int dccp_need_reset(int state)
+ {
+ 	return state != DCCP_CLOSED && state != DCCP_LISTEN &&
+@@ -913,44 +927,6 @@ out:
+ 
+ EXPORT_SYMBOL_GPL(dccp_recvmsg);
+ 
+-int inet_dccp_listen(struct socket *sock, int backlog)
+-{
+-	struct sock *sk = sock->sk;
+-	unsigned char old_state;
+-	int err;
+-
+-	lock_sock(sk);
+-
+-	err = -EINVAL;
+-	if (sock->state != SS_UNCONNECTED || sock->type != SOCK_DCCP)
+-		goto out;
+-
+-	old_state = sk->sk_state;
+-	if (!((1 << old_state) & (DCCPF_CLOSED | DCCPF_LISTEN)))
+-		goto out;
+-
+-	/* Really, if the socket is already in listen state
+-	 * we can only allow the backlog to be adjusted.
+-	 */
+-	if (old_state != DCCP_LISTEN) {
+-		/*
+-		 * FIXME: here it probably should be sk->sk_prot->listen_start
+-		 * see tcp_listen_start
+-		 */
+-		err = dccp_listen_start(sk, backlog);
+-		if (err)
+-			goto out;
+-	}
+-	sk->sk_max_ack_backlog = backlog;
+-	err = 0;
+-
+-out:
+-	release_sock(sk);
+-	return err;
+-}
+-
+-EXPORT_SYMBOL_GPL(inet_dccp_listen);
+-
+ static void dccp_terminate_connection(struct sock *sk)
+ {
+ 	u8 next_state = DCCP_CLOSED;
+diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+index cc858ef..e2e2b19 100644
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -187,62 +187,6 @@ static int inet_autobind(struct sock *sk)
+ }
+ 
+ /*
+- *	Move a socket into listening state.
+- */
+-int inet_listen(struct socket *sock, int backlog)
+-{
+-	struct sock *sk = sock->sk;
+-	unsigned char old_state;
+-	int err;
+-
+-	lock_sock(sk);
+-
+-	err = -EINVAL;
+-	if (sock->state != SS_UNCONNECTED || sock->type != SOCK_STREAM)
+-		goto out;
+-
+-	old_state = sk->sk_state;
+-	if (!((1 << old_state) & (TCPF_CLOSE | TCPF_LISTEN)))
+-		goto out;
+-
+-	/* Really, if the socket is already in listen state
+-	 * we can only allow the backlog to be adjusted.
+-	 */
+-	if (old_state != TCP_LISTEN) {
+-		/* Check special setups for testing purpose to enable TFO w/o
+-		 * requiring TCP_FASTOPEN sockopt.
+-		 * Note that only TCP sockets (SOCK_STREAM) will reach here.
+-		 * Also fastopenq may already been allocated because this
+-		 * socket was in TCP_LISTEN state previously but was
+-		 * shutdown() (rather than close()).
+-		 */
+-		if ((sysctl_tcp_fastopen & TFO_SERVER_ENABLE) != 0 &&
+-		    !inet_csk(sk)->icsk_accept_queue.fastopenq) {
+-			if ((sysctl_tcp_fastopen & TFO_SERVER_WO_SOCKOPT1) != 0)
+-				err = fastopen_init_queue(sk, backlog);
+-			else if ((sysctl_tcp_fastopen &
+-				  TFO_SERVER_WO_SOCKOPT2) != 0)
+-				err = fastopen_init_queue(sk,
+-				    ((uint)sysctl_tcp_fastopen) >> 16);
+-			else
+-				err = 0;
+-			if (err)
+-				goto out;
+-		}
+-		err = inet_csk_listen_start(sk, backlog);
+-		if (err)
+-			goto out;
+-	}
+-	sk->sk_max_ack_backlog = backlog;
+-	err = 0;
+-
+-out:
+-	release_sock(sk);
+-	return err;
+-}
+-EXPORT_SYMBOL(inet_listen);
+-
+-/*
+  *	Create an inet socket.
+  */
+ 
+@@ -903,7 +847,7 @@ const struct proto_ops inet_stream_ops = {
+ 	.getname	   = inet_getname,
+ 	.poll		   = tcp_poll,
+ 	.ioctl		   = inet_ioctl,
+-	.listen		   = inet_listen,
++	.listen		   = sock_common_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+ 	.getsockopt	   = sock_common_getsockopt,
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 65f791f..3aa185b 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1301,6 +1301,41 @@ out_err:
+ }
+ EXPORT_SYMBOL(tcp_sendmsg);
+ 
++int tcp_listen(struct sock *sk, int backlog)
++{
++	struct socket *sock = sk->sk_socket;
++	int err;
++
++	err = -EINVAL;
++	if (sock->type != SOCK_STREAM)
++		goto out;
++	/* Check special setups for testing purpose to enable TFO w/o
++	 * requiring TCP_FASTOPEN sockopt.
++	 * Note that only TCP sockets (SOCK_STREAM) will reach here.
++	 * Also fastopenq may already been allocated because this
++	 * socket was in TCP_LISTEN state previously but was
++	 * shutdown() (rather than close()).
++	 */
++	if ((sysctl_tcp_fastopen & TFO_SERVER_ENABLE) != 0 &&
++	    !inet_csk(sk)->icsk_accept_queue.fastopenq) {
++		if ((sysctl_tcp_fastopen & TFO_SERVER_WO_SOCKOPT1) != 0)
++			err = fastopen_init_queue(sk, backlog);
++		else if ((sysctl_tcp_fastopen &
++			  TFO_SERVER_WO_SOCKOPT2) != 0)
++			err = fastopen_init_queue(sk,
++			    ((uint)sysctl_tcp_fastopen) >> 16);
++		else
++			err = 0;
++		if (err)
++			goto out;
++	}
++	err = inet_csk_listen_start(sk, backlog);
++
++out:
++	return err;
++}
++EXPORT_SYMBOL(tcp_listen);
++
+ /*
+  *	Handle reading urgent data. BSD has very simple semantics for
+  *	this, no blocking and very strange errors 8)
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index d7d4c2b..0dff9dc 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -2337,6 +2337,7 @@ struct proto tcp_prot = {
+ 	.name			= "TCP",
+ 	.owner			= THIS_MODULE,
+ 	.close			= tcp_close,
++	.listen			= tcp_listen,
+ 	.connect		= tcp_v4_connect,
+ 	.disconnect		= tcp_disconnect,
+ 	.accept			= inet_csk_accept,
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 7de52b6..8fd9c77 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -516,7 +516,7 @@ const struct proto_ops inet6_stream_ops = {
+ 	.getname	   = inet6_getname,
+ 	.poll		   = tcp_poll,			/* ok		*/
+ 	.ioctl		   = inet6_ioctl,		/* must change  */
+-	.listen		   = inet_listen,		/* ok		*/
++	.listen		   = sock_common_listen,	/* ok		*/
+ 	.shutdown	   = inet_shutdown,		/* ok		*/
+ 	.setsockopt	   = sock_common_setsockopt,	/* ok		*/
+ 	.getsockopt	   = sock_common_getsockopt,	/* ok		*/
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index 45a7176..80cecc6 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1822,6 +1822,7 @@ struct proto tcpv6_prot = {
+ 	.name			= "TCPv6",
+ 	.owner			= THIS_MODULE,
+ 	.close			= tcp_close,
++	.listen			= tcp_listen,
+ 	.connect		= tcp_v6_connect,
+ 	.disconnect		= tcp_disconnect,
+ 	.accept			= inet_csk_accept,
+-- 
+2.4.3
 
