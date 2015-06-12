@@ -1,14 +1,93 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 11 Jun 2015 12:02:51 +0000
-Subject: [PATCH 0/7] Replace uses of OBD_{ALLOC,FREE}_LARGE
-Message-Id: <1434024178-8785-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 12 Jun 2015 09:07:26 +0000
+Subject: [PATCH] superhyway: convert code to use dev_groups
+Message-Id: <1434100046-19467-1-git-send-email-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
+To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
-Replace uses of OBD_ALLOC_LARGE by libcfs_kvzalloc and OBD_FREE_LARGE by
-kvfree.
+The dev_attrs field of struct bus_type is going away, use dev_groups
+instead. This converts the soundbus code to use the correct field.
 
+These modifications were made using Coccinelle.
+
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/sh/superhyway/superhyway-sysfs.c |   26 ++++++++++++++++----------
+ drivers/sh/superhyway/superhyway.c       |    4 +++-
+ include/linux/superhyway.h               |    2 +-
+ 3 files changed, 20 insertions(+), 12 deletions(-)
+
+--- a/drivers/sh/superhyway/superhyway-sysfs.c
++++ b/drivers/sh/superhyway/superhyway-sysfs.c
+@@ -23,23 +23,29 @@ static ssize_t name##_show(struct device
+ 
+ /* VCR flags */
+ superhyway_ro_attr(perr_flags, "0x%02x\n", vcr.perr_flags);
++static DEVICE_ATTR_RO(perr_flags);
+ superhyway_ro_attr(merr_flags, "0x%02x\n", vcr.merr_flags);
++static DEVICE_ATTR_RO(merr_flags);
+ superhyway_ro_attr(mod_vers, "0x%04x\n", vcr.mod_vers);
++static DEVICE_ATTR_RO(mod_vers);
+ superhyway_ro_attr(mod_id, "0x%04x\n", vcr.mod_id);
++static DEVICE_ATTR_RO(mod_id);
+ superhyway_ro_attr(bot_mb, "0x%02x\n", vcr.bot_mb);
++static DEVICE_ATTR_RO(bot_mb);
+ superhyway_ro_attr(top_mb, "0x%02x\n", vcr.top_mb);
++static DEVICE_ATTR_RO(top_mb);
+ 
+ /* Misc */
+ superhyway_ro_attr(resource, "0x%08lx\n", resource[0].start);
++static DEVICE_ATTR_RO(resource);
+ 
+-struct device_attribute superhyway_dev_attrs[] = {
+-	__ATTR_RO(perr_flags),
+-	__ATTR_RO(merr_flags),
+-	__ATTR_RO(mod_vers),
+-	__ATTR_RO(mod_id),
+-	__ATTR_RO(bot_mb),
+-	__ATTR_RO(top_mb),
+-	__ATTR_RO(resource),
+-	__ATTR_NULL,
++struct attribute *superhyway_dev_attrs[] = {
++	&dev_attr_perr_flags.attr,
++	&dev_attr_merr_flags.attr,
++	&dev_attr_mod_vers.attr,
++	&dev_attr_mod_id.attr,
++	&dev_attr_bot_mb.attr,
++	&dev_attr_top_mb.attr,
++	&dev_attr_resource.attr,
++	NULL,
+ };
+-
+--- a/drivers/sh/superhyway/superhyway.c
++++ b/drivers/sh/superhyway/superhyway.c
+@@ -205,11 +205,13 @@ static int superhyway_bus_match(struct d
+ 	return -ENODEV;
+ }
+ 
++/* superhyway_dev_attrs is defined in superhyway-sysfs.c */
++ATTRIBUTE_GROUPS(superhyway_dev);
+ struct bus_type superhyway_bus_type = {
+ 	.name		= "superhyway",
+ 	.match		= superhyway_bus_match,
+ #ifdef CONFIG_SYSFS
+-	.dev_attrs	= superhyway_dev_attrs,
++	.dev_groups	= superhyway_dev_groups,
+ #endif
+ 	.probe		= superhyway_device_probe,
+ 	.remove		= superhyway_device_remove,
+--- a/include/linux/superhyway.h
++++ b/include/linux/superhyway.h
+@@ -101,7 +101,7 @@ int superhyway_add_device(unsigned long
+ int superhyway_add_devices(struct superhyway_bus *bus, struct superhyway_device **devices, int nr_devices);
+ 
+ /* drivers/sh/superhyway/superhyway-sysfs.c */
+-extern struct device_attribute superhyway_dev_attrs[];
++extern struct attribute *superhyway_dev_attrs[];
+ 
+ #endif /* __LINUX_SUPERHYWAY_H */
+ 
