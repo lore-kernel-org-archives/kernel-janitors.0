@@ -1,38 +1,67 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 06 Jun 2015 16:55:22 +0000
-Subject: [PATCH] [media] dvb-core: prevent some corruption the legacy ioctl
-Message-Id: <20150606165521.GB28331@mwanda>
+From: Chaehyun Lim <chaehyun.lim@gmail.com>
+Date: Sat, 13 Jun 2015 06:41:18 +0000
+Subject: [PATCH 1/2] staging: wilc1000: remove BOOL_T typedef
+Message-Id: <1434177679-9831-1-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Shuah Khan <shuah.kh@samsung.com>, Akihiro Tsukada <tskd08@gmail.com>, Antti Palosaari <crope@iki.fi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, Chaehyun Lim <chaehyun.lim@gmail.com>
 
-Quite a few of the ->diseqc_send_master_cmd() implementations don't
-check cmd->msg_len so it can lead to memory corruption.
+Remove BOOL_T typedef.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
 ---
-I don't think it ever makes sense for ->msg_len to be longer than ->msg
-but I am a newbie to this code.
+ drivers/staging/wilc1000/host_interface.c | 6 +++---
+ drivers/staging/wilc1000/itypes.h         | 9 ---------
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index a894d4c..aa6b48f 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -2403,7 +2403,13 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index 17ab5cd..ca59f1b 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -7698,7 +7698,7 @@ static void *host_int_ParseJoinBssParam(tstrNetworkInfo *ptstrNetworkInfo)
+ 			/* HT Cap. IE */
+ 			else if (pu8IEs[index] = HT_CAPABILITY_IE) {
+ 				/* if IE found set the flag */
+-				pNewJoinBssParam->ht_capable = BTRUE;
++				pNewJoinBssParam->ht_capable = true;
+ 				index += pu8IEs[index + 1] + 2; /* ID,Length bytes and IE body */
+ 				/* PRINT_D(HOSTINF_DBG,"HT_CAPABALE\n"); */
+ 				continue;
+@@ -7709,11 +7709,11 @@ static void *host_int_ParseJoinBssParam(tstrNetworkInfo *ptstrNetworkInfo)
+ 				   ((pu8IEs[index + 6] = 0x00) || (pu8IEs[index + 6] = 0x01)) && /* OUI Sub Type */
+ 				   (pu8IEs[index + 7] = 0x01)) {
+ 				/* Presence of WMM Info/Param element indicates WMM capability */
+-				pNewJoinBssParam->wmm_cap = BTRUE;
++				pNewJoinBssParam->wmm_cap = true;
  
- 	case FE_DISEQC_SEND_MASTER_CMD:
- 		if (fe->ops.diseqc_send_master_cmd) {
--			err = fe->ops.diseqc_send_master_cmd(fe, (struct dvb_diseqc_master_cmd*) parg);
-+			struct dvb_diseqc_master_cmd *cmd = parg;
-+
-+			if (cmd->msg_len > sizeof(cmd->msg)) {
-+				err = -EINVAL;
-+				break;
-+			}
-+			err = fe->ops.diseqc_send_master_cmd(fe, cmd);
- 			fepriv->state = FESTATE_DISEQC;
- 			fepriv->status = 0;
- 		}
+ 				/* Check if Bit 7 is set indicating U-APSD capability */
+ 				if (pu8IEs[index + 8] & (1 << 7)) {
+-					pNewJoinBssParam->uapsd_cap = BTRUE;
++					pNewJoinBssParam->uapsd_cap = true;
+ 				}
+ 				index += pu8IEs[index + 1] + 2;
+ 				continue;
+diff --git a/drivers/staging/wilc1000/itypes.h b/drivers/staging/wilc1000/itypes.h
+index 2441853..d64ae35 100644
+--- a/drivers/staging/wilc1000/itypes.h
++++ b/drivers/staging/wilc1000/itypes.h
+@@ -36,13 +36,4 @@
+ #ifndef ITYPES_H
+ #define ITYPES_H
+ 
+-/*****************************************************************************/
+-/* Enums                                                                     */
+-/*****************************************************************************/
+-
+-typedef enum {
+-	BFALSE = 0,
+-	BTRUE  = 1
+-} BOOL_T;
+-
+ #endif /* ITYPES_H */
+-- 
+1.9.1
+
