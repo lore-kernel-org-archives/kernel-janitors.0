@@ -1,46 +1,94 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 11:33:39 +0000
-Subject: [PATCH 0/2] ARM-OMAP2+: Deletion of unnecessary checks before two function calls
-Message-Id: <558BE713.1020409@users.sourceforge.net>
+From: Chaehyun Lim <chaehyun.lim@gmail.com>
+Date: Sat, 13 Jun 2015 06:41:19 +0000
+Subject: [PATCH 2/2] staging: wilc1000: remove itypes.h
+Message-Id: <1434177679-9831-2-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1434177679-9831-1-git-send-email-chaehyun.lim@gmail.com>
+In-Reply-To: <1434177679-9831-1-git-send-email-chaehyun.lim@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: gregkh@linuxfoundation.org
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, Chaehyun Lim <chaehyun.lim@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 13:24:35 +0200
+Remove itypes.h that is not needed.
 
-Some functions which release a system resource tolerate the passing
-of a null pointer. I do not see a need because of this fact
-that a function caller repeats a corresponding check.
+Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
+---
+ drivers/staging/wilc1000/coreconfigurator.c |  1 -
+ drivers/staging/wilc1000/host_interface.c   |  1 -
+ drivers/staging/wilc1000/itypes.h           | 39 -----------------------------
+ 3 files changed, 41 deletions(-)
+ delete mode 100644 drivers/staging/wilc1000/itypes.h
 
-Markus Elfring (2):
-  Delete a check before the function call "omap_device_delete"
-  Delete a check before the function call "of_node_put"
-
- arch/arm/mach-omap2/omap_device.c | 3 +--
- arch/arm/mach-omap2/timer.c       | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
+index 9abc73d..792ba6d 100644
+--- a/drivers/staging/wilc1000/coreconfigurator.c
++++ b/drivers/staging/wilc1000/coreconfigurator.c
+@@ -12,7 +12,6 @@
+ /*****************************************************************************/
+ /* File Includes                                                             */
+ /*****************************************************************************/
+-#include "itypes.h"
+ #include "coreconfigurator.h"
+ /*****************************************************************************/
+ /* Constants                                                                 */
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index ca59f1b..1e9a2f1 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -1,6 +1,5 @@
+ #include "host_interface.h"
+ #include "wilc_oswrapper.h"
+-#include "itypes.h"
+ #include "coreconfigurator.h"
+ 
+ extern s32 TransportInit(void);
+diff --git a/drivers/staging/wilc1000/itypes.h b/drivers/staging/wilc1000/itypes.h
+deleted file mode 100644
+index d64ae35..0000000
+--- a/drivers/staging/wilc1000/itypes.h
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/*****************************************************************************/
+-/*                                                                           */
+-/*                     Ittiam 802.11 MAC SOFTWARE                            */
+-/*                                                                           */
+-/*                  ITTIAM SYSTEMS PVT LTD, BANGALORE                        */
+-/*                           COPYRIGHT(C) 2005                               */
+-/*                                                                           */
+-/*  This program  is  proprietary to  Ittiam  Systems  Private  Limited  and */
+-/*  is protected under Indian  Copyright Law as an unpublished work. Its use */
+-/*  and  disclosure  is  limited by  the terms  and  conditions of a license */
+-/*  agreement. It may not be copied or otherwise  reproduced or disclosed to */
+-/*  persons outside the licensee's organization except in accordance with the*/
+-/*  terms  and  conditions   of  such  an  agreement.  All  copies  and      */
+-/*  reproductions shall be the property of Ittiam Systems Private Limited and*/
+-/*  must bear this notice in its entirety.                                   */
+-/*                                                                           */
+-/*****************************************************************************/
+-
+-/*****************************************************************************/
+-/*                                                                           */
+-/*  File Name         : itypes.h                                             */
+-/*                                                                           */
+-/*  Description       : This file contains all the data type definitions for */
+-/*                      MAC implementation.                                  */
+-/*                                                                           */
+-/*  List of Functions : None                                                 */
+-/*  Issues / Problems : None                                                 */
+-/*                                                                           */
+-/*  Revision History  :                                                      */
+-/*                                                                           */
+-/*         DD MM YYYY   Author(s)       Changes                              */
+-/*         01 05 2005   Ittiam          Draft                                */
+-/*                                                                           */
+-/*****************************************************************************/
+-
+-#ifndef ITYPES_H
+-#define ITYPES_H
+-
+-#endif /* ITYPES_H */
 -- 
-2.4.4
+1.9.1
 
