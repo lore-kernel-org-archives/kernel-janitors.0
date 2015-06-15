@@ -1,34 +1,26 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Mon, 15 Jun 2015 14:43:56 +0000
-Subject: [PATCH] um: Fix a build error
-Message-Id: <1434379436-8301-1-git-send-email-firogm@gmail.com>
+From: Richard Weinberger <richard@nod.at>
+Date: Mon, 15 Jun 2015 14:49:06 +0000
+Subject: Re: [PATCH] um: Fix a build error
+Message-Id: <557EE5E2.7080409@nod.at>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1434379436-8301-1-git-send-email-firogm@gmail.com>
+In-Reply-To: <1434379436-8301-1-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Gcc5 failed to build uml.
-Update codes to test __GNUC__ with 5 will be happier.
+Am 15.06.2015 um 16:43 schrieb Firo Yang:
+> Gcc5 failed to build uml.
+> Update codes to test __GNUC__ with 5 will be happier.
+> 
+> Signed-off-by: Firo Yang <firogm@gmail.com>
 
-Signed-off-by: Firo Yang <firogm@gmail.com>
----
- arch/um/include/shared/init.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The issue got already addressed by patches:
+[PATCH 2/5] um: Stop abusing __KERNEL__
+[PATCH 3/5] um: Remove copy&paste code from init.h
 
-diff --git a/arch/um/include/shared/init.h b/arch/um/include/shared/init.h
-index b3906f8..3af7098 100644
---- a/arch/um/include/shared/init.h
-+++ b/arch/um/include/shared/init.h
-@@ -54,7 +54,7 @@ typedef void (*exitcall_t)(void);
- #endif
- 
- #else
--#if __GNUC__ = 4
-+#if __GNUC__ = 4 || __GNUC__ = 5
- # define __used			__attribute__((__used__))
- #endif
- #endif
--- 
-2.4.3
+They will appear soon in Linus' tree.
 
+Thanks,
+//richard
