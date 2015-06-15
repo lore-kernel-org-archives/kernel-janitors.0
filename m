@@ -1,53 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 20 Jun 2015 19:07:51 +0000
-Subject: [PATCH 3/5] staging: lustre: lmv: drop trivially useless initialization
-Message-Id: <1434827273-13929-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Maninder Singh <maninder1.s@samsung.com>
+Date: Mon, 15 Jun 2015 03:27:44 +0000
+Subject: [PATCH 1/1] arm/hw_breakpoint.c: remove unnecessary header
+Message-Id: <"000001d0a719$92ad5b40$b80811c0$@s"@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434827273-13929-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1434827273-13929-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Remove initialization of a variable that is immediately reassigned.
+Header <asm/kdebug.h> is not needed for arm,
+removing the same.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-type T;
-identifier x;
-constant C;
-expression e;
-@@
-
-T x
-- = C
- ;
-x = e;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+Reviewed-by: Vaneet Narang <v.narang@samsung.com>
 ---
- drivers/staging/lustre/lustre/lmv/lmv_obd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/kernel/hw_breakpoint.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff -u -p a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
---- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-+++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-@@ -1993,7 +1993,7 @@ static int lmv_setattr(struct obd_export
- 	struct obd_device       *obd = exp->exp_obd;
- 	struct lmv_obd	  *lmv = &obd->u.lmv;
- 	struct lmv_tgt_desc     *tgt;
--	int		      rc = 0;
-+	int		      rc;
+diff --git a/arch/arm/kernel/hw_breakpoint.c
+b/arch/arm/kernel/hw_breakpoint.c
+index dc7d0a9..6284779 100644
+--- a/arch/arm/kernel/hw_breakpoint.c
++++ b/arch/arm/kernel/hw_breakpoint.c
+@@ -35,7 +35,6 @@
+ #include <asm/cputype.h>
+ #include <asm/current.h>
+ #include <asm/hw_breakpoint.h>
+-#include <asm/kdebug.h>
+ #include <asm/traps.h>
  
- 	rc = lmv_check_connect(obd);
- 	if (rc)
+ /* Breakpoint currently in use for each BRP. */
+-- 
+1.7.1
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
