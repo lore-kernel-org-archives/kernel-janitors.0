@@ -1,157 +1,65 @@
-From: zhouqiao <zhouqiao@marvell.com>
-Date: Fri, 05 Jun 2015 07:49:49 +0000
-Subject: Re: mfd: Support 88pm80x in 80x driver
-Message-Id: <5571549D.3040703@marvell.com>
+From: ChengYi He <chengyihetaipei@gmail.com>
+Date: Mon, 15 Jun 2015 19:04:59 +0000
+Subject: [PATCH] staging: wilc1000: remove unnecessary cast
+Message-Id: <20150615190459.GA7310@chengyihe-ThinkCentre-M82>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150514103124.GA21248@mwanda>
-In-Reply-To: <20150514103124.GA21248@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 06/05/2015 03:27 PM, Lee Jones wrote:
-> On Fri, 05 Jun 2015, zhouqiao wrote:
->
->> On 05/18/2015 05:23 PM, Lee Jones wrote:
->>> On Fri, 15 May 2015, Qiao Zhou wrote:
->>>
->>>> On 05/14/2015 08:50 PM, Lee Jones wrote:
->>>>> On Thu, 14 May 2015, Qiao Zhou wrote:
->>>>>
->>>>>> On 05/14/2015 06:31 PM, Dan Carpenter wrote:
->>>>>>> Hello Qiao Zhou,
->>>>>>>
->>>>>>> The patch 70c6cce04066: "mfd: Support 88pm80x in 80x driver" from Jul
->>>>>>> 9, 2012, leads to the following static checker warning:
->>>>>>>
->>>>>>> 	include/linux/mfd/88pm80x.h:352 pm80x_dev_suspend()
->>>>>>> 	warn: test_bit() takes a bit number
->>>>>>>
->>>>>>> include/linux/mfd/88pm80x.h
->>>>>>>     344  #ifdef CONFIG_PM
->>>>>>>     345  static inline int pm80x_dev_suspend(struct device *dev)
->>>>>>>     346  {
->>>>>>>     347          struct platform_device *pdev = to_platform_device(dev);
->>>>>>>     348          struct pm80x_chip *chip = dev_get_drvdata(pdev->dev.parent);
->>>>>>>     349          int irq = platform_get_irq(pdev, 0);
->>>>>>>     350
->>>>>>>     351          if (device_may_wakeup(dev))
->>>>>>>     352                  set_bit((1 << irq), &chip->wu_flag);
->>>>>>>                                  ^^^^^^^^^
->>>>>>> Smatch is complaining because it's doing a double left shift.  If irq is
->>>>>>> larger than 5 then we are corrupting memory.  Also we don't use
->>>>>> Will fix this issue.
->>>>>>> ->wu_flag as a bitfield, we use it as a boolean so the name is
->>>>>>> confusing.
->>>>>>>
->>>>>>>     353
->>>>>>>     354          return 0;
->>>>>>>     355  }
->>>>>>>     356
->>>>>>>     357  static inline int pm80x_dev_resume(struct device *dev)
->>>>>>>     358  {
->>>>>>>     359          struct platform_device *pdev = to_platform_device(dev);
->>>>>>>     360          struct pm80x_chip *chip = dev_get_drvdata(pdev->dev.parent);
->>>>>>>     361          int irq = platform_get_irq(pdev, 0);
->>>>>>>     362
->>>>>>>     363          if (device_may_wakeup(dev))
->>>>>>>     364                  clear_bit((1 << irq), &chip->wu_flag);
->>>>>>>                                    ^^^^^^^^^^
->>>>>>> Same issue.
->>>>>>>
->>>>>>>     365
->>>>>>>     366          return 0;
->>>>>>>     367  }
->>>>>>>     368  #endif
->>>>>>>
->>>>>>> drivers/mfd/88pm80x.c
->>>>>>>     133  #ifdef CONFIG_PM_SLEEP
->>>>>>>     134  static int pm80x_suspend(struct device *dev)
->>>>>>>     135  {
->>>>>>>     136          struct i2c_client *client = container_of(dev, struct i2c_client, dev);
->>>>>>>     137          struct pm80x_chip *chip = i2c_get_clientdata(client);
->>>>>>>     138
->>>>>>>     139          if (chip && chip->wu_flag)
->>>>>>>                              ^^^^^^^^^^^^^
->>>>>>> Here it is used as a bool.
->>>>>> It's designed in this way that sub device driver may use this flag.
->>>>>> Also the bit value can tell which sub device sets the flag. However
->>>>>> here we just check whether any bit is set.
->>>>>>>     140                  if (device_may_wakeup(chip->dev))
->>>>>>>     141                          enable_irq_wake(chip->irq);
->>>>>>>     142
->>>>>>>     143          return 0;
->>>>>>>     144  }
->>>>>>>     145
->>>>>>>     146  static int pm80x_resume(struct device *dev)
->>>>>>>     147  {
->>>>>>>     148          struct i2c_client *client = container_of(dev, struct i2c_client, dev);
->>>>>>>     149          struct pm80x_chip *chip = i2c_get_clientdata(client);
->>>>>>>     150
->>>>>>>     151          if (chip && chip->wu_flag)
->>>>>>>                              ^^^^^^^^^^^^^
->>>>>>> This is the only other user.
->>>>>>>
->>>>>>>     152                  if (device_may_wakeup(chip->dev))
->>>>>>>     153                          disable_irq_wake(chip->irq);
->>>>>>>     154
->>>>>>>     155          return 0;
->>>>>>>     156  }
->>>>>>>     157  #endif
->>>>>>>
->>>>>>>
->>>>>>> regards,
->>>>>>> dan carpenter
->>>>>>>
->>>>>> Dan,
->>>>>>
->>>>>> Below is the patch to fix this issue. Please have a check and I'll
->>>>>> submit an official patch to community after you reviewed. Thanks for
->>>>>> finding this issue.
->>>>>>
->>>>>>  From 96486fda25414e3b926c275b951ac1408fae7830 Mon Sep 17 00:00:00 2001
->>>>>> From: Qiao Zhou <zhouqiao@marvell.com>
->>>>>> Date: Thu, 14 May 2015 19:00:39 +0800
->>>>>> Subject: [PATCH] mfd: 88pm80x: refine irq bit operation
->>>>>>
->>>>>> Set_bit/clear_bit for wu_flag may be corrupted if irq > 5(or 6 for
->>>>>> aarch64). The maximum irq number from 88pm80x chip series is 24.
->>>>>> Here we refine the code to protect the potential memory corruption.
->>>>>>
->>>>>> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>>> Signed-off-by: Qiao Zhou <zhouqiao@marvell.com>
->>>>>> ---
->>>>>>   include/linux/mfd/88pm80x.h |   16 ++++++++++++++--
->>>>>>   1 file changed, 14 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
->>>>>> index 97cb283..a8c0318 100644
->>>>>> --- a/include/linux/mfd/88pm80x.h
->>>>>> +++ b/include/linux/mfd/88pm80x.h
->>> [...]
->>>
->>>>>>   	if (device_may_wakeup(dev))
->>>>>> -		set_bit((1 << irq), &chip->wu_flag);
->>>>>> +		set_bit(irq, &chip->wu_flag);
->>>>> Can you come up with a better name?
->>>> It's short for wakeup flag. I may change it to wakeup_flag. Do you
->>>> have any suggestion if it's not okay?
->>> bool wakeup; will be fine.
->> Would it be OK to only change the same? The original purpose to use
->> bit control is that
->> MFD driver may check the bits so that it knows which sub-dev is
->> doing something special.
->> However, it's not pushed into mainline yet. Another concern is that
->> Currently I've no
->> platform to verify the change to change the variable type.
-> Fine, as long as you promise to attend to it in the future.
-OK. Thanks.
->
->> Sorry for late response. I've been trapped in some urgent issues these days.
+kmalloc() returns void pointer.
 
+Signed-off-by: ChengYi He <chengyihetaipei@gmail.com>
+---
+ drivers/staging/wilc1000/linux_mon.c  | 2 +-
+ drivers/staging/wilc1000/linux_wlan.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/staging/wilc1000/linux_mon.c b/drivers/staging/wilc1000/linux_mon.c
+index d5860ce..bc7feb4 100644
+--- a/drivers/staging/wilc1000/linux_mon.c
++++ b/drivers/staging/wilc1000/linux_mon.c
+@@ -258,7 +258,7 @@ static int mon_mgmt_tx(struct net_device *dev, const u8 *buf, size_t len)
+ 	len += sizeof(struct tx_complete_mon_data *);
+ 	#endif
+ 
+-	mgmt_tx->buff = (char *)kmalloc(len, GFP_ATOMIC);
++	mgmt_tx->buff = kmalloc(len, GFP_ATOMIC);
+ 	if (mgmt_tx->buff = NULL) {
+ 		PRINT_ER("Failed to allocate memory for mgmt_tx buff\n");
+ 		return WILC_FAIL;
+diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
+index 5f87148..c1e9272 100644
+--- a/drivers/staging/wilc1000/linux_wlan.c
++++ b/drivers/staging/wilc1000/linux_wlan.c
+@@ -580,7 +580,7 @@ static void linux_wlan_dbg(uint8_t *buff)
+ static void *linux_wlan_malloc_atomic(uint32_t sz)
+ {
+ 	char *pntr = NULL;
+-	pntr = (char *)kmalloc(sz, GFP_ATOMIC);
++	pntr = kmalloc(sz, GFP_ATOMIC);
+ 	PRINT_D(MEM_DBG, "Allocating %d bytes at address %p\n", sz, pntr);
+ 	return (void *)pntr;
+ 
+@@ -588,7 +588,7 @@ static void *linux_wlan_malloc_atomic(uint32_t sz)
+ static void *linux_wlan_malloc(uint32_t sz)
+ {
+ 	char *pntr = NULL;
+-	pntr = (char *)kmalloc(sz, GFP_KERNEL);
++	pntr = kmalloc(sz, GFP_KERNEL);
+ 	PRINT_D(MEM_DBG, "Allocating %d bytes at address %p\n", sz, pntr);
+ 	return (void *)pntr;
+ }
+@@ -605,7 +605,7 @@ void linux_wlan_free(void *vp)
+ static void *internal_alloc(uint32_t size, uint32_t flag)
+ {
+ 	char *pntr = NULL;
+-	pntr = (char *)kmalloc(size, flag);
++	pntr = kmalloc(size, flag);
+ 	PRINT_D(MEM_DBG, "Allocating %d bytes at address %p\n", size, pntr);
+ 	return (void *)pntr;
+ }
 -- 
-Best Regards
-Qiao
+1.9.1
 
