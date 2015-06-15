@@ -1,46 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 May 2015 19:37:54 +0000
-Subject: [PATCH 13/20] staging: lustre: obdclass: llog: remove unneeded null test before free
-Message-Id: <1430509086-22132-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Firo Yang <firogm@gmail.com>
+Date: Mon, 15 Jun 2015 14:43:56 +0000
+Subject: [PATCH] um: Fix a build error
+Message-Id: <1434379436-8301-1-git-send-email-firogm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1430509086-22132-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Kfree can cope with a null argument, so drop null tests.
+Gcc5 failed to build uml.
+Update codes to test __GNUC__ with 5 will be happier.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@ expression ptr; @@
-
-- if (ptr != NULL)
-  kfree(ptr);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Firo Yang <firogm@gmail.com>
 ---
- drivers/staging/lustre/lustre/obdclass/llog.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/um/include/shared/init.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/llog.c b/drivers/staging/lustre/lustre/obdclass/llog.c
-index 636df94..4fa52d1 100644
---- a/drivers/staging/lustre/lustre/obdclass/llog.c
-+++ b/drivers/staging/lustre/lustre/obdclass/llog.c
-@@ -563,8 +563,7 @@ int llog_reverse_process(const struct lu_env *env,
- 	}
+diff --git a/arch/um/include/shared/init.h b/arch/um/include/shared/init.h
+index b3906f8..3af7098 100644
+--- a/arch/um/include/shared/init.h
++++ b/arch/um/include/shared/init.h
+@@ -54,7 +54,7 @@ typedef void (*exitcall_t)(void);
+ #endif
  
- out:
--	if (buf)
--		kfree(buf);
-+	kfree(buf);
- 	return rc;
- }
- EXPORT_SYMBOL(llog_reverse_process);
+ #else
+-#if __GNUC__ = 4
++#if __GNUC__ = 4 || __GNUC__ = 5
+ # define __used			__attribute__((__used__))
+ #endif
+ #endif
+-- 
+2.4.3
 
