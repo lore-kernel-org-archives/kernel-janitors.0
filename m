@@ -1,58 +1,88 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 12 Jun 2015 07:55:17 +0000
-Subject: Re: [alsa-devel] [PATCH v2] ALSA: aoa: convert bus code to use dev_groups
-Message-Id: <557A9065.5020608@gmail.com>
+From: Chaehyun Lim <chaehyun.lim@gmail.com>
+Date: Tue, 16 Jun 2015 01:06:10 +0000
+Subject: [PATCH] staging: wilc1000: change enum and defines for printk
+Message-Id: <1434416770-8323-1-git-send-email-chaehyun.lim@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1432817307-28380-1-git-send-email-lambert.quentin@gmail.com>	<1434009818-16711-1-git-send-email-lambert.quentin@gmail.com>	<s5hlhfqlfzu.wl-tiwai@suse.de>	<5579795D.9080109@gmail.com> <s5heglil9de.wl-tiwai@suse.de>
-In-Reply-To: <s5heglil9de.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Remove enum and change defines for printk using BIT macro.
 
+Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
+---
+ drivers/staging/wilc1000/linux_wlan_common.h | 57 +++++++++-------------------
+ 1 file changed, 17 insertions(+), 40 deletions(-)
 
-On 11/06/2015 14:25, Takashi Iwai wrote:
-> At Thu, 11 Jun 2015 14:04:45 +0200,
-> Quentin Lambert wrote:
->>
->>
->> On 11/06/2015 12:02, Takashi Iwai wrote:
->>> At Thu, 11 Jun 2015 10:03:38 +0200,
->>> Quentin Lambert wrote:
->>>> The dev_attrs field of struct bus_type is going away, use dev_groups instead.
->>>> This converts the soundbus code to use the correct field.
->>>>
->>>> Given that all other usages of the macro define the struct attribute
->>>> *xxx_attrs[] in the same file they assign the .dev_groups field, this patch
->>>> merges sysfs.c into core.c.
->>>>
->>>> These modifications were made using Coccinelle.
->>>>
->>>> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
->>>> ---
->>>>    Changes since v1:
->>>>     - Fix the commit message to actually talk about soundbus rather than MDIO
->>>>     - This version attempt to fix a problem resulting from the macro
->>>>       ATTRIBUTE_GROUPS declaring the structure as static by merging sysfs.c into
->>>>       core.c. I understand that this may not be the prefered solution since
->>>>       Takashi suggested that adding a comment line to the previous version could
->>>>       be acceptable.
->>> Hmm, the patch doesn't look as mentioned here.
->>> It's rather bigger than the previous patch.  Is this intentional?
->>>
->> Well as mentionned in the change log it is bigger because it moves the
->> code from sysfs.c to
->> core.c. I realise as I am writing this that this patch should have
->> really been two patches.
->> The first one removing sysfs.c and the second one removing the use of
->> the dev_attrs.
-> Yes, that'd be better.  OTOH, do we really need to copy many codes at
-> all?  I really prefer shorter changes, if possible.
-All right, I will send a third version following the comments you made 
-on the fist version. I just wanted to propose this idea in case it 
-suited you.
-
-Quentin
+diff --git a/drivers/staging/wilc1000/linux_wlan_common.h b/drivers/staging/wilc1000/linux_wlan_common.h
+index 541f19c..e646a5c 100644
+--- a/drivers/staging/wilc1000/linux_wlan_common.h
++++ b/drivers/staging/wilc1000/linux_wlan_common.h
+@@ -1,46 +1,23 @@
+ #ifndef LINUX_WLAN_COMMON_H
+ #define LINUX_WLAN_COMMON_H
+ 
+-enum debug_region {
+-	Generic_debug = 0,
+-	Hostapd_debug,
+-	Hostinf_debug,
+-	CFG80211_debug,
+-	Coreconfig_debug,
+-	Interrupt_debug,
+-	TX_debug,
+-	RX_debug,
+-	Lock_debug,
+-	Tcp_enhance,
+-	/*Added by amr - BugID_4720*/
+-	Spin_debug,
+-
+-	Init_debug,
+-	Bus_debug,
+-	Mem_debug,
+-	Firmware_debug,
+-	COMP = 0xFFFFFFFF,
+-};
+-
+-#define GENERIC_DBG			(1 << Generic_debug)
+-#define HOSTAPD_DBG		(1 << Hostapd_debug)
+-#define HOSTINF_DBG			(1 << Hostinf_debug)
+-#define CORECONFIG_DBG		(1 << Coreconfig_debug)
+-#define CFG80211_DBG		(1 << CFG80211_debug)
+-#define INT_DBG				(1 << Interrupt_debug)
+-#define TX_DBG				(1 << TX_debug)
+-#define RX_DBG				(1 << RX_debug)
+-#define LOCK_DBG			(1 << Lock_debug)
+-#define TCP_ENH				(1 << Tcp_enhance)
+-
+-
+-/*Added by Amr - BugID_4720*/
+-#define SPIN_DEBUG			(1 << Spin_debug)
+-
+-#define INIT_DBG				(1 << Init_debug)
+-#define BUS_DBG				(1 << Bus_debug)
+-#define MEM_DBG				(1 << Mem_debug)
+-#define FIRM_DBG			(1 << Firmware_debug)
++#include <linux/bitops.h>
++
++#define GENERIC_DBG           BIT(0)
++#define HOSTAPD_DBG           BIT(1)
++#define HOSTINF_DBG           BIT(2)
++#define CFG80211_DBG          BIT(3)
++#define CORECONFIG_DBG        BIT(4)
++#define INT_DBG               BIT(5)
++#define TX_DBG                BIT(6)
++#define RX_DBG                BIT(7)
++#define LOCK_DBG              BIT(8)
++#define TCP_ENH               BIT(9)
++#define SPIN_DEBUG            BIT(10)
++#define INIT_DBG              BIT(11)
++#define BUS_DBG               BIT(12)
++#define MEM_DBG               BIT(13)
++#define FIRM_DBG              BIT(14)
+ 
+ #if defined (WILC_DEBUGFS)
+ extern int wilc_debugfs_init(void);
+-- 
+1.9.1
 
