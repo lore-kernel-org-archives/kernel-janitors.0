@@ -1,33 +1,53 @@
-From: Don Brace <Don.Brace@pmcs.com>
-Date: Thu, 18 Jun 2015 13:35:45 +0000
+From: "Seymour, Shane M" <shane.seymour@hp.com>
+Date: Fri, 19 Jun 2015 07:13:47 +0000
 Subject: RE: [patch] hpsa: fix an sprintf() overflow in the reset handler
-Message-Id: <07F70BBF6832E34FA1C923241E8833AB486B305D@BBYEXM01.pmc-sierra.internal>
+Message-Id: <DDB9C85B850785449757F9914A034FCB3BFF5E58@G9W0766.americas.hpqcorp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150604144756.GA8897@mwanda>
-In-Reply-To: <20150604144756.GA8897@mwanda>
+ <07F70BBF6832E34FA1C923241E8833AB486B305D@BBYEXM01.pmc-sierra.internal>
+In-Reply-To: <07F70BBF6832E34FA1C923241E8833AB486B305D@BBYEXM01.pmc-sierra.internal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "iss_storagedev@hp.com" <iss_storagedev@hp.com>, dl Team ESD Storage Dev Support <storagedev@pmcs.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Don Brace <Don.Brace@pmcs.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "James E.J. Bottomley" <JBottomley@odin.com>, ISS StorageDev <iss_storagedev@hp.com>, dl Team ESD Storage Dev Support <storagedev@pmcs.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+
+With a size of 48 while it won't overflow since you're using snprintf the string with a maximum value in %d:
+
+echo -n "cmd 2147483647 RESET FAILED, new lockup detected" |wc -c
+48
+
+is 48 characters long without a null terminator on the string (and in the unlikely event that it's somehow a the largest possible negative value it would be 49 characters after including the minus sign without a null terminator). If you always want a complete message no matter what the value formatted as %d will be I believe it needs to have a length of 50. The worst that will happen now though because you're using snprintf is you'll drop the trailing "d" or "ed" in the message with very large positive or negative numbers.
+
+My somewhat sketchy memory of the hpsa driver is that the nr_cmds member of the struct ctlr_info is never more than 1040 (?) anyway. If things are working correctly I don't think it should ever happen but I thought I should point out that msg isn't large enough to contain the complete contents of the longest possible character string.
+
+
+-----Original Message-----
+From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-owner@vger.kernel.org] On Behalf Of Don Brace
+Sent: Thursday, June 18, 2015 11:36 PM
+To: Dan Carpenter
+Cc: James E.J. Bottomley; ISS StorageDev; dl Team ESD Storage Dev Support; linux-scsi@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: RE: [patch] hpsa: fix an sprintf() overflow in the reset handler
 
 > -----Original Message-----
 > From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
 > Sent: Thursday, June 04, 2015 9:48 AM
 > To: Don Brace
-> Cc: James E.J. Bottomley; iss_storagedev@hp.com; dl Team ESD Storage Dev
-> Support; linux-scsi@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Cc: James E.J. Bottomley; iss_storagedev@hp.com; dl Team ESD Storage 
+> Dev Support; linux-scsi@vger.kernel.org; 
+> kernel-janitors@vger.kernel.org
 > Subject: [patch] hpsa: fix an sprintf() overflow in the reset handler
 > 
-> The string "cmd %d RESET FAILED, new lockup detected" is not quite
-> large enough so the sprintf() will overflow.  I have increased the size
-> of the buffer and also changed the sprintf calls to snprintf.
+> The string "cmd %d RESET FAILED, new lockup detected" is not quite 
+> large enough so the sprintf() will overflow.  I have increased the 
+> size of the buffer and also changed the sprintf calls to snprintf.
 > 
-> Fixes: 73153fe533bc ('hpsa: use block layer tag for command allocation')
+> Fixes: 73153fe533bc ('hpsa: use block layer tag for command 
+> allocation')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> index 1dafeb4..cab4e98 100644
+> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c index 
+> 1dafeb4..cab4e98 100644
 > --- a/drivers/scsi/hpsa.c
 > +++ b/drivers/scsi/hpsa.c
 > @@ -5104,7 +5104,7 @@ static int hpsa_eh_device_reset_handler(struct
@@ -43,7 +63,7 @@ Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "iss_storagedev@hp.com" <iss_s
 > @@ -5122,16 +5122,18 @@ static int hpsa_eh_device_reset_handler(struct
 > scsi_cmnd *scsicmd)
 > 
->  	/* if controller locked up, we can guarantee command won't complete
+>  	/* if controller locked up, we can guarantee command won't complete 
 > */
 >  	if (lockup_detected(h)) {
 > -		sprintf(msg, "cmd %d RESET FAILED, lockup detected",
@@ -78,3 +98,5 @@ Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "iss_storagedev@hp.com" <iss_s
 >  }
 
 Signed-off-by: Don Brace <don.brace@pmcs.com>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-scsi" in the body of a message to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
