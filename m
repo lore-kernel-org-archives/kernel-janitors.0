@@ -1,50 +1,61 @@
-From: Chaehyun Lim <chaehyun.lim@gmail.com>
-Date: Thu, 11 Jun 2015 05:35:58 +0000
-Subject: [PATCH V3 7/9] staging: wilc1000: remove WILC_Sint16
-Message-Id: <1434000960-16909-7-git-send-email-chaehyun.lim@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 20 Jun 2015 16:59:06 +0000
+Subject: [PATCH 08/12] staging: lustre: mgc: Use !x to check for kzalloc failure
+Message-Id: <1434819550-3193-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Use s16 instead of WILC_Sint16.
+!x is more normal for kzalloc failure in the kernel.
 
-Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x;
+statement S1, S2;
+@@
+
+x = kzalloc(...);
+if (
+- x = NULL
++ !x
+ ) S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-V3: rebased on the top of staging-testing
-V2: remove the spaces on the subject
-    capitalize the name on the From and the Signed-off-by
+ drivers/staging/lustre/lustre/mgc/mgc_request.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/staging/wilc1000/coreconfigurator.c | 2 +-
- drivers/staging/wilc1000/wilc_oswrapper.h   | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+diff -u -p a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+--- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
++++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+@@ -1128,7 +1128,7 @@ static int mgc_apply_recover_logs(struct
+ 	LASSERT(cfg->cfg_sb = cfg->cfg_instance);
+ 
+ 	inst = kzalloc(PAGE_CACHE_SIZE, GFP_NOFS);
+-	if (inst = NULL)
++	if (!inst)
+ 		return -ENOMEM;
+ 
+ 	if (!IS_SERVER(lsi)) {
+@@ -1493,7 +1493,7 @@ static int mgc_process_cfg_log(struct ob
+ 		lsi = s2lsi(cld->cld_cfg.cfg_sb);
+ 
+ 	env = kzalloc(sizeof(*env), GFP_NOFS);
+-	if (env = NULL)
++	if (!env)
+ 		return -ENOMEM;
+ 
+ 	rc = lu_env_init(env, LCT_MG_THREAD);
 
-diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
-index f51bfa4..cff3ff8 100644
---- a/drivers/staging/wilc1000/coreconfigurator.c
-+++ b/drivers/staging/wilc1000/coreconfigurator.c
-@@ -174,7 +174,7 @@ static tstrConfigPktInfo gstrConfigPktInfo;
- 
- static u8 g_seqno;
- 
--static WILC_Sint16 g_wid_num          = -1;
-+static s16 g_wid_num          = -1;
- 
- static u16 Res_Len;
- 
-diff --git a/drivers/staging/wilc1000/wilc_oswrapper.h b/drivers/staging/wilc1000/wilc_oswrapper.h
-index 7e84475..6deec34 100644
---- a/drivers/staging/wilc1000/wilc_oswrapper.h
-+++ b/drivers/staging/wilc1000/wilc_oswrapper.h
-@@ -14,7 +14,6 @@
- #define WILC_OSW_INTERFACE_VER 2
- 
- /* Integer Types */
--typedef signed short WILC_Sint16;
- typedef signed int WILC_Sint32;
- typedef signed long long WILC_Sint64;
- 
--- 
-1.9.1
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
