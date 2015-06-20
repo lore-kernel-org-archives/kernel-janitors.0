@@ -1,28 +1,83 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 16:18:41 +0000
-Subject: [PATCH 0/2] perf header: Deletion of an unnecessary check
-Message-Id: <558C29E1.2040909@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 20 Jun 2015 16:59:03 +0000
+Subject: [PATCH 05/12] staging: lustre: lmv: Use !x to check for kzalloc failure
+Message-Id: <1434819550-3193-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+!x is more normal for kzalloc failure in the kernel.
 
-Further update suggestions were taken into account after a patch was applied
-from static source code analysis.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Markus Elfring (2):
-  Delete an unnecessary check before the function call "free_event_desc"
-  Less function calls in read_event_desc() after error detection
+// <smpl>
+@@
+expression x;
+statement S1, S2;
+@@
 
- tools/perf/util/header.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+x = kzalloc(...);
+if (
+- x = NULL
++ !x
+ ) S1 else S2
+// </smpl>
 
--- 
-2.4.4
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/staging/lustre/lustre/lmv/lmv_intent.c |    2 +-
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c    |    6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff -u -p a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -716,7 +716,7 @@ repeat_fid2path:
+ 	if (remote_gf = NULL) {
+ 		remote_gf_size = sizeof(*remote_gf) + PATH_MAX;
+ 		remote_gf = kzalloc(remote_gf_size, GFP_NOFS);
+-		if (remote_gf = NULL) {
++		if (!remote_gf) {
+ 			rc = -ENOMEM;
+ 			goto out_fid2path;
+ 		}
+@@ -1398,7 +1398,7 @@ static int lmv_statfs(const struct lu_en
+ 		return rc;
+ 
+ 	temp = kzalloc(sizeof(*temp), GFP_NOFS);
+-	if (temp = NULL)
++	if (!temp)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < lmv->desc.ld_tgt_count; i++) {
+@@ -1730,7 +1730,7 @@ lmv_enqueue_remote(struct obd_export *ex
+ 	}
+ 
+ 	rdata = kzalloc(sizeof(*rdata), GFP_NOFS);
+-	if (rdata = NULL) {
++	if (!rdata) {
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+diff -u -p a/drivers/staging/lustre/lustre/lmv/lmv_intent.c b/drivers/staging/lustre/lustre/lmv/lmv_intent.c
+--- a/drivers/staging/lustre/lustre/lmv/lmv_intent.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_intent.c
+@@ -100,7 +100,7 @@ static int lmv_intent_remote(struct obd_
+ 	}
+ 
+ 	op_data = kzalloc(sizeof(*op_data), GFP_NOFS);
+-	if (op_data = NULL) {
++	if (!op_data) {
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
