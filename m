@@ -1,57 +1,74 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 13:32:52 +0000
-Subject: [PATCH 2/2] ARM-kernel: Delete an unnecessary check before the function call "unwind_table_del"
-Message-Id: <558C0304.6050204@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 20 Jun 2015 16:59:09 +0000
+Subject: [PATCH 11/12] staging: lustre: osc: Use !x to check for kzalloc failure
+Message-Id: <1434819550-3193-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <558C01C5.4060303@users.sourceforge.net>
-In-Reply-To: <558C01C5.4060303@users.sourceforge.net>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 15:05:21 +0200
+!x is more normal for kzalloc failure in the kernel.
 
-The unwind_table_del() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+expression x;
+statement S1, S2;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+x = kzalloc(...);
+if (
+- x = NULL
++ !x
+ ) S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/arm/kernel/module.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/osc/osc_dev.c     |    2 +-
+ drivers/staging/lustre/lustre/osc/osc_request.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
-index efdddcb..0cc1afa 100644
---- a/arch/arm/kernel/module.c
-+++ b/arch/arm/kernel/module.c
-@@ -390,7 +390,6 @@ module_arch_cleanup(struct module *mod)
- 	int i;
+diff -u -p a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
+--- a/drivers/staging/lustre/lustre/osc/osc_request.c
++++ b/drivers/staging/lustre/lustre/osc/osc_request.c
+@@ -119,7 +119,7 @@ static int osc_packmd(struct obd_export
  
- 	for (i = 0; i < ARM_SEC_MAX; i++)
--		if (mod->arch.unwind[i])
--			unwind_table_del(mod->arch.unwind[i]);
-+		unwind_table_del(mod->arch.unwind[i]);
- #endif
- }
--- 
-2.4.4
+ 	if (*lmmp = NULL) {
+ 		*lmmp = kzalloc(lmm_size, GFP_NOFS);
+-		if (*lmmp = NULL)
++		if (!*lmmp)
+ 			return -ENOMEM;
+ 	}
+ 
+@@ -1909,7 +1909,7 @@ int osc_build_rpc(const struct lu_env *e
+ 		mpflag = cfs_memory_pressure_get_and_set();
+ 
+ 	crattr = kzalloc(sizeof(*crattr), GFP_NOFS);
+-	if (crattr = NULL) {
++	if (!crattr) {
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+diff -u -p a/drivers/staging/lustre/lustre/osc/osc_dev.c b/drivers/staging/lustre/lustre/osc/osc_dev.c
+--- a/drivers/staging/lustre/lustre/osc/osc_dev.c
++++ b/drivers/staging/lustre/lustre/osc/osc_dev.c
+@@ -218,7 +218,7 @@ static struct lu_device *osc_device_allo
+ 	int rc;
+ 
+ 	od = kzalloc(sizeof(*od), GFP_NOFS);
+-	if (od = NULL)
++	if (!od)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	cl_device_init(&od->od_cl, t);
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
