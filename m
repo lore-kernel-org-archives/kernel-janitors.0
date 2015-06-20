@@ -1,62 +1,57 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Tue, 16 Jun 2015 12:41:49 +0000
-Subject: Re: [patch] drm/amdkfd: fix some range checks in address watch ioctl
-Message-Id: <CAFCwf12RoBTtHBdu5j5Jot7q=2k3G9xc0v1VgbtGHCub7Drh3w@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 20 Jun 2015 16:58:59 +0000
+Subject: [PATCH 01/12] staging: lustre: fid: Use !x to check for kzalloc failure
+Message-Id: <1434819550-3193-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150611151902.GF12192@mwanda>
-In-Reply-To: <20150611151902.GF12192@mwanda>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Yair Shachar <yair.shachar@amd.com>, John Bridgman <John.Bridgman@amd.com>
-Cc: David Airlie <airlied@linux.ie>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 11, 2015 at 6:19 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> index 96c904b..54a608a 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> @@ -553,7 +554,7 @@ static int kfd_ioctl_dbg_address_watch(struct file *filep,
->         /* Validate arguments */
->
->         if ((args->buf_size_in_bytes > MAX_ALLOWED_AW_BUFF_SIZE) ||
-> -               (args->buf_size_in_bytes <= sizeof(*args)) ||
-> +               (args->buf_size_in_bytes <= sizeof(*args) + sizeof(int) * 2) ||
->                 (cmd_from_user = NULL))
->                 return -EINVAL;
->
-> @@ -590,7 +596,7 @@ static int kfd_ioctl_dbg_address_watch(struct file *filep,
->         /* skip over the addresses buffer */
->         args_idx += sizeof(aw_info.watch_address) * aw_info.num_watch_points;
->
-> -       if (args_idx >= args->buf_size_in_bytes) {
-> +       if (args_idx >= args->buf_size_in_bytes - sizeof(*args)) {
->                 kfree(args_buff);
->                 return -EINVAL;
->         }
-> @@ -614,7 +620,7 @@ static int kfd_ioctl_dbg_address_watch(struct file *filep,
->                 args_idx += sizeof(aw_info.watch_mask);
->         }
->
-> -       if (args_idx > args->buf_size_in_bytes) {
-> +       if (args_idx >= args->buf_size_in_bytes - sizeof(args)) {
->                 kfree(args_buff);
->                 return -EINVAL;
->         }
+!x is more normal for kzalloc failure in the kernel.
 
-Hi Dan,
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-I took the above section and made a patch from them which I then
-applied to my -next-fixes tree (to be included in 4.2 merge window).
-Thanks!
+// <smpl>
+@@
+expression x;
+statement S1, S2;
+@@
 
-Yair,
-I suggest you take my amdkfd-next-fixes branch and test it with your
-debugger tests.
+x = kzalloc(...);
+if (
+- x = NULL
++ !x
+ ) S1 else S2
+// </smpl>
 
-John,
-If you could try publishing kfdtest as we talked about, that would be
-great because then everyone will be able to check this.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-   Oded
+---
+ drivers/staging/lustre/lustre/fid/fid_request.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/staging/lustre/lustre/fid/fid_request.c b/drivers/staging/lustre/lustre/fid/fid_request.c
+--- a/drivers/staging/lustre/lustre/fid/fid_request.c
++++ b/drivers/staging/lustre/lustre/fid/fid_request.c
+@@ -498,11 +498,11 @@ int client_fid_init(struct obd_device *o
+ 	int rc;
+ 
+ 	cli->cl_seq = kzalloc(sizeof(*cli->cl_seq), GFP_NOFS);
+-	if (cli->cl_seq = NULL)
++	if (!cli->cl_seq)
+ 		return -ENOMEM;
+ 
+ 	prefix = kzalloc(MAX_OBD_NAME + 5, GFP_NOFS);
+-	if (prefix = NULL) {
++	if (!prefix) {
+ 		rc = -ENOMEM;
+ 		goto out_free_seq;
+ 	}
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
