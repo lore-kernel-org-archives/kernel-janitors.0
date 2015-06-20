@@ -1,106 +1,114 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 08:15:35 +0000
-Subject: [PATCH] lib/mpi: Delete unnecessary checks before the function call "mpi_free_limb_space"
-Message-Id: <558D0A27.7010905@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 20 Jun 2015 16:59:02 +0000
+Subject: [PATCH 04/12] staging: lustre: ldlm: Use !x to check for kzalloc failure
+Message-Id: <1434819550-3193-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <5467BB2A.2030108@users.sourceforge.net>
-In-Reply-To: <5467BB2A.2030108@users.sourceforge.net>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 10:11:19 +0200
+!x is more normal for kzalloc failure in the kernel.
 
-The mpi_free_limb_space() function tests whether its argument is NULL and
-then returns immediately. Thus the test around the call is not needed.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+expression x;
+statement S1, S2;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+x = kzalloc(...);
+if (
+- x = NULL
++ !x
+ ) S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- lib/mpi/mpi-pow.c  | 15 +++++----------
- lib/mpi/mpih-mul.c | 21 +++++++--------------
- 2 files changed, 12 insertions(+), 24 deletions(-)
+ drivers/staging/lustre/lustre/ldlm/ldlm_lock.c  |    4 ++--
+ drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c |    8 ++++----
+ drivers/staging/lustre/lustre/ldlm/ldlm_pool.c  |    2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/lib/mpi/mpi-pow.c b/lib/mpi/mpi-pow.c
-index 5464c87..c28882f 100644
---- a/lib/mpi/mpi-pow.c
-+++ b/lib/mpi/mpi-pow.c
-@@ -308,16 +308,11 @@ leave:
- enomem:
- 	if (assign_rp)
- 		mpi_assign_limb_space(res, rp, size);
--	if (mp_marker)
--		mpi_free_limb_space(mp_marker);
--	if (bp_marker)
--		mpi_free_limb_space(bp_marker);
--	if (ep_marker)
--		mpi_free_limb_space(ep_marker);
--	if (xp_marker)
--		mpi_free_limb_space(xp_marker);
--	if (tspace)
--		mpi_free_limb_space(tspace);
-+	mpi_free_limb_space(mp_marker);
-+	mpi_free_limb_space(bp_marker);
-+	mpi_free_limb_space(ep_marker);
-+	mpi_free_limb_space(xp_marker);
-+	mpi_free_limb_space(tspace);
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(mpi_powm);
-diff --git a/lib/mpi/mpih-mul.c b/lib/mpi/mpih-mul.c
-index 7c84171..ff021cc 100644
---- a/lib/mpi/mpih-mul.c
-+++ b/lib/mpi/mpih-mul.c
-@@ -339,8 +339,7 @@ mpihelp_mul_karatsuba_case(mpi_ptr_t prodp,
- 	mpi_limb_t cy;
+diff -u -p a/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c b/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
+@@ -1422,7 +1422,7 @@ static int ldlm_pools_thread_start(void)
+ 		return -EALREADY;
  
- 	if (!ctx->tspace || ctx->tspace_size < vsize) {
--		if (ctx->tspace)
--			mpi_free_limb_space(ctx->tspace);
-+		mpi_free_limb_space(ctx->tspace);
- 		ctx->tspace = mpi_alloc_limb_space(2 * vsize);
- 		if (!ctx->tspace)
+ 	ldlm_pools_thread = kzalloc(sizeof(*ldlm_pools_thread), GFP_NOFS);
+-	if (ldlm_pools_thread = NULL)
++	if (!ldlm_pools_thread)
+ 		return -ENOMEM;
+ 
+ 	init_completion(&ldlm_pools_comp);
+diff -u -p a/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
+@@ -225,7 +225,7 @@ static void ldlm_handle_cp_callback(stru
+ 			void *lvb_data;
+ 
+ 			lvb_data = kzalloc(lvb_len, GFP_NOFS);
+-			if (lvb_data = NULL) {
++			if (!lvb_data) {
+ 				LDLM_ERROR(lock, "No memory: %d.\n", lvb_len);
+ 				rc = -ENOMEM;
+ 				goto out;
+@@ -453,7 +453,7 @@ static int ldlm_bl_to_thread(struct ldlm
+ 		struct ldlm_bl_work_item *blwi;
+ 
+ 		blwi = kzalloc(sizeof(*blwi), GFP_NOFS);
+-		if (blwi = NULL)
++		if (!blwi)
  			return -ENOMEM;
-@@ -354,12 +353,10 @@ mpihelp_mul_karatsuba_case(mpi_ptr_t prodp,
- 	usize -= vsize;
- 	if (usize >= vsize) {
- 		if (!ctx->tp || ctx->tp_size < vsize) {
--			if (ctx->tp)
--				mpi_free_limb_space(ctx->tp);
-+			mpi_free_limb_space(ctx->tp);
- 			ctx->tp = mpi_alloc_limb_space(2 * vsize);
- 			if (!ctx->tp) {
--				if (ctx->tspace)
--					mpi_free_limb_space(ctx->tspace);
-+				mpi_free_limb_space(ctx->tspace);
- 				ctx->tspace = NULL;
- 				return -ENOMEM;
- 			}
-@@ -407,16 +404,12 @@ void mpihelp_release_karatsuba_ctx(struct karatsuba_ctx *ctx)
- {
- 	struct karatsuba_ctx *ctx2;
+ 		init_blwi(blwi, ns, ld, cancels, count, lock, cancel_flags);
  
--	if (ctx->tp)
--		mpi_free_limb_space(ctx->tp);
--	if (ctx->tspace)
--		mpi_free_limb_space(ctx->tspace);
-+	mpi_free_limb_space(ctx->tp);
-+	mpi_free_limb_space(ctx->tspace);
- 	for (ctx = ctx->next; ctx; ctx = ctx2) {
- 		ctx2 = ctx->next;
--		if (ctx->tp)
--			mpi_free_limb_space(ctx->tp);
--		if (ctx->tspace)
--			mpi_free_limb_space(ctx->tspace);
-+		mpi_free_limb_space(ctx->tp);
-+		mpi_free_limb_space(ctx->tspace);
- 		kfree(ctx);
+@@ -1053,7 +1053,7 @@ static int ldlm_setup(void)
+ 		return -EALREADY;
+ 
+ 	ldlm_state = kzalloc(sizeof(*ldlm_state), GFP_NOFS);
+-	if (ldlm_state = NULL)
++	if (!ldlm_state)
+ 		return -ENOMEM;
+ 
+ 	ldlm_kobj = kobject_create_and_add("ldlm", lustre_kobj);
+@@ -1123,7 +1123,7 @@ static int ldlm_setup(void)
+ 
+ 
+ 	blp = kzalloc(sizeof(*blp), GFP_NOFS);
+-	if (blp = NULL) {
++	if (!blp) {
+ 		rc = -ENOMEM;
+ 		goto out;
  	}
- }
--- 
-2.4.4
+diff -u -p a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
+@@ -1528,7 +1528,7 @@ struct ldlm_lock *ldlm_lock_create(struc
+ 	if (lvb_len) {
+ 		lock->l_lvb_len = lvb_len;
+ 		lock->l_lvb_data = kzalloc(lvb_len, GFP_NOFS);
+-		if (lock->l_lvb_data = NULL)
++		if (!lock->l_lvb_data)
+ 			goto out;
+ 	}
+ 
+@@ -1813,7 +1813,7 @@ int ldlm_run_ast_work(struct ldlm_namesp
+ 		return 0;
+ 
+ 	arg = kzalloc(sizeof(*arg), GFP_NOFS);
+-	if (arg = NULL)
++	if (!arg)
+ 		return -ENOMEM;
+ 
+ 	atomic_set(&arg->restart, 0);
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
