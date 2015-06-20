@@ -1,91 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 30 Jun 2015 12:10:33 +0000
-Subject: [PATCH] ARM: OMAP2: Delete unnecessary checks before three function calls
-Message-Id: <55928739.5040809@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 20 Jun 2015 12:38:29 +0000
+Subject: re: mtip32xx: fix crash on surprise removal of the drive
+Message-Id: <20150620123829.GA24933@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54705EC3.90708@users.sourceforge.net>
-In-Reply-To: <54705EC3.90708@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 30 Jun 2015 14:00:16 +0200
+Hello Asai Thambi SP,
 
-The functions clk_disable(), of_node_put() and omap_device_delete() test
-whether their argument is NULL and then return immediately.
-Thus the test around the call is not needed.
+The patch 2132a544727e: "mtip32xx: fix crash on surprise removal of
+the drive" from May 11, 2015, leads to the following static checker
+warning:
 
-This issue was detected by using the Coccinelle software.
+	drivers/block/mtip32xx/mtip32xx.c:4489 mtip_pci_remove()
+	warn: 'dd' was already freed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap2/omap_device.c | 3 +--
- arch/arm/mach-omap2/omap_hwmod.c  | 5 +----
- arch/arm/mach-omap2/timer.c       | 3 +--
- 3 files changed, 3 insertions(+), 8 deletions(-)
+drivers/block/mtip32xx/mtip32xx.c
+  4484          spin_lock_irqsave(&dev_lock, flags);
+  4485          list_del_init(&dd->remove_list);
+  4486          spin_unlock_irqrestore(&dev_lock, flags);
+  4487  
+  4488          kfree(dd);
+                      ^^
+  4489          set_bit(MTIP_DDF_REMOVE_DONE_BIT, &dd->dd_flag);
+                                                   ^^^^^^^^^^^
+  4490  
+  4491          pcim_iounmap_regions(pdev, 1 << MTIP_ABAR);
+  4492          pci_set_drvdata(pdev, NULL);
+  4493  }
 
-diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
-index 4cb8fd9..196366e 100644
---- a/arch/arm/mach-omap2/omap_device.c
-+++ b/arch/arm/mach-omap2/omap_device.c
-@@ -193,8 +193,7 @@ static int _omap_device_notifier_call(struct notifier_block *nb,
- 
- 	switch (event) {
- 	case BUS_NOTIFY_DEL_DEVICE:
--		if (pdev->archdata.od)
--			omap_device_delete(pdev->archdata.od);
-+		omap_device_delete(pdev->archdata.od);
- 		break;
- 	case BUS_NOTIFY_ADD_DEVICE:
- 		if (pdev->dev.of_node)
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index d78c12e..1091ee7 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -921,10 +921,7 @@ static int _disable_clocks(struct omap_hwmod *oh)
- 	int i = 0;
- 
- 	pr_debug("omap_hwmod: %s: disabling clocks\n", oh->name);
--
--	if (oh->_clk)
--		clk_disable(oh->_clk);
--
-+	clk_disable(oh->_clk);
- 	p = oh->slave_ports.next;
- 
- 	while (i < oh->slaves_cnt) {
-diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
-index cac46d8..15448221 100644
---- a/arch/arm/mach-omap2/timer.c
-+++ b/arch/arm/mach-omap2/timer.c
-@@ -208,8 +208,7 @@ static void __init omap_dmtimer_init(void)
- 	/* If we are a secure device, remove any secure timer nodes */
- 	if ((omap_type() != OMAP2_DEVICE_TYPE_GP)) {
- 		np = omap_get_timer_dt(omap_timer_match, "ti,timer-secure");
--		if (np)
--			of_node_put(np);
-+		of_node_put(np);
- 	}
- }
- 
--- 
-2.4.5
-
+regards,
+dan carpenter
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
