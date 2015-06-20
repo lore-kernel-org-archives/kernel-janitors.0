@@ -1,46 +1,70 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 14:21:42 +0000
-Subject: [PATCH] fs-ext4 crypto: Delete an unnecessary check before the function call "key_put"
-Message-Id: <558D5FF6.9030401@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 20 Jun 2015 16:59:05 +0000
+Subject: [PATCH 07/12] staging: lustre: mdc: Use !x to check for kzalloc failure
+Message-Id: <1434819550-3193-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <558D5EB4.30803@users.sourceforge.net>
-In-Reply-To: <558D5EB4.30803@users.sourceforge.net>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 16:10:54 +0200
-Subject: [PATCH] fs-ext4 crypto: Delete an unnecessary check before the
- function call "key_put"
+!x is more normal for kzalloc failure in the kernel.
 
-The key_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+expression x;
+statement S1, S2;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+x = kzalloc(...);
+if (
+- x = NULL
++ !x
+ ) S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- fs/ext4/crypto_key.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/mdc/mdc_request.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/crypto_key.c b/fs/ext4/crypto_key.c
-index 442d24e..f8d15ae 100644
---- a/fs/ext4/crypto_key.c
-+++ b/fs/ext4/crypto_key.c
-@@ -89,8 +89,7 @@ void ext4_free_crypt_info(struct ext4_crypt_info *ci)
- 	if (!ci)
- 		return;
+diff -u -p a/drivers/staging/lustre/lustre/mdc/mdc_request.c b/drivers/staging/lustre/lustre/mdc/mdc_request.c
+--- a/drivers/staging/lustre/lustre/mdc/mdc_request.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_request.c
+@@ -1202,7 +1202,7 @@ static int mdc_ioc_fid2path(struct obd_e
+ 	/* Key is KEY_FID2PATH + getinfo_fid2path description */
+ 	keylen = cfs_size_round(sizeof(KEY_FID2PATH)) + sizeof(*gf);
+ 	key = kzalloc(keylen, GFP_NOFS);
+-	if (key = NULL)
++	if (!key)
+ 		return -ENOMEM;
+ 	memcpy(key, KEY_FID2PATH, sizeof(KEY_FID2PATH));
+ 	memcpy(key + cfs_size_round(sizeof(KEY_FID2PATH)), gf, sizeof(*gf));
+@@ -1605,7 +1605,7 @@ static int mdc_changelog_send_thread(voi
+ 	       cs->cs_fp, cs->cs_startrec);
  
--	if (ci->ci_keyring_key)
--		key_put(ci->ci_keyring_key);
-+	key_put(ci->ci_keyring_key);
- 	crypto_free_ablkcipher(ci->ci_ctfm);
- 	kmem_cache_free(ext4_crypt_info_cachep, ci);
- }
--- 
-2.4.4
+ 	cs->cs_buf = kzalloc(KUC_CHANGELOG_MSG_MAXSIZE, GFP_NOFS);
+-	if (cs->cs_buf = NULL) {
++	if (!cs->cs_buf) {
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+@@ -1934,7 +1934,7 @@ static int mdc_iocontrol(unsigned int cm
+ 		struct obd_quotactl *oqctl;
+ 
+ 		oqctl = kzalloc(sizeof(*oqctl), GFP_NOFS);
+-		if (oqctl = NULL) {
++		if (!oqctl) {
+ 			rc = -ENOMEM;
+ 			goto out;
+ 		}
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
