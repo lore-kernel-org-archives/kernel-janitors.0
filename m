@@ -1,61 +1,65 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 12:05:56 +0000
-Subject: [PATCH] fs-DLM: Delete unnecessary checks before the function call "kfree"
-Message-Id: <558D4024.60003@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 20 Jun 2015 16:59:00 +0000
+Subject: [PATCH 02/12] staging: lustre: fld: Use !x to check for kzalloc failure
+Message-Id: <1434819550-3193-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <5479FBA2.5020405@users.sourceforge.net>
-In-Reply-To: <5479FBA2.5020405@users.sourceforge.net>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>, cluster-devel@redhat.com
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 14:00:06 +0200
+!x is more normal for kzalloc failure in the kernel.
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+expression x;
+statement S1, S2;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+x = kzalloc(...);
+if (
+- x = NULL
++ !x
+ ) S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- fs/dlm/lockspace.c | 6 ++----
- fs/dlm/memory.c    | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/staging/lustre/lustre/fld/fld_cache.c   |    2 +-
+ drivers/staging/lustre/lustre/fld/fld_request.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
-index f3e7278..41c53b3 100644
---- a/fs/dlm/lockspace.c
-+++ b/fs/dlm/lockspace.c
-@@ -673,10 +673,8 @@ static int new_lockspace(const char *name, const char *cluster,
- 	kfree(ls->ls_recover_buf);
-  out_lkbidr:
- 	idr_destroy(&ls->ls_lkbidr);
--	for (i = 0; i < DLM_REMOVE_NAMES_MAX; i++) {
--		if (ls->ls_remove_names[i])
--			kfree(ls->ls_remove_names[i]);
--	}
-+	for (i = 0; i < DLM_REMOVE_NAMES_MAX; i++)
-+		kfree(ls->ls_remove_names[i]);
-  out_rsbtbl:
- 	vfree(ls->ls_rsbtbl);
-  out_lsfree:
-diff --git a/fs/dlm/memory.c b/fs/dlm/memory.c
-index 7cd24bc..2d2eaa0 100644
---- a/fs/dlm/memory.c
-+++ b/fs/dlm/memory.c
-@@ -86,8 +86,7 @@ void dlm_free_lkb(struct dlm_lkb *lkb)
- 		struct dlm_user_args *ua;
- 		ua = lkb->lkb_ua;
- 		if (ua) {
--			if (ua->lksb.sb_lvbptr)
--				kfree(ua->lksb.sb_lvbptr);
-+			kfree(ua->lksb.sb_lvbptr);
- 			kfree(ua);
- 		}
- 	}
--- 
-2.4.4
+diff -u -p a/drivers/staging/lustre/lustre/fld/fld_request.c b/drivers/staging/lustre/lustre/fld/fld_request.c
+--- a/drivers/staging/lustre/lustre/fld/fld_request.c
++++ b/drivers/staging/lustre/lustre/fld/fld_request.c
+@@ -222,7 +222,7 @@ int fld_client_add_target(struct lu_clie
+ 			fld->lcf_name, name, tar->ft_idx);
+ 
+ 	target = kzalloc(sizeof(*target), GFP_NOFS);
+-	if (target = NULL)
++	if (!target)
+ 		return -ENOMEM;
+ 
+ 	spin_lock(&fld->lcf_lock);
+diff -u -p a/drivers/staging/lustre/lustre/fld/fld_cache.c b/drivers/staging/lustre/lustre/fld/fld_cache.c
+--- a/drivers/staging/lustre/lustre/fld/fld_cache.c
++++ b/drivers/staging/lustre/lustre/fld/fld_cache.c
+@@ -70,7 +70,7 @@ struct fld_cache *fld_cache_init(const c
+ 	LASSERT(cache_threshold < cache_size);
+ 
+ 	cache = kzalloc(sizeof(*cache), GFP_NOFS);
+-	if (cache = NULL)
++	if (!cache)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	INIT_LIST_HEAD(&cache->fci_entries_head);
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
