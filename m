@@ -1,46 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Jun 2015 12:07:34 +0000
-Subject: Re: [PATCH v2] backlight: lp8788: Deletion of a check before backlight_device_unregister()
-Message-Id: <558FE386.7060704@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 20 Jun 2015 19:07:49 +0000
+Subject: [PATCH 1/5] staging: lustre: libcfs: drop trivially useless initialization
+Message-Id: <1434827273-13929-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54720DEB.4060109@users.sourceforge.net> <20141124101006.GD4241@x1> <5473736F.8070705@users.sourceforge.net>
-In-Reply-To: <5473736F.8070705@users.sourceforge.net>
+References: <1434827273-13929-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1434827273-13929-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, Bryan Wu <cooloney@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jg1.han@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> The backlight_device_unregister() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/video/backlight/lp8788_bl.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backlight/lp8788_bl.c
-> index d6c4f6a..24a055c 100644
-> --- a/drivers/video/backlight/lp8788_bl.c
-> +++ b/drivers/video/backlight/lp8788_bl.c
-> @@ -221,8 +221,7 @@ static void lp8788_backlight_unregister(struct lp8788_bl *bl)
->  {
->  	struct backlight_device *bl_dev = bl->bl_dev;
->  
-> -	if (bl_dev)
-> -		backlight_device_unregister(bl_dev);
-> +	backlight_device_unregister(bl_dev);
->  }
->  
->  static ssize_t lp8788_get_bl_ctl_mode(struct device *dev,
-> 
+Remove initialization of a variable that is immediately reassigned.
 
-Would you like to integrate this update suggestion
-into another source code repository?
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Regards,
-Markus
+// <smpl>
+@@
+type T;
+identifier x;
+constant C;
+expression e;
+@@
+
+T x
+- = C
+ ;
+x = e;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/lustre/lustre/libcfs/fail.c       |    2 +-
+ drivers/staging/lustre/lustre/libcfs/libcfs_cpu.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/staging/lustre/lustre/libcfs/libcfs_cpu.c b/drivers/staging/lustre/lustre/libcfs/libcfs_cpu.c
+--- a/drivers/staging/lustre/lustre/libcfs/libcfs_cpu.c
++++ b/drivers/staging/lustre/lustre/libcfs/libcfs_cpu.c
+@@ -78,7 +78,7 @@ EXPORT_SYMBOL(cfs_cpt_table_free);
+ int
+ cfs_cpt_table_print(struct cfs_cpt_table *cptab, char *buf, int len)
+ {
+-	int	rc = 0;
++	int	rc;
+ 
+ 	rc = snprintf(buf, len, "%d\t: %d\n", 0, 0);
+ 	len -= rc;
+diff -u -p a/drivers/staging/lustre/lustre/libcfs/fail.c b/drivers/staging/lustre/lustre/libcfs/fail.c
+--- a/drivers/staging/lustre/lustre/libcfs/fail.c
++++ b/drivers/staging/lustre/lustre/libcfs/fail.c
+@@ -123,7 +123,7 @@ EXPORT_SYMBOL(__cfs_fail_check_set);
+ 
+ int __cfs_fail_timeout_set(__u32 id, __u32 value, int ms, int set)
+ {
+-	int ret = 0;
++	int ret;
+ 
+ 	ret = __cfs_fail_check_set(id, value, set);
+ 	if (ret) {
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
