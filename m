@@ -1,49 +1,20 @@
-From: Chaehyun Lim <chaehyun.lim@gmail.com>
-Date: Tue, 09 Jun 2015 00:19:37 +0000
-Subject: [PATCH V2 6/8] staging: wilc1000: remove WILC_Sint16
-Message-Id: <1433809179-9769-6-git-send-email-chaehyun.lim@gmail.com>
+From: "Greg Kroah-Hartman (gregkh@linuxfoundation.org)"  <gregkh@linuxfoundation.org>
+Date: Mon, 22 Jun 2015 18:03:06 +0000
+Subject: Re: [HPDD-discuss] [PATCH 01/12] staging: lustre: fid: Use !x to check for kzalloc failure
+Message-Id: <20150622180306.GA20087@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <556d2f2088404e09aac1f0a57767cea5@EXCHCS32.ornl.gov>
+In-Reply-To: <556d2f2088404e09aac1f0a57767cea5@EXCHCS32.ornl.gov>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Simmons, James A." <simmonsja@ornl.gov>
+Cc: "Julia Lawall (Julia.Lawall@lip6.fr)" <Julia.Lawall@lip6.fr>, "oleg.drokin@intel.com" <oleg.drokin@intel.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hpdd-discuss@lists.01.org" <hpdd-discuss@ml01.01.org>, "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>
 
-Use s16 in stead of WILC_Sint16.
+On Mon, Jun 22, 2015 at 05:27:03PM +0000, Simmons, James A. wrote:
+> 
+> Is this change a hard requirement? Currently the lustre code standard in our development tree is the opposite policy.
 
-Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
----
-V2 : remove the spaces on the subject.
-     Capitalize the name on the From and the Signed-off-by
-
- drivers/staging/wilc1000/coreconfigurator.c | 2 +-
- drivers/staging/wilc1000/wilc_oswrapper.h   | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
-index 50d184c..a060172 100644
---- a/drivers/staging/wilc1000/coreconfigurator.c
-+++ b/drivers/staging/wilc1000/coreconfigurator.c
-@@ -173,7 +173,7 @@ static tstrConfigPktInfo gstrConfigPktInfo;
- 
- static u8 g_seqno;
- 
--static WILC_Sint16 g_wid_num          = -1;
-+static s16 g_wid_num          = -1;
- 
- static u16 Res_Len;
- 
-diff --git a/drivers/staging/wilc1000/wilc_oswrapper.h b/drivers/staging/wilc1000/wilc_oswrapper.h
-index fc09416..dafcfec 100644
---- a/drivers/staging/wilc1000/wilc_oswrapper.h
-+++ b/drivers/staging/wilc1000/wilc_oswrapper.h
-@@ -14,7 +14,6 @@
- #define WILC_OSW_INTERFACE_VER 2
- 
- /* Integer Types */
--typedef signed short WILC_Sint16;
- typedef signed int WILC_Sint32;
- typedef signed long long WILC_Sint64;
- 
--- 
-1.9.1
-
+Please follow the kernel coding style rules.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
