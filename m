@@ -1,53 +1,99 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Mon, 01 Jun 2015 15:56:10 +0000
-Subject: Re: [patch] iio: magnetometer: correct a harmless off by one check
-Message-Id: <556C809A.7000504@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Jun 2015 15:12:24 +0000
+Subject: [patch v2 1/2] pinctrl: samsung: don't truncate the last char
+Message-Id: <20150622151223.GA14156@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150527082052.GA19423@mwanda> <CAEnQRZDZFSQ0E7_JUrx6CsSF6erg+USDAJyMFhhhz=Brbk-VPg@mail.gmail.com>
-In-Reply-To: <CAEnQRZDZFSQ0E7_JUrx6CsSF6erg+USDAJyMFhhhz=Brbk-VPg@mail.gmail.com>
+In-Reply-To: <20150619085203.GO28762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Baluta <daniel.baluta@intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 27/05/15 09:37, Daniel Baluta wrote:
-> On Wed, May 27, 2015 at 11:20 AM, Dan Carpenter
-> <dan.carpenter@oracle.com> wrote:
->> The line before limits i to 0-3 so the existing code works fine but the
->> check is still off by one and >= is intended instead of >.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Good catch.
-> 
-> Reviewed-by: Daniel Baluta <daniel.baluta@intel.com>
-Applied to the togreg branch of iio.git - initially pushed out as
-testing when I have a network that does anything other than https.
+We were allocating enough space because sizeof("-grp") and
+sizeof("-mux") are both equal to 5 but in the snprintf() we only allowed
+for 4 characters so the last 'p' and 'x' characters were truncated.
 
-J
-> 
->>
->> diff --git a/drivers/iio/magnetometer/mmc35240.c b/drivers/iio/magnetometer/mmc35240.c
->> index aa6e25d..c71392c 100644
->> --- a/drivers/iio/magnetometer/mmc35240.c
->> +++ b/drivers/iio/magnetometer/mmc35240.c
->> @@ -308,7 +308,7 @@ static int mmc35240_read_raw(struct iio_dev *indio_dev,
->>                         return ret;
->>
->>                 i = (reg & MMC35240_CTRL1_BW_MASK) >> MMC35240_CTRL1_BW_SHIFT;
->> -               if (i < 0 || i > ARRAY_SIZE(mmc35240_samp_freq))
->> +               if (i < 0 || i >= ARRAY_SIZE(mmc35240_samp_freq))
->>                         return -EINVAL;
->>
->>                 *val = mmc35240_samp_freq[i];
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+The allocate and sprintf can be done in one step with the kasprintf().
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index f5619fb..fa84db6 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -44,9 +44,7 @@
+ #define PIN_NAME_LENGTH		10
+ 
+ #define GROUP_SUFFIX		"-grp"
+-#define GSUFFIX_LEN		sizeof(GROUP_SUFFIX)
+ #define FUNCTION_SUFFIX		"-mux"
+-#define FSUFFIX_LEN		sizeof(FUNCTION_SUFFIX)
+ 
+ /*
+  * pin configuration type and its value are packed together into a 16-bits.
+@@ -215,12 +213,11 @@ static int exynos5440_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	 * Allocate memory for pin group name. The pin group name is derived
+ 	 * from the node name from which these map entries are be created.
+ 	 */
+-	gname = kzalloc(strlen(np->name) + GSUFFIX_LEN, GFP_KERNEL);
++	gname = kasprintf(GFP_KERNEL, "%s%s", np->name, GROUP_SUFFIX);
+ 	if (!gname) {
+ 		dev_err(dev, "failed to alloc memory for group name\n");
+ 		goto free_map;
+ 	}
+-	snprintf(gname, strlen(np->name) + 4, "%s%s", np->name, GROUP_SUFFIX);
+ 
+ 	/*
+ 	 * don't have config options? then skip over to creating function
+@@ -254,13 +251,12 @@ static int exynos5440_dt_node_to_map(struct pinctrl_dev *pctldev,
+ skip_cfgs:
+ 	/* create the function map entry */
+ 	if (of_find_property(np, "samsung,exynos5440-pin-function", NULL)) {
+-		fname = kzalloc(strlen(np->name) + FSUFFIX_LEN,	GFP_KERNEL);
++		fname = kasprintf(GFP_KERNEL,
++				  "%s%s", np->name, FUNCTION_SUFFIX);
+ 		if (!fname) {
+ 			dev_err(dev, "failed to alloc memory for func name\n");
+ 			goto free_cfg;
+ 		}
+-		snprintf(fname, strlen(np->name) + 4, "%s%s", np->name,
+-			 FUNCTION_SUFFIX);
+ 
+ 		map[*nmaps].data.mux.group = gname;
+ 		map[*nmaps].data.mux.function = fname;
+@@ -710,14 +706,12 @@ static int exynos5440_pinctrl_parse_dt(struct platform_device *pdev,
+ 		}
+ 
+ 		/* derive pin group name from the node name */
+-		gname = devm_kzalloc(dev, strlen(cfg_np->name) + GSUFFIX_LEN,
+-					GFP_KERNEL);
++		gname = devm_kasprintf(dev, GFP_KERNEL,
++				       "%s%s", cfg_np->name, GROUP_SUFFIX);
+ 		if (!gname) {
+ 			dev_err(dev, "failed to alloc memory for group name\n");
+ 			return -ENOMEM;
+ 		}
+-		snprintf(gname, strlen(cfg_np->name) + 4, "%s%s", cfg_np->name,
+-			 GROUP_SUFFIX);
+ 
+ 		grp->name = gname;
+ 		grp->pins = pin_list;
+@@ -731,14 +725,12 @@ skip_to_pin_function:
+ 			continue;
+ 
+ 		/* derive function name from the node name */
+-		fname = devm_kzalloc(dev, strlen(cfg_np->name) + FSUFFIX_LEN,
+-					GFP_KERNEL);
++		fname = devm_kasprintf(dev, GFP_KERNEL,
++				       "%s%s", cfg_np->name, FUNCTION_SUFFIX);
+ 		if (!fname) {
+ 			dev_err(dev, "failed to alloc memory for func name\n");
+ 			return -ENOMEM;
+ 		}
+-		snprintf(fname, strlen(cfg_np->name) + 4, "%s%s", cfg_np->name,
+-			 FUNCTION_SUFFIX);
+ 
+ 		func->name = fname;
+ 		func->groups = devm_kzalloc(dev, sizeof(char *), GFP_KERNEL);
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
