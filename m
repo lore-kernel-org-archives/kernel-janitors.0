@@ -1,47 +1,48 @@
-From: Mateusz Kulikowski <mateusz.kulikowski@gmail.com>
-Date: Sun, 07 Jun 2015 15:49:30 +0000
-Subject: Re: [patch] staging: rtl8192e: fix some confusing indenting
-Message-Id: <5574680A.7090107@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 Jun 2015 21:20:21 +0000
+Subject: [PATCH] crypto-jitterentropy: Delete unnecessary checks before the function call "kzfree"
+Message-Id: <5589CD95.9080508@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150605092406.GC24871@mwanda>
-In-Reply-To: <20150605092406.GC24871@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 05.06.2015 11:24, Dan Carpenter wrote:
-> The indenting here causes a static checker warning:
-> 
-> 	drivers/staging/rtl8192e/rtllib_rx.c:626 RxReorderIndicatePacket()
-> 	warn: curly braces intended?
-> 
-> The code is actually correct, it's just that these lines were pushed in
-> an extra indent level by mistake in 35e33b0468ab ('staging: rtl8192e:
-> Fix LONG_LINE warnings').
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-> index 6977f04..2bef1f6 100644
-> --- a/drivers/staging/rtl8192e/rtllib_rx.c
-> +++ b/drivers/staging/rtl8192e/rtllib_rx.c
-> @@ -623,9 +623,9 @@ static void RxReorderIndicatePacket(struct rtllib_device *ieee,
->  		else
->  			pTS->RxIndicateSeq = 4095 -
->  					     (WinSize - (SeqNum + 1)) + 1;
-> -			netdev_dbg(ieee->dev,
-> -				   "Window Shift! IndicateSeq: %d, NewSeq: %d\n",
-> -				   pTS->RxIndicateSeq, SeqNum);
-> +		netdev_dbg(ieee->dev,
-> +			   "Window Shift! IndicateSeq: %d, NewSeq: %d\n",
-> +			   pTS->RxIndicateSeq, SeqNum);
->  	}
->  
->  	/* Indication process.
-> 
-Ouch, Thanks!
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 23 Jun 2015 22:30:21 +0200
 
-I've missed this one.
+The kzfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-M.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ crypto/jitterentropy.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/crypto/jitterentropy.c b/crypto/jitterentropy.c
+index d3c3045..22ded3e 100644
+--- a/crypto/jitterentropy.c
++++ b/crypto/jitterentropy.c
+@@ -698,11 +698,9 @@ static struct rand_data *jent_entropy_collector_alloc(unsigned int osr,
+ 
+ static void jent_entropy_collector_free(struct rand_data *entropy_collector)
+ {
+-	if (entropy_collector->mem)
+-		kzfree(entropy_collector->mem);
++	kzfree(entropy_collector->mem);
+ 	entropy_collector->mem = NULL;
+-	if (entropy_collector)
+-		kzfree(entropy_collector);
++	kzfree(entropy_collector);
+ 	entropy_collector = NULL;
+ }
+ 
+-- 
+2.4.4
+
