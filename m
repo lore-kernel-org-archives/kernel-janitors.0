@@ -1,37 +1,84 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 23 Jun 2015 09:57:04 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Tue, 23 Jun 2015 10:51:45 +0000
 Subject: Re: [PATCH 01/12] staging: lustre: fid: Use !x to check for kzalloc failure
-Message-Id: <20150623095704.GO28762@mwanda>
+Message-Id: <alpine.DEB.2.10.1506231247510.2554@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
- <1434819550-3193-2-git-send-email-Julia.Lawall@lip6.fr>
- <D1AECA61.F8DE5%andreas.dilger@intel.com>
- <20150623092303.GN28762@mwanda>
- <alpine.DEB.2.10.1506231127120.2554@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1506231127120.2554@hadrien>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr> <1434819550-3193-2-git-send-email-Julia.Lawall@lip6.fr> <D1AECA61.F8DE5%andreas.dilger@intel.com> <20150623092303.GN28762@mwanda> <alpine.DEB.2.10.1506231127120.2554@hadrien>
+ <20150623095704.GO28762@mwanda>
+In-Reply-To: <20150623095704.GO28762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "Dilger, Andreas" <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Drokin, Oleg" <oleg.drokin@intel.com>, "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "Dilger, Andreas" <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Drokin, Oleg" <oleg.drokin@intel.com>, "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>
 
-Yes.  I know Al's thoughts and kernel style.
 
-But Alan Cox and Andreas have both said they think (x = NULL) can help
-you avoid some kind of boolean vs pointer bugs.  I've had co-workers who
-did massive seds changing !foo to foo = NULL on our code base.  But
-I've never seen a real life example of a bug this fixes.
 
-To be honest, I've never seen a real life proof that (!foo) code is less
-buggy.  I should look through the kbuild mailbox...  Hm...  But my other
-idea of setting up code style readability testing website is also a good
-one.
+On Tue, 23 Jun 2015, Dan Carpenter wrote:
 
-Linux kernel style is based on Joe Perches finding that 80% of the code
-prefers one way or the other.  That's a valid method for determining
-code style.  I bet it normally picks the more readable style but it
-would be interesting to measure it more formally.
+> Yes.  I know Al's thoughts and kernel style.
+>
+> But Alan Cox and Andreas have both said they think (x = NULL) can help
+> you avoid some kind of boolean vs pointer bugs.  I've had co-workers who
+> did massive seds changing !foo to foo = NULL on our code base.  But
+> I've never seen a real life example of a bug this fixes.
+>
+> To be honest, I've never seen a real life proof that (!foo) code is less
+> buggy.  I should look through the kbuild mailbox...  Hm...  But my other
+> idea of setting up code style readability testing website is also a good
+> one.
+>
+> Linux kernel style is based on Joe Perches finding that 80% of the code
+> prefers one way or the other.  That's a valid method for determining
+> code style.  I bet it normally picks the more readable style but it
+> would be interesting to measure it more formally.
 
-regards,
-dan carpenter
+On today's linux-next, I find 3218 tests on the result of kmalloc etc
+using NULL and 14429 without, making 82% without.  The complete semantic
+patch is shown below.
+
+julia
+
+@initialize:ocaml@
+@@
+
+let withnull = ref 0
+let withoutnull = ref 0
+
+@r1 disable is_null, isnt_null1 exists@
+expression x,e;
+position p;
+statement S1,S2;
+@@
+
+x = \(kmalloc\|kzalloc\|kcalloc\|devm_kmalloc\|devm_kzalloc\)(...)
+... when != x = e
+    when != &x
+if@p (<+...\(x = NULL\|x != NULL\|NULL = x\|NULL != x\)...+>) S1 else S2
+
+@r2 disable not_ptr1, not_ptr2 exists@
+expression x,e;
+position p;
+statement S1,S2;
+@@
+
+x = \(kmalloc\|kzalloc\|kcalloc\|devm_kmalloc\|devm_kzalloc\)(...)
+... when != x = e
+    when != &x
+if@p (<+...\(!x\|x && ...\|x || ...\)...+>) S1 else S2
+
+@script:ocaml@
+_p << r1.p;
+@@
+withnull := !withnull + 1
+
+@script:ocaml@
+_p << r2.p;
+@@
+withoutnull := !withoutnull + 1
+
+@finalize:ocaml@
+@@
+
+Printf.printf "withnull %d withoutnull %d\n" !withnull !withoutnull
 
