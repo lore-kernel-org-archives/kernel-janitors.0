@@ -1,77 +1,29 @@
-From: Ming Lei <ming.lei@canonical.com>
-Date: Sat, 06 Jun 2015 05:58:52 +0000
-Subject: Re: [PATCH v3] firmware: Fix memory leak in error path
-Message-Id: <CACVXFVNiUn9+-ELdUKJLSDZUJivX-VW+bDJQhvBsuB3yBJN_Vw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 23 Jun 2015 11:51:48 +0000
+Subject: [patch -next] drm/radeon: missing break statement
+Message-Id: <20150623115148.GA6302@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433569695-19348-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1433569695-19348-1-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: kernel-janitors@vger.kernel.org, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org
 
-On Sat, Jun 6, 2015 at 1:48 PM, Firo Yang <firogm@gmail.com> wrote:
-> Eliminate a memory leak by unifying the error handling code
-> at the end of the function.
->
-> Signed-off-by: Firo Yang <firogm@gmail.com>
+There was a merge problem in linux-next 4598d330d29e ('Merge
+remote-tracking branch 'drm/drm-next'').  We need to add a break
+statement.
 
-Acked-by: Ming Lei <ming.lei@canonical.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  drivers/base/firmware_class.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
-> index 8c3aa3c..5bb098b 100644
-> --- a/drivers/base/firmware_class.c
-> +++ b/drivers/base/firmware_class.c
-> @@ -1299,6 +1299,7 @@ request_firmware_nowait(
->         const char *name, struct device *device, gfp_t gfp, void *context,
->         void (*cont)(const struct firmware *fw, void *context))
->  {
-> +       int rc;
->         struct firmware_work *fw_work;
->
->         fw_work = kzalloc(sizeof(struct firmware_work), gfp);
-> @@ -1307,8 +1308,11 @@ request_firmware_nowait(
->
->         fw_work->module = module;
->         fw_work->name = kstrdup_const(name, gfp);
-> -       if (!fw_work->name)
-> -               return -ENOMEM;
-> +       if (!fw_work->name) {
-> +               rc = -ENOMEM;
-> +               goto free_work;
-> +       }
-> +
->         fw_work->device = device;
->         fw_work->context = context;
->         fw_work->cont = cont;
-> @@ -1316,15 +1320,20 @@ request_firmware_nowait(
->                 (uevent ? FW_OPT_UEVENT : FW_OPT_USERHELPER);
->
->         if (!try_module_get(module)) {
-> -               kfree_const(fw_work->name);
-> -               kfree(fw_work);
-> -               return -EFAULT;
-> +               rc = -EFAULT;
-> +               goto free_name;
->         }
->
->         get_device(fw_work->device);
->         INIT_WORK(&fw_work->work, request_firmware_work_func);
->         schedule_work(&fw_work->work);
->         return 0;
-> +
-> +free_name:
-> +       kfree_const(fw_work->name);
-> +free_work:
-> +       kfree(fw_work);
-> +       return rc;
->  }
->  EXPORT_SYMBOL(request_firmware_nowait);
->
-> --
-> 2.4.2
->
+diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/radeon/radeon_kms.c
+index b4b457d..4a119c2 100644
+--- a/drivers/gpu/drm/radeon/radeon_kms.c
++++ b/drivers/gpu/drm/radeon/radeon_kms.c
+@@ -578,6 +578,7 @@ static int radeon_info_ioctl(struct drm_device *dev, void *data, struct drm_file
+ 		break;
+ 	case RADEON_INFO_VA_UNMAP_WORKING:
+ 		*value = true;
++		break;
+ 	case RADEON_INFO_GPU_RESET_COUNTER:
+ 		*value = atomic_read(&rdev->gpu_reset_counter);
+ 		break;
