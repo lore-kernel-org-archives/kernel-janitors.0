@@ -1,45 +1,56 @@
-From: =?windows-1252?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
-Date: Tue, 23 Jun 2015 11:56:09 +0000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 23 Jun 2015 18:19:33 +0000
 Subject: Re: [patch -next] drm/radeon: missing break statement
-Message-Id: <55894959.5050409@amd.com>
+Message-Id: <20150624041933.71f83cc7@canb.auug.org.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Sig_/azuQJ=8jkPsAccNxrpbzc/A"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150623115148.GA6302@mwanda>
 In-Reply-To: <20150623115148.GA6302@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alex Deucher <alexander.deucher@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On 23.06.2015 13:51, Dan Carpenter wrote:
+--Sig_/azuQJ=8jkPsAccNxrpbzc/A
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dan,
+
+On Tue, 23 Jun 2015 14:51:48 +0300 Dan Carpenter <dan.carpenter@oracle.com>=
+ wrote:
+>
 > There was a merge problem in linux-next 4598d330d29e ('Merge
 > remote-tracking branch 'drm/drm-next'').  We need to add a break
 > statement.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Good catch, fortunately only an issue in drm-next.
+Thanks for noticing.  I have fixed my merge resolution for the next
+release and hopefully Linus will do it right when he merges the drm
+tree (if it is still necessary).
 
-Reviewed-by: Christian K=F6nig <christian.koenig@amd.com>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->
-> diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/radeon=
-/radeon_kms.c
-> index b4b457d..4a119c2 100644
-> --- a/drivers/gpu/drm/radeon/radeon_kms.c
-> +++ b/drivers/gpu/drm/radeon/radeon_kms.c
-> @@ -578,6 +578,7 @@ static int radeon_info_ioctl(struct drm_device *dev, =
-void *data, struct drm_file
->   		break;
->   	case RADEON_INFO_VA_UNMAP_WORKING:
->   		*value =3D true;
-> +		break;
->   	case RADEON_INFO_GPU_RESET_COUNTER:
->   		*value =3D atomic_read(&rdev->gpu_reset_counter);
->   		break;
+--Sig_/azuQJ=8jkPsAccNxrpbzc/A
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJViaM6AAoJEMDTa8Ir7ZwVmz8P/2zFrb/u8hfw04cHH0HLZQeM
+lo1QEOMQry59Uz4bJ33Xipud3zqUQbMMOxtl2fVyvY4ilhisRaSw94DpqgNPccX+
+hKdBL48EwkwTvzH1B9JEVzKZ6s2RUu/MSAXorgIQAMcUn/Sx4eLCMP6/LNDmgVHw
+8f0mRIklOuYd9wBfGq5gbCOpiCci7h2JLEAs2XNpogtRgCWpq+2JhzTJPyb2/g/k
+WoQe9XZA2PP60I1w0a39gTUkfAEjkvjCfP4gbH+WRu3X+uMy/Q6+NEH4Wx6mzpVG
+3uhjIP7xPyiuBirVSrkr00c1f6i1GLv9lhMVoo8jvG84fbR4zVjpzNuxKqyhky1Y
+hVMp5XaKaNnVinAHP+haF9u5GthZsyRkIgKHge2uzzilrBtVgM3S9VH4sZ4Rv9jh
+ym1ymsKQRxDGymy2+hbKTW7Z/nyvGPXwNgoehDM/Xwo5F1HjarWj9XWDXE3FZ6hp
+qnkmjZFa2nDqcjqbEKdWivB/rL2CnyKz1cQfqi5vTH3lKxT/bmA+IO2bc7khU6hN
+9laldL2dJTASp09FB9qPbrV67Uac+UwzBkYljOgF0Tzqe5d9oimVOPVq6GyCrtXg
+BSiY3FP6gbHoBK2OOvPtzd0tTwaoqszX2sXkZo1NChtj1gWwTE0bqBqYn51GGNo5
+Iodtdn/Qm16weDdVgzSP
+=Rqfg
+-----END PGP SIGNATURE-----
+
+--Sig_/azuQJ=8jkPsAccNxrpbzc/A--
