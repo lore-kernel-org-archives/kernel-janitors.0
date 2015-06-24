@@ -1,65 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 11 Jun 2015 11:48:28 +0000
-Subject: Re: [PATCH] md: fix a build warning
-Message-Id: <20150611114828.GI28762@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jun 2015 15:33:50 +0000
+Subject: [PATCH] SCSI-wd33c93: Deletion of a check before the function call "wd33c93_setup"
+Message-Id: <558ACDDE.5090403@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433949658-8455-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1433949658-8455-1-git-send-email-firogm@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Firo Yang <firogm@gmail.com>, Joe Perches <joe@perches.com>
-Cc: neilb@suse.de, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "James E. J. Bottomley" <JBottomley@odin.com>, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hey Joe,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jun 2015 17:15:17 +0200
 
-checkpatch.pl in linux-next is now encouraging people to make unrelated
-long line fixes like the below patch.  Reverting 0b4193c79c83
-('checkpatch: categorize some long line length checks') makes the new
-checkpatch.pl warning go away.
+The wd33c93_setup() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
 
-On Wed, Jun 10, 2015 at 11:20:58PM +0800, Firo Yang wrote:
-> Warning like this:
-> 
-> drivers/md/md.c: In function ‘update_array_info’:
-> drivers/md/md.c:6394:26: warning: logical not is only applied
-> to the left hand side of comparison [-Wlogical-not-parentheses]
->       !mddev->persistent  != info->not_persistent||
-> 
-> I fix it by enclosing !mddev->persistent with parentheses
-> 
-> By the way, I also fixed a line over 80 characters warning outputed
-> by ./scripts/checkpatch.pl
-> 
-> Signed-off-by: Firo Yang <firogm@gmail.com>
-> ---
->  drivers/md/md.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index dd85be9..b420d82 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -6391,9 +6391,10 @@ static int update_array_info(struct mddev *mddev, mdu_array_info_t *info)
->  	    mddev->ctime         != info->ctime         ||
->  	    mddev->level         != info->level         ||
->  /*	    mddev->layout        != info->layout        || */
-> -	    !mddev->persistent	 != info->not_persistent||
-> +	    (!mddev->persistent) != info->not_persistent ||
->  	    mddev->chunk_sectors != info->chunk_size >> 9 ||
-> -	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT to change */
-> +	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT
-> +		to change */
->  	    ((state^info->state) & 0xfffffe00)
->  		)
->  		return -EINVAL;
-> -- 
-> 2.4.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/wd33c93.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/wd33c93.c b/drivers/scsi/wd33c93.c
+index 9e09da4..e5ed956 100644
+--- a/drivers/scsi/wd33c93.c
++++ b/drivers/scsi/wd33c93.c
+@@ -1939,7 +1939,7 @@ wd33c93_init(struct Scsi_Host *instance, const wd33c93_regs regs,
+ 	int val;
+ 	char buf[32];
+ 
+-	if (!done_setup && setup_strings)
++	if (!done_setup)
+ 		wd33c93_setup(setup_strings);
+ 
+ 	hostdata = (struct WD33C93_hostdata *) instance->hostdata;
+-- 
+2.4.4
+
