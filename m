@@ -1,23 +1,29 @@
-From: Chris Mason <clm@fb.com>
-Date: Wed, 24 Jun 2015 19:26:22 +0000
-Subject: Re: [patch] btrfs: delayed-ref: double free in btrfs_add_delayed_tree_ref()
-Message-Id: <20150624192622.GA3920@ret.masoncoding.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Jun 2015 14:31:33 +0000
+Subject: [patch] spi: zynq: missing break statement
+Message-Id: <20150624143133.GE1702@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150624143233.GF1702@mwanda>
-In-Reply-To: <20150624143233.GF1702@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Qu Wenruo <quwenruo@cn.fujitsu.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.cz>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Ranjit Waghmode <ranjit.waghmode@xilinx.com>
+Cc: Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 24, 2015 at 05:32:33PM +0300, Dan Carpenter wrote:
-> There is a cut and paste error so instead of freeing "head_ref", we free
-> "ref" twice.
-> 
-> Fixes: 3368d001ba5d ('btrfs: qgroup: Record possible quota-related extent for qgroup.')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a missing break statement here so selecting both only selects
+upper.
 
-Thanks Dan!  Queued.
+Fixes: dfe11a11d523 ('spi: Add support for Zynq Ultrascale+ MPSoC GQSPI controller')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--chris
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index 87b20a5..f23f36e 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -214,6 +214,7 @@ static void zynqmp_gqspi_selectslave(struct zynqmp_qspi *instanceptr,
+ 	case GQSPI_SELECT_FLASH_CS_BOTH:
+ 		instanceptr->genfifocs = GQSPI_GENFIFO_CS_LOWER |
+ 			GQSPI_GENFIFO_CS_UPPER;
++		break;
+ 	case GQSPI_SELECT_FLASH_CS_UPPER:
+ 		instanceptr->genfifocs = GQSPI_GENFIFO_CS_UPPER;
+ 		break;
