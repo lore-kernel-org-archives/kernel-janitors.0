@@ -1,66 +1,32 @@
-From: Daniel Mack <daniel@zonque.org>
-Date: Mon, 08 Jun 2015 09:49:09 +0000
-Subject: Re: [PATCH v3] ARM: pxa: ssp: remove unnessary free for devm_xxx
-Message-Id: <55756515.3010508@zonque.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Jun 2015 14:28:31 +0000
+Subject: [patch] [media] v4l: xilinx: missing error code
+Message-Id: <20150624142831.GB1702@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433756701-32194-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1433756701-32194-1-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Hyun Kwon <hyun.kwon@xilinx.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 06/08/2015 11:45 AM, Firo Yang wrote:
-> A Coccinelle warning.
-> It's not necessary to free memory allocated with devm_xxx
-> and using these free functions maybe lead to a double free that
-> will corrupt the resource subsys. So, I just remove them.
-> 
-> Signed-off-by: Firo Yang <firogm@gmail.com>
+We should set "ret" on this error path instead of returning success.
 
-Reviewed-by: Daniel Mack <daniel@zonque.org>
+Fixes: df3305156f98 ('[media] v4l: xilinx: Add Xilinx Video IP core')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Thanks!
-Daniel
-
-
-> ---
-> In "[PATCH] ARM: pxa: ssp: remove unnessary free for devm_xxx", 
-> I forgot to remove an unused variable struct resource *res.
-> 
->  arch/arm/plat-pxa/ssp.c | 9 ---------
->  1 file changed, 9 deletions(-)
-> 
-> diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
-> index ad9529c..2b92a3b 100644
-> --- a/arch/arm/plat-pxa/ssp.c
-> +++ b/arch/arm/plat-pxa/ssp.c
-> @@ -232,25 +232,16 @@ static int pxa_ssp_probe(struct platform_device *pdev)
->  
->  static int pxa_ssp_remove(struct platform_device *pdev)
->  {
-> -	struct resource *res;
->  	struct ssp_device *ssp;
->  
->  	ssp = platform_get_drvdata(pdev);
->  	if (ssp = NULL)
->  		return -ENODEV;
->  
-> -	iounmap(ssp->mmio_base);
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	release_mem_region(res->start, resource_size(res));
-> -
-> -	clk_put(ssp->clk);
-> -
->  	mutex_lock(&ssp_lock);
->  	list_del(&ssp->node);
->  	mutex_unlock(&ssp_lock);
->  
-> -	kfree(ssp);
->  	return 0;
->  }
->  
-> 
-
+diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
+index 98e50e4..e779c93 100644
+--- a/drivers/media/platform/xilinx/xilinx-dma.c
++++ b/drivers/media/platform/xilinx/xilinx-dma.c
+@@ -699,8 +699,10 @@ int xvip_dma_init(struct xvip_composite_device *xdev, struct xvip_dma *dma,
+ 
+ 	/* ... and the buffers queue... */
+ 	dma->alloc_ctx = vb2_dma_contig_init_ctx(dma->xdev->dev);
+-	if (IS_ERR(dma->alloc_ctx))
++	if (IS_ERR(dma->alloc_ctx)) {
++		ret = PTR_ERR(dma->alloc_ctx);
+ 		goto error;
++	}
+ 
+ 	/* Don't enable VB2_READ and VB2_WRITE, as using the read() and write()
+ 	 * V4L2 APIs would be inefficient. Testing on the command line with a
