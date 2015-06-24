@@ -1,50 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 26 Jun 2015 09:04:27 +0000
-Subject: re: Add support of Cavium Liquidio ethernet adapters
-Message-Id: <20150626090427.GA28090@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jun 2015 14:16:34 +0000
+Subject: [PATCH] SCSI-OSD: Delete an unnecessary check before the function call "put_disk"
+Message-Id: <558ABBC2.8080304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150623142408.GA10121@mwanda>
-In-Reply-To: <20150623142408.GA10121@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <546E238A.5050606@users.sourceforge.net>
+In-Reply-To: <546E238A.5050606@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Benny Halevy <bhalevy@primarydata.com>, Boaz Harrosh <openosd@gmail.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Raghu Vatsavayi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jun 2015 16:06:21 +0200
 
-The patch f21fb3ed364b: "Add support of Cavium Liquidio ethernet
-adapters" from Jun 9, 2015, leads to the following static checker
-warning:
+The put_disk() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-	drivers/net/ethernet/cavium/liquidio/octeon_console.c:326 cvmx_bootmem_phy_named_block_find()
-	error: potential null dereference 'name_tmp'.  (kmalloc returns null)
+This issue was detected by using the Coccinelle software.
 
-drivers/net/ethernet/cavium/liquidio/octeon_console.c
-   319                  for (i = 0; i < num_blocks; i++) {
-   320                          u64 named_size    321                                  CVMX_BOOTMEM_NAMED_GET_FIELD(oct, named_addr,
-   322                                                               size);
-   323                          if (name && named_size) {
-   324                                  char *name_tmp    325                                          kmalloc(name_length + 1, GFP_KERNEL);
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/osd/osd_uld.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-kmalloc can fail.
+diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
+index 243eab3..e2075522 100644
+--- a/drivers/scsi/osd/osd_uld.c
++++ b/drivers/scsi/osd/osd_uld.c
+@@ -407,9 +407,7 @@ static void __remove(struct device *dev)
+ 
+ 	OSD_INFO("osd_remove %s\n",
+ 		 oud->disk ? oud->disk->disk_name : NULL);
+-
+-	if (oud->disk)
+-		put_disk(oud->disk);
++	put_disk(oud->disk);
+ 	ida_remove(&osd_minor_ida, oud->minor);
+ 
+ 	kfree(oud);
+-- 
+2.4.4
 
-   326                                  CVMX_BOOTMEM_NAMED_GET_NAME(oct, named_addr,
-   327                                                              name_tmp,
-   328                                                              name_length);
-   329                                  if (!strncmp(name, name_tmp, name_length)) {
-   330                                          result = named_addr;
-   331                                          kfree(name_tmp);
-   332                                          break;
-   333                                  }
-   334                                  kfree(name_tmp);
-   335                          } else if (!name && !named_size) {
-   336                                  result = named_addr;
-   337                                  break;
-   338                          }
-   339  
-   340                          named_addr +   341                                  sizeof(struct cvmx_bootmem_named_block_desc);
-   342                  }
-
-
-regards,
-dan carpenter
