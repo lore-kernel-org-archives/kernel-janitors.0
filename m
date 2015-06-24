@@ -1,32 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Jun 2015 14:28:31 +0000
-Subject: [patch] [media] v4l: xilinx: missing error code
-Message-Id: <20150624142831.GB1702@mwanda>
+From: Hyun Kwon <hyun.kwon@xilinx.com>
+Date: Wed, 24 Jun 2015 16:14:43 +0000
+Subject: RE: [patch] [media] v4l: xilinx: missing error code
+Message-Id: <E439C2F435589E4DA34D847245F141A4AFF74C92@XSJ-PSEXMBX01.xlnx.xilinx.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150624142831.GB1702@mwanda>
+In-Reply-To: <20150624142831.GB1702@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hyun Kwon <hyun.kwon@xilinx.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Michal Simek <michals@xilinx.com>, Soren Brinkmann <sorenb@xilinx.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We should set "ret" on this error path instead of returning success.
-
-Fixes: df3305156f98 ('[media] v4l: xilinx: Add Xilinx Video IP core')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
-index 98e50e4..e779c93 100644
---- a/drivers/media/platform/xilinx/xilinx-dma.c
-+++ b/drivers/media/platform/xilinx/xilinx-dma.c
-@@ -699,8 +699,10 @@ int xvip_dma_init(struct xvip_composite_device *xdev, struct xvip_dma *dma,
- 
- 	/* ... and the buffers queue... */
- 	dma->alloc_ctx = vb2_dma_contig_init_ctx(dma->xdev->dev);
--	if (IS_ERR(dma->alloc_ctx))
-+	if (IS_ERR(dma->alloc_ctx)) {
-+		ret = PTR_ERR(dma->alloc_ctx);
- 		goto error;
-+	}
- 
- 	/* Don't enable VB2_READ and VB2_WRITE, as using the read() and write()
- 	 * V4L2 APIs would be inefficient. Testing on the command line with a
+SGkgRGFuLA0KDQpUaGFua3MgZm9yIHRoZSBwYXRjaC4NCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KPiBGcm9tOiBEYW4gQ2FycGVudGVyIFttYWlsdG86ZGFuLmNhcnBlbnRlckBvcmFj
+bGUuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIEp1bmUgMjQsIDIwMTUgNzoyOSBBTQ0KPiBUbzog
+SHl1biBLd29uDQo+IENjOiBMYXVyZW50IFBpbmNoYXJ0OyBNYXVybyBDYXJ2YWxobyBDaGVoYWI7
+IE1pY2hhbCBTaW1lazsgU29yZW4gQnJpbmttYW5uOw0KPiBsaW51eC1tZWRpYUB2Z2VyLmtlcm5l
+bC5vcmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW3BhdGNo
+XSBbbWVkaWFdIHY0bDogeGlsaW54OiBtaXNzaW5nIGVycm9yIGNvZGUNCj4NCj4gV2Ugc2hvdWxk
+IHNldCAicmV0IiBvbiB0aGlzIGVycm9yIHBhdGggaW5zdGVhZCBvZiByZXR1cm5pbmcgc3VjY2Vz
+cy4NCj4NCj4gRml4ZXM6IGRmMzMwNTE1NmY5OCAoJ1ttZWRpYV0gdjRsOiB4aWxpbng6IEFkZCBY
+aWxpbnggVmlkZW8gSVAgY29yZScpDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRh
+bi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KQWNrZWQtYnk6IEh5dW4gS3dvbiA8aHl1bi5rd29u
+QHhpbGlueC5jb20+DQoNClRoYW5rcywNCi1oeXVuDQoNCg0KDQpUaGlzIGVtYWlsIGFuZCBhbnkg
+YXR0YWNobWVudHMgYXJlIGludGVuZGVkIGZvciB0aGUgc29sZSB1c2Ugb2YgdGhlIG5hbWVkIHJl
+Y2lwaWVudChzKSBhbmQgY29udGFpbihzKSBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gdGhhdCBt
+YXkgYmUgcHJvcHJpZXRhcnksIHByaXZpbGVnZWQgb3IgY29weXJpZ2h0ZWQgdW5kZXIgYXBwbGlj
+YWJsZSBsYXcuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsIGRvIG5vdCBy
+ZWFkLCBjb3B5LCBvciBmb3J3YXJkIHRoaXMgZW1haWwgbWVzc2FnZSBvciBhbnkgYXR0YWNobWVu
+dHMuIERlbGV0ZSB0aGlzIGVtYWlsIG1lc3NhZ2UgYW5kIGFueSBhdHRhY2htZW50cyBpbW1lZGlh
+dGVseS4NCg0K
