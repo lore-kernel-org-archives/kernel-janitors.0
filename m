@@ -1,68 +1,29 @@
-From: Stephan Mueller <smueller@chronox.de>
-Date: Tue, 23 Jun 2015 21:44:40 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Jun 2015 07:48:19 +0000
 Subject: Re: [PATCH] crypto-jitterentropy: Delete unnecessary checks before the function call "kzfree"
-Message-Id: <3056833.hq1kqBmzGz@myon.chronox.de>
+Message-Id: <20150624074819.GR28762@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <5317A59D.4@users.sourceforge.net> <5589CD95.9080508@users.sourceforge.net>
-In-Reply-To: <5589CD95.9080508@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+ <5589CD95.9080508@users.sourceforge.net>
+ <3056833.hq1kqBmzGz@myon.chronox.de>
+In-Reply-To: <3056833.hq1kqBmzGz@myon.chronox.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Stephan Mueller <smueller@chronox.de>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Am Dienstag, 23. Juni 2015, 23:20:21 schrieb SF Markus Elfring:
+The other NULL assignment isn't useful either.  Also If
+"entropy_collector" is NULL then we would oops calling
+kzfree(entropy_collector->mem);
+       ^^^^^^^^^^^^^^^^^^^^^^
+Dereference.
 
-Hi Markus,
+I don't understand the patch that you sent.  We shouldn't be introducing
+jent_zalloc() or jent_zfree().  Why are you adding abstractions there?
+Quite bad ones as well.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 23 Jun 2015 22:30:21 +0200
-> 
-> The kzfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
+regards,
+dan carpenter
 
-Ack: the patch is correct and I was overzealous.
-
-Nack: I just proposed a patch earlier today to avoid compiler warnings [1]. 
-That patch clashes with yours. May I ask you to wait briefly to see whether 
-that patch will be accepted? If yes, it would be great if you could repost the 
-patch that applies to the changed code.
-
-PS: when you are at it, maybe even the last line in the function can be 
-removed: setting the entropy_collector to NULL at that the end of the function 
-is moot as well.
-
-Thanks.
-
-[1] http://lkml.iu.edu/hypermail/linux/kernel/1506.2/05196.html
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  crypto/jitterentropy.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/crypto/jitterentropy.c b/crypto/jitterentropy.c
-> index d3c3045..22ded3e 100644
-> --- a/crypto/jitterentropy.c
-> +++ b/crypto/jitterentropy.c
-> @@ -698,11 +698,9 @@ static struct rand_data
-> *jent_entropy_collector_alloc(unsigned int osr,
-> 
->  static void jent_entropy_collector_free(struct rand_data
-> *entropy_collector) {
-> -	if (entropy_collector->mem)
-> -		kzfree(entropy_collector->mem);
-> +	kzfree(entropy_collector->mem);
->  	entropy_collector->mem = NULL;
-> -	if (entropy_collector)
-> -		kzfree(entropy_collector);
-> +	kzfree(entropy_collector);
->  	entropy_collector = NULL;
->  }
-
-
--- 
-Ciao
-Stephan
