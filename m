@@ -1,64 +1,43 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 08 Jun 2015 07:09:30 +0000
-Subject: Re: [PATCH] ARM: pxa: ssp: remove unnessary free for devm_xxx
-Message-Id: <alpine.DEB.2.10.1506080908460.2660@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jun 2015 20:48:25 +0000
+Subject: [PATCH] s390/process: Delete an unnecessary check before the function call "kfree"
+Message-Id: <558B1799.8040003@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433744346-14095-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1433744346-14095-1-git-send-email-firogm@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jun 2015 22:40:30 +0200
 
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-On Mon, 8 Jun 2015, Firo Yang wrote:
+This issue was detected by using the Coccinelle software.
 
-> A Coccinelle warning.
-> It's not necessary to free memory allocated with devm_xxx
-> and using these free functions maybe lead to a double free that
-> will corrupt the resource subsys. So, I just remove them.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/s390/kernel/process.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-This code could also be using devm_ioremap_resource rather than
-devm_request_mem_region and devm_ioremap.
+diff --git a/arch/s390/kernel/process.c b/arch/s390/kernel/process.c
+index dc5edc2..22e6448 100644
+--- a/arch/s390/kernel/process.c
++++ b/arch/s390/kernel/process.c
+@@ -81,8 +81,7 @@ void release_thread(struct task_struct *dead_task)
+ 
+ void arch_release_task_struct(struct task_struct *tsk)
+ {
+-	if (tsk->thread.vxrs)
+-		kfree(tsk->thread.vxrs);
++	kfree(tsk->thread.vxrs);
+ }
+ 
+ int copy_thread(unsigned long clone_flags, unsigned long new_stackp,
+-- 
+2.4.4
 
-julia
-
-
->
-> Signed-off-by: Firo Yang <firogm@gmail.com>
-> ---
->  arch/arm/plat-pxa/ssp.c | 8 --------
->  1 file changed, 8 deletions(-)
->
-> diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
-> index ad9529c..f3f1431 100644
-> --- a/arch/arm/plat-pxa/ssp.c
-> +++ b/arch/arm/plat-pxa/ssp.c
-> @@ -239,18 +239,10 @@ static int pxa_ssp_remove(struct platform_device *pdev)
->  	if (ssp = NULL)
->  		return -ENODEV;
->
-> -	iounmap(ssp->mmio_base);
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	release_mem_region(res->start, resource_size(res));
-> -
-> -	clk_put(ssp->clk);
-> -
->  	mutex_lock(&ssp_lock);
->  	list_del(&ssp->node);
->  	mutex_unlock(&ssp_lock);
->
-> -	kfree(ssp);
->  	return 0;
->  }
->
-> --
-> 2.4.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
