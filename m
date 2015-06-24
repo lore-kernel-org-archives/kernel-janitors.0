@@ -1,94 +1,62 @@
-From: Chaehyun Lim <chaehyun.lim@gmail.com>
-Date: Sat, 13 Jun 2015 06:41:19 +0000
-Subject: [PATCH 2/2] staging: wilc1000: remove itypes.h
-Message-Id: <1434177679-9831-2-git-send-email-chaehyun.lim@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jun 2015 10:32:35 +0000
+Subject: ACPI-APEI: Make exception handling a bit more efficient in __einj_error_trigger()
+Message-Id: <558A8743.5040105@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434177679-9831-1-git-send-email-chaehyun.lim@gmail.com>
-In-Reply-To: <1434177679-9831-1-git-send-email-chaehyun.lim@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, Chaehyun Lim <chaehyun.lim@gmail.com>
+To: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Remove itypes.h that is not needed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Jun 2015 11:41:46 +0200
 
-Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
+Return from the __einj_error_trigger() function directly after a failed
+call for the request_mem_region() function according to the current Linux
+coding style convention.
+
+Drop an unnecessary initialisation for the variable "trigger_tab" then.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/wilc1000/coreconfigurator.c |  1 -
- drivers/staging/wilc1000/host_interface.c   |  1 -
- drivers/staging/wilc1000/itypes.h           | 39 -----------------------------
- 3 files changed, 41 deletions(-)
- delete mode 100644 drivers/staging/wilc1000/itypes.h
+ drivers/acpi/apei/einj.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
-index 9abc73d..792ba6d 100644
---- a/drivers/staging/wilc1000/coreconfigurator.c
-+++ b/drivers/staging/wilc1000/coreconfigurator.c
-@@ -12,7 +12,6 @@
- /*****************************************************************************/
- /* File Includes                                                             */
- /*****************************************************************************/
--#include "itypes.h"
- #include "coreconfigurator.h"
- /*****************************************************************************/
- /* Constants                                                                 */
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index ca59f1b..1e9a2f1 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -1,6 +1,5 @@
- #include "host_interface.h"
- #include "wilc_oswrapper.h"
--#include "itypes.h"
- #include "coreconfigurator.h"
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index a095d4f..c3a2c06 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -299,7 +299,7 @@ static struct acpi_generic_address *einj_get_trigger_parameter_region(
+ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
+ 				u64 param1, u64 param2)
+ {
+-	struct acpi_einj_trigger *trigger_tab = NULL;
++	struct acpi_einj_trigger *trigger_tab;
+ 	struct apei_exec_context trigger_ctx;
+ 	struct apei_resources trigger_resources;
+ 	struct acpi_whea_header *trigger_entry;
+@@ -316,7 +316,7 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
+ 		       (unsigned long long)trigger_paddr,
+ 		       (unsigned long long)trigger_paddr +
+ 			    sizeof(*trigger_tab) - 1);
+-		goto out;
++		return rc;
+ 	}
+ 	trigger_tab = ioremap_cache(trigger_paddr, sizeof(*trigger_tab));
+ 	if (!trigger_tab) {
+@@ -407,7 +407,7 @@ out_rel_entry:
+ 			   table_size - sizeof(*trigger_tab));
+ out_rel_header:
+ 	release_mem_region(trigger_paddr, sizeof(*trigger_tab));
+-out:
++
+ 	if (trigger_tab)
+ 		iounmap(trigger_tab);
  
- extern s32 TransportInit(void);
-diff --git a/drivers/staging/wilc1000/itypes.h b/drivers/staging/wilc1000/itypes.h
-deleted file mode 100644
-index d64ae35..0000000
---- a/drivers/staging/wilc1000/itypes.h
-+++ /dev/null
-@@ -1,39 +0,0 @@
--/*****************************************************************************/
--/*                                                                           */
--/*                     Ittiam 802.11 MAC SOFTWARE                            */
--/*                                                                           */
--/*                  ITTIAM SYSTEMS PVT LTD, BANGALORE                        */
--/*                           COPYRIGHT(C) 2005                               */
--/*                                                                           */
--/*  This program  is  proprietary to  Ittiam  Systems  Private  Limited  and */
--/*  is protected under Indian  Copyright Law as an unpublished work. Its use */
--/*  and  disclosure  is  limited by  the terms  and  conditions of a license */
--/*  agreement. It may not be copied or otherwise  reproduced or disclosed to */
--/*  persons outside the licensee's organization except in accordance with the*/
--/*  terms  and  conditions   of  such  an  agreement.  All  copies  and      */
--/*  reproductions shall be the property of Ittiam Systems Private Limited and*/
--/*  must bear this notice in its entirety.                                   */
--/*                                                                           */
--/*****************************************************************************/
--
--/*****************************************************************************/
--/*                                                                           */
--/*  File Name         : itypes.h                                             */
--/*                                                                           */
--/*  Description       : This file contains all the data type definitions for */
--/*                      MAC implementation.                                  */
--/*                                                                           */
--/*  List of Functions : None                                                 */
--/*  Issues / Problems : None                                                 */
--/*                                                                           */
--/*  Revision History  :                                                      */
--/*                                                                           */
--/*         DD MM YYYY   Author(s)       Changes                              */
--/*         01 05 2005   Ittiam          Draft                                */
--/*                                                                           */
--/*****************************************************************************/
--
--#ifndef ITYPES_H
--#define ITYPES_H
--
--#endif /* ITYPES_H */
 -- 
-1.9.1
+2.4.4
 
