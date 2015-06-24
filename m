@@ -1,48 +1,31 @@
-From: Dave Chinner <david@fromorbit.com>
-Date: Mon, 29 Jun 2015 21:43:55 +0000
-Subject: Re: [PATCH] XFS: Delete unnecessary checks before the function call "xfs_qm_dqrele"
-Message-Id: <20150629214355.GE7943@dastard>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Jun 2015 14:30:15 +0000
+Subject: [patch] ACPI / resources: free memory on error in add_region_before()
+Message-Id: <20150624143015.GD1702@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<5479F823.60900@users.sourceforge.net>
-	<20141130230904.GF16151@dastard>
-	<558D1833.3080009@users.sourceforge.net>
-In-Reply-To: <558D1833.3080009@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, xfs@oss.sgi.com
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 26, 2015 at 11:15:31AM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 26 Jun 2015 11:05:41 +0200
-> 
-> The xfs_qm_dqrele() function tests whether its argument is NULL and
-> then returns immediately.
+There is a small memory leak on error.
 
-True.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Thus the test around the call is not needed.
-
-But wrong.
-
-xfs_dqrele_inode() gets called on every inode in the inode cache,
-and this change results in a cacheline in every inode being dirtied
-even if they don't have dquots attached. Given the inode cache can
-hold tens to hundreds of millions of inodes on large machines, we
-don't want to dirty any cachelines we don't need to while walking
-the inode cache and releasing dquots...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
+index fcb7807..10561ce 100644
+--- a/drivers/acpi/resource.c
++++ b/drivers/acpi/resource.c
+@@ -660,8 +660,10 @@ static int add_region_before(u64 start, u64 end, u8 space_id,
+ 		return -ENOMEM;
+ 
+ 	error = request_range(start, end, space_id, flags, desc);
+-	if (error)
++	if (error) {
++		kfree(reg);
+ 		return error;
++	}
+ 
+ 	reg->start = start;
+ 	reg->end = end;
