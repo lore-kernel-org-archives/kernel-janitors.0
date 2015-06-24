@@ -1,58 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Jun 2015 14:32:33 +0000
-Subject: [patch] btrfs: delayed-ref: double free in btrfs_add_delayed_tree_ref()
-Message-Id: <20150624143233.GF1702@mwanda>
+From: Chris Mason <clm@fb.com>
+Date: Wed, 24 Jun 2015 19:26:22 +0000
+Subject: Re: [patch] btrfs: delayed-ref: double free in btrfs_add_delayed_tree_ref()
+Message-Id: <20150624192622.GA3920@ret.masoncoding.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150624143233.GF1702@mwanda>
+In-Reply-To: <20150624143233.GF1702@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <clm@fb.com>, Qu Wenruo <quwenruo@cn.fujitsu.com>
-Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.cz>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Qu Wenruo <quwenruo@cn.fujitsu.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.cz>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is a cut and paste error so instead of freeing "head_ref", we free
-"ref" twice.
+On Wed, Jun 24, 2015 at 05:32:33PM +0300, Dan Carpenter wrote:
+> There is a cut and paste error so instead of freeing "head_ref", we free
+> "ref" twice.
+> 
+> Fixes: 3368d001ba5d ('btrfs: qgroup: Record possible quota-related extent for qgroup.')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 3368d001ba5d ('btrfs: qgroup: Record possible quota-related extent for qgroup.')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks Dan!  Queued.
 
-diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-index fd64fd0..ac3e81d 100644
---- a/fs/btrfs/delayed-ref.c
-+++ b/fs/btrfs/delayed-ref.c
-@@ -650,18 +650,13 @@ int btrfs_add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
- 		return -ENOMEM;
- 
- 	head_ref = kmem_cache_alloc(btrfs_delayed_ref_head_cachep, GFP_NOFS);
--	if (!head_ref) {
--		kmem_cache_free(btrfs_delayed_tree_ref_cachep, ref);
--		return -ENOMEM;
--	}
-+	if (!head_ref)
-+		goto free_ref;
- 
- 	if (fs_info->quota_enabled && is_fstree(ref_root)) {
- 		record = kmalloc(sizeof(*record), GFP_NOFS);
--		if (!record) {
--			kmem_cache_free(btrfs_delayed_tree_ref_cachep, ref);
--			kmem_cache_free(btrfs_delayed_ref_head_cachep, ref);
--			return -ENOMEM;
--		}
-+		if (!record)
-+			goto free_head_ref;
- 	}
- 
- 	head_ref->extent_op = extent_op;
-@@ -682,6 +677,13 @@ int btrfs_add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
- 	spin_unlock(&delayed_refs->lock);
- 
- 	return 0;
-+
-+free_head_ref:
-+	kmem_cache_free(btrfs_delayed_ref_head_cachep, head_ref);
-+free_ref:
-+	kmem_cache_free(btrfs_delayed_tree_ref_cachep, ref);
-+
-+	return -ENOMEM;
- }
- 
- /*
+-chris
