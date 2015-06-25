@@ -1,65 +1,57 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 20 Jun 2015 16:59:00 +0000
-Subject: [PATCH 02/12] staging: lustre: fld: Use !x to check for kzalloc failure
-Message-Id: <1434819550-3193-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jun 2015 13:32:52 +0000
+Subject: [PATCH 2/2] ARM-kernel: Delete an unnecessary check before the function call "unwind_table_del"
+Message-Id: <558C0304.6050204@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <558C01C5.4060303@users.sourceforge.net>
+In-Reply-To: <558C01C5.4060303@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-!x is more normal for kzalloc failure in the kernel.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jun 2015 15:05:21 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The unwind_table_del() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-// <smpl>
-@@
-expression x;
-statement S1, S2;
-@@
+This issue was detected by using the Coccinelle software.
 
-x = kzalloc(...);
-if (
-- x = NULL
-+ !x
- ) S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/lustre/lustre/fld/fld_cache.c   |    2 +-
- drivers/staging/lustre/lustre/fld/fld_request.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/kernel/module.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff -u -p a/drivers/staging/lustre/lustre/fld/fld_request.c b/drivers/staging/lustre/lustre/fld/fld_request.c
---- a/drivers/staging/lustre/lustre/fld/fld_request.c
-+++ b/drivers/staging/lustre/lustre/fld/fld_request.c
-@@ -222,7 +222,7 @@ int fld_client_add_target(struct lu_clie
- 			fld->lcf_name, name, tar->ft_idx);
+diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
+index efdddcb..0cc1afa 100644
+--- a/arch/arm/kernel/module.c
++++ b/arch/arm/kernel/module.c
+@@ -390,7 +390,6 @@ module_arch_cleanup(struct module *mod)
+ 	int i;
  
- 	target = kzalloc(sizeof(*target), GFP_NOFS);
--	if (target = NULL)
-+	if (!target)
- 		return -ENOMEM;
- 
- 	spin_lock(&fld->lcf_lock);
-diff -u -p a/drivers/staging/lustre/lustre/fld/fld_cache.c b/drivers/staging/lustre/lustre/fld/fld_cache.c
---- a/drivers/staging/lustre/lustre/fld/fld_cache.c
-+++ b/drivers/staging/lustre/lustre/fld/fld_cache.c
-@@ -70,7 +70,7 @@ struct fld_cache *fld_cache_init(const c
- 	LASSERT(cache_threshold < cache_size);
- 
- 	cache = kzalloc(sizeof(*cache), GFP_NOFS);
--	if (cache = NULL)
-+	if (!cache)
- 		return ERR_PTR(-ENOMEM);
- 
- 	INIT_LIST_HEAD(&cache->fci_entries_head);
+ 	for (i = 0; i < ARM_SEC_MAX; i++)
+-		if (mod->arch.unwind[i])
+-			unwind_table_del(mod->arch.unwind[i]);
++		unwind_table_del(mod->arch.unwind[i]);
+ #endif
+ }
+-- 
+2.4.4
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
