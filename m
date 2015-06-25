@@ -1,46 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 11 Jun 2015 08:51:50 +0000
-Subject: [patch] drm/amdgpu: checking for IS_ERR() instead of NULL
-Message-Id: <20150611085150.GB27090@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jun 2015 11:40:31 +0000
+Subject: [PATCH 2/2] ARM-OMAP2+: Delete an unnecessary check before the function call "of_node_put"
+Message-Id: <558BE8AF.5000709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <558BE713.1020409@users.sourceforge.net>
+In-Reply-To: <558BE713.1020409@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Alex Deucher <alexander.deucher@amd.com>
-Cc: Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@amd.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Maarten Lankhorst <maarten.lankhorst@canonical.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, "monk.liu" <monk.liu@amd.com>
+To: linux-arm-kernel@lists.infradead.org
 
-Debugfs_ functions return an error pointer if debugfs is disabled in the
-config and NULL on failure.  They are designed so that normally you
-don't need to check for errors but here we dereference "ent" so we do
-need.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Jun 2015 13:05:28 +0200
 
-This function has an #if defined(CONFIG_DEBUG_FS) so we know the
-debugfs_create_file() can only return NULL and not an error pointer.
+The of_node_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Fixes: d38ceaf99ed0 ('drm/amdgpu: add core driver (v4)')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This issue was detected by using the Coccinelle software.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-index d3706a4..06cb508 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-@@ -1176,15 +1176,15 @@ static int amdgpu_ttm_debugfs_init(struct amdgpu_device *adev)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/timer.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index cac46d8..15448221 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -208,8 +208,7 @@ static void __init omap_dmtimer_init(void)
+ 	/* If we are a secure device, remove any secure timer nodes */
+ 	if ((omap_type() != OMAP2_DEVICE_TYPE_GP)) {
+ 		np = omap_get_timer_dt(omap_timer_match, "ti,timer-secure");
+-		if (np)
+-			of_node_put(np);
++		of_node_put(np);
+ 	}
+ }
  
- 	ent = debugfs_create_file("amdgpu_vram", S_IFREG | S_IRUGO, root,
- 				  adev, &amdgpu_ttm_vram_fops);
--	if (IS_ERR(ent))
--		return PTR_ERR(ent);
-+	if (!ent)
-+		return -ENOMEM;
- 	i_size_write(ent->d_inode, adev->mc.mc_vram_size);
- 	adev->mman.vram = ent;
- 
- 	ent = debugfs_create_file("amdgpu_gtt", S_IFREG | S_IRUGO, root,
- 				  adev, &amdgpu_ttm_gtt_fops);
--	if (IS_ERR(ent))
--		return PTR_ERR(ent);
-+	if (!ent)
-+		return -ENOMEM;
- 	i_size_write(ent->d_inode, adev->mc.gtt_size);
- 	adev->mman.gtt = ent;
- 
+-- 
+2.4.4
+
