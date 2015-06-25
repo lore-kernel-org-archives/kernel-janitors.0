@@ -1,57 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 10 Jun 2015 15:51:54 +0000
-Subject: re: dsa: add device tree bindings to register DSA switches
-Message-Id: <20150610155154.GL10549@mwanda>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Thu, 25 Jun 2015 21:10:13 +0000
+Subject: [PATCH 2/7] perf header: Delete an unnecessary check before the calling free_event_desc()
+Message-Id: <1435266618-10810-3-git-send-email-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1435266618-10810-1-git-send-email-acme@kernel.org>
+In-Reply-To: <1435266618-10810-1-git-send-email-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>, Julia Lawall <julia.lawall@lip6.fr>, Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Hello Florian Fainelli,
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-The patch 5e95329b701c: "dsa: add device tree bindings to register
-DSA switches" from Mar 22, 2013, leads to the following static
-checker warning:
+The free_event_desc() function tests whether its argument is NULL and
+then returns immediately. Thus the test around the call is not needed.
 
-	net/dsa/dsa.c:669 dsa_of_probe()
-	error: testing array offset 'port_index' after use.
+This issue was detected by using the Coccinelle software.
 
-net/dsa/dsa.c
-   644                          port_index = be32_to_cpup(port_reg);
-   645  
-   646                          port_name = of_get_property(port, "label", NULL);
-   647                          if (!port_name)
-   648                                  continue;
-   649  
-   650                          cd->port_dn[port_index] = port;
-                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Write.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/558C2ABA.3000603@users.sourceforge.net
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/header.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-   651  
-   652                          cd->port_names[port_index] = kstrdup(port_name,
-   653                                          GFP_KERNEL);
-   654                          if (!cd->port_names[port_index]) {
-   655                                  ret = -ENOMEM;
-   656                                  goto out_free_chip;
-   657                          }
-   658  
-   659                          link = of_parse_phandle(port, "link", 0);
-   660  
-   661                          if (!strcmp(port_name, "dsa") && link &&
-   662                                          pd->nr_chips > 1) {
-   663                                  ret = dsa_of_setup_routing_table(pd, cd,
-   664                                                  chip_index, port_index, link);
-   665                                  if (ret)
-   666                                          goto out_free_chip;
-   667                          }
-   668  
-   669                          if (port_index = DSA_MAX_PORTS)
-                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The write was out of bounds memory corruption.  Oops.  Too late.
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 21a77e7a171e..03ace57a800c 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1063,8 +1063,7 @@ out:
+ 	free(buf);
+ 	return events;
+ error:
+-	if (events)
+-		free_event_desc(events);
++	free_event_desc(events);
+ 	events = NULL;
+ 	goto out;
+ }
+-- 
+2.1.0
 
-   670                                  break;
-   671                  }
-
-regards,
-dan carpenter
