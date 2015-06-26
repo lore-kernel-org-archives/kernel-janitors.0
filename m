@@ -1,83 +1,54 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Date: Fri, 12 Jun 2015 20:00:05 +0000
-Subject: Re: [patch] Smack: freeing an error pointer in smk_write_revoke_subj()
-Message-Id: <557B3A45.2090908@schaufler-ca.com>
+From: Darren Hart <dvhart@infradead.org>
+Date: Fri, 26 Jun 2015 23:06:55 +0000
+Subject: Re: [PATCH 1/1] platform: x86: Deletion of checks before backlight_device_unregister()
+Message-Id: <20150626230655.GB57818@vmdeb7>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150611085116.GC27393@mwanda>
-In-Reply-To: <20150611085116.GC27393@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+ <547389A6.9090106@users.sourceforge.net>
+ <3842367.ojrMxTW2rH@path>
+ <5473AD39.9010309@users.sourceforge.net>
+ <alpine.DEB.2.10.1411271908590.2571@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1411271908590.2571@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Anisse Astier <anisse@astier.eu>, Corentin Chary <corentin.chary@gmail.com>, Ike Panhc <ike.pan@canonical.com>, Jonathan Woithe <jwoithe@just42.net>, Mattia Dongili <malattia@linux.it>, platform-driver-x86@vger.kernel.org, acpi4asus-user@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 6/11/2015 1:51 AM, Dan Carpenter wrote:
-> This code used to rely on the fact that kfree(NULL) was a no-op, but
-> then we changed smk_parse_smack() to return error pointers on failure
-> instead of NULL.  Calling kfree() on an error pointer will oops.
->
-> I have re-arranged things a bit so that we only free things if they
-> have been allocated.
->
-> Fixes: e774ad683f42 ('smack: pass error code through pointers')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Thu, Nov 27, 2014 at 07:13:10PM +0100, Julia Lawall wrote:
+> 
+> 
+> On Mon, 24 Nov 2014, SF Markus Elfring wrote:
+> 
+> > >> This issue was detected by using the Coccinelle software.
+> > >
+> > > What script was used ?
+> >
+> > A semantic patch approach which I published on the mailing lists in March
+> > is in action on my software development system for a while.
+> >
+> >
+> > > Is it in scripts/coccinelle ?
+> >
+> > Not yet.
+> >
+> > I hope that the involved update suggestions got sufficient positive feedback
+> > to integrate five scripts there.
+> 
+> The current scripts are very complicated, involving the interaction
+> between multiple scripts and a database, and I think they are not very
+> suitable for make coccicheck.  Also, the idea of removing the null checks
+> is not appropriate in all contexts.  Perhaps it could be possible to add
+> a script to the Linux kernel that handles a number of common cases for
+> which removing the null test is widely considered to be desirable.
+> 
+> julia
+> 
 
-Applied to https://github.com/cschaufler/smack-next.git#smack-for-4.2-stacked
+Julia, do you have any particular objection to this specific patch? I didn't see
+a reason to prevent it going in.
 
->
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 6beac42..2716d02 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -2253,8 +2253,8 @@ static const struct file_operations smk_access2_ops = {
->  static ssize_t smk_write_revoke_subj(struct file *file, const char __user *buf,
->  				size_t count, loff_t *ppos)
->  {
-> -	char *data = NULL;
-> -	const char *cp = NULL;
-> +	char *data;
-> +	const char *cp;
->  	struct smack_known *skp;
->  	struct smack_rule *sp;
->  	struct list_head *rule_list;
-> @@ -2276,18 +2276,18 @@ static ssize_t smk_write_revoke_subj(struct file *file, const char __user *buf,
->  
->  	if (copy_from_user(data, buf, count) != 0) {
->  		rc = -EFAULT;
-> -		goto free_out;
-> +		goto out_data;
->  	}
->  
->  	cp = smk_parse_smack(data, count);
->  	if (IS_ERR(cp)) {
->  		rc = PTR_ERR(cp);
-> -		goto free_out;
-> +		goto out_data;
->  	}
->  
->  	skp = smk_find_entry(cp);
->  	if (skp = NULL)
-> -		goto free_out;
-> +		goto out_cp;
->  
->  	rule_list = &skp->smk_rules;
->  	rule_lock = &skp->smk_rules_lock;
-> @@ -2299,9 +2299,11 @@ static ssize_t smk_write_revoke_subj(struct file *file, const char __user *buf,
->  
->  	mutex_unlock(rule_lock);
->  
-> -free_out:
-> -	kfree(data);
-> +out_cp:
->  	kfree(cp);
-> +out_data:
-> +	kfree(data);
-> +
->  	return rc;
->  }
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
+-- 
+Darren Hart
+Intel Open Source Technology Center
