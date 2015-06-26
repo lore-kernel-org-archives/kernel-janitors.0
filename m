@@ -1,43 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 15 Jun 2015 21:54:46 +0000
-Subject: Re: [PATCH v2] net: Add sock_common_listen for TCP and DCCP
-Message-Id: <20150615.145446.1566874356874515092.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Jun 2015 19:28:08 +0000
+Subject: [PATCH] tc1100-wmi: Delete an unnecessary check before the function call "kfree"
+Message-Id: <558DA7C8.6060003@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434085077-4938-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1434085077-4938-1-git-send-email-firogm@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: firogm@gmail.com
-Cc: eric.dumazet@gmail.com, gerrit@erg.abdn.ac.uk, yoshfuji@linux-ipv6.org, jmorris@namei.org, kuznet@ms2.inr.ac.ru, herbert@gondor.apana.org.au, ast@plumgrid.com, ebiederm@xmission.com, dan.carpenter@oracle.com, Julia.Lawall@lip6.fr, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Firo Yang <firogm@gmail.com>
-Date: Fri, 12 Jun 2015 12:57:57 +0800
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Jun 2015 21:21:16 +0200
 
-> Code refactoring:
-> 1. Move the common code of inet_listen() and inet_dccp_listen() to
-> sock_common_listen().
-> 
-> 2. Modify and rename inet_listen() to tcp_listen().
-> 
-> 3. Modify and rename inet_dccp_listen() to dccp_listen().
-> 
-> 4. Add new callback pointer listen in struct proto for
-> tcp_listen() and dccp_listen().
-> 
-> This patch makes codes more modularized and removes redudant codes.
-> 
-> Signed-off-by: Firo Yang <firogm@gmail.com>
-> ---
-> v2: 
-> In according to the advices of Eric Dumazet, sock_common_listen() keep 
-> using TCP_xxx state instead of introducing new aliases.
-> 
-> Test info:
-> I test it on my x86 PC.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-I don't think this is worthwhile, sorry.
+This issue was detected by using the Coccinelle software.
 
-Instead of having two straight line copies of a piece of logic, we now
-have three functions and a new callback.  I'd rather have a single
-duplicate copy of a function than all of that.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/platform/x86/tc1100-wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/tc1100-wmi.c b/drivers/platform/x86/tc1100-wmi.c
+index e365425..89aa976 100644
+--- a/drivers/platform/x86/tc1100-wmi.c
++++ b/drivers/platform/x86/tc1100-wmi.c
+@@ -82,7 +82,7 @@ static int get_state(u32 *out, u8 instance)
+ 		tmp = 0;
+ 	}
+ 
+-	if (result.length > 0 && result.pointer)
++	if (result.length > 0)
+ 		kfree(result.pointer);
+ 
+ 	switch (instance) {
+-- 
+2.4.4
+
