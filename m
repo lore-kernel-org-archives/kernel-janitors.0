@@ -1,130 +1,47 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 24 Jun 2015 16:47:14 +0000
-Subject: Re: [PATCH v2] mfd: 88pm80x: refine irq bit operation
-Message-Id: <20150624164714.GA38445@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Jun 2015 15:48:03 +0000
+Subject: Re: [osd-dev] [PATCH 1/1] exofs: Deletion of an unnecessary check before the function call "ore_put_
+Message-Id: <558D7433.6030304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433667784-27869-1-git-send-email-zhouqiao@marvell.com>
-In-Reply-To: <1433667784-27869-1-git-send-email-zhouqiao@marvell.com>
+References: <5307CAA2.8060406@users.sourceforge.net>	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>	<530A086E.8010901@users.sourceforge.net>	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>	<530A72AA.3000601@users.sourceforge.net>	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>	<530B5FB6.6010207@users.sourceforge.net>	<alpine.DEB.2.10.1402241710370.2074@hadrien>	<530C5E18.1020800@users.sourceforge.net>	<alpine.DEB.2.10.1402251014170.2080@hadrien>	<530CD2C4.4050903@users.sourceforge.net>	<alpine.DEB.2.10.1402251840450.7035@hadrien>	<530CF8FF.8080600@users.sourceforge.net>	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>	<530DD06F.4090703@users.sourceforge.net>	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.sourceforge.net> <546B0D08.2070305@users.sourceforge.net> <546B0DBB.7080000@gmail.com>
+In-Reply-To: <546B0DBB.7080000@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Boaz Harrosh <openosd@gmail.com>, Benny Halevy <bhalevy@primarydata.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Boaz Harrosh <bharrosh@panasas.com>
 
-On Wed, Jun 24, 2015 at 04:47:03PM +0800, zhouqiao wrote:
-> Hi Dmitry, Alessandro
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Tue, 18 Nov 2014 10:05:19 +0100
+>>
+>> The ore_put_io_state() function tests whether its argument is NULL and then
+>> returns immediately. Thus the test around the call is not needed.
+>>
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  fs/exofs/ore_raid.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
+>> index 84529b8..5dc7c4c 100644
+>> --- a/fs/exofs/ore_raid.c
+>> +++ b/fs/exofs/ore_raid.c
+>> @@ -716,6 +716,5 @@ void _ore_free_raid_stuff(struct ore_io_state *ios)
+>>  		if (ios->extra_part_alloc)
+>>  			kfree(ios->per_dev[0].sglist);
+>>  	}
+>> -	if (ios->ios_read_4_write)
+>> -		ore_put_io_state(ios->ios_read_4_write);
+>> +	ore_put_io_state(ios->ios_read_4_write);
+>>  }
+>>
 > 
-> Could you please review below patches? Sorry that I didn't add you earlier.
+> Thanks will submit for next Kernel
 
-This looks fine to me.
+Is this small update suggestion still in the waiting queue
+for further software improvements?
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-> 
-> On 06/24/2015 04:31 PM, Lee Jones wrote:
-> >On Sun, 07 Jun 2015, Qiao Zhou wrote:
-> >
-> >>Set_bit/clear_bit for wu_flag may be corrupted if irq > 5(or 6 for
-> >>aarch64). The maximum irq number from 88pm80x chip series is 24.
-> >>Here we refine the code to protect the potential memory corruption.
-> >>
-> >>Also change wu_flag to wakeup_flag for easier understanding.
-> >>
-> >>Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >>Signed-off-by: Qiao Zhou <zhouqiao@marvell.com>
-> >>---
-> >>  drivers/input/misc/88pm80x_onkey.c | 2 +-
-> >>  drivers/mfd/88pm80x.c              | 4 ++--
-> >>  drivers/rtc/rtc-88pm80x.c          | 2 +-
-> >>  include/linux/mfd/88pm80x.h        | 9 ++++++---
-> >>  4 files changed, 10 insertions(+), 7 deletions(-)
-> >For my own reference:
-> >  Acked-by: Lee Jones <lee.jones@linaro.org>
-> >
-> >... but I need Acks for Input and RTC before I can merge the patch.
-> >
-> >>diff --git a/drivers/input/misc/88pm80x_onkey.c b/drivers/input/misc/88pm80x_onkey.c
-> >>index cf9908f..b1fd83c 100644
-> >>--- a/drivers/input/misc/88pm80x_onkey.c
-> >>+++ b/drivers/input/misc/88pm80x_onkey.c
-> >>@@ -76,7 +76,7 @@ static int pm80x_onkey_probe(struct platform_device *pdev)
-> >>  	info->pm80x = chip;
-> >>  	info->irq = platform_get_irq(pdev, 0);
-> >>-	if (info->irq < 0) {
-> >>+	if (info->irq < 0 || info->irq >= PM80X_MAX_IRQ) {
-> >>  		dev_err(&pdev->dev, "No IRQ resource!\n");
-> >>  		err = -EINVAL;
-> >>  		goto out;
-> >>diff --git a/drivers/mfd/88pm80x.c b/drivers/mfd/88pm80x.c
-> >>index 5e72f65..e1d803a 100644
-> >>--- a/drivers/mfd/88pm80x.c
-> >>+++ b/drivers/mfd/88pm80x.c
-> >>@@ -136,7 +136,7 @@ static int pm80x_suspend(struct device *dev)
-> >>  	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
-> >>  	struct pm80x_chip *chip = i2c_get_clientdata(client);
-> >>-	if (chip && chip->wu_flag)
-> >>+	if (chip && chip->wakeup_flag)
-> >>  		if (device_may_wakeup(chip->dev))
-> >>  			enable_irq_wake(chip->irq);
-> >>@@ -148,7 +148,7 @@ static int pm80x_resume(struct device *dev)
-> >>  	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
-> >>  	struct pm80x_chip *chip = i2c_get_clientdata(client);
-> >>-	if (chip && chip->wu_flag)
-> >>+	if (chip && chip->wakeup_flag)
-> >>  		if (device_may_wakeup(chip->dev))
-> >>  			disable_irq_wake(chip->irq);
-> >>diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
-> >>index 7df0579..d53fa18 100644
-> >>--- a/drivers/rtc/rtc-88pm80x.c
-> >>+++ b/drivers/rtc/rtc-88pm80x.c
-> >>@@ -268,7 +268,7 @@ static int pm80x_rtc_probe(struct platform_device *pdev)
-> >>  	if (!info)
-> >>  		return -ENOMEM;
-> >>  	info->irq = platform_get_irq(pdev, 0);
-> >>-	if (info->irq < 0) {
-> >>+	if (info->irq < 0 || info->irq >= PM80X_MAX_IRQ) {
-> >>  		dev_err(&pdev->dev, "No IRQ resource!\n");
-> >>  		ret = -EINVAL;
-> >>  		goto out;
-> >>diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
-> >>index 97cb283..60cff11 100644
-> >>--- a/include/linux/mfd/88pm80x.h
-> >>+++ b/include/linux/mfd/88pm80x.h
-> >>@@ -276,6 +276,9 @@ enum {
-> >>  #define PM805_EARPHONE_SETTING			(0x29)
-> >>  #define PM805_AUTO_SEQ_SETTING			(0x2A)
-> >>+/* supported 24 sub-irq */
-> >>+#define PM80X_MAX_IRQ			24
-> >>+
-> >>  struct pm80x_rtc_pdata {
-> >>  	int		vrtc;
-> >>  	int		rtc_wakeup;
-> >>@@ -301,7 +304,7 @@ struct pm80x_chip {
-> >>  	int type;
-> >>  	int irq;
-> >>  	int irq_mode;
-> >>-	unsigned long wu_flag;
-> >>+	unsigned long wakeup_flag;
-> >>  	spinlock_t lock;
-> >>  };
-> >>@@ -349,7 +352,7 @@ static inline int pm80x_dev_suspend(struct device *dev)
-> >>  	int irq = platform_get_irq(pdev, 0);
-> >>  	if (device_may_wakeup(dev))
-> >>-		set_bit((1 << irq), &chip->wu_flag);
-> >>+		set_bit(irq, &chip->wakeup_flag);
-> >>  	return 0;
-> >>  }
-> >>@@ -361,7 +364,7 @@ static inline int pm80x_dev_resume(struct device *dev)
-> >>  	int irq = platform_get_irq(pdev, 0);
-> >>  	if (device_may_wakeup(dev))
-> >>-		clear_bit((1 << irq), &chip->wu_flag);
-> >>+		clear_bit(irq, &chip->wakeup_flag);
-> >>  	return 0;
-> >>  }
-> 
-> -- 
-> Best Regards
-> Qiao
-> 
-
--- 
-Dmitry
+Regards,
+Markus
