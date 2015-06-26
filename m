@@ -1,48 +1,63 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 30 Jun 2015 12:50:23 +0000
-Subject: Re: [PATCH] SCSI-aic94xx: Deletion of an unnecessary check before the function call "kfree"
-Message-Id: <5592908F.6060205@users.sourceforge.net>
+Date: Fri, 26 Jun 2015 16:42:14 +0000
+Subject: Re: [PATCH] fs-proc: One function call less in proc_sys_lookup() after error detection
+Message-Id: <558D80E6.8030307@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546E69D8.4040002@users.sourceforge.net>
-In-Reply-To: <546E69D8.4040002@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546B5CF3.1070203@users.sourceforge.net>
+In-Reply-To: <546B5CF3.1070203@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Nov 2014 23:18:56 +0100
+> Date: Tue, 18 Nov 2014 15:42:43 +0100
 > 
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
+> The sysctl_head_finish() function was called in an inefficient way by the
+> implementation of the proc_sys_lookup() function in case of a lookup failure.
+> The corresponding source code was improved by deletion of an unnecessary
+> null pointer check and a few adjustments for jump labels.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/scsi/aic94xx/aic94xx_init.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  fs/proc/proc_sysctl.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
-> index c56741f..0bfdcba 100644
-> --- a/drivers/scsi/aic94xx/aic94xx_init.c
-> +++ b/drivers/scsi/aic94xx/aic94xx_init.c
-> @@ -597,8 +597,7 @@ static void asd_destroy_ha_caches(struct asd_ha_struct *asd_ha)
->  	if (asd_ha->hw_prof.scb_ext)
->  		asd_free_coherent(asd_ha, asd_ha->hw_prof.scb_ext);
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index f92d5dd..6606aaf 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -457,21 +457,21 @@ static struct dentry *proc_sys_lookup(struct inode *dir, struct dentry *dentry,
+>  		ret = sysctl_follow_link(&h, &p, current->nsproxy);
+>  		err = ERR_PTR(ret);
+>  		if (ret)
+> -			goto out;
+> +			goto inode_failure;
+>  	}
 >  
-> -	if (asd_ha->hw_prof.ddb_bitmap)
-> -		kfree(asd_ha->hw_prof.ddb_bitmap);
-> +	kfree(asd_ha->hw_prof.ddb_bitmap);
->  	asd_ha->hw_prof.ddb_bitmap = NULL;
+>  	err = ERR_PTR(-ENOMEM);
+>  	inode = proc_sys_make_inode(dir->i_sb, h ? h : head, p);
+>  	if (!inode)
+> -		goto out;
+> +		goto inode_failure;
 >  
->  	for (i = 0; i < ASD_MAX_PHYS; i++) {
+>  	err = NULL;
+>  	d_set_d_op(dentry, &proc_sys_dentry_operations);
+>  	d_add(dentry, inode);
+>  
+> +inode_failure:
+> +	sysctl_head_finish(h);
+>  out:
+> -	if (h)
+> -		sysctl_head_finish(h);
+>  	sysctl_head_finish(head);
+>  	return err;
+>  }
 > 
 
-How are the chances to integrate this update suggestion
-into another source code repository?
+Would anybody like to integrate this update suggestion
+into a source code repository?
 
 Regards,
 Markus
