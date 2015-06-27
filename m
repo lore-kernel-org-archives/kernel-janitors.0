@@ -1,67 +1,29 @@
-From: Chaehyun Lim <chaehyun.lim@gmail.com>
-Date: Sat, 13 Jun 2015 06:41:18 +0000
-Subject: [PATCH 1/2] staging: wilc1000: remove BOOL_T typedef
-Message-Id: <1434177679-9831-1-git-send-email-chaehyun.lim@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jun 2015 21:16:42 +0000
+Subject: [PATCH 0/2] drm/msm/dsi: Deletion of an unnecessary check
+Message-Id: <558F12BA.60709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, Chaehyun Lim <chaehyun.lim@gmail.com>
+To: David Airlie <airlied@linux.ie>, Hai Li <hali@codeaurora.org>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Rob Clark <robdclark@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>
 
-Remove BOOL_T typedef.
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
----
- drivers/staging/wilc1000/host_interface.c | 6 +++---
- drivers/staging/wilc1000/itypes.h         | 9 ---------
- 2 files changed, 3 insertions(+), 12 deletions(-)
+Further update suggestions were taken into account after a patch was applied
+from static source code analysis.
 
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index 17ab5cd..ca59f1b 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -7698,7 +7698,7 @@ static void *host_int_ParseJoinBssParam(tstrNetworkInfo *ptstrNetworkInfo)
- 			/* HT Cap. IE */
- 			else if (pu8IEs[index] = HT_CAPABILITY_IE) {
- 				/* if IE found set the flag */
--				pNewJoinBssParam->ht_capable = BTRUE;
-+				pNewJoinBssParam->ht_capable = true;
- 				index += pu8IEs[index + 1] + 2; /* ID,Length bytes and IE body */
- 				/* PRINT_D(HOSTINF_DBG,"HT_CAPABALE\n"); */
- 				continue;
-@@ -7709,11 +7709,11 @@ static void *host_int_ParseJoinBssParam(tstrNetworkInfo *ptstrNetworkInfo)
- 				   ((pu8IEs[index + 6] = 0x00) || (pu8IEs[index + 6] = 0x01)) && /* OUI Sub Type */
- 				   (pu8IEs[index + 7] = 0x01)) {
- 				/* Presence of WMM Info/Param element indicates WMM capability */
--				pNewJoinBssParam->wmm_cap = BTRUE;
-+				pNewJoinBssParam->wmm_cap = true;
- 
- 				/* Check if Bit 7 is set indicating U-APSD capability */
- 				if (pu8IEs[index + 8] & (1 << 7)) {
--					pNewJoinBssParam->uapsd_cap = BTRUE;
-+					pNewJoinBssParam->uapsd_cap = true;
- 				}
- 				index += pu8IEs[index + 1] + 2;
- 				continue;
-diff --git a/drivers/staging/wilc1000/itypes.h b/drivers/staging/wilc1000/itypes.h
-index 2441853..d64ae35 100644
---- a/drivers/staging/wilc1000/itypes.h
-+++ b/drivers/staging/wilc1000/itypes.h
-@@ -36,13 +36,4 @@
- #ifndef ITYPES_H
- #define ITYPES_H
- 
--/*****************************************************************************/
--/* Enums                                                                     */
--/*****************************************************************************/
--
--typedef enum {
--	BFALSE = 0,
--	BTRUE  = 1
--} BOOL_T;
--
- #endif /* ITYPES_H */
+Markus Elfring (2):
+  Delete an unnecessary check before the function call "dsi_destroy"
+  One function call less in dsi_init() after error detection
+
+ drivers/gpu/drm/msm/dsi/dsi.c | 26 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 16 deletions(-)
+
 -- 
-1.9.1
+2.4.4
 
