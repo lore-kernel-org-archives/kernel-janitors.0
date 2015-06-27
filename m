@@ -1,38 +1,45 @@
-From: Chaehyun Lim <chaehyun.lim@gmail.com>
-Date: Thu, 11 Jun 2015 05:36:00 +0000
-Subject: [PATCH V3 9/9] staging: wilc1000: remove WILC_Sint64
-Message-Id: <1434000960-16909-9-git-send-email-chaehyun.lim@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jun 2015 18:51:01 +0000
+Subject: [PATCH] drm/bridge: ps8622: Delete a check before backlight_device_unregister()
+Message-Id: <558EF095.8020106@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-remove unused WILC_Sint64.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jun 2015 20:44:49 +0200
 
-Signed-off-by: Chaehyun Lim <chaehyun.lim@gmail.com>
+The backlight_device_unregister() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-V3: rebased on the top of staging-testing
-V2: remove the spaces on the subject
-    capitalize the name on the From and the Signed-off-by
+ drivers/gpu/drm/bridge/ps8622.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/staging/wilc1000/wilc_oswrapper.h | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/staging/wilc1000/wilc_oswrapper.h b/drivers/staging/wilc1000/wilc_oswrapper.h
-index f9a5a3a..016f964 100644
---- a/drivers/staging/wilc1000/wilc_oswrapper.h
-+++ b/drivers/staging/wilc1000/wilc_oswrapper.h
-@@ -13,9 +13,6 @@
- /* OS Wrapper interface version */
- #define WILC_OSW_INTERFACE_VER 2
+diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/drm/bridge/ps8622.c
+index 1a6607b..70dacb8 100644
+--- a/drivers/gpu/drm/bridge/ps8622.c
++++ b/drivers/gpu/drm/bridge/ps8622.c
+@@ -646,9 +646,7 @@ static int ps8622_remove(struct i2c_client *client)
+ {
+ 	struct ps8622_bridge *ps8622 = i2c_get_clientdata(client);
  
--/* Integer Types */
--typedef signed long long WILC_Sint64;
+-	if (ps8622->bl)
+-		backlight_device_unregister(ps8622->bl);
 -
- /* Boolean type */
- typedef enum {
- 	WILC_FALSE = 0,
++	backlight_device_unregister(ps8622->bl);
+ 	drm_bridge_remove(&ps8622->bridge);
+ 
+ 	return 0;
 -- 
-1.9.1
+2.4.4
 
