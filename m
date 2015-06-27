@@ -1,97 +1,44 @@
-From: chaehyun lim <chaehyun.lim@gmail.com>
-Date: Wed, 03 Jun 2015 04:50:08 +0000
-Subject: [PATCH 4/8] staging : wilc1000 : remove WILC_Uint64.
-Message-Id: <1433307008-30675-1-git-send-email-chaehyun.lim@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jun 2015 16:18:11 +0000
+Subject: [PATCH] ipmi: Delete an unnecessary check before the function call "cleanup_one_si"
+Message-Id: <558ECCC3.1020907@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Corey Minyard <minyard@acm.org>, openipmi-developer@lists.sourceforge.net
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Use u64 in stead of WILC_Uint64.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jun 2015 18:12:14 +0200
 
-Signed-off-by: chaehyun lim <chaehyun.lim@gmail.com>
+The cleanup_one_si() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/wilc1000/coreconfigurator.c   | 2 +-
- drivers/staging/wilc1000/coreconfigurator.h   | 2 +-
- drivers/staging/wilc1000/host_interface.h     | 2 +-
- drivers/staging/wilc1000/wilc_oswrapper.h     | 1 -
- drivers/staging/wilc1000/wilc_wfi_netdevice.h | 4 ++--
- 5 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/char/ipmi/ipmi_si_intf.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
-index 3ba0a40..cf21466 100644
---- a/drivers/staging/wilc1000/coreconfigurator.c
-+++ b/drivers/staging/wilc1000/coreconfigurator.c
-@@ -846,7 +846,7 @@ WILC_Sint32 ParseNetworkInfo(u8 *pu8MsgBuffer, tstrNetworkInfo **ppstrNetworkInf
- 		u32Tsf_Lo = get_beacon_timestamp_lo(pu8msa);
- 		u32Tsf_Hi = get_beacon_timestamp_hi(pu8msa);
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+index cb90f76..fbfed36 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -2778,9 +2778,7 @@ static int ipmi_remove(struct platform_device *dev)
+ {
+ 	struct smi_info *info = dev_get_drvdata(&dev->dev);
  
--		pstrNetworkInfo->u64Tsf = u32Tsf_Lo | ((WILC_Uint64)u32Tsf_Hi << 32);
-+		pstrNetworkInfo->u64Tsf = u32Tsf_Lo | ((u64)u32Tsf_Hi << 32);
- 
- 		/* Get SSID */
- 		get_ssid(pu8msa, pstrNetworkInfo->au8ssid, &(pstrNetworkInfo->u8SsidLen));
-diff --git a/drivers/staging/wilc1000/coreconfigurator.h b/drivers/staging/wilc1000/coreconfigurator.h
-index d833ec9..969fcb7 100644
---- a/drivers/staging/wilc1000/coreconfigurator.h
-+++ b/drivers/staging/wilc1000/coreconfigurator.h
-@@ -429,7 +429,7 @@ typedef struct {
- 	u16 u16IEsLen;
- 	void *pJoinParams;
- 	tstrRSSI strRssi;
--	WILC_Uint64 u64Tsf; /* time-stamp [Low and High 64 bit] */
-+	u64 u64Tsf; /* time-stamp [Low and High 64 bit] */
- } tstrNetworkInfo;
- 
- /* This structure is used to support parsing of the received Association Response frame */
-diff --git a/drivers/staging/wilc1000/host_interface.h b/drivers/staging/wilc1000/host_interface.h
-index cc28bba..864fa55 100644
---- a/drivers/staging/wilc1000/host_interface.h
-+++ b/drivers/staging/wilc1000/host_interface.h
-@@ -406,7 +406,7 @@ typedef struct {
- 	/*Remain on channel struvture*/
- 	tstrHostIfRemainOnChan strHostIfRemainOnChan;
- 	u8 u8RemainOnChan_pendingreq;
--	WILC_Uint64 u64P2p_MgmtTimeout;
-+	u64 u64P2p_MgmtTimeout;
- 	u8 u8P2PConnect;
- 	#endif
- 
-diff --git a/drivers/staging/wilc1000/wilc_oswrapper.h b/drivers/staging/wilc1000/wilc_oswrapper.h
-index 9db45a9..1060559 100644
---- a/drivers/staging/wilc1000/wilc_oswrapper.h
-+++ b/drivers/staging/wilc1000/wilc_oswrapper.h
-@@ -14,7 +14,6 @@
- #define WILC_OSW_INTERFACE_VER 2
- 
- /* Integer Types */
--typedef unsigned long long WILC_Uint64;
- typedef signed char WILC_Sint8;
- typedef signed short WILC_Sint16;
- typedef signed int WILC_Sint32;
-diff --git a/drivers/staging/wilc1000/wilc_wfi_netdevice.h b/drivers/staging/wilc1000/wilc_wfi_netdevice.h
-index 32e707b..20822c9 100644
---- a/drivers/staging/wilc1000/wilc_wfi_netdevice.h
-+++ b/drivers/staging/wilc1000/wilc_wfi_netdevice.h
-@@ -123,7 +123,7 @@ struct wilc_wfi_p2pListenParams {
- 	struct ieee80211_channel *pstrListenChan;
- 	enum nl80211_channel_type tenuChannelType;
- 	u32 u32ListenDuration;
--	WILC_Uint64 u64ListenCookie;
-+	u64 u64ListenCookie;
- 	u32 u32ListenSessionID;
- };
- 
-@@ -135,7 +135,7 @@ struct WILC_WFI_priv {
- 
- 	#ifdef WILC_P2P
- 	struct wilc_wfi_p2pListenParams strRemainOnChanParams;
--	WILC_Uint64 u64tx_cookie;
-+	u64 u64tx_cookie;
- 
- 	#endif
+-	if (info)
+-		cleanup_one_si(info);
+-
++	cleanup_one_si(info);
+ 	return 0;
+ }
  
 -- 
-1.9.1
+2.4.4
 
