@@ -1,66 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Jun 2015 10:21:53 +0000
-Subject: [PATCH] PM-wakeup: Delete unnecessary checks before two function calls
-Message-Id: <558FCAC1.1090605@users.sourceforge.net>
+Date: Sat, 27 Jun 2015 17:17:35 +0000
+Subject: Re: [PATCH] GPU-DRM-Exynos: Delete unnecessary checks before two function calls
+Message-Id: <558EDAAF.30803@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546C7E75.9080301@users.sourceforge.net>
-In-Reply-To: <546C7E75.9080301@users.sourceforge.net>
+ urceforge.net> <54D28870.3060400@users.sourceforge.net> <54D329D0.7050006@samsung.com>
+In-Reply-To: <54D329D0.7050006@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Jun 2015 12:14:43 +0200
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Wed, 4 Feb 2015 21:54:45 +0100
+>>
+>> The functions phy_power_on() and vunmap() perform also input
+>> parameter validation. Thus the test around their calls is not needed.
+>>
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_dp_core.c   | 6 ++----
+>>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 2 +-
+>>  2 files changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> index 34d46aa..306cf1d 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> @@ -1057,14 +1057,12 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
+>>  
+>>  static void exynos_dp_phy_init(struct exynos_dp_device *dp)
+>>  {
+>> -	if (dp->phy)
+>> -		phy_power_on(dp->phy);
+>> +	phy_power_on(dp->phy);
+>>  }
+>>  
+>>  static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
+>>  {
+>> -	if (dp->phy)
+>> -		phy_power_off(dp->phy);
+>> +	phy_power_off(dp->phy);
+>>  }
+>>  
+>>  static void exynos_dp_poweron(struct exynos_drm_display *display)
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> index e12ea90..0dd448a 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> @@ -313,7 +313,7 @@ static void exynos_drm_fbdev_destroy(struct drm_device *dev,
+>>  	struct exynos_drm_gem_obj *exynos_gem_obj = exynos_fbd->exynos_gem_obj;
+>>  	struct drm_framebuffer *fb;
+>>  
+>> -	if (is_drm_iommu_supported(dev) && exynos_gem_obj->buffer->kvaddr)
+>> +	if (is_drm_iommu_supported(dev))
+>>  		vunmap(exynos_gem_obj->buffer->kvaddr);
+>>  
+>>  	/* release drm framebuffer and real buffer */
+>>
+> 
+> Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
 
-The functions dev_pm_disarm_wake_irq() and wakeup_source_unregister() test
-whether their argument is NULL and then return immediately.
-Thus the test around the calls is not needed.
+Do the chances increase to integrate this update suggestion
+into another source code repository?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/base/power/wakeup.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index 40f7160..3741bc2 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -341,8 +341,7 @@ void device_wakeup_arm_wake_irqs(void)
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
--		if (ws->wakeirq)
--			dev_pm_arm_wake_irq(ws->wakeirq);
-+		dev_pm_arm_wake_irq(ws->wakeirq);
- 	}
- 	rcu_read_unlock();
- }
-@@ -358,8 +357,7 @@ void device_wakeup_disarm_wake_irqs(void)
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
--		if (ws->wakeirq)
--			dev_pm_disarm_wake_irq(ws->wakeirq);
-+		dev_pm_disarm_wake_irq(ws->wakeirq);
- 	}
- 	rcu_read_unlock();
- }
-@@ -396,9 +394,7 @@ int device_wakeup_disable(struct device *dev)
- 		return -EINVAL;
- 
- 	ws = device_wakeup_detach(dev);
--	if (ws)
--		wakeup_source_unregister(ws);
--
-+	wakeup_source_unregister(ws);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(device_wakeup_disable);
--- 
-2.4.4
-
+Regards,
+Markus
