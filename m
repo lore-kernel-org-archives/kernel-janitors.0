@@ -1,64 +1,26 @@
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-Date: Tue, 30 Jun 2015 21:26:43 +0000
-Subject: Re: [lustre-devel] LIBCFS_ALLOC
-Message-Id: <D1B863B8.FA7C0%andreas.dilger@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Jun 2015 10:00:13 +0000
+Subject: Re: platform: x86: Deletion of checks before backlight_device_unregister()
+Message-Id: <558E742D.2010907@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
- <1434819550-3193-2-git-send-email-Julia.Lawall@lip6.fr>
- <D1AECA61.F8DE5%andreas.dilger@intel.com>
- <alpine.DEB.2.02.1506280844460.2103@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1506280844460.2103@localhost6.localdomain6>
+References: <5307CAA2.8060406@users.sourceforge.net> <5317A59D.4@users.sourceforge.net> <547389A6.9090106@users.sourceforge.net> <3842367.ojrMxTW2rH@path> <5473AD39.9010309@users.sourceforge.net> <alpine.DEB.2.10.1411271908590.2571@hadrien> <20150626230655.GB57818@vmdeb7>
+In-Reply-To: <20150626230655.GB57818@vmdeb7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Drokin, Oleg" <oleg.drokin@intel.com>, "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>
+To: Darren Hart <dvhart@infradead.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Anisse Astier <anisse@astier.eu>, Corentin Chary <corentin.chary@gmail.com>, Ike Panhc <ike.pan@canonical.com>, Jonathan Woithe <jwoithe@just42.net>, Mattia Dongili <malattia@linux.it>, platform-driver-x86@vger.kernel.org, acpi4asus-user@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 2015/06/28, 12:52 AM, "Julia Lawall" <julia.lawall@lip6.fr> wrote:
+> Julia, do you have any particular objection to this specific patch?
+> I didn't see a reason to prevent it going in.
 
->It is not clear that all of the uses of LIBCFS_ALLOC really risk needing
->vmalloc.  For example:
->
->lnet/klnds/socklnd/socklnd.c, function ksocknal_accept:
->
->ksock_connreq_t *cr;
->...
->LIBCFS_ALLOC(cr, sizeof(*cr));
->
->The definition of ksock_connreq_t is:
->
->typedef struct ksock_connreq {
->        struct list_head ksncr_list;  /* stash on ksnd_connd_connreqs */
->        lnet_ni_t        *ksncr_ni;   /* chosen NI */
->        struct socket    *ksncr_sock; /* accepted socket */
->} ksock_connreq_t;
->
->This looks like a very small structure.
->
->LIBCFS_ALLOC relies on a test on the size, which should be able to be
->compiled away.  libcfs_kvzalloc on the other hand relies on the failure
->of 
->kmalloc and so the test for that won't be compiled away.
+Thanks for your interest around this concrete update suggestion.
 
-There are probably only a handful of places where trying vmalloc() even
-makes sense.  In most cases, LIBCFS_ALLOC() can be replaced by a straight
-call to kmalloc() because the allocation size is small enough, and only a
-few need to use libcfs_kvzalloc().  Anything at PAGE_SIZE or less will
-either work with kmalloc() or it won't work at all.
+* Would you like to distinguish the consequences a bit more
+  for results from the application of the semantic patch language?
 
-I do agree with James' comments that vmalloc() was needed for both very
-large allocations that can't be satisfied by kmalloc() at all, as well as
-smaller allocations (anything over a couple of pages) due to fragmentation
-of free pages after running for a long time.  I think libcfs_kvzalloc() is
-at least as good as the size-based threshold used previously, since using
-kmalloc() is going to be faster than vmalloc() and would work better on
-32-bit platforms with limited vmalloc() size.
+* Where do you prefer to store special extensions for
+  Coccinelle's script collection
 
-Cheers, Andreas
--- 
-Andreas Dilger
-
-Lustre Software Architect
-Intel High Performance Data Division
-
-
+Regards,
+Markus
