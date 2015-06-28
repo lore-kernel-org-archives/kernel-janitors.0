@@ -1,29 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Jun 2015 21:16:42 +0000
-Subject: [PATCH 0/2] drm/msm/dsi: Deletion of an unnecessary check
-Message-Id: <558F12BA.60709@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 12:07:34 +0000
+Subject: Re: [PATCH v2] backlight: lp8788: Deletion of a check before backlight_device_unregister()
+Message-Id: <558FE386.7060704@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54720DEB.4060109@users.sourceforge.net> <20141124101006.GD4241@x1> <5473736F.8070705@users.sourceforge.net>
+In-Reply-To: <5473736F.8070705@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Hai Li <hali@codeaurora.org>, dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Rob Clark <robdclark@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>
+To: Lee Jones <lee.jones@linaro.org>, Bryan Wu <cooloney@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jg1.han@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> 
+> The backlight_device_unregister() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/video/backlight/lp8788_bl.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backlight/lp8788_bl.c
+> index d6c4f6a..24a055c 100644
+> --- a/drivers/video/backlight/lp8788_bl.c
+> +++ b/drivers/video/backlight/lp8788_bl.c
+> @@ -221,8 +221,7 @@ static void lp8788_backlight_unregister(struct lp8788_bl *bl)
+>  {
+>  	struct backlight_device *bl_dev = bl->bl_dev;
+>  
+> -	if (bl_dev)
+> -		backlight_device_unregister(bl_dev);
+> +	backlight_device_unregister(bl_dev);
+>  }
+>  
+>  static ssize_t lp8788_get_bl_ctl_mode(struct device *dev,
+> 
 
-Further update suggestions were taken into account after a patch was applied
-from static source code analysis.
+Would you like to integrate this update suggestion
+into another source code repository?
 
-Markus Elfring (2):
-  Delete an unnecessary check before the function call "dsi_destroy"
-  One function call less in dsi_init() after error detection
-
- drivers/gpu/drm/msm/dsi/dsi.c | 26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
-
--- 
-2.4.4
-
+Regards,
+Markus
