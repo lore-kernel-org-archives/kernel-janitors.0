@@ -1,156 +1,43 @@
-From: Amol Bhave <ambhave@mit.edu>
-Date: Wed, 17 Jun 2015 12:19:47 +0000
-Subject: [PATCH] staging: include: remove editor specific lines (mode lines) from ./include
-Message-Id: <1434543587-21415-1-git-send-email-ambhave@mit.edu>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 16:22:24 +0000
+Subject: [PATCH 1/2] vfio: powerpc/spapr: Delete an unnecessary check before the function call "kfree"
+Message-Id: <55901F40.90500@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <55901E68.80205@users.sourceforge.net>
+In-Reply-To: <55901E68.80205@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>, Julia Lawall <julia.lawall@lip6.fr>, Michael Ellerman <mpe@ellerman.id.au>
 
-This patch removes editor specific mode lines in compliance with Chapter
-18 of Documentation/CodingStyle from header files in ./include directory.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 17:43:48 +0200
 
-Signed-off-by: Amol Bhave <ambhave@mit.edu>
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- include/linux/configfs.h          |  4 +---
- include/linux/genl_magic_func.h   |  1 -
- include/linux/genl_magic_struct.h |  1 -
- include/target/configfs_macros.h  |  4 +---
- include/uapi/linux/chio.h         |  8 --------
- include/uapi/linux/if_bonding.h   | 11 -----------
- include/uapi/linux/nfs4.h         |  6 ------
- include/xen/interface/elfnote.h   | 10 ----------
- include/xen/interface/io/xenbus.h | 10 ----------
- 9 files changed, 2 insertions(+), 53 deletions(-)
+ drivers/vfio/vfio_iommu_spapr_tce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/configfs.h b/include/linux/configfs.h
-index 34025df..156866b 100644
---- a/include/linux/configfs.h
-+++ b/include/linux/configfs.h
-@@ -1,6 +1,4 @@
--/* -*- mode: c; c-basic-offset: 8; -*-
-- * vim: noexpandtab sw=8 ts=8 sts=0:
-- *
-+/*
-  * configfs.h - definitions for the device driver filesystem
-  *
-  * This program is free software; you can redistribute it and/or
-diff --git a/include/linux/genl_magic_func.h b/include/linux/genl_magic_func.h
-index 667c311..16b347e 100644
---- a/include/linux/genl_magic_func.h
-+++ b/include/linux/genl_magic_func.h
-@@ -410,4 +410,3 @@ s_fields								\
+diff --git a/drivers/vfio/vfio_iommu_spapr_tce.c b/drivers/vfio/vfio_iommu_spapr_tce.c
+index 0582b72..50ddfac 100644
+--- a/drivers/vfio/vfio_iommu_spapr_tce.c
++++ b/drivers/vfio/vfio_iommu_spapr_tce.c
+@@ -1215,7 +1215,7 @@ static int tce_iommu_attach_group(void *iommu_data,
+ 	}
  
- /* }}}1 */
- #endif /* GENL_MAGIC_FUNC_H */
--/* vim: set foldmethod=marker foldlevel=1 nofoldenable : */
-diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
-index eecd19b..22b7f07 100644
---- a/include/linux/genl_magic_struct.h
-+++ b/include/linux/genl_magic_struct.h
-@@ -274,4 +274,3 @@ enum {									\
+ unlock_exit:
+-	if (ret && tcegrp)
++	if (ret)
+ 		kfree(tcegrp);
  
- /* }}}1 */
- #endif /* GENL_MAGIC_STRUCT_H */
--/* vim: set foldmethod=marker nofoldenable : */
-diff --git a/include/target/configfs_macros.h b/include/target/configfs_macros.h
-index a0fc85b..454a203 100644
---- a/include/target/configfs_macros.h
-+++ b/include/target/configfs_macros.h
-@@ -1,6 +1,4 @@
--/* -*- mode: c; c-basic-offset: 8; -*-
-- * vim: noexpandtab sw=8 ts=8 sts=0:
-- *
-+/*
-  * configfs_macros.h - extends macros for configfs
-  *
-  * This program is free software; you can redistribute it and/or
-diff --git a/include/uapi/linux/chio.h b/include/uapi/linux/chio.h
-index d9bac7f..b84fc76 100644
---- a/include/uapi/linux/chio.h
-+++ b/include/uapi/linux/chio.h
-@@ -158,11 +158,3 @@ struct changer_set_voltag {
- #define CHIOINITELEM   _IO('c',17)
- #define CHIOSVOLTAG    _IOW('c',18,struct changer_set_voltag)
- #define CHIOGVPARAMS   _IOR('c',19,struct changer_vendor_params)
--
--/* ---------------------------------------------------------------------- */
--
--/*
-- * Local variables:
-- * c-basic-offset: 8
-- * End:
-- */
-diff --git a/include/uapi/linux/if_bonding.h b/include/uapi/linux/if_bonding.h
-index 9635a62..f713cf3 100644
---- a/include/uapi/linux/if_bonding.h
-+++ b/include/uapi/linux/if_bonding.h
-@@ -117,14 +117,3 @@ struct ad_info {
- };
- 
- #endif /* _LINUX_IF_BONDING_H */
--
--/*
-- * Local variables:
-- *  version-control: t
-- *  kept-new-versions: 5
-- *  c-indent-level: 8
-- *  c-basic-offset: 8
-- *  tab-width: 8
-- * End:
-- */
--
-diff --git a/include/uapi/linux/nfs4.h b/include/uapi/linux/nfs4.h
-index adc0aff..d32bb3c 100644
---- a/include/uapi/linux/nfs4.h
-+++ b/include/uapi/linux/nfs4.h
-@@ -163,9 +163,3 @@
- #define NFS4_MAX_BACK_CHANNEL_OPS 2
- 
- #endif /* _UAPI_LINUX_NFS4_H */
--
--/*
-- * Local variables:
-- *  c-basic-offset: 8
-- * End:
-- */
-diff --git a/include/xen/interface/elfnote.h b/include/xen/interface/elfnote.h
-index f90b034..16adc17 100644
---- a/include/xen/interface/elfnote.h
-+++ b/include/xen/interface/elfnote.h
-@@ -198,13 +198,3 @@
- #define XEN_ELFNOTE_MAX XEN_ELFNOTE_SUPPORTED_FEATURES
- 
- #endif /* __XEN_PUBLIC_ELFNOTE_H__ */
--
--/*
-- * Local variables:
-- * mode: C
-- * c-set-style: "BSD"
-- * c-basic-offset: 4
-- * tab-width: 4
-- * indent-tabs-mode: nil
-- * End:
-- */
-diff --git a/include/xen/interface/io/xenbus.h b/include/xen/interface/io/xenbus.h
-index 9fda532..ff9f7b5 100644
---- a/include/xen/interface/io/xenbus.h
-+++ b/include/xen/interface/io/xenbus.h
-@@ -38,13 +38,3 @@ enum xenbus_state
- };
- 
- #endif /* _XEN_PUBLIC_IO_XENBUS_H */
--
--/*
-- * Local variables:
-- *  c-file-style: "linux"
-- *  indent-tabs-mode: t
-- *  c-indent-level: 8
-- *  c-basic-offset: 8
-- *  tab-width: 8
-- * End:
-- */
+ 	mutex_unlock(&container->lock);
 -- 
-2.4.2
+2.4.4
 
