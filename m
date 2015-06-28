@@ -1,34 +1,44 @@
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Sun, 07 Jun 2015 16:36:19 +0000
-Subject: Re: [PATCH] fib_trie: Fix potential null pointer dereference
-Message-Id: <55747303.4050809@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 08:45:27 +0000
+Subject: [PATCH] drm/amdgpu: Delete an unnecessary check before the function call "kfree"
+Message-Id: <558FB427.80103@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433590553-4672-1-git-send-email-firogm@gmail.com> <1433592304.1895.73.camel@edumazet-glaptop2.roam.corp.google.com> <20150607060129.GA9265@firo> <alpine.DEB.2.02.1506070835310.2108@localhost6.localdomain6> <20150607131924.GA16087@firo> <alpine.DEB.2.10.1506071520410.2716@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1506071520410.2716@hadrien>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Firo Yang <firogm@gmail.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>, davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, wharms@bfs.de
+To: Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 06/07/2015 06:23 AM, Julia Lawall wrote:
->>> I think that many people would make the same mistake when looking at the
->>> code.  The change doesn't seem to hurt anything?
->> Actually, yes. But it does imporve nothing but coding style.
->> I think Alexander's code style make function more compact is also a
->> good code style. So, just keep it original.
->
-> Still it makes noise when other people look at the code and find that it
-> looks odd.  Removing the false positive in smatch won't completely help,
-> because people could look at the code for other reasons.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 10:27:35 +0200
 
-I agree.  The patch is good.  My only comment was about the patch 
-description.  You are fixing a coding style issue reported by smatch, 
-not a NULL pointer dereference.  This is a code clean-up rather than a 
-fix, but still the patch is just as useful.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-While you are at it you could probably also incorporate the suggestion 
-from Walter as that helps to improve the readability further.
+This issue was detected by using the Coccinelle software.
 
-- Alex
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index fec487d..a85cd08 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1575,8 +1575,7 @@ void amdgpu_device_fini(struct amdgpu_device *adev)
+ 	amdgpu_fence_driver_fini(adev);
+ 	amdgpu_fbdev_fini(adev);
+ 	r = amdgpu_fini(adev);
+-	if (adev->ip_block_enabled)
+-		kfree(adev->ip_block_enabled);
++	kfree(adev->ip_block_enabled);
+ 	adev->ip_block_enabled = NULL;
+ 	adev->accel_working = false;
+ 	/* free i2c buses */
+-- 
+2.4.4
 
