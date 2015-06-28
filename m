@@ -1,15 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 20 Jun 2015 16:58:58 +0000
-Subject: [PATCH 00/12] Use !x to check for kzalloc failure
-Message-Id: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 12:36:29 +0000
+Subject: [PATCH] video: fbdev: omap2: displays-new: Delete a check before backlight_device_unregister()
+Message-Id: <558FEA4D.9030108@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Use !x to check for kzalloc failure, as is more normal in the kernel.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 14:30:17 +0200
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+The backlight_device_unregister() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/omap2/displays-new/panel-dsi-cm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/omap2/displays-new/panel-dsi-cm.c b/drivers/video/fbdev/omap2/displays-new/panel-dsi-cm.c
+index 3414c26..d2caa41 100644
+--- a/drivers/video/fbdev/omap2/displays-new/panel-dsi-cm.c
++++ b/drivers/video/fbdev/omap2/displays-new/panel-dsi-cm.c
+@@ -1323,8 +1323,7 @@ static int dsicm_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_sysfs_create:
+-	if (bldev != NULL)
+-		backlight_device_unregister(bldev);
++	backlight_device_unregister(bldev);
+ err_bl:
+ 	destroy_workqueue(ddata->workqueue);
+ err_reg:
+-- 
+2.4.4
+
