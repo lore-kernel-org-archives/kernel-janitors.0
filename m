@@ -1,41 +1,64 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 21 Jun 2015 11:58:16 +0000
-Subject: Re: [PATCH 09/12] staging: lustre: obdclass: Use !x to check for kzalloc failure
-Message-Id: <5586A6D8.7040500@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 14:52:16 +0000
+Subject: [PATCH] PCI-iproc: Delete unnecessary checks before two function calls
+Message-Id: <55900A20.5070407@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434819550-3193-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1434819550-3193-10-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 16:42:04 +0200
 
+The functions phy_exit() and phy_power_off() test whether their argument
+is NULL and then return immediately.
+Thus the test around the calls is not needed.
 
-Am 21.06.2015 12:29, schrieb Julia Lawall:
->>> @@ -885,7 +885,7 @@ static int lmd_parse_mgssec(struct lustr
->>>  		length = tail - ptr;
->>>  
->>>  	lmd->lmd_mgssec = kzalloc(length + 1, GFP_NOFS);
->>> -	if (lmd->lmd_mgssec = NULL)
->>> +	if (!lmd->lmd_mgssec)
->>>  		return -ENOMEM;
->>>  
->>>  	memcpy(lmd->lmd_mgssec, ptr, length);
->> looks like memdup()
-> 
-> kmemdup has the same length for both calls.  There is kstrndup, but it
-> recalculates the length, which looks unnecessary here.
-> 
-> julia
-> 
+This issue was detected by using the Coccinelle software.
 
-mmh, it seem to be use only while mount,
-i am wonderingparsing a comma sperareted list must be commen problem for
-all FS (and others) maybe i am looking in thew wrong place, there should be
-some helpers available ? are they ?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pci/host/pcie-iproc.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-re,
- wh
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
+index d77481e..f875821 100644
+--- a/drivers/pci/host/pcie-iproc.c
++++ b/drivers/pci/host/pcie-iproc.c
+@@ -239,12 +239,9 @@ err_rm_root_bus:
+ 	pci_remove_root_bus(bus);
+ 
+ err_power_off_phy:
+-	if (pcie->phy)
+-		phy_power_off(pcie->phy);
++	phy_power_off(pcie->phy);
+ err_exit_phy:
+-	if (pcie->phy)
+-		phy_exit(pcie->phy);
+-
++	phy_exit(pcie->phy);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(iproc_pcie_setup);
+-- 
+2.4.4
+
