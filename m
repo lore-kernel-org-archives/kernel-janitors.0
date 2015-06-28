@@ -1,32 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 19 Jun 2015 08:52:03 +0000
-Subject: Re: [patch] pinctrl: samsung: don't truncate the last char of "-grp"
-Message-Id: <20150619085203.GO28762@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 09:21:36 +0000
+Subject: [PATCH] ALSA: hda: Delete an unnecessary check before the function call "snd_info_free_entry"
+Message-Id: <558FBCA0.2090206@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150611154631.GA13202@mwanda>
- <CAJKOXPe8Pv5t9tLdFZAV+9CSiM302GTVt6_j3vKHkeFOK8U=Lw@mail.gmail.com>
-In-Reply-To: <CAJKOXPe8Pv5t9tLdFZAV+9CSiM302GTVt6_j3vKHkeFOK8U=Lw@mail.gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Jun 15, 2015 at 01:17:36PM +0900, Krzysztof Kozlowski wrote:
-> I would prefer splitting this into two patches: one for fixing
-> truncated name (by usage of kasprintf) and second for ENOMEM message.
-> The second patch can get rid of ENOMEM message in other places as
-> well.
-> 
-> As for the first issue I think that function suffix would also be
-> truncated in the same way.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 11:15:28 +0200
 
-Sorry for the delayed response, I've been offline for a few days.
+The snd_info_free_entry() function tests whether its argument is NULL and
+then returns immediately. Thus the test around the call is not needed.
 
-Yeah, you're right.
+This issue was detected by using the Coccinelle software.
 
-Let me resend.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/hda/patch_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index f852734..2f24338 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -591,7 +591,7 @@ static int eld_proc_new(struct hdmi_spec_per_pin *per_pin, int index)
+ 
+ static void eld_proc_free(struct hdmi_spec_per_pin *per_pin)
+ {
+-	if (!per_pin->codec->bus->shutdown && per_pin->proc_entry) {
++	if (!per_pin->codec->bus->shutdown) {
+ 		snd_info_free_entry(per_pin->proc_entry);
+ 		per_pin->proc_entry = NULL;
+ 	}
+-- 
+2.4.4
 
