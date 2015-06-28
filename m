@@ -1,59 +1,66 @@
-From: Firo Yang <firogm@gmail.com>
-Date: Sat, 06 Jun 2015 03:13:07 +0000
-Subject: Re: [PATCH] firmware: Fix memory leak in error path
-Message-Id: <20150606031307.GA5895@firo>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 10:21:53 +0000
+Subject: [PATCH] PM-wakeup: Delete unnecessary checks before two function calls
+Message-Id: <558FCAC1.1090605@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433522316-23063-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1433522316-23063-1-git-send-email-firogm@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <546C7E75.9080301@users.sourceforge.net>
+In-Reply-To: <546C7E75.9080301@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Jun 05, 2015 at 06:43:33PM +0200, Julia Lawall wrote:
->On Sat, 6 Jun 2015, Firo Yang wrote:
->
->> In error path, we forgot to free fw_work alloced by kzalloc.
->> This will make a memory leak. So just free it before return.
->>
->> Signed-off-by: Firo Yang <firogm@gmail.com>
->> ---
->>  drivers/base/firmware_class.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
->> index 8c3aa3c..9c42883 100644
->> --- a/drivers/base/firmware_class.c
->> +++ b/drivers/base/firmware_class.c
->> @@ -1307,8 +1307,10 @@ request_firmware_nowait(
->>
->>  	fw_work->module = module;
->>  	fw_work->name = kstrdup_const(name, gfp);
->> -	if (!fw_work->name)
->> +	if (!fw_work->name) {
->> +		kfree(fw_work);
->>  		return -ENOMEM;
->> +	}
->
->Maybe it would be better to unify the error handling code at the end of
->the function, if things are being forgotten.
-Thanks Julia!
-I will reconstruct the code.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 12:14:43 +0200
 
-Firo
->
->julia
->
->>  	fw_work->device = device;
->>  	fw_work->context = context;
->>  	fw_work->cont = cont;
->> --
->> 2.4.2
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+The functions dev_pm_disarm_wake_irq() and wakeup_source_unregister() test
+whether their argument is NULL and then return immediately.
+Thus the test around the calls is not needed.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/base/power/wakeup.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 40f7160..3741bc2 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -341,8 +341,7 @@ void device_wakeup_arm_wake_irqs(void)
+ 
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
+-		if (ws->wakeirq)
+-			dev_pm_arm_wake_irq(ws->wakeirq);
++		dev_pm_arm_wake_irq(ws->wakeirq);
+ 	}
+ 	rcu_read_unlock();
+ }
+@@ -358,8 +357,7 @@ void device_wakeup_disarm_wake_irqs(void)
+ 
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
+-		if (ws->wakeirq)
+-			dev_pm_disarm_wake_irq(ws->wakeirq);
++		dev_pm_disarm_wake_irq(ws->wakeirq);
+ 	}
+ 	rcu_read_unlock();
+ }
+@@ -396,9 +394,7 @@ int device_wakeup_disable(struct device *dev)
+ 		return -EINVAL;
+ 
+ 	ws = device_wakeup_detach(dev);
+-	if (ws)
+-		wakeup_source_unregister(ws);
+-
++	wakeup_source_unregister(ws);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(device_wakeup_disable);
 -- 
+2.4.4
+
