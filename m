@@ -1,41 +1,78 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 04 Jun 2015 14:07:39 +0000
-Subject: Re: [PATCH 6/8] staging : wilc1000 : remove WILC_Sint16
-Message-Id: <20150604140739.GJ28762@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 11:54:56 +0000
+Subject: Re: [PATCH] HID-picoLCD: Deletion of unnecessary checks before three function calls
+Message-Id: <558FE090.8030307@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433307058-30757-1-git-send-email-chaehyun.lim@gmail.com>
-In-Reply-To: <1433307058-30757-1-git-send-email-chaehyun.lim@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <546CD595.3090508@users.sourceforge.net>
+In-Reply-To: <546CD595.3090508@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: =?windows-1252?Q?Bruno_Pr=E9mont?= <bonbons@linux-vserver.org>, Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Your subjects have too many spaces.
-
-On Wed, Jun 03, 2015 at 01:50:58PM +0900, chaehyun lim wrote:
-> Use s16 in stead of WILC_Sint16.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 19 Nov 2014 18:30:22 +0100
 > 
-> Signed-off-by: chaehyun lim <chaehyun.lim@gmail.com>
+> The functions backlight_device_unregister(), lcd_device_unregister() and
+> rc_unregister_device() test whether their argument is NULL and then
+> return immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/staging/wilc1000/coreconfigurator.c | 2 +-
->  drivers/staging/wilc1000/wilc_oswrapper.h   | 1 -
->  2 files changed, 1 insertion(+), 2 deletions(-)
+>  drivers/hid/hid-picolcd_backlight.c | 3 +--
+>  drivers/hid/hid-picolcd_cir.c       | 3 +--
+>  drivers/hid/hid-picolcd_lcd.c       | 3 +--
+>  3 files changed, 3 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/staging/wilc1000/coreconfigurator.c b/drivers/staging/wilc1000/coreconfigurator.c
-> index 50d184c..a060172 100644
-> --- a/drivers/staging/wilc1000/coreconfigurator.c
-> +++ b/drivers/staging/wilc1000/coreconfigurator.c
-> @@ -173,7 +173,7 @@ static tstrConfigPktInfo gstrConfigPktInfo;
+> diff --git a/drivers/hid/hid-picolcd_backlight.c b/drivers/hid/hid-picolcd_backlight.c
+> index a32c5f8..808807a 100644
+> --- a/drivers/hid/hid-picolcd_backlight.c
+> +++ b/drivers/hid/hid-picolcd_backlight.c
+> @@ -94,8 +94,7 @@ void picolcd_exit_backlight(struct picolcd_data *data)
+>  	struct backlight_device *bdev = data->backlight;
 >  
->  static u8 g_seqno;
+>  	data->backlight = NULL;
+> -	if (bdev)
+> -		backlight_device_unregister(bdev);
+> +	backlight_device_unregister(bdev);
+>  }
 >  
-> -static WILC_Sint16 g_wid_num          = -1;
-> +static s16 g_wid_num          = -1;
+>  int picolcd_resume_backlight(struct picolcd_data *data)
+> diff --git a/drivers/hid/hid-picolcd_cir.c b/drivers/hid/hid-picolcd_cir.c
+> index 045f8eb..9628651 100644
+> --- a/drivers/hid/hid-picolcd_cir.c
+> +++ b/drivers/hid/hid-picolcd_cir.c
+> @@ -145,7 +145,6 @@ void picolcd_exit_cir(struct picolcd_data *data)
+>  	struct rc_dev *rdev = data->rc_dev;
+>  
+>  	data->rc_dev = NULL;
+> -	if (rdev)
+> -		rc_unregister_device(rdev);
+> +	rc_unregister_device(rdev);
+>  }
+>  
+> diff --git a/drivers/hid/hid-picolcd_lcd.c b/drivers/hid/hid-picolcd_lcd.c
+> index 89821c2..22dcbe1 100644
+> --- a/drivers/hid/hid-picolcd_lcd.c
+> +++ b/drivers/hid/hid-picolcd_lcd.c
+> @@ -92,8 +92,7 @@ void picolcd_exit_lcd(struct picolcd_data *data)
+>  	struct lcd_device *ldev = data->lcd;
+>  
+>  	data->lcd = NULL;
+> -	if (ldev)
+> -		lcd_device_unregister(ldev);
+> +	lcd_device_unregister(ldev);
+>  }
+>  
+>  int picolcd_resume_lcd(struct picolcd_data *data)
+> 
 
-g_wid_num is never set to anything besides -1.
+Would you like to integrate this update suggestion
+into another source code repository?
 
-TODO-list: wilc1000: get rid of g_wid_num
-
-regards,
-dan carpenter
-
+Regards,
+Markus
