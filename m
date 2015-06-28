@@ -1,61 +1,58 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 20 Jun 2015 16:59:06 +0000
-Subject: [PATCH 08/12] staging: lustre: mgc: Use !x to check for kzalloc failure
-Message-Id: <1434819550-3193-9-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 14:05:13 +0000
+Subject: [PATCH] iommu/arm-smmu: Delete an unnecessary check before the function call "free_io_pgtable_ops"
+Message-Id: <558FFF19.1060402@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-!x is more normal for kzalloc failure in the kernel.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Jun 2015 15:55:11 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The free_io_pgtable_ops() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-// <smpl>
-@@
-expression x;
-statement S1, S2;
-@@
+This issue was detected by using the Coccinelle software.
 
-x = kzalloc(...);
-if (
-- x = NULL
-+ !x
- ) S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/lustre/lustre/mgc/mgc_request.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff -u -p a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
---- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
-+++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-@@ -1128,7 +1128,7 @@ static int mgc_apply_recover_logs(struct
- 	LASSERT(cfg->cfg_sb = cfg->cfg_instance);
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index f141301..8e9ec81 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -1389,8 +1389,7 @@ static void arm_smmu_domain_free(struct iommu_domain *domain)
+ 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+ 	struct arm_smmu_device *smmu = smmu_domain->smmu;
  
- 	inst = kzalloc(PAGE_CACHE_SIZE, GFP_NOFS);
--	if (inst = NULL)
-+	if (!inst)
- 		return -ENOMEM;
+-	if (smmu_domain->pgtbl_ops)
+-		free_io_pgtable_ops(smmu_domain->pgtbl_ops);
++	free_io_pgtable_ops(smmu_domain->pgtbl_ops);
  
- 	if (!IS_SERVER(lsi)) {
-@@ -1493,7 +1493,7 @@ static int mgc_process_cfg_log(struct ob
- 		lsi = s2lsi(cld->cld_cfg.cfg_sb);
- 
- 	env = kzalloc(sizeof(*env), GFP_NOFS);
--	if (env = NULL)
-+	if (!env)
- 		return -ENOMEM;
- 
- 	rc = lu_env_init(env, LCT_MG_THREAD);
+ 	/* Free the CD and ASID, if we allocated them */
+ 	if (smmu_domain->stage = ARM_SMMU_DOMAIN_S1) {
+-- 
+2.4.4
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
