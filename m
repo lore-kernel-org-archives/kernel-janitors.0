@@ -1,57 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 13:30:51 +0000
-Subject: [PATCH 1/2] ARM-kernel: Delete an unnecessary check before the function call "smp_set_ops"
-Message-Id: <558C028B.7020907@users.sourceforge.net>
+From: Sohny Thomas <sohnythomas@zoho.com>
+Date: Tue, 30 Jun 2015 21:47:45 +0000
+Subject: [PATCH] Staging: unisys: virtpci: fixed a brace coding style issue
+Message-Id: <55930BB1.10502@zoho.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <558C01C5.4060303@users.sourceforge.net>
-In-Reply-To: <558C01C5.4060303@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: benjamin.romer@unisys.com, david.kershner@unisys.com, bryan.thompson@unisys.com, erik.arfvidson@unisys.com, devel@driverdev.osuosl.org
+Cc: gregkh@linuxfoundation.org, sparmaintainer@unisys.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Jun 2015 15:00:17 +0200
 
-The smp_set_ops() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+FIX 2 unnecessary braces found by checkpatch.pl
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Sohny Thomas <sohnythomas@zoho.com>
 ---
- arch/arm/kernel/setup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/unisys/virtpci/virtpci.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index e6d8c76..9ac786d 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -977,7 +977,7 @@ void __init setup_arch(char **cmdline_p)
- 		if (!mdesc->smp_init || !mdesc->smp_init()) {
- 			if (psci_smp_available())
- 				smp_set_ops(&psci_smp_ops);
--			else if (mdesc->smp)
-+			else
- 				smp_set_ops(mdesc->smp);
- 		}
- 		smp_init_cpus();
+diff --git a/drivers/staging/unisys/virtpci/virtpci.c b/drivers/staging/unisys/virtpci/virtpci.c
+index d5ad017..f3674de 100644
+--- a/drivers/staging/unisys/virtpci/virtpci.c
++++ b/drivers/staging/unisys/virtpci/virtpci.c
+@@ -190,9 +190,10 @@ static int write_vbus_chp_info(struct spar_vbus_channel_protocol *chan,
+ 		return -1;
+ 
+ 	off = sizeof(struct channel_header) + chan->hdr_info.chp_info_offset;
+-	if (chan->hdr_info.chp_info_offset = 0) {
++
++	if (chan->hdr_info.chp_info_offset = 0)
+ 		return -1;
+-	}
++
+ 	memcpy(((u8 *)(chan)) + off, info, sizeof(*info));
+ 	return 0;
+ }
+@@ -484,10 +485,10 @@ static int delete_vhba(struct del_virt_guestpart *delparams)
+ 
+ 	i = virtpci_device_del(NULL /*no parent bus */, VIRTHBA_TYPE,
+ 			       &scsi.wwnn, NULL);
+-	if (i) {
++	if (i)
+ 		return 1;
+-	}
+-	return 0;
++	else
++		return 0;
+ }
+ 
+ /* deletes a vnic
 -- 
-2.4.4
 
