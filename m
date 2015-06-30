@@ -1,51 +1,91 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 08 Jun 2015 09:01:35 +0000
-Subject: Re: [PATCH] ARM: pxa: ssp: Use devm_ioremap_resource instead of devm_ioremap
-Message-Id: <alpine.DEB.2.10.1506081100150.2660@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 30 Jun 2015 12:10:33 +0000
+Subject: [PATCH] ARM: OMAP2: Delete unnecessary checks before three function calls
+Message-Id: <55928739.5040809@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1433753632-28534-1-git-send-email-firogm@gmail.com>
-In-Reply-To: <1433753632-28534-1-git-send-email-firogm@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54705EC3.90708@users.sourceforge.net>
+In-Reply-To: <54705EC3.90708@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-> @@ -182,21 +182,12 @@ static int pxa_ssp_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  	}
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 30 Jun 2015 14:00:16 +0200
 
-Actually, the code up here is a check that res is not null.  You can drop
-that as well.  devm_ioremap_resource checks the same thing.
+The functions clk_disable(), of_node_put() and omap_device_delete() test
+whether their argument is NULL and then return immediately.
+Thus the test around the call is not needed.
 
-julia
+This issue was detected by using the Coccinelle software.
 
->
-> -	res = devm_request_mem_region(dev, res->start, resource_size(res),
-> -				      pdev->name);
-> -	if (res = NULL) {
-> -		dev_err(dev, "failed to request memory resource\n");
-> -		return -EBUSY;
-> -	}
-> +	ssp->mmio_base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(ssp->mmio_base))
-> +		return PTR_ERR(ssp->mmio_base);
->
->  	ssp->phys_base = res->start;
->
-> -	ssp->mmio_base = devm_ioremap(dev, res->start, resource_size(res));
-> -	if (ssp->mmio_base = NULL) {
-> -		dev_err(dev, "failed to ioremap() registers\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	ssp->irq = platform_get_irq(pdev, 0);
->  	if (ssp->irq < 0) {
->  		dev_err(dev, "no IRQ resource defined\n");
-> --
-> 2.4.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/omap_device.c | 3 +--
+ arch/arm/mach-omap2/omap_hwmod.c  | 5 +----
+ arch/arm/mach-omap2/timer.c       | 3 +--
+ 3 files changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+index 4cb8fd9..196366e 100644
+--- a/arch/arm/mach-omap2/omap_device.c
++++ b/arch/arm/mach-omap2/omap_device.c
+@@ -193,8 +193,7 @@ static int _omap_device_notifier_call(struct notifier_block *nb,
+ 
+ 	switch (event) {
+ 	case BUS_NOTIFY_DEL_DEVICE:
+-		if (pdev->archdata.od)
+-			omap_device_delete(pdev->archdata.od);
++		omap_device_delete(pdev->archdata.od);
+ 		break;
+ 	case BUS_NOTIFY_ADD_DEVICE:
+ 		if (pdev->dev.of_node)
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index d78c12e..1091ee7 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -921,10 +921,7 @@ static int _disable_clocks(struct omap_hwmod *oh)
+ 	int i = 0;
+ 
+ 	pr_debug("omap_hwmod: %s: disabling clocks\n", oh->name);
+-
+-	if (oh->_clk)
+-		clk_disable(oh->_clk);
+-
++	clk_disable(oh->_clk);
+ 	p = oh->slave_ports.next;
+ 
+ 	while (i < oh->slaves_cnt) {
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index cac46d8..15448221 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -208,8 +208,7 @@ static void __init omap_dmtimer_init(void)
+ 	/* If we are a secure device, remove any secure timer nodes */
+ 	if ((omap_type() != OMAP2_DEVICE_TYPE_GP)) {
+ 		np = omap_get_timer_dt(omap_timer_match, "ti,timer-secure");
+-		if (np)
+-			of_node_put(np);
++		of_node_put(np);
+ 	}
+ }
+ 
+-- 
+2.4.5
+
