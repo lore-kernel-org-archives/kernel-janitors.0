@@ -1,45 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jun 2015 18:45:07 +0000
-Subject: [PATCH] SCSI-fnic: Delete an unnecessary check before the function call "vfree"
-Message-Id: <558AFAB3.2020108@users.sourceforge.net>
+Date: Tue, 30 Jun 2015 12:38:39 +0000
+Subject: Re: [PATCH] SCSI-bfa: Deletion of an unnecessary check before the function call "vfree"
+Message-Id: <55928DCF.9000708@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546EFBBB.7000409@users.sourceforge.net>
-In-Reply-To: <546EFBBB.7000409@users.sourceforge.net>
+ urceforge.net> <546E6F5C.6050604@users.sourceforge.net> <20B1A3CBD98F3845B3F5F56D8597EF59FD4B5D@avmb2.qlogic.org>
+In-Reply-To: <20B1A3CBD98F3845B3F5F56D8597EF59FD4B5D@avmb2.qlogic.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Uchino <buchino@cisco.com>, Hiral Patel <hiralpat@cisco.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, Suma Ramars <sramars@cisco.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Anil Gurumurthy <Anil.Gurumurthy@qlogic.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>, linux-scsi <linux-scsi@vger.kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 24 Jun 2015 20:40:35 +0200
+> Patch looks good. 
+> Thanks!
+> Acked-by: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
+> 
+> -----Original Message-----
+> From: SF Markus Elfring [mailto:elfring@users.sourceforge.net] 
+> Sent: 21 November 2014 04:17
+> To: Anil Gurumurthy; James E. J. Bottomley; Sudarsana Kalluru; linux-scsi
+> Cc: linux-kernel; kernel-janitors@vger.kernel.org; Julia Lawall
+> Subject: [PATCH 1/1] SCSI-bfa: Deletion of an unnecessary check before the function call "vfree"
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 20 Nov 2014 23:43:17 +0100
+> 
+> The vfree() function performs also input parameter validation. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/scsi/bfa/bfad_debugfs.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/bfa/bfad_debugfs.c b/drivers/scsi/bfa/bfad_debugfs.c index 8e83d04..a72170f 100644
+> --- a/drivers/scsi/bfa/bfad_debugfs.c
+> +++ b/drivers/scsi/bfa/bfad_debugfs.c
+> @@ -399,8 +399,7 @@ bfad_debugfs_release_fwtrc(struct inode *inode, struct file *file)
+>  	if (!fw_debug)
+>  		return 0;
+>  
+> -	if (fw_debug->debug_buffer)
+> -		vfree(fw_debug->debug_buffer);
+> +	vfree(fw_debug->debug_buffer);
+>  
+>  	file->private_data = NULL;
+>  	kfree(fw_debug);
+> --
+> 2.1.3
+> 
 
-The vfree() function performs also input parameter validation.
-Thus the test around the call is not needed.
+Would you like to integrate this update suggestion
+into another source code repository?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/scsi/fnic/fnic_debugfs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
-index d6498fa..855d382 100644
---- a/drivers/scsi/fnic/fnic_debugfs.c
-+++ b/drivers/scsi/fnic/fnic_debugfs.c
-@@ -102,9 +102,7 @@ void fnic_debugfs_terminate(void)
- 
- 	debugfs_remove(fnic_trace_debugfs_root);
- 	fnic_trace_debugfs_root = NULL;
--
--	if (fc_trc_flag)
--		vfree(fc_trc_flag);
-+	vfree(fc_trc_flag);
- }
- 
- /*
--- 
-2.4.4
-
+Regards,
+Markus
