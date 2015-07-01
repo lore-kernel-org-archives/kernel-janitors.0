@@ -1,47 +1,57 @@
-From: Emmanuel Grumbach <egrumbach@gmail.com>
-Date: Wed, 08 Jul 2015 19:53:51 +0000
-Subject: Re: [PATCH] mac80211: Use kstrdup to simplify code
-Message-Id: <CANUX_P2djxM92BZX=0O7Zmb+0Y7Gs9xpbfUgPnCB0gnDwfSJuQ@mail.gmail.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date: Wed, 01 Jul 2015 06:58:23 +0000
+Subject: Re: [PATCH] Staging: unisys: virtpci: fixed a brace coding style issue
+Message-Id: <20150701065749.GA2411@sudip-PC>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1436383927-14010-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1436383927-14010-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <55930BB1.10502@zoho.com>
+In-Reply-To: <55930BB1.10502@zoho.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Kalle Valo <kvalo@codeaurora.org>, brudley@broadcom.com, Arend van Spriel <arend@broadcom.com>, frankyl@broadcom.com, meuleman@broadcom.com, linux-wireless <linux-wireless@vger.kernel.org>, brcm80211-dev-list@broadcom.com, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Sohny Thomas <sohnythomas@zoho.com>
+Cc: benjamin.romer@unisys.com, david.kershner@unisys.com, bryan.thompson@unisys.com, erik.arfvidson@unisys.com, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, sparmaintainer@unisys.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The subject is wrong. You are not patch mac80211, but bcrmsmac.
-
-On Wed, Jul 8, 2015 at 10:32 PM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> Replace a kmalloc+strcpy by an equivalent kstrdup in order to improve
-> readability.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Wed, Jul 01, 2015 at 03:05:45AM +0530, Sohny Thomas wrote:
+> 
+> FIX 2 unnecessary braces found by checkpatch.pl
+> 
+> Signed-off-by: Sohny Thomas <sohnythomas@zoho.com>
 > ---
->  drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
-> index 4813506..8a6c077 100644
-> --- a/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
-> +++ b/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
-> @@ -1476,9 +1476,7 @@ struct brcms_timer *brcms_init_timer(struct brcms_info *wl,
->         wl->timers = t;
->
->  #ifdef DEBUG
-> -       t->name = kmalloc(strlen(name) + 1, GFP_ATOMIC);
-> -       if (t->name)
-> -               strcpy(t->name, name);
-> +       t->name = kstrdup(name, GFP_ATOMIC);
->  #endif
->
->         return t;
-> --
-> 2.1.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  drivers/staging/unisys/virtpci/virtpci.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/unisys/virtpci/virtpci.c b/drivers/staging/unisys/virtpci/virtpci.c
+> index d5ad017..f3674de 100644
+> --- a/drivers/staging/unisys/virtpci/virtpci.c
+> +++ b/drivers/staging/unisys/virtpci/virtpci.c
+> @@ -190,9 +190,10 @@ static int write_vbus_chp_info(struct spar_vbus_channel_protocol *chan,
+>  		return -1;
+>  
+>  	off = sizeof(struct channel_header) + chan->hdr_info.chp_info_offset;
+> -	if (chan->hdr_info.chp_info_offset = 0) {
+> +
+> +	if (chan->hdr_info.chp_info_offset = 0)
+>  		return -1;
+> -	}
+> +
+why you are inserting new line here?
+
+>  	memcpy(((u8 *)(chan)) + off, info, sizeof(*info));
+>  	return 0;
+>  }
+> @@ -484,10 +485,10 @@ static int delete_vhba(struct del_virt_guestpart *delparams)
+>  
+>  	i = virtpci_device_del(NULL /*no parent bus */, VIRTHBA_TYPE,
+>  			       &scsi.wwnn, NULL);
+> -	if (i) {
+> +	if (i)
+>  		return 1;
+> -	}
+> -	return 0;
+> +	else
+> +		return 0;
+No, now this will introduce a new checkpatch warning that "else is not
+required after return". why did you introduce this "else"?
+
+regards
+sudip
