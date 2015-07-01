@@ -1,43 +1,73 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 27 Jul 2015 15:45:05 +0000
-Subject: re: Orangefs: kernel client part 2
-Message-Id: <20150727154505.GA16624@mwanda>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Wed, 01 Jul 2015 08:06:12 +0000
+Subject: Re: [PATCH v2] backlight: lp8788: Deletion of a check before backlight_device_unregister()
+Message-Id: <20150701080612.GG3210@x1>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <54720DEB.4060109@users.sourceforge.net>
+ <20141124101006.GD4241@x1>
+ <5473736F.8070705@users.sourceforge.net>
+ <558FE386.7060704@users.sourceforge.net>
+In-Reply-To: <558FE386.7060704@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Bryan Wu <cooloney@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jg1.han@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Mike Marshall,
+On Sun, 28 Jun 2015, SF Markus Elfring wrote:
 
-The patch ac6163f8a3f3: "Orangefs: kernel client part 2" from Jul 17,
-2015, leads to the following static checker warning:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> >=20
+> > The backlight_device_unregister() function tests whether its argument i=
+s NULL
+> > and then returns immediately. Thus the test around the call is not need=
+ed.
+> >=20
+> > This issue was detected by using the Coccinelle software.
+> >=20
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > ---
+> >  drivers/video/backlight/lp8788_bl.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backli=
+ght/lp8788_bl.c
+> > index d6c4f6a..24a055c 100644
+> > --- a/drivers/video/backlight/lp8788_bl.c
+> > +++ b/drivers/video/backlight/lp8788_bl.c
+> > @@ -221,8 +221,7 @@ static void lp8788_backlight_unregister(struct lp87=
+88_bl *bl)
+> >  {
+> >  	struct backlight_device *bl_dev =3D bl->bl_dev;
+> > =20
+> > -	if (bl_dev)
+> > -		backlight_device_unregister(bl_dev);
+> > +	backlight_device_unregister(bl_dev);
+> >  }
+> > =20
+> >  static ssize_t lp8788_get_bl_ctl_mode(struct device *dev,
+> >=20
+>=20
+> Would you like to integrate this update suggestion
+> into another source code repository?
 
-	fs/orangefs/dir.c:256 pvfs2_readdir()
-	warn: bool is not less than zero.
+If this patch has not received any attention in some time, it's
+possible that it may have slipped through the gaps.  Please
+re-submit the set.
 
-fs/orangefs/dir.c
-   249          if (pos = 0) {
-   250                  ino = get_ino_from_khandle(dentry->d_inode);
-   251                  gossip_debug(GOSSIP_DIR_DEBUG,
-   252                               "%s: calling dir_emit of \".\" with pos = %llu\n",
-   253                               __func__,
-   254                               llu(pos));
-   255                  ret = dir_emit(ctx, ".", 1, ino, DT_DIR);
-   256                  if (ret < 0)
-                            ^^^^^^^
-Most callers don't check for negative here.  I have no idea about fs/
-though so I'm not sure what was intended.
-
-   257                          goto out_destroy_handle;
-   258                  ctx->pos++;
-   259                  gossip_ldebug(GOSSIP_DIR_DEBUG,
-   260                                "%s: ctx->pos:%lld\n",
-   261                                __func__,
-   262                                lld(ctx->pos));
-   263                  pos++;
-   264          }
-
-
-regards,
-dan carpenter
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
