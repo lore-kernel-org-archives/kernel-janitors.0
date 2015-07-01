@@ -1,120 +1,67 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 05 Jul 2015 13:35:10 +0000
-Subject: [PATCH 06/11] ocfs2: Two checks less in ocfs2_local_alloc_slide_window()
-Message-Id: <5599328E.5010905@users.sourceforge.net>
+Date: Wed, 01 Jul 2015 08:50:41 +0000
+Subject: Re: [PATCH] InfiniBand: Deletion of unnecessary checks before two function calls
+Message-Id: <5593A9E1.5090206@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <5455FC05.4010606@users.sourceforge.net> <alpine.DEB.2.02.1411021150540.2239@localhost6.localdomain6> <55992DF0.5030205@users.sourceforge.net>
-In-Reply-To: <55992DF0.5030205@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <546CE09B.9090101@users.sourceforge.net>
+In-Reply-To: <546CE09B.9090101-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, Maninder Singh <maninder1.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Akhilesh Kumar <akhilesh.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 4 Jul 2015 18:18:23 +0200
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 19 Nov 2014 19:19:21 +0100
+> 
+> The functions kfree() and pci_dev_put() test whether their argument is NULL
+> and then return immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/infiniband/hw/mlx4/main.c         | 3 +--
+>  drivers/infiniband/hw/mthca/mthca_reset.c | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+> index 8b72cf3..50dee1a 100644
+> --- a/drivers/infiniband/hw/mlx4/main.c
+> +++ b/drivers/infiniband/hw/mlx4/main.c
+> @@ -2512,8 +2512,7 @@ static void do_slave_init(struct mlx4_ib_dev *ibdev, int slave, int do_init)
+>  		if (!dm[i]) {
+>  			pr_err("failed to allocate memory for tunneling qp update work struct\n");
+>  			for (i = 0; i < dev->caps.num_ports; i++) {
+> -				if (dm[i])
+> -					kfree(dm[i]);
+> +				kfree(dm[i]);
+>  			}
+>  			goto out;
+>  		}
+> diff --git a/drivers/infiniband/hw/mthca/mthca_reset.c b/drivers/infiniband/hw/mthca/mthca_reset.c
+> index 74c6a94..c521654 100644
+> --- a/drivers/infiniband/hw/mthca/mthca_reset.c
+> +++ b/drivers/infiniband/hw/mthca/mthca_reset.c
+> @@ -279,8 +279,7 @@ good:
+>  	}
+>  
+>  out:
+> -	if (bridge)
+> -		pci_dev_put(bridge);
+> +	pci_dev_put(bridge);
+>  	kfree(bridge_header);
+>  	kfree(hca_header);
+>  
+> 
 
-* Return directly from the ocfs2_local_alloc_slide_window() function
-  if a call of the ocfs2_local_alloc_reserve_for_window() function failed
-  at the beginning.
+More software developers became interested in similar
+source code improvements.
 
-* Rename jump labels according to the Linux coding style convention.
+infiniband: Remove redundant NULL check before kfree
+https://lkml.org/lkml/2015/6/26/45
+https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg919966.html
 
-* Drop an unnecessary initialisation for the variable "handle" then.
-
-* Delete a call of the mlog_errno() function at the end.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/ocfs2/localalloc.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
-
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index a614037..16579ed 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -1248,7 +1248,7 @@ static int ocfs2_local_alloc_slide_window(struct ocfs2_super *osb,
- 	int status = 0;
- 	struct buffer_head *main_bm_bh = NULL;
- 	struct inode *main_bm_inode = NULL;
--	handle_t *handle = NULL;
-+	handle_t *handle;
- 	struct ocfs2_dinode *alloc;
- 	struct ocfs2_dinode *alloc_copy = NULL;
- 	struct ocfs2_alloc_context *ac = NULL;
-@@ -1263,15 +1263,14 @@ static int ocfs2_local_alloc_slide_window(struct ocfs2_super *osb,
- 	if (status < 0) {
- 		if (status != -ENOSPC)
- 			mlog_errno(status);
--		goto bail;
-+		return status;
- 	}
- 
- 	handle = ocfs2_start_trans(osb, OCFS2_WINDOW_MOVE_CREDITS);
- 	if (IS_ERR(handle)) {
- 		status = PTR_ERR(handle);
--		handle = NULL;
- 		mlog_errno(status);
--		goto bail;
-+		goto clean_up_main;
- 	}
- 
- 	alloc = (struct ocfs2_dinode *) osb->local_alloc_bh->b_data;
-@@ -1285,7 +1284,7 @@ static int ocfs2_local_alloc_slide_window(struct ocfs2_super *osb,
- 	if (!alloc_copy) {
- 		status = -ENOMEM;
- 		mlog_errno(status);
--		goto bail;
-+		goto commit;
- 	}
- 	memcpy(alloc_copy, alloc, osb->local_alloc_bh->b_size);
- 
-@@ -1295,7 +1294,7 @@ static int ocfs2_local_alloc_slide_window(struct ocfs2_super *osb,
- 					 OCFS2_JOURNAL_ACCESS_WRITE);
- 	if (status < 0) {
- 		mlog_errno(status);
--		goto bail;
-+		goto commit;
- 	}
- 
- 	ocfs2_clear_local_alloc(alloc);
-@@ -1305,31 +1304,27 @@ static int ocfs2_local_alloc_slide_window(struct ocfs2_super *osb,
- 					  main_bm_inode, main_bm_bh);
- 	if (status < 0) {
- 		mlog_errno(status);
--		goto bail;
-+		goto commit;
- 	}
- 
- 	status = ocfs2_local_alloc_new_window(osb, handle, ac);
- 	if (status < 0) {
- 		if (status != -ENOSPC)
- 			mlog_errno(status);
--		goto bail;
-+		goto commit;
- 	}
- 
- 	atomic_inc(&osb->alloc_stats.moves);
- 
--bail:
--	if (handle)
--		ocfs2_commit_trans(osb, handle);
--
-+commit:
-+	ocfs2_commit_trans(osb, handle);
-+clean_up_main:
- 	brelse(main_bm_bh);
- 	iput(main_bm_inode);
- 	kfree(alloc_copy);
- 
- 	if (ac)
- 		ocfs2_free_alloc_context(ac);
--
--	if (status)
--		mlog_errno(status);
- 	return status;
- }
- 
--- 
-2.4.5
-
+Regards,
+Markus
