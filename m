@@ -1,184 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 13 Jul 2015 18:52:26 +0000
-Subject: [PATCH 2/2] staging: unisys: Reduce indent
-Message-Id: <adc0707d1e044973bd20f772e7150ef5c52aaaa0.1436813029.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Jul 2015 19:02:43 +0000
+Subject: [PATCH 1/2] tools/testing/nvdimm: Delete an unnecessary check before the function call "vfree"
+Message-Id: <55958AD3.5070507@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0d6047c2d4dc00ac399310ea33f0c15aef83253b.1436813029.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0d6047c2d4dc00ac399310ea33f0c15aef83253b.1436813029.git.christophe.jaillet@wanadoo.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <559589D3.8000709@users.sourceforge.net>
+In-Reply-To: <559589D3.8000709@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benjamin.romer@unisys.com, david.kershner@unisys.com, gregkh@linuxfoundation.org
-Cc: sparmaintainer@unisys.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Dan Williams <dan.j.williams@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-Remove some extra tabs in order to improve readalibility.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 2 Jul 2015 19:24:27 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The vfree() function performs also input parameter validation.
+Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/unisys/visorbus/visorbus_main.c | 49 ++++++++++++-------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+ tools/testing/nvdimm/test/nfit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/unisys/visorbus/visorbus_main.c b/drivers/staging/unisys/visorbus/visorbus_main.c
-index bbc907d..36fc15d 100644
---- a/drivers/staging/unisys/visorbus/visorbus_main.c
-+++ b/drivers/staging/unisys/visorbus/visorbus_main.c
-@@ -218,9 +218,9 @@ visorbus_release_device(struct device *xdev)
- struct devmajorminor_attribute {
- 	struct attribute attr;
- 	int slot;
--	 ssize_t (*show)(struct visor_device *, int slot, char *buf);
--	 ssize_t (*store)(struct visor_device *, int slot, const char *buf,
--			  size_t count);
-+	ssize_t (*show)(struct visor_device *, int slot, char *buf);
-+	ssize_t (*store)(struct visor_device *, int slot, const char *buf,
-+			 size_t count);
- };
- 
- static ssize_t DEVMAJORMINOR_ATTR(struct visor_device *dev, int slot, char *buf)
-@@ -1042,10 +1042,10 @@ write_vbus_chp_info(struct visorchannel *chan,
- 	int off = sizeof(struct channel_header) + hdr_info->chp_info_offset;
- 
- 	if (hdr_info->chp_info_offset = 0)
--			return -1;
-+		return -1;
- 
- 	if (visorchannel_write(chan, off, info, sizeof(*info)) < 0)
--			return -1;
-+		return -1;
- 	return 0;
- }
- 
-@@ -1060,10 +1060,10 @@ write_vbus_bus_info(struct visorchannel *chan,
- 	int off = sizeof(struct channel_header) + hdr_info->bus_info_offset;
- 
- 	if (hdr_info->bus_info_offset = 0)
--			return -1;
-+		return -1;
- 
- 	if (visorchannel_write(chan, off, info, sizeof(*info)) < 0)
--			return -1;
-+		return -1;
- 	return 0;
- }
- 
-@@ -1080,10 +1080,10 @@ write_vbus_dev_info(struct visorchannel *chan,
- 	    (hdr_info->device_info_struct_bytes * devix);
- 
- 	if (hdr_info->dev_info_offset = 0)
--			return -1;
-+		return -1;
- 
- 	if (visorchannel_write(chan, off, info, sizeof(*info)) < 0)
--			return -1;
-+		return -1;
- 	return 0;
- }
- 
-@@ -1105,7 +1105,7 @@ fix_vbus_dev_info(struct visor_device *visordev)
- 	struct spar_vbus_headerinfo *hdr_info;
- 
- 	if (!visordev->device.driver)
--			return;
-+		return;
- 
- 	hdr_info = (struct spar_vbus_headerinfo *)visordev->vbus_hdr_info;
- 	if (!hdr_info)
-@@ -1318,11 +1318,11 @@ static void
- pause_state_change_complete(struct visor_device *dev, int status)
- {
- 	if (!dev->pausing)
--			return;
-+		return;
- 
- 	dev->pausing = false;
- 	if (!chipset_responders.device_pause) /* this can never happen! */
--			return;
-+		return;
- 
- 	/* Notify the chipset driver that the pause is complete, which
- 	* will presumably want to send some sort of response to the
-@@ -1338,11 +1338,11 @@ static void
- resume_state_change_complete(struct visor_device *dev, int status)
- {
- 	if (!dev->resuming)
--			return;
-+		return;
- 
- 	dev->resuming = false;
- 	if (!chipset_responders.device_resume) /* this can never happen! */
--			return;
-+		return;
- 
- 	/* Notify the chipset driver that the resume is complete,
- 	 * which will presumably want to send some sort of response to
-@@ -1366,14 +1366,14 @@ initiate_chipset_device_pause_resume(struct visor_device *dev, bool is_pause)
- 	else
- 		notify_func = chipset_responders.device_resume;
- 	if (!notify_func)
--			goto away;
-+		goto away;
- 
- 	drv = to_visor_driver(dev->device.driver);
- 	if (!drv)
--			goto away;
-+		goto away;
- 
- 	if (dev->pausing || dev->resuming)
--			goto away;
-+		goto away;
- 
- 	/* Note that even though both drv->pause() and drv->resume
- 	 * specify a callback function, it is NOT necessary for us to
-@@ -1384,7 +1384,7 @@ initiate_chipset_device_pause_resume(struct visor_device *dev, bool is_pause)
- 	 */
- 	if (is_pause) {
- 		if (!drv->pause)
--				goto away;
-+			goto away;
- 
- 		dev->pausing = true;
- 		x = drv->pause(dev, pause_state_change_complete);
-@@ -1396,7 +1396,7 @@ initiate_chipset_device_pause_resume(struct visor_device *dev, bool is_pause)
- 		 * would never even get here in that case. */
- 		fix_vbus_dev_info(dev);
- 		if (!drv->resume)
--				goto away;
-+			goto away;
- 
- 		dev->resuming = true;
- 		x = drv->resume(dev, resume_state_change_complete);
-@@ -1412,7 +1412,7 @@ initiate_chipset_device_pause_resume(struct visor_device *dev, bool is_pause)
- away:
- 	if (rc < 0) {
- 		if (notify_func)
--				(*notify_func)(dev, rc);
-+			(*notify_func)(dev, rc);
- 	}
- }
- 
-@@ -1468,8 +1468,8 @@ visorbus_init(void)
- 
- away:
- 	if (rc)
--			POSTCODE_LINUX_3(CHIPSET_INIT_FAILURE_PC, rc,
--					 POSTCODE_SEVERITY_ERR);
-+		POSTCODE_LINUX_3(CHIPSET_INIT_FAILURE_PC, rc,
-+				 POSTCODE_SEVERITY_ERR);
- 	return rc;
- }
- 
-@@ -1494,9 +1494,8 @@ visorbus_exit(void)
- 
- 	list_for_each_safe(listentry, listtmp, &list_all_bus_instances) {
- 		struct visor_device *dev = list_entry(listentry,
--							      struct
--							      visor_device,
--							      list_all);
-+						      struct visor_device,
-+						      list_all);
- 		remove_bus_instance(dev);
- 	}
- 	remove_bus_type();
+diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
+index 4b69b83..9c910f1 100644
+--- a/tools/testing/nvdimm/test/nfit.c
++++ b/tools/testing/nvdimm/test/nfit.c
+@@ -270,7 +270,7 @@ static void *__test_alloc(struct nfit_test *t, size_t size, dma_addr_t *dma,
+  err:
+ 	if (buf && !is_vmalloc_addr(buf))
+ 		dma_free_coherent(dev, size, buf, *dma);
+-	else if (buf)
++	else
+ 		vfree(buf);
+ 	kfree(res);
+ 	kfree(nfit_res);
 -- 
-2.1.4
+2.4.5
 
