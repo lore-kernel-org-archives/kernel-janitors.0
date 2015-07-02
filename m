@@ -1,50 +1,42 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Thu, 09 Jul 2015 16:51:02 +0000
-Subject: Re: Clarification for the use of additional fields in the message body
-Message-Id: <20150709165102.GA9417@thunk.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Jul 2015 15:10:41 +0000
+Subject: [PATCH] net-ipvs: Delete an unnecessary check before the function call "module_put"
+Message-Id: <55955471.9000501@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <559BBDD6.7040808@users.sourceforge.net>
- <CAH6sp9O=NgJXOJzQaaA0o_yae+ae1oJa5Kcqmpo-WWBO_xUW+g@mail.gmail.com>
- <559BFB19.2080700@users.sourceforge.net>
- <CAGRGNgXTN8AxBNNfie4KvvErOXm3LUyL_QLLWQ6TN_wJgJkD-A@mail.gmail.com>
- <559CCC9D.8050606@users.sourceforge.net>
- <CAGRGNgWcHxwjx07A45No8vArXR12JGKcfif1Rvi30PQbJs4SGQ@mail.gmail.com>
- <559CED4C.1080402@users.sourceforge.net>
- <CAGRGNgU1SSUw-97aS0nhFObcMpLPdP3ej9WWNVwN77Fd=ws-bQ@mail.gmail.com>
- <20150708150335.GB20551@thunk.org>
- <559D416A.7050601@users.sourceforge.net>
-In-Reply-To: <559D416A.7050601@users.sourceforge.net>
+References: <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546BA253.6030100@users.sourceforge.net> <20141119134040.GA12270@salvia>
+In-Reply-To: <20141119134040.GA12270@salvia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julian Calaby <julian.calaby@gmail.com>, Frans Klaver <fransklaver@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless <linux-wireless@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "David S. Miller" <davem@davemloft.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Simon Horman <horms@verge.net.au>, Wensong Zhang <wensong@linux-vs.org>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Jul 08, 2015 at 05:27:38PM +0200, SF Markus Elfring wrote:
-> > Note also that some maintainers have work flow that deliberately smash
-> > the date (i.e., because they are using a system such as guilt),
-> > so if you are depending on the submitted timestamp, it's going to
-> > break on you.
-> 
-> Thanks for your hint.
-> 
-> I am just trying to offer the possibility for the reuse of a more
-> precise commit timestamp together with an appropriate author mail
-> address for my update suggestions.
-> Do you reject any more such message field overrides?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 2 Jul 2015 17:00:14 +0200
 
-Well, I won't hold it against you, since I also often need to fix
-patches or git commit descriptions anyway.  But at the same time, my
-workflow (which you have no right to dictate) **will** destroy your
-timestamp.  Given that you haven't explained why you want to do this,
-I'm not going have much sympathy if you complain.
+The module_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Personally, given that you're going through some extremely baroque
-e-mail/patchsubmission scheme, I don't understand why you can't also
-arrange to override the Date field in the e-mail header.  But I don't
-really care all that much, because I can ignore your timestamp no
-matter where you put it.
+This issue was detected by using the Coccinelle software.
 
-Regards,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/netfilter/ipvs/ip_vs_sched.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-					- Ted
+diff --git a/net/netfilter/ipvs/ip_vs_sched.c b/net/netfilter/ipvs/ip_vs_sched.c
+index 199760c..e50221b 100644
+--- a/net/netfilter/ipvs/ip_vs_sched.c
++++ b/net/netfilter/ipvs/ip_vs_sched.c
+@@ -137,7 +137,7 @@ struct ip_vs_scheduler *ip_vs_scheduler_get(const char *sched_name)
+ 
+ void ip_vs_scheduler_put(struct ip_vs_scheduler *scheduler)
+ {
+-	if (scheduler && scheduler->module)
++	if (scheduler)
+ 		module_put(scheduler->module);
+ }
+ 
+-- 
+2.4.5
+
