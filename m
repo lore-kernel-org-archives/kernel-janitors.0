@@ -1,67 +1,42 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 06 Jul 2015 21:16:07 +0000
-Subject: Re: [patch] drm/radeon: fix underflow in r600_cp_dispatch_texture()
-Message-Id: <CADnq5_N8DZxAct-gnpizaMB_P87giSdL7ovvW993eP9QVD9Pag@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Jul 2015 16:08:19 +0000
+Subject: [PATCH] net-RDS: Delete an unnecessary check before the function call "module_put"
+Message-Id: <559561F3.2040107@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150703085428.GB11901@mwanda>
-	<55965802.3080705@amd.com>
-In-Reply-To: <55965802.3080705@amd.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chien Yen <chien.yen@oracle.com>, "David S. Miller" <davem@davemloft.net>, rds-devel@oss.oracle.com, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Jul 3, 2015 at 5:38 AM, Christian König
-<christian.koenig@amd.com> wrote:
-> On 03.07.2015 10:54, Dan Carpenter wrote:
->>
->> The "if (pass_size > buf->total)" can underflow so I have changed the
->> type of size and pass_size to unsigned to avoid this problem.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->
-> Reviewed-by: Christian König <christian.koenig@amd.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 2 Jul 2015 17:58:21 +0200
 
-Applied.  thanks.
+The module_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
->
->> ---
->> This code is on the way out, but whatever.  I may as well send this
->> patch since I already wrote the patch.
->
->
-> Yeah, indeed but it will still take a while until we can really remove it.
->
-> Well, maybe it's time to give it a try.
+This issue was detected by using the Coccinelle software.
 
-I think it's probably about time.  IIRC, intel already dropped UMS support.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/rds/transport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alex
+diff --git a/net/rds/transport.c b/net/rds/transport.c
+index 8b4a6cd..83498e1 100644
+--- a/net/rds/transport.c
++++ b/net/rds/transport.c
+@@ -73,7 +73,7 @@ EXPORT_SYMBOL_GPL(rds_trans_unregister);
+ 
+ void rds_trans_put(struct rds_transport *trans)
+ {
+-	if (trans && trans->t_owner)
++	if (trans)
+ 		module_put(trans->t_owner);
+ }
+ 
+-- 
+2.4.5
 
->
-> Regards,
-> Christian.
->
->
->>
->> diff --git a/drivers/gpu/drm/radeon/r600_cp.c
->> b/drivers/gpu/drm/radeon/r600_cp.c
->> index 09e3f39..98f9ada 100644
->> --- a/drivers/gpu/drm/radeon/r600_cp.c
->> +++ b/drivers/gpu/drm/radeon/r600_cp.c
->> @@ -2483,7 +2483,7 @@ int r600_cp_dispatch_texture(struct drm_device *dev,
->>         struct drm_buf *buf;
->>         u32 *buffer;
->>         const u8 __user *data;
->> -       int size, pass_size;
->> +       unsigned int size, pass_size;
->>         u64 src_offset, dst_offset;
->>         if (!radeon_check_offset(dev_priv, tex->offset)) {
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
