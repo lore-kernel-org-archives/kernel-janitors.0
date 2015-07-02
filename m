@@ -1,67 +1,62 @@
-From: Benjamin Tissoires <benjamin.tissoires@gmail.com>
-Date: Thu, 09 Jul 2015 21:21:54 +0000
-Subject: Re: i2c-HID: Delete unnecessary checks before the function call "gpiod_put"
-Message-Id: <CAN+gG=GWeMY67Z0YKWyAQUBGGCrGv=_fNiZko_TD7Bh6t2Ntow@mail.gmail.com>
+From: "Simmons, James A." <simmonsja@ornl.gov>
+Date: Thu, 02 Jul 2015 22:25:41 +0000
+Subject: RE: [lustre-devel] LIBCFS_ALLOC
+Message-Id: <9cb85b423527448db721927a35974317@EXCHCS32.ornl.gov>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<559D8874.7090407@users.sourceforge.net>
-	<alpine.LNX.2.00.1507091431470.10183@pobox.suse.cz>
-	<CAN+gG=EWxh3BzOucHwMrxNByy-yEJ8Xc_tW31aiq2rbeSAZ+Rw@mail.gmail.com>
-	<559EDE3D.1030409@users.sourceforge.net>
-	<CAN+gG=G9xiFUDML6i44mKodW4tiQPgGQ0Ft7oV8RA1JpuuQ1KQ@mail.gmail.com>
-	<559EE338.4060107@users.sourceforge.net>
-In-Reply-To: <559EE338.4060107@users.sourceforge.net>
+References: <1434819550-3193-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1434819550-3193-2-git-send-email-Julia.Lawall@lip6.fr>
+	<D1AECA61.F8DE5%andreas.dilger@intel.com>
+	<alpine.DEB.2.02.1506280844460.2103@localhost6.localdomain6>
+	<20150628215408.GG28762@mwanda>
+	<d2c4fda0148a4e579b5636b586d32fbe@EXCHCS32.ornl.gov>
+ <alpine.DEB.2.10.1506301657470.2330@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1506301657470.2330@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jiri Kosina <jkosina@suse.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-input <linux-input@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: 'Julia Lawall' <julia.lawall@lip6.fr>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Drokin, Oleg" <oleg.drokin@intel.com>, 'Dan Carpenter' <dan.carpenter@oracle.com>, "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>
 
-On Thu, Jul 9, 2015 at 5:10 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>> The proposed update candidates are contained in the source
->>> file "drivers/hid/i2c-hid/i2c-hid.c" from Linux next-20150708.
->>>
->>> * i2c_hid_remove() function:
->>>   Can it be tolerated here that the pointer "ihid->desc" might be eventually null?
->>>
->>> * i2c_hid_probe() function:
->>>   Is this implementation structured in such a way that a pointer for valid data
->>>   will be usually passed for "ihid->desc" if the statements after the jump
->>>   label "err" will be reached?
->>>
+
+>> >Yeah.  You're right.  Doing a vmalloc() when kmalloc() doesn't have even
+>> >a tiny sliver of RAM isn't going to work.  It's easier to use
+>> >libcfs_kvzalloc() everywhere, but it's probably the wrong thing.
 >>
->> Again, in both case it is completely normal to have "ihid->desc =
->> NULL" given that this field is only retrieved in case of an ACPI
->> device which does not declares an IRQ but a GPIO. Most ACPI devices I
->> saw are using a simple IRQ, and the OF instantiations of the driver
->> will definitively have ihid->desc null. So I do not want to have a
->> warning for most of i2c-hid devices out there (because I will have to
->> explain that this is completely normal again and again).
+>> The original  reason we have the vmalloc water mark wasn't so much the
+>> issue of memory exhaustion but to handle the case of memory fragmentation.
+>> Some sites had after a extended period of time started to see failures of
+>> allocating even 32K using kmalloc.  In our latest development branch we moved
+>> away from using a water mark to always try kmalloc first and if it fails then we
+>> try vmalloc. At ORNL we ran into severe performance issues when we entered
+>> vmalloc territory. It has been discussed before on what might replace vmalloc
+>> handling in the case of kmalloc fails but no solution has been worked out.
 >
-> Would it make sense to annotate checks before such function calls
-> as "unlikely" then?
+>OK, but if a structure contains only 4 words, would it be better to just
+>use kzalloc?  Or does it not matter?  It would only save trying vmalloc in
+>a case that it is guaranteed to fail, but if a structure with 4 words
+>can't be allocated, the system has other problems.  Another argument is
+>that kzalloc is a well known function that people and bug-finding tools
+>understand, so it is better to use it whenever possible.
 >
+>Some of the other structures contain a lot more fields, as well as small
+>arrays.  They are probably acceptable for kzalloc too, but I wouldn't know
+>the exact dividing line.
 
-I don't see the benefits of this right now. These calls are not time
-critical and it's not because today they are few devices with GPIOs
-rather than IRQs that it will be the case all the time.
-You can always submit a patch preventing coccinelle to raise this
-warning, but maybe a simple comment in the code would be enough.
+The reason I bring this up is to discuss sorting this out. Once long ago we had
+just  LIBCFS_ALLOC. For some reason before my time OBD_ALLOC got spawned
+off of that.  Currently LIBCFS_ALLOC is used just by the libcfs/LNet layer. Now 
+OBD_ALLOC in our development branch has moved to a try kmalloc first and 
+if it fails try vmalloc for any size memory allocation.  LIBCFS_ALLOC still does the
+original approach.   So we have two possible solutions depending on if libcfs/LNet
+needs to ever do a vmalloc.
 
-Cheers,
-Benjamin
+One solution if libcfs/LNet never needs a vmalloc is remove LIBCFS_ALLOC and replace
+it with kzalloc everywhere. We can then move libcfs_kzvalloc to the lustre layer and
+port the change we did in the development branch to here of the try kmalloc then
+vmalloc approach. 
+
+The other approach is if libcfs/LNet does in some case need to use vmalloc we could 
+then update LIBCFS_ALLOC to first try kmalloc then vmalloc. Once this is implemented
+we can nuke the OBD_ALLOC system.
+
+Either way I like to see it consolidated down to one system.
