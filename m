@@ -1,73 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 17 Jul 2015 07:20:00 +0000
-Subject: [PATCH 2/2] powerpc/nvram: Fix function name in some errors messages.
-Message-Id: <1571506ab2693a3128625c94f4f89dd802bb6dd2.1437117145.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Jul 2015 18:58:27 +0000
+Subject: [PATCH 0/2] tools/testing/nvdimm: Deletion of two unnecessary checks
+Message-Id: <559589D3.8000709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4fd8daff1bb5daad99d909aa75ff5c2702c4c490.1437117145.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <4fd8daff1bb5daad99d909aa75ff5c2702c4c490.1437117145.git.christophe.jaillet@wanadoo.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Dan Williams <dan.j.williams@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-'nvram_create_os_partition' should be 'nvram_create_partition'.
-Use __func__ to have it right, as done elsewhere in this file.
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/powerpc/kernel/nvram_64.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index 574ff59..4dab163 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -1065,7 +1065,7 @@ loff_t __init nvram_create_partition(const char *name, int sig,
- 	/* Create our OS partition */
- 	new_part = kmalloc(sizeof(*new_part), GFP_KERNEL);
- 	if (!new_part) {
--		pr_err("nvram_create_os_partition: kmalloc failed\n");
-+		pr_err("%s: kmalloc failed\n", __func__);
- 		return -ENOMEM;
- 	}
- 
-@@ -1077,8 +1077,7 @@ loff_t __init nvram_create_partition(const char *name, int sig,
- 
- 	rc = nvram_write_header(new_part);
- 	if (rc <= 0) {
--		pr_err("nvram_create_os_partition: nvram_write_header "
--		       "failed (%d)\n", rc);
-+		pr_err("%s: nvram_write_header failed (%d)\n", __func__, rc);
- 		kfree(new_part);
- 		return rc;
- 	}
-@@ -1091,8 +1090,8 @@ loff_t __init nvram_create_partition(const char *name, int sig,
- 		free_part->header.checksum = nvram_checksum(&free_part->header);
- 		rc = nvram_write_header(free_part);
- 		if (rc <= 0) {
--			pr_err("nvram_create_os_partition: nvram_write_header "
--			       "failed (%d)\n", rc);
-+			pr_err("%s: nvram_write_header failed (%d)\n",
-+			       __func__, rc);
- 			return rc;
- 		}
- 	} else {
-@@ -1106,11 +1105,12 @@ loff_t __init nvram_create_partition(const char *name, int sig,
- 	     tmp_index += NVRAM_BLOCK_LEN) {
- 		rc = ppc_md.nvram_write(nv_init_vals, NVRAM_BLOCK_LEN, &tmp_index);
- 		if (rc <= 0) {
--			pr_err("nvram_create_partition: nvram_write failed (%d)\n", rc);
-+			pr_err("%s: nvram_write failed (%d)\n",
-+			       __func__, rc);
- 			return rc;
- 		}
- 	}
--	
-+
- 	return new_part->index + NVRAM_HEADER_LEN;
- }
- 
+Markus Elfring (2):
+  Delete an unnecessary check before the function call "vfree"
+  Improve error detection in __test_alloc()
+
+ tools/testing/nvdimm/test/nfit.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
 -- 
-2.1.4
+2.4.5
 
