@@ -1,62 +1,45 @@
-From: Ray Jui <rjui@broadcom.com>
-Date: Tue, 14 Jul 2015 20:53:19 +0000
-Subject: Re: [PATCH] PCI-iproc: Delete unnecessary checks before two function calls
-Message-Id: <55A576BF.9060609@broadcom.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Jul 2015 14:43:43 +0000
+Subject: [PATCH] net-ipv6: Delete an unnecessary check before the function call "free_percpu"
+Message-Id: <55954E1F.6090205@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <55900A20.5070407@users.sourceforge.net>
- <20150714201059.GG24416@google.com> <55A56FBB.20203@broadcom.com>
- <20150714205128.GI24416@google.com>
-In-Reply-To: <20150714205128.GI24416@google.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "David S. Miller" <davem@davemloft.net>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, James Morris <jmorris@namei.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 2 Jul 2015 16:30:24 +0200
 
+The free_percpu() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-On 7/14/2015 1:51 PM, Bjorn Helgaas wrote:
-> On Tue, Jul 14, 2015 at 01:23:23PM -0700, Ray Jui wrote:
->> Hi Bjorn,
->>
->> On 7/14/2015 1:10 PM, Bjorn Helgaas wrote:
->>> On Sun, Jun 28, 2015 at 04:52:16PM +0200, SF Markus Elfring wrote:
->>>> From: Markus Elfring <elfring@users.sourceforge.net>
->>>> Date: Sun, 28 Jun 2015 16:42:04 +0200
->>>>
->>>> The functions phy_exit() and phy_power_off() test whether their argument
->>>> is NULL and then return immediately.
->>>> Thus the test around the calls is not needed.
->>>>
->>>> This issue was detected by using the Coccinelle software.
->>>>
->>>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->>>
->>> I haven't seen a followup to Ray's review, but in the interest of making
->>> progress, I updated and applied the patch as appended.  I also reviewed
->>> other phy_*() calls under drivers/pci, and they all look OK (with no
->>> unnecessary tests for NULL).
->>>
->>> This is on the pci/host-iproc branch for v4.3.
->>>
->>
->> Hmmm....I searched my mailbox but cannot find an email with this patch
->> (while I remember I reviewed and commented on the initial version of
->> this patch). It must have gone into some sub-folder or deleted by me by
->> accident. My bad.
->>
->> Nevertheless,the current patch looks good to me!
-> 
-> Thanks for checking it out!  Can I add your Reviewed-by to the patch below?
-> 
+This issue was detected by using the Coccinelle software.
 
-Sure thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/ipv6/route.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Reviewed-by: Ray Jui <rjui@broadcom.com>
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 1a1122a..6090969 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -369,10 +369,7 @@ static void ip6_dst_destroy(struct dst_entry *dst)
+ 	struct inet6_dev *idev;
+ 
+ 	dst_destroy_metrics_generic(dst);
+-
+-	if (rt->rt6i_pcpu)
+-		free_percpu(rt->rt6i_pcpu);
+-
++	free_percpu(rt->rt6i_pcpu);
+ 	rt6_uncached_list_del(rt);
+ 
+ 	idev = rt->rt6i_idev;
+-- 
+2.4.5
 
-Ray
