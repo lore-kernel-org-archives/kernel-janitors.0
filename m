@@ -1,37 +1,48 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 06 Jul 2015 08:54:15 +0000
-Subject: Re: [PATCH 03/11] ocfs2: Less checks in ocfs2_rename() after error detection
-Message-Id: <20150706085414.GD28762@mwanda>
+Date: Fri, 03 Jul 2015 08:53:03 +0000
+Subject: [patch] mptfusion: prevent some memory corruption
+Message-Id: <20150703085303.GA11901@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <5455FC05.4010606@users.sourceforge.net>
- <alpine.DEB.2.02.1411021150540.2239@localhost6.localdomain6>
- <55992DF0.5030205@users.sourceforge.net>
- <55993170.6060306@users.sourceforge.net>
-In-Reply-To: <55993170.6060306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
+Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Jul 05, 2015 at 03:30:24PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 4 Jul 2015 15:30:18 +0200
-> 
-> Skip checks for a few variables in three error handling cases within
-> the ocfs2_rename() function by adjustment of a few jump targets
-> according to the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+These are signed values the come from the user, we put a cap on the
+upper bounds but not on the lower bounds.
 
-I don't think this is an improvement.
+We use "karg.dataSgeOffset" to calculate "sz".  We verify "sz" and
+proceed as if that means that "karg.dataSgeOffset" is correct but this
+fails to consider that the "sz" calculations can have integer overflows.
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+During my QC process, I realized that I sent a similar patch last year,
+but never received a response.
 
+http://permalink.gmane.org/gmane.linux.kernel.janitors/32590
+
+Looking at both of them, I guess I prefer today's patch because it is
+simpler.
+
+diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
+index 70bb753..fc73937 100644
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -1859,6 +1859,15 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
+ 	}
+ 	spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
+ 
++	/* Basic sanity checks to prevent underflows or integer overflows */
++	if (karg.maxReplyBytes < 0 ||
++	    karg.dataInSize < 0 ||
++	    karg.dataOutSize < 0 ||
++	    karg.dataSgeOffset < 0 ||
++	    karg.maxSenseBytes < 0 ||
++	    karg.dataSgeOffset > ioc->req_sz / 4)
++		return -EINVAL;
++
+ 	/* Verify that the final request frame will not be too large.
+ 	 */
+ 	sz = karg.dataSgeOffset * 4;
