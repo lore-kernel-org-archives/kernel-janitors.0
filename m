@@ -1,42 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Jul 2015 16:45:53 +0000
-Subject: [PATCH] netlink: Delete an unnecessary check before the function call "module_put"
-Message-Id: <55956AC1.9000902@users.sourceforge.net>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 03 Jul 2015 16:28:19 +0000
+Subject: Re: [PATCH] netlink: Delete an unnecessary check before the function call "module_put"
+Message-Id: <20150703.092819.95179652477512417.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<55956AC1.9000902@users.sourceforge.net>
+In-Reply-To: <55956AC1.9000902@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: elfring@users.sourceforge.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 2 Jul 2015 18:38:12 +0200
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 02 Jul 2015 18:45:53 +0200
 
-The module_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 2 Jul 2015 18:38:12 +0200
+> 
+> The module_put() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/netlink/af_netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index dea9253..9a0ae71 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -158,7 +158,7 @@ static int __netlink_remove_tap(struct netlink_tap *nt)
- out:
- 	spin_unlock(&netlink_tap_lock);
- 
--	if (found && nt->module)
-+	if (found)
- 		module_put(nt->module);
- 
- 	return found ? 0 : -ENODEV;
--- 
-2.4.5
-
+Applied.
