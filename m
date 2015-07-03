@@ -1,24 +1,32 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Tue, 14 Jul 2015 19:47:06 +0000
-Subject: Re: [PATCH] intel_scu_ipc: move local memory initialization out of a mutex
-Message-Id: <20150714194706.GA35521@vmdeb7>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 Jul 2015 08:54:28 +0000
+Subject: [patch] drm/radeon: fix underflow in r600_cp_dispatch_texture()
+Message-Id: <20150703085428.GB11901@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1436798694-6907-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1436798694-6907-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: kernel-janitors@vger.kernel.org, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org
 
-On Mon, Jul 13, 2015 at 04:44:54PM +0200, Christophe JAILLET wrote:
-> '{ }' and memset will both reset the cbuf buffer.
-> Only once is enough and this can be done outside fo the mutex.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The "if (pass_size > buf->total)" can underflow so I have changed the
+type of size and pass_size to unsigned to avoid this problem.
 
-Queued, thanks Christophe.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This code is on the way out, but whatever.  I may as well send this
+patch since I already wrote the patch.
 
--- 
-Darren Hart
-Intel Open Source Technology Center
+diff --git a/drivers/gpu/drm/radeon/r600_cp.c b/drivers/gpu/drm/radeon/r600_cp.c
+index 09e3f39..98f9ada 100644
+--- a/drivers/gpu/drm/radeon/r600_cp.c
++++ b/drivers/gpu/drm/radeon/r600_cp.c
+@@ -2483,7 +2483,7 @@ int r600_cp_dispatch_texture(struct drm_device *dev,
+ 	struct drm_buf *buf;
+ 	u32 *buffer;
+ 	const u8 __user *data;
+-	int size, pass_size;
++	unsigned int size, pass_size;
+ 	u64 src_offset, dst_offset;
+ 
+ 	if (!radeon_check_offset(dev_priv, tex->offset)) {
