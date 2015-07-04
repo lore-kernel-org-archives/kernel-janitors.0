@@ -1,29 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 17 Jul 2015 09:24:46 +0000
-Subject: [patch 1/2] Staging: rtl8192u: pointer math bug in ieee80211_rx_DELBA()
-Message-Id: <20150717092446.GB3060@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 04 Jul 2015 07:13:02 +0000
+Subject: [PATCH] kernel-sched: Delete an unnecessary check before unregister_sysctl_table()
+Message-Id: <5597877E.3060503@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The "delba" variable is a pointer to struct rtl_80211_hdr_3addr so this
-addition here means we read nonsense data from beyond the end of the
-buffer.  It could result in an oops if the memory is not mapped.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 4 Jul 2015 09:06:32 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The unregister_sysctl_table() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-index 9ff8e05..c1c1a1e 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-@@ -592,7 +592,7 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
- 	IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA|IEEE80211_DL_BA, skb->data, skb->len);
- 	delba = (struct rtl_80211_hdr_3addr *)skb->data;
- 	dst = (u8 *)(&delba->addr2[0]);
--	delba += sizeof(struct rtl_80211_hdr_3addr);
-+	delba++;
- 	pDelBaParamSet = (PDELBA_PARAM_SET)(delba+2);
- 	pReasonCode = (u16 *)(delba+4);
- 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ kernel/sched/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index b803e1b..4756d1c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5298,8 +5298,7 @@ static void register_sched_domain_sysctl(void)
+ /* may be called multiple times per register */
+ static void unregister_sched_domain_sysctl(void)
+ {
+-	if (sd_sysctl_header)
+-		unregister_sysctl_table(sd_sysctl_header);
++	unregister_sysctl_table(sd_sysctl_header);
+ 	sd_sysctl_header = NULL;
+ 	if (sd_ctl_dir[0].child)
+ 		sd_free_ctl_entry(&sd_ctl_dir[0].child);
+-- 
+2.4.5
+
