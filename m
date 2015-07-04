@@ -1,80 +1,117 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 04 Jul 2015 10:32:33 +0000
+From: Anton Altaparmakov <anton@tuxera.com>
+Date: Sat, 04 Jul 2015 10:36:57 +0000
 Subject: Re: [PATCH] ntfs: Deletion of unnecessary checks before the function call "iput"
-Message-Id: <5597B641.2030704@users.sourceforge.net>
+Message-Id: <620065E5-8238-476C-A9B5-1B5B1AD298B0@tuxera.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54679E97.5000801@users.sourceforge.net>
-In-Reply-To: <54679E97.5000801@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54679E97.5000801@users.sourceforge.net>
+ <5597B641.2030704@users.sourceforge.net>
+In-Reply-To: <5597B641.2030704@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anton Altaparmakov <anton@tuxera.com>, linux-ntfs-dev@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "linux-ntfs-dev@lists.sourceforge.net" <linux-ntfs-dev@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, SF Markus Elfring <elfring@users.sourceforge.net>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 15 Nov 2014 19:35:05 +0100
-> 
-> The iput() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/ntfs/super.c | 21 +++++++--------------
->  1 file changed, 7 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/ntfs/super.c b/fs/ntfs/super.c
-> index 6c3296e..8f22a47 100644
-> --- a/fs/ntfs/super.c
-> +++ b/fs/ntfs/super.c
-> @@ -2204,17 +2204,12 @@ get_ctx_vol_failed:
->  	return true;
->  #ifdef NTFS_RW
->  iput_usnjrnl_err_out:
-> -	if (vol->usnjrnl_j_ino)
-> -		iput(vol->usnjrnl_j_ino);
-> -	if (vol->usnjrnl_max_ino)
-> -		iput(vol->usnjrnl_max_ino);
-> -	if (vol->usnjrnl_ino)
-> -		iput(vol->usnjrnl_ino);
-> +	iput(vol->usnjrnl_j_ino);
-> +	iput(vol->usnjrnl_max_ino);
-> +	iput(vol->usnjrnl_ino);
->  iput_quota_err_out:
-> -	if (vol->quota_q_ino)
-> -		iput(vol->quota_q_ino);
-> -	if (vol->quota_ino)
-> -		iput(vol->quota_ino);
-> +	iput(vol->quota_q_ino);
-> +	iput(vol->quota_ino);
->  	iput(vol->extend_ino);
->  #endif /* NTFS_RW */
->  iput_sec_err_out:
-> @@ -2223,8 +2218,7 @@ iput_root_err_out:
->  	iput(vol->root_ino);
->  iput_logfile_err_out:
->  #ifdef NTFS_RW
-> -	if (vol->logfile_ino)
-> -		iput(vol->logfile_ino);
-> +	iput(vol->logfile_ino);
->  iput_vol_err_out:
->  #endif /* NTFS_RW */
->  	iput(vol->vol_ino);
-> @@ -2254,8 +2248,7 @@ iput_mftbmp_err_out:
->  	iput(vol->mftbmp_ino);
->  iput_mirr_err_out:
->  #ifdef NTFS_RW
-> -	if (vol->mftmirr_ino)
-> -		iput(vol->mftmirr_ino);
-> +	iput(vol->mftmirr_ino);
->  #endif /* NTFS_RW */
->  	return false;
->  }
-> 
+Hi Andrew,
 
-Would you like to integrate this update suggestion
-into another source code repository?
+Can you please take up this trivial patch and merge it upstream?
 
-Regards,
-Markus
+Reviewed-by: Anton Altaparmakov <anton@tuxera.com>
+
+Thanks a lot in advance!
+
+Best regards,
+
+	Anton
+
+> On 4 Jul 2015, at 11:32, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+> 
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sat, 15 Nov 2014 19:35:05 +0100
+>> 
+>> The iput() function tests whether its argument is NULL and then
+>> returns immediately. Thus the test around the call is not needed.
+>> 
+>> This issue was detected by using the Coccinelle software.
+>> 
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>> fs/ntfs/super.c | 21 +++++++--------------
+>> 1 file changed, 7 insertions(+), 14 deletions(-)
+>> 
+>> diff --git a/fs/ntfs/super.c b/fs/ntfs/super.c
+>> index 6c3296e..8f22a47 100644
+>> --- a/fs/ntfs/super.c
+>> +++ b/fs/ntfs/super.c
+>> @@ -2204,17 +2204,12 @@ get_ctx_vol_failed:
+>> 	return true;
+>> #ifdef NTFS_RW
+>> iput_usnjrnl_err_out:
+>> -	if (vol->usnjrnl_j_ino)
+>> -		iput(vol->usnjrnl_j_ino);
+>> -	if (vol->usnjrnl_max_ino)
+>> -		iput(vol->usnjrnl_max_ino);
+>> -	if (vol->usnjrnl_ino)
+>> -		iput(vol->usnjrnl_ino);
+>> +	iput(vol->usnjrnl_j_ino);
+>> +	iput(vol->usnjrnl_max_ino);
+>> +	iput(vol->usnjrnl_ino);
+>> iput_quota_err_out:
+>> -	if (vol->quota_q_ino)
+>> -		iput(vol->quota_q_ino);
+>> -	if (vol->quota_ino)
+>> -		iput(vol->quota_ino);
+>> +	iput(vol->quota_q_ino);
+>> +	iput(vol->quota_ino);
+>> 	iput(vol->extend_ino);
+>> #endif /* NTFS_RW */
+>> iput_sec_err_out:
+>> @@ -2223,8 +2218,7 @@ iput_root_err_out:
+>> 	iput(vol->root_ino);
+>> iput_logfile_err_out:
+>> #ifdef NTFS_RW
+>> -	if (vol->logfile_ino)
+>> -		iput(vol->logfile_ino);
+>> +	iput(vol->logfile_ino);
+>> iput_vol_err_out:
+>> #endif /* NTFS_RW */
+>> 	iput(vol->vol_ino);
+>> @@ -2254,8 +2248,7 @@ iput_mftbmp_err_out:
+>> 	iput(vol->mftbmp_ino);
+>> iput_mirr_err_out:
+>> #ifdef NTFS_RW
+>> -	if (vol->mftmirr_ino)
+>> -		iput(vol->mftmirr_ino);
+>> +	iput(vol->mftmirr_ino);
+>> #endif /* NTFS_RW */
+>> 	return false;
+>> }
+>> 
+> 
+> Would you like to integrate this update suggestion
+> into another source code repository?
+> 
+> Regards,
+> Markus
+
+-- 
+Anton Altaparmakov <anton at tuxera.com> (replace at with @)
+Lead in File System Development, Tuxera Inc., http://www.tuxera.com/
+Linux NTFS maintainer
+
