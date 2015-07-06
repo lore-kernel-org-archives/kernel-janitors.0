@@ -1,104 +1,80 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Mon, 06 Jul 2015 21:50:13 +0000
-Subject: Re: [PATCH] ntfs: Deletion of unnecessary checks before the function call "iput"
-Message-Id: <20150706145013.13e231ec1dc51ac0d9137732@linux-foundation.org>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Mon, 06 Jul 2015 15:41:20 +0000
+Subject: [GIT PULL 00/11] perf/core improvements and fixes
+Message-Id: <1436197291-21625-1-git-send-email-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54679E97.5000801@users.sourceforge.net>
-	<5597B641.2030704@users.sourceforge.net>
-	<620065E5-8238-476C-A9B5-1B5B1AD298B0@tuxera.com>
-In-Reply-To: <620065E5-8238-476C-A9B5-1B5B1AD298B0@tuxera.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anton Altaparmakov <anton@tuxera.com>
-Cc: "linux-ntfs-dev@lists.sourceforge.net" <linux-ntfs-dev@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, SF Markus Elfring <elfring@users.sourceforge.net>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Borislav Petkov <bp@suse.de>, David Ahern <dsahern@gmail.com>, Don Zickus <dzickus@redhat.com>, Frederic Weisbecker <fweisbec@gmail.com>, Jiri Olsa <jolsa@redhat.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Stephane Eranian <eranian@google.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-On Sat, 4 Jul 2015 10:36:57 +0000 Anton Altaparmakov <anton@tuxera.com> wrote:
+Hi Ingo,
 
-> Hi Andrew,
-> 
-> Can you please take up this trivial patch and merge it upstream?
-> 
-> Reviewed-by: Anton Altaparmakov <anton@tuxera.com>
-> 
+	Please consider pulling,
 
-Nobody responded to Julia's review comment: "I don't have time to look
-at the code now, but since there is an exit label here, have you
-checked whether you could improve the gotos in these cases?"
+- Arnaldo
 
-She has a good point.  We can either change those gotos to go to the
-correct place (current code is rather bizarre) or we can simply do
+The following changes since commit d2d61ed55f8375a10ff606e83e2196880a775fb4:
 
---- a/fs/ntfs/super.c~a
-+++ a/fs/ntfs/super.c
-@@ -2202,36 +2202,26 @@ get_ctx_vol_failed:
- 	}
- #endif /* NTFS_RW */
- 	return true;
-+out:
- #ifdef NTFS_RW
--iput_usnjrnl_err_out:
- 	iput(vol->usnjrnl_j_ino);
- 	iput(vol->usnjrnl_max_ino);
- 	iput(vol->usnjrnl_ino);
--iput_quota_err_out:
- 	iput(vol->quota_q_ino);
- 	iput(vol->quota_ino);
- 	iput(vol->extend_ino);
- #endif /* NTFS_RW */
--iput_sec_err_out:
- 	iput(vol->secure_ino);
--iput_root_err_out:
- 	iput(vol->root_ino);
--iput_logfile_err_out:
- #ifdef NTFS_RW
- 	iput(vol->logfile_ino);
--iput_vol_err_out:
- #endif /* NTFS_RW */
- 	iput(vol->vol_ino);
--iput_lcnbmp_err_out:
- 	iput(vol->lcnbmp_ino);
--iput_attrdef_err_out:
- 	vol->attrdef_size = 0;
--	if (vol->attrdef) {
--		ntfs_free(vol->attrdef);
--		vol->attrdef = NULL;
--	}
-+	ntfs_free(vol->attrdef);
-+	vol->attrdef = NULL;
- #ifdef NTFS_RW
--iput_upcase_err_out:
- #endif /* NTFS_RW */
- 	vol->upcase_len = 0;
- 	mutex_lock(&ntfs_lock);
-@@ -2246,7 +2236,6 @@ iput_upcase_err_out:
- 	}
- iput_mftbmp_err_out:
- 	iput(vol->mftbmp_ino);
--iput_mirr_err_out:
- #ifdef NTFS_RW
- 	iput(vol->mftmirr_ino);
- #endif /* NTFS_RW */
+  Merge branch 'perf/rbtree_copy' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2015-07-06 09:24:41 +0200)
 
-(note that ntfs_free(NULL) is OK)
+are available in the git repository at:
 
-then change all the appropriate gotos to good old "goto out;".
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo
 
-Or we can not bother ;)
+for you to fetch changes up to ab85785aa13c36440a91a8e9f7616357de411a1f:
+
+  tools lib api debugfs: Check for tracefs when reporting errors (2015-07-06 12:22:14 -0300)
+
+----------------------------------------------------------------
+perf/core improvements and fixes:
+
+User visible:
+
+- Take tracefs into account when reporting errors about accessing
+  tracepoint information in tools like 'perf trace' (Arnaldo Carvalho de Melo)
+
+- Let user have timestamps with per-thread recording in 'perf record' (Adrian Hunter)
+
+Infrastructure:
+
+- Introduce series of functions to build event filters so that we
+  can set them in just one ioctl call, useful to set up common_pid,
+  raw_syscalls:sys_{enter,exit}'s "id" filters to use with
+  'perf trace' (Arnaldo Carvalho de Melo)
+
+- Delete an unnecessary check before calling strfilter__delete() (Markus Elfring)
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+Adrian Hunter (1):
+      perf record: Let user have timestamps with per-thread recording
+
+Arnaldo Carvalho de Melo (9):
+      perf tools: Asprintf like functions to format integer filter expression
+      perf trace: Remember what are the syscalls tracepoint evsels
+      perf trace: Store the syscall ids for the event qualifiers in a table
+      perf evsel: Rename set_filter to apply_filter
+      perf evsel: Introduce set_filter method
+      perf evlist: Make perf_evlist__set_filter use perf_evsel__set_filter
+      perf evsel: Introduce append_filter() method
+      perf trace: Use event filters for the event qualifier list
+      tools lib api debugfs: Check for tracefs when reporting errors
+
+Markus Elfring (1):
+      perf probe: Delete an unnecessary check before the function call "strfilter__delete"
+
+ tools/lib/api/fs/debugfs.c     |  15 +++-
+ tools/perf/builtin-probe.c     |   3 +-
+ tools/perf/builtin-record.c    |   4 +-
+ tools/perf/builtin-trace.c     | 178 ++++++++++++++++++++++++++---------------
+ tools/perf/perf.h              |   1 +
+ tools/perf/util/evlist.c       |   6 +-
+ tools/perf/util/evsel.c        |  37 ++++++++-
+ tools/perf/util/evsel.h        |   7 +-
+ tools/perf/util/parse-events.c |   3 +-
+ tools/perf/util/string.c       |  39 +++++++++
+ tools/perf/util/util.h         |  12 +++
+ 11 files changed, 224 insertions(+), 81 deletions(-)
