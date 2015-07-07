@@ -1,37 +1,37 @@
-From: Mateusz Kulikowski <mateusz.kulikowski@gmail.com>
-Date: Tue, 28 Jul 2015 18:17:20 +0000
-Subject: Re: [patch 1/2] Staging: rtl8192e: array overflow in rtl92e_set_swcam()
-Message-Id: <55B7C730.4090301@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 07 Jul 2015 05:39:03 +0000
+Subject: [PATCH] [SCSI] FlashPoint: optimize string comparison
+Message-Id: <1436247543-7326-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150728154821.GA25739@mwanda>
-In-Reply-To: <20150728154821.GA25739@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: khalid@gonehiking.org, JBottomley@odin.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 28.07.2015 17:48, Dan Carpenter wrote:
-> "EntryNo" is comes from the user in the ioctl and it's a number between
-> 0-255.  The ieee->swcamtable[] array only has 32 elements so it can
-> result in memory corruption.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
-> index dc8c7a8..c146b7e 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
-> @@ -78,6 +78,10 @@ void rtl92e_set_swcam(struct net_device *dev, u8 EntryNo, u8 KeyIndex,
->  	RT_TRACE(COMP_DBG,
->  		 "======>%s():EntryNo is %d,KeyIndex is %d,KeyType is %d,is_mesh is %d\n",
->  		 __func__, EntryNo, KeyIndex, KeyType, is_mesh);
-> +
-> +	if (EntryNo >= TOTAL_CAM_ENTRY)
-> +		return;
-> +
->  	if (!is_mesh) {
->  		ieee->swcamtable[EntryNo].bused = true;
->  		ieee->swcamtable[EntryNo].key_index = KeyIndex;
-> 
+Stop comparing the strings as soon as we know that they don't match.
 
-+1 for both patches - thanks for finding this.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/FlashPoint.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/FlashPoint.c b/drivers/scsi/FlashPoint.c
+index 5c74e4c..24a4d1a 100644
+--- a/drivers/scsi/FlashPoint.c
++++ b/drivers/scsi/FlashPoint.c
+@@ -6280,8 +6280,10 @@ static unsigned char FPT_scmachid(unsigned char p_card,
+ 		match = 1;
+ 
+ 		for (k = 0; k < ID_STRING_LENGTH; k++) {
+-			if (p_id_string[k] != FPT_scamInfo[i].id_string[k])
++			if (p_id_string[k] != FPT_scamInfo[i].id_string[k]) {
+ 				match = 0;
++				break;
++			}
+ 		}
+ 
+ 		if (match) {
+-- 
+2.1.4
+
