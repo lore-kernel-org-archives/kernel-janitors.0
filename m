@@ -1,47 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jul 2015 19:12:55 +0000
-Subject: re: stmmac: add ipq806x glue layer
-Message-Id: <20150730191219.GA13023@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 07 Jul 2015 05:55:42 +0000
+Subject: [PATCH] cris: arch-v32: gpio: Use kzalloc instead of kmalloc/memset
+Message-Id: <1436248542-8345-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: starvik@axis.com, jesper.nilsson@axis.com
+Cc: linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hello Mathieu Olivari,
+Turn a kmalloc/memset into an equivalent kzalloc.
+Doing so also move the zero'ing of the memory outside of a mutex.
 
-The patch b1c17215d718: "stmmac: add ipq806x glue layer" from May 27,
-2015, leads to the following static checker warning:
+Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+---
+A simililar patch has already been applied against
+arch/cris/arch-v32/drivers/mach-fs/gpio.c
+---
+ arch/cris/arch-v32/drivers/mach-a3/gpio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-	drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c:314 ipq806x_gmac_probe()
-	warn: double left shift '1 << (1 << gmac->id)'
+diff --git a/arch/cris/arch-v32/drivers/mach-a3/gpio.c b/arch/cris/arch-v32/drivers/mach-a3/gpio.c
+index 74f9fe8..75f0264 100644
+--- a/arch/cris/arch-v32/drivers/mach-a3/gpio.c
++++ b/arch/cris/arch-v32/drivers/mach-a3/gpio.c
+@@ -386,13 +386,12 @@ static int gpio_open(struct inode *inode, struct file *filp)
+ 	    (p > GPIO_MINOR_LAST && p < GPIO_MINOR_PWM0))
+ 		return -EINVAL;
+ 
+-	priv = kmalloc(sizeof(struct gpio_private), GFP_KERNEL);
++	priv = kzalloc(sizeof(struct gpio_private), GFP_KERNEL);
+ 
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+ 	mutex_lock(&gpio_mutex);
+-	memset(priv, 0, sizeof(*priv));
+ 
+ 	priv->minor = p;
+ 	filp->private_data = priv;
+-- 
+2.1.4
 
-drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-   312          switch (gmac->phy_mode) {
-   313          case PHY_INTERFACE_MODE_RGMII:
-   314                  val |= NSS_COMMON_CLK_SRC_CTRL_RGMII(gmac->id) <<
-   315                          NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
-
-It's very strange to shift to do this.  My guess is we should delete the
-NSS_COMMON_CLK_SRC_CTRL_RGMII macro and just use:
-
-			val |= NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
-
-   316                  break;
-   317          case PHY_INTERFACE_MODE_SGMII:
-   318                  val |= NSS_COMMON_CLK_SRC_CTRL_SGMII(gmac->id) <<
-   319                          NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
-
-
-Same here.
-
-
-   320                  break;
-   321          default:
-   322                  dev_err(&pdev->dev, "Unsupported PHY mode: \"%s\"\n",
-   323                          phy_modes(gmac->phy_mode));
-   324                  return -EINVAL;
-   325          }
-
-regards,
-dan carpenter
