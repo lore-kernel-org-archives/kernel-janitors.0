@@ -1,27 +1,43 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Wed, 15 Jul 2015 03:15:57 +0000
-Subject: Re: [PATCH] Staging:dgnc:remove unused code
-Message-Id: <20150715031557.GB18787@kroah.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 07 Jul 2015 02:31:50 +0000
+Subject: Re: [PATCH 2/2] staging: wilc1000: One function call less in mac_ioctl() after error detection
+Message-Id: <20150707023150.GB22043@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1435828777-24181-1-git-send-email-dingxiang@huawei.com>
-In-Reply-To: <1435828777-24181-1-git-send-email-dingxiang@huawei.com>
+References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <558EB32E.6090003@users.sourceforge.net>
+ <558EB524.1050609@users.sourceforge.net>
+In-Reply-To: <558EB524.1050609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Jul 02, 2015 at 05:19:37PM +0800, DingXiang wrote:
-> Because precompiled directive "#if 1" exist,so the "#else" part
-> will never be compiled,so remove it.
-> 
-> Signed-off-by: DingXiang <dingxiang@huawei.com>
-> ---
->  dgnc_neo.c |    9 +--------
->  1 files changed, 1 insertions(+), 8 deletions(-)
-> 
-> diff --git a/dgnc_neo.c b/dgnc_neo.c
-> index 1e583c2..8e85909 100644
-> --- a/dgnc_neo.c
-> +++ b/dgnc_neo.c
+On Sat, Jun 27, 2015 at 04:37:24PM +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 27 Jun 2015 16:00:59 +0200
 
-Same problem as the other patch :(
+Again, please fix.
+
+> 
+> The kfree() function was called in two cases by the mac_ioctl() function
+> during error handling even if the passed variable did not contain a pointer
+> for a valid data item.
+> 
+> * This implementation detail could be improved by the introduction
+>   of another jump label.
+> 
+> * Drop an unnecessary initialisation for the variable "buff" then.
+
+That's a different issue, please fix it in a separate patch.
+
+thanks,
+
+greg k-h
