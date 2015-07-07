@@ -1,46 +1,32 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 25 Jul 2015 06:20:39 +0000
-Subject: Re: [patch] ALSA: hda - fix cs4210_spdif_automute()
-Message-Id: <s5hsi8cvjuw.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 07 Jul 2015 06:21:44 +0000
+Subject: Re: Clarification for the use of additional fields in the message body
+Message-Id: <559B6FF8.9010704@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <s5hoaj1v89z.wl-tiwai@suse.de>
-	<20150725000337.GA14581@mwanda>
-In-Reply-To: <20150725000337.GA14581@mwanda>
+References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <558EB32E.6090003@users.sourceforge.net>
+ <558EB4DE.3080406@users.sourceforge.net> <20150707023103.GA22043@kroah.com>
+In-Reply-To: <20150707023103.GA22043@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, 25 Jul 2015 02:03:38 +0200,
-Dan Carpenter wrote:
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sat, 27 Jun 2015 15:56:57 +0200
 > 
-> Smatch complains that we have nested checks for "spdif_present".  It
-> turns out the current behavior isn't correct, we should remove the first
-> check and keep the second.
-> 
-> Fixes: 1077a024812d ('ALSA: hda - Use generic parser for Cirrus codec driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Why is this in the body of the email?
 
-Applied, thanks.
+Does the canonical patch format support to preserve
+specific details about a shown commit by specification
+of fields like "Date" and "From" in the message body?
 
-
-Takashi
-
-> 
-> diff --git a/sound/pci/hda/patch_cirrus.c b/sound/pci/hda/patch_cirrus.c
-> index 25ccf78..584a034 100644
-> --- a/sound/pci/hda/patch_cirrus.c
-> +++ b/sound/pci/hda/patch_cirrus.c
-> @@ -999,9 +999,7 @@ static void cs4210_spdif_automute(struct hda_codec *codec,
->  
->  	spec->spdif_present = spdif_present;
->  	/* SPDIF TX on/off */
-> -	if (spdif_present)
-> -		snd_hda_set_pin_ctl(codec, spdif_pin,
-> -				    spdif_present ? PIN_OUT : 0);
-> +	snd_hda_set_pin_ctl(codec, spdif_pin, spdif_present ? PIN_OUT : 0);
->  
->  	cs_automute(codec);
->  }
-> 
+Regards,
+Markus
