@@ -1,28 +1,72 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 29 Jul 2015 18:25:30 +0000
-Subject: Re: [patch] clk: versatile: off by one in clk_sp810_timerclken_of_get()
-Message-Id: <20150729182530.GC3159@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Jul 2015 20:30:44 +0000
+Subject: [PATCH] i2c-HID: Delete unnecessary checks before the function call "gpiod_put"
+Message-Id: <559D8874.7090407@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150729101705.GB12100@mwanda>
-In-Reply-To: <20150729101705.GB12100@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 07/29, Dan Carpenter wrote:
-> The ">" should be ">=" or we end up reading beyond the end of the array.
-> 
-> Fixes: 6e973d2c4385 ('clk: vexpress: Add separate SP810 driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
-> index 64b0129..7fbe4d4 100644
-> --- a/drivers/clk/versatile/clk-sp810.c
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Jul 2015 22:12:25 +0200
 
-Applied to clk-next
+The gpiod_put() function performs also input parameter validation
+by forwarding its single input pointer to the gpiod_free() function.
+Thus the test around the calls is not needed.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/i2c-hid/i2c-hid.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+index f77469d..09ff4e7 100644
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -1048,9 +1048,7 @@ err_pm:
+ 	pm_runtime_disable(&client->dev);
+ 
+ err:
+-	if (ihid->desc)
+-		gpiod_put(ihid->desc);
+-
++	gpiod_put(ihid->desc);
+ 	i2c_hid_free_buffers(ihid);
+ 	kfree(ihid);
+ 	return ret;
+@@ -1074,9 +1072,7 @@ static int i2c_hid_remove(struct i2c_client *client)
+ 	if (ihid->bufsize)
+ 		i2c_hid_free_buffers(ihid);
+ 
+-	if (ihid->desc)
+-		gpiod_put(ihid->desc);
+-
++	gpiod_put(ihid->desc);
+ 	kfree(ihid);
+ 
+ 	acpi_dev_remove_driver_gpios(ACPI_COMPANION(&client->dev));
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.5
+
