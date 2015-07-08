@@ -1,71 +1,63 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Tue, 07 Jul 2015 23:43:17 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Jul 2015 07:09:17 +0000
 Subject: Re: Clarification for the use of additional fields in the message body
-Message-Id: <CAGRGNgXTN8AxBNNfie4KvvErOXm3LUyL_QLLWQ6TN_wJgJkD-A@mail.gmail.com>
+Message-Id: <559CCC9D.8050606@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net>
+References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net> <558EB32E.6090003@users.sourceforge.net>
  <558EB4DE.3080406@users.sourceforge.net> <20150707023103.GA22043@kroah.com>
- <559B6FF8.9010704@users.sourceforge.net> <CAH6sp9Nn7LKdqT9E0bykY8jpEc-Ugxn8wby5yLcW+nsx=yG3NQ@mail.gmail.com>
- <559B85CD.6040200@users.sourceforge.net> <CAH6sp9Npqma18pj=ZsxYpCNDCm-AjjXvw61MGKBEKSYvg_LUBg@mail.gmail.com>
- <559BBDD6.7040808@users.sourceforge.net> <CAH6sp9O=NgJXOJzQaaA0o_yae+ae1oJa5Kcqmpo-WWBO_xUW+g@mail.gmail.com>
+ <559B6FF8.9010704@users.sourceforge.net>
+ <CAH6sp9Nn7LKdqT9E0bykY8jpEc-Ugxn8wby5yLcW+nsx=yG3NQ@mail.gmail.com>
+ <559B85CD.6040200@users.sourceforge.net>
+ <CAH6sp9Npqma18pj=ZsxYpCNDCm-AjjXvw61MGKBEKSYvg_LUBg@mail.gmail.com>
+ <559BBDD6.7040808@users.sourceforge.net>
+ <CAH6sp9O=NgJXOJzQaaA0o_yae+ae1oJa5Kcqmpo-WWBO_xUW+g@mail.gmail.com>
  <559BFB19.2080700@users.sourceforge.net>
-In-Reply-To: <559BFB19.2080700@users.sourceforge.net>
+ <CAGRGNgXTN8AxBNNfie4KvvErOXm3LUyL_QLLWQ6TN_wJgJkD-A@mail.gmail.com>
+In-Reply-To: <CAGRGNgXTN8AxBNNfie4KvvErOXm3LUyL_QLLWQ6TN_wJgJkD-A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julian Calaby <julian.calaby@gmail.com>
 Cc: Frans Klaver <fransklaver@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless <linux-wireless@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Markus,
+> There's a file in the documentation directory of the kernel
+> tree describing submitting patches and email client setup.
+> Read them both,
 
-On Wed, Jul 8, 2015 at 2:15 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->> I can't remember ever changing or explicitly preserving the commit date.
->> I don't think I care enough.
->
-> Would any more software developers and maintainers like to share
-> their experiences around such details?
->
-> When do commit timestamps become relevant as a documentation item
-> for contribution authorship?
+I read this information several times.
 
-They are never relevant.
 
-"When" a commit happened is never relevant except in relation to other
-things, at which point the actual date and time is almost completely
-irrelevant.
+> do what they say without anything extra.
 
-Just submit your patches using git-format-patch or git-send-email and
-friends. There's a file in the documentation directory of the kernel
-tree describing submitting patches and email client setup. Read them
-both, do what they say without anything extra.
+Do you see any special consequences if a bit of "extra" functionality
+is already provided by the Git software for a while?
 
->> Remembering the author separately from the committer is something
->> git does by design anyway.
->
-> Do you usually just reuse a procedure from a well-known command
-> for which a description is provided like the following?
-> http://git-scm.com/docs/git-am
-> '…
-> "From: " and "Subject: " lines starting the body override
-> the respective commit author name and title values
-> taken from the headers.
-> …'
->
-> Will further fields be eventually mentioned there?
 
-Why? Just do what is described in SubmittingPatches. Your attempts to
-"improve" on the system are unnecessary and annoying people. The
-instructions there are the recommended way to do things for a reason.
+> Your attempts to "improve" on the system are unnecessary
 
-Thanks,
+It seems that my approach does not need improvements for the current
+command "git am".
+Would a few extensions for the available documentation help to clarify
+the situation?
 
--- 
-Julian Calaby
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+Do items like "commit mail address" and "commit timestamp"
+belong together for the data structure "author" by design
+in this content management system?
+
+
+> and annoying people.
+
+I understand that various update suggestions can be surprising.
+It is also usual that corresponding acceptance might take
+a bit longer than what some contributors would prefer.
+
+Regards,
+Markus
