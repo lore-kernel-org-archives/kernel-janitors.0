@@ -1,7 +1,7 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Wed, 08 Jul 2015 15:03:35 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 08 Jul 2015 15:27:38 +0000
 Subject: Re: Clarification for the use of additional fields in the message body
-Message-Id: <20150708150335.GB20551@thunk.org>
+Message-Id: <559D416A.7050601@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <559B85CD.6040200@users.sourceforge.net>
  <CAH6sp9Npqma18pj=ZsxYpCNDCm-AjjXvw61MGKBEKSYvg_LUBg@mail.gmail.com>
@@ -13,43 +13,24 @@ References: <559B85CD.6040200@users.sourceforge.net>
  <CAGRGNgWcHxwjx07A45No8vArXR12JGKcfif1Rvi30PQbJs4SGQ@mail.gmail.com>
  <559CED4C.1080402@users.sourceforge.net>
  <CAGRGNgU1SSUw-97aS0nhFObcMpLPdP3ej9WWNVwN77Fd=ws-bQ@mail.gmail.com>
-In-Reply-To: <CAGRGNgU1SSUw-97aS0nhFObcMpLPdP3ej9WWNVwN77Fd=ws-bQ@mail.gmail.com>
+ <20150708150335.GB20551@thunk.org>
+In-Reply-To: <20150708150335.GB20551@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Frans Klaver <fransklaver@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless <linux-wireless@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>, Julian Calaby <julian.calaby@gmail.com>, Frans Klaver <fransklaver@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless <linux-wireless@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Jul 08, 2015 at 09:05:53PM +1000, Julian Calaby wrote:
-> If multiple people are submitting identical changes, then the one that
-> is applied is the one the maintainer sees first, which will most
-> likely be determined by which one hit their inbox / list first. Nobody
-> is going to look at timestamps in emails to determine which one will
-> be applied.
+> Note also that some maintainers have work flow that deliberately smash
+> the date (i.e., because they are using a system such as guilt),
+> so if you are depending on the submitted timestamp, it's going to
+> break on you.
 
-And some maintainers may choose *not* to act on a patch first, even if
-they see it first.  They might be focused on bug fix patches, and not
-act on cleanup or feature patches until -rc3 or rc4.  Or maybe they
-will use separate branches for "urgent_for_linus" patches, so two
-different patchs may end up in completely different git flows.
+Thanks for your hint.
 
-> If you're worried about which one of several versions of a patch will
-> be applied, change the subject to [PATCH v2] ..... instead of [PATCH]
-> .... for the second version.
+I am just trying to offer the possibility for the reuse of a more
+precise commit timestamp together with an appropriate author mail
+address for my update suggestions.
+Do you reject any more such message field overrides?
 
-*Please* do this.  In fact, this is the one thing I wish git
-send-email would do automatically, along with having a place to edit
-and track the 0/N summary patch.
-
-> >> To be honest, I've only ever used that timestamp for reporting
-> >> purposes at work, and I'd be surprised if anyone was doing anything
-> >> other than that with them.
-> >
-> > Thanks for your detailed feedback.
-
-Note also that some maintainers have work flow that deliberately smash
-the date (i.e., because they are using a system such as guilt), so if
-you are depending on the submitted timestamp, it's going to break on
-you.
-
-							- Ted
+Regards,
+Markus
