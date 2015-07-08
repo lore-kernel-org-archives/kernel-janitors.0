@@ -1,16 +1,9 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Jul 2015 13:46:33 +0000
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Wed, 08 Jul 2015 15:03:35 +0000
 Subject: Re: Clarification for the use of additional fields in the message body
-Message-Id: <559D29B9.2080408@users.sourceforge.net>
+Message-Id: <20150708150335.GB20551@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <558EB32E.6090003@users.sourceforge.net>
- <558EB4DE.3080406@users.sourceforge.net> <20150707023103.GA22043@kroah.com>
- <559B6FF8.9010704@users.sourceforge.net>
- <CAH6sp9Nn7LKdqT9E0bykY8jpEc-Ugxn8wby5yLcW+nsx=yG3NQ@mail.gmail.com>
- <559B85CD.6040200@users.sourceforge.net>
+References: <559B85CD.6040200@users.sourceforge.net>
  <CAH6sp9Npqma18pj=ZsxYpCNDCm-AjjXvw61MGKBEKSYvg_LUBg@mail.gmail.com>
  <559BBDD6.7040808@users.sourceforge.net>
  <CAH6sp9O=NgJXOJzQaaA0o_yae+ae1oJa5Kcqmpo-WWBO_xUW+g@mail.gmail.com>
@@ -25,28 +18,38 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julian Calaby <julian.calaby@gmail.com>
-Cc: Frans Klaver <fransklaver@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless <linux-wireless@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Frans Klaver <fransklaver@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chris Park <chris.park@atmel.com>, Dean Lee <dean.lee@atmel.com>, Johnny Kim <johnny.kim@atmel.com>, Rachel Kim <rachel.kim@atmel.com>, linux-wireless <linux-wireless@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-> Is there truly no way to simplify that process?
+On Wed, Jul 08, 2015 at 09:05:53PM +1000, Julian Calaby wrote:
+> If multiple people are submitting identical changes, then the one that
+> is applied is the one the maintainer sees first, which will most
+> likely be determined by which one hit their inbox / list first. Nobody
+> is going to look at timestamps in emails to determine which one will
+> be applied.
 
-I see some software development possibilities which could improve
-the communication with high volume mailing lists.
+And some maintainers may choose *not* to act on a patch first, even if
+they see it first.  They might be focused on bug fix patches, and not
+act on cleanup or feature patches until -rc3 or rc4.  Or maybe they
+will use separate branches for "urgent_for_linus" patches, so two
+different patchs may end up in completely different git flows.
 
+> If you're worried about which one of several versions of a patch will
+> be applied, change the subject to [PATCH v2] ..... instead of [PATCH]
+> .... for the second version.
 
-> You should be sending the patches directly with SMTP using git-send-email,
+*Please* do this.  In fact, this is the one thing I wish git
+send-email would do automatically, along with having a place to edit
+and track the 0/N summary patch.
 
-This tool is also fine for the publishing of a lot of patches.
+> >> To be honest, I've only ever used that timestamp for reporting
+> >> purposes at work, and I'd be surprised if anyone was doing anything
+> >> other than that with them.
+> >
+> > Thanks for your detailed feedback.
 
+Note also that some maintainers have work flow that deliberately smash
+the date (i.e., because they are using a system such as guilt), so if
+you are depending on the submitted timestamp, it's going to break on
+you.
 
-> if you're not, then you're making things overly complicated for yourself.
-
-But I prefer a graphical user interface for my mail handling so far.
-
-
-> Having a feature doesn't mean that it should be used.
-
-Does any of the "questionable functionality" get occasionally overlooked
-a bit too often?
-
-Regards,
-Markus
+							- Ted
