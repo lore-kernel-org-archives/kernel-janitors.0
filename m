@@ -1,21 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 16 Jul 2015 00:20:46 +0000
-Subject: Re: [PATCH] net: qlcnic: Deletion of unnecessary memset
-Message-Id: <20150715.172046.1479959081115644674.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 08 Jul 2015 19:15:47 +0000
+Subject: [PATCH] um: umid: Use strdup to simplify code
+Message-Id: <1436382947-13181-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fad6a2ad1e78d8e2624903524548f8d806bf1ef0.1436816968.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <fad6a2ad1e78d8e2624903524548f8d806bf1ef0.1436816968.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: shahed.shaikh@qlogic.com, Dept-GELinuxNICDev@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jdike@addtoit.com, richard@nod.at
+Cc: user-mode-linux-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 13 Jul 2015 21:51:38 +0200
+Replace a malloc+strcpy by an equivalent strdup in order to improve
+readability.
+Turn a some spaces into a tab to be consistent with the rest of the code.
 
-> There is no need to memset memory allocated with vzalloc.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/um/os-Linux/umid.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Applied and queued up for -stable, thanks.
+diff --git a/arch/um/os-Linux/umid.c b/arch/um/os-Linux/umid.c
+index c1dc892..cc9ac2e 100644
+--- a/arch/um/os-Linux/umid.c
++++ b/arch/um/os-Linux/umid.c
+@@ -48,15 +48,14 @@ static int __init make_uml_dir(void)
+ 		strlcat(dir, "/", sizeof(dir));
+ 
+ 	err = -ENOMEM;
+-	uml_dir = malloc(strlen(dir) + 1);
++	uml_dir = strdup(dir);
+ 	if (uml_dir = NULL) {
+-		printf("make_uml_dir : malloc failed, errno = %d\n", errno);
++		printf("make_uml_dir : strdup failed, errno = %d\n", errno);
+ 		goto err;
+ 	}
+-	strcpy(uml_dir, dir);
+ 
+ 	if ((mkdir(uml_dir, 0777) < 0) && (errno != EEXIST)) {
+-	        printf("Failed to mkdir '%s': %s\n", uml_dir, strerror(errno));
++		printf("Failed to mkdir '%s': %s\n", uml_dir, strerror(errno));
+ 		err = -errno;
+ 		goto err_free;
+ 	}
+-- 
+2.1.4
+
