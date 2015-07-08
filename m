@@ -1,51 +1,41 @@
-From: Malcolm Priestley <malcolmpriestley@gmail.com>
-Date: Sat, 18 Jul 2015 12:32:10 +0000
-Subject: Re: [patch 2/2] Staging: rtl8192e: pointer math bug in rtllib_rx_DELBA()
-Message-Id: <55AA474A.3000206@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 08 Jul 2015 20:22:46 +0000
+Subject: [PATCH v2] brcmsmac: Use kstrdup to simplify code
+Message-Id: <1436386966-16148-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150717092425.GA3060@mwanda>
-In-Reply-To: <20150717092425.GA3060@mwanda>
+References: <1436383927-14010-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1436383927-14010-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kvalo@codeaurora.org, brudley@broadcom.com, arend@broadcom.com, frankyl@broadcom.com, meuleman@broadcom.com
+Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 18/07/15 09:09, Dan Carpenter wrote:
-> On Fri, Jul 17, 2015 at 10:17:40PM +0200, Mateusz Kulikowski wrote:
->>> diff --git a/drivers/staging/rtl8192e/rtl819x_BAProc.c b/drivers/staging/rtl8192e/rtl819x_BAProc.c
->>> index 60f536c..98e6c4e 100644
->>> --- a/drivers/staging/rtl8192e/rtl819x_BAProc.c
->>> +++ b/drivers/staging/rtl8192e/rtl819x_BAProc.c
->>> @@ -453,7 +453,7 @@ int rtllib_rx_DELBA(struct rtllib_device *ieee, struct sk_buff *skb)
->>>   #endif
->>>   	delba = (struct rtllib_hdr_3addr *)skb->data;
->>>   	dst = (u8 *)(&delba->addr2[0]);
->>> -	delba += sizeof(struct rtllib_hdr_3addr);
->>> +	delba++;
->>>   	pDelBaParamSet = (union delba_param_set *)(delba+2);
->>>   	pReasonCode = (u16 *)(delba+4);
->>>
->>>
->>
->> Ack/+1,
->>
->> It's not the last fix for 'delba' unfortunately :(
->>
->> Next lines should use delba as u8 if I see correctly
->> See rtllib_DELBA() (line 141) - It first fills skb with rtllib_hdr_3_addr,
->> and then adds skb delbaparam_set and reasonCode (as a 6 bytes).
->> Or I'm tired - will re-check tomorrow.
->
-> All this pointer math would have worked if "delba" were a void pointer,
-> but that's a bit ugly.  Anyway, I'll send a proper fix for this.
-Looks like it should be u8.
+Replace a kmalloc+strcpy by an equivalent kstrdup in order to improve
+readability.
 
-This is a complete hash of modifying a 3 address header.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: fix the subject
 
-However, in kernel struct ieee80211_mgmt has a delba entry to replace 
-the entire header.
+ drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Regards
+diff --git a/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
+index 4813506..8a6c077 100644
+--- a/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
++++ b/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
+@@ -1476,9 +1476,7 @@ struct brcms_timer *brcms_init_timer(struct brcms_info *wl,
+ 	wl->timers = t;
+ 
+ #ifdef DEBUG
+-	t->name = kmalloc(strlen(name) + 1, GFP_ATOMIC);
+-	if (t->name)
+-		strcpy(t->name, name);
++	t->name = kstrdup(name, GFP_ATOMIC);
+ #endif
+ 
+ 	return t;
+-- 
+2.1.4
 
-
-Malcolm
