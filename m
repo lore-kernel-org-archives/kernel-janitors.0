@@ -1,39 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 27 Jul 2015 08:11:11 +0000
-Subject: [patch] mac80211: remove always true condition
-Message-Id: <20150727081111.GB2937@mwanda>
+From: adamwitkover56@gmail.com
+Date: Thu, 09 Jul 2015 09:38:24 +0000
+Subject: Re: your protracted and stalled funds transfer from the U.K.
+Message-Id: <20150709093913.AC225209C1@mailhost.usc.br>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Recipients <adamwitkover56@gmail.com>
 
-The outside if statement checks that IEEE80211_TX_INTFL_MLME_CONN_TX is
-set so this condition is always true.  Checking twice upsets the static
-checkers.
+Attention Pls,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I am writing you with regards to your protracted and stalled funds transfer from the U.K. and would urge you to accord this correspondence your full indulgence and attention, as the authenticity and difference would be evident if you do so.
 
-diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-index 45628f3..8ba5832 100644
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -515,7 +515,7 @@ static void ieee80211_report_used_skb(struct ieee80211_local *local,
- 
- 		if (!sdata) {
- 			skb->dev = NULL;
--		} else if (info->flags & IEEE80211_TX_INTFL_MLME_CONN_TX) {
-+		} else {
- 			unsigned int hdr_size  				ieee80211_hdrlen(hdr->frame_control);
- 
-@@ -529,9 +529,6 @@ static void ieee80211_report_used_skb(struct ieee80211_local *local,
- 				ieee80211_mgd_conn_tx_status(sdata,
- 							     hdr->frame_control,
- 							     acked);
--		} else {
--			/* we assign ack frame ID for the others */
--			WARN_ON(1);
- 		}
- 
- 		rcu_read_unlock();
+As a freelance, independent External Audit expert assisting a private financial institution here in Britain in all aspects of their work, your transfer file came to my attention just this morning, and I was compelled to take special interest in it owing to its peculiar history of procedural inconsistencies. Obviously all the persons you assigned to process your transfer have proved to be incompetent. Simply put it that they have given room to some management of the Bank to try and smuggle your fund through a non-existent back door.
+
+My intention is to quickly reactivate and sort out your transfer without any distraction through a simple, transparent and authoritative means where you will not be required to pay any unauthorized fees. You are forbidden to preempt anyone of this contact and I await your response at your earliest convenience.
+
+Thank you.
+
+Sincerely,
+Adam Witkover
