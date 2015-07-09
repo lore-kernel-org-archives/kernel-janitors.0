@@ -1,57 +1,31 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 01 Jul 2015 09:35:46 +0000
-Subject: Re: [PATCH] Staging: unisys: virtpci: fixed a brace coding style issue
-Message-Id: <alpine.DEB.2.10.1507011134090.2374@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jul 2015 08:21:03 +0000
+Subject: [patch] ASoC: fsl: fsl_spdif: signedness bug in fsl_spdif_startup()
+Message-Id: <20150709082103.GA13462@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55930BB1.10502@zoho.com> <20150701065749.GA2411@sudip-PC> <55939890.6090903@zoho.com> <alpine.DEB.2.10.1507010959260.2374@hadrien> <5593B0EA.1070101@zoho.com>
-In-Reply-To: <5593B0EA.1070101@zoho.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sohny Thomas <sohnythomas@zoho.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, benjamin.romer@unisys.com, david.kershner@unisys.com, bryan.thompson@unisys.com, erik.arfvidson@unisys.com, devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, sparmaintainer@unisys.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Timur Tabi <timur@tabi.org>, Fabio Estevam <fabio.estevam@freescale.com>
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
+We need "i" to be signed or it leads to a forever loop in the error
+handling.
 
+Fixes: fa3be9208dcb ('ASoC: fsl: fsl_spdif: Check for clk_prepare_enable() error')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Wed, 1 Jul 2015, Sohny Thomas wrote:
-
-> >>>>   	i = virtpci_device_del(NULL /*no parent bus */, VIRTHBA_TYPE,
-> >>>>   			       &scsi.wwnn, NULL);
-> >>>> -	if (i) {
-> >>>> +	if (i)
-> >>>>   		return 1;
-> >>>> -	}
-> >>>> -	return 0;
-> >>>> +	else
-> >>>> +		return 0;
-> >>> No, now this will introduce a new checkpatch warning that "else is not
-> >>> required after return". why did you introduce this "else"?
-> >> I did this so that the code is more readable and understandable, I checked and
-> >> checkpatch didn't call this out , so its clean.
-> >>
-> >> Otherwise the above code looks like this
-> >>
-> >> if(i)
-> >>    return 1;
-> >> return 0;
-> >
-> > That looks fine.
-> >
-> > I haven't looked at the code in detail.  Is it normal that the return
-> > values seem to be 0 1 and -1?  Which values represent success and which
-> > represent an error?  It is nicer to have the errors under if and success
-> > as a direct return at the end.
-> Here in this driver directory, return 1 means SUCCESS and return 0 means FAILURE
-
-What is -1?
-
-> So you mean my code change is fine?
-
-I think it would be best to have the success case that is not under an if.
-So if (!i)
-     return 0;
-   return 1;
-
-I guess some day the driver would need more normal error codes?
-
-julia
+diff --git a/sound/soc/fsl/fsl_spdif.c b/sound/soc/fsl/fsl_spdif.c
+index 3ee4539..7a92f30 100644
+--- a/sound/soc/fsl/fsl_spdif.c
++++ b/sound/soc/fsl/fsl_spdif.c
+@@ -454,7 +454,8 @@ static int fsl_spdif_startup(struct snd_pcm_substream *substream,
+ 	struct fsl_spdif_priv *spdif_priv = snd_soc_dai_get_drvdata(rtd->cpu_dai);
+ 	struct platform_device *pdev = spdif_priv->pdev;
+ 	struct regmap *regmap = spdif_priv->regmap;
+-	u32 scr, mask, i;
++	u32 scr, mask;
++	int i;
+ 	int ret;
+ 
+ 	/* Reset module and interrupts only for first initialization */
