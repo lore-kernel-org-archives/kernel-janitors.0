@@ -1,37 +1,65 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 01 Jul 2015 15:08:05 +0000
-Subject: Re: [PATCH v2 3/3] Staging: android: uapi: Fix coding style typedef issue
-Message-Id: <1435763285.12101.100.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 09 Jul 2015 06:08:15 +0000
+Subject: [PATCH v2] HID: Wacom: Delete unnecessary checks before the function call "input_free_device"
+Message-Id: <559E0FCF.8000908@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5593EDBF.6010008@zoho.com> <5593EF8E.9020002@zoho.com>
-	 <20150701143132.GZ28762@mwanda>
-In-Reply-To: <20150701143132.GZ28762@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5479D93E.3040407@users.sourceforge.net>
+In-Reply-To: <5479D93E.3040407@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sohny Thomas <sohnythomas@zoho.com>, gregkh@linuxfoundation.org, arve@android.com, riandrews@android.com, sumit.semwal@linaro.org, carlos@cgarcia.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 2015-07-01 at 17:31 +0300, Dan Carpenter wrote:
-> On Wed, Jul 01, 2015 at 07:17:58PM +0530, Sohny Thomas wrote:
-> > 
-> > As per checkpatch.pl remove unnecessary typedef
-> > Here ion_user_handle_t was used only in the header .
-> > 
-> > Signed-of-by: Sohny Thomas <sohnythomas@zoho.com>
-> 
-> The original code was correct.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 9 Jul 2015 08:00:10 +0200
 
-because the typedef is exposed to user-space. (uapi)
+The input_free_device() function tests whether its argument is NULL and
+then returns immediately. Thus the test around the call is not needed.
 
-> Checkpatch.pl is not the king of the
-> world, which you must obey or die.
+This issue was detected by using the Coccinelle software.
 
-As Dan once said, "it's less sentient than a squirrel".
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/wacom_sys.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-> It is just a perl script.
-
-Don't be a squirrel.
-Please engage your brain when using the stupid little tool.
-
+diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
+index 4c0ffca..936ad77 100644
+--- a/drivers/hid/wacom_sys.c
++++ b/drivers/hid/wacom_sys.c
+@@ -1149,12 +1149,9 @@ static void wacom_free_inputs(struct wacom *wacom)
+ {
+ 	struct wacom_wac *wacom_wac = &(wacom->wacom_wac);
+ 
+-	if (wacom_wac->pen_input)
+-		input_free_device(wacom_wac->pen_input);
+-	if (wacom_wac->touch_input)
+-		input_free_device(wacom_wac->touch_input);
+-	if (wacom_wac->pad_input)
+-		input_free_device(wacom_wac->pad_input);
++	input_free_device(wacom_wac->pen_input);
++	input_free_device(wacom_wac->touch_input);
++	input_free_device(wacom_wac->pad_input);
+ 	wacom_wac->pen_input = NULL;
+ 	wacom_wac->touch_input = NULL;
+ 	wacom_wac->pad_input = NULL;
+-- 
+2.4.5
 
