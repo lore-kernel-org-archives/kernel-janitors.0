@@ -1,40 +1,44 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 17 Jul 2015 07:31:03 +0000
-Subject: [PATCH] ia64: sn2: Add missing kfree in error path
-Message-Id: <1437118263-14342-1-git-send-email-christophe.jaillet@wanadoo.fr>
+Date: Thu, 09 Jul 2015 05:06:04 +0000
+Subject: [PATCH 2/2] um: umid: Use strdup to simplify code
+Message-Id: <1436418364-5201-2-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1436382947-13181-1-git-send-email-christophe.jaillet@wanadoo.fr>
+ <1436418364-5201-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1436418364-5201-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tony.luck@intel.com, fenghua.yu@intel.com
-Cc: linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: jdike@addtoit.com, richard@nod.at
+Cc: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-If 'ia64_sn_hwperf_op' fails, then 'ptdata' should be freed, otherwise,
-there is a memory leak.
+Replace a malloc+strcpy by an equivalent strdup in order to improve
+readability.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is *untested* because I have no way to trigger the error.
----
- arch/ia64/sn/kernel/sn2/sn_hwperf.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/um/os-Linux/umid.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/ia64/sn/kernel/sn2/sn_hwperf.c b/arch/ia64/sn/kernel/sn2/sn_hwperf.c
-index b999257..9e1694f 100644
---- a/arch/ia64/sn/kernel/sn2/sn_hwperf.c
-+++ b/arch/ia64/sn/kernel/sn2/sn_hwperf.c
-@@ -499,8 +499,10 @@ static int sn_topology_show(struct seq_file *s, void *d)
- 		e = ia64_sn_hwperf_op(sn_hwperf_master_nasid,
- 				      SN_HWPERF_ENUM_PORTS, obj->id, sz,
- 				      (u64) ptdata, 0, 0, NULL);
--		if (e != SN_HWPERF_OP_OK)
-+		if (e != SN_HWPERF_OP_OK) {
-+			kfree(ptdata);
- 			return -EINVAL;
-+		}
- 		for (ordinal=0, p=objs; p != obj; p++) {
- 			if (!SN_HWPERF_FOREIGN(p))
- 				ordinal += p->ports;
+diff --git a/arch/um/os-Linux/umid.c b/arch/um/os-Linux/umid.c
+index b514ead..cc9ac2e 100644
+--- a/arch/um/os-Linux/umid.c
++++ b/arch/um/os-Linux/umid.c
+@@ -48,12 +48,11 @@ static int __init make_uml_dir(void)
+ 		strlcat(dir, "/", sizeof(dir));
+ 
+ 	err = -ENOMEM;
+-	uml_dir = malloc(strlen(dir) + 1);
++	uml_dir = strdup(dir);
+ 	if (uml_dir = NULL) {
+-		printf("make_uml_dir : malloc failed, errno = %d\n", errno);
++		printf("make_uml_dir : strdup failed, errno = %d\n", errno);
+ 		goto err;
+ 	}
+-	strcpy(uml_dir, dir);
+ 
+ 	if ((mkdir(uml_dir, 0777) < 0) && (errno != EEXIST)) {
+ 		printf("Failed to mkdir '%s': %s\n", uml_dir, strerror(errno));
 -- 
 2.1.4
 
