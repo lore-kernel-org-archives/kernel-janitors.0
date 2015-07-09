@@ -1,73 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 19 Jul 2015 10:53:19 +0000
-Subject: [patch] genalloc: freeing const data pointers
-Message-Id: <20150719105319.GC8410@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 09 Jul 2015 05:06:03 +0000
+Subject: [PATCH 1/2] um: umid: Use tab instead of spaces
+Message-Id: <1436418364-5201-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1436382947-13181-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1436382947-13181-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Laura Abbott <lauraa@codeaurora.org>, Olof Johansson <olof@lixom.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jan Kara <jack@suse.cz>, Toshi Kikuchi <toshik@chromium.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jdike@addtoit.com, richard@nod.at
+Cc: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-"pool->name" can be kmalloc()ed or const so we need to free it with
-kfree_const().
+Turn some spaces into a tab to be consistent with the rest of the code.
 
-I also cleaned up the error path in devm_gen_pool_create() a bit.  With
-the current code you have to change the kfree() in multiple places
-which is bug prone (my first draft of this patch had a bug).
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/um/os-Linux/umid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: e89a70fd54f2 ('genalloc: add support of multiple gen_pools per device')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index 794804b..c729113 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -253,7 +253,7 @@ void gen_pool_destroy(struct gen_pool *pool)
+diff --git a/arch/um/os-Linux/umid.c b/arch/um/os-Linux/umid.c
+index c1dc892..b514ead 100644
+--- a/arch/um/os-Linux/umid.c
++++ b/arch/um/os-Linux/umid.c
+@@ -56,7 +56,7 @@ static int __init make_uml_dir(void)
+ 	strcpy(uml_dir, dir);
  
- 		kfree(chunk);
+ 	if ((mkdir(uml_dir, 0777) < 0) && (errno != EEXIST)) {
+-	        printf("Failed to mkdir '%s': %s\n", uml_dir, strerror(errno));
++		printf("Failed to mkdir '%s': %s\n", uml_dir, strerror(errno));
+ 		err = -errno;
+ 		goto err_free;
  	}
--	kfree(pool->name);
-+	kfree_const(pool->name);
- 	kfree(pool);
- }
- EXPORT_SYMBOL(gen_pool_destroy);
-@@ -631,23 +631,25 @@ struct gen_pool *devm_gen_pool_create(struct device *dev, int min_alloc_order,
- 	}
- 
- 	ptr = devres_alloc(devm_gen_pool_release, sizeof(*ptr), GFP_KERNEL);
--	if (!ptr) {
--		kfree(pool_name);
--		return ERR_PTR(-ENOMEM);
--	}
-+	if (!ptr)
-+		goto free_pool_name;
- 
- 	pool = gen_pool_create(min_alloc_order, nid);
--	if (pool) {
--		*ptr = pool;
--		pool->name = pool_name;
--		devres_add(dev, ptr);
--	} else {
--		devres_free(ptr);
--		kfree(pool_name);
--		return ERR_PTR(-ENOMEM);
--	}
-+	if (!pool)
-+		goto free_devres;
-+
-+	*ptr = pool;
-+	pool->name = pool_name;
-+	devres_add(dev, ptr);
- 
- 	return pool;
-+
-+free_devres:
-+	devres_free(ptr);
-+free_pool_name:
-+	kfree_const(pool_name);
-+
-+	return ERR_PTR(-ENOMEM);
- }
- EXPORT_SYMBOL(devm_gen_pool_create);
- 
+-- 
+2.1.4
+
