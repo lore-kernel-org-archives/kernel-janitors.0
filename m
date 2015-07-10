@@ -1,44 +1,65 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 01 Jul 2015 14:29:23 +0000
-Subject: Re: [PATCH v2 2/3] Staging: android: ion: fix coding style
-Message-Id: <20150701142923.GY28762@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 10 Jul 2015 05:18:10 +0000
+Subject: [PATCH] arcmsr: Fix a potential data corruption issue
+Message-Id: <1436505490-9640-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5593EA18.8060109@zoho.com>
- <5593EF44.3050708@zoho.com>
-In-Reply-To: <5593EF44.3050708@zoho.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sohny Thomas <sohnythomas@zoho.com>
-Cc: gregkh@linuxfoundation.org, arve@android.com, riandrews@android.com, sumit.semwal@linaro.org, carlos@cgarcia.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: JBottomley@odin.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Jul 01, 2015 at 07:16:44PM +0530, Sohny Thomas wrote:
-> 
-> - Fixed 80 char limit exceeding line
->   and a newline after declarations as per checkpatch.pl
-> 
-> Signed-of-by: Sohny Thomas <sohnythomas@zoho.com>
-> ---
->  drivers/staging/android/ion/ion.c            | 1 +
->  drivers/staging/android/ion/ion_chunk_heap.c | 4 ++--
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> index 6f48112..e44f5e6 100644
-> --- a/drivers/staging/android/ion/ion.c
-> +++ b/drivers/staging/android/ion/ion.c
-> @@ -1106,6 +1106,7 @@ struct dma_buf *ion_share_dma_buf(struct ion_client *client,
->  	struct ion_buffer *buffer;
->  	struct dma_buf *dmabuf;
->  	bool valid_handle;
-> +
->  	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
->  
->  	mutex_lock(&client->lock);
+Resetting rqbuffer or wqbuffer must be done within a critial section
+in order to avoir potential data corruption.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This change is *untested* because I don't have the corresponding hardware.
+However, it should'nt have any evil side effect (just a few lines of code
+moved from outside to within a spin_lock)
 
-This is a false positive in checkpatch.pl.  Just leave it as is.
+This just a "guess" based on the other uses of the 2 buffers within the
+code.
+It is also inspired on how things are done in arcmsr_hba.c
+(see line #2390)
 
-regards,
-dan carpenter
+So please ignore if not relevant.
+---
+ drivers/scsi/arcmsr/arcmsr_attr.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/scsi/arcmsr/arcmsr_attr.c b/drivers/scsi/arcmsr/arcmsr_attr.c
+index 9c86481..2ad970d 100644
+--- a/drivers/scsi/arcmsr/arcmsr_attr.c
++++ b/drivers/scsi/arcmsr/arcmsr_attr.c
+@@ -171,22 +171,21 @@ static ssize_t arcmsr_sysfs_iop_message_clear(struct file *filp,
+ 		return -EACCES;
+ 
+ 	arcmsr_clear_iop2drv_rqueue_buffer(acb);
+-	acb->acb_flags |-		(ACB_F_MESSAGE_WQBUFFER_CLEARED
+-		| ACB_F_MESSAGE_RQBUFFER_CLEARED
+-		| ACB_F_MESSAGE_WQBUFFER_READED);
+ 	spin_lock_irqsave(&acb->rqbuffer_lock, flags);
++	acb->acb_flags |= ACB_F_MESSAGE_RQBUFFER_CLEARED;
+ 	acb->rqbuf_getIndex = 0;
+ 	acb->rqbuf_putIndex = 0;
++	pQbuffer = acb->rqbuffer;
++	memset(pQbuffer, 0, sizeof (struct QBUFFER));
+ 	spin_unlock_irqrestore(&acb->rqbuffer_lock, flags);
+ 	spin_lock_irqsave(&acb->wqbuffer_lock, flags);
++	acb->acb_flags |= (ACB_F_MESSAGE_WQBUFFER_CLEARED |
++			   ACB_F_MESSAGE_WQBUFFER_READED);
+ 	acb->wqbuf_getIndex = 0;
+ 	acb->wqbuf_putIndex = 0;
+-	spin_unlock_irqrestore(&acb->wqbuffer_lock, flags);
+-	pQbuffer = acb->rqbuffer;
+-	memset(pQbuffer, 0, sizeof (struct QBUFFER));
+ 	pQbuffer = acb->wqbuffer;
+ 	memset(pQbuffer, 0, sizeof (struct QBUFFER));
++	spin_unlock_irqrestore(&acb->wqbuffer_lock, flags);
+ 	return 1;
+ }
+ 
+-- 
+2.1.4
 
