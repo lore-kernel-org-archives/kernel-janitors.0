@@ -1,44 +1,22 @@
-From: Jiri Kosina <jkosina@suse.com>
-Date: Wed, 29 Jul 2015 12:07:39 +0000
-Subject: Re: [patch] HID: uclogic: fix limit in uclogic_tablet_enable()
-Message-Id: <alpine.LNX.2.00.1507291407100.925@pobox.suse.cz>
+From: Vineet G H <vgh4uster@gmail.com>
+Date: Mon, 13 Jul 2015 15:00:46 +0000
+Subject: Fwd: Kernel Newbie Help needed
+Message-Id: <CAMtYYr3y-WnGgzNayUPBoEDixqLMi-UTKd1yUZDuHNgxy_w5aw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150729101606.GA12100@mwanda> <55B8AAA7.6010708@gmail.com>
-In-Reply-To: <55B8AAA7.6010708@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nikolai Kondrashov <spbnick@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 29 Jul 2015, Nikolai Kondrashov wrote:
+Hello Kernel Janitors,
 
-> On 07/29/2015 01:16 PM, Dan Carpenter wrote:
-> > The limit should be ARRAY_SIZE(params) (5 elements) here instead of
-> > sizeof(params) (20 bytes).
-> > 
-> > Fixes: 08177f40bd00 ('HID: uclogic: merge hid-huion driver in hid-uclogic')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/hid/hid-uclogic.c b/drivers/hid/hid-uclogic.c
-> > index 9416731..b905d50 100644
-> > --- a/drivers/hid/hid-uclogic.c
-> > +++ b/drivers/hid/hid-uclogic.c
-> > @@ -858,7 +858,7 @@ static int uclogic_tablet_enable(struct hid_device
-> > *hdev)
-> >   	for (p = drvdata->rdesc;
-> >   	     p <= drvdata->rdesc + drvdata->rsize - 4;) {
-> >   		if (p[0] = 0xFE && p[1] = 0xED && p[2] = 0x1D &&
-> > -		    p[3] < sizeof(params)) {
-> > +		    p[3] < ARRAY_SIZE(params)) {
-> >   			v = params[p[3]];
-> >   			put_unaligned(cpu_to_le32(v), (s32 *)p);
-> >   			p += 4;
-> 
-> Argh, that's embarrassing. Thanks, Dan!
+My Name is Vineet and I am trying understand and learn linux kernel. I
+read the kernel newbie documents. I have built and poked around the
+code around a bit.
 
-Good catch Dan, thanks. Applied to for-4.2/upstream-fixes.
+I will like to contribute to Kernel Janitor to-do list. I am not sure
+what is pending and what is being done. Could someone point me to
+current to-do list and some pointers to get started as kernel janitor?
 
--- 
-Jiri Kosina
-SUSE Labs
+Regards,
+Vineet
