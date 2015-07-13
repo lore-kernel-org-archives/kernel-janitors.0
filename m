@@ -1,7 +1,7 @@
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Date: Mon, 13 Jul 2015 09:46:25 +0000
-Subject: RE: [PATCH] parisc: mm: Fix a memory leak related to pmd not attached to the pgd
-Message-Id: <20150713094625.79B6EA4@black.fi.intel.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
+Date: Mon, 13 Jul 2015 12:48:49 +0000
+Subject: Re: [PATCH] parisc: mm: Fix a memory leak related to pmd not attached to the pgd
+Message-Id: <alpine.LRH.2.02.1507130846400.9026@file01.intranet.prod.int.rdu2.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1436779963-4286-1-git-send-email-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <1436779963-4286-1-git-send-email-christophe.jaillet@wanadoo.fr>
@@ -9,9 +9,12 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jejb@parisc-linux.org, deller@gmx.de, mpatocka@redhat.com, kirill.shutemov@linux.intel.com, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: jejb@parisc-linux.org, deller@gmx.de, kirill.shutemov@linux.intel.com, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Christophe JAILLET wrote:
+
+
+On Mon, 13 Jul 2015, Christophe JAILLET wrote:
+
 > Commit 0e0da48dee8d ("parisc: mm: don't count preallocated pmds")
 > introduced a memory leak.
 > 
@@ -21,7 +24,11 @@ Christophe JAILLET wrote:
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Mikulas Patocka <mpatocka@redhat.com>
+
+also add this, so that it is backported to 4.0 and 4.2:
+Cc: stable@vger.kernel.org	# 4.0+
+Fixes: 0e0da48dee8d
 
 > ---
 > This patch is *untested* as I don't have the hardware to test it.
