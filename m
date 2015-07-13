@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 08 Jul 2015 18:40:16 +0000
+From: Alexandre Courbot <gnurou@gmail.com>
+Date: Mon, 13 Jul 2015 14:16:17 +0000
 Subject: Re: [PATCH] GPU-DRM-Tegra: Delete an unnecessary check before the function call "vunmap"
-Message-Id: <559D6E90.1040005@users.sourceforge.net>
+Message-Id: <CAAVeFu+7cF-b0zneA7BTmNcanH9tnbzV32XOFiCbxnK4kz8buw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,43 +20,29 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net> <54D335FA.6020101@users.sourceforge.net>
-In-Reply-To: <54D335FA.6020101@users.sourceforge.net>
+ <559D6E90.1040005@users.sourceforge.net>
+In-Reply-To: <559D6E90.1040005@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Thierry Reding <thierry.reding@gmail.com>
+Cc: =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Julia Lawall <julia.lawall@lip6.fr>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 5 Feb 2015 10:12:51 +0100
-> 
-> The vunmap() function performs also input parameter validation.
-> Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/tegra/fb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-> index e9c715d..803598e 100644
-> --- a/drivers/gpu/drm/tegra/fb.c
-> +++ b/drivers/gpu/drm/tegra/fb.c
-> @@ -66,7 +66,7 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
->  		struct tegra_bo *bo = fb->planes[i];
->  
->  		if (bo) {
-> -			if (bo->pages && bo->vaddr)
-> +			if (bo->pages)
->  				vunmap(bo->vaddr);
->  
->  			drm_gem_object_unreference_unlocked(&bo->gem);
-> 
+On Thu, Jul 9, 2015 at 3:40 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Thu, 5 Feb 2015 10:12:51 +0100
+>>
+>> The vunmap() function performs also input parameter validation.
+>> Thus the test around the call is not needed.
+>>
+>> This issue was detected by using the Coccinelle software.
 
-Would you like to integrate this update suggestion
-into another source code repository?
+The fix is correct, but the subject looks weird.
+"GPU-DRM-Tegra:"should be "drm/tegra:".
 
-Regards,
-Markus
+Otherwise,
+
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+
+Maybe Thierry can take it through his tree once this issue is addressed?
