@@ -1,66 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 16 Jul 2015 06:40:30 +0000
-Subject: Re: ARM: OMAP2: Delete unnecessary checks before three function calls
-Message-Id: <55A751DE.5080301@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 13 Jul 2015 18:51:32 +0000
+Subject: [PATCH 1/2] staging: unisys: Use kzalloc instead of kmalloc/memset
+Message-Id: <0d6047c2d4dc00ac399310ea33f0c15aef83253b.1436813029.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54705EC3.90708@users.sourceforge.net>
- <55928739.5040809@users.sourceforge.net>
- <alpine.DEB.2.02.1507160548040.32764@utopia.booyaka.com>
-In-Reply-To: <alpine.DEB.2.02.1507160548040.32764@utopia.booyaka.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: benjamin.romer@unisys.com, david.kershner@unisys.com, gregkh@linuxfoundation.org
+Cc: sparmaintainer@unisys.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> I have to say, I am a bit leery about applying the omap_device.c and
-> omap_hwmod.c changes, since the called functions -- omap_device_delete()
-> and clk_disable() -- don't explicitly document that NULLs are allowed
-> to be passed in.
+This patch turns a kmalloc/memset into an equivalent kzalloc.
 
-How are the chances to improve documentation around such implementation details?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/staging/unisys/visorbus/visorbus_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/staging/unisys/visorbus/visorbus_main.c b/drivers/staging/unisys/visorbus/visorbus_main.c
+index 6db4719..bbc907d 100644
+--- a/drivers/staging/unisys/visorbus/visorbus_main.c
++++ b/drivers/staging/unisys/visorbus/visorbus_main.c
+@@ -281,12 +281,11 @@ devmajorminor_create_file(struct visor_device *dev, const char *name,
+ 		rc = -ENOMEM;
+ 		goto away;
+ 	}
+-	myattr = kmalloc(sizeof(*myattr), GFP_KERNEL);
++	myattr = kzalloc(sizeof(*myattr), GFP_KERNEL);
+ 	if (!myattr) {
+ 		rc = -ENOMEM;
+ 		goto away;
+ 	}
+-	memset(myattr, 0, sizeof(struct devmajorminor_attribute));
+ 	myattr->show = DEVMAJORMINOR_ATTR;
+ 	myattr->store = NULL;
+ 	myattr->slot = slot;
+-- 
+2.1.4
 
-> So there's no explicit contract that callers can rely upon, to (at least
-> in theory) prevent those internal NULL pointer checks from being removed.
-
-Are there any additional variations to consider for source files from different
-processor architectures?
-
-
-> So I would suggest that those two functions' kerneldoc be patched first to 
-> explicitly state that passing in a NULL pointer is allowed.
-
-Should my static source code analysis approach help you any more to clarify
-further open issues?
-
-
-> So I'll apply that change now for v4.3, touching up the commit message accordingly.
-
-Thanks for your constructive feedback.
-
-
->>  arch/arm/mach-omap2/omap_device.c | 3 +--
->>  arch/arm/mach-omap2/omap_hwmod.c  | 5 +----
->>  arch/arm/mach-omap2/timer.c       | 3 +--
-
-Did Tony Lindgren pick a similar update suggestion up, too?
-https://lkml.org/lkml/2015/7/15/112
-
-Regards,
-Markus
