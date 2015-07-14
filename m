@@ -1,29 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 03 Jul 2015 16:28:19 +0000
-Subject: Re: [PATCH] netlink: Delete an unnecessary check before the function call "module_put"
-Message-Id: <20150703.092819.95179652477512417.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 14 Jul 2015 07:25:16 +0000
+Subject: [PATCH] aic7xxx: replace kmalloc/strcpy by kstrdup
+Message-Id: <4159f01e6450cee8093e7d6a0d979bbeab8243d0.1436858599.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<55956AC1.9000902@users.sourceforge.net>
-In-Reply-To: <55956AC1.9000902@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: hare@suse.de, JBottomley@odin.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Jul 2015 18:45:53 +0200
+This replaces kmalloc + strcpy by an equivalent call to kstrdup.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 2 Jul 2015 18:38:12 +0200
-> 
-> The module_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/aic7xxx/aic79xx_osm.c | 3 +--
+ drivers/scsi/aic7xxx/aic7xxx_osm.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-Applied.
+diff --git a/drivers/scsi/aic7xxx/aic79xx_osm.c b/drivers/scsi/aic7xxx/aic79xx_osm.c
+index ce96a0b..ae78e6d 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_osm.c
++++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
+@@ -1250,9 +1250,8 @@ ahd_linux_register_host(struct ahd_softc *ahd, struct scsi_host_template *templa
+ 	ahd_set_unit(ahd, ahd_linux_unit++);
+ 	ahd_unlock(ahd, &s);
+ 	sprintf(buf, "scsi%d", host->host_no);
+-	new_name = kmalloc(strlen(buf) + 1, GFP_ATOMIC);
++	new_name = kstrdup(buf, GFP_ATOMIC);
+ 	if (new_name != NULL) {
+-		strcpy(new_name, buf);
+ 		ahd_set_name(ahd, new_name);
+ 	}
+ 	host->unique_id = ahd->unit;
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm.c b/drivers/scsi/aic7xxx/aic7xxx_osm.c
+index a2f2c77..ba59947 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_osm.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_osm.c
+@@ -1114,9 +1114,8 @@ ahc_linux_register_host(struct ahc_softc *ahc, struct scsi_host_template *templa
+ 	ahc_set_unit(ahc, ahc_linux_unit++);
+ 	ahc_unlock(ahc, &s);
+ 	sprintf(buf, "scsi%d", host->host_no);
+-	new_name = kmalloc(strlen(buf) + 1, GFP_ATOMIC);
++	new_name = kstrdup(buf, GFP_ATOMIC);
+ 	if (new_name != NULL) {
+-		strcpy(new_name, buf);
+ 		ahc_set_name(ahc, new_name);
+ 	}
+ 	host->unique_id = ahc->unit;
+-- 
+2.1.4
+
