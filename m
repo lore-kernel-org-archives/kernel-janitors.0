@@ -1,46 +1,27 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 17 Jul 2015 20:30:29 +0000
-Subject: Re: [PATCH] ALSA: sparc: Add missing kfree in error path
-Message-Id: <s5hegk634t6.wl-tiwai@suse.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 16 Jul 2015 08:21:02 +0000
+Subject: Re: [patch v2 1/2] pinctrl: samsung: don't truncate the last char
+Message-Id: <CACRpkdbG8Qm6tyrNqJJBb=cg9jR=CZsdhTksn_7XQXHGf5fNng@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1437158001-29890-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1437158001-29890-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <20150619085203.GO28762@mwanda>
+	<20150622151223.GA14156@mwanda>
+In-Reply-To: <20150622151223.GA14156@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: perex@perex.cz, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 17 Jul 2015 20:33:21 +0200,
-Christophe JAILLET wrote:
-> 
-> If 'of_ioremap' fails, then 'amd' should be freed, otherwise, there is a
-> memory leak.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Mon, Jun 22, 2015 at 5:12 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Applied, thanks.
+> We were allocating enough space because sizeof("-grp") and
+> sizeof("-mux") are both equal to 5 but in the snprintf() we only allowed
+> for 4 characters so the last 'p' and 'x' characters were truncated.
+>
+> The allocate and sprintf can be done in one step with the kasprintf().
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+Patch applied with Krzysztof's review tag.
 
-Takashi
-
-> ---
->  sound/sparc/amd7930.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/sparc/amd7930.c b/sound/sparc/amd7930.c
-> index 1b1a89e..784ceb8 100644
-> --- a/sound/sparc/amd7930.c
-> +++ b/sound/sparc/amd7930.c
-> @@ -956,6 +956,7 @@ static int snd_amd7930_create(struct snd_card *card,
->  	if (!amd->regs) {
->  		snd_printk(KERN_ERR
->  			   "amd7930-%d: Unable to map chip registers.\n", dev);
-> +		kfree(amd);
->  		return -EIO;
->  	}
->  
-> -- 
-> 2.1.4
-> 
-> 
+Yours,
+Linus Walleij
