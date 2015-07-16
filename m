@@ -1,51 +1,53 @@
-From: Archit Taneja <architt@codeaurora.org>
-Date: Fri, 31 Jul 2015 09:58:53 +0000
-Subject: Re: [patch] drm/omap: checking for NULL instead of IS_ERR()
-Message-Id: <55BB440D.8060603@codeaurora.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 16 Jul 2015 20:17:13 +0000
+Subject: [PATCH] Bluetooth: cmtp: Do not use list_for_each_safe when not needed
+Message-Id: <7a32b5e113be6344c436791e5ce7c17e8f2b4e68.1437077656.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150731093330.GA11127@mwanda>
-In-Reply-To: <20150731093330.GA11127@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Fabian Frederick <fabf@skynet.be>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thierry Reding <treding@nvidia.com>
+To: marcel@holtmann.org, gustavo@padovan.org, johan.hedberg@gmail.com, davem@davemloft.net
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi,
+There is no need to use the safe version of list_for_each here.
 
-On 07/31/2015 03:03 PM, Dan Carpenter wrote:
-> We recently start using the new drm_fb_helper functions but the error
-> handling needs to be updated as well to check for IS_ERR() instead of
-> NULL.
->
-> Fixes: 377eb331375f ('drm/omap: Use new drm_fb_helper functions')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> index 08ef090..b8e4cde 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> @@ -180,9 +180,9 @@ static int omap_fbdev_create(struct drm_fb_helper *helper,
->   	mutex_lock(&dev->struct_mutex);
->
->   	fbi = drm_fb_helper_alloc_fbi(helper);
-> -	if (!fbi) {
-> +	if (IS_ERR(fbi)) {
->   		dev_err(dev->dev, "failed to allocate fb info\n");
-> -		ret = -ENOMEM;
-> +		ret = PTR_ERR(fbi);
->   		goto fail_unlock;
->   	}
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/bluetooth/cmtp/capi.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-I was going to post out a v3 for this set. I'll squash this and mention
-the fix in the changelog.
-
-Thanks,
-Archit
-
->
->
-
+diff --git a/net/bluetooth/cmtp/capi.c b/net/bluetooth/cmtp/capi.c
+index b0c6c6a..4c5e3e0 100644
+--- a/net/bluetooth/cmtp/capi.c
++++ b/net/bluetooth/cmtp/capi.c
+@@ -100,9 +100,9 @@ static void cmtp_application_del(struct cmtp_session *session, struct cmtp_appli
+ static struct cmtp_application *cmtp_application_get(struct cmtp_session *session, int pattern, __u16 value)
+ {
+ 	struct cmtp_application *app;
+-	struct list_head *p, *n;
++	struct list_head *p;
+ 
+-	list_for_each_safe(p, n, &session->applications) {
++	list_for_each(p, &session->applications) {
+ 		app = list_entry(p, struct cmtp_application, list);
+ 		switch (pattern) {
+ 		case CMTP_MSGNUM:
+@@ -511,13 +511,13 @@ static int cmtp_proc_show(struct seq_file *m, void *v)
+ 	struct capi_ctr *ctrl = m->private;
+ 	struct cmtp_session *session = ctrl->driverdata;
+ 	struct cmtp_application *app;
+-	struct list_head *p, *n;
++	struct list_head *p;
+ 
+ 	seq_printf(m, "%s\n\n", cmtp_procinfo(ctrl));
+ 	seq_printf(m, "addr %s\n", session->name);
+ 	seq_printf(m, "ctrl %d\n", session->num);
+ 
+-	list_for_each_safe(p, n, &session->applications) {
++	list_for_each(p,  &session->applications) {
+ 		app = list_entry(p, struct cmtp_application, list);
+ 		seq_printf(m, "appl %d -> %d\n", app->appl, app->mapping);
+ 	}
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
+
