@@ -1,29 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 03 Jul 2015 16:28:04 +0000
-Subject: Re: [PATCH] net-ipv6: Delete an unnecessary check before the function call "free_percpu"
-Message-Id: <20150703.092804.2186056253816861418.davem@davemloft.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 16 Jul 2015 08:22:33 +0000
+Subject: Re: [patch v2 2/2] pinctrl: samsung: remove "out of memory" messages
+Message-Id: <CACRpkdaKn+vv2Mf=G=YpisokpvQfxGaHMkgA4aGNpL9-zr9Vqg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<55954E1F.6090205@users.sourceforge.net>
-In-Reply-To: <55954E1F.6090205@users.sourceforge.net>
+References: <20150619085203.GO28762@mwanda>
+	<20150622151315.GB14156@mwanda>
+In-Reply-To: <20150622151315.GB14156@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, jmorris@namei.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: linux-arm-kernel@lists.infradead.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 02 Jul 2015 16:43:43 +0200
+On Mon, Jun 22, 2015 at 5:13 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 2 Jul 2015 16:30:24 +0200
-> 
-> The free_percpu() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Checkpatch.pl complains about these:
+>
+> WARNING: Possible unnecessary 'out of memory' message
+>
+> The messages use a little extra RAM and they add a few extra lines of
+> code.  We're probably never going to hit these out of memory situations
+> but if we did then kmalloc() has pretty good error messages built-in.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+Patch applied with Krzysztof's review tag.
+
+Yours,
+Linus Walleij
