@@ -1,82 +1,73 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 17 Jul 2015 16:27:09 +0000
-Subject: [PATCH] ocfs2: Do not log twice error messages
-Message-Id: <1437150429-26443-1-git-send-email-christophe.jaillet@wanadoo.fr>
+Date: Fri, 17 Jul 2015 07:20:00 +0000
+Subject: [PATCH 2/2] powerpc/nvram: Fix function name in some errors messages.
+Message-Id: <1571506ab2693a3128625c94f4f89dd802bb6dd2.1437117145.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4fd8daff1bb5daad99d909aa75ff5c2702c4c490.1437117145.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4fd8daff1bb5daad99d909aa75ff5c2702c4c490.1437117145.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mfasheh@suse.com, jlbec@evilplan.org
-Cc: ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-'o2hb_map_slot_data' and 'o2hb_populate_slot_data' are called from
-only one place, in 'o2hb_region_dev_write'.
-Return value is checked and 'mlog_errno' is called to log a message if
-it is not 0.
-So, there is no need to call 'mlog_errno' directly within these functions.
-This would result on logging the message twice.
+'nvram_create_os_partition' should be 'nvram_create_partition'.
+Use __func__ to have it right, as done elsewhere in this file.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/ocfs2/cluster/heartbeat.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ arch/powerpc/kernel/nvram_64.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-index 79f335d..a20d490 100644
---- a/fs/ocfs2/cluster/heartbeat.c
-+++ b/fs/ocfs2/cluster/heartbeat.c
-@@ -1583,17 +1583,13 @@ static int o2hb_map_slot_data(struct o2hb_region *reg)
- 	struct o2hb_disk_slot *slot;
- 
- 	reg->hr_tmp_block = kmalloc(reg->hr_block_bytes, GFP_KERNEL);
--	if (reg->hr_tmp_block = NULL) {
--		mlog_errno(-ENOMEM);
-+	if (reg->hr_tmp_block = NULL)
+diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
+index 574ff59..4dab163 100644
+--- a/arch/powerpc/kernel/nvram_64.c
++++ b/arch/powerpc/kernel/nvram_64.c
+@@ -1065,7 +1065,7 @@ loff_t __init nvram_create_partition(const char *name, int sig,
+ 	/* Create our OS partition */
+ 	new_part = kmalloc(sizeof(*new_part), GFP_KERNEL);
+ 	if (!new_part) {
+-		pr_err("nvram_create_os_partition: kmalloc failed\n");
++		pr_err("%s: kmalloc failed\n", __func__);
  		return -ENOMEM;
--	}
+ 	}
  
- 	reg->hr_slots = kcalloc(reg->hr_blocks,
- 				sizeof(struct o2hb_disk_slot), GFP_KERNEL);
--	if (reg->hr_slots = NULL) {
--		mlog_errno(-ENOMEM);
-+	if (reg->hr_slots = NULL)
- 		return -ENOMEM;
--	}
+@@ -1077,8 +1077,7 @@ loff_t __init nvram_create_partition(const char *name, int sig,
  
- 	for(i = 0; i < reg->hr_blocks; i++) {
- 		slot = &reg->hr_slots[i];
-@@ -1609,17 +1605,13 @@ static int o2hb_map_slot_data(struct o2hb_region *reg)
+ 	rc = nvram_write_header(new_part);
+ 	if (rc <= 0) {
+-		pr_err("nvram_create_os_partition: nvram_write_header "
+-		       "failed (%d)\n", rc);
++		pr_err("%s: nvram_write_header failed (%d)\n", __func__, rc);
+ 		kfree(new_part);
+ 		return rc;
+ 	}
+@@ -1091,8 +1090,8 @@ loff_t __init nvram_create_partition(const char *name, int sig,
+ 		free_part->header.checksum = nvram_checksum(&free_part->header);
+ 		rc = nvram_write_header(free_part);
+ 		if (rc <= 0) {
+-			pr_err("nvram_create_os_partition: nvram_write_header "
+-			       "failed (%d)\n", rc);
++			pr_err("%s: nvram_write_header failed (%d)\n",
++			       __func__, rc);
+ 			return rc;
+ 		}
+ 	} else {
+@@ -1106,11 +1105,12 @@ loff_t __init nvram_create_partition(const char *name, int sig,
+ 	     tmp_index += NVRAM_BLOCK_LEN) {
+ 		rc = ppc_md.nvram_write(nv_init_vals, NVRAM_BLOCK_LEN, &tmp_index);
+ 		if (rc <= 0) {
+-			pr_err("nvram_create_partition: nvram_write failed (%d)\n", rc);
++			pr_err("%s: nvram_write failed (%d)\n",
++			       __func__, rc);
+ 			return rc;
+ 		}
+ 	}
+-	
++
+ 	return new_part->index + NVRAM_HEADER_LEN;
+ }
  
- 	reg->hr_slot_data = kcalloc(reg->hr_num_pages, sizeof(struct page *),
- 				    GFP_KERNEL);
--	if (!reg->hr_slot_data) {
--		mlog_errno(-ENOMEM);
-+	if (!reg->hr_slot_data)
- 		return -ENOMEM;
--	}
- 
- 	for(i = 0; i < reg->hr_num_pages; i++) {
- 		page = alloc_page(GFP_KERNEL);
--		if (!page) {
--			mlog_errno(-ENOMEM);
-+		if (!page)
- 			return -ENOMEM;
--		}
- 
- 		reg->hr_slot_data[i] = page;
- 
-@@ -1651,10 +1643,8 @@ static int o2hb_populate_slot_data(struct o2hb_region *reg)
- 	struct o2hb_disk_heartbeat_block *hb_block;
- 
- 	ret = o2hb_read_slots(reg, reg->hr_blocks);
--	if (ret) {
--		mlog_errno(ret);
-+	if (ret)
- 		goto out;
--	}
- 
- 	/* We only want to get an idea of the values initially in each
- 	 * slot, so we do no verification - o2hb_check_slot will
 -- 
 2.1.4
 
