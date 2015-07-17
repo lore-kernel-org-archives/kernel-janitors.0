@@ -1,47 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 19 Jul 2015 10:52:17 +0000
-Subject: [patch 1/2 v2] Staging: rtl8192u: pointer math bug in ieee80211_rx_DELBA()
-Message-Id: <20150719105217.GA8410@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 17 Jul 2015 07:31:03 +0000
+Subject: [PATCH] ia64: sn2: Add missing kfree in error path
+Message-Id: <1437118263-14342-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, fenghua.yu@intel.com
+Cc: linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Smatch complains because "delba" is a pointer to struct
-rtl_80211_hdr_3addr so the "delba += sizeof(struct rtl_80211_hdr_3addr);"
-is clearly wrong.  We are reading nonsense data from beyond the end of
-the buffer and could oops if that memory isn't mapped.
+If 'ia64_sn_hwperf_op' fails, then 'ptdata' should be freed, otherwise,
+there is a memory leak.
 
-It turns out the next two statements are also wrong. We should delete
-the += sizeof() statement and "delba+2" should be "&delba->payload[2]".
-"pReasonCode" isn't used so I deleted that.
-
-With-Fix-From: Mateusz Kulikowski <mateusz.kulikowski@gmail.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-v2: The first patch wasn't complete.
+This patch is *untested* because I have no way to trigger the error.
+---
+ arch/ia64/sn/kernel/sn2/sn_hwperf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-index 9ff8e05..d4215fd 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-@@ -571,7 +571,6 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
- {
- 	 struct rtl_80211_hdr_3addr *delba = NULL;
- 	PDELBA_PARAM_SET	pDelBaParamSet = NULL;
--	u16			*pReasonCode = NULL;
- 	u8			*dst = NULL;
- 
- 	if (skb->len < sizeof(struct rtl_80211_hdr_3addr) + 6) {
-@@ -592,9 +591,7 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
- 	IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA|IEEE80211_DL_BA, skb->data, skb->len);
- 	delba = (struct rtl_80211_hdr_3addr *)skb->data;
- 	dst = (u8 *)(&delba->addr2[0]);
--	delba += sizeof(struct rtl_80211_hdr_3addr);
--	pDelBaParamSet = (PDELBA_PARAM_SET)(delba+2);
--	pReasonCode = (u16 *)(delba+4);
-+	pDelBaParamSet = (PDELBA_PARAM_SET)&delba->payload[2];
- 
- 	if(pDelBaParamSet->field.Initiator = 1)
- 	{
+diff --git a/arch/ia64/sn/kernel/sn2/sn_hwperf.c b/arch/ia64/sn/kernel/sn2/sn_hwperf.c
+index b999257..9e1694f 100644
+--- a/arch/ia64/sn/kernel/sn2/sn_hwperf.c
++++ b/arch/ia64/sn/kernel/sn2/sn_hwperf.c
+@@ -499,8 +499,10 @@ static int sn_topology_show(struct seq_file *s, void *d)
+ 		e = ia64_sn_hwperf_op(sn_hwperf_master_nasid,
+ 				      SN_HWPERF_ENUM_PORTS, obj->id, sz,
+ 				      (u64) ptdata, 0, 0, NULL);
+-		if (e != SN_HWPERF_OP_OK)
++		if (e != SN_HWPERF_OP_OK) {
++			kfree(ptdata);
+ 			return -EINVAL;
++		}
+ 		for (ordinal=0, p=objs; p != obj; p++) {
+ 			if (!SN_HWPERF_FOREIGN(p))
+ 				ordinal += p->ports;
+-- 
+2.1.4
+
