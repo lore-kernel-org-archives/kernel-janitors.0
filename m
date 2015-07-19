@@ -1,32 +1,46 @@
-From: Simon Horman <horms@verge.net.au>
-Date: Thu, 09 Jul 2015 01:41:02 +0000
-Subject: Re: [PATCH] net-ipvs: Delete an unnecessary check before the function call "module_put"
-Message-Id: <20150709014102.GB14843@verge.net.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 19 Jul 2015 10:52:33 +0000
+Subject: [patch 2/2 v2] Staging: rtl8192e: pointer math bug in rtllib_rx_DELBA()
+Message-Id: <20150719105233.GB8410@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <546BA253.6030100@users.sourceforge.net>
- <20141119134040.GA12270@salvia>
- <55955471.9000501@users.sourceforge.net>
-In-Reply-To: <55955471.9000501@users.sourceforge.net>
+In-Reply-To: <55A962E4.2070708@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "David S. Miller" <davem@davemloft.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Wensong Zhang <wensong@linux-vs.org>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mateusz Kulikowski <mateusz.kulikowski@gmail.com>, Vaishali Thakkar <vthakkar1994@gmail.com>, Mahati Chamarthy <mahati.chamarthy@gmail.com>, Chen Gang <gang.chen.5i5j@gmail.com>, Matthew Casey <mdcasey@chabloom.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 02, 2015 at 05:10:41PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 2 Jul 2015 17:00:14 +0200
-> 
-> The module_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
+The pointer math here was totally wrong so we were reading nonsense
+information from beyond the end of the buffer.  It could lead to an oops
+if that memory wasn't mapped.
 
-Thanks, applied to ipvs-next for v4.3.
+The "pReasonCode" pointer is assigned but never used so I deleted it.
+
+With-Fix-From: Mateusz Kulikowski <mateusz.kulikowski@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Mateusz noticed some more pointer math bugs on the next lines.
+
+diff --git a/drivers/staging/rtl8192e/rtl819x_BAProc.c b/drivers/staging/rtl8192e/rtl819x_BAProc.c
+index 60f536c..78ede4a 100644
+--- a/drivers/staging/rtl8192e/rtl819x_BAProc.c
++++ b/drivers/staging/rtl8192e/rtl819x_BAProc.c
+@@ -428,7 +428,6 @@ int rtllib_rx_DELBA(struct rtllib_device *ieee, struct sk_buff *skb)
+ {
+ 	 struct rtllib_hdr_3addr *delba = NULL;
+ 	union delba_param_set *pDelBaParamSet = NULL;
+-	u16 *pReasonCode = NULL;
+ 	u8 *dst = NULL;
+ 
+ 	if (skb->len < sizeof(struct rtllib_hdr_3addr) + 6) {
+@@ -453,9 +452,7 @@ int rtllib_rx_DELBA(struct rtllib_device *ieee, struct sk_buff *skb)
+ #endif
+ 	delba = (struct rtllib_hdr_3addr *)skb->data;
+ 	dst = (u8 *)(&delba->addr2[0]);
+-	delba += sizeof(struct rtllib_hdr_3addr);
+-	pDelBaParamSet = (union delba_param_set *)(delba+2);
+-	pReasonCode = (u16 *)(delba+4);
++	pDelBaParamSet = (union delba_param_set *)&delba->payload[2];
+ 
+ 	if (pDelBaParamSet->field.Initiator = 1) {
+ 		struct rx_ts_record *pRxTs;
