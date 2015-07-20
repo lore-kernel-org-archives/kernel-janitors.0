@@ -1,58 +1,35 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Thu, 30 Jul 2015 11:51:20 +0000
-Subject: Re: [PATCH] Bluetooth: cmtp: Do not use list_for_each_safe when not needed
-Message-Id: <F6E17164-28FF-436C-900A-EFC1DF3D5749@holtmann.org>
+From: Jens Axboe <axboe@fb.com>
+Date: Mon, 20 Jul 2015 14:58:42 +0000
+Subject: Re: block: make /sys/block/<dev>/queue/discard_max_bytes writeable
+Message-Id: <55AD0CA2.30400@fb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7a32b5e113be6344c436791e5ce7c17e8f2b4e68.1437077656.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7a32b5e113be6344c436791e5ce7c17e8f2b4e68.1437077656.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+On 07/20/2015 08:59 AM, Dan Carpenter wrote:
+> Hello Jens Axboe,
+>
+> The patch d45a0f150e9d: "block: make
+> /sys/block/<dev>/queue/discard_max_bytes writeable" from Jul 16,
+> 2015, leads to the following static checker warning:
+>
+> 	block/blk-sysfs.c:152 queue_discard_max_hw_show()
+> 	warn: should 'q->limits.max_hw_discard_sectors << 9' be a 64 bit type?
+>
+> block/blk-sysfs.c
+>     148  static ssize_t queue_discard_max_hw_show(struct request_queue *q, char *page)
+>     149  {
+>     150          unsigned long long val;
+>     151
+>     152          val = q->limits.max_hw_discard_sectors << 9;
+>                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> It definitely looks like this can wrap.
 
-> There is no need to use the safe version of list_for_each here.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> net/bluetooth/cmtp/capi.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/bluetooth/cmtp/capi.c b/net/bluetooth/cmtp/capi.c
-> index b0c6c6a..4c5e3e0 100644
-> --- a/net/bluetooth/cmtp/capi.c
-> +++ b/net/bluetooth/cmtp/capi.c
-> @@ -100,9 +100,9 @@ static void cmtp_application_del(struct cmtp_session *session, struct cmtp_appli
-> static struct cmtp_application *cmtp_application_get(struct cmtp_session *session, int pattern, __u16 value)
-> {
-> 	struct cmtp_application *app;
-> -	struct list_head *p, *n;
-> +	struct list_head *p;
-> 
-> -	list_for_each_safe(p, n, &session->applications) {
-> +	list_for_each(p, &session->applications) {
-> 		app = list_entry(p, struct cmtp_application, list);
-> 		switch (pattern) {
-> 		case CMTP_MSGNUM:
-> @@ -511,13 +511,13 @@ static int cmtp_proc_show(struct seq_file *m, void *v)
-> 	struct capi_ctr *ctrl = m->private;
-> 	struct cmtp_session *session = ctrl->driverdata;
-> 	struct cmtp_application *app;
-> -	struct list_head *p, *n;
-> +	struct list_head *p;
-> 
-> 	seq_printf(m, "%s\n\n", cmtp_procinfo(ctrl));
-> 	seq_printf(m, "addr %s\n", session->name);
-> 	seq_printf(m, "ctrl %d\n", session->num);
-> 
-> -	list_for_each_safe(p, n, &session->applications) {
-> +	list_for_each(p,  &session->applications) {
+Yeah it can, that should be cast to unsigned long long for the shift. 
+I'll make that change.
 
-you have two spaces here. I fixed that and applied the patch.
-
-Regards
-
-Marcel
+-- 
+Jens Axboe
 
