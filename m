@@ -1,32 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Jul 2015 09:08:44 +0000
-Subject: Re: [PATCH] aic7xxx: replace kmalloc/strcpy by kstrdup
-Message-Id: <20150714090844.GE4341@mwanda>
+Date: Fri, 24 Jul 2015 11:05:33 +0000
+Subject: [patch] ext4: memory leak on error in ext4_symlink()
+Message-Id: <20150724110533.GA14424@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4159f01e6450cee8093e7d6a0d979bbeab8243d0.1436858599.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <4159f01e6450cee8093e7d6a0d979bbeab8243d0.1436858599.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: hare@suse.de, JBottomley@odin.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jul 14, 2015 at 09:25:16AM +0200, Christophe JAILLET wrote:
-> --- a/drivers/scsi/aic7xxx/aic79xx_osm.c
-> +++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
-> @@ -1250,9 +1250,8 @@ ahd_linux_register_host(struct ahd_softc *ahd, struct scsi_host_template *templa
->  	ahd_set_unit(ahd, ahd_linux_unit++);
->  	ahd_unlock(ahd, &s);
->  	sprintf(buf, "scsi%d", host->host_no);
-> -	new_name = kmalloc(strlen(buf) + 1, GFP_ATOMIC);
-> +	new_name = kstrdup(buf, GFP_ATOMIC);
->  	if (new_name != NULL) {
-> -		strcpy(new_name, buf);
->  		ahd_set_name(ahd, new_name);
->  	}
+We should release "sd" before returning.
 
-Remove the curly braces.  And below as well.
+Fixes: 0fa12ad1b285 ('ext4: Handle error from dquot_initialize()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index d3ff837..9f61e76 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3084,7 +3084,7 @@ static int ext4_symlink(struct inode *dir,
+ 
+ 	err = dquot_initialize(dir);
+ 	if (err)
+-		return err;
++		goto err_free_sd;
+ 
+ 	if ((disk_link.len > EXT4_N_BLOCKS * 4)) {
+ 		/*
