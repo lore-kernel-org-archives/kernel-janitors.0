@@ -1,23 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 14 Jul 2015 22:42:23 +0000
-Subject: Re: [patch] net/xen-netback: off by one in BUG_ON() condition
-Message-Id: <20150714.154223.1886620792340165985.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 25 Jul 2015 00:03:38 +0000
+Subject: [patch] ALSA: hda - fix cs4210_spdif_automute()
+Message-Id: <20150725000337.GA14581@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150711222055.GA11708@mwanda>
-In-Reply-To: <20150711222055.GA11708@mwanda>
+References: <s5hoaj1v89z.wl-tiwai@suse.de>
+In-Reply-To: <s5hoaj1v89z.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ian.campbell@citrix.com, zoltan.kiss@citrix.com, wei.liu2@citrix.com, xen-devel@lists.xenproject.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 12 Jul 2015 01:20:55 +0300
+Smatch complains that we have nested checks for "spdif_present".  It
+turns out the current behavior isn't correct, we should remove the first
+check and keep the second.
 
-> The > should be >=.  I also added spaces around the '-' operations so
-> the code is a little more consistent and matches the condition better.
-> 
-> Fixes: f53c3fe8dad7 ('xen-netback: Introduce TX grant mapping')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 1077a024812d ('ALSA: hda - Use generic parser for Cirrus codec driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied and queued up for -stable, thanks.
+diff --git a/sound/pci/hda/patch_cirrus.c b/sound/pci/hda/patch_cirrus.c
+index 25ccf78..584a034 100644
+--- a/sound/pci/hda/patch_cirrus.c
++++ b/sound/pci/hda/patch_cirrus.c
+@@ -999,9 +999,7 @@ static void cs4210_spdif_automute(struct hda_codec *codec,
+ 
+ 	spec->spdif_present = spdif_present;
+ 	/* SPDIF TX on/off */
+-	if (spdif_present)
+-		snd_hda_set_pin_ctl(codec, spdif_pin,
+-				    spdif_present ? PIN_OUT : 0);
++	snd_hda_set_pin_ctl(codec, spdif_pin, spdif_present ? PIN_OUT : 0);
+ 
+ 	cs_automute(codec);
+ }
