@@ -1,49 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 21 Jul 2015 11:04:57 +0000
-Subject: Re: [patch] ASoC: max98925: reading beyond the end of the array
-Message-Id: <20150721110457.GT11162@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="oEj3/8+YnogYHQRs"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 27 Jul 2015 22:42:28 +0000
+Subject: [patch -master] netfilter: xt_CT: checking for IS_ERR() instead of NULL
+Message-Id: <20150727224228.GA10367@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150721085527.GA22070@mwanda>
- <20150721104350.GP11162@sirena.org.uk>
- <20150721105743.GO5422@mwanda>
-In-Reply-To: <20150721105743.GO5422@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Anish Kumar <yesanishhere@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Axel Lin <axel.lin@ingics.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We recently changed this from nf_conntrack_alloc() to nf_ct_tmpl_alloc()
+so the error handling needs to changed to check for NULL instead of
+IS_ERR().
 
---oEj3/8+YnogYHQRs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: 0838aa7fcfcd ('netfilter: fix netns dependencies with conntrack templates')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Tue, Jul 21, 2015 at 01:57:43PM +0300, Dan Carpenter wrote:
-> On Tue, Jul 21, 2015 at 11:43:50AM +0100, Mark Brown wrote:
-> > On Tue, Jul 21, 2015 at 11:55:27AM +0300, Dan Carpenter wrote:
-> > > Debug prints are seldom useful and this one has an annoying thing where
-> > > it reads one space beyond the end of the array on error.
-
-> > It's a pretty big stretch to say that debug prints are rarely useful...
-
-> I asked Anish if it was worth fixing and he said to delete it.
-
-Sure, but you're making a general comment about debug prints being
-seldom useful rather than just talking about this one.
-
---oEj3/8+YnogYHQRs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVridZAAoJECTWi3JdVIfQ+OMH/jpQMS5idHCPfkTYyC6kFuLs
-fiUA4CdNWuObghXEjCmbVyWEDEnujw4fqkXjE+2eQwlE9LpsoM9fNJO93WFBwtAn
-mfgL6rog0c/YG6+/2yZJhQmr07ys1viO7L14AxPdTgKMRBIvkes4Wx9hXOzHwRXn
-xpr7VmwAfBSseqpI6srtNU+JIsxHquhjO2VJpZbsv2s6RrKemYAjAHs6t3Eu2oNs
-pTf8qqO5bxJrsmPws7TNQVGhCZAOdOAX7XVMuBLCs0Ax55E+rl9js9rib28Q5tZ3
-/3CwGi5dBWHFN7c/CE36u/UUcOpszUGJHI6+Nb0S5zJmpw/yWiF8CRAuMiIq7MA=
-=BZjE
------END PGP SIGNATURE-----
-
---oEj3/8+YnogYHQRs--
+diff --git a/net/netfilter/xt_CT.c b/net/netfilter/xt_CT.c
+index c663003..43ddeee 100644
+--- a/net/netfilter/xt_CT.c
++++ b/net/netfilter/xt_CT.c
+@@ -202,9 +202,10 @@ static int xt_ct_tg_check(const struct xt_tgchk_param *par,
+ 		goto err1;
+ 
+ 	ct = nf_ct_tmpl_alloc(par->net, info->zone, GFP_KERNEL);
+-	ret = PTR_ERR(ct);
+-	if (IS_ERR(ct))
++	if (!ct) {
++		ret = -ENOMEM;
+ 		goto err2;
++	}
+ 
+ 	ret = 0;
+ 	if ((info->ct_events || info->exp_events) &&
