@@ -1,39 +1,31 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Thu, 30 Jul 2015 09:31:40 +0000
-Subject: Re: [patch] staging: comedi: das16: remove a duplicate condition
-Message-Id: <55B9EEFC.9010204@mev.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 28 Jul 2015 15:48:21 +0000
+Subject: [patch 1/2] Staging: rtl8192e: array overflow in rtl92e_set_swcam()
+Message-Id: <20150728154821.GA25739@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150729213632.GE21784@mwanda>
-In-Reply-To: <20150729213632.GE21784@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 29/07/15 22:36, Dan Carpenter wrote:
-> We checked that "it->options[3]" was non-zero on the line before so
-> there is no need to check again.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/staging/comedi/drivers/das16.c b/drivers/staging/comedi/drivers/das16.c
-> index d7cf4b1..056bca9 100644
-> --- a/drivers/staging/comedi/drivers/das16.c
-> +++ b/drivers/staging/comedi/drivers/das16.c
-> @@ -1032,8 +1032,7 @@ static int das16_attach(struct comedi_device *dev, struct comedi_devconfig *it)
->
->   	/*  check that clock setting is valid */
->   	if (it->options[3]) {
-> -		if (it->options[3] != 0 &&
-> -		    it->options[3] != 1 && it->options[3] != 10) {
-> +		if (it->options[3] != 1 && it->options[3] != 10) {
->   			dev_err(dev->class_dev,
->   				"Invalid option. Master clock must be set to 1 or 10 (MHz)\n");
->   			return -EINVAL;
->
+"EntryNo" is comes from the user in the ioctl and it's a number between
+0-255.  The ieee->swcamtable[] array only has 32 elements so it can
+result in memory corruption.
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk> )=-
--=(                          Web: http://www.mev.co.uk/  )=-
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
+index dc8c7a8..c146b7e 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
+@@ -78,6 +78,10 @@ void rtl92e_set_swcam(struct net_device *dev, u8 EntryNo, u8 KeyIndex,
+ 	RT_TRACE(COMP_DBG,
+ 		 "======>%s():EntryNo is %d,KeyIndex is %d,KeyType is %d,is_mesh is %d\n",
+ 		 __func__, EntryNo, KeyIndex, KeyType, is_mesh);
++
++	if (EntryNo >= TOTAL_CAM_ENTRY)
++		return;
++
+ 	if (!is_mesh) {
+ 		ieee->swcamtable[EntryNo].bused = true;
+ 		ieee->swcamtable[EntryNo].key_index = KeyIndex;
