@@ -1,40 +1,53 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Wed, 15 Jul 2015 06:41:33 +0000
-Subject: Re: [PATCH 0/2] ARM-OMAP2+: Deletion of unnecessary checks before two function calls
-Message-Id: <20150715064132.GZ17550@atomide.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Jul 2015 21:29:23 +0000
+Subject: [patch] usb: gadget: fotg210-udc: remove duplicate conditions
+Message-Id: <20150729212923.GB21784@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <558BE713.1020409@users.sourceforge.net>
-In-Reply-To: <558BE713.1020409@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-* SF Markus Elfring <elfring@users.sourceforge.net> [150625 04:35]:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 25 Jun 2015 13:24:35 +0200
-> 
-> Some functions which release a system resource tolerate the passing
-> of a null pointer. I do not see a need because of this fact
-> that a function caller repeats a corresponding check.
-> 
-> Markus Elfring (2):
->   Delete a check before the function call "omap_device_delete"
->   Delete a check before the function call "of_node_put"
-> 
->  arch/arm/mach-omap2/omap_device.c | 3 +--
->  arch/arm/mach-omap2/timer.c       | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
+We handle the "if (!req->req.length)" condition at the start of the
+function and return.  We can delete this dead code.
 
-Applying both into omap-for-v4.3/soc thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This code doesn't change the current behavior but it's also possible
+that the current code is buggy.  Perhaps we should delete the earlier
+check?
 
-Tony
+diff --git a/drivers/usb/gadget/udc/fotg210-udc.c b/drivers/usb/gadget/udc/fotg210-udc.c
+index 1137e33..a99ed6d 100644
+--- a/drivers/usb/gadget/udc/fotg210-udc.c
++++ b/drivers/usb/gadget/udc/fotg210-udc.c
+@@ -384,25 +384,15 @@ static void fotg210_ep0_queue(struct fotg210_ep *ep,
+ 		return;
+ 	}
+ 	if (ep->dir_in) { /* if IN */
+-		if (req->req.length) {
+-			fotg210_start_dma(ep, req);
+-		} else {
+-			pr_err("%s : req->req.length = 0x%x\n",
+-			       __func__, req->req.length);
+-		}
++		fotg210_start_dma(ep, req);
+ 		if ((req->req.length = req->req.actual) ||
+ 		    (req->req.actual < ep->ep.maxpacket))
+ 			fotg210_done(ep, req, 0);
+ 	} else { /* OUT */
+-		if (!req->req.length) {
+-			fotg210_done(ep, req, 0);
+-		} else {
+-			u32 value = ioread32(ep->fotg210->reg +
+-						FOTG210_DMISGR0);
++		u32 value = ioread32(ep->fotg210->reg + FOTG210_DMISGR0);
+ 
+-			value &= ~DMISGR0_MCX_OUT_INT;
+-			iowrite32(value, ep->fotg210->reg + FOTG210_DMISGR0);
+-		}
++		value &= ~DMISGR0_MCX_OUT_INT;
++		iowrite32(value, ep->fotg210->reg + FOTG210_DMISGR0);
+ 	}
+ }
+ 
