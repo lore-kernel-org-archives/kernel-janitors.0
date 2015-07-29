@@ -1,129 +1,44 @@
-From: "Gang He" <ghe@suse.com>
-Date: Tue, 28 Jul 2015 03:15:43 +0000
-Subject: Re: [patch -next] ocfs2: scheduling in atomic in ocfs2_filecheck_store()
-Message-Id: <55B7645F020000F90000FE93@relay2.provo.novell.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Jul 2015 21:36:05 +0000
+Subject: [patch] [SCSI] atp870u: 64 bit bug in probe()
+Message-Id: <20150729213605.GD21784@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150727082723.GA3310@mwanda>
-	<20150727140405.c8281f48d81bd33c6ef957a8@linux-foundation.org>
-In-Reply-To: <20150727140405.c8281f48d81bd33c6ef957a8@linux-foundation.org>
+References: <20130904095002.GC13892@elgon.mountain>
+In-Reply-To: <20130904095002.GC13892@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: "James E.J. Bottomley" <JBottomley@odin.com>
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Andrew and Dan,
+On 64 bit CPUs there is a memory corruption bug on probe().  It should
+be a u32 pointer instead of an unsigned long pointer or we write past
+the end of the setupdata[] array.
 
-Thank for your efforts.
-It is better than before.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Someone reported in 2003 that probe has a NULL deref so maybe it's
+related to this memory corruption?
+https://bugzilla.kernel.org/show_bug.cgi?id18
 
-Thanks a lot.
-Gang
+If only we had applied this patch when I originally sent it two years
+ago, then it would only be 10 years too late instead of 12!  :P
 
-
->>> 
-> On Mon, 27 Jul 2015 11:27:23 +0300 Dan Carpenter <dan.carpenter@oracle.com> 
-> wrote:
-> 
->> We're hold "spin_lock(&ent->fs_fcheck->fc_lock)" so the allocation has
->> to be GFP_ATOMIC.
->> 
->> I changed the sizeof() because otherwise the line goes over the 80
->> character limit and also the new way is prefered kernel style.
->> 
->> Fixes: e467fe5da718 ('ocfs2: sysfile interfaces for online file check')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> 
->> diff --git a/fs/ocfs2/filecheck.c b/fs/ocfs2/filecheck.c
->> index 3332af1..9613663 100644
->> --- a/fs/ocfs2/filecheck.c
->> +++ b/fs/ocfs2/filecheck.c
->> @@ -544,7 +544,7 @@ static ssize_t ocfs2_filecheck_store(struct kobject 
-> *kobj,
->>  			BUG_ON(!ocfs2_filecheck_erase_entry(ent));
->>  		}
->>  
->> -		entry = kmalloc(sizeof(struct ocfs2_filecheck_entry), GFP_NOFS);
->> +		entry = kmalloc(sizeof(*entry), GFP_ATOMIC);
->>  		if (entry) {
->>  			entry->fe_ino = args.fa_ino;
->>  			entry->fe_type = args.fa_type;
-> 
-> GFP_NOFS is more reliable than GFP_ATOMIC, so we should retain that if
-> possible.  And it's pretty easy to do here.
-> 
-> Gang, please carefully review and test?
-> 
-> 
-> --- a/fs/ocfs2/filecheck.c~ocfs2-sysfile-interfaces-for-online-file-check-fix-2
-> +++ a/fs/ocfs2/filecheck.c
-> @@ -501,7 +501,7 @@ static ssize_t ocfs2_filecheck_store(str
->  				const char *buf, size_t count)
->  {
->  	struct ocfs2_filecheck_args args;
-> -	struct ocfs2_filecheck_entry *entry = NULL;
-> +	struct ocfs2_filecheck_entry *entry;
->  	struct ocfs2_filecheck_sysfs_entry *ent;
->  	ssize_t ret = 0;
->  
-> @@ -527,12 +527,19 @@ static ssize_t ocfs2_filecheck_store(str
->  		return (!ret ? count : ret);
->  	}
->  
-> +	entry = kmalloc(sizeof(*entry), GFP_NOFS);
-> +	if (!entry) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
->  	spin_lock(&ent->fs_fcheck->fc_lock);
->  	if ((ent->fs_fcheck->fc_size >= ent->fs_fcheck->fc_max) &&
-> -		(ent->fs_fcheck->fc_done = 0)) {
-> -		mlog(ML_ERROR,
-> -		"Online file check queue(%u) is full\n",
-> -		ent->fs_fcheck->fc_max);
-> +			(ent->fs_fcheck->fc_done = 0)) {
-> +		mlog(ML_ERROR, "Online file check queue(%u) is full\n",
-> +				ent->fs_fcheck->fc_max);
-> +		kfree(entry);
-> +		entry = NULL;
->  		ret = -EBUSY;
->  	} else {
->  		if ((ent->fs_fcheck->fc_size >= ent->fs_fcheck->fc_max) &&
-> @@ -544,26 +551,21 @@ static ssize_t ocfs2_filecheck_store(str
->  			BUG_ON(!ocfs2_filecheck_erase_entry(ent));
->  		}
->  
-> -		entry = kmalloc(sizeof(struct ocfs2_filecheck_entry), GFP_NOFS);
-> -		if (entry) {
-> -			entry->fe_ino = args.fa_ino;
-> -			entry->fe_type = args.fa_type;
-> -			entry->fe_done = 0;
-> -			entry->fe_status = OCFS2_FILECHECK_ERR_INPROGRESS;
-> -			list_add_tail(&entry->fe_list,
-> -					&ent->fs_fcheck->fc_head);
-> -
-> -			ent->fs_fcheck->fc_size++;
-> -			ret = count;
-> -		} else {
-> -			ret = -ENOMEM;
-> -		}
-> +		entry->fe_ino = args.fa_ino;
-> +		entry->fe_type = args.fa_type;
-> +		entry->fe_done = 0;
-> +		entry->fe_status = OCFS2_FILECHECK_ERR_INPROGRESS;
-> +		list_add_tail(&entry->fe_list, &ent->fs_fcheck->fc_head);
-> +
-> +		ent->fs_fcheck->fc_size++;
-> +		ret = count;
->  	}
->  	spin_unlock(&ent->fs_fcheck->fc_lock);
->  
->  	if (entry)
->  		ocfs2_filecheck_handle_entry(ent, entry);
->  
-> +out:
->  	ocfs2_filecheck_sysfs_put(ent);
->  	return ret;
->  }
-> _
-
+diff --git a/drivers/scsi/atp870u.c b/drivers/scsi/atp870u.c
+index 05301bc..62acabd 100644
+--- a/drivers/scsi/atp870u.c
++++ b/drivers/scsi/atp870u.c
+@@ -2791,11 +2791,11 @@ next_fblk_885:
+ 		    p->global_map[m]= 0;
+ 		    for (k=0; k < 4; k++) {
+ 			outw(n++,base_io + 0x3c);
+-			((unsigned long *)&setupdata[m][0])[k]=inl(base_io + 0x38);
++			((u32 *)&setupdata[m][0])[k]=inl(base_io + 0x38);
+ 		    }
+ 		    for (k=0; k < 4; k++) {
+ 			outw(n++,base_io + 0x3c);
+-			((unsigned long *)&p->sp[m][0])[k]=inl(base_io + 0x38);
++			((u32 *)&p->sp[m][0])[k]=inl(base_io + 0x38);
+ 		    }
+ 		    n += 8;
+ 		}
