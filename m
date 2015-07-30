@@ -1,63 +1,47 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 09 Jul 2015 08:34:53 +0000
-Subject: Re: [PATCH] SCSI-libcxgbi: Deletion of an unnecessary check before the function call "dst_release"
-Message-Id: <559E322D.30705@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Jul 2015 19:12:55 +0000
+Subject: re: stmmac: add ipq806x glue layer
+Message-Id: <20150730191219.GA13023@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546EF5CC.1050308@users.sourceforge.net>
-In-Reply-To: <546EF5CC.1050308@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 21 Nov 2014 09:15:10 +0100
-> 
-> The dst_release() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/scsi/cxgbi/libcxgbi.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
-> index addd1dd..95d2654 100644
-> --- a/drivers/scsi/cxgbi/libcxgbi.c
-> +++ b/drivers/scsi/cxgbi/libcxgbi.c
-> @@ -798,8 +798,7 @@ void cxgbi_sock_closed(struct cxgbi_sock *csk)
->  		return;
->  	if (csk->saddr.sin_port)
->  		sock_put_port(csk);
-> -	if (csk->dst)
-> -		dst_release(csk->dst);
-> +	dst_release(csk->dst);
->  	csk->cdev->csk_release_offload_resources(csk);
->  	cxgbi_sock_set_state(csk, CTP_CLOSED);
->  	cxgbi_inform_iscsi_conn_closing(csk);
-> 
+Hello Mathieu Olivari,
 
-Would you like to integrate this update suggestion
-into another source code repository?
+The patch b1c17215d718: "stmmac: add ipq806x glue layer" from May 27,
+2015, leads to the following static checker warning:
 
-Regards,
-Markus
+	drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c:314 ipq806x_gmac_probe()
+	warn: double left shift '1 << (1 << gmac->id)'
+
+drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+   312          switch (gmac->phy_mode) {
+   313          case PHY_INTERFACE_MODE_RGMII:
+   314                  val |= NSS_COMMON_CLK_SRC_CTRL_RGMII(gmac->id) <<
+   315                          NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
+
+It's very strange to shift to do this.  My guess is we should delete the
+NSS_COMMON_CLK_SRC_CTRL_RGMII macro and just use:
+
+			val |= NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
+
+   316                  break;
+   317          case PHY_INTERFACE_MODE_SGMII:
+   318                  val |= NSS_COMMON_CLK_SRC_CTRL_SGMII(gmac->id) <<
+   319                          NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
+
+
+Same here.
+
+
+   320                  break;
+   321          default:
+   322                  dev_err(&pdev->dev, "Unsupported PHY mode: \"%s\"\n",
+   323                          phy_modes(gmac->phy_mode));
+   324                  return -EINVAL;
+   325          }
+
+regards,
+dan carpenter
