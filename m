@@ -1,55 +1,34 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Date: Mon, 06 Jul 2015 11:41:32 +0000
-Subject: Re: [PATCH] perf probe: Delete an unnecessary check before the function call "strfilter__delete"
-Message-Id: <559A696C.4030704@hitachi.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Jul 2015 09:33:30 +0000
+Subject: [patch] drm/omap: checking for NULL instead of IS_ERR()
+Message-Id: <20150731093330.GA11127@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546A2C5C.8080800@users.sourceforge.net> <5597751A.5000506@users.sourceforge.net>
-In-Reply-To: <5597751A.5000506@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Fabian Frederick <fabf@skynet.be>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thierry Reding <treding@nvidia.com>
 
-On 2015/07/04 14:54, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 4 Jul 2015 07:44:22 +0200
-> 
-> The strfilter__delete() function tests whether its argument is NULL and
-> then returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
+We recently start using the new drm_fb_helper functions but the error
+handling needs to be updated as well to check for IS_ERR() instead of
+NULL.
 
-This looks OK for me.
+Fixes: 377eb331375f ('drm/omap: Use new drm_fb_helper functions')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  tools/perf/builtin-probe.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
-> index 1272559..b81cec3 100644
-> --- a/tools/perf/builtin-probe.c
-> +++ b/tools/perf/builtin-probe.c
-> @@ -297,8 +297,7 @@ static void cleanup_params(void)
->  		clear_perf_probe_event(params.events + i);
->  	line_range__clear(&params.line_range);
->  	free(params.target);
-> -	if (params.filter)
-> -		strfilter__delete(params.filter);
-> +	strfilter__delete(params.filter);
->  	memset(&params, 0, sizeof(params));
->  }
->  
-> 
-
-
--- 
-Masami HIRAMATSU
-Linux Technology Research Center, System Productivity Research Dept.
-Center for Technology Innovation - Systems Engineering
-Hitachi, Ltd., Research & Development Group
-E-mail: masami.hiramatsu.pt@hitachi.com
+diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+index 08ef090..b8e4cde 100644
+--- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
++++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+@@ -180,9 +180,9 @@ static int omap_fbdev_create(struct drm_fb_helper *helper,
+ 	mutex_lock(&dev->struct_mutex);
+ 
+ 	fbi = drm_fb_helper_alloc_fbi(helper);
+-	if (!fbi) {
++	if (IS_ERR(fbi)) {
+ 		dev_err(dev->dev, "failed to allocate fb info\n");
+-		ret = -ENOMEM;
++		ret = PTR_ERR(fbi);
+ 		goto fail_unlock;
+ 	}
+ 
