@@ -1,41 +1,35 @@
-From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
-Date: Sun, 16 Aug 2015 02:52:24 +0000
-Subject: Re: [patch] cxlflash: off by one bug in cxlflash_show_port_status()
-Message-Id: <EC66FD3E-7BCB-4647-BAB7-875942932DAE@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 01 Aug 2015 12:33:26 +0000
+Subject: [patch] rds: fix an integer overflow test in rds_info_getsockopt()
+Message-Id: <20150801123326.GA5075@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150814203525.GA27158@mwanda>
-In-Reply-To: <20150814203525.GA27158@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <JBottomley@odin.com>, Brian King <brking@linux.vnet.ibm.com>, Michael Neuling <mikey@neuling.org>, "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chien Yen <chien.yen@oracle.com>, Andy Grover <agrover@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> On Aug 14, 2015, at 3:35 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> The > should be >= or we read one element past the end of the array.
+"len" is a signed integer.  We check that len is not negative, so it
+goes from zero to INT_MAX.  PAGE_SIZE is unsigned long so the comparison
+is type promoted to unsigned long.  ULONG_MAX - 4095 is a higher than
+INT_MAX so the condition can never be true.
 
-Dan - Good catch!
+I don't know if this is harmful but it seems safe to limit "len" to
+INT_MAX - 4095.
 
-Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
+Fixes: a8c879a7ee98 ('RDS: Info and stats')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> Fixes: c21e0bbfc485 ('cxlflash: Base support for IBM CXL Flash Adapter')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Fixes: c21e0bbfc485 ('cxlflash: Base support for IBM CXL Flash Adapter')
-> diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
-> index 0720d2f..fd70101 100644
-> --- a/drivers/scsi/cxlflash/main.c
-> +++ b/drivers/scsi/cxlflash/main.c
-> @@ -539,7 +539,7 @@ static ssize_t cxlflash_show_port_status(struct device *dev,
-> 	u64 *fc_regs;
-> 
-> 	rc = kstrtouint((attr->attr.name + 4), 10, &port);
-> -	if (rc || (port > NUM_FC_PORTS))
-> +	if (rc || (port >= NUM_FC_PORTS))
-> 		return 0;
-> 
-> 	fc_regs = &afu->afu_map->global.fc_regs[port][0];
-> 
-
+diff --git a/net/rds/info.c b/net/rds/info.c
+index 9a6b4f6..140a44a 100644
+--- a/net/rds/info.c
++++ b/net/rds/info.c
+@@ -176,7 +176,7 @@ int rds_info_getsockopt(struct socket *sock, int optname, char __user *optval,
+ 
+ 	/* check for all kinds of wrapping and the like */
+ 	start = (unsigned long)optval;
+-	if (len < 0 || len + PAGE_SIZE - 1 < len || start + len < start) {
++	if (len < 0 || len > INT_MAX - PAGE_SIZE + 1 || start + len < start) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
