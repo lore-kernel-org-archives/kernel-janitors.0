@@ -1,46 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 21 Aug 2015 12:13:50 +0000
-Subject: Re: [patch] ALSA: hdsp: silence and underflow warning
-Message-Id: <s5hh9ns4z5t.wl-tiwai@suse.de>
+From: Joe Stringer <joestringer@nicira.com>
+Date: Mon, 03 Aug 2015 18:29:14 +0000
+Subject: Re: [patch -master] netfilter: xt_CT: checking for IS_ERR() instead of NULL
+Message-Id: <CANr6G5y1bO18L3bFuGs+=Dfszm0+voQtmz-u51nhGY0u5ebb-A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150821112534.GA983@mwanda>
-In-Reply-To: <20150821112534.GA983@mwanda>
+References: <20150727224228.GA10367@mwanda> <20150730115743.GA7077@salvia>
+In-Reply-To: <20150730115743.GA7077@salvia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, Linux Netdev List <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 21 Aug 2015 13:25:34 +0200,
-Dan Carpenter wrote:
-> 
-> I believe this probably cannot happen, as the code suggests.  There
-> would have to be an kcontrol->index.id which was zero, otherwise this
-> would be prevented in snd_ctl_find_id().  But snd_BUG_ON() is just a
-> WARN() or a no-op so static checkers complain that we keep on going with
-> a negative offset.  Let's just handle the error as well as printing
-> a warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 30 July 2015 at 04:57, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> On Tue, Jul 28, 2015 at 01:42:28AM +0300, Dan Carpenter wrote:
+>> We recently changed this from nf_conntrack_alloc() to nf_ct_tmpl_alloc()
+>> so the error handling needs to changed to check for NULL instead of
+>> IS_ERR().
+>>
+>> Fixes: 0838aa7fcfcd ('netfilter: fix netns dependencies with conntrack templates')
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> Applied, thanks.
+>
+> I have also appended this chunk, since synproxy is also affected:
+>
+> --- a/net/netfilter/nf_synproxy_core.c
+> +++ b/net/netfilter/nf_synproxy_core.c
+> @@ -353,7 +353,7 @@ static int __net_init synproxy_net_init(struct net *net)
+>         int err = -ENOMEM;
+>
+>         ct = nf_ct_tmpl_alloc(net, 0, GFP_KERNEL);
+> -       if (IS_ERR(ct)) {
+> +       if (!ct) {
+>                 err = PTR_ERR(ct);
+>                 goto err1;
+>         }
 
-Applied, thanks.
-
-
-Takashi
-
-> 
-> diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
-> index c19e021..468a95c 100644
-> --- a/sound/pci/rme9652/hdsp.c
-> +++ b/sound/pci/rme9652/hdsp.c
-> @@ -2806,7 +2806,8 @@ static int snd_hdsp_get_adat_sync_check(struct snd_kcontrol *kcontrol, struct sn
->  	struct hdsp *hdsp = snd_kcontrol_chip(kcontrol);
->  
->  	offset = ucontrol->id.index - 1;
-> -	snd_BUG_ON(offset < 0);
-> +	if (snd_BUG_ON(offset < 0))
-> +		return -EINVAL;
->  
->  	switch (hdsp->io_type) {
->  	case Digiface:
-> 
+Does PTR_ERR() implicitly interpret NULL as -ENOMEM? Seems like the
+fix applied here is a little different from the xt_CT fix.
