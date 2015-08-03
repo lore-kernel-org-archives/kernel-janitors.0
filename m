@@ -1,79 +1,20 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 24 Aug 2015 21:12:26 +0000
-Subject: [PATCH 1/2] pinctrl: qcom: ssbi: convert null test to IS_ERR test
-Message-Id: <1440450747-10080-2-git-send-email-Julia.Lawall@lip6.fr>
+From: <yuriydqs@rambler.ru>
+Date: Mon, 03 Aug 2015 00:09:47 +0000
+Subject: jzfy
+Message-Id: <UbdBkJZIKINRXsGOyMFljSJrp@xnuPHgqxZbcZZSxhHTJvBobFXaJ>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="maccyrillic"
+Content-Transfer-Encoding: base64
+To: kernel-janitors@vger.kernel.org
 
-Since commit 323de9efdf3e ("pinctrl: make pinctrl_register() return proper
-error code"), pinctrl_register returns an error code rather than NULL on
-failure.  Update some drivers that were introduced more recently.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e,e1,e2;
-@@
-
-e = pinctrl_register(...)
-... when != e = e1
-if (
--   e = NULL
-+   IS_ERR(e)
-   ) {
-     ...
-     return
--      e2
-+      PTR_ERR(e)
-     ;
-     }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |    4 ++--
- drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c  |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index c978b31..e1a3721 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -723,9 +723,9 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- #endif
- 
- 	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
--	if (!pctrl->pctrl) {
-+	if (IS_ERR(pctrl->pctrl)) {
- 		dev_err(&pdev->dev, "couldn't register pm8xxx gpio driver\n");
--		return -ENODEV;
-+		return PTR_ERR(pctrl->pctrl);
- 	}
- 
- 	pctrl->chip = pm8xxx_gpio_template;
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-index 2d1b69f..6652b8d 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-@@ -814,9 +814,9 @@ static int pm8xxx_mpp_probe(struct platform_device *pdev)
- #endif
- 
- 	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
--	if (!pctrl->pctrl) {
-+	if (IS_ERR(pctrl->pctrl)) {
- 		dev_err(&pdev->dev, "couldn't register pm8xxx mpp driver\n");
--		return -ENODEV;
-+		return PTR_ERR(pctrl->pctrl);
- 	}
- 
- 	pctrl->chip = pm8xxx_mpp_template;
-
+CuTu4fD76SDk5e38IQoKQuDsIO/w6Pjr7iDv8Ojj6+D45e3o5SDt4CDh5fHv6+Dy7fvpIOLl4ejt
+4PAg7+4g7/Du5ODm4Owg8u7i4PDu4iDo5yDK6PLg/y4KCk37IOL74fDg6+gg4uDxIPHw5eToIPL7
+8f/36CDv7vLl7fbo4Ov87fv1IOHo5+3l8ezl7e7iLCDy4Oog6uDqIPDg4e7y4CDiIOTg7e3u6SDo
+7eTz8fLw6Ogg8vDl4fPl8iD25evl8/Hy8OXs6+Xt7e7x8ugg6CDm5evg7ej/IOTu4eji4PL88f8g
+8eLu5ePuLiAgIGh0dHA6Ly92YXNvYnJhbC5ydQoKSODh7vAg7eAg7eD46CDq8/Dx+yDi8eUg5fnl
+IOHl8e/r4PLt++ksIO3l8iDx7Pvx6+Ag7vLq6+Dk++Lg8vwg7eAg7+7y7uwuCgoKClju8O745ekg
+wuDsIO3l5OXr6CEKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxp
+bmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdl
+IHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0
+cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
