@@ -1,61 +1,25 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Aug 2015 00:11:15 +0000
-Subject: [PATCH 04/11] fbdev: ssd1307fb: fix error return code
-Message-Id: <1440288682-12732-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 04 Aug 2015 22:49:59 +0000
+Subject: Re: stmmac: add ipq806x glue layer
+Message-Id: <20150804224959.GZ5096@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: kernel-janitors@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Propagate error code on failure.  Also changed %ld to %d in dev_err to use
-ret variable rather than putting two calls to PTR_ERR.
+On Tue, Aug 04, 2015 at 03:42:51PM -0700, Mathieu Olivari wrote:
+> Hi Dan,
+> You're right, that's a bug. The offset should be (x), and not (1 << x).
+> We could either redefine the macro to be (x), or we just use << gmac->id
+> directly without a macro.
+> The reason why we have NSS_COMMON_CLK_SRC_CTRL_RGMII &
+> NSS_COMMON_CLK_SRC_CTRL_SGMII macros is that the bit takes different values
+> depending on the port. I can post a patch today if you want.
 
-A simplified version of the semantic match that finds the first problem is as
-follows: (http://coccinelle.lip6.fr/)
+Yes, please.  If you could give me a Reported-by: Dan Carpenter
+<dan.carpenter@oracle.com> tag, I would be grateful.  Thanks!
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+regards,
+dan carpenter
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/video/fbdev/ssd1307fb.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
-index 3e153c0..1611215 100644
---- a/drivers/video/fbdev/ssd1307fb.c
-+++ b/drivers/video/fbdev/ssd1307fb.c
-@@ -656,8 +656,9 @@ static int ssd1307fb_probe(struct i2c_client *client,
- 	bl = backlight_device_register(bl_name, &client->dev, par,
- 				       &ssd1307fb_bl_ops, NULL);
- 	if (IS_ERR(bl)) {
--		dev_err(&client->dev, "unable to register backlight device: %ld\n",
--			PTR_ERR(bl));
-+		ret = PTR_ERR(bl);
-+		dev_err(&client->dev, "unable to register backlight device: %d\n",
-+			ret);
- 		goto bl_init_error;
- 	}
- 
