@@ -1,17 +1,17 @@
-From: roopa <roopa@cumulusnetworks.com>
-Date: Tue, 04 Aug 2015 13:40:21 +0000
+From: Robert Shearman <rshearma@brocade.com>
+Date: Tue, 04 Aug 2015 13:53:02 +0000
 Subject: Re: [patch] mpls: small cleanup in inet/inet6_fib_lookup_dev()
-Message-Id: <55C0C0C5.1040901@cumulusnetworks.com>
+Message-Id: <55C0C3BE.8010007@brocade.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150804074422.GB10867@mwanda>
 In-Reply-To: <20150804074422.GB10867@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, "Eric W. Biederman" <ebiederm@xmission.com>, Robert Shearman <rshearma@brocade.com>, Tom Herbert <tom@herbertland.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Roopa Prabhu <roopa@cumulusnetworks.com>, Tom Herbert <tom@herbertland.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 8/4/15, 12:44 AM, Dan Carpenter wrote:
+On 04/08/15 08:44, Dan Carpenter wrote:
 > We recently changed this code from returning NULL to returning ERR_PTR.
 > There are some left over NULL assignments which we can remove.  We can
 > preserve the error code from ip_route_output() instead of always
@@ -20,5 +20,5 @@ On 8/4/15, 12:44 AM, Dan Carpenter wrote:
 > direct returns.
 >
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+
+Acked-by: Robert Shearman <rshearma@brocade.com>
