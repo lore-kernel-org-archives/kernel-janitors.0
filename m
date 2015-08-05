@@ -1,24 +1,23 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date: Thu, 13 Aug 2015 12:22:34 +0000
-Subject: Re: [patch] paride: fix a return in pd_detect()
-Message-Id: <20150813121034.GA4938@sudip-pc>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, 05 Aug 2015 22:10:58 +0000
+Subject: Re: [PATCH v3] firmware: Fix memory leak in error path
+Message-Id: <20150805221058.GA22337@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150812210843.GC8068@mwanda>
-In-Reply-To: <20150812210843.GC8068@mwanda>
+References: <1433569695-19348-1-git-send-email-firogm@gmail.com>
+In-Reply-To: <1433569695-19348-1-git-send-email-firogm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tim Waugh <tim@cyberelk.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 13, 2015 at 12:08:43AM +0300, Dan Carpenter wrote:
-> In this function returning non-zero means the hardware was detected and
-> zero means it wasn't.  This is a failure path so we should return zero.
+On Sat, Jun 06, 2015 at 01:48:15PM +0800, Firo Yang wrote:
+> Eliminate a memory leak by unifying the error handling code
+> at the end of the function.
 > 
-> Fixes: 9f4ba6b05869 ('paride: use new parport device model')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Firo Yang <firogm@gmail.com>
+> Acked-by: Ming Lei <ming.lei@canonical.com>
+> ---
+>  drivers/base/firmware_class.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
 
-Acked-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-
-regards
-sudip
+Doesn't apply :(
