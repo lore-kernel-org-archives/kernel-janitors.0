@@ -1,51 +1,29 @@
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 12 Aug 2015 09:22:59 +0000
-Subject: Re: [fuse-devel] [patch] fuse: fix an error code in fuse_lookup_name()
-Message-Id: <CAJfpegtnyn1hdhrutvM6XxYvnpnZ7pGGxea+3QMdim=w0zcr1A@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 08 Aug 2015 19:16:42 +0000
+Subject: [patch] iio: accel: sca3000: memory corruption in sca3000_read_first_n_hw_rb()
+Message-Id: <20150808191642.GD8034@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150808130134.GA8034@mwanda>
-In-Reply-To: <20150808130134.GA8034@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Octavian Purdila <octavian.purdila@intel.com>, Aybuke Ozdemir <aybuke.147@gmail.com>, Josselin Costanzi <josselin.costanzi@mobile-devices.fr>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-> On 08/08/2015 06:01 AM, Dan Carpenter wrote:
->>
->> This is a static checker fix because we check "outarg->nodeid" here and
->> then again a in the next if statement.  The difference is that for this
->> first one we don't set the error code.
+"num_read" is in byte units but we are write u16s so we end up write
+twice as much as intended.
 
-Except for the fact that zero error code is correct (as the comment
-indicates) and EIO would be wrong.  So the patch actually breaks the
-code, not fixes it.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Miklos
-
->>
->> Fixes: c180eebe1390 ('fuse: add fuse_lookup_name() helper')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
->> index 5e2e087..225fc703 100644
->> --- a/fs/fuse/dir.c
->> +++ b/fs/fuse/dir.c
->> @@ -306,8 +306,7 @@ int fuse_lookup_name(struct super_block *sb, u64
->> nodeid, struct qstr *name,
->>         fuse_lookup_init(fc, &args, nodeid, name, outarg);
->>         err = fuse_simple_request(fc, &args);
->> -       /* Zero nodeid is same as -ENOENT, but with valid timeout */
->> -       if (err || !outarg->nodeid)
->> +       if (err)
->>                 goto out_put_forget;
->>         err = -EIO;
->>
->>
->> ------------------------------------------------------------------------------
->> _______________________________________________
->> fuse-devel mailing list
->> fuse-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/fuse-devel
->>
->
+diff --git a/drivers/staging/iio/accel/sca3000_ring.c b/drivers/staging/iio/accel/sca3000_ring.c
+index 23685e7..bd2c69f 100644
+--- a/drivers/staging/iio/accel/sca3000_ring.c
++++ b/drivers/staging/iio/accel/sca3000_ring.c
+@@ -116,7 +116,7 @@ static int sca3000_read_first_n_hw_rb(struct iio_buffer *r,
+ 	if (ret)
+ 		goto error_ret;
+ 
+-	for (i = 0; i < num_read; i++)
++	for (i = 0; i < num_read / sizeof(u16); i++)
+ 		*(((u16 *)rx) + i) = be16_to_cpup((__be16 *)rx + i);
+ 
+ 	if (copy_to_user(buf, rx, num_read))
