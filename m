@@ -1,45 +1,34 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Thu, 13 Aug 2015 20:31:50 +0000
-Subject: Re: [patch -next] bpf: off by one in check_map_func_compatibility()
-Message-Id: <55CCFEB6.3080502@iogearbox.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 08 Aug 2015 19:15:25 +0000
+Subject: [patch 1/2 -mainline] cxgb4: missing curly braces in t4_setup_debugfs()
+Message-Id: <20150808191525.GB8034@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150813202747.GA6478@mwanda>
-In-Reply-To: <20150813202747.GA6478@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alexei Starovoitov <ast@kernel.org>, Kaixu Xia <xiakaixu@huawei.com>
+To: Hariprasad S <hariprasad@chelsio.com>
 Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/13/2015 10:27 PM, Dan Carpenter wrote:
-> The loop iterates one space too far, so we might read beyond the end of
-> the func_limit[] array.
->
-> Fixes: 35578d798400 ('bpf: Implement function bpf_perf_event_read() that get the selected hardware PMU conuter')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There were missing curly braces so it means we call add_debugfs_mem()
+unintentionally.
 
-Thanks for the fix, Dan!
+Fixes: 3ccc6cf74d8c ('cxgb4: Adds support for T6 adapter')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-There's however already one queued up here:
-
-https://git.kernel.org/cgit/linux/kernel/git/davem/net-next.git/commit/?id0d8b335a9beb234fd0ed9a15aa6a47f47fd771
-
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 48e1c71..ed12e38 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -853,7 +853,7 @@ static int check_map_func_compatibility(struct bpf_map *map, int func_id)
->   	if (!map)
->   		return 0;
->
-> -	for (i = 0; i <= ARRAY_SIZE(func_limit); i++) {
-> +	for (i = 0; i < ARRAY_SIZE(func_limit); i++) {
->   		bool_map = (map->map_type = func_limit[i].map_type);
->   		bool_func = (func_id = func_limit[i].func_id);
->   		/* only when map & func pair match it can continue.
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+index b657734..9e0b670 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+@@ -2665,10 +2665,11 @@ int t4_setup_debugfs(struct adapter *adap)
+ 					EXT_MEM1_SIZE_G(size));
+ 		}
+ 	} else {
+-		if (i & EXT_MEM_ENABLE_F)
++		if (i & EXT_MEM_ENABLE_F) {
+ 			size = t4_read_reg(adap, MA_EXT_MEMORY_BAR_A);
+ 			add_debugfs_mem(adap, "mc", MEM_MC,
+ 					EXT_MEM_SIZE_G(size));
++		}
+ 	}
+ 
+ 	de = debugfs_create_file_size("flash", S_IRUSR, adap->debugfs_root, adap,
