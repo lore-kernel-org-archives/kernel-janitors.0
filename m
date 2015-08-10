@@ -1,39 +1,53 @@
-From: <Woojung.Huh@microchip.com>
-Date: Mon, 03 Aug 2015 16:07:55 +0000
-Subject: RE: Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver
-Message-Id: <9235D6609DB808459E95D78E17F2E43D53A3E4@CHN-SV-EXMX02.mchp-main.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Aug 2015 21:34:17 +0000
+Subject: [patch] ext4: simplify some code in read_mmp_block()
+Message-Id: <20150810213416.GB31724@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150803153921.GA13117@mwanda>
-In-Reply-To: <20150803153921.GA13117@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks. I'll do it.
+My static checker complains because it is not necessary to test
+"if (*bh)" when we just tested "if (!*bh)" on the lines before.
+We can remove the condition and pull everything in one indent level.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Monday, August 03, 2015 12:06 PM
-> To: Woojung Huh - C21699
-> Cc: kernel-janitors@vger.kernel.org
-> Subject: Re: Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet
-> device driver
-> 
-> On Mon, Aug 03, 2015 at 03:48:25PM +0000, Woojung.Huh@microchip.com
-> wrote:
-> > Hi Dan,
-> >
-> > Thanks for comments.
-> > I'll look into it and get back to you.
-> >
-> > Where do I post patches?
-> >
-> 
-> To netdev and Dave Miller.  But if you could give me a
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com> tag, I would
-> appreciate it.
-> 
-> regards,
-> dan carpenter
+Then we have another "if (unlikely(!*bh))" check and the only way that
+can be true is if the "if (!buffer_uptodate(*bh))" condition was true so
+we can combine them together.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/ext4/mmp.c b/fs/ext4/mmp.c
+index 8313ca3..736f12e 100644
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -80,18 +80,15 @@ static int read_mmp_block(struct super_block *sb, struct buffer_head **bh,
+ 		*bh = sb_getblk(sb, mmp_block);
+ 	if (!*bh)
+ 		return -ENOMEM;
+-	if (*bh) {
+-		get_bh(*bh);
+-		lock_buffer(*bh);
+-		(*bh)->b_end_io = end_buffer_read_sync;
+-		submit_bh(READ_SYNC | REQ_META | REQ_PRIO, *bh);
+-		wait_on_buffer(*bh);
+-		if (!buffer_uptodate(*bh)) {
+-			brelse(*bh);
+-			*bh = NULL;
+-		}
+-	}
+-	if (unlikely(!*bh)) {
++
++	get_bh(*bh);
++	lock_buffer(*bh);
++	(*bh)->b_end_io = end_buffer_read_sync;
++	submit_bh(READ_SYNC | REQ_META | REQ_PRIO, *bh);
++	wait_on_buffer(*bh);
++	if (!buffer_uptodate(*bh)) {
++		brelse(*bh);
++		*bh = NULL;
+ 		ext4_warning(sb, "Error while reading MMP block %llu",
+ 			     mmp_block);
+ 		return -EIO;
