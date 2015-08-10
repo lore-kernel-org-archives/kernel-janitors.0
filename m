@@ -1,70 +1,42 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 25 Aug 2015 15:26:57 +0000
-Subject: Re: [PATCH 06/11] mmc: usdhi6rol0: fix error return code
-Message-Id: <CAPDyKFq06+rb12D1N59dKbojm1N+1WwbXUFrvRvktzDFjSV_TQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 10 Aug 2015 21:45:03 +0000
+Subject: [patch] iwlwifi: mvm: fix a range check in debugfs code
+Message-Id: <20150810214503.GC31724@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1440288682-12732-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440288682-12732-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On 23 August 2015 at 02:11, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> Propagate error code on failure.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> identifier ret; expression e1,e2;
-> @@
-> (
-> if (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The &mvm->tof_data.range_req.ap[] array has IWL_MVM_TOF_MAX_APS elements
+so the check should be >= instead of >.  Also the test can underflow so
+I have changed "i" to unsigned.
 
-Thanks, applied for next!
+Fixes: ce7929186a39 ('wlwifi: mvm: add basic Time of Flight (802.11mc FTM) support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Kind regards
-Uffe
-
-
->
-> ---
->  drivers/mmc/host/usdhi6rol0.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
-> index 54b082b..99f894c 100644
-> --- a/drivers/mmc/host/usdhi6rol0.c
-> +++ b/drivers/mmc/host/usdhi6rol0.c
-> @@ -1734,8 +1734,10 @@ static int usdhi6_probe(struct platform_device *pdev)
->         }
->
->         host->clk = devm_clk_get(dev, NULL);
-> -       if (IS_ERR(host->clk))
-> +       if (IS_ERR(host->clk)) {
-> +               ret = PTR_ERR(host->clk);
->                 goto e_free_mmc;
-> +       }
->
->         host->imclk = clk_get_rate(host->clk);
->
->
+diff --git a/drivers/net/wireless/iwlwifi/mvm/debugfs-vif.c b/drivers/net/wireless/iwlwifi/mvm/debugfs-vif.c
+index ddb1c84..383a316 100644
+--- a/drivers/net/wireless/iwlwifi/mvm/debugfs-vif.c
++++ b/drivers/net/wireless/iwlwifi/mvm/debugfs-vif.c
+@@ -911,9 +911,9 @@ static ssize_t iwl_dbgfs_tof_range_request_write(struct ieee80211_vif *vif,
+ 		int size = sizeof(struct iwl_tof_range_req_ap_entry);
+ 		u16 burst_period;
+ 		u8 *mac = ap.bssid;
+-		int i;
++		unsigned int i;
+ 
+-		if (sscanf(data, "%d %hhd %hhx %hhx"
++		if (sscanf(data, "%u %hhd %hhx %hhx"
+ 			   "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx"
+ 			   "%hhx %hhx %hx"
+ 			   "%hhx %hhx %x"
+@@ -929,7 +929,7 @@ static ssize_t iwl_dbgfs_tof_range_request_write(struct ieee80211_vif *vif,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-		if (i > IWL_MVM_TOF_MAX_APS) {
++		if (i >= IWL_MVM_TOF_MAX_APS) {
+ 			IWL_ERR(mvm, "Invalid AP index %d\n", i);
+ 			ret = -EINVAL;
+ 			goto out;
