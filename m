@@ -1,51 +1,37 @@
-From: Hartley Sweeten <HartleyS@visionengravers.com>
-Date: Fri, 14 Aug 2015 17:40:09 +0000
-Subject: RE: [patch] staging: comedi: me4000: use bitwise AND instead of logical
-Message-Id: <BN3PR0101MB1057D85984BCD0F1E4D1D0B2D07C0@BN3PR0101MB1057.prod.exchangelabs.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Aug 2015 21:06:44 +0000
+Subject: [patch v2] fuse: remove dead code in fuse_lookup_name()
+Message-Id: <20150812210644.GA8068@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150814085405.GB30728@mwanda>
-In-Reply-To: <20150814085405.GB30728@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Friday, August 14, 2015 3:29 AM, Ian Abbott wrote:
-> On 14/08/15 09:54, Dan Carpenter wrote:
->> This was supposed to bitwise AND but there is a typo.
->>
->> Fixes: 1a02387063fb ('staging: comedi: me4000: remove 'board' from me4000_ai_insn_read()')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/staging/comedi/drivers/me4000.c b/drivers/staging/comedi/drivers/me4000.c
->> index 5aa1780..15a5320 100644
->> --- a/drivers/staging/comedi/drivers/me4000.c
->> +++ b/drivers/staging/comedi/drivers/me4000.c
->> @@ -480,7 +480,7 @@ static int me4000_ai_insn_read(struct comedi_device *dev,
->>
->>   	entry = chan | ME4000_AI_LIST_RANGE(range);
->>   	if (aref = AREF_DIFF) {
->> -		if (!(s->subdev_flags && SDF_DIFF)) {
->> +		if (!(s->subdev_flags & SDF_DIFF)) {
->>   			dev_err(dev->class_dev,
->>   				"Differential inputs are not available\n");
->>   			return -EINVAL;
->> @@ -559,7 +559,7 @@ static int me4000_ai_check_chanlist(struct comedi_device *dev,
->>   		}
->>
->>   		if (aref = AREF_DIFF) {
->> -			if (!(s->subdev_flags && SDF_DIFF)) {
->> +			if (!(s->subdev_flags & SDF_DIFF)) {
->>   				dev_err(dev->class_dev,
->>   					"Differential inputs are not available\n");
->>   				return -EINVAL;
->>
->
-> Thanks for catching that.
->
-> Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+We check "outarg->nodeid" twice in a row and it causes a static checker
+warning.  We should return success if "outarg->nodeid" is zero so the
+first check is correct and the second one should be deleted.
 
-Gah... Sorry about that. Thanks for the catch Dan.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: The first version of this patch introduced a bug into working code.
+    (returning error instead of success).  Sorry.  :(
 
-Reviewed-by: H Hartley Sweeten <hsweeten@visionengravers.com>
-
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 5e2e087..56a3463 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -306,11 +306,10 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, struct qstr *name,
+ 
+ 	fuse_lookup_init(fc, &args, nodeid, name, outarg);
+ 	err = fuse_simple_request(fc, &args);
+-	/* Zero nodeid is same as -ENOENT, but with valid timeout */
+-	if (err || !outarg->nodeid)
++	if (err)
+ 		goto out_put_forget;
+ 
+-	err = -EIO;
++	/* Zero nodeid is same as -ENOENT, but with valid timeout */
+ 	if (!outarg->nodeid)
+ 		goto out_put_forget;
+ 	if (!fuse_valid_type(outarg->attr.mode))
