@@ -1,36 +1,30 @@
-From: Bart Van Assche <bart.vanassche@sandisk.com>
-Date: Sun, 23 Aug 2015 01:41:12 +0000
-Subject: Re: [patch] qla4xxx: remove some bogus casts
-Message-Id: <55D924B8.3090407@sandisk.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Aug 2015 20:27:47 +0000
+Subject: [patch -next] bpf: off by one in check_map_func_compatibility()
+Message-Id: <20150813202747.GA6478@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150817143647.GA23820@mwanda> <55D2B879.7040906@sandisk.com>
- <20150818084726.GG5610@mwanda>
-In-Reply-To: <20150818084726.GG5610@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: QLogic-Storage-Upstream@qlogic.com, Vikas Chaudhary <vikas.chaudhary@qlogic.com>, "James E.J. Bottomley" <JBottomley@odin.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexei Starovoitov <ast@kernel.org>, Kaixu Xia <xiakaixu@huawei.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/18/15 01:47, Dan Carpenter wrote:
-> On Mon, Aug 17, 2015 at 09:45:45PM -0700, Bart Van Assche wrote:
->> On 08/17/2015 07:36 AM, Dan Carpenter wrote:
->>> These casts are wrong and unnecessary.  They annoy static checkers
->>> because they imply we are planning to write sizeof(long) bytes to a
->>> sizeof(u32) buffer which would corrupt memory.
->>
->> Hello Dan,
->>
->> Can you verify whether that patch is still needed after having
->> applied the patch series I posted in July (and that was acknowledged
->> by QLogic): http://thread.gmane.org/gmane.linux.scsi/103135 ?
->>
->
-> I think it is needed still?
+The loop iterates one space too far, so we might read beyond the end of
+the func_limit[] array.
 
-Hello Dan,
+Fixes: 35578d798400 ('bpf: Implement function bpf_perf_event_read() that get the selected hardware PMU conuter')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-You are right, this patch is indeed needed. Hence:
-
-Reviewed-by: Bart Van Assche <bart.vanassche@sandisk.com>
-
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 48e1c71..ed12e38 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -853,7 +853,7 @@ static int check_map_func_compatibility(struct bpf_map *map, int func_id)
+ 	if (!map)
+ 		return 0;
+ 
+-	for (i = 0; i <= ARRAY_SIZE(func_limit); i++) {
++	for (i = 0; i < ARRAY_SIZE(func_limit); i++) {
+ 		bool_map = (map->map_type = func_limit[i].map_type);
+ 		bool_func = (func_id = func_limit[i].func_id);
+ 		/* only when map & func pair match it can continue.
