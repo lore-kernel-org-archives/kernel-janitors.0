@@ -1,25 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 19 Aug 2015 02:07:21 +0000
-Subject: Re: [patch] cxgb4: memory corruption in debugfs
-Message-Id: <20150818.190721.630738689965121571.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Aug 2015 20:21:53 +0000
+Subject: [patch] iio: tsl4531: fix error handling in tsl4531_check_id()
+Message-Id: <20150813202027.GA4385@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150818093144.GG3965@mwanda>
-In-Reply-To: <20150818093144.GG3965@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: hariprasad@chelsio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Peter Meerwald <pmeerw@pmeerw.net>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dan Murphy <dmurphy@ti.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Aug 2015 12:31:44 +0300
+The caller expect us to return zero if the ID doesn't match.  Negative
+error codes are treated as success.
 
-> You can't use kstrtoul() with an int or it causes memory corruption.
-> Also j should be unsigned or we have underflow bugs.
-> 
-> I considered changing "j" to unsigned long but everything fits in a u32.
-> 
-> Fixes: 8e3d04fd7d70 ('cxgb4: Add MPS tracing support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/iio/light/tsl4531.c b/drivers/iio/light/tsl4531.c
+index 2697918..730fd2b 100644
+--- a/drivers/iio/light/tsl4531.c
++++ b/drivers/iio/light/tsl4531.c
+@@ -151,7 +151,7 @@ static int tsl4531_check_id(struct i2c_client *client)
+ {
+ 	int ret = i2c_smbus_read_byte_data(client, TSL4531_ID);
+ 	if (ret < 0)
+-		return ret;
++		return 0;
+ 
+ 	switch (ret >> TSL4531_ID_SHIFT) {
+ 	case TSL45311_ID:
