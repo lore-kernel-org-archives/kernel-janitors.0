@@ -1,48 +1,46 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Mon, 10 Aug 2015 09:38:20 +0000
-Subject: Re: [patch] fbdev: off by one test (harmless)
-Message-Id: <55C8710C.4030304@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ln8DmkV7TOksnWXssCsUu9kq4ogiv0Iu2"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Aug 2015 09:56:52 +0000
+Subject: re: nvmem: Add a simple NVMEM framework for consumers
+Message-Id: <20150814095652.GB14436@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141226172657.GA14762@mwanda>
-In-Reply-To: <20141226172657.GA14762@mwanda>
-To: linux-fbdev@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
---ln8DmkV7TOksnWXssCsUu9kq4ogiv0Iu2
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Hello Srinivas Kandagatla,
+
+The patch 69aba7948cbe: "nvmem: Add a simple NVMEM framework for
+consumers" from Jul 27, 2015, leads to the following static checker
+warning:
+
+	drivers/nvmem/core.c:827 __nvmem_cell_read()
+	warn: we tested 'cell->bit_offset' before and it was 'false'
+
+drivers/nvmem/core.c
+   816  static int __nvmem_cell_read(struct nvmem_device *nvmem,
+   817                        struct nvmem_cell *cell,
+   818                        void *buf, size_t *len)
+   819  {
+   820          int rc;
+   821  
+   822          rc = regmap_raw_read(nvmem->regmap, cell->offset, buf, cell->bytes);
+   823  
+   824          if (IS_ERR_VALUE(rc))
+   825                  return rc;
+   826  
+   827          /* shift bits in-place */
+   828          if (cell->bit_offset || cell->bit_offset)
+                    ^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^
+Looks like a copy and paste bug.  Maybe something else was intended?
+
+   829                  nvmem_shift_read_buffer_in_place(cell, buf);
+   830  
+   831          *len = cell->bytes;
+   832  
+   833          return 0;
+   834  }
 
 
-On 23/07/15 15:39, Dan Carpenter wrote:
-> This was never merged.
-
-Oops. I'll pick this up now.
-
- Tomi
-
-
---ln8DmkV7TOksnWXssCsUu9kq4ogiv0Iu2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJVyHEMAAoJEPo9qoy8lh71x9wP/3N59Ouxg/NUcLixt3ARYAtB
-sah/yXmzWSBeRvN02ocfY0r+ioDsRoF/pOw4BWjwO6fxxYYUWdvMW3mPjLIdDJn+
-K9PHTfqo0lByClm5Sumdr7daF7MQ/9GFvRwymdYoel9JhrpIh+RkIG1zxWV6hTkk
-AmhODvTRsktIhOJ5PCT5h1HGtK7Uzja5wolk1vodVEvqFIRqLS5Kqy0sRZMQ5oYx
-ML/ORTjLwX30QBEmzvXKYYvb1392OnOJAMVQdsJ/BMCiPgI3aOQwEbwLzNVQVVvb
-Ie7maIlof2p1mFahe7EKsYq1rZtrk1piReIrhGdaaVJOfPfR3rGb7TYZSJvBSGSQ
-0PnsG24j7Vk0VlCuCuwlR/CsLVj54qLy9AU1qgwX5O8EIa2kS6LLDh5bR0IgjIrR
-Dmv1OAw1PXRMauemaWQkCZ0yTrAa3FJ+r11cfiIry4HrssWGGKkpto9dCfNMCLxS
-5r0JqiMlNn4AB0x/R3ooa3uLlgQHhPLRZflChMMFMUI4uVg65jtiCmBXYmWnXSQ6
-FF2FtLecn4HjVHher5KWtSySxOWqiDgNyRVN34bcP5f0KO5cj8qQWHawD2b/dL1P
-QvT18XuPEbDt1i404yaUG5p1O6mMXOjTYlFv8JAqqzrvvn/CVIWfa0MRvLIq4Zer
-0W17RFlVeUQBz0mIR2dy
-=cv6l
------END PGP SIGNATURE-----
-
---ln8DmkV7TOksnWXssCsUu9kq4ogiv0Iu2--
+regards,
+dan carpenter
