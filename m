@@ -1,37 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Aug 2015 08:54:05 +0000
-Subject: [patch] staging: comedi: me4000: use bitwise AND instead of logical
-Message-Id: <20150814085405.GB30728@mwanda>
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Fri, 14 Aug 2015 10:29:05 +0000
+Subject: Re: [patch] staging: comedi: me4000: use bitwise AND instead of logical
+Message-Id: <55CDC2F1.8080704@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150814085405.GB30728@mwanda>
+In-Reply-To: <20150814085405.GB30728@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This was supposed to bitwise AND but there is a typo.
+On 14/08/15 09:54, Dan Carpenter wrote:
+> This was supposed to bitwise AND but there is a typo.
+>
+> Fixes: 1a02387063fb ('staging: comedi: me4000: remove 'board' from me4000_ai_insn_read()')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/staging/comedi/drivers/me4000.c b/drivers/staging/comedi/drivers/me4000.c
+> index 5aa1780..15a5320 100644
+> --- a/drivers/staging/comedi/drivers/me4000.c
+> +++ b/drivers/staging/comedi/drivers/me4000.c
+> @@ -480,7 +480,7 @@ static int me4000_ai_insn_read(struct comedi_device *dev,
+>
+>   	entry = chan | ME4000_AI_LIST_RANGE(range);
+>   	if (aref = AREF_DIFF) {
+> -		if (!(s->subdev_flags && SDF_DIFF)) {
+> +		if (!(s->subdev_flags & SDF_DIFF)) {
+>   			dev_err(dev->class_dev,
+>   				"Differential inputs are not available\n");
+>   			return -EINVAL;
+> @@ -559,7 +559,7 @@ static int me4000_ai_check_chanlist(struct comedi_device *dev,
+>   		}
+>
+>   		if (aref = AREF_DIFF) {
+> -			if (!(s->subdev_flags && SDF_DIFF)) {
+> +			if (!(s->subdev_flags & SDF_DIFF)) {
+>   				dev_err(dev->class_dev,
+>   					"Differential inputs are not available\n");
+>   				return -EINVAL;
+>
 
-Fixes: 1a02387063fb ('staging: comedi: me4000: remove 'board' from me4000_ai_insn_read()')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks for catching that.
 
-diff --git a/drivers/staging/comedi/drivers/me4000.c b/drivers/staging/comedi/drivers/me4000.c
-index 5aa1780..15a5320 100644
---- a/drivers/staging/comedi/drivers/me4000.c
-+++ b/drivers/staging/comedi/drivers/me4000.c
-@@ -480,7 +480,7 @@ static int me4000_ai_insn_read(struct comedi_device *dev,
- 
- 	entry = chan | ME4000_AI_LIST_RANGE(range);
- 	if (aref = AREF_DIFF) {
--		if (!(s->subdev_flags && SDF_DIFF)) {
-+		if (!(s->subdev_flags & SDF_DIFF)) {
- 			dev_err(dev->class_dev,
- 				"Differential inputs are not available\n");
- 			return -EINVAL;
-@@ -559,7 +559,7 @@ static int me4000_ai_check_chanlist(struct comedi_device *dev,
- 		}
- 
- 		if (aref = AREF_DIFF) {
--			if (!(s->subdev_flags && SDF_DIFF)) {
-+			if (!(s->subdev_flags & SDF_DIFF)) {
- 				dev_err(dev->class_dev,
- 					"Differential inputs are not available\n");
- 				return -EINVAL;
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+
+-- 
+-=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk> )=-
+-=(                          Web: http://www.mev.co.uk/  )=-
