@@ -1,71 +1,93 @@
-From: Dan Murphy <dmurphy@ti.com>
-Date: Mon, 17 Aug 2015 15:05:19 +0000
-Subject: Re: [patch v2] iio: tsl4531: fix error handling in tsl4531_check_id()
-Message-Id: <55D1F82F.8020303@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Aug 2015 09:47:02 +0000
+Subject: [patch 1/2 v2] ext4: simplify some code in read_mmp_block()
+Message-Id: <20150814094701.GA14179@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150817143832.GC23820@mwanda>
-In-Reply-To: <20150817143832.GC23820@mwanda>
+References: <3FC4DED5-76F2-45DE-8E01-8796850CB120@dilger.ca>
+In-Reply-To: <3FC4DED5-76F2-45DE-8E01-8796850CB120@dilger.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan
+My static check complains because we have:
 
-On 08/17/2015 09:38 AM, Dan Carpenter wrote:
-> tsl4531_check_id() returns 1 on "found", 0 on "not found" and negative
-> if there is an error.  The bug here is that the error handling, treats
-> errors as "found".
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: slightly different fix
->
-> diff --git a/drivers/iio/light/tsl4531.c b/drivers/iio/light/tsl4531.c
-> index 2697918..fca0cb0 100644
-> --- a/drivers/iio/light/tsl4531.c
-> +++ b/drivers/iio/light/tsl4531.c
-> @@ -180,7 +180,10 @@ static int tsl4531_probe(struct i2c_client *client,
->  	data->client = client;
->  	mutex_init(&data->lock);
->  
-> -	if (!tsl4531_check_id(client)) {
-> +	ret = tsl4531_check_id(client);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret = 0) {
->  		dev_err(&client->dev, "no TSL4531 sensor\n");
->  		return -ENODEV;
->  	}
+	if (!*bh)
+		return -ENOMEM;
+	if (*bh) {
 
-Almost but not quite.  The suggestion from Jon and myself was to return 0 on device found and
-non-zero on an error or not found.
+The second check is unnecessary.
 
-In the check_id call I would probably do something like
+I've simplified this code by moving the "if (!*bh)" checks around.  Also
+Andreas Dilger says we should probably print a warning if sb_getblk()
+fails.
 
-    switch (ret >> TSL4531_ID_SHIFT) {
-    case TSL45311_ID:
-    case TSL45313_ID:
-    case TSL45315_ID:
-    case TSL45317_ID:
-        return 0;
-    default:
-        return -ENODEV;
-    }
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: move the code around even more, add a warning message
 
-You could probably just drop the default case all together and just have the call return -ENODEV
-
-Then in probe you just need to do
-
-if (tsl4531_check_id(client)) {
-    return ret;
-
-This way you will return the exact error.
-
-Dan
-
--- 
-------------------
-Dan Murphy
-
+diff --git a/fs/ext4/mmp.c b/fs/ext4/mmp.c
+index 8313ca3..0880ec9 100644
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -69,6 +69,7 @@ static int read_mmp_block(struct super_block *sb, struct buffer_head **bh,
+ 			  ext4_fsblk_t mmp_block)
+ {
+ 	struct mmp_struct *mmp;
++	int ret;
+ 
+ 	if (*bh)
+ 		clear_buffer_uptodate(*bh);
+@@ -76,25 +77,24 @@ static int read_mmp_block(struct super_block *sb, struct buffer_head **bh,
+ 	/* This would be sb_bread(sb, mmp_block), except we need to be sure
+ 	 * that the MD RAID device cache has been bypassed, and that the read
+ 	 * is not blocked in the elevator. */
+-	if (!*bh)
++	if (!*bh) {
+ 		*bh = sb_getblk(sb, mmp_block);
+-	if (!*bh)
+-		return -ENOMEM;
+-	if (*bh) {
+-		get_bh(*bh);
+-		lock_buffer(*bh);
+-		(*bh)->b_end_io = end_buffer_read_sync;
+-		submit_bh(READ_SYNC | REQ_META | REQ_PRIO, *bh);
+-		wait_on_buffer(*bh);
+-		if (!buffer_uptodate(*bh)) {
+-			brelse(*bh);
+-			*bh = NULL;
++		if (!*bh) {
++			ret = -ENOMEM;
++			goto warn_exit;
+ 		}
+ 	}
+-	if (unlikely(!*bh)) {
+-		ext4_warning(sb, "Error while reading MMP block %llu",
+-			     mmp_block);
+-		return -EIO;
++
++	get_bh(*bh);
++	lock_buffer(*bh);
++	(*bh)->b_end_io = end_buffer_read_sync;
++	submit_bh(READ_SYNC | REQ_META | REQ_PRIO, *bh);
++	wait_on_buffer(*bh);
++	if (!buffer_uptodate(*bh)) {
++		brelse(*bh);
++		*bh = NULL;
++		ret = -EIO;
++		goto warn_exit;
+ 	}
+ 
+ 	mmp = (struct mmp_struct *)((*bh)->b_data);
+@@ -103,6 +103,10 @@ static int read_mmp_block(struct super_block *sb, struct buffer_head **bh,
+ 		return -EINVAL;
+ 
+ 	return 0;
++
++warn_exit:
++	ext4_warning(sb, "Error while reading MMP block %llu", mmp_block);
++	return ret;
+ }
+ 
+ /*
