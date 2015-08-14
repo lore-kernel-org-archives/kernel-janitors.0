@@ -1,32 +1,42 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 24 Aug 2015 19:54:21 +0000
-Subject: [patch v2] fbdev: fix snprintf() limit in show_bl_curve()
-Message-Id: <20150824195421.GA12634@mwanda>
+Date: Fri, 14 Aug 2015 09:08:10 +0000
+Subject: re: hv_netvsc: Implement set_channels ethtool op
+Message-Id: <20150814090810.GA6580@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The limit should be "PAGE_SIZE - len" instead of PAGE_SIZE.  Also let's
-use scnprintf() because snprintf() returns the number of bytes which
-would have been printed if there were space and scnprintf() returns the
-number of bytes actually printed.
+Hello Andrew Schwartzmeyer,
 
-I don't think we are ever going to actually hit this limit in real life.
+This is a semi-automatic email about new static checker warnings.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch b5960e6e2b5c: "hv_netvsc: Implement set_channels ethtool 
+op" from Aug 11, 2015, leads to the following Smatch complaint:
 
-diff --git a/drivers/video/fbdev/core/fbsysfs.c b/drivers/video/fbdev/core/fbsysfs.c
-index 60c3f0a..15755ce 100644
---- a/drivers/video/fbdev/core/fbsysfs.c
-+++ b/drivers/video/fbdev/core/fbsysfs.c
-@@ -485,7 +485,7 @@ static ssize_t show_bl_curve(struct device *device,
- 
- 	mutex_lock(&fb_info->bl_curve_mutex);
- 	for (i = 0; i < FB_BACKLIGHT_LEVELS; i += 8)
--		len += snprintf(&buf[len], PAGE_SIZE, "%8ph\n",
-+		len += scnprintf(&buf[len], PAGE_SIZE - len, "%8ph\n",
- 				fb_info->bl_curve + i);
- 	mutex_unlock(&fb_info->bl_curve_mutex);
- 
+drivers/net/hyperv/netvsc_drv.c:785 netvsc_set_channels()
+	 warn: variable dereferenced before check 'nvdev' (see line 780)
+
+drivers/net/hyperv/netvsc_drv.c
+   779		struct netvsc_device_info device_info;
+   780		const u32 num_chn = nvdev->num_chn;
+                                    ^^^^^^^^^^^^^^
+Deref.
+
+   781		const u32 max_chn = min_t(u32, nvdev->max_chn, num_online_cpus());
+                                               ^^^^^^^^^^^^^^
+Deref.
+
+   782		int ret = 0;
+   783		bool recovering = false;
+   784	
+   785		if (!nvdev || nvdev->destroy)
+                     ^^^^^
+Check too late.
+
+   786			return -ENODEV;
+   787	
+
+regards,
+dan carpenter
