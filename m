@@ -1,72 +1,31 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Date: Tue, 25 Aug 2015 04:33:48 +0000
-Subject: Re: [PATCH 2/2] pinctrl: digicolor: convert null test to IS_ERR test
-Message-Id: <20150825043348.GX2619@sapphire.tkos.co.il>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Aug 2015 09:47:32 +0000
+Subject: [patch 2/2] ext4: silence a format string false positive
+Message-Id: <20150814094732.GB14179@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
- <1440450747-10080-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440450747-10080-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <3FC4DED5-76F2-45DE-8E01-8796850CB120@dilger.ca>
+In-Reply-To: <3FC4DED5-76F2-45DE-8E01-8796850CB120@dilger.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+Static checkers complain that the format string should be "%s".  It does
+not make a difference for the current code.
 
-On Mon, Aug 24, 2015 at 11:12:27PM +0200, Julia Lawall wrote:
-> Since commit 323de9efdf3e ("pinctrl: make pinctrl_register() return proper
-> error code"), pinctrl_register returns an error code rather than NULL on
-> failure.  Update a driver that was introduced more recently.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e,e1,e2;
-> @@
-> 
-> e = pinctrl_register(...)
-> ... when != e = e1
-> if (
-> -   e = NULL
-> +   IS_ERR(e)
->    ) {
->      ...
->      return
-> -      e2
-> +      PTR_ERR(e)
->      ;
->      }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Baruch Siach <baruch@tkos.co.il>
-
-Thanks,
-baruch
-
->  drivers/pinctrl/pinctrl-digicolor.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
-> index 461fffc..11f8b83 100644
-> --- a/drivers/pinctrl/pinctrl-digicolor.c
-> +++ b/drivers/pinctrl/pinctrl-digicolor.c
-> @@ -337,9 +337,9 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
->  	pmap->dev = &pdev->dev;
->  
->  	pmap->pctl = pinctrl_register(pctl_desc, &pdev->dev, pmap);
-> -	if (!pmap->pctl) {
-> +	if (IS_ERR(pmap->pctl)) {
->  		dev_err(&pdev->dev, "pinctrl driver registration failed\n");
-> -		return -EINVAL;
-> +		return PTR_ERR(pmap->pctl);
->  	}
->  
->  	ret = dc_gpiochip_add(pmap, pdev->dev.of_node);
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+diff --git a/fs/ext4/mmp.c b/fs/ext4/mmp.c
+index 0880ec9..8b72634 100644
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -115,7 +115,7 @@ warn_exit:
+ void __dump_mmp_msg(struct super_block *sb, struct mmp_struct *mmp,
+ 		    const char *function, unsigned int line, const char *msg)
+ {
+-	__ext4_warning(sb, function, line, msg);
++	__ext4_warning(sb, function, line, "%s", msg);
+ 	__ext4_warning(sb, function, line,
+ 		       "MMP failure info: last update time: %llu, last update "
+ 		       "node: %s, last update device: %s\n",
