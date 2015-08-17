@@ -1,110 +1,34 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 30 Aug 2015 19:54:15 +0000
-Subject: Re: [PATCH 1/2] ASoC: qcom: change PTR_ERR argument
-Message-Id: <alpine.DEB.2.02.1508302152300.2062@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Aug 2015 14:48:56 +0000
+Subject: [patch] PM / devfreq: exynos-ppmu: fix load_count calculation
+Message-Id: <20150817144856.GD23820@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440957911-7687-1-git-send-email-Julia.Lawall@lip6.fr> <1440957911-7687-2-git-send-email-Julia.Lawall@lip6.fr> <55E35169.3000703@bfs.de>
-In-Reply-To: <55E35169.3000703@bfs.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+"pmcnt_high & 0xff" is a u32 so we shifting it 32 spaces is zero.  GCC
+catches this bug:
 
+drivers/devfreq/event/exynos-ppmu.c: In function ‘exynos_ppmu_v2_get_event’:
+drivers/devfreq/event/exynos-ppmu.c:322:3: warning: left shift count >= width of type
+   load_count = (u64)((pmcnt_high & 0xff) << 32) + (u64)pmcnt_low;
 
-On Sun, 30 Aug 2015, walter harms wrote:
+Fixes: 3d87b02281a2 ('PM / devfreq: exynos-ppmu: Add the support of PPMUv2 for Exynos5433')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> 
-> Am 30.08.2015 20:05, schrieb Julia Lawall:
-> > Apply PTR_ERR to the value that was recently assigned.
-> > 
-> > The semantic match that finds this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> > 
-> > // <smpl>
-> > @@
-> > expression x,y;
-> > @@
-> > 
-> > if (IS_ERR(x) || ...) {
-> >   ... when any
-> >       when != IS_ERR(...)
-> > (
-> >    PTR_ERR(x)
-> > |
-> > *  PTR_ERR(y)
-> > )
-> >   ... when any
-> > }
-> > // </smpl>
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > ---
-> >  sound/soc/qcom/lpass-cpu.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/sound/soc/qcom/lpass-cpu.c b/sound/soc/qcom/lpass-cpu.c
-> > index 23f3d59..94beb99 100644
-> > --- a/sound/soc/qcom/lpass-cpu.c
-> > +++ b/sound/soc/qcom/lpass-cpu.c
-> > @@ -438,7 +438,8 @@ int asoc_qcom_lpass_cpu_platform_probe(struct platform_device *pdev)
-> >  		if (IS_ERR(drvdata->mi2s_bit_clk[dai_id])) {
-> >  			dev_err(&pdev->dev,
-> >  				"%s() error getting mi2s-bit-clk: %ld\n",
-> > -				__func__, PTR_ERR(drvdata->mi2s_bit_clk[i]));
-> > +				__func__,
-> > +				PTR_ERR(drvdata->mi2s_bit_clk[dai_id]));
-> >  			return PTR_ERR(drvdata->mi2s_bit_clk[dai_id]);
-> >  		}
-> >  	}
-> > 
-> 
-> just a note:
-> using a shorter name instead of drvdata->mi2s_bit_clk[dai_id] whould help to make the code
-> more readable (yes, the other code is alike). something like:
-> 
-> struct clk *tmp =  devm_clk_get(&pdev->dev,clk_name);
-
-Where do you suggest to put this?
-
-Maybe it would be reasonable to declare a variable struct clk *clk; at the 
-top of the function, and then use that as a temporary variable for all 
-three calls.
-
-However, now I see that the first call, unlike the other two doesn't cause 
-a return from the function.
-
-                if (IS_ERR(drvdata->mi2s_osr_clk[dai_id])) {
-                        dev_warn(&pdev->dev,
-                                "%s() error getting mi2s-osr-clk: %ld\n",
-				__func__,
-		                PTR_ERR(drvdata->mi2s_osr_clk[dai_id]));
-                }
-
-Is that intentional?
-
-thanks,
-julia
-
-> if (IS_ERR(tmp)) {
-> 	dev_err(&pdev->dev,"%s() error getting mi2s-bit-clk: %ld\n",__func__, PTR_ERR(tmp));
->         return PTR_ERR(tmp);
-> }
-> drvdata->mi2s_bit_clk[dai_id]=tmp;
-> 
-> 
-> just one minor:
-> the dev_warn() just before says: " error getting mi2s-osr-clk" may be it should be "warnig ..."
-> That will make it more easy to rep for real error in a log.
-> 
-> re,
->  wh
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index f9901f5..daf2cdb 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -319,7 +319,7 @@ static int exynos_ppmu_v2_get_event(struct devfreq_event_dev *edev,
+ 	case PPMU_PMNCNT3:
+ 		pmcnt_high = __raw_readl(info->ppmu.base + PPMU_V2_PMCNT3_HIGH);
+ 		pmcnt_low = __raw_readl(info->ppmu.base + PPMU_V2_PMCNT3_LOW);
+-		load_count = (u64)((pmcnt_high & 0xff) << 32) + (u64)pmcnt_low;
++		load_count = (((u64)pmcnt_high & 0xff) << 32) + pmcnt_low;
+ 		break;
+ 	}
+ 	edata->load_count = load_count;
