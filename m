@@ -1,39 +1,47 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Date: Tue, 18 Aug 2015 00:52:27 +0000
-Subject: Re: [patch] PM / devfreq: exynos-ppmu: fix load_count calculation
-Message-Id: <1584679179.174361439859146206.JavaMail.weblogic@ep2mlwas01a>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Aug 2015 14:36:47 +0000
+Subject: [patch] qla4xxx: remove some bogus casts
+Message-Id: <20150817143647.GA23820@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150817144856.GD23820@mwanda>
-In-Reply-To: <20150817144856.GD23820@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
-Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, =?utf-8?Q?=ED=81=AC=EC=89=AC=EC=8B=9C=ED=86=A0=ED=94=84?= <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linux-pm@lists.linux-foundation.org
+To: QLogic-Storage-Upstream@qlogic.com, Vikas Chaudhary <vikas.chaudhary@qlogic.com>
+Cc: "James E.J. Bottomley" <JBottomley@odin.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-PiAicG1jbnRfaGlnaCAmIDB4ZmYiIGlzIGEgdTMyIHNvIHdlIHNoaWZ0aW5nIGl0IDMyIHNwYWNl
-cyBpcyB6ZXJvLiAgR0NDDQo+IGNhdGNoZXMgdGhpcyBidWc6DQo+IA0KPiBkcml2ZXJzL2RldmZy
-ZXEvZXZlbnQvZXh5bm9zLXBwbXUuYzogSW4gZnVuY3Rpb24g4oCYZXh5bm9zX3BwbXVfdjJfZ2V0
-X2V2ZW504oCZOg0KPiBkcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYzozMjI6Mzog
-d2FybmluZzogbGVmdCBzaGlmdCBjb3VudCA+PSB3aWR0aCBvZiB0eXBlDQo+ICAgIGxvYWRfY291
-bnQgPSAodTY0KSgocG1jbnRfaGlnaCAmIDB4ZmYpIDw8IDMyKSArICh1NjQpcG1jbnRfbG93Ow0K
-PiANCj4gRml4ZXM6IDNkODdiMDIyODFhMiAoJ1BNIC8gZGV2ZnJlcTogZXh5bm9zLXBwbXU6IEFk
-ZCB0aGUgc3VwcG9ydCBvZiBQUE1VdjIgZm9yIEV4eW5vczU0MzMnKQ0KPiBTaWduZWQtb2ZmLWJ5
-OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQoNClRoaXMgcGF0Y2gg
-aGFzIGJlZW4gd2FpdGluZyBpbiBkZXZmcmVxIHRyZWUgZm9yIHNvbWUgZGF5cy4NCkl0IHdpbGwg
-YmUgc2VudCB3aXRoIHRoZSBuZXh0IHB1bGwgcmVxdWVzdC4NCg0KaHR0cHM6Ly9naXQua2VybmVs
-Lm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvbXp4L2RldmZyZXEuZ2l0L2NvbW1pdC8/aD1mb3It
-cmFmYWVsJmlkPThlMjlhYmViYmRiMzJhMzBkODdhNTgyMDFhYzliNzdmOGE4N2ZkODQNCg0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZGV2ZnJlcS9ldmVudC9leHlub3MtcHBtdS5jIGIvZHJp
-dmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMNCj4gaW5kZXggZjk5MDFmNS4uZGFmMmNk
-YiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMNCj4g
-KysrIGIvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMNCj4gQEAgLTMxOSw3ICsz
-MTksNyBAQCBzdGF0aWMgaW50IGV4eW5vc19wcG11X3YyX2dldF9ldmVudChzdHJ1Y3QgZGV2ZnJl
-cV9ldmVudF9kZXYgKmVkZXYsDQo+ICAJY2FzZSBQUE1VX1BNTkNOVDM6DQo+ICAJCXBtY250X2hp
-Z2ggPSBfX3Jhd19yZWFkbChpbmZvLT5wcG11LmJhc2UgKyBQUE1VX1YyX1BNQ05UM19ISUdIKTsN
-Cj4gIAkJcG1jbnRfbG93ID0gX19yYXdfcmVhZGwoaW5mby0+cHBtdS5iYXNlICsgUFBNVV9WMl9Q
-TUNOVDNfTE9XKTsNCj4gLQkJbG9hZF9jb3VudCA9ICh1NjQpKChwbWNudF9oaWdoICYgMHhmZikg
-PDwgMzIpICsgKHU2NClwbWNudF9sb3c7DQo+ICsJCWxvYWRfY291bnQgPSAoKCh1NjQpcG1jbnRf
-aGlnaCAmIDB4ZmYpIDw8IDMyKSArIHBtY250X2xvdzsNCj4gIAkJYnJlYWs7DQo+ICAJfQ0KPiAg
-CWVkYXRhLT5sb2FkX2NvdW50ID0gbG9hZF9jb3VudDsNCj4gDQo
+These casts are wrong and unnecessary.  They annoy static checkers
+because they imply we are planning to write sizeof(long) bytes to a
+sizeof(u32) buffer which would corrupt memory.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/scsi/qla4xxx/ql4_init.c b/drivers/scsi/qla4xxx/ql4_init.c
+index 4180d6d..d97ea5d 100644
+--- a/drivers/scsi/qla4xxx/ql4_init.c
++++ b/drivers/scsi/qla4xxx/ql4_init.c
+@@ -101,19 +101,13 @@ int qla4xxx_init_rings(struct scsi_qla_host *ha)
+ 	ha->response_ptr = &ha->response_ring[ha->response_out];
+ 
+ 	if (is_qla8022(ha)) {
+-		writel(0,
+-		    (unsigned long  __iomem *)&ha->qla4_82xx_reg->req_q_out);
+-		writel(0,
+-		    (unsigned long  __iomem *)&ha->qla4_82xx_reg->rsp_q_in);
+-		writel(0,
+-		    (unsigned long  __iomem *)&ha->qla4_82xx_reg->rsp_q_out);
++		writel(0, &ha->qla4_82xx_reg->req_q_out);
++		writel(0, &ha->qla4_82xx_reg->rsp_q_in);
++		writel(0, &ha->qla4_82xx_reg->rsp_q_out);
+ 	} else if (is_qla8032(ha) || is_qla8042(ha)) {
+-		writel(0,
+-		       (unsigned long __iomem *)&ha->qla4_83xx_reg->req_q_in);
+-		writel(0,
+-		       (unsigned long __iomem *)&ha->qla4_83xx_reg->rsp_q_in);
+-		writel(0,
+-		       (unsigned long __iomem *)&ha->qla4_83xx_reg->rsp_q_out);
++		writel(0, &ha->qla4_83xx_reg->req_q_in);
++		writel(0, &ha->qla4_83xx_reg->rsp_q_in);
++		writel(0, &ha->qla4_83xx_reg->rsp_q_out);
+ 	} else {
+ 		/*
+ 		 * Initialize DMA Shadow registers.  The firmware is really
