@@ -1,89 +1,33 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Fri, 14 Aug 2015 10:06:54 +0000
-Subject: Re: nvmem: Add a simple NVMEM framework for consumers
-Message-Id: <55CDBDBE.2080403@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Aug 2015 09:22:10 +0000
+Subject: [patch] IB/core: missing curly braces in ib_find_gid()
+Message-Id: <20150818092210.GE3965@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150814095652.GB14436@mwanda>
-In-Reply-To: <20150814095652.GB14436@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ira Weiny <ira.weiny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Michael Wang <yun.wang-EIkl63zCoXaH+58JC4qpiA@public.gmane.org>, Yotam Kenneth <yotamke-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Thanks Dan,
+Smatch says that, based on the indenting, we should probably add curly
+braces here.
 
-for reporting this.
-On 14/08/15 10:56, Dan Carpenter wrote:
-> Hello Srinivas Kandagatla,
->
-> The patch 69aba7948cbe: "nvmem: Add a simple NVMEM framework for
-> consumers" from Jul 27, 2015, leads to the following static checker
-> warning:
->
-> 	drivers/nvmem/core.c:827 __nvmem_cell_read()
-> 	warn: we tested 'cell->bit_offset' before and it was 'false'
->
-> drivers/nvmem/core.c
->     816  static int __nvmem_cell_read(struct nvmem_device *nvmem,
->     817                        struct nvmem_cell *cell,
->     818                        void *buf, size_t *len)
->     819  {
->     820          int rc;
->     821
->     822          rc = regmap_raw_read(nvmem->regmap, cell->offset, buf, cell->bytes);
->     823
->     824          if (IS_ERR_VALUE(rc))
->     825                  return rc;
->     826
->     827          /* shift bits in-place */
->     828          if (cell->bit_offset || cell->bit_offset)
->                      ^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^
-> Looks like a copy and paste bug.  Maybe something else was intended?
+Fixes: 230145ff8124 ('IB/core: Add RoCE GID table management')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Yes, its a copy paste error, I can be fixed by below patch which am 
-going to send to Greg to pick up.
-
-
------------------->snip<-------------------------
-
-Author: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date:   Fri Aug 14 11:00:57 2015 +0100
-
-     nvmem: core: fix a copy paste error
-
-     This patch fixes a copy paste error in a check which is performed to
-     determine if the cell is specified in bits or not.
-
-     Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-     Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 35a42bb..ea0d6fd 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -825,7 +825,7 @@ static int __nvmem_cell_read(struct nvmem_device *nvmem,
-                 return rc;
-
-         /* shift bits in-place */
--       if (cell->bit_offset || cell->bit_offset)
-+       if (cell->bit_offset || cell->nbits)
-                 nvmem_shift_read_buffer_in_place(cell, buf);
-
-         *len = cell->bytes;
-
------------------->snip<-------------------------
-
-
---srini
->
->     829                  nvmem_shift_read_buffer_in_place(cell, buf);
->     830
->     831          *len = cell->bytes;
->     832
->     833          return 0;
->     834  }
->
->
-> regards,
-> dan carpenter
->
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index 258b3f7..5d5bbae 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -807,9 +807,10 @@ int ib_find_gid(struct ib_device *device, union ib_gid *gid,
+ 	for (port = rdma_start_port(device); port <= rdma_end_port(device); ++port) {
+ 		if (rdma_cap_roce_gid_table(device, port)) {
+ 			if (!ib_cache_gid_find_by_port(device, gid, port,
+-						       NULL, index))
++						       NULL, index)) {
+ 				*port_num = port;
+ 				return 0;
++			}
+ 		}
+ 
+ 		for (i = 0; i < device->port_immutable[port].gid_tbl_len; ++i) {
