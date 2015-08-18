@@ -1,34 +1,38 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Sat, 01 Aug 2015 13:20:56 +0000
-Subject: Re: [patch] Bluetooth: fix breakage in amp_write_rem_assoc_frag()
-Message-Id: <0D12F29F-827C-4C1C-BA49-062DF0D7CCC2@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Aug 2015 08:57:43 +0000
+Subject: [patch] cxlflash: shift wrapping bug in afu_link_reset()
+Message-Id: <20150818085743.GA3965@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150801123008.GA4378@mwanda>
-In-Reply-To: <20150801123008.GA4378@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arron Wang <arron.wang@intel.com>, "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, BlueZ development <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@odin.com>, "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
+Cc: "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>, Brian King <brking@linux.vnet.ibm.com>, Michael Neuling <mikey@neuling.org>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+"port_sel" is a u64 so the shifting should also be a 64 bit shift.
 
-> We should be passing the pointer itself instead of the address of the
-> pointer.
-> 
-> This was a copy and paste bug when we replaced the calls to
-> hci_send_cmd().  Originally, the arguments were "len, cp" but we
-> overwrote them with "sizeof(cp), &cp" by mistake.
-> 
-> Fixes: b3d3914006a0 ('Bluetooth: Move amp assoc read/write completed callback to amp.c')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I'm pretty sure this is correct, but it's a static checker fix and I
-> haven't tested it.
+Fixes: c21e0bbfc485 ('cxlflash: Base support for IBM CXL Flash Adapter')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-it is correct and patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
-
+diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
+index 0720d2f..f97421d 100644
+--- a/drivers/scsi/cxlflash/main.c
++++ b/drivers/scsi/cxlflash/main.c
+@@ -1179,7 +1179,7 @@ static void afu_link_reset(struct afu *afu, int port, u64 *fc_regs)
+ 
+ 	/* first switch the AFU to the other links, if any */
+ 	port_sel = readq_be(&afu->afu_map->global.regs.afu_port_sel);
+-	port_sel &= ~(1 << port);
++	port_sel &= ~(1ULL << port);
+ 	writeq_be(port_sel, &afu->afu_map->global.regs.afu_port_sel);
+ 	cxlflash_afu_sync(afu, 0, 0, AFU_GSYNC);
+ 
+@@ -1196,7 +1196,7 @@ static void afu_link_reset(struct afu *afu, int port, u64 *fc_regs)
+ 		       __func__, port);
+ 
+ 	/* switch back to include this port */
+-	port_sel |= (1 << port);
++	port_sel |= (1ULL << port);
+ 	writeq_be(port_sel, &afu->afu_map->global.regs.afu_port_sel);
+ 	cxlflash_afu_sync(afu, 0, 0, AFU_GSYNC);
+ 
