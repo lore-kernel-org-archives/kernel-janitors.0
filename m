@@ -1,55 +1,29 @@
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Tue, 18 Aug 2015 10:28:53 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Aug 2015 10:38:24 +0000
 Subject: Re: [patch] cxgb4: memory corruption in debugfs
-Message-Id: <201508181928.JGB95875.OHOtSVLFMFFJQO@I-love.SAKURA.ne.jp>
+Message-Id: <20150818103824.GI5610@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150818093144.GG3965@mwanda>
-In-Reply-To: <20150818093144.GG3965@mwanda>
+ <201508181928.JGB95875.OHOtSVLFMFFJQO@I-love.SAKURA.ne.jp>
+In-Reply-To: <201508181928.JGB95875.OHOtSVLFMFFJQO@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com, hariprasad@chelsio.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: hariprasad@chelsio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter wrote:
-> You can't use kstrtoul() with an int or it causes memory corruption.
-> Also j should be unsigned or we have underflow bugs.
+On Tue, Aug 18, 2015 at 07:28:53PM +0900, Tetsuo Handa wrote:
+> Dan Carpenter wrote:
+> > You can't use kstrtoul() with an int or it causes memory corruption.
+> > Also j should be unsigned or we have underflow bugs.
+> > 
+> > I considered changing "j" to unsigned long but everything fits in a u32.
 > 
-> I considered changing "j" to unsigned long but everything fits in a u32.
+> Excuse me, but kstrtouint()'s last argument is not "u32 *" but "unsigned int *".
+> Aren't there architectures where sizeof(unsigned int) > sizeof(u32) ?
 
-Excuse me, but kstrtouint()'s last argument is not "u32 *" but "unsigned int *".
-Aren't there architectures where sizeof(unsigned int) > sizeof(u32) ?
+No.
 
-> 
-> Fixes: 8e3d04fd7d70 ('cxgb4: Add MPS tracing support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-> index 1732e29..0a87a32 100644
-> --- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-> +++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-> @@ -1289,13 +1289,14 @@ static unsigned int xdigit2int(unsigned char c)
->  static ssize_t mps_trc_write(struct file *file, const char __user *buf,
->  			     size_t count, loff_t *pos)
->  {
-> -	int i, j, enable, ret;
-> +	int i, enable, ret;
->  	u32 *data, *mask;
->  	struct trace_params tp;
->  	const struct inode *ino;
->  	unsigned int trcidx;
->  	char *s, *p, *word, *end;
->  	struct adapter *adap;
-> +	u32 j;
->  
->  	ino = file_inode(file);
->  	trcidx = (uintptr_t)ino->i_private & 3;
-> @@ -1340,7 +1341,7 @@ static ssize_t mps_trc_write(struct file *file, const char __user *buf,
->  
->  		if (!strncmp(word, "qid=", 4)) {
->  			end = (char *)word + 4;
-> -			ret = kstrtoul(end, 10, (unsigned long *)&j);
-> +			ret = kstrtouint(end, 10, &j);
->  			if (ret)
->  				goto out;
->  			if (!adap->trace_rss) {
+regards,
+dan carpenter
+
