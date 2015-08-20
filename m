@@ -1,26 +1,71 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 25 Aug 2015 20:39:16 +0000
-Subject: Re: [PATCH 10/11] ah6: fix error return code
-Message-Id: <20150825.133916.2029552672054339969.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 20 Aug 2015 10:30:37 +0000
+Subject: [patch] mwifiex: fix mwifiex_rdeeprom_read()
+Message-Id: <20150820103037.GA5521@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1440288682-12732-11-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440288682-12732-11-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: steffen.klassert@secunet.com, kernel-janitors@vger.kernel.org, herbert@gondor.apana.org.au, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>, Bing Zhao <bzhao@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Aug 2015 02:11:21 +0200
+There were several bugs here.
 
-> Return a negative error code on failure.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+1)  The done label was in the wrong place so we didn't copy any
+    information out when there was no command given.
 
-Applied and as noticed by Herbert Xu I fixed up the net/ipv4/ah4.c case
-as well.
+2)  We were using PAGE_SIZE as the size of the buffer instead of
+    "PAGE_SIZE - pos".
+
+3)  snprintf() returns the number of characters that would have been
+    printed if there were enough space.  If there was not enough space
+    (and we had fixed the memory corruption bug #2) then it would result
+    in an information leak when we do simple_read_from_buffer().  I've
+    changed it to use scnprintf() instead.
+
+I also removed the initialization at the start of the function, because
+I thought it made the code a little more clear.
+
+Fixes: 5e6e3a92b9a4 ('wireless: mwifiex: initial commit for Marvell mwifiex driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/wireless/mwifiex/debugfs.c b/drivers/net/wireless/mwifiex/debugfs.c
+index 5a0636d4..bd2f5d2 100644
+--- a/drivers/net/wireless/mwifiex/debugfs.c
++++ b/drivers/net/wireless/mwifiex/debugfs.c
+@@ -731,7 +731,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
+ 		(struct mwifiex_private *) file->private_data;
+ 	unsigned long addr = get_zeroed_page(GFP_KERNEL);
+ 	char *buf = (char *) addr;
+-	int pos = 0, ret = 0, i;
++	int pos, ret, i;
+ 	u8 value[MAX_EEPROM_DATA];
+ 
+ 	if (!buf)
+@@ -739,7 +739,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
+ 
+ 	if (saved_offset = -1) {
+ 		/* No command has been given */
+-		pos += snprintf(buf, PAGE_SIZE, "0");
++		pos = snprintf(buf, PAGE_SIZE, "0");
+ 		goto done;
+ 	}
+ 
+@@ -751,14 +751,14 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
+ 		goto done;
+ 	}
+ 
+-	pos += snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset, saved_bytes);
++	pos = snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset, saved_bytes);
+ 
+ 	for (i = 0; i < saved_bytes; i++)
+-		pos += snprintf(buf + strlen(buf), PAGE_SIZE, "%d ", value[i]);
++		pos += scnprintf(buf + pos, PAGE_SIZE - pos, "%d ", value[i]);
+ 
++done:
+ 	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
+ 
+-done:
+ 	free_page(addr);
+ 	return ret;
+ }
