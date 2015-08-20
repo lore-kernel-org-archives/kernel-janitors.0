@@ -1,20 +1,33 @@
-From: <yuriydqs@rambler.ru>
-Date: Mon, 03 Aug 2015 00:09:47 +0000
-Subject: jzfy
-Message-Id: <UbdBkJZIKINRXsGOyMFljSJrp@xnuPHgqxZbcZZSxhHTJvBobFXaJ>
+From: Mark Singer <MSinger@napavalley.edu>
+Date: Thu, 20 Aug 2015 07:08:48 +0000
+Subject: 
+Message-Id: <66EA9C2C53B30B46B1D28150E6EB8FB5015BB1A6901D@mail.napavalley.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="maccyrillic"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-CuTu4fD76SDk5e38IQoKQuDsIO/w6Pjr7iDv8Ojj6+D45e3o5SDt4CDh5fHv6+Dy7fvpIOLl4ejt
-4PAg7+4g7/Du5ODm4Owg8u7i4PDu4iDo5yDK6PLg/y4KCk37IOL74fDg6+gg4uDxIPHw5eToIPL7
-8f/36CDv7vLl7fbo4Ov87fv1IOHo5+3l8ezl7e7iLCDy4Oog6uDqIPDg4e7y4CDiIOTg7e3u6SDo
-7eTz8fLw6Ogg8vDl4fPl8iD25evl8/Hy8OXs6+Xt7e7x8ugg6CDm5evg7ej/IOTu4eji4PL88f8g
-8eLu5ePuLiAgIGh0dHA6Ly92YXNvYnJhbC5ydQoKSODh7vAg7eAg7eD46CDq8/Dx+yDi8eUg5fnl
-IOHl8e/r4PLt++ksIO3l8iDx7Pvx6+Ag7vLq6+Dk++Lg8vwg7eAg7+7y7uwuCgoKClju8O745ekg
-wuDsIO3l5OXr6CEKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxp
-bmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdl
-IHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0
-cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+
+
+
+Do you need an investor?
+Our investors fund project and business. We also give out loan/credit to an=
+y individual and company at 3% interest rate yearly. For more information, =
+Contact us via Email: devonfps@gmail.com=20
+
+If you need an investor or quick funding, forward your response ONLY to thi=
+s E-mail: devonfps@gmail.com=20
+....
+Haben Sie einen Investor brauchen?
+Unsere Investoren Fonds Projekt- und Gesch=E4fts. Wir geben auch Darlehen /=
+ Kredite an jeden einzelnen und Unternehmen bei 3% Zinsen j=E4hrlich. F=FCr=
+ weitere Informationen, kontaktieren Sie uns per E-Mail: devonfps@gmail.com=
+=20
+
+Wenn Sie ein Investor oder schnelle Finanzierung ben=F6tigen, senden Sie Ih=
+re Antwort nur auf diese E-mail: devonfps@gmail.com --
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
