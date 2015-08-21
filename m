@@ -1,43 +1,56 @@
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Date: Sat, 22 Aug 2015 17:25:48 +0000
-Subject: Re: [patch] iwlwifi: mvm: catch underflow error earlier
-Message-Id: <0BA3FCBA62E2DC44AF3030971E174FB32E8271DF@hasmsx107.ger.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Aug 2015 15:42:21 +0000
+Subject: Re: [patch] mptfusion: prevent some memory corruption
+Message-Id: <20150821154221.GS5610@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150821084821.GC25369@mwanda>
+References: <20150703085303.GA11901@mwanda>
+In-Reply-To: <20150703085303.GA11901@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Berg, Johannes" <johannes.berg@intel.com>
-Cc: Intel Linux Wireless <ilw@linux.intel.com>, Kalle Valo <kvalo@codeaurora.org>, "Coelho, Luciano" <luciano.coelho@intel.com>, Eliad Peller <eliad@wizery.com>, "Kaufman, Liad" <liad.kaufman@intel.com>, "Gottlieb, Matti" <matti.gottlieb@intel.com>, "Bondar, Alexander" <alexander.bondar@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
+Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Ping?
 
-On 08/21/2015 11:49 AM, Dan Carpenter wrote:
-> My static checker complains that we don't check for underflows in
-> iwl_dbgfs_fw_dbg_conf_write().  This is harmless because we have a
-> sanity check in iwl_mvm_start_fw_dbg_conf(), but we may as well make
-> this unsigned and silence the underflow warning.
+regards,
+dan carpenter
+
+On Fri, Jul 03, 2015 at 11:53:03AM +0300, Dan Carpenter wrote:
+> These are signed values the come from the user, we put a cap on the
+> upper bounds but not on the lower bounds.
+> 
+> We use "karg.dataSgeOffset" to calculate "sz".  We verify "sz" and
+> proceed as if that means that "karg.dataSgeOffset" is correct but this
+> fails to consider that the "sz" calculations can have integer overflows.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> During my QC process, I realized that I sent a similar patch last year,
+> but never received a response.
 > 
-
-Applied in our internal tree. Thanks.
-
-> diff --git a/drivers/net/wireless/iwlwifi/mvm/debugfs.c b/drivers/net/wireless/iwlwifi/mvm/debugfs.c
-> index ca4a1f8..7d69a55 100644
-> --- a/drivers/net/wireless/iwlwifi/mvm/debugfs.c
-> +++ b/drivers/net/wireless/iwlwifi/mvm/debugfs.c
-> @@ -949,9 +949,10 @@ static ssize_t iwl_dbgfs_fw_dbg_conf_write(struct iwl_mvm *mvm,
->  					   char *buf, size_t count,
->  					   loff_t *ppos)
->  {
-> -	int ret, conf_id;
-> +	unsigned int conf_id;
-> +	int ret;
->  
-> -	ret = kstrtoint(buf, 0, &conf_id);
-> +	ret = kstrtouint(buf, 0, &conf_id);
->  	if (ret)
->  		return ret;
->  
+> http://permalink.gmane.org/gmane.linux.kernel.janitors/32590
 > 
+> Looking at both of them, I guess I prefer today's patch because it is
+> simpler.
+> 
+> diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
+> index 70bb753..fc73937 100644
+> --- a/drivers/message/fusion/mptctl.c
+> +++ b/drivers/message/fusion/mptctl.c
+> @@ -1859,6 +1859,15 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
+>  	}
+>  	spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
+>  
+> +	/* Basic sanity checks to prevent underflows or integer overflows */
+> +	if (karg.maxReplyBytes < 0 ||
+> +	    karg.dataInSize < 0 ||
+> +	    karg.dataOutSize < 0 ||
+> +	    karg.dataSgeOffset < 0 ||
+> +	    karg.maxSenseBytes < 0 ||
+> +	    karg.dataSgeOffset > ioc->req_sz / 4)
+> +		return -EINVAL;
+> +
+>  	/* Verify that the final request frame will not be too large.
+>  	 */
+>  	sz = karg.dataSgeOffset * 4;
