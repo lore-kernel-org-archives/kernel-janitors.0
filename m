@@ -1,82 +1,67 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Fri, 14 Aug 2015 06:56:52 +0000
-Subject: Re: [PATCH] PM-wakeup: Delete unnecessary checks before two function calls
-Message-Id: <20150814065652.GA31211@Nokia-N900>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Aug 2015 08:46:56 +0000
+Subject: [patch] Input: sentelic - silence some underflow warnings
+Message-Id: <20150821084656.GA25369@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <546C7E75.9080301@users.sourceforge.net>
- <558FCAC1.1090605@users.sourceforge.net>
-In-Reply-To: <558FCAC1.1090605@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun 2015-06-28 12:21:53, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 28 Jun 2015 12:14:43 +0200
-> 
-> The functions dev_pm_disarm_wake_irq() and wakeup_source_unregister() test
-> whether their argument is NULL and then return immediately.
-> Thus the test around the calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+I have a static checker that complains when we check for an upper bound
+but don't have a coresponding check for a lower bound.  With this code,
+the upper bound check seems not really required, so it is not a bug to
+leave the lower bound check out as well.  But let's silence the warning
+by making these variables unsigned.
 
-ACK.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-> ---
->  drivers/base/power/wakeup.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> index 40f7160..3741bc2 100644
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -341,8 +341,7 @@ void device_wakeup_arm_wake_irqs(void)
->  
->  	rcu_read_lock();
->  	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
-> -		if (ws->wakeirq)
-> -			dev_pm_arm_wake_irq(ws->wakeirq);
-> +		dev_pm_arm_wake_irq(ws->wakeirq);
->  	}
->  	rcu_read_unlock();
->  }
-> @@ -358,8 +357,7 @@ void device_wakeup_disarm_wake_irqs(void)
->  
->  	rcu_read_lock();
->  	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
-> -		if (ws->wakeirq)
-> -			dev_pm_disarm_wake_irq(ws->wakeirq);
-> +		dev_pm_disarm_wake_irq(ws->wakeirq);
->  	}
->  	rcu_read_unlock();
->  }
-> @@ -396,9 +394,7 @@ int device_wakeup_disable(struct device *dev)
->  		return -EINVAL;
->  
->  	ws = device_wakeup_detach(dev);
-> -	if (ws)
-> -		wakeup_source_unregister(ws);
-> -
-> +	wakeup_source_unregister(ws);
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(device_wakeup_disable);
-> -- 
-> 2.4.4
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+diff --git a/drivers/input/mouse/sentelic.c b/drivers/input/mouse/sentelic.c
+index cc7e0d4..11c32ac 100644
+--- a/drivers/input/mouse/sentelic.c
++++ b/drivers/input/mouse/sentelic.c
+@@ -432,7 +432,7 @@ static int fsp_onpad_hscr(struct psmouse *psmouse, bool enable)
+ static ssize_t fsp_attr_set_setreg(struct psmouse *psmouse, void *data,
+ 				   const char *buf, size_t count)
+ {
+-	int reg, val;
++	unsigned int reg, val;
+ 	char *rest;
+ 	ssize_t retval;
+ 
+@@ -440,7 +440,7 @@ static ssize_t fsp_attr_set_setreg(struct psmouse *psmouse, void *data,
+ 	if (rest = buf || *rest != ' ' || reg > 0xff)
+ 		return -EINVAL;
+ 
+-	retval = kstrtoint(rest + 1, 16, &val);
++	retval = kstrtouint(rest + 1, 16, &val);
+ 	if (retval)
+ 		return retval;
+ 
+@@ -476,9 +476,10 @@ static ssize_t fsp_attr_set_getreg(struct psmouse *psmouse, void *data,
+ 					const char *buf, size_t count)
+ {
+ 	struct fsp_data *pad = psmouse->private;
+-	int reg, val, err;
++	unsigned int reg, val;
++	int err;
+ 
+-	err = kstrtoint(buf, 16, &reg);
++	err = kstrtouint(buf, 16, &reg);
+ 	if (err)
+ 		return err;
+ 
+@@ -511,9 +512,10 @@ static ssize_t fsp_attr_show_pagereg(struct psmouse *psmouse,
+ static ssize_t fsp_attr_set_pagereg(struct psmouse *psmouse, void *data,
+ 					const char *buf, size_t count)
+ {
+-	int val, err;
++	unsigned int val;
++	int err;
+ 
+-	err = kstrtoint(buf, 16, &val);
++	err = kstrtouint(buf, 16, &val);
+ 	if (err)
+ 		return err;
+ 
