@@ -1,44 +1,30 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Wed, 19 Aug 2015 14:46:12 +0000
-Subject: Re: [PATCH v3] kconfig: Delete unnecessary checks before the function call "sym_calc_value"
-Message-Id: <55D496B4.5070004@suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Aug 2015 08:49:09 +0000
+Subject: [patch] thermal: underflow bug in imx_set_trip_temp()
+Message-Id: <20150821084909.GD25369@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54568924.5010008@users.sourceforge.net>
- <5457CC33.4050906@users.sourceforge.net>
- <559C2E7A.1090408@users.sourceforge.net>
-In-Reply-To: <559C2E7A.1090408@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "Yann E. MORIN" <yann.morin.1998@free.fr>, linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paul Bolle <pebolle@tiscali.nl>
+To: Zhang Rui <rui.zhang@intel.com>, Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, lm-sensors@lm-sensors.org
 
-On 2015-07-07 21:54, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 7 Jul 2015 21:48:23 +0200
-> 
-> The sym_calc_value() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
+We recently changed this from unsigned long to int so it introduced an
+underflow bug.
 
-Applied to kbuild.git#kconfig.
+Fixes: 17e8351a7739 ('thermal: consistently use int for temperatures')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Michal
-
+diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+index 4bec1d3..7a06465 100644
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -288,7 +288,7 @@ static int imx_set_trip_temp(struct thermal_zone_device *tz, int trip,
+ 	if (trip = IMX_TRIP_CRITICAL)
+ 		return -EPERM;
+ 
+-	if (temp > IMX_TEMP_PASSIVE)
++	if (temp < 0 || temp > IMX_TEMP_PASSIVE)
+ 		return -EINVAL;
+ 
+ 	data->temp_passive = temp;
