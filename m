@@ -1,77 +1,48 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 30 Aug 2015 18:31:42 +0000
-Subject: Re: [PATCH 2/2] spi: spi-ep93xx: change PTR_ERR argument
-Message-Id: <55E34C0E.5000702@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Aug 2015 11:25:02 +0000
+Subject: Re: [patch] ALSA: hdsp: silence a sprinft() overflow warning
+Message-Id: <20150821112502.GR5610@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440957911-7687-1-git-send-email-Julia.Lawall@lip6.fr> <1440957911-7687-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440957911-7687-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <20150611151434.GE12192@mwanda>
+In-Reply-To: <20150611151434.GE12192@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Benoit Taine <benoit.taine@lip6.fr>, Bjorn Helgaas <bhelgaas@google.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
+Ping?
 
+regards,
+dan carpenter
 
-Am 30.08.2015 20:05, schrieb Julia Lawall:
-> Apply PTR_ERR to the value that was recently assigned.
+On Thu, Jun 11, 2015 at 06:14:34PM +0300, Dan Carpenter wrote:
+> card->shortname is a 32 char string so the sprintf() can theoretically
+> overflow.  snd_rawmidi_new() can accept strings up to 64 bytes long.
 > 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+> I have made the temporay buf[] array 40 bytes long and changed the
+> sprintf() to snprintf().
 > 
-> // <smpl>
-> @@
-> expression x,y;
-> @@
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> if (IS_ERR(x) || ...) {
->   ... when any
->       when != IS_ERR(...)
-> (
->    PTR_ERR(x)
-> |
-> *  PTR_ERR(y)
-> )
->   ... when any
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/spi/spi-ep93xx.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-> index bb00be8..1a7696c 100644
-> --- a/drivers/spi/spi-ep93xx.c
-> +++ b/drivers/spi/spi-ep93xx.c
-> @@ -567,7 +567,8 @@ static void ep93xx_spi_dma_transfer(struct ep93xx_spi *espi)
->  	txd = ep93xx_spi_dma_prepare(espi, DMA_MEM_TO_DEV);
->  	if (IS_ERR(txd)) {
->  		ep93xx_spi_dma_finish(espi, DMA_DEV_TO_MEM);
-> -		dev_err(&espi->pdev->dev, "DMA TX failed: %ld\n", PTR_ERR(rxd));
-> +		dev_err(&espi->pdev->dev, "DMA TX failed: %ld\n",
-> +			PTR_ERR(txd));
->  		msg->status = PTR_ERR(txd);
->  		return;
->  	}
->
-
-I improve readability i would suggest:
-
-ep93xx_spi_dma_finish(espi, DMA_DEV_TO_MEM);
-msg->status = PTR_ERR(txd);
-dev_err(&espi->pdev->dev, "DMA TX failed: %ld\n",msg->status):
-return;
-
-
-just my 2 cents,
-
-re,
- wh
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
+> index c19e021..c1fe1d3 100644
+> --- a/sound/pci/rme9652/hdsp.c
+> +++ b/sound/pci/rme9652/hdsp.c
+> @@ -1526,7 +1526,7 @@ static struct snd_rawmidi_ops snd_hdsp_midi_input >  
+>  static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int id)
+>  {
+> -	char buf[32];
+> +	char buf[40];
+>  
+>  	hdsp->midi[id].id = id;
+>  	hdsp->midi[id].rmidi = NULL;
+> @@ -1537,7 +1537,7 @@ static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int i
+>  	hdsp->midi[id].pending = 0;
+>  	spin_lock_init (&hdsp->midi[id].lock);
+>  
+> -	sprintf (buf, "%s MIDI %d", card->shortname, id+1);
+> +	snprintf(buf, sizeof(buf), "%s MIDI %d", card->shortname, id + 1);
+>  	if (snd_rawmidi_new (card, buf, id, 1, 1, &hdsp->midi[id].rmidi) < 0)
+>  		return -1;
+>  
