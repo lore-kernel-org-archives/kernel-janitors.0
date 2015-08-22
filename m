@@ -1,42 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Aug 2015 09:24:13 +0000
-Subject: [patch] ALSA: hdsp: silence a sprinft() overflow warning
-Message-Id: <20150822092413.GA13454@mwanda>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Sat, 22 Aug 2015 09:37:02 +0000
+Subject: Re: [patch] ALSA: hdsp: silence a sprinft() overflow warning
+Message-Id: <s5hfv3bu0jl.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <s5hfv3c4z3b.wl-tiwai@suse.de>
-In-Reply-To: <s5hfv3c4z3b.wl-tiwai@suse.de>
+	<20150822092413.GA13454@mwanda>
+In-Reply-To: <20150822092413.GA13454@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org
 
-card->shortname is a 32 char string so the sprintf() can theoretically
-overflow.  snd_rawmidi_new() can accept strings up to 64 bytes long.
+On Sat, 22 Aug 2015 11:24:13 +0200,
+Dan Carpenter wrote:
+> 
+> card->shortname is a 32 char string so the sprintf() can theoretically
+> overflow.  snd_rawmidi_new() can accept strings up to 64 bytes long.
+> 
+> I have made the temporay buf[] array 40 bytes long and changed the
+> sprintf() to snprintf().
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I have made the temporay buf[] array 40 bytes long and changed the
-sprintf() to snprintf().
+Applied, thanks.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
-index 468a95c..afb2dea 100644
---- a/sound/pci/rme9652/hdsp.c
-+++ b/sound/pci/rme9652/hdsp.c
-@@ -1526,7 +1526,7 @@ static struct snd_rawmidi_ops snd_hdsp_midi_input  
- static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int id)
- {
--	char buf[32];
-+	char buf[40];
- 
- 	hdsp->midi[id].id = id;
- 	hdsp->midi[id].rmidi = NULL;
-@@ -1537,7 +1537,7 @@ static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int i
- 	hdsp->midi[id].pending = 0;
- 	spin_lock_init (&hdsp->midi[id].lock);
- 
--	sprintf (buf, "%s MIDI %d", card->shortname, id+1);
-+	snprintf(buf, sizeof(buf), "%s MIDI %d", card->shortname, id + 1);
- 	if (snd_rawmidi_new (card, buf, id, 1, 1, &hdsp->midi[id].rmidi) < 0)
- 		return -1;
- 
+Takashi
+
+> 
+> diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
+> index 468a95c..afb2dea 100644
+> --- a/sound/pci/rme9652/hdsp.c
+> +++ b/sound/pci/rme9652/hdsp.c
+> @@ -1526,7 +1526,7 @@ static struct snd_rawmidi_ops snd_hdsp_midi_input >  
+>  static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int id)
+>  {
+> -	char buf[32];
+> +	char buf[40];
+>  
+>  	hdsp->midi[id].id = id;
+>  	hdsp->midi[id].rmidi = NULL;
+> @@ -1537,7 +1537,7 @@ static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int i
+>  	hdsp->midi[id].pending = 0;
+>  	spin_lock_init (&hdsp->midi[id].lock);
+>  
+> -	sprintf (buf, "%s MIDI %d", card->shortname, id+1);
+> +	snprintf(buf, sizeof(buf), "%s MIDI %d", card->shortname, id + 1);
+>  	if (snd_rawmidi_new (card, buf, id, 1, 1, &hdsp->midi[id].rmidi) < 0)
+>  		return -1;
+>  
+> 
