@@ -1,53 +1,61 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 22 Aug 2015 09:37:02 +0000
-Subject: Re: [patch] ALSA: hdsp: silence a sprinft() overflow warning
-Message-Id: <s5hfv3bu0jl.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:17 +0000
+Subject: [PATCH 06/11] mmc: usdhi6rol0: fix error return code
+Message-Id: <1440288682-12732-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <s5hfv3c4z3b.wl-tiwai@suse.de>
-	<20150822092413.GA13454@mwanda>
-In-Reply-To: <20150822092413.GA13454@mwanda>
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 22 Aug 2015 11:24:13 +0200,
-Dan Carpenter wrote:
-> 
-> card->shortname is a 32 char string so the sprintf() can theoretically
-> overflow.  snd_rawmidi_new() can accept strings up to 64 bytes long.
-> 
-> I have made the temporay buf[] array 40 bytes long and changed the
-> sprintf() to snprintf().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Propagate error code on failure.
 
-Applied, thanks.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-Takashi
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> 
-> diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
-> index 468a95c..afb2dea 100644
-> --- a/sound/pci/rme9652/hdsp.c
-> +++ b/sound/pci/rme9652/hdsp.c
-> @@ -1526,7 +1526,7 @@ static struct snd_rawmidi_ops snd_hdsp_midi_input >  
->  static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int id)
->  {
-> -	char buf[32];
-> +	char buf[40];
->  
->  	hdsp->midi[id].id = id;
->  	hdsp->midi[id].rmidi = NULL;
-> @@ -1537,7 +1537,7 @@ static int snd_hdsp_create_midi (struct snd_card *card, struct hdsp *hdsp, int i
->  	hdsp->midi[id].pending = 0;
->  	spin_lock_init (&hdsp->midi[id].lock);
->  
-> -	sprintf (buf, "%s MIDI %d", card->shortname, id+1);
-> +	snprintf(buf, sizeof(buf), "%s MIDI %d", card->shortname, id + 1);
->  	if (snd_rawmidi_new (card, buf, id, 1, 1, &hdsp->midi[id].rmidi) < 0)
->  		return -1;
->  
-> 
+---
+ drivers/mmc/host/usdhi6rol0.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
+index 54b082b..99f894c 100644
+--- a/drivers/mmc/host/usdhi6rol0.c
++++ b/drivers/mmc/host/usdhi6rol0.c
+@@ -1734,8 +1734,10 @@ static int usdhi6_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	host->clk = devm_clk_get(dev, NULL);
+-	if (IS_ERR(host->clk))
++	if (IS_ERR(host->clk)) {
++		ret = PTR_ERR(host->clk);
+ 		goto e_free_mmc;
++	}
+ 
+ 	host->imclk = clk_get_rate(host->clk);
+ 
+
