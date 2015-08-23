@@ -1,44 +1,57 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 25 Aug 2015 12:29:07 +0000
-Subject: Re: [patch] mwifiex: fix mwifiex_rdeeprom_read()
-Message-Id: <87lhcz5z70.fsf@kamboji.qca.qualcomm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:16 +0000
+Subject: [PATCH 05/11] mlxsw: fix error return code
+Message-Id: <1440288682-12732-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150820103037.GA5521@mwanda>
-In-Reply-To: <20150820103037.GA5521@mwanda> (Dan Carpenter's message of "Thu,
-	20 Aug 2015 13:30:37 +0300")
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amitkumar Karwar <akarwar@marvell.com>, Bing Zhao <bzhao@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: kernel-janitors@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+Return a negative error code on failure.
 
-> There were several bugs here.
->
-> 1)  The done label was in the wrong place so we didn't copy any
->     information out when there was no command given.
->
-> 2)  We were using PAGE_SIZE as the size of the buffer instead of
->     "PAGE_SIZE - pos".
->
-> 3)  snprintf() returns the number of characters that would have been
->     printed if there were enough space.  If there was not enough space
->     (and we had fixed the memory corruption bug #2) then it would result
->     in an information leak when we do simple_read_from_buffer().  I've
->     changed it to use scnprintf() instead.
->
-> I also removed the initialization at the start of the function, because
-> I thought it made the code a little more clear.
->
-> Fixes: 5e6e3a92b9a4 ('wireless: mwifiex: initial commit for Marvell mwifiex driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-I see a new warning:
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-drivers/net/wireless/mwifiex/debugfs.c:760:31: warning: pos may be used uninitialized in this function [-Wuninitialized]
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Is it a valid warning or should I apply the patch anyway?
+---
+ drivers/net/ethernet/mellanox/mlxsw/pci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
--- 
-Kalle Valo
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/pci.c b/drivers/net/ethernet/mellanox/mlxsw/pci.c
+index a34f474..045f98f 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/pci.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/pci.c
+@@ -1726,6 +1726,7 @@ static int mlxsw_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 						mlxsw_pci_dbg_root);
+ 	if (!mlxsw_pci->dbg_dir) {
+ 		dev_err(&pdev->dev, "Failed to create debugfs dir\n");
++		err = -ENOMEM;
+ 		goto err_dbg_create_dir;
+ 	}
+ 
+
