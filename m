@@ -1,57 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Aug 2015 00:11:16 +0000
-Subject: [PATCH 05/11] mlxsw: fix error return code
-Message-Id: <1440288682-12732-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Jiri Pirko <jiri@resnulli.us>
+Date: Sun, 23 Aug 2015 18:52:26 +0000
+Subject: Re: [PATCH 05/11] mlxsw: fix error return code
+Message-Id: <20150823185226.GA2396@nanopsycho.orion>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1440288682-12732-6-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Pirko <jiri@mellanox.com>
-Cc: kernel-janitors@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jiri Pirko <jiri@mellanox.com>, kernel-janitors@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Return a negative error code on failure.
+Sun, Aug 23, 2015 at 02:11:16AM CEST, Julia.Lawall@lip6.fr wrote:
+>Return a negative error code on failure.
+>
+>A simplified version of the semantic match that finds this problem is as
+>follows: (http://coccinelle.lip6.fr/)
+>
+>// <smpl>
+>@@
+>identifier ret; expression e1,e2;
+>@@
+>(
+>if (\(ret < 0\|ret != 0\))
+> { ... return ret; }
+>|
+>ret = 0
+>)
+>... when != ret = e1
+>    when != &ret
+>*if(...)
+>{
+>  ... when != ret = e2
+>      when forall
+> return ret;
+>}
+>// </smpl>
+>
+>Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/ethernet/mellanox/mlxsw/pci.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/pci.c b/drivers/net/ethernet/mellanox/mlxsw/pci.c
-index a34f474..045f98f 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/pci.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/pci.c
-@@ -1726,6 +1726,7 @@ static int mlxsw_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 						mlxsw_pci_dbg_root);
- 	if (!mlxsw_pci->dbg_dir) {
- 		dev_err(&pdev->dev, "Failed to create debugfs dir\n");
-+		err = -ENOMEM;
- 		goto err_dbg_create_dir;
- 	}
- 
-
+Acked-by: Jiri Pirko <jiri@mellanox.com>
