@@ -1,95 +1,61 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 24 Aug 2015 18:40:12 +0000
-Subject: [PATCH] coccinelle: api: suggest use of kvfree
-Message-Id: <1440441612-28868-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:15 +0000
+Subject: [PATCH 04/11] fbdev: ssd1307fb: fix error return code
+Message-Id: <1440288682-12732-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: kernel-janitors@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Inspired by some patches sent by Pekka Enberg, eg 958b43384e4.
+Propagate error code on failure.  Also changed %ld to %d in dev_err to use
+ret variable rather than putting two calls to PTR_ERR.
+
+A simplified version of the semantic match that finds the first problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- scripts/coccinelle/api/kvfree.cocci |   70 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ drivers/video/fbdev/ssd1307fb.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/coccinelle/api/kvfree.cocci b/scripts/coccinelle/api/kvfree.cocci
-new file mode 100644
-index 0000000..49f8551
---- /dev/null
-+++ b/scripts/coccinelle/api/kvfree.cocci
-@@ -0,0 +1,70 @@
-+/// Use kvfree for choosing free function.
-+///
-+// Confidence: High
-+// Copyright: (C) 2015 Julia Lawall, Inria, GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Options: --no-includes --include-headers
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+@r@
-+expression e;
-+position p;
-+@@
-+
-+if@p (is_vmalloc_addr(e))
-+     vfree(e);
-+else
-+     kfree(e);
-+
-+@script:python@
-+p << r.p;
-+@@
-+
-+if p[0].current_element = "kvfree":
-+  cocci.include_match(False)
-+
-+@s depends on patch && !context && !org && !report@
-+expression e;
-+position r.p;
-+@@
-+
-+- if@p (is_vmalloc_addr(e))
-+-      vfree(e);
-+- else
-+-      kfree(e);
-++ kvfree(e);
-+
-+// ----------------------------------------------------------------------------
-+
-+@s_context depends on !patch && (context || org || report)@
-+expression e;
-+position r.p;
-+position j0;
-+@@
-+
-+* if@p (is_vmalloc_addr@j0(e))
-+      vfree(e);
-+  else
-+      kfree(e);
-+
-+// ----------------------------------------------------------------------------
-+
-+@script:python s_org depends on org@
-+j0 << s_context.j0;
-+@@
-+
-+msg = "Use kvfree."
-+coccilib.org.print_todo(j0[0], msg)
-+
-+// ----------------------------------------------------------------------------
-+
-+@script:python s_report depends on report@
-+j0 << s_context.j0;
-+@@
-+
-+msg = "Use kvfree."
-+coccilib.report.print_report(j0[0], msg)
-
+diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
+index 3e153c0..1611215 100644
+--- a/drivers/video/fbdev/ssd1307fb.c
++++ b/drivers/video/fbdev/ssd1307fb.c
+@@ -656,8 +656,9 @@ static int ssd1307fb_probe(struct i2c_client *client,
+ 	bl = backlight_device_register(bl_name, &client->dev, par,
+ 				       &ssd1307fb_bl_ops, NULL);
+ 	if (IS_ERR(bl)) {
+-		dev_err(&client->dev, "unable to register backlight device: %ld\n",
+-			PTR_ERR(bl));
++		ret = PTR_ERR(bl);
++		dev_err(&client->dev, "unable to register backlight device: %d\n",
++			ret);
+ 		goto bl_init_error;
+ 	}
+ 
