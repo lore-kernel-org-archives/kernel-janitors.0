@@ -1,28 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 03 Aug 2015 22:20:28 +0000
-Subject: Re: [patch] rds: fix an integer overflow test in rds_info_getsockopt()
-Message-Id: <20150803.152028.229112174649764798.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:22 +0000
+Subject: [PATCH 11/11] gpio: xlp: fix error return code
+Message-Id: <1440288682-12732-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150801123326.GA5075@mwanda>
-In-Reply-To: <20150801123326.GA5075@mwanda>
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: chien.yen@oracle.com, agrover@redhat.com, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 1 Aug 2015 15:33:26 +0300
+Return a negative error code on failure.
 
-> "len" is a signed integer.  We check that len is not negative, so it
-> goes from zero to INT_MAX.  PAGE_SIZE is unsigned long so the comparison
-> is type promoted to unsigned long.  ULONG_MAX - 4095 is a higher than
-> INT_MAX so the condition can never be true.
-> 
-> I don't know if this is harmful but it seems safe to limit "len" to
-> INT_MAX - 4095.
-> 
-> Fixes: a8c879a7ee98 ('RDS: Info and stats')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Applied, thanks Dan.
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpio/gpio-xlp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
+index 9bdab72..e02499a 100644
+--- a/drivers/gpio/gpio-xlp.c
++++ b/drivers/gpio/gpio-xlp.c
+@@ -387,7 +387,7 @@ static int xlp_gpio_probe(struct platform_device *pdev)
+ 	irq_base = irq_alloc_descs(-1, XLP_GPIO_IRQ_BASE, gc->ngpio, 0);
+ 	if (irq_base < 0) {
+ 		dev_err(&pdev->dev, "Failed to allocate IRQ numbers\n");
+-		return err;
++		return -ENODEV;
+ 	}
+ 
+ 	err = gpiochip_add(gc);
+
