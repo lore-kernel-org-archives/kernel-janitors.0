@@ -1,50 +1,61 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Mon, 24 Aug 2015 12:21:58 +0000
-Subject: Re: [patch] i2c: xgene-slimpro: dma_mapping_error() doesn't return an error code
-Message-Id: <20150824122158.GD3608@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="DrWhICOqskFTAXiy"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:21 +0000
+Subject: [PATCH 10/11] ah6: fix error return code
+Message-Id: <1440288682-12732-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150818091219.GB3965@mwanda>
-In-Reply-To: <20150818091219.GB3965@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Feng Kan <fkan@apm.com>, Hieu Le <hnle@apm.com>, Axel Lin <axel.lin@ingics.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Return a negative error code on failure.
 
---DrWhICOqskFTAXiy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-On Tue, Aug 18, 2015 at 12:12:19PM +0300, Dan Carpenter wrote:
-> The dma_mapping_error() function returns true if there is an error, it
-> doesn't return an error code.  We should return -ENOMEM.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-Applied to for-next, thanks!
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ net/ipv6/ah6.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---DrWhICOqskFTAXiy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/net/ipv6/ah6.c b/net/ipv6/ah6.c
+index ed7d4e3..0630a4d 100644
+--- a/net/ipv6/ah6.c
++++ b/net/ipv6/ah6.c
+@@ -577,8 +577,10 @@ static int ah6_input(struct xfrm_state *x, struct sk_buff *skb)
+ 
+ 	work_iph = ah_alloc_tmp(ahash, nfrags + sglists, hdr_len +
+ 				ahp->icv_trunc_len + seqhi_len);
+-	if (!work_iph)
++	if (!work_iph) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	auth_data = ah_tmp_auth((u8 *)work_iph, hdr_len);
+ 	seqhi = (__be32 *)(auth_data + ahp->icv_trunc_len);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV2wxmAAoJEBQN5MwUoCm2sv4QAIuk/R0Tf0YJ3F5EtFgHCPdZ
-UkRYR6MCLW7fruM+cxvZqfRYNjdbloDPlp6/yaDK4xUNlnw9G0IAFoofDkKUEaZp
-sdA1D/3iTKApU6r/l+3haDi6Ya6X0BJlODhjB577m8Uei1cFCWcSgarRiHX6RXjq
-b2srfqntSZi1ZQEpFLiNTfGkxfyrPqqPk/TwWV+Y1Wm1B+BBt0lag8uTNlD+hejb
-+oCNMTdEvsM9GIX9O2VytlLwMqWt7vn5vP5B1GfRT6ZsoqHQpEOJA730gtSVe9ft
-Wv0dh+8x0GGHZA6AaofxEuMCdBJa209VXgd0POfuwcxLbmWtRSZwIMjdYmu01jG1
-3olO5pmEO3Q0j3oULL2G6zsE6o5nK+YXxo4htoiMxiaf2o7TQeaITZYTN15SkkD3
-Yd6wLplVdPuYvACOsyn+224ZeXqLzcZNzQ9vE86nhoB5wyzTIB0e5EwFzq+7ed9z
-AO1YcJgjOzeITmhTPO9WxKw8Rt1DxTmioTzRVEBI1aTnb3YrW8s+65A8ZgpVVkoa
-ZgwnvaMywOwo2UJUkfJDJlTdkA2JRrev7dL6f4wSEE1NNvF3WKaJJ/fi0e6Kyi5J
-l92s8C/Woaiq93Ewnoh/rvrLyJQ+ZEBg+tyn0FT3p5/OT8T15QoOUpsT0lCOdmS8
-5Wh+iCbeggfNv54IFNHk
-=09AK
------END PGP SIGNATURE-----
-
---DrWhICOqskFTAXiy--
