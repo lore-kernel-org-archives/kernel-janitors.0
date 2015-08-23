@@ -1,26 +1,61 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 07 Aug 2015 04:57:05 +0000
-Subject: Re: [patch] mpls: small cleanup in inet/inet6_fib_lookup_dev()
-Message-Id: <20150806.215705.2259534799573368398.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:12 +0000
+Subject: [PATCH 01/11] mmc: omap: fix error return code
+Message-Id: <1440288682-12732-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150804074422.GB10867@mwanda>
-In-Reply-To: <20150804074422.GB10867@mwanda>
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ebiederm@xmission.com, rshearma@brocade.com, roopa@cumulusnetworks.com, tom@herbertland.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jarkko Lavinen <jarkko.lavinen@nokia.com>
+Cc: kernel-janitors@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 4 Aug 2015 10:44:22 +0300
+Return a negative error code on failure.
 
-> We recently changed this code from returning NULL to returning ERR_PTR.
-> There are some left over NULL assignments which we can remove.  We can
-> preserve the error code from ip_route_output() instead of always
-> returning -ENODEV.  Also these functions use a mix of gotos and direct
-> returns.  There is no cleanup necessary so I changed the gotos to
-> direct returns.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Applied, thanks.
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/omap.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
+index 70dcf07..b763b11 100644
+--- a/drivers/mmc/host/omap.c
++++ b/drivers/mmc/host/omap.c
+@@ -1420,8 +1420,10 @@ static int mmc_omap_probe(struct platform_device *pdev)
+ 	host->reg_shift = (mmc_omap7xx() ? 1 : 2);
+ 
+ 	host->mmc_omap_wq = alloc_workqueue("mmc_omap", 0, 0);
+-	if (!host->mmc_omap_wq)
++	if (!host->mmc_omap_wq) {
++		ret = -ENOMEM;
+ 		goto err_plat_cleanup;
++	}
+ 
+ 	for (i = 0; i < pdata->nr_slots; i++) {
+ 		ret = mmc_omap_new_slot(host, i);
+
