@@ -1,19 +1,81 @@
-From: <kernel-janitors@vger.kernel.org>
-Date: Fri, 14 Aug 2015 15:41:16 +0000
-Subject: =?utf-8?B?0JrQu9C40LXQvdGC0YHQutC40LUg0LHQsNC30Ysg0KLQtdC7ICs3OTEzMzkxMzgzNyBFbWFpbDogbm9uZW4yMnBwQG
-Message-Id: <c869cee74a424c90a55a5488e416996a@DC3-EXCH-02.seymourwhyte.local>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:18 +0000
+Subject: [PATCH 07/11] drm: fix error return code
+Message-Id: <1440288682-12732-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1251"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-0e7h5fDl7CDk6/8gwuDxIO/uIOjt8uXw7eXyIOHg5/Mg5ODt7fv1IArv7vLl7fbo4Ov87fv1IOrr
-6OXt8u7iIOTr/yDC4Pjl4+4gwejn7eXx4CEKz+4g4eDn5SDs7ubt7iDn4u7t6PL8IO/o8eDy/CDx
-6+Dy/CD04Orx+yDoIGVtYWlsLCAK4uXx8ugg6/7h++Ug7/D/7PvlIODq8uji7fvlIO/w7uTg5ugg
-wuD46PUg8u7i4PDu4iDoIPPx6/PjIQrT5+3g6fLlIO/u5PDu4e3l5SDv7iAK0uXrICs3OTEzMzkx
-MzgzNwpFbWFpbDogbm9uZW4yMnBwQGdtYWlsLmNvbQotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRo
-aXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWphbml0b3JzIiBpbgp0
-aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwpNb3JlIG1h
-am9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0
-bWw=
+Return a negative error code on failure.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/gma500/psb_drv.c         |    8 ++++++--
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index 92e7e57..4eff0d6 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -326,12 +326,16 @@ static int psb_driver_load(struct drm_device *dev, unsigned long flags)
+ 		goto out_err;
+ 
+ 	dev_priv->mmu = psb_mmu_driver_init(dev, 1, 0, 0);
+-	if (!dev_priv->mmu)
++	if (!dev_priv->mmu) {
++		ret = -ENOMEM;
+ 		goto out_err;
++	}
+ 
+ 	dev_priv->pf_pd = psb_mmu_alloc_pd(dev_priv->mmu, 1, 0);
+-	if (!dev_priv->pf_pd)
++	if (!dev_priv->pf_pd) {
++		ret = -ENOMEM;
+ 		goto out_err;
++	}
+ 
+ 	ret = psb_do_init(dev);
+ 	if (ret)
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index 7841970..58a00b5 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -703,6 +703,7 @@ static int omap_dmm_probe(struct platform_device *dev)
+ 				&omap_dmm->refill_pa, GFP_KERNEL);
+ 	if (!omap_dmm->refill_va) {
+ 		dev_err(&dev->dev, "could not allocate refill memory\n");
++		ret = -ENOMEM;
+ 		goto fail;
+ 	}
+ 
+
