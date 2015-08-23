@@ -1,38 +1,57 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 30 Aug 2015 17:12:09 +0000
-Subject: Re: [PATCH 8/8] staging: lustre: put constant on the right of binary operator
-Message-Id: <alpine.DEB.2.02.1508301907310.2062@localhost6.localdomain6>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:20 +0000
+Subject: [PATCH 09/11] Input: sur40: fix error return code
+Message-Id: <1440288682-12732-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>  <1440869412-4899-9-git-send-email-Julia.Lawall@lip6.fr> <1440892412.3276.10.camel@perches.com>
-In-Reply-To: <1440892412.3276.10.camel@perches.com>
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Oleg Drokin <oleg.drokin@intel.com>, kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Propagate error code on failure.
 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-On Sat, 29 Aug 2015, Joe Perches wrote:
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-> On Sat, 2015-08-29 at 19:30 +0200, Julia Lawall wrote:
-> > Move constants to the right of binary operators.
-> []
-> > diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
-> []
-> > @@ -2954,7 +2954,7 @@ void ptlrpc_init_xid(void)
-> >  	}
-> >  
-> >  	/* Always need to be aligned to a power-of-two for multi-bulk BRW */
-> > -	CLASSERT((PTLRPC_BULK_OPS_COUNT & (PTLRPC_BULK_OPS_COUNT - 1)) = 0);
-> > +	CLASSERT(((PTLRPC_BULK_OPS_COUNT - 1) & PTLRPC_BULK_OPS_COUNT) = 0);
-> 
-> This one would probably be better as
-> 
-> 	CLASSERT(is_power_of_2(PTLRPC_BULK_OPS_COUNT));
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Actually not.  CLASSERT requires that the expression is considered to be a 
-constant by the compiler, such that there will be a compiler error, and 
-the result of is_power_of_2 is not constant enough.
+---
+ drivers/input/touchscreen/sur40.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-julia
+diff --git a/drivers/input/touchscreen/sur40.c b/drivers/input/touchscreen/sur40.c
+index 8be7b9b..3f11763 100644
+--- a/drivers/input/touchscreen/sur40.c
++++ b/drivers/input/touchscreen/sur40.c
+@@ -581,6 +581,7 @@ static int sur40_probe(struct usb_interface *interface,
+ 	sur40->alloc_ctx = vb2_dma_sg_init_ctx(sur40->dev);
+ 	if (IS_ERR(sur40->alloc_ctx)) {
+ 		dev_err(sur40->dev, "Can't allocate buffer context");
++		error = PTR_ERR(sur40->alloc_ctx);
+ 		goto err_unreg_v4l2;
+ 	}
+ 
+
