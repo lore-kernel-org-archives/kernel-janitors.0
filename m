@@ -1,45 +1,60 @@
-From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
-Date: Tue, 18 Aug 2015 15:11:40 +0000
-Subject: Re: [patch] cxlflash: shift wrapping bug in afu_link_reset()
-Message-Id: <33315DEB-60C6-4473-91F4-AD06F07A222B@linux.vnet.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Aug 2015 00:11:14 +0000
+Subject: [PATCH 03/11] net: davinci_emac: fix error return code
+Message-Id: <1440288682-12732-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150818085743.GA3965@mwanda>
-In-Reply-To: <20150818085743.GA3965@mwanda>
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>, Brian King <brking@linux.vnet.ibm.com>, Michael Neuling <mikey@neuling.org>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> On Aug 18, 2015, at 3:57 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> "port_sel" is a u64 so the shifting should also be a 64 bit shift.
-> 
-> Fixes: c21e0bbfc485 ('cxlflash: Base support for IBM CXL Flash Adapter')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
-> index 0720d2f..f97421d 100644
-> --- a/drivers/scsi/cxlflash/main.c
-> +++ b/drivers/scsi/cxlflash/main.c
-> @@ -1179,7 +1179,7 @@ static void afu_link_reset(struct afu *afu, int port, u64 *fc_regs)
-> 
-> 	/* first switch the AFU to the other links, if any */
-> 	port_sel = readq_be(&afu->afu_map->global.regs.afu_port_sel);
-> -	port_sel &= ~(1 << port);
-> +	port_sel &= ~(1ULL << port);
-> 	writeq_be(port_sel, &afu->afu_map->global.regs.afu_port_sel);
-> 	cxlflash_afu_sync(afu, 0, 0, AFU_GSYNC);
-> 
-> @@ -1196,7 +1196,7 @@ static void afu_link_reset(struct afu *afu, int port, u64 *fc_regs)
-> 		       __func__, port);
-> 
-> 	/* switch back to include this port */
-> -	port_sel |= (1 << port);
-> +	port_sel |= (1ULL << port);
-> 	writeq_be(port_sel, &afu->afu_map->global.regs.afu_port_sel);
-> 	cxlflash_afu_sync(afu, 0, 0, AFU_GSYNC);
-> 
+Propagate error code on failure.
 
-Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/ti/davinci_emac.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index aeebc0a..a21c77b 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -2004,8 +2004,10 @@ static int davinci_emac_probe(struct platform_device *pdev)
+ 	if (res_ctrl) {
+ 		priv->ctrl_base  			devm_ioremap_resource(&pdev->dev, res_ctrl);
+-		if (IS_ERR(priv->ctrl_base))
++		if (IS_ERR(priv->ctrl_base)) {
++			rc = PTR_ERR(priv->ctrl_base);
+ 			goto no_pdata;
++		}
+ 	} else {
+ 		priv->ctrl_base = priv->remap_addr + pdata->ctrl_mod_reg_offset;
+ 	}
 
