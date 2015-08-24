@@ -1,19 +1,50 @@
-From: Axel Lin <axel.lin@ingics.com>
-Date: Tue, 18 Aug 2015 23:59:01 +0000
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Mon, 24 Aug 2015 12:21:58 +0000
 Subject: Re: [patch] i2c: xgene-slimpro: dma_mapping_error() doesn't return an error code
-Message-Id: <CAFRkauCLM+g5sipBbzYVYLDp819hajHXGhWRU11Te-0RmcPiEQ@mail.gmail.com>
+Message-Id: <20150824122158.GD3608@katana>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="DrWhICOqskFTAXiy"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150818091219.GB3965@mwanda>
 In-Reply-To: <20150818091219.GB3965@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Feng Kan <fkan@apm.com>, Hieu Le <hnle@apm.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Feng Kan <fkan@apm.com>, Hieu Le <hnle@apm.com>, Axel Lin <axel.lin@ingics.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2015-08-18 17:12 GMT+08:00 Dan Carpenter <dan.carpenter@oracle.com>:
+
+--DrWhICOqskFTAXiy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Aug 18, 2015 at 12:12:19PM +0300, Dan Carpenter wrote:
 > The dma_mapping_error() function returns true if there is an error, it
 > doesn't return an error code.  We should return -ENOMEM.
->
+>=20
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Axel Lin <axel.lin@ingics.com>
+
+Applied to for-next, thanks!
+
+
+--DrWhICOqskFTAXiy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJV2wxmAAoJEBQN5MwUoCm2sv4QAIuk/R0Tf0YJ3F5EtFgHCPdZ
+UkRYR6MCLW7fruM+cxvZqfRYNjdbloDPlp6/yaDK4xUNlnw9G0IAFoofDkKUEaZp
+sdA1D/3iTKApU6r/l+3haDi6Ya6X0BJlODhjB577m8Uei1cFCWcSgarRiHX6RXjq
+b2srfqntSZi1ZQEpFLiNTfGkxfyrPqqPk/TwWV+Y1Wm1B+BBt0lag8uTNlD+hejb
++oCNMTdEvsM9GIX9O2VytlLwMqWt7vn5vP5B1GfRT6ZsoqHQpEOJA730gtSVe9ft
+Wv0dh+8x0GGHZA6AaofxEuMCdBJa209VXgd0POfuwcxLbmWtRSZwIMjdYmu01jG1
+3olO5pmEO3Q0j3oULL2G6zsE6o5nK+YXxo4htoiMxiaf2o7TQeaITZYTN15SkkD3
+Yd6wLplVdPuYvACOsyn+224ZeXqLzcZNzQ9vE86nhoB5wyzTIB0e5EwFzq+7ed9z
+AO1YcJgjOzeITmhTPO9WxKw8Rt1DxTmioTzRVEBI1aTnb3YrW8s+65A8ZgpVVkoa
+ZgwnvaMywOwo2UJUkfJDJlTdkA2JRrev7dL6f4wSEE1NNvF3WKaJJ/fi0e6Kyi5J
+l92s8C/Woaiq93Ewnoh/rvrLyJQ+ZEBg+tyn0FT3p5/OT8T15QoOUpsT0lCOdmS8
+5Wh+iCbeggfNv54IFNHk
+=09AK
+-----END PGP SIGNATURE-----
+
+--DrWhICOqskFTAXiy--
