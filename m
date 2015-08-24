@@ -1,73 +1,32 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 30 Aug 2015 20:10:15 +0000
-Subject: [PATCH 2/2 v2] spi: spi-ep93xx: fix PTR_ERR problem
-Message-Id: <alpine.DEB.2.02.1508302209040.2062@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Aug 2015 19:54:21 +0000
+Subject: [patch v2] fbdev: fix snprintf() limit in show_bl_curve()
+Message-Id: <20150824195421.GA12634@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440957911-7687-1-git-send-email-Julia.Lawall@lip6.fr> <1440957911-7687-3-git-send-email-Julia.Lawall@lip6.fr> <55E34C0E.5000702@bfs.de>
-In-Reply-To: <55E34C0E.5000702@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-Move initialization of msg->status up over the call to dev_err, in both
-calls to ep93xx_spi_dma_prepare, and change the reference in the call to
-dev_err to msg->status, to both fix the wrong argument to PTR_ERR in the
-second case and to make the dev_err line a little shorter.  This required
-furthermore replacing %ld by %d, since msg->status is an integer.
+The limit should be "PAGE_SIZE - len" instead of PAGE_SIZE.  Also let's
+use scnprintf() because snprintf() returns the number of bytes which
+would have been printed if there were space and scnprintf() returns the
+number of bytes actually printed.
 
-The semantic match that finds the PTR_ERR problem is as follows:
-(http://coccinelle.lip6.fr/)
+I don't think we are ever going to actually hit this limit in real life.
 
-// <smpl>
-@@
-expression x,y;
-@@
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-if (IS_ERR(x) || ...) {
-  ... when any
-      when != IS_ERR(...)
-(
-   PTR_ERR(x)
-|
-*  PTR_ERR(y)
-)
-  ... when any
-}
-// </smpl>
-
-Reorganizations at the suggestion of Walter Harms.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-v2: Reorganize the code, to solve the problem in a way that makes the
-resulting code simpler.
-
- drivers/spi/spi-ep93xx.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index bb00be8..73d0df6 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -559,16 +559,16 @@ static void ep93xx_spi_dma_transfer(struct ep93xx_spi *espi)
+diff --git a/drivers/video/fbdev/core/fbsysfs.c b/drivers/video/fbdev/core/fbsysfs.c
+index 60c3f0a..15755ce 100644
+--- a/drivers/video/fbdev/core/fbsysfs.c
++++ b/drivers/video/fbdev/core/fbsysfs.c
+@@ -485,7 +485,7 @@ static ssize_t show_bl_curve(struct device *device,
  
- 	rxd = ep93xx_spi_dma_prepare(espi, DMA_DEV_TO_MEM);
- 	if (IS_ERR(rxd)) {
--		dev_err(&espi->pdev->dev, "DMA RX failed: %ld\n", PTR_ERR(rxd));
- 		msg->status = PTR_ERR(rxd);
-+		dev_err(&espi->pdev->dev, "DMA RX failed: %d\n", msg->status);
- 		return;
- 	}
- 
- 	txd = ep93xx_spi_dma_prepare(espi, DMA_MEM_TO_DEV);
- 	if (IS_ERR(txd)) {
- 		ep93xx_spi_dma_finish(espi, DMA_DEV_TO_MEM);
--		dev_err(&espi->pdev->dev, "DMA TX failed: %ld\n", PTR_ERR(rxd));
- 		msg->status = PTR_ERR(txd);
-+		dev_err(&espi->pdev->dev, "DMA TX failed: %d\n", msg->status);
- 		return;
- 	}
+ 	mutex_lock(&fb_info->bl_curve_mutex);
+ 	for (i = 0; i < FB_BACKLIGHT_LEVELS; i += 8)
+-		len += snprintf(&buf[len], PAGE_SIZE, "%8ph\n",
++		len += scnprintf(&buf[len], PAGE_SIZE - len, "%8ph\n",
+ 				fb_info->bl_curve + i);
+ 	mutex_unlock(&fb_info->bl_curve_mutex);
  
