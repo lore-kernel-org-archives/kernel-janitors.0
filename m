@@ -1,33 +1,95 @@
-From: Mark Singer <MSinger@napavalley.edu>
-Date: Thu, 20 Aug 2015 07:08:48 +0000
-Subject: 
-Message-Id: <66EA9C2C53B30B46B1D28150E6EB8FB5015BB1A6901D@mail.napavalley.edu>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 24 Aug 2015 18:40:12 +0000
+Subject: [PATCH] coccinelle: api: suggest use of kvfree
+Message-Id: <1440441612-28868-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr
 
+Inspired by some patches sent by Pekka Enberg, eg 958b43384e4.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ scripts/coccinelle/api/kvfree.cocci |   70 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-Do you need an investor?
-Our investors fund project and business. We also give out loan/credit to an=
-y individual and company at 3% interest rate yearly. For more information, =
-Contact us via Email: devonfps@gmail.com=20
+diff --git a/scripts/coccinelle/api/kvfree.cocci b/scripts/coccinelle/api/kvfree.cocci
+new file mode 100644
+index 0000000..49f8551
+--- /dev/null
++++ b/scripts/coccinelle/api/kvfree.cocci
+@@ -0,0 +1,70 @@
++/// Use kvfree for choosing free function.
++///
++// Confidence: High
++// Copyright: (C) 2015 Julia Lawall, Inria, GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: --no-includes --include-headers
++
++virtual patch
++virtual context
++virtual org
++virtual report
++
++@r@
++expression e;
++position p;
++@@
++
++if@p (is_vmalloc_addr(e))
++     vfree(e);
++else
++     kfree(e);
++
++@script:python@
++p << r.p;
++@@
++
++if p[0].current_element = "kvfree":
++  cocci.include_match(False)
++
++@s depends on patch && !context && !org && !report@
++expression e;
++position r.p;
++@@
++
++- if@p (is_vmalloc_addr(e))
++-      vfree(e);
++- else
++-      kfree(e);
+++ kvfree(e);
++
++// ----------------------------------------------------------------------------
++
++@s_context depends on !patch && (context || org || report)@
++expression e;
++position r.p;
++position j0;
++@@
++
++* if@p (is_vmalloc_addr@j0(e))
++      vfree(e);
++  else
++      kfree(e);
++
++// ----------------------------------------------------------------------------
++
++@script:python s_org depends on org@
++j0 << s_context.j0;
++@@
++
++msg = "Use kvfree."
++coccilib.org.print_todo(j0[0], msg)
++
++// ----------------------------------------------------------------------------
++
++@script:python s_report depends on report@
++j0 << s_context.j0;
++@@
++
++msg = "Use kvfree."
++coccilib.report.print_report(j0[0], msg)
 
-If you need an investor or quick funding, forward your response ONLY to thi=
-s E-mail: devonfps@gmail.com=20
-....
-Haben Sie einen Investor brauchen?
-Unsere Investoren Fonds Projekt- und Gesch=E4fts. Wir geben auch Darlehen /=
- Kredite an jeden einzelnen und Unternehmen bei 3% Zinsen j=E4hrlich. F=FCr=
- weitere Informationen, kontaktieren Sie uns per E-Mail: devonfps@gmail.com=
-=20
-
-Wenn Sie ein Investor oder schnelle Finanzierung ben=F6tigen, senden Sie Ih=
-re Antwort nur auf diese E-mail: devonfps@gmail.com --
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
