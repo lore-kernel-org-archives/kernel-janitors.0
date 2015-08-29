@@ -1,42 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Aug 2015 09:08:10 +0000
-Subject: re: hv_netvsc: Implement set_channels ethtool op
-Message-Id: <20150814090810.GA6580@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Aug 2015 17:30:05 +0000
+Subject: [PATCH 1/8] staging: lustre: include: put constant on the right of binary operator
+Message-Id: <1440869412-4899-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Hello Andrew Schwartzmeyer,
+Move constants to the right of binary operators.
 
-This is a semi-automatic email about new static checker warnings.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-The patch b5960e6e2b5c: "hv_netvsc: Implement set_channels ethtool 
-op" from Aug 11, 2015, leads to the following Smatch complaint:
+// <smpl>
+@@
+constant c;
+expression e;
+binary operator b = {=,!=,&,|};
+@@
 
-drivers/net/hyperv/netvsc_drv.c:785 netvsc_set_channels()
-	 warn: variable dereferenced before check 'nvdev' (see line 780)
+(
+- c
++ e
+b
+- e
++ c
+|
+- c < e
++ e > c
+)
+// </smpl>
 
-drivers/net/hyperv/netvsc_drv.c
-   779		struct netvsc_device_info device_info;
-   780		const u32 num_chn = nvdev->num_chn;
-                                    ^^^^^^^^^^^^^^
-Deref.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-   781		const u32 max_chn = min_t(u32, nvdev->max_chn, num_online_cpus());
-                                               ^^^^^^^^^^^^^^
-Deref.
+---
+ drivers/staging/lustre/include/linux/lnet/types.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   782		int ret = 0;
-   783		bool recovering = false;
-   784	
-   785		if (!nvdev || nvdev->destroy)
-                     ^^^^^
-Check too late.
+diff --git a/drivers/staging/lustre/include/linux/lnet/types.h b/drivers/staging/lustre/include/linux/lnet/types.h
+index 940f73f..1163018 100644
+--- a/drivers/staging/lustre/include/linux/lnet/types.h
++++ b/drivers/staging/lustre/include/linux/lnet/types.h
+@@ -303,7 +303,7 @@ static inline int LNetHandleIsEqual(lnet_handle_any_t h1, lnet_handle_any_t h2)
+  */
+ static inline int LNetHandleIsInvalid(lnet_handle_any_t h)
+ {
+-	return LNET_WIRE_HANDLE_COOKIE_NONE = h.cookie;
++	return h.cookie = LNET_WIRE_HANDLE_COOKIE_NONE;
+ }
+ 
+ /**
 
-   786			return -ENODEV;
-   787	
-
-regards,
-dan carpenter
