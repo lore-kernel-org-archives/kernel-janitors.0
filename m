@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Aug 2015 17:30:05 +0000
-Subject: [PATCH 1/8] staging: lustre: include: put constant on the right of binary operator
-Message-Id: <1440869412-4899-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 29 Aug 2015 17:30:06 +0000
+Subject: [PATCH 2/8] staging: lustre: lnet: lib-ptl.c: put constant on the right of binary operator
+Message-Id: <1440869412-4899-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -38,20 +38,23 @@ b
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/include/linux/lnet/types.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/lustre/lnet/lnet/lib-ptl.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/lustre/include/linux/lnet/types.h b/drivers/staging/lustre/include/linux/lnet/types.h
-index 940f73f..1163018 100644
---- a/drivers/staging/lustre/include/linux/lnet/types.h
-+++ b/drivers/staging/lustre/include/linux/lnet/types.h
-@@ -303,7 +303,7 @@ static inline int LNetHandleIsEqual(lnet_handle_any_t h1, lnet_handle_any_t h2)
-  */
- static inline int LNetHandleIsInvalid(lnet_handle_any_t h)
- {
--	return LNET_WIRE_HANDLE_COOKIE_NONE = h.cookie;
-+	return h.cookie = LNET_WIRE_HANDLE_COOKIE_NONE;
+diff --git a/drivers/staging/lustre/lnet/lnet/lib-ptl.c b/drivers/staging/lustre/lnet/lnet/lib-ptl.c
+index 84707c5..b4f573a 100644
+--- a/drivers/staging/lustre/lnet/lnet/lib-ptl.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-ptl.c
+@@ -420,9 +420,9 @@ lnet_mt_match_md(struct lnet_match_table *mtable,
+ 
+ 	if (info->mi_opc = LNET_MD_OP_GET ||
+ 	    !lnet_ptl_is_lazy(the_lnet.ln_portals[info->mi_portal]))
+-		return LNET_MATCHMD_DROP | exhausted;
++		return exhausted | LNET_MATCHMD_DROP;
+ 
+-	return LNET_MATCHMD_NONE | exhausted;
++	return exhausted | LNET_MATCHMD_NONE;
  }
  
- /**
+ static int
 
