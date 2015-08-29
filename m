@@ -1,56 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Aug 2015 15:42:21 +0000
-Subject: Re: [patch] mptfusion: prevent some memory corruption
-Message-Id: <20150821154221.GS5610@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Aug 2015 17:30:11 +0000
+Subject: [PATCH 7/8] staging: lustre: osc: put constant on the right of binary operator
+Message-Id: <1440869412-4899-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150703085303.GA11901@mwanda>
-In-Reply-To: <20150703085303.GA11901@mwanda>
+References: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
-Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Ping?
+Move constants to the right of binary operators.
 
-regards,
-dan carpenter
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-On Fri, Jul 03, 2015 at 11:53:03AM +0300, Dan Carpenter wrote:
-> These are signed values the come from the user, we put a cap on the
-> upper bounds but not on the lower bounds.
-> 
-> We use "karg.dataSgeOffset" to calculate "sz".  We verify "sz" and
-> proceed as if that means that "karg.dataSgeOffset" is correct but this
-> fails to consider that the "sz" calculations can have integer overflows.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> During my QC process, I realized that I sent a similar patch last year,
-> but never received a response.
-> 
-> http://permalink.gmane.org/gmane.linux.kernel.janitors/32590
-> 
-> Looking at both of them, I guess I prefer today's patch because it is
-> simpler.
-> 
-> diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-> index 70bb753..fc73937 100644
-> --- a/drivers/message/fusion/mptctl.c
-> +++ b/drivers/message/fusion/mptctl.c
-> @@ -1859,6 +1859,15 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
->  	}
->  	spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
->  
-> +	/* Basic sanity checks to prevent underflows or integer overflows */
-> +	if (karg.maxReplyBytes < 0 ||
-> +	    karg.dataInSize < 0 ||
-> +	    karg.dataOutSize < 0 ||
-> +	    karg.dataSgeOffset < 0 ||
-> +	    karg.maxSenseBytes < 0 ||
-> +	    karg.dataSgeOffset > ioc->req_sz / 4)
-> +		return -EINVAL;
-> +
->  	/* Verify that the final request frame will not be too large.
->  	 */
->  	sz = karg.dataSgeOffset * 4;
+// <smpl>
+@@
+constant c;
+expression e;
+binary operator b = {=,!=,&,|};
+@@
+
+(
+- c
++ e
+b
+- e
++ c
+|
+- c < e
++ e > c
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/lustre/lustre/osc/osc_page.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/lustre/lustre/osc/osc_page.c b/drivers/staging/lustre/lustre/osc/osc_page.c
+index f9cf5ce..856d859 100644
+--- a/drivers/staging/lustre/lustre/osc/osc_page.c
++++ b/drivers/staging/lustre/lustre/osc/osc_page.c
+@@ -553,7 +553,7 @@ void osc_page_submit(const struct lu_env *env, struct osc_page *opg,
+ 	oap->oap_cmd = crt = CRT_WRITE ? OBD_BRW_WRITE : OBD_BRW_READ;
+ 	oap->oap_page_off = opg->ops_from;
+ 	oap->oap_count = opg->ops_to - opg->ops_from;
+-	oap->oap_brw_flags = OBD_BRW_SYNC | brw_flags;
++	oap->oap_brw_flags = brw_flags | OBD_BRW_SYNC;
+ 
+ 	if (!client_is_remote(osc_export(obj)) &&
+ 			capable(CFS_CAP_SYS_RESOURCE)) {
+
