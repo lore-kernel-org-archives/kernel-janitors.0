@@ -1,25 +1,79 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 04 Aug 2015 22:49:59 +0000
-Subject: Re: stmmac: add ipq806x glue layer
-Message-Id: <20150804224959.GZ5096@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Aug 2015 17:30:07 +0000
+Subject: [PATCH 3/8] staging: lustre: ldlm: put constant on the right of binary operator
+Message-Id: <1440869412-4899-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 04, 2015 at 03:42:51PM -0700, Mathieu Olivari wrote:
-> Hi Dan,
-> You're right, that's a bug. The offset should be (x), and not (1 << x).
-> We could either redefine the macro to be (x), or we just use << gmac->id
-> directly without a macro.
-> The reason why we have NSS_COMMON_CLK_SRC_CTRL_RGMII &
-> NSS_COMMON_CLK_SRC_CTRL_SGMII macros is that the bit takes different values
-> depending on the port. I can post a patch today if you want.
+Move constants to the right of binary operators.
 
-Yes, please.  If you could give me a Reported-by: Dan Carpenter
-<dan.carpenter@oracle.com> tag, I would be grateful.  Thanks!
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+constant c;
+expression e;
+binary operator b = {=,!=,&,|};
+@@
+
+(
+- c
++ e
+b
+- e
++ c
+|
+- c < e
++ e > c
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/lustre/lustre/ldlm/ldlm_flock.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
+index a4c252f..ab670fc 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
+@@ -602,7 +602,7 @@ ldlm_flock_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data)
+ 	    (LDLM_FL_FAILED|LDLM_FL_LOCAL_ONLY)) {
+ 		if (lock->l_req_mode = lock->l_granted_mode &&
+ 		    lock->l_granted_mode != LCK_NL &&
+-		    NULL = data)
++		    data = NULL)
+ 			ldlm_lock_decref_internal(lock, lock->l_req_mode);
+ 
+ 		/* Need to wake up the waiter if we were evicted */
+@@ -614,7 +614,7 @@ ldlm_flock_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data)
+ 
+ 	if (!(flags & (LDLM_FL_BLOCK_WAIT | LDLM_FL_BLOCK_GRANTED |
+ 		       LDLM_FL_BLOCK_CONV))) {
+-		if (NULL = data)
++		if (data = NULL)
+ 			/* mds granted the lock in the reply */
+ 			goto granted;
+ 		/* CP AST RPC: lock get granted, wake it up */
+@@ -627,10 +627,10 @@ ldlm_flock_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data)
+ 	obd = class_exp2obd(lock->l_conn_export);
+ 
+ 	/* if this is a local lock, there is no import */
+-	if (NULL != obd)
++	if (obd != NULL)
+ 		imp = obd->u.cli.cl_import;
+ 
+-	if (NULL != imp) {
++	if (imp != NULL) {
+ 		spin_lock(&imp->imp_lock);
+ 		fwd.fwd_generation = imp->imp_generation;
+ 		spin_unlock(&imp->imp_lock);
 
