@@ -1,68 +1,98 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Aug 2015 17:30:08 +0000
-Subject: [PATCH 4/8] staging: lustre: libcfs: put constant on the right of binary operator
-Message-Id: <1440869412-4899-5-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 29 Aug 2015 17:30:04 +0000
+Subject: [PATCH 0/8] put constant on the right of binary operator
+Message-Id: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440869412-4899-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, HPDD-discuss@ml01.01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
 
-Move constants to the right of binary operators.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+Typically, constants appear to the right of binary operators.  The complete
+semantic patch that performs this change is as follows
+(http://coccinelle.lip6.fr/).  In particular, it doesn't change long
+sequences of bit ors, or comparisons that are checking that some
+expression has a value that is between two other values.
 
 // <smpl>
-@@
-constant c;
-expression e;
+@disable bitor_comm, neg_if_exp@
+constant c,c1;
+local idexpression i;
+expression e,e1,e2;
 binary operator b = {=,!=,&,|};
+type t;
 @@
 
 (
+c b (c1)
+|
+sizeof(t) b e1
+|
+sizeof e b e1
+|
+i b e1
+|
+c | e1 | e2 | ...
+|
+c | (e ? e1 : e2)
+|
 - c
 + e
 b
 - e
 + c
+)
+
+@disable gtr_lss, gtr_lss_eq, not_int2@
+constant c,c1,c2;
+expression e,e1,e2;
+binary operator b;
+binary operator b1 = {<,<=},b2 = {<,<=};
+binary operator b3 = {>,>=},b4 = {>,>=};
+local idexpression i;
+type t;
+@@
+
+(
+c b c1
+|
+sizeof(t) b e1
+|
+sizeof e b e1
+|
+ (e1 b1 e) && (e b2 e2)
+|
+ (e1 b3 e) && (e b4 e2)
+|
+i b e
 |
 - c < e
 + e > c
+|
+- c <= e
++ e >= c
+|
+- c > e
++ e < c
+|
+- c >= e
++ e <= c
 )
 // </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
 ---
- drivers/staging/lustre/lustre/libcfs/hash.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/libcfs/hash.c b/drivers/staging/lustre/lustre/libcfs/hash.c
-index 0ed0631..08f0b48 100644
---- a/drivers/staging/lustre/lustre/libcfs/hash.c
-+++ b/drivers/staging/lustre/lustre/libcfs/hash.c
-@@ -677,8 +677,8 @@ cfs_hash_bd_findadd_locked(struct cfs_hash *hs, struct cfs_hash_bd *bd,
- 			   int noref)
- {
- 	return cfs_hash_bd_lookup_intent(hs, bd, key, hnode,
--					 CFS_HS_LOOKUP_IT_ADD |
--					 (!noref * CFS_HS_LOOKUP_MASK_REF));
-+					 (!noref * CFS_HS_LOOKUP_MASK_REF) |
-+					 CFS_HS_LOOKUP_IT_ADD);
- }
- EXPORT_SYMBOL(cfs_hash_bd_findadd_locked);
- 
-@@ -756,7 +756,7 @@ cfs_hash_multi_bd_findadd_locked(struct cfs_hash *hs,
- 	unsigned	   i;
- 
- 	LASSERT(hnode != NULL);
--	intent = CFS_HS_LOOKUP_IT_PEEK | (!noref * CFS_HS_LOOKUP_MASK_REF);
-+	intent = (!noref * CFS_HS_LOOKUP_MASK_REF) | CFS_HS_LOOKUP_IT_PEEK;
- 
- 	cfs_hash_for_each_bd(bds, n, i) {
- 		ehnode = cfs_hash_bd_lookup_intent(hs, &bds[i], key,
-
+ drivers/staging/lustre/include/linux/lnet/types.h   |    2 +-
+ drivers/staging/lustre/lnet/lnet/lib-ptl.c          |    4 ++--
+ drivers/staging/lustre/lustre/ldlm/ldlm_flock.c     |    8 ++++----
+ drivers/staging/lustre/lustre/libcfs/hash.c         |    6 +++---
+ drivers/staging/lustre/lustre/llite/dir.c           |   10 +++++-----
+ drivers/staging/lustre/lustre/llite/file.c          |   10 +++++-----
+ drivers/staging/lustre/lustre/llite/llite_lib.c     |    2 +-
+ drivers/staging/lustre/lustre/obdclass/cl_object.c  |    4 ++--
+ drivers/staging/lustre/lustre/osc/osc_page.c        |    2 +-
+ drivers/staging/lustre/lustre/ptlrpc/client.c       |    2 +-
+ drivers/staging/lustre/lustre/ptlrpc/import.c       |   10 +++++-----
+ drivers/staging/lustre/lustre/ptlrpc/pack_generic.c |    2 +-
+ 12 files changed, 31 insertions(+), 31 deletions(-)
