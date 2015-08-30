@@ -1,57 +1,73 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Aug 2015 00:11:19 +0000
-Subject: [PATCH 08/11] drm/exynos: mic: fix error return code
-Message-Id: <1440288682-12732-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sun, 30 Aug 2015 20:10:15 +0000
+Subject: [PATCH 2/2 v2] spi: spi-ep93xx: fix PTR_ERR problem
+Message-Id: <alpine.DEB.2.02.1508302209040.2062@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1440957911-7687-1-git-send-email-Julia.Lawall@lip6.fr> <1440957911-7687-3-git-send-email-Julia.Lawall@lip6.fr> <55E34C0E.5000702@bfs.de>
+In-Reply-To: <55E34C0E.5000702@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Inki Dae <inki.dae@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: walter harms <wharms@bfs.de>
+Cc: Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Propagate error code on failure.
+Move initialization of msg->status up over the call to dev_err, in both
+calls to ep93xx_spi_dma_prepare, and change the reference in the call to
+dev_err to msg->status, to both fix the wrong argument to PTR_ERR in the
+second case and to make the dev_err line a little shorter.  This required
+furthermore replacing %ld by %d, since msg->status is an integer.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic match that finds the PTR_ERR problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-identifier ret; expression e1,e2;
+expression x,y;
 @@
+
+if (IS_ERR(x) || ...) {
+  ... when any
+      when != IS_ERR(...)
 (
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
+   PTR_ERR(x)
 |
-ret = 0
+*  PTR_ERR(y)
 )
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
+  ... when any
 }
 // </smpl>
+
+Reorganizations at the suggestion of Walter Harms.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/gpu/drm/exynos/exynos_drm_mic.c |    1 +
- 1 file changed, 1 insertion(+)
+v2: Reorganize the code, to solve the problem in a way that makes the
+resulting code simpler.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index 8994eab..ddf0b6c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -432,6 +432,7 @@ int exynos_mic_probe(struct platform_device *pdev)
- 							"samsung,disp-syscon");
- 	if (IS_ERR(mic->sysreg)) {
- 		DRM_ERROR("mic: Failed to get system register.\n");
-+		ret = PTR_ERR(mic->sysreg);
- 		goto err;
+ drivers/spi/spi-ep93xx.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
+index bb00be8..73d0df6 100644
+--- a/drivers/spi/spi-ep93xx.c
++++ b/drivers/spi/spi-ep93xx.c
+@@ -559,16 +559,16 @@ static void ep93xx_spi_dma_transfer(struct ep93xx_spi *espi)
+ 
+ 	rxd = ep93xx_spi_dma_prepare(espi, DMA_DEV_TO_MEM);
+ 	if (IS_ERR(rxd)) {
+-		dev_err(&espi->pdev->dev, "DMA RX failed: %ld\n", PTR_ERR(rxd));
+ 		msg->status = PTR_ERR(rxd);
++		dev_err(&espi->pdev->dev, "DMA RX failed: %d\n", msg->status);
+ 		return;
  	}
  
-
+ 	txd = ep93xx_spi_dma_prepare(espi, DMA_MEM_TO_DEV);
+ 	if (IS_ERR(txd)) {
+ 		ep93xx_spi_dma_finish(espi, DMA_DEV_TO_MEM);
+-		dev_err(&espi->pdev->dev, "DMA TX failed: %ld\n", PTR_ERR(rxd));
+ 		msg->status = PTR_ERR(txd);
++		dev_err(&espi->pdev->dev, "DMA TX failed: %d\n", msg->status);
+ 		return;
+ 	}
+ 
