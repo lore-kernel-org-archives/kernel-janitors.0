@@ -1,90 +1,101 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 12:15:09 +0000
-Subject: [PATCH 16/39] usb: gadget: drop null test before destroy functions
-Message-Id: <1442146532-9100-17-git-send-email-Julia.Lawall@lip6.fr>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Date: Tue, 01 Sep 2015 10:39:55 +0000
+Subject: Re: [PATCH 04/11] fbdev: ssd1307fb: fix error return code
+Message-Id: <55E5807B.1020505@ti.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="WQjJdL9WnSuKeIGk6MMGVIcFRFVxTwPSu"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@ti.com>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1440288682-12732-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440288682-12732-5-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove unneeded NULL test.
+--WQjJdL9WnSuKeIGk6MMGVIcFRFVxTwPSu
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
 
-// <smpl>
-@@ expression x; @@
--if (x != NULL)
-  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-// </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On 23/08/15 03:11, Julia Lawall wrote:
+> Propagate error code on failure.  Also changed %ld to %d in dev_err to =
+use
+> ret variable rather than putting two calls to PTR_ERR.
+>=20
+> A simplified version of the semantic match that finds the first problem=
+ is as
+> follows: (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @@
+> identifier ret; expression e1,e2;
+> @@
+> (
+> if (\(ret < 0\|ret !=3D 0\))
+>  { ... return ret; }
+> |
+> ret =3D 0
+> )
+> ... when !=3D ret =3D e1
+>     when !=3D &ret
+> *if(...)
+> {
+>   ... when !=3D ret =3D e2
+>       when forall
+>  return ret;
+> }
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+>  drivers/video/fbdev/ssd1307fb.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1=
+307fb.c
+> index 3e153c0..1611215 100644
+> --- a/drivers/video/fbdev/ssd1307fb.c
+> +++ b/drivers/video/fbdev/ssd1307fb.c
+> @@ -656,8 +656,9 @@ static int ssd1307fb_probe(struct i2c_client *clien=
+t,
+>  	bl =3D backlight_device_register(bl_name, &client->dev, par,
+>  				       &ssd1307fb_bl_ops, NULL);
+>  	if (IS_ERR(bl)) {
+> -		dev_err(&client->dev, "unable to register backlight device: %ld\n",
+> -			PTR_ERR(bl));
+> +		ret =3D PTR_ERR(bl);
+> +		dev_err(&client->dev, "unable to register backlight device: %d\n",
+> +			ret);
+>  		goto bl_init_error;
+>  	}
 
----
- drivers/usb/gadget/udc/bdc/bdc_core.c |    3 +--
- drivers/usb/gadget/udc/gr_udc.c       |    3 +--
- drivers/usb/gadget/udc/mv_u3d_core.c  |    3 +--
- drivers/usb/gadget/udc/mv_udc_core.c  |    3 +--
- 4 files changed, 4 insertions(+), 8 deletions(-)
+Thanks, queued for 4.3.
 
-diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
-index 339af51..81b6229 100644
---- a/drivers/usb/gadget/udc/mv_udc_core.c
-+++ b/drivers/usb/gadget/udc/mv_udc_core.c
-@@ -2100,8 +2100,7 @@ static int mv_udc_remove(struct platform_device *pdev)
- 	}
- 
- 	/* free memory allocated in probe */
--	if (udc->dtd_pool)
--		dma_pool_destroy(udc->dtd_pool);
-+	dma_pool_destroy(udc->dtd_pool);
- 
- 	if (udc->ep_dqh)
- 		dma_free_coherent(&pdev->dev, udc->ep_dqh_size,
-diff --git a/drivers/usb/gadget/udc/gr_udc.c b/drivers/usb/gadget/udc/gr_udc.c
-index 8aa2593..b9429bc 100644
---- a/drivers/usb/gadget/udc/gr_udc.c
-+++ b/drivers/usb/gadget/udc/gr_udc.c
-@@ -2117,8 +2117,7 @@ static int gr_remove(struct platform_device *pdev)
- 		return -EBUSY;
- 
- 	gr_dfs_delete(dev);
--	if (dev->desc_pool)
--		dma_pool_destroy(dev->desc_pool);
-+	dma_pool_destroy(dev->desc_pool);
- 	platform_set_drvdata(pdev, NULL);
- 
- 	gr_free_request(&dev->epi[0].ep, &dev->ep0reqi->req);
-diff --git a/drivers/usb/gadget/udc/mv_u3d_core.c b/drivers/usb/gadget/udc/mv_u3d_core.c
-index 4c48969..dafe74e 100644
---- a/drivers/usb/gadget/udc/mv_u3d_core.c
-+++ b/drivers/usb/gadget/udc/mv_u3d_core.c
-@@ -1767,8 +1767,7 @@ static int mv_u3d_remove(struct platform_device *dev)
- 	usb_del_gadget_udc(&u3d->gadget);
- 
- 	/* free memory allocated in probe */
--	if (u3d->trb_pool)
--		dma_pool_destroy(u3d->trb_pool);
-+	dma_pool_destroy(u3d->trb_pool);
- 
- 	if (u3d->ep_context)
- 		dma_free_coherent(&dev->dev, u3d->ep_context_size,
-diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
-index 5c8f4ef..ccb9c21 100644
---- a/drivers/usb/gadget/udc/bdc/bdc_core.c
-+++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
-@@ -324,8 +324,7 @@ static void bdc_mem_free(struct bdc *bdc)
- 				bdc->scratchpad.buff, bdc->scratchpad.sp_dma);
- 
- 	/* Destroy the dma pools */
--	if (bdc->bd_table_pool)
--		dma_pool_destroy(bdc->bd_table_pool);
-+	dma_pool_destroy(bdc->bd_table_pool);
- 
- 	/* Free the bdc_ep array */
- 	kfree(bdc->bdc_ep_array);
+ Tomi
 
+
+--WQjJdL9WnSuKeIGk6MMGVIcFRFVxTwPSu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJV5YB7AAoJEPo9qoy8lh714U4P/ipuS1aXhcDcCZ1RVDE2aJiX
+QD0ndvGgMDILPtp3VcWflI73LpIM+v6fPvSgZt3DYBADm1Rh6ur1Jt4AFVu4LJBF
+hcpzZqqd1+NdVpzETLWJrXBf+wTxD0zjjYuirU0S5KjANgxmajxqwBw02IEtLkuD
+tlEJiZzdPq0YZhim28FD5f+HF9vsafvn5+gRst5kgqMiVuZNqwbYRJtDLCaK933H
+BBRTjLMdRf4KDhj2OYNIO8h17GROQwlPL26CPxf2X+bqXOO4cmVonaRAgdMbrT7D
+3sCTBPbMUL5YjEnKDW/cctHNqWNslcEwohdMPxJoWvKsqGyGqGxwfRgG1OHnjS9n
+8zClGfxOv1BWq6Sc3B1iQMboENcx0tEFl5RVgO+KQdLPAgO48jo9hg/OZm7gB+U6
+ZHwShR+AV272EC9j2s95KgBnbbMBCut7rfx5jcPdsZfOJ0NytoAAbbkmWKYB42qm
+6CIMygCJydte+oar55ZS656525xIsQtIGWsAzNlZnsT4hD/BWVNpqesmyhnfxHHZ
+6t38+9aN9qPTNJYRgGXRMCt05ah0CBo8e/ginniAqGEiDmoqYIbKcHIgWqKfrhfd
+Vp0prTTZZJ6JyICSs66OeNJ+Xzrn6td2D7rINtSRKpqHFSbYcbMuUdlvSUuc7y1l
+qLtn8zzPjgtg696lo5g4
+=9Ed+
+-----END PGP SIGNATURE-----
+
+--WQjJdL9WnSuKeIGk6MMGVIcFRFVxTwPSu--
