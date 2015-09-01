@@ -1,29 +1,39 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Mon, 14 Sep 2015 20:43:06 +0000
-Subject: Re: [PATCH 06/39] Btrfs: drop null test before destroy functions
-Message-Id: <20150914204306.GU8891@twin.jikos.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 01 Sep 2015 07:42:23 +0000
+Subject: Re: [PATCH 03/11] ocfs2: Less checks in ocfs2_rename() after error detection
+Message-Id: <55E556DF.9000301@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
- <1442146532-9100-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-7-git-send-email-Julia.Lawall@lip6.fr>
+References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5455FC05.4010606@users.sourceforge.net>
+ <alpine.DEB.2.02.1411021150540.2239@localhost6.localdomain6>
+ <55992DF0.5030205@users.sourceforge.net>
+ <55993170.6060306@users.sourceforge.net> <20150706085414.GD28762@mwanda>
+In-Reply-To: <20150706085414.GD28762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Chris Mason <clm@fb.com>, sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@suse.com>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, Sep 13, 2015 at 02:14:59PM +0200, Julia Lawall wrote:
-> Remove unneeded NULL test.
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sat, 4 Jul 2015 15:30:18 +0200
+>>
+>> Skip checks for a few variables in three error handling cases within
+>> the ocfs2_rename() function by adjustment of a few jump targets
+>> according to the Linux coding style convention.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@ expression x; @@
-> -if (x != NULL)
->   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> I don't think this is an improvement.
 
-Acked-by: David Sterba <dsterba@suse.com>
+How do you think about the other update suggestions from this patch series?
+
+Would anybody like to contribute constructive comments so that further progress
+can eventually be achieved for a corresponding source code review?
+
+Regards,
+Markus
