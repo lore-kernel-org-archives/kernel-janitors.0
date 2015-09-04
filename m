@@ -1,156 +1,196 @@
-From: Neil Brown <neilb@suse.com>
-Date: Tue, 15 Sep 2015 07:29:10 +0000
-Subject: Re: [PATCH 17/39] md: drop null test before destroy functions
-Message-Id: <87613c6szd.fsf@notabene.neil.brown.name>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 04 Sep 2015 15:55:54 +0000
+Subject: [PATCH] coccinelle: misc: move constants to the right
+Message-Id: <1441382154-16840-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr> <1442146532-9100-18-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-18-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Move constants to the right in binary operators.
 
-Julia Lawall <Julia.Lawall@lip6.fr> writes:
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> Remove unneeded NULL test.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@ expression x; @@
-> -if (x !=3D NULL)
->   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  drivers/md/multipath.c |    3 +--
->  drivers/md/raid1.c     |    6 ++----
->  drivers/md/raid10.c    |    9 +++------
->  drivers/md/raid5.c     |    3 +--
->  4 files changed, 7 insertions(+), 14 deletions(-)
+---
+ scripts/coccinelle/misc/compare_const_fl.cocci |  171 +++++++++++++++++++++++++
+ 1 file changed, 171 insertions(+)
 
-Applied, thanks.
+diff --git a/var/julia/linuxcopy/scripts/coccinelle/misc/compare_const_fl.cocci b/var/julia/linuxcopy/scripts/coccinelle/misc/compare_const_fl.cocci
+new file mode 100644
+index 0000000..b5d4bab
+--- /dev/null
++++ b/scripts/coccinelle/misc/compare_const_fl.cocci
+@@ -0,0 +1,171 @@
++/// Move constants to the right of binary operators.
++//# Depends on personal taste in some cases.
++///
++// Confidence: Moderate
++// Copyright: (C) 2015 Copyright: (C) 2015 Julia Lawall, Inria. GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: --no-includes --include-headers
++
++virtual patch
++virtual context
++virtual org
++virtual report
++
++@r1 depends on patch && !context && !org && !report
++ disable bitor_comm, neg_if_exp@
++constant c,c1;
++local idexpression i;
++expression e,e1,e2;
++binary operator b = {=,!=,&,|};
++type t;
++@@
++
++(
++c b (c1)
++|
++sizeof(t) b e1
++|
++sizeof e b e1
++|
++i b e1
++|
++c | e1 | e2 | ...
++|
++c | (e ? e1 : e2)
++|
++- c
+++ e
++b
++- e
+++ c
++)
++
++@r2 depends on patch && !context && !org && !report
++ disable gtr_lss, gtr_lss_eq, not_int2@
++constant c,c1;
++expression e,e1,e2;
++binary operator b;
++binary operator b1 = {<,<=},b2 = {<,<=};
++binary operator b3 = {>,>=},b4 = {>,>=};
++local idexpression i;
++type t;
++@@
++
++(
++c b c1
++|
++sizeof(t) b e1
++|
++sizeof e b e1
++|
++ (e1 b1 e) && (e b2 e2)
++|
++ (e1 b3 e) && (e b4 e2)
++|
++i b e
++|
++- c < e
+++ e > c
++|
++- c <= e
+++ e >= c
++|
++- c > e
+++ e < c
++|
++- c >= e
+++ e <= c
++)
++
++// ----------------------------------------------------------------------------
++
++@r1_context depends on !patch && (context || org || report)
++ disable bitor_comm, neg_if_exp exists@
++type t;
++binary operator b = {=,!=,&,|};
++constant c, c1;
++expression e, e1, e2;
++local idexpression i;
++position j0;
++@@
++
++(
++c b (c1)
++|
++sizeof(t) b e1
++|
++sizeof e b e1
++|
++i b e1
++|
++c | e1 | e2 | ...
++|
++c | (e ? e1 : e2)
++|
++* c@j0 b e
++)
++
++@r2_context depends on !patch && (context || org || report)
++ disable gtr_lss, gtr_lss_eq, not_int2 exists@
++type t;
++binary operator b, b1 = {<,<=}, b2 = {<,<=}, b3 = {>,>=}, b4 = {>,>=};
++constant c, c1;
++expression e, e1, e2;
++local idexpression i;
++position j0;
++@@
++
++(
++c b c1
++|
++sizeof(t) b e1
++|
++sizeof e b e1
++|
++ (e1 b1 e) && (e b2 e2)
++|
++ (e1 b3 e) && (e b4 e2)
++|
++i b e
++|
++* c@j0 < e
++|
++* c@j0 <= e
++|
++* c@j0 > e
++|
++* c@j0 >= e
++)
++
++// ----------------------------------------------------------------------------
++
++@script:python r1_org depends on org@
++j0 << r1_context.j0;
++@@
++
++msg = "Move constant to right."
++coccilib.org.print_todo(j0[0], msg)
++
++@script:python r2_org depends on org@
++j0 << r2_context.j0;
++@@
++
++msg = "Move constant to right."
++coccilib.org.print_todo(j0[0], msg)
++
++// ----------------------------------------------------------------------------
++
++@script:python r1_report depends on report@
++j0 << r1_context.j0;
++@@
++
++msg = "Move constant to right."
++coccilib.report.print_report(j0[0], msg)
++
++@script:python r2_report depends on report@
++j0 << r2_context.j0;
++@@
++
++msg = "Move constant to right."
++coccilib.report.print_report(j0[0], msg)
++
 
-NeilBrown
-
-
->
-> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-> index 15ef2c6..09a12d7 100644
-> --- a/drivers/md/raid5.c
-> +++ b/drivers/md/raid5.c
-> @@ -2271,8 +2271,7 @@ static void shrink_stripes(struct r5conf *conf)
->  	       drop_one_stripe(conf))
->  		;
->=20=20
-> -	if (conf->slab_cache)
-> -		kmem_cache_destroy(conf->slab_cache);
-> +	kmem_cache_destroy(conf->slab_cache);
->  	conf->slab_cache =3D NULL;
->  }
->=20=20
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 4517f06..5f4f553 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -2843,8 +2843,7 @@ static struct r1conf *setup_conf(struct mddev *mdde=
-v)
->=20=20
->   abort:
->  	if (conf) {
-> -		if (conf->r1bio_pool)
-> -			mempool_destroy(conf->r1bio_pool);
-> +		mempool_destroy(conf->r1bio_pool);
->  		kfree(conf->mirrors);
->  		safe_put_page(conf->tmppage);
->  		kfree(conf->poolinfo);
-> @@ -2946,8 +2945,7 @@ static void raid1_free(struct mddev *mddev, void *p=
-riv)
->  {
->  	struct r1conf *conf =3D priv;
->=20=20
-> -	if (conf->r1bio_pool)
-> -		mempool_destroy(conf->r1bio_pool);
-> +	mempool_destroy(conf->r1bio_pool);
->  	kfree(conf->mirrors);
->  	safe_put_page(conf->tmppage);
->  	kfree(conf->poolinfo);
-> diff --git a/drivers/md/multipath.c b/drivers/md/multipath.c
-> index d222522..d132f06 100644
-> --- a/drivers/md/multipath.c
-> +++ b/drivers/md/multipath.c
-> @@ -470,8 +470,7 @@ static int multipath_run (struct mddev *mddev)
->  	return 0;
->=20=20
->  out_free_conf:
-> -	if (conf->pool)
-> -		mempool_destroy(conf->pool);
-> +	mempool_destroy(conf->pool);
->  	kfree(conf->multipaths);
->  	kfree(conf);
->  	mddev->private =3D NULL;
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index 0fc33eb..7c99a40 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -3486,8 +3486,7 @@ static struct r10conf *setup_conf(struct mddev *mdd=
-ev)
->  		printk(KERN_ERR "md/raid10:%s: couldn't allocate memory.\n",
->  		       mdname(mddev));
->  	if (conf) {
-> -		if (conf->r10bio_pool)
-> -			mempool_destroy(conf->r10bio_pool);
-> +		mempool_destroy(conf->r10bio_pool);
->  		kfree(conf->mirrors);
->  		safe_put_page(conf->tmppage);
->  		kfree(conf);
-> @@ -3682,8 +3681,7 @@ static int run(struct mddev *mddev)
->=20=20
->  out_free_conf:
->  	md_unregister_thread(&mddev->thread);
-> -	if (conf->r10bio_pool)
-> -		mempool_destroy(conf->r10bio_pool);
-> +	mempool_destroy(conf->r10bio_pool);
->  	safe_put_page(conf->tmppage);
->  	kfree(conf->mirrors);
->  	kfree(conf);
-> @@ -3696,8 +3694,7 @@ static void raid10_free(struct mddev *mddev, void *=
-priv)
->  {
->  	struct r10conf *conf =3D priv;
->=20=20
-> -	if (conf->r10bio_pool)
-> -		mempool_destroy(conf->r10bio_pool);
-> +	mempool_destroy(conf->r10bio_pool);
->  	safe_put_page(conf->tmppage);
->  	kfree(conf->mirrors);
->  	kfree(conf->mirrors_old);
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV98jGAAoJEDnsnt1WYoG5VK4P/2mIFc+DTSvH4vi6SO65G0ON
-gBUrCh8TmvjgSncNfr77R5xevhivH4sclBNc+ZmfB0JaFzt9Qi7UfaCEJAu6qRVu
-4HD3MVS7v7aUxzT6eKt47/RlCp7bF9nYyazXzP8FniCuEop8ukcp/vMFrlYOKp2p
-rf/f+J0aXPdPntSe5/j/p/8pXXGogupe0fh4Q4sLyj17ZmSUEfEZyXcf50lQXPh+
-Z73Sf8NEeVYVesrgPHTCbFPeGkocGih7QmW1wwK+zbzPALEnj1JnVeMnw2o5oZ1n
-XJF5sS5Ins515Ogt4TwALxoCKnqVig0qrYhrYGY+qq+1k6InaDTP4bEDiHV7MeYK
-arpoHzOHF0lDRaJYh9Zpz6Llu5/bVp9svqJNcihTGkqSHzLuNKx8Uqq+QV2iZEeU
-fF2NKysjZ37CicAS+Si0Xyk9DDotDoirdnbjCKg+7wU1gFephNDrNTxovci2tRNc
-rbqu3LmTd7rBe8R0kA8h/Qm8LRXl7nSvjRhUUCkDBSvCELRnCe8GxFQLKHYPIFKn
-DMH5zfHdAjgzR1xXOyIuY7vtKcsK3mV3aG41pjaMmrJCrnBcJF8mfvu4PXCVfyuf
-81AQSSAgWE7J1mYK0nhbMJUhCz3sSBQTC/SgbW9/uPzjMTYX+YfqOBfMSEn9JtRP
-k2pD3LJwOdlcRHglNjpj
-=P64Z
------END PGP SIGNATURE-----
---=-=-=--
