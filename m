@@ -1,54 +1,47 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 14 Sep 2015 08:30:29 +0000
-Subject: Re: [PATCH 31/39] KVM: MMU: drop null test before destroy functions
-Message-Id: <55F685A5.1050805@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 08 Sep 2015 08:56:41 +0000
+Subject: Re: [PATCH 2/2] pinctrl: digicolor: convert null test to IS_ERR test
+Message-Id: <CACRpkdb4-iq7GYYjxub7dtyjRNWipJNx0NULPo8VywTKKPE5YQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
- <1442146532-9100-32-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-32-git-send-email-Julia.Lawall@lip6.fr>
+References: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1440450747-10080-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440450747-10080-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Gleb Natapov <gleb@kernel.org>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+On Mon, Aug 24, 2015 at 11:12 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-
-On 13/09/2015 14:15, Julia Lawall wrote:
-> Remove unneeded NULL test.
-> 
+> Since commit 323de9efdf3e ("pinctrl: make pinctrl_register() return proper
+> error code"), pinctrl_register returns an error code rather than NULL on
+> failure.  Update a driver that was introduced more recently.
+>
 > The semantic patch that makes this change is as follows:
 > (http://coccinelle.lip6.fr/)
-> 
+>
 > // <smpl>
-> @@ expression x; @@
-> -if (x != NULL)
->   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+> @@
+> expression e,e1,e2;
+> @@
+>
+> e = pinctrl_register(...)
+> ... when != e = e1
+> if (
+> -   e = NULL
+> +   IS_ERR(e)
+>    ) {
+>      ...
+>      return
+> -      e2
+> +      PTR_ERR(e)
+>      ;
+>      }
 > // </smpl>
-> 
+>
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  arch/x86/kvm/mmu.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index 69088a1..fb0c1bd 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -4883,10 +4883,8 @@ static struct shrinker mmu_shrinker = {
->  
->  static void mmu_destroy_caches(void)
->  {
-> -	if (pte_list_desc_cache)
-> -		kmem_cache_destroy(pte_list_desc_cache);
-> -	if (mmu_page_header_cache)
-> -		kmem_cache_destroy(mmu_page_header_cache);
-> +	kmem_cache_destroy(pte_list_desc_cache);
-> +	kmem_cache_destroy(mmu_page_header_cache);
->  }
->  
->  int kvm_mmu_module_init(void)
-> 
 
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Patch applied for fixes.
+
+Yours,
+Linus Walleij
