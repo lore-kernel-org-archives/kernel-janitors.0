@@ -1,35 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 14 Sep 2015 11:55:06 +0000
-Subject: Re: [PATCH 00/39] drop null test before destroy functions
-Message-Id: <55F6B59A.4040104@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:24 +0000
+Subject: [PATCH 31/39] KVM: MMU: drop null test before destroy functions
+Message-Id: <1442146532-9100-32-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org
-Cc: iommu@lists.linux-foundation.org, dccp@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org, dmaengine@vger.kernel.org, sergey.senozhatsky@gmail.com, Dan Williams <dan.j.williams@intel.com>, cluster-devel@redhat.com, intel-wired-lan@lists.osuosl.org, Mitch Williams <mitch.a.williams@intel.com>, John Ronciak <john.ronciak@intel.com>, Matthew Vick <matthew.vick@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Shannon Nelson <shannon.nelson@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org, netdev@vger.kernel.org, linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, linux-usb@vger.kernel.orglinux
+To: Gleb Natapov <gleb@kernel.org>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Recent commits to kernel/git/torvalds/linux.git have made the following
-> functions able to tolerate NULL arguments:
->
-> kmem_cache_destroy (commit 3942d29918522)
-> mempool_destroy (commit 4e3ca3e033d1)
-> dma_pool_destroy (commit 44d7175da6ea)
+Remove unneeded NULL test.
 
-How do you think about to extend an other SmPL script?
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Related topic:
-scripts/coccinelle/free: Delete NULL test before freeing functions
-https://systeme.lip6.fr/pipermail/cocci/2015-May/001960.html
-https://www.mail-archive.com/cocci@systeme.lip6.fr/msg01855.html
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> If these changes are OK, I will address the remainder later.
+---
+ arch/x86/kvm/mmu.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Would anybody like to reuse my general SmPL approach for similar source
-code clean-up?
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 69088a1..fb0c1bd 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -4883,10 +4883,8 @@ static struct shrinker mmu_shrinker = {
+ 
+ static void mmu_destroy_caches(void)
+ {
+-	if (pte_list_desc_cache)
+-		kmem_cache_destroy(pte_list_desc_cache);
+-	if (mmu_page_header_cache)
+-		kmem_cache_destroy(mmu_page_header_cache);
++	kmem_cache_destroy(pte_list_desc_cache);
++	kmem_cache_destroy(mmu_page_header_cache);
+ }
+ 
+ int kvm_mmu_module_init(void)
 
-Regards,
-Markus
