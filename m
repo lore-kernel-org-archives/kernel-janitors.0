@@ -1,83 +1,54 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 14 Sep 2015 18:50:03 +0000
-Subject: Re: [PATCH 12/39] dm: drop null test before destroy functions
-Message-Id: <alpine.DEB.2.02.1509142049590.2048@localhost6.localdomain6>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:07 +0000
+Subject: [PATCH 14/39] SUNRPC: drop null test before destroy functions
+Message-Id: <1442146532-9100-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr> <1442146532-9100-13-git-send-email-Julia.Lawall@lip6.fr> <alpine.LRH.2.02.1509140932400.7970@file01.intranet.prod.int.rdu2.redhat.com> <20150914140040.GA11815@redhat.com>
- <alpine.LRH.2.02.1509141004430.7970@file01.intranet.prod.int.rdu2.redhat.com>
-In-Reply-To: <alpine.LRH.2.02.1509141004430.7970@file01.intranet.prod.int.rdu2.redhat.com>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Mike Snitzer <snitzer@redhat.com>, device-mapper development <dm-devel@redhat.com>, Alasdair Kergon <agk@redhat.com>, kernel-janitors@vger.kernel.org, Neil Brown <neilb@suse.com>, linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, sergey.senozhatsky@gmail.com
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Remove unneeded NULL test.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-On Mon, 14 Sep 2015, Mikulas Patocka wrote:
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
 
-> 
-> 
-> On Mon, 14 Sep 2015, Mike Snitzer wrote:
-> 
-> > On Mon, Sep 14 2015 at  9:46am -0400,
-> > Mikulas Patocka <mpatocka@redhat.com> wrote:
-> > 
-> > > 
-> > > 
-> > > On Sun, 13 Sep 2015, Julia Lawall wrote:
-> > > 
-> > > > Remove unneeded NULL test.
-> > > > 
-> > > > The semantic patch that makes this change is as follows:
-> > > > (http://coccinelle.lip6.fr/)
-> > > > 
-> > > > // <smpl>
-> > > > @@ expression x; @@
-> > > > -if (x != NULL)
-> > > >   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-> > > > // </smpl>
-> > > > 
-> > > > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > > > 
-> > > > ---
-> > > >  drivers/md/dm-bufio.c              |    3 +--
-> > > >  drivers/md/dm-cache-target.c       |    3 +--
-> > > >  drivers/md/dm-crypt.c              |    6 ++----
-> > > >  drivers/md/dm-io.c                 |    3 +--
-> > > >  drivers/md/dm-log-userspace-base.c |    3 +--
-> > > >  drivers/md/dm-region-hash.c        |    4 +---
-> > > >  drivers/md/dm.c                    |   13 ++++---------
-> > > >  7 files changed, 11 insertions(+), 24 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
-> > > > index 83cc52e..8ad39b6 100644
-> > > > --- a/drivers/md/dm-bufio.c
-> > > > +++ b/drivers/md/dm-bufio.c
-> > > > @@ -1864,8 +1864,7 @@ static void __exit dm_bufio_exit(void)
-> > > >  	for (i = 0; i < ARRAY_SIZE(dm_bufio_caches); i++) {
-> > > >  		struct kmem_cache *kc = dm_bufio_caches[i];
-> > > >  
-> > > > -		if (kc)
-> > > > -			kmem_cache_destroy(kc);
-> > > > +		kmem_cache_destroy(kc);
-> > > >  	}
-> > > 
-> > > The variable here can be NULL. I don't know how did you conclude that it 
-> > > cannot. It seems that you didn't test the patch, if you did, you'd hit 
-> > > NULL pointer dereference here.
-> > 
-> > kmem_cache_destroy(), mempool_destroy(), etc all check for NULL and just
-> > return.  So there is no need for the callers to check for NULL too.
-> > 
-> > Mike
-> 
-> I see. It was recent change that I missed.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The relevant commits were in the cover letter:
+---
+ net/sunrpc/sched.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-kmem_cache_destroy (commit 3942d29918522)
-mempool_destroy (commit 4e3ca3e033d1)
-dma_pool_destroy (commit 44d7175da6ea)
+diff --git a/net/sunrpc/sched.c b/net/sunrpc/sched.c
+index b140c09..425ca2f 100644
+--- a/net/sunrpc/sched.c
++++ b/net/sunrpc/sched.c
+@@ -1092,14 +1092,10 @@ void
+ rpc_destroy_mempool(void)
+ {
+ 	rpciod_stop();
+-	if (rpc_buffer_mempool)
+-		mempool_destroy(rpc_buffer_mempool);
+-	if (rpc_task_mempool)
+-		mempool_destroy(rpc_task_mempool);
+-	if (rpc_task_slabp)
+-		kmem_cache_destroy(rpc_task_slabp);
+-	if (rpc_buffer_slabp)
+-		kmem_cache_destroy(rpc_buffer_slabp);
++	mempool_destroy(rpc_buffer_mempool);
++	mempool_destroy(rpc_task_mempool);
++	kmem_cache_destroy(rpc_task_slabp);
++	kmem_cache_destroy(rpc_buffer_slabp);
+ 	rpc_destroy_wait_queue(&delay_queue);
+ }
+ 
 
-julia
