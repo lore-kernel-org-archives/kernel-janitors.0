@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 12:15:06 +0000
-Subject: [PATCH 13/39] staging: lustre: drop null test before destroy functions
-Message-Id: <1442146532-9100-14-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:20 +0000
+Subject: [PATCH 27/39] ocfs2: drop null test before destroy functions
+Message-Id: <1442146532-9100-28-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Mark Fasheh <mfasheh@suse.com>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
 
 Remove unneeded NULL test.
 
@@ -37,88 +37,110 @@ expression x;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/llite/super25.c      |   16 +++-----------
- drivers/staging/lustre/lustre/obdclass/genops.c    |   24 +++++++--------------
- drivers/staging/lustre/lustre/obdclass/lu_object.c |    6 +----
- 3 files changed, 14 insertions(+), 32 deletions(-)
+ fs/ocfs2/dlm/dlmlock.c   |    3 +--
+ fs/ocfs2/dlm/dlmmaster.c |   16 +++++-----------
+ fs/ocfs2/super.c         |   18 ++++++------------
+ fs/ocfs2/uptodate.c      |    3 +--
+ 4 files changed, 13 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-index 8e47232..e8101fe 100644
---- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
-+++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-@@ -2052,10 +2052,8 @@ EXPORT_SYMBOL(lu_kmem_init);
- void lu_kmem_fini(struct lu_kmem_descr *caches)
+diff --git a/fs/ocfs2/uptodate.c b/fs/ocfs2/uptodate.c
+index 82e17b0..78f09c7 100644
+--- a/fs/ocfs2/uptodate.c
++++ b/fs/ocfs2/uptodate.c
+@@ -633,6 +633,5 @@ int __init init_ocfs2_uptodate_cache(void)
+ 
+ void exit_ocfs2_uptodate_cache(void)
  {
- 	for (; caches->ckd_cache != NULL; ++caches) {
--		if (*caches->ckd_cache != NULL) {
--			kmem_cache_destroy(*caches->ckd_cache);
--			*caches->ckd_cache = NULL;
--		}
-+		kmem_cache_destroy(*caches->ckd_cache);
-+		*caches->ckd_cache = NULL;
+-	if (ocfs2_uptodate_cachep)
+-		kmem_cache_destroy(ocfs2_uptodate_cachep);
++	kmem_cache_destroy(ocfs2_uptodate_cachep);
+ }
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 46b8b2b..eb53b98 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -414,8 +414,7 @@ int dlm_init_mle_cache(void)
+ 
+ void dlm_destroy_mle_cache(void)
+ {
+-	if (dlm_mle_cache)
+-		kmem_cache_destroy(dlm_mle_cache);
++	kmem_cache_destroy(dlm_mle_cache);
+ }
+ 
+ static void dlm_mle_release(struct kref *kref)
+@@ -472,15 +471,10 @@ bail:
+ 
+ void dlm_destroy_master_caches(void)
+ {
+-	if (dlm_lockname_cache) {
+-		kmem_cache_destroy(dlm_lockname_cache);
+-		dlm_lockname_cache = NULL;
+-	}
+-
+-	if (dlm_lockres_cache) {
+-		kmem_cache_destroy(dlm_lockres_cache);
+-		dlm_lockres_cache = NULL;
+-	}
++	kmem_cache_destroy(dlm_lockname_cache);
++	dlm_lockname_cache = NULL;
++	kmem_cache_destroy(dlm_lockres_cache);
++	dlm_lockres_cache = NULL;
+ }
+ 
+ static void dlm_lockres_release(struct kref *kref)
+diff --git a/fs/ocfs2/dlm/dlmlock.c b/fs/ocfs2/dlm/dlmlock.c
+index 66c2a49..7496231 100644
+--- a/fs/ocfs2/dlm/dlmlock.c
++++ b/fs/ocfs2/dlm/dlmlock.c
+@@ -77,8 +77,7 @@ int dlm_init_lock_cache(void)
+ 
+ void dlm_destroy_lock_cache(void)
+ {
+-	if (dlm_lock_cache)
+-		kmem_cache_destroy(dlm_lock_cache);
++	kmem_cache_destroy(dlm_lock_cache);
+ }
+ 
+ /* Tell us whether we can grant a new lock request.
+diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+index 2de4c8a..88396d2 100644
+--- a/fs/ocfs2/super.c
++++ b/fs/ocfs2/super.c
+@@ -1786,12 +1786,9 @@ static int ocfs2_initialize_mem_caches(void)
+ 					NULL);
+ 	if (!ocfs2_inode_cachep || !ocfs2_dquot_cachep ||
+ 	    !ocfs2_qf_chunk_cachep) {
+-		if (ocfs2_inode_cachep)
+-			kmem_cache_destroy(ocfs2_inode_cachep);
+-		if (ocfs2_dquot_cachep)
+-			kmem_cache_destroy(ocfs2_dquot_cachep);
+-		if (ocfs2_qf_chunk_cachep)
+-			kmem_cache_destroy(ocfs2_qf_chunk_cachep);
++		kmem_cache_destroy(ocfs2_inode_cachep);
++		kmem_cache_destroy(ocfs2_dquot_cachep);
++		kmem_cache_destroy(ocfs2_qf_chunk_cachep);
+ 		return -ENOMEM;
  	}
- }
- EXPORT_SYMBOL(lu_kmem_fini);
-diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
-index 0ca7309..ad78a04 100644
---- a/drivers/staging/lustre/lustre/obdclass/genops.c
-+++ b/drivers/staging/lustre/lustre/obdclass/genops.c
-@@ -638,22 +638,14 @@ EXPORT_SYMBOL(class_notify_sptlrpc_conf);
  
- void obd_cleanup_caches(void)
- {
--	if (obd_device_cachep) {
--		kmem_cache_destroy(obd_device_cachep);
--		obd_device_cachep = NULL;
--	}
--	if (obdo_cachep) {
--		kmem_cache_destroy(obdo_cachep);
--		obdo_cachep = NULL;
--	}
--	if (import_cachep) {
--		kmem_cache_destroy(import_cachep);
--		import_cachep = NULL;
--	}
--	if (capa_cachep) {
--		kmem_cache_destroy(capa_cachep);
--		capa_cachep = NULL;
--	}
-+	kmem_cache_destroy(obd_device_cachep);
-+	obd_device_cachep = NULL;
-+	kmem_cache_destroy(obdo_cachep);
-+	obdo_cachep = NULL;
-+	kmem_cache_destroy(import_cachep);
-+	import_cachep = NULL;
-+	kmem_cache_destroy(capa_cachep);
-+	capa_cachep = NULL;
- }
+@@ -1805,16 +1802,13 @@ static void ocfs2_free_mem_caches(void)
+ 	 * destroy cache.
+ 	 */
+ 	rcu_barrier();
+-	if (ocfs2_inode_cachep)
+-		kmem_cache_destroy(ocfs2_inode_cachep);
++	kmem_cache_destroy(ocfs2_inode_cachep);
+ 	ocfs2_inode_cachep = NULL;
  
- int obd_init_caches(void)
-diff --git a/drivers/staging/lustre/lustre/llite/super25.c b/drivers/staging/lustre/lustre/llite/super25.c
-index e4020ce..4cf7af2 100644
---- a/drivers/staging/lustre/lustre/llite/super25.c
-+++ b/drivers/staging/lustre/lustre/llite/super25.c
-@@ -183,18 +183,10 @@ out_sysfs:
- out_debugfs:
- 	debugfs_remove(llite_root);
- out_cache:
--	if (ll_inode_cachep != NULL)
--		kmem_cache_destroy(ll_inode_cachep);
--
--	if (ll_file_data_slab != NULL)
--		kmem_cache_destroy(ll_file_data_slab);
--
--	if (ll_remote_perm_cachep != NULL)
--		kmem_cache_destroy(ll_remote_perm_cachep);
--
--	if (ll_rmtperm_hash_cachep != NULL)
--		kmem_cache_destroy(ll_rmtperm_hash_cachep);
--
-+	kmem_cache_destroy(ll_inode_cachep);
-+	kmem_cache_destroy(ll_file_data_slab);
-+	kmem_cache_destroy(ll_remote_perm_cachep);
-+	kmem_cache_destroy(ll_rmtperm_hash_cachep);
- 	return rc;
+-	if (ocfs2_dquot_cachep)
+-		kmem_cache_destroy(ocfs2_dquot_cachep);
++	kmem_cache_destroy(ocfs2_dquot_cachep);
+ 	ocfs2_dquot_cachep = NULL;
+ 
+-	if (ocfs2_qf_chunk_cachep)
+-		kmem_cache_destroy(ocfs2_qf_chunk_cachep);
++	kmem_cache_destroy(ocfs2_qf_chunk_cachep);
+ 	ocfs2_qf_chunk_cachep = NULL;
  }
  
 
