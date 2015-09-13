@@ -1,101 +1,125 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 01 Sep 2015 10:39:55 +0000
-Subject: Re: [PATCH 04/11] fbdev: ssd1307fb: fix error return code
-Message-Id: <55E5807B.1020505@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="WQjJdL9WnSuKeIGk6MMGVIcFRFVxTwPSu"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:12 +0000
+Subject: [PATCH 19/39] jbd2: drop null test before destroy functions
+Message-Id: <1442146532-9100-20-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
- <1440288682-12732-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440288682-12732-5-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
 
---WQjJdL9WnSuKeIGk6MMGVIcFRFVxTwPSu
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Remove unneeded NULL test.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression x;
+@@
 
-On 23/08/15 03:11, Julia Lawall wrote:
-> Propagate error code on failure.  Also changed %ld to %d in dev_err to =
-use
-> ret variable rather than putting two calls to PTR_ERR.
->=20
-> A simplified version of the semantic match that finds the first problem=
- is as
-> follows: (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @@
-> identifier ret; expression e1,e2;
-> @@
-> (
-> if (\(ret < 0\|ret !=3D 0\))
->  { ... return ret; }
-> |
-> ret =3D 0
-> )
-> ... when !=3D ret =3D e1
->     when !=3D &ret
-> *if(...)
-> {
->   ... when !=3D ret =3D e2
->       when forall
->  return ret;
-> }
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/video/fbdev/ssd1307fb.c |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1=
-307fb.c
-> index 3e153c0..1611215 100644
-> --- a/drivers/video/fbdev/ssd1307fb.c
-> +++ b/drivers/video/fbdev/ssd1307fb.c
-> @@ -656,8 +656,9 @@ static int ssd1307fb_probe(struct i2c_client *clien=
-t,
->  	bl =3D backlight_device_register(bl_name, &client->dev, par,
->  				       &ssd1307fb_bl_ops, NULL);
->  	if (IS_ERR(bl)) {
-> -		dev_err(&client->dev, "unable to register backlight device: %ld\n",
-> -			PTR_ERR(bl));
-> +		ret =3D PTR_ERR(bl);
-> +		dev_err(&client->dev, "unable to register backlight device: %d\n",
-> +			ret);
->  		goto bl_init_error;
->  	}
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
 
-Thanks, queued for 4.3.
+@@
+expression x;
+@@
 
- Tomi
+-if (x != NULL) {
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+  x = NULL;
+-}
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---WQjJdL9WnSuKeIGk6MMGVIcFRFVxTwPSu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+---
+ fs/jbd2/journal.c     |   15 +++++----------
+ fs/jbd2/revoke.c      |   12 ++++--------
+ fs/jbd2/transaction.c |    6 ++----
+ 3 files changed, 11 insertions(+), 22 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index 6b8338e..ab26122 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -51,10 +51,8 @@ int __init jbd2_journal_init_transaction_cache(void)
+ 
+ void jbd2_journal_destroy_transaction_cache(void)
+ {
+-	if (transaction_cache) {
+-		kmem_cache_destroy(transaction_cache);
+-		transaction_cache = NULL;
+-	}
++	kmem_cache_destroy(transaction_cache);
++	transaction_cache = NULL;
+ }
+ 
+ void jbd2_journal_free_transaction(transaction_t *transaction)
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 8270fe9..6b8c2c5 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -2240,8 +2240,7 @@ static void jbd2_journal_destroy_slabs(void)
+ 	int i;
+ 
+ 	for (i = 0; i < JBD2_MAX_SLABS; i++) {
+-		if (jbd2_slab[i])
+-			kmem_cache_destroy(jbd2_slab[i]);
++		kmem_cache_destroy(jbd2_slab[i]);
+ 		jbd2_slab[i] = NULL;
+ 	}
+ }
+@@ -2360,10 +2359,8 @@ static int jbd2_journal_init_journal_head_cache(void)
+ 
+ static void jbd2_journal_destroy_journal_head_cache(void)
+ {
+-	if (jbd2_journal_head_cache) {
+-		kmem_cache_destroy(jbd2_journal_head_cache);
+-		jbd2_journal_head_cache = NULL;
+-	}
++	kmem_cache_destroy(jbd2_journal_head_cache);
++	jbd2_journal_head_cache = NULL;
+ }
+ 
+ /*
+@@ -2621,10 +2618,8 @@ static int __init jbd2_journal_init_handle_cache(void)
+ 
+ static void jbd2_journal_destroy_handle_cache(void)
+ {
+-	if (jbd2_handle_cache)
+-		kmem_cache_destroy(jbd2_handle_cache);
+-	if (jbd2_inode_cache)
+-		kmem_cache_destroy(jbd2_inode_cache);
++	kmem_cache_destroy(jbd2_handle_cache);
++	kmem_cache_destroy(jbd2_inode_cache);
+ 
+ }
+ 
+diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
+index 0abf2e7..1e77a9d 100644
+--- a/fs/jbd2/revoke.c
++++ b/fs/jbd2/revoke.c
+@@ -183,14 +183,10 @@ static struct jbd2_revoke_record_s *find_revoke_record(journal_t *journal,
+ 
+ void jbd2_journal_destroy_revoke_caches(void)
+ {
+-	if (jbd2_revoke_record_cache) {
+-		kmem_cache_destroy(jbd2_revoke_record_cache);
+-		jbd2_revoke_record_cache = NULL;
+-	}
+-	if (jbd2_revoke_table_cache) {
+-		kmem_cache_destroy(jbd2_revoke_table_cache);
+-		jbd2_revoke_table_cache = NULL;
+-	}
++	kmem_cache_destroy(jbd2_revoke_record_cache);
++	jbd2_revoke_record_cache = NULL;
++	kmem_cache_destroy(jbd2_revoke_table_cache);
++	jbd2_revoke_table_cache = NULL;
+ }
+ 
+ int __init jbd2_journal_init_revoke_caches(void)
 
-iQIcBAEBCAAGBQJV5YB7AAoJEPo9qoy8lh714U4P/ipuS1aXhcDcCZ1RVDE2aJiX
-QD0ndvGgMDILPtp3VcWflI73LpIM+v6fPvSgZt3DYBADm1Rh6ur1Jt4AFVu4LJBF
-hcpzZqqd1+NdVpzETLWJrXBf+wTxD0zjjYuirU0S5KjANgxmajxqwBw02IEtLkuD
-tlEJiZzdPq0YZhim28FD5f+HF9vsafvn5+gRst5kgqMiVuZNqwbYRJtDLCaK933H
-BBRTjLMdRf4KDhj2OYNIO8h17GROQwlPL26CPxf2X+bqXOO4cmVonaRAgdMbrT7D
-3sCTBPbMUL5YjEnKDW/cctHNqWNslcEwohdMPxJoWvKsqGyGqGxwfRgG1OHnjS9n
-8zClGfxOv1BWq6Sc3B1iQMboENcx0tEFl5RVgO+KQdLPAgO48jo9hg/OZm7gB+U6
-ZHwShR+AV272EC9j2s95KgBnbbMBCut7rfx5jcPdsZfOJ0NytoAAbbkmWKYB42qm
-6CIMygCJydte+oar55ZS656525xIsQtIGWsAzNlZnsT4hD/BWVNpqesmyhnfxHHZ
-6t38+9aN9qPTNJYRgGXRMCt05ah0CBo8e/ginniAqGEiDmoqYIbKcHIgWqKfrhfd
-Vp0prTTZZJ6JyICSs66OeNJ+Xzrn6td2D7rINtSRKpqHFSbYcbMuUdlvSUuc7y1l
-qLtn8zzPjgtg696lo5g4
-=9Ed+
------END PGP SIGNATURE-----
-
---WQjJdL9WnSuKeIGk6MMGVIcFRFVxTwPSu--
