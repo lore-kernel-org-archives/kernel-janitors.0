@@ -1,48 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 08 Sep 2015 08:55:00 +0000
-Subject: Re: [PATCH 1/2] pinctrl: qcom: ssbi: convert null test to IS_ERR test
-Message-Id: <CACRpkdb7ckOyvC=XVBvwPnxvXLEWoGA4vtj3va8dtJ1EDyaWHA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:14:56 +0000
+Subject: [PATCH 03/39] firmware: google: drop null test before destroy functions
+Message-Id: <1442146532-9100-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1440450747-10080-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440450747-10080-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org
 
-On Mon, Aug 24, 2015 at 11:12 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+Remove unneeded NULL test.
 
-> Since commit 323de9efdf3e ("pinctrl: make pinctrl_register() return proper
-> error code"), pinctrl_register returns an error code rather than NULL on
-> failure.  Update some drivers that were introduced more recently.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression e,e1,e2;
-> @@
->
-> e = pinctrl_register(...)
-> ... when != e = e1
-> if (
-> -   e = NULL
-> +   IS_ERR(e)
->    ) {
->      ...
->      return
-> -      e2
-> +      PTR_ERR(e)
->      ;
->      }
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Patch applied for fixes.
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
 
-Yours,
-Linus Walleij
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/firmware/google/gsmi.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
+index f1ab05e..c463871 100644
+--- a/drivers/firmware/google/gsmi.c
++++ b/drivers/firmware/google/gsmi.c
+@@ -910,8 +910,7 @@ out_err:
+ 	gsmi_buf_free(gsmi_dev.param_buf);
+ 	gsmi_buf_free(gsmi_dev.data_buf);
+ 	gsmi_buf_free(gsmi_dev.name_buf);
+-	if (gsmi_dev.dma_pool)
+-		dma_pool_destroy(gsmi_dev.dma_pool);
++	dma_pool_destroy(gsmi_dev.dma_pool);
+ 	platform_device_unregister(gsmi_dev.pdev);
+ 	pr_info("gsmi: failed to load: %d\n", ret);
+ 	return ret;
+
