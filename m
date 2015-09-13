@@ -1,32 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 28 Sep 2015 10:02:42 +0000
-Subject: [patch] drm/mgag200: set an error code
-Message-Id: <20150928100242.GD11367@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:11 +0000
+Subject: [PATCH 18/39] whci: drop null test before destroy functions
+Message-Id: <1442146532-9100-19-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We need to set "ret" if vmalloc() fails.
+Remove unneeded NULL test.
 
-Fixes: aec9e12953e7 ('drm/mgag200: Fix error handling paths in fbdev driver')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/gpu/drm/mgag200/mgag200_fb.c b/drivers/gpu/drm/mgag200/mgag200_fb.c
-index b35b5b2..2a1049e 100644
---- a/drivers/gpu/drm/mgag200/mgag200_fb.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_fb.c
-@@ -185,8 +185,10 @@ static int mgag200fb_create(struct drm_fb_helper *helper,
- 	}
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/usb/host/whci/init.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/usb/host/whci/init.c b/drivers/usb/host/whci/init.c
+index d3e13b6..e363723 100644
+--- a/drivers/usb/host/whci/init.c
++++ b/drivers/usb/host/whci/init.c
+@@ -175,8 +175,7 @@ void whc_clean_up(struct whc *whc)
+ 	pzl_clean_up(whc);
+ 	asl_clean_up(whc);
  
- 	sysram = vmalloc(size);
--	if (!sysram)
-+	if (!sysram) {
-+		ret = -ENOMEM;
- 		goto err_sysram;
-+	}
+-	if (whc->qset_pool)
+-		dma_pool_destroy(whc->qset_pool);
++	dma_pool_destroy(whc->qset_pool);
  
- 	info = drm_fb_helper_alloc_fbi(helper);
- 	if (IS_ERR(info)) {
+ 	len   = resource_size(&whc->umc->resource);
+ 	if (whc->base)
+
