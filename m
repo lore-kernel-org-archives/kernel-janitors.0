@@ -1,49 +1,64 @@
-From: Tillmann Heidsieck <theidsieck@leenox.de>
-Date: Wed, 30 Sep 2015 15:12:00 +0000
-Subject: [PATCH v2] staging/wlan-ng: Fix potential buffer overflow in firmware handling
-Message-Id: <1443625920-12670-1-git-send-email-theidsieck@leenox.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:14:58 +0000
+Subject: [PATCH 05/39] xhci: drop null test before destroy functions
+Message-Id: <1442146532-9100-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@intel.com>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch fixes a potential buffer overflow detected by smatch.
+Remove unneeded NULL test.
 
-pda16 has length 512, while processing an element with index < 512 we
-are checking for an end marker in the next element. This poses a
-potential buffer overflow if no end marker is present.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-v2: add missing Signed-off-by line
+ drivers/usb/host/xhci-mem.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-
- drivers/staging/wlan-ng/prism2fw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
-index fe36613..d357b7e 100644
---- a/drivers/staging/wlan-ng/prism2fw.c
-+++ b/drivers/staging/wlan-ng/prism2fw.c
-@@ -590,7 +590,7 @@ static int mkpdrlist(struct pda *pda)
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index 9a8c936..40618d1 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -1829,24 +1829,20 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
+ 	for (i = 1; i < MAX_HC_SLOTS; ++i)
+ 		xhci_free_virt_device(xhci, i);
  
- 	pda->nrec = 0;
- 	curroff = 0;
--	while (curroff < (HFA384x_PDA_LEN_MAX / 2) &&
-+	while (curroff < (HFA384x_PDA_LEN_MAX / 2 - 1) &&
- 	       le16_to_cpu(pda16[curroff + 1]) != HFA384x_PDR_END_OF_PDA) {
- 		pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
+-	if (xhci->segment_pool)
+-		dma_pool_destroy(xhci->segment_pool);
++	dma_pool_destroy(xhci->segment_pool);
+ 	xhci->segment_pool = NULL;
+ 	xhci_dbg_trace(xhci, trace_xhci_dbg_init, "Freed segment pool");
  
-@@ -626,7 +626,7 @@ static int mkpdrlist(struct pda *pda)
- 		curroff += le16_to_cpu(pda16[curroff]) + 1;
+-	if (xhci->device_pool)
+-		dma_pool_destroy(xhci->device_pool);
++	dma_pool_destroy(xhci->device_pool);
+ 	xhci->device_pool = NULL;
+ 	xhci_dbg_trace(xhci, trace_xhci_dbg_init, "Freed device context pool");
  
- 	}
--	if (curroff >= (HFA384x_PDA_LEN_MAX / 2)) {
-+	if (curroff >= (HFA384x_PDA_LEN_MAX / 2 - 1)) {
- 		pr_err("no end record found or invalid lengths in PDR data, exiting. %x %d\n",
- 		       curroff, pda->nrec);
- 		return 1;
--- 
-2.6.0
+-	if (xhci->small_streams_pool)
+-		dma_pool_destroy(xhci->small_streams_pool);
++	dma_pool_destroy(xhci->small_streams_pool);
+ 	xhci->small_streams_pool = NULL;
+ 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+ 			"Freed small stream array pool");
+ 
+-	if (xhci->medium_streams_pool)
+-		dma_pool_destroy(xhci->medium_streams_pool);
++	dma_pool_destroy(xhci->medium_streams_pool);
+ 	xhci->medium_streams_pool = NULL;
+ 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+ 			"Freed medium stream array pool");
 
