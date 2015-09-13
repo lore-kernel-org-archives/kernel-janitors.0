@@ -1,43 +1,51 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 28 Sep 2015 12:33:33 +0000
-Subject: Re: [patch] ALSA: usb-audio: harmless underflow in snd_audigy2nx_led_put()
-Message-Id: <s5hio6ubu5e.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:31 +0000
+Subject: [PATCH 38/39] iommu/amd: drop null test before destroy functions
+Message-Id: <1442146532-9100-39-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150928100620.GA12060@mwanda>
-In-Reply-To: <20150928100620.GA12060@mwanda>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Chris J Arges <chris.j.arges@canonical.com>, "Dmitry M. Fedin" <dmitry.fedin@gmail.com>, kernel-janitors@vger.kernel.org, Damien Zammit <damien@zamaudio.com>
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: sergey.senozhatsky-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, 28 Sep 2015 12:06:20 +0200,
-Dan Carpenter wrote:
-> 
-> We want to verify that "value" is either zero or one, so we test if it
-> is greater than one.  Unfortunately, this is a signed int so it could
-> also be negative.  I think this is harmless but it introduces a static
-> checker warning.  Let's make "value" unsigned.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove unneeded NULL test.
 
-Applied, thanks.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@ expression x; @@
+-if (x != NULL) {
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+  x = NULL;
+-}
+// </smpl>
 
-Takashi
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> 
-> diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
-> index 337c317..4602a78 100644
-> --- a/sound/usb/mixer_quirks.c
-> +++ b/sound/usb/mixer_quirks.c
-> @@ -340,7 +340,7 @@ static int snd_audigy2nx_led_put(struct snd_kcontrol *kcontrol,
->  	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
->  	struct usb_mixer_interface *mixer = list->mixer;
->  	int index = kcontrol->private_value & 0xff;
-> -	int value = ucontrol->value.integer.value[0];
-> +	unsigned int value = ucontrol->value.integer.value[0];
->  	int old_value = kcontrol->private_value >> 8;
->  	int err;
->  
-> 
+---
+ drivers/iommu/amd_iommu_init.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+index 5ef347a..5fb59cc 100644
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -1755,11 +1755,8 @@ static void __init free_on_init_error(void)
+ 	free_pages((unsigned long)irq_lookup_table,
+ 		   get_order(rlookup_table_size));
+ 
+-	if (amd_iommu_irq_cache) {
+-		kmem_cache_destroy(amd_iommu_irq_cache);
+-		amd_iommu_irq_cache = NULL;
+-
+-	}
++	kmem_cache_destroy(amd_iommu_irq_cache);
++	amd_iommu_irq_cache = NULL;
+ 
+ 	free_pages((unsigned long)amd_iommu_rlookup_table,
+ 		   get_order(rlookup_table_size));
+
