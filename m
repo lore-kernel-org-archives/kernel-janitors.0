@@ -1,41 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Sep 2015 18:56:57 +0000
-Subject: Re: [PATCH v2] coccinelle: tests: unsigned value cannot be lesser than zero
-Message-Id: <55F9BB79.20203@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:16 +0000
+Subject: [PATCH 23/39] UBI: drop null test before destroy functions
+Message-Id: <1442146532-9100-24-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1509161125370.2429@hadrien>
- <1442409749-32700-1-git-send-email-a.hajda@samsung.com>
-In-Reply-To: <1442409749-32700-1-git-send-email-a.hajda@samsung.com>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-> As we discussed earlier I have dropped idea of adding v <= 0 as it is widely
-> used in checking ranges, counters, quantities.
+Remove unneeded NULL test.
 
-I find that such a design decision will need more fine-tuning of the suggested
-small SmPL script.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
 
-> +@r depends on context || org || report@
-> +position p;
-> +typedef u8, u16, u32, u64;
-> +{unsigned char, unsigned short int, unsigned int, unsigned long, unsigned long long, size_t, u8, u16, u32, u64} v;
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Is it eventually needed to mention the key word "int" also together with the "long" data types?
+---
+ drivers/mtd/ubi/attach.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
+index 68eea5b..c1aaf03 100644
+--- a/drivers/mtd/ubi/attach.c
++++ b/drivers/mtd/ubi/attach.c
+@@ -1209,9 +1209,7 @@ static void destroy_ai(struct ubi_attach_info *ai)
+ 		}
+ 	}
+ 
+-	if (ai->aeb_slab_cache)
+-		kmem_cache_destroy(ai->aeb_slab_cache);
+-
++	kmem_cache_destroy(ai->aeb_slab_cache);
+ 	kfree(ai);
+ }
+ 
 
-> +@@
-> +
-> +(
-> +*v@p < 0
-> +|
-> +*v@p >= 0
-> +)
-
-How do you think about to split this SmPL rule so that corresponding warning
-messages will really fit?
-
-Regards,
-Markus
