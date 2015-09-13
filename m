@@ -1,40 +1,45 @@
-From: Tillmann Heidsieck <theidsieck@leenox.de>
-Date: Wed, 23 Sep 2015 20:07:54 +0000
-Subject: [PATCH 2/3] staging: wlan-ng remove redundant conditional
-Message-Id: <1443038876-15753-3-git-send-email-theidsieck@leenox.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:22 +0000
+Subject: [PATCH 29/39] thunderbolt: drop null test before destroy functions
+Message-Id: <1442146532-9100-30-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andreas Noever <andreas.noever@gmail.com>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We exit the above loop either if curroff >= (HFA384x_PDA_LEN_MAX / 2 - 1)
-or if we found the END marker in the element beyond the current one. The
-first case is checked for in the preceding if statement, therefore the
-second if statement is redundant and can be removed.
+Remove unneeded NULL test.
 
-Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/wlan-ng/prism2fw.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/thunderbolt/ctl.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
-index d357b7e..f5b9727 100644
---- a/drivers/staging/wlan-ng/prism2fw.c
-+++ b/drivers/staging/wlan-ng/prism2fw.c
-@@ -631,10 +631,8 @@ static int mkpdrlist(struct pda *pda)
- 		       curroff, pda->nrec);
- 		return 1;
- 	}
--	if (le16_to_cpu(pda16[curroff + 1]) = HFA384x_PDR_END_OF_PDA) {
--		pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
--		(pda->nrec)++;
--	}
-+	pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
-+	(pda->nrec)++;
- 	return result;
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index 799634b..163b283 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -530,8 +530,7 @@ void tb_ctl_free(struct tb_ctl *ctl)
+ 		tb_ctl_pkg_free(ctl->rx_packets[i]);
+ 
+ 
+-	if (ctl->frame_pool)
+-		dma_pool_destroy(ctl->frame_pool);
++	dma_pool_destroy(ctl->frame_pool);
+ 	kfree(ctl);
  }
  
--- 
-2.5.3
 
