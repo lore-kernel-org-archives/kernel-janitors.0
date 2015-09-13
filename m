@@ -1,46 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 17 Sep 2015 09:21:04 +0000
-Subject: Re: [PATCH 1/2] ASoC: qcom: change PTR_ERR argument
-Message-Id: <20150917092104.GN11268@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="dzI2QqkSBOAresgT"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:04 +0000
+Subject: [PATCH 11/39] hfi1: drop null test before destroy functions
+Message-Id: <1442146532-9100-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440957911-7687-1-git-send-email-Julia.Lawall@lip6.fr>
- <1440957911-7687-2-git-send-email-Julia.Lawall@lip6.fr>
- <20150914180425.GB12027@sirena.org.uk>
- <alpine.DEB.2.10.1509171045100.2399@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1509171045100.2399@hadrien>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, linux-kernel@vger.kernel.org, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mike Marciniszyn <infinipath@intel.com>
+Cc: devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
 
+Remove unneeded NULL test.
 
---dzI2QqkSBOAresgT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-On Thu, Sep 17, 2015 at 10:46:16AM +0200, Julia Lawall wrote:
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
 
-> The discussion was about introducing a temporary variable to simplify the
-> code.  But that makes a lot of changes, so I think it would be better to
-> just apply the original bug fixing patch as is, and then the cleanup could
-> be applied on top of that.  I will submit the original patch again.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-OK, makes sense - thanks.
+---
+ drivers/staging/rdma/hfi1/user_sdma.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---dzI2QqkSBOAresgT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/drivers/staging/rdma/hfi1/user_sdma.c b/drivers/staging/rdma/hfi1/user_sdma.c
+index 5552661..6620262 100644
+--- a/drivers/staging/rdma/hfi1/user_sdma.c
++++ b/drivers/staging/rdma/hfi1/user_sdma.c
+@@ -486,8 +486,7 @@ int hfi1_user_sdma_free_queues(struct hfi1_filedata *fd)
+ 			}
+ 			kfree(pq->reqs);
+ 		}
+-		if (pq->txreq_cache)
+-			kmem_cache_destroy(pq->txreq_cache);
++		kmem_cache_destroy(pq->txreq_cache);
+ 		kfree(pq);
+ 		fd->pq = NULL;
+ 	}
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJV+oX/AAoJECTWi3JdVIfQhKcH/i1oCiqlLjSxUbMidoS3ULfg
-xoXUoPqZhuPjBkyywy0s88b3E4koAZIpo0ZIVrWy/x/PwrrgzHq3vuq5sWKfBnfb
-1lPhl3r0KKs77hjLieq8i4F2+WMBhW81h24ryQGCeMvrfyGIJXySZNNbVOw4oP87
-ecp+GfkE5KbLDq8rqKLv46yFoa296Nr4gT46sMdVX8YSG40n+jliVEf+2ThqWQMQ
-FyZtwmedG7dY4DD1KHKOUvL8mrpjN4nib4NTaKJkqs0RFoDQ0daP08BdDDszdGKy
-2k+rTiRk80ktiCY6P0Mu+0ytXoSx3PxXdWRlt3eKz6tfs6aYW7dyX6eIE6HlGwA=
-=0Ty7
------END PGP SIGNATURE-----
-
---dzI2QqkSBOAresgT--
