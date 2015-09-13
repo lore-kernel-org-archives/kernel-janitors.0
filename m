@@ -1,29 +1,156 @@
-From: Tejun Heo <htejun@gmail.com>
-Date: Mon, 21 Sep 2015 17:40:34 +0000
-Subject: Re: [patch] devres: fix a for loop bounds check
-Message-Id: <20150921174034.GA13263@mtj.duckdns.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:05 +0000
+Subject: [PATCH 12/39] dm: drop null test before destroy functions
+Message-Id: <1442146532-9100-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150916171000.GD3243@mtj.duckdns.org>
- <20150921162151.GA5648@mwanda>
-In-Reply-To: <20150921162151.GA5648@mwanda>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, Cristian Stoica <cristian.stoica@freescale.com>, Dan Williams <dan.j.williams@intel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.com>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Sep 21, 2015 at 07:21:51PM +0300, Dan Carpenter wrote:
-> The iomap[] array has PCIM_IOMAP_MAX (6) elements and not
-> DEVICE_COUNT_RESOURCE (16).  This bug was found using a static checker.
-> It may be that the "if (!(mask & (1 << i)))" check means we never
-> actually go past the end of the array in real life.
-> 
-> Fixes: ec04b075843d ('iomap: implement pcim_iounmap_regions()')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove unneeded NULL test.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks.
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
 
--- 
-tejun
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/md/dm-bufio.c              |    3 +--
+ drivers/md/dm-cache-target.c       |    3 +--
+ drivers/md/dm-crypt.c              |    6 ++----
+ drivers/md/dm-io.c                 |    3 +--
+ drivers/md/dm-log-userspace-base.c |    3 +--
+ drivers/md/dm-region-hash.c        |    4 +---
+ drivers/md/dm.c                    |   13 ++++---------
+ 7 files changed, 11 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
+index 83cc52e..8ad39b6 100644
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -1864,8 +1864,7 @@ static void __exit dm_bufio_exit(void)
+ 	for (i = 0; i < ARRAY_SIZE(dm_bufio_caches); i++) {
+ 		struct kmem_cache *kc = dm_bufio_caches[i];
+ 
+-		if (kc)
+-			kmem_cache_destroy(kc);
++		kmem_cache_destroy(kc);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(dm_bufio_cache_names); i++)
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 6264781..163de31 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -2220,10 +2220,8 @@ static void cleanup_mapped_device(struct mapped_device *md)
+ 		destroy_workqueue(md->wq);
+ 	if (md->kworker_task)
+ 		kthread_stop(md->kworker_task);
+-	if (md->io_pool)
+-		mempool_destroy(md->io_pool);
+-	if (md->rq_pool)
+-		mempool_destroy(md->rq_pool);
++	mempool_destroy(md->io_pool);
++	mempool_destroy(md->rq_pool);
+ 	if (md->bs)
+ 		bioset_free(md->bs);
+ 
+@@ -3508,11 +3506,8 @@ void dm_free_md_mempools(struct dm_md_mempools *pools)
+ 	if (!pools)
+ 		return;
+ 
+-	if (pools->io_pool)
+-		mempool_destroy(pools->io_pool);
+-
+-	if (pools->rq_pool)
+-		mempool_destroy(pools->rq_pool);
++	mempool_destroy(pools->io_pool);
++	mempool_destroy(pools->rq_pool);
+ 
+ 	if (pools->bs)
+ 		bioset_free(pools->bs);
+diff --git a/drivers/md/dm-log-userspace-base.c b/drivers/md/dm-log-userspace-base.c
+index 058256d..53b7b06 100644
+--- a/drivers/md/dm-log-userspace-base.c
++++ b/drivers/md/dm-log-userspace-base.c
+@@ -313,8 +313,7 @@ static int userspace_ctr(struct dm_dirty_log *log, struct dm_target *ti,
+ out:
+ 	kfree(devices_rdata);
+ 	if (r) {
+-		if (lc->flush_entry_pool)
+-			mempool_destroy(lc->flush_entry_pool);
++		mempool_destroy(lc->flush_entry_pool);
+ 		kfree(lc);
+ 		kfree(ctr_str);
+ 	} else {
+diff --git a/drivers/md/dm-io.c b/drivers/md/dm-io.c
+index 6f8e83b..81c5e1a 100644
+--- a/drivers/md/dm-io.c
++++ b/drivers/md/dm-io.c
+@@ -65,8 +65,7 @@ struct dm_io_client *dm_io_client_create(void)
+ 	return client;
+ 
+    bad:
+-	if (client->pool)
+-		mempool_destroy(client->pool);
++	mempool_destroy(client->pool);
+ 	kfree(client);
+ 	return ERR_PTR(-ENOMEM);
+ }
+diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
+index dd90d12..2fd4c82 100644
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -2309,8 +2309,7 @@ static void destroy(struct cache *cache)
+ {
+ 	unsigned i;
+ 
+-	if (cache->migration_pool)
+-		mempool_destroy(cache->migration_pool);
++	mempool_destroy(cache->migration_pool);
+ 
+ 	if (cache->all_io_ds)
+ 		dm_deferred_set_destroy(cache->all_io_ds);
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index d60c88d..cf91a96 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -1543,10 +1543,8 @@ static void crypt_dtr(struct dm_target *ti)
+ 	if (cc->bs)
+ 		bioset_free(cc->bs);
+ 
+-	if (cc->page_pool)
+-		mempool_destroy(cc->page_pool);
+-	if (cc->req_pool)
+-		mempool_destroy(cc->req_pool);
++	mempool_destroy(cc->page_pool);
++	mempool_destroy(cc->req_pool);
+ 
+ 	if (cc->iv_gen_ops && cc->iv_gen_ops->dtr)
+ 		cc->iv_gen_ops->dtr(cc);
+diff --git a/drivers/md/dm-region-hash.c b/drivers/md/dm-region-hash.c
+index b929fd5..f3d608b 100644
+--- a/drivers/md/dm-region-hash.c
++++ b/drivers/md/dm-region-hash.c
+@@ -249,9 +249,7 @@ void dm_region_hash_destroy(struct dm_region_hash *rh)
+ 	if (rh->log)
+ 		dm_dirty_log_destroy(rh->log);
+ 
+-	if (rh->region_pool)
+-		mempool_destroy(rh->region_pool);
+-
++	mempool_destroy(rh->region_pool);
+ 	vfree(rh->buckets);
+ 	kfree(rh);
+ }
+
