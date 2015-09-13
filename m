@@ -1,37 +1,45 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 29 Sep 2015 08:09:08 +0000
-Subject: Re: [v2] mwifiex: fix mwifiex_rdeeprom_read()
-Message-Id: <20150929080908.CC1F813F7C4@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:14:57 +0000
+Subject: [PATCH 04/39] debugobjects: drop null test before destroy functions
+Message-Id: <1442146532-9100-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20150921161953.GQ5004@mwanda>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org
 
+Remove unneeded NULL test.
 
-> There were several bugs here.
-> 
-> 1)  The done label was in the wrong place so we didn't copy any
->     information out when there was no command given.
-> 
-> 2)  We were using PAGE_SIZE as the size of the buffer instead of
->     "PAGE_SIZE - pos".
-> 
-> 3)  snprintf() returns the number of characters that would have been
->     printed if there were enough space.  If there was not enough space
->     (and we had fixed the memory corruption bug #2) then it would result
->     in an information leak when we do simple_read_from_buffer().  I've
->     changed it to use scnprintf() instead.
-> 
-> I also removed the initialization at the start of the function, because
-> I thought it made the code a little more clear.
-> 
-> Fixes: 5e6e3a92b9a4 ('wireless: mwifiex: initial commit for Marvell mwifiex driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Amitkumar Karwar <akarwar@marvell.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks, applied to wireless-drivers-next.git.
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
 
-Kalle Valo
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ lib/debugobjects.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 547f7f9..7bf529f 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -1089,8 +1089,7 @@ void __init debug_objects_mem_init(void)
+ 
+ 	if (!obj_cache || debug_objects_replace_static_objects()) {
+ 		debug_objects_enabled = 0;
+-		if (obj_cache)
+-			kmem_cache_destroy(obj_cache);
++		kmem_cache_destroy(obj_cache);
+ 		pr_warn("out of memory.\n");
+ 	} else
+ 		debug_objects_selftest();
+
