@@ -1,56 +1,81 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 29 Sep 2015 23:03:15 +0000
-Subject: Re: [patch] Input: ff-core - silence an underflow warning
-Message-Id: <20150929230315.GA29469@dtor-ws>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:08 +0000
+Subject: [PATCH 15/39] bcache: drop null test before destroy functions
+Message-Id: <1442146532-9100-16-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150922132643.GA5751@mwanda>
- <20150929002830.GD30653@dtor-ws>
- <20150929131258.GC7340@mwanda>
-In-Reply-To: <20150929131258.GC7340@mwanda>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Neil Brown <neilb@suse.com>, linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 29, 2015 at 04:12:58PM +0300, Dan Carpenter wrote:
-> On Mon, Sep 28, 2015 at 05:28:30PM -0700, Dmitry Torokhov wrote:
-> > On Tue, Sep 22, 2015 at 04:26:43PM +0300, Dan Carpenter wrote:
-> > > My static checker complains that "value" comes from the user in
-> > > evdev_do_ioctl() and we check that it's not too large here but we don't
-> > > check that it's negative.  It's harmless because the ->set_gain() and
-> > > ->set_autocenter() functions truncate it to a valid u16 value, but we
-> > > may as well fix it just to make the static checker happy.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > 
-> > > diff --git a/drivers/input/ff-core.c b/drivers/input/ff-core.c
-> > > index c642082..6a94c5f 100644
-> > > --- a/drivers/input/ff-core.c
-> > > +++ b/drivers/input/ff-core.c
-> > > @@ -273,14 +273,14 @@ int input_ff_event(struct input_dev *dev, unsigned int type,
-> > >  
-> > >  	switch (code) {
-> > >  	case FF_GAIN:
-> > > -		if (!test_bit(FF_GAIN, dev->ffbit) || value > 0xffff)
-> > > +		if (!test_bit(FF_GAIN, dev->ffbit) || value > 0xffffUL)
-> > >  			break;
-> > >  
-> > >  		ff->set_gain(dev, value);
-> > >  		break;
-> > >  
-> > >  	case FF_AUTOCENTER:
-> > > -		if (!test_bit(FF_AUTOCENTER, dev->ffbit) || value > 0xffff)
-> > > +		if (!test_bit(FF_AUTOCENTER, dev->ffbit) || value > 0xffffUL)
-> > 
-> > Why UL and not U?
-> > 
-> 
-> You're right.  That could just be U.  I'll resend.
+Remove unneeded NULL test.
 
-That's fine, I'll adjust on my side.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks.
+// <smpl>
+@@ expression x; @@
+-if (x != NULL)
+  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+// </smpl>
 
--- 
-Dmitry
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/md/bcache/bset.c    |    3 +--
+ drivers/md/bcache/request.c |    3 +--
+ drivers/md/bcache/super.c   |    9 +++------
+ 3 files changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index 8e9877b..bd4678c 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -1145,8 +1145,7 @@ void bch_flash_dev_request_init(struct bcache_device *d)
+ 
+ void bch_request_exit(void)
+ {
+-	if (bch_search_cache)
+-		kmem_cache_destroy(bch_search_cache);
++	kmem_cache_destroy(bch_search_cache);
+ }
+ 
+ int __init bch_request_init(void)
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index 646fe85..479117c 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -1116,8 +1116,7 @@ struct bkey *bch_btree_iter_next_filter(struct btree_iter *iter,
+ 
+ void bch_bset_sort_state_free(struct bset_sort_state *state)
+ {
+-	if (state->pool)
+-		mempool_destroy(state->pool);
++	mempool_destroy(state->pool);
+ }
+ 
+ int bch_bset_sort_state_init(struct bset_sort_state *state, unsigned page_order)
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 679a093..c27a0ff 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1335,12 +1335,9 @@ static void cache_set_free(struct closure *cl)
+ 		destroy_workqueue(c->moving_gc_wq);
+ 	if (c->bio_split)
+ 		bioset_free(c->bio_split);
+-	if (c->fill_iter)
+-		mempool_destroy(c->fill_iter);
+-	if (c->bio_meta)
+-		mempool_destroy(c->bio_meta);
+-	if (c->search)
+-		mempool_destroy(c->search);
++	mempool_destroy(c->fill_iter);
++	mempool_destroy(c->bio_meta);
++	mempool_destroy(c->search);
+ 	kfree(c->devices);
+ 
+ 	mutex_lock(&bch_register_lock);
+
