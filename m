@@ -1,66 +1,52 @@
-From: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-Date: Mon, 14 Sep 2015 03:29:06 +0000
-Subject: Re: [PATCH 02/39] nilfs2: drop null test before destroy functions
-Message-Id: <20150914.122906.1656489070901419863.konishi.ryusuke@lab.ntt.co.jp>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 13:44:13 +0000
+Subject: [PATCH] serial: sccnxp: convert devm irq to non devm version
+Message-Id: <1442151853-16186-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1442146532-9100-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 13 Sep 2015 14:14:55 +0200, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> Remove unneeded NULL test.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@ expression x; @@
-> -if (x != NULL)
->   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+There seems to be no need to request an irq with a devm function, since the
+irq is being freed explicitly.
 
-Looks OK.  I'll queue this in my tree.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks,
-Ryusuke Konishi
+---
 
-> 
-> ---
->  fs/nilfs2/super.c |   12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/nilfs2/super.c b/fs/nilfs2/super.c
-> index f47585b..c69455a 100644
-> --- a/fs/nilfs2/super.c
-> +++ b/fs/nilfs2/super.c
-> @@ -1405,14 +1405,10 @@ static void nilfs_destroy_cachep(void)
->  	 */
->  	rcu_barrier();
->  
-> -	if (nilfs_inode_cachep)
-> -		kmem_cache_destroy(nilfs_inode_cachep);
-> -	if (nilfs_transaction_cachep)
-> -		kmem_cache_destroy(nilfs_transaction_cachep);
-> -	if (nilfs_segbuf_cachep)
-> -		kmem_cache_destroy(nilfs_segbuf_cachep);
-> -	if (nilfs_btree_path_cache)
-> -		kmem_cache_destroy(nilfs_btree_path_cache);
-> +	kmem_cache_destroy(nilfs_inode_cachep);
-> +	kmem_cache_destroy(nilfs_transaction_cachep);
-> +	kmem_cache_destroy(nilfs_segbuf_cachep);
-> +	kmem_cache_destroy(nilfs_btree_path_cache);
->  }
->  
->  static int __init nilfs_init_cachep(void)
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Compile tested only.
+
+ drivers/tty/serial/sccnxp.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
+index fcf803f..d0d5fa9 100644
+--- a/drivers/tty/serial/sccnxp.c
++++ b/drivers/tty/serial/sccnxp.c
+@@ -963,11 +963,9 @@ static int sccnxp_probe(struct platform_device *pdev)
+ 	sccnxp_write(&s->port[0], SCCNXP_IMR_REG, 0);
+ 
+ 	if (!s->poll) {
+-		ret = devm_request_threaded_irq(&pdev->dev, s->irq, NULL,
+-						sccnxp_ist,
+-						IRQF_TRIGGER_FALLING |
+-						IRQF_ONESHOT,
+-						dev_name(&pdev->dev), s);
++		ret = request_threaded_irq(s->irq, NULL, sccnxp_ist,
++					   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
++					   dev_name(&pdev->dev), s);
+ 		if (!ret)
+ 			return 0;
+ 
+@@ -994,7 +992,7 @@ static int sccnxp_remove(struct platform_device *pdev)
+ 	struct sccnxp_port *s = platform_get_drvdata(pdev);
+ 
+ 	if (!s->poll)
+-		devm_free_irq(&pdev->dev, s->irq, s);
++		free_irq(s->irq, s);
+ 	else
+ 		del_timer_sync(&s->timer);
+ 
+
