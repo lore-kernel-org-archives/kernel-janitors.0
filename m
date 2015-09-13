@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 12:15:29 +0000
-Subject: [PATCH 36/39] jffs2: drop null test before destroy functions
-Message-Id: <1442146532-9100-37-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 13 Sep 2015 12:15:28 +0000
+Subject: [PATCH 35/39] GFS2: drop null test before destroy functions
+Message-Id: <1442146532-9100-36-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Steven Whitehouse <swhiteho@redhat.com>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org
 
 Remove unneeded NULL test.
 
@@ -25,46 +25,47 @@ The semantic patch that makes this change is as follows:
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- fs/jffs2/malloc.c |   27 +++++++++------------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
+ fs/gfs2/main.c |   29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
 
-diff --git a/fs/jffs2/malloc.c b/fs/jffs2/malloc.c
-index b8fd651..ce11897 100644
---- a/fs/jffs2/malloc.c
-+++ b/fs/jffs2/malloc.c
-@@ -97,25 +97,16 @@ int __init jffs2_create_slab_caches(void)
- 
- void jffs2_destroy_slab_caches(void)
- {
--	if(full_dnode_slab)
--		kmem_cache_destroy(full_dnode_slab);
--	if(raw_dirent_slab)
--		kmem_cache_destroy(raw_dirent_slab);
--	if(raw_inode_slab)
--		kmem_cache_destroy(raw_inode_slab);
--	if(tmp_dnode_info_slab)
--		kmem_cache_destroy(tmp_dnode_info_slab);
--	if(raw_node_ref_slab)
--		kmem_cache_destroy(raw_node_ref_slab);
--	if(node_frag_slab)
--		kmem_cache_destroy(node_frag_slab);
--	if(inode_cache_slab)
--		kmem_cache_destroy(inode_cache_slab);
-+	kmem_cache_destroy(full_dnode_slab);
-+	kmem_cache_destroy(raw_dirent_slab);
-+	kmem_cache_destroy(raw_inode_slab);
-+	kmem_cache_destroy(tmp_dnode_info_slab);
-+	kmem_cache_destroy(raw_node_ref_slab);
-+	kmem_cache_destroy(node_frag_slab);
-+	kmem_cache_destroy(inode_cache_slab);
- #ifdef CONFIG_JFFS2_FS_XATTR
--	if (xattr_datum_cache)
--		kmem_cache_destroy(xattr_datum_cache);
--	if (xattr_ref_cache)
--		kmem_cache_destroy(xattr_ref_cache);
-+	kmem_cache_destroy(xattr_datum_cache);
-+	kmem_cache_destroy(xattr_ref_cache);
- #endif
+diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
+index 241a399..4d78c3e 100644
+--- a/fs/gfs2/main.c
++++ b/fs/gfs2/main.c
+@@ -192,28 +192,13 @@ fail:
+ fail_lru:
+ 	unregister_shrinker(&gfs2_qd_shrinker);
+ 	gfs2_glock_exit();
+-
+-	if (gfs2_rsrv_cachep)
+-		kmem_cache_destroy(gfs2_rsrv_cachep);
+-
+-	if (gfs2_quotad_cachep)
+-		kmem_cache_destroy(gfs2_quotad_cachep);
+-
+-	if (gfs2_rgrpd_cachep)
+-		kmem_cache_destroy(gfs2_rgrpd_cachep);
+-
+-	if (gfs2_bufdata_cachep)
+-		kmem_cache_destroy(gfs2_bufdata_cachep);
+-
+-	if (gfs2_inode_cachep)
+-		kmem_cache_destroy(gfs2_inode_cachep);
+-
+-	if (gfs2_glock_aspace_cachep)
+-		kmem_cache_destroy(gfs2_glock_aspace_cachep);
+-
+-	if (gfs2_glock_cachep)
+-		kmem_cache_destroy(gfs2_glock_cachep);
+-
++	kmem_cache_destroy(gfs2_rsrv_cachep);
++	kmem_cache_destroy(gfs2_quotad_cachep);
++	kmem_cache_destroy(gfs2_rgrpd_cachep);
++	kmem_cache_destroy(gfs2_bufdata_cachep);
++	kmem_cache_destroy(gfs2_inode_cachep);
++	kmem_cache_destroy(gfs2_glock_aspace_cachep);
++	kmem_cache_destroy(gfs2_glock_cachep);
+ 	gfs2_sys_uninit();
+ 	return error;
  }
- 
 
