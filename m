@@ -1,66 +1,47 @@
-From: Kenneth Westfield <kwestfie@codeaurora.org>
-Date: Thu, 03 Sep 2015 21:36:24 +0000
-Subject: Re: [alsa-devel] [PATCH 1/2] ASoC: qcom: change PTR_ERR argument
-Message-Id: <20150903213623.GA11313@kwestfie-linux.qualcomm.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 14 Sep 2015 18:04:25 +0000
+Subject: Re: [PATCH 1/2] ASoC: qcom: change PTR_ERR argument
+Message-Id: <20150914180425.GB12027@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="N5b0NsBGdE2hIyw+"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1440957911-7687-1-git-send-email-Julia.Lawall@lip6.fr>
  <1440957911-7687-2-git-send-email-Julia.Lawall@lip6.fr>
- <55E35169.3000703@bfs.de>
- <alpine.DEB.2.02.1508302152300.2062@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1508302152300.2062@localhost6.localdomain6>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: walter harms <wharms@bfs.de>, alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, linux-kernel@vger.kernel.org, Patrick Lai <plai@codeaurora.org>, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+In-Reply-To: <1440957911-7687-2-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, linux-kernel@vger.kernel.org, Patrick Lai <plai@codeaurora.org>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>
 
-On Sun, Aug 30, 2015 at 12:54:15PM -0700, Julia Lawall wrote:
-> On Sun, 30 Aug 2015, walter harms wrote:
-> > Am 30.08.2015 20:05, schrieb Julia Lawall:
-> > >  		if (IS_ERR(drvdata->mi2s_bit_clk[dai_id])) {
-> > >  			dev_err(&pdev->dev,
-> > >  				"%s() error getting mi2s-bit-clk: %ld\n",
-> > > -				__func__,
-> PTR_ERR(drvdata->mi2s_bit_clk[i]));
-> > > +				__func__,
-> > > +				PTR_ERR(drvdata->mi2s_bit_clk[dai_id]));
-> > >  			return PTR_ERR(drvdata->mi2s_bit_clk[dai_id]);
-> > >  		}
-> > >  	}
-> > > 
-> > 
-> > just a note:
-> > using a shorter name instead of drvdata->mi2s_bit_clk[dai_id] whould
-> help to make the code
-> > more readable (yes, the other code is alike). something like:
-> > 
-> > struct clk *tmp =  devm_clk_get(&pdev->dev,clk_name);
-> 
-> Where do you suggest to put this?
-> 
-> Maybe it would be reasonable to declare a variable struct clk *clk; at the
-> 
-> top of the function, and then use that as a temporary variable for all 
-> three calls.
-> 
-> However, now I see that the first call, unlike the other two doesn't cause
-> 
-> a return from the function.
-> 
->                 if (IS_ERR(drvdata->mi2s_osr_clk[dai_id])) {
->                         dev_warn(&pdev->dev,
->                                 "%s() error getting mi2s-osr-clk: %ld\n",
-> 				__func__,
-> 		                PTR_ERR(drvdata->mi2s_osr_clk[dai_id]));
->                 }
-> 
-> Is that intentional?
 
-Yes, that was intentional as the presense of the OSR clock in the DT
-node is optional.
+--N5b0NsBGdE2hIyw+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Kenneth Westfield
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
-a Linux Foundation Collaborative Project
+On Sun, Aug 30, 2015 at 08:05:10PM +0200, Julia Lawall wrote:
+> Apply PTR_ERR to the value that was recently assigned.
+>=20
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+
+I have no idea what's going on with this stuff without spending more
+time than it looks like should need, there's a moderately big thread and
+some patches posted in the middle of it.  Can you repost whatever the
+current state is please?
+
+--N5b0NsBGdE2hIyw+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJV9wwoAAoJECTWi3JdVIfQmj0H/3lruYh3O9vUoAvbLXz6pz64
+BC05jzlUO0BqyTEMtUIf8fysl0AJMpQwUW+z1BzrERsdYuJnA/LhsVdK65AkRbmj
+5xuZM+QXBjbCwH9k0rUJLOE36XtUY4PT9l2NG06NGc/esmuzfEUFAq9VWSrh0Vv/
+otwUkz4Tlb4kLjGTlzQW8u6RzKRBQfLaYxyTVcI7a+4q4lYnlcOm5JObkuEy7WKl
+/4yUYDg4sL5xjDHgHOlxYeTwwFsQN1kTcVgu+jjZ3K6OKWbt2NY6f39BPBwSL/FP
+1h6uqeEjS5yKv9YqVN3UpmM2GUY3YgR4xOncSl5QydX53kMmMDrdQBbLJt9gkK8=
+=qkwL
+-----END PGP SIGNATURE-----
+
+--N5b0NsBGdE2hIyw+--
