@@ -1,106 +1,103 @@
-From: Amitkumar Karwar <akarwar@marvell.com>
-Date: Tue, 22 Sep 2015 10:58:59 +0000
-Subject: RE: [patch v2] mwifiex: fix mwifiex_rdeeprom_read()
-Message-Id: <bd6f0967147e436fae399297d295fd34@SC-EXCH04.marvell.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Sep 2015 10:35:25 +0000
+Subject: [patch] IB/hfi1: fix copy_to/from_user() error handling
+Message-Id: <20150915103525.GA20813@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87lhcz5z70.fsf@kamboji.qca.qualcomm.com>
- <20150921161953.GQ5004@mwanda>
-In-Reply-To: <20150921161953.GQ5004@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mike Marciniszyn <infinipath@intel.com>
+Cc: devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
 
-Hi Dan,
+copy_to/from_user() returns the number of bytes which we were not able
+to copy.  It doesn't return an error code.
 
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Monday, September 21, 2015 9:50 PM
-> To: Amitkumar Karwar
-> Cc: Nishant Sarmukadam; Kalle Valo; linux-wireless@vger.kernel.org;
-> kernel-janitors@vger.kernel.org
-> Subject: [patch v2] mwifiex: fix mwifiex_rdeeprom_read()
-> 
-> There were several bugs here.
-> 
-> 1)  The done label was in the wrong place so we didn't copy any
->     information out when there was no command given.
-> 
-> 2)  We were using PAGE_SIZE as the size of the buffer instead of
->     "PAGE_SIZE - pos".
-> 
-> 3)  snprintf() returns the number of characters that would have been
->     printed if there were enough space.  If there was not enough space
->     (and we had fixed the memory corruption bug #2) then it would result
->     in an information leak when we do simple_read_from_buffer().  I've
->     changed it to use scnprintf() instead.
-> 
-> I also removed the initialization at the start of the function, because
-> I thought it made the code a little more clear.
-> 
-> Fixes: 5e6e3a92b9a4 ('wireless: mwifiex: initial commit for Marvell
-> mwifiex driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  My first part introduced a bug.  :(
-> 
-> Sorry for the delay on this.
-> 
-> diff --git a/drivers/net/wireless/mwifiex/debugfs.c
-> b/drivers/net/wireless/mwifiex/debugfs.c
-> index 5a0636d4..5583856 100644
-> --- a/drivers/net/wireless/mwifiex/debugfs.c
-> +++ b/drivers/net/wireless/mwifiex/debugfs.c
-> @@ -731,7 +731,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user
-> *ubuf,
->  		(struct mwifiex_private *) file->private_data;
->  	unsigned long addr = get_zeroed_page(GFP_KERNEL);
->  	char *buf = (char *) addr;
-> -	int pos = 0, ret = 0, i;
-> +	int pos, ret, i;
->  	u8 value[MAX_EEPROM_DATA];
-> 
->  	if (!buf)
-> @@ -739,7 +739,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user
-> *ubuf,
-> 
->  	if (saved_offset = -1) {
->  		/* No command has been given */
-> -		pos += snprintf(buf, PAGE_SIZE, "0");
-> +		pos = snprintf(buf, PAGE_SIZE, "0");
->  		goto done;
->  	}
-> 
-> @@ -748,17 +748,17 @@ mwifiex_rdeeprom_read(struct file *file, char
-> __user *ubuf,
->  				  (u16) saved_bytes, value);
->  	if (ret) {
->  		ret = -EINVAL;
-> -		goto done;
-> +		goto out_free;
->  	}
-> 
-> -	pos += snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset,
-> saved_bytes);
-> +	pos = snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset,
-> saved_bytes);
-> 
->  	for (i = 0; i < saved_bytes; i++)
-> -		pos += snprintf(buf + strlen(buf), PAGE_SIZE, "%d ",
-> value[i]);
-> -
-> -	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
-> +		pos += scnprintf(buf + pos, PAGE_SIZE - pos, "%d ",
-> value[i]);
-> 
->  done:
-> +	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
-> +out_free:
->  	free_page(addr);
->  	return ret;
->  }
+Also a couple places had a printk() on error and I removed that because
+people can take advantage of it to fill /var/log/messages with spam.
 
-Acked-by: Amitkumar Karwar <akarwar@marvell.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This patch has some checkpatch warnings because the alignment is off.
+That was a problem in the original code and needs to be fixed in a separate patch.
 
-Regards,
-Amitkumar
+Also there is another bug:
+
+drivers/staging/rdma/hfi1/diag.c:1160 hfi1_ioctl() error: scheduling with locks held: 'spin_lock:snoop_lock'
+
+That function needs to be re-worked and simplified and technically I'm
+still on vacation so I didn't address it.
+
+diff --git a/drivers/staging/rdma/hfi1/diag.c b/drivers/staging/rdma/hfi1/diag.c
+index 6777d6b..ce01dee 100644
+--- a/drivers/staging/rdma/hfi1/diag.c
++++ b/drivers/staging/rdma/hfi1/diag.c
+@@ -1012,11 +1012,10 @@ static long hfi1_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
+ 		case HFI1_SNOOP_IOCSETLINKSTATE_EXTRA:
+ 			memset(&link_info, 0, sizeof(link_info));
+ 
+-			ret = copy_from_user(&link_info,
++			if (copy_from_user(&link_info,
+ 				(struct hfi1_link_info __user *)arg,
+-				sizeof(link_info));
+-			if (ret)
+-				break;
++				sizeof(link_info)))
++				ret = -EFAULT;
+ 
+ 			value = link_info.port_state;
+ 			index = link_info.port_number;
+@@ -1080,9 +1079,10 @@ static long hfi1_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
+ 		case HFI1_SNOOP_IOCGETLINKSTATE_EXTRA:
+ 			if (cmd = HFI1_SNOOP_IOCGETLINKSTATE_EXTRA) {
+ 				memset(&link_info, 0, sizeof(link_info));
+-				ret = copy_from_user(&link_info,
++				if (copy_from_user(&link_info,
+ 					(struct hfi1_link_info __user *)arg,
+-					sizeof(link_info));
++					sizeof(link_info)))
++					ret = -EFAULT;
+ 				index = link_info.port_number;
+ 			} else {
+ 				ret = __get_user(index, (int __user *) arg);
+@@ -1114,9 +1114,10 @@ static long hfi1_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
+ 							ppd->link_speed_active;
+ 				link_info.link_width_active  							ppd->link_width_active;
+-				ret = copy_to_user(
++				if (copy_to_user(
+ 					(struct hfi1_link_info __user *)arg,
+-					&link_info, sizeof(link_info));
++					&link_info, sizeof(link_info)))
++					ret = -EFAULT;
+ 			} else {
+ 				ret = __put_user(value, (int __user *)arg);
+ 			}
+@@ -1142,10 +1143,9 @@ static long hfi1_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
+ 			snoop_dbg("Setting filter");
+ 			/* just copy command structure */
+ 			argp = (unsigned long *)arg;
+-			ret = copy_from_user(&filter_cmd, (void __user *)argp,
+-					     sizeof(filter_cmd));
+-			if (ret < 0) {
+-				pr_alert("Error copying filter command\n");
++			if (copy_from_user(&filter_cmd, (void __user *)argp,
++					     sizeof(filter_cmd))) {
++				ret = -EFAULT;
+ 				break;
+ 			}
+ 			if (filter_cmd.opcode >= HFI1_MAX_FILTERS) {
+@@ -1167,12 +1167,11 @@ static long hfi1_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
+ 				break;
+ 			}
+ 			/* copy remaining data from userspace */
+-			ret = copy_from_user((u8 *)filter_value,
++			if (copy_from_user((u8 *)filter_value,
+ 					(void __user *)filter_cmd.value_ptr,
+-					filter_cmd.length);
+-			if (ret < 0) {
++					filter_cmd.length)) {
+ 				kfree(filter_value);
+-				pr_alert("Error copying filter data\n");
++				ret = -EFAULT;
+ 				break;
+ 			}
+ 			/* Drain packets first */
