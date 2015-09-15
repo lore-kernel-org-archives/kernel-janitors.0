@@ -1,51 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 23 Sep 2015 15:17:35 +0000
-Subject: Re: [PATCH v3] coccinelle: tests: unsigned value cannot be lesser than zero
-Message-Id: <5602C28F.9010302@users.sourceforge.net>
+Date: Tue, 15 Sep 2015 13:01:48 +0000
+Subject: Re: [PATCH] coccinelle: tests: unsigned value cannot be lesser than zero
+Message-Id: <55F816BC.5050407@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1509180734350.2064@localhost6.localdomain6>
- <1442831864-25759-1-git-send-email-a.hajda@samsung.com>
- <55FFFFF4.4000007@users.sourceforge.net> <56000777.6060208@samsung.com>
- <56017374.3080402@users.sourceforge.net> <5602560B.2000601@samsung.com>
-In-Reply-To: <5602560B.2000601@samsung.com>
+References: <1442309232-5902-1-git-send-email-a.hajda@samsung.com>
+In-Reply-To: <1442309232-5902-1-git-send-email-a.hajda@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-> In the example above spatch finds ull, ulli, but not ul and uli.
-> If you add int to unsigned long long, it won't find anything.
+> +@r depends on context || org || report@
+> +position p;
+> +typedef u8, u16, u32, u64;
 
-I suggest to take another look at the use of type modifiers
-in the semantic patch language. It seems that it matters occasionally
-to specify them explicitly.
-
-How do you think about to reuse a SmPL script like the following?
+Can the involved data types be restricted for unsigned types for such
+a source code analysis in a more general way?
 
 
-@find_unsigned@
-typedef _Bool, bool, u8, u16, u32, u64;
-{
-unsigned,
-unsigned char,
-unsigned int,
-unsigned short,
-unsigned short int,
-unsigned long,
-unsigned long int,
-unsigned long long,
-unsigned long long int,
-size_t,
-_Bool,
-bool,
-u8,
-u16,
-u32,
-u64
-} var;
-@@
-*var
+> +{unsigned char, unsigned short int, unsigned int, unsigned long, unsigned long long, size_t, u8, u16, u32, u64} v;
+> +@@
+> +
+> +(
+> +*v@p < 0
+> +|
+> +*v@p >= 0
+> +)
 
+How do you think about to use the following SmPL wording instead?
+
+ v@p
+(
+*< 0
+|
+*<= 0
+)
 
 Regards,
 Markus
