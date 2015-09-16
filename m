@@ -1,146 +1,93 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 12:15:20 +0000
-Subject: [PATCH 27/39] ocfs2: drop null test before destroy functions
-Message-Id: <1442146532-9100-28-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Sep 2015 16:02:54 +0000
+Subject: [patch] IB/hfi1: clean up some defines
+Message-Id: <20150916160254.GD9735@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Fasheh <mfasheh@suse.com>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+To: Mike Marciniszyn <infinipath@intel.com>
+Cc: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-rdma@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-Remove unneeded NULL test.
+I added spaces around operators so it matches kernel style because
+normally "-1ULL" is a number and " - 1" is a subtract operation.  Also
+removed some superflous "ULL" types so "1ULL" becomes "1".
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-expression x;
-@@
-
--if (x != NULL)
-  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-
-@@
-expression x;
-@@
-
--if (x != NULL) {
-  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-  x = NULL;
--}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- fs/ocfs2/dlm/dlmlock.c   |    3 +--
- fs/ocfs2/dlm/dlmmaster.c |   16 +++++-----------
- fs/ocfs2/super.c         |   18 ++++++------------
- fs/ocfs2/uptodate.c      |    3 +--
- 4 files changed, 13 insertions(+), 27 deletions(-)
-
-diff --git a/fs/ocfs2/uptodate.c b/fs/ocfs2/uptodate.c
-index 82e17b0..78f09c7 100644
---- a/fs/ocfs2/uptodate.c
-+++ b/fs/ocfs2/uptodate.c
-@@ -633,6 +633,5 @@ int __init init_ocfs2_uptodate_cache(void)
+diff --git a/drivers/staging/rdma/hfi1/sdma.h b/drivers/staging/rdma/hfi1/sdma.h
+index 1e613fc..4960869 100644
+--- a/drivers/staging/rdma/hfi1/sdma.h
++++ b/drivers/staging/rdma/hfi1/sdma.h
+@@ -109,53 +109,53 @@
+ /*
+  * Bits defined in the send DMA descriptor.
+  */
+-#define SDMA_DESC0_FIRST_DESC_FLAG      (1ULL<<63)
+-#define SDMA_DESC0_LAST_DESC_FLAG       (1ULL<<62)
++#define SDMA_DESC0_FIRST_DESC_FLAG      (1ULL << 63)
++#define SDMA_DESC0_LAST_DESC_FLAG       (1ULL << 62)
+ #define SDMA_DESC0_BYTE_COUNT_SHIFT     48
+ #define SDMA_DESC0_BYTE_COUNT_WIDTH     14
+ #define SDMA_DESC0_BYTE_COUNT_MASK \
+-	((1ULL<<SDMA_DESC0_BYTE_COUNT_WIDTH)-1ULL)
++	((1ULL << SDMA_DESC0_BYTE_COUNT_WIDTH) - 1)
+ #define SDMA_DESC0_BYTE_COUNT_SMASK \
+-	(SDMA_DESC0_BYTE_COUNT_MASK<<SDMA_DESC0_BYTE_COUNT_SHIFT)
++	(SDMA_DESC0_BYTE_COUNT_MASK << SDMA_DESC0_BYTE_COUNT_SHIFT)
+ #define SDMA_DESC0_PHY_ADDR_SHIFT       0
+ #define SDMA_DESC0_PHY_ADDR_WIDTH       48
+ #define SDMA_DESC0_PHY_ADDR_MASK \
+-	((1ULL<<SDMA_DESC0_PHY_ADDR_WIDTH)-1ULL)
++	((1ULL << SDMA_DESC0_PHY_ADDR_WIDTH) - 1)
+ #define SDMA_DESC0_PHY_ADDR_SMASK \
+-	(SDMA_DESC0_PHY_ADDR_MASK<<SDMA_DESC0_PHY_ADDR_SHIFT)
++	(SDMA_DESC0_PHY_ADDR_MASK << SDMA_DESC0_PHY_ADDR_SHIFT)
  
- void exit_ocfs2_uptodate_cache(void)
- {
--	if (ocfs2_uptodate_cachep)
--		kmem_cache_destroy(ocfs2_uptodate_cachep);
-+	kmem_cache_destroy(ocfs2_uptodate_cachep);
- }
-diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
-index 46b8b2b..eb53b98 100644
---- a/fs/ocfs2/dlm/dlmmaster.c
-+++ b/fs/ocfs2/dlm/dlmmaster.c
-@@ -414,8 +414,7 @@ int dlm_init_mle_cache(void)
+ #define SDMA_DESC1_HEADER_UPDATE1_SHIFT 32
+ #define SDMA_DESC1_HEADER_UPDATE1_WIDTH 32
+ #define SDMA_DESC1_HEADER_UPDATE1_MASK \
+-	((1ULL<<SDMA_DESC1_HEADER_UPDATE1_WIDTH)-1ULL)
++	((1ULL << SDMA_DESC1_HEADER_UPDATE1_WIDTH) - 1)
+ #define SDMA_DESC1_HEADER_UPDATE1_SMASK \
+-	(SDMA_DESC1_HEADER_UPDATE1_MASK<<SDMA_DESC1_HEADER_UPDATE1_SHIFT)
++	(SDMA_DESC1_HEADER_UPDATE1_MASK << SDMA_DESC1_HEADER_UPDATE1_SHIFT)
+ #define SDMA_DESC1_HEADER_MODE_SHIFT    13
+ #define SDMA_DESC1_HEADER_MODE_WIDTH    3
+ #define SDMA_DESC1_HEADER_MODE_MASK \
+-	((1ULL<<SDMA_DESC1_HEADER_MODE_WIDTH)-1ULL)
++	((1ULL << SDMA_DESC1_HEADER_MODE_WIDTH) - 1)
+ #define SDMA_DESC1_HEADER_MODE_SMASK \
+-	(SDMA_DESC1_HEADER_MODE_MASK<<SDMA_DESC1_HEADER_MODE_SHIFT)
++	(SDMA_DESC1_HEADER_MODE_MASK << SDMA_DESC1_HEADER_MODE_SHIFT)
+ #define SDMA_DESC1_HEADER_INDEX_SHIFT   8
+ #define SDMA_DESC1_HEADER_INDEX_WIDTH   5
+ #define SDMA_DESC1_HEADER_INDEX_MASK \
+-	((1ULL<<SDMA_DESC1_HEADER_INDEX_WIDTH)-1ULL)
++	((1ULL << SDMA_DESC1_HEADER_INDEX_WIDTH) - 1)
+ #define SDMA_DESC1_HEADER_INDEX_SMASK \
+-	(SDMA_DESC1_HEADER_INDEX_MASK<<SDMA_DESC1_HEADER_INDEX_SHIFT)
++	(SDMA_DESC1_HEADER_INDEX_MASK << SDMA_DESC1_HEADER_INDEX_SHIFT)
+ #define SDMA_DESC1_HEADER_DWS_SHIFT     4
+ #define SDMA_DESC1_HEADER_DWS_WIDTH     4
+ #define SDMA_DESC1_HEADER_DWS_MASK \
+-	((1ULL<<SDMA_DESC1_HEADER_DWS_WIDTH)-1ULL)
++	((1ULL << SDMA_DESC1_HEADER_DWS_WIDTH) - 1)
+ #define SDMA_DESC1_HEADER_DWS_SMASK \
+-	(SDMA_DESC1_HEADER_DWS_MASK<<SDMA_DESC1_HEADER_DWS_SHIFT)
++	(SDMA_DESC1_HEADER_DWS_MASK << SDMA_DESC1_HEADER_DWS_SHIFT)
+ #define SDMA_DESC1_GENERATION_SHIFT     2
+ #define SDMA_DESC1_GENERATION_WIDTH     2
+ #define SDMA_DESC1_GENERATION_MASK \
+-	((1ULL<<SDMA_DESC1_GENERATION_WIDTH)-1ULL)
++	((1ULL << SDMA_DESC1_GENERATION_WIDTH) - 1)
+ #define SDMA_DESC1_GENERATION_SMASK \
+-	(SDMA_DESC1_GENERATION_MASK<<SDMA_DESC1_GENERATION_SHIFT)
+-#define SDMA_DESC1_INT_REQ_FLAG         (1ULL<<1)
+-#define SDMA_DESC1_HEAD_TO_HOST_FLAG    (1ULL<<0)
++	(SDMA_DESC1_GENERATION_MASK << SDMA_DESC1_GENERATION_SHIFT)
++#define SDMA_DESC1_INT_REQ_FLAG         (1ULL << 1)
++#define SDMA_DESC1_HEAD_TO_HOST_FLAG    (1ULL << 0)
  
- void dlm_destroy_mle_cache(void)
- {
--	if (dlm_mle_cache)
--		kmem_cache_destroy(dlm_mle_cache);
-+	kmem_cache_destroy(dlm_mle_cache);
- }
- 
- static void dlm_mle_release(struct kref *kref)
-@@ -472,15 +471,10 @@ bail:
- 
- void dlm_destroy_master_caches(void)
- {
--	if (dlm_lockname_cache) {
--		kmem_cache_destroy(dlm_lockname_cache);
--		dlm_lockname_cache = NULL;
--	}
--
--	if (dlm_lockres_cache) {
--		kmem_cache_destroy(dlm_lockres_cache);
--		dlm_lockres_cache = NULL;
--	}
-+	kmem_cache_destroy(dlm_lockname_cache);
-+	dlm_lockname_cache = NULL;
-+	kmem_cache_destroy(dlm_lockres_cache);
-+	dlm_lockres_cache = NULL;
- }
- 
- static void dlm_lockres_release(struct kref *kref)
-diff --git a/fs/ocfs2/dlm/dlmlock.c b/fs/ocfs2/dlm/dlmlock.c
-index 66c2a49..7496231 100644
---- a/fs/ocfs2/dlm/dlmlock.c
-+++ b/fs/ocfs2/dlm/dlmlock.c
-@@ -77,8 +77,7 @@ int dlm_init_lock_cache(void)
- 
- void dlm_destroy_lock_cache(void)
- {
--	if (dlm_lock_cache)
--		kmem_cache_destroy(dlm_lock_cache);
-+	kmem_cache_destroy(dlm_lock_cache);
- }
- 
- /* Tell us whether we can grant a new lock request.
-diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-index 2de4c8a..88396d2 100644
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -1786,12 +1786,9 @@ static int ocfs2_initialize_mem_caches(void)
- 					NULL);
- 	if (!ocfs2_inode_cachep || !ocfs2_dquot_cachep ||
- 	    !ocfs2_qf_chunk_cachep) {
--		if (ocfs2_inode_cachep)
--			kmem_cache_destroy(ocfs2_inode_cachep);
--		if (ocfs2_dquot_cachep)
--			kmem_cache_destroy(ocfs2_dquot_cachep);
--		if (ocfs2_qf_chunk_cachep)
--			kmem_cache_destroy(ocfs2_qf_chunk_cachep);
-+		kmem_cache_destroy(ocfs2_inode_cachep);
-+		kmem_cache_destroy(ocfs2_dquot_cachep);
-+		kmem_cache_destroy(ocfs2_qf_chunk_cachep);
- 		return -ENOMEM;
- 	}
- 
-@@ -1805,16 +1802,13 @@ static void ocfs2_free_mem_caches(void)
- 	 * destroy cache.
- 	 */
- 	rcu_barrier();
--	if (ocfs2_inode_cachep)
--		kmem_cache_destroy(ocfs2_inode_cachep);
-+	kmem_cache_destroy(ocfs2_inode_cachep);
- 	ocfs2_inode_cachep = NULL;
- 
--	if (ocfs2_dquot_cachep)
--		kmem_cache_destroy(ocfs2_dquot_cachep);
-+	kmem_cache_destroy(ocfs2_dquot_cachep);
- 	ocfs2_dquot_cachep = NULL;
- 
--	if (ocfs2_qf_chunk_cachep)
--		kmem_cache_destroy(ocfs2_qf_chunk_cachep);
-+	kmem_cache_destroy(ocfs2_qf_chunk_cachep);
- 	ocfs2_qf_chunk_cachep = NULL;
- }
- 
-
+ enum sdma_states {
+ 	sdma_state_s00_hw_down,
