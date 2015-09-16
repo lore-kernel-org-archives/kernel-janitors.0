@@ -1,64 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 12:14:58 +0000
-Subject: [PATCH 05/39] xhci: drop null test before destroy functions
-Message-Id: <1442146532-9100-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Sep 2015 16:03:45 +0000
+Subject: [patch] IB/hfi1: mask vs shift confusion
+Message-Id: <20150916160345.GE9735@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mathias Nyman <mathias.nyman@intel.com>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mike Marciniszyn <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Remove unneeded NULL test.
+We are shifting by the _MASK macros instead of the _SHIFT ones.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@ expression x; @@
--if (x != NULL)
-  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/usb/host/xhci-mem.c |   12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index 9a8c936..40618d1 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1829,24 +1829,20 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
- 	for (i = 1; i < MAX_HC_SLOTS; ++i)
- 		xhci_free_virt_device(xhci, i);
- 
--	if (xhci->segment_pool)
--		dma_pool_destroy(xhci->segment_pool);
-+	dma_pool_destroy(xhci->segment_pool);
- 	xhci->segment_pool = NULL;
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init, "Freed segment pool");
- 
--	if (xhci->device_pool)
--		dma_pool_destroy(xhci->device_pool);
-+	dma_pool_destroy(xhci->device_pool);
- 	xhci->device_pool = NULL;
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init, "Freed device context pool");
- 
--	if (xhci->small_streams_pool)
--		dma_pool_destroy(xhci->small_streams_pool);
-+	dma_pool_destroy(xhci->small_streams_pool);
- 	xhci->small_streams_pool = NULL;
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
- 			"Freed small stream array pool");
- 
--	if (xhci->medium_streams_pool)
--		dma_pool_destroy(xhci->medium_streams_pool);
-+	dma_pool_destroy(xhci->medium_streams_pool);
- 	xhci->medium_streams_pool = NULL;
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
- 			"Freed medium stream array pool");
-
+diff --git a/drivers/staging/rdma/hfi1/sdma.c b/drivers/staging/rdma/hfi1/sdma.c
+index a8c903c..3a457d2 100644
+--- a/drivers/staging/rdma/hfi1/sdma.c
++++ b/drivers/staging/rdma/hfi1/sdma.c
+@@ -1848,7 +1848,7 @@ static void dump_sdma_state(struct sdma_engine *sde)
+ 			dd_dev_err(sde->dd,
+ 				"\taidx: %u amode: %u alen: %u\n",
+ 				(u8)((desc[1] & SDMA_DESC1_HEADER_INDEX_SMASK)
+-					>> SDMA_DESC1_HEADER_INDEX_MASK),
++					>> SDMA_DESC1_HEADER_INDEX_SHIFT),
+ 				(u8)((desc[1] & SDMA_DESC1_HEADER_MODE_SMASK)
+ 					>> SDMA_DESC1_HEADER_MODE_SHIFT),
+ 				(u8)((desc[1] & SDMA_DESC1_HEADER_DWS_SMASK)
+@@ -1926,7 +1926,7 @@ void sdma_seqfile_dump_sde(struct seq_file *s, struct sdma_engine *sde)
+ 		if (desc[0] & SDMA_DESC0_FIRST_DESC_FLAG)
+ 			seq_printf(s, "\t\tahgidx: %u ahgmode: %u\n",
+ 				(u8)((desc[1] & SDMA_DESC1_HEADER_INDEX_SMASK)
+-					>> SDMA_DESC1_HEADER_INDEX_MASK),
++					>> SDMA_DESC1_HEADER_INDEX_SHIFT),
+ 				(u8)((desc[1] & SDMA_DESC1_HEADER_MODE_SMASK)
+ 					>> SDMA_DESC1_HEADER_MODE_SHIFT));
+ 		head = (head + 1) & sde->sdma_mask;
