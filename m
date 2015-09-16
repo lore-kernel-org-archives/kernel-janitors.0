@@ -1,58 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 12:15:30 +0000
-Subject: [PATCH 37/39] f2fs crypto: drop null test before destroy functions
-Message-Id: <1442146532-9100-38-git-send-email-Julia.Lawall@lip6.fr>
+From: Chao Yu <chao2.yu@samsung.com>
+Date: Wed, 16 Sep 2015 10:17:07 +0000
+Subject: RE: [PATCH 37/39] f2fs crypto: drop null test before destroy functions
+Message-Id: <000b01d0f068$f9695800$ec3c0800$@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1442146532-9100-38-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-38-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: 'Julia Lawall' <Julia.Lawall@lip6.fr>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Remove unneeded NULL test.
+> -----Original Message-----
+> From: Julia Lawall [mailto:Julia.Lawall@lip6.fr]
+> Sent: Sunday, September 13, 2015 8:16 PM
+> To: Jaegeuk Kim
+> Cc: sergey.senozhatsky@gmail.com; kernel-janitors@vger.kernel.org; Changman Lee; Chao Yu;
+> linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> Subject: [PATCH 37/39] f2fs crypto: drop null test before destroy functions
+> 
+> Remove unneeded NULL test.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@ expression x; @@
+> -if (x != NULL)
+>   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@ expression x; @@
--if (x != NULL)
-  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- fs/f2fs/crypto.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/crypto.c b/fs/f2fs/crypto.c
-index 4a62ef1..3c27f04 100644
---- a/fs/f2fs/crypto.c
-+++ b/fs/f2fs/crypto.c
-@@ -183,8 +183,7 @@ static void f2fs_crypto_destroy(void)
- 	list_for_each_entry_safe(pos, n, &f2fs_free_crypto_ctxs, free_list)
- 		kmem_cache_free(f2fs_crypto_ctx_cachep, pos);
- 	INIT_LIST_HEAD(&f2fs_free_crypto_ctxs);
--	if (f2fs_bounce_page_pool)
--		mempool_destroy(f2fs_bounce_page_pool);
-+	mempool_destroy(f2fs_bounce_page_pool);
- 	f2fs_bounce_page_pool = NULL;
- }
- 
-@@ -240,10 +239,8 @@ void f2fs_exit_crypto(void)
- 
- 	if (f2fs_read_workqueue)
- 		destroy_workqueue(f2fs_read_workqueue);
--	if (f2fs_crypto_ctx_cachep)
--		kmem_cache_destroy(f2fs_crypto_ctx_cachep);
--	if (f2fs_crypt_info_cachep)
--		kmem_cache_destroy(f2fs_crypt_info_cachep);
-+	kmem_cache_destroy(f2fs_crypto_ctx_cachep);
-+	kmem_cache_destroy(f2fs_crypt_info_cachep);
- }
- 
- int __init f2fs_init_crypto(void)
+Acked-by: Chao Yu <chao2.yu@samsung.com>
 
