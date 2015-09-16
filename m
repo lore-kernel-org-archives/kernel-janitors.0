@@ -1,26 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 15 Sep 2015 14:53:40 +0000
-Subject: Re: [Cocci] [PATCH] coccinelle: tests: unsigned value cannot be lesser than zero
-Message-Id: <55F830F4.5010003@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Sep 2015 06:22:51 +0000
+Subject: [patch] IB/hfi1: fix a locking bug
+Message-Id: <20150916062251.GD21542@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442309232-5902-1-git-send-email-a.hajda@samsung.com>
- <55F816BC.5050407@users.sourceforge.net> <55F8204D.3080606@samsung.com>
- <55F82D02.5010004@users.sourceforge.net>
- <alpine.DEB.2.10.1509151642200.2537@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1509151642200.2537@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Mike Marciniszyn <infinipath@intel.com>
+Cc: devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
 
-> --recursive-includes is already a parameter.
+mutex_trylock() returns zero on failure, not EBUSY.
 
-I am unsure if its effect on source code analysis speed will matter here.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-> size_t is also unsigned.
-
-Will such a specification work also without an explicit SmPL typedef?
-
-Regards,
-Markus
+diff --git a/drivers/staging/rdma/hfi1/chip.c b/drivers/staging/rdma/hfi1/chip.c
+index 654eafe..aa58e59 100644
+--- a/drivers/staging/rdma/hfi1/chip.c
++++ b/drivers/staging/rdma/hfi1/chip.c
+@@ -2710,7 +2710,7 @@ int acquire_lcb_access(struct hfi1_devdata *dd, int sleep_ok)
+ 	if (sleep_ok) {
+ 		mutex_lock(&ppd->hls_lock);
+ 	} else {
+-		while (mutex_trylock(&ppd->hls_lock) = EBUSY)
++		while (!mutex_trylock(&ppd->hls_lock))
+ 			udelay(1);
+ 	}
+ 
+@@ -2758,7 +2758,7 @@ int release_lcb_access(struct hfi1_devdata *dd, int sleep_ok)
+ 	if (sleep_ok) {
+ 		mutex_lock(&dd->pport->hls_lock);
+ 	} else {
+-		while (mutex_trylock(&dd->pport->hls_lock) = EBUSY)
++		while (!mutex_trylock(&dd->pport->hls_lock))
+ 			udelay(1);
+ 	}
+ 
