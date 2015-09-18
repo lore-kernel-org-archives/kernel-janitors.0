@@ -1,37 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Sep 2015 06:22:20 +0000
-Subject: [patch] IB/hfi1: checking for NULL instead of IS_ERR
-Message-Id: <20150916062220.GC21542@mwanda>
+From: Doug Ledford <dledford@redhat.com>
+Date: Fri, 18 Sep 2015 15:51:09 +0000
+Subject: Re: [patch] IB/hfi1: checking for NULL instead of IS_ERR
+Message-Id: <55FC32ED.1000404@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="XM7I9jLONmPSc4xXa0O9b5oVtoHVUNRo8"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mike Marciniszyn <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <20150916062220.GC21542@mwanda>
+In-Reply-To: <20150916062220.GC21542@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Mike Marciniszyn <infinipath@intel.com>
+Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-rdma@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-__get_txreq() returns an ERR_PTR() but this checks for NULL so it would
-oops on failure.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--XM7I9jLONmPSc4xXa0O9b5oVtoHVUNRo8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 09/16/2015 02:22 AM, Dan Carpenter wrote:
+> __get_txreq() returns an ERR_PTR() but this checks for NULL so it would=
 
-diff --git a/drivers/staging/rdma/hfi1/verbs.c b/drivers/staging/rdma/hfi1/verbs.c
-index 53ac214..41bb59e 100644
---- a/drivers/staging/rdma/hfi1/verbs.c
-+++ b/drivers/staging/rdma/hfi1/verbs.c
-@@ -749,11 +749,13 @@ static inline struct verbs_txreq *get_txreq(struct hfi1_ibdev *dev,
- 	struct verbs_txreq *tx;
- 
- 	tx = kmem_cache_alloc(dev->verbs_txreq_cache, GFP_ATOMIC);
--	if (!tx)
-+	if (!tx) {
- 		/* call slow path to get the lock */
- 		tx =  __get_txreq(dev, qp);
--	if (tx)
--		tx->qp = qp;
-+		if (IS_ERR(tx))
-+			return tx;
-+	}
-+	tx->qp = qp;
- 	return tx;
- }
- 
+> oops on failure.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Thanks, applied.
+
+
+--=20
+Doug Ledford <dledford@redhat.com>
+              GPG KeyID: 0E572FDD
+
+
+
+--XM7I9jLONmPSc4xXa0O9b5oVtoHVUNRo8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQIcBAEBCAAGBQJV/DLtAAoJELgmozMOVy/d3asQAJkW7AlSWibaQWVIcwZrFgbt
+RBC4x8EZ8UGuVOUBsL+LKGSweevIcnQVvyAR0adrQfOJzGcAwtUAUDL+aBcvWd0Z
+OCZGTEVFKxnXqh5DeZ7bL+u1OhtwJFWqpSSJeEBLgZG+0p71qApGXfoCkvwsLPfF
+dehGFKXtx0s8iA8QKyHIjmO68RKNX5ItndxJt/Q8Ea3i/BkPYUorUGhoyH3jTKqY
+gV6OGQg47Mzx7xOKDtBF0icltm5aUSSbJYbzzr9VpMK1q73P/Tj/fxnywZ1BZazb
+v1aaNhjrriCURs2wXv+Vzpu49YnRTlIvOpgfG8qKJSOnfcGqR+DYK1hWGknWdnYj
+MLCfmI1i1jA3IBcbtZJPhMZI2FYr836voQEqlL9o0ZVorFOuoSgK9nLhY7EfUAWZ
+zU/T2eTrJ3seu4QQSJlibMYHx9MZZD903eWBbw0xRh34gdSsh9/xN1CSFEwGSrlK
+OeC0XA0XJGXWG6QnvX1CkYbk0vkNwc7uYuV0sSVMrFGWftMapwJAH4dFUoXB2WmD
+4r4o4mf/+DPEQvVjAGkqqUDOeIf5oh3YFJYaMkndQsxyGLpaAbQ4NkPuUB10CRys
+XkhanrP1TRfRkMzS8E6FFwPvPMlTpNwjXyo9Zl27obymGd0AAZdgpzt+6br3KHgb
+n36XvjazX8H4JlZqsNc2
+=zMrs
+-----END PGP SIGNATURE-----
+
+--XM7I9jLONmPSc4xXa0O9b5oVtoHVUNRo8--
