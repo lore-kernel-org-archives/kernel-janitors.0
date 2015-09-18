@@ -1,74 +1,46 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 16 Sep 2015 09:25:56 +0000
+Date: Fri, 18 Sep 2015 05:35:34 +0000
 Subject: Re: [PATCH] coccinelle: tests: unsigned value cannot be lesser than zero
-Message-Id: <alpine.DEB.2.10.1509161125370.2429@hadrien>
+Message-Id: <alpine.DEB.2.02.1509180734350.2064@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1442309232-5902-1-git-send-email-a.hajda@samsung.com>
- <55F816BC.5050407@users.sourceforge.net>
- <alpine.DEB.2.10.1509151505240.2537@hadrien>
- <55F81A31.3040808@users.sourceforge.net>
- <alpine.DEB.2.10.1509151530190.2537@hadrien> <55F82252.4090900@samsung.com>
- <alpine.DEB.2.10.1509151557040.2537@hadrien> <55F93251.4010706@samsung.com>
-In-Reply-To: <55F93251.4010706@samsung.com>
+ <55F816BC.5050407@users.sourceforge.net> <55F8204D.3080606@samsung.com>
+In-Reply-To: <55F8204D.3080606@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
+ >> +{unsigned char, unsigned short int, unsigned int, unsigned long, unsigned long long, size_t, u8, u16, u32, u64} v;
 
-
-On Wed, 16 Sep 2015, Andrzej Hajda wrote:
-
-> On 09/15/2015 03:57 PM, Julia Lawall wrote:
-> >
-> >
-> > On Tue, 15 Sep 2015, Andrzej Hajda wrote:
-> >
-> >> On 09/15/2015 03:31 PM, Julia Lawall wrote:
-> >>> On Tue, 15 Sep 2015, SF Markus Elfring wrote:
-> >>>
-> >>>>>>  v@p
-> >>>>>> (
-> >>>>>> *< 0
-> >>>>>> |
-> >>>>>> *<= 0
-> >>>>>> )
-> >>>>> It does not, and is not intended to, work.  The branches of a disjunction
-> >>>>> should be complete expressions.
-> >>>> Will the following SmPL approach be more appropriate then?
-> >>>>
-> >>>> (
-> >>>> *v@p < 0
-> >>>> |
-> >>>> *v@p <= 0
-> >>>> )
-> >>> Actually, all of
-> >>>
-> >>> v < 0 (never true)
-> >>> v <= 0 (same as v = 0)
-> >>> v >= 0 (always true)
-> >>>
-> >>> would seem to merit attention.  Andrzej, what do you think?
-> >>
-> >> You are right, the 2nd case should be also addressed,
-> >> such code is misleading.
-> >> I will prepare then 2nd version of the patch.
-> >
-> > It could be reasonable to change the options to --all-includes?  Although
-> > it could be somewhat slow.
->
-> I have tested the patch with 'v <= 0', it spotted hundreds places with this
-> check. It seems to be quite common practice to use such checks with counters,
-> iterators, quantities, range checking. In fact it is negation of 'v > 0' which
-> seems to be acceptable even if it really means 'v != 0'. So maybe we should not
-> warn about it? What do you think?
-
-It seems a bit sloppy, but since the test does have some meaning, maybe it
-is OK.
-
-> On the other side it spotted also real bugs, but maybe I can make separate, more
-> specific test for such cases.
-
-OK, thanks.
+How about adding bool?  I don't currently find any problems with it, but
+perhaps some could arise.
 
 julia
+
+
+> >> +@@
+> >> +
+> >> +(
+> >> +*v@p < 0
+> >> +|
+> >> +*v@p >= 0
+> >> +)
+> > How do you think about to use the following SmPL wording instead?
+> >
+> >  v@p
+> > (
+> > *< 0
+> > |
+> > *<= 0
+> > )
+> >
+> > Regards,
+> > Markus
+> >
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
