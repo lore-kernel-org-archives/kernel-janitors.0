@@ -1,43 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Sep 2015 16:26:02 +0000
-Subject: [patch] PM / OPP: passing NULL to PTR_ERR()
-Message-Id: <20150921162602.GE5648@mwanda>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Mon, 21 Sep 2015 18:59:39 +0000
+Subject: Re: [patch] PM / OPP: passing NULL to PTR_ERR()
+Message-Id: <20150921185939.GB24314@linux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150921162602.GE5648@mwanda>
+In-Reply-To: <20150921162602.GE5648@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Boyd <sboyd@codeaurora.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The code was using PTR_ERR(NULL) which causes a static checker warning.
-I have fixed up the printks and changed the return to -ENOENT.
+On 21-09-15, 19:26, Dan Carpenter wrote:
+> The code was using PTR_ERR(NULL) which causes a static checker warning.
+> I have fixed up the printks and changed the return to -ENOENT.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/base/power/opp/cpu.c b/drivers/base/power/opp/cpu.c
+> index 3d946b5..7654c56 100644
+> --- a/drivers/base/power/opp/cpu.c
+> +++ b/drivers/base/power/opp/cpu.c
+> @@ -223,8 +223,7 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, cpumask_var_t cpumask
+>  	/* Get OPP descriptor node */
+>  	np = _of_get_opp_desc_node(cpu_dev);
+>  	if (!np) {
+> -		dev_dbg(cpu_dev, "%s: Couldn't find opp node: %ld\n", __func__,
+> -			PTR_ERR(np));
+> +		dev_dbg(cpu_dev, "%s: Couldn't find cpu_dev node.\n", __func__);
+>  		return -ENOENT;
+>  	}
+>  
+> @@ -247,9 +246,9 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, cpumask_var_t cpumask
+>  		/* Get OPP descriptor node */
+>  		tmp_np = _of_get_opp_desc_node(tcpu_dev);
+>  		if (!tmp_np) {
+> -			dev_err(tcpu_dev, "%s: Couldn't find opp node: %ld\n",
+> -				__func__, PTR_ERR(tmp_np));
+> -			ret = PTR_ERR(tmp_np);
+> +			dev_err(tcpu_dev, "%s: Couldn't find tcpu_dev node.\n",
+> +				__func__);
+> +			ret = -ENOENT;
+>  			goto put_cpu_node;
+>  		}
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/drivers/base/power/opp/cpu.c b/drivers/base/power/opp/cpu.c
-index 3d946b5..7654c56 100644
---- a/drivers/base/power/opp/cpu.c
-+++ b/drivers/base/power/opp/cpu.c
-@@ -223,8 +223,7 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, cpumask_var_t cpumask
- 	/* Get OPP descriptor node */
- 	np = _of_get_opp_desc_node(cpu_dev);
- 	if (!np) {
--		dev_dbg(cpu_dev, "%s: Couldn't find opp node: %ld\n", __func__,
--			PTR_ERR(np));
-+		dev_dbg(cpu_dev, "%s: Couldn't find cpu_dev node.\n", __func__);
- 		return -ENOENT;
- 	}
- 
-@@ -247,9 +246,9 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, cpumask_var_t cpumask
- 		/* Get OPP descriptor node */
- 		tmp_np = _of_get_opp_desc_node(tcpu_dev);
- 		if (!tmp_np) {
--			dev_err(tcpu_dev, "%s: Couldn't find opp node: %ld\n",
--				__func__, PTR_ERR(tmp_np));
--			ret = PTR_ERR(tmp_np);
-+			dev_err(tcpu_dev, "%s: Couldn't find tcpu_dev node.\n",
-+				__func__);
-+			ret = -ENOENT;
- 			goto put_cpu_node;
- 		}
- 
+-- 
+viresh
