@@ -1,35 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Sep 2015 16:01:15 +0000
-Subject: Re: [PATCH] coccinelle: assign signed result to unsigned variable
-Message-Id: <5606C14B.2080400@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 21 Sep 2015 16:21:51 +0000
+Subject: [patch] devres: fix a for loop bounds check
+Message-Id: <20150921162151.GA5648@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1443099286-16559-1-git-send-email-a.hajda@samsung.com>
- <56041BE5.5010005@users.sourceforge.net> <56051D2B.5040802@samsung.com>
- <56064D0B.8060907@users.sourceforge.net>
- <alpine.DEB.2.10.1509261106040.2737@hadrien>
- <56066866.1060602@users.sourceforge.net>
- <alpine.DEB.2.10.1509261144270.2737@hadrien>
- <56066AD4.9060306@users.sourceforge.net>
- <alpine.DEB.2.10.1509261154500.2737@hadrien>
- <560684F3.9090700@users.sourceforge.net>
- <alpine.DEB.2.10.1509261554100.2717@hadrien>
- <5606B837.7030608@users.sourceforge.net>
- <alpine.DEB.2.10.1509261728140.2864@hadrien>
- <5606BEBC.4010305@users.sourceforge.net>
- <alpine.DEB.2.10.1509261754350.2864@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1509261754350.2864@hadrien>
+In-Reply-To: <20150916171000.GD3243@mtj.duckdns.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, htejun@gmail.com
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Cristian Stoica <cristian.stoica@freescale.com>, Dan Williams <dan.j.williams@intel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> Are there any risks to include too many functions?
-> 
-> Maybe if there are conflicting definitions of the function with different
-> return types.  This is probably not a big deal in practice.
+The iomap[] array has PCIM_IOMAP_MAX (6) elements and not
+DEVICE_COUNT_RESOURCE (16).  This bug was found using a static checker.
+It may be that the "if (!(mask & (1 << i)))" check means we never
+actually go past the end of the array in real life.
 
-Are there any more concerns around the handling of conditional source code
-analysis for Linux subsystems?
+Fixes: ec04b075843d ('iomap: implement pcim_iounmap_regions()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
+diff --git a/lib/devres.c b/lib/devres.c
+index f13a246..8c85672 100644
+--- a/lib/devres.c
++++ b/lib/devres.c
+@@ -418,7 +418,7 @@ void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
+ 	if (!iomap)
+ 		return;
+ 
+-	for (i = 0; i < DEVICE_COUNT_RESOURCE; i++) {
++	for (i = 0; i < PCIM_IOMAP_MAX; i++) {
+ 		if (!(mask & (1 << i)))
+ 			continue;
+ 
