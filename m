@@ -1,33 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Sep 2015 18:14:15 +0000
-Subject: Re: iomap: implement pcim_iounmap_regions()
-Message-Id: <20150916181415.GK5004@mwanda>
+Date: Mon, 21 Sep 2015 16:26:02 +0000
+Subject: [patch] PM / OPP: passing NULL to PTR_ERR()
+Message-Id: <20150921162602.GE5648@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150916160024.GB9735@mwanda>
-In-Reply-To: <20150916160024.GB9735@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 16, 2015 at 01:10:00PM -0400, Tejun Heo wrote:
-> Hello,
-> 
-> On Wed, Sep 16, 2015 at 07:00:24PM +0300, Dan Carpenter wrote:
-> >    421          for (i = 0; i < DEVICE_COUNT_RESOURCE; i++) {
-> >    422                  if (!(mask & (1 << i)))
-> >    423                          continue;
-> > 
-> > Probably maks is always valid is what helps us but basically the static
-> > checker is suggesting that instead of DEVICE_COUNT_RESOURCE we should
-> > be using PCI_ROM_RESOURCE or PCIM_IOMAP_MAX.  It could be that this was
-> > deliberate though...
-> 
-> Looks like a silly mistake on my part.  Care to submit a patch?
-> 
+The code was using PTR_ERR(NULL) which causes a static checker warning.
+I have fixed up the printks and changed the return to -ENOENT.
 
-Sure, I will do that.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/base/power/opp/cpu.c b/drivers/base/power/opp/cpu.c
+index 3d946b5..7654c56 100644
+--- a/drivers/base/power/opp/cpu.c
++++ b/drivers/base/power/opp/cpu.c
+@@ -223,8 +223,7 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, cpumask_var_t cpumask
+ 	/* Get OPP descriptor node */
+ 	np = _of_get_opp_desc_node(cpu_dev);
+ 	if (!np) {
+-		dev_dbg(cpu_dev, "%s: Couldn't find opp node: %ld\n", __func__,
+-			PTR_ERR(np));
++		dev_dbg(cpu_dev, "%s: Couldn't find cpu_dev node.\n", __func__);
+ 		return -ENOENT;
+ 	}
+ 
+@@ -247,9 +246,9 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, cpumask_var_t cpumask
+ 		/* Get OPP descriptor node */
+ 		tmp_np = _of_get_opp_desc_node(tcpu_dev);
+ 		if (!tmp_np) {
+-			dev_err(tcpu_dev, "%s: Couldn't find opp node: %ld\n",
+-				__func__, PTR_ERR(tmp_np));
+-			ret = PTR_ERR(tmp_np);
++			dev_err(tcpu_dev, "%s: Couldn't find tcpu_dev node.\n",
++				__func__);
++			ret = -ENOENT;
+ 			goto put_cpu_node;
+ 		}
+ 
