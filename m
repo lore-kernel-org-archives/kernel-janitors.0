@@ -1,47 +1,81 @@
-From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
-Date: Tue, 22 Sep 2015 15:41:23 +0000
-Subject: Re: [patch] cxlflash: a couple off by one bugs
-Message-Id: <118CEC5E-75FB-4140-A576-5B8D542CD624@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 21 Sep 2015 16:19:53 +0000
+Subject: [patch v2] mwifiex: fix mwifiex_rdeeprom_read()
+Message-Id: <20150921161953.GQ5004@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150922123206.GC27407@mwanda>
-In-Reply-To: <20150922123206.GC27407@mwanda>
+In-Reply-To: <87lhcz5z70.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>, Wen Xiong <wenxiong@linux.vnet.ibm.com>, Michael Neuling <mikey@neuling.org>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> On Sep 22, 2015, at 7:32 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> The "> MAX_CONTEXT" should be ">= MAX_CONTEXT".  Otherwise we go one
-> step beyond the end of the cfg->ctx_tbl[] array.
+There were several bugs here.
 
-Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
+1)  The done label was in the wrong place so we didn't copy any
+    information out when there was no command given.
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
-> index f1b62ce..05e0ecf 100644
-> --- a/drivers/scsi/cxlflash/superpipe.c
-> +++ b/drivers/scsi/cxlflash/superpipe.c
-> @@ -1315,7 +1315,7 @@ static int cxlflash_disk_attach(struct scsi_device *sdev,
-> 	}
-> 
-> 	ctxid = cxl_process_element(ctx);
-> -	if (unlikely((ctxid > MAX_CONTEXT) || (ctxid < 0))) {
-> +	if (unlikely((ctxid >= MAX_CONTEXT) || (ctxid < 0))) {
-> 		dev_err(dev, "%s: ctxid (%d) invalid!\n", __func__, ctxid);
-> 		rc = -EPERM;
-> 		goto err1;
-> @@ -1440,7 +1440,7 @@ static int recover_context(struct cxlflash_cfg *cfg, struct ctx_info *ctxi)
-> 	}
-> 
-> 	ctxid = cxl_process_element(ctx);
-> -	if (unlikely((ctxid > MAX_CONTEXT) || (ctxid < 0))) {
-> +	if (unlikely((ctxid >= MAX_CONTEXT) || (ctxid < 0))) {
-> 		dev_err(dev, "%s: ctxid (%d) invalid!\n", __func__, ctxid);
-> 		rc = -EPERM;
-> 		goto err1;
-> 
+2)  We were using PAGE_SIZE as the size of the buffer instead of
+    "PAGE_SIZE - pos".
 
+3)  snprintf() returns the number of characters that would have been
+    printed if there were enough space.  If there was not enough space
+    (and we had fixed the memory corruption bug #2) then it would result
+    in an information leak when we do simple_read_from_buffer().  I've
+    changed it to use scnprintf() instead.
+
+I also removed the initialization at the start of the function, because
+I thought it made the code a little more clear.
+
+Fixes: 5e6e3a92b9a4 ('wireless: mwifiex: initial commit for Marvell mwifiex driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  My first part introduced a bug.  :(
+
+Sorry for the delay on this.
+
+diff --git a/drivers/net/wireless/mwifiex/debugfs.c b/drivers/net/wireless/mwifiex/debugfs.c
+index 5a0636d4..5583856 100644
+--- a/drivers/net/wireless/mwifiex/debugfs.c
++++ b/drivers/net/wireless/mwifiex/debugfs.c
+@@ -731,7 +731,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
+ 		(struct mwifiex_private *) file->private_data;
+ 	unsigned long addr = get_zeroed_page(GFP_KERNEL);
+ 	char *buf = (char *) addr;
+-	int pos = 0, ret = 0, i;
++	int pos, ret, i;
+ 	u8 value[MAX_EEPROM_DATA];
+ 
+ 	if (!buf)
+@@ -739,7 +739,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
+ 
+ 	if (saved_offset = -1) {
+ 		/* No command has been given */
+-		pos += snprintf(buf, PAGE_SIZE, "0");
++		pos = snprintf(buf, PAGE_SIZE, "0");
+ 		goto done;
+ 	}
+ 
+@@ -748,17 +748,17 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
+ 				  (u16) saved_bytes, value);
+ 	if (ret) {
+ 		ret = -EINVAL;
+-		goto done;
++		goto out_free;
+ 	}
+ 
+-	pos += snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset, saved_bytes);
++	pos = snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset, saved_bytes);
+ 
+ 	for (i = 0; i < saved_bytes; i++)
+-		pos += snprintf(buf + strlen(buf), PAGE_SIZE, "%d ", value[i]);
+-
+-	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
++		pos += scnprintf(buf + pos, PAGE_SIZE - pos, "%d ", value[i]);
+ 
+ done:
++	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
++out_free:
+ 	free_page(addr);
+ 	return ret;
+ }
