@@ -1,37 +1,74 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 28 Sep 2015 09:56:36 +0000
-Subject: [patch] mfd: 64 bit bug in bxtwc_val_store()
-Message-Id: <20150928095636.GB11367@mwanda>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Date: Mon, 21 Sep 2015 10:37:44 +0000
+Subject: [PATCH v3] coccinelle: tests: unsigned value cannot be lesser than zero
+Message-Id: <1442831864-25759-1-git-send-email-a.hajda@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <alpine.DEB.2.02.1509180734350.2064@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1509180734350.2064@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-The call to kstrtoul() will corrupt memory on 64 bit systems because an
-int is 4 bytes and a long is 8.
+Code comparing unsigned variables with zero using operators < or >= does not
+make sense. It is always false or true, respectively. However, its presence
+often indicates bugs in the code.
+gcc can detect it also using -Wtype-limits switch, but it warns also in correct
+cases, making too much noise.
 
-Also it's not a good idea to let users trigger a dev_err() because it
-just ends up flooding /var/log/messages so I removed the printk.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+---
+v3: added bool type
+v2: added --all-includes option
+---
+ .../tests/unsigned_lesser_than_zero.cocci          | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci
 
-Fixes: 2ddd2086ea9c ('mfd: add Intel Broxton Whiskey Cove PMIC driver')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci b/scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci
+new file mode 100644
+index 0000000..70e71c8
+--- /dev/null
++++ b/scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci
+@@ -0,0 +1,37 @@
++/// Unsigned variables cannot be lesser than zero. Presence of such checks
++/// can indicate incorrect variable type or just unnecessary code.
++///
++// Confidence: High
++// Copyright: (C) 2015 Andrzej Hajda, Samsung Electronics Co., Ltd. GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: --include-headers --all-includes
++
++virtual context
++virtual org
++virtual report
++
++@r depends on context || org || report@
++position p;
++typedef bool, u8, u16, u32, u64;
++{unsigned char, unsigned short int, unsigned int, unsigned long, unsigned long long, size_t, bool, u8, u16, u32, u64} v;
++@@
++
++(
++*v@p < 0
++|
++*v@p >= 0
++)
++
++@script:python depends on org@
++p << r.p;
++@@
++
++msg = "WARNING: Unsigned value cannot be lesser than zero"
++coccilib.org.print_todo(p[0], msg)
++
++@script:python depends on report@
++p << r.p;
++@@
++
++msg = "WARNING: Unsigned value cannot be lesser than zero"
++coccilib.report.print_report(p[0], msg)
+-- 
+1.9.1
 
-diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
-index 40acaff..b942876 100644
---- a/drivers/mfd/intel_soc_pmic_bxtwc.c
-+++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
-@@ -297,10 +297,9 @@ static ssize_t bxtwc_val_store(struct device *dev,
- 	unsigned int val;
- 	struct intel_soc_pmic *pmic = dev_get_drvdata(dev);
- 
--	if (kstrtoul(buf, 0, (unsigned long *)&val)) {
--		dev_err(dev, "Invalid register value\n");
--		return -EINVAL;
--	}
-+	ret = kstrtouint(buf, 0, &val);
-+	if (ret)
-+		return ret;
- 
- 	ret = regmap_write(pmic->regmap, bxtwc_reg_addr, val);
- 	if (ret) {
