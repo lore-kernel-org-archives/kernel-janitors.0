@@ -1,61 +1,41 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 18 Sep 2015 15:50:10 +0000
-Subject: Re: [patch] IB/hfi1: fix copy_to/from_user() error handling
-Message-Id: <55FC32B2.1060004@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="GUlBNGq1ArU0AWxO1xGaABlDpkL5XDXDm"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Sep 2015 14:32:08 +0000
+Subject: [patch 4/4 v2] drm/qxl: integer overflow in qxl_alloc_surf_ioctl()
+Message-Id: <20150922143208.GA2319@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150915103525.GA20813@mwanda>
-In-Reply-To: <20150915103525.GA20813@mwanda>
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Mike Marciniszyn <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <421515033.28673933.1442569564307.JavaMail.zimbra@redhat.com>
+In-Reply-To: <421515033.28673933.1442569564307.JavaMail.zimbra@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: Dave Airlie <airlied@redhat.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Frediano Ziglio <fziglio@redhat.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---GUlBNGq1ArU0AWxO1xGaABlDpkL5XDXDm
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+The size calculation can overflow.  I don't know if this leads to
+memory corruption, but it causes a static checker warning.
 
-On 09/15/2015 06:35 AM, Dan Carpenter wrote:
-> copy_to/from_user() returns the number of bytes which we were not able
-> to copy.  It doesn't return an error code.
->=20
-> Also a couple places had a printk() on error and I removed that because=
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: I don't know think the size is capped anywhere.  In my first version
+of this patch, I introduced a divide by zero bug.
 
-> people can take advantage of it to fill /var/log/messages with spam.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks, applied.
-
-
---=20
-Doug Ledford <dledford@redhat.com>
-              GPG KeyID: 0E572FDD
-
-
-
---GUlBNGq1ArU0AWxO1xGaABlDpkL5XDXDm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJV/DKyAAoJELgmozMOVy/dZi0QAIhVCPM1Ky528IpGjGN2ppZ9
-ZawlwoRaaPxpG0eJ1sfyMU3pEV6UtLRkGQjzHL4pDxb4U4NyVyBwLJVvNxeD0Exw
-qY8sV0wjYpwAVUD7j7T0U3o8eiEk15gknv/vaNTDt7Uv8kp+RDTsFJw30t/GoJPh
-2SwGpFX2CgkcYAmvVpr07fC1qL+PxJr+Q0VyJyomANt0vtv1GAt+FevOtofH6hNT
-5+9vo0y0ZLmoJ3UC11SF/v2FvAelpU/TEcfA4bfukM2Gq1TpTKEALMtasBZuJswi
-SwZpumdewVsdf2lE6rZxLUbG90AsmsgX7z3woHLwZu7YtG5vhI0NMSUiKDJhNq0p
-tUrT5IJhmcCQ8zoK8hUsc+eoTto8fWdlj+/UFq5RtIG4UQ1S/84n49dbBi6PZMLb
-ZxPvLYo6tcXLS5wXCLtxn24nk28KGhoJoccowu1baC9UwRbGZPUgHlp4lxAf98qR
-7apmpfjKRR8fR70KNzVuvO4MxGxyur0IwjGYqqU6/s9ThEYwtPc+C90y2nywbdp/
-D1bcw2nYWPKReHMmNgOl7TmNZHrI2Yn9tRyQwIFV5sHu/3tdLv24yibSti2L+vcD
-/4JHhI03hT0XKrwOf5SFyE95i3BBbtnev8FernTuA6nPm5cO9wa/P/OYHIfbmQt+
-rCa+sv3pfkhHKhNdiCZ+
-=njLT
------END PGP SIGNATURE-----
-
---GUlBNGq1ArU0AWxO1xGaABlDpkL5XDXDm--
+diff --git a/drivers/gpu/drm/qxl/qxl_ioctl.c b/drivers/gpu/drm/qxl/qxl_ioctl.c
+index b2db482..49b3158 100644
+--- a/drivers/gpu/drm/qxl/qxl_ioctl.c
++++ b/drivers/gpu/drm/qxl/qxl_ioctl.c
+@@ -396,12 +396,14 @@ static int qxl_alloc_surf_ioctl(struct drm_device *dev, void *data,
+ 	struct qxl_bo *qobj;
+ 	int handle;
+ 	int ret;
+-	int size, actual_stride;
++	u64 size, actual_stride;
+ 	struct qxl_surface surf;
+ 
+ 	/* work out size allocate bo with handle */
+ 	actual_stride = param->stride < 0 ? -param->stride : param->stride;
+ 	size = actual_stride * param->height + actual_stride;
++	if (size > INT_MAX)
++		return -EINVAL;
+ 
+ 	surf.format = param->format;
+ 	surf.width = param->width;
