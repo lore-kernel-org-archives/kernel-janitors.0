@@ -1,53 +1,40 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Fri, 25 Sep 2015 21:55:29 +0000
-Subject: Re: [patch] PM / OPP: passing NULL to PTR_ERR()
-Message-Id: <6540909.mH5lzIF4eN@vostro.rjw.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Sep 2015 13:26:43 +0000
+Subject: [patch] Input: ff-core - silence an underflow warning
+Message-Id: <20150922132643.GA5751@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150921162602.GE5648@mwanda> <20150921185939.GB24314@linux>
-In-Reply-To: <20150921185939.GB24314@linux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Boyd <sboyd@codeaurora.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Monday, September 21, 2015 11:59:39 AM Viresh Kumar wrote:
-> On 21-09-15, 19:26, Dan Carpenter wrote:
-> > The code was using PTR_ERR(NULL) which causes a static checker warning.
-> > I have fixed up the printks and changed the return to -ENOENT.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/base/power/opp/cpu.c b/drivers/base/power/opp/cpu.c
-> > index 3d946b5..7654c56 100644
-> > --- a/drivers/base/power/opp/cpu.c
-> > +++ b/drivers/base/power/opp/cpu.c
-> > @@ -223,8 +223,7 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, cpumask_var_t cpumask
-> >  	/* Get OPP descriptor node */
-> >  	np = _of_get_opp_desc_node(cpu_dev);
-> >  	if (!np) {
-> > -		dev_dbg(cpu_dev, "%s: Couldn't find opp node: %ld\n", __func__,
-> > -			PTR_ERR(np));
-> > +		dev_dbg(cpu_dev, "%s: Couldn't find cpu_dev node.\n", __func__);
-> >  		return -ENOENT;
-> >  	}
-> >  
-> > @@ -247,9 +246,9 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, cpumask_var_t cpumask
-> >  		/* Get OPP descriptor node */
-> >  		tmp_np = _of_get_opp_desc_node(tcpu_dev);
-> >  		if (!tmp_np) {
-> > -			dev_err(tcpu_dev, "%s: Couldn't find opp node: %ld\n",
-> > -				__func__, PTR_ERR(tmp_np));
-> > -			ret = PTR_ERR(tmp_np);
-> > +			dev_err(tcpu_dev, "%s: Couldn't find tcpu_dev node.\n",
-> > +				__func__);
-> > +			ret = -ENOENT;
-> >  			goto put_cpu_node;
-> >  		}
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+My static checker complains that "value" comes from the user in
+evdev_do_ioctl() and we check that it's not too large here but we don't
+check that it's negative.  It's harmless because the ->set_gain() and
+->set_autocenter() functions truncate it to a valid u16 value, but we
+may as well fix it just to make the static checker happy.
 
-Applied, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Rafael
-
+diff --git a/drivers/input/ff-core.c b/drivers/input/ff-core.c
+index c642082..6a94c5f 100644
+--- a/drivers/input/ff-core.c
++++ b/drivers/input/ff-core.c
+@@ -273,14 +273,14 @@ int input_ff_event(struct input_dev *dev, unsigned int type,
+ 
+ 	switch (code) {
+ 	case FF_GAIN:
+-		if (!test_bit(FF_GAIN, dev->ffbit) || value > 0xffff)
++		if (!test_bit(FF_GAIN, dev->ffbit) || value > 0xffffUL)
+ 			break;
+ 
+ 		ff->set_gain(dev, value);
+ 		break;
+ 
+ 	case FF_AUTOCENTER:
+-		if (!test_bit(FF_AUTOCENTER, dev->ffbit) || value > 0xffff)
++		if (!test_bit(FF_AUTOCENTER, dev->ffbit) || value > 0xffffUL)
+ 			break;
+ 
+ 		ff->set_autocenter(dev, value);
