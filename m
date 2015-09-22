@@ -1,81 +1,106 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Sep 2015 16:19:53 +0000
-Subject: [patch v2] mwifiex: fix mwifiex_rdeeprom_read()
-Message-Id: <20150921161953.GQ5004@mwanda>
+From: Amitkumar Karwar <akarwar@marvell.com>
+Date: Tue, 22 Sep 2015 10:58:59 +0000
+Subject: RE: [patch v2] mwifiex: fix mwifiex_rdeeprom_read()
+Message-Id: <bd6f0967147e436fae399297d295fd34@SC-EXCH04.marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <87lhcz5z70.fsf@kamboji.qca.qualcomm.com>
+References: <87lhcz5z70.fsf@kamboji.qca.qualcomm.com>
+ <20150921161953.GQ5004@mwanda>
+In-Reply-To: <20150921161953.GQ5004@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <akarwar@marvell.com>
-Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-There were several bugs here.
+Hi Dan,
 
-1)  The done label was in the wrong place so we didn't copy any
-    information out when there was no command given.
+> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
+> Sent: Monday, September 21, 2015 9:50 PM
+> To: Amitkumar Karwar
+> Cc: Nishant Sarmukadam; Kalle Valo; linux-wireless@vger.kernel.org;
+> kernel-janitors@vger.kernel.org
+> Subject: [patch v2] mwifiex: fix mwifiex_rdeeprom_read()
+> 
+> There were several bugs here.
+> 
+> 1)  The done label was in the wrong place so we didn't copy any
+>     information out when there was no command given.
+> 
+> 2)  We were using PAGE_SIZE as the size of the buffer instead of
+>     "PAGE_SIZE - pos".
+> 
+> 3)  snprintf() returns the number of characters that would have been
+>     printed if there were enough space.  If there was not enough space
+>     (and we had fixed the memory corruption bug #2) then it would result
+>     in an information leak when we do simple_read_from_buffer().  I've
+>     changed it to use scnprintf() instead.
+> 
+> I also removed the initialization at the start of the function, because
+> I thought it made the code a little more clear.
+> 
+> Fixes: 5e6e3a92b9a4 ('wireless: mwifiex: initial commit for Marvell
+> mwifiex driver')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2:  My first part introduced a bug.  :(
+> 
+> Sorry for the delay on this.
+> 
+> diff --git a/drivers/net/wireless/mwifiex/debugfs.c
+> b/drivers/net/wireless/mwifiex/debugfs.c
+> index 5a0636d4..5583856 100644
+> --- a/drivers/net/wireless/mwifiex/debugfs.c
+> +++ b/drivers/net/wireless/mwifiex/debugfs.c
+> @@ -731,7 +731,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user
+> *ubuf,
+>  		(struct mwifiex_private *) file->private_data;
+>  	unsigned long addr = get_zeroed_page(GFP_KERNEL);
+>  	char *buf = (char *) addr;
+> -	int pos = 0, ret = 0, i;
+> +	int pos, ret, i;
+>  	u8 value[MAX_EEPROM_DATA];
+> 
+>  	if (!buf)
+> @@ -739,7 +739,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user
+> *ubuf,
+> 
+>  	if (saved_offset = -1) {
+>  		/* No command has been given */
+> -		pos += snprintf(buf, PAGE_SIZE, "0");
+> +		pos = snprintf(buf, PAGE_SIZE, "0");
+>  		goto done;
+>  	}
+> 
+> @@ -748,17 +748,17 @@ mwifiex_rdeeprom_read(struct file *file, char
+> __user *ubuf,
+>  				  (u16) saved_bytes, value);
+>  	if (ret) {
+>  		ret = -EINVAL;
+> -		goto done;
+> +		goto out_free;
+>  	}
+> 
+> -	pos += snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset,
+> saved_bytes);
+> +	pos = snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset,
+> saved_bytes);
+> 
+>  	for (i = 0; i < saved_bytes; i++)
+> -		pos += snprintf(buf + strlen(buf), PAGE_SIZE, "%d ",
+> value[i]);
+> -
+> -	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
+> +		pos += scnprintf(buf + pos, PAGE_SIZE - pos, "%d ",
+> value[i]);
+> 
+>  done:
+> +	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
+> +out_free:
+>  	free_page(addr);
+>  	return ret;
+>  }
 
-2)  We were using PAGE_SIZE as the size of the buffer instead of
-    "PAGE_SIZE - pos".
+Acked-by: Amitkumar Karwar <akarwar@marvell.com>
 
-3)  snprintf() returns the number of characters that would have been
-    printed if there were enough space.  If there was not enough space
-    (and we had fixed the memory corruption bug #2) then it would result
-    in an information leak when we do simple_read_from_buffer().  I've
-    changed it to use scnprintf() instead.
-
-I also removed the initialization at the start of the function, because
-I thought it made the code a little more clear.
-
-Fixes: 5e6e3a92b9a4 ('wireless: mwifiex: initial commit for Marvell mwifiex driver')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2:  My first part introduced a bug.  :(
-
-Sorry for the delay on this.
-
-diff --git a/drivers/net/wireless/mwifiex/debugfs.c b/drivers/net/wireless/mwifiex/debugfs.c
-index 5a0636d4..5583856 100644
---- a/drivers/net/wireless/mwifiex/debugfs.c
-+++ b/drivers/net/wireless/mwifiex/debugfs.c
-@@ -731,7 +731,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
- 		(struct mwifiex_private *) file->private_data;
- 	unsigned long addr = get_zeroed_page(GFP_KERNEL);
- 	char *buf = (char *) addr;
--	int pos = 0, ret = 0, i;
-+	int pos, ret, i;
- 	u8 value[MAX_EEPROM_DATA];
- 
- 	if (!buf)
-@@ -739,7 +739,7 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
- 
- 	if (saved_offset = -1) {
- 		/* No command has been given */
--		pos += snprintf(buf, PAGE_SIZE, "0");
-+		pos = snprintf(buf, PAGE_SIZE, "0");
- 		goto done;
- 	}
- 
-@@ -748,17 +748,17 @@ mwifiex_rdeeprom_read(struct file *file, char __user *ubuf,
- 				  (u16) saved_bytes, value);
- 	if (ret) {
- 		ret = -EINVAL;
--		goto done;
-+		goto out_free;
- 	}
- 
--	pos += snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset, saved_bytes);
-+	pos = snprintf(buf, PAGE_SIZE, "%d %d ", saved_offset, saved_bytes);
- 
- 	for (i = 0; i < saved_bytes; i++)
--		pos += snprintf(buf + strlen(buf), PAGE_SIZE, "%d ", value[i]);
--
--	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
-+		pos += scnprintf(buf + pos, PAGE_SIZE - pos, "%d ", value[i]);
- 
- done:
-+	ret = simple_read_from_buffer(ubuf, count, ppos, buf, pos);
-+out_free:
- 	free_page(addr);
- 	return ret;
- }
+Regards,
+Amitkumar
