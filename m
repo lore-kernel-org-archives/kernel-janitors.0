@@ -1,22 +1,38 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Date: Mon, 28 Sep 2015 01:44:56 +0000
-Subject: Re: [PATCH] gpio: max730x: eliminate double free
-Message-Id: <CAAVeFu+rSS-C7560RZCqkRP-jCFYbAoG9sm_THSjipkaAS2aiA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Sep 2015 12:32:07 +0000
+Subject: [patch] cxlflash: a couple off by one bugs
+Message-Id: <20150922123206.GC27407@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1443298700-28079-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1443298700-28079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "James E.J. Bottomley" <JBottomley@odin.com>
+Cc: "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>, Wen Xiong <wenxiong@linux.vnet.ibm.com>, Michael Neuling <mikey@neuling.org>, "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Sep 27, 2015 at 5:18 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> The function __max730x_remove is called from the remove functions of
-> drivers/gpio/gpio-max7300.c and drivers/gpio/gpio-max7301.c.  In both
-> cases, the probe function allocates ts using devm_kzalloc.  Explicitly
-> freeing such a value with kfree will cause a double free.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The "> MAX_CONTEXT" should be ">= MAX_CONTEXT".  Otherwise we go one
+step beyond the end of the cfg->ctx_tbl[] array.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
+index f1b62ce..05e0ecf 100644
+--- a/drivers/scsi/cxlflash/superpipe.c
++++ b/drivers/scsi/cxlflash/superpipe.c
+@@ -1315,7 +1315,7 @@ static int cxlflash_disk_attach(struct scsi_device *sdev,
+ 	}
+ 
+ 	ctxid = cxl_process_element(ctx);
+-	if (unlikely((ctxid > MAX_CONTEXT) || (ctxid < 0))) {
++	if (unlikely((ctxid >= MAX_CONTEXT) || (ctxid < 0))) {
+ 		dev_err(dev, "%s: ctxid (%d) invalid!\n", __func__, ctxid);
+ 		rc = -EPERM;
+ 		goto err1;
+@@ -1440,7 +1440,7 @@ static int recover_context(struct cxlflash_cfg *cfg, struct ctx_info *ctxi)
+ 	}
+ 
+ 	ctxid = cxl_process_element(ctx);
+-	if (unlikely((ctxid > MAX_CONTEXT) || (ctxid < 0))) {
++	if (unlikely((ctxid >= MAX_CONTEXT) || (ctxid < 0))) {
+ 		dev_err(dev, "%s: ctxid (%d) invalid!\n", __func__, ctxid);
+ 		rc = -EPERM;
+ 		goto err1;
