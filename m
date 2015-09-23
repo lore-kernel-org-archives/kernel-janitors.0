@@ -1,71 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 12:15:28 +0000
-Subject: [PATCH 35/39] GFS2: drop null test before destroy functions
-Message-Id: <1442146532-9100-36-git-send-email-Julia.Lawall@lip6.fr>
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Wed, 23 Sep 2015 20:07:53 +0000
+Subject: [PATCH 1/3] staging: wlan-ng fix buffer overflow in firmware handling
+Message-Id: <1443038876-15753-2-git-send-email-theidsieck@leenox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Whitehouse <swhiteho@redhat.com>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Remove unneeded NULL test.
+We test for an END marker in the element beyond the current one, this
+effectively limits the size of the array to be HFA384x_PDA_LEN_MAX/2 - 1
+not HFA384x_PDR_END_OF_PDA/2. This patch fixes a possible buffer
+overflow in case there was no END marker.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@ expression x; @@
--if (x != NULL)
-  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
 ---
- fs/gfs2/main.c |   29 +++++++----------------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+ drivers/staging/wlan-ng/prism2fw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
-index 241a399..4d78c3e 100644
---- a/fs/gfs2/main.c
-+++ b/fs/gfs2/main.c
-@@ -192,28 +192,13 @@ fail:
- fail_lru:
- 	unregister_shrinker(&gfs2_qd_shrinker);
- 	gfs2_glock_exit();
--
--	if (gfs2_rsrv_cachep)
--		kmem_cache_destroy(gfs2_rsrv_cachep);
--
--	if (gfs2_quotad_cachep)
--		kmem_cache_destroy(gfs2_quotad_cachep);
--
--	if (gfs2_rgrpd_cachep)
--		kmem_cache_destroy(gfs2_rgrpd_cachep);
--
--	if (gfs2_bufdata_cachep)
--		kmem_cache_destroy(gfs2_bufdata_cachep);
--
--	if (gfs2_inode_cachep)
--		kmem_cache_destroy(gfs2_inode_cachep);
--
--	if (gfs2_glock_aspace_cachep)
--		kmem_cache_destroy(gfs2_glock_aspace_cachep);
--
--	if (gfs2_glock_cachep)
--		kmem_cache_destroy(gfs2_glock_cachep);
--
-+	kmem_cache_destroy(gfs2_rsrv_cachep);
-+	kmem_cache_destroy(gfs2_quotad_cachep);
-+	kmem_cache_destroy(gfs2_rgrpd_cachep);
-+	kmem_cache_destroy(gfs2_bufdata_cachep);
-+	kmem_cache_destroy(gfs2_inode_cachep);
-+	kmem_cache_destroy(gfs2_glock_aspace_cachep);
-+	kmem_cache_destroy(gfs2_glock_cachep);
- 	gfs2_sys_uninit();
- 	return error;
- }
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index fe36613..d357b7e 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -590,7 +590,7 @@ static int mkpdrlist(struct pda *pda)
+ 
+ 	pda->nrec = 0;
+ 	curroff = 0;
+-	while (curroff < (HFA384x_PDA_LEN_MAX / 2) &&
++	while (curroff < (HFA384x_PDA_LEN_MAX / 2 - 1) &&
+ 	       le16_to_cpu(pda16[curroff + 1]) != HFA384x_PDR_END_OF_PDA) {
+ 		pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
+ 
+@@ -626,7 +626,7 @@ static int mkpdrlist(struct pda *pda)
+ 		curroff += le16_to_cpu(pda16[curroff]) + 1;
+ 
+ 	}
+-	if (curroff >= (HFA384x_PDA_LEN_MAX / 2)) {
++	if (curroff >= (HFA384x_PDA_LEN_MAX / 2 - 1)) {
+ 		pr_err("no end record found or invalid lengths in PDR data, exiting. %x %d\n",
+ 		       curroff, pda->nrec);
+ 		return 1;
+-- 
+2.5.3
 
