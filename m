@@ -1,22 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 22 Sep 2015 15:27:48 +0000
+From: Andrzej Hajda <a.hajda@samsung.com>
+Date: Wed, 23 Sep 2015 07:34:35 +0000
 Subject: Re: [PATCH v3] coccinelle: tests: unsigned value cannot be lesser than zero
-Message-Id: <56017374.3080402@users.sourceforge.net>
+Message-Id: <5602560B.2000601@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.DEB.2.02.1509180734350.2064@localhost6.localdomain6>
  <1442831864-25759-1-git-send-email-a.hajda@samsung.com>
  <55FFFFF4.4000007@users.sourceforge.net> <56000777.6060208@samsung.com>
-In-Reply-To: <56000777.6060208@samsung.com>
+ <56017374.3080402@users.sourceforge.net>
+In-Reply-To: <56017374.3080402@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-> If you mean adding int to 'unsigned long [long]' types, it does not work.
-> For some reason it works only without adding int after long.
+On 09/22/2015 05:27 PM, SF Markus Elfring wrote:
+>> If you mean adding int to 'unsigned long [long]' types, it does not work.
+>> For some reason it works only without adding int after long.
+> Do you get any error message for this SmPL approach?
+> With which source files do you try the extended SmPL script out?
+>
+> Regards,
+> Markus
+>
+No, spatch just does not find everything it should. Sample below:
+--- test.cocci
+virtual context
 
-Do you get any error message for this SmPL approach?
-With which source files do you try the extended SmPL script out?
+@r depends on context@
+{unsigned char, unsigned short int, unsigned int, unsigned long int, unsigned
+long long, size_t} v;
+@@
 
-Regards,
-Markus
+*v
+--- test.c
+void f()
+{
+    unsigned long ul;
+    unsigned long int uli;
+    unsigned long long ull;
+    unsigned long long int ulli;
+
+    ul;
+    uli;
+    ull;
+    ulli;
+}
+---
+In the example above spatch finds ull, ulli, but not ul and uli.
+If you add int to unsigned long long, it won't find anything.
+
+Regards
+Andrzej
+
+
