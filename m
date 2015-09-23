@@ -1,93 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Sep 2015 16:02:54 +0000
-Subject: [patch] IB/hfi1: clean up some defines
-Message-Id: <20150916160254.GD9735@mwanda>
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Wed, 23 Sep 2015 20:07:55 +0000
+Subject: [PATCH 3/3] staging: wlan-ng remove unnessecary variable
+Message-Id: <1443038876-15753-4-git-send-email-theidsieck@leenox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marciniszyn <infinipath@intel.com>
-Cc: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-rdma@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-I added spaces around operators so it matches kernel style because
-normally "-1ULL" is a number and " - 1" is a subtract operation.  Also
-removed some superflous "ULL" types so "1ULL" becomes "1".
+The result variable is not set anywhere beyond its initialization,
+therefore it can be remove.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
+---
+ drivers/staging/wlan-ng/prism2fw.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rdma/hfi1/sdma.h b/drivers/staging/rdma/hfi1/sdma.h
-index 1e613fc..4960869 100644
---- a/drivers/staging/rdma/hfi1/sdma.h
-+++ b/drivers/staging/rdma/hfi1/sdma.h
-@@ -109,53 +109,53 @@
- /*
-  * Bits defined in the send DMA descriptor.
-  */
--#define SDMA_DESC0_FIRST_DESC_FLAG      (1ULL<<63)
--#define SDMA_DESC0_LAST_DESC_FLAG       (1ULL<<62)
-+#define SDMA_DESC0_FIRST_DESC_FLAG      (1ULL << 63)
-+#define SDMA_DESC0_LAST_DESC_FLAG       (1ULL << 62)
- #define SDMA_DESC0_BYTE_COUNT_SHIFT     48
- #define SDMA_DESC0_BYTE_COUNT_WIDTH     14
- #define SDMA_DESC0_BYTE_COUNT_MASK \
--	((1ULL<<SDMA_DESC0_BYTE_COUNT_WIDTH)-1ULL)
-+	((1ULL << SDMA_DESC0_BYTE_COUNT_WIDTH) - 1)
- #define SDMA_DESC0_BYTE_COUNT_SMASK \
--	(SDMA_DESC0_BYTE_COUNT_MASK<<SDMA_DESC0_BYTE_COUNT_SHIFT)
-+	(SDMA_DESC0_BYTE_COUNT_MASK << SDMA_DESC0_BYTE_COUNT_SHIFT)
- #define SDMA_DESC0_PHY_ADDR_SHIFT       0
- #define SDMA_DESC0_PHY_ADDR_WIDTH       48
- #define SDMA_DESC0_PHY_ADDR_MASK \
--	((1ULL<<SDMA_DESC0_PHY_ADDR_WIDTH)-1ULL)
-+	((1ULL << SDMA_DESC0_PHY_ADDR_WIDTH) - 1)
- #define SDMA_DESC0_PHY_ADDR_SMASK \
--	(SDMA_DESC0_PHY_ADDR_MASK<<SDMA_DESC0_PHY_ADDR_SHIFT)
-+	(SDMA_DESC0_PHY_ADDR_MASK << SDMA_DESC0_PHY_ADDR_SHIFT)
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index f5b9727..8fc80df 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -584,7 +584,6 @@ static int mkimage(struct imgchunk *clist, unsigned int *ccnt)
+ ----------------------------------------------------------------*/
+ static int mkpdrlist(struct pda *pda)
+ {
+-	int result = 0;
+ 	u16 *pda16 = (u16 *) pda->buf;
+ 	int curroff;		/* in 'words' */
  
- #define SDMA_DESC1_HEADER_UPDATE1_SHIFT 32
- #define SDMA_DESC1_HEADER_UPDATE1_WIDTH 32
- #define SDMA_DESC1_HEADER_UPDATE1_MASK \
--	((1ULL<<SDMA_DESC1_HEADER_UPDATE1_WIDTH)-1ULL)
-+	((1ULL << SDMA_DESC1_HEADER_UPDATE1_WIDTH) - 1)
- #define SDMA_DESC1_HEADER_UPDATE1_SMASK \
--	(SDMA_DESC1_HEADER_UPDATE1_MASK<<SDMA_DESC1_HEADER_UPDATE1_SHIFT)
-+	(SDMA_DESC1_HEADER_UPDATE1_MASK << SDMA_DESC1_HEADER_UPDATE1_SHIFT)
- #define SDMA_DESC1_HEADER_MODE_SHIFT    13
- #define SDMA_DESC1_HEADER_MODE_WIDTH    3
- #define SDMA_DESC1_HEADER_MODE_MASK \
--	((1ULL<<SDMA_DESC1_HEADER_MODE_WIDTH)-1ULL)
-+	((1ULL << SDMA_DESC1_HEADER_MODE_WIDTH) - 1)
- #define SDMA_DESC1_HEADER_MODE_SMASK \
--	(SDMA_DESC1_HEADER_MODE_MASK<<SDMA_DESC1_HEADER_MODE_SHIFT)
-+	(SDMA_DESC1_HEADER_MODE_MASK << SDMA_DESC1_HEADER_MODE_SHIFT)
- #define SDMA_DESC1_HEADER_INDEX_SHIFT   8
- #define SDMA_DESC1_HEADER_INDEX_WIDTH   5
- #define SDMA_DESC1_HEADER_INDEX_MASK \
--	((1ULL<<SDMA_DESC1_HEADER_INDEX_WIDTH)-1ULL)
-+	((1ULL << SDMA_DESC1_HEADER_INDEX_WIDTH) - 1)
- #define SDMA_DESC1_HEADER_INDEX_SMASK \
--	(SDMA_DESC1_HEADER_INDEX_MASK<<SDMA_DESC1_HEADER_INDEX_SHIFT)
-+	(SDMA_DESC1_HEADER_INDEX_MASK << SDMA_DESC1_HEADER_INDEX_SHIFT)
- #define SDMA_DESC1_HEADER_DWS_SHIFT     4
- #define SDMA_DESC1_HEADER_DWS_WIDTH     4
- #define SDMA_DESC1_HEADER_DWS_MASK \
--	((1ULL<<SDMA_DESC1_HEADER_DWS_WIDTH)-1ULL)
-+	((1ULL << SDMA_DESC1_HEADER_DWS_WIDTH) - 1)
- #define SDMA_DESC1_HEADER_DWS_SMASK \
--	(SDMA_DESC1_HEADER_DWS_MASK<<SDMA_DESC1_HEADER_DWS_SHIFT)
-+	(SDMA_DESC1_HEADER_DWS_MASK << SDMA_DESC1_HEADER_DWS_SHIFT)
- #define SDMA_DESC1_GENERATION_SHIFT     2
- #define SDMA_DESC1_GENERATION_WIDTH     2
- #define SDMA_DESC1_GENERATION_MASK \
--	((1ULL<<SDMA_DESC1_GENERATION_WIDTH)-1ULL)
-+	((1ULL << SDMA_DESC1_GENERATION_WIDTH) - 1)
- #define SDMA_DESC1_GENERATION_SMASK \
--	(SDMA_DESC1_GENERATION_MASK<<SDMA_DESC1_GENERATION_SHIFT)
--#define SDMA_DESC1_INT_REQ_FLAG         (1ULL<<1)
--#define SDMA_DESC1_HEAD_TO_HOST_FLAG    (1ULL<<0)
-+	(SDMA_DESC1_GENERATION_MASK << SDMA_DESC1_GENERATION_SHIFT)
-+#define SDMA_DESC1_INT_REQ_FLAG         (1ULL << 1)
-+#define SDMA_DESC1_HEAD_TO_HOST_FLAG    (1ULL << 0)
+@@ -633,7 +632,7 @@ static int mkpdrlist(struct pda *pda)
+ 	}
+ 	pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
+ 	(pda->nrec)++;
+-	return result;
++	return 0;
+ }
  
- enum sdma_states {
- 	sdma_state_s00_hw_down,
+ /*----------------------------------------------------------------
+-- 
+2.5.3
+
