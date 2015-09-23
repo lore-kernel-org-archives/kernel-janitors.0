@@ -1,50 +1,30 @@
-From: Frediano Ziglio <fziglio@redhat.com>
-Date: Wed, 23 Sep 2015 10:45:05 +0000
-Subject: Re: [patch 4/4 v2] drm/qxl: integer overflow in qxl_alloc_surf_ioctl()
-Message-Id: <151358038.30813068.1443005105969.JavaMail.zimbra@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Sep 2015 09:42:28 +0000
+Subject: ALSA: core: check for underflow in snd_pcm_sw_params()
+Message-Id: <20150923094228.GA13867@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150922143208.GA2319@mwanda>
-In-Reply-To: <20150922143208.GA2319@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dave Airlie <airlied@redhat.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-> 
-> The size calculation can overflow.  I don't know if this leads to
-> memory corruption, but it causes a static checker warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: I don't know think the size is capped anywhere.  In my first version
-> of this patch, I introduced a divide by zero bug.
-> 
+As far as I can see, having an invalid ->tstamp_mode is harmless, but
+adding a check silences a static checker warning.
 
-Beside the second sentence I would ack
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Frediano
-
-> diff --git a/drivers/gpu/drm/qxl/qxl_ioctl.c
-> b/drivers/gpu/drm/qxl/qxl_ioctl.c
-> index b2db482..49b3158 100644
-> --- a/drivers/gpu/drm/qxl/qxl_ioctl.c
-> +++ b/drivers/gpu/drm/qxl/qxl_ioctl.c
-> @@ -396,12 +396,14 @@ static int qxl_alloc_surf_ioctl(struct drm_device *dev,
-> void *data,
->  	struct qxl_bo *qobj;
->  	int handle;
->  	int ret;
-> -	int size, actual_stride;
-> +	u64 size, actual_stride;
->  	struct qxl_surface surf;
->  
->  	/* work out size allocate bo with handle */
->  	actual_stride = param->stride < 0 ? -param->stride : param->stride;
->  	size = actual_stride * param->height + actual_stride;
-> +	if (size > INT_MAX)
-> +		return -EINVAL;
->  
->  	surf.format = param->format;
->  	surf.width = param->width;
-> 
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 75888dd..4863af5 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -650,7 +650,8 @@ static int snd_pcm_sw_params(struct snd_pcm_substream *substream,
+ 	}
+ 	snd_pcm_stream_unlock_irq(substream);
+ 
+-	if (params->tstamp_mode > SNDRV_PCM_TSTAMP_LAST)
++	if (params->tstamp_mode < 0 ||
++	    params->tstamp_mode > SNDRV_PCM_TSTAMP_LAST)
+ 		return -EINVAL;
+ 	if (params->proto >= SNDRV_PROTOCOL_VERSION(2, 0, 12) &&
+ 	    params->tstamp_type > SNDRV_PCM_TSTAMP_TYPE_LAST)
