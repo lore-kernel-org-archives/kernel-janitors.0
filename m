@@ -1,55 +1,51 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Date: Wed, 23 Sep 2015 07:34:35 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Sep 2015 15:17:35 +0000
 Subject: Re: [PATCH v3] coccinelle: tests: unsigned value cannot be lesser than zero
-Message-Id: <5602560B.2000601@samsung.com>
+Message-Id: <5602C28F.9010302@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.DEB.2.02.1509180734350.2064@localhost6.localdomain6>
  <1442831864-25759-1-git-send-email-a.hajda@samsung.com>
  <55FFFFF4.4000007@users.sourceforge.net> <56000777.6060208@samsung.com>
- <56017374.3080402@users.sourceforge.net>
-In-Reply-To: <56017374.3080402@users.sourceforge.net>
+ <56017374.3080402@users.sourceforge.net> <5602560B.2000601@samsung.com>
+In-Reply-To: <5602560B.2000601@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-On 09/22/2015 05:27 PM, SF Markus Elfring wrote:
->> If you mean adding int to 'unsigned long [long]' types, it does not work.
->> For some reason it works only without adding int after long.
-> Do you get any error message for this SmPL approach?
-> With which source files do you try the extended SmPL script out?
->
-> Regards,
-> Markus
->
-No, spatch just does not find everything it should. Sample below:
---- test.cocci
-virtual context
+> In the example above spatch finds ull, ulli, but not ul and uli.
+> If you add int to unsigned long long, it won't find anything.
 
-@r depends on context@
-{unsigned char, unsigned short int, unsigned int, unsigned long int, unsigned
-long long, size_t} v;
-@@
+I suggest to take another look at the use of type modifiers
+in the semantic patch language. It seems that it matters occasionally
+to specify them explicitly.
 
-*v
---- test.c
-void f()
+How do you think about to reuse a SmPL script like the following?
+
+
+@find_unsigned@
+typedef _Bool, bool, u8, u16, u32, u64;
 {
-    unsigned long ul;
-    unsigned long int uli;
-    unsigned long long ull;
-    unsigned long long int ulli;
+unsigned,
+unsigned char,
+unsigned int,
+unsigned short,
+unsigned short int,
+unsigned long,
+unsigned long int,
+unsigned long long,
+unsigned long long int,
+size_t,
+_Bool,
+bool,
+u8,
+u16,
+u32,
+u64
+} var;
+@@
+*var
 
-    ul;
-    uli;
-    ull;
-    ulli;
-}
----
-In the example above spatch finds ull, ulli, but not ul and uli.
-If you add int to unsigned long long, it won't find anything.
 
-Regards
-Andrzej
-
-
+Regards,
+Markus
