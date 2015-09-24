@@ -1,39 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 01 Sep 2015 07:42:23 +0000
-Subject: Re: [PATCH 03/11] ocfs2: Less checks in ocfs2_rename() after error detection
-Message-Id: <55E556DF.9000301@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Sep 2015 18:41:37 +0000
+Subject: [patch] power: qcom_smbb: test the correct variable
+Message-Id: <20150924184137.GA28804@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5455FC05.4010606@users.sourceforge.net>
- <alpine.DEB.2.02.1411021150540.2239@localhost6.localdomain6>
- <55992DF0.5030205@users.sourceforge.net>
- <55993170.6060306@users.sourceforge.net> <20150706085414.GD28762@mwanda>
-In-Reply-To: <20150706085414.GD28762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com, kernel-janitors@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Joel Becker <jlbec@evilplan.org>, Mark Fasheh <mfasheh@suse.com>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Sebastian Reichel <sre@kernel.org>, Courtney Cavin <courtney.cavin@sonymobile.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Sat, 4 Jul 2015 15:30:18 +0200
->>
->> Skip checks for a few variables in three error handling cases within
->> the ocfs2_rename() function by adjustment of a few jump targets
->> according to the Linux coding style convention.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> I don't think this is an improvement.
+"state" is a bool so it's never less than zero.  The intent was to test
+"ret" instead.
 
-How do you think about the other update suggestions from this patch series?
+Fixes: 56d7df8716b2 ('power: Add Qualcomm SMBB driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Would anybody like to contribute constructive comments so that further progress
-can eventually be achieved for a corresponding source code review?
-
-Regards,
-Markus
+diff --git a/drivers/power/qcom_smbb.c b/drivers/power/qcom_smbb.c
+index 0dabfe8..5eb1e9e 100644
+--- a/drivers/power/qcom_smbb.c
++++ b/drivers/power/qcom_smbb.c
+@@ -351,7 +351,7 @@ static void smbb_set_line_flag(struct smbb_charger *chg, int irq, int flag)
+ 	int ret;
+ 
+ 	ret = irq_get_irqchip_state(irq, IRQCHIP_STATE_LINE_LEVEL, &state);
+-	if (state < 0) {
++	if (ret < 0) {
+ 		dev_err(chg->dev, "failed to read irq line\n");
+ 		return;
+ 	}
