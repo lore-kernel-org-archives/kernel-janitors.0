@@ -1,47 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 08 Sep 2015 08:56:41 +0000
-Subject: Re: [PATCH 2/2] pinctrl: digicolor: convert null test to IS_ERR test
-Message-Id: <CACRpkdb4-iq7GYYjxub7dtyjRNWipJNx0NULPo8VywTKKPE5YQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 24 Sep 2015 15:51:01 +0000
+Subject: Re: [PATCH] coccinelle: assign signed result to unsigned variable
+Message-Id: <56041BE5.5010005@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
- <1440450747-10080-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1440450747-10080-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1443099286-16559-1-git-send-email-a.hajda@samsung.com>
+In-Reply-To: <1443099286-16559-1-git-send-email-a.hajda@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: cocci@systeme.lip6.fr
 
-On Mon, Aug 24, 2015 at 11:12 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> +@rs@
+> +position p;
+> +typedef bool, u8, u16, u32, u64, s8, s16, s32, s64;
+> +{char, short int, int, long, long long, s8, s16, s32, s64} vs;
 
-> Since commit 323de9efdf3e ("pinctrl: make pinctrl_register() return proper
-> error code"), pinctrl_register returns an error code rather than NULL on
-> failure.  Update a driver that was introduced more recently.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression e,e1,e2;
-> @@
->
-> e = pinctrl_register(...)
-> ... when != e = e1
-> if (
-> -   e = NULL
-> +   IS_ERR(e)
->    ) {
->      ...
->      return
-> -      e2
-> +      PTR_ERR(e)
->      ;
->      }
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Can it matter to specify also the type modifier "signed" in this SmPL approach?
+http://coccinelle.lip6.fr/docs/main_grammar005.html#ctype_qualif
 
-Patch applied for fixes.
 
-Yours,
-Linus Walleij
+> +{unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long, size_t, bool, u8, u16, u32, u64} vu;
+
+How do you think about to reformat such a data type enumeration?
+
+
+> +@@
+> +
+> +vu@p = vs
+> +
+> +@r@
+> +position rs.p;
+> +identifier v, f;
+> +statement S1, S2;
+> +expression e;
+> +@@
+> +
+> +*v@p = f(...);
+
+Do you try to check here if the value receiver is at the same source code
+position from the SmPL rule "rs"?
+
+Regards,
+Markus
