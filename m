@@ -1,42 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 24 Sep 2015 09:46:37 +0000
-Subject: Re: ALSA: core: check for underflow in snd_pcm_sw_params()
-Message-Id: <s5hk2rg5ev6.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Sep 2015 11:36:55 +0000
+Subject: [patch] drm/amdgpu: signedness bug in amdgpu_cs_parser_init()
+Message-Id: <20150925113655.GA12962@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150923094228.GA13867@mwanda>
-In-Reply-To: <20150923094228.GA13867@mwanda>
+References: <A3397C8B8B789E45844E7EC5DEAD89D06E91395A@satlexdag05.amd.com>
+In-Reply-To: <A3397C8B8B789E45844E7EC5DEAD89D06E91395A@satlexdag05.amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Chunming Zhou <david1.zhou@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Jammy Zhou <Jammy.Zhou@amd.com>, "monk.liu" <monk.liu@amd.com>, Marek =?utf-8?B?T2zFocOhaw==?= <marek.olsak@amd.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, security@kernel.org, Ilja Van Sprundel <ivansprundel@ioactive.com>
 
-On Wed, 23 Sep 2015 11:42:28 +0200,
-Dan Carpenter wrote:
-> 
-> As far as I can see, having an invalid ->tstamp_mode is harmless, but
-> adding a check silences a static checker warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The "i" variable should be signed or it leads to a crash in the error
+handling code.
 
-Applied, thanks.
+Fixes: 1d263474c441 ('drm/amdgpu: unwind properly in amdgpu_cs_parser_init()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-> index 75888dd..4863af5 100644
-> --- a/sound/core/pcm_native.c
-> +++ b/sound/core/pcm_native.c
-> @@ -650,7 +650,8 @@ static int snd_pcm_sw_params(struct snd_pcm_substream *substream,
->  	}
->  	snd_pcm_stream_unlock_irq(substream);
->  
-> -	if (params->tstamp_mode > SNDRV_PCM_TSTAMP_LAST)
-> +	if (params->tstamp_mode < 0 ||
-> +	    params->tstamp_mode > SNDRV_PCM_TSTAMP_LAST)
->  		return -EINVAL;
->  	if (params->proto >= SNDRV_PROTOCOL_VERSION(2, 0, 12) &&
->  	    params->tstamp_type > SNDRV_PCM_TSTAMP_TYPE_LAST)
-> 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index 749420f..cb3c274 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -156,7 +156,8 @@ int amdgpu_cs_parser_init(struct amdgpu_cs_parser *p, void *data)
+ 	uint64_t *chunk_array_user;
+ 	uint64_t *chunk_array;
+ 	struct amdgpu_fpriv *fpriv = p->filp->driver_priv;
+-	unsigned size, i;
++	unsigned size;
++	int i;
+ 	int ret;
+ 
+ 	if (cs->in.num_chunks = 0)
