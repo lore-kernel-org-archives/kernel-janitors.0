@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Sep 2015 15:51:01 +0000
+Date: Sat, 26 Sep 2015 07:45:15 +0000
 Subject: Re: [PATCH] coccinelle: assign signed result to unsigned variable
-Message-Id: <56056D65.7070205@users.sourceforge.net>
+Message-Id: <56064D0B.8060907@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1443099286-16559-1-git-send-email-a.hajda@samsung.com>
  <56041BE5.5010005@users.sourceforge.net> <56051D2B.5040802@samsung.com>
@@ -11,50 +11,32 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
->>> +@rs@
->>> +position p;
->>> +typedef bool, u8, u16, u32, u64, s8, s16, s32, s64;
->>> +{char, short int, int, long, long long, s8, s16, s32, s64} vs;
->> Can it matter to specify also the type modifier "signed" in this SmPL approach?
->> http://coccinelle.lip6.fr/docs/main_grammar005.html#ctype_qualif
-> According to my tests it does not matter.
-> Btw I should replace short int, with short,
+> Generally I want to catch all assignments of signed function result to unsigned var.
 
-I have got an other view on such an implementation detail around
-explicit SmPL specifications.
+Such a static source code analysis will be useful to some degree.
 
 
-> to allow catch short intergers.
+> In this script I have implemented it this way:
+> 1. Look for all assignments 'unsigned = signed' (rs rule).
+> 2. Check if signed from rs rule looks as a function call.
 
-Do you assume that the Coccinelle software will handle more data type
-variants for you automatically?
-
-
->>> +@@
->>> +
->>> +vu@p = vs
->>> +
->>> +@r@
->>> +position rs.p;
->>> +identifier v, f;
->>> +statement S1, S2;
->>> +expression e;
->>> +@@
->>> +
->>> +*v@p = f(...);
->> Do you try to check here if the value receiver is at the same source code
->> position from the SmPL rule "rs"?
-> Yes.
-
-I imagine that there is an open issue in this SmPL approach then.
-How should a return value from a function call and a variable access
-work at the same place?
+I recommend to reconsider a few implementation details because I have got
+the impression that this check sequence is inappropriate.
 
 
 > Is there better way to do it?
 
-Do you need to distinguish source code positions a bit more with
-corresponding SmPL variables?
+I suggest to fix expression weaknesses and a design mistake in this SmPL approach.
+
+I guess that you want to determine functions with a signed return type first
+before corresponding variable assignments will be checked further.
+* Would you like to collect function names for this purpose by a general analysis
+  of more source files?
+  (How do you think about to store them in a dedicated database?)
+
+* Which couple of function calls will be interesting for you?
+
+* Should the search approach take also recursively included files into account?
 
 Regards,
 Markus
