@@ -1,32 +1,31 @@
-From: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
-Date: Tue, 15 Sep 2015 13:56:18 +0000
-Subject: RE: [PATCH 11/39] hfi1: drop null test before destroy functions
-Message-Id: <32E1700B9017364D9B60AED9960492BC257C173D@fmsmsx120.amr.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 28 Sep 2015 10:06:20 +0000
+Subject: [patch] ALSA: usb-audio: harmless underflow in snd_audigy2nx_led_put()
+Message-Id: <20150928100620.GA12060@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
- <1442146532-9100-12-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-12-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, infinipath <infinipath@intel.com>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, "Hefty, Sean" <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>, Chris J Arges <chris.j.arges@canonical.com>, Damien Zammit <damien@zamaudio.com>, "Dmitry M. Fedin" <dmitry.fedin@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-> Subject: [PATCH 11/39] hfi1: drop null test before destroy functions
-> 
-> Remove unneeded NULL test.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@ expression x; @@
-> -if (x != NULL)
->   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+We want to verify that "value" is either zero or one, so we test if it
+is greater than one.  Unfortunately, this is a signed int so it could
+also be negative.  I think this is harmless but it introduces a static
+checker warning.  Let's make "value" unsigned.
 
-Thanks for the patch!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
+index 337c317..4602a78 100644
+--- a/sound/usb/mixer_quirks.c
++++ b/sound/usb/mixer_quirks.c
+@@ -340,7 +340,7 @@ static int snd_audigy2nx_led_put(struct snd_kcontrol *kcontrol,
+ 	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
+ 	struct usb_mixer_interface *mixer = list->mixer;
+ 	int index = kcontrol->private_value & 0xff;
+-	int value = ucontrol->value.integer.value[0];
++	unsigned int value = ucontrol->value.integer.value[0];
+ 	int old_value = kcontrol->private_value >> 8;
+ 	int err;
+ 
