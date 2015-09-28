@@ -1,38 +1,47 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 17 Sep 2015 08:49:19 +0000
-Subject: Re: [patch] mmc: sdhci-of-at91: remove a line of dead code
-Message-Id: <CAPDyKFoR1gq+xEBZRqaPZ9WPKLN_KAkcbNCF_pnR+VJ9RXJCFg@mail.gmail.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Mon, 28 Sep 2015 12:42:58 +0000
+Subject: Re: [Cocci] [PATCH v2] coccinelle: assign signed result to unsigned variable
+Message-Id: <alpine.DEB.2.10.1509281440320.3108@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150916061949.GA21542@mwanda>
-In-Reply-To: <20150916061949.GA21542@mwanda>
+References: <alpine.DEB.2.10.1509261106040.2737@hadrien>
+ <1443437687-16559-1-git-send-email-a.hajda@samsung.com>
+ <56092D7B.4030106@users.sourceforge.net> <56092E98.9000103@samsung.com>
+ <560930A7.2070400@users.sourceforge.net>
+In-Reply-To: <560930A7.2070400@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, linux-mmc <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-On 16 September 2015 at 08:19, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The goto is correct and the unreachable "return -EINVAL" should be
-> removed.
+On Mon, 28 Sep 2015, SF Markus Elfring wrote:
+
+> >> How do you think about the reuse of the parameter "--recursive-includes" here?
+> >
+> > Last time I have tried it, kernel source check took more than 10 hours,
+> > so I gave up.
 >
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> This is interesting background information.
+>
+> There are opportunities for more fine-tuning of such a source code analysis,
+> aren't there?
 
-Thanks, applied for next!
+I guess parallelism would be helpful?  You could try the following
+options:
 
-Kind regards
-Uffe
+-j n --chunksize 10 --recursive-includes --include-headers-for-types
+
+where n is the number of cores that you want to use.  Parsed header files
+will be cached within chunks.  I don't really know what is the best
+chunksize.
+
+julia
 
 
 >
-> diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
-> index d155664..d3df786 100644
-> --- a/drivers/mmc/host/sdhci-of-at91.c
-> +++ b/drivers/mmc/host/sdhci-of-at91.c
-> @@ -110,7 +110,6 @@ static int sdhci_at91_probe(struct platform_device *pdev)
->         if (ret < 0) {
->                 dev_err(&pdev->dev, "failed to set gck");
->                 goto hclock_disable_unprepare;
-> -               return -EINVAL;
->         }
->         /*
->          * We need to check if we have the requested rate for gck because in
+> Regards,
+> Markus
+> _______________________________________________
+> Cocci mailing list
+> Cocci@systeme.lip6.fr
+> https://systeme.lip6.fr/mailman/listinfo/cocci
+>
