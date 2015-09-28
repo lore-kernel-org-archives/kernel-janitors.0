@@ -1,28 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Sep 2015 06:54:33 +0000
-Subject: [patch] staging: wilc1000: off by one in get_handler_from_id()
-Message-Id: <20150915065433.GA4811@mwanda>
+Date: Mon, 28 Sep 2015 10:02:42 +0000
+Subject: [patch] drm/mgag200: set an error code
+Message-Id: <20150928100242.GD11367@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-The > should be >= here or we read beyond the end of the array.
+We need to set "ret" if vmalloc() fails.
 
-Fixes: d42ab0838d04 ('staging: wilc1000: use id value as argument')
+Fixes: aec9e12953e7 ('drm/mgag200: Fix error handling paths in fbdev driver')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index 59a1a9d..621fd18 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -637,7 +637,7 @@ static int get_id_from_handler(tstrWILC_WFIDrv *handler)
+diff --git a/drivers/gpu/drm/mgag200/mgag200_fb.c b/drivers/gpu/drm/mgag200/mgag200_fb.c
+index b35b5b2..2a1049e 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_fb.c
++++ b/drivers/gpu/drm/mgag200/mgag200_fb.c
+@@ -185,8 +185,10 @@ static int mgag200fb_create(struct drm_fb_helper *helper,
+ 	}
  
- static tstrWILC_WFIDrv *get_handler_from_id(int id)
- {
--	if (id <= 0 || id > ARRAY_SIZE(wfidrv_list))
-+	if (id <= 0 || id >= ARRAY_SIZE(wfidrv_list))
- 		return NULL;
- 	return wfidrv_list[id];
- }
+ 	sysram = vmalloc(size);
+-	if (!sysram)
++	if (!sysram) {
++		ret = -ENOMEM;
+ 		goto err_sysram;
++	}
+ 
+ 	info = drm_fb_helper_alloc_fbi(helper);
+ 	if (IS_ERR(info)) {
