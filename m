@@ -1,43 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 15 Sep 2015 23:50:09 +0000
-Subject: Re: [PATCH 34/39] dccp: drop null test before destroy functions
-Message-Id: <20150915.165009.293831022941705256.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 28 Sep 2015 09:56:36 +0000
+Subject: [patch] mfd: 64 bit bug in bxtwc_val_store()
+Message-Id: <20150928095636.GB11367@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1442146532-9100-35-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-35-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: gerrit@erg.abdn.ac.uk, sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, dccp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 14:15:27 +0200
+The call to kstrtoul() will corrupt memory on 64 bit systems because an
+int is 4 bytes and a long is 8.
 
-> Remove unneeded NULL test.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x;
-> @@
-> 
-> -if (x != NULL)
->   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-> 
-> @@
-> expression x;
-> @@
-> 
-> -if (x != NULL) {
->   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
->   x = NULL;
-> -}
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Also it's not a good idea to let users trigger a dev_err() because it
+just ends up flooding /var/log/messages so I removed the printk.
 
-Applied.
+Fixes: 2ddd2086ea9c ('mfd: add Intel Broxton Whiskey Cove PMIC driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
+index 40acaff..b942876 100644
+--- a/drivers/mfd/intel_soc_pmic_bxtwc.c
++++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
+@@ -297,10 +297,9 @@ static ssize_t bxtwc_val_store(struct device *dev,
+ 	unsigned int val;
+ 	struct intel_soc_pmic *pmic = dev_get_drvdata(dev);
+ 
+-	if (kstrtoul(buf, 0, (unsigned long *)&val)) {
+-		dev_err(dev, "Invalid register value\n");
+-		return -EINVAL;
+-	}
++	ret = kstrtouint(buf, 0, &val);
++	if (ret)
++		return ret;
+ 
+ 	ret = regmap_write(pmic->regmap, bxtwc_reg_addr, val);
+ 	if (ret) {
