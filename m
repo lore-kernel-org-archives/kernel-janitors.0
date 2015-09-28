@@ -1,100 +1,103 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Mon, 14 Sep 2015 09:08:18 +0000
-Subject: Re: [PATCH 15/39] bcache: drop null test before destroy functions
-Message-Id: <mqdfv2hnzb1.fsf@c203.arch.suse.de>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Date: Mon, 28 Sep 2015 10:54:47 +0000
+Subject: [PATCH v2] coccinelle: assign signed result to unsigned variable
+Message-Id: <1443437687-16559-1-git-send-email-a.hajda@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1442146532-9100-16-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-16-git-send-email-Julia.Lawall@lip6.fr> (Julia
-	Lawall's message of "Sun, 13 Sep 2015 14:15:08 +0200")
+References: <alpine.DEB.2.10.1509261106040.2737@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1509261106040.2737@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>, sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Neil Brown <neilb@suse.com>, linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr
 
-Julia Lawall <Julia.Lawall@lip6.fr> writes:
+Assigning signed function result to unsigned variable can indicate error.
+To decrease number of false positives patch looks if after assignment
+there is also check for negative values of the result.
 
-> Remove unneeded NULL test.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@ expression x; @@
-> -if (x != NULL)
->   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+Hi Julia,
 
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Thanks for the hint. Now it looks much better.
+Summarizing this patch has found 20 problems and has 22 false positives [1][2].
+unsigned_lesser_than_zero.cocci patch posted earlier has found
+40 problems [3][4], and about 80 false positives if I remember correctly.
+Few patches were rejected, as developers likes code for testing variable range,
+even if its result is always true/false [5][6], but most of kernel patches are
+real bug fixes.
 
->
-> ---
->  drivers/md/bcache/bset.c    |    3 +--
->  drivers/md/bcache/request.c |    3 +--
->  drivers/md/bcache/super.c   |    9 +++------
->  3 files changed, 5 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index 8e9877b..bd4678c 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -1145,8 +1145,7 @@ void bch_flash_dev_request_init(struct bcache_device *d)
->  
->  void bch_request_exit(void)
->  {
-> -	if (bch_search_cache)
-> -		kmem_cache_destroy(bch_search_cache);
-> +	kmem_cache_destroy(bch_search_cache);
->  }
->  
->  int __init bch_request_init(void)
-> diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
-> index 646fe85..479117c 100644
-> --- a/drivers/md/bcache/bset.c
-> +++ b/drivers/md/bcache/bset.c
-> @@ -1116,8 +1116,7 @@ struct bkey *bch_btree_iter_next_filter(struct btree_iter *iter,
->  
->  void bch_bset_sort_state_free(struct bset_sort_state *state)
->  {
-> -	if (state->pool)
-> -		mempool_destroy(state->pool);
-> +	mempool_destroy(state->pool);
->  }
->  
->  int bch_bset_sort_state_init(struct bset_sort_state *state, unsigned page_order)
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 679a093..c27a0ff 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1335,12 +1335,9 @@ static void cache_set_free(struct closure *cl)
->  		destroy_workqueue(c->moving_gc_wq);
->  	if (c->bio_split)
->  		bioset_free(c->bio_split);
-> -	if (c->fill_iter)
-> -		mempool_destroy(c->fill_iter);
-> -	if (c->bio_meta)
-> -		mempool_destroy(c->bio_meta);
-> -	if (c->search)
-> -		mempool_destroy(c->search);
-> +	mempool_destroy(c->fill_iter);
-> +	mempool_destroy(c->bio_meta);
-> +	mempool_destroy(c->search);
->  	kfree(c->devices);
->  
->  	mutex_lock(&bch_register_lock);
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-bcache" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Both patches tries to address similar issues, maybe it would be good to merge
+them? Especially as their results overlap.
+Additionally I thought about adding detecting range checks in
+unsigned_lesser_than_zero.cocci, to decrease number of false positives.
+Of course it could then miss real bugs. What do you think about it?
 
+[1]: http://permalink.gmane.org/gmane.linux.kernel/2046131
+[2]: http://permalink.gmane.org/gmane.linux.kernel/2048070
+[3]: http://permalink.gmane.org/gmane.comp.freedesktop.xorg.drivers.intel/70031
+[4]: http://permalink.gmane.org/gmane.linux.power-management.general/66143
+[5]: http://permalink.gmane.org/gmane.linux.kernel.mm/138902
+[6]: http://libdivecomputer.org/pipermail/devel/2014-July/000329.html
+
+Regards
+Andrzej
+
+---
+ .../tests/assign_signed_to_unsigned.cocci          | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 scripts/coccinelle/tests/assign_signed_to_unsigned.cocci
+
+diff --git a/scripts/coccinelle/tests/assign_signed_to_unsigned.cocci b/scripts/coccinelle/tests/assign_signed_to_unsigned.cocci
+new file mode 100644
+index 0000000..efa4e83
+--- /dev/null
++++ b/scripts/coccinelle/tests/assign_signed_to_unsigned.cocci
+@@ -0,0 +1,45 @@
++/// Assigning signed function result to unsigned variable can indicate error.
++/// To decrease number of false positives patch looks if after assignment
++/// there is also check for negative values of the result.
++///
++// Confidence: High
++// Copyright: (C) 2015 Andrzej Hajda, Samsung Electronics Co., Ltd. GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: --include-headers --all-includes
++
++virtual context
++virtual org
++virtual report
++
++@r@
++typedef bool, u8, u16, u32, u64, s8, s16, s32, s64;
++{char, short, int, long, long long, s8, s16, s32, s64} vs;
++{unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long,
++    size_t, bool, u8, u16, u32, u64} vu;
++position p;
++identifier f;
++statement S1, S2;
++expression e;
++@@
++
++*vu@p = f(...)@vs;
++... when != vu = e;
++if ( \( vu < 0 \| vu <= 0 \) ) S1 else S2
++
++@script:python depends on r && org@
++p << r.p;
++f << r.f;
++vu << r.vu;
++@@
++
++msg = "WARNING: Assigning signed result to unsigned variable: %s = %s(...)" % (vu, f)
++coccilib.org.print_todo(p[0], msg)
++
++@script:python depends on r && report@
++p << r.p;
++f << r.f;
++vu << r.vu;
++@@
++
++msg = "WARNING: Assigning signed result to unsigned variable: %s = %s(...)" % (vu, f)
++coccilib.report.print_report(p[0], msg)
 -- 
-Johannes Thumshirn                                           Storage
-jthumshirn@suse.de                                 +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600  D0D0 0393 969D 2D76 0850
+1.9.1
+
