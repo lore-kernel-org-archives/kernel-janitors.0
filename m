@@ -1,40 +1,54 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Date: Mon, 28 Sep 2015 15:08:37 +0000
+From: Sebastian Reichel <sre@kernel.org>
+Date: Mon, 28 Sep 2015 16:33:05 +0000
 Subject: Re: [patch] power: bq27xxx_battery: signedness bug in bq27xxx_battery_read_health()
-Message-Id: <560957F5.3090900@ti.com>
+Message-Id: <20150928163304.GB3660@earth>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="eJnRUKwClWJh1Khz"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150928091653.GA11367@mwanda>
 In-Reply-To: <20150928091653.GA11367@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, "Andrew F. Davis" <afd@ti.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 09/28/2015 04:16 AM, Dan Carpenter wrote:
+
+--eJnRUKwClWJh1Khz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Mon, Sep 28, 2015 at 12:16:53PM +0300, Dan Carpenter wrote:
 > We need flags to be signed for the error handling to work.
->
+>=20
 > Fixes: 74aab849f342 ('power: bq27xxx_battery: Cleanup health checking')
-
-This bug looks to have been added back in c91d36ea8116, either way the
-fix itself is correct so,
-
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
 
-Acked-by: Andrew F. Davis <afd@ti.com>
+Thanks, Andrzej Hajda was slightly fast than you, so I merged his
+patch instead. I merged some of your patch description into his
+patch, though.
 
-> diff --git a/drivers/power/bq27xxx_battery.c b/drivers/power/bq27xxx_battery.c
-> index 473aa2f..994c78d 100644
-> --- a/drivers/power/bq27xxx_battery.c
-> +++ b/drivers/power/bq27xxx_battery.c
-> @@ -691,7 +691,7 @@ static bool bq27xxx_battery_dead(struct bq27xxx_device_info *di, u16 flags)
->    */
->   static int bq27xxx_battery_read_health(struct bq27xxx_device_info *di)
->   {
-> -	u16 flags;
-> +	int flags;
->
->   	flags = bq27xxx_read(di, BQ27XXX_REG_FLAGS, false);
->   	if (flags < 0) {
->
+-- Sebastian
+
+--eJnRUKwClWJh1Khz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJWCWu9AAoJENju1/PIO/qa+m4QAJdqsn+LJmXqQ3apuroL7BM6
+BEpSlar3uK9qcrqwLFLTMKoxkG4jmgF1O0toyQOyLhSvJrLLTYzEfiH+4EmnwXy5
+Sa08cA7hLrLin6LBi2YZHb6HWLx4dJ2CIHJY8T9HhSW2p3c7uIKBRuqKjKSXPqe5
+v9Ehde/ScMeeD0un+YO7y/2z5Px61x21yVsMvhupRbwCiu55MYsN3za/CI+3dZPf
+V/eZTqNT++Yk8JvMwyjAu6DM2AO/zxKWCKd3QbshvrpZTFSOSgvkXMA02d4CUiMV
+HahOS0sCoRe2e+CA5KhyG360yJ+WC+r4x+AsdCvIcq960x4obGawXwzsKInH4U91
+z2/sOVK7ztl19/nfbqhlDuPrgkmWyzQrBUA9QgsUOcSDVjWZzGGm5vcfoqHPjS3/
+awtJmBy6wssuvtlHq7+PWHpCxXd6xYBoCNpZoFr5CS1erAjopqjp7KjDqDjZEAXW
+y20O3z1+beNMNLclZ+fhHLfFdPUuriL+NR83vQXkXYWaM+y3AIRh7jpS70JwpBCm
+IEdZ7pxrox5tOAXTgOJ/kzsn0N8lOYSnjswHBQLtVl86iVMbcOZlqQhzZXg4bUdO
+eykuVuZpaHCHlOucGC8b3sTA6XvyST7vNAgM36mQWw+bZABSj0MelAOpXQQaLJwG
+S5aAnZ7Eu3cK+gb6TWSk
+=g37v
+-----END PGP SIGNATURE-----
+
+--eJnRUKwClWJh1Khz--
