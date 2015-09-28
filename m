@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Sep 2015 13:53:10 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Mon, 28 Sep 2015 15:07:30 +0000
 Subject: Re: [Cocci] [PATCH v2] coccinelle: assign signed result to unsigned variable
-Message-Id: <56094646.2010301@users.sourceforge.net>
+Message-Id: <alpine.DEB.2.10.1509281707010.3181@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.DEB.2.10.1509261106040.2737@hadrien>
  <1443437687-16559-1-git-send-email-a.hajda@samsung.com>
@@ -10,19 +10,23 @@ References: <alpine.DEB.2.10.1509261106040.2737@hadrien>
  <alpine.DEB.2.10.1509281440320.3108@hadrien>
  <560938D6.70305@users.sourceforge.net>
  <alpine.DEB.2.10.1509281512510.3148@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1509281512510.3148@hadrien>
+ <56094646.2010301@users.sourceforge.net>
+In-Reply-To: <56094646.2010301@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
->> Can the Coccinelle software work together with a kind of "precompiled
->> header database"?
-> 
-> There is an option --use-cache, which caches the compiled code
-> on the disk.  But I have not found the effects to be very satisfactory.
+On Mon, 28 Sep 2015, SF Markus Elfring wrote:
 
-I am curious if this situation will be improved by further software evolution.
+> >> Can the Coccinelle software work together with a kind of "precompiled
+> >> header database"?
+> >
+> > There is an option --use-cache, which caches the compiled code
+> > on the disk.  But I have not found the effects to be very satisfactory.
+>
+> I am curious if this situation will be improved by further software evolution.
 
-Regards,
-Markus
+There are no plans in that direction.
+
+julia
