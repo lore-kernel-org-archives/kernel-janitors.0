@@ -1,34 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Aug 2015 14:37:03 +0000
-Subject: [patch] drm/tegra: checking for IS_ERR() instead of NULL
-Message-Id: <20150817143703.GB23820@mwanda>
+Date: Mon, 28 Sep 2015 09:16:53 +0000
+Subject: [patch] power: bq27xxx_battery: signedness bug in bq27xxx_battery_read_health()
+Message-Id: <20150928091653.GA11367@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>, "Andrew F. Davis" <afd@ti.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The tegra_sor_hdmi_find_settings() function returns NULL on error and
-not an ERR_PTR.
+We need flags to be signed for the error handling to work.
 
-Fixes: 459cc2c6800b ('drm/tegra: sor: Add HDMI support')
+Fixes: 74aab849f342 ('power: bq27xxx_battery: Cleanup health checking')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index da1715e..08c5461 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -1961,9 +1961,9 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+diff --git a/drivers/power/bq27xxx_battery.c b/drivers/power/bq27xxx_battery.c
+index 473aa2f..994c78d 100644
+--- a/drivers/power/bq27xxx_battery.c
++++ b/drivers/power/bq27xxx_battery.c
+@@ -691,7 +691,7 @@ static bool bq27xxx_battery_dead(struct bq27xxx_device_info *di, u16 flags)
+  */
+ static int bq27xxx_battery_read_health(struct bq27xxx_device_info *di)
+ {
+-	u16 flags;
++	int flags;
  
- 	/* production settings */
- 	settings = tegra_sor_hdmi_find_settings(sor, mode->clock * 1000);
--	if (IS_ERR(settings)) {
--		dev_err(sor->dev, "no settings for pixel clock %d Hz: %ld\n",
--			mode->clock * 1000, PTR_ERR(settings));
-+	if (!settings) {
-+		dev_err(sor->dev, "no settings for pixel clock %d Hz\n",
-+			mode->clock * 1000);
- 		return;
- 	}
- 
+ 	flags = bq27xxx_read(di, BQ27XXX_REG_FLAGS, false);
+ 	if (flags < 0) {
