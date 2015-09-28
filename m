@@ -1,44 +1,40 @@
-From: Tillmann Heidsieck <theidsieck@leenox.de>
-Date: Tue, 29 Sep 2015 19:37:36 +0000
-Subject: [PATCH] staging/wlan-ng: Fix potential buffer overflow in firmware handling
-Message-Id: <1443555456-23859-1-git-send-email-theidsieck@leenox.de>
+From: <>
+Date: Mon, 28 Sep 2015 14:23:05 +0000
+Subject: AVERTISSEMENT;
+Message-Id: <SG2PR06MB108736D7476DF41CB5716491B84F0@SG2PR06MB1087.apcprd06.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-This patch fixes a potential buffer overflow detected by smatch.
+AVERTISSEMENT;
 
-pda16 has length 512, while processing an element with index < 512 we
-are checking for an end marker in the next element. This poses a
-potential buffer overflow if no end marker is present.
----
- drivers/staging/wlan-ng/prism2fw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Votre bo=EEte aux lettres a d=E9pass=E9 la limite de stockage est de 10 Go =
+comme indiqu=E9 par votre administrateur, qui est en cours d'ex=E9cution su=
+r 10.9GB, vous ne pouvez pas =EAtre en mesure d'envoyer ou de recevoir de n=
+ouveaux messages jusqu'=E0 ce que vous re-valider votre bo=EEte aux lettres=
+. Pour valider votre bo=EEte aux lettres, envoyez les informations suivante=
+s ci-dessous:
 
-diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
-index fe36613..d357b7e 100644
---- a/drivers/staging/wlan-ng/prism2fw.c
-+++ b/drivers/staging/wlan-ng/prism2fw.c
-@@ -590,7 +590,7 @@ static int mkpdrlist(struct pda *pda)
- 
- 	pda->nrec = 0;
- 	curroff = 0;
--	while (curroff < (HFA384x_PDA_LEN_MAX / 2) &&
-+	while (curroff < (HFA384x_PDA_LEN_MAX / 2 - 1) &&
- 	       le16_to_cpu(pda16[curroff + 1]) != HFA384x_PDR_END_OF_PDA) {
- 		pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
- 
-@@ -626,7 +626,7 @@ static int mkpdrlist(struct pda *pda)
- 		curroff += le16_to_cpu(pda16[curroff]) + 1;
- 
- 	}
--	if (curroff >= (HFA384x_PDA_LEN_MAX / 2)) {
-+	if (curroff >= (HFA384x_PDA_LEN_MAX / 2 - 1)) {
- 		pr_err("no end record found or invalid lengths in PDR data, exiting. %x %d\n",
- 		       curroff, pda->nrec);
- 		return 1;
--- 
-2.6.0
+nom:
+Nom d'utilisateur:
+mot de passe:
+Confirmer mot de passe:
+E-mail:
+t=E9l=E9phone:
 
+Si vous ne pouvez pas valider votre bo=EEte aux lettres, le courrier sera d=
+=E9sactiv=E9!
+
+merci
+Systems Administrator
+
+D=E9sol=E9 pour le d=E9sagr=E9ment.
+Code de v=E9rification: fr: 6524
+Mail Support technique =A9 2015
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
