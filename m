@@ -1,198 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 04 Sep 2015 19:27:51 +0000
-Subject: [PATCH v2] coccinelle: misc: move constants to the right
-Message-Id: <1441394871-17774-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Tue, 29 Sep 2015 19:37:36 +0000
+Subject: [PATCH] staging/wlan-ng: Fix potential buffer overflow in firmware handling
+Message-Id: <1443555456-23859-1-git-send-email-theidsieck@leenox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: kernel-janitors@vger.kernel.org
 
-Move constants to the right in binary operators.
+This patch fixes a potential buffer overflow detected by smatch.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+pda16 has length 512, while processing an element with index < 512 we
+are checking for an end marker in the next element. This poses a
+potential buffer overflow if no end marker is present.
 ---
-v2. Add lkml, no other change
+ drivers/staging/wlan-ng/prism2fw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- scripts/coccinelle/misc/compare_const_fl.cocci |  171 +++++++++++++++++++++++++
- 1 file changed, 171 insertions(+)
-
-diff --git a/var/julia/linuxcopy/scripts/coccinelle/misc/compare_const_fl.cocci b/var/julia/linuxcopy/scripts/coccinelle/misc/compare_const_fl.cocci
-new file mode 100644
-index 0000000..b5d4bab
---- /dev/null
-+++ b/scripts/coccinelle/misc/compare_const_fl.cocci
-@@ -0,0 +1,171 @@
-+/// Move constants to the right of binary operators.
-+//# Depends on personal taste in some cases.
-+///
-+// Confidence: Moderate
-+// Copyright: (C) 2015 Copyright: (C) 2015 Julia Lawall, Inria. GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Options: --no-includes --include-headers
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+@r1 depends on patch && !context && !org && !report
-+ disable bitor_comm, neg_if_exp@
-+constant c,c1;
-+local idexpression i;
-+expression e,e1,e2;
-+binary operator b = {=,!=,&,|};
-+type t;
-+@@
-+
-+(
-+c b (c1)
-+|
-+sizeof(t) b e1
-+|
-+sizeof e b e1
-+|
-+i b e1
-+|
-+c | e1 | e2 | ...
-+|
-+c | (e ? e1 : e2)
-+|
-+- c
-++ e
-+b
-+- e
-++ c
-+)
-+
-+@r2 depends on patch && !context && !org && !report
-+ disable gtr_lss, gtr_lss_eq, not_int2@
-+constant c,c1;
-+expression e,e1,e2;
-+binary operator b;
-+binary operator b1 = {<,<=},b2 = {<,<=};
-+binary operator b3 = {>,>=},b4 = {>,>=};
-+local idexpression i;
-+type t;
-+@@
-+
-+(
-+c b c1
-+|
-+sizeof(t) b e1
-+|
-+sizeof e b e1
-+|
-+ (e1 b1 e) && (e b2 e2)
-+|
-+ (e1 b3 e) && (e b4 e2)
-+|
-+i b e
-+|
-+- c < e
-++ e > c
-+|
-+- c <= e
-++ e >= c
-+|
-+- c > e
-++ e < c
-+|
-+- c >= e
-++ e <= c
-+)
-+
-+// ----------------------------------------------------------------------------
-+
-+@r1_context depends on !patch && (context || org || report)
-+ disable bitor_comm, neg_if_exp exists@
-+type t;
-+binary operator b = {=,!=,&,|};
-+constant c, c1;
-+expression e, e1, e2;
-+local idexpression i;
-+position j0;
-+@@
-+
-+(
-+c b (c1)
-+|
-+sizeof(t) b e1
-+|
-+sizeof e b e1
-+|
-+i b e1
-+|
-+c | e1 | e2 | ...
-+|
-+c | (e ? e1 : e2)
-+|
-+* c@j0 b e
-+)
-+
-+@r2_context depends on !patch && (context || org || report)
-+ disable gtr_lss, gtr_lss_eq, not_int2 exists@
-+type t;
-+binary operator b, b1 = {<,<=}, b2 = {<,<=}, b3 = {>,>=}, b4 = {>,>=};
-+constant c, c1;
-+expression e, e1, e2;
-+local idexpression i;
-+position j0;
-+@@
-+
-+(
-+c b c1
-+|
-+sizeof(t) b e1
-+|
-+sizeof e b e1
-+|
-+ (e1 b1 e) && (e b2 e2)
-+|
-+ (e1 b3 e) && (e b4 e2)
-+|
-+i b e
-+|
-+* c@j0 < e
-+|
-+* c@j0 <= e
-+|
-+* c@j0 > e
-+|
-+* c@j0 >= e
-+)
-+
-+// ----------------------------------------------------------------------------
-+
-+@script:python r1_org depends on org@
-+j0 << r1_context.j0;
-+@@
-+
-+msg = "Move constant to right."
-+coccilib.org.print_todo(j0[0], msg)
-+
-+@script:python r2_org depends on org@
-+j0 << r2_context.j0;
-+@@
-+
-+msg = "Move constant to right."
-+coccilib.org.print_todo(j0[0], msg)
-+
-+// ----------------------------------------------------------------------------
-+
-+@script:python r1_report depends on report@
-+j0 << r1_context.j0;
-+@@
-+
-+msg = "Move constant to right."
-+coccilib.report.print_report(j0[0], msg)
-+
-+@script:python r2_report depends on report@
-+j0 << r2_context.j0;
-+@@
-+
-+msg = "Move constant to right."
-+coccilib.report.print_report(j0[0], msg)
-+
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index fe36613..d357b7e 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -590,7 +590,7 @@ static int mkpdrlist(struct pda *pda)
+ 
+ 	pda->nrec = 0;
+ 	curroff = 0;
+-	while (curroff < (HFA384x_PDA_LEN_MAX / 2) &&
++	while (curroff < (HFA384x_PDA_LEN_MAX / 2 - 1) &&
+ 	       le16_to_cpu(pda16[curroff + 1]) != HFA384x_PDR_END_OF_PDA) {
+ 		pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
+ 
+@@ -626,7 +626,7 @@ static int mkpdrlist(struct pda *pda)
+ 		curroff += le16_to_cpu(pda16[curroff]) + 1;
+ 
+ 	}
+-	if (curroff >= (HFA384x_PDA_LEN_MAX / 2)) {
++	if (curroff >= (HFA384x_PDA_LEN_MAX / 2 - 1)) {
+ 		pr_err("no end record found or invalid lengths in PDR data, exiting. %x %d\n",
+ 		       curroff, pda->nrec);
+ 		return 1;
+-- 
+2.6.0
 
