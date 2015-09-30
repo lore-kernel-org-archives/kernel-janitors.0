@@ -1,46 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 13 Sep 2015 12:15:16 +0000
-Subject: [PATCH 23/39] UBI: drop null test before destroy functions
-Message-Id: <1442146532-9100-24-git-send-email-Julia.Lawall@lip6.fr>
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Wed, 30 Sep 2015 15:12:00 +0000
+Subject: [PATCH v2] staging/wlan-ng: Fix potential buffer overflow in firmware handling
+Message-Id: <1443625920-12670-1-git-send-email-theidsieck@leenox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Remove unneeded NULL test.
+This patch fixes a potential buffer overflow detected by smatch.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+pda16 has length 512, while processing an element with index < 512 we
+are checking for an end marker in the next element. This poses a
+potential buffer overflow if no end marker is present.
 
-// <smpl>
-@@ expression x; @@
--if (x != NULL)
-  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
 ---
- drivers/mtd/ubi/attach.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+v2: add missing Signed-off-by line
 
-diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
-index 68eea5b..c1aaf03 100644
---- a/drivers/mtd/ubi/attach.c
-+++ b/drivers/mtd/ubi/attach.c
-@@ -1209,9 +1209,7 @@ static void destroy_ai(struct ubi_attach_info *ai)
- 		}
+
+ drivers/staging/wlan-ng/prism2fw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index fe36613..d357b7e 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -590,7 +590,7 @@ static int mkpdrlist(struct pda *pda)
+ 
+ 	pda->nrec = 0;
+ 	curroff = 0;
+-	while (curroff < (HFA384x_PDA_LEN_MAX / 2) &&
++	while (curroff < (HFA384x_PDA_LEN_MAX / 2 - 1) &&
+ 	       le16_to_cpu(pda16[curroff + 1]) != HFA384x_PDR_END_OF_PDA) {
+ 		pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
+ 
+@@ -626,7 +626,7 @@ static int mkpdrlist(struct pda *pda)
+ 		curroff += le16_to_cpu(pda16[curroff]) + 1;
+ 
  	}
- 
--	if (ai->aeb_slab_cache)
--		kmem_cache_destroy(ai->aeb_slab_cache);
--
-+	kmem_cache_destroy(ai->aeb_slab_cache);
- 	kfree(ai);
- }
- 
+-	if (curroff >= (HFA384x_PDA_LEN_MAX / 2)) {
++	if (curroff >= (HFA384x_PDA_LEN_MAX / 2 - 1)) {
+ 		pr_err("no end record found or invalid lengths in PDR data, exiting. %x %d\n",
+ 		       curroff, pda->nrec);
+ 		return 1;
+-- 
+2.6.0
 
