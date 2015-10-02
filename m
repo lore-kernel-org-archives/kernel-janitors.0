@@ -1,56 +1,23 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 11 Oct 2015 06:08:37 +0000
-Subject: Re: [PATCH v2] ALSA: bebob: constify snd_bebob_rate_spec structures
-Message-Id: <alpine.DEB.2.02.1510110807340.2057@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Oct 2015 06:07:27 +0000
+Subject: Re: [patch] Input: ff-core - silence an underflow warning
+Message-Id: <20151002060727.GL7340@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444484390-22158-1-git-send-email-Julia.Lawall@lip6.fr> <5619308C.7000601@sakamocchi.jp> <alpine.DEB.2.02.1510102323080.2053@localhost6.localdomain6> <5619DA57.6010705@sakamocchi.jp>
-In-Reply-To: <5619DA57.6010705@sakamocchi.jp>
+References: <20150922132643.GA5751@mwanda>
+ <20150929002830.GD30653@dtor-ws>
+ <20150929131258.GC7340@mwanda>
+ <20150929230315.GA29469@dtor-ws>
+In-Reply-To: <20150929230315.GA29469@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+On Tue, Sep 29, 2015 at 04:03:15PM -0700, Dmitry Torokhov wrote:
+> That's fine, I'll adjust on my side.
 
+Thanks!
 
-On Sun, 11 Oct 2015, Takashi Sakamoto wrote:
-
-> Hi,
-> 
-> On Oct 11 2015 06:24, Julia Lawall wrote:
-> > The structures of type snd_bebob_clock_spec, snd_bebob_rate_spec,
-> > snd_bebob_meter_spec, and snd_bebob_spec are never modified after they are
-> > initialized.  Make them all const.
-> > 
-> > Done with the help of Coccinelle.
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > ---
-> > 
-> > v2: extend to snd_bebob_clock_spec, snd_bebob_meter_spec, and 
-> > snd_bebob_spec structures.
-> > 
-> >  sound/firewire/bebob/bebob.c           |    2 +-
-> >  sound/firewire/bebob/bebob.h           |   32 ++++++++++++++++----------------
-> >  sound/firewire/bebob/bebob_focusrite.c |   26 +++++++++++++-------------
-> >  sound/firewire/bebob/bebob_maudio.c    |   32 ++++++++++++++++----------------
-> >  sound/firewire/bebob/bebob_pcm.c       |    2 +-
-> >  sound/firewire/bebob/bebob_proc.c      |    6 +++---
-> >  sound/firewire/bebob/bebob_stream.c    |    6 +++---
-> >  sound/firewire/bebob/bebob_terratec.c  |   10 +++++-----
-> >  sound/firewire/bebob/bebob_yamaha.c    |    6 +++---
-> >  9 files changed, 61 insertions(+), 61 deletions(-)
-> 
-> Tested-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> 
-> Thank you to include my extra request and spend more time for this patch ;)
-> 
-> But I prefer to change the title of this patch to 'ALSA: bebob: constify
-> some structures because they are never modified' or something like it
-> because this patch is not only for 'struct snd_bebob_rate_spec'.
-
-Sorry not to have paid attention to that.  I will send it again.
-
-julia
+regards,
+dan carpenter
