@@ -1,40 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Oct 2015 19:00:37 +0000
-Subject: re: net: Microchip encx24j600 driver
-Message-Id: <20151006190037.GA31786@mwanda>
+From: Richard Weinberger <richard@nod.at>
+Date: Sat, 03 Oct 2015 18:36:24 +0000
+Subject: Re: [PATCH 23/39] UBI: drop null test before destroy functions
+Message-Id: <56102028.70501@nod.at>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1442146532-9100-24-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442146532-9100-24-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello Jon Ringle,
+Am 13.09.2015 um 14:15 schrieb Julia Lawall:
+> Remove unneeded NULL test.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@ expression x; @@
+> -if (x != NULL)
+>   \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/mtd/ubi/attach.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
+> index 68eea5b..c1aaf03 100644
+> --- a/drivers/mtd/ubi/attach.c
+> +++ b/drivers/mtd/ubi/attach.c
+> @@ -1209,9 +1209,7 @@ static void destroy_ai(struct ubi_attach_info *ai)
+>  		}
+>  	}
+>  
+> -	if (ai->aeb_slab_cache)
+> -		kmem_cache_destroy(ai->aeb_slab_cache);
+> -
+> +	kmem_cache_destroy(ai->aeb_slab_cache);
+>  	kfree(ai);
+>  }
 
-This is a semi-automatic email about new static checker warnings.
+Applied!
 
-The patch 04fbfce7a222: "net: Microchip encx24j600 driver" from Oct 
-1, 2015, leads to the following Smatch complaint:
-
-drivers/net/ethernet/microchip/encx24j600.c:313 encx24j600_tx_complete()
-	 warn: variable dereferenced before check 'priv->tx_skb' (see line 307)
-
-drivers/net/ethernet/microchip/encx24j600.c
-   306	
-   307		dev->stats.tx_bytes += priv->tx_skb->len;
-                                       ^^^^^^^^^^^^
-Unchecked dereference.
-
-   308	
-   309		encx24j600_clr_bits(priv, EIR, TXIF | TXABTIF);
-   310	
-   311		netif_dbg(priv, tx_done, dev, "TX Done%s\n", err ? ": Err" : "");
-   312	
-   313		if (priv->tx_skb) {
-                    ^^^^^^^^^^^^
-Too late.
-
-   314			dev_kfree_skb(priv->tx_skb);
-   315			priv->tx_skb = NULL;
-
-regards,
-dan carpenter
+Thanks,
+//richard
