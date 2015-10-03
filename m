@@ -1,42 +1,62 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 15 Oct 2015 08:02:09 +0000
-Subject: Re: [patch] ALSA: oss: underflow in snd_mixer_oss_proc_write()
-Message-Id: <s5h1tcwk1a6.wl-tiwai@suse.de>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sat, 03 Oct 2015 09:28:43 +0000
+Subject: Re: [patch] iio: accel: sca3000: memory corruption in sca3000_read_first_n_hw_rb()
+Message-Id: <560F9FCB.40704@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151015070141.GA6422@mwanda>
-In-Reply-To: <20151015070141.GA6422@mwanda>
+References: <20150808191642.GD8034@mwanda> <55CF9BA1.7020804@kernel.org>
+In-Reply-To: <55CF9BA1.7020804@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Jie Yang <yang.jie@intel.com>, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Octavian Purdila <octavian.purdila@intel.com>, Aybuke Ozdemir <aybuke.147@gmail.com>, Josselin Costanzi <josselin.costanzi@mobile-devices.fr>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-On Thu, 15 Oct 2015 09:01:42 +0200,
-Dan Carpenter wrote:
+On 15/08/15 21:05, Jonathan Cameron wrote:
+> On 08/08/15 20:16, Dan Carpenter wrote:
+>> "num_read" is in byte units but we are write u16s so we end up write
+>> twice as much as intended.
+>>
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Hi Dan,
 > 
-> We cap the upper bound of "idx" but not the negative side.  Let's make
-> it unsigned to fix this.
+> This is fine. Given it's an old bug, Greg is not going to take this
+> sort of fix until after the merge window.   I won't be doing another
+> pull to him to go in during the merge window.  Hence fastest route
+> will be as a fix post 4.3-rc1.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied, thanks.
-
-
-Takashi
-
+> Give me a poke if I haven't picked it up and sent it on by rc2 or so.
 > 
-> diff --git a/sound/core/oss/mixer_oss.c b/sound/core/oss/mixer_oss.c
-> index a99f720..7a8c79d 100644
-> --- a/sound/core/oss/mixer_oss.c
-> +++ b/sound/core/oss/mixer_oss.c
-> @@ -1177,7 +1177,8 @@ static void snd_mixer_oss_proc_write(struct snd_info_entry *entry,
->  	struct snd_mixer_oss *mixer = entry->private_data;
->  	char line[128], str[32], idxstr[16];
->  	const char *cptr;
-> -	int ch, idx;
-> +	unsigned int idx;
-> +	int ch;
->  	struct snd_mixer_oss_assign_table *tbl;
->  	struct slot *slot;
->  
+> Thanks and good find.
 > 
+> Jonathan
+Nearly forgot this one!
+
+Anyhow, applied to the fixes-togreg branch of iio.git and marked for stable.
+
+Jonathan
+>>
+>> diff --git a/drivers/staging/iio/accel/sca3000_ring.c b/drivers/staging/iio/accel/sca3000_ring.c
+>> index 23685e7..bd2c69f 100644
+>> --- a/drivers/staging/iio/accel/sca3000_ring.c
+>> +++ b/drivers/staging/iio/accel/sca3000_ring.c
+>> @@ -116,7 +116,7 @@ static int sca3000_read_first_n_hw_rb(struct iio_buffer *r,
+>>  	if (ret)
+>>  		goto error_ret;
+>>  
+>> -	for (i = 0; i < num_read; i++)
+>> +	for (i = 0; i < num_read / sizeof(u16); i++)
+>>  		*(((u16 *)rx) + i) = be16_to_cpup((__be16 *)rx + i);
+>>  
+>>  	if (copy_to_user(buf, rx, num_read))
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
