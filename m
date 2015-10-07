@@ -1,61 +1,65 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 24 Oct 2015 14:42:33 +0000
-Subject: [PATCH 7/9] gpu: host1x: add missing of_node_put
-Message-Id: <1445697755-26341-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Wed, 07 Oct 2015 22:45:12 +0000
+Subject: [GIT PULL 0/5] perf/core improvements and fixes
+Message-Id: <1444257917-24527-1-git-send-email-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Jason Cooper <jason@lakedaemon.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Borislav Petkov <bp@suse.de>, David Ahern <dsahern@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>, Guy Streeter <streeter@redhat.com>, Jiri Olsa <jolsa@redhat.com>, kernel-janitors@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Stephane Eranian <eranian@google.com>, Wang Nan <wangnan0@huawei.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+Hi Ingo,
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
+	Please consider pulling,
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-@@
+- Arnaldo
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-+  of_node_put(child);
-?  return ...;
-)
-   ...
- }
-// </smpl>
+The following changes since commit 712df65ccb63da08a484bf57c40b250dfd4103a7:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+  perf/x86/intel/uncore: Fix multi-segment problem of perf_event_intel_uncore (2015-10-06 17:31:51 +0200)
 
----
- drivers/gpu/host1x/bus.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+are available in the git repository at:
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 4a99c64..c1795a2 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -82,8 +82,10 @@ static int host1x_device_parse_dt(struct host1x_device *device,
- 		if (of_match_node(driver->subdevs, np) &&
- 		    of_device_is_available(np)) {
- 			err = host1x_subdev_add(device, np);
--			if (err < 0)
-+			if (err < 0) {
-+				of_node_put(np);
- 				return err;
-+			}
- 		}
- 	}
- 
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo
 
+for you to fetch changes up to ae938802443732e77d01f8d5b52b900b9327ff30:
+
+  perf python: Support the PERF_RECORD_SWITCH event (2015-10-07 19:41:50 -0300)
+
+----------------------------------------------------------------
+perf/core improvements and fixes:
+
+User visible:
+
+- Adding a field via 'perf report -F' that already is enabled makes
+  the tool get stuck in a loop, fix it (Jiri Olsa)
+
+Infrastructure:
+
+- Support PERF_RECORD_SWITCH in the python binding (Arnaldo Carvalho de Melo)
+
+- Fix handling read() result using a signed variable, found with Coccinelle
+  (Andrzej Hajda)
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+Andrzej Hajda (1):
+      perf tools: Fix handling read result using a signed variable
+
+Arnaldo Carvalho de Melo (1):
+      perf python: Support the PERF_RECORD_SWITCH event
+
+Jiri Olsa (3):
+      perf tools: Get rid of superfluos call to reset_dimensions
+      perf tools: Introduce hpp_dimension__add_output function
+      perf tools: Use hpp_dimension__add_output to register hpp columns
+
+ tools/perf/python/twatch.py | 23 +++++++++++++++---
+ tools/perf/ui/hist.c        | 16 ++++++------
+ tools/perf/util/event.c     |  3 ++-
+ tools/perf/util/python.c    | 59 ++++++++++++++++++++++++++++++++++++++++++---
+ tools/perf/util/sort.c      |  8 ++++--
+ tools/perf/util/sort.h      |  2 ++
+ 6 files changed, 93 insertions(+), 18 deletions(-)
