@@ -1,32 +1,42 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Tue, 20 Oct 2015 04:50:58 +0000
-Subject: Re: [PATCH 1/2] NFC: delete null dereference
-Message-Id: <20151020045058.GG9764@zurbaran.home>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 Oct 2015 06:41:22 +0000
+Subject: [patch 1/2] misc: mic/scif: fix error code in scif_create_remote_lookup()
+Message-Id: <20151009064122.GC7540@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445074340-21955-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445074340-21955-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445074340-21955-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, kernel-janitors@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nikhil Rao <nikhil.rao@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
+Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+We should be returning -ENOMEM here instead of success.
 
-On Sat, Oct 17, 2015 at 11:32:19AM +0200, Julia Lawall wrote:
-> The exit label performs device_unlock(&dev->dev);, which will fail when dev
-> is NULL, and nfc_put_device(dev);, which is not useful when dev is NULL, so
-> just exit the function immediately.
-> 
-> Problem found using scripts/coccinelle/null/deref_null.cocci
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  net/nfc/netlink.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-Applied to nfc-next, thanks.
+Fixes: ba612aa8b487 ('misc: mic: SCIF memory registration and unregistration')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cheers,
-Samuel.
+diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+index e288996..bc2dccb 100644
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -386,16 +386,20 @@ static int scif_create_remote_lookup(struct scif_dev *remote_dev,
+ 				    remote_dev, window->nr_lookup *
+ 				    sizeof(*window->dma_addr_lookup.lookup),
+ 				    GFP_KERNEL | __GFP_ZERO);
+-	if (!window->dma_addr_lookup.lookup)
++	if (!window->dma_addr_lookup.lookup) {
++		err = -ENOMEM;
+ 		goto error_window;
++	}
+ 
+ 	window->num_pages_lookup.lookup  		scif_alloc_coherent(&window->num_pages_lookup.offset,
+ 				    remote_dev, window->nr_lookup *
+ 				    sizeof(*window->num_pages_lookup.lookup),
+ 				    GFP_KERNEL | __GFP_ZERO);
+-	if (!window->num_pages_lookup.lookup)
++	if (!window->num_pages_lookup.lookup) {
++		err = -ENOMEM;
+ 		goto error_window;
++	}
+ 
+ 	vmalloc_dma_phys = is_vmalloc_addr(&window->dma_addr[0]);
+ 	vmalloc_num_pages = is_vmalloc_addr(&window->num_pages[0]);
