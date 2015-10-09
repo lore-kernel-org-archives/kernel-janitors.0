@@ -1,60 +1,57 @@
-From: Brian Foster <bfoster@redhat.com>
-Date: Mon, 12 Oct 2015 12:49:10 +0000
-Subject: Re: [PATCH] xfs: constify sysfs_ops structures
-Message-Id: <20151012124910.GB25023@bfoster.bfoster>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 09 Oct 2015 17:47:41 +0000
+Subject: [PATCH 2/2] clk: tegra: delete unneeded of_node_put
+Message-Id: <1444412861-2580-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444560146-22737-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444560146-22737-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: kernel-janitors@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-On Sun, Oct 11, 2015 at 12:42:26PM +0200, Julia Lawall wrote:
-> These sysfs_ops structures are never modified.  All other sysfs_ops
-> structures in the kernel are declared as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+for_each_child_of_node performs an of_node_put on each iteration, so
+putting an of_node_put before a continue results in a double put.
 
-The fix looks correct, but these data structures just happened to be
-removed and condensed into a more generic xfs_sysfs_ops definition as
-part of the recent per-mount stats series. See commit a27c2640 ("xfs:
-consolidate sysfs ops") for reference.
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Brian
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
-> ---
->  fs/xfs/xfs_sysfs.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_sysfs.c b/fs/xfs/xfs_sysfs.c
-> index aa03670..192c865 100644
-> --- a/fs/xfs/xfs_sysfs.c
-> +++ b/fs/xfs/xfs_sysfs.c
-> @@ -112,7 +112,7 @@ xfs_dbg_store(
->  	return xfs_attr->store ? xfs_attr->store(buf, count, NULL) : 0;
->  }
->  
-> -static struct sysfs_ops xfs_dbg_ops = {
-> +static const struct sysfs_ops xfs_dbg_ops = {
->  	.show = xfs_dbg_show,
->  	.store = xfs_dbg_store,
->  };
-> @@ -227,7 +227,7 @@ xfs_log_store(
->  	return xfs_attr->store ? xfs_attr->store(buf, count, log) : 0;
->  }
->  
-> -static struct sysfs_ops xfs_log_ops = {
-> +static const struct sysfs_ops xfs_log_ops = {
->  	.show = xfs_log_show,
->  	.store = xfs_log_store,
->  };
-> 
-> _______________________________________________
-> xfs mailing list
-> xfs@oss.sgi.com
-> http://oss.sgi.com/mailman/listinfo/xfs
+ for_each_child_of_node(root, child) {
+   ... when != of_node_get(child)
+*  of_node_put(child);
+   ...
+*  continue;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/clk/tegra/clk-emc.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+index 138a94b..e1fe8f3 100644
+--- a/drivers/clk/tegra/clk-emc.c
++++ b/drivers/clk/tegra/clk-emc.c
+@@ -491,10 +491,8 @@ struct clk *tegra_clk_register_emc(void __iomem *base, struct device_node *np,
+ 	for_each_child_of_node(np, node) {
+ 		err = of_property_read_u32(node, "nvidia,ram-code",
+ 					   &node_ram_code);
+-		if (err) {
+-			of_node_put(node);
++		if (err)
+ 			continue;
+-		}
+ 
+ 		/*
+ 		 * Store timings for all ram codes as we cannot read the
+
