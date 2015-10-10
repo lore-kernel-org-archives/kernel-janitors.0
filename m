@@ -1,33 +1,49 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Date: Mon, 12 Oct 2015 22:40:36 +0000
-Subject: Re: [PATCH 3/3] ARM: EXYNOS: delete unneeded of_node_put
-Message-Id: <561C36E4.3050804@osg.samsung.com>
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Sat, 10 Oct 2015 19:56:16 +0000
+Subject: [RESEND PATCH v2] staging/wlan-ng: Fix potential buffer overflow in firmware handling
+Message-Id: <1444506976-11098-1-git-send-email-theidsieck@leenox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
- <1444682596-3065-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444682596-3065-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Hello Julia,
+This patch fixes a potential buffer overflow detected by smatch.
 
-On 10/12/2015 10:43 PM, Julia Lawall wrote:
-> Device node iterators perform an of_node_put on each iteration, so putting
-> an of_node_put before going around to the next iteration results in a
-> double put.
-> 
-> Problem found using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
+pda16 has length 512, while processing an element with index < 512 we
+are checking for an end marker in the next element. This poses a
+potential buffer overflow if no end marker is present.
 
-Krzysztof sent the same patch yesterday and was already applied:
-https://lkml.org/lkml/2015/10/12/688
+Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
+---
+v2: add missing Signed-off-by line
 
-Best regards,
+
+ drivers/staging/wlan-ng/prism2fw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index fe36613..d357b7e 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -590,7 +590,7 @@ static int mkpdrlist(struct pda *pda)
+ 
+ 	pda->nrec = 0;
+ 	curroff = 0;
+-	while (curroff < (HFA384x_PDA_LEN_MAX / 2) &&
++	while (curroff < (HFA384x_PDA_LEN_MAX / 2 - 1) &&
+ 	       le16_to_cpu(pda16[curroff + 1]) != HFA384x_PDR_END_OF_PDA) {
+ 		pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
+ 
+@@ -626,7 +626,7 @@ static int mkpdrlist(struct pda *pda)
+ 		curroff += le16_to_cpu(pda16[curroff]) + 1;
+ 
+ 	}
+-	if (curroff >= (HFA384x_PDA_LEN_MAX / 2)) {
++	if (curroff >= (HFA384x_PDA_LEN_MAX / 2 - 1)) {
+ 		pr_err("no end record found or invalid lengths in PDR data, exiting. %x %d\n",
+ 		       curroff, pda->nrec);
+ 		return 1;
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.6.0
+
