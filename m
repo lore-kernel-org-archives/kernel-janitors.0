@@ -1,127 +1,61 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 21 Oct 2015 20:41:35 +0000
-Subject: [PATCH 0/5] add missing of_node_put
-Message-Id: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 10 Oct 2015 12:30:51 +0000
+Subject: [PATCH 2/5] power_supply: charger-manager: add missing of_node_put
+Message-Id: <1444480254-14399-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-The various for_each device_node iterators performs an of_node_get on each
-iteration, so a break out of the loop requires an of_node_put.
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-The complete semantic patch that fixes this problem is
+The semantic patch that fixes this problem is as follows
 (http://coccinelle.lip6.fr):
 
 // <smpl>
-@r@
-local idexpression n;
-expression e1,e2;
-iterator name for_each_node_by_name, for_each_node_by_type,
-for_each_compatible_node, for_each_matching_node,
-for_each_matching_node_and_match, for_each_child_of_node,
-for_each_available_child_of_node, for_each_node_with_property;
-iterator i;
-statement S;
-expression list [n1] es;
+@@
+expression root,e;
+local idexpression child;
 @@
 
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
 (
-(
-for_each_node_by_name(n,e1) S
+   return child;
 |
-for_each_node_by_type(n,e1) S
-|
-for_each_compatible_node(n,e1,e2) S
-|
-for_each_matching_node(n,e1) S
-|
-for_each_matching_node_and_match(n,e1,e2) S
-|
-for_each_child_of_node(e1,n) S
-|
-for_each_available_child_of_node(e1,n) S
-|
-for_each_node_with_property(n,e1) S
-)
-&
-i(es,n,...) S
-)
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-   return n;
-|
-+  of_node_put(n);
++  of_node_put(child);
 ?  return ...;
 )
    ...
  }
+// </smpl>
 
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-identifier l;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  goto l;
-)
-   ...
- }
-...
-l: ... when != n// </smpl>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
+ drivers/power/charger-manager.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- drivers/clk/clk-scpi.c      |    1 +
- drivers/clk/clk-si5351.c    |   17 ++++++++++-------
- drivers/clk/clk.c           |    4 ++++
- drivers/clk/imx/clk-imx27.c |    4 +++-
- drivers/clk/imx/clk-imx31.c |    4 +++-
- 5 files changed, 21 insertions(+), 9 deletions(-)
+diff --git a/drivers/power/charger-manager.c b/drivers/power/charger-manager.c
+index 907293e..1ea5d1a 100644
+--- a/drivers/power/charger-manager.c
++++ b/drivers/power/charger-manager.c
+@@ -1581,8 +1581,10 @@ static struct charger_desc *of_cm_parse_desc(struct device *dev)
+ 				cables = devm_kzalloc(dev, sizeof(*cables)
+ 						* chg_regs->num_cables,
+ 						GFP_KERNEL);
+-				if (!cables)
++				if (!cables) {
++					of_node_put(child);
+ 					return ERR_PTR(-ENOMEM);
++				}
+ 
+ 				chg_regs->cables = cables;
+ 
+
