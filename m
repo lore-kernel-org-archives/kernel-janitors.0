@@ -1,30 +1,40 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Thu, 29 Oct 2015 14:40:03 +0000
-Subject: Re: [patch] drm: crtc: integer overflow in drm_property_create_blob()
-Message-Id: <CAPj87rPTY3EJ15MtRdx_7edjJ4v-Bp-2EvfOd9tZJ0fjtHDO1w@mail.gmail.com>
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Sat, 10 Oct 2015 19:47:18 +0000
+Subject: [PATCH 1/2] atm: iphase: return -ENOMEM instead of -1 in case of failed kmalloc()
+Message-Id: <1444506439-10414-2-git-send-email-theidsieck@leenox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151029133754.GA2862@mwanda>
-In-Reply-To: <20151029133754.GA2862@mwanda>
+References: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
+In-Reply-To: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>
+To: Chas Williams <3chas3@gmail.com>
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tillmann Heidsieck <theidsieck@leenox.de>
 
-Hi Dan,
+Smatch complains about returning hard coded error codes, silence this
+warning.
 
-On 29 October 2015 at 13:37, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The size here comes from the user via the ioctl, it is a number between
-> 1-u32max so the addition here could overflow on 32 bit systems.
->
-> Fixes: f453ba046074 ('DRM: add mode setting support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/atm/iphase.c:115 ia_enque_rtn_q() warn: returning -1 instead of -ENOMEM is sloppy
 
-Thanks for catching this. I did have a pass through looking for such
-issues but couldn't see any. :\
+Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
+---
+ drivers/atm/iphase.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Reviewed-by: Daniel Stone <daniels@collabora.com>
-Cc: stable@kernel.org # v4.2
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index 65e65903faa0..d5010d7a99c3 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -112,7 +112,8 @@ static void ia_enque_head_rtn_q (IARTN_Q *que, IARTN_Q * data)
+ 
+ static int ia_enque_rtn_q (IARTN_Q *que, struct desc_tbl_t data) {
+    IARTN_Q *entry = kmalloc(sizeof(*entry), GFP_ATOMIC);
+-   if (!entry) return -1;
++   if (!entry)
++      return -ENOMEM;
+    entry->data = data;
+    entry->next = NULL;
+    if (que->next = NULL) 
+-- 
+2.6.1
 
-Cheers,
-Daniel
