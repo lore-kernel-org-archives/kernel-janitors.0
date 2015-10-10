@@ -1,42 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Oct 2015 12:58:37 +0000
-Subject: Re: [patch] ASoC: es8328: harmless underflow in es8328_put_deemph()
-Message-Id: <20151022125837.GM8232@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="sWvRP97dwRHm9fX+"
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Sat, 10 Oct 2015 19:47:17 +0000
+Subject: [PATCH 0/2] atm: iphase: Fix misleading indention and return -ENOMEM on error
+Message-Id: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151013071109.GH31537@mwanda>
-In-Reply-To: <20151013071109.GH31537@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Lars-Peter Clausen <lars@metafoo.de>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chas Williams <3chas3@gmail.com>
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tillmann Heidsieck <theidsieck@leenox.de>
+
+OK here it goes ...
+
+There are three non-indention specific smatch warnings in atm/iphase.c
+
+drivers/atm/iphase.c:115 ia_enque_rtn_q() warn: returning -1 instead of -ENOMEM is sloppy
+drivers/atm/iphase.c:148 ia_hack_tcq() warn: if();
+drivers/atm/iphase.c:1178 rx_pkt() warn: curly braces intended?
+
+this series fixes two of them. The if(); warning would require
+restructuring the code to a larger extend. Beyond this there remains a
+whooping number of > 2k checkpatch.pl warnings and errors each. Those
+can be grouped into 
+
+- Direct usage of printk()
+- Style issues concerning operators
+- Style issues concerning {}
+- Indention with spaces, mixed tabs and spaces etc
+- Trailing white-spaces
+
+Generally I would not mind cleaning all this up for those who have to
+make functional changes to the driver. However, I would like to know
+from the maintainers if such an afford would be welcome or not.
+
+Regards,
+Tillmann Heidsieck
 
 
---sWvRP97dwRHm9fX+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Tillmann Heidsieck (2):
+  atm: iphase: return -ENOMEM instead of -1 in case of failed kmalloc()
+  atm: iphase: fix misleading indention
 
-On Tue, Oct 13, 2015 at 10:11:09AM +0300, Dan Carpenter wrote:
-> Valid values for "deemph" are zero and one but we accidentally allow
-> negative values as well.  It's harmless but it causes static checker
-> warnings and we may as well clean it up.
+ drivers/atm/iphase.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks for all these fixes.  It almost feels like someone should
-volunteer to implement these deemphasis controls in some generic
-fashion!  :)
+-- 
+2.6.1
 
---sWvRP97dwRHm9fX+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWKN18AAoJECTWi3JdVIfQ36wH/iBwa85a0OGiqZvPBjmOZjEl
-LTzvV9LZL+KsBV9b7QNTTdJb47OTSUgpzfdbP/VT2qpnGRfnVQvCNBOeqR89zqO8
-nlzm3OMuUg3Oj40WksUWsKVr9VQepyhpz6x512b6D7cKfzLPUznjTzTqEWZLJyL7
-jXsnR285BZCj+s5nuqETk7PGQEk0SyyDkTDaMfgvK/E9x1jd5GP8v3gUEYJCs6+3
-ujX1BAxIfkRePdjaGT7jsbGYy8IzMdMtYS+O+U05k1D3MbjWGFEpga+lejXUWe1H
-XUYI0d5EQz8XhoWTCrAv3+5o3bCUE7H2x9omJLrzSt6ME5gW1ziIxf0pNKPRK6g=
-=EaEx
------END PGP SIGNATURE-----
-
---sWvRP97dwRHm9fX+--
