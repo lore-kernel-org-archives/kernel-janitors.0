@@ -1,21 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 01 Oct 2015 15:35:30 +0000
-Subject: Re: [patch] mfd: 64 bit bug in bxtwc_val_store()
-Message-Id: <20151001153530.GH7289@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 10 Oct 2015 12:30:49 +0000
+Subject: [PATCH 0/5] add missing of_node_put
+Message-Id: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150928095636.GB11367@mwanda>
-In-Reply-To: <20150928095636.GB11367@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-I'm often the first person to touch a new patch after the author so this
-is a conversation I have had before.  I "persuaded" the drivers/media
-people and now they write patch descriptions like:
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-85756a0 [media] cobalt: add new driver
+The complete semantic patch that fixes this problem is
+(http://coccinelle.lip6.fr):
 
-regards,
-dan carpenter
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+---
+
+ arch/arm/kernel/devtree.c             |    1 +
+ arch/arm/mach-shmobile/pm-rmobile.c   |    4 +++-
+ drivers/power/charger-manager.c       |    4 +++-
+ drivers/regulator/of_regulator.c      |    1 +
+ drivers/video/backlight/88pm860x_bl.c |    1 +
+ 5 files changed, 9 insertions(+), 2 deletions(-)
