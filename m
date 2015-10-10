@@ -1,25 +1,40 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Thu, 15 Oct 2015 11:11:00 +0000
-Subject: Re: powerpc/mpc5xxx: Use of_get_next_parent to simplify code
-Message-Id: <20151015111100.87B391402BF@ozlabs.org>
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Sat, 10 Oct 2015 19:47:19 +0000
+Subject: [PATCH 2/2] atm: iphase: fix misleading indention
+Message-Id: <1444506439-10414-3-git-send-email-theidsieck@leenox.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1444595260-3332-1-git-send-email-christophe.jaillet@wanadoo.fr>
-References: <20151014040011.8AB1514110A@ozlabs.org>
-In-Reply-To: <20151014040011.8AB1514110A@ozlabs.org>
+References: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
+In-Reply-To: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, benh@kernel.crashing.org, paulus@samba.org
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Chas Williams <3chas3@gmail.com>
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tillmann Heidsieck <theidsieck@leenox.de>
 
-On Sun, 2015-11-10 at 20:27:40 UTC, Christophe Jaillet wrote:
-> of_get_next_parent can be used to simplify the while() loop and
-> avoid the need of a temp variable.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fix a smatch warning:
+drivers/atm/iphase.c:1178 rx_pkt() warn: curly braces intended?
 
-Applied to powerpc next, thanks.
+The code is correct, the indention is misleading. In case the allocation
+of skb fails, we want to skip to the end.
 
-https://git.kernel.org/powerpc/c/b340587e68b479e52039f800
+Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
+---
+ drivers/atm/iphase.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-cheers
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index d5010d7a99c3..7d00f2994738 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -1176,7 +1176,7 @@ static int rx_pkt(struct atm_dev *dev)
+         if (!(skb = atm_alloc_charge(vcc, len, GFP_ATOMIC))) {
+            if (vcc->vci < 32)
+               printk("Drop control packets\n");
+-	      goto out_free_desc;
++	   goto out_free_desc;
+         }
+ 	skb_put(skb,len);  
+         // pwang_test
+-- 
+2.6.1
+
