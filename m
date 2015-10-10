@@ -1,54 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 10 Oct 2015 12:30:54 +0000
-Subject: [PATCH 5/5] arm: add missing of_node_put
-Message-Id: <1444480254-14399-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sat, 10 Oct 2015 21:02:15 +0000
+Subject: Re: [PATCH 5/5] arm: add missing of_node_put
+Message-Id: <8655275.vMqHQfLN9g@wuerfel>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1444480254-14399-6-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444480254-14399-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+On Saturday 10 October 2015 14:30:54 Julia Lawall wrote:
+> diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
+> index 11c54de..432ff34 100644
+> --- a/arch/arm/kernel/devtree.c
+> +++ b/arch/arm/kernel/devtree.c
+> @@ -143,6 +143,7 @@ void __init arm_dt_init_cpu_maps(void)
+>                                                "max cores %u, capping them\n",
+>                                                cpuidx, nr_cpu_ids)) {
+>                         cpuidx = nr_cpu_ids;
+> +                       of_node_put(cpu);
+>                         break;
+>                 }
+> 
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+The same for_each_child_of_node() loop has three 'return' statements'
+aside from the 'break' statement here. I think you should change your
+semantic patch to cover both cases.
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-+  of_node_put(child);
-?  break;
-   ...
-}
-... when != child
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- arch/arm/kernel/devtree.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
-index 11c54de..432ff34 100644
---- a/arch/arm/kernel/devtree.c
-+++ b/arch/arm/kernel/devtree.c
-@@ -143,6 +143,7 @@ void __init arm_dt_init_cpu_maps(void)
- 					       "max cores %u, capping them\n",
- 					       cpuidx, nr_cpu_ids)) {
- 			cpuidx = nr_cpu_ids;
-+			of_node_put(cpu);
- 			break;
- 		}
- 
-
+	Arnd
