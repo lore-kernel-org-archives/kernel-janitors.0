@@ -1,43 +1,55 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 Oct 2015 07:30:38 +0000
-Subject: Re: [PATCH 3/5] ARM: shmobile: R-Mobile: add missing of_node_put
-Message-Id: <CAMuHMdWxZG0tyESgGe=Ze_nrH8oHq1vW3xUBBnc8eNSMUUCExQ@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 10 Oct 2015 12:30:50 +0000
+Subject: [PATCH 1/5] backlight: 88pm860x_bl: add missing of_node_put
+Message-Id: <1444480254-14399-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
- <1444480254-14399-4-git-send-email-Julia.Lawall@lip6.fr>
- <CAMuHMdUVraBT+s1e-m89KmjbZnEQjBaSz+c93rCOWPMnT5CVPA@mail.gmail.com>
- <20151012092910.7580c2b9@free-electrons.com>
-In-Reply-To: <20151012092910.7580c2b9@free-electrons.com>
+In-Reply-To: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jingoo Han <jingoohan1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-On Mon, Oct 12, 2015 at 9:29 AM, Thomas Petazzoni
-<thomas.petazzoni@free-electrons.com> wrote:
-> On Mon, 12 Oct 2015 09:18:52 +0200, Geert Uytterhoeven wrote:
->
->> >                 pd = kzalloc(sizeof(*pd), GFP_KERNEL);
->> > -               if (!pd)
->> > +               if (!pd) {
->> > +                       of_node_put(np);
->> >                         return -ENOMEM;
->> > +               }
->>
->> While technically this patch is correct, the system will be dead anyway if it
->> ever goes OOM at core_initcall() time.
->
-> Then BUG_ON(!pd); ?
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-kzalloc() will scream anyway.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Gr{oetje,eeting}s,
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
-                        Geert
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+// </smpl>
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---
+ drivers/video/backlight/88pm860x_bl.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/video/backlight/88pm860x_bl.c b/drivers/video/backlight/88pm860x_bl.c
+index 2da5862..6d8dc2c 100644
+--- a/drivers/video/backlight/88pm860x_bl.c
++++ b/drivers/video/backlight/88pm860x_bl.c
+@@ -180,6 +180,7 @@ static int pm860x_backlight_dt_init(struct platform_device *pdev,
+ 			data->iset = PM8606_WLED_CURRENT(iset);
+ 			of_property_read_u32(np, "marvell,88pm860x-pwm",
+ 					     &data->pwm);
++			of_node_put(np);
+ 			break;
+ 		}
+ 	}
+
