@@ -1,26 +1,50 @@
-From: "Charles (Chas) Williams" <3chas3@gmail.com>
-Date: Mon, 12 Oct 2015 15:28:55 +0000
-Subject: Re: [PATCH 0/2] atm: iphase: Fix misleading indention and return -ENOMEM on error
-Message-Id: <1444663735.3494.58.camel@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Oct 2015 12:18:09 +0000
+Subject: [PATCH] drm/nouveau/disp,pm: constify nvkm_object_func structures
+Message-Id: <1444565889-27074-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
-In-Reply-To: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tillmann Heidsieck <theidsieck@leenox.de>
-Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Sat, 2015-10-10 at 21:47 +0200, Tillmann Heidsieck wrote:
-> this series fixes two of them. The if(); warning would require
-> restructuring the code to a larger extend. Beyond this there remains a
-> whooping number of > 2k checkpatch.pl warnings and errors each. Those
-> can be grouped into 
-...
-> Generally I would not mind cleaning all this up for those who have to
-> make functional changes to the driver. However, I would like to know
-> from the maintainers if such an afford would be welcome or not.
+These nvkm_object_func structures are never modified.  All other
+nvkm_object_func structures are declared as const.
 
-It doesn't bother me if you do this.  I can review it.
+Done with the help of Coccinelle.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/rootnv04.c |    2 +-
+ drivers/gpu/drm/nouveau/nvkm/engine/pm/base.c       |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/rootnv04.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/rootnv04.c
+index 62d3fb6..2be8463 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/rootnv04.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/rootnv04.c
+@@ -109,7 +109,7 @@ nv04_disp_mthd(struct nvkm_object *object, u32 mthd, void *data, u32 size)
+ 	return -EINVAL;
+ }
+ 
+-static struct nvkm_object_func
++static const struct nvkm_object_func
+ nv04_disp_root = {
+ 	.mthd = nv04_disp_mthd,
+ 	.ntfy = nvkm_disp_ntfy,
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/pm/base.c b/drivers/gpu/drm/nouveau/nvkm/engine/pm/base.c
+index 0db9be2..2721592 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/pm/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/pm/base.c
+@@ -633,7 +633,7 @@ nvkm_perfmon_dtor(struct nvkm_object *object)
+ 	return perfmon;
+ }
+ 
+-static struct nvkm_object_func
++static const struct nvkm_object_func
+ nvkm_perfmon = {
+ 	.dtor = nvkm_perfmon_dtor,
+ 	.mthd = nvkm_perfmon_mthd,
 
