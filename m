@@ -1,29 +1,64 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Date: Mon, 26 Oct 2015 08:48:31 +0000
-Subject: Re: [PATCH 0/9] add missing of_node_put
-Message-Id: <562DE8DF.5090609@samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Oct 2015 11:48:05 +0000
+Subject: [PATCH] qlcnic: constify qlcnic_mbx_ops structure
+Message-Id: <1444564085-12839-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: Dept-GELinuxNICDev@qlogic.com
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Julia,
+The only instance of a qlcnic_mbx_ops structure is never modified.  Thus
+the declaration of the structure and all references to the structure type
+can be made const.
 
-Patches 1-4 have been applied to the LED tree, thanks.
+In the definition of the qlcnic_mailbox structure, the ops field is no
+longer lined up with the other fields.  This was left as is, to avoid a lot
+of trivial changes on the other lines.
 
-On 10/24/2015 04:42 PM, Julia Lawall wrote:
-> The various for_each device_node iterators performs an of_node_get on each
-> iteration, so a break out of the loop requires an of_node_put.
->
-> The complete semantic patch that fixes this problem is
-> (http://coccinelle.lip6.fr):
->
-[...]
+Done with the help of Coccinelle.
 
--- 
-Best Regards,
-Jacek Anaszewski
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic.h         |    2 +-
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+index 9f0bdd9..37a731b 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+@@ -4048,7 +4048,7 @@ static void qlcnic_83xx_mailbox_worker(struct work_struct *work)
+ 	struct qlcnic_mailbox *mbx = container_of(work, struct qlcnic_mailbox,
+ 						  work);
+ 	struct qlcnic_adapter *adapter = mbx->adapter;
+-	struct qlcnic_mbx_ops *mbx_ops = mbx->ops;
++	const struct qlcnic_mbx_ops *mbx_ops = mbx->ops;
+ 	struct device *dev = &adapter->pdev->dev;
+ 	atomic_t *rsp_status = &mbx->rsp_status;
+ 	struct list_head *head = &mbx->cmd_q;
+@@ -4098,7 +4098,7 @@ static void qlcnic_83xx_mailbox_worker(struct work_struct *work)
+ 	}
+ }
+ 
+-static struct qlcnic_mbx_ops qlcnic_83xx_mbx_ops = {
++static const struct qlcnic_mbx_ops qlcnic_83xx_mbx_ops = {
+ 	.enqueue_cmd    = qlcnic_83xx_enqueue_mbx_cmd,
+ 	.dequeue_cmd    = qlcnic_83xx_dequeue_mbx_cmd,
+ 	.decode_resp    = qlcnic_83xx_decode_mbx_rsp,
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
+index d6696cf..46bbea8 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
+@@ -1092,7 +1092,7 @@ struct qlcnic_filter_hash {
+ struct qlcnic_mailbox {
+ 	struct workqueue_struct	*work_q;
+ 	struct qlcnic_adapter	*adapter;
+-	struct qlcnic_mbx_ops	*ops;
++	const struct qlcnic_mbx_ops *ops;
+ 	struct work_struct	work;
+ 	struct completion	completion;
+ 	struct list_head	cmd_q;
+
