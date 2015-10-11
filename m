@@ -1,59 +1,14 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 25 Oct 2015 13:57:02 +0000
-Subject: [PATCH 3/8] netdev/phy: add missing of_node_put
-Message-Id: <1445781427-7110-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Vera@vger.kernel.org, Hollin@vger.kernel.org, Kvan@vger.kernel.org
+Date: Sun, 11 Oct 2015 22:14:42 +0000
+Subject: I Have An Urgent Matter To Discuss With You
+Message-Id: <TY1PR0201MB09581B572C78DE6148571702B8320@TY1PR0201MB0958.apcprd02.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: kernel-janitors@vger.kernel.org
 
-for_each_available_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+My name is Vera Hollin Kvan,i have an urgent matter to discuss with you please do not ignore this message make sure you reply me urgently with this email: verahollinkvan1@gmail.com
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
 
-// <smpl>
-@@
-local idexpression r.n;
-expression r,e;
-@@
-
- for_each_available_child_of_node(r,n) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/phy/mdio-mux.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/phy/mdio-mux.c b/drivers/net/phy/mdio-mux.c
-index 280c7c3..908e8d4 100644
---- a/drivers/net/phy/mdio-mux.c
-+++ b/drivers/net/phy/mdio-mux.c
-@@ -144,6 +144,7 @@ int mdio_mux_init(struct device *dev,
- 			dev_err(dev,
- 				"Error: Failed to allocate memory for child\n");
- 			ret_val = -ENOMEM;
-+			of_node_put(child_bus_node);
- 			break;
- 		}
- 		cb->bus_number = v;
-
+Mein Name ist Vera Hollin Kvan, ich habe eine dringende Angelegenheit mit Ihnen besprechen Sie bitte nicht, diese Nachricht ignorieren sicherzustellen, dass Sie mir antworten dringend mit dieser E-Mail: verahollinkvan1@gmail.com
