@@ -1,66 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 26 Oct 2015 21:28:25 +0000
-Subject: [PATCH 1/2 v2] coccinelle: ifnullfree: various cleanups
-Message-Id: <1445894906-28137-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Oct 2015 20:23:27 +0000
+Subject: [PATCH] powerpc/numa: Use of_get_next_parent to simplify code
+Message-Id: <1444595007-3029-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Adjust tests to compare against NULL, to match cases that explicitly make
-that comparison.
+of_get_next_parent can be used to simplify the while() loop and
+avoid the need of a temp variable.
 
-Remove removal and re-addition of freeing functions.
-
-Add position variable on usb_free_urb in the non-patch case.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-v2: better subject
+ arch/powerpc/mm/numa.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
- scripts/coccinelle/free/ifnullfree.cocci |   18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
-
-diff --git a/scripts/coccinelle/free/ifnullfree.cocci b/scripts/coccinelle/free/ifnullfree.cocci
-index a42d70b..d4a072d 100644
---- a/scripts/coccinelle/free/ifnullfree.cocci
-+++ b/scripts/coccinelle/free/ifnullfree.cocci
-@@ -16,19 +16,15 @@ virtual context
- @r2 depends on patch@
- expression E;
- @@
--- if (E)
-+- if (E != NULL)
- (
---	kfree(E);
--+ kfree(E);
-+  kfree(E);
- |
---	debugfs_remove(E);
--+ debugfs_remove(E);
-+  debugfs_remove(E);
- |
---	debugfs_remove_recursive(E);
--+ debugfs_remove_recursive(E);
-+  debugfs_remove_recursive(E);
- |
---	usb_free_urb(E);
--+ usb_free_urb(E);
-+  usb_free_urb(E);
- )
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 8b9502a..b85d442 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -276,7 +276,6 @@ static int of_node_to_nid_single(struct device_node *device)
+ /* Walk the device tree upwards, looking for an associativity id */
+ int of_node_to_nid(struct device_node *device)
+ {
+-	struct device_node *tmp;
+ 	int nid = -1;
  
- @r depends on context || report || org @
-@@ -36,8 +32,8 @@ expression E;
- position p;
- @@
+ 	of_node_get(device);
+@@ -285,9 +284,7 @@ int of_node_to_nid(struct device_node *device)
+ 		if (nid != -1)
+ 			break;
  
--* if (E)
--*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
-+* if (E != NULL)
-+*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb@p\)(E);
+-	        tmp = device;
+-		device = of_get_parent(tmp);
+-		of_node_put(tmp);
++		device = of_get_next_parent(device);
+ 	}
+ 	of_node_put(device);
  
- @script:python depends on org@
- p << r.p;
+-- 
+2.1.4
 
