@@ -1,76 +1,45 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 26 Oct 2015 01:19:42 +0000
-Subject: Re: [PATCH 6/8] [media] v4l: xilinx-tpg: add missing of_node_put
-Message-Id: <1798308.03Tu29vvmA@avalon>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Oct 2015 10:42:26 +0000
+Subject: [PATCH] xfs: constify sysfs_ops structures
+Message-Id: <1444560146-22737-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445781427-7110-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445781427-7110-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com
 
-Hi Julia,
+These sysfs_ops structures are never modified.  All other sysfs_ops
+structures in the kernel are declared as const.
 
-Thank you for the patch.
+Done with the help of Coccinelle.
 
-On Sunday 25 October 2015 14:57:05 Julia Lawall wrote:
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> a break out of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> 
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ fs/xfs/xfs_sysfs.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/media/platform/xilinx/xilinx-tpg.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c
-> b/drivers/media/platform/xilinx/xilinx-tpg.c index b5f7d5e..8bd7e37 100644
-> --- a/drivers/media/platform/xilinx/xilinx-tpg.c
-> +++ b/drivers/media/platform/xilinx/xilinx-tpg.c
-> @@ -731,6 +731,7 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
->  		format = xvip_of_get_format(port);
->  		if (IS_ERR(format)) {
->  			dev_err(dev, "invalid format in DT");
-> +			of_node_put(port);
->  			return PTR_ERR(format);
->  		}
-> 
-> @@ -739,6 +740,7 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
->  			xtpg->vip_format = format;
->  		} else if (xtpg->vip_format != format) {
->  			dev_err(dev, "in/out format mismatch in DT");
-> +			of_node_put(port);
->  			return -EINVAL;
->  		}
-
--- 
-Regards,
-
-Laurent Pinchart
+diff --git a/fs/xfs/xfs_sysfs.c b/fs/xfs/xfs_sysfs.c
+index aa03670..192c865 100644
+--- a/fs/xfs/xfs_sysfs.c
++++ b/fs/xfs/xfs_sysfs.c
+@@ -112,7 +112,7 @@ xfs_dbg_store(
+ 	return xfs_attr->store ? xfs_attr->store(buf, count, NULL) : 0;
+ }
+ 
+-static struct sysfs_ops xfs_dbg_ops = {
++static const struct sysfs_ops xfs_dbg_ops = {
+ 	.show = xfs_dbg_show,
+ 	.store = xfs_dbg_store,
+ };
+@@ -227,7 +227,7 @@ xfs_log_store(
+ 	return xfs_attr->store ? xfs_attr->store(buf, count, log) : 0;
+ }
+ 
+-static struct sysfs_ops xfs_log_ops = {
++static const struct sysfs_ops xfs_log_ops = {
+ 	.show = xfs_log_show,
+ 	.store = xfs_log_store,
+ };
 
