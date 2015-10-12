@@ -1,69 +1,83 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Oct 2015 09:02:48 +0000
-Subject: [PATCH 1/4] of/overlay: add missing of_node_put
-Message-Id: <1445504571-19838-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 12 Oct 2015 20:43:13 +0000
+Subject: [PATCH 0/3] delete unneeded of_node_put
+Message-Id: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Cc: kernel-janitors@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+Device node iterators perform an of_node_put on each iteration, so putting
+an of_node_put before going around to the next iteration results in a
+double put.
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
+The complete semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
 // <smpl>
-@@
-expression root,e;
-local idexpression child;
+@r exists@
+expression e1,e2;
+local idexpression n;
+iterator name for_each_node_by_name, for_each_node_by_type,
+for_each_compatible_node, for_each_matching_node,
+for_each_matching_node_and_match, for_each_child_of_node,
+for_each_available_child_of_node, for_each_node_with_property;
+iterator i;
+position p1,p2;
+statement S;
 @@
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
 (
-   return child;
+(
+for_each_node_by_name(n,e1) S
 |
-+  of_node_put(child);
-?  return ...;
+for_each_node_by_type(n,e1) S
+|
+for_each_compatible_node(n,e1,e2) S
+|
+for_each_matching_node(n,e1) S
+|
+for_each_matching_node_and_match(n,e1,e2) S
+|
+for_each_child_of_node(e1,n) S
+|
+for_each_available_child_of_node(e1,n) S
+|
+for_each_node_with_property(n,e1) S
 )
-   ...
- }
+&
+i@p1(...) {
+   ... when != of_node_get(n)
+       when any
+   of_node_put@p2(n);
+   ... when any
+}
+)
+
+@s exists@
+local idexpression r.n;
+statement S;
+position r.p1,r.p2;
+iterator i;
+@@
+
+ of_node_put@p2(n);
+ ... when any
+ i@p1(..., n, ...)
+ S
+
+@depends on s@
+local idexpression n;
+position r.p2;
+@@
+
+- of_node_put@p2(n);
 // </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
 ---
- drivers/of/overlay.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 24e025f..54e5af9 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -149,6 +149,7 @@ static int of_overlay_apply_one(struct of_overlay *ov,
- 			pr_err("%s: Failed to apply single node @%s/%s\n",
- 					__func__, target->full_name,
- 					child->name);
-+			of_node_put(child);
- 			return ret;
- 		}
- 	}
-@@ -417,8 +418,10 @@ static int overlay_subtree_check(struct device_node *tree,
- 		return 1;
- 
- 	for_each_child_of_node(tree, child) {
--		if (overlay_subtree_check(child, dn))
-+		if (overlay_subtree_check(child, dn)) {
-+			of_node_put(child);
- 			return 1;
-+		}
- 	}
- 
- 	return 0;
-
+ arch/arm/mach-exynos/pm_domains.c                 |    8 +++-----
+ drivers/soc/qcom/smd.c                            |    4 +---
+ drivers/video/fbdev/omap2/dss/omapdss-boot-init.c |    4 +---
+ 3 files changed, 5 insertions(+), 11 deletions(-)
