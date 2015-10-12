@@ -1,86 +1,103 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 12 Oct 2015 12:44:31 +0000
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Date: Mon, 12 Oct 2015 12:58:28 +0000
 Subject: Re: [PATCH 4/5] regulator: of: add missing of_node_put
-Message-Id: <alpine.DEB.2.10.1510121439440.2652@hadrien>
+Message-Id: <561BAE74.3030807@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr> <1444480254-14399-5-git-send-email-Julia.Lawall@lip6.fr> <CAJKOXPc7b4H8qFLRLR2jecA74BPJ-SNfY-GtfTVf=mfzrEeCtw@mail.gmail.com>
-In-Reply-To: <CAJKOXPc7b4H8qFLRLR2jecA74BPJ-SNfY-GtfTVf=mfzrEeCtw@mail.gmail.com>
+References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1444480254-14399-5-git-send-email-Julia.Lawall@lip6.fr>
+ <CAJKOXPc7b4H8qFLRLR2jecA74BPJ-SNfY-GtfTVf=mfzrEeCtw@mail.gmail.com>
+ <alpine.DEB.2.10.1510121439440.2652@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1510121439440.2652@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: k.kozlowski.k@gmail.com, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
+W dniu 12.10.2015 o 21:44, Julia Lawall pisze:
+> 
+> 
+> On Mon, 12 Oct 2015, Krzysztof Kozlowski wrote:
+> 
+>> 2015-10-10 21:30 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
+>>>
+>>> for_each_child_of_node performs an of_node_get on each iteration, so
+>>> a break out of the loop requires an of_node_put.
+>>>
+>>> The semantic patch that fixes this problem is as follows
+>>> (http://coccinelle.lip6.fr):
+>>>
+>>> // <smpl>
+>>> @@
+>>> expression root,e;
+>>> local idexpression child;
+>>> @@
+>>>
+>>>  for_each_child_of_node(root, child) {
+>>>    ... when != of_node_put(child)
+>>>        when != e = child
+>>> (
+>>>    return child;
+>>> |
+>>> +  of_node_put(child);
+>>> ?  return ...;
+>>> )
+>>>    ...
+>>>  }
+>>> // </smpl>
+>>>
+>>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>>>
+>>> ---
+>>>  drivers/regulator/of_regulator.c |    1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+>>> index 499e437..f9d77b4 100644
+>>> --- a/drivers/regulator/of_regulator.c
+>>> +++ b/drivers/regulator/of_regulator.c
+>>> @@ -274,6 +274,7 @@ int of_regulator_match(struct device *dev, struct device_node *node,
+>>>                                 dev_err(dev,
+>>>                                         "failed to parse DT for regulator %s\n",
+>>>                                         child->name);
+>>> +                               of_node_put(child);
+>>
+>> This looks good.
+>>
+>>>                                 return -EINVAL;
+>>>                         }
+>>>                         match->of_node = of_node_get(child);
+>>
+>> But what about 'break' few lines below? The reference from last
+>> of_get_next_child() should be also dropped because... or we should
+>> remove this of_node_get() call.
+> 
+> Actually, the break is OK.  It's on the inner for loop, not the
+> for_each_child_of_node loop.  The for_each_child_of_node will still
+> decrement the reference count in the normal way.
+> 
+> julia
 
+Yes, you're right. The patch looks good:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Mon, 12 Oct 2015, Krzysztof Kozlowski wrote:
+Best regards,
+Krzysztof
 
-> 2015-10-10 21:30 GMT+09:00 Julia Lawall <Julia.Lawall@lip6.fr>:
-> >
-> > for_each_child_of_node performs an of_node_get on each iteration, so
-> > a break out of the loop requires an of_node_put.
-> >
-> > The semantic patch that fixes this problem is as follows
-> > (http://coccinelle.lip6.fr):
-> >
-> > // <smpl>
-> > @@
-> > expression root,e;
-> > local idexpression child;
-> > @@
-> >
-> >  for_each_child_of_node(root, child) {
-> >    ... when != of_node_put(child)
-> >        when != e = child
-> > (
-> >    return child;
-> > |
-> > +  of_node_put(child);
-> > ?  return ...;
-> > )
-> >    ...
-> >  }
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >  drivers/regulator/of_regulator.c |    1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-> > index 499e437..f9d77b4 100644
-> > --- a/drivers/regulator/of_regulator.c
-> > +++ b/drivers/regulator/of_regulator.c
-> > @@ -274,6 +274,7 @@ int of_regulator_match(struct device *dev, struct device_node *node,
-> >                                 dev_err(dev,
-> >                                         "failed to parse DT for regulator %s\n",
-> >                                         child->name);
-> > +                               of_node_put(child);
->
-> This looks good.
->
-> >                                 return -EINVAL;
-> >                         }
-> >                         match->of_node = of_node_get(child);
->
-> But what about 'break' few lines below? The reference from last
-> of_get_next_child() should be also dropped because... or we should
-> remove this of_node_get() call.
-
-Actually, the break is OK.  It's on the inner for loop, not the
-for_each_child_of_node loop.  The for_each_child_of_node will still
-decrement the reference count in the normal way.
-
-julia
-
-> How about fixing also usage of for_each_available_child_of_node() in
-> regulator_of_get_init_data()?
->
-> Best regards,
-> Krzysztof
+>> How about fixing also usage of for_each_available_child_of_node() in
+>> regulator_of_get_init_data()?
+>>
+>> Best regards,
+>> Krzysztof
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
 > --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
+
