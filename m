@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 12 Oct 2015 05:35:44 +0000
+Date: Mon, 12 Oct 2015 12:44:31 +0000
 Subject: Re: [PATCH 4/5] regulator: of: add missing of_node_put
-Message-Id: <alpine.DEB.2.02.1510120735060.2041@localhost6.localdomain6>
+Message-Id: <alpine.DEB.2.10.1510121439440.2652@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr> <1444480254-14399-5-git-send-email-Julia.Lawall@lip6.fr> <CAJKOXPc7b4H8qFLRLR2jecA74BPJ-SNfY-GtfTVf=mfzrEeCtw@mail.gmail.com>
 In-Reply-To: <CAJKOXPc7b4H8qFLRLR2jecA74BPJ-SNfY-GtfTVf=mfzrEeCtw@mail.gmail.com>
@@ -57,20 +57,30 @@ On Mon, 12 Oct 2015, Krzysztof Kozlowski wrote:
 > >                                         "failed to parse DT for regulator %s\n",
 > >                                         child->name);
 > > +                               of_node_put(child);
-> 
+>
 > This looks good.
-> 
+>
 > >                                 return -EINVAL;
 > >                         }
 > >                         match->of_node = of_node_get(child);
-> 
+>
 > But what about 'break' few lines below? The reference from last
 > of_get_next_child() should be also dropped because... or we should
 > remove this of_node_get() call.
-> 
-> How about fixing also usage of for_each_available_child_of_node() in
-> regulator_of_get_init_data()?
 
-I'll check on all of this and resend.  Thanks for the feedback.
+Actually, the break is OK.  It's on the inner for loop, not the
+for_each_child_of_node loop.  The for_each_child_of_node will still
+decrement the reference count in the normal way.
 
 julia
+
+> How about fixing also usage of for_each_available_child_of_node() in
+> regulator_of_get_init_data()?
+>
+> Best regards,
+> Krzysztof
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
