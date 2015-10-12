@@ -1,75 +1,23 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Oct 2015 09:02:49 +0000
-Subject: [PATCH 2/4] of/platform: add missing of_node_put
-Message-Id: <1445504571-19838-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Date: Mon, 12 Oct 2015 11:17:18 +0000
+Subject: Re: [1/2] powerpc/nvram: Add missing kfree in error path
+Message-Id: <20151012111719.07ACD14029E@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <4fd8daff1bb5daad99d909aa75ff5c2702c4c490.1437117145.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Herring <robh+dt@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, benh@kernel.crashing.org, paulus@samba.org
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+On Fri, 2015-17-07 at 07:19:59 UTC, Christophe Jaillet wrote:
+> If 'nvram_write_header' fails, then 'new_part' should be freed, otherwise,
+> there is a memory leak.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
+Applied to powerpc next, thanks.
 
-// <smpl>
-@@
-local idexpression n;
-expression root,e;
-@@
+https://git.kernel.org/powerpc/c/7d523187173294f6ae3b86a4
 
- for_each_child_of_node(root,n) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/of/platform.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 7b33e03..64daf05 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -409,8 +409,10 @@ int of_platform_bus_probe(struct device_node *root,
- 		if (!of_match_node(matches, child))
- 			continue;
- 		rc = of_platform_bus_create(child, matches, NULL, parent, false);
--		if (rc)
-+		if (rc) {
-+			of_node_put(child);
- 			break;
-+		}
- 	}
- 
- 	of_node_put(root);
-@@ -451,8 +453,10 @@ int of_platform_populate(struct device_node *root,
- 
- 	for_each_child_of_node(root, child) {
- 		rc = of_platform_bus_create(child, matches, lookup, parent, true);
--		if (rc)
-+		if (rc) {
-+			of_node_put(child);
- 			break;
-+		}
- 	}
- 	of_node_set_flag(root, OF_POPULATED_BUS);
- 
-
+cheers
