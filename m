@@ -1,57 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 12 Oct 2015 20:43:16 +0000
-Subject: [PATCH 3/3] ARM: EXYNOS: delete unneeded of_node_put
-Message-Id: <1444682596-3065-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Date: Mon, 12 Oct 2015 22:40:36 +0000
+Subject: Re: [PATCH 3/3] ARM: EXYNOS: delete unneeded of_node_put
+Message-Id: <561C36E4.3050804@osg.samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1444682596-3065-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444682596-3065-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Device node iterators perform an of_node_put on each iteration, so putting
-an of_node_put before going around to the next iteration results in a
-double put.
+Hello Julia,
 
-Problem found using Coccinelle.
+On 10/12/2015 10:43 PM, Julia Lawall wrote:
+> Device node iterators perform an of_node_put on each iteration, so putting
+> an of_node_put before going around to the next iteration results in a
+> double put.
+> 
+> Problem found using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Krzysztof sent the same patch yesterday and was already applied:
+https://lkml.org/lkml/2015/10/12/688
 
----
- arch/arm/mach-exynos/pm_domains.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 4a87e86..7c21760 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -200,15 +200,15 @@ no_clk:
- 		args.args_count = 0;
- 		child_domain = of_genpd_get_from_provider(&args);
- 		if (IS_ERR(child_domain))
--			goto next_pd;
-+			continue;
- 
- 		if (of_parse_phandle_with_args(np, "power-domains",
- 					 "#power-domain-cells", 0, &args) != 0)
--			goto next_pd;
-+			continue;
- 
- 		parent_domain = of_genpd_get_from_provider(&args);
- 		if (IS_ERR(parent_domain))
--			goto next_pd;
-+			continue;
- 
- 		if (pm_genpd_add_subdomain(parent_domain, child_domain))
- 			pr_warn("%s failed to add subdomain: %s\n",
-@@ -216,8 +216,6 @@ no_clk:
- 		else
- 			pr_info("%s has as child subdomain: %s.\n",
- 				parent_domain->name, child_domain->name);
--next_pd:
--		of_node_put(np);
- 	}
- 
- 	return 0;
-
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
