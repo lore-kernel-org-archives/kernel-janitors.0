@@ -1,62 +1,57 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 25 Oct 2015 13:57:00 +0000
-Subject: [PATCH 1/8] net: thunderx: add missing of_node_put
-Message-Id: <1445781427-7110-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 12 Oct 2015 20:43:15 +0000
+Subject: [PATCH 2/3] soc: qcom: smd: delete unneeded of_node_put
+Message-Id: <1444682596-3065-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Kumar Gala <galak@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+Device node iterators perform an of_node_put on each iteration, so putting
+an of_node_put before a continue results in a double put.
 
-A simplified version of the semantic patch that fixes this problem is as
+A simplified version of the semantic match that finds this problem is as
 follows (http://coccinelle.lip6.fr):
 
 // <smpl>
 @@
-local idexpression r.n;
-expression r,e;
+expression root,e;
+local idexpression child;
+iterator i;
 @@
 
- for_each_child_of_node(r,n) {
+ i(..., child, ...) {
+   ... when != of_node_get(child)
+*  of_node_put(child);
    ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
+*  continue;
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/net/ethernet/cavium/thunder/thunder_bgx.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/soc/qcom/smd.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-index 574c492..180aa9f 100644
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-@@ -977,8 +977,10 @@ static int bgx_init_of_phy(struct bgx *bgx)
- 		SET_NETDEV_DEV(&bgx->lmac[lmac].netdev, &bgx->pdev->dev);
- 		bgx->lmac[lmac].lmacid = lmac;
- 		lmac++;
--		if (lmac = MAX_LMAC_PER_BGX)
-+		if (lmac = MAX_LMAC_PER_BGX) {
-+			of_node_put(np_child);
- 			break;
-+		}
- 	}
- 	return 0;
- }
+diff --git a/drivers/soc/qcom/smd.c b/drivers/soc/qcom/smd.c
+index 6da0463..8c7a489 100644
+--- a/drivers/soc/qcom/smd.c
++++ b/drivers/soc/qcom/smd.c
+@@ -916,10 +916,8 @@ static struct device_node *qcom_smd_match_channel(struct device_node *edge_node,
+ 	for_each_available_child_of_node(edge_node, child) {
+ 		key = "qcom,smd-channels";
+ 		ret = of_property_read_string(child, key, &name);
+-		if (ret) {
+-			of_node_put(child);
++		if (ret)
+ 			continue;
+-		}
+ 
+ 		if (strcmp(name, channel) = 0)
+ 			return child;
 
