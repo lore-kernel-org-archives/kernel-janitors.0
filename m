@@ -1,46 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Oct 2015 16:18:02 +0000
-Subject: Re: [PATCH 9/9] pinctrl: at91: add missing of_node_put
-Message-Id: <CACRpkdYOMyhz_6G15UkLbp5Jo=7k98_i8p6NUgzOev=gCWNyDQ@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 12 Oct 2015 20:43:16 +0000
+Subject: [PATCH 3/3] ARM: EXYNOS: delete unneeded of_node_put
+Message-Id: <1444682596-3065-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445697755-26341-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445697755-26341-10-git-send-email-Julia.Lawall@lip6.fr>
+References: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Sat, Oct 24, 2015 at 4:42 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+Device node iterators perform an of_node_put on each iteration, so putting
+an of_node_put before going around to the next iteration results in a
+double put.
 
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> a break out of the loop requires an of_node_put.
->
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
->
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
->
->  for_each_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Problem found using Coccinelle.
 
-Patch applied with Ludovic's ACK.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yours,
-Linus Walleij
+---
+ arch/arm/mach-exynos/pm_domains.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 4a87e86..7c21760 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -200,15 +200,15 @@ no_clk:
+ 		args.args_count = 0;
+ 		child_domain = of_genpd_get_from_provider(&args);
+ 		if (IS_ERR(child_domain))
+-			goto next_pd;
++			continue;
+ 
+ 		if (of_parse_phandle_with_args(np, "power-domains",
+ 					 "#power-domain-cells", 0, &args) != 0)
+-			goto next_pd;
++			continue;
+ 
+ 		parent_domain = of_genpd_get_from_provider(&args);
+ 		if (IS_ERR(parent_domain))
+-			goto next_pd;
++			continue;
+ 
+ 		if (pm_genpd_add_subdomain(parent_domain, child_domain))
+ 			pr_warn("%s failed to add subdomain: %s\n",
+@@ -216,8 +216,6 @@ no_clk:
+ 		else
+ 			pr_info("%s has as child subdomain: %s.\n",
+ 				parent_domain->name, child_domain->name);
+-next_pd:
+-		of_node_put(np);
+ 	}
+ 
+ 	return 0;
+
