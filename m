@@ -1,74 +1,29 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 26 Oct 2015 01:20:36 +0000
-Subject: Re: [PATCH 5/8] [media] v4l: xilinx-vipp: add missing of_node_put
-Message-Id: <8217156.HJH9oYGKMG@avalon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Oct 2015 07:09:19 +0000
+Subject: [patch] ASoC: wm8960: harmless underflow in wm8960_put_deemph()
+Message-Id: <20151013070919.GD31537@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445781427-7110-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445781427-7110-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Zidan Wang <zidan.wang@freescale.com>, Lars-Peter Clausen <lars@metafoo.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+We should only accept "deemph" values of zero and one, but by mistake we
+accept negatives as well.  It's harmless but let's clean it up anyway.
 
-Thank you for the patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Sunday 25 October 2015 14:57:04 Julia Lawall wrote:
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> a break out of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> 
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/platform/xilinx/xilinx-vipp.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c
-> b/drivers/media/platform/xilinx/xilinx-vipp.c index 7b7cb9c..b9bf24f 100644
-> --- a/drivers/media/platform/xilinx/xilinx-vipp.c
-> +++ b/drivers/media/platform/xilinx/xilinx-vipp.c
-> @@ -476,8 +476,10 @@ static int xvip_graph_dma_init(struct
-> xvip_composite_device *xdev)
-> 
->  	for_each_child_of_node(ports, port) {
->  		ret = xvip_graph_dma_init_one(xdev, port);
-> -		if (ret < 0)
-> +		if (ret < 0) {
-> +			of_node_put(port);
->  			return ret;
-> +		}
->  	}
-> 
->  	return 0;
-
--- 
-Regards,
-
-Laurent Pinchart
-
+diff --git a/sound/soc/codecs/wm8960.c b/sound/soc/codecs/wm8960.c
+index e3b7d0c..dc47c2f 100644
+--- a/sound/soc/codecs/wm8960.c
++++ b/sound/soc/codecs/wm8960.c
+@@ -201,7 +201,7 @@ static int wm8960_put_deemph(struct snd_kcontrol *kcontrol,
+ {
+ 	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct wm8960_priv *wm8960 = snd_soc_codec_get_drvdata(codec);
+-	int deemph = ucontrol->value.integer.value[0];
++	unsigned int deemph = ucontrol->value.integer.value[0];
+ 
+ 	if (deemph > 1)
+ 		return -EINVAL;
