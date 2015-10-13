@@ -1,26 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 02 Oct 2015 21:48:49 +0000
-Subject: Re: [PATCH] gpio: max730x: eliminate double free
-Message-Id: <CACRpkda+YTx2pD7cXeYen+jXPxAYQWM0PNqOeJxJGfxLFG3mLA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Oct 2015 07:08:57 +0000
+Subject: [patch] ASoC: wm8731: harmless underflow in wm8731_put_deemph()
+Message-Id: <20151013070857.GC31537@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1443298700-28079-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1443298700-28079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Lars-Peter Clausen <lars@metafoo.de>, Fabio Estevam <fabio.estevam@freescale.com>, Songjun Wu <songjun.wu@atmel.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Axel Lin <axel.lin@ingics.com>, Sergey Kiselev <sergey.kiselev@intel.com>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Sat, Sep 26, 2015 at 1:18 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+The code tries to verify that "deemph" is zero or one, but it fails to
+account for that it can be negative.  It's harmless because negatives
+are treated the same as one, but we should fix it just to silence the
+static checker warning.
 
-> The function __max730x_remove is called from the remove functions of
-> drivers/gpio/gpio-max7300.c and drivers/gpio/gpio-max7301.c.  In both
-> cases, the probe function allocates ts using devm_kzalloc.  Explicitly
-> freeing such a value with kfree will cause a double free.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied with Alex' review-tag.
-
-Yours,
-Linus Walleij
+diff --git a/sound/soc/codecs/wm8731.c b/sound/soc/codecs/wm8731.c
+index ace8645..07cf1bd 100644
+--- a/sound/soc/codecs/wm8731.c
++++ b/sound/soc/codecs/wm8731.c
+@@ -132,7 +132,7 @@ static int wm8731_put_deemph(struct snd_kcontrol *kcontrol,
+ {
+ 	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct wm8731_priv *wm8731 = snd_soc_codec_get_drvdata(codec);
+-	int deemph = ucontrol->value.integer.value[0];
++	unsigned int deemph = ucontrol->value.integer.value[0];
+ 	int ret = 0;
+ 
+ 	if (deemph > 1)
