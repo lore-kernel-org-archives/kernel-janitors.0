@@ -1,50 +1,29 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 23:15:28 +0000
-Subject: Re: [PATCH 3/5] clk: imx27: add missing of_node_put
-Message-Id: <20151021231528.GJ19782@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Oct 2015 07:10:48 +0000
+Subject: [patch] ASoC: wm8955: harmless underflow in wm8955_put_deemph()
+Message-Id: <20151013071048.GG31537@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445460100-26727-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445460100-26727-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Lars-Peter Clausen <lars@metafoo.de>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Axel Lin <axel.lin@ingics.com>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On 10/21, Julia Lawall wrote:
-> for_each_compatible_node performs an of_node_get on each iteration, so a
-> break out of the loop requires an of_node_put.
-> 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> local idexpression n;
-> expression e;
-> @@
-> 
->  for_each_compatible_node(n,...) {
->    ...
-> (
->    of_node_put(n);
-> |
->    e = n
-> |
-> +  of_node_put(n);
-> ?  break;
-> )
->    ...
->  }
-> ... when != n
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+Valid values for "deemph" are zero and one, but we mistakenly allow
+negative values as well.  It's harmless but we may as well clean it up.
 
-Applied to clk-next
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/sound/soc/codecs/wm8955.c b/sound/soc/codecs/wm8955.c
+index 12e4435..9db00d5 100644
+--- a/sound/soc/codecs/wm8955.c
++++ b/sound/soc/codecs/wm8955.c
+@@ -402,7 +402,7 @@ static int wm8955_put_deemph(struct snd_kcontrol *kcontrol,
+ {
+ 	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+ 	struct wm8955_priv *wm8955 = snd_soc_codec_get_drvdata(codec);
+-	int deemph = ucontrol->value.integer.value[0];
++	unsigned int deemph = ucontrol->value.integer.value[0];
+ 
+ 	if (deemph > 1)
+ 		return -EINVAL;
