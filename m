@@ -1,40 +1,25 @@
-From: Tillmann Heidsieck <theidsieck@leenox.de>
-Date: Sat, 10 Oct 2015 19:47:18 +0000
-Subject: [PATCH 1/2] atm: iphase: return -ENOMEM instead of -1 in case of failed kmalloc()
-Message-Id: <1444506439-10414-2-git-send-email-theidsieck@leenox.de>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 13 Oct 2015 02:56:48 +0000
+Subject: Re: [PATCH 1/2] atm: iphase: return -ENOMEM instead of -1 in case of failed kmalloc()
+Message-Id: <20151012.195648.1985012794848944824.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
-In-Reply-To: <1444506439-10414-1-git-send-email-theidsieck@leenox.de>
+	<1444506439-10414-2-git-send-email-theidsieck@leenox.de>
+In-Reply-To: <1444506439-10414-2-git-send-email-theidsieck@leenox.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chas Williams <3chas3@gmail.com>
-Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tillmann Heidsieck <theidsieck@leenox.de>
+To: theidsieck@leenox.de
+Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Smatch complains about returning hard coded error codes, silence this
-warning.
+From: Tillmann Heidsieck <theidsieck@leenox.de>
+Date: Sat, 10 Oct 2015 21:47:18 +0200
 
-drivers/atm/iphase.c:115 ia_enque_rtn_q() warn: returning -1 instead of -ENOMEM is sloppy
+> Smatch complains about returning hard coded error codes, silence this
+> warning.
+> 
+> drivers/atm/iphase.c:115 ia_enque_rtn_q() warn: returning -1 instead of -ENOMEM is sloppy
+> 
+> Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
 
-Signed-off-by: Tillmann Heidsieck <theidsieck@leenox.de>
----
- drivers/atm/iphase.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
-index 65e65903faa0..d5010d7a99c3 100644
---- a/drivers/atm/iphase.c
-+++ b/drivers/atm/iphase.c
-@@ -112,7 +112,8 @@ static void ia_enque_head_rtn_q (IARTN_Q *que, IARTN_Q * data)
- 
- static int ia_enque_rtn_q (IARTN_Q *que, struct desc_tbl_t data) {
-    IARTN_Q *entry = kmalloc(sizeof(*entry), GFP_ATOMIC);
--   if (!entry) return -1;
-+   if (!entry)
-+      return -ENOMEM;
-    entry->data = data;
-    entry->next = NULL;
-    if (que->next = NULL) 
--- 
-2.6.1
-
+Applied to net-next.
