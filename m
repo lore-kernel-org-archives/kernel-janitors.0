@@ -1,31 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 13 Oct 2015 07:08:18 +0000
-Subject: [patch] ASoC: wm8904: harmless underflow in wm8904_put_deemph()
-Message-Id: <20151013070818.GB31537@mwanda>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Date: Tue, 13 Oct 2015 12:27:11 +0000
+Subject: Re: [patch] ASoC: wm8904: harmless underflow in wm8904_put_deemph()
+Message-Id: <20151013122711.GF8805@ck-lbox>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20151013070818.GB31537@mwanda>
+In-Reply-To: <20151013070818.GB31537@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Lars-Peter Clausen <lars@metafoo.de>, Bo Shen <voice.shen@atmel.com>, Alexander Morozov <linux@meltdown.ru>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Fabio Estevam <fabio.estevam@freescale.com>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Fabio Estevam <fabio.estevam@freescale.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Alexander Morozov <linux@meltdown.ru>, Mark Brown <broonie@kernel.org>, Bo Shen <voice.shen@atmel.com>
 
-We try to check that "deemph" is zero or one, but because of an
-underflow bug, it can also be negative.  It's fine, negative values are
-handled as non-zero.  But it's messy and static checkers complain so
-let's fix it.
+On Tue, Oct 13, 2015 at 10:08:18AM +0300, Dan Carpenter wrote:
+> We try to check that "deemph" is zero or one, but because of an
+> underflow bug, it can also be negative.  It's fine, negative values are
+> handled as non-zero.  But it's messy and static checkers complain so
+> let's fix it.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
-index b783743..2aa23f1 100644
---- a/sound/soc/codecs/wm8904.c
-+++ b/sound/soc/codecs/wm8904.c
-@@ -534,7 +534,7 @@ static int wm8904_put_deemph(struct snd_kcontrol *kcontrol,
- {
- 	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
- 	struct wm8904_priv *wm8904 = snd_soc_codec_get_drvdata(codec);
--	int deemph = ucontrol->value.integer.value[0];
-+	unsigned int deemph = ucontrol->value.integer.value[0];
- 
- 	if (deemph > 1)
- 		return -EINVAL;
+Thanks,
+Charles
