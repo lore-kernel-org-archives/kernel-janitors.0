@@ -1,47 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Oct 2015 13:51:23 +0000
-Subject: [patch] staging: lustre: potential underflow in libcfs_kkuc_group_add()
-Message-Id: <20151029135122.GA7709@mwanda>
+Date: Tue, 13 Oct 2015 12:52:06 +0000
+Subject: [patch] misc: mic/scif: re-take a lock on error path
+Message-Id: <20151013125206.GA2524@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150106095708.GB8698@mwanda>
-In-Reply-To: <20150106095708.GB8698@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: Nikhil Rao <nikhil.rao@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sudeep Dutt <sudeep.dutt@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker says that "group" is a user controlled number that can
-be negative leading to an array underflow.  I have looked at it, and I'm
-not an expert enough in lustre to say for sure if it is really a bug.
-Anyway, it's simple enough to make the variable unsigned which pleases
-the static checker and makes it easier to audit.
+The caller expects that we take this lock again before returning
+otherwise it you get double unlocks and races.
 
+Fixes: ba612aa8b487 ('misc: mic: SCIF memory registration and unregistration')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
-index a989d26..41f3d81 100644
---- a/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
-@@ -91,7 +91,7 @@ typedef int (*libcfs_kkuc_cb_t)(__u32 data, void *cb_arg);
- /* Kernel methods */
- int libcfs_kkuc_msg_put(struct file *fp, void *payload);
- int libcfs_kkuc_group_put(int group, void *payload);
--int libcfs_kkuc_group_add(struct file *fp, int uid, int group,
-+int libcfs_kkuc_group_add(struct file *fp, int uid, unsigned int group,
- 				 __u32 data);
- int libcfs_kkuc_group_rem(int uid, int group);
- int libcfs_kkuc_group_foreach(int group, libcfs_kkuc_cb_t cb_func,
-diff --git a/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c b/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
-index ad661a3..d8230ae 100644
---- a/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
-+++ b/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
-@@ -110,7 +110,8 @@ static DECLARE_RWSEM(kg_sem);
-  * @param uid identifier for this receiver
-  * @param group group number
-  */
--int libcfs_kkuc_group_add(struct file *filp, int uid, int group, __u32 data)
-+int libcfs_kkuc_group_add(struct file *filp, int uid, unsigned int group,
-+			  __u32 data)
- {
- 	struct kkuc_reg *reg;
- 
+diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+index e288996..980ef13 100644
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -680,6 +680,7 @@ int scif_unregister_window(struct scif_window *window)
+ 			}
+ 		} else {
+ 			/* Return ENXIO since unregistration is in progress */
++			mutex_lock(&ep->rma_info.rma_lock);
+ 			return -ENXIO;
+ 		}
+ retry:
