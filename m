@@ -1,25 +1,31 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Date: Tue, 13 Oct 2015 12:27:11 +0000
-Subject: Re: [patch] ASoC: wm8904: harmless underflow in wm8904_put_deemph()
-Message-Id: <20151013122711.GF8805@ck-lbox>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Oct 2015 07:07:56 +0000
+Subject: [patch] ALSA: pcm: harmless underflow issue in snd_pcm_sw_params()
+Message-Id: <20151013070756.GA31537@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151013070818.GB31537@mwanda>
-In-Reply-To: <20151013070818.GB31537@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Fabio Estevam <fabio.estevam@freescale.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Alexander Morozov <linux@meltdown.ru>, Mark Brown <broonie@kernel.org>, Bo Shen <voice.shen@atmel.com>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 13, 2015 at 10:08:18AM +0300, Dan Carpenter wrote:
-> We try to check that "deemph" is zero or one, but because of an
-> underflow bug, it can also be negative.  It's fine, negative values are
-> handled as non-zero.  But it's messy and static checkers complain so
-> let's fix it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"params->tstamp_mode" is a user supplied int.  We cap the maximum but
+allow negative values by mistake.  It's harmless but static checkers
+complain.
 
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Charles
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 75888dd..4863af5 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -650,7 +650,8 @@ static int snd_pcm_sw_params(struct snd_pcm_substream *substream,
+ 	}
+ 	snd_pcm_stream_unlock_irq(substream);
+ 
+-	if (params->tstamp_mode > SNDRV_PCM_TSTAMP_LAST)
++	if (params->tstamp_mode < 0 ||
++	    params->tstamp_mode > SNDRV_PCM_TSTAMP_LAST)
+ 		return -EINVAL;
+ 	if (params->proto >= SNDRV_PROTOCOL_VERSION(2, 0, 12) &&
+ 	    params->tstamp_type > SNDRV_PCM_TSTAMP_TYPE_LAST)
