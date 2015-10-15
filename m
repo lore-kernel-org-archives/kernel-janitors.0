@@ -1,52 +1,30 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 23:14:58 +0000
-Subject: Re: [PATCH 2/5] clk: si5351: add missing of_node_put
-Message-Id: <20151021231458.GI19782@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Oct 2015 07:01:42 +0000
+Subject: [patch] ALSA: oss: underflow in snd_mixer_oss_proc_write()
+Message-Id: <20151015070141.GA6422@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445460100-26727-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445460100-26727-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>, Jie Yang <yang.jie@intel.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On 10/21, Julia Lawall wrote:
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> a break out of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> The resulting puts were manually moved to the end of the function for
-> conciseness.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+We cap the upper bound of "idx" but not the negative side.  Let's make
+it unsigned to fix this.
 
-Applied to clk-next
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/sound/core/oss/mixer_oss.c b/sound/core/oss/mixer_oss.c
+index a99f720..7a8c79d 100644
+--- a/sound/core/oss/mixer_oss.c
++++ b/sound/core/oss/mixer_oss.c
+@@ -1177,7 +1177,8 @@ static void snd_mixer_oss_proc_write(struct snd_info_entry *entry,
+ 	struct snd_mixer_oss *mixer = entry->private_data;
+ 	char line[128], str[32], idxstr[16];
+ 	const char *cptr;
+-	int ch, idx;
++	unsigned int idx;
++	int ch;
+ 	struct snd_mixer_oss_assign_table *tbl;
+ 	struct slot *slot;
+ 
