@@ -1,23 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 27 Oct 2015 04:52:32 +0000
-Subject: Re: [PATCH 0/8] add missing of_node_put
-Message-Id: <20151026.220848.1827888098875824300.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Oct 2015 18:25:15 +0000
+Subject: [patch] iommu/vt-d: shift wrapping bug in prq_event_thread()
+Message-Id: <20151015182515.GE3163@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Joerg Roedel <joro@8bytes.org>, David Woodhouse <David.Woodhouse@intel.com>
+Cc: iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 25 Oct 2015 14:56:59 +0100
+The "req->addr" variable is a bit field declared as "u64 addr:52;".
+The "address" variable is a u64.  We need to cast "req->addr" to a u64
+before the shift or the result is truncated to 52 bits.
 
-> The various for_each device_node iterators performs an of_node_get on each
-> iteration, so a break out of the loop requires an of_node_put.
-> 
-> The complete semantic patch that fixes this problem is
-> (http://coccinelle.lip6.fr):
- ...
+Fixes: 0b9252a34858 ('iommu/vt-d: Implement page request handling')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Also does this code work if PAGE_SHIFT is more than 12?  (I am a newbie
+so this is not rhetorical, I don't know the answer).
 
-Series applied, thanks a lot Julia.
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index ba88889..19aa67b 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -395,7 +395,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 		req = &iommu->prq[head / sizeof(*req)];
+ 
+ 		result = QI_RESP_INVALID;
+-		address = req->addr << PAGE_SHIFT;
++		address = (u64)req->addr << PAGE_SHIFT;
+ 		if (!req->pasid_present) {
+ 			pr_err("%s: Page request without PASID: %08llx %08llx\n",
+ 			       iommu->name, ((unsigned long long *)req)[0],
