@@ -1,22 +1,31 @@
-From: Michal Marek <mmarek@suse.com>
-Date: Mon, 26 Oct 2015 21:39:50 +0000
-Subject: Re: [PATCH] cocinelle: iterators: semantic patch to delete unneeded of_node_put
-Message-Id: <562E9DA6.1040702@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Oct 2015 18:18:29 +0000
+Subject: [patch] ALSA: firewire-tascam: off by one in identify_model()
+Message-Id: <20151015181828.GC3163@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445544719-11953-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445544719-11953-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Clemens Ladisch <clemens@ladisch.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Dne 22.10.2015 v 22:11 Julia Lawall napsal(a):
-> Device node iterators perform an of_node_put on each iteration, so putting
-> an of_node_put before a continue results in a double put.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+In the original code, we potentially put a NUL character in model[8] and
+it caused a static checker warning.  We can put the NUL in model[7]
+instead.
 
-Applied to kbuild.git#misc, thanks.
+Fixes: 53b3ffee7885 ('ALSA: firewire-tascam: change device probing processing')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Michal
-
+diff --git a/sound/firewire/tascam/tascam.c b/sound/firewire/tascam/tascam.c
+index c6747a4..6ef2bcc 100644
+--- a/sound/firewire/tascam/tascam.c
++++ b/sound/firewire/tascam/tascam.c
+@@ -51,7 +51,7 @@ static int identify_model(struct snd_tscm *tscm)
+ 	}
+ 
+ 	/* Pick up model name from certain addresses. */
+-	for (i = 0; i < 8; i++) {
++	for (i = 0; i < 7; i++) {
+ 		c = config_rom[28 + i / 4] >> (24 - 8 * (i % 4));
+ 		if (c = '\0')
+ 			break;
