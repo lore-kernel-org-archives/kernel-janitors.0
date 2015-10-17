@@ -1,50 +1,30 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 23:15:46 +0000
-Subject: Re: [PATCH 4/5] clk: imx31: add missing of_node_put
-Message-Id: <20151021231546.GK19782@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 17 Oct 2015 05:18:47 +0000
+Subject: [patch] iommu/vt-d: fix a loop in prq_event_thread()
+Message-Id: <20151017051847.GA13372@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445460100-26727-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445460100-26727-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, David Woodhouse <David.Woodhouse-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 10/21, Julia Lawall wrote:
-> for_each_compatible_node performs an of_node_get on each iteration, so a
-> break out of the loop requires an of_node_put.
-> 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> local idexpression n;
-> expression e;
-> @@
-> 
->  for_each_compatible_node(n,...) {
->    ...
-> (
->    of_node_put(n);
-> |
->    e = n
-> |
-> +  of_node_put(n);
-> ?  break;
-> )
->    ...
->  }
-> ... when != n
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+There is an extra semi-colon on this if statement so we always break on
+the first iteration.
 
-Applied to clk-next
+Fixes: 0204a4960982 ('iommu/vt-d: Add callback to device driver on page faults')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 99a7803..dd070e6 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -536,7 +536,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 		/* Accounting for major/minor faults? */
+ 		rcu_read_lock();
+ 		list_for_each_entry_rcu(sdev, &svm->devs, list) {
+-			if (sdev->sid = PCI_DEVID(req->bus, req->devfn));
++			if (sdev->sid = PCI_DEVID(req->bus, req->devfn))
+ 				break;
+ 		}
+ 		/* Other devices can go away, but the drivers are not permitted
