@@ -1,45 +1,64 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Mon, 12 Oct 2015 18:52:55 +0000
-Subject: Re: [PATCH 2/2] clk: tegra: delete unneeded of_node_put
-Message-Id: <20151012185255.GC26883@codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 17 Oct 2015 17:23:24 +0000
+Subject: [PATCH 1/2] coccinelle: ifnullfree: improve and extend ifnullfree
+Message-Id: <1445102605-22408-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
- <1444412861-2580-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444412861-2580-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, kernel-janitors@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: cocci@systeme.lip6.fr
 
-On 10/09, Julia Lawall wrote:
-> for_each_child_of_node performs an of_node_put on each iteration, so
-> putting an of_node_put before a continue results in a double put.
-> 
-> The semantic match that finds this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> iterator name for_each_child_of_node;
-> @@
-> 
->  for_each_child_of_node(root, child) {
->    ... when != of_node_get(child)
-> *  of_node_put(child);
->    ...
-> *  continue;
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+Adjust tests to compare against NULL, to match cases that explicitly make
+that comparison.
 
-Applied to clk-next
+Remove removal and re-addition of freeing functions.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Add position variable on usb_free_urb in the non-patch case.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ scripts/coccinelle/free/ifnullfree.cocci |   18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/scripts/coccinelle/free/ifnullfree.cocci b/scripts/coccinelle/free/ifnullfree.cocci
+index a42d70b..d4a072d 100644
+--- a/scripts/coccinelle/free/ifnullfree.cocci
++++ b/scripts/coccinelle/free/ifnullfree.cocci
+@@ -16,19 +16,15 @@ virtual context
+ @r2 depends on patch@
+ expression E;
+ @@
+-- if (E)
++- if (E != NULL)
+ (
+--	kfree(E);
+-+ kfree(E);
++  kfree(E);
+ |
+--	debugfs_remove(E);
+-+ debugfs_remove(E);
++  debugfs_remove(E);
+ |
+--	debugfs_remove_recursive(E);
+-+ debugfs_remove_recursive(E);
++  debugfs_remove_recursive(E);
+ |
+--	usb_free_urb(E);
+-+ usb_free_urb(E);
++  usb_free_urb(E);
+ )
+ 
+ @r depends on context || report || org @
+@@ -36,8 +32,8 @@ expression E;
+ position p;
+ @@
+ 
+-* if (E)
+-*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
++* if (E != NULL)
++*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb@p\)(E);
+ 
+ @script:python depends on org@
+ p << r.p;
+
