@@ -1,64 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 17 Oct 2015 17:23:24 +0000
-Subject: [PATCH 1/2] coccinelle: ifnullfree: improve and extend ifnullfree
-Message-Id: <1445102605-22408-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Oct 2015 09:55:38 +0000
+Subject: Re: [PATCH 1/2] coccinelle: ifnullfree: improve and extend ifnullfree
+Message-Id: <56236C9A.8060906@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1445102605-22408-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445102605-22408-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-Adjust tests to compare against NULL, to match cases that explicitly make
-that comparison.
+> Remove removal and re-addition of freeing functions.
 
-Remove removal and re-addition of freeing functions.
+I find such a wording confusing for a commit message.
 
-Add position variable on usb_free_urb in the non-patch case.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> Add position variable on usb_free_urb in the non-patch case.
 
----
- scripts/coccinelle/free/ifnullfree.cocci |   18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+Is it interesting that this fix corresponds to a bug report from 2014-08-09?
+https://lkml.org/lkml/2014/8/9/33
+https://systeme.lip6.fr/pipermail/cocci/2014-August/001038.html
 
-diff --git a/scripts/coccinelle/free/ifnullfree.cocci b/scripts/coccinelle/free/ifnullfree.cocci
-index a42d70b..d4a072d 100644
---- a/scripts/coccinelle/free/ifnullfree.cocci
-+++ b/scripts/coccinelle/free/ifnullfree.cocci
-@@ -16,19 +16,15 @@ virtual context
- @r2 depends on patch@
- expression E;
- @@
--- if (E)
-+- if (E != NULL)
- (
---	kfree(E);
--+ kfree(E);
-+  kfree(E);
- |
---	debugfs_remove(E);
--+ debugfs_remove(E);
-+  debugfs_remove(E);
- |
---	debugfs_remove_recursive(E);
--+ debugfs_remove_recursive(E);
-+  debugfs_remove_recursive(E);
- |
---	usb_free_urb(E);
--+ usb_free_urb(E);
-+  usb_free_urb(E);
- )
- 
- @r depends on context || report || org @
-@@ -36,8 +32,8 @@ expression E;
- position p;
- @@
- 
--* if (E)
--*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
-+* if (E != NULL)
-+*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb@p\)(E);
- 
- @script:python depends on org@
- p << r.p;
 
+>  @r depends on context || report || org @
+> @@ -36,8 +32,8 @@ expression E;
+>  position p;
+>  @@
+>  
+> -* if (E)
+> -*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
+> +* if (E != NULL)
+> +*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb@p\)(E);
+
+How do you think about to extend the shown function name pattern
+also with suffixes like the following (besides "destroy")?
+* put
+* release
+* unref
+* unregister
+
+Regards,
+Markus
