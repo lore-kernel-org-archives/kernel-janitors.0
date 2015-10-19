@@ -1,57 +1,34 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Sat, 10 Oct 2015 21:15:43 +0000
-Subject: Re: [PATCH 5/5] arm: add missing of_node_put
-Message-Id: <8965654.Mi98YpI4rM@wuerfel>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Oct 2015 11:29:27 +0000
+Subject: [patch v2] ALSA: firewire-tascam: off by one in identify_model()
+Message-Id: <20151019112927.GA31691@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
- <8655275.vMqHQfLN9g@wuerfel>
- <alpine.DEB.2.02.1510102307570.2053@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1510102307570.2053@localhost6.localdomain6>
+References: <5622EF20.6010708@sakamocchi.jp>
+In-Reply-To: <5622EF20.6010708@sakamocchi.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Saturday 10 October 2015 23:10:06 Julia Lawall wrote:
-> On Sat, 10 Oct 2015, Arnd Bergmann wrote:
-> 
-> > On Saturday 10 October 2015 14:30:54 Julia Lawall wrote:
-> > > diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
-> > > index 11c54de..432ff34 100644
-> > > --- a/arch/arm/kernel/devtree.c
-> > > +++ b/arch/arm/kernel/devtree.c
-> > > @@ -143,6 +143,7 @@ void __init arm_dt_init_cpu_maps(void)
-> > >                                                "max cores %u, capping them\n",
-> > >                                                cpuidx, nr_cpu_ids)) {
-> > >                         cpuidx = nr_cpu_ids;
-> > > +                       of_node_put(cpu);
-> > >                         break;
-> > >                 }
-> > > 
-> > 
-> > The same for_each_child_of_node() loop has three 'return' statements'
-> > aside from the 'break' statement here. I think you should change your
-> > semantic patch to cover both cases.
-> 
-> It was intended to,
+Let's leave space for the NUL char otherwise the static checkers
+complain that we go beyond the end of the array.
 
-Ok, I saw that just after replying...
+Fixes: 53b3ffee7885 ('ALSA: firewire-tascam: change device probing processing') 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: I truncated the last char in v1 instead of making the buffer larger
 
-> but it seems that it's not working on the case where 
-> there is no argument to return.
-
-> In any case, it's an opportunity to ask a question.  Would one want a 
-> of_node_put in front of every return, or should the returns become gotos, 
-> to a single of_node_put after the current end of the function?
-
-The two styles that I see in code I consider particularly clean are:
-
-- have only one return statement in the function and use goto for
-  error handling
-
-- avoid the goto and have the early return.
-
-Mixing the two tends to make the function less readable, so I'd only
-change it to use gotos if it can be done nicely for all cases.
-
-	Arnd
+diff --git a/sound/firewire/tascam/tascam.c b/sound/firewire/tascam/tascam.c
+index c6747a4..79cb9e9 100644
+--- a/sound/firewire/tascam/tascam.c
++++ b/sound/firewire/tascam/tascam.c
+@@ -40,7 +40,7 @@ static int identify_model(struct snd_tscm *tscm)
+ {
+ 	struct fw_device *fw_dev = fw_parent_device(tscm->unit);
+ 	const u32 *config_rom = fw_dev->config_rom;
+-	char model[8];
++	char model[9];
+ 	unsigned int i;
+ 	u8 c;
+ 
