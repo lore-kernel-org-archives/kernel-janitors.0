@@ -1,80 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Oct 2015 09:02:51 +0000
-Subject: [PATCH 4/4] of/irq: add missing of_node_put
-Message-Id: <1445504571-19838-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Oct 2015 11:19:01 +0000
+Subject: [patch 2/2 v2] misc: mic/scif: fix wrap around tests
+Message-Id: <20151019111901.GA29692@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Herring <robh+dt@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ashutosh Dixit <ashutosh.dixit@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
+Cc: Nikhil Rao <nikhil.rao@intel.com>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
 
-for_each_matching_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+Signed integer overflow is undefined.  Also I added a check for
+"(offset < 0)" in scif_unregister() because that makes it match the
+other conditions and because I didn't want to subtract a negative.
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-local idexpression n;
-expression e;
-identifier l;
-@@
-
- for_each_matching_node(n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  goto l;
-)
-   ...
- }
-...
-l: ... when != n
-// </smpl>
-
-Besides the issue found by the semantic patch, this code also stores the
-device_node value in a list, which requires an of_node_get, and then cleans
-up the list on exit from the function, which requires an of_node_put.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: ba612aa8b487 ('misc: mic: SCIF memory registration and unregistration')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/of/irq.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+I reversed a condition in the first version of this patch.
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 171798d..902b89b 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -501,10 +501,12 @@ void __init of_irq_init(const struct of_device_id *matches)
- 		 * pointer, interrupt-parent device_node etc.
- 		 */
- 		desc = kzalloc(sizeof(*desc), GFP_KERNEL);
--		if (WARN_ON(!desc))
-+		if (WARN_ON(!desc)) {
-+			of_node_put(np);
- 			goto err;
-+		}
+diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+index bc2dccb..245ea9b 100644
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -1510,7 +1510,7 @@ off_t scif_register_pinned_pages(scif_epd_t epd,
+ 	if ((map_flags & SCIF_MAP_FIXED) &&
+ 	    ((ALIGN(offset, PAGE_SIZE) != offset) ||
+ 	    (offset < 0) ||
+-	    (offset + (off_t)len < offset)))
++	    (len > LONG_MAX - offset)))
+ 		return -EINVAL;
  
--		desc->dev = np;
-+		desc->dev = of_node_get(np);
- 		desc->interrupt_parent = of_irq_find_parent(np);
- 		if (desc->interrupt_parent = np)
- 			desc->interrupt_parent = NULL;
-@@ -575,6 +577,7 @@ void __init of_irq_init(const struct of_device_id *matches)
- err:
- 	list_for_each_entry_safe(desc, temp_desc, &intc_desc_list, list) {
- 		list_del(&desc->list);
-+		of_node_put(desc->dev);
- 		kfree(desc);
- 	}
- }
-
+ 	might_sleep();
+@@ -1613,7 +1613,7 @@ off_t scif_register(scif_epd_t epd, void *addr, size_t len, off_t offset,
+ 	if ((map_flags & SCIF_MAP_FIXED) &&
+ 	    ((ALIGN(offset, PAGE_SIZE) != offset) ||
+ 	    (offset < 0) ||
+-	    (offset + (off_t)len < offset)))
++	    (len > LONG_MAX - offset)))
+ 		return -EINVAL;
+ 
+ 	/* Unsupported protection requested */
+@@ -1731,7 +1731,8 @@ scif_unregister(scif_epd_t epd, off_t offset, size_t len)
+ 
+ 	/* Offset is not page aligned or offset+len wraps around */
+ 	if ((ALIGN(offset, PAGE_SIZE) != offset) ||
+-	    (offset + (off_t)len < offset))
++	    (offset < 0) ||
++	    (len > LONG_MAX - offset))
+ 		return -EINVAL;
+ 
+ 	err = scif_verify_epd(ep);
