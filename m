@@ -1,47 +1,29 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Fri, 30 Oct 2015 15:44:14 +0000
-Subject: Re: [patch] [media] uvcvideo: small cleanup in uvc_video_clock_update()
-Message-Id: <1682612.NLBs1S0Qsv@avalon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Oct 2015 10:18:05 +0000
+Subject: [patch] mfd: arizona: signedness bug in arizona_runtime_suspend()
+Message-Id: <20151019101805.GE26688@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151022090905.GB9202@mwanda>
-In-Reply-To: <20151022090905.GB9202@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+The "jd_active" variable needs to be signed for the error handling to
+work.
 
-Thank you for the patch.
+Fixes: 143e5887ae57 ('mfd: arizona: factor out checking of jack detection state')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Thursday 22 October 2015 12:09:05 Dan Carpenter wrote:
-> Smatch is not smart enough to see that "&stream->clock.lock" and
-> "&clock->lock" are the same thing so it complains about the locking
-> here.  Let's make it more consistent.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
-> diff --git a/drivers/media/usb/uvc/uvc_video.c
-> b/drivers/media/usb/uvc/uvc_video.c index 2b276ab..4abe3e9 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -709,7 +709,7 @@ void uvc_video_clock_update(struct uvc_streaming
-> *stream, vbuf->timestamp.tv_usec = ts.tv_nsec / NSEC_PER_USEC;
-> 
->  done:
-> -	spin_unlock_irqrestore(&stream->clock.lock, flags);
-> +	spin_unlock_irqrestore(&clock->lock, flags);
->  }
-> 
->  /* ------------------------------------------------------------------------
-
--- 
-Regards,
-
-Laurent Pinchart
-
+diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+index 4e49210..d474732 100644
+--- a/drivers/mfd/arizona-core.c
++++ b/drivers/mfd/arizona-core.c
+@@ -628,7 +628,7 @@ err:
+ static int arizona_runtime_suspend(struct device *dev)
+ {
+ 	struct arizona *arizona = dev_get_drvdata(dev);
+-	unsigned int jd_active = 0;
++	int jd_active = 0;
+ 	int ret;
+ 
+ 	dev_dbg(arizona->dev, "Entering AoD mode\n");
