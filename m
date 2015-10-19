@@ -1,28 +1,65 @@
-From: Rob Herring <robh+dt@kernel.org>
-Date: Thu, 22 Oct 2015 15:08:36 +0000
-Subject: Re: [PATCH 0/4] add missing of_node_put
-Message-Id: <CAL_Jsq+MsKSF4r8S50YYaQYH0N0SzQZHJ0sSW6eHK_XXdvAmnQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Oct 2015 10:20:05 +0000
+Subject: [patch] mtd/docg3: off by one in doc_register_sysfs()
+Message-Id: <20151019102005.GF26688@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On Thu, Oct 22, 2015 at 4:02 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> The various for_each device_node iterators performs an of_node_get on each
-> iteration, so a break out of the loop requires an of_node_put.
+Smatch found a bug in the error handling:
 
-> ---
->
->  drivers/of/irq.c      |    7 +++++--
->  drivers/of/overlay.c  |    5 ++++-
->  drivers/of/platform.c |    8 ++++++--
->  drivers/of/unittest.c |    8 ++++++--
->  4 files changed, 21 insertions(+), 7 deletions(-)
+	drivers/mtd/devices/docg3.c:1634 doc_register_sysfs()
+	error: buffer overflow 'doc_sys_attrs' 4 <= 4
 
-Series applied, thanks.
+The problem is that if the very last device_create_file() fails, then we
+are beyond the end of the array.  Actually, any time i = 3 then there
+is a problem.  We can fix this an simplify the code at the same time by
+moving the !ret conditions out of the for loops and using a goto
+instead.
 
-Rob
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+index f00d0da..c3a2695 100644
+--- a/drivers/mtd/devices/docg3.c
++++ b/drivers/mtd/devices/docg3.c
+@@ -1620,20 +1620,30 @@ static struct device_attribute doc_sys_attrs[DOC_MAX_NBFLOORS][4] = {
+ static int doc_register_sysfs(struct platform_device *pdev,
+ 			      struct docg3_cascade *cascade)
+ {
+-	int ret = 0, floor, i = 0;
+ 	struct device *dev = &pdev->dev;
++	int floor;
++	int ret;
++	int i;
+ 
+-	for (floor = 0; !ret && floor < DOC_MAX_NBFLOORS &&
+-		     cascade->floors[floor]; floor++)
+-		for (i = 0; !ret && i < 4; i++)
++	for (floor = 0;
++	     floor < DOC_MAX_NBFLOORS && cascade->floors[floor];
++	     floor++) {
++		for (i = 0; i < 4; i++) {
+ 			ret = device_create_file(dev, &doc_sys_attrs[floor][i]);
+-	if (!ret)
+-		return 0;
++			if (ret)
++				goto remove_files;
++		}
++	}
++
++	return 0;
++
++remove_files:
+ 	do {
+ 		while (--i >= 0)
+ 			device_remove_file(dev, &doc_sys_attrs[floor][i]);
+ 		i = 4;
+ 	} while (--floor >= 0);
++
+ 	return ret;
+ }
+ 
