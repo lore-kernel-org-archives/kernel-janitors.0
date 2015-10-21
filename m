@@ -1,34 +1,75 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Mon, 19 Oct 2015 09:27:57 +0000
-Subject: Re: [PATCH v2] powerpc/prom: Avoid reference to potentially freed memory
-Message-Id: <1445246877.30407.1.camel@ellerman.id.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Oct 2015 20:26:10 +0000
+Subject: re: mailbox: Add generic mechanism for testing Mailbox Controllers
+Message-Id: <20151021202610.GA31470@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444976055-19148-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <1445031525-20086-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1445031525-20086-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, benh@kernel.crashing.org, paulus@samba.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2015-10-16 at 23:38 +0200, Christophe JAILLET wrote:
+Hello Lee Jones,
 
-> of_get_property() is used inside the loop, but then the reference to the
-> node is dropped before dereferencing the prop pointer, which could by then
-> point to junk if the node has been freed.
-> 
-> Instead use of_property_read_u32() to actually read the property
-> value before dropping the reference.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: Fix missing '{'
-> *** COMPILE-TESTED ONLY ***
+The patch 8ea4484d0c2b: "mailbox: Add generic mechanism for testing
+Mailbox Controllers" from Oct 16, 2015, leads to the following static
+checker warning:
 
-Thanks, this looks good. I'll test it on real hardware.
+	drivers/mailbox/mailbox-test.c:71 mbox_test_signal_write()
+	warn: copy_to/from_user() returns a positive value
 
-Can you send me a follow up which does the of_get_next_parent() conversion?
+drivers/mailbox/mailbox-test.c
+    42  static ssize_t mbox_test_signal_write(struct file *filp,
+    43                                         const char __user *userbuf,
+    44                                         size_t count, loff_t *ppos)
+    45  {
+    46          struct mbox_test_device *tdev = filp->private_data;
+    47          int ret;
+    48  
+    49          if (!tdev->tx_channel) {
+    50                  dev_err(tdev->dev, "Channel cannot do Tx\n");
+    51                  return -EINVAL;
+    52          }
+    53  
+    54          if (count > MBOX_MAX_SIG_LEN) {
+    55                  dev_err(tdev->dev,
+    56                          "Signal length %zd greater than max allowed %d\n",
+    57                          count, MBOX_MAX_SIG_LEN);
+    58                  return -EINVAL;
+    59          }
+    60  
+    61          tdev->signal = kzalloc(MBOX_MAX_SIG_LEN, GFP_KERNEL);
+    62          if (!tdev->signal)
+    63                  return -ENOMEM;
 
-cheers
 
+This feels racy.  Also if ->signal has already been allocated then this
+leaks.
+
+    64  
+    65          ret = copy_from_user(tdev->signal, userbuf, count);
+    66          if (ret) {
+    67                  kfree(tdev->signal);
+    68                  return -EFAULT;
+    69          }
+
+Normally we do it like this:
+
+	if (copy_from_user(tdev->signal, userbuf, count)) {
+		kfree(tdev->signal);
+		tdev->signal;  <-- also let's set it to NULL or it leads
+				   to a use after free.
+		return -EFAULT;
+	}
+
+
+
+    70  
+    71          return ret < 0 ? ret : count;
+
+"ret" is always zero here.  But we can just get rid of that variable
+completely.
+
+    72  }
+
+regards,
+dan carpenter
