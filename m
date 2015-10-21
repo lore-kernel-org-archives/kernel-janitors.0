@@ -1,61 +1,79 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 11 Oct 2015 20:44:25 +0000
-Subject: Re: [PATCH] powerpc/mpc5xxx: Use of_get_next_parent to simplify code
-Message-Id: <alpine.DEB.2.02.1510112243420.2096@localhost6.localdomain6>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 21 Oct 2015 20:41:36 +0000
+Subject: [PATCH 1/5] clk: add missing of_node_put
+Message-Id: <1445460100-26727-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444595260-3332-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1444595260-3332-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-On Sun, 11 Oct 2015, Christophe JAILLET wrote:
+for_each_matching_node_and_match performs an of_node_get on each iteration,
+so a break out of the loop requires an of_node_put.
 
-> of_get_next_parent can be used to simplify the while() loop and
-> avoid the need of a temp variable.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-Can you do something with the loop in __of_translate_address, in 
-drivers/of/address.c?  Is there not an iterator for this?
+// <smpl>
+@@
+expression e1,e2,e;
+local idexpression np;
+@@
 
-julia
+ for_each_matching_node_and_match(np, e1, e2) {
+   ... when != of_node_put(np)
+       when != e = np
+(
+   return np;
+|
++  of_node_put(np);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
+Besides the problem identified by the semantic patch, this patch adds an
+of_node_get in front of saving np in a field of parent, to account for the
+fact that this value will be put on going on to the next element in the
+iteration, and then adds of_node_puts in the two loops where the parent
+pointer can be freed.
 
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  arch/powerpc/sysdev/mpc5xxx_clocks.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/arch/powerpc/sysdev/mpc5xxx_clocks.c b/arch/powerpc/sysdev/mpc5xxx_clocks.c
-> index f4f0301..5732926 100644
-> --- a/arch/powerpc/sysdev/mpc5xxx_clocks.c
-> +++ b/arch/powerpc/sysdev/mpc5xxx_clocks.c
-> @@ -13,7 +13,6 @@
->  
->  unsigned long mpc5xxx_get_bus_frequency(struct device_node *node)
->  {
-> -	struct device_node *np;
->  	const unsigned int *p_bus_freq = NULL;
->  
->  	of_node_get(node);
-> @@ -22,9 +21,7 @@ unsigned long mpc5xxx_get_bus_frequency(struct device_node *node)
->  		if (p_bus_freq)
->  			break;
->  
-> -		np = of_get_parent(node);
-> -		of_node_put(node);
-> -		node = np;
-> +		node = of_get_next_parent(node);
->  	}
->  	of_node_put(node);
->  
-> -- 
-> 2.1.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/clk/clk.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e735eab..11babd1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3200,12 +3200,15 @@ void __init of_clk_init(const struct of_device_id *matches)
+ 			list_for_each_entry_safe(clk_provider, next,
+ 						 &clk_provider_list, node) {
+ 				list_del(&clk_provider->node);
++				of_node_put(clk_provider->np);
+ 				kfree(clk_provider);
+ 			}
++			of_node_put(np);
+ 			return;
+ 		}
+ 
+ 		parent->clk_init_cb = match->data;
++		of_node_get(np);
+ 		parent->np = np;
+ 		list_add_tail(&parent->node, &clk_provider_list);
+ 	}
+@@ -3220,6 +3223,7 @@ void __init of_clk_init(const struct of_device_id *matches)
+ 				of_clk_set_defaults(clk_provider->np, true);
+ 
+ 				list_del(&clk_provider->node);
++				of_node_put(clk_provider->np);
+ 				kfree(clk_provider);
+ 				is_init_done = true;
+ 			}
+
