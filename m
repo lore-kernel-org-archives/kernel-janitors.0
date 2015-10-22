@@ -1,33 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 13 Oct 2015 12:06:07 +0000
-Subject: Re: [patch] ALSA: pcm: harmless underflow issue in snd_pcm_sw_params()
-Message-Id: <20151013120607.GM7289@mwanda>
+Date: Thu, 22 Oct 2015 09:06:09 +0000
+Subject: [patch] Bluetooth: hci_bcm: checking for ERR_PTR instead of NULL
+Message-Id: <20151022090609.GA9202@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151013070756.GA31537@mwanda>
- <s5heggzksyq.wl-tiwai@suse.de>
-In-Reply-To: <s5heggzksyq.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 13, 2015 at 11:39:41AM +0200, Takashi Iwai wrote:
-> On Tue, 13 Oct 2015 09:07:56 +0200,
-> Dan Carpenter wrote:
-> > 
-> > "params->tstamp_mode" is a user supplied int.  We cap the maximum but
-> > allow negative values by mistake.  It's harmless but static checkers
-> > complain.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> You already sent the same fix and it was applied in the commit
-> 145d92e77e6f.
-> 
+bt_skb_alloc() returns NULL on error, it never returns an ERR_PTR.
 
-Oops.  Sorry about that.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index 645e66e..4937ecc 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -259,8 +259,8 @@ static int bcm_set_diag(struct hci_dev *hdev, bool enable)
+ 		return -ENETDOWN;
+ 
+ 	skb = bt_skb_alloc(3, GFP_KERNEL);
+-	if (IS_ERR(skb))
+-		return PTR_ERR(skb);
++	if (!skb)
++		return -ENOMEM;
+ 
+ 	*skb_put(skb, 1) = BCM_LM_DIAG_PKT;
+ 	*skb_put(skb, 1) = 0xf0;
