@@ -1,41 +1,30 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Mon, 19 Oct 2015 04:38:10 +0000
-Subject: Re: [PATCH v2] powerpc/mpc5xxx: Avoid dereferencing potentially freed memory
-Message-Id: <1445229490.11557.3.camel@ellerman.id.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Oct 2015 19:52:59 +0000
+Subject: [patch] ACPI/CPPC: signedness bug in register_pcc_channel()
+Message-Id: <20151022195259.GC24439@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151014040011.8AB1514110A@ozlabs.org>
- <1444888580-12966-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <1444890977.5970.4.camel@ellerman.id.au> <5620971D.8040103@wanadoo.fr>
- <1444988979.12954.1.camel@ellerman.id.au> <562158A3.90000@wanadoo.fr>
-In-Reply-To: <562158A3.90000@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: benh@kernel.crashing.org, paulus@samba.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ashwin Chaugule <ashwin.chaugule@linaro.org>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 2015-10-16 at 22:05 +0200, Christophe JAILLET wrote:
-> Hi,
-> sorry if un-clear.
-> 
-> What I mean is that in the patch related 
-> 'powerpc/sysdev/mpc5xxx_clocks.c', there was no call to 'be32_to_cpup'.
-> So in the proposed patch, 'of_property_read_u32' adds it.
-> 
-> While in the patch against 'powerpc/kernel/prom.c', 'be32_to_cpup' was 
-> called explicitly.
-> So using 'of_property_read_u32' keep the same logic.
+The "pcc_subspace_idx" is -1 if it hasn't been initialized yet.  We need
+it to be signed.
 
-Ah right, I understand now.
+Fixes: 337aadff8e45 ('ACPI: Introduce CPU performance controls using CPPC')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Basically the code from 'mpc5xxx_clocks.c' and from 'prom.c' were 
-> written the same way. I found spurious that a call to 'be32_to_cpup' was 
-> done in only one case.
-> Maybe, it was a missing in 'mpc5xxx_clocks.c'.
-
-Yes it was missing in that code.
-
-But that's not a real bug because that code only ever runs on BE systems.
-
-cheers
-
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index 0bbf84b..2ed5516 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -302,7 +302,7 @@ err_ret:
+ }
+ EXPORT_SYMBOL_GPL(acpi_get_psd_map);
+ 
+-static int register_pcc_channel(unsigned pcc_subspace_idx)
++static int register_pcc_channel(int pcc_subspace_idx)
+ {
+ 	struct acpi_pcct_subspace *cppc_ss;
+ 	unsigned int len;
