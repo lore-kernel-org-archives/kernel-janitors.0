@@ -1,44 +1,28 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Date: Fri, 23 Oct 2015 00:58:07 +0000
-Subject: Re: [patch] mmc: dw_mmc: NULL dereference in error message
-Message-Id: <5629861F.2060905@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Oct 2015 19:52:08 +0000
+Subject: [patch] cpufreq: scpi-cpufreq: signedness bug in scpi_get_dvfs_info()
+Message-Id: <20151022195208.GB24439@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151022195346.GD24439@mwanda>
-In-Reply-To: <20151022195346.GD24439@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org, CPGS <cpgs@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
 
-Hi,
+The "domain" variable needs to be signed for the error handling to work.
 
-Thanks for pointing out.
-I will pick this patch at my repository.
+Fixes: 8def31034d03 ('cpufreq: arm_big_little: add SCPI interface driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Best Regards,
-Jaehoon Chung
-
-On 10/23/2015 04:53 AM, Dan Carpenter wrote:
-> The "host->dms->ch" pointer is NULL here so we can't use it to print the
-> error message.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 6e600e8..f877b2c 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -752,9 +752,7 @@ static int dw_mci_edmac_init(struct dw_mci *host)
->  
->  	host->dms->ch = dma_request_slave_channel(host->dev, "rx-tx");
->  	if (!host->dms->ch) {
-> -		dev_err(host->dev,
-> -			"Failed to get external DMA channel %d\n",
-> -			host->dms->ch->chan_id);
-> +		dev_err(host->dev, "Failed to get external DMA channel.\n");
->  		kfree(host->dms);
->  		host->dms = NULL;
->  		return -ENXIO;
-> 
-
+diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
+index 2c3b16f..de5e89b 100644
+--- a/drivers/cpufreq/scpi-cpufreq.c
++++ b/drivers/cpufreq/scpi-cpufreq.c
+@@ -31,7 +31,7 @@ static struct scpi_ops *scpi_ops;
+ 
+ static struct scpi_dvfs_info *scpi_get_dvfs_info(struct device *cpu_dev)
+ {
+-	u8 domain = topology_physical_package_id(cpu_dev->id);
++	int domain = topology_physical_package_id(cpu_dev->id);
+ 
+ 	if (domain < 0)
+ 		return ERR_PTR(-EINVAL);
