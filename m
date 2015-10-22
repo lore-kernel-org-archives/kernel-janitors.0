@@ -1,30 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 13 Oct 2015 07:11:09 +0000
-Subject: [patch] ASoC: es8328: harmless underflow in es8328_put_deemph()
-Message-Id: <20151013071109.GH31537@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 22 Oct 2015 12:58:37 +0000
+Subject: Re: [patch] ASoC: es8328: harmless underflow in es8328_put_deemph()
+Message-Id: <20151022125837.GM8232@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="sWvRP97dwRHm9fX+"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Lars-Peter Clausen <lars@metafoo.de>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+References: <20151013071109.GH31537@mwanda>
+In-Reply-To: <20151013071109.GH31537@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Lars-Peter Clausen <lars@metafoo.de>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Valid values for "deemph" are zero and one but we accidentally allow
-negative values as well.  It's harmless but it causes static checker
-warnings and we may as well clean it up.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--sWvRP97dwRHm9fX+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/sound/soc/codecs/es8328.c b/sound/soc/codecs/es8328.c
-index 6a09101..969e337 100644
---- a/sound/soc/codecs/es8328.c
-+++ b/sound/soc/codecs/es8328.c
-@@ -129,7 +129,7 @@ static int es8328_put_deemph(struct snd_kcontrol *kcontrol,
- {
- 	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
- 	struct es8328_priv *es8328 = snd_soc_codec_get_drvdata(codec);
--	int deemph = ucontrol->value.integer.value[0];
-+	unsigned int deemph = ucontrol->value.integer.value[0];
- 	int ret;
- 
- 	if (deemph > 1)
+On Tue, Oct 13, 2015 at 10:11:09AM +0300, Dan Carpenter wrote:
+> Valid values for "deemph" are zero and one but we accidentally allow
+> negative values as well.  It's harmless but it causes static checker
+> warnings and we may as well clean it up.
+
+Thanks for all these fixes.  It almost feels like someone should
+volunteer to implement these deemphasis controls in some generic
+fashion!  :)
+
+--sWvRP97dwRHm9fX+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWKN18AAoJECTWi3JdVIfQ36wH/iBwa85a0OGiqZvPBjmOZjEl
+LTzvV9LZL+KsBV9b7QNTTdJb47OTSUgpzfdbP/VT2qpnGRfnVQvCNBOeqR89zqO8
+nlzm3OMuUg3Oj40WksUWsKVr9VQepyhpz6x512b6D7cKfzLPUznjTzTqEWZLJyL7
+jXsnR285BZCj+s5nuqETk7PGQEk0SyyDkTDaMfgvK/E9x1jd5GP8v3gUEYJCs6+3
+ujX1BAxIfkRePdjaGT7jsbGYy8IzMdMtYS+O+U05k1D3MbjWGFEpga+lejXUWe1H
+XUYI0d5EQz8XhoWTCrAv3+5o3bCUE7H2x9omJLrzSt6ME5gW1ziIxf0pNKPRK6g=
+=EaEx
+-----END PGP SIGNATURE-----
+
+--sWvRP97dwRHm9fX+--
