@@ -1,17 +1,17 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 24 Oct 2015 14:42:28 +0000
-Subject: [PATCH 2/9] leds: bcm6358: add missing of_node_put
-Message-Id: <1445697755-26341-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Oct 2015 09:02:48 +0000
+Subject: [PATCH 1/4] of/overlay: add missing of_node_put
+Message-Id: <1445504571-19838-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Purdie <rpurdie@rpsys.net>
-Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Cc: kernel-janitors@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-for_each_available_child_of_node performs an of_node_get on each iteration, so
+for_each_child_of_node performs an of_node_get on each iteration, so
 a break out of the loop requires an of_node_put.
 
 A simplified version of the semantic patch that fixes this problem is as
@@ -23,7 +23,7 @@ expression root,e;
 local idexpression child;
 @@
 
- for_each_available_child_of_node(root, child) {
+ for_each_child_of_node(root, child) {
    ... when != of_node_put(child)
        when != e = child
 (
@@ -39,21 +39,29 @@ local idexpression child;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/leds/leds-bcm6358.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/of/overlay.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
-index 7ea3526..82b4ee1 100644
---- a/drivers/leds/leds-bcm6358.c
-+++ b/drivers/leds/leds-bcm6358.c
-@@ -215,8 +215,10 @@ static int bcm6358_leds_probe(struct platform_device *pdev)
- 		}
- 
- 		rc = bcm6358_led(dev, child, reg, mem, lock);
--		if (rc < 0)
-+		if (rc < 0) {
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 24e025f..54e5af9 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -149,6 +149,7 @@ static int of_overlay_apply_one(struct of_overlay *ov,
+ 			pr_err("%s: Failed to apply single node @%s/%s\n",
+ 					__func__, target->full_name,
+ 					child->name);
 +			of_node_put(child);
- 			return rc;
+ 			return ret;
+ 		}
+ 	}
+@@ -417,8 +418,10 @@ static int overlay_subtree_check(struct device_node *tree,
+ 		return 1;
+ 
+ 	for_each_child_of_node(tree, child) {
+-		if (overlay_subtree_check(child, dn))
++		if (overlay_subtree_check(child, dn)) {
++			of_node_put(child);
+ 			return 1;
 +		}
  	}
  
