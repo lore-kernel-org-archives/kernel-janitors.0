@@ -1,83 +1,75 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 12 Oct 2015 20:43:13 +0000
-Subject: [PATCH 0/3] delete unneeded of_node_put
-Message-Id: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Oct 2015 09:02:49 +0000
+Subject: [PATCH 2/4] of/platform: add missing of_node_put
+Message-Id: <1445504571-19838-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Device node iterators perform an of_node_put on each iteration, so putting
-an of_node_put before going around to the next iteration results in a
-double put.
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-The complete semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
 // <smpl>
-@r exists@
-expression e1,e2;
+@@
 local idexpression n;
-iterator name for_each_node_by_name, for_each_node_by_type,
-for_each_compatible_node, for_each_matching_node,
-for_each_matching_node_and_match, for_each_child_of_node,
-for_each_available_child_of_node, for_each_node_with_property;
-iterator i;
-position p1,p2;
-statement S;
+expression root,e;
 @@
 
+ for_each_child_of_node(root,n) {
+   ...
 (
-(
-for_each_node_by_name(n,e1) S
+   of_node_put(n);
 |
-for_each_node_by_type(n,e1) S
+   e = n
 |
-for_each_compatible_node(n,e1,e2) S
-|
-for_each_matching_node(n,e1) S
-|
-for_each_matching_node_and_match(n,e1,e2) S
-|
-for_each_child_of_node(e1,n) S
-|
-for_each_available_child_of_node(e1,n) S
-|
-for_each_node_with_property(n,e1) S
++  of_node_put(n);
+?  break;
 )
-&
-i@p1(...) {
-   ... when != of_node_get(n)
-       when any
-   of_node_put@p2(n);
-   ... when any
-}
-)
-
-@s exists@
-local idexpression r.n;
-statement S;
-position r.p1,r.p2;
-iterator i;
-@@
-
- of_node_put@p2(n);
- ... when any
- i@p1(..., n, ...)
- S
-
-@depends on s@
-local idexpression n;
-position r.p2;
-@@
-
-- of_node_put@p2(n);
+   ...
+ }
+... when != n
 // </smpl>
 
----
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- arch/arm/mach-exynos/pm_domains.c                 |    8 +++-----
- drivers/soc/qcom/smd.c                            |    4 +---
- drivers/video/fbdev/omap2/dss/omapdss-boot-init.c |    4 +---
- 3 files changed, 5 insertions(+), 11 deletions(-)
+---
+ drivers/of/platform.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 7b33e03..64daf05 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -409,8 +409,10 @@ int of_platform_bus_probe(struct device_node *root,
+ 		if (!of_match_node(matches, child))
+ 			continue;
+ 		rc = of_platform_bus_create(child, matches, NULL, parent, false);
+-		if (rc)
++		if (rc) {
++			of_node_put(child);
+ 			break;
++		}
+ 	}
+ 
+ 	of_node_put(root);
+@@ -451,8 +453,10 @@ int of_platform_populate(struct device_node *root,
+ 
+ 	for_each_child_of_node(root, child) {
+ 		rc = of_platform_bus_create(child, matches, lookup, parent, true);
+-		if (rc)
++		if (rc) {
++			of_node_put(child);
+ 			break;
++		}
+ 	}
+ 	of_node_set_flag(root, OF_POPULATED_BUS);
+ 
+
