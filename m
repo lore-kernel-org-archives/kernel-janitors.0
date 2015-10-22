@@ -1,29 +1,125 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 13 Oct 2015 11:18:59 +0000
-Subject: Re: [PATCH] qlcnic: constify qlcnic_mbx_ops structure
-Message-Id: <20151013.041859.2079956557358480044.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Oct 2015 09:02:47 +0000
+Subject: [PATCH 0/4] add missing of_node_put
+Message-Id: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444564085-12839-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444564085-12839-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: Dept-GELinuxNICDev@qlogic.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Oct 2015 13:48:05 +0200
+The various for_each device_node iterators performs an of_node_get on each
+iteration, so a break out of the loop requires an of_node_put.
 
-> The only instance of a qlcnic_mbx_ops structure is never modified.  Thus
-> the declaration of the structure and all references to the structure type
-> can be made const.
-> 
-> In the definition of the qlcnic_mailbox structure, the ops field is no
-> longer lined up with the other fields.  This was left as is, to avoid a lot
-> of trivial changes on the other lines.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The complete semantic patch that fixes this problem is
+(http://coccinelle.lip6.fr):
 
-Applied, thanks.
+// <smpl>
+@r@
+local idexpression n;
+expression e1,e2;
+iterator name for_each_node_by_name, for_each_node_by_type,
+for_each_compatible_node, for_each_matching_node,
+for_each_matching_node_and_match, for_each_child_of_node,
+for_each_available_child_of_node, for_each_node_with_property;
+iterator i;
+statement S;
+expression list [n1] es;
+@@
+
+(
+(
+for_each_node_by_name(n,e1) S
+|
+for_each_node_by_type(n,e1) S
+|
+for_each_compatible_node(n,e1,e2) S
+|
+for_each_matching_node(n,e1) S
+|
+for_each_matching_node_and_match(n,e1,e2) S
+|
+for_each_child_of_node(e1,n) S
+|
+for_each_available_child_of_node(e1,n) S
+|
+for_each_node_with_property(n,e1) S
+)
+&
+i(es,n,...) S
+)
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+identifier l;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+...
+l: ... when != n// </smpl>
+
+---
+
+ drivers/of/irq.c      |    7 +++++--
+ drivers/of/overlay.c  |    5 ++++-
+ drivers/of/platform.c |    8 ++++++--
+ drivers/of/unittest.c |    8 ++++++--
+ 4 files changed, 21 insertions(+), 7 deletions(-)
