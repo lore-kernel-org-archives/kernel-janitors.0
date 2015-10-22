@@ -1,38 +1,30 @@
-From: "Bill O'Donnell" <billodo@redhat.com>
-Date: Thu, 15 Oct 2015 18:48:15 +0000
-Subject: Re: [patch] xfs: fix an error code in xfs_fs_fill_super()
-Message-Id: <20151015184815.GA18333@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Oct 2015 09:09:05 +0000
+Subject: [patch] [media] uvcvideo: small cleanup in uvc_video_clock_update()
+Message-Id: <20151022090905.GB9202@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151015181951.GD3163@mwanda>
-In-Reply-To: <20151015181951.GD3163@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Oct 15, 2015 at 09:19:51PM +0300, Dan Carpenter wrote:
-> If alloc_percpu() fails, we accidentally return PTR_ERR(NULL), which
-> means success, but we intended to return -ENOMEM.
-> 
-> Fixes: 225e4635580c ('xfs: per-filesystem stats in sysfs')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 368c55a..b2c252c 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1477,7 +1477,7 @@ xfs_fs_fill_super(
->  	/* Allocate stats memory before we do operations that might use it */
->  	mp->m_stats.xs_stats = alloc_percpu(struct xfsstats);
->  	if (!mp->m_stats.xs_stats) {
-> -		error = PTR_ERR(mp->m_stats.xs_stats);
-> +		error = -ENOMEM;
->  		goto out_destroy_counters;
->  	}
->  
+Smatch is not smart enough to see that "&stream->clock.lock" and
+"&clock->lock" are the same thing so it complains about the locking
+here.  Let's make it more consistent.
 
-Agreed. Thanks for the patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Bill O'Donnell <billodo@redhat.com>
-
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index 2b276ab..4abe3e9 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -709,7 +709,7 @@ void uvc_video_clock_update(struct uvc_streaming *stream,
+ 	vbuf->timestamp.tv_usec = ts.tv_nsec / NSEC_PER_USEC;
+ 
+ done:
+-	spin_unlock_irqrestore(&stream->clock.lock, flags);
++	spin_unlock_irqrestore(&clock->lock, flags);
+ }
+ 
+ /* ------------------------------------------------------------------------
