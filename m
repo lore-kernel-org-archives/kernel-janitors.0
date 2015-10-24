@@ -1,23 +1,61 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Thu, 15 Oct 2015 11:10:59 +0000
-Subject: Re: powerpc/numa: Use of_get_next_parent to simplify code
-Message-Id: <20151015111059.D8BC91402DD@ozlabs.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 24 Oct 2015 14:42:33 +0000
+Subject: [PATCH 7/9] gpu: host1x: add missing of_node_put
+Message-Id: <1445697755-26341-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1444595007-3029-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, benh@kernel.crashing.org, paulus@samba.org
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Jason Cooper <jason@lakedaemon.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>
 
-On Sun, 2015-11-10 at 20:23:27 UTC, Christophe Jaillet wrote:
-> of_get_next_parent can be used to simplify the while() loop and
-> avoid the need of a temp variable.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-Applied to powerpc next, thanks.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-https://git.kernel.org/powerpc/c/1def37586fb1f3bbbedeaa64
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
 
-cheers
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/host1x/bus.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 4a99c64..c1795a2 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -82,8 +82,10 @@ static int host1x_device_parse_dt(struct host1x_device *device,
+ 		if (of_match_node(driver->subdevs, np) &&
+ 		    of_device_is_available(np)) {
+ 			err = host1x_subdev_add(device, np);
+-			if (err < 0)
++			if (err < 0) {
++				of_node_put(np);
+ 				return err;
++			}
+ 		}
+ 	}
+ 
+
