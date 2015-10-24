@@ -1,49 +1,61 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 17 Oct 2015 09:32:20 +0000
-Subject: [PATCH 2/2] [media] netup_unidvb: delete null dereference
-Message-Id: <1445074340-21955-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 24 Oct 2015 14:42:29 +0000
+Subject: [PATCH 3/9] leds: bcm6328: add missing of_node_put
+Message-Id: <1445697755-26341-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445074340-21955-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445074340-21955-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergey Kozlov <serjk@netup.ru>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: kernel-janitors@vger.kernel.org, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-The calls to dev_dbg will not work properly when spi is NULL.  Just use
-pr_debug instead.
+for_each_available_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-Problem found using scripts/coccinelle/null/deref_null.cocci
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_available_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/pci/netup_unidvb/netup_unidvb_spi.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/leds/leds-bcm6328.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/netup_unidvb/netup_unidvb_spi.c b/drivers/media/pci/netup_unidvb/netup_unidvb_spi.c
-index f55b327..026895f 100644
---- a/drivers/media/pci/netup_unidvb/netup_unidvb_spi.c
-+++ b/drivers/media/pci/netup_unidvb/netup_unidvb_spi.c
-@@ -81,8 +81,7 @@ irqreturn_t netup_spi_interrupt(struct netup_spi *spi)
- 	unsigned long flags;
+diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+index 18de094..c7ea5c6 100644
+--- a/drivers/leds/leds-bcm6328.c
++++ b/drivers/leds/leds-bcm6328.c
+@@ -403,8 +403,10 @@ static int bcm6328_leds_probe(struct platform_device *pdev)
+ 			rc = bcm6328_led(dev, child, reg, mem, lock,
+ 					 blink_leds, blink_delay);
  
- 	if (!spi) {
--		dev_dbg(&spi->master->dev,
--			"%s(): SPI not initialized\n", __func__);
-+		pr_debug("%s(): SPI not initialized\n", __func__);
- 		return IRQ_NONE;
+-		if (rc < 0)
++		if (rc < 0) {
++			of_node_put(child);
+ 			return rc;
++		}
  	}
- 	spin_lock_irqsave(&spi->lock, flags);
-@@ -235,8 +234,7 @@ void netup_spi_release(struct netup_unidvb_dev *ndev)
- 	struct netup_spi *spi = ndev->spi;
  
- 	if (!spi) {
--		dev_dbg(&spi->master->dev,
--			"%s(): SPI not initialized\n", __func__);
-+		pr_debug("%s(): SPI not initialized\n", __func__);
- 		return;
- 	}
- 	spin_lock_irqsave(&spi->lock, flags);
+ 	return 0;
 
