@@ -1,73 +1,130 @@
-From: Sebastian Reichel <sre@kernel.org>
-Date: Thu, 15 Oct 2015 08:56:40 +0000
-Subject: Re: [PATCH 2/5] power_supply: charger-manager: add missing of_node_put
-Message-Id: <20151015085640.GA29200@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="fdj2RfSjLxBAspz7"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 24 Oct 2015 14:42:26 +0000
+Subject: [PATCH 0/9] add missing of_node_put
+Message-Id: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
- <1444480254-14399-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444480254-14399-3-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-leds@vger.kernel.org
 
+The various for_each device_node iterators performs an of_node_get on each
+iteration, so a break out of the loop requires an of_node_put.
 
---fdj2RfSjLxBAspz7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The complete semantic patch that fixes this problem is
+(http://coccinelle.lip6.fr):
 
-Hi,
+// <smpl>
+@r@
+local idexpression n;
+expression e1,e2;
+iterator name for_each_node_by_name, for_each_node_by_type,
+for_each_compatible_node, for_each_matching_node,
+for_each_matching_node_and_match, for_each_child_of_node,
+for_each_available_child_of_node, for_each_node_with_property;
+iterator i;
+statement S;
+expression list [n1] es;
+@@
 
-On Sat, Oct 10, 2015 at 02:30:51PM +0200, Julia Lawall wrote:
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> a break out of the loop requires an of_node_put.
->=20
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
->=20
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
->=20
->  for_each_child_of_node(root, child) {
->    ... when !=3D of_node_put(child)
->        when !=3D e =3D child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
+(
+(
+for_each_node_by_name(n,e1) S
+|
+for_each_node_by_type(n,e1) S
+|
+for_each_compatible_node(n,e1,e2) S
+|
+for_each_matching_node(n,e1) S
+|
+for_each_matching_node_and_match(n,e1,e2) S
+|
+for_each_child_of_node(e1,n) S
+|
+for_each_available_child_of_node(e1,n) S
+|
+for_each_node_with_property(n,e1) S
+)
+&
+i(es,n,...) S
+)
 
-Thanks, queued.
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
 
--- Sebastian
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
 
---fdj2RfSjLxBAspz7
-Content-Type: application/pgp-signature; name="signature.asc"
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
 
-iQIcBAEBCgAGBQJWH2o7AAoJENju1/PIO/qaUaEP/3ztSp8LKOFAAO8ZcNHvh/U+
-JcFlKfmj+pJlbOkxxaSBsSLHvl0iKBvL+d6vQOXPDttCZqEjovUeuoP9L8DzNs4y
-m49nrn5uZFHqHbIIU+YyUSFzX30WrPu3crGS8IcKCp87MHP3Bw8PngwP8bHVlKGI
-rNhboQ/N03m+74lqeYHgZukTQ+EeT88E8X6mwpUvq9PK6mCXRXh+tVJSe6QLsuRz
-CXkrBaXTEzosljBKcwpc3UuRVdCGW63B1TqwW6krmR0l+YfGoSuNWJblL/r5GUao
-GbqCNX9NPHmhKr0heVUb2ULgIVEFhyyTs1kBeLW/3bgc1a4kVVQouBACmwAwxIAd
-0sXBDYl5+izmLLZTtJrT4bPYPoD4PkvwqhfR2e7e2JAFsywQWa34ENYkFPZTdUW8
-nBnNMVYJ9GHnjTN9nU3DV9TzIH15VDiDYKMAuO9wdL0n326Hflh0WQq1hAviKMHF
-IZLAupDGMf4LWgsiUU45uts8mGzVik00TXsDrzJ8iNvjMwfE6uomiTMMcLmVgv1N
-OJgIZzJi3bzK5a6GVj4XTADB3lche6kgdWFybOdpFrUKfWw9GfGXC81RXLKeqy4p
-3mb57ML4O8qI4J5tNwi5K79LOpcxlb3z0swhbTp7oaZ8v05CyrgnNnnZqqoGYAMl
-DS0ADXSH+iupUzptV89T
-=SJLz
------END PGP SIGNATURE-----
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+identifier l;
+expression list [r.n1] es;
+@@
 
---fdj2RfSjLxBAspz7--
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+...
+l: ... when != n// </smpl>
+
+---
+
+ drivers/bluetooth/btmrvl_main.c  |    5 ++++-
+ drivers/gpu/drm/tegra/dc.c       |    4 +++-
+ drivers/gpu/host1x/bus.c         |    4 +++-
+ drivers/leds/leds-88pm860x.c     |    1 +
+ drivers/leds/leds-bcm6328.c      |    4 +++-
+ drivers/leds/leds-bcm6358.c      |    4 +++-
+ drivers/leds/leds-powernv.c      |    8 ++++++--
+ drivers/pinctrl/pinctrl-at91.c   |    5 ++++-
+ drivers/soc/ti/knav_qmss_queue.c |    3 +++
+ 9 files changed, 30 insertions(+), 8 deletions(-)
