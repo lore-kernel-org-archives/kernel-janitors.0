@@ -1,48 +1,72 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 17 Oct 2015 17:23:25 +0000
-Subject: [PATCH 2/2] coccinelle: ifnullfree: improve and extend ifnullfree
-Message-Id: <1445102605-22408-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 24 Oct 2015 14:42:34 +0000
+Subject: [PATCH 8/9] soc: ti: knav_qmss_queue: add missing of_node_put
+Message-Id: <1445697755-26341-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-arm-kernel@lists.infradead.org
 
-Extend ifnullfree to the various destroy functions that were recently
-extended to tolerate NULL arguments.
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
+
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- scripts/coccinelle/free/ifnullfree.cocci |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/soc/ti/knav_qmss_queue.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/scripts/coccinelle/free/ifnullfree.cocci b/scripts/coccinelle/free/ifnullfree.cocci
-index d4a072d..52bd235 100644
---- a/scripts/coccinelle/free/ifnullfree.cocci
-+++ b/scripts/coccinelle/free/ifnullfree.cocci
-@@ -25,6 +25,12 @@ expression E;
-   debugfs_remove_recursive(E);
- |
-   usb_free_urb(E);
-+|
-+  kmem_cache_destroy(E);
-+|
-+  mempool_destroy(E);
-+|
-+  dma_pool_destroy(E);
- )
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index 89789e2..6f3d12b 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -1074,6 +1074,7 @@ static int knav_queue_setup_regions(struct knav_device *kdev,
+ 		region = devm_kzalloc(dev, sizeof(*region), GFP_KERNEL);
+ 		if (!region) {
+ 			dev_err(dev, "out of memory allocating region\n");
++			of_node_put(child);
+ 			return -ENOMEM;
+ 		}
  
- @r depends on context || report || org @
-@@ -33,7 +39,9 @@ position p;
- @@
+@@ -1373,6 +1374,7 @@ static int knav_queue_init_qmgrs(struct knav_device *kdev,
+ 		qmgr = devm_kzalloc(dev, sizeof(*qmgr), GFP_KERNEL);
+ 		if (!qmgr) {
+ 			dev_err(dev, "out of memory allocating qmgr\n");
++			of_node_put(child);
+ 			return -ENOMEM;
+ 		}
  
- * if (E != NULL)
--*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb@p\)(E);
-+*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|
-+*         usb_free_urb@p\|kmem_cache_destroy@p\|mempool_destroy@p\|
-+*         dma_pool_destroy@p\)(E);
- 
- @script:python depends on org@
- p << r.p;
+@@ -1450,6 +1452,7 @@ static int knav_queue_init_pdsps(struct knav_device *kdev,
+ 		pdsp = devm_kzalloc(dev, sizeof(*pdsp), GFP_KERNEL);
+ 		if (!pdsp) {
+ 			dev_err(dev, "out of memory allocating pdsp\n");
++			of_node_put(child);
+ 			return -ENOMEM;
+ 		}
+ 		pdsp->name = knav_queue_find_name(child);
 
