@@ -1,21 +1,60 @@
-From: Michal Marek <mmarek@suse.com>
-Date: Mon, 26 Oct 2015 21:26:42 +0000
-Subject: Re: [PATCH] scripts/coccinelle: fix typos
-Message-Id: <562E9A92.9070001@suse.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 25 Oct 2015 13:57:04 +0000
+Subject: [PATCH 5/8] [media] v4l: xilinx-vipp: add missing of_node_put
+Message-Id: <1445781427-7110-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445074546-22023-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445074546-22023-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-arm-kernel@lists.infradead.org
 
-Dne 17.10.2015 v 11:35 Julia Lawall napsal(a):
-> Fix a couple spelling mistakes.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-Applied, thanks.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-Michal
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/xilinx/xilinx-vipp.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
+index 7b7cb9c..b9bf24f 100644
+--- a/drivers/media/platform/xilinx/xilinx-vipp.c
++++ b/drivers/media/platform/xilinx/xilinx-vipp.c
+@@ -476,8 +476,10 @@ static int xvip_graph_dma_init(struct xvip_composite_device *xdev)
+ 
+ 	for_each_child_of_node(ports, port) {
+ 		ret = xvip_graph_dma_init_one(xdev, port);
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(port);
+ 			return ret;
++		}
+ 	}
+ 
+ 	return 0;
 
