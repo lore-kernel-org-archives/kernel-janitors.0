@@ -1,36 +1,75 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Oct 2015 11:01:28 +0000
-Subject: [PATCH] thermal: constify pch_dev_ops structure
-Message-Id: <1444561288-29764-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 25 Oct 2015 13:57:01 +0000
+Subject: [PATCH 2/8] net: netcp: add missing of_node_put
+Message-Id: <1445781427-7110-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wingman Kwok <w-kwok2@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-The pch_dev_ops structure is never modified.  It is only stored in a field
-that is already declared as const.
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-Done with the help of Coccinelle.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+local idexpression r.n;
+expression r,e;
+@@
+
+ for_each_child_of_node(r,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/thermal/intel_pch_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/ti/netcp_ethss.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/intel_pch_thermal.c b/drivers/thermal/intel_pch_thermal.c
-index 50c7da7..00d81af 100644
---- a/drivers/thermal/intel_pch_thermal.c
-+++ b/drivers/thermal/intel_pch_thermal.c
-@@ -136,7 +136,7 @@ struct pch_dev_ops {
+diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+index 6bff8d8..4e70e75 100644
+--- a/drivers/net/ethernet/ti/netcp_ethss.c
++++ b/drivers/net/ethernet/ti/netcp_ethss.c
+@@ -2637,8 +2637,10 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
+ 			mac_phy_link = true;
  
+ 		slave->open = true;
+-		if (gbe_dev->num_slaves >= gbe_dev->max_num_slaves)
++		if (gbe_dev->num_slaves >= gbe_dev->max_num_slaves) {
++			of_node_put(port);
+ 			break;
++		}
+ 	}
  
- /* dev ops for Wildcat Point */
--static struct pch_dev_ops pch_dev_ops_wpt = {
-+static const struct pch_dev_ops pch_dev_ops_wpt = {
- 	.hw_init = pch_wpt_init,
- 	.get_temp = pch_wpt_get_temp,
- };
+ 	/* of_phy_connect() is needed only for MAC-PHY interface */
+@@ -3137,8 +3139,10 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+ 			continue;
+ 		}
+ 		gbe_dev->num_slaves++;
+-		if (gbe_dev->num_slaves >= gbe_dev->max_num_slaves)
++		if (gbe_dev->num_slaves >= gbe_dev->max_num_slaves) {
++			of_node_put(interface);
+ 			break;
++		}
+ 	}
+ 	of_node_put(interfaces);
+ 
 
