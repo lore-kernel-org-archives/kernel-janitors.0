@@ -1,62 +1,57 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 03 Oct 2015 09:28:43 +0000
-Subject: Re: [patch] iio: accel: sca3000: memory corruption in sca3000_read_first_n_hw_rb()
-Message-Id: <560F9FCB.40704@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 25 Oct 2015 13:57:06 +0000
+Subject: [PATCH 7/8] ath6kl: add missing of_node_put
+Message-Id: <1445781427-7110-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150808191642.GD8034@mwanda> <55CF9BA1.7020804@kernel.org>
-In-Reply-To: <55CF9BA1.7020804@kernel.org>
+References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Octavian Purdila <octavian.purdila@intel.com>, Aybuke Ozdemir <aybuke.147@gmail.com>, Josselin Costanzi <josselin.costanzi@mobile-devices.fr>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-On 15/08/15 21:05, Jonathan Cameron wrote:
-> On 08/08/15 20:16, Dan Carpenter wrote:
->> "num_read" is in byte units but we are write u16s so we end up write
->> twice as much as intended.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Hi Dan,
-> 
-> This is fine. Given it's an old bug, Greg is not going to take this
-> sort of fix until after the merge window.   I won't be doing another
-> pull to him to go in during the merge window.  Hence fastest route
-> will be as a fix post 4.3-rc1.
-> 
-> Give me a poke if I haven't picked it up and sent it on by rc2 or so.
-> 
-> Thanks and good find.
-> 
-> Jonathan
-Nearly forgot this one!
+for_each_compatible_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-Anyhow, applied to the fixes-togreg branch of iio.git and marked for stable.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-Jonathan
->>
->> diff --git a/drivers/staging/iio/accel/sca3000_ring.c b/drivers/staging/iio/accel/sca3000_ring.c
->> index 23685e7..bd2c69f 100644
->> --- a/drivers/staging/iio/accel/sca3000_ring.c
->> +++ b/drivers/staging/iio/accel/sca3000_ring.c
->> @@ -116,7 +116,7 @@ static int sca3000_read_first_n_hw_rb(struct iio_buffer *r,
->>  	if (ret)
->>  		goto error_ret;
->>  
->> -	for (i = 0; i < num_read; i++)
->> +	for (i = 0; i < num_read / sizeof(u16); i++)
->>  		*(((u16 *)rx) + i) = be16_to_cpup((__be16 *)rx + i);
->>  
->>  	if (copy_to_user(buf, rx, num_read))
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+// <smpl>
+@@
+expression e;
+local idexpression n;
+@@
+
+ for_each_compatible_node(n,...) {
+   ... when != of_node_put(n)
+       when != e = n
+(
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/wireless/ath/ath6kl/init.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/wireless/ath/ath6kl/init.c b/drivers/net/wireless/ath/ath6kl/init.c
+index 6e473fa..12241b1 100644
+--- a/drivers/net/wireless/ath/ath6kl/init.c
++++ b/drivers/net/wireless/ath/ath6kl/init.c
+@@ -715,6 +715,7 @@ static bool check_device_tree(struct ath6kl *ar)
+ 				   board_filename, ret);
+ 			continue;
+ 		}
++		of_node_put(node);
+ 		return true;
+ 	}
+ 	return false;
 
