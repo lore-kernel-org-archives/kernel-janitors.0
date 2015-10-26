@@ -1,57 +1,23 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 12 Oct 2015 20:43:14 +0000
-Subject: [PATCH 1/3] video: omapdss: delete unneeded of_node_put
-Message-Id: <1444682596-3065-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Michal Marek <mmarek@suse.com>
+Date: Mon, 26 Oct 2015 19:55:32 +0000
+Subject: Re: [PATCH] coccinelle: tests: improve odd_ptr_err.cocci
+Message-Id: <562E8534.4090907@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1440965894-12356-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1440965894-12356-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: cocci@systeme.lip6.fr
 
-Device node iterators perform an of_node_put on each iteration, so putting
-an of_node_put before a continue results in a double put.
+Dne 30.8.2015 v 22:18 Julia Lawall napsal(a):
+> The original version only considered the case where the then branch
+> contains only one call to PTR_ERR.  Reimplement the whole thing to allow
+> multiple calls, with potentially different arguments.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-A simplified version of the semantic match that finds this problem is as
-follows (http://coccinelle.lip6.fr):
+Applied to kbuild.git#misc, thanks.
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator i;
-@@
-
- i(..., child, ...) {
-   ... when != of_node_get(child)
-*  of_node_put(child);
-   ...
-*  continue;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/video/fbdev/omap2/dss/omapdss-boot-init.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/video/fbdev/omap2/dss/omapdss-boot-init.c b/drivers/video/fbdev/omap2/dss/omapdss-boot-init.c
-index 8b6f6d5..136d304 100644
---- a/drivers/video/fbdev/omap2/dss/omapdss-boot-init.c
-+++ b/drivers/video/fbdev/omap2/dss/omapdss-boot-init.c
-@@ -199,10 +199,8 @@ static int __init omapdss_boot_init(void)
- 	omapdss_walk_device(dss, true);
- 
- 	for_each_available_child_of_node(dss, child) {
--		if (!of_find_property(child, "compatible", NULL)) {
--			of_node_put(child);
-+		if (!of_find_property(child, "compatible", NULL))
- 			continue;
--		}
- 
- 		omapdss_walk_device(child, true);
- 	}
+Michal
 
