@@ -1,25 +1,50 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Thu, 22 Oct 2015 09:33:16 +0000
-Subject: Re: [patch] Bluetooth: hci_bcm: checking for ERR_PTR instead of NULL
-Message-Id: <F7002528-3BCE-4A94-B9F5-7C1CF0B54745@holtmann.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 26 Oct 2015 21:28:26 +0000
+Subject: [PATCH 2/2 v2] coccinelle: ifnullfree: handle various destroy functions
+Message-Id: <1445894906-28137-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151022090609.GA9202@mwanda>
-In-Reply-To: <20151022090609.GA9202@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-Hi Dan,
+Extend ifnullfree to the various destroy functions that were recently
+extended to tolerate NULL arguments.
 
-> bt_skb_alloc() returns NULL on error, it never returns an ERR_PTR.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-patch has been applied to bluetooth-next tree.
+---
+v2: better subject
 
-Regards
+ scripts/coccinelle/free/ifnullfree.cocci |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Marcel
+diff --git a/scripts/coccinelle/free/ifnullfree.cocci b/scripts/coccinelle/free/ifnullfree.cocci
+index d4a072d..52bd235 100644
+--- a/scripts/coccinelle/free/ifnullfree.cocci
++++ b/scripts/coccinelle/free/ifnullfree.cocci
+@@ -25,6 +25,12 @@ expression E;
+   debugfs_remove_recursive(E);
+ |
+   usb_free_urb(E);
++|
++  kmem_cache_destroy(E);
++|
++  mempool_destroy(E);
++|
++  dma_pool_destroy(E);
+ )
+ 
+ @r depends on context || report || org @
+@@ -33,7 +39,9 @@ position p;
+ @@
+ 
+ * if (E != NULL)
+-*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb@p\)(E);
++*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|
++*         usb_free_urb@p\|kmem_cache_destroy@p\|mempool_destroy@p\|
++*         dma_pool_destroy@p\)(E);
+ 
+ @script:python depends on org@
+ p << r.p;
 
