@@ -1,32 +1,21 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 17 Oct 2015 09:35:46 +0000
-Subject: [PATCH] scripts/coccinelle: fix typos
-Message-Id: <1445074546-22023-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Michal Marek <mmarek@suse.com>
+Date: Mon, 26 Oct 2015 21:26:42 +0000
+Subject: Re: [PATCH] scripts/coccinelle: fix typos
+Message-Id: <562E9A92.9070001@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1445074546-22023-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445074546-22023-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-Fix a couple spelling mistakes.
+Dne 17.10.2015 v 11:35 Julia Lawall napsal(a):
+> Fix a couple spelling mistakes.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Applied, thanks.
 
----
- scripts/coccinelle/null/deref_null.cocci |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/coccinelle/null/deref_null.cocci b/scripts/coccinelle/null/deref_null.cocci
-index cdac6cf..f192d60 100644
---- a/scripts/coccinelle/null/deref_null.cocci
-+++ b/scripts/coccinelle/null/deref_null.cocci
-@@ -1,6 +1,6 @@
- ///
--/// A variable is dereference under a NULL test.
--/// Even though it is know to be NULL.
-+/// A variable is dereferenced under a NULL test.
-+/// Even though it is known to be NULL.
- ///
- // Confidence: Moderate
- // Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
+Michal
 
