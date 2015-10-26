@@ -1,130 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 24 Oct 2015 14:42:26 +0000
-Subject: [PATCH 0/9] add missing of_node_put
-Message-Id: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Date: Mon, 26 Oct 2015 08:48:31 +0000
+Subject: Re: [PATCH 0/9] add missing of_node_put
+Message-Id: <562DE8DF.5090609@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-leds@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-The various for_each device_node iterators performs an of_node_get on each
-iteration, so a break out of the loop requires an of_node_put.
+Hi Julia,
 
-The complete semantic patch that fixes this problem is
-(http://coccinelle.lip6.fr):
+Patches 1-4 have been applied to the LED tree, thanks.
 
-// <smpl>
-@r@
-local idexpression n;
-expression e1,e2;
-iterator name for_each_node_by_name, for_each_node_by_type,
-for_each_compatible_node, for_each_matching_node,
-for_each_matching_node_and_match, for_each_child_of_node,
-for_each_available_child_of_node, for_each_node_with_property;
-iterator i;
-statement S;
-expression list [n1] es;
-@@
+On 10/24/2015 04:42 PM, Julia Lawall wrote:
+> The various for_each device_node iterators performs an of_node_get on each
+> iteration, so a break out of the loop requires an of_node_put.
+>
+> The complete semantic patch that fixes this problem is
+> (http://coccinelle.lip6.fr):
+>
+[...]
 
-(
-(
-for_each_node_by_name(n,e1) S
-|
-for_each_node_by_type(n,e1) S
-|
-for_each_compatible_node(n,e1,e2) S
-|
-for_each_matching_node(n,e1) S
-|
-for_each_matching_node_and_match(n,e1,e2) S
-|
-for_each_child_of_node(e1,n) S
-|
-for_each_available_child_of_node(e1,n) S
-|
-for_each_node_with_property(n,e1) S
-)
-&
-i(es,n,...) S
-)
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-   return n;
-|
-+  of_node_put(n);
-?  return ...;
-)
-   ...
- }
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-identifier l;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  goto l;
-)
-   ...
- }
-...
-l: ... when != n// </smpl>
-
----
-
- drivers/bluetooth/btmrvl_main.c  |    5 ++++-
- drivers/gpu/drm/tegra/dc.c       |    4 +++-
- drivers/gpu/host1x/bus.c         |    4 +++-
- drivers/leds/leds-88pm860x.c     |    1 +
- drivers/leds/leds-bcm6328.c      |    4 +++-
- drivers/leds/leds-bcm6358.c      |    4 +++-
- drivers/leds/leds-powernv.c      |    8 ++++++--
- drivers/pinctrl/pinctrl-at91.c   |    5 ++++-
- drivers/soc/ti/knav_qmss_queue.c |    3 +++
- 9 files changed, 30 insertions(+), 8 deletions(-)
+-- 
+Best Regards,
+Jacek Anaszewski
