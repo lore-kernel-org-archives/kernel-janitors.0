@@ -1,14 +1,20 @@
-From: Vera@vger.kernel.org, Hollin@vger.kernel.org, Kvan@vger.kernel.org
-Date: Sun, 11 Oct 2015 22:14:42 +0000
-Subject: I Have An Urgent Matter To Discuss With You
-Message-Id: <TY1PR0201MB09581B572C78DE6148571702B8320@TY1PR0201MB0958.apcprd02.prod.outlook.com>
+From: Michal Marek <mmarek@suse.com>
+Date: Mon, 26 Oct 2015 19:44:16 +0000
+Subject: Re: [PATCH v2] coccinelle: misc: move constants to the right
+Message-Id: <562E8290.7070104@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1441394871-17774-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1441394871-17774-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-My name is Vera Hollin Kvan,i have an urgent matter to discuss with you please do not ignore this message make sure you reply me urgently with this email: verahollinkvan1@gmail.com
+Dne 4.9.2015 v 21:27 Julia Lawall napsal(a):
+> Move constants to the right in binary operators.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Applied to kbuild.git#misc, thanks.
 
-Mein Name ist Vera Hollin Kvan, ich habe eine dringende Angelegenheit mit Ihnen besprechen Sie bitte nicht, diese Nachricht ignorieren sicherzustellen, dass Sie mir antworten dringend mit dieser E-Mail: verahollinkvan1@gmail.com
+Michal
