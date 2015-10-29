@@ -1,30 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Oct 2015 13:37:54 +0000
-Subject: [patch] drm: crtc: integer overflow in drm_property_create_blob()
-Message-Id: <20151029133754.GA2862@mwanda>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Thu, 29 Oct 2015 14:40:03 +0000
+Subject: Re: [patch] drm: crtc: integer overflow in drm_property_create_blob()
+Message-Id: <CAPj87rPTY3EJ15MtRdx_7edjJ4v-Bp-2EvfOd9tZJ0fjtHDO1w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20151029133754.GA2862@mwanda>
+In-Reply-To: <20151029133754.GA2862@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>
 
-The size here comes from the user via the ioctl, it is a number between
-1-u32max so the addition here could overflow on 32 bit systems.
+Hi Dan,
 
-Fixes: f453ba046074 ('DRM: add mode setting support')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 29 October 2015 at 13:37, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> The size here comes from the user via the ioctl, it is a number between
+> 1-u32max so the addition here could overflow on 32 bit systems.
+>
+> Fixes: f453ba046074 ('DRM: add mode setting support')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index e54660a..627b2d0 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -4107,7 +4107,7 @@ drm_property_create_blob(struct drm_device *dev, size_t length,
- 	struct drm_property_blob *blob;
- 	int ret;
- 
--	if (!length)
-+	if (!length || length > ULONG_MAX - sizeof(struct drm_property_blob))
- 		return ERR_PTR(-EINVAL);
- 
- 	blob = kzalloc(sizeof(struct drm_property_blob)+length, GFP_KERNEL);
+Thanks for catching this. I did have a pass through looking for such
+issues but couldn't see any. :\
+
+Reviewed-by: Daniel Stone <daniels@collabora.com>
+Cc: stable@kernel.org # v4.2
+
+Cheers,
+Daniel
