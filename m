@@ -1,39 +1,47 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 26 Oct 2015 21:36:02 +0000
-Subject: Re: [PATCH 1/2] coccinelle: ifnullfree: improve and extend ifnullfree
-Message-Id: <alpine.DEB.2.02.1510262235490.2079@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Oct 2015 13:51:23 +0000
+Subject: [patch] staging: lustre: potential underflow in libcfs_kkuc_group_add()
+Message-Id: <20151029135122.GA7709@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445102605-22408-1-git-send-email-Julia.Lawall@lip6.fr>
- <56236C9A.8060906@users.sourceforge.net> <562E9BE3.5080004@suse.com>
-In-Reply-To: <562E9BE3.5080004@suse.com>
+References: <20150106095708.GB8698@mwanda>
+In-Reply-To: <20150106095708.GB8698@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: lustre-devel@lists.lustre.org
 
-On Mon, 26 Oct 2015, Michal Marek wrote:
+My static checker says that "group" is a user controlled number that can
+be negative leading to an array underflow.  I have looked at it, and I'm
+not an expert enough in lustre to say for sure if it is really a bug.
+Anyway, it's simple enough to make the variable unsigned which pleases
+the static checker and makes it easier to audit.
 
-> Dne 18.10.2015 v 11:55 SF Markus Elfring napsal(a):
-> >> Remove removal and re-addition of freeing functions.
-> > 
-> > I find such a wording confusing for a commit message.
-> 
-> It is also a bit confusing to use the same subject for two patches in a
-> series. How about
-> 
-> [PATCH 1/2] coccinelle: ifnullfree: Adjust tests to compare against NULL
-> [PATCH 2/2] coccinelle: ifnullfree: handle various destroy functions
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Sorry.  I'll send them again.
-
-julia
-
-> 
-> ?
-> 
-> Michal
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
+index a989d26..41f3d81 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
+@@ -91,7 +91,7 @@ typedef int (*libcfs_kkuc_cb_t)(__u32 data, void *cb_arg);
+ /* Kernel methods */
+ int libcfs_kkuc_msg_put(struct file *fp, void *payload);
+ int libcfs_kkuc_group_put(int group, void *payload);
+-int libcfs_kkuc_group_add(struct file *fp, int uid, int group,
++int libcfs_kkuc_group_add(struct file *fp, int uid, unsigned int group,
+ 				 __u32 data);
+ int libcfs_kkuc_group_rem(int uid, int group);
+ int libcfs_kkuc_group_foreach(int group, libcfs_kkuc_cb_t cb_func,
+diff --git a/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c b/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
+index ad661a3..d8230ae 100644
+--- a/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
++++ b/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
+@@ -110,7 +110,8 @@ static DECLARE_RWSEM(kg_sem);
+  * @param uid identifier for this receiver
+  * @param group group number
+  */
+-int libcfs_kkuc_group_add(struct file *filp, int uid, int group, __u32 data)
++int libcfs_kkuc_group_add(struct file *filp, int uid, unsigned int group,
++			  __u32 data)
+ {
+ 	struct kkuc_reg *reg;
+ 
