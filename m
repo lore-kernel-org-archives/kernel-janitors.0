@@ -1,242 +1,56 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 11 Nov 2015 07:42:00 +0000
-Subject: Re: [PATCH v2] ALSA: ctxfi: constify rsc ops structures
-Message-Id: <s5hegfx56ev.wl-tiwai@suse.de>
+From: "Simmons, James A." <simmonsja@ornl.gov>
+Date: Tue, 03 Nov 2015 23:28:17 +0000
+Subject: RE: [patch] staging: lustre: potential underflow in libcfs_kkuc_group_add()
+Message-Id: <b7e8511d07d84cfaa9e437729795f179@EXCHCS32.ornl.gov>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447021024-10392-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447022441-18364-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447022441-18364-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20151029135122.GA7709@mwanda>
+In-Reply-To: <20151029135122.GA7709@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-
-On Sun, 08 Nov 2015 23:40:41 +0100,
-Julia Lawall wrote:
-> 
-> The various rsc ops structures are never modified, so declare them as
-> const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> 
-> v2: This does the following types all at once: dao_rsc_ops, dai_rsc_ops,
-> amixer_rsc_ops, src_rsc_ops, srcimp_rsc_ops, rsc_ops.  Most of these types
-> are only used in specific files, but the rsc_ops structures appear in all
-> of the files, so just do them all at once.  This patch thus also replaces
-> the one with the subject "ALSA: ctxfi: constify dao and dai rsc ops structures"
-
-Thanks, applied this one.
+To: lustre-devel@lists.lustre.org
 
 
-Takashi
+>My static checker says that "group" is a user controlled number that can
+>be negative leading to an array underflow.  I have looked at it, and I'm
+>not an expert enough in lustre to say for sure if it is really a bug.
+>Anyway, it's simple enough to make the variable unsigned which pleases
+>the static checker and makes it easier to audit.
+>
+>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
->  sound/pci/ctxfi/ctamixer.c   |    6 +++---
->  sound/pci/ctxfi/ctamixer.h   |    2 +-
->  sound/pci/ctxfi/ctdaio.c     |   10 +++++-----
->  sound/pci/ctxfi/ctdaio.h     |    4 ++--
->  sound/pci/ctxfi/ctresource.c |    2 +-
->  sound/pci/ctxfi/ctresource.h |    2 +-
->  sound/pci/ctxfi/ctsrc.c      |    6 +++---
->  sound/pci/ctxfi/ctsrc.h      |    4 ++--
->  8 files changed, 18 insertions(+), 18 deletions(-)
-> 
-> diff --git a/sound/pci/ctxfi/ctamixer.c b/sound/pci/ctxfi/ctamixer.c
-> index c7dc38d..5fcbb06 100644
-> --- a/sound/pci/ctxfi/ctamixer.c
-> +++ b/sound/pci/ctxfi/ctamixer.c
-> @@ -49,7 +49,7 @@ static int amixer_output_slot(const struct rsc *rsc)
->  	return (amixer_index(rsc) << 4) + 0x4;
->  }
->  
-> -static struct rsc_ops amixer_basic_rsc_ops = {
-> +static const struct rsc_ops amixer_basic_rsc_ops = {
->  	.master		= amixer_master,
->  	.next_conj	= amixer_next_conj,
->  	.index		= amixer_index,
-> @@ -186,7 +186,7 @@ static int amixer_setup(struct amixer *amixer, struct rsc *input,
->  	return 0;
->  }
->  
-> -static struct amixer_rsc_ops amixer_ops = {
-> +static const struct amixer_rsc_ops amixer_ops = {
->  	.set_input		= amixer_set_input,
->  	.set_invalid_squash	= amixer_set_invalid_squash,
->  	.set_scale		= amixer_set_y,
-> @@ -357,7 +357,7 @@ static int sum_output_slot(const struct rsc *rsc)
->  	return (sum_index(rsc) << 4) + 0xc;
->  }
->  
-> -static struct rsc_ops sum_basic_rsc_ops = {
-> +static const struct rsc_ops sum_basic_rsc_ops = {
->  	.master		= sum_master,
->  	.next_conj	= sum_next_conj,
->  	.index		= sum_index,
-> diff --git a/sound/pci/ctxfi/ctamixer.h b/sound/pci/ctxfi/ctamixer.h
-> index 72f42f2..2de18aa 100644
-> --- a/sound/pci/ctxfi/ctamixer.h
-> +++ b/sound/pci/ctxfi/ctamixer.h
-> @@ -58,7 +58,7 @@ struct amixer {
->  	unsigned char idx[8];
->  	struct rsc *input;	/* pointer to a resource acting as source */
->  	struct sum *sum;	/* Put amixer output to this summation node */
-> -	struct amixer_rsc_ops *ops;	/* AMixer specific operations */
-> +	const struct amixer_rsc_ops *ops;	/* AMixer specific operations */
->  };
->  
->  struct amixer_rsc_ops {
-> diff --git a/sound/pci/ctxfi/ctdaio.c b/sound/pci/ctxfi/ctdaio.c
-> index 9b87dd2..7f089cb 100644
-> --- a/sound/pci/ctxfi/ctdaio.c
-> +++ b/sound/pci/ctxfi/ctdaio.c
-> @@ -83,21 +83,21 @@ static int daio_in_next_conj_20k2(struct rsc *rsc)
->  	return rsc->conj += 0x100;
->  }
->  
-> -static struct rsc_ops daio_out_rsc_ops = {
-> +static const struct rsc_ops daio_out_rsc_ops = {
->  	.master		= daio_master,
->  	.next_conj	= daio_out_next_conj,
->  	.index		= daio_index,
->  	.output_slot	= NULL,
->  };
->  
-> -static struct rsc_ops daio_in_rsc_ops_20k1 = {
-> +static const struct rsc_ops daio_in_rsc_ops_20k1 = {
->  	.master		= daio_master,
->  	.next_conj	= daio_in_next_conj_20k1,
->  	.index		= NULL,
->  	.output_slot	= daio_index,
->  };
->  
-> -static struct rsc_ops daio_in_rsc_ops_20k2 = {
-> +static const struct rsc_ops daio_in_rsc_ops_20k2 = {
->  	.master		= daio_master,
->  	.next_conj	= daio_in_next_conj_20k2,
->  	.index		= NULL,
-> @@ -263,7 +263,7 @@ static int dao_clear_right_input(struct dao *dao)
->  	return 0;
->  }
->  
-> -static struct dao_rsc_ops dao_ops = {
-> +static const struct dao_rsc_ops dao_ops = {
->  	.set_spos		= dao_spdif_set_spos,
->  	.commit_write		= dao_commit_write,
->  	.get_spos		= dao_spdif_get_spos,
-> @@ -318,7 +318,7 @@ static int dai_commit_write(struct dai *dai)
->  	return 0;
->  }
->  
-> -static struct dai_rsc_ops dai_ops = {
-> +static const struct dai_rsc_ops dai_ops = {
->  	.set_srt_srcl		= dai_set_srt_srcl,
->  	.set_srt_srcr		= dai_set_srt_srcr,
->  	.set_srt_msr		= dai_set_srt_msr,
-> diff --git a/sound/pci/ctxfi/ctdaio.h b/sound/pci/ctxfi/ctdaio.h
-> index 0ebbf35..a30be73 100644
-> --- a/sound/pci/ctxfi/ctdaio.h
-> +++ b/sound/pci/ctxfi/ctdaio.h
-> @@ -51,7 +51,7 @@ struct daio {
->  
->  struct dao {
->  	struct daio daio;
-> -	struct dao_rsc_ops *ops;	/* DAO specific operations */
-> +	const struct dao_rsc_ops *ops;	/* DAO specific operations */
->  	struct imapper **imappers;
->  	struct daio_mgr *mgr;
->  	struct hw *hw;
-> @@ -60,7 +60,7 @@ struct dao {
->  
->  struct dai {
->  	struct daio daio;
-> -	struct dai_rsc_ops *ops;	/* DAI specific operations */
-> +	const struct dai_rsc_ops *ops;	/* DAI specific operations */
->  	struct hw *hw;
->  	void *ctrl_blk;
->  };
-> diff --git a/sound/pci/ctxfi/ctresource.c b/sound/pci/ctxfi/ctresource.c
-> index 1a97e40..c5124c3 100644
-> --- a/sound/pci/ctxfi/ctresource.c
-> +++ b/sound/pci/ctxfi/ctresource.c
-> @@ -127,7 +127,7 @@ static int rsc_master(struct rsc *rsc)
->  	return rsc->conj = rsc->idx;
->  }
->  
-> -static struct rsc_ops rsc_generic_ops = {
-> +static const struct rsc_ops rsc_generic_ops = {
->  	.index		= rsc_index,
->  	.output_slot	= audio_ring_slot,
->  	.master		= rsc_master,
-> diff --git a/sound/pci/ctxfi/ctresource.h b/sound/pci/ctxfi/ctresource.h
-> index 9b746c3..736d9f7 100644
-> --- a/sound/pci/ctxfi/ctresource.h
-> +++ b/sound/pci/ctxfi/ctresource.h
-> @@ -39,7 +39,7 @@ struct rsc {
->  	u32 msr:4;	/* The Master Sample Rate a resource working on */
->  	void *ctrl_blk;	/* Chip specific control info block for a resource */
->  	struct hw *hw;	/* Chip specific object for hardware access means */
-> -	struct rsc_ops *ops;	/* Generic resource operations */
-> +	const struct rsc_ops *ops;	/* Generic resource operations */
->  };
->  
->  struct rsc_ops {
-> diff --git a/sound/pci/ctxfi/ctsrc.c b/sound/pci/ctxfi/ctsrc.c
-> index ec1f084..a5a72df 100644
-> --- a/sound/pci/ctxfi/ctsrc.c
-> +++ b/sound/pci/ctxfi/ctsrc.c
-> @@ -335,7 +335,7 @@ static int src_default_config_arcrw(struct src *src)
->  	return 0;
->  }
->  
-> -static struct src_rsc_ops src_rsc_ops = {
-> +static const struct src_rsc_ops src_rsc_ops = {
->  	.set_state		= src_set_state,
->  	.set_bm			= src_set_bm,
->  	.set_sf			= src_set_sf,
-> @@ -611,7 +611,7 @@ static int srcimp_index(const struct rsc *rsc)
->  	return container_of(rsc, struct srcimp, rsc)->idx[rsc->conj];
->  }
->  
-> -static struct rsc_ops srcimp_basic_rsc_ops = {
-> +static const struct rsc_ops srcimp_basic_rsc_ops = {
->  	.master		= srcimp_master,
->  	.next_conj	= srcimp_next_conj,
->  	.index		= srcimp_index,
-> @@ -662,7 +662,7 @@ static int srcimp_unmap(struct srcimp *srcimp)
->  	return 0;
->  }
->  
-> -static struct srcimp_rsc_ops srcimp_ops = {
-> +static const struct srcimp_rsc_ops srcimp_ops = {
->  	.map = srcimp_map,
->  	.unmap = srcimp_unmap
->  };
-> diff --git a/sound/pci/ctxfi/ctsrc.h b/sound/pci/ctxfi/ctsrc.h
-> index da7573c..92944a0 100644
-> --- a/sound/pci/ctxfi/ctsrc.h
-> +++ b/sound/pci/ctxfi/ctsrc.h
-> @@ -48,7 +48,7 @@ struct src_rsc_ops;
->  struct src {
->  	struct rsc rsc; /* Basic resource info */
->  	struct src *intlv; /* Pointer to next interleaved SRC in a series */
-> -	struct src_rsc_ops *ops; /* SRC specific operations */
-> +	const struct src_rsc_ops *ops; /* SRC specific operations */
->  	/* Number of contiguous srcs for interleaved usage */
->  	unsigned char multi;
->  	unsigned char mode; /* Working mode of this SRC resource */
-> @@ -110,7 +110,7 @@ struct srcimp {
->  	struct imapper *imappers;
->  	unsigned int mapped; /* A bit-map indicating which conj rsc is mapped */
->  	struct srcimp_mgr *mgr;
-> -	struct srcimp_rsc_ops *ops;
-> +	const struct srcimp_rsc_ops *ops;
->  };
->  
->  struct srcimp_rsc_ops {
-> 
-> 
+Dmitry do you this this could be placed under place under LU-6303 or does a new ticket need to be open.
+I also CC Frank Zago who is very familiar with this code. To me it looks okay.
+
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
+index a989d26..41f3d81 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_kernelcomm.h
+@@ -91,7 +91,7 @@ typedef int (*libcfs_kkuc_cb_t)(__u32 data, void *cb_arg);
+ /* Kernel methods */
+ int libcfs_kkuc_msg_put(struct file *fp, void *payload);
+ int libcfs_kkuc_group_put(int group, void *payload);
+-int libcfs_kkuc_group_add(struct file *fp, int uid, int group,
++int libcfs_kkuc_group_add(struct file *fp, int uid, unsigned int group,
+ 				 __u32 data);
+ int libcfs_kkuc_group_rem(int uid, int group);
+ int libcfs_kkuc_group_foreach(int group, libcfs_kkuc_cb_t cb_func,
+diff --git a/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c b/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
+index ad661a3..d8230ae 100644
+--- a/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
++++ b/drivers/staging/lustre/lustre/libcfs/kernel_user_comm.c
+@@ -110,7 +110,8 @@ static DECLARE_RWSEM(kg_sem);
+  * @param uid identifier for this receiver
+  * @param group group number
+  */
+-int libcfs_kkuc_group_add(struct file *filp, int uid, int group, __u32 data)
++int libcfs_kkuc_group_add(struct file *filp, int uid, unsigned int group,
++			  __u32 data)
+ {
+ 	struct kkuc_reg *reg;
+ 
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+
