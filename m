@@ -1,40 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Nov 2015 10:06:55 +0000
-Subject: [PATCH 3/9] cxgb4/cxgb4vf/csiostor: constify pci_error_handlers structures
-Message-Id: <1447495621-9161-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 03 Nov 2015 20:45:43 +0000
+Subject: [PATCH 0/3] batman-adv: Deletion of a few unnecessary checks
+Message-Id: <56391CF7.9080400@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@odin.com>
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This pci_error_handlers structure is never modified, like all the other
-pci_error_handlers structures, so declare it as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Nov 2015 21:34:29 +0100
 
-Done with the help of Coccinelle.
+Further update suggestions were taken into account after a patch
+was applied from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (3):
+  Delete an unnecessary check before the function call "batadv_softif_vlan_free_ref"
+  Split a condition check
+  Less function calls in batadv_is_ap_isolated() after error detection
 
----
-There are no dependencies between these patches.
+ net/batman-adv/translation-table.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
- drivers/scsi/csiostor/csio_init.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/csiostor/csio_init.c b/drivers/scsi/csiostor/csio_init.c
-index dbe416f..33996f2 100644
---- a/drivers/scsi/csiostor/csio_init.c
-+++ b/drivers/scsi/csiostor/csio_init.c
-@@ -1162,7 +1162,7 @@ err_resume_exit:
- 	dev_err(&pdev->dev, "resume of device failed: %d\n", rv);
- }
- 
--static struct pci_error_handlers csio_err_handler = {
-+static const struct pci_error_handlers csio_err_handler = {
- 	.error_detected = csio_pci_error_detected,
- 	.slot_reset	= csio_pci_slot_reset,
- 	.resume		= csio_pci_resume,
+-- 
+2.6.2
 
