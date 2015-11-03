@@ -1,75 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 25 Oct 2015 13:57:01 +0000
-Subject: [PATCH 2/8] net: netcp: add missing of_node_put
-Message-Id: <1445781427-7110-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Nov 2015 22:37:31 +0000
+Subject: [patch] nvme: lightnvm: clean up a data type
+Message-Id: <20151103223731.GE19280@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445781427-7110-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wingman Kwok <w-kwok2@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: kernel-janitors@vger.kernel.org
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+"nlb_pr_rq" can't be more than u32 because "len" is a u32.  Later we
+truncate it to u32 anyway when we calculate min_t().
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-local idexpression r.n;
-expression r,e;
-@@
-
- for_each_child_of_node(r,n) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/ethernet/ti/netcp_ethss.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 6bff8d8..4e70e75 100644
---- a/drivers/net/ethernet/ti/netcp_ethss.c
-+++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -2637,8 +2637,10 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
- 			mac_phy_link = true;
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 133c839..e0b7b95 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -282,7 +282,7 @@ static int nvme_nvm_get_l2p_tbl(struct request_queue *q, u64 slba, u32 nlb,
+ 	struct nvme_dev *dev = ns->dev;
+ 	struct nvme_nvm_command c = {};
+ 	u32 len = queue_max_hw_sectors(q) << 9;
+-	u64 nlb_pr_rq = len / sizeof(u64);
++	u32 nlb_pr_rq = len / sizeof(u64);
+ 	u64 cmd_slba = slba;
+ 	void *entries;
+ 	int ret = 0;
+@@ -294,7 +294,7 @@ static int nvme_nvm_get_l2p_tbl(struct request_queue *q, u64 slba, u32 nlb,
+ 		return -ENOMEM;
  
- 		slave->open = true;
--		if (gbe_dev->num_slaves >= gbe_dev->max_num_slaves)
-+		if (gbe_dev->num_slaves >= gbe_dev->max_num_slaves) {
-+			of_node_put(port);
- 			break;
-+		}
- 	}
+ 	while (nlb) {
+-		u32 cmd_nlb = min_t(u32, nlb_pr_rq, nlb);
++		u32 cmd_nlb = min(nlb_pr_rq, nlb);
  
- 	/* of_phy_connect() is needed only for MAC-PHY interface */
-@@ -3137,8 +3139,10 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
- 			continue;
- 		}
- 		gbe_dev->num_slaves++;
--		if (gbe_dev->num_slaves >= gbe_dev->max_num_slaves)
-+		if (gbe_dev->num_slaves >= gbe_dev->max_num_slaves) {
-+			of_node_put(interface);
- 			break;
-+		}
- 	}
- 	of_node_put(interfaces);
- 
-
+ 		c.l2p.slba = cpu_to_le64(cmd_slba);
+ 		c.l2p.nlb = cpu_to_le32(cmd_nlb);
