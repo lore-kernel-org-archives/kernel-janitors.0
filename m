@@ -1,94 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 16 Nov 2015 11:33:19 +0000
-Subject: [PATCH 6/7] phy: miphy365x: add missing of_node_put
-Message-Id: <1447673600-8881-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Nov 2015 14:24:14 +0000
+Subject: re: qed: Add link support
+Message-Id: <20151103142414.GA28591@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-for_each_child_of_node performs an of_node_get on each iteration,
-so a return from the middle of the loop requires an of_node_put.
+Hello Yuval Mintz,
 
-A simplified version of the semantic patch that finds this problem is as
-follows (http://coccinelle.lip6.fr):
+The patch cc875c2e4f34: "qed: Add link support" from Oct 26, 2015,
+leads to the following static checker warning:
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-@@
+	drivers/net/ethernet/qlogic/qed/qed_main.c:940 qed_set_link()
+	warn: bitwise AND condition is false here
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-*  return ...;
-)
-   ...
- }
-// </smpl>
+drivers/net/ethernet/qlogic/qed/qed_main.c
+   925          link_params = qed_mcp_get_link_params(hwfn);
+   926          if (params->override_flags & QED_LINK_OVERRIDE_SPEED_AUTONEG)
+   927                  link_params->speed.autoneg = params->autoneg;
+   928          if (params->override_flags & QED_LINK_OVERRIDE_SPEED_ADV_SPEEDS) {
+   929                  link_params->speed.advertised_speeds = 0;
+   930                  if ((params->adv_speeds & SUPPORTED_1000baseT_Half) ||
+   931                      (params->adv_speeds & SUPPORTED_1000baseT_Full))
+   932                          link_params->speed.advertised_speeds |   933                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_1G;
+   934                  if (params->adv_speeds & SUPPORTED_10000baseKR_Full)
+   935                          link_params->speed.advertised_speeds |   936                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_10G;
+   937                  if (params->adv_speeds & SUPPORTED_40000baseLR4_Full)
+   938                          link_params->speed.advertised_speeds |   939                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_40G;
+   940                  if (params->adv_speeds & 0)
+                            ^^^^^^^^^^^^^^^^^^^^^^
+False.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+   941                          link_params->speed.advertised_speeds |   942                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_50G;
+   943                  if (params->adv_speeds & 0)
+                            ^^^^^^^^^^^^^^^^^^^^^^
+False.
 
----
- drivers/phy/phy-miphy365x.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+   944                          link_params->speed.advertised_speeds |   945                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_100G;
+   946          }
 
-diff --git a/drivers/phy/phy-miphy365x.c b/drivers/phy/phy-miphy365x.c
-index 00a686a..e661f3b 100644
---- a/drivers/phy/phy-miphy365x.c
-+++ b/drivers/phy/phy-miphy365x.c
-@@ -566,22 +566,25 @@ static int miphy365x_probe(struct platform_device *pdev)
- 
- 		miphy_phy = devm_kzalloc(&pdev->dev, sizeof(*miphy_phy),
- 					 GFP_KERNEL);
--		if (!miphy_phy)
--			return -ENOMEM;
-+		if (!miphy_phy) {
-+			ret = -ENOMEM;
-+			goto put_child;
-+		}
- 
- 		miphy_dev->phys[port] = miphy_phy;
- 
- 		phy = devm_phy_create(&pdev->dev, child, &miphy365x_ops);
- 		if (IS_ERR(phy)) {
- 			dev_err(&pdev->dev, "failed to create PHY\n");
--			return PTR_ERR(phy);
-+			ret = PTR_ERR(phy);
-+			goto put_child;
- 		}
- 
- 		miphy_dev->phys[port]->phy = phy;
- 
- 		ret = miphy365x_of_probe(child, miphy_phy);
- 		if (ret)
--			return ret;
-+			goto put_child;
- 
- 		phy_set_drvdata(phy, miphy_dev->phys[port]);
- 
-@@ -591,12 +594,15 @@ static int miphy365x_probe(struct platform_device *pdev)
- 					&miphy_phy->ctrlreg);
- 		if (ret) {
- 			dev_err(&pdev->dev, "No sysconfig offset found\n");
--			return ret;
-+			goto put_child;
- 		}
- 	}
- 
- 	provider = devm_of_phy_provider_register(&pdev->dev, miphy365x_xlate);
- 	return PTR_ERR_OR_ZERO(provider);
-+put_child:
-+	of_node_put(child);
-+	return ret;
- }
- 
- static const struct of_device_id miphy365x_of_match[] = {
-
+regards,
+dan carpenter
