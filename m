@@ -1,22 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Nov 2015 18:40:04 +0000
-Subject: Re: [patch -next] qlogic: qed: fix error codes in qed_resc_alloc()
-Message-Id: <20151105.134004.2208461190213502633.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Nov 2015 19:50:49 +0000
+Subject: [patch] NVMe: Precedence error in nvme_pr_clear()
+Message-Id: <20151103195049.GA17238@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151105084128.GC19405@mwanda>
-In-Reply-To: <20151105084128.GC19405@mwanda>
+In-Reply-To: <20151103153958.GH13904@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Yuval.Mintz@qlogic.com, Ariel.Elior@qlogic.com, everest-linux-l2@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 5 Nov 2015 11:41:28 +0300
+The original code is equivalent to:
 
-> We accidentally return success instead of -ENOMEM here.
-> 
-> Fixes: fe56b9e6a8d9 ('qed: Add module with basic common support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+	u32 cdw10 = (1 | key) ? 1 << 3 : 0;
 
-Applied, thanks Dan.
+But we want:
+
+	u32 cdw10 = 1 | (key ? 1 << 3 : 0);
+
+Fixes: 1d277a637a71: ('NVMe: Add persistent reservation ops')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 34fae28..8bcb772 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2140,7 +2140,7 @@ static int nvme_pr_preempt(struct block_device *bdev, u64 old, u64 new,
+ 
+ static int nvme_pr_clear(struct block_device *bdev, u64 key)
+ {
+-	u32 cdw10 = 1 | key ? 1 << 3 : 0;
++	u32 cdw10 = 1 | (key ? 1 << 3 : 0);
+ 	return nvme_pr_command(bdev, cdw10, key, 0, nvme_cmd_resv_register);
+ }
+ 
