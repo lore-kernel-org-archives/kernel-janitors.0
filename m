@@ -1,63 +1,51 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 24 Nov 2015 11:28:09 +0000
-Subject: Re: [PATCH] video: constify geode ops structures
-Message-Id: <565449C9.10206@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="enVrx1qFpvJ1Isc08Iv4b2ioIFAED6pAU"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Nov 2015 22:14:34 +0000
+Subject: [patch] thermal: underflow in trip_point_temp_store()
+Message-Id: <20151103221434.GB19280@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447018493-20631-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447018493-20631-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: kernel-janitors@vger.kernel.org, linux-geode@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---enVrx1qFpvJ1Isc08Iv4b2ioIFAED6pAU
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+This is to address a static checker warning about an underflow in
+imx_set_trip_temp().  The checker is complaining that we have a user
+supplied value for "temp" from kstrtoul() where we treat it as signed,
+we cap the upper but we accept negative values.
 
+This looks unintentional since the caller is using unsigned longs to
+represent the temperature.  Let's change it to int and reject negatives
+in the caller.
 
+Also I changed it to reject negative "trip" values as well.
 
-On 08/11/15 23:34, Julia Lawall wrote:
-> These geode ops structures are never modified, so declare them as const=
-=2E
->=20
-> Done with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/video/fbdev/geode/display_gx1.c  |    2 +-
->  drivers/video/fbdev/geode/display_gx1.h  |    2 +-
->  drivers/video/fbdev/geode/geodefb.h      |    4 ++--
->  drivers/video/fbdev/geode/video_cs5530.c |    2 +-
->  drivers/video/fbdev/geode/video_cs5530.h |    2 +-
->  5 files changed, 6 insertions(+), 6 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Someday we will use super cooled CPUs and we will need to rethink this
+code.  :)
 
-Thanks, queued for 4.5.
-
- Tomi
-
-
---enVrx1qFpvJ1Isc08Iv4b2ioIFAED6pAU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJWVEnJAAoJEPo9qoy8lh71mlYQAKaCCYWg3W+w71nV8K7Ivt3Y
-NjfP07ApN31g8gqXpAVhTWP990BD5JTx1KtN4oJnFuiKU7OZwC3XaACYs3kF67w8
-7uhdk+npN6AQ2wC0nEq+iOeZrqKLu44YB6Vk7l10zbT1Or3GmtbcrZnwLCA/bqaK
-fPV6MBSPdtJMVhatZJyRv1aodmb8vEq86PLC97zXsSyP5qLD4Kcc6hlhBfRSgEEo
-FdUL5muRA/C7ZkY3tTY7vEMBSDvG+eY+nS50VRttOo09QsBDhNNUbmd9g3yszPnX
-1eezWz33vIvjp8zZ44TOaIfgPTpnZKzPiti0pUxYtQIYOppxPPl5148KcPBbyMT5
-mfLAAN6eWAfMyrA9QwrK0bVnWThH+VlguE1LJ+Db00Xrv3zxMST1tH/k/kuZgh9C
-li1TCCQfH5g8KHhVfAaNmj+rlz665uxedSztX2I1pasX1vfHpMo6nR+8KamkGN3X
-kdBAzVdDFjuqbVxrDvxsNoqK5/hjZEwm38OWuAOATFqC0Sb9EnFJDyhSutUBGRyh
-AlkiD2bzTPPGJkweLvsbpybdEWJjjPy3Ii2VpNlPl4TLpULJKubcOnMkwvFRjSJy
-PEhYDFvzdwEoGJpQMor5YKZOKNNTTQXhAkjG0/HGh9cjCSV44vyZRce1PcfYFsIV
-dGLq+TdKMPRqSVTk7/m3
-=APHw
------END PGP SIGNATURE-----
-
---enVrx1qFpvJ1Isc08Iv4b2ioIFAED6pAU--
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index d9e525c..151a630 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -664,7 +664,7 @@ trip_point_temp_store(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct thermal_zone_device *tz = to_thermal_zone(dev);
+ 	int trip, ret;
+-	unsigned long temperature;
++	int temperature;
+ 
+ 	if (!tz->ops->set_trip_temp)
+ 		return -EPERM;
+@@ -672,7 +672,9 @@ trip_point_temp_store(struct device *dev, struct device_attribute *attr,
+ 	if (!sscanf(attr->attr.name, "trip_point_%d_temp", &trip))
+ 		return -EINVAL;
+ 
+-	if (kstrtoul(buf, 10, &temperature))
++	if (kstrtoint(buf, 10, &temperature))
++		return -EINVAL;
++	if (trip < 0 || temperature < 0)
+ 		return -EINVAL;
+ 
+ 	ret = tz->ops->set_trip_temp(tz, trip, temperature);
