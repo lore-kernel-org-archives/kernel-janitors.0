@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 08:43:26 +0000
-Subject: [PATCH 1/2] batman-adv: Delete unnecessary checks before the function call "kfree_skb"
-Message-Id: <564845AE.8020008@users.sourceforge.net>
+Date: Tue, 03 Nov 2015 20:54:35 +0000
+Subject: [PATCH 2/3] batman-adv: Split a condition check
+Message-Id: <56391F0B.2060102@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,8 +19,8 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <56484502.8000206@users.sourceforge.net>
-In-Reply-To: <56484502.8000206@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <56391CF7.9080400@users.sourceforge.net>
+In-Reply-To: <56391CF7.9080400@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -28,62 +28,33 @@ To: Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemlo
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 08:04:43 +0100
+Date: Tue, 3 Nov 2015 20:41:02 +0100
 
-The kfree_skb() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the calls is not needed.
-
-This issue was detected by using the Coccinelle software.
+Let us split a check for a condition at the beginning of the
+batadv_is_ap_isolated() function so that a direct return can be performed
+in this function if the variable "vlan" contained a null pointer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/batman-adv/main.c           | 2 +-
- net/batman-adv/network-coding.c | 4 +---
- net/batman-adv/send.c           | 3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ net/batman-adv/translation-table.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/net/batman-adv/main.c b/net/batman-adv/main.c
-index d7f17c1..9e9b8f6 100644
---- a/net/batman-adv/main.c
-+++ b/net/batman-adv/main.c
-@@ -1184,7 +1184,7 @@ void batadv_tvlv_unicast_send(struct batadv_priv *bat_priv, u8 *src,
- 		ret = true;
+diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+index 48315de..965a004 100644
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -3319,7 +3319,10 @@ bool batadv_is_ap_isolated(struct batadv_priv *bat_priv, u8 *src, u8 *dst,
+ 	bool ret = false;
  
- out:
--	if (skb && !ret)
-+	if (!ret)
- 		kfree_skb(skb);
- 	if (orig_node)
- 		batadv_orig_node_free_ref(orig_node);
-diff --git a/net/batman-adv/network-coding.c b/net/batman-adv/network-coding.c
-index f5276be..c98b0ab 100644
---- a/net/batman-adv/network-coding.c
-+++ b/net/batman-adv/network-coding.c
-@@ -244,9 +244,7 @@ static void batadv_nc_path_free_ref(struct batadv_nc_path *nc_path)
-  */
- static void batadv_nc_packet_free(struct batadv_nc_packet *nc_packet)
- {
--	if (nc_packet->skb)
--		kfree_skb(nc_packet->skb);
--
-+	kfree_skb(nc_packet->skb);
- 	batadv_nc_path_free_ref(nc_packet->nc_path);
- 	kfree(nc_packet);
- }
-diff --git a/net/batman-adv/send.c b/net/batman-adv/send.c
-index f664324..782fa33 100644
---- a/net/batman-adv/send.c
-+++ b/net/batman-adv/send.c
-@@ -407,8 +407,7 @@ void batadv_schedule_bat_ogm(struct batadv_hard_iface *hard_iface)
+ 	vlan = batadv_softif_vlan_get(bat_priv, vid);
+-	if (!vlan || !atomic_read(&vlan->ap_isolation))
++	if (!vlan)
++		return false;
++
++	if (!atomic_read(&vlan->ap_isolation))
+ 		goto out;
  
- static void batadv_forw_packet_free(struct batadv_forw_packet *forw_packet)
- {
--	if (forw_packet->skb)
--		kfree_skb(forw_packet->skb);
-+	kfree_skb(forw_packet->skb);
- 	if (forw_packet->if_incoming)
- 		batadv_hardif_free_ref(forw_packet->if_incoming);
- 	if (forw_packet->if_outgoing)
+ 	tt_local_entry = batadv_tt_local_hash_find(bat_priv, dst, vid);
 -- 
 2.6.2
 
