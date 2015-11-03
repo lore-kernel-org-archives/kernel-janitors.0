@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 09:47:37 +0000
-Subject: [PATCH 2/2] mISDN: One function call less in mISDN_sock_sendmsg() after error detection
-Message-Id: <5649A639.2040503@users.sourceforge.net>
+Date: Tue, 03 Nov 2015 20:52:58 +0000
+Subject: [PATCH 1/3] batman-adv: Delete an unnecessary check before the function call "batadv_softif_vlan_fre
+Message-Id: <56391EAA.2060002@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,49 +19,41 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5649A524.6030407@users.sourceforge.net>
-In-Reply-To: <5649A524.6030407@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <56391CF7.9080400@users.sourceforge.net>
+In-Reply-To: <56391CF7.9080400@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org
+To: Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 10:30:29 +0100
+Date: Tue, 3 Nov 2015 19:20:34 +0100
 
-The kfree_skb() function was called in one case by the
-mISDN_sock_sendmsg() function during error handling even if a call of
-the _l2_alloc_skb() function returned a null pointer.
+The batadv_softif_vlan_free_ref() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-This implementation detail could be improved by the introduction
-of another jump label.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/isdn/mISDN/socket.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/batman-adv/translation-table.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
-index edd16ef..430ac8c 100644
---- a/drivers/isdn/mISDN/socket.c
-+++ b/drivers/isdn/mISDN/socket.c
-@@ -200,7 +200,7 @@ mISDN_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+index 4228b10..48315de 100644
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -3336,8 +3336,7 @@ bool batadv_is_ap_isolated(struct batadv_priv *bat_priv, u8 *src, u8 *dst,
+ 	ret = true;
  
- 	skb = _l2_alloc_skb(len, GFP_KERNEL);
- 	if (!skb)
--		goto done;
-+		goto release_socket;
- 
- 	if (memcpy_from_msg(skb_put(skb, len), msg, len)) {
- 		err = -EFAULT;
-@@ -237,6 +237,7 @@ mISDN_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 
- done:
- 	kfree_skb(skb);
-+release_socket:
- 	release_sock(sk);
- 	return err;
- }
+ out:
+-	if (vlan)
+-		batadv_softif_vlan_free_ref(vlan);
++	batadv_softif_vlan_free_ref(vlan);
+ 	if (tt_global_entry)
+ 		batadv_tt_global_entry_free_ref(tt_global_entry);
+ 	if (tt_local_entry)
 -- 
 2.6.2
+
