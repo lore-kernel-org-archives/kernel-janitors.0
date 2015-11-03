@@ -1,54 +1,44 @@
-From: Bob Peterson <rpeterso@redhat.com>
-Date: Mon, 16 Nov 2015 18:11:55 +0000
-Subject: Re: [PATCH] GFS2: Delete an unnecessary check before the function call "iput"
-Message-Id: <331389501.12200850.1447697515517.JavaMail.zimbra@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Nov 2015 22:15:39 +0000
+Subject: [patch] Smack: harmless underflow in smk_set_cipso()
+Message-Id: <20151103221539.GC19280@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546B20F0.9040202@users.sourceforge.net> <546B27FF.6080702@redhat.com> <563A6A22.5000206@users.sourceforge.net>
-In-Reply-To: <563A6A22.5000206@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Steven Whitehouse <swhiteho@redhat.com>, cluster-devel@redhat.com, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
------ Original Message -----
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Nov 2015 21:23:43 +0100
-> 
-> The iput() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/gfs2/ops_fstype.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-> index baab99b..1f9de17 100644
-> --- a/fs/gfs2/ops_fstype.c
-> +++ b/fs/gfs2/ops_fstype.c
-> @@ -910,8 +910,7 @@ fail_qc_i:
->  fail_ut_i:
->  	iput(sdp->sd_sc_inode);
->  fail:
-> -	if (pn)
-> -		iput(pn);
-> +	iput(pn);
->  	return error;
->  }
->  
-> --
-> 2.6.2
-> 
-> --
-Hi,
+This causes a static checker warning because "maplevel" is set by the
+user and we cap the upper bound but not the lower bound.  It seems
+harmless to me and it's root only but we may as well make the static
+checker happy.
 
-Thanks. This is now applied to the for-next branch of the linux-gfs2 tree:
-https://git.kernel.org/cgit/linux/kernel/git/gfs2/linux-gfs2.git/commit/fs/gfs2?h=for-next&idode22426be6af261816db5941744b8d3c4c7f96
+Also checkpatch complains that we should use kstrtouint() instead of
+sscanf here.
 
-Regards,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Bob Peterson
-Red Hat File Systems
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 94bd9e4..ebb1241 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -862,7 +862,7 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 	struct smack_known *skp;
+ 	struct netlbl_lsm_secattr ncats;
+ 	char mapcatset[SMK_CIPSOLEN];
+-	int maplevel;
++	unsigned int maplevel;
+ 	unsigned int cat;
+ 	int catlen;
+ 	ssize_t rc = -EINVAL;
+@@ -912,8 +912,8 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 	else
+ 		rule += strlen(skp->smk_known) + 1;
+ 
+-	ret = sscanf(rule, "%d", &maplevel);
+-	if (ret != 1 || maplevel > SMACK_CIPSO_MAXLEVEL)
++	ret = kstrtouint(rule, 10, &maplevel);
++	if (ret || maplevel > SMACK_CIPSO_MAXLEVEL)
+ 		goto out;
+ 
+ 	rule += SMK_DIGITLEN;
