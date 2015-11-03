@@ -1,58 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 28 Nov 2015 14:19:00 +0000
-Subject: [PATCH 2/2] USB: constify usb_mon_operations structure
-Message-Id: <1448720340-16837-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Nov 2015 14:26:23 +0000
+Subject: re: openvswitch: Fix egress tunnel info.
+Message-Id: <20151103142623.GD28591@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The usb_mon_operations structure is never modified, so declare it as const.
+Hello Pravin B Shelar,
 
-Done with the help of Coccinelle.
+This is a semi-automatic email about new static checker warnings.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The patch fc4099f17240: "openvswitch: Fix egress tunnel info." from 
+Oct 22, 2015, leads to the following Smatch complaint:
 
----
- drivers/usb/core/hcd.c     |    4 ++--
- drivers/usb/mon/mon_main.c |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+include/net/dst_metadata.h:69 tun_dst_unclone()
+	 warn: variable dereferenced before check 'md_dst' (see line 66)
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 1c102d6..df0e3b9 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -3000,7 +3000,7 @@ EXPORT_SYMBOL_GPL(usb_hcd_platform_shutdown);
- 
- #if defined(CONFIG_USB_MON) || defined(CONFIG_USB_MON_MODULE)
- 
--struct usb_mon_operations *mon_ops;
-+const struct usb_mon_operations *mon_ops;
- 
- /*
-  * The registration is unlocked.
-@@ -3010,7 +3010,7 @@ struct usb_mon_operations *mon_ops;
-  * symbols from usbcore, usbcore gets referenced and cannot be unloaded first.
-  */
- 
--int usb_mon_register (struct usb_mon_operations *ops)
-+int usb_mon_register(const struct usb_mon_operations *ops)
- {
- 
- 	if (mon_ops)
-diff --git a/drivers/usb/mon/mon_main.c b/drivers/usb/mon/mon_main.c
-index f7c292f..fec3f11 100644
---- a/drivers/usb/mon/mon_main.c
-+++ b/drivers/usb/mon/mon_main.c
-@@ -241,7 +241,7 @@ static struct notifier_block mon_nb = {
- /*
-  * Ops
-  */
--static struct usb_mon_operations mon_ops_0 = {
-+static const struct usb_mon_operations mon_ops_0 = {
- 	.urb_submit =	mon_submit,
- 	.urb_submit_error = mon_submit_error,
- 	.urb_complete =	mon_complete,
+include/net/dst_metadata.h
+    65		struct metadata_dst *md_dst = skb_metadata_dst(skb);
+    66		int md_size = md_dst->u.tun_info.options_len;
+                              ^^^^^^^^
+New dereference.
 
+    67		struct metadata_dst *new_md;
+    68	
+    69		if (!md_dst)
+                    ^^^^^^^
+New NULL check.
+
+    70			return ERR_PTR(-EINVAL);
+    71	
+
+regards,
+dan carpenter
