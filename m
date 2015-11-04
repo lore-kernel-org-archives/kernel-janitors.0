@@ -1,33 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 19 Nov 2015 12:41:25 +0000
-Subject: [patch 2/2] KVM: fix vm_stat_get()
-Message-Id: <20151119124125.GB2638@mwanda>
+Date: Wed, 04 Nov 2015 13:37:28 +0000
+Subject: [patch] NFC: nci: memory leak in nci_core_conn_create()
+Message-Id: <20151104133728.GG20966@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Gleb Natapov <gleb@kernel.org>, Janosch Frank <frankja@linux.vnet.ibm.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Robert Dolca <robert.dolca@intel.com>
+Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Christophe Ricard <christophe.ricard@gmail.com>, Julien Lefrique <lefrique@marvell.com>, Robert Baldyga <r.baldyga@samsung.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The indenting suggests missing curly braces.
+I've moved the check for "number_destination_params" forward a few lines
+to avoid leaking "cmd".
 
-Fixes: 7805f53a85ec ('KVM: Create debugfs dir and stat files for each VM')
+Fixes: caa575a86ec1 ('NFC: nci: fix possible crash in nci_core_conn_create')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index f62621f..4740e54 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -3576,10 +3576,11 @@ static int vm_stat_get(void *_offset, u64 *val)
+diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+index 10c99a5..fbb7a2b 100644
+--- a/net/nfc/nci/core.c
++++ b/net/nfc/nci/core.c
+@@ -610,14 +610,14 @@ int nci_core_conn_create(struct nci_dev *ndev, u8 destination_type,
+ 	struct nci_core_conn_create_cmd *cmd;
+ 	struct core_conn_create_data data;
  
- 	*val = 0;
- 	spin_lock(&kvm_lock);
--	list_for_each_entry(kvm, &vm_list, vm_list)
-+	list_for_each_entry(kvm, &vm_list, vm_list) {
- 		stat_tmp.kvm = kvm;
- 		vm_stat_get_per_vm((void *)&stat_tmp, &tmp_val);
- 		*val += tmp_val;
-+	}
- 	spin_unlock(&kvm_lock);
- 	return 0;
- }
++	if (!number_destination_params)
++		return -EINVAL;
++
+ 	data.length = params_len + sizeof(struct nci_core_conn_create_cmd);
+ 	cmd = kzalloc(data.length, GFP_KERNEL);
+ 	if (!cmd)
+ 		return -ENOMEM;
+ 
+-	if (!number_destination_params)
+-		return -EINVAL;
+-
+ 	cmd->destination_type = destination_type;
+ 	cmd->number_destination_params = number_destination_params;
+ 	memcpy(cmd->params, params, params_len);
