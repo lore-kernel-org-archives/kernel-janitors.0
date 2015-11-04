@@ -1,23 +1,69 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 30 Nov 2015 12:59:17 +0000
-Subject: Re: brcm80211: fix error code in brcmf_pcie_exit_download_state()
-Message-Id: <20151130125917.A242C1409E0@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Nov 2015 19:10:19 +0000
+Subject: [PATCH] UBIFS: Delete unnecessary checks before the function call "iput"
+Message-Id: <563A581B.7070708@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20151127134327.GA16802@mwanda>
-References: <20151127134327.GA16802@mwanda>
-In-Reply-To: <20151127134327.GA16802@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Brett Rudley <brudley@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>, linux-mtd@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Nov 2015 20:00:42 +0100
 
-> The original code returns 1 on failure and 0 on success but the caller
-> was expecting an error code on failure.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The iput() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Thanks, applied to wireless-drivers-next.git.
+This issue was detected by using the Coccinelle software.
 
-Kalle Valo
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/ubifs/recovery.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
+index 2a1f0bc..586d593 100644
+--- a/fs/ubifs/recovery.c
++++ b/fs/ubifs/recovery.c
+@@ -1331,8 +1331,7 @@ void ubifs_destroy_size_tree(struct ubifs_info *c)
+ 	struct size_entry *e, *n;
+ 
+ 	rbtree_postorder_for_each_entry_safe(e, n, &c->size_tree, rb) {
+-		if (e->inode)
+-			iput(e->inode);
++		iput(e->inode);
+ 		kfree(e);
+ 	}
+ 
+@@ -1533,8 +1532,7 @@ int ubifs_recover_size(struct ubifs_info *c)
+ 				err = fix_size_in_place(c, e);
+ 				if (err)
+ 					return err;
+-				if (e->inode)
+-					iput(e->inode);
++				iput(e->inode);
+ 			}
+ 		}
+ 
+-- 
+2.6.2
+
