@@ -1,63 +1,74 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 09 Nov 2015 20:48:26 +0000
-Subject: Re: [PATCH 1/9] drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c: use correct structure type nam
-Message-Id: <1915769.aHlhsWqSsK@avalon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 04 Nov 2015 17:57:06 +0000
+Subject: [PATCH] fs-ext4: Delete unnecessary checks before the function call "iput"
+Message-Id: <563A46F2.4050908@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr> <1406647011-8543-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1406647011-8543-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Julia,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 4 Nov 2015 18:48:38 +0100
 
-Thank you for the patch.
+The iput() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-On Tuesday 29 July 2014 17:16:43 Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Correct typo in the name of the type given to sizeof.  Because it is the
-> size of a pointer that is wanted, the typo has no impact on compilation or
-> execution.
-> 
-> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
-> semantic patch used can be found in message 0 of this patch series.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-> b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c index
-> cda8388..255590f 100644
-> --- a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-> +++ b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-> @@ -227,7 +227,7 @@ static int vpfe_enable_clock(struct vpfe_device
-> *vpfe_dev) return 0;
-> 
->  	vpfe_dev->clks = kzalloc(vpfe_cfg->num_clocks *
-> -				   sizeof(struct clock *), GFP_KERNEL);
-> +				   sizeof(struct clk *), GFP_KERNEL);
+This issue was detected by using the Coccinelle software.
 
-I'd use sizeof(*vpfe_dev->clks) to avoid such issues.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/ext4/resize.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-Apart from that,
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-I've applied the patch to my tree with the above change, there's no need to 
-resubmit if you agree with the proposal.
-
->  	if (vpfe_dev->clks = NULL) {
->  		v4l2_err(vpfe_dev->pdev->driver, "Memory allocation failed\n");
->  		return -ENOMEM;
-
+diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+index ad62d7a..7918012 100644
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1942,10 +1942,10 @@ retry:
+ 		err = ext4_convert_meta_bg(sb, resize_inode);
+ 		if (err)
+ 			goto out;
+-		if (resize_inode) {
+-			iput(resize_inode);
+-			resize_inode = NULL;
+-		}
++
++		iput(resize_inode);
++		resize_inode = NULL;
++
+ 		if (n_blocks_count_retry) {
+ 			n_blocks_count = n_blocks_count_retry;
+ 			n_blocks_count_retry = 0;
+@@ -2011,8 +2011,7 @@ retry:
+ out:
+ 	if (flex_gd)
+ 		free_flex_gd(flex_gd);
+-	if (resize_inode != NULL)
+-		iput(resize_inode);
++	iput(resize_inode);
+ 	ext4_msg(sb, KERN_INFO, "resized filesystem to %llu", n_blocks_count);
+ 	return err;
+ }
 -- 
-Regards,
-
-Laurent Pinchart
+2.6.2
 
