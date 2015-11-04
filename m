@@ -1,34 +1,44 @@
-From: Robin Holt <robinmholt@gmail.com>
-Date: Fri, 06 Nov 2015 10:24:58 +0000
-Subject: Re: [PATCH] SGI-XPC: Delete unnecessary checks before unregister_sysctl_table()
-Message-Id: <CAPp3RGq0iZtgNEXtre34wZtti4kGseeKJDP7=50T0y2osNAnVg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Nov 2015 13:40:45 +0000
+Subject: [patch] rtc: rtc-rv8803: Fix a couple locking bugs
+Message-Id: <20151104134045.GJ20966@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<563C6FAE.3060606@users.sourceforge.net>
-In-Reply-To: <563C6FAE.3060606@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Cliff Whickman <cpw@sgi.com>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: rtc-linux@googlegroups.com, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 6, 2015 at 3:15 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Robin Holt <robinmholt@gmail.com>
+There was one missing unlock on error in rv8803_set_alarm() and one
+unlock in rv8803_ioctl() which was missing altogether.
+
+Fixes: 2f370c4a1a44 ('rtc: Add a driver for Micro Crystal RV8803')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Presumably the IOCTL issue was a last minute change after the driver had
+been tested...
+
+diff --git a/drivers/rtc/rtc-rv8803.c b/drivers/rtc/rtc-rv8803.c
+index 63244eb..9508de4 100644
+--- a/drivers/rtc/rtc-rv8803.c
++++ b/drivers/rtc/rtc-rv8803.c
+@@ -240,8 +240,10 @@ static int rv8803_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	spin_lock_irqsave(&rv8803->flags_lock, irqflags);
+ 
+ 	ret = i2c_smbus_read_i2c_block_data(client, RV8803_FLAG, 2, ctrl);
+-	if (ret != 2)
++	if (ret != 2) {
++		spin_unlock_irqrestore(&rv8803->flags_lock, irqflags);
+ 		return ret < 0 ? ret : -EIO;
++	}
+ 
+ 	alarmvals[0] = bin2bcd(alrm->time.tm_min);
+ 	alarmvals[1] = bin2bcd(alrm->time.tm_hour);
+@@ -338,6 +340,7 @@ static int rv8803_ioctl(struct device *dev, unsigned int cmd, unsigned long arg)
+ 	case RTC_VL_READ:
+ 		spin_lock_irqsave(&rv8803->flags_lock, irqflags);
+ 		flags = i2c_smbus_read_byte_data(client, RV8803_FLAG);
++		spin_unlock_irqrestore(&rv8803->flags_lock, irqflags);
+ 		if (flags < 0)
+ 			return flags;
+ 
