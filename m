@@ -1,40 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Nov 2015 08:18:00 +0000
-Subject: Re: [PATCH] staging/rdma/hfi1: Delete unnecessary checks before two function calls
-Message-Id: <20151105081800.GU18797@mwanda>
+Date: Wed, 04 Nov 2015 13:38:31 +0000
+Subject: [patch] dmaengine: edma: predecence bug in GET_NUM_QDMACH()
+Message-Id: <20151104133831.GH20966@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <563B0F07.3090301@users.sourceforge.net>
-In-Reply-To: <563B0F07.3090301@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@driverdev.osuosl.org, Julia Lawall <julia.lawall@lip6.fr>, linux-rdma@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Marciniszyn <infinipath@intel.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Nov 05, 2015 at 09:10:47AM +0100, SF Markus Elfring wrote:
-> diff --git a/drivers/staging/rdma/hfi1/file_ops.c b/drivers/staging/rdma/hfi1/file_ops.c
-> index aae9826..204d1d0 100644
-> --- a/drivers/staging/rdma/hfi1/file_ops.c
-> +++ b/drivers/staging/rdma/hfi1/file_ops.c
-> @@ -313,7 +313,7 @@ static ssize_t hfi1_file_write(struct file *fp, const char __user *data,
->  	case HFI1_CMD_SDMA_STATUS_UPD:
->  		break;
->  	case HFI1_CMD_CREDIT_UPD:
-> -		if (uctxt && uctxt->sc)
-> +		if (uctxt)
->  			sc_return_credits(uctxt->sc);
+The current code uses bits 0-2 instead of 4-6 as the comment says.
 
-Relying on hidden sanity checks makes the code harder to read.
+Fixes: 633e42b8c546 ('dmaengine: edma: Get qDMA channel information from HW also')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/dma/edma.c b/drivers/dma/edma.c
+index 31722d4..ba5eb17 100644
+--- a/drivers/dma/edma.c
++++ b/drivers/dma/edma.c
+@@ -107,7 +107,7 @@
+ 
+ /* CCCFG register */
+ #define GET_NUM_DMACH(x)	(x & 0x7) /* bits 0-2 */
+-#define GET_NUM_QDMACH(x)	(x & 0x70 >> 4) /* bits 4-6 */
++#define GET_NUM_QDMACH(x)	((x & 0x70) >> 4) /* bits 4-6 */
+ #define GET_NUM_PAENTRY(x)	((x & 0x7000) >> 12) /* bits 12-14 */
+ #define GET_NUM_EVQUE(x)	((x & 0x70000) >> 16) /* bits 16-18 */
+ #define GET_NUM_REGN(x)		((x & 0x300000) >> 20) /* bits 20-21 */
