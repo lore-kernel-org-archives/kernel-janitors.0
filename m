@@ -1,22 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Nov 2015 03:06:37 +0000
-Subject: Re: [patch -next] qlogic: qed: fix a test for MODE_MF_SI
-Message-Id: <20151104.220637.2147977492516549425.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Nov 2015 13:25:09 +0000
+Subject: [patch] drm/amdgpu: cleanup on error in amdgpu_cs_ioctl()
+Message-Id: <20151104132509.GB20966@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151104132911.GE20966@mwanda>
-In-Reply-To: <20151104132911.GE20966@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Yuval.Mintz@qlogic.com, Ariel.Elior@qlogic.com, everest-linux-l2@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Chunming Zhou <david1.zhou@amd.com>
+Cc: Marek =?utf-8?B?T2zFocOhaw==?= <marek.olsak@amd.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, "monk.liu" <monk.liu@amd.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 4 Nov 2015 16:29:11 +0300
+We recently changed the locking in this function and now there is a
+missing unlock on error.  Also there are some other resources that we
+should probably release as well...
 
-> MODE_MF_SI is 9.  We should be testing bit 9 instead of AND 0x9.
-> 
-> Fixes: fe56b9e6a8d9 ('qed: Add module with basic common support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: f48b2659f521 ('drm/amdgpu: fix the broken vm->mutex V2')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm not terribly familiar with this code.  Please review this one a bit
+carefully.
 
-Applied.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index 27ef528..dfc4d02 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -876,8 +876,10 @@ int amdgpu_cs_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
+ 		struct amdgpu_job *job;
+ 		struct amdgpu_ring * ring =  parser->ibs->ring;
+ 		job = kzalloc(sizeof(struct amdgpu_job), GFP_KERNEL);
+-		if (!job)
+-			return -ENOMEM;
++		if (!job) {
++			r = -ENOMEM;
++			goto out;
++		}
+ 		job->base.sched = &ring->sched;
+ 		job->base.s_entity = &parser->ctx->rings[ring->idx].entity;
+ 		job->adev = parser->adev;
