@@ -1,56 +1,33 @@
-From: khalasa@piap.pl (Krzysztof =?utf-8?Q?Ha=C5=82asa?=)
-Date: Wed, 25 Nov 2015 12:19:12 +0000
-Subject: Re: [PATCH] ixp4xx_eth: Delete an unnecessary check before the function call "dma_pool_destroy"
-Message-Id: <m3poyyz2yn.fsf@t19.piap.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Nov 2015 13:26:24 +0000
+Subject: [patch] vfio: make an array larger
+Message-Id: <20151104132624.GC20966@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<5649BDF5.5040405@users.sourceforge.net>
-In-Reply-To: <5649BDF5.5040405@users.sourceforge.net> (SF Markus Elfring's
-	message of "Mon, 16 Nov 2015 12:28:53 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Frank Blaschka <frank.blaschka@de.ibm.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-SF Markus Elfring <elfring@users.sourceforge.net> writes:
+Smatch complains about a possible out of bounds error:
 
-> The dma_pool_destroy() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
+	drivers/vfio/pci/vfio_pci_config.c:1241 vfio_cap_init()
+	error: buffer overflow 'pci_cap_length' 20 <= 20
 
-> --- a/drivers/net/ethernet/xscale/ixp4xx_eth.c
-> +++ b/drivers/net/ethernet/xscale/ixp4xx_eth.c
-> @@ -1192,7 +1192,7 @@ static void destroy_queues(struct port *port)
->  		port->desc_tab = NULL;
->  	}
->  
-> -	if (!ports_open && dma_pool) {
-> +	if (!ports_open) {
->  		dma_pool_destroy(dma_pool);
->  		dma_pool = NULL;
->  	}
+Fix this by making the array larger.
 
-Acked-by: Krzysztof Halasa <khalasa@piap.pl>
--- 
-Krzysztof Halasa
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Industrial Research Institute for Automation and Measurements PIAP
-Al. Jerozolimskie 202, 02-486 Warsaw, Poland
+diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+index ff75ca3..001d48a 100644
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -46,7 +46,7 @@
+  *   0: Removed from the user visible capability list
+  *   FF: Variable length
+  */
+-static u8 pci_cap_length[] = {
++static u8 pci_cap_length[PCI_CAP_ID_MAX + 1] = {
+ 	[PCI_CAP_ID_BASIC]	= PCI_STD_HEADER_SIZEOF, /* pci config header */
+ 	[PCI_CAP_ID_PM]		= PCI_PM_SIZEOF,
+ 	[PCI_CAP_ID_AGP]	= PCI_AGP_SIZEOF,
