@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 21:52:30 +0000
-Subject: [PATCH] ACPI-EC: Delete an unnecessary check before the function call "acpi_ec_delete_query"
-Message-Id: <5648FE9E.5060201@users.sourceforge.net>
+Date: Wed, 04 Nov 2015 19:48:51 +0000
+Subject: [PATCH] sysfs: Delete an unnecessary check before the function call "kernfs_get"
+Message-Id: <563A6123.8030506@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,35 +24,36 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 22:42:27 +0100
+Date: Wed, 4 Nov 2015 20:44:50 +0100
 
-The acpi_ec_delete_query() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+The kernfs_get() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/ec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/sysfs/group.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
-index f61a7c8..b420fb4 100644
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -1103,7 +1103,7 @@ static int acpi_ec_query(struct acpi_ec *ec, u8 *data)
- 	}
- 
- err_exit:
--	if (result && q)
-+	if (result)
- 		acpi_ec_delete_query(q);
- 	if (data)
- 		*data = value;
+diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
+index dc1358b..9b34c07 100644
+--- a/fs/sysfs/group.c
++++ b/fs/sysfs/group.c
+@@ -388,8 +388,7 @@ int __compat_only_sysfs_link_entry_to_kobj(struct kobject *kobj,
+ 	 */
+ 	spin_lock(&sysfs_symlink_target_lock);
+ 	target = target_kobj->sd;
+-	if (target)
+-		kernfs_get(target);
++	kernfs_get(target);
+ 	spin_unlock(&sysfs_symlink_target_lock);
+ 	if (!target)
+ 		return -ENOENT;
 -- 
 2.6.2
 
