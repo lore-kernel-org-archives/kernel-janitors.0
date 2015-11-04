@@ -1,82 +1,29 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Tue, 17 Nov 2015 08:47:03 +0000
-Subject: Re: [PATCH] brcmfmac: constify brcmf_bus_ops structures
-Message-Id: <564AE987.60709@broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Nov 2015 13:29:11 +0000
+Subject: [patch -next] qlogic: qed: fix a test for MODE_MF_SI
+Message-Id: <20151104132911.GE20966@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447518127-1994-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447518127-1994-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Brett Rudley <brudley@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yuval Mintz <Yuval.Mintz@qlogic.com>
+Cc: Ariel Elior <Ariel.Elior@qlogic.com>, everest-linux-l2@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/14/2015 05:22 PM, Julia Lawall wrote:
-> The brcmf_bus_ops structures are never modified, so declare them as const.
->
-> Done with the help of Coccinelle.
+MODE_MF_SI is 9.  We should be testing bit 9 instead of AND 0x9.
 
-Acked-by: Arend van Spriel <arend@broadcom.com>
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->   drivers/net/wireless/brcm80211/brcmfmac/bus.h  |    2 +-
->   drivers/net/wireless/brcm80211/brcmfmac/pcie.c |    2 +-
->   drivers/net/wireless/brcm80211/brcmfmac/sdio.c |    2 +-
->   drivers/net/wireless/brcm80211/brcmfmac/usb.c  |    2 +-
->   4 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/bus.h b/drivers/net/wireless/brcm80211/brcmfmac/bus.h
-> index 230cad7..36093f9 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/bus.h
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/bus.h
-> @@ -137,7 +137,7 @@ struct brcmf_bus {
->   	bool always_use_fws_queue;
->   	bool wowl_supported;
->
-> -	struct brcmf_bus_ops *ops;
-> +	const struct brcmf_bus_ops *ops;
->   	struct brcmf_bus_msgbuf *msgbuf;
->   };
->
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
-> index 83d8042..65ae3b0 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
-> @@ -1419,7 +1419,7 @@ static int brcmf_pcie_get_memdump(struct device *dev, void *data, size_t len)
->   }
->
->
-> -static struct brcmf_bus_ops brcmf_pcie_bus_ops = {
-> +static const struct brcmf_bus_ops brcmf_pcie_bus_ops = {
->   	.txdata = brcmf_pcie_tx,
->   	.stop = brcmf_pcie_down,
->   	.txctl = brcmf_pcie_tx_ctlpkt,
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
-> index 7e74ac3..01f359e 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
-> @@ -4025,7 +4025,7 @@ brcmf_sdio_watchdog(unsigned long data)
->   	}
->   }
->
-> -static struct brcmf_bus_ops brcmf_sdio_bus_ops = {
-> +static const struct brcmf_bus_ops brcmf_sdio_bus_ops = {
->   	.stop = brcmf_sdio_bus_stop,
->   	.preinit = brcmf_sdio_bus_preinit,
->   	.txdata = brcmf_sdio_bus_txdata,
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/brcm80211/brcmfmac/usb.c
-> index 689e64d..4bdd3b3 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/usb.c
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/usb.c
-> @@ -1163,7 +1163,7 @@ static void brcmf_usb_wowl_config(struct device *dev, bool enabled)
->   		device_set_wakeup_enable(devinfo->dev, false);
->   }
->
-> -static struct brcmf_bus_ops brcmf_usb_bus_ops = {
-> +static const struct brcmf_bus_ops brcmf_usb_bus_ops = {
->   	.txdata = brcmf_usb_tx,
->   	.stop = brcmf_usb_down,
->   	.txctl = brcmf_usb_tx_ctlpkt,
->
+Fixes: fe56b9e6a8d9 ('qed: Add module with basic common support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+index b9b7b7e..774b223 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+@@ -562,7 +562,7 @@ static int qed_hw_init_pf(struct qed_hwfn *p_hwfn,
+ 	}
+ 
+ 	/* Enable classification by MAC if needed */
+-	if (hw_mode & MODE_MF_SI) {
++	if (hw_mode & (1 << MODE_MF_SI)) {
+ 		DP_VERBOSE(p_hwfn, NETIF_MSG_HW,
+ 			   "Configuring TAGMAC_CLS_TYPE\n");
+ 		STORE_RT_REG(p_hwfn,
