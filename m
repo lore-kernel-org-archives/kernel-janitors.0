@@ -1,106 +1,39 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Mon, 16 Nov 2015 14:04:25 +0000
-Subject: Re: [PATCH] GPU-DRM: Delete unnecessary checks before drm_property_unreference_blob()
-Message-Id: <20151116140425.GS16848@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Nov 2015 13:21:40 +0000
+Subject: [patch] drm/vc4: checking for NULL instead of IS_ERR
+Message-Id: <20151104132140.GA20966@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <55998CD5.3080204@users.sourceforge.net>
- <CAEG8a3KgYtd4b6Dk0+TjcX_-gHXWMc5xv367LPvChivjM-uzRg@mail.gmail.com>
- <20150706065346.GA2156@phenom.ffwll.local>
- <563C8B3E.405@users.sourceforge.net>
-In-Reply-To: <563C8B3E.405@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Julia Lawall <julia.lawall@lip6.fr>, Junwang Zhao <zhjwpku@gmail.com>
+To: David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 06, 2015 at 12:13:02PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 6 Nov 2015 12:03:46 +0100
-> 
-> The drm_property_unreference_blob() function tests whether its argument
-> is NULL and then returns immediately.
-> Thus the tests around the calls are not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+vc4_plane_init() returns an ERR_PTR on error, it doesn't return NULL.
+This was obviously intended because the next lines call
+PTR_ERR(primary_plane) already.
 
-Applied to drm-misc, thanks.
--Daniel
+Fixes: c8b75bca92cb ('Eric Anholt <eric@anholt.net>')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  drivers/gpu/drm/drm_atomic.c        | 9 +++------
->  drivers/gpu/drm/drm_atomic_helper.c | 5 ++---
->  2 files changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 7bb3845..d65dc31 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -316,8 +316,7 @@ int drm_atomic_set_mode_for_crtc(struct drm_crtc_state *state,
->  	if (mode && memcmp(&state->mode, mode, sizeof(*mode)) = 0)
->  		return 0;
->  
-> -	if (state->mode_blob)
-> -		drm_property_unreference_blob(state->mode_blob);
-> +	drm_property_unreference_blob(state->mode_blob);
->  	state->mode_blob = NULL;
->  
->  	if (mode) {
-> @@ -363,8 +362,7 @@ int drm_atomic_set_mode_prop_for_crtc(struct drm_crtc_state *state,
->  	if (blob = state->mode_blob)
->  		return 0;
->  
-> -	if (state->mode_blob)
-> -		drm_property_unreference_blob(state->mode_blob);
-> +	drm_property_unreference_blob(state->mode_blob);
->  	state->mode_blob = NULL;
->  
->  	if (blob) {
-> @@ -419,8 +417,7 @@ int drm_atomic_crtc_set_property(struct drm_crtc *crtc,
->  		struct drm_property_blob *mode >  			drm_property_lookup_blob(dev, val);
->  		ret = drm_atomic_set_mode_prop_for_crtc(state, mode);
-> -		if (mode)
-> -			drm_property_unreference_blob(mode);
-> +		drm_property_unreference_blob(mode);
->  		return ret;
->  	}
->  	else if (crtc->funcs->atomic_set_property)
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 0c6f621..9870c70 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -2173,7 +2173,7 @@ EXPORT_SYMBOL(drm_atomic_helper_connector_dpms);
->   */
->  void drm_atomic_helper_crtc_reset(struct drm_crtc *crtc)
->  {
-> -	if (crtc->state && crtc->state->mode_blob)
-> +	if (crtc->state)
->  		drm_property_unreference_blob(crtc->state->mode_blob);
->  	kfree(crtc->state);
->  	crtc->state = kzalloc(sizeof(*crtc->state), GFP_KERNEL);
-> @@ -2241,8 +2241,7 @@ EXPORT_SYMBOL(drm_atomic_helper_crtc_duplicate_state);
->  void __drm_atomic_helper_crtc_destroy_state(struct drm_crtc *crtc,
->  					    struct drm_crtc_state *state)
->  {
-> -	if (state->mode_blob)
-> -		drm_property_unreference_blob(state->mode_blob);
-> +	drm_property_unreference_blob(state->mode_blob);
->  }
->  EXPORT_SYMBOL(__drm_atomic_helper_crtc_destroy_state);
->  
-> -- 
-> 2.6.2
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/drivers/gpu/drm/vc4/vc4_crtc.c b/drivers/gpu/drm/vc4/vc4_crtc.c
+index 7a9f476..0c363df 100644
+--- a/drivers/gpu/drm/vc4/vc4_crtc.c
++++ b/drivers/gpu/drm/vc4/vc4_crtc.c
+@@ -591,14 +591,14 @@ static int vc4_crtc_bind(struct device *dev, struct device *master, void *data)
+ 	 * that will take too much.
+ 	 */
+ 	primary_plane = vc4_plane_init(drm, DRM_PLANE_TYPE_PRIMARY);
+-	if (!primary_plane) {
++	if (IS_ERR(primary_plane)) {
+ 		dev_err(dev, "failed to construct primary plane\n");
+ 		ret = PTR_ERR(primary_plane);
+ 		goto err;
+ 	}
+ 
+ 	cursor_plane = vc4_plane_init(drm, DRM_PLANE_TYPE_CURSOR);
+-	if (!cursor_plane) {
++	if (IS_ERR(cursor_plane)) {
+ 		dev_err(dev, "failed to construct cursor plane\n");
+ 		ret = PTR_ERR(cursor_plane);
+ 		goto err_primary;
