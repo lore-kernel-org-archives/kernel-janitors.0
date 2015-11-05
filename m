@@ -1,56 +1,59 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 04 Nov 2015 21:39:57 +0000
-Subject: Re: [patch] vfio: make an array larger
-Message-Id: <563A7B2D.4040904@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Nov 2015 20:15:27 +0000
+Subject: [PATCH] CPPC-CPUFreq: Delete an unnecessary check before the function call "kfree"
+Message-Id: <563BB8DF.7020908@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151104132624.GC20966@mwanda>
-In-Reply-To: <20151104132624.GC20966@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, Frank Blaschka <frank.blaschka@de.ibm.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Nov 2015 21:10:29 +0100
 
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Am 04.11.2015 14:26, schrieb Dan Carpenter:
-> Smatch complains about a possible out of bounds error:
-> 
-> 	drivers/vfio/pci/vfio_pci_config.c:1241 vfio_cap_init()
-> 	error: buffer overflow 'pci_cap_length' 20 <= 20
-> 
-> Fix this by making the array larger.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-> index ff75ca3..001d48a 100644
-> --- a/drivers/vfio/pci/vfio_pci_config.c
-> +++ b/drivers/vfio/pci/vfio_pci_config.c
-> @@ -46,7 +46,7 @@
->   *   0: Removed from the user visible capability list
->   *   FF: Variable length
->   */
-> -static u8 pci_cap_length[] = {
-> +static u8 pci_cap_length[PCI_CAP_ID_MAX + 1] = {
->  	[PCI_CAP_ID_BASIC]	= PCI_STD_HEADER_SIZEOF, /* pci config header */
->  	[PCI_CAP_ID_PM]		= PCI_PM_SIZEOF,
->  	[PCI_CAP_ID_AGP]	= PCI_AGP_SIZEOF,
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/cpufreq/cppc_cpufreq.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-(i am sorry Dave)
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index 93c219f..e8cb334 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -166,8 +166,7 @@ static int __init cppc_cpufreq_init(void)
+ 
+ out:
+ 	for_each_possible_cpu(i)
+-		if (all_cpu_data[i])
+-			kfree(all_cpu_data[i]);
++		kfree(all_cpu_data[i]);
+ 
+ 	kfree(all_cpu_data);
+ 	return -ENODEV;
+-- 
+2.6.2
 
-I am not sure if that is the way to go.
-this define make me feel uneasy,
-#define   PCI_CAP_ID_MAX         PCI_CAP_ID_AF
-
-Would it be possible to ARRAY_SIZE(pci_cap_length) instead of PCI_CAP_ID_MAX ?
-Then that would grow automatically with the array. And its more clear what
-is actually happening.
-
-re,
- wh
-
-
-
-> 
