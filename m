@@ -1,41 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Nov 2015 19:26:19 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Thu, 05 Nov 2015 19:38:59 +0000
 Subject: Re: [PATCH] decnet: remove macro-local declarations
-Message-Id: <20151105.142619.983467860147585345.davem@davemloft.net>
+Message-Id: <alpine.DEB.2.02.1511052038400.2065@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1446718696-32505-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1446718696-32505-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1446718696-32505-1-git-send-email-Julia.Lawall@lip6.fr> <20151105.142619.983467860147585345.davem@davemloft.net>
+In-Reply-To: <20151105.142619.983467860147585345.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com, roopa@cumulusnetworks.com, rshearma@brocade.com, ebiederm@xmission.com
+To: David Miller <davem@davemloft.net>
+Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com, roopa@cumulusnetworks.com, rshearma@brocade.com, ebiederm@xmission.com
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu,  5 Nov 2015 11:18:16 +0100
+On Thu, 5 Nov 2015, David Miller wrote:
 
-> Move the variable declarations from the for_nexthops macro to the
-> surrounding context, so that it is clear where these variables are
-> declared.  This also makes it possible to remove the endfor_nexthops macro.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> Date: Thu,  5 Nov 2015 11:18:16 +0100
 > 
-> This change adds new arguments to the macro for_nexthops.  They are ordered
-> such that a pointer to the referenced object comes first, the index in the
-> list comes next, and the list itself comes last, roughly in analogy with
-> the list_for_each macros.
+> > Move the variable declarations from the for_nexthops macro to the
+> > surrounding context, so that it is clear where these variables are
+> > declared.  This also makes it possible to remove the endfor_nexthops macro.
+> > 
+> > This change adds new arguments to the macro for_nexthops.  They are ordered
+> > such that a pointer to the referenced object comes first, the index in the
+> > list comes next, and the list itself comes last, roughly in analogy with
+> > the list_for_each macros.
+> > 
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> > 
+> > ---
+> > 
+> > This patch takes care of a single file, where the macros are defined
+> > locally.  If the basic transformation looks OK, I will change the other
+> > files that either likewise define their own macros or use the macros in
+> > net/mpls/internal.h.  The potentially affected files are:
+>  ...
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> This looks fine to me.
 > 
-> ---
-> 
-> This patch takes care of a single file, where the macros are defined
-> locally.  If the basic transformation looks OK, I will change the other
-> files that either likewise define their own macros or use the macros in
-> net/mpls/internal.h.  The potentially affected files are:
- ...
+> Please resubmit this when net-next opens back up, which should be
+> shortly after -rc1.
 
-This looks fine to me.
+OK, I'll do the others then too.
 
-Please resubmit this when net-next opens back up, which should be
-shortly after -rc1.
-
-Thanks.
+julia
