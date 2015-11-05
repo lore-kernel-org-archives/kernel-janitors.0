@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 10:22:57 +0000
-Subject: [PATCH] WiMAX-i2400m: Delete an unnecessary check before the function call "kfree_skb"
-Message-Id: <5649AE81.6070809@users.sourceforge.net>
+Date: Thu, 05 Nov 2015 17:00:46 +0000
+Subject: [PATCH] IPC-mqueue: Delete unnecessary checks before two function calls
+Message-Id: <563B8B3E.8050004@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,35 +24,47 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 11:17:55 +0100
+Date: Thu, 5 Nov 2015 17:55:25 +0100
 
-The kfree_skb() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+The functions iput() and unregister_sysctl_table() test whether their
+argument is NULL and then return immediately.
+Thus the tests around their calls are not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wimax/i2400m/control.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ ipc/mqueue.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
-index 4c41790..4de22b7 100644
---- a/drivers/net/wimax/i2400m/control.c
-+++ b/drivers/net/wimax/i2400m/control.c
-@@ -644,7 +644,7 @@ void i2400m_msg_to_dev_cancel_wait(struct i2400m *i2400m, int code)
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 161a180..ade9dd8 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -885,8 +885,7 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
  
- 	spin_lock_irqsave(&i2400m->rx_lock, flags);
- 	ack_skb = i2400m->ack_skb;
--	if (ack_skb && !IS_ERR(ack_skb))
-+	if (!IS_ERR(ack_skb))
- 		kfree_skb(ack_skb);
- 	i2400m->ack_skb = ERR_PTR(code);
- 	spin_unlock_irqrestore(&i2400m->rx_lock, flags);
+ out_unlock:
+ 	mutex_unlock(&d_inode(mnt->mnt_root)->i_mutex);
+-	if (inode)
+-		iput(inode);
++	iput(inode);
+ 	mnt_drop_write(mnt);
+ out_name:
+ 	putname(name);
+@@ -1460,8 +1459,7 @@ static int __init init_mqueue_fs(void)
+ out_filesystem:
+ 	unregister_filesystem(&mqueue_fs_type);
+ out_sysctl:
+-	if (mq_sysctl_table)
+-		unregister_sysctl_table(mq_sysctl_table);
++	unregister_sysctl_table(mq_sysctl_table);
+ 	kmem_cache_destroy(mqueue_inode_cachep);
+ 	return error;
+ }
 -- 
 2.6.2
 
