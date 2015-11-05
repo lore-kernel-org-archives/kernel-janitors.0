@@ -1,7 +1,7 @@
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Fri, 06 Nov 2015 22:15:33 +0000
-Subject: Re: [PATCH] UBIFS: Delete unnecessary checks before the function call "iput"
-Message-Id: <CAFLxGvztEke+ncYoAtORcmCWjkQiD3dU1c69KZkRsLM+cMFobg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Nov 2015 18:50:52 +0000
+Subject: [PATCH 2/2] [media] c8sectpfe: Combine three checks into a single if block
+Message-Id: <563BA50C.4060303@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,56 +19,58 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <563A581B.7070708@users.sourceforge.net>
-In-Reply-To: <563A581B.7070708@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <563BA3CC.4040709@users.sourceforge.net>
+In-Reply-To: <563BA3CC.4040709@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Julia Lawall <julia.lawall@lip6.fr>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Nov 4, 2015 at 8:10 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 4 Nov 2015 20:00:42 +0100
->
-> The iput() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/ubifs/recovery.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
-> index 2a1f0bc..586d593 100644
-> --- a/fs/ubifs/recovery.c
-> +++ b/fs/ubifs/recovery.c
-> @@ -1331,8 +1331,7 @@ void ubifs_destroy_size_tree(struct ubifs_info *c)
->         struct size_entry *e, *n;
->
->         rbtree_postorder_for_each_entry_safe(e, n, &c->size_tree, rb) {
-> -               if (e->inode)
-> -                       iput(e->inode);
-> +               iput(e->inode);
->                 kfree(e);
->         }
->
-> @@ -1533,8 +1532,7 @@ int ubifs_recover_size(struct ubifs_info *c)
->                                 err = fix_size_in_place(c, e);
->                                 if (err)
->                                         return err;
-> -                               if (e->inode)
-> -                                       iput(e->inode);
-> +                               iput(e->inode);
->                         }
->                 }
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Nov 2015 19:23:50 +0100
 
-Applied!
+The variable "tsin" was checked three times in a loop iteration of the
+c8sectpfe_tuner_unregister_frontend() function.
+This implementation detail could be improved by the combination of the
+involved statements into a single if block so that this variable will be
+checked only once there.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
+index 07fd6d9..2dfbe8a 100644
+--- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
++++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
+@@ -209,17 +209,18 @@ void c8sectpfe_tuner_unregister_frontend(struct c8sectpfe *c8sectpfe,
+ 
+ 		tsin = fei->channel_data[n];
+ 
+-		if (tsin && tsin->frontend) {
+-			dvb_unregister_frontend(tsin->frontend);
+-			dvb_frontend_detach(tsin->frontend);
+-		}
++		if (tsin) {
++			if (tsin->frontend) {
++				dvb_unregister_frontend(tsin->frontend);
++				dvb_frontend_detach(tsin->frontend);
++			}
+ 
+-		if (tsin)
+ 			i2c_put_adapter(tsin->i2c_adapter);
+ 
+-		if (tsin && tsin->i2c_client) {
+-			module_put(tsin->i2c_client->dev.driver->owner);
+-			i2c_unregister_device(tsin->i2c_client);
++			if (tsin->i2c_client) {
++				module_put(tsin->i2c_client->dev.driver->owner);
++				i2c_unregister_device(tsin->i2c_client);
++			}
+ 		}
+ 	}
+ 
 -- 
-Thanks,
-//richard
+2.6.2
+
