@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Nov 2015 16:17:15 +0000
-Subject: [PATCH] pinctrl: Delete unnecessary checks before the function call "pinctrl_unregister"
-Message-Id: <563B810B.6050401@users.sourceforge.net>
+From: Ray Jui <rjui@broadcom.com>
+Date: Thu, 05 Nov 2015 16:53:45 +0000
+Subject: Re: [PATCH] pinctrl: Delete unnecessary checks before the function call "pinctrl_unregister"
+Message-Id: <563B8999.4010409@broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,57 +19,65 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <563B810B.6050401@users.sourceforge.net>
+In-Reply-To: <563B810B.6050401@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Nov 2015 17:10:22 +0100
 
-The pinctrl_unregister() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+On 11/5/2015 8:17 AM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 5 Nov 2015 17:10:22 +0100
+>
+> The pinctrl_unregister() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c | 3 +--
+>   drivers/pinctrl/pinctrl-single.c          | 5 +----
+>   2 files changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> index 12a48f4..663ad0a 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> @@ -638,8 +638,7 @@ static int cygnus_gpio_register_pinconf(struct cygnus_gpio *chip)
+>
+>   static void cygnus_gpio_unregister_pinconf(struct cygnus_gpio *chip)
+>   {
+> -	if (chip->pctl)
+> -		pinctrl_unregister(chip->pctl);
+> +	pinctrl_unregister(chip->pctl);
+>   }
+>
+>   struct cygnus_gpio_data {
+> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+> index ef04b96..d24e5f1 100644
+> --- a/drivers/pinctrl/pinctrl-single.c
+> +++ b/drivers/pinctrl/pinctrl-single.c
+> @@ -1484,10 +1484,7 @@ static void pcs_irq_free(struct pcs_device *pcs)
+>   static void pcs_free_resources(struct pcs_device *pcs)
+>   {
+>   	pcs_irq_free(pcs);
+> -
+> -	if (pcs->pctl)
+> -		pinctrl_unregister(pcs->pctl);
+> -
+> +	pinctrl_unregister(pcs->pctl);
+>   	pcs_free_funcs(pcs);
+>   	pcs_free_pingroups(pcs);
+>   }
+>
 
-This issue was detected by using the Coccinelle software.
+The change looks good to me, thanks!
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c | 3 +--
- drivers/pinctrl/pinctrl-single.c          | 5 +----
- 2 files changed, 2 insertions(+), 6 deletions(-)
+Reviewed-by: Ray Jui <rjui@broadcom.com>
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-index 12a48f4..663ad0a 100644
---- a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-+++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-@@ -638,8 +638,7 @@ static int cygnus_gpio_register_pinconf(struct cygnus_gpio *chip)
- 
- static void cygnus_gpio_unregister_pinconf(struct cygnus_gpio *chip)
- {
--	if (chip->pctl)
--		pinctrl_unregister(chip->pctl);
-+	pinctrl_unregister(chip->pctl);
- }
- 
- struct cygnus_gpio_data {
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index ef04b96..d24e5f1 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1484,10 +1484,7 @@ static void pcs_irq_free(struct pcs_device *pcs)
- static void pcs_free_resources(struct pcs_device *pcs)
- {
- 	pcs_irq_free(pcs);
--
--	if (pcs->pctl)
--		pinctrl_unregister(pcs->pctl);
--
-+	pinctrl_unregister(pcs->pctl);
- 	pcs_free_funcs(pcs);
- 	pcs_free_pingroups(pcs);
- }
--- 
-2.6.2
++ Pramod since he's working on changes on the pinctrl-cygnus-gpio driver.
 
+Ray
