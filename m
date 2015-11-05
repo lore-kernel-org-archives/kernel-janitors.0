@@ -1,7 +1,7 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Fri, 06 Nov 2015 12:52:27 +0000
-Subject: Re: [PATCH] GPU-DRM-i915: Delete an unnecessary check before the function call "pwm_put"
-Message-Id: <87h9kzl27o.fsf@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Nov 2015 12:20:33 +0000
+Subject: [PATCH 3/3] staging: lustre: Less function calls in class_register_type() after error detection
+Message-Id: <563B4991.90005@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,50 +19,97 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563CA07D.30805@users.sourceforge.net>
-In-Reply-To: <563CA07D.30805@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <563B473C.5090508@users.sourceforge.net>
+In-Reply-To: <563B473C.5090508@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, 06 Nov 2015, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 6 Nov 2015 13:38:22 +0100
->
-> The pwm_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Nov 2015 12:48:58 +0100
 
-The compiler doesn't need it, but IMO it's useful documentation for
-humans.
+The functions "kfree" and "kobject_put" were called in a few cases by the
+function "class_register_type" during error handling even if the passed
+variable contained a null pointer.
 
-BR,
-Jani.
+This implementation detail could be improved by the adjustment of
+jump targets.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/lustre/lustre/obdclass/genops.c | 26 +++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/i915/intel_panel.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_panel.c b/drivers/gpu/drm/i915/intel_panel.c
-> index a24df35..3d8d913 100644
-> --- a/drivers/gpu/drm/i915/intel_panel.c
-> +++ b/drivers/gpu/drm/i915/intel_panel.c
-> @@ -1729,8 +1729,7 @@ void intel_panel_destroy_backlight(struct drm_connector *connector)
->  	struct intel_panel *panel = &intel_connector->panel;
->  
->  	/* dispose of the pwm */
-> -	if (panel->backlight.pwm)
-> -		pwm_put(panel->backlight.pwm);
-> +	pwm_put(panel->backlight.pwm);
->  
->  	panel->backlight.present = false;
->  }
-
+diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
+index acb86f0..4d99a39 100644
+--- a/drivers/staging/lustre/lustre/obdclass/genops.c
++++ b/drivers/staging/lustre/lustre/obdclass/genops.c
+@@ -171,13 +171,16 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
+ 		return rc;
+ 
+ 	type->typ_dt_ops = kzalloc(sizeof(*type->typ_dt_ops), GFP_NOFS);
++	if (!type->typ_dt_ops)
++		goto free_type;
++
+ 	type->typ_md_ops = kzalloc(sizeof(*type->typ_md_ops), GFP_NOFS);
+-	type->typ_name = kzalloc(strlen(name) + 1, GFP_NOFS);
++	if (!type->typ_md_ops)
++		goto free_dt_ops;
+ 
+-	if (!type->typ_dt_ops ||
+-	    !type->typ_md_ops ||
+-	    !type->typ_name)
+-		goto failed;
++	type->typ_name = kzalloc(strlen(name) + 1, GFP_NOFS);
++	if (!type->typ_name)
++		goto free_md_ops;
+ 
+ 	*(type->typ_dt_ops) = *dt_ops;
+ 	/* md_ops is optional */
+@@ -193,20 +196,20 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
+ 		rc = type->typ_debugfs_entry ? PTR_ERR(type->typ_debugfs_entry)
+ 					     : -ENOMEM;
+ 		type->typ_debugfs_entry = NULL;
+-		goto failed;
++		goto free_name;
+ 	}
+ 
+ 	type->typ_kobj = kobject_create_and_add(type->typ_name, lustre_kobj);
+ 	if (!type->typ_kobj) {
+ 		rc = -ENOMEM;
+-		goto failed;
++		goto free_name;
+ 	}
+ 
+ 	if (ldt != NULL) {
+ 		type->typ_lu = ldt;
+ 		rc = lu_device_type_init(ldt);
+ 		if (rc != 0)
+-			goto failed;
++			goto put_object;
+ 	}
+ 
+ 	spin_lock(&obd_types_lock);
+@@ -214,12 +217,15 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
+ 	spin_unlock(&obd_types_lock);
+ 
+ 	return 0;
+-
+- failed:
++put_object:
+ 	kobject_put(type->typ_kobj);
++free_name:
+ 	kfree(type->typ_name);
++free_md_ops:
+ 	kfree(type->typ_md_ops);
++free_dt_ops:
+ 	kfree(type->typ_dt_ops);
++free_type:
+ 	kfree(type);
+ 	return rc;
+ }
 -- 
-Jani Nikula, Intel Open Source Technology Center
+2.6.2
+
