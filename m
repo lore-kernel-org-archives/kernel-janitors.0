@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 05 Nov 2015 19:38:59 +0000
+Date: Thu, 05 Nov 2015 20:08:17 +0000
 Subject: Re: [PATCH] decnet: remove macro-local declarations
-Message-Id: <alpine.DEB.2.02.1511052038400.2065@localhost6.localdomain6>
+Message-Id: <alpine.DEB.2.02.1511052107501.2065@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1446718696-32505-1-git-send-email-Julia.Lawall@lip6.fr> <20151105.142619.983467860147585345.davem@davemloft.net>
 In-Reply-To: <20151105.142619.983467860147585345.davem@davemloft.net>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: David Miller <davem@davemloft.net>
-Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com, roopa@cumulusnetworks.com, rshearma@brocade.com, ebiederm@xmission.com
+Cc: kernel-janitors@vger.kernel.org, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com, roopa@cumulusnetworks.com, rshearma@brocade.com, ebiederm@xmission.com
 
 On Thu, 5 Nov 2015, David Miller wrote:
 
@@ -36,10 +36,18 @@ On Thu, 5 Nov 2015, David Miller wrote:
 >  ...
 > 
 > This looks fine to me.
-> 
-> Please resubmit this when net-next opens back up, which should be
-> shortly after -rc1.
 
-OK, I'll do the others then too.
+Would it be preferable to remove the macro entirely and inline the for 
+loop header?
 
 julia
+
+> Please resubmit this when net-next opens back up, which should be
+> shortly after -rc1.
+> 
+> Thanks.
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
