@@ -1,65 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Nov 2015 08:41:28 +0000
-Subject: [patch -next] qlogic: qed: fix error codes in qed_resc_alloc()
-Message-Id: <20151105084128.GC19405@mwanda>
+From: Yuval Mintz <Yuval.Mintz@qlogic.com>
+Date: Thu, 05 Nov 2015 09:01:08 +0000
+Subject: RE: [patch -next] qlogic: qed: fix error codes in qed_resc_alloc()
+Message-Id: <B5657A6538887040AD3A81F1008BEC63E6BC48@avmb3.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20151105084128.GC19405@mwanda>
+In-Reply-To: <20151105084128.GC19405@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yuval Mintz <Yuval.Mintz@qlogic.com>
-Cc: Ariel Elior <Ariel.Elior@qlogic.com>, everest-linux-l2@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ariel Elior <Ariel.Elior@qlogic.com>, Dept-Eng Everest Linux L2 <everest-linux-l2@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We accidentally return success instead of -ENOMEM here.
+> We accidentally return success instead of -ENOMEM here.
+> 
+> Fixes: fe56b9e6a8d9 ('qed: Add module with basic common support')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
 
-Fixes: fe56b9e6a8d9 ('qed: Add module with basic common support')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks. Although you might also argue that it's good enough for this function
+to always return -ENOMEM [given it's a resource allocation functions]
+instead of bothering with setting 'rc' with correct error codes.
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index b9b7b7e..562e160 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -223,6 +223,7 @@ int qed_resc_alloc(struct qed_dev *cdev)
- 		if (!p_hwfn->p_tx_cids) {
- 			DP_NOTICE(p_hwfn,
- 				  "Failed to allocate memory for Tx Cids\n");
-+			rc = -ENOMEM;
- 			goto alloc_err;
- 		}
- 
-@@ -230,6 +231,7 @@ int qed_resc_alloc(struct qed_dev *cdev)
- 		if (!p_hwfn->p_rx_cids) {
- 			DP_NOTICE(p_hwfn,
- 				  "Failed to allocate memory for Rx Cids\n");
-+			rc = -ENOMEM;
- 			goto alloc_err;
- 		}
- 	}
-@@ -281,14 +283,17 @@ int qed_resc_alloc(struct qed_dev *cdev)
- 
- 		/* EQ */
- 		p_eq = qed_eq_alloc(p_hwfn, 256);
--
--		if (!p_eq)
-+		if (!p_eq) {
-+			rc = -ENOMEM;
- 			goto alloc_err;
-+		}
- 		p_hwfn->p_eq = p_eq;
- 
- 		p_consq = qed_consq_alloc(p_hwfn);
--		if (!p_consq)
-+		if (!p_consq) {
-+			rc = -ENOMEM;
- 			goto alloc_err;
-+		}
- 		p_hwfn->p_consq = p_consq;
- 
- 		/* DMA info initialization */
-@@ -303,6 +308,7 @@ int qed_resc_alloc(struct qed_dev *cdev)
- 	cdev->reset_stats = kzalloc(sizeof(*cdev->reset_stats), GFP_KERNEL);
- 	if (!cdev->reset_stats) {
- 		DP_NOTICE(cdev, "Failed to allocate reset statistics\n");
-+		rc = -ENOMEM;
- 		goto alloc_err;
- 	}
- 
+Regardless,
+Acked-by: Yuval Mintz <Yuval.Mintz@qlogic.com
