@@ -1,75 +1,57 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 30 Nov 2015 10:40:42 +0000
-Subject: Re: [PATCH] ALSA: i2c: constify snd_i2c_ops structures
-Message-Id: <s5hbnabhis5.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Nov 2015 12:18:25 +0000
+Subject: [PATCH 2/3] staging: lustre: Delete an unnecessary variable initialisation in class_register_type()
+Message-Id: <563B4911.2000603@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448817924-17447-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448817924-17447-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <563B473C.5090508@users.sourceforge.net>
+In-Reply-To: <563B473C.5090508@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, 29 Nov 2015 18:25:24 +0100,
-Julia Lawall wrote:
-> 
-> The snd_i2c_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Nov 2015 10:55:16 +0100
 
-Applied, thanks.
+The variable "rc" will be eventually set to an error return code in the
+class_register_type() function.
+Thus let us omit the explicit initialisation at the beginning.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/lustre/lustre/obdclass/genops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Takashi
+diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
+index a1cf8e1..acb86f0 100644
+--- a/drivers/staging/lustre/lustre/obdclass/genops.c
++++ b/drivers/staging/lustre/lustre/obdclass/genops.c
+@@ -155,7 +155,7 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
+ 			struct lu_device_type *ldt)
+ {
+ 	struct obd_type *type;
+-	int rc = 0;
++	int rc;
+ 
+ 	/* sanity check */
+ 	LASSERT(strnlen(name, CLASS_MAX_NAME) < CLASS_MAX_NAME);
+-- 
+2.6.2
 
-> 
-> ---
->  include/sound/i2c.h       |    2 +-
->  sound/i2c/i2c.c           |    2 +-
->  sound/pci/ice1712/delta.c |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/sound/i2c.h b/include/sound/i2c.h
-> index d125ff8..835254d 100644
-> --- a/include/sound/i2c.h
-> +++ b/include/sound/i2c.h
-> @@ -66,7 +66,7 @@ struct snd_i2c_bus {
->  		struct snd_i2c_bit_ops *bit;
->  		void *ops;
->  	} hw_ops;		/* lowlevel operations */
-> -	struct snd_i2c_ops *ops;	/* midlevel operations */
-> +	const struct snd_i2c_ops *ops;	/* midlevel operations */
->  
->  	unsigned long private_value;
->  	void *private_data;
-> diff --git a/sound/i2c/i2c.c b/sound/i2c/i2c.c
-> index 4677037..ef2a9af 100644
-> --- a/sound/i2c/i2c.c
-> +++ b/sound/i2c/i2c.c
-> @@ -39,7 +39,7 @@ static int snd_i2c_bit_readbytes(struct snd_i2c_device *device,
->  static int snd_i2c_bit_probeaddr(struct snd_i2c_bus *bus,
->  				 unsigned short addr);
->  
-> -static struct snd_i2c_ops snd_i2c_bit_ops = {
-> +static const struct snd_i2c_ops snd_i2c_bit_ops = {
->  	.sendbytes = snd_i2c_bit_sendbytes,
->  	.readbytes = snd_i2c_bit_readbytes,
->  	.probeaddr = snd_i2c_bit_probeaddr,
-> diff --git a/sound/pci/ice1712/delta.c b/sound/pci/ice1712/delta.c
-> index 496dbd0..3bfdc78 100644
-> --- a/sound/pci/ice1712/delta.c
-> +++ b/sound/pci/ice1712/delta.c
-> @@ -174,7 +174,7 @@ static int ap_cs8427_probeaddr(struct snd_i2c_bus *bus, unsigned short addr)
->  	return -ENOENT;
->  }
->  
-> -static struct snd_i2c_ops ap_cs8427_i2c_ops = {
-> +static const struct snd_i2c_ops ap_cs8427_i2c_ops = {
->  	.sendbytes = ap_cs8427_sendbytes,
->  	.readbytes = ap_cs8427_readbytes,
->  	.probeaddr = ap_cs8427_probeaddr,
-> 
-> 
