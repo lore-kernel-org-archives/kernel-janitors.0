@@ -1,83 +1,59 @@
-From: Robert Baldyga <r.baldyga@samsung.com>
-Date: Fri, 13 Nov 2015 14:28:32 +0000
-Subject: Re: [PATCH] nfc: s3fwrn5: constify s3fwrn5_phy_ops structures
-Message-Id: <5645F390.9040407@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Nov 2015 13:40:34 +0000
+Subject: [PATCH] staging: most: Delete an unnecessary check before the function call "module_put"
+Message-Id: <563B5C52.2060507@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447416281-3357-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447416281-3357-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-nfc@lists.01.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 11/13/2015 01:04 PM, Julia Lawall wrote:
-> The s3fwrn5_phy_ops structure is never modified, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Nov 2015 14:34:43 +0100
 
-Acked-by: Robert Baldyga <r.baldyga@samsung.com>
+The module_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Thanks!
-Robert Baldyga
+This issue was detected by using the Coccinelle software.
 
-> 
-> ---
->  drivers/nfc/s3fwrn5/core.c    |    2 +-
->  drivers/nfc/s3fwrn5/i2c.c     |    2 +-
->  drivers/nfc/s3fwrn5/s3fwrn5.h |    4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/nfc/s3fwrn5/core.c b/drivers/nfc/s3fwrn5/core.c
-> index 0d866ca..9d9c8d5 100644
-> --- a/drivers/nfc/s3fwrn5/core.c
-> +++ b/drivers/nfc/s3fwrn5/core.c
-> @@ -147,7 +147,7 @@ static struct nci_ops s3fwrn5_nci_ops = {
->  };
->  
->  int s3fwrn5_probe(struct nci_dev **ndev, void *phy_id, struct device *pdev,
-> -	struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload)
-> +	const struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload)
->  {
->  	struct s3fwrn5_info *info;
->  	int ret;
-> diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
-> index c61d8a3..3ed0adf 100644
-> --- a/drivers/nfc/s3fwrn5/i2c.c
-> +++ b/drivers/nfc/s3fwrn5/i2c.c
-> @@ -125,7 +125,7 @@ static int s3fwrn5_i2c_write(void *phy_id, struct sk_buff *skb)
->  	return 0;
->  }
->  
-> -static struct s3fwrn5_phy_ops i2c_phy_ops = {
-> +static const struct s3fwrn5_phy_ops i2c_phy_ops = {
->  	.set_wake = s3fwrn5_i2c_set_wake,
->  	.set_mode = s3fwrn5_i2c_set_mode,
->  	.get_mode = s3fwrn5_i2c_get_mode,
-> diff --git a/drivers/nfc/s3fwrn5/s3fwrn5.h b/drivers/nfc/s3fwrn5/s3fwrn5.h
-> index 89210d4..7d5e516 100644
-> --- a/drivers/nfc/s3fwrn5/s3fwrn5.h
-> +++ b/drivers/nfc/s3fwrn5/s3fwrn5.h
-> @@ -44,7 +44,7 @@ struct s3fwrn5_info {
->  	void *phy_id;
->  	struct device *pdev;
->  
-> -	struct s3fwrn5_phy_ops *phy_ops;
-> +	const struct s3fwrn5_phy_ops *phy_ops;
->  	unsigned int max_payload;
->  
->  	struct s3fwrn5_fw_info fw_info;
-> @@ -90,7 +90,7 @@ static inline int s3fwrn5_write(struct s3fwrn5_info *info, struct sk_buff *skb)
->  }
->  
->  int s3fwrn5_probe(struct nci_dev **ndev, void *phy_id, struct device *pdev,
-> -	struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload);
-> +	const struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload);
->  void s3fwrn5_remove(struct nci_dev *ndev);
->  
->  int s3fwrn5_recv_frame(struct nci_dev *ndev, struct sk_buff *skb,
-> 
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/most/mostcore/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/most/mostcore/core.c b/drivers/staging/most/mostcore/core.c
+index 19852ca..ed1ed25 100644
+--- a/drivers/staging/most/mostcore/core.c
++++ b/drivers/staging/most/mostcore/core.c
+@@ -1587,8 +1587,7 @@ out:
+ 	return 0;
+ 
+ error:
+-	if (iface->mod)
+-		module_put(iface->mod);
++	module_put(iface->mod);
+ 	modref--;
+ 	mutex_unlock(&c->start_mutex);
+ 	return ret;
+-- 
+2.6.2
 
