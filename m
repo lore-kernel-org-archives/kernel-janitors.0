@@ -1,9 +1,17 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Mon, 16 Nov 2015 15:30:19 +0000
-Subject: Re: [PATCH] s390: Delete unnecessary checks before the function call "debug_unregister"
-Message-Id: <20151116153019.GD4069@osiris>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 05 Nov 2015 18:45:32 +0000
+Subject: [PATCH 0/2] [media] c8sectpfe: Deletion of a few unnecessary checks
+Message-Id: <563BA3CC.4040709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.10.1402251014170.2080@hadrien>
  <530CD2C4.4050903@users.sourceforge.net>
  <alpine.DEB.2.10.1402251840450.7035@hadrien>
@@ -12,30 +20,25 @@ References: <530C5E18.1020800@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <5649E4F5.5060604@users.sourceforge.net>
-In-Reply-To: <5649E4F5.5060604@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Ingo Tuchscherer <ingo.tuchscherer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, Sebastian Ott <sebott@linux.vnet.ibm.com>, linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Nov 16, 2015 at 03:15:17PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Nov 2015 14:45:40 +0100
-> 
-> The debug_unregister() function performs also input parameter validation.
-> Thus the test around the calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/s390/cio/chsc_sch.c      | 3 +--
->  drivers/s390/cio/cio.c           | 9 +++------
->  drivers/s390/cio/qdio_debug.c    | 6 ++----
->  drivers/s390/crypto/zcrypt_api.c | 6 ++----
->  4 files changed, 8 insertions(+), 16 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 5 Nov 2015 19:39:32 +0100
 
-Applied, thanks!
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
+
+Markus Elfring (2):
+  Delete unnecessary checks before two function calls
+  Combine three checks into a single if block
+
+ drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+-- 
+2.6.2
 
