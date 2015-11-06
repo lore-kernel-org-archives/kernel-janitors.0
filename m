@@ -1,7 +1,7 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 29 Nov 2015 21:29:37 +0000
-Subject: Re: [PATCH 3/3] ste_dma40: Delete an unnecessary variable initialisation in d40_probe()
-Message-Id: <CACRpkdZ7=LaCVKn5ObE48n0YvCpq5BbxLOUR7BQ_6O9j1H8=-w@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 06 Nov 2015 15:56:33 +0000
+Subject: [PATCH] bq2415x_charger: Delete unnecessary checks before the function call "of_node_put"
+Message-Id: <563CCDB1.1040703@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,27 +20,50 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <564A4899.8040109@users.sourceforge.net>
- <564A4A08.5000705@users.sourceforge.net>
-In-Reply-To: <564A4A08.5000705@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: David Woodhouse <dwmw2@infradead.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Nov 16, 2015 at 10:26 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Nov 2015 16:48:46 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Nov 2015 22:00:28 +0100
->
-> The variable "res" will eventually be set to a resource pointer from
-> a call of the d40_hw_detect_init(() function.
-> Thus let us omit the explicit initialisation at the beginning.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The of_node_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the calls is not needed.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/power/bq2415x_charger.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/power/bq2415x_charger.c b/drivers/power/bq2415x_charger.c
+index 4afd768..27e8953 100644
+--- a/drivers/power/bq2415x_charger.c
++++ b/drivers/power/bq2415x_charger.c
+@@ -1704,7 +1704,7 @@ error_4:
+ error_3:
+ 	bq2415x_power_supply_exit(bq);
+ error_2:
+-	if (bq && bq->notify_node)
++	if (bq)
+ 		of_node_put(bq->notify_node);
+ 	kfree(name);
+ error_1:
+@@ -1724,9 +1724,7 @@ static int bq2415x_remove(struct i2c_client *client)
+ 	if (bq->nb.notifier_call)
+ 		power_supply_unreg_notifier(&bq->nb);
+ 
+-	if (bq->notify_node)
+-		of_node_put(bq->notify_node);
+-
++	of_node_put(bq->notify_node);
+ 	bq2415x_sysfs_exit(bq);
+ 	bq2415x_power_supply_exit(bq);
+ 
+-- 
+2.6.2
+
