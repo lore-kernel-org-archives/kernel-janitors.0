@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Nov 2015 18:45:32 +0000
-Subject: [PATCH 0/2] [media] c8sectpfe: Deletion of a few unnecessary checks
-Message-Id: <563BA3CC.4040709@users.sourceforge.net>
+From: Maxime Coquelin <maxime.coquelin@st.com>
+Date: Fri, 06 Nov 2015 07:50:37 +0000
+Subject: Re: [PATCH 0/2] [media] c8sectpfe: Deletion of a few unnecessary checks
+Message-Id: <563C5BCD.806@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,26 +19,31 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <563BA3CC.4040709@users.sourceforge.net>
+In-Reply-To: <563BA3CC.4040709@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Nov 2015 19:39:32 +0100
+Hi Markus,
 
-Another update suggestion was taken into account after a patch was applied
-from static source code analysis.
+On 11/05/2015 07:45 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 5 Nov 2015 19:39:32 +0100
+>
+> Another update suggestion was taken into account after a patch was applied
+> from static source code analysis.
+>
+> Markus Elfring (2):
+>    Delete unnecessary checks before two function calls
+>    Combine three checks into a single if block
+>
+>   drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c | 16 ++++++++--------
+>   1 file changed, 8 insertions(+), 8 deletions(-)
+>
+For the series:
+Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
 
-Markus Elfring (2):
-  Delete unnecessary checks before two function calls
-  Combine three checks into a single if block
-
- drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
--- 
-2.6.2
-
+Thanks!
+Maxime
