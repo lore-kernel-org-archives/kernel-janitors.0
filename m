@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Nov 2015 18:50:52 +0000
-Subject: [PATCH 2/2] [media] c8sectpfe: Combine three checks into a single if block
-Message-Id: <563BA50C.4060303@users.sourceforge.net>
+From: walter harms <wharms@bfs.de>
+Date: Fri, 06 Nov 2015 10:09:29 +0000
+Subject: Re: [PATCH 2/2] [media] c8sectpfe: Combine three checks into a single if block
+Message-Id: <563C7C59.8020907@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,57 +20,66 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net> <563BA3CC.4040709@users.sourceforge.net>
-In-Reply-To: <563BA3CC.4040709@users.sourceforge.net>
+ <563BA50C.4060303@users.sourceforge.net>
+In-Reply-To: <563BA50C.4060303@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Nov 2015 19:23:50 +0100
 
-The variable "tsin" was checked three times in a loop iteration of the
-c8sectpfe_tuner_unregister_frontend() function.
-This implementation detail could be improved by the combination of the
-involved statements into a single if block so that this variable will be
-checked only once there.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+Am 05.11.2015 19:50, schrieb SF Markus Elfring:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 5 Nov 2015 19:23:50 +0100
+> 
+> The variable "tsin" was checked three times in a loop iteration of the
+> c8sectpfe_tuner_unregister_frontend() function.
+> This implementation detail could be improved by the combination of the
+> involved statements into a single if block so that this variable will be
+> checked only once there.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
+> index 07fd6d9..2dfbe8a 100644
+> --- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
+> +++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
+> @@ -209,17 +209,18 @@ void c8sectpfe_tuner_unregister_frontend(struct c8sectpfe *c8sectpfe,
+>  
+>  		tsin = fei->channel_data[n];
 
-diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
-index 07fd6d9..2dfbe8a 100644
---- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
-+++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c
-@@ -209,17 +209,18 @@ void c8sectpfe_tuner_unregister_frontend(struct c8sectpfe *c8sectpfe,
- 
- 		tsin = fei->channel_data[n];
- 
--		if (tsin && tsin->frontend) {
--			dvb_unregister_frontend(tsin->frontend);
--			dvb_frontend_detach(tsin->frontend);
--		}
-+		if (tsin) {
-+			if (tsin->frontend) {
-+				dvb_unregister_frontend(tsin->frontend);
-+				dvb_frontend_detach(tsin->frontend);
-+			}
- 
--		if (tsin)
- 			i2c_put_adapter(tsin->i2c_adapter);
- 
--		if (tsin && tsin->i2c_client) {
--			module_put(tsin->i2c_client->dev.driver->owner);
--			i2c_unregister_device(tsin->i2c_client);
-+			if (tsin->i2c_client) {
-+				module_put(tsin->i2c_client->dev.driver->owner);
-+				i2c_unregister_device(tsin->i2c_client);
-+			}
- 		}
- 	}
- 
--- 
-2.6.2
 
+if you do "if (!tsin) continue ;"
+you can save one indent level
+
+re,
+ wh
+
+>  
+> -		if (tsin && tsin->frontend) {
+> -			dvb_unregister_frontend(tsin->frontend);
+> -			dvb_frontend_detach(tsin->frontend);
+> -		}
+> +		if (tsin) {
+> +			if (tsin->frontend) {
+> +				dvb_unregister_frontend(tsin->frontend);
+> +				dvb_frontend_detach(tsin->frontend);
+> +			}
+>  
+> -		if (tsin)
+>  			i2c_put_adapter(tsin->i2c_adapter);
+>  
+> -		if (tsin && tsin->i2c_client) {
+> -			module_put(tsin->i2c_client->dev.driver->owner);
+> -			i2c_unregister_device(tsin->i2c_client);
+> +			if (tsin->i2c_client) {
+> +				module_put(tsin->i2c_client->dev.driver->owner);
+> +				i2c_unregister_device(tsin->i2c_client);
+> +			}
+>  		}
+>  	}
+>  
