@@ -1,23 +1,30 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Mon, 16 Nov 2015 03:54:24 +0000
-Subject: Re: [PATCH v2] dmaengine: ioatdma: constify dca_ops structures
-Message-Id: <20151116035805.GD25173@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 06 Nov 2015 10:01:20 +0000
+Subject: [patch] ath9k_htc: check for underflow in ath9k_htc_rx_msg()
+Message-Id: <20151106100120.GB18557@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447410688-7213-1-git-send-email-Julia.Lawall@lip6.fr>
- <alpine.DEB.2.10.1511131244230.2561@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1511131244230.2561@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dan Williams <dan.j.williams@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 13, 2015 at 12:46:00PM +0100, Julia Lawall wrote:
-> The dca_ops structure is never modified, so declare it as const.
-> 
-> Done with the help of Coccinelle.
+We check for overflow here, but we don't check for underflow so it
+causes a static checker warning.
 
-Applied, thanks
+Fixes: fb9987d0f748 ('ath9k_htc: Support for AR9271 chipset.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-~Vinod
+diff --git a/drivers/net/wireless/ath/ath9k/htc_hst.c b/drivers/net/wireless/ath/ath9k/htc_hst.c
+index 2294709..fd85f996 100644
+--- a/drivers/net/wireless/ath/ath9k/htc_hst.c
++++ b/drivers/net/wireless/ath/ath9k/htc_hst.c
+@@ -414,7 +414,7 @@ void ath9k_htc_rx_msg(struct htc_target *htc_handle,
+ 		return;
+ 	}
+ 
+-	if (epid >= ENDPOINT_MAX) {
++	if (epid < 0 || epid >= ENDPOINT_MAX) {
+ 		if (pipe_id != USB_REG_IN_PIPE)
+ 			dev_kfree_skb_any(skb);
+ 		else
