@@ -1,72 +1,71 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 21 Nov 2015 18:25:29 +0000
-Subject: Re: [PATCH 3/4] iio: adc: spmi-vadc: add missing of_node_put
-Message-Id: <5650B719.80004@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 06 Nov 2015 09:15:26 +0000
+Subject: [PATCH] SGI-XPC: Delete unnecessary checks before unregister_sysctl_table()
+Message-Id: <563C6FAE.3060606@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447884254-26336-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447884254-26336-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: linux-kernel@vger.kernel.org, Cliff Whickman <cpw@sgi.com>, Robin Holt <robinmholt@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 18/11/15 22:04, Julia Lawall wrote:
-> for_each_available_child_of_node performs an of_node_get on each iteration,
-> so a break out of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_available_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Thanks. Applied to the fixes-togreg branch of iio.git and marked for stable.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Nov 2015 10:08:46 +0100
 
-Jonathan
-> 
-> ---
->  drivers/iio/adc/qcom-spmi-vadc.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/qcom-spmi-vadc.c b/drivers/iio/adc/qcom-spmi-vadc.c
-> index 0c4618b..c2babe5 100644
-> --- a/drivers/iio/adc/qcom-spmi-vadc.c
-> +++ b/drivers/iio/adc/qcom-spmi-vadc.c
-> @@ -839,8 +839,10 @@ static int vadc_get_dt_data(struct vadc_priv *vadc, struct device_node *node)
->  
->  	for_each_available_child_of_node(node, child) {
->  		ret = vadc_get_dt_channel_data(vadc->dev, &prop, child);
-> -		if (ret)
-> +		if (ret) {
-> +			of_node_put(child);
->  			return ret;
-> +		}
->  
->  		vadc->chan_props[index] = prop;
->  
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+The unregister_sysctl_table() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/sgi-xp/xpc_main.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/misc/sgi-xp/xpc_main.c b/drivers/misc/sgi-xp/xpc_main.c
+index 7f32712..8d4fcac 100644
+--- a/drivers/misc/sgi-xp/xpc_main.c
++++ b/drivers/misc/sgi-xp/xpc_main.c
+@@ -1046,9 +1046,7 @@ xpc_do_exit(enum xp_retval reason)
+ 	/* clear the interface to XPC's functions */
+ 	xpc_clear_interface();
+ 
+-	if (xpc_sysctl)
+-		unregister_sysctl_table(xpc_sysctl);
+-
++	unregister_sysctl_table(xpc_sysctl);
+ 	xpc_teardown_partitions();
+ 
+ 	if (is_shub())
+@@ -1331,9 +1329,7 @@ out_3:
+ 	(void)unregister_die_notifier(&xpc_die_notifier);
+ 	(void)unregister_reboot_notifier(&xpc_reboot_notifier);
+ out_2:
+-	if (xpc_sysctl)
+-		unregister_sysctl_table(xpc_sysctl);
+-
++	unregister_sysctl_table(xpc_sysctl);
+ 	xpc_teardown_partitions();
+ out_1:
+ 	if (is_shub())
+-- 
+2.6.2
 
