@@ -1,129 +1,96 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Date: Fri, 27 Nov 2015 14:26:20 +0000
-Subject: Re: [PATCH 1/7] phy: brcmstb-sata: add missing of_node_put
-Message-Id: <5658653C.2050006@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 06 Nov 2015 11:13:02 +0000
+Subject: [PATCH] GPU-DRM: Delete unnecessary checks before drm_property_unreference_blob()
+Message-Id: <563C8B3E.405@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447673600-8881-2-git-send-email-Julia.Lawall@lip6.fr>
- <20151117013830.GV8456@google.com>
-In-Reply-To: <20151117013830.GV8456@google.com>
+References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <55998CD5.3080204@users.sourceforge.net>
+ <CAEG8a3KgYtd4b6Dk0+TjcX_-gHXWMc5xv367LPvChivjM-uzRg@mail.gmail.com>
+ <20150706065346.GA2156@phenom.ffwll.local>
+In-Reply-To: <20150706065346.GA2156@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Junwang Zhao <zhjwpku@gmail.com>
 
-+Grant
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Nov 2015 12:03:46 +0100
 
-Hi,
+The drm_property_unreference_blob() function tests whether its argument
+is NULL and then returns immediately.
+Thus the tests around the calls are not needed.
 
-On Tuesday 17 November 2015 07:08 AM, Brian Norris wrote:
-> On Mon, Nov 16, 2015 at 12:33:14PM +0100, Julia Lawall wrote:
->> for_each_available_child_of_node performs an of_node_get on each iteration,
->> so a return from the middle of the loop requires an of_node_put.
->>
->> A simplified version of the semantic patch that finds this problem is as
->> follows (http://coccinelle.lip6.fr):
->>
->> // <smpl>
->> @@
->> expression root,e;
->> local idexpression child;
->> @@
->>
->>  for_each_available_child_of_node(root, child) {
->>    ... when != of_node_put(child)
->>        when != e = child
->> (
->>    return child;
->> |
->> *  return ...;
->> )
->>    ...
->>  }
->> // </smpl>
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>
->> ---
-> 
-> For this patch:
-> 
-> Acked-by: Brian Norris <computersforpeace@gmail.com>
-> 
->>  drivers/phy/phy-brcmstb-sata.c |   17 ++++++++++++-----
->>  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> [snip patch, which fixes of_node_put() handling for
-> for_each_available_child_of_node() loop, which creates PHY devices with
-> devm_phy_create()]
-> 
-> This reminds me of a potential problem I'm looking at in other
-> subsystems: from code reading (I haven't seen any issues in practice,
-> probably because I don't use OF_DYNAMIC) it looks like device-creating
-> infrastructure like the PHY subsystem should be acquiring a reference to
-> the device_node when they stash it away. But drivers/phy/phy-core.c does
-> not do this, AFAICT.
-> 
-> See phy_create(), which does
-> 
-> 	phy->dev.of_node = node ?: dev->of_node;
-> 
-> and later might reuse this of_node pointer, even though it never called
-> of_node_get() on this node.
-> 
-> Potential patch to fix this (not tested).
-> 
-> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
-> 
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index fc48fac003a6..8df29caeeef9 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -697,6 +697,7 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
->  	phy->dev.class = phy_class;
->  	phy->dev.parent = dev;
->  	phy->dev.of_node = node ?: dev->of_node;
-> +	of_node_get(phy->dev.of_node);
->  	phy->id = id;
->  	phy->ops = ops;
->  
-> @@ -726,6 +727,7 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
->  	return phy;
->  
->  put_dev:
-> +	of_node_put(phy->dev.of_node);
->  	put_device(&phy->dev);  /* calls phy_release() which frees resources */
->  	return ERR_PTR(ret);
->  
-> @@ -775,6 +777,7 @@ EXPORT_SYMBOL_GPL(devm_phy_create);
->   */
->  void phy_destroy(struct phy *phy)
->  {
-> +	of_node_put(phy->dev.of_node);
+This issue was detected by using the Coccinelle software.
 
-I think it's better to have this patch in phy-core though OF_DYNAMIC is not
-enabled?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/drm_atomic.c        | 9 +++------
+ drivers/gpu/drm/drm_atomic_helper.c | 5 ++---
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-Grant,
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index 7bb3845..d65dc31 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -316,8 +316,7 @@ int drm_atomic_set_mode_for_crtc(struct drm_crtc_state *state,
+ 	if (mode && memcmp(&state->mode, mode, sizeof(*mode)) = 0)
+ 		return 0;
+ 
+-	if (state->mode_blob)
+-		drm_property_unreference_blob(state->mode_blob);
++	drm_property_unreference_blob(state->mode_blob);
+ 	state->mode_blob = NULL;
+ 
+ 	if (mode) {
+@@ -363,8 +362,7 @@ int drm_atomic_set_mode_prop_for_crtc(struct drm_crtc_state *state,
+ 	if (blob = state->mode_blob)
+ 		return 0;
+ 
+-	if (state->mode_blob)
+-		drm_property_unreference_blob(state->mode_blob);
++	drm_property_unreference_blob(state->mode_blob);
+ 	state->mode_blob = NULL;
+ 
+ 	if (blob) {
+@@ -419,8 +417,7 @@ int drm_atomic_crtc_set_property(struct drm_crtc *crtc,
+ 		struct drm_property_blob *mode  			drm_property_lookup_blob(dev, val);
+ 		ret = drm_atomic_set_mode_prop_for_crtc(state, mode);
+-		if (mode)
+-			drm_property_unreference_blob(mode);
++		drm_property_unreference_blob(mode);
+ 		return ret;
+ 	}
+ 	else if (crtc->funcs->atomic_set_property)
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 0c6f621..9870c70 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -2173,7 +2173,7 @@ EXPORT_SYMBOL(drm_atomic_helper_connector_dpms);
+  */
+ void drm_atomic_helper_crtc_reset(struct drm_crtc *crtc)
+ {
+-	if (crtc->state && crtc->state->mode_blob)
++	if (crtc->state)
+ 		drm_property_unreference_blob(crtc->state->mode_blob);
+ 	kfree(crtc->state);
+ 	crtc->state = kzalloc(sizeof(*crtc->state), GFP_KERNEL);
+@@ -2241,8 +2241,7 @@ EXPORT_SYMBOL(drm_atomic_helper_crtc_duplicate_state);
+ void __drm_atomic_helper_crtc_destroy_state(struct drm_crtc *crtc,
+ 					    struct drm_crtc_state *state)
+ {
+-	if (state->mode_blob)
+-		drm_property_unreference_blob(state->mode_blob);
++	drm_property_unreference_blob(state->mode_blob);
+ }
+ EXPORT_SYMBOL(__drm_atomic_helper_crtc_destroy_state);
+ 
+-- 
+2.6.2
 
-Is it safe to assume of_node_get() will prevent "anyone else" from deleting the
-node?
-Here phy core uses the node pointer (passed to it by phy providers) and we
-would like to avoid "anyone" from removing this node pointer resulting in phy
-core having an invalid node pointer. Using of_node_get() in phy core should be
-sufficient for this?
-
-We are also interested in this todo tasklist for Devicetree..
-"Document node lifecycle for CONFIG_OF_DYNAMIC"
-
-Please find the complete thread of this mail chain here [1]
-
-[1] -> http://www.gossamer-threads.com/lists/linux/kernel/2304857
-
-Thanks
-Kishon
-
->  	pm_runtime_disable(&phy->dev);
->  	device_unregister(&phy->dev);
->  }
-> 
