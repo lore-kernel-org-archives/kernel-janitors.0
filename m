@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 06 Nov 2015 12:55:37 +0000
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Date: Fri, 06 Nov 2015 13:17:05 +0000
 Subject: Re: GPU-DRM-i915: Delete an unnecessary check before the function call "pwm_put"
-Message-Id: <563CA349.7030004@users.sourceforge.net>
+Message-Id: <87egg3l12m.fsf@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,21 +20,41 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net> <563CA07D.30805@users.sourceforge.net>
- <87h9kzl27o.fsf@intel.com>
-In-Reply-To: <87h9kzl27o.fsf@intel.com>
+ <87h9kzl27o.fsf@intel.com> <563CA349.7030004@users.sourceforge.net>
+In-Reply-To: <563CA349.7030004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->> The pwm_put() function tests whether its argument is NULL and then
->> returns immediately. Thus the test around the call is not needed.
-> 
-> The compiler doesn't need it, but IMO it's useful documentation for humans.
+On Fri, 06 Nov 2015, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+>>> The pwm_put() function tests whether its argument is NULL and then
+>>> returns immediately. Thus the test around the call is not needed.
+>> 
+>> The compiler doesn't need it, but IMO it's useful documentation for humans.
+>
+> How do you think about to extend the explicit documentation for
+> the affected parameters in the Linux programming interfaces?
 
-How do you think about to extend the explicit documentation for
-the affected parameters in the Linux programming interfaces?
+The question is, while reading intel_panel.c, which one conveys the
+reader better the idea that panel->backlight.pwm may be NULL for some
+connectors:
 
-Regards,
-Markus
+a)	if (panel->backlight.pwm)
+		pwm_put(panel->backlight.pwm);
+	
+b)	pwm_put(panel->backlight.pwm);
+
+No amount of documentation in pwm_put() kernel-doc is going to help with
+that. In most cases, panel->backlight.pwm is in fact NULL. IMO
+unconditionally calling pwm_put() on it gives the reader the wrong idea.
+
+Others may disagree.
+
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
