@@ -1,53 +1,59 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Mon, 23 Nov 2015 13:59:15 +0000
-Subject: Re: [PATCH 2/4] mtd: nand: sunxi: add missing of_node_put
-Message-Id: <20151123145915.04ed6508@bbrezillon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 06 Nov 2015 17:00:30 +0000
+Subject: [PATCH] HID: Wacom: Delete an unnecessary check before the function call "kobject_put"
+Message-Id: <563CDCAE.9080109@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447884254-26336-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447884254-26336-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 18 Nov 2015 23:04:12 +0100
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Nov 2015 17:55:23 +0100
 
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> a break out of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The kobject_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+This issue was detected by using the Coccinelle software.
 
-Thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hid/wacom_sys.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Boris
-
+diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
+index 125e9d5..fb9b1d1 100644
+--- a/drivers/hid/wacom_sys.c
++++ b/drivers/hid/wacom_sys.c
+@@ -1353,8 +1353,7 @@ static void wacom_clean_inputs(struct wacom *wacom)
+ 		else
+ 			input_free_device(wacom->wacom_wac.pad_input);
+ 	}
+-	if (wacom->remote_dir)
+-		kobject_put(wacom->remote_dir);
++	kobject_put(wacom->remote_dir);
+ 	wacom->wacom_wac.pen_input = NULL;
+ 	wacom->wacom_wac.touch_input = NULL;
+ 	wacom->wacom_wac.pad_input = NULL;
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.6.2
+
