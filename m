@@ -1,51 +1,60 @@
-From: Kashyap Desai <kashyap.desai@avagotech.com>
-Date: Tue, 10 Nov 2015 10:33:44 +0000
-Subject: RE: [patch 1/2] megaraid_sas: remove a stray tab
-Message-Id: <fa20b992d4c9f74d290d7d842386faf1@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 06 Nov 2015 10:05:46 +0000
+Subject: [PATCH] cxl: Delete an unnecessary check before the function call "kfree"
+Message-Id: <563C7B7A.2080403@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151107161615.GA30686@mwanda>
-In-Reply-To: <20151107161615.GA30686@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Sumit Saxena <sumit.saxena@avagotech.com>
-Cc: Uday Lingala <uday.lingala@avagotech.com>, "James E.J. Bottomley" <JBottomley@odin.com>, "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@avagotech.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ian Munsie <imunsie@au1.ibm.com>, Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Saturday, November 07, 2015 9:46 PM
-> To: Kashyap Desai; Sumit Saxena
-> Cc: Uday Lingala; James E.J. Bottomley; megaraidlinux.pdl@avagotech.com;
-> linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [patch 1/2] megaraid_sas: remove a stray tab
->
-> One line was indented more than the others.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Nov 2015 11:00:23 +0100
 
-Let us combine your next patch (because that is also indentation issue)
-and this one. We will resubmit patch.   For now ignore to avoid any issue
-for pending patches to be committed.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
->
-> diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c
-> b/drivers/scsi/megaraid/megaraid_sas_base.c
-> index cc95372..829e9e9 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas_base.c
-> +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-> @@ -5923,9 +5923,9 @@ static void megasas_detach_one(struct pci_dev
-> *pdev)
->
->  	if (instance->ctrl_context) {
->  		megasas_release_fusion(instance);
-> -			pd_seq_map_sz = sizeof(struct
-> MR_PD_CFG_SEQ_NUM_SYNC) +
-> +		pd_seq_map_sz = sizeof(struct
-> MR_PD_CFG_SEQ_NUM_SYNC) +
->  				(sizeof(struct MR_PD_CFG_SEQ) *
-> -					(MAX_PHYSICAL_DEVICES - 1));
-> +				(MAX_PHYSICAL_DEVICES - 1));
->  		for (i = 0; i < 2 ; i++) {
->  			if (fusion->ld_map[i])
->  				dma_free_coherent(&instance->pdev->dev,
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/misc/cxl/context.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/misc/cxl/context.c b/drivers/misc/cxl/context.c
+index 2faa127..52e39b6 100644
+--- a/drivers/misc/cxl/context.c
++++ b/drivers/misc/cxl/context.c
+@@ -275,9 +275,7 @@ static void reclaim_ctx(struct rcu_head *rcu)
+ 	if (ctx->kernelapi)
+ 		kfree(ctx->mapping);
+ 
+-	if (ctx->irq_bitmap)
+-		kfree(ctx->irq_bitmap);
+-
++	kfree(ctx->irq_bitmap);
+ 	kfree(ctx);
+ }
+ 
+-- 
+2.6.2
+
