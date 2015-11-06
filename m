@@ -1,30 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 21 Nov 2015 10:32:21 +0000
-Subject: [patch] vfio: fix a warning message
-Message-Id: <20151121103221.GC7002@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 06 Nov 2015 13:45:51 +0000
+Subject: [PATCH] GPU-DRM-ps8622: Delete an unnecessary check before backlight_device_unregister()
+Message-Id: <563CAF0F.60105@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The first argument to the WARN() macro has to be a condition.  I'm sort
-of disappointed that this code doesn't generate a compiler warning.  I
-guess -Wformat-extra-args doesn't work in the kernel.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Nov 2015 14:38:34 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The backlight_device_unregister() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-index de632da..9da0703 100644
---- a/drivers/vfio/vfio.c
-+++ b/drivers/vfio/vfio.c
-@@ -682,7 +682,7 @@ static int vfio_group_nb_add_dev(struct vfio_group *group, struct device *dev)
- 		return 0;
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/bridge/parade-ps8622.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/parade-ps8622.c b/drivers/gpu/drm/bridge/parade-ps8622.c
+index be881e9..046fba0 100644
+--- a/drivers/gpu/drm/bridge/parade-ps8622.c
++++ b/drivers/gpu/drm/bridge/parade-ps8622.c
+@@ -646,9 +646,7 @@ static int ps8622_remove(struct i2c_client *client)
+ {
+ 	struct ps8622_bridge *ps8622 = i2c_get_clientdata(client);
  
- 	/* TODO Prevent device auto probing */
--	WARN("Device %s added to live group %d!\n", dev_name(dev),
-+	WARN(1, "Device %s added to live group %d!\n", dev_name(dev),
- 	     iommu_group_id(group->iommu_group));
+-	if (ps8622->bl)
+-		backlight_device_unregister(ps8622->bl);
+-
++	backlight_device_unregister(ps8622->bl);
+ 	drm_bridge_remove(&ps8622->bridge);
  
  	return 0;
+-- 
+2.6.2
+
