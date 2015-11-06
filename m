@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 04 Nov 2015 19:10:19 +0000
-Subject: [PATCH] UBIFS: Delete unnecessary checks before the function call "iput"
-Message-Id: <563A581B.7070708@users.sourceforge.net>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Fri, 06 Nov 2015 22:15:33 +0000
+Subject: Re: [PATCH] UBIFS: Delete unnecessary checks before the function call "iput"
+Message-Id: <CAFLxGvztEke+ncYoAtORcmCWjkQiD3dU1c69KZkRsLM+cMFobg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,50 +20,55 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <563A581B.7070708@users.sourceforge.net>
+In-Reply-To: <563A581B.7070708@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adrian Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>, linux-mtd@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Julia Lawall <julia.lawall@lip6.fr>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 4 Nov 2015 20:00:42 +0100
+On Wed, Nov 4, 2015 at 8:10 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 4 Nov 2015 20:00:42 +0100
+>
+> The iput() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  fs/ubifs/recovery.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
+> index 2a1f0bc..586d593 100644
+> --- a/fs/ubifs/recovery.c
+> +++ b/fs/ubifs/recovery.c
+> @@ -1331,8 +1331,7 @@ void ubifs_destroy_size_tree(struct ubifs_info *c)
+>         struct size_entry *e, *n;
+>
+>         rbtree_postorder_for_each_entry_safe(e, n, &c->size_tree, rb) {
+> -               if (e->inode)
+> -                       iput(e->inode);
+> +               iput(e->inode);
+>                 kfree(e);
+>         }
+>
+> @@ -1533,8 +1532,7 @@ int ubifs_recover_size(struct ubifs_info *c)
+>                                 err = fix_size_in_place(c, e);
+>                                 if (err)
+>                                         return err;
+> -                               if (e->inode)
+> -                                       iput(e->inode);
+> +                               iput(e->inode);
+>                         }
+>                 }
 
-The iput() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Applied!
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/ubifs/recovery.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ubifs/recovery.c b/fs/ubifs/recovery.c
-index 2a1f0bc..586d593 100644
---- a/fs/ubifs/recovery.c
-+++ b/fs/ubifs/recovery.c
-@@ -1331,8 +1331,7 @@ void ubifs_destroy_size_tree(struct ubifs_info *c)
- 	struct size_entry *e, *n;
- 
- 	rbtree_postorder_for_each_entry_safe(e, n, &c->size_tree, rb) {
--		if (e->inode)
--			iput(e->inode);
-+		iput(e->inode);
- 		kfree(e);
- 	}
- 
-@@ -1533,8 +1532,7 @@ int ubifs_recover_size(struct ubifs_info *c)
- 				err = fix_size_in_place(c, e);
- 				if (err)
- 					return err;
--				if (e->inode)
--					iput(e->inode);
-+				iput(e->inode);
- 			}
- 		}
- 
 -- 
-2.6.2
-
+Thanks,
+//richard
