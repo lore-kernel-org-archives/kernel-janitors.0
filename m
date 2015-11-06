@@ -1,20 +1,60 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Nov 2015 22:02:48 +0000
-Subject: [PATCH 0/3] constify mmu_notifier_ops structures
-Message-Id: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 06 Nov 2015 09:43:46 +0000
+Subject: [PATCH] SRAM: Delete an unnecessary check before the function call "of_node_put"
+Message-Id: <563C7652.6080609@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-mmu_notifier_ops structures are never modified, so declare them all as
-const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Nov 2015 10:36:49 +0100
 
+The of_node_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/misc/sram.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/infiniband/core/umem_odp.c |    2 +-
- drivers/iommu/amd_iommu_v2.c       |    2 +-
- drivers/xen/gntdev.c               |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
+index 736dae7..34287f7 100644
+--- a/drivers/misc/sram.c
++++ b/drivers/misc/sram.c
+@@ -326,9 +326,7 @@ static int sram_reserve_regions(struct sram_dev *sram, struct resource *res)
+ 	}
+ 
+  err_chunks:
+-	if (child)
+-		of_node_put(child);
+-
++	of_node_put(child);
+ 	kfree(rblocks);
+ 
+ 	return ret;
+-- 
+2.6.2
+
