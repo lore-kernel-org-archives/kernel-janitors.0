@@ -1,53 +1,31 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Wed, 25 Nov 2015 18:03:42 +0000
-Subject: Re: [patch] PCI: altera: fix loop in tlp_read_packet()
-Message-Id: <20151125180342.GC8869@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 07 Nov 2015 16:16:15 +0000
+Subject: [patch 1/2] megaraid_sas: remove a stray tab
+Message-Id: <20151107161615.GA30686@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151104133936.GI20966@mwanda>
-In-Reply-To: <20151104133936.GI20966@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ley Foon Tan <lftan@altera.com>, Bjorn Helgaas <bhelgaas@google.com>, rfi@lists.rocketboards.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kashyap Desai <kashyap.desai@avagotech.com>, Sumit Saxena <sumit.saxena@avagotech.com>
+Cc: Uday Lingala <uday.lingala@avagotech.com>, "James E.J. Bottomley" <JBottomley@odin.com>, megaraidlinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Nov 04, 2015 at 04:39:36PM +0300, Dan Carpenter wrote:
-> The problem is that TLP_LOOP is 500 and the "loop" variable was a u8 so
-> "loop < TLP_LOOP" is always true.  We only need this condition to work
-> if there is a problem so it would have been easy to miss this in
-> testing.  Anyway, lets just make it a normal for loop with "int i"
-> instead of over thinking things and making it complicated.
-> 
-> Fixes: 6bb4dd154ae8 ('PCI: altera: Add Altera PCIe host controller driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+One line was indented more than the others.
 
-Applied with Ley Foon's ack to pci/host-altera for v4.5, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
-> index e5dda38..b05de63 100644
-> --- a/drivers/pci/host/pcie-altera.c
-> +++ b/drivers/pci/host/pcie-altera.c
-> @@ -166,16 +166,16 @@ static bool altera_pcie_valid_config(struct altera_pcie *pcie,
->  
->  static int tlp_read_packet(struct altera_pcie *pcie, u32 *value)
->  {
-> -	u8 loop;
->  	bool sop = 0;
->  	u32 ctrl;
->  	u32 reg0, reg1;
-> +	int i;
->  
->  	/*
->  	 * Minimum 2 loops to read TLP headers and 1 loop to read data
->  	 * payload.
->  	 */
-> -	for (loop = 0; loop < TLP_LOOP; loop++) {
-> +	for (i = 0; i < TLP_LOOP; i++) {
->  		ctrl = cra_readl(pcie, RP_RXCPL_STATUS);
->  		if ((ctrl & RP_RXCPL_SOP) || (ctrl & RP_RXCPL_EOP) || sop) {
->  			reg0 = cra_readl(pcie, RP_RXCPL_REG0);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index cc95372..829e9e9 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -5923,9 +5923,9 @@ static void megasas_detach_one(struct pci_dev *pdev)
+ 
+ 	if (instance->ctrl_context) {
+ 		megasas_release_fusion(instance);
+-			pd_seq_map_sz = sizeof(struct MR_PD_CFG_SEQ_NUM_SYNC) +
++		pd_seq_map_sz = sizeof(struct MR_PD_CFG_SEQ_NUM_SYNC) +
+ 				(sizeof(struct MR_PD_CFG_SEQ) *
+-					(MAX_PHYSICAL_DEVICES - 1));
++				(MAX_PHYSICAL_DEVICES - 1));
+ 		for (i = 0; i < 2 ; i++) {
+ 			if (fusion->ld_map[i])
+ 				dma_free_coherent(&instance->pdev->dev,
