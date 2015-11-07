@@ -1,35 +1,46 @@
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Date: Sat, 21 Nov 2015 18:24:49 +0000
-Subject: Re: [patch] iwlwifi: mvm: rs: fix a warning message
-Message-Id: <0BA3FCBA62E2DC44AF3030971E174FB32E8F6961@hasmsx107.ger.corp.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 07 Nov 2015 15:34:48 +0000
+Subject: [PATCH] dwc_eth_qos: Delete an unnecessary check before the function call "of_node_put"
+Message-Id: <563E1A18.101@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151121103338.GE7002@mwanda>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <563C5392.6030309@users.sourceforge.net>
+ <20151106.233311.2260896695923603885.davem@davemloft.net>
+In-Reply-To: <20151106.233311.2260896695923603885.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Berg, Johannes" <johannes.berg@intel.com>
-Cc: linuxwifi <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Eyal Shapira <eyal@wizery.com>, "Coelho, Luciano" <luciano.coelho@intel.com>, "Kaufman, Liad" <liad.kaufman@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Lars Persson <lars.persson@axis.com>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 7 Nov 2015 16:30:34 +0100
 
+The of_node_put() function tests whether its argument is NULL
+and then returns immediately.
+Thus the test around the call is not needed.
 
-On 11/21/2015 12:33 PM, Dan Carpenter wrote:
-> WARN_ON_ONCE() doesn't take a message, it only takes a condition.  I
-> have changed this to WARN(1, ...).
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/net/wireless/iwlwifi/mvm/rs.c b/drivers/net/wireless/iwlwifi/mvm/rs.c
-> index d1ad103..58d7bee 100644
-> --- a/drivers/net/wireless/iwlwifi/mvm/rs.c
-> +++ b/drivers/net/wireless/iwlwifi/mvm/rs.c
-> @@ -1827,7 +1827,7 @@ static int rs_switch_to_column(struct iwl_mvm *mvm,
->  		rate->type = lq_sta->is_vht ? LQ_VHT_MIMO2 : LQ_HT_MIMO2;
->  		rate_mask = lq_sta->active_mimo2_rate;
->  	} else {
-> -		WARN_ON_ONCE("Bad column mode");
-> +		WARN_ONCE(1, "Bad column mode");
->  	}
->  
->  	if (column->mode != RS_LEGACY) {
->
-Ouch - thanks. Clearly, this one doesn't trigger very often :)
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/synopsys/dwc_eth_qos.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/synopsys/dwc_eth_qos.c b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
+index 85b3326..9066d7a 100644
+--- a/drivers/net/ethernet/synopsys/dwc_eth_qos.c
++++ b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
+@@ -2970,8 +2970,7 @@ err_out_unregister_netdev:
+ err_out_clk_dis_aper:
+ 	clk_disable_unprepare(lp->apb_pclk);
+ err_out_free_netdev:
+-	if (lp->phy_node)
+-		of_node_put(lp->phy_node);
++	of_node_put(lp->phy_node);
+ 	free_netdev(ndev);
+ 	platform_set_drvdata(pdev, NULL);
+ 	return ret;
+-- 
+2.6.2
+
