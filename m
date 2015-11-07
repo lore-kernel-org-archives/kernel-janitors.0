@@ -1,42 +1,45 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 17 Nov 2015 13:48:48 +0000
-Subject: Re: [PATCH 3/4] crypto-ixp4xx: Reduce assignment for a variable in init_ixp_crypto()
-Message-Id: <20151117134848.GA9452@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 07 Nov 2015 14:15:24 +0000
+Subject: [PATCH] ethernet-synopsys: Delete an unnecessary check before of_node_put()
+Message-Id: <563E077C.3090201@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <5648D2C1.8050603@users.sourceforge.net>
- <5648D466.10307@users.sourceforge.net>
-In-Reply-To: <5648D466.10307@users.sourceforge.net>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <563C5392.6030309@users.sourceforge.net>
+ <20151106.233311.2260896695923603885.davem@davemloft.net>
+In-Reply-To: <20151106.233311.2260896695923603885.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: David Miller <davem@davemloft.net>, Lars Persson <lars.persson@axis.com>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
 
-On Sun, Nov 15, 2015 at 07:52:22PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Nov 2015 19:06:44 +0100
-> 
-> The variable "ret" was set more often than necessary by the
-> init_ixp_crypto() function.
-> 
-> * Omit its initialisation at the beginning.
-> 
-> * Use an error return code in two cases directly.
-> 
-> * Improve compliance with the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 7 Nov 2015 15:10:29 +0100
 
-Again I don't see how this is making the code better so nack.
+The of_node_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/synopsys/dwc_eth_qos.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/synopsys/dwc_eth_qos.c b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
+index 85b3326..9066d7a 100644
+--- a/drivers/net/ethernet/synopsys/dwc_eth_qos.c
++++ b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
+@@ -2970,8 +2970,7 @@ err_out_unregister_netdev:
+ err_out_clk_dis_aper:
+ 	clk_disable_unprepare(lp->apb_pclk);
+ err_out_free_netdev:
+-	if (lp->phy_node)
+-		of_node_put(lp->phy_node);
++	of_node_put(lp->phy_node);
+ 	free_netdev(ndev);
+ 	platform_set_drvdata(pdev, NULL);
+ 	return ret;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.6.2
+
