@@ -1,93 +1,50 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 16 Nov 2015 11:33:18 +0000
-Subject: [PATCH 5/7] phy: miphy28lp: add missing of_node_put
-Message-Id: <1447673600-8881-6-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 08 Nov 2015 22:17:04 +0000
+Subject: [PATCH] ALSA: ctxfi: constify amixer_rsc_ops structure
+Message-Id: <1447021024-10392-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-for_each_child_of_node performs an of_node_get on each iteration,
-so a return from the middle of the loop requires an of_node_put.
+The amixer_rsc_ops structure is never modified, so declare it as
+const.
 
-A simplified version of the semantic patch that finds this problem is as
-follows (http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-*  return ...;
-)
-   ...
- }
-// </smpl>
+Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/phy/phy-miphy28lp.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ sound/pci/ctxfi/ctamixer.c |    2 +-
+ sound/pci/ctxfi/ctamixer.h |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/phy-miphy28lp.c b/drivers/phy/phy-miphy28lp.c
-index c47b56b..3acd2a1 100644
---- a/drivers/phy/phy-miphy28lp.c
-+++ b/drivers/phy/phy-miphy28lp.c
-@@ -1226,15 +1226,18 @@ static int miphy28lp_probe(struct platform_device *pdev)
- 
- 		miphy_phy = devm_kzalloc(&pdev->dev, sizeof(*miphy_phy),
- 					 GFP_KERNEL);
--		if (!miphy_phy)
--			return -ENOMEM;
-+		if (!miphy_phy) {
-+			ret = -ENOMEM;
-+			goto put_child;
-+		}
- 
- 		miphy_dev->phys[port] = miphy_phy;
- 
- 		phy = devm_phy_create(&pdev->dev, child, &miphy28lp_ops);
- 		if (IS_ERR(phy)) {
- 			dev_err(&pdev->dev, "failed to create PHY\n");
--			return PTR_ERR(phy);
-+			ret = PTR_ERR(phy);
-+			goto put_child;
- 		}
- 
- 		miphy_dev->phys[port]->phy = phy;
-@@ -1242,11 +1245,11 @@ static int miphy28lp_probe(struct platform_device *pdev)
- 
- 		ret = miphy28lp_of_probe(child, miphy_phy);
- 		if (ret)
--			return ret;
-+			goto put_child;
- 
- 		ret = miphy28lp_probe_resets(child, miphy_dev->phys[port]);
- 		if (ret)
--			return ret;
-+			goto put_child;
- 
- 		phy_set_drvdata(phy, miphy_dev->phys[port]);
- 		port++;
-@@ -1255,6 +1258,9 @@ static int miphy28lp_probe(struct platform_device *pdev)
- 
- 	provider = devm_of_phy_provider_register(&pdev->dev, miphy28lp_xlate);
- 	return PTR_ERR_OR_ZERO(provider);
-+put_child:
-+	of_node_put(child);
-+	return ret;
+diff --git a/sound/pci/ctxfi/ctamixer.c b/sound/pci/ctxfi/ctamixer.c
+index c7dc38d..465b5c5 100644
+--- a/sound/pci/ctxfi/ctamixer.c
++++ b/sound/pci/ctxfi/ctamixer.c
+@@ -186,7 +186,7 @@ static int amixer_setup(struct amixer *amixer, struct rsc *input,
+ 	return 0;
  }
  
- static const struct of_device_id miphy28lp_of_match[] = {
+-static struct amixer_rsc_ops amixer_ops = {
++static const struct amixer_rsc_ops amixer_ops = {
+ 	.set_input		= amixer_set_input,
+ 	.set_invalid_squash	= amixer_set_invalid_squash,
+ 	.set_scale		= amixer_set_y,
+diff --git a/sound/pci/ctxfi/ctamixer.h b/sound/pci/ctxfi/ctamixer.h
+index 72f42f2..2de18aa 100644
+--- a/sound/pci/ctxfi/ctamixer.h
++++ b/sound/pci/ctxfi/ctamixer.h
+@@ -58,7 +58,7 @@ struct amixer {
+ 	unsigned char idx[8];
+ 	struct rsc *input;	/* pointer to a resource acting as source */
+ 	struct sum *sum;	/* Put amixer output to this summation node */
+-	struct amixer_rsc_ops *ops;	/* AMixer specific operations */
++	const struct amixer_rsc_ops *ops;	/* AMixer specific operations */
+ };
+ 
+ struct amixer_rsc_ops {
 
