@@ -1,86 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Nov 2015 20:56:19 +0000
-Subject: [PATCH 3/3] batman-adv: Less function calls in batadv_is_ap_isolated() after error detection
-Message-Id: <56391F73.7090605@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Nov 2015 22:06:49 +0000
+Subject: [PATCH] ALSA: ctxfi: constify dao and dai rsc ops structures
+Message-Id: <1447020409-3022-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <56391CF7.9080400@users.sourceforge.net>
-In-Reply-To: <56391CF7.9080400@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Nov 2015 21:10:51 +0100
+The dao and dai rsc ops structures are never modified, so declare them as
+const.
 
-The variables "tt_local_entry" and "tt_global_entry" were eventually checked
-again despite of a corresponding null pointer test before.
-Let us avoid this double check by reordering a function call sequence
-and the better selection of jump targets.
+Done with the help of Coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- net/batman-adv/translation-table.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ sound/pci/ctxfi/ctdaio.c |    4 ++--
+ sound/pci/ctxfi/ctdaio.h |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-index 965a004..3ac32d9 100644
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -3323,27 +3323,24 @@ bool batadv_is_ap_isolated(struct batadv_priv *bat_priv, u8 *src, u8 *dst,
- 		return false;
- 
- 	if (!atomic_read(&vlan->ap_isolation))
--		goto out;
-+		goto vlan_free;
- 
- 	tt_local_entry = batadv_tt_local_hash_find(bat_priv, dst, vid);
- 	if (!tt_local_entry)
--		goto out;
-+		goto vlan_free;
- 
- 	tt_global_entry = batadv_tt_global_hash_find(bat_priv, src, vid);
- 	if (!tt_global_entry)
--		goto out;
-+		goto local_entry_free;
- 
--	if (!_batadv_is_ap_isolated(tt_local_entry, tt_global_entry))
--		goto out;
--
--	ret = true;
-+	if (_batadv_is_ap_isolated(tt_local_entry, tt_global_entry))
-+		ret = true;
- 
--out:
-+	batadv_tt_global_entry_free_ref(tt_global_entry);
-+local_entry_free:
-+	batadv_tt_local_entry_free_ref(tt_local_entry);
-+vlan_free:
- 	batadv_softif_vlan_free_ref(vlan);
--	if (tt_global_entry)
--		batadv_tt_global_entry_free_ref(tt_global_entry);
--	if (tt_local_entry)
--		batadv_tt_local_entry_free_ref(tt_local_entry);
- 	return ret;
+diff --git a/sound/pci/ctxfi/ctdaio.c b/sound/pci/ctxfi/ctdaio.c
+index 9b87dd2..2221d7c 100644
+--- a/sound/pci/ctxfi/ctdaio.c
++++ b/sound/pci/ctxfi/ctdaio.c
+@@ -263,7 +263,7 @@ static int dao_clear_right_input(struct dao *dao)
+ 	return 0;
  }
  
--- 
-2.6.2
+-static struct dao_rsc_ops dao_ops = {
++static const struct dao_rsc_ops dao_ops = {
+ 	.set_spos		= dao_spdif_set_spos,
+ 	.commit_write		= dao_commit_write,
+ 	.get_spos		= dao_spdif_get_spos,
+@@ -318,7 +318,7 @@ static int dai_commit_write(struct dai *dai)
+ 	return 0;
+ }
+ 
+-static struct dai_rsc_ops dai_ops = {
++static const struct dai_rsc_ops dai_ops = {
+ 	.set_srt_srcl		= dai_set_srt_srcl,
+ 	.set_srt_srcr		= dai_set_srt_srcr,
+ 	.set_srt_msr		= dai_set_srt_msr,
+diff --git a/sound/pci/ctxfi/ctdaio.h b/sound/pci/ctxfi/ctdaio.h
+index 0ebbf35..a30be73 100644
+--- a/sound/pci/ctxfi/ctdaio.h
++++ b/sound/pci/ctxfi/ctdaio.h
+@@ -51,7 +51,7 @@ struct daio {
+ 
+ struct dao {
+ 	struct daio daio;
+-	struct dao_rsc_ops *ops;	/* DAO specific operations */
++	const struct dao_rsc_ops *ops;	/* DAO specific operations */
+ 	struct imapper **imappers;
+ 	struct daio_mgr *mgr;
+ 	struct hw *hw;
+@@ -60,7 +60,7 @@ struct dao {
+ 
+ struct dai {
+ 	struct daio daio;
+-	struct dai_rsc_ops *ops;	/* DAI specific operations */
++	const struct dai_rsc_ops *ops;	/* DAI specific operations */
+ 	struct hw *hw;
+ 	void *ctrl_blk;
+ };
 
