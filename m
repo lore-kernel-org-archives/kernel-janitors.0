@@ -1,65 +1,231 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 24 Nov 2015 13:20:11 +0000
-Subject: Re: [PATCH 1/2] block-rbd: Delete an unnecessary check before the function call "rbd_dev_destroy"
-Message-Id: <CAOi1vP8CQW6P3-VkSzSSj0xASbuaZdUAfAWAbgxiPBG5OU5-QA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Nov 2015 22:40:41 +0000
+Subject: [PATCH v2] ALSA: ctxfi: constify rsc ops structures
+Message-Id: <1447022441-18364-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<56536BAD.4000309@users.sourceforge.net>
-	<56536C9B.5010109@users.sourceforge.net>
-In-Reply-To: <56536C9B.5010109@users.sourceforge.net>
+References: <1447021024-10392-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447021024-10392-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, Ceph Development <ceph-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 23, 2015 at 8:44 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 23 Nov 2015 20:16:45 +0100
->
-> The rbd_dev_destroy() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/block/rbd.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 235708c..24a757e 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -5184,8 +5184,7 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
->
->  out_err:
->         rbd_dev_unparent(rbd_dev);
-> -       if (parent)
-> -               rbd_dev_destroy(parent);
-> +       rbd_dev_destroy(parent);
->         return ret;
->  }
+The various rsc ops structures are never modified, so declare them as
+const.
 
-Applied, see https://github.com/ceph/ceph-client/commit/b0098c3eadd33fa212987dab0529e35c948aaff4.
+Done with the help of Coccinelle.
 
-Thanks,
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-                Ilya
+---
+
+v2: This does the following types all at once: dao_rsc_ops, dai_rsc_ops,
+amixer_rsc_ops, src_rsc_ops, srcimp_rsc_ops, rsc_ops.  Most of these types
+are only used in specific files, but the rsc_ops structures appear in all
+of the files, so just do them all at once.  This patch thus also replaces
+the one with the subject "ALSA: ctxfi: constify dao and dai rsc ops structures"
+
+ sound/pci/ctxfi/ctamixer.c   |    6 +++---
+ sound/pci/ctxfi/ctamixer.h   |    2 +-
+ sound/pci/ctxfi/ctdaio.c     |   10 +++++-----
+ sound/pci/ctxfi/ctdaio.h     |    4 ++--
+ sound/pci/ctxfi/ctresource.c |    2 +-
+ sound/pci/ctxfi/ctresource.h |    2 +-
+ sound/pci/ctxfi/ctsrc.c      |    6 +++---
+ sound/pci/ctxfi/ctsrc.h      |    4 ++--
+ 8 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/sound/pci/ctxfi/ctamixer.c b/sound/pci/ctxfi/ctamixer.c
+index c7dc38d..5fcbb06 100644
+--- a/sound/pci/ctxfi/ctamixer.c
++++ b/sound/pci/ctxfi/ctamixer.c
+@@ -49,7 +49,7 @@ static int amixer_output_slot(const struct rsc *rsc)
+ 	return (amixer_index(rsc) << 4) + 0x4;
+ }
+ 
+-static struct rsc_ops amixer_basic_rsc_ops = {
++static const struct rsc_ops amixer_basic_rsc_ops = {
+ 	.master		= amixer_master,
+ 	.next_conj	= amixer_next_conj,
+ 	.index		= amixer_index,
+@@ -186,7 +186,7 @@ static int amixer_setup(struct amixer *amixer, struct rsc *input,
+ 	return 0;
+ }
+ 
+-static struct amixer_rsc_ops amixer_ops = {
++static const struct amixer_rsc_ops amixer_ops = {
+ 	.set_input		= amixer_set_input,
+ 	.set_invalid_squash	= amixer_set_invalid_squash,
+ 	.set_scale		= amixer_set_y,
+@@ -357,7 +357,7 @@ static int sum_output_slot(const struct rsc *rsc)
+ 	return (sum_index(rsc) << 4) + 0xc;
+ }
+ 
+-static struct rsc_ops sum_basic_rsc_ops = {
++static const struct rsc_ops sum_basic_rsc_ops = {
+ 	.master		= sum_master,
+ 	.next_conj	= sum_next_conj,
+ 	.index		= sum_index,
+diff --git a/sound/pci/ctxfi/ctamixer.h b/sound/pci/ctxfi/ctamixer.h
+index 72f42f2..2de18aa 100644
+--- a/sound/pci/ctxfi/ctamixer.h
++++ b/sound/pci/ctxfi/ctamixer.h
+@@ -58,7 +58,7 @@ struct amixer {
+ 	unsigned char idx[8];
+ 	struct rsc *input;	/* pointer to a resource acting as source */
+ 	struct sum *sum;	/* Put amixer output to this summation node */
+-	struct amixer_rsc_ops *ops;	/* AMixer specific operations */
++	const struct amixer_rsc_ops *ops;	/* AMixer specific operations */
+ };
+ 
+ struct amixer_rsc_ops {
+diff --git a/sound/pci/ctxfi/ctdaio.c b/sound/pci/ctxfi/ctdaio.c
+index 9b87dd2..7f089cb 100644
+--- a/sound/pci/ctxfi/ctdaio.c
++++ b/sound/pci/ctxfi/ctdaio.c
+@@ -83,21 +83,21 @@ static int daio_in_next_conj_20k2(struct rsc *rsc)
+ 	return rsc->conj += 0x100;
+ }
+ 
+-static struct rsc_ops daio_out_rsc_ops = {
++static const struct rsc_ops daio_out_rsc_ops = {
+ 	.master		= daio_master,
+ 	.next_conj	= daio_out_next_conj,
+ 	.index		= daio_index,
+ 	.output_slot	= NULL,
+ };
+ 
+-static struct rsc_ops daio_in_rsc_ops_20k1 = {
++static const struct rsc_ops daio_in_rsc_ops_20k1 = {
+ 	.master		= daio_master,
+ 	.next_conj	= daio_in_next_conj_20k1,
+ 	.index		= NULL,
+ 	.output_slot	= daio_index,
+ };
+ 
+-static struct rsc_ops daio_in_rsc_ops_20k2 = {
++static const struct rsc_ops daio_in_rsc_ops_20k2 = {
+ 	.master		= daio_master,
+ 	.next_conj	= daio_in_next_conj_20k2,
+ 	.index		= NULL,
+@@ -263,7 +263,7 @@ static int dao_clear_right_input(struct dao *dao)
+ 	return 0;
+ }
+ 
+-static struct dao_rsc_ops dao_ops = {
++static const struct dao_rsc_ops dao_ops = {
+ 	.set_spos		= dao_spdif_set_spos,
+ 	.commit_write		= dao_commit_write,
+ 	.get_spos		= dao_spdif_get_spos,
+@@ -318,7 +318,7 @@ static int dai_commit_write(struct dai *dai)
+ 	return 0;
+ }
+ 
+-static struct dai_rsc_ops dai_ops = {
++static const struct dai_rsc_ops dai_ops = {
+ 	.set_srt_srcl		= dai_set_srt_srcl,
+ 	.set_srt_srcr		= dai_set_srt_srcr,
+ 	.set_srt_msr		= dai_set_srt_msr,
+diff --git a/sound/pci/ctxfi/ctdaio.h b/sound/pci/ctxfi/ctdaio.h
+index 0ebbf35..a30be73 100644
+--- a/sound/pci/ctxfi/ctdaio.h
++++ b/sound/pci/ctxfi/ctdaio.h
+@@ -51,7 +51,7 @@ struct daio {
+ 
+ struct dao {
+ 	struct daio daio;
+-	struct dao_rsc_ops *ops;	/* DAO specific operations */
++	const struct dao_rsc_ops *ops;	/* DAO specific operations */
+ 	struct imapper **imappers;
+ 	struct daio_mgr *mgr;
+ 	struct hw *hw;
+@@ -60,7 +60,7 @@ struct dao {
+ 
+ struct dai {
+ 	struct daio daio;
+-	struct dai_rsc_ops *ops;	/* DAI specific operations */
++	const struct dai_rsc_ops *ops;	/* DAI specific operations */
+ 	struct hw *hw;
+ 	void *ctrl_blk;
+ };
+diff --git a/sound/pci/ctxfi/ctresource.c b/sound/pci/ctxfi/ctresource.c
+index 1a97e40..c5124c3 100644
+--- a/sound/pci/ctxfi/ctresource.c
++++ b/sound/pci/ctxfi/ctresource.c
+@@ -127,7 +127,7 @@ static int rsc_master(struct rsc *rsc)
+ 	return rsc->conj = rsc->idx;
+ }
+ 
+-static struct rsc_ops rsc_generic_ops = {
++static const struct rsc_ops rsc_generic_ops = {
+ 	.index		= rsc_index,
+ 	.output_slot	= audio_ring_slot,
+ 	.master		= rsc_master,
+diff --git a/sound/pci/ctxfi/ctresource.h b/sound/pci/ctxfi/ctresource.h
+index 9b746c3..736d9f7 100644
+--- a/sound/pci/ctxfi/ctresource.h
++++ b/sound/pci/ctxfi/ctresource.h
+@@ -39,7 +39,7 @@ struct rsc {
+ 	u32 msr:4;	/* The Master Sample Rate a resource working on */
+ 	void *ctrl_blk;	/* Chip specific control info block for a resource */
+ 	struct hw *hw;	/* Chip specific object for hardware access means */
+-	struct rsc_ops *ops;	/* Generic resource operations */
++	const struct rsc_ops *ops;	/* Generic resource operations */
+ };
+ 
+ struct rsc_ops {
+diff --git a/sound/pci/ctxfi/ctsrc.c b/sound/pci/ctxfi/ctsrc.c
+index ec1f084..a5a72df 100644
+--- a/sound/pci/ctxfi/ctsrc.c
++++ b/sound/pci/ctxfi/ctsrc.c
+@@ -335,7 +335,7 @@ static int src_default_config_arcrw(struct src *src)
+ 	return 0;
+ }
+ 
+-static struct src_rsc_ops src_rsc_ops = {
++static const struct src_rsc_ops src_rsc_ops = {
+ 	.set_state		= src_set_state,
+ 	.set_bm			= src_set_bm,
+ 	.set_sf			= src_set_sf,
+@@ -611,7 +611,7 @@ static int srcimp_index(const struct rsc *rsc)
+ 	return container_of(rsc, struct srcimp, rsc)->idx[rsc->conj];
+ }
+ 
+-static struct rsc_ops srcimp_basic_rsc_ops = {
++static const struct rsc_ops srcimp_basic_rsc_ops = {
+ 	.master		= srcimp_master,
+ 	.next_conj	= srcimp_next_conj,
+ 	.index		= srcimp_index,
+@@ -662,7 +662,7 @@ static int srcimp_unmap(struct srcimp *srcimp)
+ 	return 0;
+ }
+ 
+-static struct srcimp_rsc_ops srcimp_ops = {
++static const struct srcimp_rsc_ops srcimp_ops = {
+ 	.map = srcimp_map,
+ 	.unmap = srcimp_unmap
+ };
+diff --git a/sound/pci/ctxfi/ctsrc.h b/sound/pci/ctxfi/ctsrc.h
+index da7573c..92944a0 100644
+--- a/sound/pci/ctxfi/ctsrc.h
++++ b/sound/pci/ctxfi/ctsrc.h
+@@ -48,7 +48,7 @@ struct src_rsc_ops;
+ struct src {
+ 	struct rsc rsc; /* Basic resource info */
+ 	struct src *intlv; /* Pointer to next interleaved SRC in a series */
+-	struct src_rsc_ops *ops; /* SRC specific operations */
++	const struct src_rsc_ops *ops; /* SRC specific operations */
+ 	/* Number of contiguous srcs for interleaved usage */
+ 	unsigned char multi;
+ 	unsigned char mode; /* Working mode of this SRC resource */
+@@ -110,7 +110,7 @@ struct srcimp {
+ 	struct imapper *imappers;
+ 	unsigned int mapped; /* A bit-map indicating which conj rsc is mapped */
+ 	struct srcimp_mgr *mgr;
+-	struct srcimp_rsc_ops *ops;
++	const struct srcimp_rsc_ops *ops;
+ };
+ 
+ struct srcimp_rsc_ops {
+
