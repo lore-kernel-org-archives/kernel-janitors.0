@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 06 Nov 2015 10:05:46 +0000
-Subject: [PATCH] cxl: Delete an unnecessary check before the function call "kfree"
-Message-Id: <563C7B7A.2080403@users.sourceforge.net>
+From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date: Sun, 08 Nov 2015 22:56:27 +0000
+Subject: Re: [PATCH] cxl: Delete an unnecessary check before the function call "kfree"
+Message-Id: <563FD31B.3090807@au1.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,42 +19,31 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <563C7B7A.2080403@users.sourceforge.net>
+In-Reply-To: <563C7B7A.2080403@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ian Munsie <imunsie@au1.ibm.com>, Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Ian Munsie <imunsie@au1.ibm.com>, Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 6 Nov 2015 11:00:23 +0100
+On 06/11/15 21:05, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 6 Nov 2015 11:00:23 +0100
+>
+> The kfree() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Thanks for picking this up - will remember in my future patches.
 
-This issue was detected by using the Coccinelle software.
+Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/misc/cxl/context.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/misc/cxl/context.c b/drivers/misc/cxl/context.c
-index 2faa127..52e39b6 100644
---- a/drivers/misc/cxl/context.c
-+++ b/drivers/misc/cxl/context.c
-@@ -275,9 +275,7 @@ static void reclaim_ctx(struct rcu_head *rcu)
- 	if (ctx->kernelapi)
- 		kfree(ctx->mapping);
- 
--	if (ctx->irq_bitmap)
--		kfree(ctx->irq_bitmap);
--
-+	kfree(ctx->irq_bitmap);
- 	kfree(ctx);
- }
- 
 -- 
-2.6.2
+Andrew Donnellan              Software Engineer, OzLabs
+andrew.donnellan@au1.ibm.com  Australia Development Lab, Canberra
++61 2 6201 8874 (work)        IBM Australia Limited
 
