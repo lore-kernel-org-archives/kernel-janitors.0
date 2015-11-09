@@ -1,7 +1,7 @@
-From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date: Sun, 08 Nov 2015 22:56:27 +0000
+From: Ian Munsie <imunsie@au1.ibm.com>
+Date: Mon, 09 Nov 2015 02:09:51 +0000
 Subject: Re: [PATCH] cxl: Delete an unnecessary check before the function call "kfree"
-Message-Id: <563FD31B.3090807@au1.ibm.com>
+Message-Id: <1447034981-sup-9258@delenn.ozlabs.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,26 +24,8 @@ In-Reply-To: <563C7B7A.2080403@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Ian Munsie <imunsie@au1.ibm.com>, Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Michael Neuling <mikey@neuling.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On 06/11/15 21:05, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 6 Nov 2015 11:00:23 +0100
->
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Thanks for picking this up - will remember in my future patches.
-
-Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-
--- 
-Andrew Donnellan              Software Engineer, OzLabs
-andrew.donnellan@au1.ibm.com  Australia Development Lab, Canberra
-+61 2 6201 8874 (work)        IBM Australia Limited
+Acked-by: Ian Munsie <imunsie@au1.ibm.com>
 
