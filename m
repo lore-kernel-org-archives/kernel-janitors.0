@@ -1,59 +1,63 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 09:45:51 +0000
-Subject: [PATCH 1/2] mISDN: Delete an unnecessary check before the function call "kfree_skb"
-Message-Id: <5649A5CF.3090403@users.sourceforge.net>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Mon, 09 Nov 2015 20:48:26 +0000
+Subject: Re: [PATCH 1/9] drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c: use correct structure type nam
+Message-Id: <1915769.aHlhsWqSsK@avalon>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5649A524.6030407@users.sourceforge.net>
-In-Reply-To: <5649A524.6030407@users.sourceforge.net>
+References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr> <1406647011-8543-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1406647011-8543-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 10:10:53 +0100
+Hi Julia,
 
-The kfree_skb() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Thank you for the patch.
 
-This issue was detected by using the Coccinelle software.
+On Tuesday 29 July 2014 17:16:43 Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Correct typo in the name of the type given to sizeof.  Because it is the
+> size of a pointer that is wanted, the typo has no impact on compilation or
+> execution.
+> 
+> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
+> semantic patch used can be found in message 0 of this patch series.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
+> b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c index
+> cda8388..255590f 100644
+> --- a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
+> +++ b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
+> @@ -227,7 +227,7 @@ static int vpfe_enable_clock(struct vpfe_device
+> *vpfe_dev) return 0;
+> 
+>  	vpfe_dev->clks = kzalloc(vpfe_cfg->num_clocks *
+> -				   sizeof(struct clock *), GFP_KERNEL);
+> +				   sizeof(struct clk *), GFP_KERNEL);
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/isdn/mISDN/socket.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I'd use sizeof(*vpfe_dev->clks) to avoid such issues.
 
-diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
-index 0d29b5a..edd16ef 100644
---- a/drivers/isdn/mISDN/socket.c
-+++ b/drivers/isdn/mISDN/socket.c
-@@ -236,8 +236,7 @@ mISDN_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 	}
- 
- done:
--	if (skb)
--		kfree_skb(skb);
-+	kfree_skb(skb);
- 	release_sock(sk);
- 	return err;
- }
+Apart from that,
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+I've applied the patch to my tree with the above change, there's no need to 
+resubmit if you agree with the proposal.
+
+>  	if (vpfe_dev->clks = NULL) {
+>  		v4l2_err(vpfe_dev->pdev->driver, "Memory allocation failed\n");
+>  		return -ENOMEM;
+
 -- 
-2.6.2
+Regards,
+
+Laurent Pinchart
 
