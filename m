@@ -1,44 +1,69 @@
 From: Kees Cook <keescook@chromium.org>
-Date: Mon, 09 Nov 2015 21:20:12 +0000
-Subject: Re: [PATCH] video: constify geode ops structures
-Message-Id: <CAGXu5jJp4hQKWyQhu5fqgnvAEgeWDAKtaDm2norVM19n=+qigQ@mail.gmail.com>
+Date: Mon, 09 Nov 2015 21:24:27 +0000
+Subject: Re: [kernel-hardening] Re: [PATCH] video: constify geode ops structures
+Message-Id: <CAGXu5jJ7HvAKEs0YynnLQH9xJPgb7LKEvuaQtDY=3K9J4xawjQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1447018493-20631-1-git-send-email-Julia.Lawall@lip6.fr>
 	<20151108221624.GP18797@mwanda>
-In-Reply-To: <20151108221624.GP18797@mwanda>
+	<alpine.DEB.2.10.1511082220500.2583@hadrien>
+	<20151109054253.GQ18797@mwanda>
+	<20151109134942.GB8264@mwanda>
+	<alpine.DEB.2.10.1511091449560.3103@hadrien>
+	<20151109180555.28c45c3ccaf2042dd7fefec4@gmail.com>
+	<alpine.DEB.2.10.1511091747430.3745@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1511091747430.3745@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, kernel-janitors@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-geode@lists.infradead.org, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Emese Revfy <re.emese@gmail.com>, "kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>, Dan Carpenter <dan.carpenter@oracle.com>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sun, Nov 8, 2015 at 2:16 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Cool.  So, in grsec they use a GCC plugin to make these const
-> automatically since they only contain function pointers.  There about
-> 100 struct types marked as __no_const.  Kees would like to adopt the
-> grsec pluggin approach I expect.  Do you have an idea how many structs
-> only contain function pointers or how many consts we would have to add
-> to get the same effect without the plugin?
+On Mon, Nov 9, 2015 at 9:48 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> On Mon, 9 Nov 2015, Emese Revfy wrote:
+>
+>> On Mon, 9 Nov 2015 14:50:47 +0000 (GMT)
+>> Julia Lawall <julia.lawall@lip6.fr> wrote:
+>> > > Actually, it looks like Emese Revfy is going to merge the GCC plugin
+>> > > constify stuff sooner rather than later so maybe adding all these consts
+>> > > isn't going to be needed.
+>> >
+>> > Is there any advantage of const over the plugin?  The consts are easy to
+>> > add.
+>>
+>> Hi,
+>>
+>> I think it's a very good advantage that the plugin constifies automatically
+>> without regular maintenance (e.g., generate patches with coccinelle,
+>> send patches to the maintainers every new kernel version). ;)
+>> But if it doesn't convince you, I did constification by hand (with a coccinelle
+>> script) some years ago.
+>> There are too many types that can be const and it took too long to prepare and
+>> get the maintainers to accept the patches.
+>> And it never ends as there are always new types that can be const.
+>
+> What happens if some structures cannot be made const because there is a
+> reassignment somewhere?  Is there any feedback about the problem?
 
-Just to remind everyone: while we certainly want to clean these up in
-the code where possible, we still want to make the constification
-plugin part of the regular builds. We want to provide a
-secure-by-default build, even when vendors are adding their own
-out-of-tree code when producing Linux-based products. So, we'll always
-want to have the plugin as a back-stop for out-of-tree code, or places
-where const was accidentally missed upstream.
+AIUI, for now, we can't make those const (though I would be happy to
+be corrected). My hope would be to allow reassignment using something
+like PaX's kernel_open/kernel_close inlines to allow for temporary
+modification of read-only things (as part of the KERNEXEC feature).
 
 -Kees
 
 >
-> regards,
-> dan carpenter
+> julia
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+>>
+>> > Does the plugin help for structures that have non-function fields?
+>> Yes, it does. See __do_const here:
+>> http://www.openwall.com/lists/kernel-hardening/2015/11/06/11
+>> or more about the constify plugin:
+>> https://pax.grsecurity.net/docs/PaXTeam-H2HC13-PaX-gcc-plugins.pdf
+>>
+>> --
+>> Emese
+>>
 
 
 
