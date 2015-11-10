@@ -1,59 +1,50 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 20 Nov 2015 20:33:21 +0000
-Subject: [PATCH 3/6] powerpc/powernv: add missing of_node_put
-Message-Id: <1448051604-25256-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 10 Nov 2015 22:22:49 +0000
+Subject: [patch 1/2] [media] av7110: don't allow negative volumes
+Message-Id: <20151110222249.GD30281@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-for_each_compatible_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+The issue here is that we there is a static checker warning because we
+have a user controlled volume setting and we cap the upper bound but we
+allow negative numbers.  Negative volumes don't make sense, so let's
+make these variables unsigned.
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-local idexpression n;
-expression e;
-@@
-
- for_each_compatible_node(n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
+diff --git a/drivers/media/pci/ttpci/av7110_av.h b/drivers/media/pci/ttpci/av7110_av.h
+index 5f02ef8..f52276f 100644
+--- a/drivers/media/pci/ttpci/av7110_av.h
++++ b/drivers/media/pci/ttpci/av7110_av.h
+@@ -10,7 +10,8 @@ extern int av7110_record_cb(struct dvb_filter_pes2ts *p2t, u8 *buf, size_t len);
+ extern int av7110_pes_play(void *dest, struct dvb_ringbuffer *buf, int dlen);
+ extern int av7110_write_to_decoder(struct dvb_demux_feed *feed, const u8 *buf, size_t len);
+ 
+-extern int av7110_set_volume(struct av7110 *av7110, int volleft, int volright);
++extern int av7110_set_volume(struct av7110 *av7110, unsigned int volleft,
++			     unsigned int volright);
+ extern int av7110_av_stop(struct av7110 *av7110, int av);
+ extern int av7110_av_start_record(struct av7110 *av7110, int av,
+ 			  struct dvb_demux_feed *dvbdmxfeed);
+diff --git a/drivers/media/pci/ttpci/av7110_av.c b/drivers/media/pci/ttpci/av7110_av.c
+index 9ed1ec7..ccb3b2c 100644
+--- a/drivers/media/pci/ttpci/av7110_av.c
++++ b/drivers/media/pci/ttpci/av7110_av.c
+@@ -280,9 +280,11 @@ int av7110_pes_play(void *dest, struct dvb_ringbuffer *buf, int dlen)
  }
-... when != n
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- arch/powerpc/platforms/powernv/opal-lpc.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/powerpc/platforms/powernv/opal-lpc.c b/arch/powerpc/platforms/powernv/opal-lpc.c
-index e4169d6..d28c4a9 100644
---- a/arch/powerpc/platforms/powernv/opal-lpc.c
-+++ b/arch/powerpc/platforms/powernv/opal-lpc.c
-@@ -401,6 +401,7 @@ void opal_lpc_init(void)
- 		if (!of_get_property(np, "primary", NULL))
- 			continue;
- 		opal_lpc_chip_id = of_get_ibm_chip_id(np);
-+		of_node_put(np);
- 		break;
- 	}
- 	if (opal_lpc_chip_id < 0)
-
+ 
+ 
+-int av7110_set_volume(struct av7110 *av7110, int volleft, int volright)
++int av7110_set_volume(struct av7110 *av7110, unsigned int volleft,
++		      unsigned int volright)
+ {
+-	int err, vol, val, balance = 0;
++	unsigned int vol, val, balance = 0;
++	int err;
+ 
+ 	dprintk(2, "av7110:%p, \n", av7110);
+ 
