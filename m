@@ -1,34 +1,27 @@
-From: "PaX Team" <pageexec@freemail.hu>
-Date: Tue, 10 Nov 2015 01:24:54 +0000
-Subject: Re: [kernel-hardening] Re: [PATCH] video: constify geode ops structures
-Message-Id: <56414766.18876.2B8A87D7@pageexec.freemail.hu>
+From: Christoph Hellwig <hch@infradead.org>
+Date: Tue, 10 Nov 2015 06:38:21 +0000
+Subject: Re: [PATCH] video: constify geode ops structures
+Message-Id: <20151110063821.GA31014@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447018493-20631-1-git-send-email-Julia.Lawall@lip6.fr>, <alpine.DEB.2.10.1511092154160.3844@hadrien>, <CAGXu5jKzKAje_gtOQY7ukh67LLqmcWzVQ502V6akAB6ShH3h3w@mail.gmail.com>
-In-Reply-To: <CAGXu5jKzKAje_gtOQY7ukh67LLqmcWzVQ502V6akAB6ShH3h3w@mail.gmail.com>
+References: <1447018493-20631-1-git-send-email-Julia.Lawall@lip6.fr>
+ <20151108221624.GP18797@mwanda>
+ <CAGXu5jJp4hQKWyQhu5fqgnvAEgeWDAKtaDm2norVM19n=+qigQ@mail.gmail.com>
+In-Reply-To: <CAGXu5jJp4hQKWyQhu5fqgnvAEgeWDAKtaDm2norVM19n=+qigQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, Kees Cook <keescook@chromium.org>
-Cc: Emese Revfy <re.emese@gmail.com>, "kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>, Dan Carpenter <dan.carpenter@oracle.com>, Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, kernel-janitors@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-geode@lists.infradead.org, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-> On Mon, Nov 9, 2015 at 1:55 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> >> > What happens if some structures cannot be made const because there is a
-> >> > reassignment somewhere?  Is there any feedback about the problem?
+On Mon, Nov 09, 2015 at 01:20:12PM -0800, Kees Cook wrote:
+> Just to remind everyone: while we certainly want to clean these up in
+> the code where possible, we still want to make the constification
+> plugin part of the regular builds. We want to provide a
+> secure-by-default build, even when vendors are adding their own
+> out-of-tree code when producing Linux-based products. So, we'll always
+> want to have the plugin as a back-stop for out-of-tree code, or places
+> where const was accidentally missed upstream.
 
-the constify plugin basically simulates what a source level 'const' would
-do (sets a specific flag on the 'tree' structure representing the so-called
-main variant of the ops type, see my h2hc13 presentation for details) and
-since this happens early in the frontend, the const violations will be
-reported by the compiler just like as it would otherwise report such source
-level problems.
-
-this way one can simply put a do_const attribute on a type, recompile the
-tree and see if the compiler ever reports an error to know if the given
-constification attempt is viable for the given type or not (and by finding
-the 'bad' assignments one can see where to consider rewriting the code
-perhaps, we did this a lot in PaX for example to achieve the current level
-of attack surface reduction).
-
-cheers,
- PaX Team
-
+Who is 'we'?  While a plugin like this that warns would be very ueful
+I strongly disagree with bloating the kernel tree with any infrastructure
+primarily aimed at out of tree code.
