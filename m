@@ -1,21 +1,34 @@
-From: "Simmons, James A." <simmonsja@ornl.gov>
-Date: Wed, 04 Nov 2015 19:00:27 +0000
-Subject: RE: [patch] staging: lustre: potential underflow in libcfs_kkuc_group_add()
-Message-Id: <21429a01825c4730ab4b247e8bb24b00@EXCHCS32.ornl.gov>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 10 Nov 2015 22:15:24 +0000
+Subject: [patch] mptfusion: don't allow negative bytes in kbuf_alloc_2_sgl()
+Message-Id: <20151110221524.GB30281@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151029135122.GA7709@mwanda>
-	<b7e8511d07d84cfaa9e437729795f179@EXCHCS32.ornl.gov>
-	<563947EC.9020502@cray.com> <20151104182529.GK7289@mwanda>
-In-Reply-To: <20151104182529.GK7289@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
+Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->On Tue, Nov 03, 2015 at 05:49:00PM -0600, Frank Zago wrote:
->> Yes, but for consistency, all 4 functions should be changed.
->
->Thanks for the review.  I will send a v2.
+There is a static checker warning here because "bytes" is controlled by
+the user and we cap the upper bound with min() but allow negatives.
+Negative bytes will result in some nasty warning messages but are not
+super harmful.  Anyway, no one needs negative bytes so let's just check
+for it and return NULL.
 
-Greg merged your original patch so it will be a new patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
+index fc73937..02b5f69 100644
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -1038,6 +1038,10 @@ kbuf_alloc_2_sgl(int bytes, u32 sgdir, int sge_offset, int *frags,
+ 	int		 i, buflist_ent;
+ 	int		 sg_spill = MAX_FRAGS_SPILL1;
+ 	int		 dir;
++
++	if (bytes < 0)
++		return NULL;
++
+ 	/* initialization */
+ 	*frags = 0;
+ 	*blp = NULL;
