@@ -1,35 +1,31 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Thu, 26 Nov 2015 14:07:23 +0000
-Subject: Re: [patch] cpufreq: scpi-cpufreq: signedness bug in scpi_get_dvfs_info()
-Message-Id: <CAPKp9uZNHU-msMq7NMhOcaueEkc=bQhctovLjU4iGAN_Si4g0Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 10 Nov 2015 09:09:24 +0000
+Subject: [patch] ncpfs: don't allow negative timeouts
+Message-Id: <20151110090924.GB2934@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151022195208.GB24439@mwanda>
-	<562A090A.5000703@arm.com>
-In-Reply-To: <562A090A.5000703@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Petr Vandrovec <petr@vandrovec.name>
+Cc: Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Rafael,
+This code causes a static checker warning because it's a user controlled
+variable where we cap the upper bound but not the lower bound.  If
+someone passes us a negative timeout then I guess lets set it to the
+default.
 
-On Fri, Oct 23, 2015 at 11:16 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->
->
-> On 22/10/15 20:52, Dan Carpenter wrote:
->>
->> The "domain" variable needs to be signed for the error handling to
->> work.
->>
->> Fixes: 8def31034d03 ('cpufreq: arm_big_little: add SCPI interface
->> driver') Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->
-> Thanks for the fix
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
->
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Can you pick this up for your next -rc fixes ?
-
-Regards,
-Sudeep
+diff --git a/fs/ncpfs/ioctl.c b/fs/ncpfs/ioctl.c
+index 79b1130..c07498a 100644
+--- a/fs/ncpfs/ioctl.c
++++ b/fs/ncpfs/ioctl.c
+@@ -525,7 +525,7 @@ static long __ncp_ioctl(struct inode *inode, unsigned int cmd, unsigned long arg
+ 			switch (rqdata.cmd) {
+ 				case NCP_LOCK_EX:
+ 				case NCP_LOCK_SH:
+-						if (rqdata.timeout = 0)
++						if (rqdata.timeout <= 0)
+ 							rqdata.timeout = NCP_LOCK_DEFAULT_TIMEOUT;
+ 						else if (rqdata.timeout > NCP_LOCK_MAX_TIMEOUT)
+ 							rqdata.timeout = NCP_LOCK_MAX_TIMEOUT;
