@@ -1,34 +1,45 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Thu, 19 Nov 2015 15:53:11 +0000
-Subject: Re: [PATCH] HID: Wacom: Delete an unnecessary check before the function call "kobject_put"
-Message-Id: <alpine.LNX.2.00.1511191652580.20111@pobox.suse.cz>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 13 Nov 2015 16:03:51 +0000
+Subject: [PATCH] mfd: constify da903x_chip_ops structure
+Message-Id: <1447430631-10455-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563CDCAE.9080109@users.sourceforge.net>
-In-Reply-To: <563CDCAE.9080109@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Support Opensource <support.opensource@diasemi.com>
+Cc: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
 
-On Fri, 6 Nov 2015, SF Markus Elfring wrote:
+The da903x_chip_ops structure is never modified, so declare it
+as const.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 6 Nov 2015 17:55:23 +0100
-> 
-> The kobject_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
+Done with the help of Coccinelle.
 
-Applied to for-4.5/wacom.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks,
+---
+ drivers/mfd/da903x.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
-Jiri Kosina
-SUSE Labs
+diff --git a/drivers/mfd/da903x.c b/drivers/mfd/da903x.c
+index 37e4426..f6a0459 100644
+--- a/drivers/mfd/da903x.c
++++ b/drivers/mfd/da903x.c
+@@ -60,7 +60,7 @@ struct da903x_chip_ops {
+ struct da903x_chip {
+ 	struct i2c_client	*client;
+ 	struct device		*dev;
+-	struct da903x_chip_ops	*ops;
++	const struct da903x_chip_ops *ops;
+ 
+ 	int			type;
+ 	uint32_t		events_mask;
+@@ -424,7 +424,7 @@ static irqreturn_t da903x_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static struct da903x_chip_ops da903x_ops[] = {
++static const struct da903x_chip_ops da903x_ops[] = {
+ 	[0] = {
+ 		.init_chip	= da9030_init_chip,
+ 		.unmask_events	= da9030_unmask_events,
 
