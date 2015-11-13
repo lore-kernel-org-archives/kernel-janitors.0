@@ -1,72 +1,83 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 13 Nov 2015 12:04:41 +0000
-Subject: [PATCH] nfc: s3fwrn5: constify s3fwrn5_phy_ops structures
-Message-Id: <1447416281-3357-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Robert Baldyga <r.baldyga@samsung.com>
+Date: Fri, 13 Nov 2015 14:28:32 +0000
+Subject: Re: [PATCH] nfc: s3fwrn5: constify s3fwrn5_phy_ops structures
+Message-Id: <5645F390.9040407@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1447416281-3357-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447416281-3357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robert Baldyga <r.baldyga@samsung.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-nfc@lists.01.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The s3fwrn5_phy_ops structure is never modified, so declare it as const.
+On 11/13/2015 01:04 PM, Julia Lawall wrote:
+> The s3fwrn5_phy_ops structure is never modified, so declare it as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
+Acked-by: Robert Baldyga <r.baldyga@samsung.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Thanks!
+Robert Baldyga
 
----
- drivers/nfc/s3fwrn5/core.c    |    2 +-
- drivers/nfc/s3fwrn5/i2c.c     |    2 +-
- drivers/nfc/s3fwrn5/s3fwrn5.h |    4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/nfc/s3fwrn5/core.c b/drivers/nfc/s3fwrn5/core.c
-index 0d866ca..9d9c8d5 100644
---- a/drivers/nfc/s3fwrn5/core.c
-+++ b/drivers/nfc/s3fwrn5/core.c
-@@ -147,7 +147,7 @@ static struct nci_ops s3fwrn5_nci_ops = {
- };
- 
- int s3fwrn5_probe(struct nci_dev **ndev, void *phy_id, struct device *pdev,
--	struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload)
-+	const struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload)
- {
- 	struct s3fwrn5_info *info;
- 	int ret;
-diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
-index c61d8a3..3ed0adf 100644
---- a/drivers/nfc/s3fwrn5/i2c.c
-+++ b/drivers/nfc/s3fwrn5/i2c.c
-@@ -125,7 +125,7 @@ static int s3fwrn5_i2c_write(void *phy_id, struct sk_buff *skb)
- 	return 0;
- }
- 
--static struct s3fwrn5_phy_ops i2c_phy_ops = {
-+static const struct s3fwrn5_phy_ops i2c_phy_ops = {
- 	.set_wake = s3fwrn5_i2c_set_wake,
- 	.set_mode = s3fwrn5_i2c_set_mode,
- 	.get_mode = s3fwrn5_i2c_get_mode,
-diff --git a/drivers/nfc/s3fwrn5/s3fwrn5.h b/drivers/nfc/s3fwrn5/s3fwrn5.h
-index 89210d4..7d5e516 100644
---- a/drivers/nfc/s3fwrn5/s3fwrn5.h
-+++ b/drivers/nfc/s3fwrn5/s3fwrn5.h
-@@ -44,7 +44,7 @@ struct s3fwrn5_info {
- 	void *phy_id;
- 	struct device *pdev;
- 
--	struct s3fwrn5_phy_ops *phy_ops;
-+	const struct s3fwrn5_phy_ops *phy_ops;
- 	unsigned int max_payload;
- 
- 	struct s3fwrn5_fw_info fw_info;
-@@ -90,7 +90,7 @@ static inline int s3fwrn5_write(struct s3fwrn5_info *info, struct sk_buff *skb)
- }
- 
- int s3fwrn5_probe(struct nci_dev **ndev, void *phy_id, struct device *pdev,
--	struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload);
-+	const struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload);
- void s3fwrn5_remove(struct nci_dev *ndev);
- 
- int s3fwrn5_recv_frame(struct nci_dev *ndev, struct sk_buff *skb,
+> 
+> ---
+>  drivers/nfc/s3fwrn5/core.c    |    2 +-
+>  drivers/nfc/s3fwrn5/i2c.c     |    2 +-
+>  drivers/nfc/s3fwrn5/s3fwrn5.h |    4 ++--
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/nfc/s3fwrn5/core.c b/drivers/nfc/s3fwrn5/core.c
+> index 0d866ca..9d9c8d5 100644
+> --- a/drivers/nfc/s3fwrn5/core.c
+> +++ b/drivers/nfc/s3fwrn5/core.c
+> @@ -147,7 +147,7 @@ static struct nci_ops s3fwrn5_nci_ops = {
+>  };
+>  
+>  int s3fwrn5_probe(struct nci_dev **ndev, void *phy_id, struct device *pdev,
+> -	struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload)
+> +	const struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload)
+>  {
+>  	struct s3fwrn5_info *info;
+>  	int ret;
+> diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
+> index c61d8a3..3ed0adf 100644
+> --- a/drivers/nfc/s3fwrn5/i2c.c
+> +++ b/drivers/nfc/s3fwrn5/i2c.c
+> @@ -125,7 +125,7 @@ static int s3fwrn5_i2c_write(void *phy_id, struct sk_buff *skb)
+>  	return 0;
+>  }
+>  
+> -static struct s3fwrn5_phy_ops i2c_phy_ops = {
+> +static const struct s3fwrn5_phy_ops i2c_phy_ops = {
+>  	.set_wake = s3fwrn5_i2c_set_wake,
+>  	.set_mode = s3fwrn5_i2c_set_mode,
+>  	.get_mode = s3fwrn5_i2c_get_mode,
+> diff --git a/drivers/nfc/s3fwrn5/s3fwrn5.h b/drivers/nfc/s3fwrn5/s3fwrn5.h
+> index 89210d4..7d5e516 100644
+> --- a/drivers/nfc/s3fwrn5/s3fwrn5.h
+> +++ b/drivers/nfc/s3fwrn5/s3fwrn5.h
+> @@ -44,7 +44,7 @@ struct s3fwrn5_info {
+>  	void *phy_id;
+>  	struct device *pdev;
+>  
+> -	struct s3fwrn5_phy_ops *phy_ops;
+> +	const struct s3fwrn5_phy_ops *phy_ops;
+>  	unsigned int max_payload;
+>  
+>  	struct s3fwrn5_fw_info fw_info;
+> @@ -90,7 +90,7 @@ static inline int s3fwrn5_write(struct s3fwrn5_info *info, struct sk_buff *skb)
+>  }
+>  
+>  int s3fwrn5_probe(struct nci_dev **ndev, void *phy_id, struct device *pdev,
+> -	struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload);
+> +	const struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload);
+>  void s3fwrn5_remove(struct nci_dev *ndev);
+>  
+>  int s3fwrn5_recv_frame(struct nci_dev *ndev, struct sk_buff *skb,
+> 
+> 
 
