@@ -1,73 +1,79 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Nov 2015 12:30:34 +0000
-Subject: [PATCH] lustre: constify inode_operations structures
-Message-Id: <1447504234-25165-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Nov 2015 14:34:01 +0000
+Subject: [patch] ide: silence some underflow warnings
+Message-Id: <20151113143401.GC1445@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The inode_operations structures are never modified, so declare them
-as const, like all the other inode_operations structures.
+Back in the day we used to just say this code was root only so it was
+ok that the bounds checking was sloppy.  These days it annoys static
+checkers so we fix it.
 
-Done with the help of Coccinelle.
+In the original code "c > INT_MAX" was never true since "c" was an int.
+I am not sure what was intended so I left it alone.  But because I made
+"c" unsigned it means we don't have a warning any more.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The second warning is that we cap "i" but allow negatives leading to an
+underflow of the ide_disks_chs[] array.  The third set of warnings is
+because these values come from the user and we cap most of the upper
+bounds but allow negative values.  Negative cylinders doesn't make
+sense.
 
----
- drivers/staging/lustre/lustre/llite/file.c           |    2 +-
- drivers/staging/lustre/lustre/llite/llite_internal.h |    4 ++--
- drivers/staging/lustre/lustre/llite/symlink.c        |    2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+drivers/ide/ide.c:262 ide_set_disk_chs() warn: impossible condition '(c > ((~0 >> 1))) => (s32min-s32max > s32max)'
+drivers/ide/ide.c:270 ide_set_disk_chs() warn: check 'ide_disks_chs[i]' for negative offsets 'i' = s32min.  extra = 's32min-19'
+drivers/ide/ide.c:271 ide_set_disk_chs() warn: no lower bound on 'h'
 
-diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
-index 02f2759..31cd6b3 100644
---- a/drivers/staging/lustre/lustre/llite/file.c
-+++ b/drivers/staging/lustre/lustre/llite/file.c
-@@ -3139,7 +3139,7 @@ struct file_operations ll_file_operations_noflock = {
- 	.lock	   = ll_file_noflock
- };
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/ide/ide.c b/drivers/ide/ide.c
+index f086ef3..d127ace 100644
+--- a/drivers/ide/ide.c
++++ b/drivers/ide/ide.c
+@@ -178,17 +178,17 @@ MODULE_PARM_DESC(pci_clock, "PCI bus clock frequency (in MHz)");
  
--struct inode_operations ll_file_inode_operations = {
-+const struct inode_operations ll_file_inode_operations = {
- 	.setattr	= ll_setattr,
- 	.getattr	= ll_getattr,
- 	.permission	= ll_inode_permission,
-diff --git a/drivers/staging/lustre/lustre/llite/llite_internal.h b/drivers/staging/lustre/lustre/llite/llite_internal.h
-index 9096d31..6102b29 100644
---- a/drivers/staging/lustre/lustre/llite/llite_internal.h
-+++ b/drivers/staging/lustre/lustre/llite/llite_internal.h
-@@ -705,7 +705,7 @@ extern const struct address_space_operations ll_aops;
- extern struct file_operations ll_file_operations;
- extern struct file_operations ll_file_operations_flock;
- extern struct file_operations ll_file_operations_noflock;
--extern struct inode_operations ll_file_inode_operations;
-+extern const struct inode_operations ll_file_inode_operations;
- int ll_have_md_lock(struct inode *inode, __u64 *bits,
- 		    ldlm_mode_t l_req_mode);
- ldlm_mode_t ll_take_md_lock(struct inode *inode, __u64 bits,
-@@ -805,7 +805,7 @@ struct inode *search_inode_for_lustre(struct super_block *sb,
- 				      const struct lu_fid *fid);
+ static int ide_set_dev_param_mask(const char *s, const struct kernel_param *kp)
+ {
+-	int a, b, i, j = 1;
++	unsigned int a, b, i, j = 1;
+ 	unsigned int *dev_param_mask = (unsigned int *)kp->arg;
  
- /* llite/symlink.c */
--extern struct inode_operations ll_fast_symlink_inode_operations;
-+extern const struct inode_operations ll_fast_symlink_inode_operations;
+ 	/* controller . device (0 or 1) [ : 1 (set) | 0 (clear) ] */
+-	if (sscanf(s, "%d.%d:%d", &a, &b, &j) != 3 &&
+-	    sscanf(s, "%d.%d", &a, &b) != 2)
++	if (sscanf(s, "%u.%u:%u", &a, &b, &j) != 3 &&
++	    sscanf(s, "%u.%u", &a, &b) != 2)
+ 		return -EINVAL;
  
- /* llite/llite_close.c */
- struct ll_close_queue {
-diff --git a/drivers/staging/lustre/lustre/llite/symlink.c b/drivers/staging/lustre/lustre/llite/symlink.c
-index 69b2036..32c4cf4 100644
---- a/drivers/staging/lustre/lustre/llite/symlink.c
-+++ b/drivers/staging/lustre/lustre/llite/symlink.c
-@@ -146,7 +146,7 @@ static void ll_put_link(struct inode *unused, void *cookie)
- 	ptlrpc_req_finished(cookie);
- }
+ 	i = a * MAX_DRIVES + b;
  
--struct inode_operations ll_fast_symlink_inode_operations = {
-+const struct inode_operations ll_fast_symlink_inode_operations = {
- 	.readlink	= generic_readlink,
- 	.setattr	= ll_setattr,
- 	.follow_link	= ll_follow_link,
-
+-	if (i >= MAX_HWIFS * MAX_DRIVES || j < 0 || j > 1)
++	if (i >= MAX_HWIFS * MAX_DRIVES || j > 1)
+ 		return -EINVAL;
+ 
+ 	if (j)
+@@ -246,17 +246,17 @@ static struct chs_geom ide_disks_chs[MAX_HWIFS * MAX_DRIVES];
+ 
+ static int ide_set_disk_chs(const char *str, struct kernel_param *kp)
+ {
+-	int a, b, c = 0, h = 0, s = 0, i, j = 1;
++	unsigned int a, b, c = 0, h = 0, s = 0, i, j = 1;
+ 
+ 	/* controller . device (0 or 1) : Cylinders , Heads , Sectors */
+ 	/* controller . device (0 or 1) : 1 (use CHS) | 0 (ignore CHS) */
+-	if (sscanf(str, "%d.%d:%d,%d,%d", &a, &b, &c, &h, &s) != 5 &&
+-	    sscanf(str, "%d.%d:%d", &a, &b, &j) != 3)
++	if (sscanf(str, "%u.%u:%u,%u,%u", &a, &b, &c, &h, &s) != 5 &&
++	    sscanf(str, "%u.%u:%u", &a, &b, &j) != 3)
+ 		return -EINVAL;
+ 
+ 	i = a * MAX_DRIVES + b;
+ 
+-	if (i >= MAX_HWIFS * MAX_DRIVES || j < 0 || j > 1)
++	if (i >= MAX_HWIFS * MAX_DRIVES || j > 1)
+ 		return -EINVAL;
+ 
+ 	if (c > INT_MAX || h > 255 || s > 255)
