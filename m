@@ -1,103 +1,72 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Date: Wed, 18 Nov 2015 21:42:32 +0000
-Subject: Re: [PATCH 4/7] phy: rockchip-usb: add missing of_node_put
-Message-Id: <3319805.OP3X7Mj3av@diego>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 13 Nov 2015 12:04:41 +0000
+Subject: [PATCH] nfc: s3fwrn5: constify s3fwrn5_phy_ops structures
+Message-Id: <1447416281-3357-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447673600-8881-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447673600-8881-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Robert Baldyga <r.baldyga@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-nfc@lists.01.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Montag, 16. November 2015, 12:33:17 schrieb Julia Lawall:
-> for_each_available_child_of_node performs an of_node_get on each iteration,
-> so a return from the middle of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that finds this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_available_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> 
-> *  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The s3fwrn5_phy_ops structure is never modified, so declare it as const.
 
-After 
+Done with the help of Coccinelle.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-on a rk3288-veyron chromebook
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/nfc/s3fwrn5/core.c    |    2 +-
+ drivers/nfc/s3fwrn5/i2c.c     |    2 +-
+ drivers/nfc/s3fwrn5/s3fwrn5.h |    4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-> 
-> ---
->  drivers/phy/phy-rockchip-usb.c |   17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/phy/phy-rockchip-usb.c b/drivers/phy/phy-rockchip-usb.c
-> index 91d6f34..62c43c4 100644
-> --- a/drivers/phy/phy-rockchip-usb.c
-> +++ b/drivers/phy/phy-rockchip-usb.c
-> @@ -108,13 +108,16 @@ static int rockchip_usb_phy_probe(struct
-> platform_device *pdev)
-> 
->  	for_each_available_child_of_node(dev->of_node, child) {
->  		rk_phy = devm_kzalloc(dev, sizeof(*rk_phy), GFP_KERNEL);
-> -		if (!rk_phy)
-> -			return -ENOMEM;
-> +		if (!rk_phy) {
-> +			err = -ENOMEM;
-> +			goto put_child;
-> +		}
-> 
->  		if (of_property_read_u32(child, "reg", &reg_offset)) {
->  			dev_err(dev, "missing reg property in node %s\n",
->  				child->name);
-> -			return -EINVAL;
-> +			err = -EINVAL;
-> +			goto put_child;
->  		}
-> 
->  		rk_phy->reg_offset = reg_offset;
-> @@ -127,18 +130,22 @@ static int rockchip_usb_phy_probe(struct
-> platform_device *pdev) rk_phy->phy = devm_phy_create(dev, child, &ops);
->  		if (IS_ERR(rk_phy->phy)) {
->  			dev_err(dev, "failed to create PHY\n");
-> -			return PTR_ERR(rk_phy->phy);
-> +			err = PTR_ERR(rk_phy->phy);
-> +			goto put_child;
->  		}
->  		phy_set_drvdata(rk_phy->phy, rk_phy);
-> 
->  		/* only power up usb phy when it use, so disable it when init*/
->  		err = rockchip_usb_phy_power(rk_phy, 1);
->  		if (err)
-> -			return err;
-> +			goto put_child;
->  	}
-> 
->  	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->  	return PTR_ERR_OR_ZERO(phy_provider);
-> +put_child:
-> +	of_node_put(child);
-> +	return err;
->  }
-> 
->  static const struct of_device_id rockchip_usb_phy_dt_ids[] = {
+diff --git a/drivers/nfc/s3fwrn5/core.c b/drivers/nfc/s3fwrn5/core.c
+index 0d866ca..9d9c8d5 100644
+--- a/drivers/nfc/s3fwrn5/core.c
++++ b/drivers/nfc/s3fwrn5/core.c
+@@ -147,7 +147,7 @@ static struct nci_ops s3fwrn5_nci_ops = {
+ };
+ 
+ int s3fwrn5_probe(struct nci_dev **ndev, void *phy_id, struct device *pdev,
+-	struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload)
++	const struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload)
+ {
+ 	struct s3fwrn5_info *info;
+ 	int ret;
+diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
+index c61d8a3..3ed0adf 100644
+--- a/drivers/nfc/s3fwrn5/i2c.c
++++ b/drivers/nfc/s3fwrn5/i2c.c
+@@ -125,7 +125,7 @@ static int s3fwrn5_i2c_write(void *phy_id, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
+-static struct s3fwrn5_phy_ops i2c_phy_ops = {
++static const struct s3fwrn5_phy_ops i2c_phy_ops = {
+ 	.set_wake = s3fwrn5_i2c_set_wake,
+ 	.set_mode = s3fwrn5_i2c_set_mode,
+ 	.get_mode = s3fwrn5_i2c_get_mode,
+diff --git a/drivers/nfc/s3fwrn5/s3fwrn5.h b/drivers/nfc/s3fwrn5/s3fwrn5.h
+index 89210d4..7d5e516 100644
+--- a/drivers/nfc/s3fwrn5/s3fwrn5.h
++++ b/drivers/nfc/s3fwrn5/s3fwrn5.h
+@@ -44,7 +44,7 @@ struct s3fwrn5_info {
+ 	void *phy_id;
+ 	struct device *pdev;
+ 
+-	struct s3fwrn5_phy_ops *phy_ops;
++	const struct s3fwrn5_phy_ops *phy_ops;
+ 	unsigned int max_payload;
+ 
+ 	struct s3fwrn5_fw_info fw_info;
+@@ -90,7 +90,7 @@ static inline int s3fwrn5_write(struct s3fwrn5_info *info, struct sk_buff *skb)
+ }
+ 
+ int s3fwrn5_probe(struct nci_dev **ndev, void *phy_id, struct device *pdev,
+-	struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload);
++	const struct s3fwrn5_phy_ops *phy_ops, unsigned int max_payload);
+ void s3fwrn5_remove(struct nci_dev *ndev);
+ 
+ int s3fwrn5_recv_frame(struct nci_dev *ndev, struct sk_buff *skb,
 
