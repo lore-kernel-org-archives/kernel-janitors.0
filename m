@@ -1,85 +1,44 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 19 Nov 2015 21:32:15 +0000
-Subject: [PATCH 1/4 v2] mtd: brcmnand: improve memory management
-Message-Id: <alpine.DEB.2.02.1511192231330.2106@localhost6.localdomain6>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 13 Nov 2015 18:41:34 +0000
+Subject: [PATCH] ds2782_battery: constify ds278x_battery_ops structure
+Message-Id: <1447440094-10105-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447884254-26336-2-git-send-email-Julia.Lawall@lip6.fr>
- <20151118224440.GC64635@google.com>
- <alpine.DEB.2.02.1511190713140.2008@localhost6.localdomain6>
- <20151119192632.GH64635@google.com>
-In-Reply-To: <20151119192632.GH64635@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>, Kamal Dasu <kdasu.kdev@gmail.com>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch addresses two related memory management issues in the probe
-function:
+The ds278x_battery_ops structure is never modified, so declare it as const.
 
-1. for_each_available_child_of_node performs an of_node_get on each
-iteration, so a break out of the loop requires an of_node_put.
-
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-@@
-
- for_each_available_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-+  of_node_put(child);
-?  return ...;
-)
-   ...
- }
-// </smpl>
-
-2. The devm_kzalloc'd data is not used if brcmnand_init_cs fails.  Free it
-immediately, using devm_kfree in this case, instead of waiting for the
-remove function.
+Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
+ drivers/power/ds2782_battery.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v2: Drop of_node_get addition, as another patch will get rid of the need
-for it completely.
+diff --git a/drivers/power/ds2782_battery.c b/drivers/power/ds2782_battery.c
+index ed4d756..a1b7e05 100644
+--- a/drivers/power/ds2782_battery.c
++++ b/drivers/power/ds2782_battery.c
+@@ -59,7 +59,7 @@ struct ds278x_info {
+ 	struct i2c_client	*client;
+ 	struct power_supply	*battery;
+ 	struct power_supply_desc	battery_desc;
+-	struct ds278x_battery_ops  *ops;
++	const struct ds278x_battery_ops *ops;
+ 	struct delayed_work	bat_work;
+ 	int			id;
+ 	int                     rsns;
+@@ -361,7 +361,7 @@ enum ds278x_num_id {
+ 	DS2786,
+ };
+ 
+-static struct ds278x_battery_ops ds278x_ops[] = {
++static const struct ds278x_battery_ops ds278x_ops[] = {
+ 	[DS2782] = {
+ 		.get_battery_current  = ds2782_get_current,
+ 		.get_battery_voltage  = ds2782_get_voltage,
 
- drivers/mtd/nand/brcmnand/brcmnand.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/nand/brcmnand/brcmnand.c b/drivers/mtd/nand/brcmnand/brcmnand.c
-index 2a437c7..551d474 100644
---- a/drivers/mtd/nand/brcmnand/brcmnand.c
-+++ b/drivers/mtd/nand/brcmnand/brcmnand.c
-@@ -2237,15 +2237,19 @@ int brcmnand_probe(struct platform_device *pdev, struct brcmnand_soc *soc)
- 			struct brcmnand_host *host;
- 
- 			host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
--			if (!host)
-+			if (!host) {
-+				of_node_put(child);
- 				return -ENOMEM;
-+			}
- 			host->pdev = pdev;
- 			host->ctrl = ctrl;
- 			host->of_node = child;
- 
- 			ret = brcmnand_init_cs(host);
--			if (ret)
-+			if (ret) {
-+				devm_kfree(dev, host);
- 				continue; /* Try all chip-selects */
-+			}
- 
- 			list_add_tail(&host->node, &ctrl->host_list);
- 		}
