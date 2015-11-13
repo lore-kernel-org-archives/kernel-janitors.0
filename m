@@ -1,30 +1,32 @@
-From: Jens Axboe <axboe@fb.com>
-Date: Tue, 03 Nov 2015 19:58:33 +0000
-Subject: Re: [patch] NVMe: Precedence error in nvme_pr_clear()
-Message-Id: <563911E9.6080605@fb.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Nov 2015 14:20:44 +0000
+Subject: [patch] netlink: fix a limit in NETLINK_LIST_MEMBERSHIPS
+Message-Id: <20151113142044.GA1445@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151103195049.GA17238@mwanda>
-In-Reply-To: <20151103195049.GA17238@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, David Herrmann <dh.herrmann@gmail.com>
+Cc: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>, Daniel Borkmann <daniel@iogearbox.net>, Johannes Berg <johannes.berg@intel.com>, Al Viro <viro@zeniv.linux.org.uk>, Nicolas Dichtel <nicolas.dichtel@6wind.com>, Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/03/2015 12:50 PM, Dan Carpenter wrote:
-> The original code is equivalent to:
->
-> 	u32 cdw10 = (1 | key) ? 1 << 3 : 0;
->
-> But we want:
->
-> 	u32 cdw10 = 1 | (key ? 1 << 3 : 0);
->
-> Fixes: 1d277a637a71: ('NVMe: Add persistent reservation ops')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This condition doesn't work when len is smaller than expected and not a
+multiple of 4.  In that situation "len - pos" is negative and type
+promoted to a high unsigned value and we do not break out of the loop.
+It causes the program calling it to crash.
 
-Thanks Dan, applied.
+Fixes: b42be38b2778 ('netlink: add API to retrieve all group memberships')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
--- 
-Jens Axboe
-
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 59651af..76a8466 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -2373,7 +2373,7 @@ static int netlink_getsockopt(struct socket *sock, int level, int optname,
+ 		err = 0;
+ 		netlink_lock_table();
+ 		for (pos = 0; pos * 8 < nlk->ngroups; pos += sizeof(u32)) {
+-			if (len - pos < sizeof(u32))
++			if (len < pos + sizeof(u32))
+ 				break;
+ 
+ 			idx = pos / sizeof(unsigned long);
