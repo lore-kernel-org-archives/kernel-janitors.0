@@ -1,36 +1,78 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 07 Nov 2015 18:21:04 +0000
-Subject: Re: [PATCH] decnet: remove macro-local declarations
-Message-Id: <alpine.DEB.2.02.1511071920450.1976@localhost6.localdomain6>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 13 Nov 2015 12:24:39 +0000
+Subject: [PATCH] drivers/media/usb/dvb-usb-v2: constify mxl111sf_demod_config structure
+Message-Id: <1447417479-18095-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1511052107501.2065@localhost6.localdomain6> <20151105.151320.1646543343654766675.davem@davemloft.net> <alpine.DEB.2.10.1511061142440.2378@hadrien> <20151107.131834.2152455608881468661.davem@davemloft.net>
-In-Reply-To: <20151107.131834.2152455608881468661.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com, roopa@cumulusnetworks.com, rshearma@brocade.com, ebiederm@xmission.com
+To: Michael Krufky <mkrufky@linuxtv.org>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
+The mxl111sf_demod_config structure is never modified, so declare it
+as const.
 
+Done with the help of Coccinelle.
 
-On Sat, 7 Nov 2015, David Miller wrote:
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> From: Julia Lawall <julia.lawall@lip6.fr>
-> Date: Fri, 6 Nov 2015 11:57:34 +0100 (CET)
-> 
-> >> > Would it be preferable to remove the macro entirely and inline the for
-> >> > loop header?
-> >>
-> >> Could you show me an example of how this would look exactly?
-> > 
-> > One possible solution is below.  I moved the initialization of the nh
-> > pointer inside the loop to reduce the size of the loop header.  One could
-> > also inline fi->fib_nh[nhsel] where it occurs, but it seemed that that
-> > would make quite long expressions.
-> 
-> Personally I like the explicit named iterator.  It is descriptive and
-> tells that we are walking over all of the nexthops for a route.
+---
+ drivers/media/usb/dvb-usb-v2/mxl111sf-demod.c |    4 ++--
+ drivers/media/usb/dvb-usb-v2/mxl111sf-demod.h |    4 ++--
+ drivers/media/usb/dvb-usb-v2/mxl111sf.c       |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-OK, I'll follow that solution.
+diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf-demod.c b/drivers/media/usb/dvb-usb-v2/mxl111sf-demod.c
+index ea37536..84f6de6 100644
+--- a/drivers/media/usb/dvb-usb-v2/mxl111sf-demod.c
++++ b/drivers/media/usb/dvb-usb-v2/mxl111sf-demod.c
+@@ -35,7 +35,7 @@ MODULE_PARM_DESC(debug, "set debugging level (1=info (or-able)).");
+ struct mxl111sf_demod_state {
+ 	struct mxl111sf_state *mxl_state;
+ 
+-	struct mxl111sf_demod_config *cfg;
++	const struct mxl111sf_demod_config *cfg;
+ 
+ 	struct dvb_frontend fe;
+ };
+@@ -579,7 +579,7 @@ static struct dvb_frontend_ops mxl111sf_demod_ops = {
+ };
+ 
+ struct dvb_frontend *mxl111sf_demod_attach(struct mxl111sf_state *mxl_state,
+-					   struct mxl111sf_demod_config *cfg)
++				   const struct mxl111sf_demod_config *cfg)
+ {
+ 	struct mxl111sf_demod_state *state = NULL;
+ 
+diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf-demod.h b/drivers/media/usb/dvb-usb-v2/mxl111sf-demod.h
+index 0bd83e5..7065aca 100644
+--- a/drivers/media/usb/dvb-usb-v2/mxl111sf-demod.h
++++ b/drivers/media/usb/dvb-usb-v2/mxl111sf-demod.h
+@@ -35,11 +35,11 @@ struct mxl111sf_demod_config {
+ #if IS_ENABLED(CONFIG_DVB_USB_MXL111SF)
+ extern
+ struct dvb_frontend *mxl111sf_demod_attach(struct mxl111sf_state *mxl_state,
+-					   struct mxl111sf_demod_config *cfg);
++				   const struct mxl111sf_demod_config *cfg);
+ #else
+ static inline
+ struct dvb_frontend *mxl111sf_demod_attach(struct mxl111sf_state *mxl_state,
+-					   struct mxl111sf_demod_config *cfg)
++				   const struct mxl111sf_demod_config *cfg)
+ {
+ 	printk(KERN_WARNING "%s: driver disabled by Kconfig\n", __func__);
+ 	return NULL;
+diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
+index bec12b0..c4a4a99 100644
+--- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
++++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
+@@ -731,7 +731,7 @@ fail:
+ 	return ret;
+ }
+ 
+-static struct mxl111sf_demod_config mxl_demod_config = {
++static const struct mxl111sf_demod_config mxl_demod_config = {
+ 	.read_reg        = mxl111sf_read_reg,
+ 	.write_reg       = mxl111sf_write_reg,
+ 	.program_regs    = mxl111sf_ctrl_program_regs,
 
-julia
