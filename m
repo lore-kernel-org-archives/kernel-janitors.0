@@ -1,30 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 06 Nov 2015 20:04:44 +0000
-Subject: Re: [patch 2/2] xprtrdma: checking for NULL instead of IS_ERR()
-Message-Id: <20151106200444.GO7289@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 17:05:20 +0000
+Subject: [PATCH] mmc: pwrseq: constify mmc_pwrseq_ops structures
+Message-Id: <1447520720-11564-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151105083952.GB19405@mwanda>
- <563CF2CA.5050409@Netapp.com>
-In-Reply-To: <563CF2CA.5050409@Netapp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anna Schumaker <Anna.Schumaker@netapp.com>
-Cc: Trond Myklebust <trond.myklebust@primarydata.com>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@poochiereds.net>, Sagi Grimberg <sagig@mellanox.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 06, 2015 at 01:34:50PM -0500, Anna Schumaker wrote:
-> On 11/05/2015 03:39 AM, Dan Carpenter wrote:
-> > The rpcrdma_create_req() function returns error pointers or success.  It
-> > never returns NULL.
-> > 
-> > Fixes: f531a5dbc451 ('xprtrdma: Pre-allocate backward rpc_rqst and send/receive buffers')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Thanks, Dan! These patches don't look urgent, so if it's okay with you then I'll save them for 4.5.
+The mmc_pwrseq_ops structures are never modified, so declare them as const.
 
-To be honest, I only ever care about linux-next and not released
-versions.  :P  As long as it's in linux-next I'll be happy.
+Done with the help of Coccinelle.
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/core/pwrseq.h        |    2 +-
+ drivers/mmc/core/pwrseq_emmc.c   |    2 +-
+ drivers/mmc/core/pwrseq_simple.c |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/core/pwrseq.h b/drivers/mmc/core/pwrseq.h
+index 096da48..133de04 100644
+--- a/drivers/mmc/core/pwrseq.h
++++ b/drivers/mmc/core/pwrseq.h
+@@ -16,7 +16,7 @@ struct mmc_pwrseq_ops {
+ };
+ 
+ struct mmc_pwrseq {
+-	struct mmc_pwrseq_ops *ops;
++	const struct mmc_pwrseq_ops *ops;
+ };
+ 
+ #ifdef CONFIG_OF
+diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
+index ad4f94e..4a82bc7 100644
+--- a/drivers/mmc/core/pwrseq_emmc.c
++++ b/drivers/mmc/core/pwrseq_emmc.c
+@@ -51,7 +51,7 @@ static void mmc_pwrseq_emmc_free(struct mmc_host *host)
+ 	kfree(pwrseq);
+ }
+ 
+-static struct mmc_pwrseq_ops mmc_pwrseq_emmc_ops = {
++static const struct mmc_pwrseq_ops mmc_pwrseq_emmc_ops = {
+ 	.post_power_on = mmc_pwrseq_emmc_reset,
+ 	.free = mmc_pwrseq_emmc_free,
+ };
+diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+index d10538b..2b16263 100644
+--- a/drivers/mmc/core/pwrseq_simple.c
++++ b/drivers/mmc/core/pwrseq_simple.c
+@@ -87,7 +87,7 @@ static void mmc_pwrseq_simple_free(struct mmc_host *host)
+ 	kfree(pwrseq);
+ }
+ 
+-static struct mmc_pwrseq_ops mmc_pwrseq_simple_ops = {
++static const struct mmc_pwrseq_ops mmc_pwrseq_simple_ops = {
+ 	.pre_power_on = mmc_pwrseq_simple_pre_power_on,
+ 	.post_power_on = mmc_pwrseq_simple_post_power_on,
+ 	.power_off = mmc_pwrseq_simple_power_off,
 
