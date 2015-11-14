@@ -1,38 +1,40 @@
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-Date: Fri, 06 Nov 2015 16:13:35 +0000
-Subject: Re: [PATCH] bq2415x_charger: Delete unnecessary checks before the function call "of_node_put"
-Message-Id: <20151106161335.GG16108@pali>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 10:06:59 +0000
+Subject: [PATCH 7/9] crypto: constify pci_error_handlers structures
+Message-Id: <1447495621-9161-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <563CCDB1.1040703@users.sourceforge.net>
-In-Reply-To: <563CCDB1.1040703@users.sourceforge.net>
+References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: David Woodhouse <dwmw2@infradead.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday 06 November 2015 16:56:33 SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 6 Nov 2015 16:48:46 +0100
-> 
-> The of_node_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+This pci_error_handlers structure is never modified, like all the other
+pci_error_handlers structures, so declare it as const.
 
-Acked-by: Pali Rohár <pali.rohar@gmail.com>
+Done with the help of Coccinelle.
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+There are no dependencies between these patches.
+
+ drivers/crypto/qat/qat_common/adf_aer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/qat/qat_common/adf_aer.c b/drivers/crypto/qat/qat_common/adf_aer.c
+index 0a5ca0b..d24cfd4 100644
+--- a/drivers/crypto/qat/qat_common/adf_aer.c
++++ b/drivers/crypto/qat/qat_common/adf_aer.c
+@@ -197,7 +197,7 @@ static void adf_resume(struct pci_dev *pdev)
+ 	dev_info(&pdev->dev, "Device is up and runnig\n");
+ }
+ 
+-static struct pci_error_handlers adf_err_handler = {
++static const struct pci_error_handlers adf_err_handler = {
+ 	.error_detected = adf_error_detected,
+ 	.slot_reset = adf_slot_reset,
+ 	.resume = adf_resume,
+
