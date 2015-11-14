@@ -1,69 +1,77 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 24 Nov 2015 10:47:33 +0000
-Subject: Re: [patch] OMAPDSS: DSI: cleanup DSI_IRQ_ERROR_MASK define
-Message-Id: <56544045.7060308@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ORfdITwu0UlNF4ct8TdK95NH8Q3jfBUId"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 16:22:07 +0000
+Subject: [PATCH] brcmfmac: constify brcmf_bus_ops structures
+Message-Id: <1447518127-1994-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151123182235.GA2825@mwanda>
-In-Reply-To: <20151123182235.GA2825@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Brett Rudley <brudley@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
---ORfdITwu0UlNF4ct8TdK95NH8Q3jfBUId
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+The brcmf_bus_ops structures are never modified, so declare them as const.
 
+Done with the help of Coccinelle.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On 23/11/15 20:22, Dan Carpenter wrote:
-> DSI_IRQ_SYNC_LOST was ORed twice so we can remove one.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/video/fbdev/omap2/dss/dsi.c b/drivers/video/fbdev/=
-omap2/dss/dsi.c
-> index b3606de..e86df6d 100644
-> --- a/drivers/video/fbdev/omap2/dss/dsi.c
-> +++ b/drivers/video/fbdev/omap2/dss/dsi.c
-> @@ -144,7 +144,7 @@ struct dsi_reg { u16 module; u16 idx; };
->  #define DSI_IRQ_TA_TIMEOUT	(1 << 20)
->  #define DSI_IRQ_ERROR_MASK \
->  	(DSI_IRQ_HS_TX_TIMEOUT | DSI_IRQ_LP_RX_TIMEOUT | DSI_IRQ_SYNC_LOST | =
-\
-> -	DSI_IRQ_TA_TIMEOUT | DSI_IRQ_SYNC_LOST)
-> +	DSI_IRQ_TA_TIMEOUT)
->  #define DSI_IRQ_CHANNEL_MASK	0xf
-> =20
->  /* Virtual channel interrupts */
->=20
+---
+ drivers/net/wireless/brcm80211/brcmfmac/bus.h  |    2 +-
+ drivers/net/wireless/brcm80211/brcmfmac/pcie.c |    2 +-
+ drivers/net/wireless/brcm80211/brcmfmac/sdio.c |    2 +-
+ drivers/net/wireless/brcm80211/brcmfmac/usb.c  |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Thanks, queued for 4.5.
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/bus.h b/drivers/net/wireless/brcm80211/brcmfmac/bus.h
+index 230cad7..36093f9 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/bus.h
++++ b/drivers/net/wireless/brcm80211/brcmfmac/bus.h
+@@ -137,7 +137,7 @@ struct brcmf_bus {
+ 	bool always_use_fws_queue;
+ 	bool wowl_supported;
+ 
+-	struct brcmf_bus_ops *ops;
++	const struct brcmf_bus_ops *ops;
+ 	struct brcmf_bus_msgbuf *msgbuf;
+ };
+ 
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
+index 83d8042..65ae3b0 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/pcie.c
+@@ -1419,7 +1419,7 @@ static int brcmf_pcie_get_memdump(struct device *dev, void *data, size_t len)
+ }
+ 
+ 
+-static struct brcmf_bus_ops brcmf_pcie_bus_ops = {
++static const struct brcmf_bus_ops brcmf_pcie_bus_ops = {
+ 	.txdata = brcmf_pcie_tx,
+ 	.stop = brcmf_pcie_down,
+ 	.txctl = brcmf_pcie_tx_ctlpkt,
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
+index 7e74ac3..01f359e 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/sdio.c
+@@ -4025,7 +4025,7 @@ brcmf_sdio_watchdog(unsigned long data)
+ 	}
+ }
+ 
+-static struct brcmf_bus_ops brcmf_sdio_bus_ops = {
++static const struct brcmf_bus_ops brcmf_sdio_bus_ops = {
+ 	.stop = brcmf_sdio_bus_stop,
+ 	.preinit = brcmf_sdio_bus_preinit,
+ 	.txdata = brcmf_sdio_bus_txdata,
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/brcm80211/brcmfmac/usb.c
+index 689e64d..4bdd3b3 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/usb.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/usb.c
+@@ -1163,7 +1163,7 @@ static void brcmf_usb_wowl_config(struct device *dev, bool enabled)
+ 		device_set_wakeup_enable(devinfo->dev, false);
+ }
+ 
+-static struct brcmf_bus_ops brcmf_usb_bus_ops = {
++static const struct brcmf_bus_ops brcmf_usb_bus_ops = {
+ 	.txdata = brcmf_usb_tx,
+ 	.stop = brcmf_usb_down,
+ 	.txctl = brcmf_usb_tx_ctlpkt,
 
- Tomi
-
-
---ORfdITwu0UlNF4ct8TdK95NH8Q3jfBUId
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJWVEBFAAoJEPo9qoy8lh71hxYP/3+OCQ3rk0B+pNTjlQGTF9dB
-70zlR81mgpZMf0vnZJ7E7EhjlwbvVahFGASCx51p+d4I7K2Njm9fMrXNS60wy5lo
-tcM+YnMGHOF0ST5uNKsaPLOTl5YjpY5ZMlyAS3Lg607r6/0TP8a4AL8Evsi4FD7n
-um8TmlStlyzt0RWNwoZdeJXuVc0kUuWrzV7PBKDmvMiCTXYjdGG5H02CtpcI79hF
-K+0vQ0xm3g8jinSxzsB3ATyDi9DAqoXQmELJ9mqWJPys8H2Dum9wAIgUSFnjB6KW
-ZKXu4dh8LPZ4poGI9ReScVp40623giqQpwTDH5YDTMsAEi7A/2OMCwvNcVrSrADg
-55Fhb5F9/Doa1vrFoDzw1pGtgGNnuc+goAxyjqoaqBVnVSU8cznyWxtdt79bDpC/
-Cm5VMZEQFlLwJ5Tn/JkeU1HmbHvpRQAhm6m2e3Zb0Z+CsEEcXM03z7TWLPfZi1tI
-ph1fV8eW3IlWuxsz4sUrUpTrVNay7HVj6jHaL5ikmg42DwcxEwCIfpGcdUDiy/2Q
-aU8tHRu2CPfnIP29ke2G3/iV71qIx9werFbryXezYw/qy2Oa8+xCiCvKGEBnukia
-jVs4d8+62M0V6htzhANvpf9WyvOyQCB58ghfpYcdscQBo7n0trIZ5mhGqqDlRGMP
-keqq0L2jTIzSrzLR3l+S
-=3GfJ
------END PGP SIGNATURE-----
-
---ORfdITwu0UlNF4ct8TdK95NH8Q3jfBUId--
