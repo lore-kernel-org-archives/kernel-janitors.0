@@ -1,61 +1,40 @@
-From: Vasu Dev <vasu.dev@linux.intel.com>
-Date: Thu, 19 Nov 2015 18:21:28 +0000
-Subject: Re: [PATCH] SCSI-libfc: Delete an unnecessary check before the function call "kmem_cache_destroy"
-Message-Id: <1447957288.5825.83.camel@lin-nd1-054.jf.intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 10:06:57 +0000
+Subject: [PATCH 5/9] sfc: constify pci_error_handlers structures
+Message-Id: <1447495621-9161-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	 <530A086E.8010901@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	 <530A72AA.3000601@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	 <530B5FB6.6010207@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402241710370.2074@hadrien>
-	 <530C5E18.1020800@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402251014170.2080@hadrien>
-	 <530CD2C4.4050903@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402251840450.7035@hadrien>
-	 <530CF8FF.8080600@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	 <530DD06F.4090703@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	 <5317A59D.4@users.sourceforge.net> <564997B5.6030703@users.sourceforge.net>
-In-Reply-To: <564997B5.6030703@users.sourceforge.net>
+References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "James E. J. Bottomley" <JBottomley@odin.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Solarflare linux maintainers <linux-net-drivers@solarflare.com>
+Cc: kernel-janitors@vger.kernel.org, Shradha Shah <sshah@solarflare.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2015-11-16 at 09:45 +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Nov 2015 09:39:12 +0100
-> 
-> The kmem_cache_destroy() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/scsi/libfc/fc_fcp.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/libfc/fc_fcp.c b/drivers/scsi/libfc/fc_fcp.c
-> index 5121272..d377514 100644
-> --- a/drivers/scsi/libfc/fc_fcp.c
-> +++ b/drivers/scsi/libfc/fc_fcp.c
-> @@ -2216,8 +2216,7 @@ int fc_setup_fcp(void)
->  
->  void fc_destroy_fcp(void)
->  {
-> -	if (scsi_pkt_cachep)
-> -		kmem_cache_destroy(scsi_pkt_cachep);
-> +	kmem_cache_destroy(scsi_pkt_cachep);
->  }
->  
->  /**
-Looks good.
+This pci_error_handlers structure is never modified, like all the other
+pci_error_handlers structures, so declare it as const.
 
-Acked-by: Vasu Dev <vasu.dev@intel.com>
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+There are no dependencies between these patches.
+
+ drivers/net/ethernet/sfc/efx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
+index d288f1c..a3c42a3 100644
+--- a/drivers/net/ethernet/sfc/efx.c
++++ b/drivers/net/ethernet/sfc/efx.c
+@@ -3422,7 +3422,7 @@ out:
+  * with our request for slot reset the mmio_enabled callback will never be
+  * called, and the link_reset callback is not used by AER or EEH mechanisms.
+  */
+-static struct pci_error_handlers efx_err_handlers = {
++static const struct pci_error_handlers efx_err_handlers = {
+ 	.error_detected = efx_io_error_detected,
+ 	.slot_reset	= efx_io_slot_reset,
+ 	.resume		= efx_io_resume,
 
