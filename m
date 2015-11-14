@@ -1,47 +1,59 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Thu, 19 Nov 2015 23:55:25 +0000
-Subject: Re: [PATCH 9/9] vfio-pci: constify pci_error_handlers structures
-Message-Id: <1447977325.4697.212.camel@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2015 21:10:22 +0000
+Subject: [PATCH] Bluetooth-cmtp: Delete an unnecessary check before the function call "kfree_skb"
+Message-Id: <5647A33E.3030103@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1447495621-9161-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447495621-9161-10-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, 2015-11-14 at 11:07 +0100, Julia Lawall wrote:
-> This pci_error_handlers structure is never modified, like all the other
-> pci_error_handlers structures, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> There are no dependencies between these patches.
-> 
->  drivers/vfio/pci/vfio_pci.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> index 32b88bd..2760a7b 100644
-> --- a/drivers/vfio/pci/vfio_pci.c
-> +++ b/drivers/vfio/pci/vfio_pci.c
-> @@ -1035,7 +1035,7 @@ static pci_ers_result_t vfio_pci_aer_err_detected(struct pci_dev *pdev,
->  	return PCI_ERS_RESULT_CAN_RECOVER;
->  }
->  
-> -static struct pci_error_handlers vfio_err_handlers = {
-> +static const struct pci_error_handlers vfio_err_handlers = {
->  	.error_detected = vfio_pci_aer_err_detected,
->  };
->  
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2015 22:00:27 +0100
 
-Thank you!  I'll queue this one in my tree.
+The kfree_skb() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Alex
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/bluetooth/cmtp/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/net/bluetooth/cmtp/core.c b/net/bluetooth/cmtp/core.c
+index 298ed37..9e59b66 100644
+--- a/net/bluetooth/cmtp/core.c
++++ b/net/bluetooth/cmtp/core.c
+@@ -178,8 +178,7 @@ static inline int cmtp_recv_frame(struct cmtp_session *session, struct sk_buff *
+ 			cmtp_add_msgpart(session, id, skb->data + hdrlen, len);
+ 			break;
+ 		default:
+-			if (session->reassembly[id] != NULL)
+-				kfree_skb(session->reassembly[id]);
++			kfree_skb(session->reassembly[id]);
+ 			session->reassembly[id] = NULL;
+ 			break;
+ 		}
+-- 
+2.6.2
 
