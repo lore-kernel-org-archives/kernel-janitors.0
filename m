@@ -1,59 +1,73 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Nov 2015 20:52:58 +0000
-Subject: [PATCH 1/3] batman-adv: Delete an unnecessary check before the function call "batadv_softif_vlan_fre
-Message-Id: <56391EAA.2060002@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 12:30:34 +0000
+Subject: [PATCH] lustre: constify inode_operations structures
+Message-Id: <1447504234-25165-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <56391CF7.9080400@users.sourceforge.net>
-In-Reply-To: <56391CF7.9080400@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Nov 2015 19:20:34 +0100
+The inode_operations structures are never modified, so declare them
+as const, like all the other inode_operations structures.
 
-The batadv_softif_vlan_free_ref() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/batman-adv/translation-table.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/llite/file.c           |    2 +-
+ drivers/staging/lustre/lustre/llite/llite_internal.h |    4 ++--
+ drivers/staging/lustre/lustre/llite/symlink.c        |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-index 4228b10..48315de 100644
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -3336,8 +3336,7 @@ bool batadv_is_ap_isolated(struct batadv_priv *bat_priv, u8 *src, u8 *dst,
- 	ret = true;
+diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
+index 02f2759..31cd6b3 100644
+--- a/drivers/staging/lustre/lustre/llite/file.c
++++ b/drivers/staging/lustre/lustre/llite/file.c
+@@ -3139,7 +3139,7 @@ struct file_operations ll_file_operations_noflock = {
+ 	.lock	   = ll_file_noflock
+ };
  
- out:
--	if (vlan)
--		batadv_softif_vlan_free_ref(vlan);
-+	batadv_softif_vlan_free_ref(vlan);
- 	if (tt_global_entry)
- 		batadv_tt_global_entry_free_ref(tt_global_entry);
- 	if (tt_local_entry)
--- 
-2.6.2
+-struct inode_operations ll_file_inode_operations = {
++const struct inode_operations ll_file_inode_operations = {
+ 	.setattr	= ll_setattr,
+ 	.getattr	= ll_getattr,
+ 	.permission	= ll_inode_permission,
+diff --git a/drivers/staging/lustre/lustre/llite/llite_internal.h b/drivers/staging/lustre/lustre/llite/llite_internal.h
+index 9096d31..6102b29 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_internal.h
++++ b/drivers/staging/lustre/lustre/llite/llite_internal.h
+@@ -705,7 +705,7 @@ extern const struct address_space_operations ll_aops;
+ extern struct file_operations ll_file_operations;
+ extern struct file_operations ll_file_operations_flock;
+ extern struct file_operations ll_file_operations_noflock;
+-extern struct inode_operations ll_file_inode_operations;
++extern const struct inode_operations ll_file_inode_operations;
+ int ll_have_md_lock(struct inode *inode, __u64 *bits,
+ 		    ldlm_mode_t l_req_mode);
+ ldlm_mode_t ll_take_md_lock(struct inode *inode, __u64 bits,
+@@ -805,7 +805,7 @@ struct inode *search_inode_for_lustre(struct super_block *sb,
+ 				      const struct lu_fid *fid);
+ 
+ /* llite/symlink.c */
+-extern struct inode_operations ll_fast_symlink_inode_operations;
++extern const struct inode_operations ll_fast_symlink_inode_operations;
+ 
+ /* llite/llite_close.c */
+ struct ll_close_queue {
+diff --git a/drivers/staging/lustre/lustre/llite/symlink.c b/drivers/staging/lustre/lustre/llite/symlink.c
+index 69b2036..32c4cf4 100644
+--- a/drivers/staging/lustre/lustre/llite/symlink.c
++++ b/drivers/staging/lustre/lustre/llite/symlink.c
+@@ -146,7 +146,7 @@ static void ll_put_link(struct inode *unused, void *cookie)
+ 	ptlrpc_req_finished(cookie);
+ }
+ 
+-struct inode_operations ll_fast_symlink_inode_operations = {
++const struct inode_operations ll_fast_symlink_inode_operations = {
+ 	.readlink	= generic_readlink,
+ 	.setattr	= ll_setattr,
+ 	.follow_link	= ll_follow_link,
 
