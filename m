@@ -1,32 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Nov 2015 14:22:08 +0000
-Subject: re: bnxt_en: New Broadcom ethernet driver.
-Message-Id: <20151103142208.GA28545@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 10:06:55 +0000
+Subject: [PATCH 3/9] cxgb4/cxgb4vf/csiostor: constify pci_error_handlers structures
+Message-Id: <1447495621-9161-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@odin.com>
+Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Michael Chan,
+This pci_error_handlers structure is never modified, like all the other
+pci_error_handlers structures, so declare it as const.
 
-The patch c0c050c58d84: "bnxt_en: New Broadcom ethernet driver." from
-Oct 22, 2015, leads to the following static checker warning:
+Done with the help of Coccinelle.
 
-	drivers/net/ethernet/broadcom/bnxt/bnxt.c:5337 bnxt_rx_flow_steer()
-	warn: impossible condition '(new_fltr->sw_id < 0) => (0-65535 < 0)'
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-drivers/net/ethernet/broadcom/bnxt/bnxt.c
-  5335          new_fltr->sw_id = bitmap_find_free_region(bp->ntp_fltr_bmap,
-  5336                                                    BNXT_NTP_FLTR_MAX_FLTR, 0);
-  5337          if (new_fltr->sw_id < 0) {
-                   ^^^^^^^^^^^^^^^^^^^^
-Unsigned never less than zero.
+---
+There are no dependencies between these patches.
 
-  5338                  spin_unlock_bh(&bp->ntp_fltr_lock);
-  5339                  rc = -ENOMEM;
-  5340                  goto err_free;
-  5341          }
+ drivers/scsi/csiostor/csio_init.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/scsi/csiostor/csio_init.c b/drivers/scsi/csiostor/csio_init.c
+index dbe416f..33996f2 100644
+--- a/drivers/scsi/csiostor/csio_init.c
++++ b/drivers/scsi/csiostor/csio_init.c
+@@ -1162,7 +1162,7 @@ err_resume_exit:
+ 	dev_err(&pdev->dev, "resume of device failed: %d\n", rv);
+ }
+ 
+-static struct pci_error_handlers csio_err_handler = {
++static const struct pci_error_handlers csio_err_handler = {
+ 	.error_detected = csio_pci_error_detected,
+ 	.slot_reset	= csio_pci_slot_reset,
+ 	.resume		= csio_pci_resume,
+
