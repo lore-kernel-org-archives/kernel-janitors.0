@@ -1,64 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Nov 2015 07:21:42 +0000
-Subject: [PATCH] SCSI-aic94xx: Delete unnecessary checks before the function call "kmem_cache_destroy"
-Message-Id: <564AD586.5040606@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 10:07:01 +0000
+Subject: [PATCH 9/9] vfio-pci: constify pci_error_handlers structures
+Message-Id: <1447495621-9161-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <JBottomley@odin.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Nov 2015 08:14:52 +0100
+This pci_error_handlers structure is never modified, like all the other
+pci_error_handlers structures, so declare it as const.
 
-The kmem_cache_destroy() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the calls is not needed.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/aic94xx/aic94xx_init.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+There are no dependencies between these patches.
 
-diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
-index 662b232..ab93049 100644
---- a/drivers/scsi/aic94xx/aic94xx_init.c
-+++ b/drivers/scsi/aic94xx/aic94xx_init.c
-@@ -660,12 +660,9 @@ Err:
- 
- static void asd_destroy_global_caches(void)
- {
--	if (asd_dma_token_cache)
--		kmem_cache_destroy(asd_dma_token_cache);
-+	kmem_cache_destroy(asd_dma_token_cache);
- 	asd_dma_token_cache = NULL;
--
--	if (asd_ascb_cache)
--		kmem_cache_destroy(asd_ascb_cache);
-+	kmem_cache_destroy(asd_ascb_cache);
- 	asd_ascb_cache = NULL;
+ drivers/vfio/pci/vfio_pci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index 32b88bd..2760a7b 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -1035,7 +1035,7 @@ static pci_ers_result_t vfio_pci_aer_err_detected(struct pci_dev *pdev,
+ 	return PCI_ERS_RESULT_CAN_RECOVER;
  }
  
--- 
-2.6.2
+-static struct pci_error_handlers vfio_err_handlers = {
++static const struct pci_error_handlers vfio_err_handlers = {
+ 	.error_detected = vfio_pci_aer_err_detected,
+ };
+ 
 
