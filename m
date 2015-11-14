@@ -1,27 +1,79 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 17 Nov 2015 14:09:54 +0000
-Subject: Re: [PATCH 7/9] crypto: constify pci_error_handlers structures
-Message-Id: <20151117140953.GI9546@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2015 19:05:17 +0000
+Subject: [PATCH] net-ipv6: Delete unnecessary checks before the function call "kfree_skb"
+Message-Id: <564785ED.1040906@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447495621-9161-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447495621-9161-8-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Tadeusz Struk <tadeusz.struk@intel.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "David S. Miller" <davem@davemloft.net>, Hideaki Yoshfuji <yoshfuji@linux-ipv6.org>, James Morris <jmorris@namei.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, Nov 14, 2015 at 11:06:59AM +0100, Julia Lawall wrote:
-> This pci_error_handlers structure is never modified, like all the other
-> pci_error_handlers structures, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2015 19:55:00 +0100
 
-Patch applied.  Thanks.
+The kfree_skb() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the calls is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/ipv6/af_inet6.c                     | 7 ++-----
+ net/ipv6/netfilter/nf_conntrack_reasm.c | 3 +--
+ 2 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 44bb66b..4cd9259 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -416,12 +416,9 @@ void inet6_destroy_sock(struct sock *sk)
+ 	/* Release rx options */
+ 
+ 	skb = xchg(&np->pktoptions, NULL);
+-	if (skb)
+-		kfree_skb(skb);
+-
++	kfree_skb(skb);
+ 	skb = xchg(&np->rxpmtu, NULL);
+-	if (skb)
+-		kfree_skb(skb);
++	kfree_skb(skb);
+ 
+ 	/* Free flowlabels */
+ 	fl6_free_socklist(sk);
+diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
+index d5efeb8..dbc013b 100644
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -172,8 +172,7 @@ static unsigned int nf_hashfn(const struct inet_frag_queue *q)
+ 
+ static void nf_skb_free(struct sk_buff *skb)
+ {
+-	if (NFCT_FRAG6_CB(skb)->orig)
+-		kfree_skb(NFCT_FRAG6_CB(skb)->orig);
++	kfree_skb(NFCT_FRAG6_CB(skb)->orig);
+ }
+ 
+ static void nf_ct_frag6_expire(unsigned long data)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.6.2
+
