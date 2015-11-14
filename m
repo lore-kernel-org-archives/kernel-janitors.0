@@ -1,27 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Nov 2015 15:26:44 +0000
-Subject: Re: [PATCH 2/2] block-rbd: One function call less in rbd_dev_probe_parent() after error detection
-Message-Id: <20151125152644.GB18797@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2015 17:12:44 +0000
+Subject: [PATCH] net: dsa: Delete an unnecessary check before the function call "put_device"
+Message-Id: <56476B8C.7020309@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530DD06F.4090703@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <56536BAD.4000309@users.sourceforge.net>
- <56536D12.4000308@users.sourceforge.net>
- <CAOi1vP_t6-vw-sesRwpgfbqLVRyevOP4uvhbj05b3PPg=oHD6Q@mail.gmail.com>
- <5654B91D.4040808@users.sourceforge.net>
- <CAOi1vP-Z2yfJVcpqZN8EOf6rYsd41ixOOQWVva_xkKmA6PLrhg@mail.gmail.com>
- <20151125115512.GA18797@mwanda>
- <CAOi1vP_zf6q=Dzy8F_OCUTDCHp2KXU2nv5DSjJXAKekcStXQgw@mail.gmail.com>
-In-Reply-To: <CAOi1vP_zf6q=Dzy8F_OCUTDCHp2KXU2nv5DSjJXAKekcStXQgw@mail.gmail.com>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, Ceph Development <ceph-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Ah... I see now.  Thanks.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2015 17:58:00 +0100
 
-regards,
-dan carpenter
+The put_device() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/dsa/dsa.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/net/dsa/dsa.c b/net/dsa/dsa.c
+index 1eba07f..045d776 100644
+--- a/net/dsa/dsa.c
++++ b/net/dsa/dsa.c
+@@ -671,8 +671,7 @@ static void dsa_of_free_platform_data(struct dsa_platform_data *pd)
+ 		kfree(pd->chip[i].rtable);
+ 
+ 		/* Drop our reference to the MDIO bus device */
+-		if (pd->chip[i].host_dev)
+-			put_device(pd->chip[i].host_dev);
++		put_device(pd->chip[i].host_dev);
+ 	}
+ 	kfree(pd->chip);
+ }
+-- 
+2.6.2
 
