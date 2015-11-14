@@ -1,90 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 18:54:10 +0000
-Subject: [PATCH 4/4] crypto-ixp4xx: Less function calls in init_ixp_crypto() after error detection
-Message-Id: <5648D4D2.4080008@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 10:07:00 +0000
+Subject: [PATCH 8/9] mpt3sas: constify pci_error_handlers structures
+Message-Id: <1447495621-9161-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5648D2C1.8050603@users.sourceforge.net>
-In-Reply-To: <5648D2C1.8050603@users.sourceforge.net>
+References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
+Cc: kernel-janitors@vger.kernel.org, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@odin.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 19:23:55 +0100
+This pci_error_handlers structure is never modified, like all the other
+pci_error_handlers structures, so declare it as const.
 
-The dma_pool_destroy() function was called in up to two cases by the
-init_ixp_crypto() function during error handling even if a call of
-the dma_pool_create() function failed.
+Done with the help of Coccinelle.
 
-This implementation detail could be improved by the adjustment
-of jump targets according to the Linux coding style convention.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/ixp4xx_crypto.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+There are no dependencies between these patches.
 
-diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
-index 97da36a..a2c3155 100644
---- a/drivers/crypto/ixp4xx_crypto.c
-+++ b/drivers/crypto/ixp4xx_crypto.c
-@@ -483,23 +483,23 @@ static int init_ixp_crypto(struct device *dev)
- 			sizeof(struct buffer_desc), 32, 0);
- 	if (!buffer_pool) {
- 		ret = -ENOMEM;
--		goto err;
-+		goto release_npe;
- 	}
- 	ctx_pool = dma_pool_create("context", dev,
- 			NPE_CTX_LEN, 16, 0);
- 	if (!ctx_pool) {
- 		ret = -ENOMEM;
--		goto err;
-+		goto destroy_buffer_pool;
- 	}
- 	ret = qmgr_request_queue(SEND_QID, NPE_QLEN_TOTAL, 0, 0,
- 				 "ixp_crypto:out", NULL);
- 	if (ret)
--		goto err;
-+		goto destroy_ctx_pool;
- 	ret = qmgr_request_queue(RECV_QID, NPE_QLEN, 0, 0,
- 				 "ixp_crypto:in", NULL);
- 	if (ret) {
- 		qmgr_release_queue(SEND_QID);
--		goto err;
-+		goto destroy_ctx_pool;
- 	}
- 	qmgr_set_irq(RECV_QID, QUEUE_IRQ_SRC_NOT_EMPTY, irqhandler, NULL);
- 	tasklet_init(&crypto_done_tasklet, crypto_done_action, 0);
-@@ -511,8 +511,9 @@ npe_error:
- 	printk(KERN_ERR "%s not responding\n", npe_name(npe_c));
- 	ret = -EIO;
- 	goto release_npe;
--err:
-+destroy_ctx_pool:
- 	dma_pool_destroy(ctx_pool);
-+destroy_buffer_pool:
- 	dma_pool_destroy(buffer_pool);
- release_npe:
- 	npe_release(npe_c);
--- 
-2.6.2
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index 9e68432..39678e7 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -8557,7 +8557,7 @@ static struct raid_function_template mpt3sas_raid_functions = {
+ 	.get_state	= _scsih_get_state,
+ };
+ 
+-static struct pci_error_handlers _scsih_err_handler = {
++static const struct pci_error_handlers _scsih_err_handler = {
+ 	.error_detected = _scsih_pci_error_detected,
+ 	.mmio_enabled = _scsih_pci_mmio_enabled,
+ 	.slot_reset =	_scsih_pci_slot_reset,
 
