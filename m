@@ -1,64 +1,83 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 20 Nov 2015 20:33:19 +0000
-Subject: [PATCH 1/6] powerpc/6xx: add missing of_node_put
-Message-Id: <1448051604-25256-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 12:30:23 +0000
+Subject: [PATCH] Orangefs: constify inode_operations structures
+Message-Id: <1447504223-25135-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-for_each_compatible_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+The inode_operations structures are never modified, so declare them
+as const, like all the other inode_operations structures.
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-expression e;
-local idexpression n;
-@@
-
-@@
-local idexpression n;
-expression e;
-@@
-
- for_each_compatible_node(n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-// </smpl>
+Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- arch/powerpc/platforms/embedded6xx/hlwd-pic.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/orangefs/inode.c        |    2 +-
+ fs/orangefs/namei.c        |    2 +-
+ fs/orangefs/pvfs2-kernel.h |    6 +++---
+ fs/orangefs/symlink.c      |    2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/platforms/embedded6xx/hlwd-pic.c b/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
-index 9b79757..b581b42 100644
---- a/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
-+++ b/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
-@@ -215,6 +215,7 @@ void hlwd_pic_probe(void)
- 			irq_set_chained_handler(cascade_virq,
- 						hlwd_pic_irq_cascade);
- 			hlwd_irq_host = host;
-+			of_node_put(np);
- 			break;
- 		}
- 	}
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 4f7c45a..97e64b9 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -295,7 +295,7 @@ int pvfs2_getattr(struct vfsmount *mnt,
+ }
+ 
+ /* PVFS2 implementation of VFS inode operations for files */
+-struct inode_operations pvfs2_file_inode_operations = {
++const struct inode_operations pvfs2_file_inode_operations = {
+ 	.get_acl = pvfs2_get_acl,
+ 	.set_acl = pvfs2_set_acl,
+ 	.setattr = pvfs2_setattr,
+diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
+index 05f6fea..6fcb517 100644
+--- a/fs/orangefs/namei.c
++++ b/fs/orangefs/namei.c
+@@ -448,7 +448,7 @@ static int pvfs2_rename(struct inode *old_dir,
+ }
+ 
+ /* PVFS2 implementation of VFS inode operations for directories */
+-struct inode_operations pvfs2_dir_inode_operations = {
++const struct inode_operations pvfs2_dir_inode_operations = {
+ 	.lookup = pvfs2_lookup,
+ 	.get_acl = pvfs2_get_acl,
+ 	.set_acl = pvfs2_set_acl,
+diff --git a/fs/orangefs/pvfs2-kernel.h b/fs/orangefs/pvfs2-kernel.h
+index 29b4a48..68cbd28 100644
+--- a/fs/orangefs/pvfs2-kernel.h
++++ b/fs/orangefs/pvfs2-kernel.h
+@@ -674,10 +674,10 @@ extern int hash_table_size;
+ 
+ extern const struct address_space_operations pvfs2_address_operations;
+ extern struct backing_dev_info pvfs2_backing_dev_info;
+-extern struct inode_operations pvfs2_file_inode_operations;
++extern const struct inode_operations pvfs2_file_inode_operations;
+ extern const struct file_operations pvfs2_file_operations;
+-extern struct inode_operations pvfs2_symlink_inode_operations;
+-extern struct inode_operations pvfs2_dir_inode_operations;
++extern const struct inode_operations pvfs2_symlink_inode_operations;
++extern const struct inode_operations pvfs2_dir_inode_operations;
+ extern const struct file_operations pvfs2_dir_operations;
+ extern const struct dentry_operations pvfs2_dentry_operations;
+ extern const struct file_operations pvfs2_devreq_file_operations;
+diff --git a/fs/orangefs/symlink.c b/fs/orangefs/symlink.c
+index 2adfcef..38dd73c 100644
+--- a/fs/orangefs/symlink.c
++++ b/fs/orangefs/symlink.c
+@@ -21,7 +21,7 @@ static const char *pvfs2_follow_link(struct dentry *dentry, void **cookie)
+ 	return target;
+ }
+ 
+-struct inode_operations pvfs2_symlink_inode_operations = {
++const struct inode_operations pvfs2_symlink_inode_operations = {
+ 	.readlink = generic_readlink,
+ 	.follow_link = pvfs2_follow_link,
+ 	.setattr = pvfs2_setattr,
 
