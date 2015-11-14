@@ -1,123 +1,59 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 16 Nov 2015 20:21:34 +0000
-Subject: Re: [PATCH] [media] i2c: constify v4l2_ctrl_ops structures
-Message-Id: <1528138.k1hTttqLyu@avalon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2015 19:27:38 +0000
+Subject: [PATCH] mac802154: Delete an unnecessary check before the function call "kfree_skb"
+Message-Id: <56478B2A.6030808@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447452318-19028-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447452318-19028-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Lad Prabhakar <prabhakar.csengg@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+To: Alexander Aring <alex.aring@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Julia,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Nov 2015 20:22:41 +0100
 
-Thank you for the patch.
+The kfree_skb() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-On Friday 13 November 2015 23:05:17 Julia Lawall wrote:
-> These v4l2_ctrl_ops structures are never modified, like all the other
-> v4l2_ctrl_ops structures, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/mac802154/rx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-and applied to my tree. I've prefixed the subject line with "v4l: i2c" instead 
-of just "i2c".
-
-> ---
->  drivers/media/i2c/mt9m032.c |    2 +-
->  drivers/media/i2c/mt9p031.c |    2 +-
->  drivers/media/i2c/mt9t001.c |    2 +-
->  drivers/media/i2c/mt9v011.c |    2 +-
->  drivers/media/i2c/mt9v032.c |    2 +-
->  drivers/media/i2c/ov2659.c  |    2 +-
->  6 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/mt9t001.c b/drivers/media/i2c/mt9t001.c
-> index 8ae99f7..3486bc8 100644
-> --- a/drivers/media/i2c/mt9t001.c
-> +++ b/drivers/media/i2c/mt9t001.c
-> @@ -626,7 +626,7 @@ static int mt9t001_s_ctrl(struct v4l2_ctrl *ctrl)
->  	return 0;
->  }
-> 
-> -static struct v4l2_ctrl_ops mt9t001_ctrl_ops = {
-> +static const struct v4l2_ctrl_ops mt9t001_ctrl_ops = {
->  	.s_ctrl = mt9t001_s_ctrl,
->  };
-> 
-> diff --git a/drivers/media/i2c/mt9v032.c b/drivers/media/i2c/mt9v032.c
-> index a68ce94..b8e80c0 100644
-> --- a/drivers/media/i2c/mt9v032.c
-> +++ b/drivers/media/i2c/mt9v032.c
-> @@ -703,7 +703,7 @@ static int mt9v032_s_ctrl(struct v4l2_ctrl *ctrl)
->  	return 0;
->  }
-> 
-> -static struct v4l2_ctrl_ops mt9v032_ctrl_ops = {
-> +static const struct v4l2_ctrl_ops mt9v032_ctrl_ops = {
->  	.s_ctrl = mt9v032_s_ctrl,
->  };
-> 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index 0db15f5..1e78aa2 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -817,7 +817,7 @@ static int mt9p031_s_ctrl(struct v4l2_ctrl *ctrl)
->  	return 0;
->  }
-> 
-> -static struct v4l2_ctrl_ops mt9p031_ctrl_ops = {
-> +static const struct v4l2_ctrl_ops mt9p031_ctrl_ops = {
->  	.s_ctrl = mt9p031_s_ctrl,
->  };
-> 
-> diff --git a/drivers/media/i2c/mt9v011.c b/drivers/media/i2c/mt9v011.c
-> index a4a5c39..c681b3b 100644
-> --- a/drivers/media/i2c/mt9v011.c
-> +++ b/drivers/media/i2c/mt9v011.c
-> @@ -454,7 +454,7 @@ static int mt9v011_s_ctrl(struct v4l2_ctrl *ctrl)
->  	return 0;
->  }
-> 
-> -static struct v4l2_ctrl_ops mt9v011_ctrl_ops = {
-> +static const struct v4l2_ctrl_ops mt9v011_ctrl_ops = {
->  	.s_ctrl = mt9v011_s_ctrl,
->  };
-> 
-> diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
-> index 49109f4..b952e7d 100644
-> --- a/drivers/media/i2c/ov2659.c
-> +++ b/drivers/media/i2c/ov2659.c
-> @@ -1249,7 +1249,7 @@ static int ov2659_s_ctrl(struct v4l2_ctrl *ctrl)
->  	return 0;
->  }
-> 
-> -static struct v4l2_ctrl_ops ov2659_ctrl_ops = {
-> +static const struct v4l2_ctrl_ops ov2659_ctrl_ops = {
->  	.s_ctrl = ov2659_s_ctrl,
->  };
-> 
-> diff --git a/drivers/media/i2c/mt9m032.c b/drivers/media/i2c/mt9m032.c
-> index c7747bd..eec064e 100644
-> --- a/drivers/media/i2c/mt9m032.c
-> +++ b/drivers/media/i2c/mt9m032.c
-> @@ -671,7 +671,7 @@ static int mt9m032_set_ctrl(struct v4l2_ctrl *ctrl)
->  	return 0;
->  }
-> 
-> -static struct v4l2_ctrl_ops mt9m032_ctrl_ops = {
-> +static const struct v4l2_ctrl_ops mt9m032_ctrl_ops = {
->  	.s_ctrl = mt9m032_set_ctrl,
->  	.try_ctrl = mt9m032_try_ctrl,
->  };
-
+diff --git a/net/mac802154/rx.c b/net/mac802154/rx.c
+index 42e9672..446e130 100644
+--- a/net/mac802154/rx.c
++++ b/net/mac802154/rx.c
+@@ -217,8 +217,7 @@ __ieee802154_rx_handle_packet(struct ieee802154_local *local,
+ 		break;
+ 	}
+ 
+-	if (skb)
+-		kfree_skb(skb);
++	kfree_skb(skb);
+ }
+ 
+ static void
 -- 
-Regards,
-
-Laurent Pinchart
+2.6.2
 
