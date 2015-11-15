@@ -1,44 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Nov 2015 22:15:39 +0000
-Subject: [patch] Smack: harmless underflow in smk_set_cipso()
-Message-Id: <20151103221539.GC19280@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 09:45:34 +0000
+Subject: [PATCH] KVM-async_pf: Delete an unnecessary check before the function call "kmem_cache_destroy"
+Message-Id: <5648543E.1000202@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Gleb Natapov <gleb@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This causes a static checker warning because "maplevel" is set by the
-user and we cap the upper bound but not the lower bound.  It seems
-harmless to me and it's root only but we may as well make the static
-checker happy.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 10:40:36 +0100
 
-Also checkpatch complains that we should use kstrtouint() instead of
-sscanf here.
+The kmem_cache_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This issue was detected by using the Coccinelle software.
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 94bd9e4..ebb1241 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -862,7 +862,7 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 	struct smack_known *skp;
- 	struct netlbl_lsm_secattr ncats;
- 	char mapcatset[SMK_CIPSOLEN];
--	int maplevel;
-+	unsigned int maplevel;
- 	unsigned int cat;
- 	int catlen;
- 	ssize_t rc = -EINVAL;
-@@ -912,8 +912,8 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 	else
- 		rule += strlen(skp->smk_known) + 1;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ virt/kvm/async_pf.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/virt/kvm/async_pf.c b/virt/kvm/async_pf.c
+index 77d42be..3531599 100644
+--- a/virt/kvm/async_pf.c
++++ b/virt/kvm/async_pf.c
+@@ -57,8 +57,7 @@ int kvm_async_pf_init(void)
  
--	ret = sscanf(rule, "%d", &maplevel);
--	if (ret != 1 || maplevel > SMACK_CIPSO_MAXLEVEL)
-+	ret = kstrtouint(rule, 10, &maplevel);
-+	if (ret || maplevel > SMACK_CIPSO_MAXLEVEL)
- 		goto out;
+ void kvm_async_pf_deinit(void)
+ {
+-	if (async_pf_cache)
+-		kmem_cache_destroy(async_pf_cache);
++	kmem_cache_destroy(async_pf_cache);
+ 	async_pf_cache = NULL;
+ }
  
- 	rule += SMK_DIGITLEN;
+-- 
+2.6.2
+
