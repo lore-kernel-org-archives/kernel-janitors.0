@@ -1,155 +1,90 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 30 Nov 2015 10:39:56 +0000
-Subject: Re: [PATCH] ALSA: pcm: constify action_ops structures
-Message-Id: <s5hd1urhitf.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 18:52:22 +0000
+Subject: [PATCH 3/4] crypto-ixp4xx: Reduce assignment for a variable in init_ixp_crypto()
+Message-Id: <5648D466.10307@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448811400-11304-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448811400-11304-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5648D2C1.8050603@users.sourceforge.net>
+In-Reply-To: <5648D2C1.8050603@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, 29 Nov 2015 16:36:40 +0100,
-Julia Lawall wrote:
-> 
-> The action_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 19:06:44 +0100
 
-Applied, thanks.
+The variable "ret" was set more often than necessary by the
+init_ixp_crypto() function.
 
+* Omit its initialisation at the beginning.
 
-Takashi
+* Use an error return code in two cases directly.
 
-> 
-> ---
->  sound/core/pcm_native.c |   26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-> index a8b27cd..fadd3eb 100644
-> --- a/sound/core/pcm_native.c
-> +++ b/sound/core/pcm_native.c
-> @@ -875,7 +875,7 @@ struct action_ops {
->   *  Note: the stream state might be changed also on failure
->   *  Note2: call with calling stream lock + link lock
->   */
-> -static int snd_pcm_action_group(struct action_ops *ops,
-> +static int snd_pcm_action_group(const struct action_ops *ops,
->  				struct snd_pcm_substream *substream,
->  				int state, int do_lock)
->  {
-> @@ -932,7 +932,7 @@ static int snd_pcm_action_group(struct action_ops *ops,
->  /*
->   *  Note: call with stream lock
->   */
-> -static int snd_pcm_action_single(struct action_ops *ops,
-> +static int snd_pcm_action_single(const struct action_ops *ops,
->  				 struct snd_pcm_substream *substream,
->  				 int state)
->  {
-> @@ -952,7 +952,7 @@ static int snd_pcm_action_single(struct action_ops *ops,
->  /*
->   *  Note: call with stream lock
->   */
-> -static int snd_pcm_action(struct action_ops *ops,
-> +static int snd_pcm_action(const struct action_ops *ops,
->  			  struct snd_pcm_substream *substream,
->  			  int state)
->  {
-> @@ -984,7 +984,7 @@ static int snd_pcm_action(struct action_ops *ops,
->  /*
->   *  Note: don't use any locks before
->   */
-> -static int snd_pcm_action_lock_irq(struct action_ops *ops,
-> +static int snd_pcm_action_lock_irq(const struct action_ops *ops,
->  				   struct snd_pcm_substream *substream,
->  				   int state)
->  {
-> @@ -998,7 +998,7 @@ static int snd_pcm_action_lock_irq(struct action_ops *ops,
->  
->  /*
->   */
-> -static int snd_pcm_action_nonatomic(struct action_ops *ops,
-> +static int snd_pcm_action_nonatomic(const struct action_ops *ops,
->  				    struct snd_pcm_substream *substream,
->  				    int state)
->  {
-> @@ -1056,7 +1056,7 @@ static void snd_pcm_post_start(struct snd_pcm_substream *substream, int state)
->  	snd_pcm_timer_notify(substream, SNDRV_TIMER_EVENT_MSTART);
->  }
->  
-> -static struct action_ops snd_pcm_action_start = {
-> +static const struct action_ops snd_pcm_action_start = {
->  	.pre_action = snd_pcm_pre_start,
->  	.do_action = snd_pcm_do_start,
->  	.undo_action = snd_pcm_undo_start,
-> @@ -1107,7 +1107,7 @@ static void snd_pcm_post_stop(struct snd_pcm_substream *substream, int state)
->  	wake_up(&runtime->tsleep);
->  }
->  
-> -static struct action_ops snd_pcm_action_stop = {
-> +static const struct action_ops snd_pcm_action_stop = {
->  	.pre_action = snd_pcm_pre_stop,
->  	.do_action = snd_pcm_do_stop,
->  	.post_action = snd_pcm_post_stop
-> @@ -1224,7 +1224,7 @@ static void snd_pcm_post_pause(struct snd_pcm_substream *substream, int push)
->  	}
->  }
->  
-> -static struct action_ops snd_pcm_action_pause = {
-> +static const struct action_ops snd_pcm_action_pause = {
->  	.pre_action = snd_pcm_pre_pause,
->  	.do_action = snd_pcm_do_pause,
->  	.undo_action = snd_pcm_undo_pause,
-> @@ -1273,7 +1273,7 @@ static void snd_pcm_post_suspend(struct snd_pcm_substream *substream, int state)
->  	wake_up(&runtime->tsleep);
->  }
->  
-> -static struct action_ops snd_pcm_action_suspend = {
-> +static const struct action_ops snd_pcm_action_suspend = {
->  	.pre_action = snd_pcm_pre_suspend,
->  	.do_action = snd_pcm_do_suspend,
->  	.post_action = snd_pcm_post_suspend
-> @@ -1375,7 +1375,7 @@ static void snd_pcm_post_resume(struct snd_pcm_substream *substream, int state)
->  	snd_pcm_timer_notify(substream, SNDRV_TIMER_EVENT_MRESUME);
->  }
->  
-> -static struct action_ops snd_pcm_action_resume = {
-> +static const struct action_ops snd_pcm_action_resume = {
->  	.pre_action = snd_pcm_pre_resume,
->  	.do_action = snd_pcm_do_resume,
->  	.undo_action = snd_pcm_undo_resume,
-> @@ -1478,7 +1478,7 @@ static void snd_pcm_post_reset(struct snd_pcm_substream *substream, int state)
->  		snd_pcm_playback_silence(substream, ULONG_MAX);
->  }
->  
-> -static struct action_ops snd_pcm_action_reset = {
-> +static const struct action_ops snd_pcm_action_reset = {
->  	.pre_action = snd_pcm_pre_reset,
->  	.do_action = snd_pcm_do_reset,
->  	.post_action = snd_pcm_post_reset
-> @@ -1522,7 +1522,7 @@ static void snd_pcm_post_prepare(struct snd_pcm_substream *substream, int state)
->  	snd_pcm_set_state(substream, SNDRV_PCM_STATE_PREPARED);
->  }
->  
-> -static struct action_ops snd_pcm_action_prepare = {
-> +static const struct action_ops snd_pcm_action_prepare = {
->  	.pre_action = snd_pcm_pre_prepare,
->  	.do_action = snd_pcm_do_prepare,
->  	.post_action = snd_pcm_post_prepare
-> @@ -1618,7 +1618,7 @@ static void snd_pcm_post_drain_init(struct snd_pcm_substream *substream, int sta
->  {
->  }
->  
-> -static struct action_ops snd_pcm_action_drain_init = {
-> +static const struct action_ops snd_pcm_action_drain_init = {
->  	.pre_action = snd_pcm_pre_drain_init,
->  	.do_action = snd_pcm_do_drain_init,
->  	.post_action = snd_pcm_post_drain_init
-> 
-> 
+* Improve compliance with the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/ixp4xx_crypto.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
+index efe0eca..97da36a 100644
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -433,17 +433,17 @@ static void crypto_done_action(unsigned long arg)
+ 
+ static int init_ixp_crypto(struct device *dev)
+ {
+-	int ret = -ENODEV;
++	int ret;
+ 	u32 msg[2] = { 0, 0 };
+ 
+ 	if (! ( ~(*IXP4XX_EXP_CFG2) & (IXP4XX_FEATURE_HASH |
+ 				IXP4XX_FEATURE_AES | IXP4XX_FEATURE_DES))) {
+ 		printk(KERN_ERR "ixp_crypto: No HW crypto available\n");
+-		return ret;
++		return -ENODEV;
+ 	}
+ 	npe_c = npe_request(NPE_ID);
+ 	if (!npe_c)
+-		return ret;
++		return -ENODEV;
+ 
+ 	if (!npe_running(npe_c)) {
+ 		ret = npe_load_firmware(npe_c, npe_name(npe_c), dev);
+@@ -481,13 +481,14 @@ static int init_ixp_crypto(struct device *dev)
+ 	BUILD_BUG_ON(SHA1_DIGEST_SIZE > sizeof(struct buffer_desc));
+ 	buffer_pool = dma_pool_create("buffer", dev,
+ 			sizeof(struct buffer_desc), 32, 0);
+-	ret = -ENOMEM;
+ 	if (!buffer_pool) {
++		ret = -ENOMEM;
+ 		goto err;
+ 	}
+ 	ctx_pool = dma_pool_create("context", dev,
+ 			NPE_CTX_LEN, 16, 0);
+ 	if (!ctx_pool) {
++		ret = -ENOMEM;
+ 		goto err;
+ 	}
+ 	ret = qmgr_request_queue(SEND_QID, NPE_QLEN_TOTAL, 0, 0,
+-- 
+2.6.2
+
