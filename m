@@ -1,33 +1,61 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 16 Nov 2015 20:11:56 +0000
-Subject: Re: [PATCH] net: dsa: Delete an unnecessary check before the function call "put_device"
-Message-Id: <20151116.151156.22243959928293016.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 18:49:16 +0000
+Subject: [PATCH 1/4] crypto-ixp4xx: Delete unnecessary checks before the function call "dma_pool_destroy"
+Message-Id: <5648D3AC.6090904@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<56476B8C.7020309@users.sourceforge.net>
-In-Reply-To: <56476B8C.7020309@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5648D2C1.8050603@users.sourceforge.net>
+In-Reply-To: <5648D2C1.8050603@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 16:51:21 +0100
 
-I'm starting to grow quite weary of these "unnecessary check" changes.
+The dma_pool_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the calls is not needed.
 
-Sometimes it is better to have them, either because the path is a hot
-path or some atomic sequence is involved.
+This issue was detected by using the Coccinelle software.
 
-But there is never harm in them being there.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/ixp4xx_crypto.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-All of this is a matter of taste, of course.  But one thing I know for
-sure, it is undisputable that there are much more important things to
-work on than this kind of stuff...
-
-So I'm not applying these changes any more and directing my time and
-effort to reviewing and applying patches that fix bugs, really
-restructure the code in useful ways that increase maintainability over
-the long time, and add interesting new features.
-
-These patches do none of the above.
+diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
+index 8f27903..e52496a 100644
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -510,10 +510,8 @@ npe_error:
+ 	printk(KERN_ERR "%s not responding\n", npe_name(npe_c));
+ 	ret = -EIO;
+ err:
+-	if (ctx_pool)
+-		dma_pool_destroy(ctx_pool);
+-	if (buffer_pool)
+-		dma_pool_destroy(buffer_pool);
++	dma_pool_destroy(ctx_pool);
++	dma_pool_destroy(buffer_pool);
+ 	npe_release(npe_c);
+ 	return ret;
+ }
+-- 
+2.6.2
