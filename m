@@ -1,60 +1,98 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 06 Nov 2015 09:43:46 +0000
-Subject: [PATCH] SRAM: Delete an unnecessary check before the function call "of_node_put"
-Message-Id: <563C7652.6080609@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 15 Nov 2015 19:27:19 +0000
+Subject: [PATCH] drivers/message/fusion: constify mpt_pci_driver structures
+Message-Id: <1447615639-7879-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
+Cc: kernel-janitors@vger.kernel.org, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 6 Nov 2015 10:36:49 +0100
+The mpt_pci_driver structures are never modified, so declare them as const.
 
-The of_node_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/sram.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/message/fusion/mptbase.c |    8 +++++---
+ drivers/message/fusion/mptbase.h |    3 ++-
+ drivers/message/fusion/mptctl.c  |    2 +-
+ drivers/message/fusion/mptlan.c  |    2 +-
+ 4 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
-index 736dae7..34287f7 100644
---- a/drivers/misc/sram.c
-+++ b/drivers/misc/sram.c
-@@ -326,9 +326,7 @@ static int sram_reserve_regions(struct sram_dev *sram, struct resource *res)
+diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+index 5dcc031..451e73c 100644
+--- a/drivers/message/fusion/mptbase.c
++++ b/drivers/message/fusion/mptbase.c
+@@ -140,7 +140,9 @@ static int			 MptDriverClass[MPT_MAX_PROTOCOL_DRIVERS];
+ static MPT_EVHANDLER		 MptEvHandlers[MPT_MAX_PROTOCOL_DRIVERS];
+ 					/* Reset handler lookup table */
+ static MPT_RESETHANDLER		 MptResetHandlers[MPT_MAX_PROTOCOL_DRIVERS];
+-static struct mpt_pci_driver 	*MptDeviceDriverHandlers[MPT_MAX_PROTOCOL_DRIVERS];
++
++static const
++struct mpt_pci_driver *MptDeviceDriverHandlers[MPT_MAX_PROTOCOL_DRIVERS];
+ 
+ #ifdef CONFIG_PROC_FS
+ static struct proc_dir_entry 	*mpt_proc_root_dir;
+@@ -826,7 +828,7 @@ mpt_reset_deregister(u8 cb_idx)
+  *	@cb_idx: MPT protocol driver index
+  */
+ int
+-mpt_device_driver_register(struct mpt_pci_driver * dd_cbfunc, u8 cb_idx)
++mpt_device_driver_register(const struct mpt_pci_driver *dd_cbfunc, u8 cb_idx)
+ {
+ 	MPT_ADAPTER	*ioc;
+ 	const struct pci_device_id *id;
+@@ -855,7 +857,7 @@ mpt_device_driver_register(struct mpt_pci_driver * dd_cbfunc, u8 cb_idx)
+ void
+ mpt_device_driver_deregister(u8 cb_idx)
+ {
+-	struct mpt_pci_driver *dd_cbfunc;
++	const struct mpt_pci_driver *dd_cbfunc;
+ 	MPT_ADAPTER	*ioc;
+ 
+ 	if (!cb_idx || cb_idx >= MPT_MAX_PROTOCOL_DRIVERS)
+diff --git a/drivers/message/fusion/mptbase.h b/drivers/message/fusion/mptbase.h
+index 813d463..e29e4be 100644
+--- a/drivers/message/fusion/mptbase.h
++++ b/drivers/message/fusion/mptbase.h
+@@ -920,7 +920,8 @@ extern int	 mpt_event_register(u8 cb_idx, MPT_EVHANDLER ev_cbfunc);
+ extern void	 mpt_event_deregister(u8 cb_idx);
+ extern int	 mpt_reset_register(u8 cb_idx, MPT_RESETHANDLER reset_func);
+ extern void	 mpt_reset_deregister(u8 cb_idx);
+-extern int	 mpt_device_driver_register(struct mpt_pci_driver * dd_cbfunc, u8 cb_idx);
++extern int	 mpt_device_driver_register(const struct mpt_pci_driver *dd_cbfunc,
++					      u8 cb_idx);
+ extern void	 mpt_device_driver_deregister(u8 cb_idx);
+ extern MPT_FRAME_HDR	*mpt_get_msg_frame(u8 cb_idx, MPT_ADAPTER *ioc);
+ extern void	 mpt_free_msg_frame(MPT_ADAPTER *ioc, MPT_FRAME_HDR *mf);
+diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
+index 02b5f69..7d051af 100644
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -2990,7 +2990,7 @@ mptctl_remove(struct pci_dev *pdev)
+ {
+ }
+ 
+-static struct mpt_pci_driver mptctl_driver = {
++static const struct mpt_pci_driver mptctl_driver = {
+   .probe		= mptctl_probe,
+   .remove		= mptctl_remove,
+ };
+diff --git a/drivers/message/fusion/mptlan.c b/drivers/message/fusion/mptlan.c
+index cbe9607..4b20af4 100644
+--- a/drivers/message/fusion/mptlan.c
++++ b/drivers/message/fusion/mptlan.c
+@@ -1443,7 +1443,7 @@ mptlan_remove(struct pci_dev *pdev)
  	}
+ }
  
-  err_chunks:
--	if (child)
--		of_node_put(child);
--
-+	of_node_put(child);
- 	kfree(rblocks);
- 
- 	return ret;
--- 
-2.6.2
+-static struct mpt_pci_driver mptlan_driver = {
++static const struct mpt_pci_driver mptlan_driver = {
+ 	.probe		= mptlan_probe,
+ 	.remove		= mptlan_remove,
+ };
 
