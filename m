@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 21:20:25 +0000
-Subject: [PATCH 0/3] ste_dma40: Deletion of a few unnecessary checks
-Message-Id: <564A4899.8040109@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 21:08:32 +0000
+Subject: [PATCH] staging-EHCA: Delete unnecessary checks before the function call "kmem_cache_destroy"
+Message-Id: <5648F450.3050004@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,22 +24,106 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Doug Ledford <dledford@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, linux-rdma@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 22:12:23 +0100
+Date: Sun, 15 Nov 2015 21:58:45 +0100
 
-Further update suggestions were taken into account after a patch
-was applied from static source code analysis.
+The kmem_cache_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the calls is not needed.
 
-Markus Elfring (3):
-  Delete an unnecessary check before the function call "kmem_cache_destroy"
-  Delete another unnecessary check in d40_probe()
-  Delete an unnecessary variable initialisation in d40_probe()
+This issue was detected by using the Coccinelle software.
 
- drivers/dma/ste_dma40.c | 87 ++++++++++++++++++++++++-------------------------
- 1 file changed, 42 insertions(+), 45 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/rdma/ehca/ehca_av.c   | 3 +--
+ drivers/staging/rdma/ehca/ehca_cq.c   | 3 +--
+ drivers/staging/rdma/ehca/ehca_main.c | 3 +--
+ drivers/staging/rdma/ehca/ehca_mrmw.c | 6 ++----
+ drivers/staging/rdma/ehca/ehca_pd.c   | 3 +--
+ drivers/staging/rdma/ehca/ehca_qp.c   | 3 +--
+ 6 files changed, 7 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/staging/rdma/ehca/ehca_av.c b/drivers/staging/rdma/ehca/ehca_av.c
+index 4659263..04b9398 100644
+--- a/drivers/staging/rdma/ehca/ehca_av.c
++++ b/drivers/staging/rdma/ehca/ehca_av.c
+@@ -272,6 +272,5 @@ int ehca_init_av_cache(void)
+ 
+ void ehca_cleanup_av_cache(void)
+ {
+-	if (av_cache)
+-		kmem_cache_destroy(av_cache);
++	kmem_cache_destroy(av_cache);
+ }
+diff --git a/drivers/staging/rdma/ehca/ehca_cq.c b/drivers/staging/rdma/ehca/ehca_cq.c
+index ea1b5c1..1aa7931 100644
+--- a/drivers/staging/rdma/ehca/ehca_cq.c
++++ b/drivers/staging/rdma/ehca/ehca_cq.c
+@@ -393,6 +393,5 @@ int ehca_init_cq_cache(void)
+ 
+ void ehca_cleanup_cq_cache(void)
+ {
+-	if (cq_cache)
+-		kmem_cache_destroy(cq_cache);
++	kmem_cache_destroy(cq_cache);
+ }
+diff --git a/drivers/staging/rdma/ehca/ehca_main.c b/drivers/staging/rdma/ehca/ehca_main.c
+index 8246418..860b974 100644
+--- a/drivers/staging/rdma/ehca/ehca_main.c
++++ b/drivers/staging/rdma/ehca/ehca_main.c
+@@ -245,8 +245,7 @@ static void ehca_destroy_slab_caches(void)
+ 	ehca_cleanup_cq_cache();
+ 	ehca_cleanup_pd_cache();
+ #ifdef CONFIG_PPC_64K_PAGES
+-	if (ctblk_cache)
+-		kmem_cache_destroy(ctblk_cache);
++	kmem_cache_destroy(ctblk_cache);
+ #endif
+ }
+ 
+diff --git a/drivers/staging/rdma/ehca/ehca_mrmw.c b/drivers/staging/rdma/ehca/ehca_mrmw.c
+index f914b30..553e883 100644
+--- a/drivers/staging/rdma/ehca/ehca_mrmw.c
++++ b/drivers/staging/rdma/ehca/ehca_mrmw.c
+@@ -2251,10 +2251,8 @@ int ehca_init_mrmw_cache(void)
+ 
+ void ehca_cleanup_mrmw_cache(void)
+ {
+-	if (mr_cache)
+-		kmem_cache_destroy(mr_cache);
+-	if (mw_cache)
+-		kmem_cache_destroy(mw_cache);
++	kmem_cache_destroy(mr_cache);
++	kmem_cache_destroy(mw_cache);
+ }
+ 
+ static inline int ehca_init_top_bmap(struct ehca_top_bmap *ehca_top_bmap,
+diff --git a/drivers/staging/rdma/ehca/ehca_pd.c b/drivers/staging/rdma/ehca/ehca_pd.c
+index 351577a..2a8aae4 100644
+--- a/drivers/staging/rdma/ehca/ehca_pd.c
++++ b/drivers/staging/rdma/ehca/ehca_pd.c
+@@ -119,6 +119,5 @@ int ehca_init_pd_cache(void)
+ 
+ void ehca_cleanup_pd_cache(void)
+ {
+-	if (pd_cache)
+-		kmem_cache_destroy(pd_cache);
++	kmem_cache_destroy(pd_cache);
+ }
+diff --git a/drivers/staging/rdma/ehca/ehca_qp.c b/drivers/staging/rdma/ehca/ehca_qp.c
+index 2e89356..896c01f 100644
+--- a/drivers/staging/rdma/ehca/ehca_qp.c
++++ b/drivers/staging/rdma/ehca/ehca_qp.c
+@@ -2252,6 +2252,5 @@ int ehca_init_qp_cache(void)
+ 
+ void ehca_cleanup_qp_cache(void)
+ {
+-	if (qp_cache)
+-		kmem_cache_destroy(qp_cache);
++	kmem_cache_destroy(qp_cache);
+ }
 -- 
 2.6.2
 
