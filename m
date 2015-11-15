@@ -1,22 +1,35 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Mon, 30 Nov 2015 15:48:34 +0000
-Subject: Re: [PATCH] mailbox: constify mbox_chan_ops structure
-Message-Id: <CABb+yY2G5p_-aHVXfP6TP0tKhVgWyUbdFkkR4YSfm9fF_kE7FQ@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 15 Nov 2015 20:00:02 +0000
+Subject: [PATCH] iio: adc: xilinx: constify iio_buffer_setup_ops structure
+Message-Id: <1447617602-12922-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448801402-27540-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448801402-27540-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Sun, Nov 29, 2015 at 6:20 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> This mbox_chan_ops structure is never modified, so declare it as const,
-> like all the other mbox_chan_ops structures.
->
-> Done with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-Applied, Thanks.
+The iio_buffer_setup_ops structures are never modified, so declare this one
+as const, like the others.
+
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/iio/adc/xilinx-xadc-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
+index 0370624..c2b5f10 100644
+--- a/drivers/iio/adc/xilinx-xadc-core.c
++++ b/drivers/iio/adc/xilinx-xadc-core.c
+@@ -803,7 +803,7 @@ err:
+ 	return ret;
+ }
+ 
+-static struct iio_buffer_setup_ops xadc_buffer_ops = {
++static const struct iio_buffer_setup_ops xadc_buffer_ops = {
+ 	.preenable = &xadc_preenable,
+ 	.postenable = &iio_triggered_buffer_postenable,
+ 	.predisable = &iio_triggered_buffer_predisable,
+
