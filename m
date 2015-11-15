@@ -1,49 +1,50 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 28 Nov 2015 14:00:37 +0000
-Subject: [PATCH] RDMA/nes: constify nes_cm_ops structure
-Message-Id: <1448719237-17445-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 15 Nov 2015 20:36:30 +0000
+Subject: [PATCH] ide: constify ide_dma_ops structures
+Message-Id: <1447619790-5203-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Faisal Latif <faisal.latif@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The nes_cm_ops structure is never modified, so declare it as const.
+The ide_dma_ops structures are never modified, so declare these as const,
+as is already done for the others.
 
 Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/infiniband/hw/nes/nes_cm.c |    2 +-
- drivers/infiniband/hw/nes/nes_cm.h |    2 +-
+ drivers/ide/it821x.c |    2 +-
+ drivers/ide/trm290.c |    2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/nes/nes_cm.c b/drivers/infiniband/hw/nes/nes_cm.c
-index 8a3ad17..d129342 100644
---- a/drivers/infiniband/hw/nes/nes_cm.c
-+++ b/drivers/infiniband/hw/nes/nes_cm.c
-@@ -134,7 +134,7 @@ static void record_ird_ord(struct nes_cm_node *, u16, u16);
- /* External CM API Interface */
- /* instance of function pointers for client API */
- /* set address of this instance to cm_core->cm_ops at cm_core alloc */
--static struct nes_cm_ops nes_cm_api = {
-+static const struct nes_cm_ops nes_cm_api = {
- 	mini_cm_accelerated,
- 	mini_cm_listen,
- 	mini_cm_del_listen,
-diff --git a/drivers/infiniband/hw/nes/nes_cm.h b/drivers/infiniband/hw/nes/nes_cm.h
-index 32a6420..147c2c8 100644
---- a/drivers/infiniband/hw/nes/nes_cm.h
-+++ b/drivers/infiniband/hw/nes/nes_cm.h
-@@ -423,7 +423,7 @@ struct nes_cm_core {
+diff --git a/drivers/ide/it821x.c b/drivers/ide/it821x.c
+index f01ba46..04029d1 100644
+--- a/drivers/ide/it821x.c
++++ b/drivers/ide/it821x.c
+@@ -508,7 +508,7 @@ static void it821x_quirkproc(ide_drive_t *drive)
  
- 	struct timer_list       tcp_timer;
+ }
  
--	struct nes_cm_ops       *api;
-+	const struct nes_cm_ops *api;
+-static struct ide_dma_ops it821x_pass_through_dma_ops = {
++static const struct ide_dma_ops it821x_pass_through_dma_ops = {
+ 	.dma_host_set		= ide_dma_host_set,
+ 	.dma_setup		= ide_dma_setup,
+ 	.dma_start		= it821x_dma_start,
+diff --git a/drivers/ide/trm290.c b/drivers/ide/trm290.c
+index 0069f6c..d550b37 100644
+--- a/drivers/ide/trm290.c
++++ b/drivers/ide/trm290.c
+@@ -314,7 +314,7 @@ static const struct ide_tp_ops trm290_tp_ops = {
+ 	.output_data		= ide_output_data,
+ };
  
- 	int (*post_event)(struct nes_cm_event *event);
- 	atomic_t                events_posted;
+-static struct ide_dma_ops trm290_dma_ops = {
++static const struct ide_dma_ops trm290_dma_ops = {
+ 	.dma_host_set		= trm290_dma_host_set,
+ 	.dma_setup 		= trm290_dma_setup,
+ 	.dma_start 		= trm290_dma_start,
 
