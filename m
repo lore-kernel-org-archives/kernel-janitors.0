@@ -1,32 +1,46 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Thu, 26 Nov 2015 17:29:27 +0000
-Subject: Re: [PATCH 5/5] clk: scpi: add missing of_node_put
-Message-Id: <CAPKp9uZH71gzAhhbuk-tGOxrQ3jXS1Ot4NpTW7Jx5nhrwi7bfg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 18:45:21 +0000
+Subject: [PATCH 0/4] crypto-ixp4xx: Deletion of a few unnecessary checks
+Message-Id: <5648D2C1.8050603@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445460100-26727-6-git-send-email-Julia.Lawall@lip6.fr>
- <5628AA99.1000000@arm.com>
-In-Reply-To: <5628AA99.1000000@arm.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Mike/Stephen,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 19:39:00 +0100
 
-On Thu, Oct 22, 2015 at 10:21 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->
->
-> Thanks for the fix.
->
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
->
-> PS: Since this driver is queued via arm-soc, it needs to go via them or
-> wait for v4.4-rc1 and then queue via clk tree.
->
+Further update suggestions were taken into account after a patch
+was applied from static source code analysis.
 
-Now that the driver is in mainline, can you take this fix via clk tree for
-you next -rc fixes ?
+Markus Elfring (4):
+  Delete unnecessary checks before the function call "dma_pool_destroy"
+  Two function calls less in init_ixp_crypto() after error detection
+  Reduce assignment for a variable in init_ixp_crypto()
+  Less function calls in init_ixp_crypto() after error detection
 
-Regards,
-Sudeep
+ drivers/crypto/ixp4xx_crypto.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
+
+-- 
+2.6.2
