@@ -1,63 +1,71 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Thu, 19 Nov 2015 19:14:28 +0000
-Subject: Re: device_node lifetime (was: Re: [PATCH 1/7] phy: brcmstb-sata: add missing of_node_put)
-Message-Id: <20151119191428.GB8644@n2100.arm.linux.org.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 11:42:52 +0000
+Subject: [PATCH] kernel-audit: Delete unnecessary checks before two function calls
+Message-Id: <56486FBC.3070103@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447673600-8881-2-git-send-email-Julia.Lawall@lip6.fr>
- <20151117013830.GV8456@google.com>
- <alpine.DEB.2.02.1511170711340.2045@localhost6.localdomain6>
- <20151117174430.GA8456@google.com>
- <alpine.DEB.2.10.1511171846120.2455@hadrien>
- <20151117183036.GF8456@google.com>
- <alpine.DEB.2.02.1511172327030.2121@localhost6.localdomain6>
- <20151118190500.GE140057@google.com>
- <CAL_JsqLQWh8-gshYLrYwrrRjBRXiOACh9LzVn2HUU38mfgYGoQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqLQWh8-gshYLrYwrrRjBRXiOACh9LzVn2HUU38mfgYGoQ@mail.gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, linux-audit@redhat.com
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Nov 19, 2015 at 12:44:11PM -0600, Rob Herring wrote:
-> On Wed, Nov 18, 2015 at 1:05 PM, Brian Norris
-> <computersforpeace@gmail.com> wrote:
-> > (changing subject, add devicetree@vger.kernel.org)
-> >
-> > On Tue, Nov 17, 2015 at 11:33:25PM +0100, Julia Lawall wrote:
-> >> On Tue, 17 Nov 2015, Brian Norris wrote:
-> >> > On Tue, Nov 17, 2015 at 06:48:39PM +0100, Julia Lawall wrote:
-> >> > > Is this something that should be checked for elsewhere?
-> >> >
-> >> > I expect the same sort of problem shows up plenty of other places. I
-> >> > don't think many people use CONFIG_OF_DYNAMIC, so the effects of these
-> >> > failures probably aren't felt by many.
-> 
-> The "problem" is non-existent because either CONFIG_OF_DYNAMIC is off
-> or where it is used is limited (memory and cpus on PSeries) and now
-> overlays. Overlays have the potential to be problematic, but we should
-> manage ref counting for overlays in a completely different way. What
-> that looks like, I don't know. I'll leave that to the person that
-> cares about removing overlays.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 12:38:33 +0100
 
-So are you saying we should just forget about of_node_put and delete all
-of_node_put/of_node_get references in code outside drivers/of ?  That
-seems pretty obtuse given that we do have the overlay code merged, and
-sounds to me like a very bad idea.
+The functions consume_skb() and kfree_skb() test whether their argument
+is NULL and then return immediately.
+Thus the tests around their calls are not needed.
 
-Expecting those who want to use overlays to run around checking that
-the refcounting is correct in drivers is a really silly idea IMHO -
-the existing API is refcounted, so either people really ought to be
-using it correctly as it's already been designed (in other words, with
-correct refcounting, and we shouldn't be shovelling this problem onto
-other people) or the refcounting should be completely killed.
+This issue was detected by using the Coccinelle software.
 
-The existing half-way house of "we have refcounting, but we don't care
-about it" is really insane.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ kernel/audit.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Either we have refcounting, and it's used properly, or we don't have
-refcounting.  No middle ground IMHO.
-
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 5ffcbd3..1e8e228 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -509,8 +509,7 @@ static void flush_hold_queue(void)
+ 	 * if auditd just disappeared but we
+ 	 * dequeued an skb we need to drop ref
+ 	 */
+-	if (skb)
+-		consume_skb(skb);
++	consume_skb(skb);
+ }
+ 
+ static int kauditd_thread(void *dummy)
+@@ -1232,9 +1231,7 @@ static void audit_buffer_free(struct audit_buffer *ab)
+ 	if (!ab)
+ 		return;
+ 
+-	if (ab->skb)
+-		kfree_skb(ab->skb);
+-
++	kfree_skb(ab->skb);
+ 	spin_lock_irqsave(&audit_freelist_lock, flags);
+ 	if (audit_freelist_count > AUDIT_MAXFREE)
+ 		kfree(ab);
 -- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.6.2
+
