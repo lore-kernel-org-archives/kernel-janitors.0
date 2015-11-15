@@ -1,50 +1,58 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 08 Nov 2015 22:17:04 +0000
-Subject: [PATCH] ALSA: ctxfi: constify amixer_rsc_ops structure
-Message-Id: <1447021024-10392-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 21:52:30 +0000
+Subject: [PATCH] ACPI-EC: Delete an unnecessary check before the function call "acpi_ec_delete_query"
+Message-Id: <5648FE9E.5060201@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The amixer_rsc_ops structure is never modified, so declare it as
-const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 22:42:27 +0100
 
-Done with the help of Coccinelle.
+The acpi_ec_delete_query() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/ctxfi/ctamixer.c |    2 +-
- sound/pci/ctxfi/ctamixer.h |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/acpi/ec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/ctxfi/ctamixer.c b/sound/pci/ctxfi/ctamixer.c
-index c7dc38d..465b5c5 100644
---- a/sound/pci/ctxfi/ctamixer.c
-+++ b/sound/pci/ctxfi/ctamixer.c
-@@ -186,7 +186,7 @@ static int amixer_setup(struct amixer *amixer, struct rsc *input,
- 	return 0;
- }
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index f61a7c8..b420fb4 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -1103,7 +1103,7 @@ static int acpi_ec_query(struct acpi_ec *ec, u8 *data)
+ 	}
  
--static struct amixer_rsc_ops amixer_ops = {
-+static const struct amixer_rsc_ops amixer_ops = {
- 	.set_input		= amixer_set_input,
- 	.set_invalid_squash	= amixer_set_invalid_squash,
- 	.set_scale		= amixer_set_y,
-diff --git a/sound/pci/ctxfi/ctamixer.h b/sound/pci/ctxfi/ctamixer.h
-index 72f42f2..2de18aa 100644
---- a/sound/pci/ctxfi/ctamixer.h
-+++ b/sound/pci/ctxfi/ctamixer.h
-@@ -58,7 +58,7 @@ struct amixer {
- 	unsigned char idx[8];
- 	struct rsc *input;	/* pointer to a resource acting as source */
- 	struct sum *sum;	/* Put amixer output to this summation node */
--	struct amixer_rsc_ops *ops;	/* AMixer specific operations */
-+	const struct amixer_rsc_ops *ops;	/* AMixer specific operations */
- };
- 
- struct amixer_rsc_ops {
+ err_exit:
+-	if (result && q)
++	if (result)
+ 		acpi_ec_delete_query(q);
+ 	if (data)
+ 		*data = value;
+-- 
+2.6.2
 
