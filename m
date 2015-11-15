@@ -1,29 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 07 Nov 2015 18:18:43 +0000
-Subject: Re: [PATCH] fjes: Delete an unnecessary check before the function call "vfree"
-Message-Id: <20151107.131843.218377814617040539.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 15 Nov 2015 19:48:14 +0000
+Subject: [PATCH] clk: ti: dra7: constify clk_hw_omap_ops structure
+Message-Id: <1447616894-31717-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<563C673B.1020605@users.sourceforge.net>
-In-Reply-To: <563C673B.1020605@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: izumi.taku@jp.fujitsu.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: Tero Kristo <t-kristo@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 6 Nov 2015 09:39:23 +0100
+The clk_hw_omap_ops structures are never modified, so declare this one as
+const, like the others.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 6 Nov 2015 09:30:29 +0100
-> 
-> The vfree() function performs also input parameter validation.
-> Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Done with the help of Coccinelle.
 
-Applied.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/clk/ti/apll.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+index f3eab6e..b336a8c 100644
+--- a/drivers/clk/ti/apll.c
++++ b/drivers/clk/ti/apll.c
+@@ -323,7 +323,7 @@ static void omap2_apll_deny_idle(struct clk_hw_omap *clk)
+ 	omap2_apll_set_autoidle(clk, OMAP2_APLL_AUTOIDLE_DISABLE);
+ }
+ 
+-static struct clk_hw_omap_ops omap2_apll_hwops = {
++static const struct clk_hw_omap_ops omap2_apll_hwops = {
+ 	.allow_idle	= &omap2_apll_allow_idle,
+ 	.deny_idle	= &omap2_apll_deny_idle,
+ };
+
