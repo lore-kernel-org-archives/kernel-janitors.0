@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 06 Nov 2015 14:05:43 +0000
-Subject: [PATCH] HDMI-HDCP: Delete an unnecessary check before the function call "kfree"
-Message-Id: <563CB3B7.7010403@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 06:17:46 +0000
+Subject: Re: net-ipv6: Delete unnecessary checks before the function call "kfree_skb"
+Message-Id: <5648238A.20109@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,40 +19,22 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <564785ED.1040906@users.sourceforge.net>
+ <1447558345.22599.64.camel@edumazet-glaptop2.roam.corp.google.com>
+In-Reply-To: <1447558345.22599.64.camel@edumazet-glaptop2.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "David S. Miller" <davem@davemloft.net>, Hideaki Yoshfuji <yoshfuji@linux-ipv6.org>, James Morris <jmorris@namei.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 6 Nov 2015 15:00:22 +0100
+> While if the test is done in kfree_skb(), the branch predictor of the
+> cpu wont be able to predict things.
+> 
+> By feeding too many NULL pointers to kfree_skb(), we slow down it.
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Would it make sense to annotate checks before such function calls
+as "UNLIKELY"?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c b/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
-index 1dc9c34..205e931 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
-@@ -1430,7 +1430,7 @@ struct hdmi_hdcp_ctrl *hdmi_hdcp_init(struct hdmi *hdmi)
- 
- void hdmi_hdcp_destroy(struct hdmi *hdmi)
- {
--	if (hdmi && hdmi->hdcp_ctrl) {
-+	if (hdmi) {
- 		kfree(hdmi->hdcp_ctrl);
- 		hdmi->hdcp_ctrl = NULL;
- 	}
--- 
-2.6.2
-
+Regards,
+Markus
