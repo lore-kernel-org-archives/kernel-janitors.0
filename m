@@ -1,46 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 18:45:21 +0000
-Subject: [PATCH 0/4] crypto-ixp4xx: Deletion of a few unnecessary checks
-Message-Id: <5648D2C1.8050603@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 15 Nov 2015 20:08:23 +0000
+Subject: [PATCH] drivers/media/platform/s5p-tv: constify mxr_layer_ops structures
+Message-Id: <1447618103-20329-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 19:39:00 +0100
+The mxr_layer_ops structures are never modified, so declare them as const.
 
-Further update suggestions were taken into account after a patch
-was applied from static source code analysis.
+Done with the help of Coccinelle.
 
-Markus Elfring (4):
-  Delete unnecessary checks before the function call "dma_pool_destroy"
-  Two function calls less in init_ixp_crypto() after error detection
-  Reduce assignment for a variable in init_ixp_crypto()
-  Less function calls in init_ixp_crypto() after error detection
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- drivers/crypto/ixp4xx_crypto.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+---
+ drivers/media/platform/s5p-tv/mixer.h           |    2 +-
+ drivers/media/platform/s5p-tv/mixer_grp_layer.c |    2 +-
+ drivers/media/platform/s5p-tv/mixer_video.c     |    2 +-
+ drivers/media/platform/s5p-tv/mixer_vp_layer.c  |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
--- 
-2.6.2
+diff --git a/drivers/media/platform/s5p-tv/mixer.h b/drivers/media/platform/s5p-tv/mixer.h
+index 42cd270..4dd62a9 100644
+--- a/drivers/media/platform/s5p-tv/mixer.h
++++ b/drivers/media/platform/s5p-tv/mixer.h
+@@ -300,7 +300,7 @@ void mxr_release_video(struct mxr_device *mdev);
+ struct mxr_layer *mxr_graph_layer_create(struct mxr_device *mdev, int idx);
+ struct mxr_layer *mxr_vp_layer_create(struct mxr_device *mdev, int idx);
+ struct mxr_layer *mxr_base_layer_create(struct mxr_device *mdev,
+-	int idx, char *name, struct mxr_layer_ops *ops);
++	int idx, char *name, const struct mxr_layer_ops *ops);
+ 
+ void mxr_base_layer_release(struct mxr_layer *layer);
+ void mxr_layer_release(struct mxr_layer *layer);
+diff --git a/drivers/media/platform/s5p-tv/mixer_grp_layer.c b/drivers/media/platform/s5p-tv/mixer_grp_layer.c
+index db3163b..d4d2564 100644
+--- a/drivers/media/platform/s5p-tv/mixer_grp_layer.c
++++ b/drivers/media/platform/s5p-tv/mixer_grp_layer.c
+@@ -235,7 +235,7 @@ struct mxr_layer *mxr_graph_layer_create(struct mxr_device *mdev, int idx)
+ {
+ 	struct mxr_layer *layer;
+ 	int ret;
+-	struct mxr_layer_ops ops = {
++	const struct mxr_layer_ops ops = {
+ 		.release = mxr_graph_layer_release,
+ 		.buffer_set = mxr_graph_buffer_set,
+ 		.stream_set = mxr_graph_stream_set,
+diff --git a/drivers/media/platform/s5p-tv/mixer_video.c b/drivers/media/platform/s5p-tv/mixer_video.c
+index dc1c679..abcc36a 100644
+--- a/drivers/media/platform/s5p-tv/mixer_video.c
++++ b/drivers/media/platform/s5p-tv/mixer_video.c
+@@ -1070,7 +1070,7 @@ static void mxr_vfd_release(struct video_device *vdev)
+ }
+ 
+ struct mxr_layer *mxr_base_layer_create(struct mxr_device *mdev,
+-	int idx, char *name, struct mxr_layer_ops *ops)
++	int idx, char *name, const struct mxr_layer_ops *ops)
+ {
+ 	struct mxr_layer *layer;
+ 
+diff --git a/drivers/media/platform/s5p-tv/mixer_vp_layer.c b/drivers/media/platform/s5p-tv/mixer_vp_layer.c
+index dd002a4..6fa6f67 100644
+--- a/drivers/media/platform/s5p-tv/mixer_vp_layer.c
++++ b/drivers/media/platform/s5p-tv/mixer_vp_layer.c
+@@ -207,7 +207,7 @@ struct mxr_layer *mxr_vp_layer_create(struct mxr_device *mdev, int idx)
+ {
+ 	struct mxr_layer *layer;
+ 	int ret;
+-	struct mxr_layer_ops ops = {
++	const struct mxr_layer_ops ops = {
+ 		.release = mxr_vp_layer_release,
+ 		.buffer_set = mxr_vp_buffer_set,
+ 		.stream_set = mxr_vp_stream_set,
+
