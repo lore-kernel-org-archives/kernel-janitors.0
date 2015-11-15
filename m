@@ -1,44 +1,90 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 13 Nov 2015 18:41:34 +0000
-Subject: [PATCH] ds2782_battery: constify ds278x_battery_ops structure
-Message-Id: <1447440094-10105-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 18:54:10 +0000
+Subject: [PATCH 4/4] crypto-ixp4xx: Less function calls in init_ixp_crypto() after error detection
+Message-Id: <5648D4D2.4080008@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5648D2C1.8050603@users.sourceforge.net>
+In-Reply-To: <5648D2C1.8050603@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The ds278x_battery_ops structure is never modified, so declare it as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 19:23:55 +0100
 
-Done with the help of Coccinelle.
+The dma_pool_destroy() function was called in up to two cases by the
+init_ixp_crypto() function during error handling even if a call of
+the dma_pool_create() function failed.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This implementation detail could be improved by the adjustment
+of jump targets according to the Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/power/ds2782_battery.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/ixp4xx_crypto.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/power/ds2782_battery.c b/drivers/power/ds2782_battery.c
-index ed4d756..a1b7e05 100644
---- a/drivers/power/ds2782_battery.c
-+++ b/drivers/power/ds2782_battery.c
-@@ -59,7 +59,7 @@ struct ds278x_info {
- 	struct i2c_client	*client;
- 	struct power_supply	*battery;
- 	struct power_supply_desc	battery_desc;
--	struct ds278x_battery_ops  *ops;
-+	const struct ds278x_battery_ops *ops;
- 	struct delayed_work	bat_work;
- 	int			id;
- 	int                     rsns;
-@@ -361,7 +361,7 @@ enum ds278x_num_id {
- 	DS2786,
- };
- 
--static struct ds278x_battery_ops ds278x_ops[] = {
-+static const struct ds278x_battery_ops ds278x_ops[] = {
- 	[DS2782] = {
- 		.get_battery_current  = ds2782_get_current,
- 		.get_battery_voltage  = ds2782_get_voltage,
+diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
+index 97da36a..a2c3155 100644
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -483,23 +483,23 @@ static int init_ixp_crypto(struct device *dev)
+ 			sizeof(struct buffer_desc), 32, 0);
+ 	if (!buffer_pool) {
+ 		ret = -ENOMEM;
+-		goto err;
++		goto release_npe;
+ 	}
+ 	ctx_pool = dma_pool_create("context", dev,
+ 			NPE_CTX_LEN, 16, 0);
+ 	if (!ctx_pool) {
+ 		ret = -ENOMEM;
+-		goto err;
++		goto destroy_buffer_pool;
+ 	}
+ 	ret = qmgr_request_queue(SEND_QID, NPE_QLEN_TOTAL, 0, 0,
+ 				 "ixp_crypto:out", NULL);
+ 	if (ret)
+-		goto err;
++		goto destroy_ctx_pool;
+ 	ret = qmgr_request_queue(RECV_QID, NPE_QLEN, 0, 0,
+ 				 "ixp_crypto:in", NULL);
+ 	if (ret) {
+ 		qmgr_release_queue(SEND_QID);
+-		goto err;
++		goto destroy_ctx_pool;
+ 	}
+ 	qmgr_set_irq(RECV_QID, QUEUE_IRQ_SRC_NOT_EMPTY, irqhandler, NULL);
+ 	tasklet_init(&crypto_done_tasklet, crypto_done_action, 0);
+@@ -511,8 +511,9 @@ npe_error:
+ 	printk(KERN_ERR "%s not responding\n", npe_name(npe_c));
+ 	ret = -EIO;
+ 	goto release_npe;
+-err:
++destroy_ctx_pool:
+ 	dma_pool_destroy(ctx_pool);
++destroy_buffer_pool:
+ 	dma_pool_destroy(buffer_pool);
+ release_npe:
+ 	npe_release(npe_c);
+-- 
+2.6.2
 
