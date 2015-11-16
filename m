@@ -1,72 +1,63 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 19 Nov 2015 11:51:30 +0000
-Subject: Re: [PATCH] mmc: pwrseq: constify mmc_pwrseq_ops structures
-Message-Id: <CAPDyKFpav2M+XyPmhKdGX33OemxJo-w9AenEcWk1uw_L8-zu2Q@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 08:04:53 +0000
+Subject: [PATCH] x86: AMD-perf_event: Delete unnecessary checks before the function call "free_percpu"
+Message-Id: <56498E25.50301@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447520720-11564-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447520720-11564-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54708B5E.2080302@users.sourceforge.net>
+In-Reply-To: <54708B5E.2080302@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Paul Mackerras <paulus@samba.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 14 November 2015 at 18:05, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> The mmc_pwrseq_ops structures are never modified, so declare them as const.
->
-> Done with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 09:00:20 +0100
 
-Thanks, applied for next!
+The free_percpu() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the calls is not needed.
 
-Kind regards
-Uffe
+This issue was detected by using the Coccinelle software.
 
->
-> ---
->  drivers/mmc/core/pwrseq.h        |    2 +-
->  drivers/mmc/core/pwrseq_emmc.c   |    2 +-
->  drivers/mmc/core/pwrseq_simple.c |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/core/pwrseq.h b/drivers/mmc/core/pwrseq.h
-> index 096da48..133de04 100644
-> --- a/drivers/mmc/core/pwrseq.h
-> +++ b/drivers/mmc/core/pwrseq.h
-> @@ -16,7 +16,7 @@ struct mmc_pwrseq_ops {
->  };
->
->  struct mmc_pwrseq {
-> -       struct mmc_pwrseq_ops *ops;
-> +       const struct mmc_pwrseq_ops *ops;
->  };
->
->  #ifdef CONFIG_OF
-> diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
-> index ad4f94e..4a82bc7 100644
-> --- a/drivers/mmc/core/pwrseq_emmc.c
-> +++ b/drivers/mmc/core/pwrseq_emmc.c
-> @@ -51,7 +51,7 @@ static void mmc_pwrseq_emmc_free(struct mmc_host *host)
->         kfree(pwrseq);
->  }
->
-> -static struct mmc_pwrseq_ops mmc_pwrseq_emmc_ops = {
-> +static const struct mmc_pwrseq_ops mmc_pwrseq_emmc_ops = {
->         .post_power_on = mmc_pwrseq_emmc_reset,
->         .free = mmc_pwrseq_emmc_free,
->  };
-> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-> index d10538b..2b16263 100644
-> --- a/drivers/mmc/core/pwrseq_simple.c
-> +++ b/drivers/mmc/core/pwrseq_simple.c
-> @@ -87,7 +87,7 @@ static void mmc_pwrseq_simple_free(struct mmc_host *host)
->         kfree(pwrseq);
->  }
->
-> -static struct mmc_pwrseq_ops mmc_pwrseq_simple_ops = {
-> +static const struct mmc_pwrseq_ops mmc_pwrseq_simple_ops = {
->         .pre_power_on = mmc_pwrseq_simple_pre_power_on,
->         .post_power_on = mmc_pwrseq_simple_post_power_on,
->         .power_off = mmc_pwrseq_simple_power_off,
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/x86/kernel/cpu/perf_event_amd_uncore.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/perf_event_amd_uncore.c b/arch/x86/kernel/cpu/perf_event_amd_uncore.c
+index cc6cedb..240ecee 100644
+--- a/arch/x86/kernel/cpu/perf_event_amd_uncore.c
++++ b/arch/x86/kernel/cpu/perf_event_amd_uncore.c
+@@ -588,11 +588,9 @@ fail_online:
+ fail_l2:
+ 	if (cpu_has_perfctr_nb)
+ 		perf_pmu_unregister(&amd_nb_pmu);
+-	if (amd_uncore_l2)
+-		free_percpu(amd_uncore_l2);
++	free_percpu(amd_uncore_l2);
+ fail_nb:
+-	if (amd_uncore_nb)
+-		free_percpu(amd_uncore_nb);
++	free_percpu(amd_uncore_nb);
+ 
+ fail_nodev:
+ 	return ret;
+-- 
+2.6.2
+
