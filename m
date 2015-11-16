@@ -1,76 +1,94 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 15 Nov 2015 20:08:23 +0000
-Subject: [PATCH] drivers/media/platform/s5p-tv: constify mxr_layer_ops structures
-Message-Id: <1447618103-20329-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 16 Nov 2015 11:33:19 +0000
+Subject: [PATCH 6/7] phy: miphy365x: add missing of_node_put
+Message-Id: <1447673600-8881-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-The mxr_layer_ops structures are never modified, so declare them as const.
+for_each_child_of_node performs an of_node_get on each iteration,
+so a return from the middle of the loop requires an of_node_put.
 
-Done with the help of Coccinelle.
+A simplified version of the semantic patch that finds this problem is as
+follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
+*  return ...;
+)
+   ...
+ }
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/platform/s5p-tv/mixer.h           |    2 +-
- drivers/media/platform/s5p-tv/mixer_grp_layer.c |    2 +-
- drivers/media/platform/s5p-tv/mixer_video.c     |    2 +-
- drivers/media/platform/s5p-tv/mixer_vp_layer.c  |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/phy/phy-miphy365x.c |   16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-tv/mixer.h b/drivers/media/platform/s5p-tv/mixer.h
-index 42cd270..4dd62a9 100644
---- a/drivers/media/platform/s5p-tv/mixer.h
-+++ b/drivers/media/platform/s5p-tv/mixer.h
-@@ -300,7 +300,7 @@ void mxr_release_video(struct mxr_device *mdev);
- struct mxr_layer *mxr_graph_layer_create(struct mxr_device *mdev, int idx);
- struct mxr_layer *mxr_vp_layer_create(struct mxr_device *mdev, int idx);
- struct mxr_layer *mxr_base_layer_create(struct mxr_device *mdev,
--	int idx, char *name, struct mxr_layer_ops *ops);
-+	int idx, char *name, const struct mxr_layer_ops *ops);
+diff --git a/drivers/phy/phy-miphy365x.c b/drivers/phy/phy-miphy365x.c
+index 00a686a..e661f3b 100644
+--- a/drivers/phy/phy-miphy365x.c
++++ b/drivers/phy/phy-miphy365x.c
+@@ -566,22 +566,25 @@ static int miphy365x_probe(struct platform_device *pdev)
  
- void mxr_base_layer_release(struct mxr_layer *layer);
- void mxr_layer_release(struct mxr_layer *layer);
-diff --git a/drivers/media/platform/s5p-tv/mixer_grp_layer.c b/drivers/media/platform/s5p-tv/mixer_grp_layer.c
-index db3163b..d4d2564 100644
---- a/drivers/media/platform/s5p-tv/mixer_grp_layer.c
-+++ b/drivers/media/platform/s5p-tv/mixer_grp_layer.c
-@@ -235,7 +235,7 @@ struct mxr_layer *mxr_graph_layer_create(struct mxr_device *mdev, int idx)
- {
- 	struct mxr_layer *layer;
- 	int ret;
--	struct mxr_layer_ops ops = {
-+	const struct mxr_layer_ops ops = {
- 		.release = mxr_graph_layer_release,
- 		.buffer_set = mxr_graph_buffer_set,
- 		.stream_set = mxr_graph_stream_set,
-diff --git a/drivers/media/platform/s5p-tv/mixer_video.c b/drivers/media/platform/s5p-tv/mixer_video.c
-index dc1c679..abcc36a 100644
---- a/drivers/media/platform/s5p-tv/mixer_video.c
-+++ b/drivers/media/platform/s5p-tv/mixer_video.c
-@@ -1070,7 +1070,7 @@ static void mxr_vfd_release(struct video_device *vdev)
+ 		miphy_phy = devm_kzalloc(&pdev->dev, sizeof(*miphy_phy),
+ 					 GFP_KERNEL);
+-		if (!miphy_phy)
+-			return -ENOMEM;
++		if (!miphy_phy) {
++			ret = -ENOMEM;
++			goto put_child;
++		}
+ 
+ 		miphy_dev->phys[port] = miphy_phy;
+ 
+ 		phy = devm_phy_create(&pdev->dev, child, &miphy365x_ops);
+ 		if (IS_ERR(phy)) {
+ 			dev_err(&pdev->dev, "failed to create PHY\n");
+-			return PTR_ERR(phy);
++			ret = PTR_ERR(phy);
++			goto put_child;
+ 		}
+ 
+ 		miphy_dev->phys[port]->phy = phy;
+ 
+ 		ret = miphy365x_of_probe(child, miphy_phy);
+ 		if (ret)
+-			return ret;
++			goto put_child;
+ 
+ 		phy_set_drvdata(phy, miphy_dev->phys[port]);
+ 
+@@ -591,12 +594,15 @@ static int miphy365x_probe(struct platform_device *pdev)
+ 					&miphy_phy->ctrlreg);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "No sysconfig offset found\n");
+-			return ret;
++			goto put_child;
+ 		}
+ 	}
+ 
+ 	provider = devm_of_phy_provider_register(&pdev->dev, miphy365x_xlate);
+ 	return PTR_ERR_OR_ZERO(provider);
++put_child:
++	of_node_put(child);
++	return ret;
  }
  
- struct mxr_layer *mxr_base_layer_create(struct mxr_device *mdev,
--	int idx, char *name, struct mxr_layer_ops *ops)
-+	int idx, char *name, const struct mxr_layer_ops *ops)
- {
- 	struct mxr_layer *layer;
- 
-diff --git a/drivers/media/platform/s5p-tv/mixer_vp_layer.c b/drivers/media/platform/s5p-tv/mixer_vp_layer.c
-index dd002a4..6fa6f67 100644
---- a/drivers/media/platform/s5p-tv/mixer_vp_layer.c
-+++ b/drivers/media/platform/s5p-tv/mixer_vp_layer.c
-@@ -207,7 +207,7 @@ struct mxr_layer *mxr_vp_layer_create(struct mxr_device *mdev, int idx)
- {
- 	struct mxr_layer *layer;
- 	int ret;
--	struct mxr_layer_ops ops = {
-+	const struct mxr_layer_ops ops = {
- 		.release = mxr_vp_layer_release,
- 		.buffer_set = mxr_vp_buffer_set,
- 		.stream_set = mxr_vp_stream_set,
+ static const struct of_device_id miphy365x_of_match[] = {
 
