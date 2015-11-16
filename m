@@ -1,7 +1,7 @@
 From: Bob Peterson <rpeterso@redhat.com>
-Date: Fri, 13 Nov 2015 14:06:45 +0000
+Date: Mon, 16 Nov 2015 18:11:55 +0000
 Subject: Re: [PATCH] GFS2: Delete an unnecessary check before the function call "iput"
-Message-Id: <608064275.10477765.1447423605461.JavaMail.zimbra@redhat.com>
+Message-Id: <331389501.12200850.1447697515517.JavaMail.zimbra@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546B20F0.9040202@users.sourceforge.net> <546B27FF.6080702@redhat.com> <563A6A22.5000206@users.sourceforge.net>
 In-Reply-To: <563A6A22.5000206@users.sourceforge.net>
@@ -42,12 +42,11 @@ Cc: Steven Whitehouse <swhiteho@redhat.com>, cluster-devel@redhat.com, LKML <lin
 > --
 > 2.6.2
 > 
-> 
-Hi Markus,
+> --
+Hi,
 
-ACK,
-
-I'll save this patch and push it after the current merge window closed.
+Thanks. This is now applied to the for-next branch of the linux-gfs2 tree:
+https://git.kernel.org/cgit/linux/kernel/git/gfs2/linux-gfs2.git/commit/fs/gfs2?h=for-next&idode22426be6af261816db5941744b8d3c4c7f96
 
 Regards,
 
