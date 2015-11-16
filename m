@@ -1,40 +1,67 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Nov 2015 10:06:56 +0000
-Subject: [PATCH 4/9] bfa: constify pci_error_handlers structures
-Message-Id: <1447495621-9161-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 09:47:37 +0000
+Subject: [PATCH 2/2] mISDN: One function call less in mISDN_sock_sendmsg() after error detection
+Message-Id: <5649A639.2040503@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5649A524.6030407@users.sourceforge.net>
+In-Reply-To: <5649A524.6030407@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
-Cc: kernel-janitors@vger.kernel.org, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <JBottomley@odin.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This pci_error_handlers structure is never modified, like all the other
-pci_error_handlers structures, so declare it as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 10:30:29 +0100
 
-Done with the help of Coccinelle.
+The kfree_skb() function was called in one case by the
+mISDN_sock_sendmsg() function during error handling even if a call of
+the _l2_alloc_skb() function returned a null pointer.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This implementation detail could be improved by the introduction
+of another jump label.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-There are no dependencies between these patches.
+ drivers/isdn/mISDN/socket.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/scsi/bfa/bfad.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
-index cc3b9d3..8df346a 100644
---- a/drivers/scsi/bfa/bfad.c
-+++ b/drivers/scsi/bfa/bfad.c
-@@ -1687,7 +1687,7 @@ MODULE_DEVICE_TABLE(pci, bfad_id_table);
- /*
-  * PCI error recovery handlers.
-  */
--static struct pci_error_handlers bfad_err_handler = {
-+static const struct pci_error_handlers bfad_err_handler = {
- 	.error_detected = bfad_pci_error_detected,
- 	.slot_reset = bfad_pci_slot_reset,
- 	.mmio_enabled = bfad_pci_mmio_enabled,
-
+diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
+index edd16ef..430ac8c 100644
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -200,7 +200,7 @@ mISDN_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+ 
+ 	skb = _l2_alloc_skb(len, GFP_KERNEL);
+ 	if (!skb)
+-		goto done;
++		goto release_socket;
+ 
+ 	if (memcpy_from_msg(skb_put(skb, len), msg, len)) {
+ 		err = -EFAULT;
+@@ -237,6 +237,7 @@ mISDN_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+ 
+ done:
+ 	kfree_skb(skb);
++release_socket:
+ 	release_sock(sk);
+ 	return err;
+ }
+-- 
+2.6.2
