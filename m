@@ -1,42 +1,92 @@
-From: Jan Kara <jack@suse.cz>
-Date: Tue, 10 Nov 2015 09:19:23 +0000
-Subject: Re: [patch] ncpfs: don't allow negative timeouts
-Message-Id: <20151110091923.GE26699@quack.suse.cz>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 16 Nov 2015 11:33:17 +0000
+Subject: [PATCH 4/7] phy: rockchip-usb: add missing of_node_put
+Message-Id: <1447673600-8881-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151110090924.GB2934@mwanda>
-In-Reply-To: <20151110090924.GB2934@mwanda>
+References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Petr Vandrovec <petr@vandrovec.name>, Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue 10-11-15 12:09:24, Dan Carpenter wrote:
-> This code causes a static checker warning because it's a user controlled
-> variable where we cap the upper bound but not the lower bound.  If
-> someone passes us a negative timeout then I guess lets set it to the
-> default.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+for_each_available_child_of_node performs an of_node_get on each iteration,
+so a return from the middle of the loop requires an of_node_put.
 
-IMHO it would be better to return error from the ioctl. Currently it would
-just wrap when converting to u16 anyway...
+A simplified version of the semantic patch that finds this problem is as
+follows (http://coccinelle.lip6.fr):
 
-								Honza
-> 
-> diff --git a/fs/ncpfs/ioctl.c b/fs/ncpfs/ioctl.c
-> index 79b1130..c07498a 100644
-> --- a/fs/ncpfs/ioctl.c
-> +++ b/fs/ncpfs/ioctl.c
-> @@ -525,7 +525,7 @@ static long __ncp_ioctl(struct inode *inode, unsigned int cmd, unsigned long arg
->  			switch (rqdata.cmd) {
->  				case NCP_LOCK_EX:
->  				case NCP_LOCK_SH:
-> -						if (rqdata.timeout = 0)
-> +						if (rqdata.timeout <= 0)
->  							rqdata.timeout = NCP_LOCK_DEFAULT_TIMEOUT;
->  						else if (rqdata.timeout > NCP_LOCK_MAX_TIMEOUT)
->  							rqdata.timeout = NCP_LOCK_MAX_TIMEOUT;
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_available_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
+*  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/phy/phy-rockchip-usb.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/phy/phy-rockchip-usb.c b/drivers/phy/phy-rockchip-usb.c
+index 91d6f34..62c43c4 100644
+--- a/drivers/phy/phy-rockchip-usb.c
++++ b/drivers/phy/phy-rockchip-usb.c
+@@ -108,13 +108,16 @@ static int rockchip_usb_phy_probe(struct platform_device *pdev)
+ 
+ 	for_each_available_child_of_node(dev->of_node, child) {
+ 		rk_phy = devm_kzalloc(dev, sizeof(*rk_phy), GFP_KERNEL);
+-		if (!rk_phy)
+-			return -ENOMEM;
++		if (!rk_phy) {
++			err = -ENOMEM;
++			goto put_child;
++		}
+ 
+ 		if (of_property_read_u32(child, "reg", &reg_offset)) {
+ 			dev_err(dev, "missing reg property in node %s\n",
+ 				child->name);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto put_child;
+ 		}
+ 
+ 		rk_phy->reg_offset = reg_offset;
+@@ -127,18 +130,22 @@ static int rockchip_usb_phy_probe(struct platform_device *pdev)
+ 		rk_phy->phy = devm_phy_create(dev, child, &ops);
+ 		if (IS_ERR(rk_phy->phy)) {
+ 			dev_err(dev, "failed to create PHY\n");
+-			return PTR_ERR(rk_phy->phy);
++			err = PTR_ERR(rk_phy->phy);
++			goto put_child;
+ 		}
+ 		phy_set_drvdata(rk_phy->phy, rk_phy);
+ 
+ 		/* only power up usb phy when it use, so disable it when init*/
+ 		err = rockchip_usb_phy_power(rk_phy, 1);
+ 		if (err)
+-			return err;
++			goto put_child;
+ 	}
+ 
+ 	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+ 	return PTR_ERR_OR_ZERO(phy_provider);
++put_child:
++	of_node_put(child);
++	return err;
+ }
+ 
+ static const struct of_device_id rockchip_usb_phy_dt_ids[] = {
+
