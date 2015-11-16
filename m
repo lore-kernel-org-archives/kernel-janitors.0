@@ -1,63 +1,59 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 20 Nov 2015 20:33:23 +0000
-Subject: [PATCH 5/6] powerpc/btext: add missing of_node_put
-Message-Id: <1448051604-25256-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 14:45:57 +0000
+Subject: [PATCH] GPU-DRM-TTM: Delete an unnecessary check before the function call "ttm_tt_destroy"
+Message-Id: <5649EC25.3040004@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-for_each_node_by_type performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 15:40:58 +0100
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
+The ttm_tt_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-// <smpl>
-@@
-local idexpression n;
-expression e;
-@@
+This issue was detected by using the Coccinelle software.
 
- for_each_node_by_type(n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kernel/btext.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/ttm/ttm_bo.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/btext.c b/arch/powerpc/kernel/btext.c
-index 41c011c..8d05ef2 100644
---- a/arch/powerpc/kernel/btext.c
-+++ b/arch/powerpc/kernel/btext.c
-@@ -257,8 +257,10 @@ int __init btext_find_display(int allow_nonstdout)
- 			rc = btext_initialize(np);
- 			printk("result: %d\n", rc);
- 		}
--		if (rc = 0)
-+		if (rc = 0) {
-+			of_node_put(np);
- 			break;
-+		}
- 	}
- 	return rc;
- }
+diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+index 745e996..d6736e6 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -147,8 +147,7 @@ static void ttm_bo_release_list(struct kref *list_kref)
+ 	BUG_ON(!list_empty(&bo->lru));
+ 	BUG_ON(!list_empty(&bo->ddestroy));
+ 
+-	if (bo->ttm)
+-		ttm_tt_destroy(bo->ttm);
++	ttm_tt_destroy(bo->ttm);
+ 	atomic_dec(&bo->glob->bo_count);
+ 	if (bo->resv = &bo->ttm_resv)
+ 		reservation_object_fini(&bo->ttm_resv);
+-- 
+2.6.2
 
