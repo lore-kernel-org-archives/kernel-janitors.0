@@ -1,7 +1,7 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Fri, 06 Nov 2015 13:17:05 +0000
-Subject: Re: GPU-DRM-i915: Delete an unnecessary check before the function call "pwm_put"
-Message-Id: <87egg3l12m.fsf@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 21:23:01 +0000
+Subject: [PATCH 1/3] ste_dma40: Delete an unnecessary check before the function call "kmem_cache_destroy"
+Message-Id: <564A4935.6010307@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,42 +19,39 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563CA07D.30805@users.sourceforge.net>
- <87h9kzl27o.fsf@intel.com> <563CA349.7030004@users.sourceforge.net>
-In-Reply-To: <563CA349.7030004@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <564A4899.8040109@users.sourceforge.net>
+In-Reply-To: <564A4899.8040109@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 06 Nov 2015, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
->>> The pwm_put() function tests whether its argument is NULL and then
->>> returns immediately. Thus the test around the call is not needed.
->> 
->> The compiler doesn't need it, but IMO it's useful documentation for humans.
->
-> How do you think about to extend the explicit documentation for
-> the affected parameters in the Linux programming interfaces?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 20:26:27 +0100
 
-The question is, while reading intel_panel.c, which one conveys the
-reader better the idea that panel->backlight.pwm may be NULL for some
-connectors:
+The kmem_cache_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-a)	if (panel->backlight.pwm)
-		pwm_put(panel->backlight.pwm);
-	
-b)	pwm_put(panel->backlight.pwm);
+This issue was detected by using the Coccinelle software.
 
-No amount of documentation in pwm_put() kernel-doc is going to help with
-that. In most cases, panel->backlight.pwm is in fact NULL. IMO
-unconditionally calling pwm_put() on it gives the reader the wrong idea.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/ste_dma40.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Others may disagree.
-
-BR,
-Jani.
-
-
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index dd3e7ba..9132ae0 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3694,8 +3694,7 @@ static int __init d40_probe(struct platform_device *pdev)
+ 
+ failure:
+ 	if (base) {
+-		if (base->desc_slab)
+-			kmem_cache_destroy(base->desc_slab);
++		kmem_cache_destroy(base->desc_slab);
+ 		if (base->virtbase)
+ 			iounmap(base->virtbase);
+ 
 -- 
-Jani Nikula, Intel Open Source Technology Center
+2.6.2
