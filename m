@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 08:45:51 +0000
-Subject: [PATCH 2/2] batman-adv: Less checks in batadv_tvlv_unicast_send()
-Message-Id: <5648463F.3070403@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 09:43:00 +0000
+Subject: [PATCH 0/2] mISDN: Deletion of an unnecessary check
+Message-Id: <5649A524.6030407@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,70 +19,26 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <56484502.8000206@users.sourceforge.net>
-In-Reply-To: <56484502.8000206@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 09:00:42 +0100
+Date: Mon, 16 Nov 2015 10:40:11 +0100
 
-* Let us return directly if a call of the batadv_orig_hash_find() function
-  returned a null pointer.
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-* Omit the initialisation for the variable "skb" at the beginning.
+Markus Elfring (2):
+  Delete an unnecessary check before the function call "kfree_skb"
+  One function call less in mISDN_sock_sendmsg() after error detection
 
-* Replace an assignment by a call of the kfree_skb() function
-  and delete the affected variable "ret" then.
+ drivers/isdn/mISDN/socket.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/batman-adv/main.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/net/batman-adv/main.c b/net/batman-adv/main.c
-index 9e9b8f6..4eaa09a 100644
---- a/net/batman-adv/main.c
-+++ b/net/batman-adv/main.c
-@@ -1143,15 +1143,14 @@ void batadv_tvlv_unicast_send(struct batadv_priv *bat_priv, u8 *src,
- 	struct batadv_unicast_tvlv_packet *unicast_tvlv_packet;
- 	struct batadv_tvlv_hdr *tvlv_hdr;
- 	struct batadv_orig_node *orig_node;
--	struct sk_buff *skb = NULL;
-+	struct sk_buff *skb;
- 	unsigned char *tvlv_buff;
- 	unsigned int tvlv_len;
- 	ssize_t hdr_len = sizeof(*unicast_tvlv_packet);
--	bool ret = false;
- 
- 	orig_node = batadv_orig_hash_find(bat_priv, dst);
- 	if (!orig_node)
--		goto out;
-+		return;
- 
- 	tvlv_len = sizeof(*tvlv_hdr) + tvlv_value_len;
- 
-@@ -1180,14 +1179,10 @@ void batadv_tvlv_unicast_send(struct batadv_priv *bat_priv, u8 *src,
- 	tvlv_buff += sizeof(*tvlv_hdr);
- 	memcpy(tvlv_buff, tvlv_value, tvlv_value_len);
- 
--	if (batadv_send_skb_to_orig(skb, orig_node, NULL) != NET_XMIT_DROP)
--		ret = true;
--
--out:
--	if (!ret)
-+	if (batadv_send_skb_to_orig(skb, orig_node, NULL) = NET_XMIT_DROP)
- 		kfree_skb(skb);
--	if (orig_node)
--		batadv_orig_node_free_ref(orig_node);
-+out:
-+	batadv_orig_node_free_ref(orig_node);
- }
- 
- /**
 -- 
 2.6.2
-
