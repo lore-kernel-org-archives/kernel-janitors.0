@@ -1,40 +1,25 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Nov 2015 10:06:53 +0000
-Subject: [PATCH 1/9] net: cavium: liquidio: constify pci_error_handlers structures
-Message-Id: <1447495621-9161-2-git-send-email-Julia.Lawall@lip6.fr>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 16 Nov 2015 20:07:45 +0000
+Subject: Re: [PATCH 1/9] net: cavium: liquidio: constify pci_error_handlers structures
+Message-Id: <20151116.150745.188460724093737913.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1447495621-9161-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447495621-9161-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Derek Chickles <derek.chickles@caviumnetworks.com>
-Cc: kernel-janitors@vger.kernel.org, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia.Lawall@lip6.fr
+Cc: derek.chickles@caviumnetworks.com, kernel-janitors@vger.kernel.org, satananda.burla@caviumnetworks.com, felix.manlunas@caviumnetworks.com, raghu.vatsavayi@caviumnetworks.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This pci_error_handlers structure is never modified, like all the other
-pci_error_handlers structures, so declare it as const.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Nov 2015 11:06:53 +0100
 
-Done with the help of Coccinelle.
+> This pci_error_handlers structure is never modified, like all the other
+> pci_error_handlers structures, so declare it as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-There are no dependencies between these patches.
-
- drivers/net/ethernet/cavium/liquidio/lio_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-index f683d97..b895044 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -560,7 +560,7 @@ static int liquidio_resume(struct pci_dev *pdev)
- #endif
- 
- /* For PCI-E Advanced Error Recovery (AER) Interface */
--static struct pci_error_handlers liquidio_err_handler = {
-+static const struct pci_error_handlers liquidio_err_handler = {
- 	.error_detected = liquidio_pcie_error_detected,
- 	.mmio_enabled	= liquidio_pcie_mmio_enabled,
- 	.slot_reset	= liquidio_pcie_slot_reset,
-
+Applied.
