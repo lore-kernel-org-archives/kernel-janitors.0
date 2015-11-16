@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 03 Nov 2015 20:45:43 +0000
-Subject: [PATCH 0/3] batman-adv: Deletion of a few unnecessary checks
-Message-Id: <56391CF7.9080400@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 11:52:28 +0000
+Subject: [PATCH] cxgb3: Delete unnecessary checks before the function call "kfree_skb"
+Message-Id: <5649C37C.9000603@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,23 +24,51 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: netdev@vger.kernel.org, Santosh Raspatur <santosh@chelsio.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 3 Nov 2015 21:34:29 +0100
+Date: Mon, 16 Nov 2015 12:46:41 +0100
 
-Further update suggestions were taken into account after a patch
-was applied from static source code analysis.
+The kfree_skb() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the calls is not needed.
 
-Markus Elfring (3):
-  Delete an unnecessary check before the function call "batadv_softif_vlan_free_ref"
-  Split a condition check
-  Less function calls in batadv_is_ap_isolated() after error detection
+This issue was detected by using the Coccinelle software.
 
- net/batman-adv/translation-table.c | 29 ++++++++++++++---------------
- 1 file changed, 14 insertions(+), 15 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c    | 3 +--
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+index 8f7aa53a..89f193b 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -3401,8 +3401,7 @@ static void remove_one(struct pci_dev *pdev)
+ 				free_netdev(adapter->port[i]);
+ 
+ 		iounmap(adapter->regs);
+-		if (adapter->nofail_skb)
+-			kfree_skb(adapter->nofail_skb);
++		kfree_skb(adapter->nofail_skb);
+ 		kfree(adapter);
+ 		pci_release_regions(pdev);
+ 		pci_disable_device(pdev);
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c
+index 76684dc..9a77339 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c
+@@ -1323,8 +1323,7 @@ void cxgb3_offload_deactivate(struct adapter *adapter)
+ 	rcu_read_unlock();
+ 	RCU_INIT_POINTER(tdev->l2opt, NULL);
+ 	call_rcu(&d->rcu_head, clean_l2_data);
+-	if (t->nofail_skb)
+-		kfree_skb(t->nofail_skb);
++	kfree_skb(t->nofail_skb);
+ 	kfree(t);
+ }
+ 
 -- 
 2.6.2
 
