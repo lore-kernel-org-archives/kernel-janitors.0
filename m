@@ -1,53 +1,59 @@
-From: Chuck Lever <chuck.lever@oracle.com>
-Date: Thu, 05 Nov 2015 14:06:36 +0000
-Subject: Re: [patch 1/2] xprtrdma: clean up some curly braces
-Message-Id: <F97535F6-6BC8-430E-B346-9BAA41693DE8@oracle.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 12:57:18 +0000
+Subject: [PATCH] ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
+Message-Id: <5649D2AE.60100@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151105083708.GA19405@mwanda>
-In-Reply-To: <20151105083708.GA19405@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Trond Myklebust <trond.myklebust@primarydata.com>, Jeff Layton <jlayton@poochiereds.net>, Anna Schumaker <anna.schumaker@netapp.com>, Sagi Grimberg <sagig@mellanox.com>, Steve Wise <swise@opengridcomputing.com>, Doug Ledford <dledford@redhat.com>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@osg.samsung.com>, linux-wpan@vger.kernel.org, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 13:50:23 +0100
 
-> On Nov 5, 2015, at 3:37 AM, Dan Carpenter <dan.carpenter@oracle.com> wrot=
-e:
->=20
-> It doesn't matter either way, but the curly braces were clearly intended
-> here.  It causes a Smatch warning.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The kfree_skb() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ieee802154/atusb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
-> index eadd1655..2cc1014 100644
-> --- a/net/sunrpc/xprtrdma/verbs.c
-> +++ b/net/sunrpc/xprtrdma/verbs.c
-> @@ -852,10 +852,11 @@ retry:
->=20
-> 		if (extras) {
-> 			rc =3D rpcrdma_ep_post_extra_recv(r_xprt, extras);
-> -			if (rc)
-> +			if (rc) {
-> 				pr_warn("%s: rpcrdma_ep_post_extra_recv: %i\n",
-> 					__func__, rc);
-> 				rc =3D 0;
-> +			}
-> 		}
-> 	}
->=20
+diff --git a/drivers/net/ieee802154/atusb.c b/drivers/net/ieee802154/atusb.c
+index 199a94a..b1cd865 100644
+--- a/drivers/net/ieee802154/atusb.c
++++ b/drivers/net/ieee802154/atusb.c
+@@ -310,8 +310,7 @@ static void atusb_free_urbs(struct atusb *atusb)
+ 		urb = usb_get_from_anchor(&atusb->idle_urbs);
+ 		if (!urb)
+ 			break;
+-		if (urb->context)
+-			kfree_skb(urb->context);
++		kfree_skb(urb->context);
+ 		usb_free_urb(urb);
+ 	}
+ }
+-- 
+2.6.2
 
-=E2=80=94
-Chuck Lever
-
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
