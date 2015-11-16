@@ -1,7 +1,7 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 17 Nov 2015 10:50:47 +0000
-Subject: Re: [PATCH] pinctrl: Delete unnecessary checks before the function call "pinctrl_unregister"
-Message-Id: <CACRpkdYDwOLsG3NVN36OJo0V+XgU4Z4r6KGy7RpYrmmdJVTyng@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 07:28:55 +0000
+Subject: [PATCH] sh-DWARF: Delete unnecessary checks before the function call "mempool_destroy"
+Message-Id: <564985B7.3080806@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,27 +20,43 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <563B810B.6050401@users.sourceforge.net>
-In-Reply-To: <563B810B.6050401@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Nov 5, 2015 at 5:17 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 08:20:36 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 5 Nov 2015 17:10:22 +0100
->
-> The pinctrl_unregister() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The mempool_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the calls is not needed.
 
-Patch applied with Ray's Review tag.
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/sh/kernel/dwarf.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/sh/kernel/dwarf.c b/arch/sh/kernel/dwarf.c
+index 9d209a0..e1d751a 100644
+--- a/arch/sh/kernel/dwarf.c
++++ b/arch/sh/kernel/dwarf.c
+@@ -1009,10 +1009,8 @@ static void __init dwarf_unwinder_cleanup(void)
+ 	rbtree_postorder_for_each_entry_safe(cie, next_cie, &cie_root, node)
+ 		kfree(cie);
+ 
+-	if (dwarf_reg_pool)
+-		mempool_destroy(dwarf_reg_pool);
+-	if (dwarf_frame_pool)
+-		mempool_destroy(dwarf_frame_pool);
++	mempool_destroy(dwarf_reg_pool);
++	mempool_destroy(dwarf_frame_pool);
+ 	kmem_cache_destroy(dwarf_reg_cachep);
+ 	kmem_cache_destroy(dwarf_frame_cachep);
+ }
+-- 
+2.6.2
+
