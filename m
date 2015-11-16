@@ -1,36 +1,132 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 30 Nov 2015 12:58:07 +0000
-Subject: Re: rt2x00: type bug in _rt2500usb_register_read()
-Message-Id: <20151130125807.4FB601409D1@smtp.codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 16 Nov 2015 11:33:13 +0000
+Subject: [PATCH 0/7] add missing of_node_put
+Message-Id: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20151126115523.GD10556@mwanda>
-References: <20151126115523.GD10556@mwanda>
-In-Reply-To: <20151126115523.GD10556@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Helmut Schaa <helmut.schaa@googlemail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+The various for_each device_node iterators performs an of_node_get on each
+iteration, so a break out of the loop requires an of_node_put.
 
-> This code causes a static checker bug.
-> 
-> drivers/net/wireless/ralink/rt2x00/rt2500usb.c:232 _rt2500usb_register_read()
-> warn: passing casted pointer 'value' to 'rt2500usb_register_read()' 32 vs 16.
-> 
-> If the low 16 bits were initialized to zero then this code would only be
-> a problem on big endian systems.  But in this case this is case the low
-> 16 bits are never initialized.  This is called from a function which is
-> created using a macro:
-> 
-> RT2X00DEBUGFS_OPS(csr, "0x%.8x\n", u32);
-> 
-> We end up copying uninitialized data to the user which is bogus and an
-> information leak.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+The complete semantic patch that finds this problem is
+(http://coccinelle.lip6.fr):
 
-Thanks, applied to wireless-drivers-next.git.
+// <smpl>
+@r@
+local idexpression n;
+expression e1,e2;
+iterator name for_each_node_by_name, for_each_node_by_type,
+for_each_compatible_node, for_each_matching_node,
+for_each_matching_node_and_match, for_each_child_of_node,
+for_each_available_child_of_node, for_each_node_with_property;
+iterator i;
+statement S;
+expression list [n1] es;
+@@
 
-Kalle Valo
+(
+(
+for_each_node_by_name(n,e1) S
+|
+for_each_node_by_type(n,e1) S
+|
+for_each_compatible_node(n,e1,e2) S
+|
+for_each_matching_node(n,e1) S
+|
+for_each_matching_node_and_match(n,e1,e2) S
+|
+for_each_child_of_node(e1,n) S
+|
+for_each_available_child_of_node(e1,n) S
+|
+for_each_node_with_property(n,e1) S
+)
+&
+i(es,n,...) S
+)
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+identifier l;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+...
+l: ... when != n
+// </smpl>
+
+This semantic patch puts an of_node_put before a return, but in each of
+these patches, we have grouped the multiple resulting of_node_puts into a
+single call at an error exit label.
+
+---
+
+ drivers/phy/phy-bcm-cygnus-pcie.c |   16 ++++++++++++----
+ drivers/phy/phy-berlin-sata.c     |   20 ++++++++++++++------
+ drivers/phy/phy-brcmstb-sata.c    |   17 ++++++++++++-----
+ drivers/phy/phy-miphy28lp.c       |   16 +++++++++++-----
+ drivers/phy/phy-miphy365x.c       |   16 +++++++++++-----
+ drivers/phy/phy-mt65xx-usb3.c     |   20 +++++++++++++-------
+ drivers/phy/phy-rockchip-usb.c    |   17 ++++++++++++-----
+ 7 files changed, 85 insertions(+), 37 deletions(-)
