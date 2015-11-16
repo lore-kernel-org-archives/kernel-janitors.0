@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Nov 2015 21:50:31 +0000
-Subject: [PATCH] NFC-nci: Delete unnecessary checks before the function call "kfree_skb"
-Message-Id: <5647ACA7.3000905@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 12:18:38 +0000
+Subject: [PATCH] rtlwifi: Delete unnecessary checks before the function call "kfree_skb"
+Message-Id: <5649C99E.2070602@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,11 +24,11 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, "David S. Miller" <davem@davemloft.net>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Vincent Cuissard <cuissard@marvell.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Nov 2015 22:42:48 +0100
+Date: Mon, 16 Nov 2015 13:12:25 +0100
 
 The kfree_skb() function tests whether its argument is NULL and then
 returns immediately. Thus the test around the calls is not needed.
@@ -37,27 +37,39 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- net/nfc/nci/uart.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/core.c                 | 3 +--
+ drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c | 4 +---
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/net/nfc/nci/uart.c b/net/nfc/nci/uart.c
-index 21d8875..106ecc1 100644
---- a/net/nfc/nci/uart.c
-+++ b/net/nfc/nci/uart.c
-@@ -199,11 +199,8 @@ static void nci_uart_tty_close(struct tty_struct *tty)
- 	if (!nu)
- 		return;
+diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
+index c925a4d..4ae421e 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/core.c
++++ b/drivers/net/wireless/realtek/rtlwifi/core.c
+@@ -1833,8 +1833,7 @@ bool rtl_cmd_send_packet(struct ieee80211_hw *hw, struct sk_buff *skb)
  
--	if (nu->tx_skb)
--		kfree_skb(nu->tx_skb);
--	if (nu->rx_skb)
--		kfree_skb(nu->rx_skb);
+ 	spin_lock_irqsave(&rtlpriv->locks.irq_th_lock, flags);
+ 	pskb = __skb_dequeue(&ring->queue);
+-	if (pskb)
+-		kfree_skb(pskb);
++	kfree_skb(pskb);
+ 
+ 	/*this is wrong, fill_tx_cmddesc needs update*/
+ 	pdesc = &ring->desc[0];
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c
+index a2f5e89..6e51862 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c
+@@ -318,9 +318,7 @@ bool rtl8723_cmd_send_packet(struct ieee80211_hw *hw,
+ 	ring = &rtlpci->tx_ring[BEACON_QUEUE];
+ 
+ 	pskb = __skb_dequeue(&ring->queue);
+-	if (pskb)
+-		kfree_skb(pskb);
 -
-+	kfree_skb(nu->tx_skb);
-+	kfree_skb(nu->rx_skb);
- 	skb_queue_purge(&nu->tx_q);
++	kfree_skb(pskb);
+ 	spin_lock_irqsave(&rtlpriv->locks.irq_th_lock, flags);
  
- 	nu->ops.close(nu);
+ 	pdesc = &ring->desc[0];
 -- 
 2.6.2
 
