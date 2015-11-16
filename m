@@ -1,36 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 15 Nov 2015 20:44:01 +0000
-Subject: [PATCH] drm/vmwgfx: constify fence_ops structure
-Message-Id: <1447620241-12984-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 21:20:25 +0000
+Subject: [PATCH 0/3] ste_dma40: Deletion of a few unnecessary checks
+Message-Id: <564A4899.8040109@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The fence_ops structures are never modified, so declare this one as const,
-as is already done for the others.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 22:12:23 +0100
 
-Done with the help of Coccinelle.
+Further update suggestions were taken into account after a patch
+was applied from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (3):
+  Delete an unnecessary check before the function call "kmem_cache_destroy"
+  Delete another unnecessary check in d40_probe()
+  Delete an unnecessary variable initialisation in d40_probe()
 
----
- drivers/gpu/drm/vmwgfx/vmwgfx_fence.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/ste_dma40.c | 87 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 42 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-index 8e689b4..4d09da1 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-@@ -226,7 +226,7 @@ out:
- 	return ret;
- }
- 
--static struct fence_ops vmw_fence_ops = {
-+static const struct fence_ops vmw_fence_ops = {
- 	.get_driver_name = vmw_fence_get_driver_name,
- 	.get_timeline_name = vmw_fence_get_timeline_name,
- 	.enable_signaling = vmw_fence_enable_signaling,
+-- 
+2.6.2
 
