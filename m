@@ -1,39 +1,55 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Thu, 19 Nov 2015 19:26:32 +0000
-Subject: Re: [PATCH 1/4] mtd: brcmnand: improve memory management
-Message-Id: <20151119192632.GH64635@google.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 21:26:32 +0000
+Subject: [PATCH 3/3] ste_dma40: Delete an unnecessary variable initialisation in d40_probe()
+Message-Id: <564A4A08.5000705@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447884254-26336-2-git-send-email-Julia.Lawall@lip6.fr>
- <20151118224440.GC64635@google.com>
- <alpine.DEB.2.02.1511190713140.2008@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1511190713140.2008@localhost6.localdomain6>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <564A4899.8040109@users.sourceforge.net>
+In-Reply-To: <564A4899.8040109@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>, Kamal Dasu <kdasu.kdev@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Nov 19, 2015 at 07:13:45AM +0100, Julia Lawall wrote:
-> On Wed, 18 Nov 2015, Brian Norris wrote:
-> > On Wed, Nov 18, 2015 at 11:04:11PM +0100, Julia Lawall wrote:
-> > > 3. If the continue is not taken, then host is added to a list, that has a
-> > > lifetime beyond the end of the for_each_available_child_of_node loop body.
-> > > Thus, of_node_get is needed on child, which is referenced by host.  A
-> > > corresponding of_node_put is needed in the remove function.
-> > 
-> > This one's a bit silly. We really shouldn't be keeping the reference in
-> > 'host' at all. Also, as of commit 215a02fd3087 ("mtd: grab a reference to
-> > the MTD of_node before registering it"), the MTD core will actually be
-> > refcounting the node for us, too, so this isn't really necessary.
-> > 
-> > I have a patch to remove brcmnand_host::of_node (appended below), which
-> > should make this step obsolete, and be more obvious that no extra
-> > of_node_get()'ing is required.
-> 
-> OK.  Should I resend my patch without this change?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 22:00:28 +0100
 
-Sure, that'd be good. Then I could merge/rebase mine on top.
+The variable "res" will eventually be set to a resource pointer from
+a call of the d40_hw_detect_init(() function.
+Thus let us omit the explicit initialisation at the beginning.
 
-Thanks,
-Brian
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/ste_dma40.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 8ebfde1..6fb8307 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3544,7 +3544,7 @@ static int __init d40_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	int ret = -ENOENT;
+ 	struct d40_base *base;
+-	struct resource *res = NULL;
++	struct resource *res;
+ 	int num_reserved_chans;
+ 	u32 val;
+ 
+-- 
+2.6.2
