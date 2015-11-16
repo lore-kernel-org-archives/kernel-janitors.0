@@ -1,45 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Nov 2015 14:24:14 +0000
-Subject: re: qed: Add link support
-Message-Id: <20151103142414.GA28591@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 09:45:51 +0000
+Subject: [PATCH 1/2] mISDN: Delete an unnecessary check before the function call "kfree_skb"
+Message-Id: <5649A5CF.3090403@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5649A524.6030407@users.sourceforge.net>
+In-Reply-To: <5649A524.6030407@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Yuval Mintz,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 10:10:53 +0100
 
-The patch cc875c2e4f34: "qed: Add link support" from Oct 26, 2015,
-leads to the following static checker warning:
+The kfree_skb() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-	drivers/net/ethernet/qlogic/qed/qed_main.c:940 qed_set_link()
-	warn: bitwise AND condition is false here
+This issue was detected by using the Coccinelle software.
 
-drivers/net/ethernet/qlogic/qed/qed_main.c
-   925          link_params = qed_mcp_get_link_params(hwfn);
-   926          if (params->override_flags & QED_LINK_OVERRIDE_SPEED_AUTONEG)
-   927                  link_params->speed.autoneg = params->autoneg;
-   928          if (params->override_flags & QED_LINK_OVERRIDE_SPEED_ADV_SPEEDS) {
-   929                  link_params->speed.advertised_speeds = 0;
-   930                  if ((params->adv_speeds & SUPPORTED_1000baseT_Half) ||
-   931                      (params->adv_speeds & SUPPORTED_1000baseT_Full))
-   932                          link_params->speed.advertised_speeds |   933                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_1G;
-   934                  if (params->adv_speeds & SUPPORTED_10000baseKR_Full)
-   935                          link_params->speed.advertised_speeds |   936                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_10G;
-   937                  if (params->adv_speeds & SUPPORTED_40000baseLR4_Full)
-   938                          link_params->speed.advertised_speeds |   939                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_40G;
-   940                  if (params->adv_speeds & 0)
-                            ^^^^^^^^^^^^^^^^^^^^^^
-False.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/isdn/mISDN/socket.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-   941                          link_params->speed.advertised_speeds |   942                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_50G;
-   943                  if (params->adv_speeds & 0)
-                            ^^^^^^^^^^^^^^^^^^^^^^
-False.
+diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
+index 0d29b5a..edd16ef 100644
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -236,8 +236,7 @@ mISDN_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+ 	}
+ 
+ done:
+-	if (skb)
+-		kfree_skb(skb);
++	kfree_skb(skb);
+ 	release_sock(sk);
+ 	return err;
+ }
+-- 
+2.6.2
 
-   944                          link_params->speed.advertised_speeds |   945                                  NVM_CFG1_PORT_DRV_SPEED_CAPABILITY_MASK_100G;
-   946          }
-
-regards,
-dan carpenter
