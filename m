@@ -1,35 +1,99 @@
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-Date: Wed, 04 Nov 2015 01:43:03 +0000
-Subject: Re: [lustre-devel] [patch] staging: lustre: remove unused variable
-Message-Id: <D25E8C0E.1180A2%andreas.dilger@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 16 Nov 2015 11:33:16 +0000
+Subject: [PATCH 3/7] phy: berlin-sata: add missing of_node_put
+Message-Id: <1447673600-8881-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151103221616.GD19280@mwanda>
-In-Reply-To: <20151103221616.GD19280@mwanda>
+References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-On 2015/11/03, 15:38, "Simmons, James A." <simmonsja@ornl.gov> wrote:
+for_each_available_child_of_node performs an of_node_get on each iteration,
+so a return from the middle of the loop requires an of_node_put.
 
->>The "->lr_lvb_data" struct member is never used.  Delete it.
->>
->>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>---
->>I have compile tested this.  I looked through the history and it seems
->>to never have been used.  I wonder if we can remove the locking as well.
->
->This is used by the quota and ofd layer which are both server side.
+A simplified version of the semantic patch that finds this problem is as
+follows (http://coccinelle.lip6.fr):
 
-When the server code is merged upstream this can be added to a union that
-contains only server-side data that overlaps with a union containing only
-client-side data.  For now it is fine to remove from the kernel.
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
 
-Cheers, Andreas
--- 
-Andreas Dilger
+ for_each_available_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
+*  return ...;
+)
+   ...
+ }
+// </smpl>
 
-Lustre Software Architect
-Intel High Performance Data Division
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/phy/phy-berlin-sata.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/phy/phy-berlin-sata.c b/drivers/phy/phy-berlin-sata.c
+index 77a2e05..f84a33a 100644
+--- a/drivers/phy/phy-berlin-sata.c
++++ b/drivers/phy/phy-berlin-sata.c
+@@ -195,7 +195,7 @@ static int phy_berlin_sata_probe(struct platform_device *pdev)
+ 	struct phy_provider *phy_provider;
+ 	struct phy_berlin_priv *priv;
+ 	struct resource *res;
+-	int i = 0;
++	int ret, i = 0;
+ 	u32 phy_id;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+@@ -237,22 +237,27 @@ static int phy_berlin_sata_probe(struct platform_device *pdev)
+ 		if (of_property_read_u32(child, "reg", &phy_id)) {
+ 			dev_err(dev, "missing reg property in node %s\n",
+ 				child->name);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto put_child;
+ 		}
+ 
+ 		if (phy_id >= ARRAY_SIZE(phy_berlin_power_down_bits)) {
+ 			dev_err(dev, "invalid reg in node %s\n", child->name);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto put_child;
+ 		}
+ 
+ 		phy_desc = devm_kzalloc(dev, sizeof(*phy_desc), GFP_KERNEL);
+-		if (!phy_desc)
+-			return -ENOMEM;
++		if (!phy_desc) {
++			ret = -ENOMEM;
++			goto put_child;
++		}
+ 
+ 		phy = devm_phy_create(dev, NULL, &phy_berlin_sata_ops);
+ 		if (IS_ERR(phy)) {
+ 			dev_err(dev, "failed to create PHY %d\n", phy_id);
+-			return PTR_ERR(phy);
++			ret = PTR_ERR(phy);
++			goto put_child;
+ 		}
+ 
+ 		phy_desc->phy = phy;
+@@ -269,6 +274,9 @@ static int phy_berlin_sata_probe(struct platform_device *pdev)
+ 	phy_provider  		devm_of_phy_provider_register(dev, phy_berlin_sata_phy_xlate);
+ 	return PTR_ERR_OR_ZERO(phy_provider);
++put_child:
++	of_node_put(child);
++	return ret;
+ }
+ 
+ static const struct of_device_id phy_berlin_sata_of_match[] = {
 
