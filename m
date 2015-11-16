@@ -1,7 +1,7 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 29 Nov 2015 21:26:42 +0000
-Subject: Re: [PATCH 1/3] ste_dma40: Delete an unnecessary check before the function call "kmem_cache_destroy"
-Message-Id: <CACRpkdZHhSy5Y0O0j9dSutfej_Ro6zCjZQuUiHG9X1b1feC3Mg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 18:05:52 +0000
+Subject: [PATCH] USB-EHCI: Delete unnecessary checks before the function call "dma_pool_destroy"
+Message-Id: <564A1B00.8030507@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,28 +20,57 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <564A4899.8040109@users.sourceforge.net>
- <564A4935.6010307@users.sourceforge.net>
-In-Reply-To: <564A4935.6010307@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Nov 16, 2015 at 10:23 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 Nov 2015 19:01:44 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Nov 2015 20:26:27 +0100
->
-> The kmem_cache_destroy() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The dma_pool_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the calls is not needed.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/usb/host/ehci-mem.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-mem.c b/drivers/usb/host/ehci-mem.c
+index b6205fa..4de4301 100644
+--- a/drivers/usb/host/ehci-mem.c
++++ b/drivers/usb/host/ehci-mem.c
+@@ -128,21 +128,13 @@ static void ehci_mem_cleanup (struct ehci_hcd *ehci)
+ 	ehci->dummy = NULL;
+ 
+ 	/* DMA consistent memory and pools */
+-	if (ehci->qtd_pool)
+-		dma_pool_destroy (ehci->qtd_pool);
++	dma_pool_destroy(ehci->qtd_pool);
+ 	ehci->qtd_pool = NULL;
+-
+-	if (ehci->qh_pool) {
+-		dma_pool_destroy (ehci->qh_pool);
+-		ehci->qh_pool = NULL;
+-	}
+-
+-	if (ehci->itd_pool)
+-		dma_pool_destroy (ehci->itd_pool);
++	dma_pool_destroy(ehci->qh_pool);
++	ehci->qh_pool = NULL;
++	dma_pool_destroy(ehci->itd_pool);
+ 	ehci->itd_pool = NULL;
+-
+-	if (ehci->sitd_pool)
+-		dma_pool_destroy (ehci->sitd_pool);
++	dma_pool_destroy(ehci->sitd_pool);
+ 	ehci->sitd_pool = NULL;
+ 
+ 	if (ehci->periodic)
+-- 
+2.6.2
+
