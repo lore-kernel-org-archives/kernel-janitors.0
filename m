@@ -1,36 +1,58 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Date: Wed, 04 Nov 2015 16:32:38 +0000
-Subject: Re: [patch] thermal: underflow in trip_point_temp_store()
-Message-Id: <20151104163236.GD8850@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 16:43:35 +0000
+Subject: [PATCH] net-scm: Delete an unnecessary check before the function call "kfree"
+Message-Id: <564B5937.1070707@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151103221434.GB19280@mwanda>
- <20151104055659.GB8850@localhost.localdomain>
- <20151104113231.GI7289@mwanda>
-In-Reply-To: <20151104113231.GI7289@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Nov 04, 2015 at 02:32:32PM +0300, Dan Carpenter wrote:
-> Oh...  Hm.  I actually sent a totally different patch to fix this
-> warning and you just merged it.  I had forgotten about that.  As far as
-> I am concerned this issue is solved.  :)  Sorry for sending duplicates.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 17:37:22 +0100
 
-Ok. Thanks :-). I guess this one took more attention for being touching
-the thermal core. On IMX driver, it might still make sense to remove the
-negative values as we are dealing with CPU temperature over there.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-But it is good as it brings to the radar the point of reviewing again
-the possibility of supporting negative temperatures. 
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/core/scm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BR
+diff --git a/net/core/scm.c b/net/core/scm.c
+index 3b6899b..4f64173 100644
+--- a/net/core/scm.c
++++ b/net/core/scm.c
+@@ -193,7 +193,7 @@ int __scm_send(struct socket *sock, struct msghdr *msg, struct scm_cookie *p)
+ 		}
+ 	}
+ 
+-	if (p->fp && !p->fp->count)
++	if (likely(!p->fp->count))
+ 	{
+ 		kfree(p->fp);
+ 		p->fp = NULL;
+-- 
+2.6.2
 
-Eduardo
-
-> 
-> regards,
-> dan carpenter
-> 
