@@ -1,83 +1,63 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Nov 2015 12:30:23 +0000
-Subject: [PATCH] Orangefs: constify inode_operations structures
-Message-Id: <1447504223-25135-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 08:10:05 +0000
+Subject: [PATCH] scsi_lib: Delete unnecessary checks before two function calls
+Message-Id: <564AE0DD.6000300@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <JBottomley@odin.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The inode_operations structures are never modified, so declare them
-as const, like all the other inode_operations structures.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 09:00:31 +0100
 
-Done with the help of Coccinelle.
+The functions kmem_cache_destroy() and mempool_destroy() test whether
+their argument is NULL and then return immediately.
+Thus the tests around their calls are not needed.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/orangefs/inode.c        |    2 +-
- fs/orangefs/namei.c        |    2 +-
- fs/orangefs/pvfs2-kernel.h |    6 +++---
- fs/orangefs/symlink.c      |    2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/scsi/scsi_lib.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 4f7c45a..97e64b9 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -295,7 +295,7 @@ int pvfs2_getattr(struct vfsmount *mnt,
- }
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index dd8ad2a..13973a3 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -2298,10 +2298,8 @@ int __init scsi_init_queue(void)
+ cleanup_sdb:
+ 	for (i = 0; i < SG_MEMPOOL_NR; i++) {
+ 		struct scsi_host_sg_pool *sgp = scsi_sg_pools + i;
+-		if (sgp->pool)
+-			mempool_destroy(sgp->pool);
+-		if (sgp->slab)
+-			kmem_cache_destroy(sgp->slab);
++		mempool_destroy(sgp->pool);
++		kmem_cache_destroy(sgp->slab);
+ 	}
+ 	kmem_cache_destroy(scsi_sdb_cache);
  
- /* PVFS2 implementation of VFS inode operations for files */
--struct inode_operations pvfs2_file_inode_operations = {
-+const struct inode_operations pvfs2_file_inode_operations = {
- 	.get_acl = pvfs2_get_acl,
- 	.set_acl = pvfs2_set_acl,
- 	.setattr = pvfs2_setattr,
-diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
-index 05f6fea..6fcb517 100644
---- a/fs/orangefs/namei.c
-+++ b/fs/orangefs/namei.c
-@@ -448,7 +448,7 @@ static int pvfs2_rename(struct inode *old_dir,
- }
- 
- /* PVFS2 implementation of VFS inode operations for directories */
--struct inode_operations pvfs2_dir_inode_operations = {
-+const struct inode_operations pvfs2_dir_inode_operations = {
- 	.lookup = pvfs2_lookup,
- 	.get_acl = pvfs2_get_acl,
- 	.set_acl = pvfs2_set_acl,
-diff --git a/fs/orangefs/pvfs2-kernel.h b/fs/orangefs/pvfs2-kernel.h
-index 29b4a48..68cbd28 100644
---- a/fs/orangefs/pvfs2-kernel.h
-+++ b/fs/orangefs/pvfs2-kernel.h
-@@ -674,10 +674,10 @@ extern int hash_table_size;
- 
- extern const struct address_space_operations pvfs2_address_operations;
- extern struct backing_dev_info pvfs2_backing_dev_info;
--extern struct inode_operations pvfs2_file_inode_operations;
-+extern const struct inode_operations pvfs2_file_inode_operations;
- extern const struct file_operations pvfs2_file_operations;
--extern struct inode_operations pvfs2_symlink_inode_operations;
--extern struct inode_operations pvfs2_dir_inode_operations;
-+extern const struct inode_operations pvfs2_symlink_inode_operations;
-+extern const struct inode_operations pvfs2_dir_inode_operations;
- extern const struct file_operations pvfs2_dir_operations;
- extern const struct dentry_operations pvfs2_dentry_operations;
- extern const struct file_operations pvfs2_devreq_file_operations;
-diff --git a/fs/orangefs/symlink.c b/fs/orangefs/symlink.c
-index 2adfcef..38dd73c 100644
---- a/fs/orangefs/symlink.c
-+++ b/fs/orangefs/symlink.c
-@@ -21,7 +21,7 @@ static const char *pvfs2_follow_link(struct dentry *dentry, void **cookie)
- 	return target;
- }
- 
--struct inode_operations pvfs2_symlink_inode_operations = {
-+const struct inode_operations pvfs2_symlink_inode_operations = {
- 	.readlink = generic_readlink,
- 	.follow_link = pvfs2_follow_link,
- 	.setattr = pvfs2_setattr,
+-- 
+2.6.2
 
