@@ -1,23 +1,93 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 26 Nov 2015 12:55:14 +0000
-Subject: Re: brcmfmac: constify brcmf_bus_ops structures
-Message-Id: <20151126125514.86D88140631@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 15:46:46 +0000
+Subject: [PATCH v2 3/3] crypto-ixp4xx: Less function calls in init_ixp_crypto() after error detection
+Message-Id: <564B4BE6.6010209@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1447518127-1994-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5648D2C1.8050603@users.sourceforge.net>
+ <564B489F.10308@users.sourceforge.net>
+In-Reply-To: <564B489F.10308@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Brett Rudley <brudley@broadcom.com>, kernel-janitors@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 16:15:21 +0100
 
-> The brcmf_bus_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> Acked-by: Arend van Spriel <arend@broadcom.com>
+The dma_pool_destroy() function was called in up to two cases by the
+init_ixp_crypto() function during error handling even if a call of
+the dma_pool_create() function failed.
 
-Thanks, applied to wireless-drivers-next.git.
+This implementation detail could be improved by the adjustment
+of jump targets according to the Linux coding style convention.
 
-Kalle Valo
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/ixp4xx_crypto.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
+index 79b6958..0a5969c 100644
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -483,23 +483,23 @@ static int init_ixp_crypto(struct device *dev)
+ 			sizeof(struct buffer_desc), 32, 0);
+ 	if (!buffer_pool) {
+ 		ret = -ENOMEM;
+-		goto err;
++		goto release_npe;
+ 	}
+ 	ctx_pool = dma_pool_create("context", dev,
+ 			NPE_CTX_LEN, 16, 0);
+ 	if (!ctx_pool) {
+ 		ret = -ENOMEM;
+-		goto err;
++		goto destroy_buffer_pool;
+ 	}
+ 	ret = qmgr_request_queue(SEND_QID, NPE_QLEN_TOTAL, 0, 0,
+ 				 "ixp_crypto:out", NULL);
+ 	if (ret)
+-		goto err;
++		goto destroy_ctx_pool;
+ 	ret = qmgr_request_queue(RECV_QID, NPE_QLEN, 0, 0,
+ 				 "ixp_crypto:in", NULL);
+ 	if (ret) {
+ 		qmgr_release_queue(SEND_QID);
+-		goto err;
++		goto destroy_ctx_pool;
+ 	}
+ 	qmgr_set_irq(RECV_QID, QUEUE_IRQ_SRC_NOT_EMPTY, irqhandler, NULL);
+ 	tasklet_init(&crypto_done_tasklet, crypto_done_action, 0);
+@@ -510,9 +510,11 @@ static int init_ixp_crypto(struct device *dev)
+ npe_error:
+ 	printk(KERN_ERR "%s not responding\n", npe_name(npe_c));
+ 	ret = -EIO;
+-err:
++destroy_ctx_pool:
+ 	dma_pool_destroy(ctx_pool);
++destroy_buffer_pool:
+ 	dma_pool_destroy(buffer_pool);
++release_npe:
+ 	npe_release(npe_c);
+ 	return ret;
+ }
+-- 
+2.6.2
+
