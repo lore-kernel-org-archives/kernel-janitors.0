@@ -1,49 +1,40 @@
-From: Jan Kara <jack@suse.cz>
-Date: Wed, 11 Nov 2015 07:35:48 +0000
-Subject: Re: [patch v2] ncpfs: don't allow negative timeouts
-Message-Id: <20151111073548.GA19064@quack.suse.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 18:05:35 +0000
+Subject: Re: net-scm: Delete an unnecessary check before the function call "kfree"
+Message-Id: <564B6C6F.3070809@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151110091923.GE26699@quack.suse.cz>
- <20151110221441.GA30281@mwanda>
-In-Reply-To: <20151110221441.GA30281@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <564B5937.1070707@users.sourceforge.net>
+ <564B602F.2020302@iogearbox.net>
+In-Reply-To: <564B602F.2020302@iogearbox.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Petr Vandrovec <petr@vandrovec.name>, David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, eric.dumazet@gmail.com
 
-On Wed 11-11-15 01:14:41, Dan Carpenter wrote:
-> This code causes a static checker warning because it's a user controlled
-> variable where we cap the upper bound but not the lower bound.  Let's
-> return an -EINVAL for negative timeouts.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Eric already mentioned that in some situations where it's critical,
+> it actually slows down the code, i.e. you'll have an extra
+> function call to get there and inside kfree() / kfree_skb() / etc,
+> the test is actually marked as unlikely().
 
-Looks good. You can add:
+How do you think about to add similar annotations to any more
+source code places?
 
-Reviewed-by: Jan Kara <jack@suse.com>
-
-								Honza
-
-> ---
-> v2: in the original I just ignored the invalid data and went with the
->     default but now it returns -EINVAL.
-> 
-> diff --git a/fs/ncpfs/ioctl.c b/fs/ncpfs/ioctl.c
-> index 79b1130..ebf45d2 100644
-> --- a/fs/ncpfs/ioctl.c
-> +++ b/fs/ncpfs/ioctl.c
-> @@ -525,7 +525,9 @@ static long __ncp_ioctl(struct inode *inode, unsigned int cmd, unsigned long arg
->  			switch (rqdata.cmd) {
->  				case NCP_LOCK_EX:
->  				case NCP_LOCK_SH:
-> -						if (rqdata.timeout = 0)
-> +						if (rqdata.timeout < 0)
-> +							return -EINVAL;
-> +						else if (rqdata.timeout = 0)
->  							rqdata.timeout = NCP_LOCK_DEFAULT_TIMEOUT;
->  						else if (rqdata.timeout > NCP_LOCK_MAX_TIMEOUT)
->  							rqdata.timeout = NCP_LOCK_MAX_TIMEOUT;
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Markus
