@@ -1,79 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Nov 2015 14:34:01 +0000
-Subject: [patch] ide: silence some underflow warnings
-Message-Id: <20151113143401.GC1445@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 15:41:40 +0000
+Subject: [PATCH v2 1/3] crypto-ixp4xx: Delete unnecessary checks before the function call "dma_pool_destroy"
+Message-Id: <564B4AB4.3010709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5648D2C1.8050603@users.sourceforge.net>
+ <564B489F.10308@users.sourceforge.net>
+In-Reply-To: <564B489F.10308@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Back in the day we used to just say this code was root only so it was
-ok that the bounds checking was sloppy.  These days it annoys static
-checkers so we fix it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Nov 2015 16:51:21 +0100
 
-In the original code "c > INT_MAX" was never true since "c" was an int.
-I am not sure what was intended so I left it alone.  But because I made
-"c" unsigned it means we don't have a warning any more.
+The dma_pool_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the calls is not needed.
 
-The second warning is that we cap "i" but allow negatives leading to an
-underflow of the ide_disks_chs[] array.  The third set of warnings is
-because these values come from the user and we cap most of the upper
-bounds but allow negative values.  Negative cylinders doesn't make
-sense.
+This issue was detected by using the Coccinelle software.
 
-drivers/ide/ide.c:262 ide_set_disk_chs() warn: impossible condition '(c > ((~0 >> 1))) => (s32min-s32max > s32max)'
-drivers/ide/ide.c:270 ide_set_disk_chs() warn: check 'ide_disks_chs[i]' for negative offsets 'i' = s32min.  extra = 's32min-19'
-drivers/ide/ide.c:271 ide_set_disk_chs() warn: no lower bound on 'h'
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/ixp4xx_crypto.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/ide/ide.c b/drivers/ide/ide.c
-index f086ef3..d127ace 100644
---- a/drivers/ide/ide.c
-+++ b/drivers/ide/ide.c
-@@ -178,17 +178,17 @@ MODULE_PARM_DESC(pci_clock, "PCI bus clock frequency (in MHz)");
- 
- static int ide_set_dev_param_mask(const char *s, const struct kernel_param *kp)
- {
--	int a, b, i, j = 1;
-+	unsigned int a, b, i, j = 1;
- 	unsigned int *dev_param_mask = (unsigned int *)kp->arg;
- 
- 	/* controller . device (0 or 1) [ : 1 (set) | 0 (clear) ] */
--	if (sscanf(s, "%d.%d:%d", &a, &b, &j) != 3 &&
--	    sscanf(s, "%d.%d", &a, &b) != 2)
-+	if (sscanf(s, "%u.%u:%u", &a, &b, &j) != 3 &&
-+	    sscanf(s, "%u.%u", &a, &b) != 2)
- 		return -EINVAL;
- 
- 	i = a * MAX_DRIVES + b;
- 
--	if (i >= MAX_HWIFS * MAX_DRIVES || j < 0 || j > 1)
-+	if (i >= MAX_HWIFS * MAX_DRIVES || j > 1)
- 		return -EINVAL;
- 
- 	if (j)
-@@ -246,17 +246,17 @@ static struct chs_geom ide_disks_chs[MAX_HWIFS * MAX_DRIVES];
- 
- static int ide_set_disk_chs(const char *str, struct kernel_param *kp)
- {
--	int a, b, c = 0, h = 0, s = 0, i, j = 1;
-+	unsigned int a, b, c = 0, h = 0, s = 0, i, j = 1;
- 
- 	/* controller . device (0 or 1) : Cylinders , Heads , Sectors */
- 	/* controller . device (0 or 1) : 1 (use CHS) | 0 (ignore CHS) */
--	if (sscanf(str, "%d.%d:%d,%d,%d", &a, &b, &c, &h, &s) != 5 &&
--	    sscanf(str, "%d.%d:%d", &a, &b, &j) != 3)
-+	if (sscanf(str, "%u.%u:%u,%u,%u", &a, &b, &c, &h, &s) != 5 &&
-+	    sscanf(str, "%u.%u:%u", &a, &b, &j) != 3)
- 		return -EINVAL;
- 
- 	i = a * MAX_DRIVES + b;
- 
--	if (i >= MAX_HWIFS * MAX_DRIVES || j < 0 || j > 1)
-+	if (i >= MAX_HWIFS * MAX_DRIVES || j > 1)
- 		return -EINVAL;
- 
- 	if (c > INT_MAX || h > 255 || s > 255)
+diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
+index 8f27903..e52496a 100644
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -510,10 +510,8 @@ npe_error:
+ 	printk(KERN_ERR "%s not responding\n", npe_name(npe_c));
+ 	ret = -EIO;
+ err:
+-	if (ctx_pool)
+-		dma_pool_destroy(ctx_pool);
+-	if (buffer_pool)
+-		dma_pool_destroy(buffer_pool);
++	dma_pool_destroy(ctx_pool);
++	dma_pool_destroy(buffer_pool);
+ 	npe_release(npe_c);
+ 	return ret;
+ }
+-- 
+2.6.2
