@@ -1,22 +1,64 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 23 Nov 2015 19:56:36 +0000
-Subject: Re: [patch] net/hsr: fix a warning message
-Message-Id: <20151123.145636.1037248055461936030.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 07:21:42 +0000
+Subject: [PATCH] SCSI-aic94xx: Delete unnecessary checks before the function call "kmem_cache_destroy"
+Message-Id: <564AD586.5040606@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151121103412.GF7002@mwanda>
-In-Reply-To: <20151121103412.GF7002@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: arvid.brodin@alten.se, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, "James E. J. Bottomley" <JBottomley@odin.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 21 Nov 2015 13:34:12 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 17 Nov 2015 08:14:52 +0100
 
-> WARN_ON_ONCE() takes a condition, it doesn't take an error message.  I
-> have converted this to WARN() instead.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The kmem_cache_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the calls is not needed.
 
-Applied, thanks Dan.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/aic94xx/aic94xx_init.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
+index 662b232..ab93049 100644
+--- a/drivers/scsi/aic94xx/aic94xx_init.c
++++ b/drivers/scsi/aic94xx/aic94xx_init.c
+@@ -660,12 +660,9 @@ Err:
+ 
+ static void asd_destroy_global_caches(void)
+ {
+-	if (asd_dma_token_cache)
+-		kmem_cache_destroy(asd_dma_token_cache);
++	kmem_cache_destroy(asd_dma_token_cache);
+ 	asd_dma_token_cache = NULL;
+-
+-	if (asd_ascb_cache)
+-		kmem_cache_destroy(asd_ascb_cache);
++	kmem_cache_destroy(asd_ascb_cache);
+ 	asd_ascb_cache = NULL;
+ }
+ 
+-- 
+2.6.2
+
