@@ -1,53 +1,57 @@
-From: Marek Lindner <mareklindner@neomailbox.ch>
-Date: Sat, 21 Nov 2015 21:51:04 +0000
-Subject: Re: [B.A.T.M.A.N.] [PATCH 2/3] batman-adv: Split a condition check
-Message-Id: <2723284.fvSBmu6aJ3@voltaire>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nextPart5154744.fNLkcmSmS2"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 18 Nov 2015 22:04:14 +0000
+Subject: [PATCH 4/4] power/reset: at91-reset: add missing of_node_put
+Message-Id: <1447884254-26336-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <56391CF7.9080400@users.sourceforge.net> <56391F0B.2060102@users.sourceforge.net>
-In-Reply-To: <56391F0B.2060102@users.sourceforge.net>
-To: b.a.t.m.a.n@lists.open-mesh.org
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Simon Wunderlich <sw@simonwunderlich.de>, netdev@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-
---nextPart5154744.fNLkcmSmS2
-Content-Transfer-Encoding: 7Bit
+References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sebastian Reichel <sre@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-On Tuesday, November 03, 2015 21:54:35 SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 3 Nov 2015 20:41:02 +0100
-> 
-> Let us split a check for a condition at the beginning of the
-> batadv_is_ap_isolated() function so that a direct return can be performed
-> in this function if the variable "vlan" contained a null pointer.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  net/batman-adv/translation-table.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+for_each_matching_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-Applied in revision b1199c6.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-Thanks,
-Marek
+// <smpl>
+@@
+expression e,e1;
+local idexpression np;
+@@
 
---nextPart5154744.fNLkcmSmS2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+ for_each_matching_node(np, e1) {
+   ... when != of_node_put(np)
+       when != e = np
+(
+   return np;
+|
++  of_node_put(np);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-iQEcBAABCAAGBQJWUOdIAAoJEFNVTo/uthzAH6MH/1ZRFtHupThwVXcBfnoqGgUY
-qgd9VHY6TX1BEbSF79nydp8bqjIES8yXE8ltBXCwy3ixgkomZyxNyqnAXlFfZoOi
-QBwMQcS0LFKEoLFbP80P6JDU869DjqS8upKZ75klqne+kFxB6eA13joxpqJgVSYv
-lVeSL3i64JZSjqwFXmRFeDX7wUMfFfZoKDYeJoF3RU7Pu73vA0Jpa+d7SkoHrUKG
-g9PwApoZosqe/Wo46Wdm8DMr97iEynrOQBVkqcVO8wLXGMOGAmZ8/xEKd4gYAx9v
-CH5OJnMy06YH2B2Lil/c+mEmVl01rntn5I4mO3tCzqZ3PzQFDip9q/dzfZTCjYI=
-=6RRe
------END PGP SIGNATURE-----
+---
+ drivers/power/reset/at91-reset.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---nextPart5154744.fNLkcmSmS2--
+diff --git a/drivers/power/reset/at91-reset.c b/drivers/power/reset/at91-reset.c
+index 3f6b5dd..1b5d450 100644
+--- a/drivers/power/reset/at91-reset.c
++++ b/drivers/power/reset/at91-reset.c
+@@ -198,6 +198,7 @@ static int __init at91_reset_probe(struct platform_device *pdev)
+ 			at91_ramc_base[idx] = of_iomap(np, 0);
+ 			if (!at91_ramc_base[idx]) {
+ 				dev_err(&pdev->dev, "Could not map ram controller address\n");
++				of_node_put(np);
+ 				return -ENODEV;
+ 			}
+ 			idx++;
 
