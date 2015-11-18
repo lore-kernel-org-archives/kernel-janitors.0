@@ -1,20 +1,102 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Mon, 23 Nov 2015 19:13:44 +0000
-Subject: Re: [PATCH] nfsd: constify nfsd4_callback_ops structure
-Message-Id: <20151123191344.GD12032@fieldses.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 18 Nov 2015 22:04:11 +0000
+Subject: [PATCH 1/4] mtd: brcmnand: improve memory management
+Message-Id: <1447884254-26336-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448143059-3523-1-git-send-email-Julia.Lawall@lip6.fr>
- <20151122175742.GA21902@infradead.org>
-In-Reply-To: <20151122175742.GA21902@infradead.org>
+References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Jeff Layton <jlayton@poochiereds.net>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-On Sun, Nov 22, 2015 at 09:57:42AM -0800, Christoph Hellwig wrote:
-> Thanks, this looks good.  I should have add the const from the start.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+This patch addresses several related memory management issues in the probe
+function:
 
-Thanks, applying for 4.5.--b.
+1. for_each_available_child_of_node performs an of_node_get on each
+iteration, so a break out of the loop requires an of_node_put.
+
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_available_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+2. The devm_kzalloc'd data is not used if brcmnand_init_cs fails.  Free it
+immediately, using devm_kfree in this case, instead of waiting for the
+remove function.
+
+3. If the continue is not taken, then host is added to a list, that has a
+lifetime beyond the end of the for_each_available_child_of_node loop body.
+Thus, of_node_get is needed on child, which is referenced by host.  A
+corresponding of_node_put is needed in the remove function.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+One could consider whether the of_node_get should be on host->of_node,
+which looks more similar to the thing that is stored in the list.  I used
+child, to be more similar to the of_node_put in the same function.
+
+ drivers/mtd/nand/brcmnand/brcmnand.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/nand/brcmnand/brcmnand.c b/drivers/mtd/nand/brcmnand/brcmnand.c
+index 2a437c7..b0cb55d 100644
+--- a/drivers/mtd/nand/brcmnand/brcmnand.c
++++ b/drivers/mtd/nand/brcmnand/brcmnand.c
+@@ -2237,16 +2237,20 @@ int brcmnand_probe(struct platform_device *pdev, struct brcmnand_soc *soc)
+ 			struct brcmnand_host *host;
+ 
+ 			host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
+-			if (!host)
++			if (!host) {
++				of_node_put(child);
+ 				return -ENOMEM;
++			}
+ 			host->pdev = pdev;
+ 			host->ctrl = ctrl;
+ 			host->of_node = child;
+ 
+ 			ret = brcmnand_init_cs(host);
+-			if (ret)
++			if (ret) {
++				devm_kfree(dev, host);
+ 				continue; /* Try all chip-selects */
+-
++			}
++			of_node_get(child);
+ 			list_add_tail(&host->node, &ctrl->host_list);
+ 		}
+ 	}
+@@ -2264,8 +2268,10 @@ int brcmnand_remove(struct platform_device *pdev)
+ 	struct brcmnand_controller *ctrl = dev_get_drvdata(&pdev->dev);
+ 	struct brcmnand_host *host;
+ 
+-	list_for_each_entry(host, &ctrl->host_list, node)
++	list_for_each_entry(host, &ctrl->host_list, node) {
++		of_node_put(host->of_node);
+ 		nand_release(&host->mtd);
++	}
+ 
+ 	dev_set_drvdata(&pdev->dev, NULL);
+ 
+
