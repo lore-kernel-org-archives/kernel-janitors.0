@@ -1,27 +1,126 @@
-From: Haggai Eran <haggaie@mellanox.com>
-Date: Mon, 30 Nov 2015 06:07:57 +0000
-Subject: Re: [PATCH 3/3] IB/core: constify mmu_notifier_ops structures
-Message-Id: <565BE7BD.80000@mellanox.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 18 Nov 2015 22:04:10 +0000
+Subject: [PATCH 0/4] add missing of_node_put
+Message-Id: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
- <1448834571-2988-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448834571-2988-4-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+References: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445504571-19838-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 30/11/2015 00:02, Julia Lawall wrote:
-> This mmu_notifier_ops structure is never modified, so declare it as
-> const, like the other mmu_notifier_ops structures.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The various for_each device_node iterators performs an of_node_get on each
+iteration, so a break out of the loop requires an of_node_put.
 
-Reviewed-by: Haggai Eran <haggaie@mellanox.com>
+The complete semantic patch that fixes this problem is
+(http://coccinelle.lip6.fr):
 
-Thanks,
-Haggai
+// <smpl>
+@r@
+local idexpression n;
+expression e1,e2;
+iterator name for_each_node_by_name, for_each_node_by_type,
+for_each_compatible_node, for_each_matching_node,
+for_each_matching_node_and_match, for_each_child_of_node,
+for_each_available_child_of_node, for_each_node_with_property;
+iterator i;
+statement S;
+expression list [n1] es;
+@@
 
+(
+(
+for_each_node_by_name(n,e1) S
+|
+for_each_node_by_type(n,e1) S
+|
+for_each_compatible_node(n,e1,e2) S
+|
+for_each_matching_node(n,e1) S
+|
+for_each_matching_node_and_match(n,e1,e2) S
+|
+for_each_child_of_node(e1,n) S
+|
+for_each_available_child_of_node(e1,n) S
+|
+for_each_node_with_property(n,e1) S
+)
+&
+i(es,n,...) S
+)
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+identifier l;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+...
+l: ... when != n// </smpl>
+
+---
+
+ drivers/iio/adc/qcom-spmi-vadc.c     |    4 +++-
+ drivers/mtd/nand/brcmnand/brcmnand.c |   14 ++++++++++----
+ drivers/mtd/nand/sunxi_nand.c        |    4 +++-
+ drivers/power/reset/at91-reset.c     |    1 +
+ 4 files changed, 17 insertions(+), 6 deletions(-)
