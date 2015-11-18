@@ -1,23 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 23 Nov 2015 20:49:46 +0000
-Subject: Re: [PATCH] VSOCK: constify vmci_transport_notify_ops structures
-Message-Id: <20151123.154946.1373634995645161672.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 18 Nov 2015 10:04:20 +0000
+Subject: [patch] ASoC: Intel: pass correct parameter in sst_alloc_stream_mrfld()
+Message-Id: <20151118100255.GA15236@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448127557-22280-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448127557-22280-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jie Yang <yang.jie@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 21 Nov 2015 18:39:17 +0100
+"data" is always NULL in this function.  I think we should be passing
+"&data" to sst_prepare_and_post_msg() instead of "data".
 
-> The vmci_transport_notify_ops structures are never modified, so declare
-> them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: 3d9ff34622ba ('ASoC: Intel: sst: add stream operations')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
-Applied.
+diff --git a/sound/soc/intel/atom/sst/sst_stream.c b/sound/soc/intel/atom/sst/sst_stream.c
+index a74c64c..4ccc80e 100644
+--- a/sound/soc/intel/atom/sst/sst_stream.c
++++ b/sound/soc/intel/atom/sst/sst_stream.c
+@@ -108,7 +108,7 @@ int sst_alloc_stream_mrfld(struct intel_sst_drv *sst_drv_ctx, void *params)
+ 			str_id, pipe_id);
+ 	ret = sst_prepare_and_post_msg(sst_drv_ctx, task_id, IPC_CMD,
+ 			IPC_IA_ALLOC_STREAM_MRFLD, pipe_id, sizeof(alloc_param),
+-			&alloc_param, data, true, true, false, true);
++			&alloc_param, &data, true, true, false, true);
+ 
+ 	if (ret < 0) {
+ 		dev_err(sst_drv_ctx->dev, "FW alloc failed ret %d\n", ret);
