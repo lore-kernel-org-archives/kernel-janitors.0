@@ -1,70 +1,61 @@
-From: Stefan Schmidt <stefan@osg.samsung.com>
-Date: Tue, 17 Nov 2015 16:19:39 +0000
-Subject: Re: [PATCH] ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
-Message-Id: <564B539B.9080003@osg.samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 18 Nov 2015 22:04:13 +0000
+Subject: [PATCH 3/4] iio: adc: spmi-vadc: add missing of_node_put
+Message-Id: <1447884254-26336-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5649D2AE.60100@users.sourceforge.net>
- <5649DE40.6030405@osg.samsung.com>
- <FB4ECAF8-4F55-4F5C-AF13-D402BEE9CE74@holtmann.org>
-In-Reply-To: <FB4ECAF8-4F55-4F5C-AF13-D402BEE9CE74@holtmann.org>
+References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-Hello.
+for_each_available_child_of_node performs an of_node_get on each iteration,
+so a break out of the loop requires an of_node_put.
 
-On 17/11/15 15:01, Marcel Holtmann wrote:
-> Hi Stefan,
->
->>> The kfree_skb() function tests whether its argument is NULL and then
->>> returns immediately. Thus the test around the call is not needed.
->>>
->>> This issue was detected by using the Coccinelle software.
->>>
->>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->>> ---
->>>   drivers/net/ieee802154/atusb.c | 3 +--
->>>   1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/net/ieee802154/atusb.c b/drivers/net/ieee802154/atusb.c
->>> index 199a94a..b1cd865 100644
->>> --- a/drivers/net/ieee802154/atusb.c
->>> +++ b/drivers/net/ieee802154/atusb.c
->>> @@ -310,8 +310,7 @@ static void atusb_free_urbs(struct atusb *atusb)
->>>   		urb = usb_get_from_anchor(&atusb->idle_urbs);
->>>   		if (!urb)
->>>   			break;
->>> -		if (urb->context)
->>> -			kfree_skb(urb->context);
->>> +		kfree_skb(urb->context);
->>>   		usb_free_urb(urb);
->>>   	}
->>>   }
->> Acked-by: Stefan Schmidt <stefan@osg.samsung.com>
-> for some reason I am missing the original patch, can someone resend it please.
->
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-Done. Resend the original message from my address but with the From line 
-intact inside the patch. Please check if it really lists Markus as 
-author when applying. Acked-by also resend as reply to the resend patch.
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
 
-regards
-Stefan Schmidt
+ for_each_available_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/iio/adc/qcom-spmi-vadc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/qcom-spmi-vadc.c b/drivers/iio/adc/qcom-spmi-vadc.c
+index 0c4618b..c2babe5 100644
+--- a/drivers/iio/adc/qcom-spmi-vadc.c
++++ b/drivers/iio/adc/qcom-spmi-vadc.c
+@@ -839,8 +839,10 @@ static int vadc_get_dt_data(struct vadc_priv *vadc, struct device_node *node)
+ 
+ 	for_each_available_child_of_node(node, child) {
+ 		ret = vadc_get_dt_channel_data(vadc->dev, &prop, child);
+-		if (ret)
++		if (ret) {
++			of_node_put(child);
+ 			return ret;
++		}
+ 
+ 		vadc->chan_props[index] = prop;
+ 
+
