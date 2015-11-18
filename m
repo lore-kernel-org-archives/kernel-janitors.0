@@ -1,83 +1,43 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Date: Wed, 18 Nov 2015 19:27:07 +0000
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Wed, 18 Nov 2015 19:31:29 +0000
 Subject: Re: [PATCH 4/7] phy: rockchip-usb: add missing of_node_put
-Message-Id: <19587543.sZ81DoLUBT@diego>
+Message-Id: <20151118193129.GA48815@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
  <1447673600-8881-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447673600-8881-5-git-send-email-Julia.Lawall@lip6.fr>
+ <19587543.sZ81DoLUBT@diego>
+In-Reply-To: <19587543.sZ81DoLUBT@diego>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-Hi Julia,
+On Wed, Nov 18, 2015 at 08:27:07PM +0100, Heiko St=FCbner wrote:
+> Am Montag, 16. November 2015, 12:33:17 schrieb Julia Lawall:
+> hmm, while I agree that the rockchip phy has an issue in the node lifecyc=
+le,=20
+> I'm not sure that patch fixes it fully.
+>=20
+> It currently iterates over each phy, but would only of_node_put the phy i=
+t=20
+> handled last. So if an error happens on the 3rd phy, the first 2 are alre=
+ady=20
+> instantiated and would also get removed when the overall probe fails, but=
+=20
+> their of_node would never be "put".
 
-Am Montag, 16. November 2015, 12:33:17 schrieb Julia Lawall:
-> diff --git a/drivers/phy/phy-rockchip-usb.c b/drivers/phy/phy-rockchip-usb.c
-> index 91d6f34..62c43c4 100644
-> --- a/drivers/phy/phy-rockchip-usb.c
-> +++ b/drivers/phy/phy-rockchip-usb.c
-> @@ -108,13 +108,16 @@ static int rockchip_usb_phy_probe(struct
-> platform_device *pdev)
-> 
->  	for_each_available_child_of_node(dev->of_node, child) {
->  		rk_phy = devm_kzalloc(dev, sizeof(*rk_phy), GFP_KERNEL);
-> -		if (!rk_phy)
-> -			return -ENOMEM;
-> +		if (!rk_phy) {
-> +			err = -ENOMEM;
-> +			goto put_child;
-> +		}
-> 
->  		if (of_property_read_u32(child, "reg", &reg_offset)) {
->  			dev_err(dev, "missing reg property in node %s\n",
->  				child->name);
-> -			return -EINVAL;
-> +			err = -EINVAL;
-> +			goto put_child;
->  		}
-> 
->  		rk_phy->reg_offset = reg_offset;
-> @@ -127,18 +130,22 @@ static int rockchip_usb_phy_probe(struct
-> platform_device *pdev) rk_phy->phy = devm_phy_create(dev, child, &ops);
->  		if (IS_ERR(rk_phy->phy)) {
->  			dev_err(dev, "failed to create PHY\n");
-> -			return PTR_ERR(rk_phy->phy);
-> +			err = PTR_ERR(rk_phy->phy);
-> +			goto put_child;
->  		}
->  		phy_set_drvdata(rk_phy->phy, rk_phy);
-> 
->  		/* only power up usb phy when it use, so disable it when init*/
->  		err = rockchip_usb_phy_power(rk_phy, 1);
->  		if (err)
-> -			return err;
-> +			goto put_child;
->  	}
-> 
->  	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->  	return PTR_ERR_OR_ZERO(phy_provider);
-> +put_child:
-> +	of_node_put(child);
-> +	return err;
->  }
-> 
->  static const struct of_device_id rockchip_usb_phy_dt_ids[] = {
+Note the behavior of of_get_next_child() (and
+of_get_next_available_child()); it "Decrements the refcount of prev." So
+the loop only keeps a reference for (at most) one node at a time.
 
-hmm, while I agree that the rockchip phy has an issue in the node lifecycle, 
-I'm not sure that patch fixes it fully.
+I believe Julia's patch is correct. It's possible the commit description
+could have made this aspect clearer though, since I was confused about
+this at first as well.
 
-It currently iterates over each phy, but would only of_node_put the phy it 
-handled last. So if an error happens on the 3rd phy, the first 2 are already 
-instantiated and would also get removed when the overall probe fails, but 
-their of_node would never be "put".
-
-I think this goes together with what Brian described in patch1 having the phy-
-core also handle the node-reference. When this is included we could just 
-always put the of_node when finishing its loop iteration, as the phy-core will 
-have its own reference on the node.
-
-
-Heiko
-
+Regards,
+Brian
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
