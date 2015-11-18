@@ -1,91 +1,82 @@
-From: Keyon <yang.jie@linux.intel.com>
-Date: Wed, 11 Nov 2015 00:53:24 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: constify sst_block_ops structures
-Message-Id: <56429184.1020803@linux.intel.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Wed, 18 Nov 2015 19:05:00 +0000
+Subject: device_node lifetime (was: Re: [PATCH 1/7] phy: brcmstb-sata: add missing of_node_put)
+Message-Id: <20151118190500.GE140057@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447197532-24055-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447197532-24055-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1447673600-8881-2-git-send-email-Julia.Lawall@lip6.fr>
+ <20151117013830.GV8456@google.com>
+ <alpine.DEB.2.02.1511170711340.2045@localhost6.localdomain6>
+ <20151117174430.GA8456@google.com>
+ <alpine.DEB.2.10.1511171846120.2455@hadrien>
+ <20151117183036.GF8456@google.com>
+ <alpine.DEB.2.02.1511172327030.2121@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1511172327030.2121@localhost6.localdomain6>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+(changing subject, add devicetree@vger.kernel.org)
 
-On 2015年11月11日 07:18, Julia Lawall wrote:
-> The sst_block_ops structure is never modified, and is thus declared as
-> const.
->
-> Done with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On Tue, Nov 17, 2015 at 11:33:25PM +0100, Julia Lawall wrote:
+> On Tue, 17 Nov 2015, Brian Norris wrote:
+> > On Tue, Nov 17, 2015 at 06:48:39PM +0100, Julia Lawall wrote:
+> > > Is this something that should be checked for elsewhere?
+> > 
+> > I expect the same sort of problem shows up plenty of other places. I
+> > don't think many people use CONFIG_OF_DYNAMIC, so the effects of these
+> > failures probably aren't felt by many.
+> 
+> I tried the following semantic patch:
+> 
+> @@
+> struct device_node *e;
+> expression e1;
+> identifier fld;
+> @@
+> 
+>  ... when != of_node_get(...)
+> *(<+...e1->fld...+>) = e
+>  ... when != of_node_get(...)
+>  return e1;
+> 
+> basically, this says that a structure field is initilized to a device node 
+> value, the structure is returned by the containing function, and the 
+> containing function contains no of_node_get at all.  Certainly this is 
+> quite constrained, but it does produce a number of examples.
+> 
+> I looked at a few of them:
+> 
+> drivers/clk/ingenic/cgu.c, ingenic_cgu_new
+> clk/pistachio/clk.c, pistachio_clk_alloc_provider
 
-Thanks.
+It looks like the clock core (drivers/clk/clk.c) initially grabs the clk
+provider node in of_clk_init(), then drops it after it's initialized,
+but most of these providers use of_clk_add_provider(), which seems to
+manage the device_node lifetime for the user. So I think these are OK.
 
-Acked-by: Jie Yang <yang.jie@intel.com>
+> drivers/mfd/syscon.c, of_syscon_register
 
->
-> ---
->   sound/soc/intel/common/sst-dsp-priv.h     |    6 +++---
->   sound/soc/intel/common/sst-firmware.c     |    4 ++--
->   sound/soc/intel/haswell/sst-haswell-dsp.c |    2 +-
->   3 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/sound/soc/intel/common/sst-dsp-priv.h b/sound/soc/intel/common/sst-dsp-priv.h
-> index 2151652..d21f16d 100644
-> --- a/sound/soc/intel/common/sst-dsp-priv.h
-> +++ b/sound/soc/intel/common/sst-dsp-priv.h
-> @@ -243,7 +243,7 @@ struct sst_mem_block {
->   	u32 size;			/* block size */
->   	u32 index;			/* block index 0..N */
->   	enum sst_mem_type type;		/* block memory type IRAM/DRAM */
-> -	struct sst_block_ops *ops;	/* block operations, if any */
-> +	const struct sst_block_ops *ops;/* block operations, if any */
->
->   	/* block status */
->   	u32 bytes_used;			/* bytes in use by modules */
-> @@ -376,8 +376,8 @@ void sst_block_free_scratch(struct sst_dsp *dsp);
->
->   /* Register the DSPs memory blocks - would be nice to read from ACPI */
->   struct sst_mem_block *sst_mem_block_register(struct sst_dsp *dsp, u32 offset,
-> -	u32 size, enum sst_mem_type type, struct sst_block_ops *ops, u32 index,
-> -	void *private);
-> +	u32 size, enum sst_mem_type type, const struct sst_block_ops *ops,
-> +	u32 index, void *private);
->   void sst_mem_block_unregister_all(struct sst_dsp *dsp);
->
->   /* Create/Free DMA resources */
-> diff --git a/sound/soc/intel/common/sst-firmware.c b/sound/soc/intel/common/sst-firmware.c
-> index 1636a1e..bee04a9 100644
-> --- a/sound/soc/intel/common/sst-firmware.c
-> +++ b/sound/soc/intel/common/sst-firmware.c
-> @@ -1014,8 +1014,8 @@ EXPORT_SYMBOL_GPL(sst_module_runtime_restore);
->
->   /* register a DSP memory block for use with FW based modules */
->   struct sst_mem_block *sst_mem_block_register(struct sst_dsp *dsp, u32 offset,
-> -	u32 size, enum sst_mem_type type, struct sst_block_ops *ops, u32 index,
-> -	void *private)
-> +	u32 size, enum sst_mem_type type, const struct sst_block_ops *ops,
-> +	u32 index, void *private)
->   {
->   	struct sst_mem_block *block;
->
-> diff --git a/sound/soc/intel/haswell/sst-haswell-dsp.c b/sound/soc/intel/haswell/sst-haswell-dsp.c
-> index 7f94920..b2bec36 100644
-> --- a/sound/soc/intel/haswell/sst-haswell-dsp.c
-> +++ b/sound/soc/intel/haswell/sst-haswell-dsp.c
-> @@ -607,7 +607,7 @@ static int hsw_block_disable(struct sst_mem_block *block)
->   	return 0;
->   }
->
-> -static struct sst_block_ops sst_hsw_ops = {
-> +static const struct sst_block_ops sst_hsw_ops = {
->   	.enable = hsw_block_enable,
->   	.disable = hsw_block_disable,
->   };
->
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
->
+This one looks potentially suspect. Syscon nodes aren't usually directly
+managed by a single driver, and the device_node pointer is used for
+lookups later...so I think it should keep a kref, and it doesn't.
+
+> drivers/of/pdt.c, function of_pdt_create_node
+
+Not real sure about this one.
+
+> Any idea whether these need of_node_get?  In all cases the device node 
+> value comes in as a parameter.
+
+I'm really not an expert on this stuff. I just saw a potential problem
+that I happen to be looking at in other subsystems, and I wanted to know
+what others thought. I think this discussion should include the DT folks
+and the subsystems in question. For one, I'm as interested as anyone in
+getting this todo clarified:
+
+Documentation/devicetree/todo.txt
+- Document node lifecycle for CONFIG_OF_DYNAMIC
+
+Regards,
+Brian
