@@ -1,52 +1,29 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Wed, 18 Nov 2015 19:04:21 +0000
-Subject: Re: [PATCH] iio: adc: xilinx: constify iio_buffer_setup_ops structure
-Message-Id: <564CCBB5.6000607@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Nov 2015 19:34:09 +0000
+Subject: [patch -next] rcu: off by one in gp_state_getname()
+Message-Id: <20151119193408.GA24110@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447617602-12922-1-git-send-email-Julia.Lawall@lip6.fr>
- <5648E8DA.3070509@metafoo.de>
-In-Reply-To: <5648E8DA.3070509@metafoo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Josh Triplett <josh@joshtriplett.org>, Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 15/11/15 20:19, Lars-Peter Clausen wrote:
-> On 11/15/2015 09:00 PM, Julia Lawall wrote:
->> The iio_buffer_setup_ops structures are never modified, so declare this one
->> as const, like the others.
->>
->> Done with the help of Coccinelle.
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Applied.
+It should be >= ARRAY_SIZE() instead of > ARRAY_SIZE().
 
-Thanks,
+Fixes: 6231da675578 ('rcu: Print symbolic name for ->gp_state')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Jonathan
-> 
-> Thanks.
-> 
->>
->> ---
->>  drivers/iio/adc/xilinx-xadc-core.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
->> index 0370624..c2b5f10 100644
->> --- a/drivers/iio/adc/xilinx-xadc-core.c
->> +++ b/drivers/iio/adc/xilinx-xadc-core.c
->> @@ -803,7 +803,7 @@ err:
->>  	return ret;
->>  }
->>  
->> -static struct iio_buffer_setup_ops xadc_buffer_ops = {
->> +static const struct iio_buffer_setup_ops xadc_buffer_ops = {
->>  	.preenable = &xadc_preenable,
->>  	.postenable = &iio_triggered_buffer_postenable,
->>  	.predisable = &iio_triggered_buffer_predisable,
->>
-> 
-
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 6a5e1c4..6559b3c 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1203,7 +1203,7 @@ static void record_gp_stall_check_time(struct rcu_state *rsp)
+  */
+ static char *gp_state_getname(short gs)
+ {
+-	if (gs < 0 || gs > ARRAY_SIZE(gp_state_names))
++	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
+ 		return "???";
+ 	return gp_state_names[gs];
+ }
