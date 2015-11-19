@@ -1,50 +1,85 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Nov 2015 22:22:49 +0000
-Subject: [patch 1/2] [media] av7110: don't allow negative volumes
-Message-Id: <20151110222249.GD30281@mwanda>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Thu, 19 Nov 2015 21:32:15 +0000
+Subject: [PATCH 1/4 v2] mtd: brcmnand: improve memory management
+Message-Id: <alpine.DEB.2.02.1511192231330.2106@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1447884254-26336-2-git-send-email-Julia.Lawall@lip6.fr>
+ <20151118224440.GC64635@google.com>
+ <alpine.DEB.2.02.1511190713140.2008@localhost6.localdomain6>
+ <20151119192632.GH64635@google.com>
+In-Reply-To: <20151119192632.GH64635@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>, Kamal Dasu <kdasu.kdev@gmail.com>
 
-The issue here is that we there is a static checker warning because we
-have a user controlled volume setting and we cap the upper bound but we
-allow negative numbers.  Negative volumes don't make sense, so let's
-make these variables unsigned.
+This patch addresses two related memory management issues in the probe
+function:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+1. for_each_available_child_of_node performs an of_node_get on each
+iteration, so a break out of the loop requires an of_node_put.
 
-diff --git a/drivers/media/pci/ttpci/av7110_av.h b/drivers/media/pci/ttpci/av7110_av.h
-index 5f02ef8..f52276f 100644
---- a/drivers/media/pci/ttpci/av7110_av.h
-+++ b/drivers/media/pci/ttpci/av7110_av.h
-@@ -10,7 +10,8 @@ extern int av7110_record_cb(struct dvb_filter_pes2ts *p2t, u8 *buf, size_t len);
- extern int av7110_pes_play(void *dest, struct dvb_ringbuffer *buf, int dlen);
- extern int av7110_write_to_decoder(struct dvb_demux_feed *feed, const u8 *buf, size_t len);
- 
--extern int av7110_set_volume(struct av7110 *av7110, int volleft, int volright);
-+extern int av7110_set_volume(struct av7110 *av7110, unsigned int volleft,
-+			     unsigned int volright);
- extern int av7110_av_stop(struct av7110 *av7110, int av);
- extern int av7110_av_start_record(struct av7110 *av7110, int av,
- 			  struct dvb_demux_feed *dvbdmxfeed);
-diff --git a/drivers/media/pci/ttpci/av7110_av.c b/drivers/media/pci/ttpci/av7110_av.c
-index 9ed1ec7..ccb3b2c 100644
---- a/drivers/media/pci/ttpci/av7110_av.c
-+++ b/drivers/media/pci/ttpci/av7110_av.c
-@@ -280,9 +280,11 @@ int av7110_pes_play(void *dest, struct dvb_ringbuffer *buf, int dlen)
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
+
+ for_each_available_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
  }
+// </smpl>
+
+2. The devm_kzalloc'd data is not used if brcmnand_init_cs fails.  Free it
+immediately, using devm_kfree in this case, instead of waiting for the
+remove function.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+v2: Drop of_node_get addition, as another patch will get rid of the need
+for it completely.
+
+ drivers/mtd/nand/brcmnand/brcmnand.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/nand/brcmnand/brcmnand.c b/drivers/mtd/nand/brcmnand/brcmnand.c
+index 2a437c7..551d474 100644
+--- a/drivers/mtd/nand/brcmnand/brcmnand.c
++++ b/drivers/mtd/nand/brcmnand/brcmnand.c
+@@ -2237,15 +2237,19 @@ int brcmnand_probe(struct platform_device *pdev, struct brcmnand_soc *soc)
+ 			struct brcmnand_host *host;
  
+ 			host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
+-			if (!host)
++			if (!host) {
++				of_node_put(child);
+ 				return -ENOMEM;
++			}
+ 			host->pdev = pdev;
+ 			host->ctrl = ctrl;
+ 			host->of_node = child;
  
--int av7110_set_volume(struct av7110 *av7110, int volleft, int volright)
-+int av7110_set_volume(struct av7110 *av7110, unsigned int volleft,
-+		      unsigned int volright)
- {
--	int err, vol, val, balance = 0;
-+	unsigned int vol, val, balance = 0;
-+	int err;
+ 			ret = brcmnand_init_cs(host);
+-			if (ret)
++			if (ret) {
++				devm_kfree(dev, host);
+ 				continue; /* Try all chip-selects */
++			}
  
- 	dprintk(2, "av7110:%p, \n", av7110);
- 
+ 			list_add_tail(&host->node, &ctrl->host_list);
+ 		}
