@@ -1,51 +1,58 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 09 Nov 2015 14:34:19 +0000
-Subject: Re: [PATCH] [media] mt9t001: constify v4l2_subdev_internal_ops structure
-Message-Id: <1969703.gAPgeEIYEi@avalon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Nov 2015 05:22:56 +0000
+Subject: Re: x86, mpx: Decode MPX instruction to get bound violation information
+Message-Id: <20151119052256.GW7289@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444564633-19861-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444564633-19861-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Julia,
+Hey Dave,
 
-Thank you for the patch.
+Whatever happened with this?
 
-On Sunday 11 October 2015 13:57:13 Julia Lawall wrote:
-> This v4l2_subdev_internal_ops structure is never modified.  All other
-> v4l2_subdev_internal_ops structures are declared as const.
+regards,
+dan carpenter
+
+On Mon, May 18, 2015 at 03:32:16PM +0300, Dan Carpenter wrote:
+> Hello Dave Hansen,
 > 
-> Done with the help of Coccinelle.
+> The patch fcc7ffd67991: "x86, mpx: Decode MPX instruction to get
+> bound violation information" from Nov 14, 2014, leads to the
+> following static checker warning:
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
-> ---
->  drivers/media/i2c/mt9t001.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 	arch/x86/mm/mpx.c:147 get_reg_offset()
+> 	warn: masked condition is always false. '((insn->rex_prefix.value) & 2) = 1'
 > 
-> diff --git a/drivers/media/i2c/mt9t001.c b/drivers/media/i2c/mt9t001.c
-> index 8ae99f7..4383a5d 100644
-> --- a/drivers/media/i2c/mt9t001.c
-> +++ b/drivers/media/i2c/mt9t001.c
-> @@ -834,7 +834,7 @@ static struct v4l2_subdev_ops mt9t001_subdev_ops = {
->  	.pad = &mt9t001_subdev_pad_ops,
->  };
+> arch/x86/mm/mpx.c
+>    138          switch (type) {
+>    139          case REG_TYPE_RM:
+>    140                  regno = X86_MODRM_RM(insn->modrm.value);
+>    141                  if (X86_REX_B(insn->rex_prefix.value) = 1)
+>    142                          regno += 8;
+>    143                  break;
+>    144  
+>    145          case REG_TYPE_INDEX:
+>    146                  regno = X86_SIB_INDEX(insn->sib.value);
+>    147                  if (X86_REX_X(insn->rex_prefix.value) = 1)
+>                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Was X86_REX_B() intended?
 > 
-> -static struct v4l2_subdev_internal_ops mt9t001_subdev_internal_ops = {
-> +static const struct v4l2_subdev_internal_ops mt9t001_subdev_internal_ops > { .registered = mt9t001_registered,
->  	.open = mt9t001_open,
->  	.close = mt9t001_close,
-
--- 
-Regards,
-
-Laurent Pinchart
-
+>    148                          regno += 8;
+>    149                  break;
+>    150  
+>    151          case REG_TYPE_BASE:
+>    152                  regno = X86_SIB_BASE(insn->sib.value);
+>    153                  if (X86_REX_B(insn->rex_prefix.value) = 1)
+>    154                          regno += 8;
+>    155                  break;
+>    156  
+>    157          default:
+>    158                  pr_err("invalid register type");
+>    159                  BUG();
+>    160                  break;
+>    161          }
+> 
+> regards,
+> dan carpenter
