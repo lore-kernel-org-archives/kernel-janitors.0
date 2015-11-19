@@ -1,59 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 08:45:41 +0000
-Subject: [PATCH] SCSI-libfc: Delete an unnecessary check before the function call "kmem_cache_destroy"
-Message-Id: <564997B5.6030703@users.sourceforge.net>
+From: Vasu Dev <vasu.dev@linux.intel.com>
+Date: Thu, 19 Nov 2015 18:21:28 +0000
+Subject: Re: [PATCH] SCSI-libfc: Delete an unnecessary check before the function call "kmem_cache_destroy"
+Message-Id: <1447957288.5825.83.camel@lin-nd1-054.jf.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+	 <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+	 <530A086E.8010901@users.sourceforge.net>
+	 <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+	 <530A72AA.3000601@users.sourceforge.net>
+	 <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+	 <530B5FB6.6010207@users.sourceforge.net>
+	 <alpine.DEB.2.10.1402241710370.2074@hadrien>
+	 <530C5E18.1020800@users.sourceforge.net>
+	 <alpine.DEB.2.10.1402251014170.2080@hadrien>
+	 <530CD2C4.4050903@users.sourceforge.net>
+	 <alpine.DEB.2.10.1402251840450.7035@hadrien>
+	 <530CF8FF.8080600@users.sourceforge.net>
+	 <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+	 <530DD06F.4090703@users.sourceforge.net>
+	 <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	 <5317A59D.4@users.sourceforge.net> <564997B5.6030703@users.sourceforge.net>
+In-Reply-To: <564997B5.6030703@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E. J. Bottomley" <JBottomley@odin.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "James E. J. Bottomley" <JBottomley@odin.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 09:39:12 +0100
+On Mon, 2015-11-16 at 09:45 +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 16 Nov 2015 09:39:12 +0100
+> 
+> The kmem_cache_destroy() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/scsi/libfc/fc_fcp.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/libfc/fc_fcp.c b/drivers/scsi/libfc/fc_fcp.c
+> index 5121272..d377514 100644
+> --- a/drivers/scsi/libfc/fc_fcp.c
+> +++ b/drivers/scsi/libfc/fc_fcp.c
+> @@ -2216,8 +2216,7 @@ int fc_setup_fcp(void)
+>  
+>  void fc_destroy_fcp(void)
+>  {
+> -	if (scsi_pkt_cachep)
+> -		kmem_cache_destroy(scsi_pkt_cachep);
+> +	kmem_cache_destroy(scsi_pkt_cachep);
+>  }
+>  
+>  /**
+Looks good.
 
-The kmem_cache_destroy() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/scsi/libfc/fc_fcp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/libfc/fc_fcp.c b/drivers/scsi/libfc/fc_fcp.c
-index 5121272..d377514 100644
---- a/drivers/scsi/libfc/fc_fcp.c
-+++ b/drivers/scsi/libfc/fc_fcp.c
-@@ -2216,8 +2216,7 @@ int fc_setup_fcp(void)
- 
- void fc_destroy_fcp(void)
- {
--	if (scsi_pkt_cachep)
--		kmem_cache_destroy(scsi_pkt_cachep);
-+	kmem_cache_destroy(scsi_pkt_cachep);
- }
- 
- /**
--- 
-2.6.2
+Acked-by: Vasu Dev <vasu.dev@intel.com>
 
