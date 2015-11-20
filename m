@@ -1,30 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Nov 2015 22:23:53 +0000
-Subject: [patch 2/2] [media] av7110: potential divide by zero
-Message-Id: <20151110222353.GE30281@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 20 Nov 2015 20:33:19 +0000
+Subject: [PATCH 1/6] powerpc/6xx: add missing of_node_put
+Message-Id: <1448051604-25256-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-"len" comes from dvb_video_ioctl() and there is a possibility that it is
-zero.  We do a divide by len later in the function so that's not ok.
+for_each_compatible_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-diff --git a/drivers/media/pci/ttpci/av7110_av.c b/drivers/media/pci/ttpci/av7110_av.c
-index ccb3b2c..1cf9060 100644
---- a/drivers/media/pci/ttpci/av7110_av.c
-+++ b/drivers/media/pci/ttpci/av7110_av.c
-@@ -1045,6 +1045,9 @@ static int play_iframe(struct av7110 *av7110, char __user *buf, unsigned int len
- 
- 	dprintk(2, "av7110:%p, \n", av7110);
- 
-+	if (len = 0)
-+		return 0;
-+
- 	if (!(av7110->playing & RP_VIDEO)) {
- 		if (av7110_av_start_play(av7110, RP_VIDEO) < 0)
- 			return -EBUSY;
+// <smpl>
+@@
+expression e;
+local idexpression n;
+@@
+
+@@
+local idexpression n;
+expression e;
+@@
+
+ for_each_compatible_node(n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/powerpc/platforms/embedded6xx/hlwd-pic.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/powerpc/platforms/embedded6xx/hlwd-pic.c b/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
+index 9b79757..b581b42 100644
+--- a/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
++++ b/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
+@@ -215,6 +215,7 @@ void hlwd_pic_probe(void)
+ 			irq_set_chained_handler(cascade_virq,
+ 						hlwd_pic_irq_cascade);
+ 			hlwd_irq_host = host;
++			of_node_put(np);
+ 			break;
+ 		}
+ 	}
+
