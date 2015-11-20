@@ -1,39 +1,127 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Nov 2015 14:02:12 +0000
-Subject: Re: staging: most: Delete an unnecessary check before the function call "module_put"
-Message-Id: <563B6164.6020707@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 20 Nov 2015 20:33:18 +0000
+Subject: [PATCH 0/6] add missing of_node_put
+Message-Id: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563B5C52.2060507@users.sourceforge.net>
- <20151105135235.GX18797@mwanda>
-In-Reply-To: <20151105135235.GX18797@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org
-Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-> Please stop sending these patches for drivers/staging.
+The various for_each device_node iterators performs an of_node_get on each
+iteration, so a break out of the loop requires an of_node_put.
 
-Will further contributors take another look at similar update suggestions?
+The complete semantic patch that fixes this problem is
+(http://coccinelle.lip6.fr):
 
+// <smpl>
+@r@
+local idexpression n;
+expression e1,e2;
+iterator name for_each_node_by_name, for_each_node_by_type,
+for_each_compatible_node, for_each_matching_node,
+for_each_matching_node_and_match, for_each_child_of_node,
+for_each_available_child_of_node, for_each_node_with_property;
+iterator i;
+statement S;
+expression list [n1] es;
+@@
 
-> You are welcome to send them for other subsystems
+(
+(
+for_each_node_by_name(n,e1) S
+|
+for_each_node_by_type(n,e1) S
+|
+for_each_compatible_node(n,e1,e2) S
+|
+for_each_matching_node(n,e1) S
+|
+for_each_matching_node_and_match(n,e1,e2) S
+|
+for_each_child_of_node(e1,n) S
+|
+for_each_available_child_of_node(e1,n) S
+|
+for_each_node_with_property(n,e1) S
+)
+&
+i(es,n,...) S
+)
 
-Thanks for this suggestion.
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
 
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
 
-> which I don't care about.
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
 
-I am curious if other software developers will give more positive feedback
-on the proposed source code fine-tuning because of collateral evolution.
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
 
-Regards,
-Markus
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+identifier l;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+...
+l: ... when != n// </smpl>
+
+---
+
+ arch/powerpc/kernel/btext.c                   |    4 +++-
+ arch/powerpc/kernel/machine_kexec_64.c        |    4 +++-
+ arch/powerpc/platforms/cell/iommu.c           |    1 +
+ arch/powerpc/platforms/embedded6xx/hlwd-pic.c |    1 +
+ arch/powerpc/platforms/powernv/opal-lpc.c     |    1 +
+ arch/powerpc/platforms/pseries/setup.c        |    3 ++-
+ 6 files changed, 11 insertions(+), 3 deletions(-)
