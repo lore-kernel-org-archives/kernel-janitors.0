@@ -1,70 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 05 Nov 2015 17:00:46 +0000
-Subject: [PATCH] IPC-mqueue: Delete unnecessary checks before two function calls
-Message-Id: <563B8B3E.8050004@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 20 Nov 2015 20:33:22 +0000
+Subject: [PATCH 4/6] powerpc/kexec: add missing of_node_put
+Message-Id: <1448051604-25256-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 5 Nov 2015 17:55:25 +0100
+for_each_node_by_type performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-The functions iput() and unregister_sysctl_table() test whether their
-argument is NULL and then return immediately.
-Thus the tests around their calls are not needed.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+expression e,e1;
+local idexpression n;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- ipc/mqueue.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 161a180..ade9dd8 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -885,8 +885,7 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
- 
- out_unlock:
- 	mutex_unlock(&d_inode(mnt->mnt_root)->i_mutex);
--	if (inode)
--		iput(inode);
-+	iput(inode);
- 	mnt_drop_write(mnt);
- out_name:
- 	putname(name);
-@@ -1460,8 +1459,7 @@ static int __init init_mqueue_fs(void)
- out_filesystem:
- 	unregister_filesystem(&mqueue_fs_type);
- out_sysctl:
--	if (mq_sysctl_table)
--		unregister_sysctl_table(mq_sysctl_table);
-+	unregister_sysctl_table(mq_sysctl_table);
- 	kmem_cache_destroy(mqueue_inode_cachep);
- 	return error;
+ for_each_node_by_type(n, e1) {
+   ... when != of_node_put(n)
+       when != e = n
+(
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
  }
--- 
-2.6.2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/powerpc/kernel/machine_kexec_64.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/kernel/machine_kexec_64.c b/arch/powerpc/kernel/machine_kexec_64.c
+index 0fbd75d..4ba61ce 100644
+--- a/arch/powerpc/kernel/machine_kexec_64.c
++++ b/arch/powerpc/kernel/machine_kexec_64.c
+@@ -103,8 +103,10 @@ int default_machine_kexec_prepare(struct kimage *image)
+ 			begin = image->segment[i].mem;
+ 			end = begin + image->segment[i].memsz;
+ 
+-			if ((begin < high) && (end > low))
++			if ((begin < high) && (end > low)) {
++				of_node_put(node);
+ 				return -ETXTBSY;
++			}
+ 		}
+ 	}
+ 
 
