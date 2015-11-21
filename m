@@ -1,37 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Nov 2015 14:26:23 +0000
-Subject: re: openvswitch: Fix egress tunnel info.
-Message-Id: <20151103142623.GD28591@mwanda>
+From: Marek Lindner <mareklindner@neomailbox.ch>
+Date: Sat, 21 Nov 2015 21:51:04 +0000
+Subject: Re: [B.A.T.M.A.N.] [PATCH 2/3] batman-adv: Split a condition check
+Message-Id: <2723284.fvSBmu6aJ3@voltaire>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="nextPart5154744.fNLkcmSmS2"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
+References: <5307CAA2.8060406@users.sourceforge.net> <56391CF7.9080400@users.sourceforge.net> <56391F0B.2060102@users.sourceforge.net>
+In-Reply-To: <56391F0B.2060102@users.sourceforge.net>
+To: b.a.t.m.a.n@lists.open-mesh.org
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Simon Wunderlich <sw@simonwunderlich.de>, netdev@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+
+--nextPart5154744.fNLkcmSmS2
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
 
-Hello Pravin B Shelar,
+On Tuesday, November 03, 2015 21:54:35 SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 3 Nov 2015 20:41:02 +0100
+> 
+> Let us split a check for a condition at the beginning of the
+> batadv_is_ap_isolated() function so that a direct return can be performed
+> in this function if the variable "vlan" contained a null pointer.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  net/batman-adv/translation-table.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-This is a semi-automatic email about new static checker warnings.
+Applied in revision b1199c6.
 
-The patch fc4099f17240: "openvswitch: Fix egress tunnel info." from 
-Oct 22, 2015, leads to the following Smatch complaint:
+Thanks,
+Marek
 
-include/net/dst_metadata.h:69 tun_dst_unclone()
-	 warn: variable dereferenced before check 'md_dst' (see line 66)
+--nextPart5154744.fNLkcmSmS2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-include/net/dst_metadata.h
-    65		struct metadata_dst *md_dst = skb_metadata_dst(skb);
-    66		int md_size = md_dst->u.tun_info.options_len;
-                              ^^^^^^^^
-New dereference.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-    67		struct metadata_dst *new_md;
-    68	
-    69		if (!md_dst)
-                    ^^^^^^^
-New NULL check.
+iQEcBAABCAAGBQJWUOdIAAoJEFNVTo/uthzAH6MH/1ZRFtHupThwVXcBfnoqGgUY
+qgd9VHY6TX1BEbSF79nydp8bqjIES8yXE8ltBXCwy3ixgkomZyxNyqnAXlFfZoOi
+QBwMQcS0LFKEoLFbP80P6JDU869DjqS8upKZ75klqne+kFxB6eA13joxpqJgVSYv
+lVeSL3i64JZSjqwFXmRFeDX7wUMfFfZoKDYeJoF3RU7Pu73vA0Jpa+d7SkoHrUKG
+g9PwApoZosqe/Wo46Wdm8DMr97iEynrOQBVkqcVO8wLXGMOGAmZ8/xEKd4gYAx9v
+CH5OJnMy06YH2B2Lil/c+mEmVl01rntn5I4mO3tCzqZ3PzQFDip9q/dzfZTCjYI=
+=6RRe
+-----END PGP SIGNATURE-----
 
-    70			return ERR_PTR(-EINVAL);
-    71	
+--nextPart5154744.fNLkcmSmS2--
 
-regards,
-dan carpenter
