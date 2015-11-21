@@ -1,77 +1,106 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 13:23:42 +0000
-Subject: [PATCH] SCSI-zfcp: Delete unnecessary checks before the function call "mempool_destroy"
-Message-Id: <5649D8DE.1030809@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 21 Nov 2015 15:15:37 +0000
+Subject: [PATCH] adfs: constify adfs_dir_ops structures
+Message-Id: <1448118937-21015-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Steffen Maier <maier@linux.vnet.ibm.com>, linux-s390@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 14:19:03 +0100
+The adfs_dir_ops structures are never modified, so declare them as const.
 
-The mempool_destroy() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the calls is not needed.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/s390/scsi/zfcp_aux.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ fs/adfs/adfs.h      |    6 +++---
+ fs/adfs/dir.c       |    6 +++---
+ fs/adfs/dir_f.c     |    2 +-
+ fs/adfs/dir_fplus.c |    2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/s390/scsi/zfcp_aux.c b/drivers/s390/scsi/zfcp_aux.c
-index c00ac46..abc9c93 100644
---- a/drivers/s390/scsi/zfcp_aux.c
-+++ b/drivers/s390/scsi/zfcp_aux.c
-@@ -248,20 +248,13 @@ static int zfcp_allocate_low_mem_buffers(struct zfcp_adapter *adapter)
+diff --git a/fs/adfs/adfs.h b/fs/adfs/adfs.h
+index 24575d9..ea4aba5 100644
+--- a/fs/adfs/adfs.h
++++ b/fs/adfs/adfs.h
+@@ -45,7 +45,7 @@ struct adfs_dir_ops;
+ struct adfs_sb_info {
+ 	union { struct {
+ 		struct adfs_discmap *s_map;	/* bh list containing map	 */
+-		struct adfs_dir_ops *s_dir;	/* directory operations		 */
++		const struct adfs_dir_ops *s_dir; /* directory operations	 */
+ 		};
+ 		struct rcu_head rcu;		/* used only at shutdown time	 */
+ 	};
+@@ -168,8 +168,8 @@ void __adfs_error(struct super_block *sb, const char *function,
+ extern const struct inode_operations adfs_dir_inode_operations;
+ extern const struct file_operations adfs_dir_operations;
+ extern const struct dentry_operations adfs_dentry_operations;
+-extern struct adfs_dir_ops adfs_f_dir_ops;
+-extern struct adfs_dir_ops adfs_fplus_dir_ops;
++extern const struct adfs_dir_ops adfs_f_dir_ops;
++extern const struct adfs_dir_ops adfs_fplus_dir_ops;
  
- static void zfcp_free_low_mem_buffers(struct zfcp_adapter *adapter)
+ extern int adfs_dir_update(struct super_block *sb, struct object_info *obj,
+ 			   int wait);
+diff --git a/fs/adfs/dir.c b/fs/adfs/dir.c
+index 51c279a..fd4cf2c 100644
+--- a/fs/adfs/dir.c
++++ b/fs/adfs/dir.c
+@@ -21,7 +21,7 @@ adfs_readdir(struct file *file, struct dir_context *ctx)
  {
--	if (adapter->pool.erp_req)
--		mempool_destroy(adapter->pool.erp_req);
--	if (adapter->pool.scsi_req)
--		mempool_destroy(adapter->pool.scsi_req);
--	if (adapter->pool.scsi_abort)
--		mempool_destroy(adapter->pool.scsi_abort);
--	if (adapter->pool.qtcb_pool)
--		mempool_destroy(adapter->pool.qtcb_pool);
--	if (adapter->pool.status_read_req)
--		mempool_destroy(adapter->pool.status_read_req);
--	if (adapter->pool.sr_data)
--		mempool_destroy(adapter->pool.sr_data);
--	if (adapter->pool.gid_pn)
--		mempool_destroy(adapter->pool.gid_pn);
-+	mempool_destroy(adapter->pool.erp_req);
-+	mempool_destroy(adapter->pool.scsi_req);
-+	mempool_destroy(adapter->pool.scsi_abort);
-+	mempool_destroy(adapter->pool.qtcb_pool);
-+	mempool_destroy(adapter->pool.status_read_req);
-+	mempool_destroy(adapter->pool.sr_data);
-+	mempool_destroy(adapter->pool.gid_pn);
+ 	struct inode *inode = file_inode(file);
+ 	struct super_block *sb = inode->i_sb;
+-	struct adfs_dir_ops *ops = ADFS_SB(sb)->s_dir;
++	const struct adfs_dir_ops *ops = ADFS_SB(sb)->s_dir;
+ 	struct object_info obj;
+ 	struct adfs_dir dir;
+ 	int ret = 0;
+@@ -69,7 +69,7 @@ adfs_dir_update(struct super_block *sb, struct object_info *obj, int wait)
+ {
+ 	int ret = -EINVAL;
+ #ifdef CONFIG_ADFS_FS_RW
+-	struct adfs_dir_ops *ops = ADFS_SB(sb)->s_dir;
++	const struct adfs_dir_ops *ops = ADFS_SB(sb)->s_dir;
+ 	struct adfs_dir dir;
+ 
+ 	printk(KERN_INFO "adfs_dir_update: object %06X in dir %06X\n",
+@@ -129,7 +129,7 @@ static int
+ adfs_dir_lookup_byname(struct inode *inode, struct qstr *name, struct object_info *obj)
+ {
+ 	struct super_block *sb = inode->i_sb;
+-	struct adfs_dir_ops *ops = ADFS_SB(sb)->s_dir;
++	const struct adfs_dir_ops *ops = ADFS_SB(sb)->s_dir;
+ 	struct adfs_dir dir;
+ 	int ret;
+ 
+diff --git a/fs/adfs/dir_f.c b/fs/adfs/dir_f.c
+index 4bbe853..0fbfd0b 100644
+--- a/fs/adfs/dir_f.c
++++ b/fs/adfs/dir_f.c
+@@ -476,7 +476,7 @@ adfs_f_free(struct adfs_dir *dir)
+ 	dir->sb = NULL;
  }
  
- /**
--- 
-2.6.2
+-struct adfs_dir_ops adfs_f_dir_ops = {
++const struct adfs_dir_ops adfs_f_dir_ops = {
+ 	.read		= adfs_f_read,
+ 	.setpos		= adfs_f_setpos,
+ 	.getnext	= adfs_f_getnext,
+diff --git a/fs/adfs/dir_fplus.c b/fs/adfs/dir_fplus.c
+index 82d14cd..c92cfb6 100644
+--- a/fs/adfs/dir_fplus.c
++++ b/fs/adfs/dir_fplus.c
+@@ -256,7 +256,7 @@ adfs_fplus_free(struct adfs_dir *dir)
+ 	dir->sb = NULL;
+ }
+ 
+-struct adfs_dir_ops adfs_fplus_dir_ops = {
++const struct adfs_dir_ops adfs_fplus_dir_ops = {
+ 	.read		= adfs_fplus_read,
+ 	.setpos		= adfs_fplus_setpos,
+ 	.getnext	= adfs_fplus_getnext,
 
