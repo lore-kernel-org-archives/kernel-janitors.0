@@ -1,40 +1,55 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Nov 2015 10:06:58 +0000
-Subject: [PATCH 6/9] be2iscsi: constify pci_error_handlers structures
-Message-Id: <1447495621-9161-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Marek Lindner <mareklindner@neomailbox.ch>
+Date: Sat, 21 Nov 2015 21:48:34 +0000
+Subject: Re: [B.A.T.M.A.N.] [PATCH 1/3] batman-adv: Delete an unnecessary check before the function call "bat
+Message-Id: <1654342.xzdxStlkQC@voltaire>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="nextPart2885958.OeX6xKt5oC"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
+References: <5307CAA2.8060406@users.sourceforge.net> <56391CF7.9080400@users.sourceforge.net> <56391EAA.2060002@users.sourceforge.net>
+In-Reply-To: <56391EAA.2060002@users.sourceforge.net>
+To: b.a.t.m.a.n@lists.open-mesh.org
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Simon Wunderlich <sw@simonwunderlich.de>, netdev@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+
+--nextPart2885958.OeX6xKt5oC
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jayamohan Kallickal <jayamohan.kallickal@avagotech.com>
-Cc: kernel-janitors@vger.kernel.org, Ketan Mukadam <ketan.mukadam@avagotech.com>, John Soni Jose <sony.john@avagotech.com>, "James E.J. Bottomley" <JBottomley@odin.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This pci_error_handlers structure is never modified, like all the other
-pci_error_handlers structures, so declare it as const.
+On Tuesday, November 03, 2015 21:52:58 SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 3 Nov 2015 19:20:34 +0100
+> 
+> The batadv_softif_vlan_free_ref() function tests whether its argument is
+> NULL and then returns immediately. Thus the test around the call is not
+> needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  net/batman-adv/translation-table.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Done with the help of Coccinelle.
+Applied in revision bbcbe0f.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Thanks,
+Marek
 
----
-There are no dependencies between these patches.
+--nextPart2885958.OeX6xKt5oC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
- drivers/scsi/be2iscsi/be_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-index 2e6abe7..0b8f873 100644
---- a/drivers/scsi/be2iscsi/be_main.c
-+++ b/drivers/scsi/be2iscsi/be_main.c
-@@ -5786,7 +5786,7 @@ disable_pci:
- 	return ret;
- }
- 
--static struct pci_error_handlers beiscsi_eeh_handlers = {
-+static const struct pci_error_handlers beiscsi_eeh_handlers = {
- 	.error_detected = beiscsi_eeh_err_detected,
- 	.slot_reset = beiscsi_eeh_reset,
- 	.resume = beiscsi_eeh_resume,
+iQEcBAABCAAGBQJWUOayAAoJEFNVTo/uthzAkjsH/jVuyf4Ouw89Isf/n3xjAKOT
+b6GzZR66BrYCQeizuq/ZvxiIyqbM2J+rv2JrsO0Bz1kVqC3TJMC+JGvR6k7YWkBK
+VDgWOs2d4FTlu+XIk6Wn5sd5C+5a+xcKwxx0FLifM+9DejfdLPoQqDJx+P7OXjFA
+ddzXEaW3JqoTc5wceXDGKGcnt/8zlvAUWjxIhs3tYeE4Uc+VbU0kJLZFORIOt9O4
+5lWbdKNVoCU76A+NmxjflJX1wvi64gi5oikJrfVPJu2dCAAySSV37vG3uaaLanLU
+Hs+nEQE9IqVoxTtXmNGChZ4rqvYvHJtgoUzmnBcluzHq7CRIfrEcGMpsqYmeU1c=
+=mmCS
+-----END PGP SIGNATURE-----
+
+--nextPart2885958.OeX6xKt5oC--
 
