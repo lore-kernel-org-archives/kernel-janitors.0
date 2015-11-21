@@ -1,27 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Nov 2015 12:57:46 +0000
-Subject: Re: [PATCH 2/3] staging: lustre: Delete an unnecessary variable initialisation in class_register_typ
-Message-Id: <20151105125746.GW18797@mwanda>
+Date: Sat, 21 Nov 2015 10:29:39 +0000
+Subject: [patch] drm/vmwgfx: fix a warning message
+Message-Id: <20151121102939.GB7002@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <563B473C.5090508@users.sourceforge.net>
- <563B4911.2000603@users.sourceforge.net>
-In-Reply-To: <563B4911.2000603@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Airlie <airlied@linux.ie>
+Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, Jakob Bornecrantz <jakob@vmware.com>, dri-devel@lists.freedesktop.org, Brian Paul <brianp@vmware.com>, Charmaine Lee <charmainel@vmware.com>
 
-Looks good.
+The WARN_ON() macro only takes a condition argument, it doesn't take
+a message.  I have converted this to WARN() instead.
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
+index a8baf5f..b6a0806 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fifo.c
+@@ -390,7 +390,7 @@ void *vmw_fifo_reserve_dx(struct vmw_private *dev_priv, uint32_t bytes,
+ 	else if (ctx_id = SVGA3D_INVALID_ID)
+ 		ret = vmw_local_fifo_reserve(dev_priv, bytes);
+ 	else {
+-		WARN_ON("Command buffer has not been allocated.\n");
++		WARN(1, "Command buffer has not been allocated.\n");
+ 		ret = NULL;
+ 	}
+ 	if (IS_ERR_OR_NULL(ret)) {
