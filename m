@@ -1,32 +1,42 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Nov 2015 12:57:12 +0000
-Subject: Re: [PATCH 1/3] staging: lustre: Delete unnecessary checks before two function calls
-Message-Id: <20151105125712.GV18797@mwanda>
+Date: Sat, 21 Nov 2015 10:33:00 +0000
+Subject: [patch] iio: fix some warning messages
+Message-Id: <20151121103300.GD7002@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <563B473C.5090508@users.sourceforge.net>
- <563B4878.7000106@users.sourceforge.net>
-In-Reply-To: <563B4878.7000106@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I don't like these patches because relying on hidden sanity checks makes
-the code harder to read.
+WARN_ON() only takes a condition argument.  I have changed these to
+WARN() instead.
 
-I am CC'd on all these patches because of kernel-janitors and normally I
-ignore them but this is drivers/staging so I am invested in this code.
-Feel free to send them to other subsystems though.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 37697d5..fe80366 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -654,7 +654,7 @@ int __iio_device_attr_init(struct device_attribute *dev_attr,
+ 			break;
+ 		case IIO_SEPARATE:
+ 			if (!chan->indexed) {
+-				WARN_ON("Differential channels must be indexed\n");
++				WARN(1, "Differential channels must be indexed\n");
+ 				ret = -EINVAL;
+ 				goto error_free_full_postfix;
+ 			}
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index d7e908a..0f6f63b 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -302,7 +302,7 @@ static int iio_scan_mask_set(struct iio_dev *indio_dev,
+ 	if (trialmask = NULL)
+ 		return -ENOMEM;
+ 	if (!indio_dev->masklength) {
+-		WARN_ON("Trying to set scanmask prior to registering buffer\n");
++		WARN(1, "Trying to set scanmask prior to registering buffer\n");
+ 		goto err_invalid_mask;
+ 	}
+ 	bitmap_copy(trialmask, buffer->scan_mask, indio_dev->masklength);
