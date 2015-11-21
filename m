@@ -1,20 +1,79 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Nov 2015 19:53:09 +0000
-Subject: Re: [patch] netlink: fix a limit in NETLINK_LIST_MEMBERSHIPS
-Message-Id: <20151113195309.GV7289@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 21 Nov 2015 17:39:17 +0000
+Subject: [PATCH] VSOCK: constify vmci_transport_notify_ops structures
+Message-Id: <1448127557-22280-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151113142044.GA1445@mwanda>
- <CANq1E4Rh60iS6WRq6xypV_ahG5N=uErL_hMnVcncc=DTSPvdUw@mail.gmail.com>
-In-Reply-To: <CANq1E4Rh60iS6WRq6xypV_ahG5N=uErL_hMnVcncc=DTSPvdUw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Herrmann <dh.herrmann@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>, Daniel Borkmann <daniel@iogearbox.net>, Johannes Berg <johannes.berg@intel.com>, Al Viro <viro@zeniv.linux.org.uk>, Nicolas Dichtel <nicolas.dichtel@6wind.com>, Florian Westphal <fw@strlen.de>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-Oh.  Crap...  My mistake.  Sorry for the noise.  The original code is
-fine.
+The vmci_transport_notify_ops structures are never modified, so declare
+them as const.
 
-regards,
-dan carpenter
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ net/vmw_vsock/vmci_transport.h               |    2 +-
+ net/vmw_vsock/vmci_transport_notify.c        |    2 +-
+ net/vmw_vsock/vmci_transport_notify.h        |    5 +++--
+ net/vmw_vsock/vmci_transport_notify_qstate.c |    2 +-
+ 4 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/net/vmw_vsock/vmci_transport.h b/net/vmw_vsock/vmci_transport.h
+index 2ad46f3..1820e74 100644
+--- a/net/vmw_vsock/vmci_transport.h
++++ b/net/vmw_vsock/vmci_transport.h
+@@ -121,7 +121,7 @@ struct vmci_transport {
+ 	u64 queue_pair_max_size;
+ 	u32 detach_sub_id;
+ 	union vmci_transport_notify notify;
+-	struct vmci_transport_notify_ops *notify_ops;
++	const struct vmci_transport_notify_ops *notify_ops;
+ 	struct list_head elem;
+ 	struct sock *sk;
+ 	spinlock_t lock; /* protects sk. */
+diff --git a/net/vmw_vsock/vmci_transport_notify.c b/net/vmw_vsock/vmci_transport_notify.c
+index 9b7f207..fd8cf02 100644
+--- a/net/vmw_vsock/vmci_transport_notify.c
++++ b/net/vmw_vsock/vmci_transport_notify.c
+@@ -661,7 +661,7 @@ static void vmci_transport_notify_pkt_process_negotiate(struct sock *sk)
+ }
+ 
+ /* Socket control packet based operations. */
+-struct vmci_transport_notify_ops vmci_transport_notify_pkt_ops = {
++const struct vmci_transport_notify_ops vmci_transport_notify_pkt_ops = {
+ 	vmci_transport_notify_pkt_socket_init,
+ 	vmci_transport_notify_pkt_socket_destruct,
+ 	vmci_transport_notify_pkt_poll_in,
+diff --git a/net/vmw_vsock/vmci_transport_notify.h b/net/vmw_vsock/vmci_transport_notify.h
+index 7df7932..3c464d3 100644
+--- a/net/vmw_vsock/vmci_transport_notify.h
++++ b/net/vmw_vsock/vmci_transport_notify.h
+@@ -77,7 +77,8 @@ struct vmci_transport_notify_ops {
+ 	void (*process_negotiate) (struct sock *sk);
+ };
+ 
+-extern struct vmci_transport_notify_ops vmci_transport_notify_pkt_ops;
+-extern struct vmci_transport_notify_ops vmci_transport_notify_pkt_q_state_ops;
++extern const struct vmci_transport_notify_ops vmci_transport_notify_pkt_ops;
++extern const
++struct vmci_transport_notify_ops vmci_transport_notify_pkt_q_state_ops;
+ 
+ #endif /* __VMCI_TRANSPORT_NOTIFY_H__ */
+diff --git a/net/vmw_vsock/vmci_transport_notify_qstate.c b/net/vmw_vsock/vmci_transport_notify_qstate.c
+index dc9c792..21e591d 100644
+--- a/net/vmw_vsock/vmci_transport_notify_qstate.c
++++ b/net/vmw_vsock/vmci_transport_notify_qstate.c
+@@ -419,7 +419,7 @@ vmci_transport_notify_pkt_send_pre_enqueue(
+ }
+ 
+ /* Socket always on control packet based operations. */
+-struct vmci_transport_notify_ops vmci_transport_notify_pkt_q_state_ops = {
++const struct vmci_transport_notify_ops vmci_transport_notify_pkt_q_state_ops = {
+ 	vmci_transport_notify_pkt_socket_init,
+ 	vmci_transport_notify_pkt_socket_destruct,
+ 	vmci_transport_notify_pkt_poll_in,
 
