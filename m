@@ -1,49 +1,31 @@
-From: Maxime Coquelin <maxime.coquelin@st.com>
-Date: Fri, 06 Nov 2015 07:50:37 +0000
-Subject: Re: [PATCH 0/2] [media] c8sectpfe: Deletion of a few unnecessary checks
-Message-Id: <563C5BCD.806@st.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 21 Nov 2015 10:28:50 +0000
+Subject: [patch] nfsd: fix a warning message
+Message-Id: <20151121102850.GA7002@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563BA3CC.4040709@users.sourceforge.net>
-In-Reply-To: <563BA3CC.4040709@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Jeff Layton <jlayton@poochiereds.net>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+The WARN() macro takes a condition and a format string.  The condition
+was accidentally left out here so it just prints the function name
+instead of the message.
 
-On 11/05/2015 07:45 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 5 Nov 2015 19:39:32 +0100
->
-> Another update suggestion was taken into account after a patch was applied
-> from static source code analysis.
->
-> Markus Elfring (2):
->    Delete unnecessary checks before two function calls
->    Combine three checks into a single if block
->
->   drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
->
-For the series:
-Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks!
-Maxime
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 6b800b5..7af023f 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -2240,7 +2240,8 @@ nfsd4_store_cache_entry(struct nfsd4_compoundres *resp)
+ 	base = resp->cstate.data_offset;
+ 	slot->sl_datalen = buf->len - base;
+ 	if (read_bytes_from_xdr_buf(buf, base, slot->sl_data, slot->sl_datalen))
+-		WARN("%s: sessions DRC could not cache compound\n", __func__);
++		WARN(1, "%s: sessions DRC could not cache compound\n",
++		     __func__);
+ 	return;
+ }
+ 
