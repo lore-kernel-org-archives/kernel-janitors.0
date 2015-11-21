@@ -1,107 +1,56 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 16 Nov 2015 11:33:15 +0000
-Subject: [PATCH 2/7] phy: mt65xx-usb3: add missing of_node_put
-Message-Id: <1447673600-8881-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Marek Lindner <mareklindner@neomailbox.ch>
+Date: Sat, 21 Nov 2015 21:45:33 +0000
+Subject: Re: [B.A.T.M.A.N.] [PATCH 1/2] batman-adv: Delete unnecessary checks before the function call "kfree
+Message-Id: <2329415.lXFbWjXfj3@voltaire>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="nextPart1573570.N95rHCmhjF"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
+References: <5307CAA2.8060406@users.sourceforge.net> <56484502.8000206@users.sourceforge.net> <564845AE.8020008@users.sourceforge.net>
+In-Reply-To: <564845AE.8020008@users.sourceforge.net>
+To: b.a.t.m.a.n@lists.open-mesh.org
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Simon Wunderlich <sw@simonwunderlich.de>, netdev@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+
+--nextPart1573570.N95rHCmhjF
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
 
-for_each_child_of_node performs an of_node_get on each iteration,
-so a return from the middle of the loop requires an of_node_put.
+On Sunday, November 15, 2015 09:43:26 SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 15 Nov 2015 08:04:43 +0100
+> 
+> The kfree_skb() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the calls is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  net/batman-adv/main.c           | 2 +-
+>  net/batman-adv/network-coding.c | 4 +---
+>  net/batman-adv/send.c           | 3 +--
+>  3 files changed, 3 insertions(+), 6 deletions(-)
 
-A simplified version of the semantic patch that finds this problem is as
-follows (http://coccinelle.lip6.fr):
+Applied in revision 77d84a6.
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-@@
+Thanks,
+Marek
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-*  return ...;
-)
-   ...
- }
-// </smpl>
+--nextPart1573570.N95rHCmhjF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
----
- drivers/phy/phy-mt65xx-usb3.c |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+iQEcBAABCAAGBQJWUOX9AAoJEFNVTo/uthzACYYH/A2iYbcxJ/MhlyXJslnVgmLf
+BfzckoTCJQUH4mjopK/cZcvuAQT6HUTHXi2oBV5+58NRAwHAXg2zv1yDCtBuav+9
+SPqYTWV4dNJb0cQFTuKbLXqXCGe/n1SlHgyvtttLgF3p0zjeNRQScqC5/2/urEBc
+yZr8HmGofBVZGj8drzcL+deGari5o0z1r8RojzKv33E/IMv6sBZ5+I4EmNQGDLDg
+zdWvHTRn/3MZGH4UsEw3HXVUVVOCeyjvAGEBORz63GZR42tM+0TCgHpo3Z7kTynE
+WX2wFI/FRhoSxhHS3APzSUxQ/7o1MCuzNKDS430OYKVW/WrV8CP2jqVGrRUGwvQ=
+=6jJq
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/phy/phy-mt65xx-usb3.c b/drivers/phy/phy-mt65xx-usb3.c
-index f30b28b..e427c3b 100644
---- a/drivers/phy/phy-mt65xx-usb3.c
-+++ b/drivers/phy/phy-mt65xx-usb3.c
-@@ -415,7 +415,7 @@ static int mt65xx_u3phy_probe(struct platform_device *pdev)
- 	struct resource *sif_res;
- 	struct mt65xx_u3phy *u3phy;
- 	struct resource res;
--	int port;
-+	int port, retval;
- 
- 	u3phy = devm_kzalloc(dev, sizeof(*u3phy), GFP_KERNEL);
- 	if (!u3phy)
-@@ -447,31 +447,34 @@ static int mt65xx_u3phy_probe(struct platform_device *pdev)
- 	for_each_child_of_node(np, child_np) {
- 		struct mt65xx_phy_instance *instance;
- 		struct phy *phy;
--		int retval;
- 
- 		instance = devm_kzalloc(dev, sizeof(*instance), GFP_KERNEL);
--		if (!instance)
--			return -ENOMEM;
-+		if (!instance) {
-+			retval = -ENOMEM;
-+			goto put_child;
-+		}
- 
- 		u3phy->phys[port] = instance;
- 
- 		phy = devm_phy_create(dev, child_np, &mt65xx_u3phy_ops);
- 		if (IS_ERR(phy)) {
- 			dev_err(dev, "failed to create phy\n");
--			return PTR_ERR(phy);
-+			retval = PTR_ERR(phy);
-+			goto put_child;
- 		}
- 
- 		retval = of_address_to_resource(child_np, 0, &res);
- 		if (retval) {
- 			dev_err(dev, "failed to get address resource(id-%d)\n",
- 				port);
--			return retval;
-+			goto put_child;
- 		}
- 
- 		instance->port_base = devm_ioremap_resource(&phy->dev, &res);
- 		if (IS_ERR(instance->port_base)) {
- 			dev_err(dev, "failed to remap phy regs\n");
--			return PTR_ERR(instance->port_base);
-+			retval = PTR_ERR(instance->port_base);
-+			goto put_child;
- 		}
- 
- 		instance->phy = phy;
-@@ -483,6 +486,9 @@ static int mt65xx_u3phy_probe(struct platform_device *pdev)
- 	provider = devm_of_phy_provider_register(dev, mt65xx_phy_xlate);
- 
- 	return PTR_ERR_OR_ZERO(provider);
-+put_child:
-+	of_node_put(child_np);
-+	return retval;
- }
- 
- static const struct of_device_id mt65xx_u3phy_id_table[] = {
+--nextPart1573570.N95rHCmhjF--
 
