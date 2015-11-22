@@ -1,129 +1,89 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 21:08:32 +0000
-Subject: [PATCH] staging-EHCA: Delete unnecessary checks before the function call "kmem_cache_destroy"
-Message-Id: <5648F450.3050004@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 22 Nov 2015 17:44:38 +0000
+Subject: [PATCH] [media] cx231xx: constify cx2341x_handler_ops structures
+Message-Id: <1448214278-5261-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, linux-rdma@vger.kernel.org, devel@driverdev.osuosl.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Andy Walls <awalls@md.metrocast.net>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 21:58:45 +0100
+The cx2341x_handler_ops structures are never modified, so declare them as
+const.
 
-The kmem_cache_destroy() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the calls is not needed.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/rdma/ehca/ehca_av.c   | 3 +--
- drivers/staging/rdma/ehca/ehca_cq.c   | 3 +--
- drivers/staging/rdma/ehca/ehca_main.c | 3 +--
- drivers/staging/rdma/ehca/ehca_mrmw.c | 6 ++----
- drivers/staging/rdma/ehca/ehca_pd.c   | 3 +--
- drivers/staging/rdma/ehca/ehca_qp.c   | 3 +--
- 6 files changed, 7 insertions(+), 14 deletions(-)
+ drivers/media/pci/cx18/cx18-controls.c  |    2 +-
+ drivers/media/pci/cx18/cx18-controls.h  |    2 +-
+ drivers/media/pci/ivtv/ivtv-controls.c  |    2 +-
+ drivers/media/pci/ivtv/ivtv-controls.h  |    2 +-
+ drivers/media/usb/cx231xx/cx231xx-417.c |    2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/rdma/ehca/ehca_av.c b/drivers/staging/rdma/ehca/ehca_av.c
-index 4659263..04b9398 100644
---- a/drivers/staging/rdma/ehca/ehca_av.c
-+++ b/drivers/staging/rdma/ehca/ehca_av.c
-@@ -272,6 +272,5 @@ int ehca_init_av_cache(void)
- 
- void ehca_cleanup_av_cache(void)
- {
--	if (av_cache)
--		kmem_cache_destroy(av_cache);
-+	kmem_cache_destroy(av_cache);
- }
-diff --git a/drivers/staging/rdma/ehca/ehca_cq.c b/drivers/staging/rdma/ehca/ehca_cq.c
-index ea1b5c1..1aa7931 100644
---- a/drivers/staging/rdma/ehca/ehca_cq.c
-+++ b/drivers/staging/rdma/ehca/ehca_cq.c
-@@ -393,6 +393,5 @@ int ehca_init_cq_cache(void)
- 
- void ehca_cleanup_cq_cache(void)
- {
--	if (cq_cache)
--		kmem_cache_destroy(cq_cache);
-+	kmem_cache_destroy(cq_cache);
- }
-diff --git a/drivers/staging/rdma/ehca/ehca_main.c b/drivers/staging/rdma/ehca/ehca_main.c
-index 8246418..860b974 100644
---- a/drivers/staging/rdma/ehca/ehca_main.c
-+++ b/drivers/staging/rdma/ehca/ehca_main.c
-@@ -245,8 +245,7 @@ static void ehca_destroy_slab_caches(void)
- 	ehca_cleanup_cq_cache();
- 	ehca_cleanup_pd_cache();
- #ifdef CONFIG_PPC_64K_PAGES
--	if (ctblk_cache)
--		kmem_cache_destroy(ctblk_cache);
-+	kmem_cache_destroy(ctblk_cache);
- #endif
+diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
+index f59a6f1..66b1b00 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-417.c
++++ b/drivers/media/usb/cx231xx/cx231xx-417.c
+@@ -1901,7 +1901,7 @@ static int cx231xx_s_audio_sampling_freq(struct cx2341x_handler *cxhdl, u32 idx)
+ 	return 0;
  }
  
-diff --git a/drivers/staging/rdma/ehca/ehca_mrmw.c b/drivers/staging/rdma/ehca/ehca_mrmw.c
-index f914b30..553e883 100644
---- a/drivers/staging/rdma/ehca/ehca_mrmw.c
-+++ b/drivers/staging/rdma/ehca/ehca_mrmw.c
-@@ -2251,10 +2251,8 @@ int ehca_init_mrmw_cache(void)
- 
- void ehca_cleanup_mrmw_cache(void)
- {
--	if (mr_cache)
--		kmem_cache_destroy(mr_cache);
--	if (mw_cache)
--		kmem_cache_destroy(mw_cache);
-+	kmem_cache_destroy(mr_cache);
-+	kmem_cache_destroy(mw_cache);
+-static struct cx2341x_handler_ops cx231xx_ops = {
++static const struct cx2341x_handler_ops cx231xx_ops = {
+ 	/* needed for the video clock freq */
+ 	.s_audio_sampling_freq = cx231xx_s_audio_sampling_freq,
+ 	/* needed for setting up the video resolution */
+diff --git a/drivers/media/pci/cx18/cx18-controls.c b/drivers/media/pci/cx18/cx18-controls.c
+index 71227a1..adb5a8c 100644
+--- a/drivers/media/pci/cx18/cx18-controls.c
++++ b/drivers/media/pci/cx18/cx18-controls.c
+@@ -126,7 +126,7 @@ static int cx18_s_audio_mode(struct cx2341x_handler *cxhdl, u32 val)
+ 	return 0;
  }
  
- static inline int ehca_init_top_bmap(struct ehca_top_bmap *ehca_top_bmap,
-diff --git a/drivers/staging/rdma/ehca/ehca_pd.c b/drivers/staging/rdma/ehca/ehca_pd.c
-index 351577a..2a8aae4 100644
---- a/drivers/staging/rdma/ehca/ehca_pd.c
-+++ b/drivers/staging/rdma/ehca/ehca_pd.c
-@@ -119,6 +119,5 @@ int ehca_init_pd_cache(void)
+-struct cx2341x_handler_ops cx18_cxhdl_ops = {
++const struct cx2341x_handler_ops cx18_cxhdl_ops = {
+ 	.s_audio_mode = cx18_s_audio_mode,
+ 	.s_audio_sampling_freq = cx18_s_audio_sampling_freq,
+ 	.s_video_encoding = cx18_s_video_encoding,
+diff --git a/drivers/media/pci/cx18/cx18-controls.h b/drivers/media/pci/cx18/cx18-controls.h
+index cb5dfc7..3267948 100644
+--- a/drivers/media/pci/cx18/cx18-controls.h
++++ b/drivers/media/pci/cx18/cx18-controls.h
+@@ -21,4 +21,4 @@
+  *  02111-1307  USA
+  */
  
- void ehca_cleanup_pd_cache(void)
- {
--	if (pd_cache)
--		kmem_cache_destroy(pd_cache);
-+	kmem_cache_destroy(pd_cache);
+-extern struct cx2341x_handler_ops cx18_cxhdl_ops;
++extern const struct cx2341x_handler_ops cx18_cxhdl_ops;
+diff --git a/drivers/media/pci/ivtv/ivtv-controls.c b/drivers/media/pci/ivtv/ivtv-controls.c
+index 8a55ccb..9666ca0 100644
+--- a/drivers/media/pci/ivtv/ivtv-controls.c
++++ b/drivers/media/pci/ivtv/ivtv-controls.c
+@@ -96,7 +96,7 @@ static int ivtv_s_audio_mode(struct cx2341x_handler *cxhdl, u32 val)
+ 	return 0;
  }
-diff --git a/drivers/staging/rdma/ehca/ehca_qp.c b/drivers/staging/rdma/ehca/ehca_qp.c
-index 2e89356..896c01f 100644
---- a/drivers/staging/rdma/ehca/ehca_qp.c
-+++ b/drivers/staging/rdma/ehca/ehca_qp.c
-@@ -2252,6 +2252,5 @@ int ehca_init_qp_cache(void)
  
- void ehca_cleanup_qp_cache(void)
- {
--	if (qp_cache)
--		kmem_cache_destroy(qp_cache);
-+	kmem_cache_destroy(qp_cache);
- }
--- 
-2.6.2
+-struct cx2341x_handler_ops ivtv_cxhdl_ops = {
++const struct cx2341x_handler_ops ivtv_cxhdl_ops = {
+ 	.s_audio_mode = ivtv_s_audio_mode,
+ 	.s_audio_sampling_freq = ivtv_s_audio_sampling_freq,
+ 	.s_video_encoding = ivtv_s_video_encoding,
+diff --git a/drivers/media/pci/ivtv/ivtv-controls.h b/drivers/media/pci/ivtv/ivtv-controls.h
+index 3999e63..ea397ba 100644
+--- a/drivers/media/pci/ivtv/ivtv-controls.h
++++ b/drivers/media/pci/ivtv/ivtv-controls.h
+@@ -21,7 +21,7 @@
+ #ifndef IVTV_CONTROLS_H
+ #define IVTV_CONTROLS_H
+ 
+-extern struct cx2341x_handler_ops ivtv_cxhdl_ops;
++extern const struct cx2341x_handler_ops ivtv_cxhdl_ops;
+ extern const struct v4l2_ctrl_ops ivtv_hdl_out_ops;
+ int ivtv_g_pts_frame(struct ivtv *itv, s64 *pts, s64 *frame);
+ 
 
