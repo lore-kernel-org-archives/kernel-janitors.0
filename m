@@ -1,59 +1,64 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 14:45:57 +0000
-Subject: [PATCH] GPU-DRM-TTM: Delete an unnecessary check before the function call "ttm_tt_destroy"
-Message-Id: <5649EC25.3040004@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 22 Nov 2015 09:12:56 +0000
+Subject: [PATCH] [media] soc_camera: constify v4l2_subdev_sensor_ops structures
+Message-Id: <1448183576-10330-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 15:40:58 +0100
+The v4l2_subdev_sensor_ops structures are never modified, so declare them
+as const.
 
-The ttm_tt_destroy() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/ttm/ttm_bo.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/i2c/soc_camera/mt9m001.c |    2 +-
+ drivers/media/i2c/soc_camera/mt9t031.c |    2 +-
+ drivers/media/i2c/soc_camera/mt9v022.c |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index 745e996..d6736e6 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -147,8 +147,7 @@ static void ttm_bo_release_list(struct kref *list_kref)
- 	BUG_ON(!list_empty(&bo->lru));
- 	BUG_ON(!list_empty(&bo->ddestroy));
+diff --git a/drivers/media/i2c/soc_camera/mt9m001.c b/drivers/media/i2c/soc_camera/mt9m001.c
+index 2e14e52..69becc3 100644
+--- a/drivers/media/i2c/soc_camera/mt9m001.c
++++ b/drivers/media/i2c/soc_camera/mt9m001.c
+@@ -632,7 +632,7 @@ static struct v4l2_subdev_video_ops mt9m001_subdev_video_ops = {
+ 	.s_mbus_config	= mt9m001_s_mbus_config,
+ };
  
--	if (bo->ttm)
--		ttm_tt_destroy(bo->ttm);
-+	ttm_tt_destroy(bo->ttm);
- 	atomic_dec(&bo->glob->bo_count);
- 	if (bo->resv = &bo->ttm_resv)
- 		reservation_object_fini(&bo->ttm_resv);
--- 
-2.6.2
+-static struct v4l2_subdev_sensor_ops mt9m001_subdev_sensor_ops = {
++static const struct v4l2_subdev_sensor_ops mt9m001_subdev_sensor_ops = {
+ 	.g_skip_top_lines	= mt9m001_g_skip_top_lines,
+ };
+ 
+diff --git a/drivers/media/i2c/soc_camera/mt9t031.c b/drivers/media/i2c/soc_camera/mt9t031.c
+index 3b6eeed..5c8e3ff 100644
+--- a/drivers/media/i2c/soc_camera/mt9t031.c
++++ b/drivers/media/i2c/soc_camera/mt9t031.c
+@@ -728,7 +728,7 @@ static struct v4l2_subdev_video_ops mt9t031_subdev_video_ops = {
+ 	.s_mbus_config	= mt9t031_s_mbus_config,
+ };
+ 
+-static struct v4l2_subdev_sensor_ops mt9t031_subdev_sensor_ops = {
++static const struct v4l2_subdev_sensor_ops mt9t031_subdev_sensor_ops = {
+ 	.g_skip_top_lines	= mt9t031_g_skip_top_lines,
+ };
+ 
+diff --git a/drivers/media/i2c/soc_camera/mt9v022.c b/drivers/media/i2c/soc_camera/mt9v022.c
+index c2ba1fb..2721e58 100644
+--- a/drivers/media/i2c/soc_camera/mt9v022.c
++++ b/drivers/media/i2c/soc_camera/mt9v022.c
+@@ -860,7 +860,7 @@ static struct v4l2_subdev_video_ops mt9v022_subdev_video_ops = {
+ 	.s_mbus_config	= mt9v022_s_mbus_config,
+ };
+ 
+-static struct v4l2_subdev_sensor_ops mt9v022_subdev_sensor_ops = {
++static const struct v4l2_subdev_sensor_ops mt9v022_subdev_sensor_ops = {
+ 	.g_skip_top_lines	= mt9v022_g_skip_top_lines,
+ };
+ 
 
