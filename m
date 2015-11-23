@@ -1,66 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Nov 2015 10:56:39 +0000
-Subject: Re: [B.A.T.M.A.N.] [PATCH 3/3] batman-adv: Less function calls in batadv_is_ap_isolated() after erro
-Message-Id: <564EFC67.7050307@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 Nov 2015 18:22:36 +0000
+Subject: [patch] OMAPDSS: DSI: cleanup DSI_IRQ_ERROR_MASK define
+Message-Id: <20151123182235.GA2825@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <56391CF7.9080400@users.sourceforge.net>
- <56391F73.7090605@users.sourceforge.net> <564EDE1D.7070809@meshcoding.com>
-In-Reply-To: <564EDE1D.7070809@meshcoding.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonio Quartulli <antonio@meshcoding.com>
-Cc: The list for a Better Approach To Mobile Ad-hoc Networking <b.a.t.m.a.n@lists.open-mesh.org>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, netdev@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> -out:
->> +	batadv_tt_global_entry_free_ref(tt_global_entry);
->> +local_entry_free:
->> +	batadv_tt_local_entry_free_ref(tt_local_entry);
->> +vlan_free:
->>  	batadv_softif_vlan_free_ref(vlan);
->> -	if (tt_global_entry)
->> -		batadv_tt_global_entry_free_ref(tt_global_entry);
->> -	if (tt_local_entry)
->> -		batadv_tt_local_entry_free_ref(tt_local_entry);
->>  	return ret;
+DSI_IRQ_SYNC_LOST was ORed twice so we can remove one.
 
-> if you really want to make this codestyle change, I'd suggest you to go
-> through the whole batman-adv code and apply the same change where needed.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks for your interest in similar source code changes.
-
-I would prefer general acceptance for this specific update suggestion
-before I might invest further software development efforts for the
-affected network module.
-
-
-> It does not make sense to change the codestyle in one spot only.
-
-I agree in the way that I would be nice if more places can still be improved.
-
-
-> On top of that, by going through the batman-adv code you might agree
-> that the current style is actually not a bad idea.
-
-I got the impression that the current Linux coding style convention
-disagrees around the affected jump label selection to some degree,
-doesn't it?
-
-Regards,
-Markus
+diff --git a/drivers/video/fbdev/omap2/dss/dsi.c b/drivers/video/fbdev/omap2/dss/dsi.c
+index b3606de..e86df6d 100644
+--- a/drivers/video/fbdev/omap2/dss/dsi.c
++++ b/drivers/video/fbdev/omap2/dss/dsi.c
+@@ -144,7 +144,7 @@ struct dsi_reg { u16 module; u16 idx; };
+ #define DSI_IRQ_TA_TIMEOUT	(1 << 20)
+ #define DSI_IRQ_ERROR_MASK \
+ 	(DSI_IRQ_HS_TX_TIMEOUT | DSI_IRQ_LP_RX_TIMEOUT | DSI_IRQ_SYNC_LOST | \
+-	DSI_IRQ_TA_TIMEOUT | DSI_IRQ_SYNC_LOST)
++	DSI_IRQ_TA_TIMEOUT)
+ #define DSI_IRQ_CHANNEL_MASK	0xf
+ 
+ /* Virtual channel interrupts */
