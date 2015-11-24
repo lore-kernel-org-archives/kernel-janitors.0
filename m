@@ -1,85 +1,78 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Nov 2015 13:09:19 +0000
-Subject: [PATCH] dm: constify crypt_iv_operations structures
-Message-Id: <1448802559-2671-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Date: Tue, 24 Nov 2015 11:37:58 +0000
+Subject: Re: [PATCH 1/3] video: omapdss: delete unneeded of_node_put
+Message-Id: <56544C16.2070209@ti.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="i65rJa85XKJ06HIM1LqiHGoSgpovkkEQc"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.com>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1444682596-3065-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1444682596-3065-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444682596-3065-2-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-The crypt_iv_operations are never modified, so declare them
-as const.
+--i65rJa85XKJ06HIM1LqiHGoSgpovkkEQc
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Done with the help of Coccinelle.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
- drivers/md/dm-crypt.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On 12/10/15 23:43, Julia Lawall wrote:
+> Device node iterators perform an of_node_put on each iteration, so putt=
+ing
+> an of_node_put before a continue results in a double put.
+>=20
+> A simplified version of the semantic match that finds this problem is a=
+s
+> follows (http://coccinelle.lip6.fr):
+>=20
+> // <smpl>
+> @@
+> expression root,e;
+> local idexpression child;
+> iterator i;
+> @@
+>=20
+>  i(..., child, ...) {
+>    ... when !=3D of_node_get(child)
+> *  of_node_put(child);
+>    ...
+> *  continue;
+> }
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+>  drivers/video/fbdev/omap2/dss/omapdss-boot-init.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index 3147c8d..c7058fc 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -141,7 +141,7 @@ struct crypt_config {
- 	char *cipher;
- 	char *cipher_string;
- 
--	struct crypt_iv_operations *iv_gen_ops;
-+	const struct crypt_iv_operations *iv_gen_ops;
- 	union {
- 		struct iv_essiv_private essiv;
- 		struct iv_benbi_private benbi;
-@@ -756,15 +756,15 @@ static int crypt_iv_tcw_post(struct crypt_config *cc, u8 *iv,
- 	return r;
- }
- 
--static struct crypt_iv_operations crypt_iv_plain_ops = {
-+static const struct crypt_iv_operations crypt_iv_plain_ops = {
- 	.generator = crypt_iv_plain_gen
- };
- 
--static struct crypt_iv_operations crypt_iv_plain64_ops = {
-+static const struct crypt_iv_operations crypt_iv_plain64_ops = {
- 	.generator = crypt_iv_plain64_gen
- };
- 
--static struct crypt_iv_operations crypt_iv_essiv_ops = {
-+static const struct crypt_iv_operations crypt_iv_essiv_ops = {
- 	.ctr       = crypt_iv_essiv_ctr,
- 	.dtr       = crypt_iv_essiv_dtr,
- 	.init      = crypt_iv_essiv_init,
-@@ -772,17 +772,17 @@ static struct crypt_iv_operations crypt_iv_essiv_ops = {
- 	.generator = crypt_iv_essiv_gen
- };
- 
--static struct crypt_iv_operations crypt_iv_benbi_ops = {
-+static const struct crypt_iv_operations crypt_iv_benbi_ops = {
- 	.ctr	   = crypt_iv_benbi_ctr,
- 	.dtr	   = crypt_iv_benbi_dtr,
- 	.generator = crypt_iv_benbi_gen
- };
- 
--static struct crypt_iv_operations crypt_iv_null_ops = {
-+static const struct crypt_iv_operations crypt_iv_null_ops = {
- 	.generator = crypt_iv_null_gen
- };
- 
--static struct crypt_iv_operations crypt_iv_lmk_ops = {
-+static const struct crypt_iv_operations crypt_iv_lmk_ops = {
- 	.ctr	   = crypt_iv_lmk_ctr,
- 	.dtr	   = crypt_iv_lmk_dtr,
- 	.init	   = crypt_iv_lmk_init,
-@@ -791,7 +791,7 @@ static struct crypt_iv_operations crypt_iv_lmk_ops = {
- 	.post	   = crypt_iv_lmk_post
- };
- 
--static struct crypt_iv_operations crypt_iv_tcw_ops = {
-+static const struct crypt_iv_operations crypt_iv_tcw_ops = {
- 	.ctr	   = crypt_iv_tcw_ctr,
- 	.dtr	   = crypt_iv_tcw_dtr,
- 	.init	   = crypt_iv_tcw_init,
+Thanks, queued for 4.5.
 
+ Tomi
+
+
+--i65rJa85XKJ06HIM1LqiHGoSgpovkkEQc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJWVEwWAAoJEPo9qoy8lh71Al4P/3UXuqJKtWgp6ZbgHMtelyM9
+ABQ3xTdQ9mkANhrwktBJje3OToxEHUyA+2ZFb5HXOwEJCVWVFVmN8GhD0k1M5WTQ
+lWil+In5gOQLoQp2qQH+jv8FjtWjh/S0dGisYVl2sdpCm/aKLam93wL4MVzU7Ube
+hi2zKqbO4vlpVR+4jxe63aJW2CZwirYES8oRXVPwxRJvEEke96T3m5pHq5yl4y1G
+179MY9Bq75zOCYJrDVRel0WO16G394fvmASqaIkoEpU+CVki6j0dk8JAoxRFHlCM
+OW61Xw49DzU244JN2hOcAi4VlzIUbU8r7VXaZnYl9f7Be8j7bi7mPK0gJcoC5IDZ
+016fgWt8lFM+gqXvj2Lk/XJaYy4SLh9XeV11CL6u8eF4zYQOVx0uiqMvKB0P0OlL
+pSIAYjyg5hHSyDuguaTtBotlf9G1bJQpSUmY2xvzNCEB6gm81nRrvXz/DJoWYfpd
+4EPOaxyfFVyTvQCixSdpEemRct/FIyoEkGznIF1LllQRbrTmArrplhdD0gxEvTwJ
+JVPZDSJICCh5PbQ1YVJmrRkJ9qd/xJlBfAFTBOhguCSF0vXVwF8AQjFhtdzV40uu
+nRJryp4jjM2ZBHg5DTVka8N4J350KkRCDPM25t4ci9OPm4eeNofqz0kODXl9wf8w
+SZg/yTXh0kjgaTy/7cJL
+=W9Et
+-----END PGP SIGNATURE-----
+
+--i65rJa85XKJ06HIM1LqiHGoSgpovkkEQc--
