@@ -1,52 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Nov 2015 20:01:30 +0000
-Subject: Re: [PATCH 3/3] staging: lustre: Less function calls in class_register_type() after error detection
-Message-Id: <20151126200130.GI7289@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Nov 2015 20:34:58 +0000
+Subject: Re: block-rbd: One function call less in rbd_dev_probe_parent() after error detection
+Message-Id: <5654C9F2.20409@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <563B473C.5090508@users.sourceforge.net>
- <563B4991.90005@users.sourceforge.net>
- <20151125163901.GA7368@kroah.com>
- <5656AFEC.8030709@users.sourceforge.net>
- <20151126165331.GA7882@kroah.com>
- <5657573D.4080905@users.sourceforge.net>
-In-Reply-To: <5657573D.4080905@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <56536BAD.4000309@users.sourceforge.net>
+ <56536D12.4000308@users.sourceforge.net>
+ <CAOi1vP_t6-vw-sesRwpgfbqLVRyevOP4uvhbj05b3PPg=oHD6Q@mail.gmail.com>
+ <5654B91D.4040808@users.sourceforge.net>
+ <CAOi1vP-Z2yfJVcpqZN8EOf6rYsd41ixOOQWVva_xkKmA6PLrhg@mail.gmail.com>
+In-Reply-To: <CAOi1vP-Z2yfJVcpqZN8EOf6rYsd41ixOOQWVva_xkKmA6PLrhg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, lustre-devel@lists.lustre.org
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, Ceph Development <ceph-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-These patches are often correct in the same way a stopped clock is
-correct twice a day, but I reject the motivation/approach/patch
-description.  Just because there is a sanity check does not mean we
-should use it (ie, do an insane thing).  It hurts readability to hide
-the NULL check.
+> Well, there isn't any _literal_ linking (e.g. adding to a link list,
+> etc) in this case.  We just bump some refs and do probe to fill in the
+> newly allocated parent.
 
-On the other hand, half the time the NULL checks are superflous because
-the pointer is never NULL.  The other half of the time the NULL checks
-are there because the code uses one err style error handling.  Also the
-error handling code should mirror the allocation code so I feel like it
-should be:
+Thanks for your clarification.
 
-	if (some_feature)
-		foo = allocate();
-	ret = frob();
-	if (ret)
-		goto free_foo;
 
-free_foo:
-	if (some_feature)  // <--- as opposed to if (foo) {
-		free(foo);
+> The actual linking (rbd_dev->parent = parent) is done right before
+> returning so we never have to undo it in rbd_dev_probe_parent() and
+> that's the only reason your patch probably doesn't break anything.
 
-So anyway I often don't like the original code, but the new code is
-even worse and I have never heard a good motivation for these patches
-besides that they were generated using a cool tool.  It's not a good
-reason.  Other maintainers are accepting these patches so you are free
-to send them there.
+Is this function implementation just also affected by an issue
+which is mentioned in the Linux document "CodingStyle" as "one err bugs"?
 
-regards,
-dan carpenter
+
+> Think about what happens if, after your patch is applied, someone moves
+> that assignment up or adds an extra step that can fail after it...
+
+Is such a software maintenance concern really enough to delay (or reject)
+my second update suggestion in this small patch series?
+
+Regards,
+Markus
