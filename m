@@ -1,30 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Nov 2015 12:36:19 +0000
+From: Stanislaw Gruszka <sgruszka@redhat.com>
+Date: Thu, 26 Nov 2015 13:52:42 +0000
 Subject: Re: [patch] rt2x00: type bug in _rt2500usb_register_read()
-Message-Id: <20151126123618.GE7289@mwanda>
+Message-Id: <20151126135241.GA3111@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20151126115523.GD10556@mwanda>
- <5656F95C.60107@bfs.de>
-In-Reply-To: <5656F95C.60107@bfs.de>
+In-Reply-To: <20151126115523.GD10556@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 26, 2015 at 01:21:48PM +0100, walter harms wrote:
-> > If the low 16 bits were initialized to zero then this code would only be
-> > a problem on big endian systems.
-
-> perhaps, cleaning *value would be sufficient ? Avoiding the need for a tmp var.
+On Thu, Nov 26, 2015 at 02:55:23PM +0300, Dan Carpenter wrote:
+> This code causes a static checker bug.
 > 
-> *value = 0
-> rt2500usb_register_read(rt2x00dev, offset, (u16 *)value);
+> drivers/net/wireless/ralink/rt2x00/rt2500usb.c:232 _rt2500usb_register_read()
+> warn: passing casted pointer 'value' to 'rt2500usb_register_read()' 32 vs 16.
 > 
+> If the low 16 bits were initialized to zero then this code would only be
+> a problem on big endian systems.  But in this case this is case the low
+> 16 bits are never initialized.  This is called from a function which is
+> created using a macro:
+> 
+> RT2X00DEBUGFS_OPS(csr, "0x%.8x\n", u32);
+> 
+> We end up copying uninitialized data to the user which is bogus and an
+> information leak.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-Because if you initialize value then you still have a bug on big endian
-systems.
+> ---
+> Not tested.  Perhaps we should just remove this code since it has never
+> worked.
 
-regards,
-dan carpenter
+It is used for debugfs interface and I would like to keep it.
 
+Stanislaw
