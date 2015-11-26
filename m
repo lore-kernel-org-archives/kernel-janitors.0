@@ -1,9 +1,11 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Nov 2015 10:23:21 +0000
+Date: Thu, 26 Nov 2015 07:54:45 +0000
 Subject: Re: block-rbd: One function call less in rbd_dev_probe_parent() after error detection
-Message-Id: <56558C19.8090607@users.sourceforge.net>
+Message-Id: <5656BAC5.3060501@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
  <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
  <530B5FB6.6010207@users.sourceforge.net>
  <alpine.DEB.2.10.1402241710370.2074@hadrien>
@@ -20,20 +22,26 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <CAOi1vP_t6-vw-sesRwpgfbqLVRyevOP4uvhbj05b3PPg=oHD6Q@mail.gmail.com>
  <5654B91D.4040808@users.sourceforge.net>
  <CAOi1vP-Z2yfJVcpqZN8EOf6rYsd41ixOOQWVva_xkKmA6PLrhg@mail.gmail.com>
- <5654C9F2.20409@users.sourceforge.net>
- <CAOi1vP_MoqiPqNMGJVEeAyBywtkHbZrn7cLayEgdT1cL63c7KQ@mail.gmail.com>
-In-Reply-To: <CAOi1vP_MoqiPqNMGJVEeAyBywtkHbZrn7cLayEgdT1cL63c7KQ@mail.gmail.com>
+In-Reply-To: <CAOi1vP-Z2yfJVcpqZN8EOf6rYsd41ixOOQWVva_xkKmA6PLrhg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, Ceph Development <ceph-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, Ceph Development <ceph-devel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> "one err bug" as per CodingStyle is a NULL deref on line 2 if foo is NULL.
-> If it was just "err: kfree(foo); return ret;", a NULL foo would be perfectly OK.
+>> I interpreted the eventual passing of a null pointer to the rbd_dev_destroy()
+>> function as an indication for further source code adjustments.
+> 
+> If all error paths could be adjusted so that NULL pointers are never passed in,
+> destroy functions wouldn't need to have a NULL check, would they?
 
-Would it make sense to rename such an issue as the "one error jump label bug"?
-https://plus.google.com/106378716002406849458/posts/dnanfhQ4mHQ
+How do you think about to clarify corresponding implementation details a bit more?
+
+* Why was the function "rbd_dev_probe_parent" implemented in the way
+  that it relies on a sanity check in the function "rbd_dev_destroy" then?
+* How are the chances to restructure the source code a bit (like changing a few
+  jump labels) so that it should also work without an extra function call
+  during error handling there?
 
 Regards,
 Markus
