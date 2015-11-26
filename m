@@ -1,30 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 06 Nov 2015 10:01:20 +0000
-Subject: [patch] ath9k_htc: check for underflow in ath9k_htc_rx_msg()
-Message-Id: <20151106100120.GB18557@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 26 Nov 2015 12:05:50 +0000
+Subject: Re: ath9k_htc: check for underflow in ath9k_htc_rx_msg()
+Message-Id: <20151126120550.4AF5413F351@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20151106100120.GB18557@mwanda>
+References: <20151106100120.GB18557@mwanda>
+In-Reply-To: <20151106100120.GB18557@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
-We check for overflow here, but we don't check for underflow so it
-causes a static checker warning.
 
-Fixes: fb9987d0f748 ('ath9k_htc: Support for AR9271 chipset.')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> We check for overflow here, but we don't check for underflow so it
+> causes a static checker warning.
+> 
+> Fixes: fb9987d0f748 ('ath9k_htc: Support for AR9271 chipset.')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/wireless/ath/ath9k/htc_hst.c b/drivers/net/wireless/ath/ath9k/htc_hst.c
-index 2294709..fd85f996 100644
---- a/drivers/net/wireless/ath/ath9k/htc_hst.c
-+++ b/drivers/net/wireless/ath/ath9k/htc_hst.c
-@@ -414,7 +414,7 @@ void ath9k_htc_rx_msg(struct htc_target *htc_handle,
- 		return;
- 	}
- 
--	if (epid >= ENDPOINT_MAX) {
-+	if (epid < 0 || epid >= ENDPOINT_MAX) {
- 		if (pipe_id != USB_REG_IN_PIPE)
- 			dev_kfree_skb_any(skb);
- 		else
+Thanks, applied to wireless-drivers-next.git.
+
+Kalle Valo
