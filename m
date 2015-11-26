@@ -1,31 +1,47 @@
-From: Ian Munsie <imunsie@au1.ibm.com>
-Date: Mon, 09 Nov 2015 02:09:51 +0000
-Subject: Re: [PATCH] cxl: Delete an unnecessary check before the function call "kfree"
-Message-Id: <1447034981-sup-9258@delenn.ozlabs.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Nov 2015 11:55:23 +0000
+Subject: [patch] rt2x00: type bug in _rt2500usb_register_read()
+Message-Id: <20151126115523.GD10556@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563C7B7A.2080403@users.sourceforge.net>
-In-Reply-To: <563C7B7A.2080403@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Michael Neuling <mikey@neuling.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Ian Munsie <imunsie@au1.ibm.com>
+This code causes a static checker bug.
 
+drivers/net/wireless/ralink/rt2x00/rt2500usb.c:232 _rt2500usb_register_read()
+warn: passing casted pointer 'value' to 'rt2500usb_register_read()' 32 vs 16.
+
+If the low 16 bits were initialized to zero then this code would only be
+a problem on big endian systems.  But in this case this is case the low
+16 bits are never initialized.  This is called from a function which is
+created using a macro:
+
+RT2X00DEBUGFS_OPS(csr, "0x%.8x\n", u32);
+
+We end up copying uninitialized data to the user which is bogus and an
+information leak.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.  Perhaps we should just remove this code since it has never
+worked.
+
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2500usb.c b/drivers/net/wireless/ralink/rt2x00/rt2500usb.c
+index b50d873..d26018f 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2500usb.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2500usb.c
+@@ -229,7 +229,10 @@ static void _rt2500usb_register_read(struct rt2x00_dev *rt2x00dev,
+ 				     const unsigned int offset,
+ 				     u32 *value)
+ {
+-	rt2500usb_register_read(rt2x00dev, offset, (u16 *)value);
++	u16 tmp;
++
++	rt2500usb_register_read(rt2x00dev, offset, &tmp);
++	*value = tmp;
+ }
+ 
+ static void _rt2500usb_register_write(struct rt2x00_dev *rt2x00dev,
