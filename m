@@ -1,25 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 16 Nov 2015 20:07:39 +0000
-Subject: Re: [PATCH 5/9] sfc: constify pci_error_handlers structures
-Message-Id: <20151116.150739.1894829733349078407.davem@davemloft.net>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Date: Thu, 26 Nov 2015 14:07:23 +0000
+Subject: Re: [patch] cpufreq: scpi-cpufreq: signedness bug in scpi_get_dvfs_info()
+Message-Id: <CAPKp9uZNHU-msMq7NMhOcaueEkc=bQhctovLjU4iGAN_Si4g0Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1447495621-9161-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447495621-9161-6-git-send-email-Julia.Lawall@lip6.fr>
+References: <20151022195208.GB24439@mwanda>
+	<562A090A.5000703@arm.com>
+In-Reply-To: <562A090A.5000703@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: linux-net-drivers@solarflare.com, kernel-janitors@vger.kernel.org, sshah@solarflare.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Nov 2015 11:06:57 +0100
+Hi Rafael,
 
-> This pci_error_handlers structure is never modified, like all the other
-> pci_error_handlers structures, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On Fri, Oct 23, 2015 at 11:16 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+>
+> On 22/10/15 20:52, Dan Carpenter wrote:
+>>
+>> The "domain" variable needs to be signed for the error handling to
+>> work.
+>>
+>> Fixes: 8def31034d03 ('cpufreq: arm_big_little: add SCPI interface
+>> driver') Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>
+>
+> Thanks for the fix
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>
 
-Applied.
+Can you pick this up for your next -rc fixes ?
+
+Regards,
+Sudeep
