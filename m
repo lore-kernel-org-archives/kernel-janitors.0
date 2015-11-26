@@ -1,45 +1,27 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Nov 2015 19:40:29 +0000
-Subject: [PATCH 0/2] block-rbd: Deletion of an unnecessary check
-Message-Id: <56536BAD.4000309@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 26 Nov 2015 12:04:50 +0000
+Subject: Re: brcm80211: Delete an unnecessary check before the function call"release_firmware"
+Message-Id: <20151126120450.AA72313F2A0@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <563C5DA2.3000005@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>, ceph-devel@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Arend van Spriel <arend@broadcom.com>, Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Nov 2015 20:33:59 +0100
 
-Another update suggestion was taken into account after a patch was applied
-from static source code analysis.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 6 Nov 2015 08:48:23 +0100
+> 
+> The release_firmware() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Acked-by: Arend van Spriel <arend@broadcom.com>
 
-Markus Elfring (2):
-  Delete an unnecessary check before the function call "rbd_dev_destroy"
-  One function call less in rbd_dev_probe_parent() after error detection
+Thanks, applied to wireless-drivers-next.git.
 
- drivers/block/rbd.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
--- 
-2.6.3
-
+Kalle Valo
