@@ -1,106 +1,129 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 17 Nov 2015 22:33:25 +0000
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Date: Fri, 27 Nov 2015 14:26:20 +0000
 Subject: Re: [PATCH 1/7] phy: brcmstb-sata: add missing of_node_put
-Message-Id: <alpine.DEB.2.02.1511172327030.2121@localhost6.localdomain6>
+Message-Id: <5658653C.2050006@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1447673600-8881-1-git-send-email-Julia.Lawall@lip6.fr>
  <1447673600-8881-2-git-send-email-Julia.Lawall@lip6.fr>
  <20151117013830.GV8456@google.com>
- <alpine.DEB.2.02.1511170711340.2045@localhost6.localdomain6>
- <20151117174430.GA8456@google.com>
- <alpine.DEB.2.10.1511171846120.2455@hadrien>
- <20151117183036.GF8456@google.com>
-In-Reply-To: <20151117183036.GF8456@google.com>
+In-Reply-To: <20151117013830.GV8456@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
++Grant
 
+Hi,
 
-On Tue, 17 Nov 2015, Brian Norris wrote:
-
-> On Tue, Nov 17, 2015 at 06:48:39PM +0100, Julia Lawall wrote:
-> > On Tue, 17 Nov 2015, Brian Norris wrote:
-> > > On Tue, Nov 17, 2015 at 07:12:22AM +0100, Julia Lawall wrote:
-> > > > On Mon, 16 Nov 2015, Brian Norris wrote:
-> > > > > diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> > > > > index fc48fac003a6..8df29caeeef9 100644
-> > > > > --- a/drivers/phy/phy-core.c
-> > > > > +++ b/drivers/phy/phy-core.c
-> > > > > @@ -697,6 +697,7 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
-> > > > >  	phy->dev.class = phy_class;
-> > > > >  	phy->dev.parent = dev;
-> > > > >  	phy->dev.of_node = node ?: dev->of_node;
-> > > > > +	of_node_get(phy->dev.of_node);
-> > > >
-> > > > Why not put of_node_get around dev->of_node?
-> > >
-> > > Like this?
-> > >
-> > > 	phy->dev.of_node = node ?: of_node_get(dev->of_node);
-> > >
-> > > Or this?
-> > >
-> > > 	phy->dev.of_node = of_node_get(node ?: dev->of_node);
-> > >
-> > > The former wouldn't do what I proposed; if this PHY device is created
-> > > with a sub-node of 'dev' rather than dev->of_node, then the caller will
-> > > pass it in as the 2nd argument to phy_create (i.e., 'node'), and then I
-> > > expect it's the PHY core's responsibility to refcount it.
-> > >
-> > > I'd be fine with the latter. Looks a little better, I suppose.
-> > 
-> > I proposed it because I was worried that the of_node field could end up
-> > containing something that had been freed.  But probably this is not
-> > possible?
+On Tuesday 17 November 2015 07:08 AM, Brian Norris wrote:
+> On Mon, Nov 16, 2015 at 12:33:14PM +0100, Julia Lawall wrote:
+>> for_each_available_child_of_node performs an of_node_get on each iteration,
+>> so a return from the middle of the loop requires an of_node_put.
+>>
+>> A simplified version of the semantic patch that finds this problem is as
+>> follows (http://coccinelle.lip6.fr):
+>>
+>> // <smpl>
+>> @@
+>> expression root,e;
+>> local idexpression child;
+>> @@
+>>
+>>  for_each_available_child_of_node(root, child) {
+>>    ... when != of_node_put(child)
+>>        when != e = child
+>> (
+>>    return child;
+>> |
+>> *  return ...;
+>> )
+>>    ...
+>>  }
+>> // </smpl>
+>>
+>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>>
+>> ---
 > 
-> AIUI, the caller of phy_create() should already have a refcount on both
-> 'dev->of_node' and 'node' (if applicable), so nobody should be freeing
-> it from underneath us right here. But *after* phy_create() returns,
-> there's no guarantee the caller will hold a reference for us.
+> For this patch:
 > 
-> So even if it's ever possible, I'd consider it a bug in the caller, not
-> in phy_create().
+> Acked-by: Brian Norris <computersforpeace@gmail.com>
 > 
-> > If it is not possible, then the ?: in the function argument is
-> > probably a bit ugly...
+>>  drivers/phy/phy-brcmstb-sata.c |   17 ++++++++++++-----
+>>  1 file changed, 12 insertions(+), 5 deletions(-)
 > 
-> OK, then I'll go with my first proposal.
+> [snip patch, which fixes of_node_put() handling for
+> for_each_available_child_of_node() loop, which creates PHY devices with
+> devm_phy_create()]
 > 
-> > Is this something that should be checked for elsewhere?
+> This reminds me of a potential problem I'm looking at in other
+> subsystems: from code reading (I haven't seen any issues in practice,
+> probably because I don't use OF_DYNAMIC) it looks like device-creating
+> infrastructure like the PHY subsystem should be acquiring a reference to
+> the device_node when they stash it away. But drivers/phy/phy-core.c does
+> not do this, AFAICT.
 > 
-> I expect the same sort of problem shows up plenty of other places. I
-> don't think many people use CONFIG_OF_DYNAMIC, so the effects of these
-> failures probably aren't felt by many.
+> See phy_create(), which does
+> 
+> 	phy->dev.of_node = node ?: dev->of_node;
+> 
+> and later might reuse this of_node pointer, even though it never called
+> of_node_get() on this node.
+> 
+> Potential patch to fix this (not tested).
+> 
+> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+> 
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index fc48fac003a6..8df29caeeef9 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -697,6 +697,7 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
+>  	phy->dev.class = phy_class;
+>  	phy->dev.parent = dev;
+>  	phy->dev.of_node = node ?: dev->of_node;
+> +	of_node_get(phy->dev.of_node);
+>  	phy->id = id;
+>  	phy->ops = ops;
+>  
+> @@ -726,6 +727,7 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
+>  	return phy;
+>  
+>  put_dev:
+> +	of_node_put(phy->dev.of_node);
+>  	put_device(&phy->dev);  /* calls phy_release() which frees resources */
+>  	return ERR_PTR(ret);
+>  
+> @@ -775,6 +777,7 @@ EXPORT_SYMBOL_GPL(devm_phy_create);
+>   */
+>  void phy_destroy(struct phy *phy)
+>  {
+> +	of_node_put(phy->dev.of_node);
 
-I tried the following semantic patch:
+I think it's better to have this patch in phy-core though OF_DYNAMIC is not
+enabled?
 
-@@
-struct device_node *e;
-expression e1;
-identifier fld;
-@@
+Grant,
 
- ... when != of_node_get(...)
-*(<+...e1->fld...+>) = e
- ... when != of_node_get(...)
- return e1;
+Is it safe to assume of_node_get() will prevent "anyone else" from deleting the
+node?
+Here phy core uses the node pointer (passed to it by phy providers) and we
+would like to avoid "anyone" from removing this node pointer resulting in phy
+core having an invalid node pointer. Using of_node_get() in phy core should be
+sufficient for this?
 
-basically, this says that a structure field is initilized to a device node 
-value, the structure is returned by the containing function, and the 
-containing function contains no of_node_get at all.  Certainly this is 
-quite constrained, but it does produce a number of examples.
+We are also interested in this todo tasklist for Devicetree..
+"Document node lifecycle for CONFIG_OF_DYNAMIC"
 
-I looked at a few of them:
+Please find the complete thread of this mail chain here [1]
 
-drivers/clk/ingenic/cgu.c, ingenic_cgu_new
-clk/pistachio/clk.c, pistachio_clk_alloc_provider
-drivers/mfd/syscon.c, of_syscon_register
-drivers/of/pdt.c, function of_pdt_create_node
+[1] -> http://www.gossamer-threads.com/lists/linux/kernel/2304857
 
-Any idea whether these need of_node_get?  In all cases the device node 
-value comes in as a parameter.
+Thanks
+Kishon
 
-thanks,
-julia
+>  	pm_runtime_disable(&phy->dev);
+>  	device_unregister(&phy->dev);
+>  }
+> 
