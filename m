@@ -1,65 +1,31 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 29 Nov 2015 00:56:44 +0000
-Subject: Re: [PATCH] spi: dw-mid: constify dw_spi_dma_ops structure
-Message-Id: <CAHp75VfkOMnBWWCZEowB0f_VSTMfOk_snQCm-J=DMv4x_4YUeg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 27 Nov 2015 13:43:27 +0000
+Subject: [patch] brcm80211: fix error code in brcmf_pcie_exit_download_state()
+Message-Id: <20151127134327.GA16802@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448719778-32271-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448719778-32271-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Brett Rudley <brudley@broadcom.com>
+Cc: Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, Kalle Valo <kvalo@codeaurora.org>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
 
-On Sat, Nov 28, 2015 at 4:09 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> The dw_spi_dma_ops structure is never modified, so declare it as const.
->
-> Done with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
+The original code returns 1 on failure and 0 on success but the caller
+was expecting an error code on failure.
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  drivers/spi/spi-dw-mid.c |    2 +-
->  drivers/spi/spi-dw.h     |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/spi/spi-dw-mid.c b/drivers/spi/spi-dw-mid.c
-> index bb1052e..9185f6c 100644
-> --- a/drivers/spi/spi-dw-mid.c
-> +++ b/drivers/spi/spi-dw-mid.c
-> @@ -283,7 +283,7 @@ static void mid_spi_dma_stop(struct dw_spi *dws)
->         }
->  }
->
-> -static struct dw_spi_dma_ops mid_dma_ops = {
-> +static const struct dw_spi_dma_ops mid_dma_ops = {
->         .dma_init       = mid_spi_dma_init,
->         .dma_exit       = mid_spi_dma_exit,
->         .dma_setup      = mid_spi_dma_setup,
-> diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
-> index 35589a2..61bc3cb 100644
-> --- a/drivers/spi/spi-dw.h
-> +++ b/drivers/spi/spi-dw.h
-> @@ -130,7 +130,7 @@ struct dw_spi {
->         struct dma_chan         *rxchan;
->         unsigned long           dma_chan_busy;
->         dma_addr_t              dma_addr; /* phy address of the Data register */
-> -       struct dw_spi_dma_ops   *dma_ops;
-> +       const struct dw_spi_dma_ops *dma_ops;
->         void                    *dma_tx;
->         void                    *dma_rx;
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+index 83d8042..e149541 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+@@ -622,7 +622,9 @@ static int brcmf_pcie_exit_download_state(struct brcmf_pciedev_info *devinfo,
+ 		brcmf_chip_resetcore(core, 0, 0, 0);
+ 	}
+ 
+-	return !brcmf_chip_set_active(devinfo->ci, resetintr);
++	if (!brcmf_chip_set_active(devinfo->ci, resetintr))
++		return -EINVAL;
++	return 0;
+ }
+ 
+ 
