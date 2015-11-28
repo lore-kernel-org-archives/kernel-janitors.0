@@ -1,40 +1,58 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Nov 2015 10:06:54 +0000
-Subject: [PATCH 2/9] GenWQE: constify pci_error_handlers structures
-Message-Id: <1447495621-9161-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 28 Nov 2015 14:19:00 +0000
+Subject: [PATCH 2/2] USB: constify usb_mon_operations structure
+Message-Id: <1448720340-16837-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447495621-9161-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This pci_error_handlers structure is never modified, like all the other
-pci_error_handlers structures, so declare it as const.
+The usb_mon_operations structure is never modified, so declare it as const.
 
 Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-There are no dependencies between these patches.
+ drivers/usb/core/hcd.c     |    4 ++--
+ drivers/usb/mon/mon_main.c |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
- drivers/misc/genwqe/card_base.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/genwqe/card_base.c b/drivers/misc/genwqe/card_base.c
-index 4cf8f82..40cefef 100644
---- a/drivers/misc/genwqe/card_base.c
-+++ b/drivers/misc/genwqe/card_base.c
-@@ -1337,7 +1337,7 @@ static int genwqe_sriov_configure(struct pci_dev *dev, int numvfs)
- 	return 0;
- }
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index 1c102d6..df0e3b9 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -3000,7 +3000,7 @@ EXPORT_SYMBOL_GPL(usb_hcd_platform_shutdown);
  
--static struct pci_error_handlers genwqe_err_handler = {
-+static const struct pci_error_handlers genwqe_err_handler = {
- 	.error_detected = genwqe_err_error_detected,
- 	.mmio_enabled	= genwqe_err_result_none,
- 	.link_reset	= genwqe_err_result_none,
+ #if defined(CONFIG_USB_MON) || defined(CONFIG_USB_MON_MODULE)
+ 
+-struct usb_mon_operations *mon_ops;
++const struct usb_mon_operations *mon_ops;
+ 
+ /*
+  * The registration is unlocked.
+@@ -3010,7 +3010,7 @@ struct usb_mon_operations *mon_ops;
+  * symbols from usbcore, usbcore gets referenced and cannot be unloaded first.
+  */
+ 
+-int usb_mon_register (struct usb_mon_operations *ops)
++int usb_mon_register(const struct usb_mon_operations *ops)
+ {
+ 
+ 	if (mon_ops)
+diff --git a/drivers/usb/mon/mon_main.c b/drivers/usb/mon/mon_main.c
+index f7c292f..fec3f11 100644
+--- a/drivers/usb/mon/mon_main.c
++++ b/drivers/usb/mon/mon_main.c
+@@ -241,7 +241,7 @@ static struct notifier_block mon_nb = {
+ /*
+  * Ops
+  */
+-static struct usb_mon_operations mon_ops_0 = {
++static const struct usb_mon_operations mon_ops_0 = {
+ 	.urb_submit =	mon_submit,
+ 	.urb_submit_error = mon_submit_error,
+ 	.urb_complete =	mon_complete,
 
