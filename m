@@ -1,136 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 22 Nov 2015 17:07:23 +0000
-Subject: Re: [PATCH] media, sound: tea575x: constify snd_tea575x_ops structures
-Message-Id: <s5hlh9qx8s4.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Nov 2015 22:02:51 +0000
+Subject: [PATCH 3/3] IB/core: constify mmu_notifier_ops structures
+Message-Id: <1448834571-2988-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448188373-27089-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448188373-27089-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Hans de Goede <hdegoede@redhat.com>, alsa-devel@alsa-project.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+To: Doug Ledford <dledford@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 22 Nov 2015 11:32:53 +0100,
-Julia Lawall wrote:
-> 
-> The snd_tea575x_ops structures are never modified, so declare them as
-> const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This mmu_notifier_ops structure is never modified, so declare it as
+const, like the other mmu_notifier_ops structures.
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Done with the help of Coccinelle.
 
-Feel free to take via media tree.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+The patches in this series are independent of each other.
 
-thanks,
+ drivers/infiniband/core/umem_odp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Takashi
+diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+index 40becdb..e69bf26 100644
+--- a/drivers/infiniband/core/umem_odp.c
++++ b/drivers/infiniband/core/umem_odp.c
+@@ -232,7 +232,7 @@ static void ib_umem_notifier_invalidate_range_end(struct mmu_notifier *mn,
+ 	ib_ucontext_notifier_end_account(context);
+ }
+ 
+-static struct mmu_notifier_ops ib_umem_notifiers = {
++static const struct mmu_notifier_ops ib_umem_notifiers = {
+ 	.release                    = ib_umem_notifier_release,
+ 	.invalidate_page            = ib_umem_notifier_invalidate_page,
+ 	.invalidate_range_start     = ib_umem_notifier_invalidate_range_start,
 
-> 
-> ---
->  drivers/media/pci/bt8xx/bttv-cards.c  |    2 +-
->  drivers/media/radio/radio-maxiradio.c |    2 +-
->  drivers/media/radio/radio-sf16fmr2.c  |    2 +-
->  drivers/media/radio/radio-shark.c     |    2 +-
->  include/media/drv-intf/tea575x.h      |    2 +-
->  sound/pci/es1968.c                    |    2 +-
->  sound/pci/fm801.c                     |    2 +-
->  7 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/sound/pci/es1968.c b/sound/pci/es1968.c
-> index cb38cd1..514f260 100644
-> --- a/sound/pci/es1968.c
-> +++ b/sound/pci/es1968.c
-> @@ -2605,7 +2605,7 @@ static void snd_es1968_tea575x_set_direction(struct snd_tea575x *tea, bool outpu
->  	}
->  }
->  
-> -static struct snd_tea575x_ops snd_es1968_tea_ops = {
-> +static const struct snd_tea575x_ops snd_es1968_tea_ops = {
->  	.set_pins = snd_es1968_tea575x_set_pins,
->  	.get_pins = snd_es1968_tea575x_get_pins,
->  	.set_direction = snd_es1968_tea575x_set_direction,
-> diff --git a/sound/pci/fm801.c b/sound/pci/fm801.c
-> index 5144a7f..759295a 100644
-> --- a/sound/pci/fm801.c
-> +++ b/sound/pci/fm801.c
-> @@ -815,7 +815,7 @@ static void snd_fm801_tea575x_set_direction(struct snd_tea575x *tea, bool output
->  	fm801_writew(chip, GPIO_CTRL, reg);
->  }
->  
-> -static struct snd_tea575x_ops snd_fm801_tea_ops = {
-> +static const struct snd_tea575x_ops snd_fm801_tea_ops = {
->  	.set_pins = snd_fm801_tea575x_set_pins,
->  	.get_pins = snd_fm801_tea575x_get_pins,
->  	.set_direction = snd_fm801_tea575x_set_direction,
-> diff --git a/drivers/media/pci/bt8xx/bttv-cards.c b/drivers/media/pci/bt8xx/bttv-cards.c
-> index 7a08102..8a17cc0 100644
-> --- a/drivers/media/pci/bt8xx/bttv-cards.c
-> +++ b/drivers/media/pci/bt8xx/bttv-cards.c
-> @@ -3808,7 +3808,7 @@ static void bttv_tea575x_set_direction(struct snd_tea575x *tea, bool output)
->  		gpio_inout(mask, (1 << gpio.clk) | (1 << gpio.wren));
->  }
->  
-> -static struct snd_tea575x_ops bttv_tea_ops = {
-> +static const struct snd_tea575x_ops bttv_tea_ops = {
->  	.set_pins = bttv_tea575x_set_pins,
->  	.get_pins = bttv_tea575x_get_pins,
->  	.set_direction = bttv_tea575x_set_direction,
-> diff --git a/drivers/media/radio/radio-sf16fmr2.c b/drivers/media/radio/radio-sf16fmr2.c
-> index 8e4f1d1..dc81d42 100644
-> --- a/drivers/media/radio/radio-sf16fmr2.c
-> +++ b/drivers/media/radio/radio-sf16fmr2.c
-> @@ -82,7 +82,7 @@ static void fmr2_tea575x_set_direction(struct snd_tea575x *tea, bool output)
->  {
->  }
->  
-> -static struct snd_tea575x_ops fmr2_tea_ops = {
-> +static const struct snd_tea575x_ops fmr2_tea_ops = {
->  	.set_pins = fmr2_tea575x_set_pins,
->  	.get_pins = fmr2_tea575x_get_pins,
->  	.set_direction = fmr2_tea575x_set_direction,
-> diff --git a/include/media/drv-intf/tea575x.h b/include/media/drv-intf/tea575x.h
-> index 5d09657..fb272d4 100644
-> --- a/include/media/drv-intf/tea575x.h
-> +++ b/include/media/drv-intf/tea575x.h
-> @@ -63,7 +63,7 @@ struct snd_tea575x {
->  	u32 band;			/* 0: FM, 1: FM-Japan, 2: AM */
->  	u32 freq;			/* frequency */
->  	struct mutex mutex;
-> -	struct snd_tea575x_ops *ops;
-> +	const struct snd_tea575x_ops *ops;
->  	void *private_data;
->  	u8 card[32];
->  	u8 bus_info[32];
-> diff --git a/drivers/media/radio/radio-shark.c b/drivers/media/radio/radio-shark.c
-> index 409fac1..85667a9 100644
-> --- a/drivers/media/radio/radio-shark.c
-> +++ b/drivers/media/radio/radio-shark.c
-> @@ -150,7 +150,7 @@ static u32 shark_read_val(struct snd_tea575x *tea)
->  	return val;
->  }
->  
-> -static struct snd_tea575x_ops shark_tea_ops = {
-> +static const struct snd_tea575x_ops shark_tea_ops = {
->  	.write_val = shark_write_val,
->  	.read_val  = shark_read_val,
->  };
-> diff --git a/drivers/media/radio/radio-maxiradio.c b/drivers/media/radio/radio-maxiradio.c
-> index 41c1652..70fd8e8 100644
-> --- a/drivers/media/radio/radio-maxiradio.c
-> +++ b/drivers/media/radio/radio-maxiradio.c
-> @@ -108,7 +108,7 @@ static void maxiradio_tea575x_set_direction(struct snd_tea575x *tea, bool output
->  {
->  }
->  
-> -static struct snd_tea575x_ops maxiradio_tea_ops = {
-> +static const struct snd_tea575x_ops maxiradio_tea_ops = {
->  	.set_pins = maxiradio_tea575x_set_pins,
->  	.get_pins = maxiradio_tea575x_get_pins,
->  	.set_direction = maxiradio_tea575x_set_direction,
-> 
-> 
