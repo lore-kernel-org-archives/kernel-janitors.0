@@ -1,49 +1,85 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 13 Nov 2015 11:38:32 +0000
-Subject: [PATCH] [media] radio-shark2: constify radio_tea5777_ops structures
-Message-Id: <1447414712-26586-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Nov 2015 13:09:19 +0000
+Subject: [PATCH] dm: constify crypt_iv_operations structures
+Message-Id: <1448802559-2671-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Hans de Goede <hdegoede@redhat.com>
+To: Alasdair Kergon <agk@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.com>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The radio_tea5777_ops structure is never modified, so declare it as const.
+The crypt_iv_operations are never modified, so declare them
+as const.
 
 Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/radio/radio-shark2.c  |    2 +-
- drivers/media/radio/radio-tea5777.h |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/dm-crypt.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/radio/radio-tea5777.h b/drivers/media/radio/radio-tea5777.h
-index 4ea43a9..4bd9425 100644
---- a/drivers/media/radio/radio-tea5777.h
-+++ b/drivers/media/radio/radio-tea5777.h
-@@ -76,7 +76,7 @@ struct radio_tea5777 {
- 	u32 read_reg;
- 	u64 write_reg;
- 	struct mutex mutex;
--	struct radio_tea5777_ops *ops;
-+	const struct radio_tea5777_ops *ops;
- 	void *private_data;
- 	u8 card[32];
- 	u8 bus_info[32];
-diff --git a/drivers/media/radio/radio-shark2.c b/drivers/media/radio/radio-shark2.c
-index 8654e0d..0e65a85 100644
---- a/drivers/media/radio/radio-shark2.c
-+++ b/drivers/media/radio/radio-shark2.c
-@@ -137,7 +137,7 @@ static int shark_read_reg(struct radio_tea5777 *tea, u32 *reg_ret)
- 	return 0;
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 3147c8d..c7058fc 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -141,7 +141,7 @@ struct crypt_config {
+ 	char *cipher;
+ 	char *cipher_string;
+ 
+-	struct crypt_iv_operations *iv_gen_ops;
++	const struct crypt_iv_operations *iv_gen_ops;
+ 	union {
+ 		struct iv_essiv_private essiv;
+ 		struct iv_benbi_private benbi;
+@@ -756,15 +756,15 @@ static int crypt_iv_tcw_post(struct crypt_config *cc, u8 *iv,
+ 	return r;
  }
  
--static struct radio_tea5777_ops shark_tea_ops = {
-+static const struct radio_tea5777_ops shark_tea_ops = {
- 	.write_reg = shark_write_reg,
- 	.read_reg  = shark_read_reg,
+-static struct crypt_iv_operations crypt_iv_plain_ops = {
++static const struct crypt_iv_operations crypt_iv_plain_ops = {
+ 	.generator = crypt_iv_plain_gen
  };
+ 
+-static struct crypt_iv_operations crypt_iv_plain64_ops = {
++static const struct crypt_iv_operations crypt_iv_plain64_ops = {
+ 	.generator = crypt_iv_plain64_gen
+ };
+ 
+-static struct crypt_iv_operations crypt_iv_essiv_ops = {
++static const struct crypt_iv_operations crypt_iv_essiv_ops = {
+ 	.ctr       = crypt_iv_essiv_ctr,
+ 	.dtr       = crypt_iv_essiv_dtr,
+ 	.init      = crypt_iv_essiv_init,
+@@ -772,17 +772,17 @@ static struct crypt_iv_operations crypt_iv_essiv_ops = {
+ 	.generator = crypt_iv_essiv_gen
+ };
+ 
+-static struct crypt_iv_operations crypt_iv_benbi_ops = {
++static const struct crypt_iv_operations crypt_iv_benbi_ops = {
+ 	.ctr	   = crypt_iv_benbi_ctr,
+ 	.dtr	   = crypt_iv_benbi_dtr,
+ 	.generator = crypt_iv_benbi_gen
+ };
+ 
+-static struct crypt_iv_operations crypt_iv_null_ops = {
++static const struct crypt_iv_operations crypt_iv_null_ops = {
+ 	.generator = crypt_iv_null_gen
+ };
+ 
+-static struct crypt_iv_operations crypt_iv_lmk_ops = {
++static const struct crypt_iv_operations crypt_iv_lmk_ops = {
+ 	.ctr	   = crypt_iv_lmk_ctr,
+ 	.dtr	   = crypt_iv_lmk_dtr,
+ 	.init	   = crypt_iv_lmk_init,
+@@ -791,7 +791,7 @@ static struct crypt_iv_operations crypt_iv_lmk_ops = {
+ 	.post	   = crypt_iv_lmk_post
+ };
+ 
+-static struct crypt_iv_operations crypt_iv_tcw_ops = {
++static const struct crypt_iv_operations crypt_iv_tcw_ops = {
+ 	.ctr	   = crypt_iv_tcw_ctr,
+ 	.dtr	   = crypt_iv_tcw_dtr,
+ 	.init	   = crypt_iv_tcw_init,
 
