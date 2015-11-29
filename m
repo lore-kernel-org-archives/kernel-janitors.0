@@ -1,56 +1,40 @@
-From: Marek Lindner <mareklindner@neomailbox.ch>
-Date: Sat, 21 Nov 2015 21:45:33 +0000
-Subject: Re: [B.A.T.M.A.N.] [PATCH 1/2] batman-adv: Delete unnecessary checks before the function call "kfree
-Message-Id: <2329415.lXFbWjXfj3@voltaire>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nextPart1573570.N95rHCmhjF"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Nov 2015 22:02:49 +0000
+Subject: [PATCH 1/3] xen/gntdev: constify mmu_notifier_ops structures
+Message-Id: <1448834571-2988-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <56484502.8000206@users.sourceforge.net> <564845AE.8020008@users.sourceforge.net>
-In-Reply-To: <564845AE.8020008@users.sourceforge.net>
-To: b.a.t.m.a.n@lists.open-mesh.org
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Antonio Quartulli <antonio@meshcoding.com>, "David S. Miller" <davem@davemloft.net>, Simon Wunderlich <sw@simonwunderlich.de>, netdev@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-
---nextPart1573570.N95rHCmhjF
-Content-Transfer-Encoding: 7Bit
+References: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, David Vrabel <david.vrabel@citrix.com>, xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
 
-On Sunday, November 15, 2015 09:43:26 SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 15 Nov 2015 08:04:43 +0100
-> 
-> The kfree_skb() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  net/batman-adv/main.c           | 2 +-
->  net/batman-adv/network-coding.c | 4 +---
->  net/batman-adv/send.c           | 3 +--
->  3 files changed, 3 insertions(+), 6 deletions(-)
+This mmu_notifier_ops structure is never modified, so declare it as
+const, like the other mmu_notifier_ops structures.
 
-Applied in revision 77d84a6.
+Done with the help of Coccinelle.
 
-Thanks,
-Marek
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---nextPart1573570.N95rHCmhjF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+---
+The patches in this series are independent of each other.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+ drivers/xen/gntdev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-iQEcBAABCAAGBQJWUOX9AAoJEFNVTo/uthzACYYH/A2iYbcxJ/MhlyXJslnVgmLf
-BfzckoTCJQUH4mjopK/cZcvuAQT6HUTHXi2oBV5+58NRAwHAXg2zv1yDCtBuav+9
-SPqYTWV4dNJb0cQFTuKbLXqXCGe/n1SlHgyvtttLgF3p0zjeNRQScqC5/2/urEBc
-yZr8HmGofBVZGj8drzcL+deGari5o0z1r8RojzKv33E/IMv6sBZ5+I4EmNQGDLDg
-zdWvHTRn/3MZGH4UsEw3HXVUVVOCeyjvAGEBORz63GZR42tM+0TCgHpo3Z7kTynE
-WX2wFI/FRhoSxhHS3APzSUxQ/7o1MCuzNKDS430OYKVW/WrV8CP2jqVGrRUGwvQ=
-=6jJq
------END PGP SIGNATURE-----
-
---nextPart1573570.N95rHCmhjF--
+diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+index 2ea0b3b..a27a9a5 100644
+--- a/drivers/xen/gntdev.c
++++ b/drivers/xen/gntdev.c
+@@ -518,7 +518,7 @@ static void mn_release(struct mmu_notifier *mn,
+ 	mutex_unlock(&priv->lock);
+ }
+ 
+-static struct mmu_notifier_ops gntdev_mmu_ops = {
++static const struct mmu_notifier_ops gntdev_mmu_ops = {
+ 	.release                = mn_release,
+ 	.invalidate_page        = mn_invl_page,
+ 	.invalidate_range_start = mn_invl_range_start,
 
