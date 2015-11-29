@@ -1,40 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Nov 2015 06:17:46 +0000
-Subject: Re: net-ipv6: Delete unnecessary checks before the function call "kfree_skb"
-Message-Id: <5648238A.20109@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Nov 2015 22:02:50 +0000
+Subject: [PATCH 2/3] iommu/amd: constify mmu_notifier_ops structures
+Message-Id: <1448834571-2988-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <564785ED.1040906@users.sourceforge.net>
- <1447558345.22599.64.camel@edumazet-glaptop2.roam.corp.google.com>
-In-Reply-To: <1447558345.22599.64.camel@edumazet-glaptop2.roam.corp.google.com>
+References: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "David S. Miller" <davem@davemloft.net>, Hideaki Yoshfuji <yoshfuji@linux-ipv6.org>, James Morris <jmorris@namei.org>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 
-> While if the test is done in kfree_skb(), the branch predictor of the
-> cpu wont be able to predict things.
-> 
-> By feeding too many NULL pointers to kfree_skb(), we slow down it.
+This mmu_notifier_ops structure is never modified, so declare it as
+const, like the other mmu_notifier_ops structures.
 
-Would it make sense to annotate checks before such function calls
-as "UNLIKELY"?
+Done with the help of Coccinelle.
 
-Regards,
-Markus
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The patches in this series are independent of each other.
+
+ drivers/iommu/amd_iommu_v2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/amd_iommu_v2.c b/drivers/iommu/amd_iommu_v2.c
+index d21d4ed..c847f2f 100644
+--- a/drivers/iommu/amd_iommu_v2.c
++++ b/drivers/iommu/amd_iommu_v2.c
+@@ -432,7 +432,7 @@ static void mn_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ 	unbind_pasid(pasid_state);
+ }
+ 
+-static struct mmu_notifier_ops iommu_mn = {
++static const struct mmu_notifier_ops iommu_mn = {
+ 	.release		= mn_release,
+ 	.clear_flush_young      = mn_clear_flush_young,
+ 	.invalidate_page        = mn_invalidate_page,
+
