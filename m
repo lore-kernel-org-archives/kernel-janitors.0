@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 21:26:32 +0000
-Subject: [PATCH 3/3] ste_dma40: Delete an unnecessary variable initialisation in d40_probe()
-Message-Id: <564A4A08.5000705@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 29 Nov 2015 21:29:37 +0000
+Subject: Re: [PATCH 3/3] ste_dma40: Delete an unnecessary variable initialisation in d40_probe()
+Message-Id: <CACRpkdZ7=LaCVKn5ObE48n0YvCpq5BbxLOUR7BQ_6O9j1H8=-w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,37 +19,28 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <564A4899.8040109@users.sourceforge.net>
-In-Reply-To: <564A4899.8040109@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+ <564A4899.8040109@users.sourceforge.net>
+ <564A4A08.5000705@users.sourceforge.net>
+In-Reply-To: <564A4A08.5000705@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Nov 2015 22:00:28 +0100
+On Mon, Nov 16, 2015 at 10:26 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-The variable "res" will eventually be set to a resource pointer from
-a call of the d40_hw_detect_init(() function.
-Thus let us omit the explicit initialisation at the beginning.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 16 Nov 2015 22:00:28 +0100
+>
+> The variable "res" will eventually be set to a resource pointer from
+> a call of the d40_hw_detect_init(() function.
+> Thus let us omit the explicit initialisation at the beginning.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/dma/ste_dma40.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index 8ebfde1..6fb8307 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -3544,7 +3544,7 @@ static int __init d40_probe(struct platform_device *pdev)
- 	struct device_node *np = pdev->dev.of_node;
- 	int ret = -ENOENT;
- 	struct d40_base *base;
--	struct resource *res = NULL;
-+	struct resource *res;
- 	int num_reserved_chans;
- 	u32 val;
- 
--- 
-2.6.2
+Yours,
+Linus Walleij
