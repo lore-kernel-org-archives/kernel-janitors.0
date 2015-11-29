@@ -1,37 +1,36 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Tue, 10 Nov 2015 19:03:52 +0000
-Subject: Re: [patch v2] vfio/pci: make an array larger
-Message-Id: <1447182232.4925.116.camel@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Nov 2015 12:50:02 +0000
+Subject: [PATCH] mailbox: constify mbox_chan_ops structure
+Message-Id: <1448801402-27540-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151109122455.GA28870@mwanda>
-In-Reply-To: <20151109122455.GA28870@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Sean O. Stalley" <sean.stalley@intel.com>, Mark Rustad <mark.d.rustad@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2015-11-09 at 15:24 +0300, Dan Carpenter wrote:
-> Smatch complains about a possible out of bounds error:
-> 
-> 	drivers/vfio/pci/vfio_pci_config.c:1241 vfio_cap_init()
-> 	error: buffer overflow 'pci_cap_length' 20 <= 20
-> 
-> The problem is that pci_cap_length[] was defined as large enough to
-> hold "PCI_CAP_ID_AF + 1" elements.  The code in vfio_cap_init() assumes
-> it has PCI_CAP_ID_MAX + 1 elements.  Originally, PCI_CAP_ID_AF and
-> PCI_CAP_ID_MAX were the same but then we introduced PCI_CAP_ID_EA in
-> f80b0ba95964 ('PCI: Add Enhanced Allocation register entries') so now
-> the array is too small.
-> 
-> Let's fix this by making the array size PCI_CAP_ID_MAX + 1.  And let's
-> make a similar change to pci_ext_cap_length[] for consistency.  Also
-> both these arrays can be made const.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+This mbox_chan_ops structure is never modified, so declare it as const,
+like all the other mbox_chan_ops structures.
 
-Applied to next for v4.4.  Thanks!
+Done with the help of Coccinelle.
 
-Alex
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mailbox/mailbox-sti.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mailbox/mailbox-sti.c b/drivers/mailbox/mailbox-sti.c
+index 4835817..2394cfe 100644
+--- a/drivers/mailbox/mailbox-sti.c
++++ b/drivers/mailbox/mailbox-sti.c
+@@ -384,7 +384,7 @@ static struct mbox_chan *sti_mbox_xlate(struct mbox_controller *mbox,
+ 	return chan;
+ }
+ 
+-static struct mbox_chan_ops sti_mbox_ops = {
++static const struct mbox_chan_ops sti_mbox_ops = {
+ 	.startup	= sti_mbox_startup_chan,
+ 	.shutdown	= sti_mbox_shutdown_chan,
+ 	.send_data	= sti_mbox_send_data,
 
