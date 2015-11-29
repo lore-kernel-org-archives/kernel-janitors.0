@@ -1,49 +1,65 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 28 Nov 2015 14:09:38 +0000
-Subject: [PATCH] spi: dw-mid: constify dw_spi_dma_ops structure
-Message-Id: <1448719778-32271-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 29 Nov 2015 00:56:44 +0000
+Subject: Re: [PATCH] spi: dw-mid: constify dw_spi_dma_ops structure
+Message-Id: <CAHp75VfkOMnBWWCZEowB0f_VSTMfOk_snQCm-J=DMv4x_4YUeg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1448719778-32271-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1448719778-32271-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-The dw_spi_dma_ops structure is never modified, so declare it as const.
+On Sat, Nov 28, 2015 at 4:09 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> The dw_spi_dma_ops structure is never modified, so declare it as const.
+>
+> Done with the help of Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
 
-Done with the help of Coccinelle.
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> ---
+>  drivers/spi/spi-dw-mid.c |    2 +-
+>  drivers/spi/spi-dw.h     |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/spi/spi-dw-mid.c b/drivers/spi/spi-dw-mid.c
+> index bb1052e..9185f6c 100644
+> --- a/drivers/spi/spi-dw-mid.c
+> +++ b/drivers/spi/spi-dw-mid.c
+> @@ -283,7 +283,7 @@ static void mid_spi_dma_stop(struct dw_spi *dws)
+>         }
+>  }
+>
+> -static struct dw_spi_dma_ops mid_dma_ops = {
+> +static const struct dw_spi_dma_ops mid_dma_ops = {
+>         .dma_init       = mid_spi_dma_init,
+>         .dma_exit       = mid_spi_dma_exit,
+>         .dma_setup      = mid_spi_dma_setup,
+> diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
+> index 35589a2..61bc3cb 100644
+> --- a/drivers/spi/spi-dw.h
+> +++ b/drivers/spi/spi-dw.h
+> @@ -130,7 +130,7 @@ struct dw_spi {
+>         struct dma_chan         *rxchan;
+>         unsigned long           dma_chan_busy;
+>         dma_addr_t              dma_addr; /* phy address of the Data register */
+> -       struct dw_spi_dma_ops   *dma_ops;
+> +       const struct dw_spi_dma_ops *dma_ops;
+>         void                    *dma_tx;
+>         void                    *dma_rx;
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
----
- drivers/spi/spi-dw-mid.c |    2 +-
- drivers/spi/spi-dw.h     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-dw-mid.c b/drivers/spi/spi-dw-mid.c
-index bb1052e..9185f6c 100644
---- a/drivers/spi/spi-dw-mid.c
-+++ b/drivers/spi/spi-dw-mid.c
-@@ -283,7 +283,7 @@ static void mid_spi_dma_stop(struct dw_spi *dws)
- 	}
- }
- 
--static struct dw_spi_dma_ops mid_dma_ops = {
-+static const struct dw_spi_dma_ops mid_dma_ops = {
- 	.dma_init	= mid_spi_dma_init,
- 	.dma_exit	= mid_spi_dma_exit,
- 	.dma_setup	= mid_spi_dma_setup,
-diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
-index 35589a2..61bc3cb 100644
---- a/drivers/spi/spi-dw.h
-+++ b/drivers/spi/spi-dw.h
-@@ -130,7 +130,7 @@ struct dw_spi {
- 	struct dma_chan		*rxchan;
- 	unsigned long		dma_chan_busy;
- 	dma_addr_t		dma_addr; /* phy address of the Data register */
--	struct dw_spi_dma_ops	*dma_ops;
-+	const struct dw_spi_dma_ops *dma_ops;
- 	void			*dma_tx;
- 	void			*dma_rx;
- 
 
+-- 
+With Best Regards,
+Andy Shevchenko
