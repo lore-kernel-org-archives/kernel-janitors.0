@@ -1,61 +1,143 @@
-From: Clemens Ladisch <clemens@ladisch.de>
-Date: Fri, 06 Nov 2015 11:34:56 +0000
-Subject: Re: [PATCH] hpet: Delete an unnecessary check before unregister_sysctl_table()
-Message-Id: <563C9060.2000400@ladisch.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Nov 2015 15:36:40 +0000
+Subject: [PATCH] ALSA: pcm: constify action_ops structures
+Message-Id: <1448811400-11304-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<563BC20A.5000803@users.sourceforge.net>
-In-Reply-To: <563BC20A.5000803@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 5 Nov 2015 21:32:42 +0100
->
-> The unregister_sysctl_table() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The action_ops structures are never modified, so declare them as const.
 
-Acked-by: Clemens Ladisch <clemens@ladisch.de>
+Done with the help of Coccinelle.
 
-> ---
->  drivers/char/hpet.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-> index 240b6cf..fe511e9 100644
-> --- a/drivers/char/hpet.c
-> +++ b/drivers/char/hpet.c
-> @@ -1069,8 +1069,7 @@ static int __init hpet_init(void)
->
->  	result = acpi_bus_register_driver(&hpet_acpi_driver);
->  	if (result < 0) {
-> -		if (sysctl_header)
-> -			unregister_sysctl_table(sysctl_header);
-> +		unregister_sysctl_table(sysctl_header);
->  		misc_deregister(&hpet_misc);
->  		return result;
->  	}
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/core/pcm_native.c |   26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index a8b27cd..fadd3eb 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -875,7 +875,7 @@ struct action_ops {
+  *  Note: the stream state might be changed also on failure
+  *  Note2: call with calling stream lock + link lock
+  */
+-static int snd_pcm_action_group(struct action_ops *ops,
++static int snd_pcm_action_group(const struct action_ops *ops,
+ 				struct snd_pcm_substream *substream,
+ 				int state, int do_lock)
+ {
+@@ -932,7 +932,7 @@ static int snd_pcm_action_group(struct action_ops *ops,
+ /*
+  *  Note: call with stream lock
+  */
+-static int snd_pcm_action_single(struct action_ops *ops,
++static int snd_pcm_action_single(const struct action_ops *ops,
+ 				 struct snd_pcm_substream *substream,
+ 				 int state)
+ {
+@@ -952,7 +952,7 @@ static int snd_pcm_action_single(struct action_ops *ops,
+ /*
+  *  Note: call with stream lock
+  */
+-static int snd_pcm_action(struct action_ops *ops,
++static int snd_pcm_action(const struct action_ops *ops,
+ 			  struct snd_pcm_substream *substream,
+ 			  int state)
+ {
+@@ -984,7 +984,7 @@ static int snd_pcm_action(struct action_ops *ops,
+ /*
+  *  Note: don't use any locks before
+  */
+-static int snd_pcm_action_lock_irq(struct action_ops *ops,
++static int snd_pcm_action_lock_irq(const struct action_ops *ops,
+ 				   struct snd_pcm_substream *substream,
+ 				   int state)
+ {
+@@ -998,7 +998,7 @@ static int snd_pcm_action_lock_irq(struct action_ops *ops,
+ 
+ /*
+  */
+-static int snd_pcm_action_nonatomic(struct action_ops *ops,
++static int snd_pcm_action_nonatomic(const struct action_ops *ops,
+ 				    struct snd_pcm_substream *substream,
+ 				    int state)
+ {
+@@ -1056,7 +1056,7 @@ static void snd_pcm_post_start(struct snd_pcm_substream *substream, int state)
+ 	snd_pcm_timer_notify(substream, SNDRV_TIMER_EVENT_MSTART);
+ }
+ 
+-static struct action_ops snd_pcm_action_start = {
++static const struct action_ops snd_pcm_action_start = {
+ 	.pre_action = snd_pcm_pre_start,
+ 	.do_action = snd_pcm_do_start,
+ 	.undo_action = snd_pcm_undo_start,
+@@ -1107,7 +1107,7 @@ static void snd_pcm_post_stop(struct snd_pcm_substream *substream, int state)
+ 	wake_up(&runtime->tsleep);
+ }
+ 
+-static struct action_ops snd_pcm_action_stop = {
++static const struct action_ops snd_pcm_action_stop = {
+ 	.pre_action = snd_pcm_pre_stop,
+ 	.do_action = snd_pcm_do_stop,
+ 	.post_action = snd_pcm_post_stop
+@@ -1224,7 +1224,7 @@ static void snd_pcm_post_pause(struct snd_pcm_substream *substream, int push)
+ 	}
+ }
+ 
+-static struct action_ops snd_pcm_action_pause = {
++static const struct action_ops snd_pcm_action_pause = {
+ 	.pre_action = snd_pcm_pre_pause,
+ 	.do_action = snd_pcm_do_pause,
+ 	.undo_action = snd_pcm_undo_pause,
+@@ -1273,7 +1273,7 @@ static void snd_pcm_post_suspend(struct snd_pcm_substream *substream, int state)
+ 	wake_up(&runtime->tsleep);
+ }
+ 
+-static struct action_ops snd_pcm_action_suspend = {
++static const struct action_ops snd_pcm_action_suspend = {
+ 	.pre_action = snd_pcm_pre_suspend,
+ 	.do_action = snd_pcm_do_suspend,
+ 	.post_action = snd_pcm_post_suspend
+@@ -1375,7 +1375,7 @@ static void snd_pcm_post_resume(struct snd_pcm_substream *substream, int state)
+ 	snd_pcm_timer_notify(substream, SNDRV_TIMER_EVENT_MRESUME);
+ }
+ 
+-static struct action_ops snd_pcm_action_resume = {
++static const struct action_ops snd_pcm_action_resume = {
+ 	.pre_action = snd_pcm_pre_resume,
+ 	.do_action = snd_pcm_do_resume,
+ 	.undo_action = snd_pcm_undo_resume,
+@@ -1478,7 +1478,7 @@ static void snd_pcm_post_reset(struct snd_pcm_substream *substream, int state)
+ 		snd_pcm_playback_silence(substream, ULONG_MAX);
+ }
+ 
+-static struct action_ops snd_pcm_action_reset = {
++static const struct action_ops snd_pcm_action_reset = {
+ 	.pre_action = snd_pcm_pre_reset,
+ 	.do_action = snd_pcm_do_reset,
+ 	.post_action = snd_pcm_post_reset
+@@ -1522,7 +1522,7 @@ static void snd_pcm_post_prepare(struct snd_pcm_substream *substream, int state)
+ 	snd_pcm_set_state(substream, SNDRV_PCM_STATE_PREPARED);
+ }
+ 
+-static struct action_ops snd_pcm_action_prepare = {
++static const struct action_ops snd_pcm_action_prepare = {
+ 	.pre_action = snd_pcm_pre_prepare,
+ 	.do_action = snd_pcm_do_prepare,
+ 	.post_action = snd_pcm_post_prepare
+@@ -1618,7 +1618,7 @@ static void snd_pcm_post_drain_init(struct snd_pcm_substream *substream, int sta
+ {
+ }
+ 
+-static struct action_ops snd_pcm_action_drain_init = {
++static const struct action_ops snd_pcm_action_drain_init = {
+ 	.pre_action = snd_pcm_pre_drain_init,
+ 	.do_action = snd_pcm_do_drain_init,
+ 	.post_action = snd_pcm_post_drain_init
+
