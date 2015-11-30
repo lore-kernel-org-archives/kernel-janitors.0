@@ -1,29 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Nov 2015 12:04:49 +0000
-Subject: [patch] libertas: cleanup a variable name
-Message-Id: <20151126120449.GK10556@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 30 Nov 2015 12:58:30 +0000
+Subject: Re: libertas: cleanup a variable name
+Message-Id: <20151130125830.29FEA1409D5@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20151126120449.GK10556@mwanda>
+References: <20151126120449.GK10556@mwanda>
+In-Reply-To: <20151126120449.GK10556@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"&card->priv->driver_lock" and "&priv->driver_lock" are the same and
-it's nicer to use the shorter one consistently.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> "&card->priv->driver_lock" and "&priv->driver_lock" are the same and
+> it's nicer to use the shorter one consistently.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/net/wireless/marvell/libertas/if_sdio.c
-index 33ceda2..68fd3a9 100644
---- a/drivers/net/wireless/marvell/libertas/if_sdio.c
-+++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
-@@ -228,7 +228,7 @@ static int if_sdio_handle_cmd(struct if_sdio_card *card,
- 	memcpy(priv->resp_buf[i], buffer, size);
- 	lbs_notify_command_response(priv, i);
- 
--	spin_unlock_irqrestore(&card->priv->driver_lock, flags);
-+	spin_unlock_irqrestore(&priv->driver_lock, flags);
- 
- 	ret = 0;
- 
+Thanks, applied to wireless-drivers-next.git.
+
+Kalle Valo
