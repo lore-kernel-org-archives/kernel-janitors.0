@@ -1,17 +1,18 @@
-From: Stanislaw Gruszka <sgruszka@redhat.com>
-Date: Thu, 26 Nov 2015 13:52:42 +0000
-Subject: Re: [patch] rt2x00: type bug in _rt2500usb_register_read()
-Message-Id: <20151126135241.GA3111@redhat.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 30 Nov 2015 12:58:07 +0000
+Subject: Re: rt2x00: type bug in _rt2500usb_register_read()
+Message-Id: <20151130125807.4FB601409D1@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20151126115523.GD10556@mwanda>
 References: <20151126115523.GD10556@mwanda>
 In-Reply-To: <20151126115523.GD10556@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Helmut Schaa <helmut.schaa@googlemail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Helmut Schaa <helmut.schaa@googlemail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 26, 2015 at 02:55:23PM +0300, Dan Carpenter wrote:
+
 > This code causes a static checker bug.
 > 
 > drivers/net/wireless/ralink/rt2x00/rt2500usb.c:232 _rt2500usb_register_read()
@@ -28,12 +29,8 @@ On Thu, Nov 26, 2015 at 02:55:23PM +0300, Dan Carpenter wrote:
 > information leak.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-> ---
-> Not tested.  Perhaps we should just remove this code since it has never
-> worked.
+Thanks, applied to wireless-drivers-next.git.
 
-It is used for debugfs interface and I would like to keep it.
-
-Stanislaw
+Kalle Valo
