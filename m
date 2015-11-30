@@ -1,26 +1,21 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 26 Nov 2015 13:01:27 +0000
-Subject: Re: rtlwifi: Delete unnecessary checks before the function call"kfree_skb"
-Message-Id: <20151126130127.DDFC3140731@smtp.codeaurora.org>
+From: David Vrabel <dvrabel@cantab.net>
+Date: Mon, 30 Nov 2015 14:13:15 +0000
+Subject: Re: [Xen-devel] [PATCH] xen/grant-table: constify gnttab_ops structure
+Message-Id: <565C597B.2030500@cantab.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <5649C99E.2070602@users.sourceforge.net>
+References: <1448720920-10606-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1448720920-10606-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: xen-devel@lists.xenproject.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, kernel-janitors@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, linux-kernel@vger.kernel.org
 
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Nov 2015 13:12:25 +0100
+On 28/11/15 14:28, Julia Lawall wrote:
+> The gnttab_ops structure is never modified, so declare it as const.
 > 
-> The kfree_skb() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the calls is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Done with the help of Coccinelle.
 
-Thanks, applied to wireless-drivers-next.git.
+Applied to for-linus-4.5, thanks.
 
-Kalle Valo
+David
