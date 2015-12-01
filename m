@@ -1,34 +1,43 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Date: Sun, 20 Dec 2015 20:09:34 +0000
-Subject: Re: [PATCH] posix-clock: Use an unsigned data type for a variable
-Message-Id: <20151220200934.GB2027@netboy>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Tue, 01 Dec 2015 01:56:37 +0000
+Subject: Re: [PATCH 2/4] mtd: nand: sunxi: add missing of_node_put
+Message-Id: <20151201015637.GW64635@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <56766488.9050402@users.sourceforge.net>
-In-Reply-To: <56766488.9050402@users.sourceforge.net>
+References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1447884254-26336-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447884254-26336-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-On Sun, Dec 20, 2015 at 09:19:20AM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 20 Dec 2015 09:09:34 +0100
+On Wed, Nov 18, 2015 at 11:04:12PM +0100, Julia Lawall wrote:
+> for_each_child_of_node performs an of_node_get on each iteration, so
+> a break out of the loop requires an of_node_put.
 > 
-> The data type "int" was used by the variable "result" in the
-> function "posix_clock_poll" even though the type "uint" will usually
-> be needed for the return value from a call of the function which was
-> assigned to the pointer "poll" of the variable "clk".
-> Reuse the type from this poll call instead.
+> A simplified version of the semantic patch that fixes this problem is as
+> follows (http://coccinelle.lip6.fr):
 > 
-> This issue was detected by using the Coccinelle software.
+> // <smpl>
+> @@
+> expression root,e;
+> local idexpression child;
+> @@
+> 
+>  for_each_child_of_node(root, child) {
+>    ... when != of_node_put(child)
+>        when != e = child
+> (
+>    return child;
+> |
+> +  of_node_put(child);
+> ?  return ...;
+> )
+>    ...
+>  }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
 
-Coccinelle has pointed out a type mismatch.  This fact may or may not
-indicate a real problem.  You need to analyze code to see if there is
-a problem and then fix the problem.
-
-In this case, there is indeed a problem.  However, just changing the
-type won't fix it.
-
-Thanks,
-Richard
+Pushed to l2-mtd.git
