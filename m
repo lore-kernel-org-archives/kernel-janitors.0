@@ -1,25 +1,30 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 11 Dec 2015 11:23:20 +0000
-Subject: Re: prism54: off by one BUG_ON() test
-Message-Id: <20151211112320.5798B141ACB@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Dec 2015 08:58:40 +0000
+Subject: MAINTAINERS: update a file name in drivers/acpi/
+Message-Id: <20151201085840.GA26852@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20151204131949.GF12792@mwanda>
-References: <20151204131949.GF12792@mwanda>
-In-Reply-To: <20151204131949.GF12792@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Luis R. Rodriguez" <mcgrof@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Hans de Goede <hdegoede@redhat.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We renamed drivers/acpi/video.c to drivers/acpi/acpi_video.c in commit
+14ca7a47d0ab ('acpi-video-detect: video: Make video_detect code part of
+the video module').
 
-> This code was supposed to trigger a BUG() if we truncate the output but
-> it's off by one so it allows one character to be truncated.  Really
-> drivers shouldn't call BUG_ON() and especially for something minor like
-> this so I've changed it to a WARN_ON().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied to wireless-drivers-next.git.
-
-Kalle Valo
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f3de001..736a103 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -318,7 +318,7 @@ M:	Zhang Rui <rui.zhang@intel.com>
+ L:	linux-acpi@vger.kernel.org
+ W:	https://01.org/linux-acpi
+ S:	Supported
+-F:	drivers/acpi/video.c
++F:	drivers/acpi/acpi_video.c
+ 
+ ACPI WMI DRIVER
+ L:	platform-driver-x86@vger.kernel.org
