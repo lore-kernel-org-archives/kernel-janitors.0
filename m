@@ -1,85 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 18:34:16 +0000
-Subject: [PATCH] mfd: twl-core: One function call less in add_numbered_child() after error detection
-Message-Id: <5682D228.7070902@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Dec 2015 08:29:12 +0000
+Subject: [patch] regulator: pv88060: fix error handling in probe
+Message-Id: <20151201082912.GA23996@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>, James Ban <James.Ban.opensource@diasemi.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 19:29:08 +0100
+There were some missing "ret = " assignments here.
 
-The platform_device_put() function was called in one case by the
-add_numbered_child() function during error handling even if the passed
-variable "pdev" contained a null pointer.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Implementation details could be improved by the adjustment of jump targets
-according to the Linux coding style convention.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mfd/twl-core.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
-index 831696e..0d9350c 100644
---- a/drivers/mfd/twl-core.c
-+++ b/drivers/mfd/twl-core.c
-@@ -625,7 +625,7 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
- 	if (!pdev) {
- 		dev_dbg(&twl->client->dev, "can't alloc dev\n");
- 		status = -ENOMEM;
--		goto err;
-+		goto report_failure;
- 	}
- 
- 	pdev->dev.parent = &twl->client->dev;
-@@ -634,7 +634,7 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
- 		status = platform_device_add_data(pdev, pdata, pdata_len);
- 		if (status < 0) {
- 			dev_dbg(&pdev->dev, "can't add platform_data\n");
--			goto err;
-+			goto put_device;
+diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
+index 69893f2..094376c 100644
+--- a/drivers/regulator/pv88060-regulator.c
++++ b/drivers/regulator/pv88060-regulator.c
+@@ -351,14 +351,14 @@ static int pv88060_i2c_probe(struct i2c_client *i2c,
+ 			return ret;
  		}
- 	}
  
-@@ -647,21 +647,20 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
- 		status = platform_device_add_resources(pdev, r, irq1 ? 2 : 1);
- 		if (status < 0) {
- 			dev_dbg(&pdev->dev, "can't add irqs\n");
--			goto err;
-+			goto put_device;
+-		regmap_write(chip->regmap, PV88060_REG_MASK_B, 0xFF);
++		ret = regmap_write(chip->regmap, PV88060_REG_MASK_B, 0xFF);
+ 		if (ret < 0) {
+ 			dev_err(chip->dev,
+ 				"Failed to mask B reg: %d\n", ret);
+ 			return ret;
  		}
- 	}
  
- 	status = platform_device_add(pdev);
--	if (status = 0)
-+	if (!status) {
- 		device_init_wakeup(&pdev->dev, can_wakeup);
--
--err:
--	if (status < 0) {
--		platform_device_put(pdev);
--		dev_err(&twl->client->dev, "can't add %s dev\n", name);
--		return ERR_PTR(status);
-+		return &pdev->dev;
- 	}
--	return &pdev->dev;
-+put_device:
-+	platform_device_put(pdev);
-+report_failure:
-+	dev_err(&twl->client->dev, "can't add %s dev\n", name);
-+	return ERR_PTR(status);
- }
- 
- static inline struct device *add_child(unsigned mod_no, const char *name,
--- 
-2.6.3
-
+-		regmap_write(chip->regmap, PV88060_REG_MASK_C, 0xFF);
++		ret = regmap_write(chip->regmap, PV88060_REG_MASK_C, 0xFF);
+ 		if (ret < 0) {
+ 			dev_err(chip->dev,
+ 				"Failed to mask C reg: %d\n", ret);
