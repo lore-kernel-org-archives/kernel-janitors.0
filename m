@@ -1,48 +1,56 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Sat, 26 Dec 2015 07:48:59 +0000
-Subject: Re: [PATCH v2] i2c-core: One function call less in acpi_i2c_space_handler() after error detection
-Message-Id: <20151226074859.GA905@tetsubishi>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="FL5UXtIhxfXey3p5"
+From: Casey Schaufler <casey@schaufler-ca.com>
+Date: Thu, 03 Dec 2015 22:23:22 +0000
+Subject: Re: [patch] Smack: harmless underflow in smk_set_cipso()
+Message-Id: <5660C0DA.90503@schaufler-ca.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201512261449.pmBxYtq3%fengguang.wu@intel.com>
- <567E3CF3.10606@users.sourceforge.net>
-In-Reply-To: <567E3CF3.10606@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-i2c@vger.kernel.org, kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+References: <20151103221539.GC19280@mwanda>
+In-Reply-To: <20151103221539.GC19280@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+On 11/3/2015 2:15 PM, Dan Carpenter wrote:
+> This causes a static checker warning because "maplevel" is set by the
+> user and we cap the upper bound but not the lower bound.  It seems
+> harmless to me and it's root only but we may as well make the static
+> checker happy.
+>
+> Also checkpatch complains that we should use kstrtouint() instead of
+> sscanf here.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---FL5UXtIhxfXey3p5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This no longer parses cipso specifications correctly.
+I haven't investigated why. It looks as if it should
+work. Does kstrtouint() allow for leading whitespace?
+If not, that's the problem.
+  
 
-> The kfree() function was called in one case by the
-> acpi_i2c_space_handler() function during error handling
-> even if the passed variable "client" contained a null pointer.
+>
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 94bd9e4..ebb1241 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -862,7 +862,7 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+>   	struct smack_known *skp;
+>   	struct netlbl_lsm_secattr ncats;
+>   	char mapcatset[SMK_CIPSOLEN];
+> -	int maplevel;
+> +	unsigned int maplevel;
+>   	unsigned int cat;
+>   	int catlen;
+>   	ssize_t rc = -EINVAL;
+> @@ -912,8 +912,8 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+>   	else
+>   		rule += strlen(skp->smk_known) + 1;
+>   
+> -	ret = sscanf(rule, "%d", &maplevel);
+> -	if (ret != 1 || maplevel > SMACK_CIPSO_MAXLEVEL)
+> +	ret = kstrtouint(rule, 10, &maplevel);
+> +	if (ret || maplevel > SMACK_CIPSO_MAXLEVEL)
+>   		goto out;
+>   
+>   	rule += SMK_DIGITLEN;
+>
 
-This is OK. kfree() is known to be NULL-tolerant and we rely on it in
-various places to keep the code simpler.
-
-
---FL5UXtIhxfXey3p5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWfkZrAAoJEBQN5MwUoCm2NXkP/3T9Btt307u289g31NAzHAZJ
-R58vKBGLhZBdAhOZRtfCFMQ5kB0TfrKDdalObUvU3QnjGJgJO92iueIUIRCkYxLi
-tf/ORn6ZBOmrb412c8lQNZv96lG8/mBvaqUoQQVwojAJaW8R9xDhyqcutz26Uthb
-VkjM6tEfVD9G/qzeoQ9per5CR3WrZbde4iX0mJNMfUWkqH5sK/4jpdKoDXtBQ3Lq
-bfsGCZZI67EBbCJxNfhCv5iAUkZt1INQ1TGE93mIf4XPYmGeXm1oh7GXyTZf1k3H
-xFCTD5bFezbLIHlrcS3SfgnTsOmMAIu2uXiuE38WV3eyjIVcwrCzhQM15kW8Rw1T
-WaLkCzkkrO8q3v74ugfEHBbTpTwJVQHw/Tzb50tQG6Y5s225ebcn6j7NVMpa/lAs
-VTEZlhQwaswcsFKPp7fwmmwiX6kz/6ZpfpQ0MVaqyFDcg3M7pZz0ioyNWaxdwpWV
-sW6E3XLvnBEsYHIplAcdw+sXMEocVCnUySgmpDoHOK7SCyzV7GwfuGPpcJBrh99A
-jOhmHAGpwTMleUG2pEsYNiuJ4Mk0fueOlBxwvDOPA6f0Pwc5PyhRcJR/gqMsvr4D
-/HuGviOmH2rPKpU7dk/7DmbPZqbLioiT7QDRVHm1aTF1HRWMwqbCNao8pJOIfvXC
-VfElt6PDuzAaxZgUHKL3
-=olSG
------END PGP SIGNATURE-----
-
---FL5UXtIhxfXey3p5--
