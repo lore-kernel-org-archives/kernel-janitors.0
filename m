@@ -1,62 +1,33 @@
-From: "Zheng, Lv" <lv.zheng@intel.com>
-Date: Fri, 25 Dec 2015 03:25:19 +0000
-Subject: RE: [patch 2/2] ACPI / debugger: copy_to_user doesn't return errors
-Message-Id: <1AE640813FDE7649BE1B193DEA596E883BB0A8E8@SHSMSX101.ccr.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Dec 2015 13:15:23 +0000
+Subject: [patch] cw1200: remove some dead code
+Message-Id: <20151204131523.GB12792@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151224072437.GB29642@mwanda>
- <alpine.DEB.2.02.1512240838170.2053@localhost6.localdomain6>
- <20151224191548.GB5284@mwanda>
-In-Reply-To: <20151224191548.GB5284@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Solomon Peachy <pizza@shaftnet.org>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+If the mode is NL80211_IFTYPE_UNSPECIFIED then we return success at the
+start of the function so this condition is never true.
 
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Friday, December 25, 2015 3:16 AM
-> Subject: Re: [patch 2/2] ACPI / debugger: copy_to_user doesn't return errors
-> 
-> On Thu, Dec 24, 2015 at 08:39:06AM +0100, Julia Lawall wrote:
-> > On Thu, 24 Dec 2015, Dan Carpenter wrote:
-> >
-> > > The copy_to/from_user() functions don't return error codes, they return
-> > > the number of bytes remaining.  We had intended to return -EFUALT here.
-> > > We actually have already checked access_ok() in an earlier function so
-> > > I don't think these functions will fail but let's fix it anyway.
-> > >
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > >
-> > > diff --git a/drivers/acpi/acpi_dbg.c b/drivers/acpi/acpi_dbg.c
-> > > index f2c92ab..2a1777b 100644
-> > > --- a/drivers/acpi/acpi_dbg.c
-> > > +++ b/drivers/acpi/acpi_dbg.c
-> > > @@ -592,9 +592,10 @@ static int acpi_aml_read_user(char __user *buf,
-> int len)
-> > >  	smp_rmb();
-> > >  	p = &crc->buf[crc->tail];
-> > >  	n = min(len, circ_count_to_end(crc));
-> > > -	ret = copy_to_user(buf, p, n);
-> > > -	if (IS_ERR_VALUE(ret))
-> >
-> > I'm not familiar with IS_ERR_VALUE.  Is it to allow functions that
-> > return unsigned values to also return negative error codes?
-> 
-> Yes, but here it is used as a substitue for checking if (ret < 0) or if
-> (ret >= 0).  I would have prefered to open code it.  Also I prefer
-> if (ret) for when the value is either zero or negative error codes but
-> here we have standardized on IS_ERR_VALUE(ret) for everything.
-[Lv Zheng] 
-This patch looks correct.
-It's good for me to know the rule for copy_to/from_user().
-Thanks for pointing out.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks and best regards
--Lv
-
-> 
-> regards,
-> dan carpenter
-
+diff --git a/drivers/net/wireless/st/cw1200/sta.c b/drivers/net/wireless/st/cw1200/sta.c
+index 95a7fdb..06321c7 100644
+--- a/drivers/net/wireless/st/cw1200/sta.c
++++ b/drivers/net/wireless/st/cw1200/sta.c
+@@ -873,12 +873,6 @@ int cw1200_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
+ 	else
+ 		val32 = 0; /* disabled */
+ 
+-	if (priv->mode = NL80211_IFTYPE_UNSPECIFIED) {
+-		/* device is down, can _not_ set threshold */
+-		ret = -ENODEV;
+-		goto out;
+-	}
+-
+ 	if (priv->rts_threshold = value)
+ 		goto out;
+ 
