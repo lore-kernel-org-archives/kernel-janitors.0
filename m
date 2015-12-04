@@ -1,17 +1,31 @@
-From: "Jeff Skoll" <verna.viajar@icdd.uni-kassel.de>
-Date: Tue, 29 Dec 2015 03:20:33 +0000
-Subject: Charity Donation
-Message-Id: <auto-000005558012@mailadmin.uni-kassel.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Dec 2015 13:19:49 +0000
+Subject: [patch] prism54: off by one BUG_ON() test
+Message-Id: <20151204131949.GF12792@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
-My name is Jeffrey Skoll, a philanthropist and the founder of one of the largest private foundations in the world. I believe strongly in ‘giving while living.’ I had one idea that never changed in my mind — that you should use your wealth to help people and I have decided to secretly give USD2.498 Million to a randomly selected individual. On receipt of this email, you should count yourself as the individual. Kindly get back to me at your earliest convenience, so I know your email address is valid.
+This code was supposed to trigger a BUG() if we truncate the output but
+it's off by one so it allows one character to be truncated.  Really
+drivers shouldn't call BUG_ON() and especially for something minor like
+this so I've changed it to a WARN_ON().
 
-Visit the web page to know more about me: http://www.theglobeandmail.com/news/national/meet-the-canadian-billionaire-whos-giving-it-all-away/article4209888/ or you can read an article of me on Wikipedia.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Jeffrey Skoll.
+diff --git a/drivers/net/wireless/intersil/prism54/isl_ioctl.c b/drivers/net/wireless/intersil/prism54/isl_ioctl.c
+index ecbb054..48e8a97 100644
+--- a/drivers/net/wireless/intersil/prism54/isl_ioctl.c
++++ b/drivers/net/wireless/intersil/prism54/isl_ioctl.c
+@@ -2036,7 +2036,7 @@ format_event(islpci_private *priv, char *dest, const char *str,
+ 			 mlme->address,
+ 			 (error ? (mlme->code ? " : REJECTED " : " : ACCEPTED ")
+ 			  : ""), mlme->code);
+-	BUG_ON(n > IW_CUSTOM_MAX);
++	WARN_ON(n >= IW_CUSTOM_MAX);
+ 	*length = n;
+ }
+ 
