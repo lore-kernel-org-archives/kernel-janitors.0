@@ -1,25 +1,32 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 11 Dec 2015 03:00:27 +0000
-Subject: Re: [PATCH] crypto: constify drbg_state_ops structures
-Message-Id: <20151211030027.GA10399@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Dec 2015 13:17:15 +0000
+Subject: [patch] mwifiex: remove an unneeded condition
+Message-Id: <20151204131715.GD12792@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1449520617-1964-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1449520617-1964-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Dec 07, 2015 at 09:36:57PM +0100, Julia Lawall wrote:
-> The drbg_state_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+We already know that "wep_key->key_length" is set so there is no need to
+check again.  Also the last curly brace was indented too far.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+index a6c8a4f..80f5064 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -923,9 +923,8 @@ static int mwifiex_sec_ioctl_set_wep_key(struct mwifiex_private *priv,
+ 		if (encrypt_key->key_disable) {
+ 			memset(&priv->wep_key[index], 0,
+ 			       sizeof(struct mwifiex_wep_key));
+-			if (wep_key->key_length)
+-				goto done;
+-			}
++			goto done;
++		}
+ 
+ 		if (adapter->key_api_major_ver = KEY_API_VER_MAJOR_V2)
+ 			enc_key = encrypt_key;
