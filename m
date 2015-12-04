@@ -1,32 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 19 Dec 2015 20:42:22 +0000
-Subject: Re: [PATCH] [media] gsc-m2m: Use an unsigned data type for a variable
-Message-Id: <20151219204222.GU5284@mwanda>
+Date: Fri, 04 Dec 2015 13:14:58 +0000
+Subject: [patch] OMAPDSS: DSS: fix a warning message
+Message-Id: <20151204131458.GA12792@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5675765F.9020002@users.sourceforge.net>
-In-Reply-To: <5675765F.9020002@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 19, 2015 at 04:23:11PM +0100, SF Markus Elfring wrote:
-> diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> index d82e717..f2c091c 100644
-> --- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> +++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> @@ -701,7 +701,7 @@ static unsigned int gsc_m2m_poll(struct file *file,
->  {
->  	struct gsc_ctx *ctx = fh_to_ctx(file->private_data);
->  	struct gsc_dev *gsc = ctx->gsc_dev;
-> -	int ret;
-> +	unsigned int ret;
->  
->  	if (mutex_lock_interruptible(&gsc->lock))
->  		return -ERESTARTSYS;
+The WARN() macro has to take a condition.  The current code will just
+print the stack trace and the function name instead of the intended
+warning message.
 
-I'm suspect returning -ERESTARTSYS is a bug.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/video/fbdev/omap2/dss/dss.h b/drivers/video/fbdev/omap2/dss/dss.h
+index 2406bcd..da3a85a 100644
+--- a/drivers/video/fbdev/omap2/dss/dss.h
++++ b/drivers/video/fbdev/omap2/dss/dss.h
+@@ -343,7 +343,8 @@ u8 dsi_get_pixel_size(enum omap_dss_dsi_pixel_format fmt);
+ #else
+ static inline u8 dsi_get_pixel_size(enum omap_dss_dsi_pixel_format fmt)
+ {
+-	WARN("%s: DSI not compiled in, returning pixel_size as 0\n", __func__);
++	WARN(1, "%s: DSI not compiled in, returning pixel_size as 0\n",
++	     __func__);
+ 	return 0;
+ }
+ #endif
