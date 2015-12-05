@@ -1,32 +1,54 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Thu, 10 Dec 2015 03:59:33 +0000
-Subject: Re: [PATCH 0/3] ste_dma40: Deletion of a few unnecessary checks
-Message-Id: <20151210034732.GJ1854@localhost>
+From: Sebastian Reichel <sre@kernel.org>
+Date: Sat, 05 Dec 2015 00:41:52 +0000
+Subject: Re: [PATCH] ds2782_battery: constify ds278x_battery_ops structure
+Message-Id: <20151205004152.GC22936@earth>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="i7F3eY7HS/tUJxUd"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <564A4899.8040109@users.sourceforge.net>
-In-Reply-To: <564A4899.8040109@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+References: <1447440094-10105-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447440094-10105-1-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 16, 2015 at 10:20:25PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Nov 2015 22:12:23 +0100
-> 
-> Further update suggestions were taken into account after a patch
-> was applied from static source code analysis.
 
-Applied, thanks
+--i7F3eY7HS/tUJxUd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-~Vinod
+Hi,
+
+On Fri, Nov 13, 2015 at 07:41:34PM +0100, Julia Lawall wrote:
+> The ds278x_battery_ops structure is never modified, so declare it as cons=
+t.
+>=20
+> Done with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Thanks, queued.
+
+-- Sebastian
+
+--i7F3eY7HS/tUJxUd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJWYjLQAAoJENju1/PIO/qaRzMP/1pR2ms5h8ha+IpX1Pw/hqk+
+gQRVoQRIlJNPEN+Nx+GqX9rzm47cdWe65Ao7ZkaEvW29s00yeF0OKU7FFdRPZnxx
+YD+PsKEghGrxdL4hO6jB3qk5aG6EZhbXH9+jM4LLwCSaJ6s9yJY5vEOTPgEZrlgf
+RXkTqB5N9nLG7OwiMveW8shIgH3SBUpR4X1/YBm7jRJ3JAg4USDhcC4GXU9NdVbr
+COmiU9lofljzJOKpPrkrXNT/YSVb7QLYy0HArnIMywWMQik4qvPv9T6L4T5EvjXg
+HP0jSqbOxGhL9hlT7L+1w0OPDomdA4E1Am3oSQSD10+ZBqj8x/HhhH7hBLRJ8ik7
+mXSRgFtcOCBxicrdtoTLz10D58uWvLWAXuz2ZroUYMUs6y7+7A8T/ZjdswKeDPue
+Z0RqNGjX/DajC2Hg1UribaNLZDw0Dxkv5+7MDmIZoPZfL4lVod8zMHkbYGCwrOTB
+O/+rFXcrCv6MpYNSa7rWBqr90bw87mvn7AA5uMPSxcFNWazN8ufiH3Jjio8ckcF0
+lxGaN3ghC6mmOwR1K8tW3GHBBdjH1moyop45xFBE+OOLecXWKj6puufszHixM5ws
+YpbEpPqDzmGWwtzioD4r/vqoeIFCbNUwMnZVk8xpKOXDtwhVzuegfNENQDEMoTpR
+VO82irChw1qCgD+uKK41
+=A56Y
+-----END PGP SIGNATURE-----
+
+--i7F3eY7HS/tUJxUd--
