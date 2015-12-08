@@ -1,25 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 22 Dec 2015 12:49:37 +0000
-Subject: Re: [PATCH 5/5] pinctrl: mediatek: add missing of_node_put
-Message-Id: <CACRpkdaqPaojghOz1Avzwj-BsVJfz06CJBq9J1vC15BP7hXYOw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 08 Dec 2015 05:53:22 +0000
+Subject: [patch] ASoC: Intel: Skylake: pointer math issue
+Message-Id: <20151208055321.GA5597@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
- <1450715988-4770-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450715988-4770-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Hardik T Shah <hardik.t.shah@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Mon, Dec 21, 2015 at 5:39 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+"data" is a u32 pointer so this copies the information to wrong place
+entirely.
 
-> for_each_child_of_node performs an of_node_get on each iteration, so a
-> return from the loop requires an of_node_put.
->
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
+Fixes: 140adfba5280 ('ASoC: Intel: Skylake: Add tlv byte kcontrols')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
+index dde8d3c..2c4405e 100644
+--- a/sound/soc/intel/skylake/skl-topology.c
++++ b/sound/soc/intel/skylake/skl-topology.c
+@@ -885,9 +885,9 @@ static int skl_tplg_tlv_control_get(struct snd_kcontrol *kcontrol,
+ 	if (bc->params) {
+ 		if (copy_to_user(data, &bc->param_id, sizeof(u32)))
+ 			return -EFAULT;
+-		if (copy_to_user(data + sizeof(u32), &size, sizeof(u32)))
++		if (copy_to_user(data + 1, &size, sizeof(u32)))
+ 			return -EFAULT;
+-		if (copy_to_user(data + 2 * sizeof(u32), bc->params, size))
++		if (copy_to_user(data + 2, bc->params, size))
+ 			return -EFAULT;
+ 	}
+ 
