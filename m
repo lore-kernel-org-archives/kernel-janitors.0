@@ -1,33 +1,29 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Date: Wed, 09 Dec 2015 19:37:32 +0000
-Subject: Re: [patch RESEND] atp870u: 64 bit bug in atp885_init()
-Message-Id: <20151209193732.5940e706@lxorguk.ukuu.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2015 10:33:51 +0000
+Subject: [patch -next] mlxsw: spectrum: fix some error handling
+Message-Id: <20151209103351.GI3173@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55B9CA3B.1030205@suse.de>
-	<20151209102453.GE3173@mwanda>
-	<20151209115339.46a09d94@lxorguk.ukuu.org.uk>
-	<20151209134512.GA5177@mwanda>
-	<20151209141459.41a237c9@lxorguk.ukuu.org.uk>
-	<20151209174819.GB5177@mwanda>
-	<alpine.DEB.2.10.1512091907590.2491@hadrien>
-	<20151209182822.GC5284@mwanda>
-In-Reply-To: <20151209182822.GC5284@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, "James E.J. Bottomley" <JBottomley@odin.com>, Ondrej Zary <linux@rainbow-software.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hannes Reinecke <hare@suse.com>
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> You should just delete that code along with the Kconfig and Makefile
-> entries.  Don't bother moving it to staging.  The move to staging is
-> supposed to give people one last chance to yell if they absolutely need
-> the code.  No one has compiled this code for years so no one will miss
-> it.
+The "err = " assignment is missing here.
 
-And for stuff which might be worth saving (eg something that looks rather
-broken but has possibly got users) the driver goes into staging
-in its own directory and the Makefile and Kconfig entry for it move into
-the staging directory with the hope that someone screams and maintains it.
+Fixes: 0d65fc13042f ('mlxsw: spectrum: Implement LAG port join/leave')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Alan
-
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index 3ec07b9..322ed54 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -2091,7 +2091,7 @@ static int mlxsw_sp_port_lag_leave(struct mlxsw_sp_port *mlxsw_sp_port,
+ 	err = mlxsw_sp_lag_col_port_disable(mlxsw_sp_port, lag_id);
+ 	if (err)
+ 		return err;
+-	mlxsw_sp_lag_col_port_remove(mlxsw_sp_port, lag_id);
++	err = mlxsw_sp_lag_col_port_remove(mlxsw_sp_port, lag_id);
+ 	if (err)
+ 		return err;
+ 
