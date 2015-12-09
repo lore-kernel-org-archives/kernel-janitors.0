@@ -1,40 +1,39 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 15 Dec 2015 18:55:11 +0000
-Subject: Re: staging: lustre: Delete unnecessary goto statements in six functions
-Message-Id: <1450205711.4142.23.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2015 10:22:05 +0000
+Subject: [patch] HID: wacom: bitwise vs logical ORs
+Message-Id: <20151209102205.GB3173@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	 <566D7733.1030102@users.sourceforge.net>
-	 <566D7830.9060000@users.sourceforge.net>
-	 <1450189676.3551.1.camel@perches.com> <20151215144133.GC5284@mwanda>
-	 <1450191751.3551.14.camel@perches.com> <20151215174844.GE5284@mwanda>
-	 <1450203011.4142.4.camel@perches.com>
-	 <56705B71.6090307@users.sourceforge.net>
-	 <1450204451.4142.19.camel@perches.com>
-	 <567060C3.5070608@users.sourceforge.net>
-In-Reply-To: <567060C3.5070608@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jiri Kosina <jikos@kernel.org>, Jason Gerecke <killertofu@gmail.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2015-12-15 at 19:49 +0100, SF Markus Elfring wrote:
-> > I think there should _not_ be a hardened rule.
-> I guess that it can become hard to achieve consensus on a precise rule.
+Smatch complains that these should probably be bitwise ORs instead of
+logical.  It doesn't matter for "prox" but it makes a difference for
+"strip1" and "strip2".
 
-Consensus isn't unanimity.
+Fixes: c7f0522a1ad1 ('HID: wacom: Slim down wacom_intuos_pad processing')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> I imagine that your feedback
-> can cause further software development troubles if the acceptance for
-> this update suggestion will really depend on the number of blank lines
-> before a jump label.
-
-<shrug>
-
-The author of any particular bit of code can do
-whatever they want.
-
-Localized consistency is probably more valuable than
-global consistency.
-
+diff --git a/drivers/hid/wacom_wac.c b/drivers/hid/wacom_wac.c
+index 7cf0417..af330aa 100644
+--- a/drivers/hid/wacom_wac.c
++++ b/drivers/hid/wacom_wac.c
+@@ -545,12 +545,12 @@ static int wacom_intuos_pad(struct wacom_wac *wacom)
+ 			          ((data[6] & 0x0F) << 4)  |
+ 			          (data[5] & 0x0F);
+ 		}
+-		strip1 = (data[1] << 8) || data[2];
+-		strip2 = (data[3] << 8) || data[4];
++		strip1 = (data[1] << 8) | data[2];
++		strip2 = (data[3] << 8) | data[4];
+ 	}
+ 
+-	prox = (buttons & ~(~0 << nbuttons)) || (keys & ~(~0 << nkeys)) ||
+-	       (ring1 & 0x80) || (ring2 & 0x80) || strip1 || strip2;
++	prox = (buttons & ~(~0 << nbuttons)) | (keys & ~(~0 << nkeys)) |
++	       (ring1 & 0x80) | (ring2 & 0x80) | strip1 | strip2;
+ 
+ 	wacom_report_numbered_buttons(input, nbuttons, buttons);
+ 
