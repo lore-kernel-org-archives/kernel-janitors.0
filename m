@@ -1,92 +1,35 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Mon, 07 Dec 2015 16:06:49 +0000
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date: Wed, 09 Dec 2015 00:51:44 +0000
 Subject: Re: [PATCH] PCI: constify pci_platform_pm_ops structure
-Message-Id: <20151207160649.GG7994@localhost>
+Message-Id: <11604085.iKre2i4LQp@vostro.rjw.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1449419625-29045-1-git-send-email-Julia.Lawall@lip6.fr>
- <1556686.IXJIjFBvQx@vostro.rjw.lan>
-In-Reply-To: <1556686.IXJIjFBvQx@vostro.rjw.lan>
+References: <1449419625-29045-1-git-send-email-Julia.Lawall@lip6.fr> <1556686.IXJIjFBvQx@vostro.rjw.lan> <20151207160649.GG7994@localhost>
+In-Reply-To: <20151207160649.GG7994@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Bjorn Helgaas <helgaas@kernel.org>
 Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>
 
-On Mon, Dec 07, 2015 at 02:41:34AM +0100, Rafael J. Wysocki wrote:
-> On Sunday, December 06, 2015 05:33:45 PM Julia Lawall wrote:
-> > The pci_platform_pm_ops structure is never modified, so declare it as
-> > const.
+On Monday, December 07, 2015 10:06:49 AM Bjorn Helgaas wrote:
+> On Mon, Dec 07, 2015 at 02:41:34AM +0100, Rafael J. Wysocki wrote:
+> > On Sunday, December 06, 2015 05:33:45 PM Julia Lawall wrote:
+> > > The pci_platform_pm_ops structure is never modified, so declare it as
+> > > const.
+> > > 
+> > > Done with the help of Coccinelle.
+> > > 
+> > > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 > > 
-> > Done with the help of Coccinelle.
+> > OK
 > > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> > Bjorn, do you want me to handle this one?
 > 
-> OK
+> Sure, sounds good to me.
 > 
-> Bjorn, do you want me to handle this one?
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Sure, sounds good to me.
+OK, queued up for 4.5, thanks!
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Rafael
 
-> > ---
-> >  drivers/pci/pci-acpi.c |    2 +-
-> >  drivers/pci/pci.c      |    4 ++--
-> >  drivers/pci/pci.h      |    2 +-
-> >  3 files changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> > index a32ba75..8400f80 100644
-> > --- a/drivers/pci/pci-acpi.c
-> > +++ b/drivers/pci/pci-acpi.c
-> > @@ -529,7 +529,7 @@ static bool acpi_pci_need_resume(struct pci_dev *dev)
-> >  	return !!adev->power.flags.dsw_present;
-> >  }
-> >  
-> > -static struct pci_platform_pm_ops acpi_pci_platform_pm = {
-> > +static const struct pci_platform_pm_ops acpi_pci_platform_pm = {
-> >  	.is_manageable = acpi_pci_power_manageable,
-> >  	.set_state = acpi_pci_set_power_state,
-> >  	.choose_state = acpi_pci_choose_state,
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index 314db8c..d1a7105 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -527,9 +527,9 @@ static void pci_restore_bars(struct pci_dev *dev)
-> >  		pci_update_resource(dev, i);
-> >  }
-> >  
-> > -static struct pci_platform_pm_ops *pci_platform_pm;
-> > +static const struct pci_platform_pm_ops *pci_platform_pm;
-> >  
-> > -int pci_set_platform_pm(struct pci_platform_pm_ops *ops)
-> > +int pci_set_platform_pm(const struct pci_platform_pm_ops *ops)
-> >  {
-> >  	if (!ops->is_manageable || !ops->set_state || !ops->choose_state
-> >  	    || !ops->sleep_wake)
-> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > index d390fc1..f6f151a 100644
-> > --- a/drivers/pci/pci.h
-> > +++ b/drivers/pci/pci.h
-> > @@ -68,7 +68,7 @@ struct pci_platform_pm_ops {
-> >  	bool (*need_resume)(struct pci_dev *dev);
-> >  };
-> >  
-> > -int pci_set_platform_pm(struct pci_platform_pm_ops *ops);
-> > +int pci_set_platform_pm(const struct pci_platform_pm_ops *ops);
-> >  void pci_update_current_state(struct pci_dev *dev, pci_power_t state);
-> >  void pci_power_up(struct pci_dev *dev);
-> >  void pci_disable_enabled_device(struct pci_dev *dev);
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> -- 
-> I speak only for myself.
-> Rafael J. Wysocki, Intel Open Source Technology Center.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
