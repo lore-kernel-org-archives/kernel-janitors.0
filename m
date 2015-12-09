@@ -1,27 +1,46 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 19 Dec 2015 20:04:14 +0000
-Subject: Re: [patch] Input: egalax: potential NULL dereference on error
-Message-Id: <20151219200414.GO5284@mwanda>
+Date: Wed, 09 Dec 2015 10:21:23 +0000
+Subject: [patch] blk-integrity: checking for NULL instead of IS_ERR
+Message-Id: <20151209102123.GA3173@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151219105824.GA3749@mwanda>
- <alpine.DEB.2.02.1512191204430.2055@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1512191204430.2055@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?iso-8859-1?B?QvZzevZybelueWkgWm9sdOFu?= <zboszormenyi@sicom.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 19, 2015 at 12:04:56PM +0100, Julia Lawall wrote:
-> On Sat, 19 Dec 2015, Dan Carpenter wrote:
-> 
-> > We didn't check input_allocate_device() for failures so it could lead to
-> > a NULL deref.
-> 
-> The patch does several other things...
+We recently changed bio_integrity_alloc() to return ERR_PTRs instead of
+NULL but these calls were missed.
 
-Not really.  It's all part of fixing the input_allocate_device() check.
+Fixes: 06c1e3902aa7 ('blk-integrity: empty implementation when disabled')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index e6ba501..711e4d8d 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -298,10 +298,10 @@ int bio_integrity_prep(struct bio *bio)
+ 
+ 	/* Allocate bio integrity payload and integrity vectors */
+ 	bip = bio_integrity_alloc(bio, GFP_NOIO, nr_pages);
+-	if (unlikely(bip = NULL)) {
++	if (IS_ERR(bip)) {
+ 		printk(KERN_ERR "could not allocate data integrity bioset\n");
+ 		kfree(buf);
+-		return -EIO;
++		return PTR_ERR(bip);
+ 	}
+ 
+ 	bip->bip_flags |= BIP_BLOCK_INTEGRITY;
+@@ -465,9 +465,8 @@ int bio_integrity_clone(struct bio *bio, struct bio *bio_src,
+ 	BUG_ON(bip_src = NULL);
+ 
+ 	bip = bio_integrity_alloc(bio, gfp_mask, bip_src->bip_vcnt);
+-
+-	if (bip = NULL)
+-		return -EIO;
++	if (IS_ERR(bip))
++		return PTR_ERR(bip);
+ 
+ 	memcpy(bip->bip_vec, bip_src->bip_vec,
+ 	       bip_src->bip_vcnt * sizeof(struct bio_vec));
