@@ -1,43 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 09 Dec 2015 10:24:53 +0000
-Subject: [patch RESEND] atp870u: 64 bit bug in atp885_init()
-Message-Id: <20151209102453.GE3173@mwanda>
+From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Date: Wed, 09 Dec 2015 11:53:39 +0000
+Subject: Re: [patch RESEND] atp870u: 64 bit bug in atp885_init()
+Message-Id: <20151209115339.46a09d94@lxorguk.ukuu.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <55B9CA3B.1030205@suse.de>
-In-Reply-To: <55B9CA3B.1030205@suse.de>
+	<20151209102453.GE3173@mwanda>
+In-Reply-To: <20151209102453.GE3173@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@odin.com>, Ondrej Zary <linux@rainbow-software.org>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hannes Reinecke <hare@suse.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "James E.J. Bottomley" <JBottomley@odin.com>, Ondrej Zary <linux@rainbow-software.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hannes Reinecke <hare@suse.com>
 
-On 64 bit CPUs there is a memory corruption bug on probe().  It should
-be a u32 pointer instead of an unsigned long pointer or we write past
-the end of the setupdata[] array.
+On Wed, 9 Dec 2015 13:24:53 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
----
-Resending because we have shuffled the code around so the patch needed
-to be refreshed against linux-next.  Although I do wonder why we are
-still working on this code since it has never worked on 64 bit systems
-so probably all the users gave up a decade ago.
+> On 64 bit CPUs there is a memory corruption bug on probe().  It should
+> be a u32 pointer instead of an unsigned long pointer or we write past
+> the end of the setupdata[] array.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Hannes Reinecke <hare@suse.com>
+> ---
+> Resending because we have shuffled the code around so the patch needed
+> to be refreshed against linux-next.  Although I do wonder why we are
+> still working on this code since it has never worked on 64 bit systems
+> so probably all the users gave up a decade ago.
 
-diff --git a/drivers/scsi/atp870u.c b/drivers/scsi/atp870u.c
-index 8b52a9d..b46997c 100644
---- a/drivers/scsi/atp870u.c
-+++ b/drivers/scsi/atp870u.c
-@@ -1413,11 +1413,11 @@ static void atp885_init(struct Scsi_Host *shpnt)
- 			atpdev->global_map[m] = 0;
- 			for (k = 0; k < 4; k++) {
- 				atp_writew_base(atpdev, 0x3c, n++);
--				((unsigned long *)&setupdata[m][0])[k] = atp_readl_base(atpdev, 0x38);
-+				((u32 *)&setupdata[m][0])[k] = atp_readl_base(atpdev, 0x38);
- 			}
- 			for (k = 0; k < 4; k++) {
- 				atp_writew_base(atpdev, 0x3c, n++);
--				((unsigned long *)&atpdev->sp[m][0])[k] = atp_readl_base(atpdev, 0x38);
-+				((u32 *)&atpdev->sp[m][0])[k] = atp_readl_base(atpdev, 0x38);
- 			}
- 			n += 8;
- 		}
+So this is untested ? If so please make it very clear in the commit
+message because the kernel is IMHO getting too full of polished, neat,
+recently modified, never tested, never used code.
+
+I agree it would be better if the driver was simply deleted. I've not
+even seen an ATP870 bug report in years.
+
+Alan
