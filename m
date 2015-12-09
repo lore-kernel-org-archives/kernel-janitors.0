@@ -1,74 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Dec 2015 19:20:27 +0000
-Subject: [PATCH] [media] xc5000: Faster result reporting in xc_load_fw_and_init_tuner()
-Message-Id: <56818B7B.8040801@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2015 10:23:01 +0000
+Subject: [patch] usb: gadget: f_tcm: memory leak on error in tcm_alloc_inst()
+Message-Id: <20151209102301.GC3173@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Dec 2015 20:10:30 +0100
+We need to kfree(opts) on error.  Also it's nicer to allocate opts
+before taking the lock.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Split the previous if statement at the end so that each final log statement
-will eventually be performed by a direct jump to these labels.
-* report_failure
-* report_success
-
-A check repetition can be excluded for the variable "ret" at the end then.
-
-
-Apply also two recommendations from the script "checkpatch.pl".
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/tuners/xc5000.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/media/tuners/xc5000.c b/drivers/media/tuners/xc5000.c
-index e6e5e90..1360677 100644
---- a/drivers/media/tuners/xc5000.c
-+++ b/drivers/media/tuners/xc5000.c
-@@ -1166,7 +1166,7 @@ static int xc_load_fw_and_init_tuner(struct dvb_frontend *fe, int force)
+diff --git a/drivers/usb/gadget/function/f_tcm.c b/drivers/usb/gadget/function/f_tcm.c
+index ed47e40..0a26a2e 100644
+--- a/drivers/usb/gadget/function/f_tcm.c
++++ b/drivers/usb/gadget/function/f_tcm.c
+@@ -2300,20 +2300,19 @@ static struct usb_function_instance *tcm_alloc_inst(void)
+ 	struct f_tcm_opts *opts;
+ 	int i;
  
- 		ret = xc5000_fwupload(fe, desired_fw, fw);
- 		if (ret != 0)
--			goto err;
-+			goto report_failure;
+-	mutex_lock(&tpg_instances_lock);
+-	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
+-	if (!opts) {
+-		mutex_unlock(&tpg_instances_lock);
  
- 		msleep(20);
++	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
++	if (!opts)
+ 		return ERR_PTR(-ENOMEM);
+-	}
++
++	mutex_lock(&tpg_instances_lock);
+ 	for (i = 0; i < TPG_INSTANCES; ++i)
+ 		if (!tpg_instances[i].func_inst)
+ 			break;
  
-@@ -1229,18 +1229,16 @@ static int xc_load_fw_and_init_tuner(struct dvb_frontend *fe, int force)
- 		/* Default to "CABLE" mode */
- 		ret = xc_write_reg(priv, XREG_SIGNALSOURCE, XC_RF_MODE_CABLE);
- 		if (!ret)
--			break;
-+			goto report_success;
- 		printk(KERN_ERR "xc5000: can't set to cable mode.");
- 	}
- 
--err:
--	if (!ret)
--		printk(KERN_INFO "xc5000: Firmware %s loaded and running.\n",
--		       desired_fw->name);
--	else
--		printk(KERN_CONT " - too many retries. Giving up\n");
+ 	if (i = TPG_INSTANCES) {
+ 		mutex_unlock(&tpg_instances_lock);
 -
-+report_failure:
-+	pr_cont(" - too many retries. Giving up\n");
- 	return ret;
-+report_success:
-+	pr_info("xc5000: Firmware %s loaded and running.\n", desired_fw->name);
-+	return 0;
- }
- 
- static void xc5000_do_timer_sleep(struct work_struct *timer_sleep)
--- 
-2.6.3
-
++		kfree(opts);
+ 		return ERR_PTR(-EBUSY);
+ 	}
+ 	tpg_instances[i].func_inst = &opts->func_inst;
