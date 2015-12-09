@@ -1,83 +1,43 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 15 Dec 2015 18:10:11 +0000
-Subject: Re: [PATCH 1/7] staging: lustre: Delete unnecessary goto statements in six functions
-Message-Id: <1450203011.4142.4.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2015 10:24:53 +0000
+Subject: [patch RESEND] atp870u: 64 bit bug in atp885_init()
+Message-Id: <20151209102453.GE3173@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	 <566D7733.1030102@users.sourceforge.net>
-	 <566D7830.9060000@users.sourceforge.net>
-	 <1450189676.3551.1.camel@perches.com> <20151215144133.GC5284@mwanda>
-	 <1450191751.3551.14.camel@perches.com> <20151215174844.GE5284@mwanda>
-In-Reply-To: <20151215174844.GE5284@mwanda>
+References: <55B9CA3B.1030205@suse.de>
+In-Reply-To: <55B9CA3B.1030205@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "James E.J. Bottomley" <JBottomley@odin.com>, Ondrej Zary <linux@rainbow-software.org>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hannes Reinecke <hare@suse.com>
 
-On Tue, 2015-12-15 at 20:48 +0300, Dan Carpenter wrote:
-> On Tue, Dec 15, 2015 at 07:02:31AM -0800, Joe Perches wrote:
-> > This is the original code:
-> >=20
-> > 	result =3D foo();
-> > 	if (result)
-> > 		goto label;
-> >=20
-> > 	result =3D bar();
-> > 	if (result)
-> > 		goto label;
-> >=20
-> > 	result =3D baz();
-> > 	if (result)
-> > 		goto label;
-> >=20
-> > label:
-> > 	go on...
-> >=20
->=20
-> No.=A0=A0There is no test.=A0=A0The original code looks like:
->=20
-> 	result =3D foo();
-> 	if (result)
-> 		goto out;
-> 	result =3D baz();
-> 	goto out;
-> out:
-> 	go on..
->=20
-> regards,
-> dan carpenter
+On 64 bit CPUs there is a memory corruption bug on probe().  It should
+be a u32 pointer instead of an unsigned long pointer or we write past
+the end of the setupdata[] array.
 
-Here is the original code:
----------------------
-	/* Copy hsm_progress struct */
-	req_hpk =3D req_capsule_client_get(&req->rq_pill, &RMF_MDS_HSM_PROGRESS);
-	if (req_hpk =3D NULL) {
-		rc =3D -EPROTO;
-		goto out;
-	}
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+---
+Resending because we have shuffled the code around so the patch needed
+to be refreshed against linux-next.  Although I do wonder why we are
+still working on this code since it has never worked on 64 bit systems
+so probably all the users gave up a decade ago.
 
-	*req_hpk =3D *hpk;
-	req_hpk->hpk_errval =3D lustre_errno_hton(hpk->hpk_errval);
-
-	ptlrpc_request_set_replen(req);
-
-	rc =3D mdc_queue_wait(req);
-	goto out;
-out:
-	ptlrpc_req_finished(req);
-	return rc;
-}
----------------------
-
-I think if the last goto out; is to be removed,
-then it should be replaced by a blank line.
-
-It separates the last operation block from the return.
-
-cheers, Joe
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/atp870u.c b/drivers/scsi/atp870u.c
+index 8b52a9d..b46997c 100644
+--- a/drivers/scsi/atp870u.c
++++ b/drivers/scsi/atp870u.c
+@@ -1413,11 +1413,11 @@ static void atp885_init(struct Scsi_Host *shpnt)
+ 			atpdev->global_map[m] = 0;
+ 			for (k = 0; k < 4; k++) {
+ 				atp_writew_base(atpdev, 0x3c, n++);
+-				((unsigned long *)&setupdata[m][0])[k] = atp_readl_base(atpdev, 0x38);
++				((u32 *)&setupdata[m][0])[k] = atp_readl_base(atpdev, 0x38);
+ 			}
+ 			for (k = 0; k < 4; k++) {
+ 				atp_writew_base(atpdev, 0x3c, n++);
+-				((unsigned long *)&atpdev->sp[m][0])[k] = atp_readl_base(atpdev, 0x38);
++				((u32 *)&atpdev->sp[m][0])[k] = atp_readl_base(atpdev, 0x38);
+ 			}
+ 			n += 8;
+ 		}
