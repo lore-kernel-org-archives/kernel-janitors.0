@@ -1,41 +1,27 @@
-From: Ondrej Zary <linux@rainbow-software.org>
-Date: Wed, 09 Dec 2015 12:07:58 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Dec 2015 13:45:12 +0000
 Subject: Re: [patch RESEND] atp870u: 64 bit bug in atp885_init()
-Message-Id: <201512091307.59549.linux@rainbow-software.org>
+Message-Id: <20151209134512.GA5177@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55B9CA3B.1030205@suse.de> <20151209102453.GE3173@mwanda> <20151209115339.46a09d94@lxorguk.ukuu.org.uk>
+References: <55B9CA3B.1030205@suse.de>
+ <20151209102453.GE3173@mwanda>
+ <20151209115339.46a09d94@lxorguk.ukuu.org.uk>
 In-Reply-To: <20151209115339.46a09d94@lxorguk.ukuu.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <JBottomley@odin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hannes Reinecke <hare@suse.com>
+Cc: "James E.J. Bottomley" <JBottomley@odin.com>, Ondrej Zary <linux@rainbow-software.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Hannes Reinecke <hare@suse.com>
 
-On Wednesday 09 December 2015 12:53:39 One Thousand Gnomes wrote:
-> On Wed, 9 Dec 2015 13:24:53 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > On 64 bit CPUs there is a memory corruption bug on probe().  It should
-> > be a u32 pointer instead of an unsigned long pointer or we write past
-> > the end of the setupdata[] array.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Reviewed-by: Hannes Reinecke <hare@suse.com>
-> > ---
-> > Resending because we have shuffled the code around so the patch needed
-> > to be refreshed against linux-next.  Although I do wonder why we are
-> > still working on this code since it has never worked on 64 bit systems
-> > so probably all the users gave up a decade ago.
-> 
-> So this is untested ? If so please make it very clear in the commit
-> message because the kernel is IMHO getting too full of polished, neat,
-> recently modified, never tested, never used code.
-> 
-> I agree it would be better if the driver was simply deleted. I've not
-> even seen an ATP870 bug report in years.
+Everyone knows I didn't test it but it's an obvious one line fix for
+memory corruption.  If no one uses the code, at least this is harmless
+and silences a static checker warning.
 
-Maybe because it worked. Although the code was horrible. I've done some big changes to this driver recently (tested, of course).
-I can't test this patch as I don't have ATP885 card, only ATP870.
+In olden times we used to say, "Oh this bounds checking is crap but it's
+root only so let's leave it alone."  But these days we just fix it.
+It's easier to just fix everything instead of trying to decide which
+bugs are critical.
 
--- 
-Ondrej Zary
+regards,
+dan carpenter
+
