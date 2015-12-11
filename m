@@ -1,50 +1,54 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 23 Dec 2015 21:36:32 +0000
-Subject: [PATCH] mac802154: constify ieee802154_llsec_ops structure
-Message-Id: <1450906592-9203-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Dec 2015 18:26:10 +0000
+Subject: [PATCH 2/2] z2ram: Delete a jump label in z2_init()
+Message-Id: <566B1542.7040902@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566B13C1.50907@users.sourceforge.net>
+In-Reply-To: <566B13C1.50907@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Aring <alex.aring@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-wpan@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: LKML <linux-kernel@vger.kernel.org>, Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The ieee802154_llsec_ops structure is never modified, so declare it as
-const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Dec 2015 18:48:14 +0100
 
-Done with the help of Coccinelle.
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+* Let us return directly if a call of the function "register_blkdev" failed.
 
+* Remove the jump label "err" then.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- include/net/ieee802154_netdev.h |    2 +-
- net/mac802154/mac_cmd.c         |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/z2ram.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/net/ieee802154_netdev.h b/include/net/ieee802154_netdev.h
-index a62a051..c4b3160 100644
---- a/include/net/ieee802154_netdev.h
-+++ b/include/net/ieee802154_netdev.h
-@@ -337,7 +337,7 @@ struct ieee802154_mlme_ops {
- 	void (*get_mac_params)(struct net_device *dev,
- 			       struct ieee802154_mac_params *params);
+diff --git a/drivers/block/z2ram.c b/drivers/block/z2ram.c
+index 968f9e5..b07581d 100644
+--- a/drivers/block/z2ram.c
++++ b/drivers/block/z2ram.c
+@@ -345,9 +345,8 @@ z2_init(void)
+     if (!MACH_IS_AMIGA)
+ 	return -ENODEV;
  
--	struct ieee802154_llsec_ops *llsec;
-+	const struct ieee802154_llsec_ops *llsec;
- };
+-    ret = -EBUSY;
+     if (register_blkdev(Z2RAM_MAJOR, DEVICE_NAME))
+-	goto err;
++	return -EBUSY;
  
- static inline struct ieee802154_mlme_ops *
-diff --git a/net/mac802154/mac_cmd.c b/net/mac802154/mac_cmd.c
-index 8606da4..3db1634 100644
---- a/net/mac802154/mac_cmd.c
-+++ b/net/mac802154/mac_cmd.c
-@@ -126,7 +126,7 @@ static void mac802154_get_mac_params(struct net_device *dev,
- 	params->lbt = wpan_dev->lbt;
+     ret = -ENOMEM;
+     z2ram_gendisk = alloc_disk(1);
+@@ -374,7 +373,6 @@ out_queue:
+     put_disk(z2ram_gendisk);
+ out_disk:
+     unregister_blkdev(Z2RAM_MAJOR, DEVICE_NAME);
+-err:
+     return ret;
  }
  
--static struct ieee802154_llsec_ops mac802154_llsec_ops = {
-+static const struct ieee802154_llsec_ops mac802154_llsec_ops = {
- 	.get_params = mac802154_get_params,
- 	.set_params = mac802154_set_params,
- 	.add_key = mac802154_add_key,
+-- 
+2.6.3
 
