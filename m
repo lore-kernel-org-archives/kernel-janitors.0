@@ -1,30 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Dec 2015 12:53:01 +0000
-Subject: Re: [patch] Smack: harmless underflow in smk_set_cipso()
-Message-Id: <20151204124956.GY18797@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Dec 2015 13:07:16 +0000
+Subject: Re: ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
+Message-Id: <566ACA84.6080603@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151103221539.GC19280@mwanda>
-In-Reply-To: <20151103221539.GC19280@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <564B5327.4010307@osg.samsung.com>
+ <564B5344.1090200@osg.samsung.com> <56695093.8080605@osg.samsung.com>
+ <7DCE62A2-DEA0-4ABF-A0D6-4EE00BDFFE95@holtmann.org>
+In-Reply-To: <7DCE62A2-DEA0-4ABF-A0D6-4EE00BDFFE95@holtmann.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, Stefan Schmidt <stefan@osg.samsung.com>
+Cc: Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Dec 03, 2015 at 02:23:22PM -0800, Casey Schaufler wrote:
-> On 11/3/2015 2:15 PM, Dan Carpenter wrote:
-> >Also checkpatch complains that we should use kstrtouint() instead of
-> >sscanf here.
-> >
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> this slipped through, but now it does no longer apply.
 > 
-> This no longer parses cipso specifications correctly.
-> I haven't investigated why. It looks as if it should
-> work. Does kstrtouint() allow for leading whitespace?
+> Applying: ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
+> error: patch failed: drivers/net/ieee802154/atusb.c:310
+> error: drivers/net/ieee802154/atusb.c: patch does not apply
+> Patch failed at 0001 ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
 
-No it doesn't.  I feel slightly betrayed because checkpatch.pl told me
-to introduce that bug.  I have said so many times that I think
-checkpatch.pl should not tell people to introduce bugs...
+How can this hiccup happen?
 
-regards,
-dan carpenter
+A command like the following is still working for me on source files
+for the software "Linux next-20151211".
 
+elfring@Sonne:~/Projekte/Linux/next-patched> git apply ~/Projekte/Bau/Linux/scripts/Coccinelle/deletions1/next/20151113/Flicken/0001-ieee802154-atusb-Delete-an-unnecessary-check-before.patch
+
+Regards,
+Markus
