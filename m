@@ -1,42 +1,198 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Dec 2015 20:17:34 +0000
-Subject: Re: [patch v2] qlcnic: fix a timeout loop
-Message-Id: <20151215201734.GJ5177@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 11 Dec 2015 13:37:47 +0000
+Subject: [PATCH] ttm/drm: constify ttm_backend_func structures
+Message-Id: <1449841067-3718-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <BLUPR11MB0114ED16EBE57CC01FD9797393EE0@BLUPR11MB0114.namprd11.prod.outlook.com>
- <20151215135616.GA18851@mwanda>
- <20151215.131341.175421419282676757.davem@davemloft.net>
- <20151215201350.GI5177@mwanda>
-In-Reply-To: <20151215201350.GI5177@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: Dept-GELinuxNICDev@qlogic.com, manish.chopra@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, rajesh.borundia@qlogic.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Alex Deucher <alexander.deucher@amd.com>
 
-On Tue, Dec 15, 2015 at 11:13:50PM +0300, Dan Carpenter wrote:
-> On Tue, Dec 15, 2015 at 01:13:41PM -0500, David Miller wrote:
-> > From: Dan Carpenter <dan.carpenter@oracle.com>
-> > Date: Tue, 15 Dec 2015 16:56:16 +0300
-> > 
-> > > The problem here is that at the end of the loop we test for if
-> > > idc->vnic_wait_limit is zero, but since idc->vnic_wait_limit-- is a
-> > > post-op, it actually ends up set to (u8)-1.  I have fixed this by
-> > > moving the decrement inside the loop.
-> > > 
-> > > Fixes: 486a5bc77a4a ('qlcnic: Add support for 83xx suspend and resume.')
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Applied.
-> 
-> Ugh...  I appologize, I just noticed a mistake in this one.  I have to
-> do the decrement at the end of the loop and not the start of the loop.
-> 
+The ttm_backend_func structures are never modified, so declare them as
+const.
 
-Nope.  I'm wrong again.  My original patch was the correct way to do
-this.  Otherwise you can end up with state = QLCNIC_DEV_NPAR_OPER and
-->vnic_wait_limit set to zero.
+Done with the help of Coccinelle.
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c |    2 +-
+ drivers/gpu/drm/ast/ast_ttm.c           |    2 +-
+ drivers/gpu/drm/bochs/bochs_mm.c        |    2 +-
+ drivers/gpu/drm/cirrus/cirrus_ttm.c     |    2 +-
+ drivers/gpu/drm/mgag200/mgag200_ttm.c   |    2 +-
+ drivers/gpu/drm/nouveau/nouveau_sgdma.c |    4 ++--
+ drivers/gpu/drm/qxl/qxl_ttm.c           |    2 +-
+ drivers/gpu/drm/radeon/radeon_ttm.c     |    2 +-
+ drivers/gpu/drm/ttm/ttm_agp_backend.c   |    2 +-
+ drivers/gpu/drm/virtio/virtgpu_ttm.c    |    2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c  |    2 +-
+ include/drm/ttm/ttm_bo_driver.h         |    2 +-
+ 12 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+index 9fd924c..a323422 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+@@ -319,7 +319,7 @@ static void virtio_gpu_ttm_backend_destroy(struct ttm_tt *ttm)
+ 	kfree(gtt);
+ }
+ 
+-static struct ttm_backend_func virtio_gpu_backend_func = {
++static const struct ttm_backend_func virtio_gpu_backend_func = {
+ 	.bind = &virtio_gpu_ttm_backend_bind,
+ 	.unbind = &virtio_gpu_ttm_backend_unbind,
+ 	.destroy = &virtio_gpu_ttm_backend_destroy,
+diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/radeon/radeon_ttm.c
+index e343074..9fa758c 100644
+--- a/drivers/gpu/drm/radeon/radeon_ttm.c
++++ b/drivers/gpu/drm/radeon/radeon_ttm.c
+@@ -666,7 +666,7 @@ static void radeon_ttm_backend_destroy(struct ttm_tt *ttm)
+ 	kfree(gtt);
+ }
+ 
+-static struct ttm_backend_func radeon_backend_func = {
++static const struct ttm_backend_func radeon_backend_func = {
+ 	.bind = &radeon_ttm_backend_bind,
+ 	.unbind = &radeon_ttm_backend_unbind,
+ 	.destroy = &radeon_ttm_backend_destroy,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index d4bac5f..befa9c2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -634,7 +634,7 @@ static void amdgpu_ttm_backend_destroy(struct ttm_tt *ttm)
+ 	kfree(gtt);
+ }
+ 
+-static struct ttm_backend_func amdgpu_backend_func = {
++static const struct ttm_backend_func amdgpu_backend_func = {
+ 	.bind = &amdgpu_ttm_backend_bind,
+ 	.unbind = &amdgpu_ttm_backend_unbind,
+ 	.destroy = &amdgpu_ttm_backend_destroy,
+diff --git a/drivers/gpu/drm/ast/ast_ttm.c b/drivers/gpu/drm/ast/ast_ttm.c
+index 08f82ea..5840785 100644
+--- a/drivers/gpu/drm/ast/ast_ttm.c
++++ b/drivers/gpu/drm/ast/ast_ttm.c
+@@ -203,7 +203,7 @@ static void ast_ttm_backend_destroy(struct ttm_tt *tt)
+ 	kfree(tt);
+ }
+ 
+-static struct ttm_backend_func ast_tt_backend_func = {
++static const struct ttm_backend_func ast_tt_backend_func = {
+ 	.destroy = &ast_ttm_backend_destroy,
+ };
+ 
+diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
+index d812ad0..b5b782d 100644
+--- a/drivers/gpu/drm/bochs/bochs_mm.c
++++ b/drivers/gpu/drm/bochs/bochs_mm.c
+@@ -180,7 +180,7 @@ static void bochs_ttm_backend_destroy(struct ttm_tt *tt)
+ 	kfree(tt);
+ }
+ 
+-static struct ttm_backend_func bochs_tt_backend_func = {
++static const struct ttm_backend_func bochs_tt_backend_func = {
+ 	.destroy = &bochs_ttm_backend_destroy,
+ };
+ 
+diff --git a/drivers/gpu/drm/cirrus/cirrus_ttm.c b/drivers/gpu/drm/cirrus/cirrus_ttm.c
+index dfffd52..da88541 100644
+--- a/drivers/gpu/drm/cirrus/cirrus_ttm.c
++++ b/drivers/gpu/drm/cirrus/cirrus_ttm.c
+@@ -203,7 +203,7 @@ static void cirrus_ttm_backend_destroy(struct ttm_tt *tt)
+ 	kfree(tt);
+ }
+ 
+-static struct ttm_backend_func cirrus_tt_backend_func = {
++static const struct ttm_backend_func cirrus_tt_backend_func = {
+ 	.destroy = &cirrus_ttm_backend_destroy,
+ };
+ 
+diff --git a/drivers/gpu/drm/mgag200/mgag200_ttm.c b/drivers/gpu/drm/mgag200/mgag200_ttm.c
+index 05108b5..e368562 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_ttm.c
++++ b/drivers/gpu/drm/mgag200/mgag200_ttm.c
+@@ -203,7 +203,7 @@ static void mgag200_ttm_backend_destroy(struct ttm_tt *tt)
+ 	kfree(tt);
+ }
+ 
+-static struct ttm_backend_func mgag200_tt_backend_func = {
++static const struct ttm_backend_func mgag200_tt_backend_func = {
+ 	.destroy = &mgag200_ttm_backend_destroy,
+ };
+ 
+diff --git a/drivers/gpu/drm/nouveau/nouveau_sgdma.c b/drivers/gpu/drm/nouveau/nouveau_sgdma.c
+index 8c3053a..3b8f556 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_sgdma.c
++++ b/drivers/gpu/drm/nouveau/nouveau_sgdma.c
+@@ -51,7 +51,7 @@ nv04_sgdma_unbind(struct ttm_tt *ttm)
+ 	return 0;
+ }
+ 
+-static struct ttm_backend_func nv04_sgdma_backend = {
++static const struct ttm_backend_func nv04_sgdma_backend = {
+ 	.bind			= nv04_sgdma_bind,
+ 	.unbind			= nv04_sgdma_unbind,
+ 	.destroy		= nouveau_sgdma_destroy
+@@ -82,7 +82,7 @@ nv50_sgdma_unbind(struct ttm_tt *ttm)
+ 	return 0;
+ }
+ 
+-static struct ttm_backend_func nv50_sgdma_backend = {
++static const struct ttm_backend_func nv50_sgdma_backend = {
+ 	.bind			= nv50_sgdma_bind,
+ 	.unbind			= nv50_sgdma_unbind,
+ 	.destroy		= nouveau_sgdma_destroy
+diff --git a/drivers/gpu/drm/qxl/qxl_ttm.c b/drivers/gpu/drm/qxl/qxl_ttm.c
+index 0cbc4c9..93dc45d 100644
+--- a/drivers/gpu/drm/qxl/qxl_ttm.c
++++ b/drivers/gpu/drm/qxl/qxl_ttm.c
+@@ -288,7 +288,7 @@ static void qxl_ttm_backend_destroy(struct ttm_tt *ttm)
+ 	kfree(gtt);
+ }
+ 
+-static struct ttm_backend_func qxl_backend_func = {
++static const struct ttm_backend_func qxl_backend_func = {
+ 	.bind = &qxl_ttm_backend_bind,
+ 	.unbind = &qxl_ttm_backend_unbind,
+ 	.destroy = &qxl_ttm_backend_destroy,
+diff --git a/drivers/gpu/drm/ttm/ttm_agp_backend.c b/drivers/gpu/drm/ttm/ttm_agp_backend.c
+index 764be36..5fdaba5 100644
+--- a/drivers/gpu/drm/ttm/ttm_agp_backend.c
++++ b/drivers/gpu/drm/ttm/ttm_agp_backend.c
+@@ -104,7 +104,7 @@ static void ttm_agp_destroy(struct ttm_tt *ttm)
+ 	kfree(agp_be);
+ }
+ 
+-static struct ttm_backend_func ttm_agp_func = {
++static const struct ttm_backend_func ttm_agp_func = {
+ 	.bind = ttm_agp_bind,
+ 	.unbind = ttm_agp_unbind,
+ 	.destroy = ttm_agp_destroy,
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
+index 3329f62..d59572a 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
+@@ -683,7 +683,7 @@ static void vmw_ttm_unpopulate(struct ttm_tt *ttm)
+ 		ttm_pool_unpopulate(ttm);
+ }
+ 
+-static struct ttm_backend_func vmw_ttm_func = {
++static const struct ttm_backend_func vmw_ttm_func = {
+ 	.bind = vmw_ttm_bind,
+ 	.unbind = vmw_ttm_unbind,
+ 	.destroy = vmw_ttm_destroy,
+diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
+index 813042c..c43efa4 100644
+--- a/include/drm/ttm/ttm_bo_driver.h
++++ b/include/drm/ttm/ttm_bo_driver.h
+@@ -113,7 +113,7 @@ enum ttm_caching_state {
+ 
+ struct ttm_tt {
+ 	struct ttm_bo_device *bdev;
+-	struct ttm_backend_func *func;
++	const struct ttm_backend_func *func;
+ 	struct page *dummy_read_page;
+ 	struct page **pages;
+ 	uint32_t page_flags;
 
