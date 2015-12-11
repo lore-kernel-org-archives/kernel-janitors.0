@@ -1,90 +1,30 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 14:37:03 +0000
-Subject: [PATCH 2/7] iscsi-target: Less checks in iscsi_set_default_param() after error detection
-Message-Id: <566C310F.6040604@users.sourceforge.net>
+Date: Fri, 11 Dec 2015 18:19:45 +0000
+Subject: [PATCH 0/2] block: Fine-tuning for two function implementations
+Message-Id: <566B13C1.50907@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <566C2F7B.6030704@users.sourceforge.net>
-In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: LKML <linux-kernel@vger.kernel.org>, Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 12:50:10 +0100
+Date: Fri, 11 Dec 2015 19:12:34 +0100
 
-This issue was detected by using the Coccinelle software.
+A few update suggestions were taken into account from static
+source code analysis.
 
-A sanity check would be performed by the iscsi_set_default_param() function
-even if it is known already that the passed variable contained
-a null pointer.
+Markus Elfring (2):
+  zram: Less checks in zram_bvec_write() after error detection
+  z2ram: Delete a jump label in z2_init()
 
-* This implementation detail could be improved by adjustments
-  for jump targets according to the Linux coding style convention.
+ drivers/block/z2ram.c         |  4 +---
+ drivers/block/zram/zram_drv.c | 26 +++++++++++++-------------
+ 2 files changed, 14 insertions(+), 16 deletions(-)
 
-* Let us return directly if a call of the function "kzalloc" failed.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/target/iscsi/iscsi_target_parameters.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-index 0a8bd3f..15b2618 100644
---- a/drivers/target/iscsi/iscsi_target_parameters.c
-+++ b/drivers/target/iscsi/iscsi_target_parameters.c
-@@ -131,20 +131,20 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
- 
- 	if (!param) {
- 		pr_err("Unable to allocate memory for parameter.\n");
--		goto out;
-+		return NULL;
- 	}
- 	INIT_LIST_HEAD(&param->p_list);
- 
- 	param->name = kstrdup(name, GFP_KERNEL);
- 	if (!param->name) {
- 		pr_err("Unable to allocate memory for parameter name.\n");
--		goto out;
-+		goto free_param;
- 	}
- 
- 	param->value = kstrdup(value, GFP_KERNEL);
- 	if (!param->value) {
- 		pr_err("Unable to allocate memory for parameter value.\n");
--		goto out;
-+		goto free_name;
- 	}
- 
- 	param->phase		= phase;
-@@ -182,18 +182,17 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
- 	default:
- 		pr_err("Unknown type_range 0x%02x\n",
- 				param->type_range);
--		goto out;
-+		goto free_value;
- 	}
- 	list_add_tail(&param->p_list, &param_list->param_list);
- 
- 	return param;
--out:
--	if (param) {
--		kfree(param->value);
--		kfree(param->name);
--		kfree(param);
--	}
--
-+free_value:
-+	kfree(param->value);
-+free_name:
-+	kfree(param->name);
-+free_param:
-+	kfree(param);
- 	return NULL;
- }
- 
 -- 
 2.6.3
 
