@@ -1,77 +1,80 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Dec 2015 16:32:22 +0000
-Subject: [PATCH 2/2] [media] r820t: Better exception handling in generic_set_freq()
-Message-Id: <56816416.2060702@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 11 Dec 2015 16:03:26 +0000
+Subject: [PATCH] logfs: constify logfs_block_ops structures
+Message-Id: <1449849806-30429-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <56816256.70304@users.sourceforge.net>
-In-Reply-To: <56816256.70304@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Joern Engel <joern@logfs.org>
+Cc: kernel-janitors@vger.kernel.org, Prasad Joshi <prasadjoshi.linux@gmail.com>, logfs@logfs.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 28 Dec 2015 17:13:02 +0100
+The logfs_block_ops structures are never modified, so declare them as
+const.
 
-This issue was detected by using the Coccinelle software.
+Done with the help of Coccinelle.
 
-Move the jump label directly before the desired log statement
-so that the variable "rc" will not be checked once more
-after a function call.
-Use the identifier "report_failure" instead of "err".
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The error logging is performed in a separate section at the end now.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/tuners/r820t.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ fs/logfs/logfs.h     |    4 ++--
+ fs/logfs/readwrite.c |    4 ++--
+ fs/logfs/segment.c   |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/tuners/r820t.c b/drivers/media/tuners/r820t.c
-index 6ab35e3..f71642e 100644
---- a/drivers/media/tuners/r820t.c
-+++ b/drivers/media/tuners/r820t.c
-@@ -1303,7 +1303,7 @@ static int generic_set_freq(struct dvb_frontend *fe,
+diff --git a/fs/logfs/logfs.h b/fs/logfs/logfs.h
+index 23f961a..b710788 100644
+--- a/fs/logfs/logfs.h
++++ b/fs/logfs/logfs.h
+@@ -302,7 +302,7 @@ struct logfs_block {
+ 	struct inode *inode;
+ 	struct logfs_transaction *ta;
+ 	unsigned long alias_map[LOGFS_BLOCK_FACTOR / BITS_PER_LONG];
+-	struct logfs_block_ops *ops;
++	const struct logfs_block_ops *ops;
+ 	int full;
+ 	int partial;
+ 	int reserved_bytes;
+@@ -579,7 +579,7 @@ int logfs_exist_block(struct inode *inode, u64 bix);
+ int get_page_reserve(struct inode *inode, struct page *page);
+ void logfs_get_wblocks(struct super_block *sb, struct page *page, int lock);
+ void logfs_put_wblocks(struct super_block *sb, struct page *page, int lock);
+-extern struct logfs_block_ops indirect_block_ops;
++extern const struct logfs_block_ops indirect_block_ops;
  
- 	rc = r820t_set_tv_standard(priv, bw, type, std, delsys);
- 	if (rc < 0)
--		goto err;
-+		goto report_failure;
- 
- 	if ((type = V4L2_TUNER_ANALOG_TV) && (std = V4L2_STD_SECAM_LC))
- 		lo_freq = freq - priv->int_freq;
-@@ -1312,23 +1312,21 @@ static int generic_set_freq(struct dvb_frontend *fe,
- 
- 	rc = r820t_set_mux(priv, lo_freq);
- 	if (rc < 0)
--		goto err;
-+		goto report_failure;
- 
- 	rc = r820t_set_pll(priv, type, lo_freq);
- 	if (rc < 0 || !priv->has_lock)
--		goto err;
-+		goto report_failure;
- 
- 	rc = r820t_sysfreq_sel(priv, freq, type, std, delsys);
- 	if (rc < 0)
--		goto err;
-+		goto report_failure;
- 
- 	tuner_dbg("%s: PLL locked on frequency %d Hz, gain=%d\n",
- 		  __func__, freq, r820t_read_gain(priv));
--
--err:
--
--	if (rc < 0)
--		tuner_dbg("%s: failed=%d\n", __func__, rc);
-+	return 0;
-+report_failure:
-+	tuner_dbg("%s: failed=%d\n", __func__, rc);
- 	return rc;
+ /* segment.c */
+ int logfs_erase_segment(struct super_block *sb, u32 ofs, int ensure_erase);
+diff --git a/fs/logfs/readwrite.c b/fs/logfs/readwrite.c
+index 380d86e..20973c9 100644
+--- a/fs/logfs/readwrite.c
++++ b/fs/logfs/readwrite.c
+@@ -569,13 +569,13 @@ static void indirect_free_block(struct super_block *sb,
  }
  
--- 
-2.6.3
+ 
+-static struct logfs_block_ops inode_block_ops = {
++static const struct logfs_block_ops inode_block_ops = {
+ 	.write_block = inode_write_block,
+ 	.free_block = inode_free_block,
+ 	.write_alias = inode_write_alias,
+ };
+ 
+-struct logfs_block_ops indirect_block_ops = {
++const struct logfs_block_ops indirect_block_ops = {
+ 	.write_block = indirect_write_block,
+ 	.free_block = indirect_free_block,
+ 	.write_alias = indirect_write_alias,
+diff --git a/fs/logfs/segment.c b/fs/logfs/segment.c
+index 6de0fbf..d270e4b 100644
+--- a/fs/logfs/segment.c
++++ b/fs/logfs/segment.c
+@@ -197,7 +197,7 @@ static int btree_write_alias(struct super_block *sb, struct logfs_block *block,
+ 	return 0;
+ }
+ 
+-static struct logfs_block_ops btree_block_ops = {
++static const struct logfs_block_ops btree_block_ops = {
+ 	.write_block	= btree_write_block,
+ 	.free_block	= __free_block,
+ 	.write_alias	= btree_write_alias,
 
