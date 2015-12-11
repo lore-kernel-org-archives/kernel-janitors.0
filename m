@@ -1,77 +1,128 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 23 Dec 2015 16:11:06 +0000
-Subject: Re: [PATCH] IB/usnic: delete unneeded IS_ERR test
-Message-Id: <567AC79A.8000306@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PQUBMw1PDrg3Iucc6e3kIDXUfvKltCFGr"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 11 Dec 2015 14:52:37 +0000
+Subject: [PATCH] ALSA: usb-audio: constify usb_protocol_ops structures
+Message-Id: <1449845557-22444-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450558139-466-1-git-send-email-Julia.Lawall@lip6.fr>
- <20151222152903.GA23118@DGOODELL-M-F02A.cisco.com>
-In-Reply-To: <20151222152903.GA23118@DGOODELL-M-F02A.cisco.com>
-To: Dave Goodell <dgoodell@cisco.com>, Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Christian Benvenuti <benve@cisco.com>, kernel-janitors@vger.kernel.org, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Nelson Escobar <neescoba@cisco.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---PQUBMw1PDrg3Iucc6e3kIDXUfvKltCFGr
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+The usb_protocol_ops structures are never modified, so declare them as
+const.
 
-On 12/22/2015 10:29 AM, Dave Goodell wrote:
-> [copying Nelson too]
->=20
-> On Sat, Dec 19, 2015 at 09:48:59PM +0100, Julia Lawall wrote:
->> kzalloc doesn't return ERR_PTR, so there is no need to test for it.
->>
->> The semantic match that finds this problem is as follows:
->> (http://coccinelle.lip6.fr/)
->>
->> // <smpl>
->> @@
->> expression x,e;
->> @@
->>
->> * x =3D kzalloc(...)
->> ... when !=3D x =3D e
->> * IS_ERR_OR_NULL(x)
->> // </smpl>
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Reviewed-by: Dave Goodell <dgoodell@cisco.com>
->=20
-> -Dave
->=20
+Done with the help of Coccinelle.
 
-Thanks, applied.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---=20
-Doug Ledford <dledford@redhat.com>
-              GPG KeyID: 0E572FDD
+---
+ sound/usb/midi.c |   25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
+diff --git a/sound/usb/midi.c b/sound/usb/midi.c
+index ee212e7..cc39f63 100644
+--- a/sound/usb/midi.c
++++ b/sound/usb/midi.c
+@@ -112,7 +112,7 @@ struct snd_usb_midi {
+ 	struct usb_interface *iface;
+ 	const struct snd_usb_audio_quirk *quirk;
+ 	struct snd_rawmidi *rmidi;
+-	struct usb_protocol_ops *usb_protocol_ops;
++	const struct usb_protocol_ops *usb_protocol_ops;
+ 	struct list_head list;
+ 	struct timer_list error_timer;
+ 	spinlock_t disc_lock;
+@@ -671,31 +671,32 @@ static void snd_usbmidi_standard_output(struct snd_usb_midi_out_endpoint *ep,
+ 	}
+ }
+ 
+-static struct usb_protocol_ops snd_usbmidi_standard_ops = {
++static const struct usb_protocol_ops snd_usbmidi_standard_ops = {
+ 	.input = snd_usbmidi_standard_input,
+ 	.output = snd_usbmidi_standard_output,
+ 	.output_packet = snd_usbmidi_output_standard_packet,
+ };
+ 
+-static struct usb_protocol_ops snd_usbmidi_midiman_ops = {
++static const struct usb_protocol_ops snd_usbmidi_midiman_ops = {
+ 	.input = snd_usbmidi_midiman_input,
+ 	.output = snd_usbmidi_standard_output,
+ 	.output_packet = snd_usbmidi_output_midiman_packet,
+ };
+ 
+-static struct usb_protocol_ops snd_usbmidi_maudio_broken_running_status_ops = {
++static const
++struct usb_protocol_ops snd_usbmidi_maudio_broken_running_status_ops = {
+ 	.input = snd_usbmidi_maudio_broken_running_status_input,
+ 	.output = snd_usbmidi_standard_output,
+ 	.output_packet = snd_usbmidi_output_standard_packet,
+ };
+ 
+-static struct usb_protocol_ops snd_usbmidi_cme_ops = {
++static const struct usb_protocol_ops snd_usbmidi_cme_ops = {
+ 	.input = snd_usbmidi_cme_input,
+ 	.output = snd_usbmidi_standard_output,
+ 	.output_packet = snd_usbmidi_output_standard_packet,
+ };
+ 
+-static struct usb_protocol_ops snd_usbmidi_ch345_broken_sysex_ops = {
++static const struct usb_protocol_ops snd_usbmidi_ch345_broken_sysex_ops = {
+ 	.input = ch345_broken_sysex_input,
+ 	.output = snd_usbmidi_standard_output,
+ 	.output_packet = snd_usbmidi_output_standard_packet,
+@@ -795,7 +796,7 @@ static void snd_usbmidi_akai_output(struct snd_usb_midi_out_endpoint *ep,
+ 	}
+ }
+ 
+-static struct usb_protocol_ops snd_usbmidi_akai_ops = {
++static const struct usb_protocol_ops snd_usbmidi_akai_ops = {
+ 	.input = snd_usbmidi_akai_input,
+ 	.output = snd_usbmidi_akai_output,
+ };
+@@ -835,7 +836,7 @@ static void snd_usbmidi_novation_output(struct snd_usb_midi_out_endpoint *ep,
+ 	urb->transfer_buffer_length = 2 + count;
+ }
+ 
+-static struct usb_protocol_ops snd_usbmidi_novation_ops = {
++static const struct usb_protocol_ops snd_usbmidi_novation_ops = {
+ 	.input = snd_usbmidi_novation_input,
+ 	.output = snd_usbmidi_novation_output,
+ };
+@@ -867,7 +868,7 @@ static void snd_usbmidi_raw_output(struct snd_usb_midi_out_endpoint *ep,
+ 	urb->transfer_buffer_length = count;
+ }
+ 
+-static struct usb_protocol_ops snd_usbmidi_raw_ops = {
++static const struct usb_protocol_ops snd_usbmidi_raw_ops = {
+ 	.input = snd_usbmidi_raw_input,
+ 	.output = snd_usbmidi_raw_output,
+ };
+@@ -883,7 +884,7 @@ static void snd_usbmidi_ftdi_input(struct snd_usb_midi_in_endpoint *ep,
+ 		snd_usbmidi_input_data(ep, 0, buffer + 2, buffer_length - 2);
+ }
+ 
+-static struct usb_protocol_ops snd_usbmidi_ftdi_ops = {
++static const struct usb_protocol_ops snd_usbmidi_ftdi_ops = {
+ 	.input = snd_usbmidi_ftdi_input,
+ 	.output = snd_usbmidi_raw_output,
+ };
+@@ -927,7 +928,7 @@ static void snd_usbmidi_us122l_output(struct snd_usb_midi_out_endpoint *ep,
+ 	urb->transfer_buffer_length = ep->max_transfer;
+ }
+ 
+-static struct usb_protocol_ops snd_usbmidi_122l_ops = {
++static const struct usb_protocol_ops snd_usbmidi_122l_ops = {
+ 	.input = snd_usbmidi_us122l_input,
+ 	.output = snd_usbmidi_us122l_output,
+ };
+@@ -1060,7 +1061,7 @@ static void snd_usbmidi_emagic_output(struct snd_usb_midi_out_endpoint *ep,
+ 	urb->transfer_buffer_length = ep->max_transfer - buf_free;
+ }
+ 
+-static struct usb_protocol_ops snd_usbmidi_emagic_ops = {
++static const struct usb_protocol_ops snd_usbmidi_emagic_ops = {
+ 	.input = snd_usbmidi_emagic_input,
+ 	.output = snd_usbmidi_emagic_output,
+ 	.init_out_endpoint = snd_usbmidi_emagic_init_out,
 
-
---PQUBMw1PDrg3Iucc6e3kIDXUfvKltCFGr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJWeseaAAoJELgmozMOVy/dVMoP/3mWqaXvMNRrJ9vRXtknXXvu
-kNM1/gZUJL5vbdIF0Lf5QsUFYCU9jKnUjBfvM2LuHMvdO+uTFCmOvVxqhXfFNDGn
-dLOqeF1kC1grguS2Ta2dElyKFt45as8R5s4kRCXxucHmevOP4WvFe/s24EVJKFV1
-rYx+Py5hvPeqQNqcLCIBSEvBglzQpsz8I7JyrqHju4t5wLJmB+KxQgHwOlcDMZkZ
-Ef9VBhQJFLOq6MYx1diuuUODxd9CCMb5UOpRI2otkRgaWnUQ+b+NBvlVu6pM6NnL
-pskKx/siAtFTWSPE4GTtOyND5tFyqbvKmUkgfHJ6X+A2RmZTKH42/UEaHD/6t8QO
-cO2XUCdOy1jAyI3M8PZZriDBiOvOJiDIazuA3UyfU4cJIsRGgAfbvB/yZtdEiufP
-mkoLKzlnTJraPZvJSlHZSPGzWUaTdSM+4tF1Hj87F6ti3h4BuQu87dv1gXj/KsXw
-SjBvRpm2Zqw35L0fMno6UKePa96fSLPI1ksSMw1+EMocOMA36uUk7zfemUbWTY3m
-vXgOU9JQbvGM7kPRus9ewD+U6SNNPnt32hNAEkTp2/LGAiI8tdoOjWCjwFmN021b
-MA+zFFUjNDH3U2LG/mjk1WiBPdXoOZvplHlBOe6wqnO0qOKfGxvENhY+zxp7dyBk
-JFZWXY3nOY0/0Xir5cJQ
-=4EPa
------END PGP SIGNATURE-----
-
---PQUBMw1PDrg3Iucc6e3kIDXUfvKltCFGr--
