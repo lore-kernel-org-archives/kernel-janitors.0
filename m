@@ -1,39 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 22 Dec 2015 18:22:50 +0000
-Subject: Re: [patch] usb: gadget: f_midi: missing unlock on error path
-Message-Id: <567994FA.5080309@users.sourceforge.net>
+Date: Sat, 12 Dec 2015 14:34:50 +0000
+Subject: [PATCH 1/7] iscsi-target: Use a variable initialisation in iscsi_set_default_param() directly
+Message-Id: <566C308A.6000109@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151221132017.GB27286@mwanda>
-In-Reply-To: <20151221132017.GB27286@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566C2F7B.6030704@users.sourceforge.net>
+In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> We added a new error path to this function and we forgot to drop the lock.
-> 
-> Fixes: e1e3d7ec5da3 ('usb: gadget: f_midi: pre-allocate IN requests')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
-> index fb1fe96d..92b9ec8 100644
-> --- a/drivers/usb/gadget/function/f_midi.c
-> +++ b/drivers/usb/gadget/function/f_midi.c
-> @@ -1213,8 +1213,10 @@ static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
->  	midi->in_last_port = 0;
->  
->  	status = kfifo_alloc(&midi->in_req_fifo, midi->qlen, GFP_KERNEL);
-> -	if (status)
-> +	if (status) {
-> +		mutex_unlock(&opts->lock);
->  		goto setup_fail;
-> +	}
->  
->  	++opts->refcnt;
->  	mutex_unlock(&opts->lock);
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Dec 2015 11:36:02 +0100
 
-How do you think about to move this unlock call and the one that belongs to
-the handling of a kstrdup() failure below the shown jump target?
+Omit the unnecessary setting to a null pointer for the variable "param"
+at the beginning of the function "iscsi_set_default_param"
+because it can be directly initialized with the return value
+from the function "kzalloc".
 
-Regards,
-Markus
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/target/iscsi/iscsi_target_parameters.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index 3a1f9a7..0a8bd3f 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -127,9 +127,8 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
+ 		char *name, char *value, u8 phase, u8 scope, u8 sender,
+ 		u16 type_range, u8 use)
+ {
+-	struct iscsi_param *param = NULL;
++	struct iscsi_param *param = kzalloc(sizeof(*param), GFP_KERNEL);
+ 
+-	param = kzalloc(sizeof(struct iscsi_param), GFP_KERNEL);
+ 	if (!param) {
+ 		pr_err("Unable to allocate memory for parameter.\n");
+ 		goto out;
+-- 
+2.6.3
+
