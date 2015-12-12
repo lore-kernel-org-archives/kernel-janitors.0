@@ -1,58 +1,47 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 23 Dec 2015 20:35:35 +0000
-Subject: [PATCH] shpchp: constify hpc_ops structure
-Message-Id: <1450902935-20302-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 12 Dec 2015 12:59:14 +0000
+Subject: [patch 1/2] regmap: shift wrapping bugs in 64 bit code
+Message-Id: <20151212125914.GA22043@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Xiubo Li <lixiubo@cmss.chinamobile.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The hpc_ops structure is never modified, so declare it as const.
+We should cast these to 64bit so that we don't truncate away the high
+bits.
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: afcc00b91f18 ('regmap: add 64-bit mode support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/pci/hotplug/shpchp.h     |    4 ++--
- drivers/pci/hotplug/shpchp_hpc.c |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Not tested.
 
-diff --git a/drivers/pci/hotplug/shpchp.h b/drivers/pci/hotplug/shpchp.h
-index 5897d51..3059c34 100644
---- a/drivers/pci/hotplug/shpchp.h
-+++ b/drivers/pci/hotplug/shpchp.h
-@@ -84,7 +84,7 @@ struct slot {
- 	u8 presence_save;
- 	u8 pwr_save;
- 	struct controller *ctrl;
--	struct hpc_ops *hpc_ops;
-+	const struct hpc_ops *hpc_ops;
- 	struct hotplug_slot *hotplug_slot;
- 	struct list_head	slot_list;
- 	struct delayed_work work;	/* work for button event */
-@@ -106,7 +106,7 @@ struct controller {
- 	int slot_num_inc;		/* 1 or -1 */
- 	struct pci_dev *pci_dev;
- 	struct list_head slot_list;
--	struct hpc_ops *hpc_ops;
-+	const struct hpc_ops *hpc_ops;
- 	wait_queue_head_t queue;	/* sleep & wake process */
- 	u8 slot_device_offset;
- 	u32 pcix_misc2_reg;	/* for amd pogo errata */
-diff --git a/drivers/pci/hotplug/shpchp_hpc.c b/drivers/pci/hotplug/shpchp_hpc.c
-index 7d223e9..43e7906 100644
---- a/drivers/pci/hotplug/shpchp_hpc.c
-+++ b/drivers/pci/hotplug/shpchp_hpc.c
-@@ -910,7 +910,7 @@ static int shpc_get_max_bus_speed(struct controller *ctrl)
- 	return retval;
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 1791180..2d4cc70 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -250,20 +250,20 @@ static void regmap_format_64_be(void *buf, unsigned int val, unsigned int shift)
+ {
+ 	__be64 *b = buf;
+ 
+-	b[0] = cpu_to_be64(val << shift);
++	b[0] = cpu_to_be64((u64)val << shift);
  }
  
--static struct hpc_ops shpchp_hpc_ops = {
-+static const struct hpc_ops shpchp_hpc_ops = {
- 	.power_on_slot			= hpc_power_on_slot,
- 	.slot_enable			= hpc_slot_enable,
- 	.slot_disable			= hpc_slot_disable,
-
+ static void regmap_format_64_le(void *buf, unsigned int val, unsigned int shift)
+ {
+ 	__le64 *b = buf;
+ 
+-	b[0] = cpu_to_le64(val << shift);
++	b[0] = cpu_to_le64((u64)val << shift);
+ }
+ 
+ static void regmap_format_64_native(void *buf, unsigned int val,
+ 				    unsigned int shift)
+ {
+-	*(u64 *)buf = val << shift;
++	*(u64 *)buf = (u64)val << shift;
+ }
+ #endif
+ 
