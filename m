@@ -1,68 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 19:50:17 +0000
-Subject: [PATCH] mmc-core: One check less in mmc_select_hs200() after error detection
-Message-Id: <5682E3F9.4040006@users.sourceforge.net>
+Date: Sat, 12 Dec 2015 14:43:35 +0000
+Subject: [PATCH 6/7] iscsi-target: Delete unnecessary variable initialisations in iscsi_check_valuelist_for_s
+Message-Id: <566C3297.1040404@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+ <566C2F7B.6030704@users.sourceforge.net>
+In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 20:28:46 +0100
+Date: Sat, 12 Dec 2015 14:34:26 +0100
 
-This issue was detected by using the Coccinelle software.
-
-Move the jump label directly before the desired log statement
-so that the variable "err" will not be checked once more
-after it was determined that a call of the function
-"__mmc_set_signal_voltage" or "__mmc_switch" failed.
-Use the identifier "report_failure" instead of the label "err".
+The variables "tmp1" and "tmp2" will eventually be set to appropriate
+pointers from a call of the strchr() function.
+Thus let us omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mmc/core/mmc.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 549c56e..866f72b 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1256,7 +1256,7 @@ static int mmc_select_hs200(struct mmc_card *card)
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index 29ecf29..53e3345 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -920,7 +920,7 @@ static char *iscsi_check_valuelist_for_support(
+ 	struct iscsi_param *param,
+ 	char *value)
+ {
+-	char *tmp1 = NULL, *tmp2 = NULL;
++	char *tmp1, *tmp2;
+ 	char *acceptor_values = NULL, *proposer_values = NULL;
  
- 	/* If fails try again during next card power cycle */
- 	if (err)
--		goto err;
-+		goto report_failure;
- 
- 	mmc_select_driver_type(card);
- 
-@@ -1276,7 +1276,7 @@ static int mmc_select_hs200(struct mmc_card *card)
- 				   card->ext_csd.generic_cmd6_time,
- 				   true, send_status, true);
- 		if (err)
--			goto err;
-+			goto report_failure;
- 		old_timing = host->ios.timing;
- 		mmc_set_timing(host, MMC_TIMING_MMC_HS200);
- 		if (!send_status) {
-@@ -1289,10 +1289,11 @@ static int mmc_select_hs200(struct mmc_card *card)
- 				mmc_set_timing(host, old_timing);
- 		}
- 	}
--err:
--	if (err)
-+	if (err) {
-+report_failure:
- 		pr_err("%s: %s failed, error %d\n", mmc_hostname(card->host),
- 		       __func__, err);
-+	}
- 	return err;
- }
- 
+ 	acceptor_values = param->value;
 -- 
 2.6.3
 
