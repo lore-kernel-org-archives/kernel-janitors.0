@@ -1,66 +1,90 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Dec 2015 12:41:46 +0000
-Subject: [PATCH 2/2] InfiniBand-iSER-target: One jump label less in isert_reg_sig_mr()
-Message-Id: <567FDC8A.6000602@users.sourceforge.net>
+Date: Sat, 12 Dec 2015 14:37:03 +0000
+Subject: [PATCH 2/7] iscsi-target: Less checks in iscsi_set_default_param() after error detection
+Message-Id: <566C310F.6040604@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <567FDB4E.2040000@users.sourceforge.net>
-In-Reply-To: <567FDB4E.2040000@users.sourceforge.net>
+ <566C2F7B.6030704@users.sourceforge.net>
+In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagig@mellanox.com>, Sean Hefty <sean.hefty@intel.com>
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Dec 2015 12:54:52 +0100
+Date: Sat, 12 Dec 2015 12:50:10 +0100
 
 This issue was detected by using the Coccinelle software.
 
-1. Let us return directly if a call of the function "isert_set_sig_attrs"
-   or "ib_post_send" failed.
+A sanity check would be performed by the iscsi_set_default_param() function
+even if it is known already that the passed variable contained
+a null pointer.
 
-2. Delete the jump label "err" then.
+* This implementation detail could be improved by adjustments
+  for jump targets according to the Linux coding style convention.
 
-3. Return zero as a constant at the end.
+* Let us return directly if a call of the function "kzalloc" failed.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/ulp/isert/ib_isert.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/target/iscsi/iscsi_target_parameters.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/isert/ib_isert.c b/drivers/infiniband/ulp/isert/ib_isert.c
-index 8a51c3b..9b22db0 100644
---- a/drivers/infiniband/ulp/isert/ib_isert.c
-+++ b/drivers/infiniband/ulp/isert/ib_isert.c
-@@ -2660,7 +2660,7 @@ isert_reg_sig_mr(struct isert_conn *isert_conn,
- 	memset(&sig_attrs, 0, sizeof(sig_attrs));
- 	ret = isert_set_sig_attrs(se_cmd, &sig_attrs);
- 	if (ret)
--		goto err;
-+		return ret;
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index 0a8bd3f..15b2618 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -131,20 +131,20 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
  
- 	sig_attrs.check_mask = isert_set_prot_checks(se_cmd->prot_checks);
- 
-@@ -2688,7 +2688,7 @@ isert_reg_sig_mr(struct isert_conn *isert_conn,
- 	ret = ib_post_send(isert_conn->qp, wr, &bad_wr);
- 	if (ret) {
- 		isert_err("fast registration failed, ret:%d\n", ret);
--		goto err;
-+		return ret;
+ 	if (!param) {
+ 		pr_err("Unable to allocate memory for parameter.\n");
+-		goto out;
++		return NULL;
  	}
- 	fr_desc->ind &= ~ISERT_SIG_KEY_VALID;
+ 	INIT_LIST_HEAD(&param->p_list);
  
-@@ -2706,8 +2706,7 @@ isert_reg_sig_mr(struct isert_conn *isert_conn,
- 	isert_dbg("sig_sge: addr: 0x%llx  length: %u lkey: %x\n",
- 		  rdma_wr->ib_sg[SIG].addr, rdma_wr->ib_sg[SIG].length,
- 		  rdma_wr->ib_sg[SIG].lkey);
--err:
--	return ret;
-+	return 0;
+ 	param->name = kstrdup(name, GFP_KERNEL);
+ 	if (!param->name) {
+ 		pr_err("Unable to allocate memory for parameter name.\n");
+-		goto out;
++		goto free_param;
+ 	}
+ 
+ 	param->value = kstrdup(value, GFP_KERNEL);
+ 	if (!param->value) {
+ 		pr_err("Unable to allocate memory for parameter value.\n");
+-		goto out;
++		goto free_name;
+ 	}
+ 
+ 	param->phase		= phase;
+@@ -182,18 +182,17 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
+ 	default:
+ 		pr_err("Unknown type_range 0x%02x\n",
+ 				param->type_range);
+-		goto out;
++		goto free_value;
+ 	}
+ 	list_add_tail(&param->p_list, &param_list->param_list);
+ 
+ 	return param;
+-out:
+-	if (param) {
+-		kfree(param->value);
+-		kfree(param->name);
+-		kfree(param);
+-	}
+-
++free_value:
++	kfree(param->value);
++free_name:
++	kfree(param->name);
++free_param:
++	kfree(param);
+ 	return NULL;
  }
  
- static int
 -- 
 2.6.3
 
