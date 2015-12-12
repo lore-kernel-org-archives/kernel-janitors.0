@@ -1,29 +1,46 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Mon, 21 Dec 2015 10:16:49 +0000
-Subject: Re: blackfin-cpufreq: How to mark cpu_set_cclk() as static?
-Message-Id: <20151221100449.GA22946@ubuntu>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Dec 2015 14:45:24 +0000
+Subject: [PATCH 7/7] iscsi-target: Make two variable initialisations a bit more obvious in iscsi_check_valuel
+Message-Id: <566C3304.1090802@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5674598B.6020000@users.sourceforge.net>
- <20151219015926.GJ3946@ubuntu>
- <5675141F.2090803@users.sourceforge.net>
- <20151221031757.GA5532@ubuntu>
- <5677C452.8040307@users.sourceforge.net>
- <20151221092805.GD5532@ubuntu>
- <5677CB72.8090504@users.sourceforge.net>
- <20151221095308.GE5532@ubuntu>
- <5677CDB4.2020608@users.sourceforge.net>
-In-Reply-To: <5677CDB4.2020608@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566C2F7B.6030704@users.sourceforge.net>
+In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 21-12-15, 11:00, SF Markus Elfring wrote:
-> Does it matter to provide the proposed changes as a tiny patch series
-> with two update steps?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Dec 2015 15:04:57 +0100
 
-Yeah, you can do it that way as well :)
+The variable "acceptor_values" and "proposer_values" were initialized
+by null pointers and immediately assigned values from input parameters
+by separate statements.
+Let us express the desired variable initialisations directly.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/target/iscsi/iscsi_target_parameters.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index 53e3345..fb6fd34 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -921,10 +921,7 @@ static char *iscsi_check_valuelist_for_support(
+ 	char *value)
+ {
+ 	char *tmp1, *tmp2;
+-	char *acceptor_values = NULL, *proposer_values = NULL;
+-
+-	acceptor_values = param->value;
+-	proposer_values = value;
++	char *acceptor_values = param->value, *proposer_values = value;
+ 
+ 	do {
+ 		if (!proposer_values)
 -- 
-viresh
+2.6.3
+
