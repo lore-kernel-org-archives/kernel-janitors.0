@@ -1,55 +1,124 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Date: Sun, 13 Dec 2015 21:08:09 +0000
-Subject: Re: [patch] clk: sunxi: signedness bug in sun8i_h3_bus_gates_init()
-Message-Id: <20151213210809.GD19456@lukather>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="n/aVsWSeQ4JHkrmm"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 12 Dec 2015 16:36:39 +0000
+Subject: [PATCH] hwmon: constify sensor_template_group structures
+Message-Id: <1449938199-26314-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151212124346.GC21408@mwanda>
-In-Reply-To: <20151212124346.GC21408@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org
 
+The sensor_template_group structures are never modified, so declare them as
+const.
 
---n/aVsWSeQ4JHkrmm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Done with the help of Coccinelle.
 
-On Sat, Dec 12, 2015 at 03:43:46PM +0300, Dan Carpenter wrote:
-> "index" needs to be signed for the error handling to work.
->=20
-> Fixes: ab6e23a4e388 ('clk: sunxi: Add H3 clocks support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied, thanks!
-Maxime
+---
+ drivers/hwmon/nct6683.c |   11 ++++++-----
+ drivers/hwmon/nct6775.c |   11 ++++++-----
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+diff --git a/drivers/hwmon/nct6683.c b/drivers/hwmon/nct6683.c
+index 37f0170..6cf392c 100644
+--- a/drivers/hwmon/nct6683.c
++++ b/drivers/hwmon/nct6683.c
+@@ -394,7 +394,8 @@ struct sensor_template_group {
+ };
+ 
+ static struct attribute_group *
+-nct6683_create_attr_group(struct device *dev, struct sensor_template_group *tg,
++nct6683_create_attr_group(struct device *dev,
++			  const struct sensor_template_group *tg,
+ 			  int repeat)
+ {
+ 	struct sensor_device_attribute_2 *a2;
+@@ -703,7 +704,7 @@ static struct sensor_device_template *nct6683_attributes_in_template[] = {
+ 	NULL
+ };
+ 
+-static struct sensor_template_group nct6683_in_template_group = {
++static const struct sensor_template_group nct6683_in_template_group = {
+ 	.templates = nct6683_attributes_in_template,
+ 	.is_visible = nct6683_in_is_visible,
+ };
+@@ -774,7 +775,7 @@ static struct sensor_device_template *nct6683_attributes_fan_template[] = {
+ 	NULL
+ };
+ 
+-static struct sensor_template_group nct6683_fan_template_group = {
++static const struct sensor_template_group nct6683_fan_template_group = {
+ 	.templates = nct6683_attributes_fan_template,
+ 	.is_visible = nct6683_fan_is_visible,
+ 	.base = 1,
+@@ -902,7 +903,7 @@ static struct sensor_device_template *nct6683_attributes_temp_template[] = {
+ 	NULL
+ };
+ 
+-static struct sensor_template_group nct6683_temp_template_group = {
++static const struct sensor_template_group nct6683_temp_template_group = {
+ 	.templates = nct6683_attributes_temp_template,
+ 	.is_visible = nct6683_temp_is_visible,
+ 	.base = 1,
+@@ -938,7 +939,7 @@ static struct sensor_device_template *nct6683_attributes_pwm_template[] = {
+ 	NULL
+ };
+ 
+-static struct sensor_template_group nct6683_pwm_template_group = {
++static const struct sensor_template_group nct6683_pwm_template_group = {
+ 	.templates = nct6683_attributes_pwm_template,
+ 	.is_visible = nct6683_pwm_is_visible,
+ 	.base = 1,
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index d7ebdf8..d087a8e 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -1045,7 +1045,8 @@ struct sensor_template_group {
+ };
+ 
+ static struct attribute_group *
+-nct6775_create_attr_group(struct device *dev, struct sensor_template_group *tg,
++nct6775_create_attr_group(struct device *dev,
++			  const struct sensor_template_group *tg,
+ 			  int repeat)
+ {
+ 	struct attribute_group *group;
+@@ -1827,7 +1828,7 @@ static struct sensor_device_template *nct6775_attributes_in_template[] = {
+ 	NULL
+ };
+ 
+-static struct sensor_template_group nct6775_in_template_group = {
++static const struct sensor_template_group nct6775_in_template_group = {
+ 	.templates = nct6775_attributes_in_template,
+ 	.is_visible = nct6775_in_is_visible,
+ };
+@@ -2046,7 +2047,7 @@ static struct sensor_device_template *nct6775_attributes_fan_template[] = {
+ 	NULL
+ };
+ 
+-static struct sensor_template_group nct6775_fan_template_group = {
++static const struct sensor_template_group nct6775_fan_template_group = {
+ 	.templates = nct6775_attributes_fan_template,
+ 	.is_visible = nct6775_fan_is_visible,
+ 	.base = 1,
+@@ -2255,7 +2256,7 @@ static struct sensor_device_template *nct6775_attributes_temp_template[] = {
+ 	NULL
+ };
+ 
+-static struct sensor_template_group nct6775_temp_template_group = {
++static const struct sensor_template_group nct6775_temp_template_group = {
+ 	.templates = nct6775_attributes_temp_template,
+ 	.is_visible = nct6775_temp_is_visible,
+ 	.base = 1,
+@@ -3117,7 +3118,7 @@ static struct sensor_device_template *nct6775_attributes_pwm_template[] = {
+ 	NULL
+ };
+ 
+-static struct sensor_template_group nct6775_pwm_template_group = {
++static const struct sensor_template_group nct6775_pwm_template_group = {
+ 	.templates = nct6775_attributes_pwm_template,
+ 	.is_visible = nct6775_pwm_is_visible,
+ 	.base = 1,
 
---n/aVsWSeQ4JHkrmm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWbd45AAoJEBx+YmzsjxAgaA4QAII0Y5/Rd8ZQUqcoF2TutjlX
-YGSEI8U2ZvaRN4Yi9SMA657aHFiHPEBJDY1FYcta63ITJKjanpAynVgnL/CzlRiy
-lHxLOxcm2sAhUmtlVBWxTUfz/9ReV0FsVgYGHOdtaY+uqkqhnobYzHO/8lhCB45T
-NrVEpLblbiAzqG67gBVvdIFd/eB8RnFpF7F8AKjW/ZKliANrEyayoa/netpNkjE3
-Im7hQBZ8r5hr2bXmjpzCU8lYF5BWrwdh9yH52d97Q0KUTo5g4ItoW3IjTsgmrrqv
-EDq0kOyD/8xbutTVbShuhrA9WDUB0lopu9Lcrqrgk9395LSn1O4haJi2a1dBKS47
-l4UTYuNAiKKEO1akgFd/BToZV5G9rQJVA3oC7fXC34b6fxn2BRsTr5rrE+KyX0Yn
-o5o6HG9vZtOQaB0uX3/b44ondedJG80ErQ+pDNQg1pBYfBPUEFhlVeVdS46mrGuv
-qw2XhY0C3CkxTqWNo7kTOchslk8CtbLwJjCFQPeh+mDNHHC1OnuHQ+PZ6hhvJmw8
-6UhiErNUmUXKiKAOjfISj7I6cHjXQ9U55yPA+ZVkHNbaXSl9BOfuriav9/jGe3uW
-SGp86gWyvFGG2eR417JKscblKpzNYWtJlb4Bpv7w2kx1aMIc2dAbt4VU9pDFFUZY
-IS8xWSjjSpX/8dnD3uFx
-=AMZQ
------END PGP SIGNATURE-----
-
---n/aVsWSeQ4JHkrmm--
