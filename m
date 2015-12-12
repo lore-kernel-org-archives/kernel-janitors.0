@@ -1,23 +1,47 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 11 Dec 2015 11:17:31 +0000
-Subject: Re: mwifiex: remove an unneeded condition
-Message-Id: <20151211111731.906FF141A92@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 12 Dec 2015 12:38:15 +0000
+Subject: [patch] ASoC: Intel: Skylake: Fix a couple signedness bugs
+Message-Id: <20151212123815.GA21408@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20151204131715.GD12792@mwanda>
-References: <20151204131715.GD12792@mwanda>
-In-Reply-To: <20151204131715.GD12792@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Dharageswari R <dharageswari.r@intel.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
+These need to be unsigned because they hold negative error codes.
 
-> We already know that "wep_key->key_length" is set so there is no need to
-> check again.  Also the last curly brace was indented too far.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied to wireless-drivers-next.git.
+diff --git a/sound/soc/intel/skylake/skl-sst.c b/sound/soc/intel/skylake/skl-sst.c
+index 8cd5cdb..e26f474 100644
+--- a/sound/soc/intel/skylake/skl-sst.c
++++ b/sound/soc/intel/skylake/skl-sst.c
+@@ -208,7 +208,7 @@ static unsigned int skl_get_errorcode(struct sst_dsp *ctx)
+  * since get/set_module are called from DAPM context,
+  * we don't need lock for usage count
+  */
+-static unsigned int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
++static int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
+ {
+ 	struct skl_module_table *module;
+ 
+@@ -220,7 +220,7 @@ static unsigned int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
+ 	return -EINVAL;
+ }
+ 
+-static unsigned int skl_put_module(struct sst_dsp *ctx, u16 mod_id)
++static int skl_put_module(struct sst_dsp *ctx, u16 mod_id)
+ {
+ 	struct skl_module_table *module;
+ 
+@@ -340,7 +340,7 @@ static int skl_load_module(struct sst_dsp *ctx, u16 mod_id, char *guid)
+ 
+ static int skl_unload_module(struct sst_dsp *ctx, u16 mod_id)
+ {
+-	unsigned int usage_cnt;
++	int usage_cnt;
+ 	struct skl_sst *skl = ctx->thread_context;
+ 	int ret = 0;
+ 
 
-Kalle Valo
