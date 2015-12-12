@@ -1,58 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 18:51:21 +0000
-Subject: [PATCH 6/6] InfiniBand-ocrdma: Delete an unnecessary variable in ocrdma_dealloc_pd()
-Message-Id: <567EE1A9.9000101@users.sourceforge.net>
+Date: Sat, 12 Dec 2015 14:40:28 +0000
+Subject: [PATCH 3/7] iscsi-target: Delete an unnecessary variable initialisation in iscsi_create_default_para
+Message-Id: <566C31DC.4090000@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <567EDED5.4040201@users.sourceforge.net>
-In-Reply-To: <567EDED5.4040201@users.sourceforge.net>
+ <566C2F7B.6030704@users.sourceforge.net>
+In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 19:09:23 +0100
+Date: Sat, 12 Dec 2015 13:20:08 +0100
 
-1. Return zero in one case directly.
-
-2. Return the value from a call of the _ocrdma_dealloc_pd() function
-   without using an extra assignment for the local variable.
-
-3. Remove the variable "status" in this function then.
+The variable "param" will eventually be set to an appropriate pointer
+from a call of the iscsi_set_default_param() function.
+Thus let us omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index 7bedf44..0f79a01 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -750,7 +750,6 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
- 	struct ocrdma_pd *pd = get_ocrdma_pd(ibpd);
- 	struct ocrdma_dev *dev = get_ocrdma_dev(ibpd->device);
- 	struct ocrdma_ucontext *uctx = NULL;
--	int status = 0;
- 	u64 usr_db;
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index 15b2618..e0b173d 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -199,7 +199,7 @@ free_param:
+ /* #warning Add extension keys */
+ int iscsi_create_default_params(struct iscsi_param_list **param_list_ptr)
+ {
+-	struct iscsi_param *param = NULL;
++	struct iscsi_param *param;
+ 	struct iscsi_param_list *pl;
  
- 	uctx = pd->uctx;
-@@ -764,11 +763,10 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
- 
- 		if (is_ucontext_pd(uctx, pd)) {
- 			ocrdma_release_ucontext_pd(uctx);
--			return status;
-+			return 0;
- 		}
- 	}
--	status = _ocrdma_dealloc_pd(dev, pd);
--	return status;
-+	return _ocrdma_dealloc_pd(dev, pd);
- }
- 
- static int ocrdma_alloc_lkey(struct ocrdma_dev *dev, struct ocrdma_mr *mr,
+ 	pl = kzalloc(sizeof(struct iscsi_param_list), GFP_KERNEL);
 -- 
 2.6.3
 
