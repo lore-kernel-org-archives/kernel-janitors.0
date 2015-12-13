@@ -1,59 +1,67 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Tue, 01 Dec 2015 01:56:15 +0000
-Subject: Re: [PATCH 1/4 v2] mtd: brcmnand: improve memory management
-Message-Id: <20151201015615.GV64635@google.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 13 Dec 2015 13:55:46 +0000
+Subject: [PATCH 3/7] staging: lustre: Rename a jump label for a kfree(key) call
+Message-Id: <566D78E2.9060209@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447884254-26336-2-git-send-email-Julia.Lawall@lip6.fr>
- <20151118224440.GC64635@google.com>
- <alpine.DEB.2.02.1511190713140.2008@localhost6.localdomain6>
- <20151119192632.GH64635@google.com>
- <alpine.DEB.2.02.1511192231330.2106@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1511192231330.2106@localhost6.localdomain6>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+In-Reply-To: <566D7733.1030102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>, Kamal Dasu <kdasu.kdev@gmail.com>
+To: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Nov 19, 2015 at 10:32:15PM +0100, Julia Lawall wrote:
-> This patch addresses two related memory management issues in the probe
-> function:
-> 
-> 1. for_each_available_child_of_node performs an of_node_get on each
-> iteration, so a break out of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_available_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> 2. The devm_kzalloc'd data is not used if brcmnand_init_cs fails.  Free it
-> immediately, using devm_kfree in this case, instead of waiting for the
-> remove function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> 
-> v2: Drop of_node_get addition, as another patch will get rid of the need
-> for it completely.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 13 Dec 2015 10:56:35 +0100
 
-Pushed to l2-mtd.git
+This issue was detected by using the Coccinelle software.
+
+Choose a jump label according to the current Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/lustre/lustre/mdc/mdc_request.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_request.c b/drivers/staging/lustre/lustre/mdc/mdc_request.c
+index 2a76685..2085ba6 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_request.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_request.c
+@@ -1125,7 +1125,7 @@ static int mdc_ioc_fid2path(struct obd_export *exp, struct getinfo_fid2path *gf)
+ 
+ 	if (!fid_is_sane(&gf->gf_fid)) {
+ 		rc = -EINVAL;
+-		goto out;
++		goto free_key;
+ 	}
+ 
+ 	/* Val is struct getinfo_fid2path result plus path */
+@@ -1133,20 +1133,19 @@ static int mdc_ioc_fid2path(struct obd_export *exp, struct getinfo_fid2path *gf)
+ 
+ 	rc = obd_get_info(NULL, exp, keylen, key, &vallen, gf, NULL);
+ 	if (rc != 0 && rc != -EREMOTE)
+-		goto out;
++		goto free_key;
+ 
+ 	if (vallen <= sizeof(*gf)) {
+ 		rc = -EPROTO;
+-		goto out;
++		goto free_key;
+ 	} else if (vallen > sizeof(*gf) + gf->gf_pathlen) {
+ 		rc = -EOVERFLOW;
+-		goto out;
++		goto free_key;
+ 	}
+ 
+ 	CDEBUG(D_IOCTL, "path get "DFID" from %llu #%d\n%s\n",
+ 	       PFID(&gf->gf_fid), gf->gf_recno, gf->gf_linkno, gf->gf_path);
+-
+-out:
++free_key:
+ 	kfree(key);
+ 	return rc;
+ }
+-- 
+2.6.3
+
