@@ -1,51 +1,33 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 14 Dec 2015 11:38:28 +0000
-Subject: Re: [PATCH 1/7] iscsi-target: Use a variable initialisation in iscsi_set_default_param() directly
-Message-Id: <566EAA34.5000301@users.sourceforge.net>
+Date: Mon, 14 Dec 2015 12:45:11 +0000
+Subject: Re: staging: lustre: Less checks in mgc_process_recover_log() after error detection
+Message-Id: <566EB9D7.9090904@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <566C2F7B.6030704@users.sourceforge.net>
- <566C308A.6000109@users.sourceforge.net> <20151212194939.GQ5284@mwanda>
- <20151214084114.GB31151@c203.arch.suse.de>
-In-Reply-To: <20151214084114.GB31151@c203.arch.suse.de>
+ <566D7733.1030102@users.sourceforge.net>
+ <566D7952.7090401@users.sourceforge.net> <20151214110003.GV5284@mwanda>
+ <566EB03E.2000007@users.sourceforge.net> <20151214123840.GX5284@mwanda>
+In-Reply-To: <20151214123840.GX5284@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, lustre-devel@lists.lustre.org
 
-> @@ -127,9 +127,8 @@ static struct iscsi_param *iscsi_set_default_param(struct iscsi_param_list *para
->  		char *name, char *value, u8 phase, u8 scope, u8 sender,
->  		u16 type_range, u8 use)
->  {
-> -	struct iscsi_param *param = NULL;
-> +	struct iscsi_param *param;
->  
-> 	param = kzalloc(sizeof(struct iscsi_param), GFP_KERNEL);
->  	if (!param) {
->  		pr_err("Unable to allocate memory for parameter.\n");
+>> Can you accept the proposed changes around the affected memory allocations?
 > 
+> Just leave it as-is if there is no reason.
+
+I suggest to make the implementation of the function "mgc_process_recover_log"
+a bit more efficient.
+
+
+>> Do you prefer to stash any changes together for a bigger update step?
 > 
-> This way it would be _far_ more readable.
+> Yes.  Patches 5 and 6 would be easier to review if they were folded into
+> one patch.
 
-I guess that there are some opinions available for this implementation detail.
-
-
-> IMHO one should have a 1 action per line of code style
-
-How often do you care for such style issues?
-
-
-> and only assign values in at declaration time if really necessary.
-
-Which is or might become the official Linux coding style recommendation
-for this aspect?
-
-
-> But what is the benefit from this? Is it fixing a (hypothetical) bug?
-
-I find the shown null pointer initialisation just needless.
+I do not like patch squashing for my update suggestions here.
 
 Regards,
 Markus
-
