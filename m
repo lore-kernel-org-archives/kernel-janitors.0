@@ -1,57 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 31 Dec 2015 20:25:57 +0000
-Subject: [PATCH 1/3] mtd-rfd_ftl: Replace a variable initialisation by assignments in move_block_contents()
-Message-Id: <56858F55.7040604@users.sourceforge.net>
+Date: Mon, 14 Dec 2015 10:03:23 +0000
+Subject: Re: staging: lustre: Rename a jump label for ptlrpc_req_finished() calls
+Message-Id: <566E93EB.3000309@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <56858E3A.7000706@users.sourceforge.net>
-In-Reply-To: <56858E3A.7000706@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <566D7884.5050407@users.sourceforge.net> <20151214065325.GS5284@mwanda>
+ <566E86F3.9010209@users.sourceforge.net> <20151214093121.GU5284@mwanda>
+In-Reply-To: <20151214093121.GU5284@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, lustre-devel@lists.lustre.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 31 Dec 2015 20:34:51 +0100
+>>> Markus, please stop sending these things to rename out labels unless
+>>> there is a bug.  CodingStyle allows out labels.
+>>
+>> How does this feedback fit to information like the following?
+>>
+>> "…
+>> Chapter 7: …
+>> …
+>> Choose label names which say what the goto does or why the goto exists.
+> 
+> A lot of people think "out" says what the goto does and why it exists.
 
-Replace an explicit initialisation for the variable "rc" at the beginning
-by assignments that will only be performed if a memory allocation failed.
+I have got the impression that this short identifier is only partly appropriate.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/mtd/rfd_ftl.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/rfd_ftl.c b/drivers/mtd/rfd_ftl.c
-index d1cbf26..2927e1b 100644
---- a/drivers/mtd/rfd_ftl.c
-+++ b/drivers/mtd/rfd_ftl.c
-@@ -359,17 +359,21 @@ static int move_block_contents(struct partition *part, int block_no, u_long *old
- 	void *sector_data;
- 	u16 *map;
- 	size_t retlen;
--	int i, rc = -ENOMEM;
-+	int i, rc;
- 
- 	part->is_reclaiming = 1;
- 
- 	sector_data = kmalloc(SECTOR_SIZE, GFP_KERNEL);
--	if (!sector_data)
-+	if (!sector_data) {
-+		rc = -ENOMEM;
- 		goto err3;
-+	}
- 
- 	map = kmalloc(part->header_size, GFP_KERNEL);
--	if (!map)
-+	if (!map) {
-+		rc = -ENOMEM;
- 		goto err2;
-+	}
- 
- 	rc = mtd_read(part->mbd.mtd, part->blocks[block_no].offset,
- 		      part->header_size, &retlen, (u_char *)map);
--- 
-2.6.3
+> I personally don't agree with them
 
+I guess that my opinion goes into a similar direction here.
+
+
+> but if you look at when I complain about it, it's almost always
+> when it causes a bug.
+
+I agree that the combination with bug fixing is more appealing
+than an attempt to improve coding style applications.
+
+
+>> … Avoid using GW-BASIC names …
+> 
+> Those when people just use numbers for their label names instead of
+> words like out1, out2, out4, out5.  It's a different thing.
+
+The difference is not so clear for me as it appears to you.
+How many software developers can still remember habits around
+the selection of such identifiers from GW-BASIC times?
+
+Regards,
+Markus
