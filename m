@@ -1,26 +1,66 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Date: Mon, 21 Dec 2015 08:59:12 +0000
-Subject: Re: [PATCH] regulator: wm8*: constify regulator_ops structures
-Message-Id: <20151221085912.GW6058@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 14 Dec 2015 22:10:17 +0000
+Subject: [POWERPC] bootwrapper: One check less in fsl_get_immr() after error detection
+Message-Id: <566F3E49.2010506@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450539084-13982-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450539084-13982-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, Dec 19, 2015 at 04:31:24PM +0100, Julia Lawall wrote:
-> The regulator_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 14 Dec 2015 23:01:32 +0100
 
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+A status check was performed by the fsl_get_immr() function even if it
+was known already that a system setting did not fit to the expectations.
 
-Thanks,
-Charles
+This implementation detail could be improved by an adjustment for
+a jump label according to the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/boot/fsl-soc.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/powerpc/boot/fsl-soc.c b/arch/powerpc/boot/fsl-soc.c
+index b835ed6..ff1dae3 100644
+--- a/arch/powerpc/boot/fsl-soc.c
++++ b/arch/powerpc/boot/fsl-soc.c
+@@ -34,24 +34,24 @@ u32 *fsl_get_immr(void)
+ 			naddr = 2;
+ 
+ 		if (naddr != 1 && naddr != 2)
+-			goto err;
++			goto report_failure;
+ 
+ 		size = getprop(soc, "ranges", prop_buf, MAX_PROP_LEN);
+ 
+ 		if (size < 12)
+-			goto err;
++			goto report_failure;
+ 		if (prop_buf[0] != 0)
+-			goto err;
++			goto report_failure;
+ 		if (naddr = 2 && prop_buf[1] != 0)
+-			goto err;
++			goto report_failure;
+ 
+ 		if (!dt_xlate_addr(soc, prop_buf + naddr, 8, &ret))
+ 			ret = 0;
+ 	}
+ 
+-err:
+-	if (!ret)
++	if (!ret) {
++report_failure:
+ 		printf("fsl_get_immr: Failed to find immr base\r\n");
+-
++	}
+ 	return (u32 *)ret;
+ }
+-- 
+2.6.3
+
