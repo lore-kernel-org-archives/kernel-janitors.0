@@ -1,35 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 15:02:16 +0000
-Subject: Re: [PATCH 4/7] iscsi-target: Make a variable initialisation a bit more obvious in iscsi_create_defa
-Message-Id: <566C36F8.7040704@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Dec 2015 09:20:14 +0000
+Subject: [patch v2] ASoC: Intel: Skylake: Fix a couple signedness bugs
+Message-Id: <20151215092014.GG5177@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566C2F7B.6030704@users.sourceforge.net>
- <566C3225.4070100@users.sourceforge.net>
- <alpine.DEB.2.10.1512121545230.2512@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1512121545230.2512@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Dharageswari R <dharageswari.r@intel.com>
+Cc: alsa-devel@alsa-project.org, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
 
->> @@ -200,9 +200,8 @@ free_param:
->>  int iscsi_create_default_params(struct iscsi_param_list **param_list_ptr)
->>  {
->>  	struct iscsi_param *param;
->> -	struct iscsi_param_list *pl;
->> +	struct iscsi_param_list *pl = kzalloc(sizeof(*pl), GFP_KERNEL);
->>
->> -	pl = kzalloc(sizeof(struct iscsi_param_list), GFP_KERNEL);
-> 
-> I don't see the benefit of this change, and the pattern assignment ->
-> failure test becomes more obscure.
+These need to be signed because they hold negative error codes.
 
-Are there any more software developers who prefer to specify
-such a variable initialisation on a single line?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Fix a typo in the change log.  s/unsigned/signed/
 
-Does the proposed small source code reduction matter for you?
-
-Regards,
-Markus
+diff --git a/sound/soc/intel/skylake/skl-sst.c b/sound/soc/intel/skylake/skl-sst.c
+index 8cd5cdb..e26f474 100644
+--- a/sound/soc/intel/skylake/skl-sst.c
++++ b/sound/soc/intel/skylake/skl-sst.c
+@@ -208,7 +208,7 @@ static unsigned int skl_get_errorcode(struct sst_dsp *ctx)
+  * since get/set_module are called from DAPM context,
+  * we don't need lock for usage count
+  */
+-static unsigned int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
++static int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
+ {
+ 	struct skl_module_table *module;
+ 
+@@ -220,7 +220,7 @@ static unsigned int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
+ 	return -EINVAL;
+ }
+ 
+-static unsigned int skl_put_module(struct sst_dsp *ctx, u16 mod_id)
++static int skl_put_module(struct sst_dsp *ctx, u16 mod_id)
+ {
+ 	struct skl_module_table *module;
+ 
+@@ -340,7 +340,7 @@ static int skl_load_module(struct sst_dsp *ctx, u16 mod_id, char *guid)
+ 
+ static int skl_unload_module(struct sst_dsp *ctx, u16 mod_id)
+ {
+-	unsigned int usage_cnt;
++	int usage_cnt;
+ 	struct skl_sst *skl = ctx->thread_context;
+ 	int ret = 0;
+ 
