@@ -1,43 +1,44 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Tue, 01 Dec 2015 01:56:37 +0000
-Subject: Re: [PATCH 2/4] mtd: nand: sunxi: add missing of_node_put
-Message-Id: <20151201015637.GW64635@google.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 15 Dec 2015 18:02:44 +0000
+Subject: Re: staging: lustre: Delete unnecessary goto statements in six functions
+Message-Id: <567055C4.8000806@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447884254-26336-1-git-send-email-Julia.Lawall@lip6.fr>
- <1447884254-26336-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447884254-26336-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <566D7830.9060000@users.sourceforge.net>
+ <1450189676.3551.1.camel@perches.com> <20151215144133.GC5284@mwanda>
+ <1450191751.3551.14.camel@perches.com>
+In-Reply-To: <1450191751.3551.14.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Joe Perches <joe@perches.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Nov 18, 2015 at 11:04:12PM +0100, Julia Lawall wrote:
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> a break out of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+> This is the original code:
+Really =85?
+> 	result =3D baz();
+> 	if (result)
+> 		goto label;
+>
+> label:
+> 	go on...
 
-Pushed to l2-mtd.git
+I do not see such a source code structure
+at the six places I propose to clean-up.
+
+
+> I don't find the test->goto label; label: use offensive,
+> but if he does, I think keeping a blank line in place of
+> the test->goto might be better.
+
+I find this an interesting view on source code layout.
+Are there any more opinions around such implementation details?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
