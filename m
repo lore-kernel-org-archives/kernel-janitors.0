@@ -1,23 +1,40 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 11 Dec 2015 11:15:31 +0000
-Subject: Re: cw1200: remove some dead code
-Message-Id: <20151211111531.630D3141A67@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Dec 2015 10:12:29 +0000
+Subject: [patch -mainline] amd-xgbe: fix a couple timeout loops
+Message-Id: <20151215101229.GF20848@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20151204131523.GB12792@mwanda>
-References: <20151204131523.GB12792@mwanda>
-In-Reply-To: <20151204131523.GB12792@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Solomon Peachy <pizza@shaftnet.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+At the end of the loop we test "if (!count)" but because "count--" is
+a post-op then the loop will end with count set to -1.  I have fixed
+this by changing it to --count.
 
-> If the mode is NL80211_IFTYPE_UNSPECIFIED then we return success at the
-> start of the function so this condition is never true.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: c5aa9e3b8156 ('amd-xgbe: Initial AMD 10GbE platform driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied to wireless-drivers-next.git.
-
-Kalle Valo
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+index 970781a..f6a7161 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+@@ -1849,7 +1849,7 @@ static int xgbe_exit(struct xgbe_prv_data *pdata)
+ 	usleep_range(10, 15);
+ 
+ 	/* Poll Until Poll Condition */
+-	while (count-- && XGMAC_IOREAD_BITS(pdata, DMA_MR, SWR))
++	while (--count && XGMAC_IOREAD_BITS(pdata, DMA_MR, SWR))
+ 		usleep_range(500, 600);
+ 
+ 	if (!count)
+@@ -1873,7 +1873,7 @@ static int xgbe_flush_tx_queues(struct xgbe_prv_data *pdata)
+ 	/* Poll Until Poll Condition */
+ 	for (i = 0; i < pdata->tx_q_count; i++) {
+ 		count = 2000;
+-		while (count-- && XGMAC_MTL_IOREAD_BITS(pdata, i,
++		while (--count && XGMAC_MTL_IOREAD_BITS(pdata, i,
+ 							MTL_Q_TQOMR, FTQ))
+ 			usleep_range(500, 600);
+ 
