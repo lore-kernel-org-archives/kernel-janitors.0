@@ -1,20 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Dec 2015 12:48:49 +0000
-Subject: Re: Source code review around jump label usage
-Message-Id: <20151211124849.GI5284@mwanda>
+Date: Tue, 15 Dec 2015 10:16:18 +0000
+Subject: [patch] qlcnic: fix a timeout loop
+Message-Id: <20151215101618.GG20848@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, "Derek M. Jones" <derek@knosof.co.uk>
+To: Dept-GELinuxNICDev@qlogic.com, Rajesh Borundia <rajesh.borundia@qlogic.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I hate out labels but a lot of people like them and they're not
-prohibited by kernel style. I only complain about them when they
-introduce bugs.
+The problem here is that at the end of the loop we test for if
+idc->vnic_wait_limit is zero, but since idc->vnic_wait_limit-- is a
+post-op, it actually ends up set to (u8)-1.  I have fixed this by
+changing it to a pre-op.  I had to change the starting value from
+"QLCNIC_DEV_NPAR_OPER_TIMEO" (30) to "QLCNIC_DEV_NPAR_OPER_TIMEO + 1" so
+that we still loop the same number of times as before.
 
-regards,
-dan carpenter
+Fixes: 486a5bc77a4a ('qlcnic: Add support for 83xx suspend and resume.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_vnic.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_vnic.c
+index be7d7a6..9919245 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_vnic.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_vnic.c
+@@ -234,7 +234,7 @@ int qlcnic_83xx_config_vnic_opmode(struct qlcnic_adapter *adapter)
+ 	}
+ 
+ 	ahw->idc.vnic_state = QLCNIC_DEV_NPAR_NON_OPER;
+-	ahw->idc.vnic_wait_limit = QLCNIC_DEV_NPAR_OPER_TIMEO;
++	ahw->idc.vnic_wait_limit = QLCNIC_DEV_NPAR_OPER_TIMEO + 1;
+ 
+ 	return 0;
+ }
+@@ -246,7 +246,7 @@ int qlcnic_83xx_check_vnic_state(struct qlcnic_adapter *adapter)
+ 	u32 state;
+ 
+ 	state = QLCRDX(ahw, QLC_83XX_VNIC_STATE);
+-	while (state != QLCNIC_DEV_NPAR_OPER && idc->vnic_wait_limit--) {
++	while (state != QLCNIC_DEV_NPAR_OPER && --idc->vnic_wait_limit) {
+ 		msleep(1000);
+ 		state = QLCRDX(ahw, QLC_83XX_VNIC_STATE);
+ 	}
