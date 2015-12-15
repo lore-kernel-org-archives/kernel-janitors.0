@@ -1,54 +1,60 @@
-From: Stefan Schmidt <stefan@osg.samsung.com>
-Date: Fri, 11 Dec 2015 13:21:04 +0000
-Subject: Re: ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
-Message-Id: <566ACDC0.30201@osg.samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Dec 2015 10:07:52 +0000
+Subject: [patch] mISDN: fix a loop count
+Message-Id: <20151215100752.GC20848@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <564B5327.4010307@osg.samsung.com>
- <564B5344.1090200@osg.samsung.com> <56695093.8080605@osg.samsung.com>
- <7DCE62A2-DEA0-4ABF-A0D6-4EE00BDFFE95@holtmann.org>
- <566ACA84.6080603@users.sourceforge.net>
-In-Reply-To: <566ACA84.6080603@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Marcel Holtmann <marcel@holtmann.org>
-Cc: Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello.
+There are two issue here.
+1)  cnt starts as maxloop + 1 so all these loops iterate one more time
+    than intended.
+2)  At the end of the loop we test for "if (maxloop && !cnt)" but for
+    the first two loops, we end with cnt equal to -1.  Changing this to
+    a pre-op means we end with cnt set to 0.
 
-On 11/12/15 14:07, SF Markus Elfring wrote:
->> this slipped through, but now it does no longer apply.
->>
->> Applying: ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
->> error: patch failed: drivers/net/ieee802154/atusb.c:310
->> error: drivers/net/ieee802154/atusb.c: patch does not apply
->> Patch failed at 0001 ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
-> How can this hiccup happen?
->
+Fixes: cae86d4a4e56 ('mISDN: Add driver for Infineon ISDN chipset family')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I might have been a problem when I was resending your patch the first 
-time as Marcel was not able to find the original one.
-
-I have send it a second time now and it worked fine. The patch is 
-already applied to the bluetooth-next tree and thus on its way. All good 
-now.
-
-https://git.kernel.org/cgit/linux/kernel/git/bluetooth/bluetooth-next.git/commit/?idA88146566a9f1d57dfce77fd9457f7304b69dfa
-
-regards
-Stefan Schmidt
+diff --git a/drivers/isdn/hardware/mISDN/mISDNipac.c b/drivers/isdn/hardware/mISDN/mISDNipac.c
+index a77eea5..cb428b9 100644
+--- a/drivers/isdn/hardware/mISDN/mISDNipac.c
++++ b/drivers/isdn/hardware/mISDN/mISDNipac.c
+@@ -1170,7 +1170,7 @@ mISDNipac_irq(struct ipac_hw *ipac, int maxloop)
+ 
+ 	if (ipac->type & IPAC_TYPE_IPACX) {
+ 		ista = ReadIPAC(ipac, ISACX_ISTA);
+-		while (ista && cnt--) {
++		while (ista && --cnt) {
+ 			pr_debug("%s: ISTA %02x\n", ipac->name, ista);
+ 			if (ista & IPACX__ICA)
+ 				ipac_irq(&ipac->hscx[0], ista);
+@@ -1182,7 +1182,7 @@ mISDNipac_irq(struct ipac_hw *ipac, int maxloop)
+ 		}
+ 	} else if (ipac->type & IPAC_TYPE_IPAC) {
+ 		ista = ReadIPAC(ipac, IPAC_ISTA);
+-		while (ista && cnt--) {
++		while (ista && --cnt) {
+ 			pr_debug("%s: ISTA %02x\n", ipac->name, ista);
+ 			if (ista & (IPAC__ICD | IPAC__EXD)) {
+ 				istad = ReadISAC(isac, ISAC_ISTA);
+@@ -1200,7 +1200,7 @@ mISDNipac_irq(struct ipac_hw *ipac, int maxloop)
+ 			ista = ReadIPAC(ipac, IPAC_ISTA);
+ 		}
+ 	} else if (ipac->type & IPAC_TYPE_HSCX) {
+-		while (cnt) {
++		while (--cnt) {
+ 			ista = ReadIPAC(ipac, IPAC_ISTAB + ipac->hscx[1].off);
+ 			pr_debug("%s: B2 ISTA %02x\n", ipac->name, ista);
+ 			if (ista)
+@@ -1211,7 +1211,6 @@ mISDNipac_irq(struct ipac_hw *ipac, int maxloop)
+ 				mISDNisac_irq(isac, istad);
+ 			if (0 = (ista | istad))
+ 				break;
+-			cnt--;
+ 		}
+ 	}
+ 	if (cnt > maxloop) /* only for ISAC/HSCX without PCI IRQ test */
