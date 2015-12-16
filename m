@@ -1,85 +1,71 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 26 Dec 2015 19:12:13 +0000
-Subject: [PATCH 6/7 v2] drivers: net: cpsw: fix error return code
-Message-Id: <alpine.DEB.2.02.1512262011220.2070@localhost6.localdomain6>
+From: James Smart <james.smart@avagotech.com>
+Date: Wed, 16 Dec 2015 23:17:23 +0000
+Subject: Re: [PATCH] SCSI-lpfc: Delete unnecessary checks before the function call "mempool_destroy"
+Message-Id: <5671F103.8070404@avagotech.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr> <1451143726-28195-7-git-send-email-Julia.Lawall@lip6.fr> <567ED019.3000407@cogentembedded.com> <alpine.DEB.2.02.1512261838330.2064@localhost6.localdomain6>
- <567ED36A.9000701@cogentembedded.com>
-In-Reply-To: <567ED36A.9000701@cogentembedded.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <564AE8EB.4050509@users.sourceforge.net>
+In-Reply-To: <564AE8EB.4050509@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Dick Kennedy <dick.kennedy@avagotech.com>, "James E. J. Bottomley" <JBottomley@odin.com>, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Propagate the return value of platform_get_irq on failure.
+fyi - this patch was just pushed in our 11.0.0.10 patch set - patch 15/17
 
-A simplified version of the semantic match that finds the two cases where
-no error code is returned at all is as follows:
-(http://coccinelle.lip6.fr/)
+-- james s
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On 11/17/2015 12:44 AM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 17 Nov 2015 09:34:27 +0100
+>
+> The mempool_destroy() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the calls is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   drivers/scsi/lpfc/lpfc_mem.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/scsi/lpfc/lpfc_mem.c b/drivers/scsi/lpfc/lpfc_mem.c
+> index 3fa6533..4fb3581 100644
+> --- a/drivers/scsi/lpfc/lpfc_mem.c
+> +++ b/drivers/scsi/lpfc/lpfc_mem.c
+> @@ -231,15 +231,13 @@ lpfc_mem_free(struct lpfc_hba *phba)
+>   	if (phba->lpfc_hbq_pool)
+>   		pci_pool_destroy(phba->lpfc_hbq_pool);
+>   	phba->lpfc_hbq_pool = NULL;
+> -
+> -	if (phba->rrq_pool)
+> -		mempool_destroy(phba->rrq_pool);
+> +	mempool_destroy(phba->rrq_pool);
+>   	phba->rrq_pool = NULL;
+>   
+>   	/* Free NLP memory pool */
+>   	mempool_destroy(phba->nlp_mem_pool);
+>   	phba->nlp_mem_pool = NULL;
+> -	if (phba->sli_rev = LPFC_SLI_REV4 && phba->active_rrq_pool) {
+> +	if (phba->sli_rev = LPFC_SLI_REV4) {
+>   		mempool_destroy(phba->active_rrq_pool);
+>   		phba->active_rrq_pool = NULL;
+>   	}
 
----
-v2: propagate platform_get_irq return value, at all calls
-
- drivers/net/ethernet/ti/cpsw.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 3409e80..34ce7dc 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -2427,7 +2427,7 @@ static int cpsw_probe(struct platform_device *pdev)
- 	ndev->irq = platform_get_irq(pdev, 1);
- 	if (ndev->irq < 0) {
- 		dev_err(priv->dev, "error getting irq resource\n");
--		ret = -ENOENT;
-+		ret = ndev->irq;
- 		goto clean_ale_ret;
- 	}
- 
-@@ -2448,8 +2448,10 @@ static int cpsw_probe(struct platform_device *pdev)
- 
- 	/* RX IRQ */
- 	irq = platform_get_irq(pdev, 1);
--	if (irq < 0)
-+	if (irq < 0) {
-+		ret = irq;
- 		goto clean_ale_ret;
-+	}
- 
- 	priv->irqs_table[0] = irq;
- 	ret = devm_request_irq(&pdev->dev, irq, cpsw_rx_interrupt,
-@@ -2461,8 +2463,10 @@ static int cpsw_probe(struct platform_device *pdev)
- 
- 	/* TX IRQ */
- 	irq = platform_get_irq(pdev, 2);
--	if (irq < 0)
-+	if (irq < 0) {
-+		ret = irq;
- 		goto clean_ale_ret;
-+	}
- 
- 	priv->irqs_table[1] = irq;
- 	ret = devm_request_irq(&pdev->dev, irq, cpsw_tx_interrupt,
