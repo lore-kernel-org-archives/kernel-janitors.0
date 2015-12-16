@@ -1,16 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Dec 2015 11:10:00 +0000
-Subject: [patch] wil6210: fix a warning message condition
-Message-Id: <20151216111000.GC21018@mwanda>
+From: "Haim, Maya" <merez@qti.qualcomm.com>
+Date: Wed, 16 Dec 2015 12:55:58 +0000
+Subject: RE: [patch] wil6210: fix a warning message condition
+Message-Id: <230d7346e47845fca26b7124ba898e20@euamsexm01a.eu.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20151216111000.GC21018@mwanda>
+In-Reply-To: <20151216111000.GC21018@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maya Erez <qca_merez@qca.qualcomm.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qca.qualcomm.com, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, qca_merez <qca_merez@qca.qualcomm.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, wil6210 <wil6210@qca.qualcomm.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-"iter" is -1 at the end of the loop and not zero.  It means we don't
-print a warning message.
+Acked-by: Maya Erez <qca_merez@qca.qualcomm.com>
+
+-----Original Message-----
+From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
+Sent: Wednesday, December 16, 2015 1:10 PM
+To: qca_merez
+Cc: Kalle Valo; linux-wireless@vger.kernel.org; wil6210; kernel-janitors@vger.kernel.org
+Subject: [patch] wil6210: fix a warning message condition
+
+"iter" is -1 at the end of the loop and not zero.  It means we don't print a warning message.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
