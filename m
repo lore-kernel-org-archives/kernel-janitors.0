@@ -1,57 +1,29 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 12 Dec 2015 17:17:46 +0000
-Subject: Re: [PATCH 7/7] iscsi-target: Make two variable initialisations a bit more obvious in iscsi_check_va
-Message-Id: <566C56BA.7010903@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Dec 2015 11:10:00 +0000
+Subject: [patch] wil6210: fix a warning message condition
+Message-Id: <20151216111000.GC21018@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <566C2F7B.6030704@users.sourceforge.net> <566C3304.1090802@users.sourceforge.net>
-In-Reply-To: <566C3304.1090802@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Maya Erez <qca_merez@qca.qualcomm.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, wil6210@qca.qualcomm.com, kernel-janitors@vger.kernel.org
 
+"iter" is -1 at the end of the loop and not zero.  It means we don't
+print a warning message.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am 12.12.2015 15:45, schrieb SF Markus Elfring:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 12 Dec 2015 15:04:57 +0100
-> 
-> The variable "acceptor_values" and "proposer_values" were initialized
-> by null pointers and immediately assigned values from input parameters
-> by separate statements.
-> Let us express the desired variable initialisations directly.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/target/iscsi/iscsi_target_parameters.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-> index 53e3345..fb6fd34 100644
-> --- a/drivers/target/iscsi/iscsi_target_parameters.c
-> +++ b/drivers/target/iscsi/iscsi_target_parameters.c
-> @@ -921,10 +921,7 @@ static char *iscsi_check_valuelist_for_support(
->  	char *value)
->  {
->  	char *tmp1, *tmp2;
-> -	char *acceptor_values = NULL, *proposer_values = NULL;
-> -
-> -	acceptor_values = param->value;
-> -	proposer_values = value;
-> +	char *acceptor_values = param->value, *proposer_values = value;
->  
-
-I do not thing that this is a good idea,
-i find the first version more readable
-but you are right the NULL can be removed.
-
-just my 2 cents,
-
-re,
- wh
-
-
-
->  	do {
->  		if (!proposer_values)
+diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless/ath/wil6210/main.c
+index 48687f1..4544e8c 100644
+--- a/drivers/net/wireless/ath/wil6210/main.c
++++ b/drivers/net/wireless/ath/wil6210/main.c
+@@ -985,7 +985,7 @@ int __wil_down(struct wil6210_priv *wil)
+ 	}
+ 	mutex_lock(&wil->mutex);
+ 
+-	if (!iter)
++	if (iter < 0)
+ 		wil_err(wil, "timeout waiting for idle FW/HW\n");
+ 
+ 	wil_reset(wil, false);
