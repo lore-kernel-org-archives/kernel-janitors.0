@@ -1,39 +1,36 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Sun, 27 Dec 2015 11:18:44 +0000
-Subject: Re: [PATCH v2] coccinelle: api: check for propagation of error from platform_get_irq
-Message-Id: <567FC914.4080705@cogentembedded.com>
+From: Yang Pingchao <pingchao.yang@intel.com>
+Date: Wed, 16 Dec 2015 02:39:40 +0000
+Subject: [PATCH] crypto: qat - fix CTX_ENABLES bits shift direction issue
+Message-Id: <1450233580-58266-1-git-send-email-pingchao.yang@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451157891-24881-1-git-send-email-Julia.Lawall@lip6.fr>
- <567EF188.7020203@cogentembedded.com>
- <alpine.DEB.2.02.1512262107340.2070@localhost6.localdomain6>
- <alpine.DEB.2.02.1512262123500.2070@localhost6.localdomain6>
- <567EF895.6080702@cogentembedded.com>
- <alpine.DEB.2.02.1512262156580.2070@localhost6.localdomain6>
- <567F141C.8010000@cogentembedded.com>
- <alpine.DEB.2.02.1512262330430.2070@localhost6.localdomain6>
- <567F166B.7030208@cogentembedded.com>
- <alpine.DEB.2.02.1512270709420.2038@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1512270709420.2038@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: herbert@gondor.apana.org.au
+Cc: dan.carpenter@oracle.com, tadeusz.struk@intel.com, linux-crypto@vger.kernel.org, qat-linux@intel.com, kernel-janitors@vger.kernel.org, Yang Pingchao <pingchao.yang@intel.com>
 
-On 12/27/2015 9:13 AM, Julia Lawall wrote:
+AE CTX bits should be 8-15 in CTX_ENABLES, so the mask
+value 0xff should be left shifted 0x8.
 
->>     Well, looking again, the patch should be good. I just thought its goal was
->> to fix the code as well...
->
-> I could do that for the irq < 0 case, but I think that in that case, kbuild
-> will only run the patch version, and the <= cases will not be reported on.
-> I don't have a general fix for the <= 0.  Is it even correct to have < in
-> some cases and <= in others?
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Yang Pingchao <pingchao.yang@intel.com>
+---
+ drivers/crypto/qat/qat_common/qat_hal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    That's a good question...
-    In my prior fixes of this case I preferred to consider IRQ0 valid and so 
-used 'irq < 0'. I myself don't share the "IRQ0 is invalid" sentiment...
-
-> julia
-
-MBR, Sergei
+diff --git a/drivers/crypto/qat/qat_common/qat_hal.c b/drivers/crypto/qat/qat_common/qat_hal.c
+index 45c1739..81bd1fe 100644
+--- a/drivers/crypto/qat/qat_common/qat_hal.c
++++ b/drivers/crypto/qat/qat_common/qat_hal.c
+@@ -418,7 +418,7 @@ int qat_hal_check_ae_active(struct icp_qat_fw_loader_handle *handle,
+ 
+ 	qat_hal_rd_ae_csr(handle, ae, CTX_ENABLES, &enable);
+ 	qat_hal_rd_ae_csr(handle, ae, ACTIVE_CTX_STATUS, &active);
+-	if ((enable & (0xff >> CE_ENABLE_BITPOS)) ||
++	if ((enable & (0xff << CE_ENABLE_BITPOS)) ||
+ 	    (active & (1 << ACS_ABO_BITPOS)))
+ 		return 1;
+ 	else
+-- 
+2.6.4
 
