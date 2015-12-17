@@ -1,23 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 28 Dec 2015 05:38:47 +0000
-Subject: Re: [PATCH] qlcnic: constify qlcnic_dcb_ops structures
-Message-Id: <20151228.003847.613118803384387386.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Dec 2015 12:40:20 +0000
+Subject: [patch 3/3 -next] drm/vc4: fix an error code
+Message-Id: <20151217124020.GC27382@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451250089-6989-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1451250089-6989-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: Dept-GELinuxNICDev@qlogic.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 27 Dec 2015 22:01:29 +0100
+"exec->exec_bo" is NULL at this point so this code returns success.  We
+want to return -ENOMEM.
 
-> The qlcnic_dcb_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: d5b1a78a772f ('drm/vc4: Add support for drawing 3D frames.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Julia.
+diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
+index 2a680d9..98a25b8 100644
+--- a/drivers/gpu/drm/vc4/vc4_gem.c
++++ b/drivers/gpu/drm/vc4/vc4_gem.c
+@@ -580,7 +580,7 @@ vc4_get_bcl(struct drm_device *dev, struct vc4_exec_info *exec)
+ 	bo = vc4_bo_create(dev, exec_size, true);
+ 	if (!bo) {
+ 		DRM_ERROR("Couldn't allocate BO for binning\n");
+-		ret = PTR_ERR(exec->exec_bo);
++		ret = -ENOMEM;
+ 		goto fail;
+ 	}
+ 	exec->exec_bo = &bo->base;
