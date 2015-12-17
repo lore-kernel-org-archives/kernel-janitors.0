@@ -1,163 +1,89 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 26 Dec 2015 15:28:43 +0000
-Subject: [PATCH 4/7] usb: gadget: legacy: fix error return code
-Message-Id: <1451143726-28195-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Dec 2015 12:36:28 +0000
+Subject: [patch 1/3 -next] drm/vc4: copy_to_user() returns the number of bytes remaining
+Message-Id: <20151217123628.GA27382@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>
+Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-Return a negative error code on failure.
+The copy_to/from_user() functions return the number of bytes remaining
+to be copied.  We want to return error codes here.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Also it's a bad idea to print an error message if a copy from user fails
+because users can use that to spam /var/log/messages which is annoying
+so I removed those.
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+Fixes: 214613656b51 ('drm/vc4: Add an interface for capturing the GPU state after a hang.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/usb/gadget/legacy/acm_ms.c       |    4 +++-
- drivers/usb/gadget/legacy/audio.c        |    4 +++-
- drivers/usb/gadget/legacy/cdc2.c         |    4 +++-
- drivers/usb/gadget/legacy/ether.c        |    4 +++-
- drivers/usb/gadget/legacy/hid.c          |    4 +++-
- drivers/usb/gadget/legacy/mass_storage.c |    4 +++-
- drivers/usb/gadget/legacy/ncm.c          |    4 +++-
- 7 files changed, 21 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/usb/gadget/legacy/acm_ms.c b/drivers/usb/gadget/legacy/acm_ms.c
-index c16089e..2679264 100644
---- a/drivers/usb/gadget/legacy/acm_ms.c
-+++ b/drivers/usb/gadget/legacy/acm_ms.c
-@@ -211,8 +211,10 @@ static int acm_ms_bind(struct usb_composite_dev *cdev)
- 		struct usb_descriptor_header *usb_desc;
+diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
+index 39f29e7..461a16c 100644
+--- a/drivers/gpu/drm/vc4/vc4_gem.c
++++ b/drivers/gpu/drm/vc4/vc4_gem.c
+@@ -71,7 +71,7 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, void *data,
+ 	struct vc4_dev *vc4 = to_vc4_dev(dev);
+ 	unsigned long irqflags;
+ 	u32 i;
+-	int ret;
++	int ret = 0;
  
- 		usb_desc = usb_otg_descriptor_alloc(gadget);
--		if (!usb_desc)
-+		if (!usb_desc) {
-+			status = -ENOMEM;
- 			goto fail_string_ids;
-+		}
- 		usb_otg_descriptor_init(gadget, usb_desc);
- 		otg_desc[0] = usb_desc;
- 		otg_desc[1] = NULL;
-diff --git a/drivers/usb/gadget/legacy/audio.c b/drivers/usb/gadget/legacy/audio.c
-index 5d7b3c6..f61936b 100644
---- a/drivers/usb/gadget/legacy/audio.c
-+++ b/drivers/usb/gadget/legacy/audio.c
-@@ -249,8 +249,10 @@ static int audio_bind(struct usb_composite_dev *cdev)
- 		struct usb_descriptor_header *usb_desc;
+ 	spin_lock_irqsave(&vc4->job_lock, irqflags);
+ 	kernel_state = vc4->hang_state;
+@@ -119,9 +119,11 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, void *data,
+ 		bo_state[i].size = vc4_bo->base.base.size;
+ 	}
  
- 		usb_desc = usb_otg_descriptor_alloc(cdev->gadget);
--		if (!usb_desc)
-+		if (!usb_desc) {
-+			status = -ENOMEM;
- 			goto fail;
-+		}
- 		usb_otg_descriptor_init(cdev->gadget, usb_desc);
- 		otg_desc[0] = usb_desc;
- 		otg_desc[1] = NULL;
-diff --git a/drivers/usb/gadget/legacy/cdc2.c b/drivers/usb/gadget/legacy/cdc2.c
-index 51c0868..94261a1 100644
---- a/drivers/usb/gadget/legacy/cdc2.c
-+++ b/drivers/usb/gadget/legacy/cdc2.c
-@@ -183,8 +183,10 @@ static int cdc_bind(struct usb_composite_dev *cdev)
- 		struct usb_descriptor_header *usb_desc;
+-	ret = copy_to_user((void __user *)(uintptr_t)get_state->bo,
+-			   bo_state,
+-			   state->bo_count * sizeof(*bo_state));
++	if (copy_to_user((void __user *)(uintptr_t)get_state->bo,
++			 bo_state,
++			 state->bo_count * sizeof(*bo_state)))
++		ret = -EFAULT;
++
+ 	kfree(bo_state);
  
- 		usb_desc = usb_otg_descriptor_alloc(gadget);
--		if (!usb_desc)
-+		if (!usb_desc) {
-+			status = -ENOMEM;
- 			goto fail1;
-+		}
- 		usb_otg_descriptor_init(gadget, usb_desc);
- 		otg_desc[0] = usb_desc;
- 		otg_desc[1] = NULL;
-diff --git a/drivers/usb/gadget/legacy/ether.c b/drivers/usb/gadget/legacy/ether.c
-index 25a2c2e..3396e71 100644
---- a/drivers/usb/gadget/legacy/ether.c
-+++ b/drivers/usb/gadget/legacy/ether.c
-@@ -407,8 +407,10 @@ static int eth_bind(struct usb_composite_dev *cdev)
- 		struct usb_descriptor_header *usb_desc;
+ err_free:
+@@ -554,27 +556,24 @@ vc4_get_bcl(struct drm_device *dev, struct vc4_exec_info *exec)
+ 	exec->shader_state = temp + exec_size;
+ 	exec->shader_state_size = args->shader_rec_count;
  
- 		usb_desc = usb_otg_descriptor_alloc(gadget);
--		if (!usb_desc)
-+		if (!usb_desc) {
-+			status = -ENOMEM;
- 			goto fail1;
-+		}
- 		usb_otg_descriptor_init(gadget, usb_desc);
- 		otg_desc[0] = usb_desc;
- 		otg_desc[1] = NULL;
-diff --git a/drivers/usb/gadget/legacy/hid.c b/drivers/usb/gadget/legacy/hid.c
-index a71a884..cccbb94 100644
---- a/drivers/usb/gadget/legacy/hid.c
-+++ b/drivers/usb/gadget/legacy/hid.c
-@@ -175,8 +175,10 @@ static int hid_bind(struct usb_composite_dev *cdev)
- 		struct usb_descriptor_header *usb_desc;
+-	ret = copy_from_user(bin,
+-			     (void __user *)(uintptr_t)args->bin_cl,
+-			     args->bin_cl_size);
+-	if (ret) {
+-		DRM_ERROR("Failed to copy in bin cl\n");
++	if (copy_from_user(bin,
++			   (void __user *)(uintptr_t)args->bin_cl,
++			   args->bin_cl_size)) {
++		ret = -EFAULT;
+ 		goto fail;
+ 	}
  
- 		usb_desc = usb_otg_descriptor_alloc(gadget);
--		if (!usb_desc)
-+		if (!usb_desc) {
-+			status = -ENOMEM;
- 			goto put;
-+		}
- 		usb_otg_descriptor_init(gadget, usb_desc);
- 		otg_desc[0] = usb_desc;
- 		otg_desc[1] = NULL;
-diff --git a/drivers/usb/gadget/legacy/mass_storage.c b/drivers/usb/gadget/legacy/mass_storage.c
-index e61af53..93f2b8f 100644
---- a/drivers/usb/gadget/legacy/mass_storage.c
-+++ b/drivers/usb/gadget/legacy/mass_storage.c
-@@ -200,8 +200,10 @@ static int msg_bind(struct usb_composite_dev *cdev)
- 		struct usb_descriptor_header *usb_desc;
+-	ret = copy_from_user(exec->shader_rec_u,
+-			     (void __user *)(uintptr_t)args->shader_rec,
+-			     args->shader_rec_size);
+-	if (ret) {
+-		DRM_ERROR("Failed to copy in shader recs\n");
++	if (copy_from_user(exec->shader_rec_u,
++			   (void __user *)(uintptr_t)args->shader_rec,
++			   args->shader_rec_size)) {
++		ret = -EFAULT;
+ 		goto fail;
+ 	}
  
- 		usb_desc = usb_otg_descriptor_alloc(cdev->gadget);
--		if (!usb_desc)
-+		if (!usb_desc) {
-+			status = -ENOMEM;
- 			goto fail_string_ids;
-+		}
- 		usb_otg_descriptor_init(cdev->gadget, usb_desc);
- 		otg_desc[0] = usb_desc;
- 		otg_desc[1] = NULL;
-diff --git a/drivers/usb/gadget/legacy/ncm.c b/drivers/usb/gadget/legacy/ncm.c
-index 0aba682..d71e368 100644
---- a/drivers/usb/gadget/legacy/ncm.c
-+++ b/drivers/usb/gadget/legacy/ncm.c
-@@ -162,8 +162,10 @@ static int gncm_bind(struct usb_composite_dev *cdev)
- 		struct usb_descriptor_header *usb_desc;
+-	ret = copy_from_user(exec->uniforms_u,
+-			     (void __user *)(uintptr_t)args->uniforms,
+-			     args->uniforms_size);
+-	if (ret) {
+-		DRM_ERROR("Failed to copy in uniforms cl\n");
++	if (copy_from_user(exec->uniforms_u,
++			   (void __user *)(uintptr_t)args->uniforms,
++			   args->uniforms_size)) {
++		ret = -EFAULT;
+ 		goto fail;
+ 	}
  
- 		usb_desc = usb_otg_descriptor_alloc(gadget);
--		if (!usb_desc)
-+		if (!usb_desc) {
-+			status = -ENOMEM;
- 			goto fail;
-+		}
- 		usb_otg_descriptor_init(gadget, usb_desc);
- 		otg_desc[0] = usb_desc;
- 		otg_desc[1] = NULL;
-
