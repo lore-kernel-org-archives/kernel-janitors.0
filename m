@@ -1,88 +1,31 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 30 Dec 2015 21:50:52 +0000
-Subject: Re: [PATCH] ALSA: atiixp: constify atiixp_dma_ops structures
-Message-Id: <s5ha8ortxkz.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Dec 2015 12:27:07 +0000
+Subject: [patch]  VFIO: platform: reset: fix a warning message condition
+Message-Id: <20151217122707.GA4267@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451470917-30436-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1451470917-30436-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>, Eric Auger <eric.auger@linaro.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>, Arnd Bergmann <arnd@arndb.de>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 30 Dec 2015 11:21:57 +0100,
-Julia Lawall wrote:
-> 
-> The atiixp_dma_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This loop ends with count set to -1 and not zero so the warning message
+isn't printed when it should be.  I've fixed this by change the postop
+to a preop.
 
-Applied, thanks.
+Fixes: 0990822c9866 ('VFIO: platform: reset: AMD xgbe reset module')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> ---
->  sound/pci/atiixp.c       |    6 +++---
->  sound/pci/atiixp_modem.c |    4 ++--
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/sound/pci/atiixp.c b/sound/pci/atiixp.c
-> index 1028fc8..2ce0022 100644
-> --- a/sound/pci/atiixp.c
-> +++ b/sound/pci/atiixp.c
-> @@ -1219,7 +1219,7 @@ static struct ac97_pcm atiixp_pcm_defs[] = {
->  	},
->  };
->  
-> -static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
-> +static const struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
->  	.type = ATI_DMA_PLAYBACK,
->  	.llp_offset = ATI_REG_OUT_DMA_LINKPTR,
->  	.dt_cur = ATI_REG_OUT_DMA_DT_CUR,
-> @@ -1228,7 +1228,7 @@ static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
->  	.flush_dma = atiixp_out_flush_dma,
->  };
->  	
-> -static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
-> +static const struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
->  	.type = ATI_DMA_CAPTURE,
->  	.llp_offset = ATI_REG_IN_DMA_LINKPTR,
->  	.dt_cur = ATI_REG_IN_DMA_DT_CUR,
-> @@ -1237,7 +1237,7 @@ static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
->  	.flush_dma = atiixp_in_flush_dma,
->  };
->  	
-> -static struct atiixp_dma_ops snd_atiixp_spdif_dma_ops = {
-> +static const struct atiixp_dma_ops snd_atiixp_spdif_dma_ops = {
->  	.type = ATI_DMA_SPDIF,
->  	.llp_offset = ATI_REG_SPDF_DMA_LINKPTR,
->  	.dt_cur = ATI_REG_SPDF_DMA_DT_CUR,
-> diff --git a/sound/pci/atiixp_modem.c b/sound/pci/atiixp_modem.c
-> index 27ed678..c534552 100644
-> --- a/sound/pci/atiixp_modem.c
-> +++ b/sound/pci/atiixp_modem.c
-> @@ -970,7 +970,7 @@ static struct snd_pcm_ops snd_atiixp_capture_ops = {
->  	.pointer =	snd_atiixp_pcm_pointer,
->  };
->  
-> -static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
-> +static const struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
->  	.type = ATI_DMA_PLAYBACK,
->  	.llp_offset = ATI_REG_MODEM_OUT_DMA1_LINKPTR,
->  	.dt_cur = ATI_REG_MODEM_OUT_DMA1_DT_CUR,
-> @@ -979,7 +979,7 @@ static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
->  	.flush_dma = atiixp_out_flush_dma,
->  };
->  	
-> -static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
-> +static const struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
->  	.type = ATI_DMA_CAPTURE,
->  	.llp_offset = ATI_REG_MODEM_IN_DMA_LINKPTR,
->  	.dt_cur = ATI_REG_MODEM_IN_DMA_DT_CUR,
-> 
-> 
+diff --git a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
+index da5356f..d4030d0 100644
+--- a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
++++ b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
+@@ -110,7 +110,7 @@ int vfio_platform_amdxgbe_reset(struct vfio_platform_device *vdev)
+ 	usleep_range(10, 15);
+ 
+ 	count = 2000;
+-	while (count-- && (ioread32(xgmac_regs->ioaddr + DMA_MR) & 1))
++	while (--count && (ioread32(xgmac_regs->ioaddr + DMA_MR) & 1))
+ 		usleep_range(500, 600);
+ 
+ 	if (!count)
