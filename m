@@ -1,42 +1,51 @@
-From: kbuild test robot <lkp@intel.com>
-Date: Sat, 26 Dec 2015 19:41:48 +0000
-Subject: Re: [PATCH 1/6] InfiniBand-ocrdma: One variable and jump label less in ocrdma_alloc_ucontext_pd()
-Message-Id: <201512270304.PMbiMdOa%fengguang.wu@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Dec 2015 18:44:06 +0000
+Subject: [PATCH] SCSI-lpfc: Use a signed return type for two functions
+Message-Id: <5675A576.8020008@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <567EDFDF.5000801@users.sourceforge.net>
-In-Reply-To: <567EDFDF.5000801@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, Dick Kennedy <dick.kennedy@avagotech.com>, "James E. J. Bottomley" <JBottomley@odin.com>, James Smart <james.smart@avagotech.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Dec 2015 19:32:27 +0100
 
-[auto build test WARNING on v4.4-rc6]
-[also build test WARNING on next-20151223]
+The return type "size_t" was used by the functions "lpfc_wwn_set"
+and "lpfc_oas_lun_state_set" despite of the aspect that they will
+eventually return a negative error code.
+Improve this implementation detail by using the type "ssize_t" instead.
 
-url:    https://github.com/0day-ci/linux/commits/SF-Markus-Elfring/InfiniBand-ocrdma-Fine-tuning-for-some-function-implementations/20151227-025304
+This issue was detected by using the Coccinelle software.
 
-
-coccinelle warnings: (new ones prefixed by >>)
-
->> drivers/infiniband/hw/ocrdma/ocrdma_verbs.c:489:9-16: ERROR: PTR_ERR applied after initialization to constant on line 488
-
-vim +489 drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-
-   482	static int ocrdma_alloc_ucontext_pd(struct ocrdma_dev *dev,
-   483					    struct ocrdma_ucontext *uctx,
-   484					    struct ib_udata *udata)
-   485	{
-   486		uctx->cntxt_pd = _ocrdma_alloc_pd(dev, uctx, udata);
-   487		if (IS_ERR(uctx->cntxt_pd)) {
- > 488			uctx->cntxt_pd = NULL;
- > 489			return PTR_ERR(uctx->cntxt_pd);
-   490		}
-   491	
-   492		uctx->cntxt_pd->uctx = uctx;
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/scsi/lpfc/lpfc_attr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+index f6446d7..777960e 100644
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -2089,7 +2089,7 @@ static char *lpfc_soft_wwn_key = "C99G71SL8032A";
+  * -EINVAL if the buffer does not contain a valid wwn
+  * 0 success
+  **/
+-static size_t
++static ssize_t
+ lpfc_wwn_set(const char *buf, size_t cnt, char wwn[])
+ {
+ 	unsigned int i, j;
+@@ -2570,7 +2570,7 @@ static DEVICE_ATTR(lpfc_xlane_lun_status, S_IRUGO,
+  * -EPERM OAS is not enabled or not supported by this port.
+  *
+  */
+-static size_t
++static ssize_t
+ lpfc_oas_lun_state_set(struct lpfc_hba *phba, uint8_t vpt_wwpn[],
+ 		       uint8_t tgt_wwpn[], uint64_t lun, uint32_t oas_state)
+ {
+-- 
+2.6.3
+
