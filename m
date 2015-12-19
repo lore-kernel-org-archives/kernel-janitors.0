@@ -1,42 +1,19 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Dec 2015 17:00:36 +0000
-Subject: [PATCH] pinctrl-adi2: Use a signed return type for adi_gpio_irq_startup()
-Message-Id: <56758D34.2070806@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 19 Dec 2015 20:12:13 +0000
+Subject: Re: [PATCH] pinctrl-adi2: Use a signed return type for adi_gpio_irq_startup()
+Message-Id: <20151219201213.GP5284@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <56758D34.2070806@users.sourceforge.net>
+In-Reply-To: <56758D34.2070806@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 19 Dec 2015 17:55:39 +0100
+This introduces a compile warning.  These functions are supposed to
+return 1 if there is an IRQ pending.  Change the -EINVAL to 0.
 
-The return type "unsigned int" was used by the adi_gpio_irq_startup()
-function despite of the aspect that it will eventually return a negative
-error code.
-Improve this implementation detail by deletion of the type modifier then.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-adi2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
-index fd342df..4032004 100644
---- a/drivers/pinctrl/pinctrl-adi2.c
-+++ b/drivers/pinctrl/pinctrl-adi2.c
-@@ -329,7 +329,7 @@ static void adi_gpio_unmask_irq(struct irq_data *d)
- 	spin_unlock_irqrestore(&port->lock, flags);
- }
- 
--static unsigned int adi_gpio_irq_startup(struct irq_data *d)
-+static int adi_gpio_irq_startup(struct irq_data *d)
- {
- 	unsigned long flags;
- 	struct gpio_port *port = irq_data_get_irq_chip_data(d);
--- 
-2.6.3
+regards,
+dan carpenter
 
