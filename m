@@ -1,67 +1,144 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 31 Dec 2015 21:47:31 +0000
-Subject: [PATCH] net-thunder: One check less in nicvf_register_interrupts() after error detection
-Message-Id: <5685A273.6070607@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 19 Dec 2015 14:58:00 +0000
+Subject: [PATCH] regulator: s2m,s5m: constify regulator_ops structures
+Message-Id: <1450537080-17387-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Sangbeom Kim <sbkim73@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 31 Dec 2015 22:40:39 +0100
+The regulator_ops structures are never modified, so declare them as const.
 
-Adjust a jump target to eliminate a check before error logging.
-Use the identifier "report_failure" instead of "err".
+Done with the help of Coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/net/ethernet/cavium/thunder/nicvf_main.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/regulator/s2mpa01.c |    4 ++--
+ drivers/regulator/s2mps11.c |   16 ++++++++--------
+ drivers/regulator/s5m8767.c |    4 ++--
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-index c24cb2a..21e1579 100644
---- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-+++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-@@ -922,7 +922,7 @@ static int nicvf_register_interrupts(struct nicvf *nic)
- 		ret = request_irq(vector, nicvf_intr_handler,
- 				  0, nic->irq_name[irq], nic->napi[irq]);
- 		if (ret)
--			goto err;
-+			goto report_failure;
- 		nic->irq_allocated[irq] = true;
- 	}
- 
-@@ -933,7 +933,7 @@ static int nicvf_register_interrupts(struct nicvf *nic)
- 		ret = request_irq(vector, nicvf_rbdr_intr_handler,
- 				  0, nic->irq_name[irq], nic);
- 		if (ret)
--			goto err;
-+			goto report_failure;
- 		nic->irq_allocated[irq] = true;
- 	}
- 
-@@ -944,13 +944,12 @@ static int nicvf_register_interrupts(struct nicvf *nic)
- 	ret = request_irq(nic->msix_entries[irq].vector,
- 			  nicvf_qs_err_intr_handler,
- 			  0, nic->irq_name[irq], nic);
--	if (!ret)
-+	if (!ret) {
- 		nic->irq_allocated[irq] = true;
--
--err:
--	if (ret)
--		netdev_err(nic->netdev, "request_irq failed, vector %d\n", irq);
--
-+		return 0;
-+	}
-+report_failure:
-+	netdev_err(nic->netdev, "request_irq failed, vector %d\n", irq);
- 	return ret;
+diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
+index 92f8875..dc2105c 100644
+--- a/drivers/regulator/s2mpa01.c
++++ b/drivers/regulator/s2mpa01.c
+@@ -212,7 +212,7 @@ ramp_disable:
+ 				  1 << enable_shift, 0);
  }
  
--- 
-2.6.3
+-static struct regulator_ops s2mpa01_ldo_ops = {
++static const struct regulator_ops s2mpa01_ldo_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+@@ -223,7 +223,7 @@ static struct regulator_ops s2mpa01_ldo_ops = {
+ 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+ };
+ 
+-static struct regulator_ops s2mpa01_buck_ops = {
++static const struct regulator_ops s2mpa01_buck_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 3242ffc..e5be2ad 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -236,7 +236,7 @@ ramp_disable:
+ 				  1 << enable_shift, 0);
+ }
+ 
+-static struct regulator_ops s2mps11_ldo_ops = {
++static const struct regulator_ops s2mps11_ldo_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+@@ -247,7 +247,7 @@ static struct regulator_ops s2mps11_ldo_ops = {
+ 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+ };
+ 
+-static struct regulator_ops s2mps11_buck_ops = {
++static const struct regulator_ops s2mps11_buck_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+@@ -373,7 +373,7 @@ static const struct regulator_desc s2mps11_regulators[] = {
+ 	regulator_desc_s2mps11_buck6_10(10, MIN_750_MV, STEP_12_5_MV),
+ };
+ 
+-static struct regulator_ops s2mps14_reg_ops;
++static const struct regulator_ops s2mps14_reg_ops;
+ 
+ #define regulator_desc_s2mps13_ldo(num, min, step, min_sel) {	\
+ 	.name		= "LDO"#num,				\
+@@ -580,7 +580,7 @@ static int s2mps14_regulator_set_suspend_disable(struct regulator_dev *rdev)
+ 			rdev->desc->enable_mask, state);
+ }
+ 
+-static struct regulator_ops s2mps14_reg_ops = {
++static const struct regulator_ops s2mps14_reg_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+@@ -662,7 +662,7 @@ static const struct regulator_desc s2mps14_regulators[] = {
+ 				    S2MPS14_BUCK1235_START_SEL),
+ };
+ 
+-static struct regulator_ops s2mps15_reg_ldo_ops = {
++static const struct regulator_ops s2mps15_reg_ldo_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear_range,
+ 	.map_voltage		= regulator_map_voltage_linear_range,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+@@ -672,7 +672,7 @@ static struct regulator_ops s2mps15_reg_ldo_ops = {
+ 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+ };
+ 
+-static struct regulator_ops s2mps15_reg_buck_ops = {
++static const struct regulator_ops s2mps15_reg_buck_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear_range,
+ 	.map_voltage		= regulator_map_voltage_linear_range,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+@@ -866,7 +866,7 @@ static int s2mpu02_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ 				  ramp_val << ramp_shift);
+ }
+ 
+-static struct regulator_ops s2mpu02_ldo_ops = {
++static const struct regulator_ops s2mpu02_ldo_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+@@ -878,7 +878,7 @@ static struct regulator_ops s2mpu02_ldo_ops = {
+ 	.set_suspend_disable	= s2mps14_regulator_set_suspend_disable,
+ };
+ 
+-static struct regulator_ops s2mpu02_buck_ops = {
++static const struct regulator_ops s2mpu02_buck_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 58f5d3b..34f63f1 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -356,7 +356,7 @@ static int s5m8767_set_voltage_time_sel(struct regulator_dev *rdev,
+ 	return 0;
+ }
+ 
+-static struct regulator_ops s5m8767_ops = {
++static const struct regulator_ops s5m8767_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+ 	.enable			= regulator_enable_regmap,
+@@ -366,7 +366,7 @@ static struct regulator_ops s5m8767_ops = {
+ 	.set_voltage_time_sel	= s5m8767_set_voltage_time_sel,
+ };
+ 
+-static struct regulator_ops s5m8767_buck78_ops = {
++static const struct regulator_ops s5m8767_buck78_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.is_enabled		= regulator_is_enabled_regmap,
+ 	.enable			= regulator_enable_regmap,
 
