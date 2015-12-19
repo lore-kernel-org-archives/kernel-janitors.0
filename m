@@ -1,48 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 22 Dec 2015 15:54:26 +0000
-Subject: [PATCH v2 2/2] USB-FHCI: Use a signed return type for endpoint_zero_init()
-Message-Id: <56797232.1020501@users.sourceforge.net>
+Date: Sat, 19 Dec 2015 11:56:54 +0000
+Subject: [PATCH] GPU-host1x: Use a signed return type for do_relocs()
+Message-Id: <56754606.6060201@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5675BAE0.2010304@users.sourceforge.net>
- <20151219202706.GT5284@mwanda> <567970D1.3030503@users.sourceforge.net>
-In-Reply-To: <567970D1.3030503@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 22 Dec 2015 16:24:46 +0100
+Date: Sat, 19 Dec 2015 12:48:31 +0100
 
-The return type "u32" was used by the endpoint_zero_init() function
-even though it can return a value which corresponds to a negative
-error code from a call of the fhci_create_ep() function.
-Improve this implementation detail by using the type "int" instead.
+The return type "unsigned int" was used by the do_relocs() function
+despite of the aspect that it will eventually return a negative error code.
+Improve this implementation detail by deletion of the type qualifier then.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/host/fhci-hcd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/host1x/job.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/fhci-hcd.c b/drivers/usb/host/fhci-hcd.c
-index c6cebb9..b2889f0 100644
---- a/drivers/usb/host/fhci-hcd.c
-+++ b/drivers/usb/host/fhci-hcd.c
-@@ -64,11 +64,11 @@ u16 fhci_get_sof_timer_count(struct fhci_usb *usb)
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 63bd63f..1919aab 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -225,7 +225,7 @@ unpin:
+ 	return 0;
  }
  
- /* initialize the endpoint zero */
--static u32 endpoint_zero_init(struct fhci_usb *usb,
-+static int endpoint_zero_init(struct fhci_usb *usb,
- 			      enum fhci_mem_alloc data_mem,
- 			      u32 ring_len)
+-static unsigned int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
++static int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
  {
--	u32 rc;
-+	int rc;
- 
- 	rc = fhci_create_ep(usb, data_mem, ring_len);
- 	if (rc)
+ 	int i = 0;
+ 	u32 last_page = ~0;
 -- 
 2.6.3
 
