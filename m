@@ -1,140 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 11 Dec 2015 15:18:43 +0000
-Subject: Re: [PATCH] ALSA: usb-audio: constify usb_protocol_ops structures
-Message-Id: <s5hlh91j9nw.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Dec 2015 15:23:11 +0000
+Subject: [PATCH] [media] gsc-m2m: Use an unsigned data type for a variable
+Message-Id: <5675765F.9020002@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1449845557-22444-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1449845557-22444-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Clemens Ladisch <clemens@ladisch.de>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 11 Dec 2015 15:52:37 +0100,
-Julia Lawall wrote:
-> 
-> The usb_protocol_ops structures are never modified, so declare them as
-> const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Dec 2015 15:28:37 +0100
 
-Applied with Clemens' ack.  Thanks.
+The data type "int" was used by the variable "ret" in the
+gsc_m2m_poll() function despite of the aspect that the type "unsigned int"
+will usually be needed for the return value from a call of the
+v4l2_m2m_poll() function.
+Improve this implementation detail by addition of the type modifier then.
 
+This issue was detected by using the Coccinelle software.
 
-Takashi
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/exynos-gsc/gsc-m2m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> ---
->  sound/usb/midi.c |   25 +++++++++++++------------
->  1 file changed, 13 insertions(+), 12 deletions(-)
-> 
-> diff --git a/sound/usb/midi.c b/sound/usb/midi.c
-> index ee212e7..cc39f63 100644
-> --- a/sound/usb/midi.c
-> +++ b/sound/usb/midi.c
-> @@ -112,7 +112,7 @@ struct snd_usb_midi {
->  	struct usb_interface *iface;
->  	const struct snd_usb_audio_quirk *quirk;
->  	struct snd_rawmidi *rmidi;
-> -	struct usb_protocol_ops *usb_protocol_ops;
-> +	const struct usb_protocol_ops *usb_protocol_ops;
->  	struct list_head list;
->  	struct timer_list error_timer;
->  	spinlock_t disc_lock;
-> @@ -671,31 +671,32 @@ static void snd_usbmidi_standard_output(struct snd_usb_midi_out_endpoint *ep,
->  	}
->  }
->  
-> -static struct usb_protocol_ops snd_usbmidi_standard_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_standard_ops = {
->  	.input = snd_usbmidi_standard_input,
->  	.output = snd_usbmidi_standard_output,
->  	.output_packet = snd_usbmidi_output_standard_packet,
->  };
->  
-> -static struct usb_protocol_ops snd_usbmidi_midiman_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_midiman_ops = {
->  	.input = snd_usbmidi_midiman_input,
->  	.output = snd_usbmidi_standard_output,
->  	.output_packet = snd_usbmidi_output_midiman_packet,
->  };
->  
-> -static struct usb_protocol_ops snd_usbmidi_maudio_broken_running_status_ops = {
-> +static const
-> +struct usb_protocol_ops snd_usbmidi_maudio_broken_running_status_ops = {
->  	.input = snd_usbmidi_maudio_broken_running_status_input,
->  	.output = snd_usbmidi_standard_output,
->  	.output_packet = snd_usbmidi_output_standard_packet,
->  };
->  
-> -static struct usb_protocol_ops snd_usbmidi_cme_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_cme_ops = {
->  	.input = snd_usbmidi_cme_input,
->  	.output = snd_usbmidi_standard_output,
->  	.output_packet = snd_usbmidi_output_standard_packet,
->  };
->  
-> -static struct usb_protocol_ops snd_usbmidi_ch345_broken_sysex_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_ch345_broken_sysex_ops = {
->  	.input = ch345_broken_sysex_input,
->  	.output = snd_usbmidi_standard_output,
->  	.output_packet = snd_usbmidi_output_standard_packet,
-> @@ -795,7 +796,7 @@ static void snd_usbmidi_akai_output(struct snd_usb_midi_out_endpoint *ep,
->  	}
->  }
->  
-> -static struct usb_protocol_ops snd_usbmidi_akai_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_akai_ops = {
->  	.input = snd_usbmidi_akai_input,
->  	.output = snd_usbmidi_akai_output,
->  };
-> @@ -835,7 +836,7 @@ static void snd_usbmidi_novation_output(struct snd_usb_midi_out_endpoint *ep,
->  	urb->transfer_buffer_length = 2 + count;
->  }
->  
-> -static struct usb_protocol_ops snd_usbmidi_novation_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_novation_ops = {
->  	.input = snd_usbmidi_novation_input,
->  	.output = snd_usbmidi_novation_output,
->  };
-> @@ -867,7 +868,7 @@ static void snd_usbmidi_raw_output(struct snd_usb_midi_out_endpoint *ep,
->  	urb->transfer_buffer_length = count;
->  }
->  
-> -static struct usb_protocol_ops snd_usbmidi_raw_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_raw_ops = {
->  	.input = snd_usbmidi_raw_input,
->  	.output = snd_usbmidi_raw_output,
->  };
-> @@ -883,7 +884,7 @@ static void snd_usbmidi_ftdi_input(struct snd_usb_midi_in_endpoint *ep,
->  		snd_usbmidi_input_data(ep, 0, buffer + 2, buffer_length - 2);
->  }
->  
-> -static struct usb_protocol_ops snd_usbmidi_ftdi_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_ftdi_ops = {
->  	.input = snd_usbmidi_ftdi_input,
->  	.output = snd_usbmidi_raw_output,
->  };
-> @@ -927,7 +928,7 @@ static void snd_usbmidi_us122l_output(struct snd_usb_midi_out_endpoint *ep,
->  	urb->transfer_buffer_length = ep->max_transfer;
->  }
->  
-> -static struct usb_protocol_ops snd_usbmidi_122l_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_122l_ops = {
->  	.input = snd_usbmidi_us122l_input,
->  	.output = snd_usbmidi_us122l_output,
->  };
-> @@ -1060,7 +1061,7 @@ static void snd_usbmidi_emagic_output(struct snd_usb_midi_out_endpoint *ep,
->  	urb->transfer_buffer_length = ep->max_transfer - buf_free;
->  }
->  
-> -static struct usb_protocol_ops snd_usbmidi_emagic_ops = {
-> +static const struct usb_protocol_ops snd_usbmidi_emagic_ops = {
->  	.input = snd_usbmidi_emagic_input,
->  	.output = snd_usbmidi_emagic_output,
->  	.init_out_endpoint = snd_usbmidi_emagic_init_out,
-> 
-> 
+diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+index d82e717..f2c091c 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
++++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+@@ -701,7 +701,7 @@ static unsigned int gsc_m2m_poll(struct file *file,
+ {
+ 	struct gsc_ctx *ctx = fh_to_ctx(file->private_data);
+ 	struct gsc_dev *gsc = ctx->gsc_dev;
+-	int ret;
++	unsigned int ret;
+ 
+ 	if (mutex_lock_interruptible(&gsc->lock))
+ 		return -ERESTARTSYS;
+-- 
+2.6.3
+
