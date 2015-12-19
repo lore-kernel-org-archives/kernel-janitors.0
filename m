@@ -1,32 +1,47 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 22 Dec 2015 05:47:43 +0000
-Subject: Re: [PATCH 2/2] blackfin-cpufreq: Mark cpu_set_cclk() as static
-Message-Id: <20151222053543.GB12364@ubuntu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 19 Dec 2015 10:58:24 +0000
+Subject: [patch] Input: egalax: potential NULL dereference on error
+Message-Id: <20151219105824.GA3749@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5674598B.6020000@users.sourceforge.net>
- <56786EF3.3070203@users.sourceforge.net>
- <56786FF6.4060900@users.sourceforge.net>
-In-Reply-To: <56786FF6.4060900@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?iso-8859-1?B?QvZzevZybelueWkgWm9sdOFu?= <zboszormenyi@sicom.com>
+Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 21-12-15, 22:32, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 21 Dec 2015 22:12:26 +0100
-> 
-> The cpu_set_cclk() function was only used in a single source file so far.
-> Indicate this setting also by the corresponding linkage specifier.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+We didn't check input_allocate_device() for failures so it could lead to
+a NULL deref.
 
-Well, I never Acked this patch as such and you shouldn't have
-mentioned it by yourself. But it looks fine otherwise and so
+Fixes: 6b0f8f9c52ef ('Input: add eGalaxTouch serial touchscreen driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+diff --git a/drivers/input/touchscreen/egalax_ts_serial.c b/drivers/input/touchscreen/egalax_ts_serial.c
+index a078c1c..8becd26 100644
+--- a/drivers/input/touchscreen/egalax_ts_serial.c
++++ b/drivers/input/touchscreen/egalax_ts_serial.c
+@@ -104,10 +104,13 @@ static int egalax_connect(struct serio *serio, struct serio_driver *drv)
+ 	int error;
+ 
+ 	egalax = kzalloc(sizeof(struct egalax), GFP_KERNEL);
++	if (!egalax)
++		return -ENOMEM;
++
+ 	input_dev = input_allocate_device();
+-	if (!egalax) {
++	if (!input_dev) {
+ 		error = -ENOMEM;
+-		goto err_free_mem;
++		goto err_free_egalax;
+ 	}
+ 
+ 	egalax->serio = serio;
+@@ -145,8 +148,8 @@ err_close_serio:
+ 	serio_close(serio);
+ err_reset_drvdata:
+ 	serio_set_drvdata(serio, NULL);
+-err_free_mem:
+ 	input_free_device(input_dev);
++err_free_egalax:
+ 	kfree(egalax);
+ 	return error;
+ }
