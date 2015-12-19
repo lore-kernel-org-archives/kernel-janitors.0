@@ -1,79 +1,47 @@
-From: Stefan Schmidt <stefan@osg.samsung.com>
-Date: Thu, 10 Dec 2015 22:45:57 +0000
-Subject: Re: [PATCH] ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
-Message-Id: <566A00A5.8030806@osg.samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 19 Dec 2015 21:19:33 +0000
+Subject: [PATCH] nvmem: delete unneeded IS_ERR test
+Message-Id: <1450559973-9067-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <564B5327.4010307@osg.samsung.com>
- <564B5344.1090200@osg.samsung.com> <56695093.8080605@osg.samsung.com>
- <7DCE62A2-DEA0-4ABF-A0D6-4EE00BDFFE95@holtmann.org>
-In-Reply-To: <7DCE62A2-DEA0-4ABF-A0D6-4EE00BDFFE95@holtmann.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Alexander Aring <alex.aring@gmail.com>, linux-wpan@vger.kernel.org, Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-Hello.
+devm_kzalloc returns NULL rather than an ERR_PTR value.
 
-On 10/12/15 19:16, Marcel Holtmann wrote:
-> Hi Stefan,
->
->>>> From: Markus Elfring <elfring@users.sourceforge.net>
->>>> Date: Mon, 16 Nov 2015 13:50:23 +0100
->>>>
->>>> The kfree_skb() function tests whether its argument is NULL and then
->>>> returns immediately. Thus the test around the call is not needed.
->>>>
->>>> This issue was detected by using the Coccinelle software.
->>>>
->>>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->>>> ---
->>>> drivers/net/ieee802154/atusb.c | 3 +--
->>>> 1 file changed, 1 insertion(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/net/ieee802154/atusb.c b/drivers/net/ieee802154/atusb.c
->>>> index 199a94a..b1cd865 100644
->>>> --- a/drivers/net/ieee802154/atusb.c
->>>> +++ b/drivers/net/ieee802154/atusb.c
->>>> @@ -310,8 +310,7 @@ static void atusb_free_urbs(struct atusb *atusb)
->>>>          urb = usb_get_from_anchor(&atusb->idle_urbs);
->>>>          if (!urb)
->>>>              break;
->>>> -        if (urb->context)
->>>> -            kfree_skb(urb->context);
->>>> +        kfree_skb(urb->context);
->>>>          usb_free_urb(urb);
->>>>      }
->>>> }
->>> Acked-by: Stefan Schmidt <stefan@osg.samsung.com>
->>
->> You got the original patch and my ACK on this one or would you prefer me to resend it again?
-> this slipped through, but now it does no longer apply.
->
-> Applying: ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
-> error: patch failed: drivers/net/ieee802154/atusb.c:310
-> error: drivers/net/ieee802154/atusb.c: patch does not apply
-> Patch failed at 0001 ieee802154-atusb: Delete an unnecessary check before the function call "kfree_skb"
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Not good. I did another resend, this one applied, compiled and worked 
-fine for me. You will be in the to line.
+// <smpl>
+@@
+expression x,e;
+@@
 
-regards
-Stefan Schmidt
+* x = devm_kzalloc(...)
+... when != x = e
+* IS_ERR(x)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/nvmem/rockchip-efuse.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
+index f552134..811c73c 100644
+--- a/drivers/nvmem/rockchip-efuse.c
++++ b/drivers/nvmem/rockchip-efuse.c
+@@ -136,8 +136,8 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
+ 
+ 	context = devm_kzalloc(dev, sizeof(struct rockchip_efuse_context),
+ 			       GFP_KERNEL);
+-	if (IS_ERR(context))
+-		return PTR_ERR(context);
++	if (!context)
++		return -ENOMEM;
+ 
+ 	clk = devm_clk_get(dev, "pclk_efuse");
+ 	if (IS_ERR(clk))
 
