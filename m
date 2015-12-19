@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 19 Dec 2015 11:04:56 +0000
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Sat, 19 Dec 2015 17:21:49 +0000
 Subject: Re: [patch] Input: egalax: potential NULL dereference on error
-Message-Id: <alpine.DEB.2.02.1512191204430.2055@localhost6.localdomain6>
+Message-Id: <20151219172149.GA27255@dtor-ws>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20151219105824.GA3749@mwanda>
 In-Reply-To: <20151219105824.GA3749@mwanda>
@@ -9,17 +9,13 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?ISO-8859-15?Q?B=F6sz=F6rm=E9nyi_Zolt=E1n?= <zboszormenyi@sicom.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: =?iso-8859-1?B?QvZzevZybelueWkgWm9sdOFu?= <zboszormenyi@sicom.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 19 Dec 2015, Dan Carpenter wrote:
+Hi Dan,
 
+On Sat, Dec 19, 2015 at 01:58:24PM +0300, Dan Carpenter wrote:
 > We didn't check input_allocate_device() for failures so it could lead to
 > a NULL deref.
-
-The patch does several other things...
-
-julia
-
 > 
 > Fixes: 6b0f8f9c52ef ('Input: add eGalaxTouch serial touchscreen driver')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
@@ -54,8 +50,12 @@ julia
 >  	kfree(egalax);
 >  	return error;
 >  }
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+This is my screwup. The original code had the "if (!egalax ||
+!input_dev)" check but I was considering using devm (but then decided
+against it) but forget to adjust the check back. I'll put it back in.
+
+Thank you for noticing!
+
+-- 
+Dmitry
