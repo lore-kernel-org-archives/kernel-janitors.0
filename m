@@ -1,37 +1,41 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 27 Dec 2015 06:08:44 +0000
-Subject: Re: [PATCH 0/3] IDE-ACPI: Fine-tuning for a function
-Message-Id: <alpine.DEB.2.02.1512270707320.2038@localhost6.localdomain6>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Dec 2015 20:15:28 +0000
+Subject: [PATCH] USB-FHCI: Use a signed return type for fhci_create_ep()
+Message-Id: <5675BAE0.2010304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>  <567E6799.5070802@users.sourceforge.net>  <20151226.131257.1589698540013987354.davem@davemloft.net> <1451173382.12498.10.camel@perches.com>
-In-Reply-To: <1451173382.12498.10.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: David Miller <davem@davemloft.net>, elfring@users.sourceforge.net, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 19 Dec 2015 21:10:20 +0100
 
+The return type "u32" was used by the fhci_create_ep() function even though
+it will eventually return a negative error code.
+Improve this implementation detail by using the type "s32" instead.
 
-On Sat, 26 Dec 2015, Joe Perches wrote:
+This issue was detected by using the Coccinelle software.
 
-> On Sat, 2015-12-26 at 13:12 -0500, David Miller wrote:
-> > IDE is in deep freeze maintainence mode.
-> > 
-> > Therefore patches that perform simplications and cleanups will
-> > not be accepted.
-> 
-> Maybe there should be something like a README
-> in drivers/ide that says that.
-> 
-> Maybe the MAINTAINERS entry for "IDE SUBSYSTEM"
-> should be something like:
-> 
-> S:	Frozen - critical fixes only
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/usb/host/fhci-tds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This could be a good idea.  Sometimes I hold off on sending patches for 
-things becuse I have the impression that the subsystem doesn't want minor 
-fixes, but I could be wrong, and if one could have a deterministic way to 
-know, it could be better for everyone.
+diff --git a/drivers/usb/host/fhci-tds.c b/drivers/usb/host/fhci-tds.c
+index f82ad5d..c1ae172 100644
+--- a/drivers/usb/host/fhci-tds.c
++++ b/drivers/usb/host/fhci-tds.c
+@@ -149,7 +149,7 @@ void fhci_ep0_free(struct fhci_usb *usb)
+  * data_mem	The data memory partition(BUS)
+  * ring_len	TD ring length
+  */
+-u32 fhci_create_ep(struct fhci_usb *usb, enum fhci_mem_alloc data_mem,
++s32 fhci_create_ep(struct fhci_usb *usb, enum fhci_mem_alloc data_mem,
+ 			   u32 ring_len)
+ {
+ 	struct endpoint *ep;
+-- 
+2.6.3
 
-julia
