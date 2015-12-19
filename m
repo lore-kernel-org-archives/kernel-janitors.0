@@ -1,24 +1,29 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 11 Dec 2015 11:22:32 +0000
-Subject: Re: hostap: fix an error code in prism2_config()
-Message-Id: <20151211112232.34708141AC6@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 19 Dec 2015 10:59:19 +0000
+Subject: [patch -next] ath9k: fix ath9k_hw_nvram_check_version()
+Message-Id: <20151219105919.GB3749@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20151204131746.GE12792@mwanda>
-References: <20151204131746.GE12792@mwanda>
-In-Reply-To: <20151204131746.GE12792@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jouni Malinen <j@w1.fi>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
+There is a type bug so it always returns success.
 
-> The current code returns success if prism2_init_local_data() fails, but
-> we want to return an error code.  Also we can remove the bogus
-> ret initializer because it is wrong and never used.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 6fa658fd5ab2 ('ath9k: Simplify and fix eeprom endianness swapping')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied to wireless-drivers-next.git.
-
-Kalle Valo
+diff --git a/drivers/net/wireless/ath/ath9k/eeprom.c b/drivers/net/wireless/ath/ath9k/eeprom.c
+index f8c5065..a7afdee 100644
+--- a/drivers/net/wireless/ath/ath9k/eeprom.c
++++ b/drivers/net/wireless/ath/ath9k/eeprom.c
+@@ -206,7 +206,7 @@ bool ath9k_hw_nvram_check_version(struct ath_hw *ah, int version, int minrev)
+ 		ath_err(common, "Bad EEPROM VER 0x%04x or REV 0x%04x\n",
+ 			ah->eep_ops->get_eeprom_ver(ah),
+ 			ah->eep_ops->get_eeprom_rev(ah));
+-		return -EINVAL;
++		return false;
+ 	}
+ 
+ 	return true;
