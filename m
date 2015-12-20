@@ -1,50 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 23 Dec 2015 11:37:55 +0000
-Subject: Re: [PATCH] regulator: s2m,s5m: constify regulator_ops structures
-Message-Id: <20151223113755.GP16023@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="tZCmRiovzb4sxAVa"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Dec 2015 08:19:20 +0000
+Subject: [PATCH] posix-clock: Use an unsigned data type for a variable
+Message-Id: <56766488.9050402@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450537080-17387-1-git-send-email-Julia.Lawall@lip6.fr>
- <20151223000043.GE16023@sirena.org.uk>
- <alpine.DEB.2.02.1512230819490.2081@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1512230819490.2081@localhost6.localdomain6>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: LKML <linux-kernel@vger.kernel.org>, Richard Cochran <richardcochran@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Dec 2015 09:09:34 +0100
 
---tZCmRiovzb4sxAVa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The data type "int" was used by the variable "result" in the
+function "posix_clock_poll" even though the type "uint" will usually
+be needed for the return value from a call of the function which was
+assigned to the pointer "poll" of the variable "clk".
+Reuse the type from this poll call instead.
 
-On Wed, Dec 23, 2015 at 08:20:43AM +0100, Julia Lawall wrote:
-> On Wed, 23 Dec 2015, Mark Brown wrote:
+This issue was detected by using the Coccinelle software.
 
-> > On Sat, Dec 19, 2015 at 03:58:00PM +0100, Julia Lawall wrote:
-> > > The regulator_ops structures are never modified, so declare them as const.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ kernel/time/posix-clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > > Done with the help of Coccinelle.
+diff --git a/kernel/time/posix-clock.c b/kernel/time/posix-clock.c
+index ce033c7..ac0b733 100644
+--- a/kernel/time/posix-clock.c
++++ b/kernel/time/posix-clock.c
+@@ -69,7 +69,7 @@ static ssize_t posix_clock_read(struct file *fp, char __user *buf,
+ static unsigned int posix_clock_poll(struct file *fp, poll_table *wait)
+ {
+ 	struct posix_clock *clk = get_posix_clock(fp);
+-	int result = 0;
++	uint result = 0;
+ 
+ 	if (!clk)
+ 		return -ENODEV;
+-- 
+2.6.3
 
-> > This doesn't apply against current code, please check and resend.
-
-> It works fine for me on today's linux-next (80c75a0f1d).  What goes wrong?
-
-It just doesn't apply against my tree.  Presumably there's a change
-somewhere else in -next (probably the MFD tree).
-
---tZCmRiovzb4sxAVa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWeoeSAAoJECTWi3JdVIfQuOUH/0O+2OIz+OZ+m8BNcOepVoPi
-buFL50f5mG0EZOOp3eMoAAcpQ3K8IvNGPSHjicPlwUTKdqKA7js8ZrZYSz3En8zY
-oyk2dY8bGQRpgN24KQUbKdZJmRdqxpaepbMzVCB15HLWQmPfwbRCpTyOaF7Q37nc
-7NS4aMD2K+uU9zIpwqrQhL3ciOjho8HdDWZh72rK6inIiaLRo8OO5rO00Epi3yOD
-e813AWUvH5b9PIYJyZz/VWDYl48h6sFOVFU+a1e4zmM6FoKji3xkQj9zKyKq6+zL
-Yg2rlMrigRZAjpgOexg7gtvUXocKo4WGaDGEKgCb9pFG3JJh+pDvcqxxqpQbzT8=
-=qTEo
------END PGP SIGNATURE-----
-
---tZCmRiovzb4sxAVa--
