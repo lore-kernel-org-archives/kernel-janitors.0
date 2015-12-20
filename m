@@ -1,25 +1,23 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 22 Dec 2015 12:48:35 +0000
-Subject: Re: [PATCH 4/5] pinctrl: rockchip: add missing of_node_put
-Message-Id: <CACRpkdb4m9XHXbmnd9rUyetegBNySjyBn2LpcmN9TfU8stAr+g@mail.gmail.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Sun, 20 Dec 2015 17:51:18 +0000
+Subject: Re: [PATCH] nfc: s3fwrn5: constify s3fwrn5_phy_ops structures
+Message-Id: <20151220175118.GB4772@zurbaran.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
- <1450715988-4770-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450715988-4770-5-git-send-email-Julia.Lawall@lip6.fr>
+References: <1447416281-3357-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447416281-3357-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Robert Baldyga <r.baldyga@samsung.com>, kernel-janitors@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, linux-nfc@lists.01.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Dec 21, 2015 at 5:39 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+Hi Julia,
 
-> for_each_child_of_node performs an of_node_get on each iteration, so a
-> return from the loop requires an of_node_put.
->
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
+On Fri, Nov 13, 2015 at 01:04:41PM +0100, Julia Lawall wrote:
+> The s3fwrn5_phy_ops structure is never modified, so declare it as const.
+> 
+> Done with the help of Coccinelle.
+Applied to nfc-next, thanks.
 
-Patch applied with Heiko's review tag.
-
-Yours,
-Linus Walleij
+Cheers,
+Samuel.
