@@ -1,45 +1,48 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Tue, 22 Dec 2015 20:09:00 +0000
-Subject: Re: [patch]  VFIO: platform: reset: fix a warning message condition
-Message-Id: <1450814940.2950.3.camel@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 20 Dec 2015 11:15:50 +0000
+Subject: [PATCH 1/4] ASoC: imx-pcm-dma: add NULL test
+Message-Id: <1450610153-7746-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151217122707.GA4267@mwanda>
-In-Reply-To: <20151217122707.GA4267@mwanda>
+References: <1450610153-7746-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450610153-7746-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Baptiste Reynal <b.reynal@virtualopensystems.com>, Eric Auger <eric.auger@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Timur Tabi <timur@tabi.org>
+Cc: kernel-janitors@vger.kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-On Thu, 2015-12-17 at 15:27 +0300, Dan Carpenter wrote:
-> This loop ends with count set to -1 and not zero so the warning
-> message
-> isn't printed when it should be.  I've fixed this by change the
-> postop
-> to a preop.
-> 
-> Fixes: 0990822c9866 ('VFIO: platform: reset: AMD xgbe reset module')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add NULL test on call to devm_kzalloc.
 
-Applied to next for v4.5 with Eric's Reviewed-by.  Thanks!
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Alex
+// <smpl>
+@@
+expression x;
+@@
 
-> diff --git a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> index da5356f..d4030d0 100644
-> --- a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> +++ b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> @@ -110,7 +110,7 @@ int vfio_platform_amdxgbe_reset(struct
-> vfio_platform_device *vdev)
->  	usleep_range(10, 15);
->  
->  	count = 2000;
-> -	while (count-- && (ioread32(xgmac_regs->ioaddr + DMA_MR) &
-> 1))
-> +	while (--count && (ioread32(xgmac_regs->ioaddr + DMA_MR) &
-> 1))
->  		usleep_range(500, 600);
->  
->  	if (!count)
+* x = devm_kzalloc(...);
+  ... when != x = NULL
+  *x
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/fsl/imx-pcm-dma.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/soc/fsl/imx-pcm-dma.c b/sound/soc/fsl/imx-pcm-dma.c
+index 1fc01ed..f3d3d1f 100644
+--- a/sound/soc/fsl/imx-pcm-dma.c
++++ b/sound/soc/fsl/imx-pcm-dma.c
+@@ -62,6 +62,8 @@ int imx_pcm_dma_init(struct platform_device *pdev, size_t size)
+ 
+ 	config = devm_kzalloc(&pdev->dev,
+ 			sizeof(struct snd_dmaengine_pcm_config), GFP_KERNEL);
++	if (!config)
++		return -ENOMEM;
+ 	*config = imx_dmaengine_pcm_config;
+ 	if (size)
+ 		config->prealloc_buffer_size = size;
 
