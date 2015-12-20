@@ -1,61 +1,32 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 20 Dec 2015 11:09:52 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 20 Dec 2015 12:48:25 +0000
 Subject: Re: [PATCH] posix-clock: Use an unsigned data type for a variable
-Message-Id: <alpine.DEB.2.02.1512201208250.2067@localhost6.localdomain6>
+Message-Id: <5676A399.4080007@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <56766488.9050402@users.sourceforge.net>
-In-Reply-To: <56766488.9050402@users.sourceforge.net>
+ <alpine.DEB.2.02.1512201208250.2067@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1512201208250.2067@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Richard Cochran <richardcochran@gmail.com>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>
 
-
-
-On Sun, 20 Dec 2015, SF Markus Elfring wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 20 Dec 2015 09:09:34 +0100
+>> Reuse the type from this poll call instead.
 > 
-> The data type "int" was used by the variable "result" in the
-> function "posix_clock_poll" even though the type "uint" will usually
-> be needed for the return value from a call of the function which was
-> assigned to the pointer "poll" of the variable "clk".
-> Reuse the type from this poll call instead.
+> Why use uint when the function return type it unsigned int?
 
-Why use uint when the function return type it unsigned int?
-On the other hand, why is the function return type unsigned int when there 
-is a return of a negative constant?
+Do you prefer to express the type modifier once more there?
 
-julia
 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  kernel/time/posix-clock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/time/posix-clock.c b/kernel/time/posix-clock.c
-> index ce033c7..ac0b733 100644
-> --- a/kernel/time/posix-clock.c
-> +++ b/kernel/time/posix-clock.c
-> @@ -69,7 +69,7 @@ static ssize_t posix_clock_read(struct file *fp, char __user *buf,
->  static unsigned int posix_clock_poll(struct file *fp, poll_table *wait)
->  {
->  	struct posix_clock *clk = get_posix_clock(fp);
-> -	int result = 0;
-> +	uint result = 0;
->  
->  	if (!clk)
->  		return -ENODEV;
-> -- 
-> 2.6.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> On the other hand, why is the function return type unsigned int
+> when there is a return of a negative constant?
+
+This implementation detail can trigger further software development
+considerations, can't it?
+
+This is a general issue for the exception handling in several functions.
+Would you like to improve any more source code around it?
+
+Regards,
+Markus
