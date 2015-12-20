@@ -1,45 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 10:18:46 +0000
-Subject: [PATCH] [media] hdpvr: Refactoring for hdpvr_read()
-Message-Id: <56825E06.6040708@users.sourceforge.net>
+Date: Sun, 20 Dec 2015 09:40:24 +0000
+Subject: [PATCH] ASoC: ssm2518: Use a signed return type for ssm2518_lookup_mcs()
+Message-Id: <56767788.4020709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 11:02:43 +0100
+Date: Sun, 20 Dec 2015 10:34:25 +0100
 
-Let us return directly if the element "status" of the variable "buf"
-indicates "BUFSTAT_READY".
-A check repetition can be excluded for the variable "ret" at the end then.
+The return type "unsigned int" was used by the ssm2518_lookup_mcs()
+function even though it will eventually return a negative error code.
+Improve this implementation detail by deletion of the type modifier then.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/hdpvr/hdpvr-video.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ sound/soc/codecs/ssm2518.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/hdpvr/hdpvr-video.c b/drivers/media/usb/hdpvr/hdpvr-video.c
-index 7dee22d..ba7f022 100644
---- a/drivers/media/usb/hdpvr/hdpvr-video.c
-+++ b/drivers/media/usb/hdpvr/hdpvr-video.c
-@@ -462,10 +462,8 @@ static ssize_t hdpvr_read(struct file *file, char __user *buffer, size_t count,
- 			}
+diff --git a/sound/soc/codecs/ssm2518.c b/sound/soc/codecs/ssm2518.c
+index 86b81a6..e2e0bfa 100644
+--- a/sound/soc/codecs/ssm2518.c
++++ b/sound/soc/codecs/ssm2518.c
+@@ -309,7 +309,7 @@ static const struct snd_pcm_hw_constraint_list ssm2518_constraints_12288000 = {
+ 	.count = ARRAY_SIZE(ssm2518_rates_12288000),
+ };
  
- 			if (wait_event_interruptible(dev->wait_data,
--					      buf->status = BUFSTAT_READY)) {
--				ret = -ERESTARTSYS;
--				goto err;
--			}
-+					      buf->status = BUFSTAT_READY))
-+				return -ERESTARTSYS;
- 		}
- 
- 		if (buf->status != BUFSTAT_READY)
+-static unsigned int ssm2518_lookup_mcs(struct ssm2518 *ssm2518,
++static int ssm2518_lookup_mcs(struct ssm2518 *ssm2518,
+ 	unsigned int rate)
+ {
+ 	const unsigned int *sysclks = NULL;
 -- 
 2.6.3
 
