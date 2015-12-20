@@ -1,32 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Dec 2015 11:04:14 +0000
-Subject: [patch] [media] v4l2-device: fix a missing error code
-Message-Id: <20151215110307.GB9594@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 20 Dec 2015 11:15:49 +0000
+Subject: [PATCH 0/4] add NULL test
+Message-Id: <1450610153-7746-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Tommi Franttila <tommi.franttila@intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-s390@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 
-We need to set "err = -ENOMEM" here.
+Add NULL tests on various calls to kzalloc and devm_kzalloc.
 
-Fixes: 38b11f19667a ('[media] v4l2-core: create MC interfaces for devnodes')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic match that finds these problems is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
-index 85f724b..85b1e98 100644
---- a/drivers/media/v4l2-core/v4l2-device.c
-+++ b/drivers/media/v4l2-core/v4l2-device.c
-@@ -266,8 +266,10 @@ int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
- 			link = media_create_intf_link(&sd->entity,
- 						      &vdev->intf_devnode->intf,
- 						      MEDIA_LNK_FL_ENABLED);
--			if (!link)
-+			if (!link) {
-+				err = -ENOMEM;
- 				goto clean_up;
-+			}
- 		}
- #endif
- 		sd->devnode = vdev;
+// <smpl>
+@@
+expression x,y;
+identifier fld;
+@@
+
+(
+x = \(vmalloc\|kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|krealloc\|
+        kmemdup\|kstrdup\|
+	devm_kzalloc\|devm_kmalloc\|devm_kcalloc\|devm_kasprintf\|
+	kmalloc_array\)(...,<+... __GFP_NOFAIL ...+>,...);
+|
+* x = \(vmalloc\|kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|krealloc\|
+        kmemdup\|kstrdup\|
+	devm_kzalloc\|devm_kmalloc\|devm_kcalloc\|devm_kasprintf\|
+	kmalloc_array\)(...);
+)
+  ... when != (x) = NULL
+      when != (x) != NULL
+      when != (x) = 0
+      when != (x) != 0
+      when != x = y
+(
+  x->fld
+|
+  *x
+|
+  x[...]
+)
+// </smpl>
+
+---
+
+ drivers/s390/char/con3215.c                 |    2 ++
+ drivers/s390/char/raw3270.c                 |    2 ++
+ sound/soc/fsl/imx-pcm-dma.c                 |    2 ++
+ sound/soc/intel/baytrail/sst-baytrail-pcm.c |    2 ++
+ sound/soc/omap/omap-hdmi-audio.c            |    2 ++
+ 5 files changed, 10 insertions(+)
