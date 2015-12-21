@@ -1,55 +1,128 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Date: Mon, 21 Dec 2015 07:34:32 +0000
-Subject: Re: [PATCH 1/4] ASoC: imx-pcm-dma: add NULL test
-Message-Id: <20151221073431.GD3524@Asurada-CZ80>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Dec 2015 16:39:43 +0000
+Subject: [PATCH 0/5] add missing of_node_put
+Message-Id: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450610153-7746-1-git-send-email-Julia.Lawall@lip6.fr>
- <1450610153-7746-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450610153-7746-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Timur Tabi <timur@tabi.org>, kernel-janitors@vger.kernel.org, Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Sun, Dec 20, 2015 at 12:15:50PM +0100, Julia Lawall wrote:
-> Add NULL test on call to devm_kzalloc.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x;
-> @@
-> 
-> * x = devm_kzalloc(...);
->   ... when != x = NULL
->   *x
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The various for_each device_node iterators performs an of_node_get on each
+iteration, so a break out of the loop requires an of_node_put.
 
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+The complete semantic patch that fixes this problem is
+(http://coccinelle.lip6.fr):
 
-Thank you
+// <smpl>
+@r@
+local idexpression n;
+expression e1,e2;
+iterator name for_each_node_by_name, for_each_node_by_type,
+for_each_compatible_node, for_each_matching_node,
+for_each_matching_node_and_match, for_each_child_of_node,
+for_each_available_child_of_node, for_each_node_with_property;
+iterator i;
+statement S;
+expression list [n1] es;
+@@
 
-> 
-> ---
->  sound/soc/fsl/imx-pcm-dma.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/sound/soc/fsl/imx-pcm-dma.c b/sound/soc/fsl/imx-pcm-dma.c
-> index 1fc01ed..f3d3d1f 100644
-> --- a/sound/soc/fsl/imx-pcm-dma.c
-> +++ b/sound/soc/fsl/imx-pcm-dma.c
-> @@ -62,6 +62,8 @@ int imx_pcm_dma_init(struct platform_device *pdev, size_t size)
->  
->  	config = devm_kzalloc(&pdev->dev,
->  			sizeof(struct snd_dmaengine_pcm_config), GFP_KERNEL);
-> +	if (!config)
-> +		return -ENOMEM;
->  	*config = imx_dmaengine_pcm_config;
->  	if (size)
->  		config->prealloc_buffer_size = size;
-> 
+(
+(
+for_each_node_by_name(n,e1) S
+|
+for_each_node_by_type(n,e1) S
+|
+for_each_compatible_node(n,e1,e2) S
+|
+for_each_matching_node(n,e1) S
+|
+for_each_matching_node_and_match(n,e1,e2) S
+|
+for_each_child_of_node(e1,n) S
+|
+for_each_available_child_of_node(e1,n) S
+|
+for_each_node_with_property(n,e1) S
+)
+&
+i(es,n,...) S
+)
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+
+@@
+local idexpression r.n;
+iterator r.i;
+expression e;
+identifier l;
+expression list [r.n1] es;
+@@
+
+ i(es,n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+...
+l: ... when != n// </smpl>
+
+---
+
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    1 +
+ drivers/pinctrl/pinctrl-rockchip.c            |    5 ++++-
+ drivers/pinctrl/pinctrl-tegra-xusb.c          |    4 +++-
+ drivers/pinctrl/pinctrl-tegra.c               |    1 +
+ drivers/pinctrl/sh-pfc/pinctrl.c              |    4 +++-
+ drivers/pinctrl/sirf/pinctrl-sirf.c           |    8 ++++++--
+ 6 files changed, 18 insertions(+), 5 deletions(-)
