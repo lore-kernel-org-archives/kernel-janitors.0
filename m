@@ -1,30 +1,59 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 22 Dec 2015 08:43:07 +0000
-Subject: Re: blackfin-cpufreq: Mark cpu_set_cclk() as static
-Message-Id: <20151222083107.GD12364@ubuntu>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Dec 2015 16:39:48 +0000
+Subject: [PATCH 5/5] pinctrl: mediatek: add missing of_node_put
+Message-Id: <1450715988-4770-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5674598B.6020000@users.sourceforge.net>
- <56786EF3.3070203@users.sourceforge.net>
- <56786FF6.4060900@users.sourceforge.net>
- <20151222053543.GB12364@ubuntu>
- <567909E9.5090602@users.sourceforge.net>
-In-Reply-To: <567909E9.5090602@users.sourceforge.net>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-On 22-12-15, 09:29, SF Markus Elfring wrote:
-> > Well, I never Acked this patch as such and you shouldn't have
-> > mentioned it by yourself.
-> 
-> Did I interpret your positive feedback too early in the way
-> that I can add this tag myself already?
+for_each_child_of_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-You aren't supposed to add a Tag on someone else's behalf, even if
-they said that the change is okay. Others have to send this
-separately.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
--- 
-viresh
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+@@
+
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 45f3562..ee2287b 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -598,6 +598,7 @@ static int mtk_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 				&reserved_maps, num_maps);
+ 		if (ret < 0) {
+ 			pinctrl_utils_dt_free_map(pctldev, *map, *num_maps);
++			of_node_put(np);
+ 			return ret;
+ 		}
+ 	}
+
