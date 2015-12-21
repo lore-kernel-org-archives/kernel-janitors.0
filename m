@@ -1,277 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 14:42:42 +0000
-Subject: [PATCH 5/7] iscsi-target: Rename a jump label in iscsi_create_default_params()
-Message-Id: <566C3262.6010105@users.sourceforge.net>
+Date: Mon, 21 Dec 2015 19:10:25 +0000
+Subject: [PATCH v2 2/4] staging: lustre: Delete an unnecessary variable initialisation in mgc_process_recover
+Message-Id: <56784EA1.3090407@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <566C2F7B.6030704@users.sourceforge.net>
-In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <56784D83.7080108@users.sourceforge.net>
+In-Reply-To: <56784D83.7080108@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+To: lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 14:12:50 +0100
+Date: Mon, 21 Dec 2015 18:24:45 +0100
 
-This issue was detected by using the Coccinelle software.
-
-Choose a jump label according to the current Linux coding style convention.
+The variable "mne_swab" will eventually be set to an appropriate value
+from a call of the ptlrpc_rep_need_swab() function.
+Thus let us omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/iscsi/iscsi_target_parameters.c | 64 +++++++++++++-------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ drivers/staging/lustre/lustre/mgc/mgc_request.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-index 3f3842f..29ecf29 100644
---- a/drivers/target/iscsi/iscsi_target_parameters.c
-+++ b/drivers/target/iscsi/iscsi_target_parameters.c
-@@ -225,185 +225,185 @@ int iscsi_create_default_params(struct iscsi_param_list **param_list_ptr)
- 			PHASE_SECURITY, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_AUTH, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, HEADERDIGEST, INITIAL_HEADERDIGEST,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_DIGEST, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, DATADIGEST, INITIAL_DATADIGEST,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_DIGEST, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, MAXCONNECTIONS,
- 			INITIAL_MAXCONNECTIONS, PHASE_OPERATIONAL,
- 			SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_1_TO_65535, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, SENDTARGETS, INITIAL_SENDTARGETS,
- 			PHASE_FFP0, SCOPE_SESSION_WIDE, SENDER_INITIATOR,
- 			TYPERANGE_UTF8, 0);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, TARGETNAME, INITIAL_TARGETNAME,
- 			PHASE_DECLARATIVE, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_ISCSINAME, USE_ALL);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, INITIATORNAME,
- 			INITIAL_INITIATORNAME, PHASE_DECLARATIVE,
- 			SCOPE_SESSION_WIDE, SENDER_INITIATOR,
- 			TYPERANGE_ISCSINAME, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, TARGETALIAS, INITIAL_TARGETALIAS,
- 			PHASE_DECLARATIVE, SCOPE_SESSION_WIDE, SENDER_TARGET,
- 			TYPERANGE_UTF8, USE_ALL);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, INITIATORALIAS,
- 			INITIAL_INITIATORALIAS, PHASE_DECLARATIVE,
- 			SCOPE_SESSION_WIDE, SENDER_INITIATOR, TYPERANGE_UTF8,
- 			USE_ALL);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, TARGETADDRESS,
- 			INITIAL_TARGETADDRESS, PHASE_DECLARATIVE,
- 			SCOPE_SESSION_WIDE, SENDER_TARGET,
- 			TYPERANGE_TARGETADDRESS, USE_ALL);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, TARGETPORTALGROUPTAG,
- 			INITIAL_TARGETPORTALGROUPTAG,
- 			PHASE_DECLARATIVE, SCOPE_SESSION_WIDE, SENDER_TARGET,
- 			TYPERANGE_0_TO_65535, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, INITIALR2T, INITIAL_INITIALR2T,
- 			PHASE_OPERATIONAL, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_BOOL_OR, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, IMMEDIATEDATA,
- 			INITIAL_IMMEDIATEDATA, PHASE_OPERATIONAL,
- 			SCOPE_SESSION_WIDE, SENDER_BOTH, TYPERANGE_BOOL_AND,
- 			USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, MAXXMITDATASEGMENTLENGTH,
- 			INITIAL_MAXXMITDATASEGMENTLENGTH,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_512_TO_16777215, USE_ALL);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, MAXRECVDATASEGMENTLENGTH,
- 			INITIAL_MAXRECVDATASEGMENTLENGTH,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_512_TO_16777215, USE_ALL);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, MAXBURSTLENGTH,
- 			INITIAL_MAXBURSTLENGTH, PHASE_OPERATIONAL,
- 			SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_512_TO_16777215, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, FIRSTBURSTLENGTH,
- 			INITIAL_FIRSTBURSTLENGTH,
- 			PHASE_OPERATIONAL, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_512_TO_16777215, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, DEFAULTTIME2WAIT,
- 			INITIAL_DEFAULTTIME2WAIT,
- 			PHASE_OPERATIONAL, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_0_TO_3600, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, DEFAULTTIME2RETAIN,
- 			INITIAL_DEFAULTTIME2RETAIN,
- 			PHASE_OPERATIONAL, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_0_TO_3600, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, MAXOUTSTANDINGR2T,
- 			INITIAL_MAXOUTSTANDINGR2T,
- 			PHASE_OPERATIONAL, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_1_TO_65535, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, DATAPDUINORDER,
- 			INITIAL_DATAPDUINORDER, PHASE_OPERATIONAL,
- 			SCOPE_SESSION_WIDE, SENDER_BOTH, TYPERANGE_BOOL_OR,
- 			USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, DATASEQUENCEINORDER,
- 			INITIAL_DATASEQUENCEINORDER,
- 			PHASE_OPERATIONAL, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_BOOL_OR, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, ERRORRECOVERYLEVEL,
- 			INITIAL_ERRORRECOVERYLEVEL,
- 			PHASE_OPERATIONAL, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_0_TO_2, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, SESSIONTYPE, INITIAL_SESSIONTYPE,
- 			PHASE_DECLARATIVE, SCOPE_SESSION_WIDE, SENDER_INITIATOR,
- 			TYPERANGE_SESSIONTYPE, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, IFMARKER, INITIAL_IFMARKER,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_BOOL_AND, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, OFMARKER, INITIAL_OFMARKER,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_BOOL_AND, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, IFMARKINT, INITIAL_IFMARKINT,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_UTF8, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, OFMARKINT, INITIAL_OFMARKINT,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_UTF8, USE_INITIAL_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	/*
- 	 * Extra parameters for ISER from RFC-5046
-@@ -412,25 +412,25 @@ int iscsi_create_default_params(struct iscsi_param_list **param_list_ptr)
- 			PHASE_OPERATIONAL, SCOPE_SESSION_WIDE, SENDER_BOTH,
- 			TYPERANGE_BOOL_AND, USE_LEADING_ONLY);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, INITIATORRECVDATASEGMENTLENGTH,
- 			INITIAL_INITIATORRECVDATASEGMENTLENGTH,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_512_TO_16777215, USE_ALL);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	param = iscsi_set_default_param(pl, TARGETRECVDATASEGMENTLENGTH,
- 			INITIAL_TARGETRECVDATASEGMENTLENGTH,
- 			PHASE_OPERATIONAL, SCOPE_CONNECTION_ONLY, SENDER_BOTH,
- 			TYPERANGE_512_TO_16777215, USE_ALL);
- 	if (!param)
--		goto out;
-+		goto release_list;
- 
- 	*param_list_ptr = pl;
- 	return 0;
--out:
-+release_list:
- 	iscsi_release_param_list(pl);
- 	return -1;
- }
+diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+index 2c48847..da130f4 100644
+--- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
++++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+@@ -1293,7 +1293,7 @@ static int mgc_process_recover_log(struct obd_device *obd,
+ 	struct page **pages;
+ 	int nrpages;
+ 	bool eof = true;
+-	bool mne_swab = false;
++	bool mne_swab;
+ 	int i;
+ 	int ealen;
+ 	int rc;
 -- 
 2.6.3
 
