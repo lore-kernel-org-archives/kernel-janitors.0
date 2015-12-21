@@ -1,42 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 13 Dec 2015 13:56:43 +0000
-Subject: [PATCH 4/7] staging: lustre: Delete an unnecessary variable initialisation in mgc_process_recover_lo
-Message-Id: <566D791B.7010604@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 21 Dec 2015 13:13:04 +0000
+Subject: [patch] pwm: omap-dmtimer: Potential NULL dereference on error
+Message-Id: <20151221131304.GA27286@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
-In-Reply-To: <566D7733.1030102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Thierry Reding <thierry.reding@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 13 Dec 2015 12:00:32 +0100
+"omap" is NULL so we can't dereference it.
 
-The variable "mne_swab" will eventually be set to an appropriate value
-from a call of the ptlrpc_rep_need_swab() function.
-Thus let us omit the explicit initialisation at the beginning.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/lustre/lustre/mgc/mgc_request.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's weird that request_by_node() and free() are allocate/free pairs.
+Also this was Thierry's last minute tweaks mentioned in the changelog,
+Neil Armstrong is innocent.  :P
 
-diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-index 2c48847..da130f4 100644
---- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
-+++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-@@ -1293,7 +1293,7 @@ static int mgc_process_recover_log(struct obd_device *obd,
- 	struct page **pages;
- 	int nrpages;
- 	bool eof = true;
--	bool mne_swab = false;
-+	bool mne_swab;
- 	int i;
- 	int ealen;
- 	int rc;
--- 
-2.6.3
-
+diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+index c453b33..826634e 100644
+--- a/drivers/pwm/pwm-omap-dmtimer.c
++++ b/drivers/pwm/pwm-omap-dmtimer.c
+@@ -243,7 +243,7 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+ 
+ 	omap = devm_kzalloc(&pdev->dev, sizeof(*omap), GFP_KERNEL);
+ 	if (!omap) {
+-		omap->pdata->free(dm_timer);
++		pdata->free(dm_timer);
+ 		return -ENOMEM;
+ 	}
+ 
