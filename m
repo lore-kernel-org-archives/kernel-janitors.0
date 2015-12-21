@@ -1,77 +1,70 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Dec 2015 09:10:57 +0000
-Subject: Re: [PATCH 2/2] z2ram: Delete a jump label in z2_init()
-Message-Id: <CAMuHMdVfaPCSZ2EX0MdU8uakqmP734d0QpEgWkMfwL8LbVZVxQ@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Dec 2015 16:39:45 +0000
+Subject: [PATCH 2/5] pinctrl: sirf: add missing of_node_put
+Message-Id: <1450715988-4770-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<566B13C1.50907@users.sourceforge.net>
-	<566B1542.7040902@users.sourceforge.net>
-	<20151214003621.GB718@swordfish>
-In-Reply-To: <20151214003621.GB718@swordfish>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, LKML <linux-kernel@vger.kernel.org>, Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@fb.com>, Linux/m68k <linux-m68k@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Dec 14, 2015 at 1:36 AM, Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
-> Cc Jens, Andrew, Geert
->
-> On (12/11/15 19:26), SF Markus Elfring wrote:
->>
->> This issue was detected by using the Coccinelle software.
->>
->> * Let us return directly if a call of the function "register_blkdev" failed.
->>
->> * Remove the jump label "err" then.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+for_each_child_of_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
->> ---
->>  drivers/block/z2ram.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/block/z2ram.c b/drivers/block/z2ram.c
->> index 968f9e5..b07581d 100644
->> --- a/drivers/block/z2ram.c
->> +++ b/drivers/block/z2ram.c
->> @@ -345,9 +345,8 @@ z2_init(void)
->>      if (!MACH_IS_AMIGA)
->>       return -ENODEV;
->>
->> -    ret = -EBUSY;
->>      if (register_blkdev(Z2RAM_MAJOR, DEVICE_NAME))
->> -     goto err;
->> +     return -EBUSY;
->>
->>      ret = -ENOMEM;
->>      z2ram_gendisk = alloc_disk(1);
->> @@ -374,7 +373,6 @@ out_queue:
->>      put_disk(z2ram_gendisk);
->>  out_disk:
->>      unregister_blkdev(Z2RAM_MAJOR, DEVICE_NAME);
->> -err:
->>      return ret;
->>  }
->
-> z2ram and zram are different drivers, but the change looks
-> ok to me.
->
-> z2ram can be improved in many ways, so my question is - do
-> people still use it?
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+@@
 
-I think it's still used.
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
-Gr{oetje,eeting}s,
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-                        Geert
+---
+ drivers/pinctrl/sirf/pinctrl-sirf.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index ae97bdc..18fe46d 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -85,12 +85,16 @@ static int sirfsoc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	/* calculate number of maps required */
+ 	for_each_child_of_node(np_config, np) {
+ 		ret = of_property_read_string(np, "sirf,function", &function);
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(np);
+ 			return ret;
++		}
+ 
+ 		ret = of_property_count_strings(np, "sirf,pins");
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(np);
+ 			return ret;
++		}
+ 
+ 		count += ret;
+ 	}
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
