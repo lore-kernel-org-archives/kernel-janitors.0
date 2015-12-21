@@ -1,34 +1,77 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Dec 2015 16:24:02 +0000
-Subject: Re: [Cocci] [PATCH v2] coccinelle: api: check for propagation of error from platform_get_irq
-Message-Id: <568010A2.3000902@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Dec 2015 16:39:44 +0000
+Subject: [PATCH 1/5] pinctrl-tegra: add missing of_node_put
+Message-Id: <1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451157891-24881-1-git-send-email-Julia.Lawall@lip6.fr>
- <567EF188.7020203@cogentembedded.com>
- <alpine.DEB.2.02.1512262107340.2070@localhost6.localdomain6>
- <alpine.DEB.2.02.1512262123500.2070@localhost6.localdomain6>
- <567EF895.6080702@cogentembedded.com>
- <alpine.DEB.2.02.1512262156580.2070@localhost6.localdomain6>
- <567F9A29.50202@users.sourceforge.net>
- <alpine.DEB.2.02.1512271239460.2038@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1512271239460.2038@localhost6.localdomain6>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> https://cwe.mitre.org/data/definitions/252.html
-> 
-> The value is not unchecked.
+for_each_child_of_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-Would you like to express any stronger relationship between
-the function call example and the occurrence of an if statement
-by the discussed SmPL script?
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+@@
 
-> I made a specific rule because the specific problem is quite common.
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
-Can it become also interesting to generalise this search pattern?
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Regards,
-Markus
+---
+ drivers/pinctrl/pinctrl-tegra-xusb.c |    4 +++-
+ drivers/pinctrl/pinctrl-tegra.c      |    1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+index 84a43e6..bd3aa5a 100644
+--- a/drivers/pinctrl/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -253,8 +253,10 @@ static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
+ 		err = tegra_xusb_padctl_parse_subnode(padctl, np, maps,
+ 						      &reserved_maps,
+ 						      num_maps);
+-		if (err < 0)
++		if (err < 0) {
++			of_node_put(np);
+ 			return err;
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index 0fd7fd2..9da4da2 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -217,6 +217,7 @@ static int tegra_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		if (ret < 0) {
+ 			pinctrl_utils_dt_free_map(pctldev, *map,
+ 				*num_maps);
++			of_node_put(np);
+ 			return ret;
+ 		}
+ 	}
+
