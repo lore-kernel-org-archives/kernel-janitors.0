@@ -1,25 +1,22 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 09 Dec 2015 15:04:53 +0000
-Subject: Re: [patch] blk-integrity: checking for NULL instead of IS_ERR
-Message-Id: <56684315.8060506@kernel.dk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Dec 2015 09:30:27 +0000
+Subject: Re: posix-clock: Use an unsigned data type for a variable
+Message-Id: <5677C6B3.8060007@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151209102123.GA3173@mwanda>
-In-Reply-To: <20151209102123.GA3173@mwanda>
+References: <56766488.9050402@users.sourceforge.net>
+ <20151220200934.GB2027@netboy>
+In-Reply-To: <20151220200934.GB2027@netboy>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Keith Busch <keith.busch@intel.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 12/09/2015 03:21 AM, Dan Carpenter wrote:
-> We recently changed bio_integrity_alloc() to return ERR_PTRs instead of
-> NULL but these calls were missed.
->
-> Fixes: 06c1e3902aa7 ('blk-integrity: empty implementation when disabled')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> In this case, there is indeed a problem.  However, just changing the
+> type won't fix it.
 
-Thanks, applied.
+Would you like to explain your view on the handling of potential
+data type mismatches a bit more?
 
--- 
-Jens Axboe
-
+Regards,
+Markus
