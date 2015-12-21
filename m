@@ -1,50 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 06 Dec 2015 15:51:38 +0000
-Subject: [PATCH] drivers/media/usb/as102: constify as102_priv_ops_t structure
-Message-Id: <1449417098-8822-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Dec 2015 21:30:31 +0000
+Subject: [PATCH 1/2] blackfin-cpufreq: Change return type of cpu_set_cclk() to that of clk_set_rate()
+Message-Id: <56786F77.4000305@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5674598B.6020000@users.sourceforge.net>
+ <56786EF3.3070203@users.sourceforge.net>
+In-Reply-To: <56786EF3.3070203@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The as102_priv_ops_t structure is never modified, so declare it as
-const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 21 Dec 2015 21:56:27 +0100
 
-Done with the help of Coccinelle.
+The return type "unsigned long" was used by the cpu_set_cclk() function
+while the type "int" is provided by the clk_set_rate() function.
+Let us make this usage consistent.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/media/usb/as102/as102_drv.h     |    2 +-
- drivers/media/usb/as102/as102_usb_drv.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/cpufreq/blackfin-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/as102/as102_drv.h b/drivers/media/usb/as102/as102_drv.h
-index aee2d76..8def19d 100644
---- a/drivers/media/usb/as102/as102_drv.h
-+++ b/drivers/media/usb/as102/as102_drv.h
-@@ -52,7 +52,7 @@ struct as10x_bus_adapter_t {
- 	struct as10x_cmd_t *cmd, *rsp;
- 
- 	/* bus adapter private ops callback */
--	struct as102_priv_ops_t *ops;
-+	const struct as102_priv_ops_t *ops;
- };
- 
- struct as102_dev_t {
-diff --git a/drivers/media/usb/as102/as102_usb_drv.c b/drivers/media/usb/as102/as102_usb_drv.c
-index 3f66906..0e8030c 100644
---- a/drivers/media/usb/as102/as102_usb_drv.c
-+++ b/drivers/media/usb/as102/as102_usb_drv.c
-@@ -189,7 +189,7 @@ static int as102_read_ep2(struct as10x_bus_adapter_t *bus_adap,
- 	return actual_len;
+diff --git a/drivers/cpufreq/blackfin-cpufreq.c b/drivers/cpufreq/blackfin-cpufreq.c
+index a9f8e5b..2a6f3ac 100644
+--- a/drivers/cpufreq/blackfin-cpufreq.c
++++ b/drivers/cpufreq/blackfin-cpufreq.c
+@@ -112,7 +112,7 @@ static unsigned int bfin_getfreq_khz(unsigned int cpu)
  }
  
--static struct as102_priv_ops_t as102_priv_ops = {
-+static const struct as102_priv_ops_t as102_priv_ops = {
- 	.upload_fw_pkt	= as102_send_ep1,
- 	.xfer_cmd	= as102_usb_xfer_cmd,
- 	.as102_read_ep2	= as102_read_ep2,
+ #ifdef CONFIG_BF60x
+-unsigned long cpu_set_cclk(int cpu, unsigned long new)
++int cpu_set_cclk(int cpu, unsigned long new)
+ {
+ 	struct clk *clk;
+ 	int ret;
+-- 
+2.6.3
 
