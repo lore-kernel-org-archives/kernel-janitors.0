@@ -1,32 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 22 Dec 2015 15:48:33 +0000
-Subject: [PATCH v2 0/2] USB-FHCI: Use return type "int" for two functions
-Message-Id: <567970D1.3030503@users.sourceforge.net>
+Date: Mon, 21 Dec 2015 19:13:18 +0000
+Subject: [PATCH v2 4/4] staging: lustre: Fix a jump label position in osc_get_info()
+Message-Id: <56784F4E.3070808@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5675BAE0.2010304@users.sourceforge.net>
- <20151219202706.GT5284@mwanda>
-In-Reply-To: <20151219202706.GT5284@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <56784D83.7080108@users.sourceforge.net>
+In-Reply-To: <56784D83.7080108@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 22 Dec 2015 16:43:12 +0100
+Date: Mon, 21 Dec 2015 19:30:42 +0100
 
-Another update suggestion was taken into account after a patch was applied
-from static source code analysis.
+The script "checkpatch.pl" pointed out that labels should not be indented.
+Thus delete a horizontal tab before the jump label "out"
+in the function "osc_get_info".
 
-Markus Elfring (2):
-  Use a signed return type for fhci_create_ep()
-  Use a signed return type for endpoint_zero_init()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/lustre/lustre/osc/osc_request.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/usb/host/fhci-hcd.c | 4 ++--
- drivers/usb/host/fhci-tds.c | 2 +-
- drivers/usb/host/fhci.h     | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
+index d6c1447..85ab180 100644
+--- a/drivers/staging/lustre/lustre/osc/osc_request.c
++++ b/drivers/staging/lustre/lustre/osc/osc_request.c
+@@ -2727,7 +2727,7 @@ static int osc_get_info(const struct lu_env *env, struct obd_export *exp,
+ 		}
+ 
+ 		*((u64 *)val) = *reply;
+-	out:
++out:
+ 		ptlrpc_req_finished(req);
+ 		return rc;
+ 	} else if (KEY_IS(KEY_FIEMAP)) {
 -- 
 2.6.3
 
