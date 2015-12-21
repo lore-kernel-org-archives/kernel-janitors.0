@@ -1,40 +1,66 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 Dec 2015 09:31:22 +0000
-Subject: Re: [PATCH 2/7] staging: lustre: Rename a jump label for ptlrpc_req_finished() calls
-Message-Id: <20151214093121.GU5284@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Dec 2015 16:39:46 +0000
+Subject: [PATCH 3/5] pinctrl: sh-pfc: add missing of_node_put
+Message-Id: <1450715988-4770-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <566D7884.5050407@users.sourceforge.net>
- <20151214065325.GS5284@mwanda>
- <566E86F3.9010209@users.sourceforge.net>
-In-Reply-To: <566E86F3.9010209@users.sourceforge.net>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, lustre-devel@lists.lustre.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: kernel-janitors@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Dec 14, 2015 at 10:08:03AM +0100, SF Markus Elfring wrote:
-> > Markus, please stop sending these things to rename out labels unless
-> > there is a bug.  CodingStyle allows out labels.
-> 
-> How does this feedback fit to information like the following?
-> 
-> "…
-> Chapter 7: …
-> …
-> Choose label names which say what the goto does or why the goto exists.
+for_each_child_of_node performs an of_node_get on each iteration, so a
+goto out of the loop requires an of_node_put.
 
-A lot of people think "out" says what the goto does and why it exists.
-I personally don't agree with them but if you look at when I complain
-about it, it's almost always when it causes a bug.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-> … Avoid using GW-BASIC names …
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+identifier l;
+@@
 
-Those when people just use numbers for their label names instead of
-words like out1, out2, out4, out5.  It's a different thing.
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  goto l;
+)
+   ...
+ }
+l: ... when != n
+// </smpl>
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/sh-pfc/pinctrl.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index 863c3e3..87b0a59 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -273,8 +273,10 @@ static int sh_pfc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	for_each_child_of_node(np, child) {
+ 		ret = sh_pfc_dt_subnode_to_map(pctldev, child, map, num_maps,
+ 					       &index);
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(child);
+ 			goto done;
++		}
+ 	}
+ 
+ 	/* If no mapping has been found in child nodes try the config node. */
 
