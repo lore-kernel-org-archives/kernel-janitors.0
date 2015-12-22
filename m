@@ -1,26 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Dec 2015 13:13:58 +0000
-Subject: Re: [patch] VFIO: platform: reset: fix a warning message condition
-Message-Id: <20151217131358.GL5284@mwanda>
+From: Alex Williamson <alex.williamson@redhat.com>
+Date: Tue, 22 Dec 2015 20:09:00 +0000
+Subject: Re: [patch]  VFIO: platform: reset: fix a warning message condition
+Message-Id: <1450814940.2950.3.camel@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20151217122707.GA4267@mwanda>
- <5672AE80.3010806@linaro.org>
-In-Reply-To: <5672AE80.3010806@linaro.org>
+In-Reply-To: <20151217122707.GA4267@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Eric Auger <eric.auger@linaro.org>
-Cc: Baptiste Reynal <b.reynal@virtualopensystems.com>, Alex Williamson <alex.williamson@redhat.com>, Arnd Bergmann <arnd@arndb.de>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org, "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, Baptiste Reynal <b.reynal@virtualopensystems.com>, Eric Auger <eric.auger@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 17, 2015 at 01:45:52PM +0100, Eric Auger wrote:
-> I add Thomas in CC since the bug also exists in the native driver I
-> think (drivers/net/ethernet/amd/xgbe/drivers/net/ethernet/amd/xgbe
-> /xgbe-dev.c, xgbe_exit function).
+On Thu, 2015-12-17 at 15:27 +0300, Dan Carpenter wrote:
+> This loop ends with count set to -1 and not zero so the warning
+> message
+> isn't printed when it should be.  I've fixed this by change the
+> postop
+> to a preop.
 > 
+> Fixes: 0990822c9866 ('VFIO: platform: reset: AMD xgbe reset module')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, but I sent a patch for that one already.  (These are static
-checker fixes).
+Applied to next for v4.5 with Eric's Reviewed-by.  Thanks!
 
-regards,
-dan carpenter
+Alex
+
+> diff --git a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
+> b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
+> index da5356f..d4030d0 100644
+> --- a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
+> +++ b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
+> @@ -110,7 +110,7 @@ int vfio_platform_amdxgbe_reset(struct
+> vfio_platform_device *vdev)
+>  	usleep_range(10, 15);
+>  
+>  	count = 2000;
+> -	while (count-- && (ioread32(xgmac_regs->ioaddr + DMA_MR) &
+> 1))
+> +	while (--count && (ioread32(xgmac_regs->ioaddr + DMA_MR) &
+> 1))
+>  		usleep_range(500, 600);
+>  
+>  	if (!count)
 
