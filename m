@@ -1,85 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 10:15:42 +0000
-Subject: [PATCH 1/3] IDE-ACPI: One function call less in ide_get_dev_handle() after error detection
-Message-Id: <567E68CE.7030503@users.sourceforge.net>
+From: Richard Cochran <richardcochran@gmail.com>
+Date: Tue, 22 Dec 2015 21:19:58 +0000
+Subject: [PATCH] posix-clock: fix return code on the poll method's error path
+Message-Id: <1450819198-17420-1-git-send-email-richardcochran@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <567E6799.5070802@users.sourceforge.net>
-In-Reply-To: <567E6799.5070802@users.sourceforge.net>
+References: <56766488.9050402@users.sourceforge.net>
+In-Reply-To: <56766488.9050402@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ide@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org
+Cc: John Stultz <john.stultz@linaro.org>, Julia Lawall <julia.lawall@lip6.fr>, Markus Elfring <elfring@users.sourceforge.net>, Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 10:01:36 +0100
+The posix_clock_poll function is supposed to return a bit mask of
+POLLxxx values.  However, in case the hardware has disappeared (due to
+hot plugging for example) this code returns -ENODEV in a futile
+attempt to throw an error at the file descriptor level.  The kernel's
+file_operations interface does not accept such error codes from the
+poll method.  Instead, this function aught to return POLLERR.
 
-The kfree() function was called in two cases by the
-ide_get_dev_handle() function during error handling
-even if the passed variable "dinfo" contained a null pointer.
+The value -ENODEV does, in fact, contain the POLLERR bit (and almost
+all the other POLLxxx bits as well), but only by chance.  This patch
+fixes code to return a proper bit mask.
 
-* Let us return directly if a call of the function "ACPI_HANDLE"
-  or "acpi_get_object_info" failed.
+Credit goes to Markus Elfring for pointing out the suspicious
+signed/unsigned mismatch.
 
-* Delete the explicit initialisation for the variables "dinfo" and "ret"
-  at the beginning then.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Richard Cochran <richardcochran@gmail.com>
 ---
- drivers/ide/ide-acpi.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ kernel/time/posix-clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ide/ide-acpi.c b/drivers/ide/ide-acpi.c
-index b694099..319b754 100644
---- a/drivers/ide/ide-acpi.c
-+++ b/drivers/ide/ide-acpi.c
-@@ -126,8 +126,8 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
- 	u64 addr;
- 	acpi_handle dev_handle;
- 	acpi_status status;
--	struct acpi_device_info	*dinfo = NULL;
--	int ret = -ENODEV;
-+	struct acpi_device_info	*dinfo;
-+	int ret;
+diff --git a/kernel/time/posix-clock.c b/kernel/time/posix-clock.c
+index ce033c7..9cff0ab 100644
+--- a/kernel/time/posix-clock.c
++++ b/kernel/time/posix-clock.c
+@@ -69,10 +69,10 @@ static ssize_t posix_clock_read(struct file *fp, char __user *buf,
+ static unsigned int posix_clock_poll(struct file *fp, poll_table *wait)
+ {
+ 	struct posix_clock *clk = get_posix_clock(fp);
+-	int result = 0;
++	unsigned int result = 0;
  
- 	bus = pdev->bus->number;
- 	devnum = PCI_SLOT(pdev->devfn);
-@@ -140,13 +140,13 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
- 	dev_handle = ACPI_HANDLE(dev);
- 	if (!dev_handle) {
- 		DEBPRINT("no acpi handle for device\n");
--		goto err;
-+		return -ENODEV;
- 	}
+ 	if (!clk)
+-		return -ENODEV;
++		return POLLERR;
  
- 	status = acpi_get_object_info(dev_handle, &dinfo);
- 	if (ACPI_FAILURE(status)) {
- 		DEBPRINT("get_object_info for device failed\n");
--		goto err;
-+		return -ENODEV;
- 	}
- 	if (dinfo && (dinfo->valid & ACPI_VALID_ADR) &&
- 	    dinfo->address = addr) {
-@@ -157,13 +157,14 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
- 			" address: %llu, should be %u\n",
- 			dinfo ? (unsigned long long)dinfo->address : -1ULL,
- 			(unsigned int)addr);
--		goto err;
-+		ret = -ENODEV;
-+		goto free_info;
- 	}
- 
- 	DEBPRINT("for dev=0x%x.%x, addr=0x%llx, *handle=0x%p\n",
- 		 devnum, func, (unsigned long long)addr, *handle);
- 	ret = 0;
--err:
-+free_info:
- 	kfree(dinfo);
- 	return ret;
- }
+ 	if (clk->ops.poll)
+ 		result = clk->ops.poll(clk, fp, wait);
 -- 
-2.6.3
+2.1.4
 
