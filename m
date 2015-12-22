@@ -1,57 +1,32 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Dec 2015 12:40:13 +0000
-Subject: [PATCH 1/2] InfiniBand-iSER: One jump label less in iser_reg_sig_mr()
-Message-Id: <567FDC2D.2090706@users.sourceforge.net>
+Date: Tue, 22 Dec 2015 15:48:33 +0000
+Subject: [PATCH v2 0/2] USB-FHCI: Use return type "int" for two functions
+Message-Id: <567970D1.3030503@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <567FDB4E.2040000@users.sourceforge.net>
-In-Reply-To: <567FDB4E.2040000@users.sourceforge.net>
+References: <5675BAE0.2010304@users.sourceforge.net>
+ <20151219202706.GT5284@mwanda>
+In-Reply-To: <20151219202706.GT5284@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagig@mellanox.com>, Sean Hefty <sean.hefty@intel.com>
+To: linux-usb@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Dec 2015 11:41:42 +0100
+Date: Tue, 22 Dec 2015 16:43:12 +0100
 
-This issue was detected by using the Coccinelle software.
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-1. Let us return directly if a call of the iser_set_sig_attrs()
-   function failed.
+Markus Elfring (2):
+  Use a signed return type for fhci_create_ep()
+  Use a signed return type for endpoint_zero_init()
 
-2. Delete the jump label "err" then.
+ drivers/usb/host/fhci-hcd.c | 4 ++--
+ drivers/usb/host/fhci-tds.c | 2 +-
+ drivers/usb/host/fhci.h     | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-3. Return zero as a constant at the end.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/ulp/iser/iser_memory.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/infiniband/ulp/iser/iser_memory.c b/drivers/infiniband/ulp/iser/iser_memory.c
-index ea765fb..14e08b3 100644
---- a/drivers/infiniband/ulp/iser/iser_memory.c
-+++ b/drivers/infiniband/ulp/iser/iser_memory.c
-@@ -443,7 +443,7 @@ iser_reg_sig_mr(struct iscsi_iser_task *iser_task,
- 	memset(sig_attrs, 0, sizeof(*sig_attrs));
- 	ret = iser_set_sig_attrs(iser_task->sc, sig_attrs);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	iser_set_prot_checks(iser_task->sc, &sig_attrs->check_mask);
- 
-@@ -475,8 +475,7 @@ iser_reg_sig_mr(struct iscsi_iser_task *iser_task,
- 	iser_dbg("lkey=0x%x rkey=0x%x addr=0x%llx length=%u\n",
- 		 sig_reg->sge.lkey, sig_reg->rkey, sig_reg->sge.addr,
- 		 sig_reg->sge.length);
--err:
--	return ret;
-+	return 0;
- }
- 
- static int iser_fast_reg_mr(struct iscsi_iser_task *iser_task,
 -- 
 2.6.3
 
