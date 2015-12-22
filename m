@@ -1,22 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 12 Dec 2015 01:15:51 +0000
-Subject: Re: [patch -next] mlxsw: spectrum: fix some error handling
-Message-Id: <20151211.201551.1725224415474409711.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Dec 2015 08:29:29 +0000
+Subject: Re: blackfin-cpufreq: Mark cpu_set_cclk() as static
+Message-Id: <567909E9.5090602@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151209103351.GI3173@mwanda>
-In-Reply-To: <20151209103351.GI3173@mwanda>
+References: <5674598B.6020000@users.sourceforge.net>
+ <56786EF3.3070203@users.sourceforge.net>
+ <56786FF6.4060900@users.sourceforge.net> <20151222053543.GB12364@ubuntu>
+In-Reply-To: <20151222053543.GB12364@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jiri@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 9 Dec 2015 13:33:51 +0300
+> Well, I never Acked this patch as such and you shouldn't have
+> mentioned it by yourself.
 
-> The "err = " assignment is missing here.
-> 
-> Fixes: 0d65fc13042f ('mlxsw: spectrum: Implement LAG port join/leave')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Did I interpret your positive feedback too early in the way
+that I can add this tag myself already?
 
-Applied.
+
+> But it looks fine otherwise and so
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+Thanks for another acknowledgement.
+
+Regards,
+Markus
