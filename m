@@ -1,49 +1,41 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Thu, 17 Dec 2015 19:48:09 +0000
-Subject: Re: [patch 3/3 -next] drm/vc4: fix an error code
-Message-Id: <8737v0x3eu.fsf@eliezer.anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Dec 2015 09:43:55 +0000
+Subject: [PATCH] block-LDM: One function call less in ldm_validate_tocblocks() after error detection
+Message-Id: <567A6CDB.4030703@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151217124020.GC27382@mwanda>
-In-Reply-To: <20151217124020.GC27382@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-ntfs-dev@lists.sourceforge.net, linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Richard Russon <ldm@flatcap.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
---=-=-=
-Content-Type: text/plain
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 22 Dec 2015 22:32:07 +0100
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+This issue was detected by using the Coccinelle software.
 
-> "exec->exec_bo" is NULL at this point so this code returns success.  We
-> want to return -ENOMEM.
->
-> Fixes: d5b1a78a772f ('drm/vc4: Add support for drawing 3D frames.')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Let us return directly if a memory allocation failed.
 
-Thanks!  All 3 of these are Reviewed-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ block/partitions/ldm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've pulled them to my -next tree, which I'll send to Dave once we get
-the CONFIG_PM_SLEEP bits sorted out.
+diff --git a/block/partitions/ldm.c b/block/partitions/ldm.c
+index e507cfb..a50385c 100644
+--- a/block/partitions/ldm.c
++++ b/block/partitions/ldm.c
+@@ -433,7 +433,7 @@ static bool ldm_validate_tocblocks(struct parsed_partitions *state,
+ 	tb[1] = kmalloc(sizeof(*tb[1]) * 3, GFP_KERNEL);
+ 	if (!tb[1]) {
+ 		ldm_crit("Out of memory.");
+-		goto err;
++		return false;
+ 	}
+ 	tb[2] = (struct tocblock*)((u8*)tb[1] + sizeof(*tb[1]));
+ 	tb[3] = (struct tocblock*)((u8*)tb[2] + sizeof(*tb[2]));
+-- 
+2.6.3
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJWcxF5AAoJELXWKTbR/J7oNI8QAJxAJcMtMJBE84j5cezShc3T
-9mUDubaw5KqIg76y6LIRmPd3eFqqdKl0Nng0bdj4KWQEoYF4pNMlc+d2J+ok7Btl
-DfxIaCfzMeLtzaAYSriq/w3PPLMFDQsrgWFaYczK9WlCfVMPw+w3xZQATB3uRtUD
-bck3p2O9seT0BxeeGVJSQhS/bBo2ipDmCWSIPWlWN9o4I2Emt3bqAppyawZfneP0
-zbpiU/sdsnB54ne6i3UW5LZKozIhCty7ht0cMuB7zSnVIQDG73N8+CJV49f6hB3w
-xOqqhUn3YjldPWtBbNSlcO0/YfEc8iuvUCne+sCBtW1jsO5faFycc4ep1QXBD8vL
-rWKOizehyNQVeqHX2yLpDTrSqiIiX0XEJYAkZBOvfGuwkA2sYCD/l5A1qHTkgHsO
-IMPOoJuxWaub4Ou0bCE139ZfExrHGYZC9yvsfHa1/HPzlmzJwU+Gxw4qYEmB4YV7
-0JsjTHAMKwliHstl4ygXfnxkPv7MySi8n7elt1k06Pf7wla++8ZLhUDCXbvGPHuV
-+VuoZFrv35W56Xud5TDoCONakY2OGCIweL/afmhsF6LAfqsGx2BRu5Wv9w0O8C+r
-8tUKocDWvFLn5HFd9hF+9efmIXTuq2YrVbhrYCQPHAbZk3GTSn9JokjnLfGaY9aT
-OnctAz+imaO+JR2WjERD
-=CtYn
------END PGP SIGNATURE-----
---=-=-=--
