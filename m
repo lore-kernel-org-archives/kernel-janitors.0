@@ -1,58 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 22 Dec 2015 13:45:20 +0000
-Subject: [PATCH v2] ti-st: Use a signed return type for st_ll_sleep_state()
-Message-Id: <567953F0.7000802@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 23 Dec 2015 20:42:57 +0000
+Subject: [PATCH] staging: rdma: hfi1: diag: constify hfi1_filter_array structure
+Message-Id: <1450903377-27803-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <56758462.1020902@users.sourceforge.net>
- <20151219201511.GQ5284@mwanda>
-In-Reply-To: <20151219201511.GQ5284@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Mike Marciniszyn <infinipath@intel.com>
+Cc: devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 22 Dec 2015 14:40:47 +0100
+The hfi1_filter_array structure is never modified, so declare it as const.
 
-The return type "unsigned long" was used by the st_ll_sleep_state()
-function even though it will eventually return a negative error code.
-Improve this implementation detail by using the type "int" instead.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/ti-st/st_ll.c   | 2 +-
- include/linux/ti_wilink_st.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rdma/hfi1/diag.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/ti-st/st_ll.c b/drivers/misc/ti-st/st_ll.c
-index 93b4d67..788d436 100644
---- a/drivers/misc/ti-st/st_ll.c
-+++ b/drivers/misc/ti-st/st_ll.c
-@@ -128,7 +128,7 @@ unsigned long st_ll_getstate(struct st_data_s *ll)
- }
+diff --git a/drivers/staging/rdma/hfi1/diag.c b/drivers/staging/rdma/hfi1/diag.c
+index 0c88317..e41159f 100644
+--- a/drivers/staging/rdma/hfi1/diag.c
++++ b/drivers/staging/rdma/hfi1/diag.c
+@@ -257,7 +257,7 @@ static int hfi1_filter_ib_service_level(void *ibhdr, void *packet_data,
+ static int hfi1_filter_ib_pkey(void *ibhdr, void *packet_data, void *value);
+ static int hfi1_filter_direction(void *ibhdr, void *packet_data, void *value);
  
- /* called from ST Core, when a PM related packet arrives */
--unsigned long st_ll_sleep_state(struct st_data_s *st_data,
-+int st_ll_sleep_state(struct st_data_s *st_data,
- 	unsigned char cmd)
- {
- 	switch (cmd) {
-diff --git a/include/linux/ti_wilink_st.h b/include/linux/ti_wilink_st.h
-index 0a0d568..4205eb2 100644
---- a/include/linux/ti_wilink_st.h
-+++ b/include/linux/ti_wilink_st.h
-@@ -391,7 +391,7 @@ void st_ll_disable(struct st_data_s *);
-  * of the chip.
-  */
- unsigned long st_ll_getstate(struct st_data_s *);
--unsigned long st_ll_sleep_state(struct st_data_s *, unsigned char);
-+int st_ll_sleep_state(struct st_data_s *, unsigned char);
- void st_ll_wakeup(struct st_data_s *);
- 
- /*
--- 
-2.6.3
+-static struct hfi1_filter_array hfi1_filters[] = {
++static const struct hfi1_filter_array hfi1_filters[] = {
+ 	{ hfi1_filter_lid },
+ 	{ hfi1_filter_dlid },
+ 	{ hfi1_filter_mad_mgmt_class },
 
