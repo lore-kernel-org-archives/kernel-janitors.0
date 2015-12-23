@@ -1,54 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 31 Dec 2015 23:22:21 +0000
-Subject: [PATCH] be2net: Delete an unnecessary check in two functions
-Message-Id: <5685B8AD.7010900@users.sourceforge.net>
+Date: Wed, 23 Dec 2015 18:06:32 +0000
+Subject: [PATCH 1/5] block-LDM: One function call less in ldm_validate_tocblocks() after error detection
+Message-Id: <567AE2A8.8050900@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+ <567A6CDB.4030703@users.sourceforge.net>
+ <alpine.DEB.2.10.1512231140090.4367@hadrien>
+ <567AE1C6.9020108@users.sourceforge.net>
+In-Reply-To: <567AE1C6.9020108@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Ajit Khaparde <ajit.khaparde@avagotech.com>, Padmanabh Ratnakar <padmanabh.ratnakar@avagotech.com>, Sathya Perla <sathya.perla@avagotech.com>, Sriharsha Basavapatna <sriharsha.basavapatna@avagotech.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-ntfs-dev@lists.sourceforge.net, linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Richard Russon <ldm@flatcap.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Jan 2016 00:11:57 +0100
+Date: Tue, 22 Dec 2015 22:32:07 +0100
 
-Remove two checks for null pointers which would be handled by usual
-error detection before.
+This issue was detected by using the Coccinelle software.
+
+Let us return directly if a memory allocation failed.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/emulex/benet/be_cmds.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ block/partitions/ldm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_cmds.c b/drivers/net/ethernet/emulex/benet/be_cmds.c
-index b63d8ad..ba98297 100644
---- a/drivers/net/ethernet/emulex/benet/be_cmds.c
-+++ b/drivers/net/ethernet/emulex/benet/be_cmds.c
-@@ -4366,9 +4366,7 @@ int be_cmd_get_profile_config(struct be_adapter *adapter,
- 	if (vf_res)
- 		res->vf_if_cap_flags = vf_res->cap_flags;
- err:
--	if (cmd.va)
--		dma_free_coherent(&adapter->pdev->dev, cmd.size, cmd.va,
--				  cmd.dma);
-+	dma_free_coherent(&adapter->pdev->dev, cmd.size, cmd.va, cmd.dma);
- 	return status;
- }
- 
-@@ -4398,10 +4396,7 @@ static int be_cmd_set_profile_config(struct be_adapter *adapter, void *desc,
- 	memcpy(req->desc, desc, size);
- 
- 	status = be_cmd_notify_wait(adapter, &wrb);
--
--	if (cmd.va)
--		dma_free_coherent(&adapter->pdev->dev, cmd.size, cmd.va,
--				  cmd.dma);
-+	dma_free_coherent(&adapter->pdev->dev, cmd.size, cmd.va, cmd.dma);
- 	return status;
- }
- 
+diff --git a/block/partitions/ldm.c b/block/partitions/ldm.c
+index e507cfb..a50385c 100644
+--- a/block/partitions/ldm.c
++++ b/block/partitions/ldm.c
+@@ -433,7 +433,7 @@ static bool ldm_validate_tocblocks(struct parsed_partitions *state,
+ 	tb[1] = kmalloc(sizeof(*tb[1]) * 3, GFP_KERNEL);
+ 	if (!tb[1]) {
+ 		ldm_crit("Out of memory.");
+-		goto err;
++		return false;
+ 	}
+ 	tb[2] = (struct tocblock*)((u8*)tb[1] + sizeof(*tb[1]));
+ 	tb[3] = (struct tocblock*)((u8*)tb[2] + sizeof(*tb[2]));
 -- 
 2.6.3
 
