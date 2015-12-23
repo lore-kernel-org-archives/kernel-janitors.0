@@ -1,49 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 20 Dec 2015 11:15:53 +0000
-Subject: [PATCH 4/4] ASoC: Intel: add NULL test
-Message-Id: <1450610153-7746-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 23 Dec 2015 00:02:45 +0000
+Subject: Re: [PATCH 4/4] ASoC: Intel: add NULL test
+Message-Id: <20151223000245.GF16023@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="9ADF8FXzFeE7X4jE"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1450610153-7746-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450610153-7746-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+ <1450610153-7746-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450610153-7746-5-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-Add NULL test on call to devm_kzalloc.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+--9ADF8FXzFeE7X4jE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-// <smpl>
-@@
-expression x;
-identifier fld;
-@@
+On Sun, Dec 20, 2015 at 12:15:53PM +0100, Julia Lawall wrote:
+> Add NULL test on call to devm_kzalloc.
+>=20
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
 
-* x = devm_kzalloc(...);
-  ... when != x = NULL
-  x->fld
-// </smpl>
+If there was a patch 3 in this series I seem to be missing it.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+--9ADF8FXzFeE7X4jE
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
- sound/soc/intel/baytrail/sst-baytrail-pcm.c |    2 ++
- 1 file changed, 2 insertions(+)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/sound/soc/intel/baytrail/sst-baytrail-pcm.c b/sound/soc/intel/baytrail/sst-baytrail-pcm.c
-index 79547be..4765ad4 100644
---- a/sound/soc/intel/baytrail/sst-baytrail-pcm.c
-+++ b/sound/soc/intel/baytrail/sst-baytrail-pcm.c
-@@ -377,6 +377,8 @@ static int sst_byt_pcm_probe(struct snd_soc_platform *platform)
- 
- 	priv_data = devm_kzalloc(platform->dev, sizeof(*priv_data),
- 				 GFP_KERNEL);
-+	if (!priv_data)
-+		return -ENOMEM;
- 	priv_data->byt = plat_data->dsp;
- 	snd_soc_platform_set_drvdata(platform, priv_data);
- 
+iQEcBAEBCAAGBQJWeeSkAAoJECTWi3JdVIfQAcgH/AnXYLkd8gXHMDybnNC9+oaD
+CVwq0j5B5a74EH/qGKqhI6+uO8m036ILqLjVA7UqW+cCHmQPkyRrnsVyxRZfLI2p
+O0Zz1JL21qhh8Or+KmzaqS9paQrDa+i6PEcOopmXpPTgt5gzKE2kAWzt1TdQLIFf
+VJ8JhTO51G062YezaC2SRjInriZ8IkiVvbL43O48KcB/xFa23Gw9iD+eScCAU2cU
+hqSeR/VnOkvairb+gHTYTWWSSsQcYsLG0JN5FF3WlC9hx+KX6md8OS9UFrbazfMX
+1Kg9f9fETKVItwjO1y2gT/+oaCtXc5vbxo4RntRbqPipyqqQEW2UD/oMjHU9rPI=
+=4TrR
+-----END PGP SIGNATURE-----
 
+--9ADF8FXzFeE7X4jE--
