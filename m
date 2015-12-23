@@ -1,63 +1,96 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 30 Dec 2015 21:20:30 +0000
-Subject: [PATCH] drm/dp/mst: constify drm_dp_mst_topology_cbs structures
-Message-Id: <1451510430-11149-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Dec 2015 18:09:18 +0000
+Subject: [PATCH 2/5] block-LDM: Delete extra log messages for memory allocation failures
+Message-Id: <567AE34E.9000008@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567A6CDB.4030703@users.sourceforge.net>
+ <alpine.DEB.2.10.1512231140090.4367@hadrien>
+ <567AE1C6.9020108@users.sourceforge.net>
+In-Reply-To: <567AE1C6.9020108@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Daniel Vetter <daniel.vetter@intel.com>
+To: linux-ntfs-dev@lists.sourceforge.net, linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Richard Russon <ldm@flatcap.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The drm_dp_mst_topology_cbs structures are never modified, so declare them
-as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Dec 2015 13:21:01 +0100
 
-Done with the help of Coccinelle.
+A failed call of the kmalloc() function can generate appropriate
+information about insufficient memory already.
+Thus remove unnecessary log messages for such failures.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Suggested-by: Julia Lawall <julia.lawall@lip6.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/i915/intel_dp_mst.c    |    2 +-
- drivers/gpu/drm/radeon/radeon_dp_mst.c |    2 +-
- include/drm/drm_dp_mst_helper.h        |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ block/partitions/ldm.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index 74b5888..b37b859 100644
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@ -421,7 +421,7 @@ struct drm_dp_payload {
- struct drm_dp_mst_topology_mgr {
+diff --git a/block/partitions/ldm.c b/block/partitions/ldm.c
+index a50385c..856658a 100644
+--- a/block/partitions/ldm.c
++++ b/block/partitions/ldm.c
+@@ -343,10 +343,8 @@ static bool ldm_validate_privheads(struct parsed_partitions *state,
  
- 	struct device *dev;
--	struct drm_dp_mst_topology_cbs *cbs;
-+	const struct drm_dp_mst_topology_cbs *cbs;
- 	int max_dpcd_transaction_bytes;
- 	struct drm_dp_aux *aux; /* auxch for this topology mgr to use */
- 	int max_payloads;
-diff --git a/drivers/gpu/drm/radeon/radeon_dp_mst.c b/drivers/gpu/drm/radeon/radeon_dp_mst.c
-index 94323f5..8a02225 100644
---- a/drivers/gpu/drm/radeon/radeon_dp_mst.c
-+++ b/drivers/gpu/drm/radeon/radeon_dp_mst.c
-@@ -329,7 +329,7 @@ static void radeon_dp_mst_hotplug(struct drm_dp_mst_topology_mgr *mgr)
- 	drm_kms_helper_hotplug_event(dev);
- }
+ 	ph[1] = kmalloc (sizeof (*ph[1]), GFP_KERNEL);
+ 	ph[2] = kmalloc (sizeof (*ph[2]), GFP_KERNEL);
+-	if (!ph[1] || !ph[2]) {
+-		ldm_crit ("Out of memory.");
++	if (!ph[1] || !ph[2])
+ 		goto out;
+-	}
  
--struct drm_dp_mst_topology_cbs mst_cbs = {
-+const struct drm_dp_mst_topology_cbs mst_cbs = {
- 	.add_connector = radeon_dp_add_mst_connector,
- 	.register_connector = radeon_dp_register_mst_connector,
- 	.destroy_connector = radeon_dp_destroy_mst_connector,
-diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index e2f515d..fa0dabf 100644
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -534,7 +534,7 @@ static void intel_dp_mst_hotplug(struct drm_dp_mst_topology_mgr *mgr)
- 	drm_kms_helper_hotplug_event(dev);
- }
+ 	/* off[1 & 2] are relative to ph[0]->config_start */
+ 	ph[0]->config_start = 0;
+@@ -431,10 +429,8 @@ static bool ldm_validate_tocblocks(struct parsed_partitions *state,
+ 	ph = &ldb->ph;
+ 	tb[0] = &ldb->toc;
+ 	tb[1] = kmalloc(sizeof(*tb[1]) * 3, GFP_KERNEL);
+-	if (!tb[1]) {
+-		ldm_crit("Out of memory.");
++	if (!tb[1])
+ 		return false;
+-	}
+ 	tb[2] = (struct tocblock*)((u8*)tb[1] + sizeof(*tb[1]));
+ 	tb[3] = (struct tocblock*)((u8*)tb[2] + sizeof(*tb[2]));
+ 	/*
+@@ -1239,10 +1235,8 @@ static bool ldm_ldmdb_add (u8 *data, int len, struct ldmdb *ldb)
+ 	BUG_ON (!data || !ldb);
  
--static struct drm_dp_mst_topology_cbs mst_cbs = {
-+static const struct drm_dp_mst_topology_cbs mst_cbs = {
- 	.add_connector = intel_dp_add_mst_connector,
- 	.register_connector = intel_dp_register_mst_connector,
- 	.destroy_connector = intel_dp_destroy_mst_connector,
+ 	vb = kmalloc (sizeof (*vb), GFP_KERNEL);
+-	if (!vb) {
+-		ldm_crit ("Out of memory.");
++	if (!vb)
+ 		return false;
+-	}
+ 
+ 	if (!ldm_parse_vblk (data, len, vb)) {
+ 		kfree(vb);
+@@ -1325,10 +1319,8 @@ static bool ldm_frag_add (const u8 *data, int size, struct list_head *frags)
+ 	}
+ 
+ 	f = kmalloc (sizeof (*f) + size*num, GFP_KERNEL);
+-	if (!f) {
+-		ldm_crit ("Out of memory.");
++	if (!f)
+ 		return false;
+-	}
+ 
+ 	f->group = group;
+ 	f->num   = num;
+@@ -1519,10 +1511,8 @@ int ldm_partition(struct parsed_partitions *state)
+ 		return 0;
+ 
+ 	ldb = kmalloc (sizeof (*ldb), GFP_KERNEL);
+-	if (!ldb) {
+-		ldm_crit ("Out of memory.");
++	if (!ldb)
+ 		goto out;
+-	}
+ 
+ 	/* Parse and check privheads. */
+ 	if (!ldm_validate_privheads(state, &ldb->ph))
+-- 
+2.6.3
 
