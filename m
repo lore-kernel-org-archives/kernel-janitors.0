@@ -1,29 +1,50 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 09 Dec 2015 10:41:22 +0000
-Subject: Re: [patch] iwlwifi: mvm: remove an extra tab
-Message-Id: <1449657682.2304.1.camel@sipsolutions.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 23 Dec 2015 21:36:32 +0000
+Subject: [PATCH] mac802154: constify ieee802154_llsec_ops structure
+Message-Id: <1450906592-9203-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151209102608.GF3173@mwanda>
-	 (sfid-20151209_112631_985246_0F4FF2B2)
-In-Reply-To: <20151209102608.GF3173@mwanda> (sfid-20151209_112631_985246_0F4FF2B2)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Golan Ben-Ami <golan.ben.ami@intel.com>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexander Aring <alex.aring@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-wpan@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Wed, 2015-12-09 at 13:26 +0300, Dan Carpenter wrote:
-> Smatch prints a static checker warning here:
-> 
->     drivers/net/wireless/intel/iwlwifi/mvm/fw-dbg.c:386
-> iwl_dump_prph()
->     warn: curly braces intended?
-> 
-> Curly braces are NOT intended, the extra tab was added by mistake in
-> commit 1a616dd2f171 ('iwlwifi: dump prph registers in a common place
-> for all transports').
-> 
+The ieee802154_llsec_ops structure is never modified, so declare it as
+const.
 
-Applied, thanks.
+Done with the help of Coccinelle.
 
-johannes
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ include/net/ieee802154_netdev.h |    2 +-
+ net/mac802154/mac_cmd.c         |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/ieee802154_netdev.h b/include/net/ieee802154_netdev.h
+index a62a051..c4b3160 100644
+--- a/include/net/ieee802154_netdev.h
++++ b/include/net/ieee802154_netdev.h
+@@ -337,7 +337,7 @@ struct ieee802154_mlme_ops {
+ 	void (*get_mac_params)(struct net_device *dev,
+ 			       struct ieee802154_mac_params *params);
+ 
+-	struct ieee802154_llsec_ops *llsec;
++	const struct ieee802154_llsec_ops *llsec;
+ };
+ 
+ static inline struct ieee802154_mlme_ops *
+diff --git a/net/mac802154/mac_cmd.c b/net/mac802154/mac_cmd.c
+index 8606da4..3db1634 100644
+--- a/net/mac802154/mac_cmd.c
++++ b/net/mac802154/mac_cmd.c
+@@ -126,7 +126,7 @@ static void mac802154_get_mac_params(struct net_device *dev,
+ 	params->lbt = wpan_dev->lbt;
+ }
+ 
+-static struct ieee802154_llsec_ops mac802154_llsec_ops = {
++static const struct ieee802154_llsec_ops mac802154_llsec_ops = {
+ 	.get_params = mac802154_get_params,
+ 	.set_params = mac802154_set_params,
+ 	.add_key = mac802154_add_key,
+
