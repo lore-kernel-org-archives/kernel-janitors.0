@@ -1,41 +1,108 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 24 Dec 2015 17:54:50 +0000
-Subject: Re: Documentation-getdelays: Fix a check for container file usage in main()
-Message-Id: <567C316A.6020406@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 23 Dec 2015 21:59:55 +0000
+Subject: [PATCH] PowerCap: constify powercap_zone_ops and powercap_zone_constraint_ops structures
+Message-Id: <1450907995-825-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <567BE5AA.6070607@users.sourceforge.net>
- <567BE64C.4090604@users.sourceforge.net> <20151224072210.15d6ee6c@lwn.net>
-In-Reply-To: <20151224072210.15d6ee6c@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> The close() function could be called by the main() function even if
->> the passed variable "cfd" was assigned a negative value.
-=85
-> This seems more easily fixed by simply making the condition > 0.
+The powercap_zone_ops and powercap_zone_constraint_ops structures are never
+modified, so declare them as const.
 
-How do you think about the reuse of the error predicate "cfd !=3D -1"
-for the return value from a call of the function "open"?
-http://pubs.opengroup.org/onlinepubs/9699919799/functions/open.html
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Docum=
-entation/accounting/getdelays.c?id=80c75a0f1d81922bf322c0634d1e1a15825a89e6=
-#n425
+Most of the actual changes adjust indentation to accomodate the const
+keyword.
 
+Done with the help of Coccinelle.
 
-> Meanwhile, I'd really not add labels-inside-if-statements as an example
-> in the documentation tree.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-How are the chances to improve the affected error detection
-and corresponding exception handling?
+---
+ drivers/powercap/intel_rapl.c   |    4 ++--
+ drivers/powercap/powercap_sys.c |   18 +++++++++---------
+ include/linux/powercap.h        |    4 ++--
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
+index 4099159..6c592dc 100644
+--- a/drivers/powercap/intel_rapl.c
++++ b/drivers/powercap/intel_rapl.c
+@@ -388,7 +388,7 @@ static int get_domain_enable(struct powercap_zone *power_zone, bool *mode)
+ }
+ 
+ /* per RAPL domain ops, in the order of rapl_domain_type */
+-static struct powercap_zone_ops zone_ops[] = {
++static const struct powercap_zone_ops zone_ops[] = {
+ 	/* RAPL_DOMAIN_PACKAGE */
+ 	{
+ 		.get_energy_uj = get_energy_counter,
+@@ -584,7 +584,7 @@ static int get_max_power(struct powercap_zone *power_zone, int id,
+ 	return ret;
+ }
+ 
+-static struct powercap_zone_constraint_ops constraint_ops = {
++static const struct powercap_zone_constraint_ops constraint_ops = {
+ 	.set_power_limit_uw = set_power_limit,
+ 	.get_power_limit_uw = get_current_power_limit,
+ 	.set_time_window_us = set_time_window,
+diff --git a/drivers/powercap/powercap_sys.c b/drivers/powercap/powercap_sys.c
+index 84419af..14bde0d 100644
+--- a/drivers/powercap/powercap_sys.c
++++ b/drivers/powercap/powercap_sys.c
+@@ -293,8 +293,8 @@ err_alloc:
+ }
+ 
+ static int create_constraints(struct powercap_zone *power_zone,
+-				int nr_constraints,
+-				struct powercap_zone_constraint_ops *const_ops)
++			int nr_constraints,
++			const struct powercap_zone_constraint_ops *const_ops)
+ {
+ 	int i;
+ 	int ret = 0;
+@@ -492,13 +492,13 @@ static struct class powercap_class = {
+ };
+ 
+ struct powercap_zone *powercap_register_zone(
+-				struct powercap_zone *power_zone,
+-				struct powercap_control_type *control_type,
+-				const char *name,
+-				struct powercap_zone *parent,
+-				const struct powercap_zone_ops *ops,
+-				int nr_constraints,
+-				struct powercap_zone_constraint_ops *const_ops)
++			struct powercap_zone *power_zone,
++			struct powercap_control_type *control_type,
++			const char *name,
++			struct powercap_zone *parent,
++			const struct powercap_zone_ops *ops,
++			int nr_constraints,
++			const struct powercap_zone_constraint_ops *const_ops)
+ {
+ 	int result;
+ 	int nr_attrs;
+diff --git a/include/linux/powercap.h b/include/linux/powercap.h
+index 4e25041..f0a4e62 100644
+--- a/include/linux/powercap.h
++++ b/include/linux/powercap.h
+@@ -208,7 +208,7 @@ struct powercap_zone_constraint_ops {
+ struct powercap_zone_constraint {
+ 	int id;
+ 	struct powercap_zone *power_zone;
+-	struct powercap_zone_constraint_ops *ops;
++	const struct powercap_zone_constraint_ops *ops;
+ };
+ 
+ 
+@@ -309,7 +309,7 @@ struct powercap_zone *powercap_register_zone(
+ 			struct powercap_zone *parent,
+ 			const struct powercap_zone_ops *ops,
+ 			int nr_constraints,
+-			struct powercap_zone_constraint_ops *const_ops);
++			const struct powercap_zone_constraint_ops *const_ops);
+ 
+ /**
+ * powercap_unregister_zone() - Unregister a zone device
+
