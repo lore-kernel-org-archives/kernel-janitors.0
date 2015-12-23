@@ -1,41 +1,67 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 14:17:01 +0000
-Subject: [PATCH 1/2] mfd: smsc-ece1099: Delete an unnecessary variable initialisation in smsc_i2c_probe()
-Message-Id: <568295DD.3090809@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 23 Dec 2015 21:25:13 +0000
+Subject: [PATCH] lockd: constify nlmsvc_binding structure
+Message-Id: <1450905913-657-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5682957F.5000604@users.sourceforge.net>
-In-Reply-To: <5682957F.5000604@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: kernel-janitors@vger.kernel.org, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 14:47:40 +0100
+The nlmsvc_binding structure is never modified, so declare it as const.
 
-The variable "ret" will be set to an appropriate value a bit later.
-Thus let us omit the explicit initialisation at the beginning.
+Done with the help of Coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/mfd/smsc-ece1099.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/smsc-ece1099.c b/drivers/mfd/smsc-ece1099.c
-index a4c0df7..bcac488 100644
---- a/drivers/mfd/smsc-ece1099.c
-+++ b/drivers/mfd/smsc-ece1099.c
-@@ -36,7 +36,7 @@ static int smsc_i2c_probe(struct i2c_client *i2c,
- {
- 	struct smsc *smsc;
- 	int devid, rev, venid_l, venid_h;
--	int ret = 0;
-+	int ret;
+This assumes that whoever takes advantage of the EXPORT_SYMBOL will also
+not want to write in the fields.  Is that reasonable?
+
+ fs/lockd/svc.c             |    2 +-
+ fs/nfsd/lockd.c            |    2 +-
+ include/linux/lockd/bind.h |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+index 44d18ad..0c1a699 100644
+--- a/fs/lockd/svc.c
++++ b/fs/lockd/svc.c
+@@ -48,7 +48,7 @@
  
- 	smsc = devm_kzalloc(&i2c->dev, sizeof(struct smsc),
- 				GFP_KERNEL);
--- 
-2.6.3
+ static struct svc_program	nlmsvc_program;
+ 
+-struct nlmsvc_binding *		nlmsvc_ops;
++const struct nlmsvc_binding	*nlmsvc_ops;
+ EXPORT_SYMBOL_GPL(nlmsvc_ops);
+ 
+ static DEFINE_MUTEX(nlmsvc_mutex);
+diff --git a/include/linux/lockd/bind.h b/include/linux/lockd/bind.h
+index 4d24d64..140edab6 100644
+--- a/include/linux/lockd/bind.h
++++ b/include/linux/lockd/bind.h
+@@ -29,7 +29,7 @@ struct nlmsvc_binding {
+ 	void			(*fclose)(struct file *);
+ };
+ 
+-extern struct nlmsvc_binding *	nlmsvc_ops;
++extern const struct nlmsvc_binding *nlmsvc_ops;
+ 
+ /*
+  * Similar to nfs_client_initdata, but without the NFS-specific
+diff --git a/fs/nfsd/lockd.c b/fs/nfsd/lockd.c
+index 77e7a5c..1a03bc3 100644
+--- a/fs/nfsd/lockd.c
++++ b/fs/nfsd/lockd.c
+@@ -58,7 +58,7 @@ nlm_fclose(struct file *filp)
+ 	fput(filp);
+ }
+ 
+-static struct nlmsvc_binding	nfsd_nlm_ops = {
++static const struct nlmsvc_binding nfsd_nlm_ops = {
+ 	.fopen		= nlm_fopen,		/* open file for locking */
+ 	.fclose		= nlm_fclose,		/* close file */
+ };
 
