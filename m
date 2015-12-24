@@ -1,41 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Dec 2015 09:40:24 +0000
-Subject: [PATCH] ASoC: ssm2518: Use a signed return type for ssm2518_lookup_mcs()
-Message-Id: <56767788.4020709@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Dec 2015 07:23:03 +0000
+Subject: [patch 1/2] ACPI / debugger: remove some unneeded conditions
+Message-Id: <20151224072303.GA29642@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lv Zheng <lv.zheng@intel.com>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 20 Dec 2015 10:34:25 +0100
+"count" is unsigned so checking for less than zero here causes a static
+checker warning.  And really it's better to let the access_ok() check
+fail if the user passes in a NULL "buf" pointer because -EFAULT is the
+correct error code.
 
-The return type "unsigned int" was used by the ssm2518_lookup_mcs()
-function even though it will eventually return a negative error code.
-Improve this implementation detail by deletion of the type modifier then.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/codecs/ssm2518.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/ssm2518.c b/sound/soc/codecs/ssm2518.c
-index 86b81a6..e2e0bfa 100644
---- a/sound/soc/codecs/ssm2518.c
-+++ b/sound/soc/codecs/ssm2518.c
-@@ -309,7 +309,7 @@ static const struct snd_pcm_hw_constraint_list ssm2518_constraints_12288000 = {
- 	.count = ARRAY_SIZE(ssm2518_rates_12288000),
- };
+diff --git a/drivers/acpi/acpi_dbg.c b/drivers/acpi/acpi_dbg.c
+index 381beb2..f2c92ab 100644
+--- a/drivers/acpi/acpi_dbg.c
++++ b/drivers/acpi/acpi_dbg.c
+@@ -610,8 +610,6 @@ static ssize_t acpi_aml_read(struct file *file, char __user *buf,
+ 	int ret = 0;
+ 	int size = 0;
  
--static unsigned int ssm2518_lookup_mcs(struct ssm2518 *ssm2518,
-+static int ssm2518_lookup_mcs(struct ssm2518 *ssm2518,
- 	unsigned int rate)
- {
- 	const unsigned int *sysclks = NULL;
--- 
-2.6.3
-
+-	if (!buf || count < 0)
+-		return -EINVAL;
+ 	if (!count)
+ 		return 0;
+ 	if (!access_ok(VERIFY_WRITE, buf, count))
+@@ -681,8 +679,6 @@ static ssize_t acpi_aml_write(struct file *file, const char __user *buf,
+ 	int ret = 0;
+ 	int size = 0;
+ 
+-	if (!buf || count < 0)
+-		return -EINVAL;
+ 	if (!count)
+ 		return 0;
+ 	if (!access_ok(VERIFY_READ, buf, count))
