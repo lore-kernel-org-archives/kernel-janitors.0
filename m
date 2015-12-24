@@ -1,74 +1,32 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Mon, 07 Dec 2015 15:39:28 +0000
-Subject: Re: [patch] OMAPDSS: DSS: fix a warning message
-Message-Id: <5665A830.7030201@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="avLNdaKKQjiHN3xGdPNIu6SNnClK9hN1T"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Dec 2015 07:25:32 +0000
+Subject: [patch] pinctrl: nsp-gpio: forever loop in nsp_gpio_get_strength()
+Message-Id: <20151224072532.GC29642@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151204131458.GA12792@mwanda>
-In-Reply-To: <20151204131458.GA12792@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Linus Walleij <linus.walleij@linaro.org>, Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
+Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, kernel-janitors@vger.kernel.org
 
---avLNdaKKQjiHN3xGdPNIu6SNnClK9hN1T
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+There is a signedness bug here so the loop will never exit.
 
+Fixes: 8bfcbbbcabe0 ('pinctrl: nsp: add gpio-a driver support for Broadcom NSP SoC')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-On 04/12/15 15:14, Dan Carpenter wrote:
-> The WARN() macro has to take a condition.  The current code will just
-> print the stack trace and the function name instead of the intended
-> warning message.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/video/fbdev/omap2/dss/dss.h b/drivers/video/fbdev/=
-omap2/dss/dss.h
-> index 2406bcd..da3a85a 100644
-> --- a/drivers/video/fbdev/omap2/dss/dss.h
-> +++ b/drivers/video/fbdev/omap2/dss/dss.h
-> @@ -343,7 +343,8 @@ u8 dsi_get_pixel_size(enum omap_dss_dsi_pixel_forma=
-t fmt);
->  #else
->  static inline u8 dsi_get_pixel_size(enum omap_dss_dsi_pixel_format fmt=
-)
->  {
-> -	WARN("%s: DSI not compiled in, returning pixel_size as 0\n", __func__=
-);
-> +	WARN(1, "%s: DSI not compiled in, returning pixel_size as 0\n",
-> +	     __func__);
->  	return 0;
->  }
->  #endif
->=20
-
-Thanks, queued for 4.5.
-
- Tomi
-
-
---avLNdaKKQjiHN3xGdPNIu6SNnClK9hN1T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJWZagwAAoJEPo9qoy8lh71O5sQAJc+QbjCw0dOFWmG/WHYuis+
-igpSLzJh5BGkJTkdukCmW5BFK1tFH91p3L6mLhrDGc00d7mRmBX6Adea4l48UtSg
-7nN0jtg8YMHsMF4sGPZ6eNd7j2hcRhj4JuCsLGvnShqPI7juk5JycY81hpEe6NIk
-pWbWJ0aVSc1w7O8zSr5zsJPtYTPI6z/NvVXz57UQstYFp/Rj73tmHrU7pVJxFLKG
-82XQ3DZdp6L/sfVFaXXyVKPIzBklqUJnL2n2C8x00DqLTWBqO4rrj02GdvkxTWfR
-CVL9tu/nHLYiDaIkV9NwI21BHTlGeHeTTs1aQoTUDJJ5z2xCtUNpsPGy1jR+uQAw
-Ftw19xdwnTUVXQv252YOJdHNBt4dvmIPPAvHKftsXStqDYK0YjQPF+iUjocmgh2g
-nGDIv0/mHyZwpM6jfKEhE0BVCthHBk2/WCofucbv8fALroBEHBPjcWPTC1SM8t4u
-qLXffX2TNeTeqVUdD3ht19TfucqYT7ljoUg9vktuj1Ay9VJz6NWsKxdWHTdUBrNM
-temHA5l1yzk/2Ka1IjSl+rXiP78IW2TShhFttHJlESh/3UtuymX0mpEE7+6elUnP
-1Kiw6EsliOxCvrBr+/YD1CE7Mv5Hu9cc++VntjVqR1/mxcqn9mAstkBgRn2oCNuC
-p9ObztLd6SaDPjt5bqCX
-=Pe7h
------END PGP SIGNATURE-----
-
---avLNdaKKQjiHN3xGdPNIu6SNnClK9hN1T--
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+index 34648f6..ac7b010 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+@@ -439,9 +439,10 @@ static int nsp_gpio_set_strength(struct nsp_gpio *chip, unsigned gpio,
+ static int nsp_gpio_get_strength(struct nsp_gpio *chip, unsigned gpio,
+ 				 u16 *strength)
+ {
+-	unsigned int i, offset, shift;
++	unsigned int offset, shift;
+ 	u32 val;
+ 	unsigned long flags;
++	int i;
+ 
+ 	offset = NSP_GPIO_DRV_CTRL;
+ 	shift = gpio;
