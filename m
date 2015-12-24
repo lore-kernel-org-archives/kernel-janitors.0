@@ -1,28 +1,43 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Thu, 17 Dec 2015 23:02:07 +0000
-Subject: Re: [patch] HID: wacom: bitwise vs logical ORs
-Message-Id: <alpine.LNX.2.00.1512180001380.9922@cbobk.fhfr.pm>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 24 Dec 2015 12:36:48 +0000
+Subject: [PATCH 2/3] Documentation-getdelays: Apply a recommendation from "checkpatch.pl" in main()
+Message-Id: <567BE6E0.6040405@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151209102205.GB3173@mwanda> <alpine.LNX.2.00.1512161557060.9922@cbobk.fhfr.pm> <CANRwn3TvwFr85A=dbVTY2gXVdL0y=uw10f1eJBLYWzd3BfNg1Q@mail.gmail.com>
-In-Reply-To: <CANRwn3TvwFr85A=dbVTY2gXVdL0y=uw10f1eJBLYWzd3BfNg1Q@mail.gmail.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567BE5AA.6070607@users.sourceforge.net>
+In-Reply-To: <567BE5AA.6070607@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jason Gerecke <killertofu@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Henrik Rydberg <rydberg@bitmath.org>, Linux Input <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 16 Dec 2015, Jason Gerecke wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 24 Dec 2015 11:05:32 +0100
 
-> This patch looks fine to me (the 'prox' calculation /should/ be
-> logical, but I suppose bitwise works too :D). Found two other bugs
-> from c7f0522 while reviewing though -- I'll have patches for you
-> shortly.
-> 
-> Reviewed-by: Jason Gerecke <jason.gerecke@wacom.com>
+The script "checkpatch.pl" pointed out that assignments should usually
+not be performed within condition checks.
+Thus move the assignment for the variable "nl_sd" to a separate statement.
 
-Queued in for-4.5/wacom, thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ Documentation/accounting/getdelays.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/accounting/getdelays.c b/Documentation/accounting/getdelays.c
+index 6656c0c..9ca318d 100644
+--- a/Documentation/accounting/getdelays.c
++++ b/Documentation/accounting/getdelays.c
+@@ -375,7 +375,8 @@ int main(int argc, char *argv[])
+ 		}
+ 	}
+ 
+-	if ((nl_sd = create_nl_socket(NETLINK_GENERIC)) < 0)
++	nl_sd = create_nl_socket(NETLINK_GENERIC);
++	if (nl_sd < 0)
+ 		err(1, "error creating Netlink socket\n");
+ 
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+2.6.3
 
