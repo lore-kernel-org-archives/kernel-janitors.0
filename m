@@ -1,30 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Dec 2015 10:11:28 +0000
-Subject: [patch] mic_virtio: fix a timeout loop
-Message-Id: <20151215101128.GE20848@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 24 Dec 2015 19:40:32 +0000
+Subject: Re: Documentation-getdelays: Less function calls in usage()
+Message-Id: <567C4A30.8040500@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567BE5AA.6070607@users.sourceforge.net>
+ <567BE729.7030800@users.sourceforge.net> <20151224072332.6df702b3@lwn.net>
+In-Reply-To: <20151224072332.6df702b3@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, Sudeep Dutt <sudeep.dutt@intel.com>, Ashutosh Dixit <ashutosh.dixit@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-After the loop we test "if (!retry)" to see if we timedout.  The problem
-is "retry--" is a post-op so retry will be -1 at the end of the loop.  I
-have fixed this by changing it to a pre-op instead.
+>> A single call of the fprintf() function is sufficient for the desired
+>> display of the usage information.
+>=20
+> This seems like churn that doesn't actually fix anything.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Will it matter occasionally to reduce the number of function calls
+by combining several text fragments into the passing of one longer
+string parameter?
 
-diff --git a/drivers/misc/mic/card/mic_virtio.c b/drivers/misc/mic/card/mic_virtio.c
-index e486a0c..b3ad9c4 100644
---- a/drivers/misc/mic/card/mic_virtio.c
-+++ b/drivers/misc/mic/card/mic_virtio.c
-@@ -337,7 +337,7 @@ static int mic_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 	 * rings have been re-assigned.
- 	 */
- 	mic_send_intr(mvdev->mdev, mvdev->c2h_vdev_db);
--	for (retry = 100; retry--;) {
-+	for (retry = 100; --retry;) {
- 		if (!ioread8(&dc->used_address_updated))
- 			break;
- 		msleep(100);
+Does a warning like "quoted string split across lines" need also
+any further considerations for the Linux coding style specification?
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/scrip=
+ts/checkpatch.pl?id=80c75a0f1d81922bf322c0634d1e1a15825a89e6#n4837
+
+Regards,
+Markus
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
