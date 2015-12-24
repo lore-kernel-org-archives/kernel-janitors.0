@@ -1,95 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 08 Dec 2015 21:14:31 +0000
-Subject: [PATCH] ocfs2: constify ocfs2_extent_tree_operations structures
-Message-Id: <1449609271-4955-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 24 Dec 2015 17:54:50 +0000
+Subject: Re: Documentation-getdelays: Fix a check for container file usage in main()
+Message-Id: <567C316A.6020406@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567BE5AA.6070607@users.sourceforge.net>
+ <567BE64C.4090604@users.sourceforge.net> <20151224072210.15d6ee6c@lwn.net>
+In-Reply-To: <20151224072210.15d6ee6c@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mark Fasheh <mfasheh@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The ocfs2_extent_tree_operations structures are never modified, so declare
-them as const.
+>> The close() function could be called by the main() function even if
+>> the passed variable "cfd" was assigned a negative value.
+=85
+> This seems more easily fixed by simply making the condition > 0.
 
-Done with the help of Coccinelle.
+How do you think about the reuse of the error predicate "cfd !=3D -1"
+for the return value from a call of the function "open"?
+http://pubs.opengroup.org/onlinepubs/9699919799/functions/open.html
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Docum=
+entation/accounting/getdelays.c?id=80c75a0f1d81922bf322c0634d1e1a15825a89e6=
+#n425
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
- fs/ocfs2/alloc.c |   12 ++++++------
- fs/ocfs2/alloc.h |    2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+> Meanwhile, I'd really not add labels-inside-if-statements as an example
+> in the documentation tree.
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index c2cb51d..ceb56b7 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -164,7 +164,7 @@ static int ocfs2_dinode_insert_check(struct ocfs2_extent_tree *et,
- 				     struct ocfs2_extent_rec *rec);
- static int ocfs2_dinode_sanity_check(struct ocfs2_extent_tree *et);
- static void ocfs2_dinode_fill_root_el(struct ocfs2_extent_tree *et);
--static struct ocfs2_extent_tree_operations ocfs2_dinode_et_ops = {
-+static const struct ocfs2_extent_tree_operations ocfs2_dinode_et_ops = {
- 	.eo_set_last_eb_blk	= ocfs2_dinode_set_last_eb_blk,
- 	.eo_get_last_eb_blk	= ocfs2_dinode_get_last_eb_blk,
- 	.eo_update_clusters	= ocfs2_dinode_update_clusters,
-@@ -286,7 +286,7 @@ static void ocfs2_xattr_value_update_clusters(struct ocfs2_extent_tree *et,
- 	le32_add_cpu(&vb->vb_xv->xr_clusters, clusters);
- }
- 
--static struct ocfs2_extent_tree_operations ocfs2_xattr_value_et_ops = {
-+static const struct ocfs2_extent_tree_operations ocfs2_xattr_value_et_ops = {
- 	.eo_set_last_eb_blk	= ocfs2_xattr_value_set_last_eb_blk,
- 	.eo_get_last_eb_blk	= ocfs2_xattr_value_get_last_eb_blk,
- 	.eo_update_clusters	= ocfs2_xattr_value_update_clusters,
-@@ -332,7 +332,7 @@ static void ocfs2_xattr_tree_update_clusters(struct ocfs2_extent_tree *et,
- 	le32_add_cpu(&xb->xb_attrs.xb_root.xt_clusters, clusters);
- }
- 
--static struct ocfs2_extent_tree_operations ocfs2_xattr_tree_et_ops = {
-+static const struct ocfs2_extent_tree_operations ocfs2_xattr_tree_et_ops = {
- 	.eo_set_last_eb_blk	= ocfs2_xattr_tree_set_last_eb_blk,
- 	.eo_get_last_eb_blk	= ocfs2_xattr_tree_get_last_eb_blk,
- 	.eo_update_clusters	= ocfs2_xattr_tree_update_clusters,
-@@ -379,7 +379,7 @@ static void ocfs2_dx_root_fill_root_el(struct ocfs2_extent_tree *et)
- 	et->et_root_el = &dx_root->dr_list;
- }
- 
--static struct ocfs2_extent_tree_operations ocfs2_dx_root_et_ops = {
-+static const struct ocfs2_extent_tree_operations ocfs2_dx_root_et_ops = {
- 	.eo_set_last_eb_blk	= ocfs2_dx_root_set_last_eb_blk,
- 	.eo_get_last_eb_blk	= ocfs2_dx_root_get_last_eb_blk,
- 	.eo_update_clusters	= ocfs2_dx_root_update_clusters,
-@@ -425,7 +425,7 @@ ocfs2_refcount_tree_extent_contig(struct ocfs2_extent_tree *et,
- 	return CONTIG_NONE;
- }
- 
--static struct ocfs2_extent_tree_operations ocfs2_refcount_tree_et_ops = {
-+static const struct ocfs2_extent_tree_operations ocfs2_refcount_tree_et_ops = {
- 	.eo_set_last_eb_blk	= ocfs2_refcount_tree_set_last_eb_blk,
- 	.eo_get_last_eb_blk	= ocfs2_refcount_tree_get_last_eb_blk,
- 	.eo_update_clusters	= ocfs2_refcount_tree_update_clusters,
-@@ -438,7 +438,7 @@ static void __ocfs2_init_extent_tree(struct ocfs2_extent_tree *et,
- 				     struct buffer_head *bh,
- 				     ocfs2_journal_access_func access,
- 				     void *obj,
--				     struct ocfs2_extent_tree_operations *ops)
-+				     const struct ocfs2_extent_tree_operations *ops)
- {
- 	et->et_ops = ops;
- 	et->et_root_bh = bh;
-diff --git a/fs/ocfs2/alloc.h b/fs/ocfs2/alloc.h
-index fb09b97..f3dc1b0 100644
---- a/fs/ocfs2/alloc.h
-+++ b/fs/ocfs2/alloc.h
-@@ -54,7 +54,7 @@
-  */
- struct ocfs2_extent_tree_operations;
- struct ocfs2_extent_tree {
--	struct ocfs2_extent_tree_operations	*et_ops;
-+	const struct ocfs2_extent_tree_operations *et_ops;
- 	struct buffer_head			*et_root_bh;
- 	struct ocfs2_extent_list		*et_root_el;
- 	struct ocfs2_caching_info		*et_ci;
+How are the chances to improve the affected error detection
+and corresponding exception handling?
 
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
