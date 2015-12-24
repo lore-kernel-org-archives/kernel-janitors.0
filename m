@@ -1,24 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 15 Dec 2015 17:52:24 +0000
-Subject: Re: [patch -mainline] qlge: fix a timeout loop in ql_change_rx_buffers()
-Message-Id: <20151215.125224.1037822755732556120.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Dec 2015 07:24:37 +0000
+Subject: [patch 2/2] ACPI / debugger: copy_to_user doesn't return errors
+Message-Id: <20151224072437.GB29642@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151215105236.GH20848@mwanda>
-In-Reply-To: <20151215105236.GH20848@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: harish.patil@qlogic.com, sudarsana.kalluru@qlogic.com, Dept-GELinuxNICDev@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lv Zheng <lv.zheng@intel.com>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Dec 2015 13:52:36 +0300
+The copy_to/from_user() functions don't return error codes, they return
+the number of bytes remaining.  We had intended to return -EFUALT here.
+We actually have already checked access_ok() in an earlier function so
+I don't think these functions will fail but let's fix it anyway.
 
-> The problem here is that after the loop we test for "if (!i) " but
-> because "i--" is a post-op we exit with i set to -1.  I have fixed this
-> by changing it to a pre-op instead.  I had to change the starting value
-> from 3 to 4 so that we still iterate 3 times.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/acpi/acpi_dbg.c b/drivers/acpi/acpi_dbg.c
+index f2c92ab..2a1777b 100644
+--- a/drivers/acpi/acpi_dbg.c
++++ b/drivers/acpi/acpi_dbg.c
+@@ -592,9 +592,10 @@ static int acpi_aml_read_user(char __user *buf, int len)
+ 	smp_rmb();
+ 	p = &crc->buf[crc->tail];
+ 	n = min(len, circ_count_to_end(crc));
+-	ret = copy_to_user(buf, p, n);
+-	if (IS_ERR_VALUE(ret))
++	if (copy_to_user(buf, p, n)) {
++		ret = -EFAULT;
+ 		goto out;
++	}
+ 	/* sync tail after removing logs */
+ 	smp_mb();
+ 	crc->tail = (crc->tail + n) & (ACPI_AML_BUF_SIZE - 1);
+@@ -661,9 +662,10 @@ static int acpi_aml_write_user(const char __user *buf, int len)
+ 	smp_mb();
+ 	p = &crc->buf[crc->head];
+ 	n = min(len, circ_space_to_end(crc));
+-	ret = copy_from_user(p, buf, n);
+-	if (IS_ERR_VALUE(ret))
++	if (copy_from_user(p, buf, n)) {
++		ret = -EFAULT;
+ 		goto out;
++	}
+ 	/* sync head after inserting cmds */
+ 	smp_wmb();
+ 	crc->head = (crc->head + n) & (ACPI_AML_BUF_SIZE - 1);
