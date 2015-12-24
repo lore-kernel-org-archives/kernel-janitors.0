@@ -1,60 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 26 Dec 2015 21:57:44 +0000
-Subject: [PATCH 2/2] USB: usbmon: remove assignment from IS_ERR argument
-Message-Id: <1451167064-2288-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 24 Dec 2015 12:31:38 +0000
+Subject: [PATCH 0/3] Documentation-getdelays: Fine-tuning for two functions
+Message-Id: <567BE5AA.6070607@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451167064-2288-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1451167064-2288-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 24 Dec 2015 13:23:34 +0100
 
-// <smpl>
-@@
-expression e1,e2;
-statement S1,S2;
-@@
+A few update suggestions were taken into account
+from static source code analysis.
 
-+e1 = e2;
-if (IS_ERR(
-    e1
--   = e2
-   )) S1 else S2
-// </smpl>
+Markus Elfring (3):
+  Fix a check for container file usage in main()
+  Apply a recommendation from "checkpatch.pl" in main()
+  Less function calls in usage()
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+ Documentation/accounting/getdelays.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
 
----
- drivers/usb/mon/mon_text.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/mon/mon_text.c b/drivers/usb/mon/mon_text.c
-index 98e4f63..e59334b 100644
---- a/drivers/usb/mon/mon_text.c
-+++ b/drivers/usb/mon/mon_text.c
-@@ -387,7 +387,8 @@ static ssize_t mon_text_read_t(struct file *file, char __user *buf,
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
- 
--	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
-+	ep = mon_text_read_wait(rp, file);
-+	if (IS_ERR(ep))
- 		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
- 	ptr.cnt = 0;
-@@ -414,7 +415,8 @@ static ssize_t mon_text_read_u(struct file *file, char __user *buf,
- 	struct mon_event_text *ep;
- 	struct mon_text_ptr ptr;
- 
--	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
-+	ep = mon_text_read_wait(rp, file);
-+	if (IS_ERR(ep))
- 		return PTR_ERR(ep);
- 	mutex_lock(&rp->printf_lock);
- 	ptr.cnt = 0;
+-- 
+2.6.3
 
