@@ -1,25 +1,47 @@
-From: bojan prtvar <prtvar.b@gmail.com>
-Date: Tue, 29 Dec 2015 15:04:41 +0000
-Subject: Re: [PATCH] resources: Remove unneeded initialization of local variable
-Message-Id: <CAOmT4fRQ1RQeP_hcVX2Z8o+t9dgmkyhriAMd0sbLiSO1_9veaA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Dec 2015 16:00:30 +0000
+Subject: sata_mv: Another source code review around exception handling?
+Message-Id: <567D681E.7050903@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451395493-22380-1-git-send-email-prtvar.b@gmail.com>
-	<CAH7P7NjofbwyUDjy8bq0NNDr0x_h=xYy9Zm3WxcXK-GhRyJspg@mail.gmail.com>
-In-Reply-To: <CAH7P7NjofbwyUDjy8bq0NNDr0x_h=xYy9Zm3WxcXK-GhRyJspg@mail.gmail.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Laurent Navet <laurent.navet@gmail.com>
-Cc: toshi.kani@hp.com, dan.j.williams@intel.com, Andrew Morton <akpm@linux-foundation.org>, Jakub Sitnicki <jsitnicki@gmail.com>, jiang.liu@linux.intel.com, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-ide@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Dec 29, 2015 at 2:36 PM, Laurent Navet <laurent.navet@gmail.com> wrote:
-> why not directly ?
->
-> struct region_devres *dr = devres_alloc(devm_region_release,
-> sizeof(struct region_devres),..
->
+Hello,
 
-I follow Dan's rationale [1]
+I have looked at the source file for the Marvell SATA support driver once m=
+ore.
+I would appreciate if a specific implementation detail can be clarified the=
+re.
 
-[1]
-http://www.spinics.net/lists/target-devel/msg11355.html
+Static source code analysis can point out that functions like the following
+are called by the mv_platform_probe() function.
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/drive=
+rs/ata/sata_mv.c?id=80c75a0f1d81922bf322c0634d1e1a15825a89e6#n4055
+
+* ata_host_alloc_pinfo
+  http://lxr.free-electrons.com/source/drivers/ata/libata-core.c?v=3D4.3#L5=
+768
+
+* devm_kzalloc
+  http://lxr.free-electrons.com/source/include/linux/device.h?v=3D4.3#L645
+
+
+The value "-ENOMEM" will be returned if one of these function calls failed.
+Can it be that any system resources (like memory) are not appropriately
+released if any calls of this sequence succeeded before the failure?
+
+
+Is the use of the single jump label "err" also suspicious here?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
