@@ -1,72 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 11 Dec 2015 16:16:48 +0000
-Subject: [PATCH] [media] go7007: constify go7007_hpi_ops structures
-Message-Id: <1449850608-5788-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Dec 2015 18:49:11 +0000
+Subject: [PATCH] gpio-ucb1400: Delete an unnecessary variable initialisation in ucb1400_gpio_probe()
+Message-Id: <567D8FA7.2070701@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The go7007_hpi_ops structures are never modified, so declare them as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Dec 2015 19:36:20 +0100
 
-Done with the help of Coccinelle.
+The variable "err" will eventually be set to an appropriate value
+from a call of the gpiochip_add() function.
+Thus let us omit the explicit initialisation at the beginning.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/saa7134/saa7134-go7007.c |    2 +-
- drivers/media/usb/go7007/go7007-priv.h     |    2 +-
- drivers/media/usb/go7007/go7007-usb.c      |    4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-ucb1400.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/go7007/go7007-priv.h b/drivers/media/usb/go7007/go7007-priv.h
-index 745185e..bebee8c 100644
---- a/drivers/media/usb/go7007/go7007-priv.h
-+++ b/drivers/media/usb/go7007/go7007-priv.h
-@@ -250,7 +250,7 @@ struct go7007 {
- 	struct i2c_adapter i2c_adapter;
+diff --git a/drivers/gpio/gpio-ucb1400.c b/drivers/gpio/gpio-ucb1400.c
+index d502825..c963517 100644
+--- a/drivers/gpio/gpio-ucb1400.c
++++ b/drivers/gpio/gpio-ucb1400.c
+@@ -46,7 +46,7 @@ static void ucb1400_gpio_set(struct gpio_chip *gc, unsigned off, int val)
+ static int ucb1400_gpio_probe(struct platform_device *dev)
+ {
+ 	struct ucb1400_gpio *ucb = dev_get_platdata(&dev->dev);
+-	int err = 0;
++	int err;
  
- 	/* HPI driver */
--	struct go7007_hpi_ops *hpi_ops;
-+	const struct go7007_hpi_ops *hpi_ops;
- 	void *hpi_context;
- 	int interrupt_available;
- 	wait_queue_head_t interrupt_waitq;
-diff --git a/drivers/media/usb/go7007/go7007-usb.c b/drivers/media/usb/go7007/go7007-usb.c
-index 3dbf14c..14d3f8c 100644
---- a/drivers/media/usb/go7007/go7007-usb.c
-+++ b/drivers/media/usb/go7007/go7007-usb.c
-@@ -932,7 +932,7 @@ static void go7007_usb_release(struct go7007 *go)
- 	kfree(go->hpi_context);
- }
- 
--static struct go7007_hpi_ops go7007_usb_ezusb_hpi_ops = {
-+static const struct go7007_hpi_ops go7007_usb_ezusb_hpi_ops = {
- 	.interface_reset	= go7007_usb_interface_reset,
- 	.write_interrupt	= go7007_usb_ezusb_write_interrupt,
- 	.read_interrupt		= go7007_usb_read_interrupt,
-@@ -942,7 +942,7 @@ static struct go7007_hpi_ops go7007_usb_ezusb_hpi_ops = {
- 	.release		= go7007_usb_release,
- };
- 
--static struct go7007_hpi_ops go7007_usb_onboard_hpi_ops = {
-+static const struct go7007_hpi_ops go7007_usb_onboard_hpi_ops = {
- 	.interface_reset	= go7007_usb_interface_reset,
- 	.write_interrupt	= go7007_usb_onboard_write_interrupt,
- 	.read_interrupt		= go7007_usb_read_interrupt,
-diff --git a/drivers/media/pci/saa7134/saa7134-go7007.c b/drivers/media/pci/saa7134/saa7134-go7007.c
-index 8a2abb3..2799538 100644
---- a/drivers/media/pci/saa7134/saa7134-go7007.c
-+++ b/drivers/media/pci/saa7134/saa7134-go7007.c
-@@ -378,7 +378,7 @@ static int saa7134_go7007_send_firmware(struct go7007 *go, u8 *data, int len)
- 	return 0;
- }
- 
--static struct go7007_hpi_ops saa7134_go7007_hpi_ops = {
-+static const struct go7007_hpi_ops saa7134_go7007_hpi_ops = {
- 	.interface_reset	= saa7134_go7007_interface_reset,
- 	.write_interrupt	= saa7134_go7007_write_interrupt,
- 	.read_interrupt		= saa7134_go7007_read_interrupt,
+ 	if (!(ucb && ucb->gpio_offset)) {
+ 		err = -EINVAL;
+-- 
+2.6.3
 
