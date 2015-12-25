@@ -1,89 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Dec 2015 12:36:28 +0000
-Subject: [patch 1/3 -next] drm/vc4: copy_to_user() returns the number of bytes remaining
-Message-Id: <20151217123628.GA27382@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 25 Dec 2015 10:35:29 +0000
+Subject: ACPI-fan: Another source code review around null pointer handling?
+Message-Id: <567D1BF1.6060701@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>
-Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The copy_to/from_user() functions return the number of bytes remaining
-to be copied.  We want to return error codes here.
+Hello,
 
-Also it's a bad idea to print an error message if a copy from user fails
-because users can use that to spam /var/log/messages which is annoying
-so I removed those.
+I have looked at the source file for the ACPI fan driver once more.
+I would appreciate if a specific implementation detail can be clarified the=
+re.
 
-Fixes: 214613656b51 ('drm/vc4: Add an interface for capturing the GPU state after a hang.')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Static source code analysis can point out that functions like the following
+share an approach for error detection and corresponding exception handling.
+* acpi_fan_get_fif
+* acpi_fan_get_fps
+* fan_get_state_acpi4
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/drive=
+rs/acpi/fan.c?id=80c75a0f1d81922bf322c0634d1e1a15825a89e6#n107
 
-diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
-index 39f29e7..461a16c 100644
---- a/drivers/gpu/drm/vc4/vc4_gem.c
-+++ b/drivers/gpu/drm/vc4/vc4_gem.c
-@@ -71,7 +71,7 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, void *data,
- 	struct vc4_dev *vc4 = to_vc4_dev(dev);
- 	unsigned long irqflags;
- 	u32 i;
--	int ret;
-+	int ret = 0;
- 
- 	spin_lock_irqsave(&vc4->job_lock, irqflags);
- 	kernel_state = vc4->hang_state;
-@@ -119,9 +119,11 @@ vc4_get_hang_state_ioctl(struct drm_device *dev, void *data,
- 		bo_state[i].size = vc4_bo->base.base.size;
- 	}
- 
--	ret = copy_to_user((void __user *)(uintptr_t)get_state->bo,
--			   bo_state,
--			   state->bo_count * sizeof(*bo_state));
-+	if (copy_to_user((void __user *)(uintptr_t)get_state->bo,
-+			 bo_state,
-+			 state->bo_count * sizeof(*bo_state)))
-+		ret = -EFAULT;
-+
- 	kfree(bo_state);
- 
- err_free:
-@@ -554,27 +556,24 @@ vc4_get_bcl(struct drm_device *dev, struct vc4_exec_info *exec)
- 	exec->shader_state = temp + exec_size;
- 	exec->shader_state_size = args->shader_rec_count;
- 
--	ret = copy_from_user(bin,
--			     (void __user *)(uintptr_t)args->bin_cl,
--			     args->bin_cl_size);
--	if (ret) {
--		DRM_ERROR("Failed to copy in bin cl\n");
-+	if (copy_from_user(bin,
-+			   (void __user *)(uintptr_t)args->bin_cl,
-+			   args->bin_cl_size)) {
-+		ret = -EFAULT;
- 		goto fail;
- 	}
- 
--	ret = copy_from_user(exec->shader_rec_u,
--			     (void __user *)(uintptr_t)args->shader_rec,
--			     args->shader_rec_size);
--	if (ret) {
--		DRM_ERROR("Failed to copy in shader recs\n");
-+	if (copy_from_user(exec->shader_rec_u,
-+			   (void __user *)(uintptr_t)args->shader_rec,
-+			   args->shader_rec_size)) {
-+		ret = -EFAULT;
- 		goto fail;
- 	}
- 
--	ret = copy_from_user(exec->uniforms_u,
--			     (void __user *)(uintptr_t)args->uniforms,
--			     args->uniforms_size);
--	if (ret) {
--		DRM_ERROR("Failed to copy in uniforms cl\n");
-+	if (copy_from_user(exec->uniforms_u,
-+			   (void __user *)(uintptr_t)args->uniforms,
-+			   args->uniforms_size)) {
-+		ret = -EFAULT;
- 		goto fail;
- 	}
- 
+Can it matter eventually to handle a detected null pointer differently from
+further checks for an attribute like "obj->type" or "obj->package"?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
