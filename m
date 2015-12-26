@@ -1,30 +1,87 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Dec 2015 18:19:45 +0000
-Subject: [PATCH 0/2] block: Fine-tuning for two function implementations
-Message-Id: <566B13C1.50907@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 13:04:25 +0000
+Subject: [PATCH] iio: qcom-spmi-vadc: One check less in vadc_measure_ref_points() after error detection
+Message-Id: <567E9059.30709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
 In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>, Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 11 Dec 2015 19:12:34 +0100
+Date: Sat, 26 Dec 2015 13:53:15 +0100
 
-A few update suggestions were taken into account from static
-source code analysis.
+This issue was detected by using the Coccinelle software.
 
-Markus Elfring (2):
-  zram: Less checks in zram_bvec_write() after error detection
-  z2ram: Delete a jump label in z2_init()
+Move the jump label directly before the desired log statement
+so that the variable "ret" does not need to be checked once more
+after it was determined that a function call failed.
 
- drivers/block/z2ram.c         |  4 +---
- drivers/block/zram/zram_drv.c | 26 +++++++++++++-------------
- 2 files changed, 14 insertions(+), 16 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/adc/qcom-spmi-vadc.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/iio/adc/qcom-spmi-vadc.c b/drivers/iio/adc/qcom-spmi-vadc.c
+index c2babe5..391eefa 100644
+--- a/drivers/iio/adc/qcom-spmi-vadc.c
++++ b/drivers/iio/adc/qcom-spmi-vadc.c
+@@ -424,7 +424,7 @@ static int vadc_measure_ref_points(struct vadc_priv *vadc)
+ 	prop = vadc_get_channel(vadc, VADC_REF_1250MV);
+ 	ret = vadc_do_conversion(vadc, prop, &read_1);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 
+ 	/* Try with buffered 625mV channel first */
+ 	prop = vadc_get_channel(vadc, VADC_SPARE1);
+@@ -433,11 +433,11 @@ static int vadc_measure_ref_points(struct vadc_priv *vadc)
+ 
+ 	ret = vadc_do_conversion(vadc, prop, &read_2);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 
+ 	if (read_1 = read_2) {
+ 		ret = -EINVAL;
+-		goto err;
++		goto report_failure;
+ 	}
+ 
+ 	vadc->graph[VADC_CALIB_ABSOLUTE].dy = read_1 - read_2;
+@@ -447,23 +447,24 @@ static int vadc_measure_ref_points(struct vadc_priv *vadc)
+ 	prop = vadc_get_channel(vadc, VADC_VDD_VADC);
+ 	ret = vadc_do_conversion(vadc, prop, &read_1);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 
+ 	prop = vadc_get_channel(vadc, VADC_GND_REF);
+ 	ret = vadc_do_conversion(vadc, prop, &read_2);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 
+ 	if (read_1 = read_2) {
+ 		ret = -EINVAL;
+-		goto err;
++		goto report_failure;
+ 	}
+ 
+ 	vadc->graph[VADC_CALIB_RATIOMETRIC].dy = read_1 - read_2;
+ 	vadc->graph[VADC_CALIB_RATIOMETRIC].gnd = read_2;
+-err:
+-	if (ret)
++	if (ret) {
++report_failure:
+ 		dev_err(vadc->dev, "measure reference points failed\n");
++	}
+ 
+ 	return ret;
+ }
 -- 
 2.6.3
 
