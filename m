@@ -1,29 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Dec 2015 10:09:08 +0000
-Subject: [patch] [media] media_entity: logical vs bitwise AND typo
-Message-Id: <20151215100908.GD20848@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 18:39:17 +0000
+Subject: [PATCH 0/6] InfiniBand-ocrdma: Fine-tuning for some function implementations
+Message-Id: <567EDED5.4040201@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This was obviously supposed to be a bitwise AND.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 19:30:54 +0100
 
-Fixes: 403da6ca3465 ('[media] media: move MEDIA_LNK_FL_INTERFACE_LINK logic to link creation')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Several update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 7895e17..6926e06 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -526,7 +526,7 @@ media_create_pad_link(struct media_entity *source, u16 source_pad,
- 
- 	link->source = &source->pads[source_pad];
- 	link->sink = &sink->pads[sink_pad];
--	link->flags = flags && ~MEDIA_LNK_FL_INTERFACE_LINK;
-+	link->flags = flags & ~MEDIA_LNK_FL_INTERFACE_LINK;
- 
- 	/* Initialize graph object embedded at the new link */
- 	media_gobj_create(source->graph_obj.mdev, MEDIA_GRAPH_LINK,
+Markus Elfring (6):
+  One variable and jump label less in ocrdma_alloc_ucontext_pd()
+  Delete unnecessary variable initialisations in 11 functions
+  Returning only value constants in ocrdma_qp_state_change()
+  Return a value from a function call in _ocrdma_modify_qp() directly
+  Returning only value constants in ocrdma_resize_cq()
+  Delete an unnecessary variable in ocrdma_dealloc_pd()
+
+ drivers/infiniband/hw/ocrdma/ocrdma_ah.c    |  2 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c    |  7 +++---
+ drivers/infiniband/hw/ocrdma/ocrdma_stats.c |  4 +--
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 39 +++++++++++------------------
+ 4 files changed, 20 insertions(+), 32 deletions(-)
+
+-- 
+2.6.3
+
