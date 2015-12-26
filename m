@@ -1,188 +1,145 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 26 Dec 2015 15:28:39 +0000
-Subject: [PATCH 0/7] fix error return code
-Message-Id: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 18:45:20 +0000
+Subject: [PATCH 2/6] InfiniBand-ocrdma: Delete unnecessary variable initialisations in 11 functions
+Message-Id: <567EE040.4020700@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567EDED5.4040201@users.sourceforge.net>
+In-Reply-To: <567EDED5.4040201-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mitesh Ahuja <mitesh.ahuja-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-The complate semantic patch that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 18:18:18 +0100
 
-// <smpl>
-@ok exists@
-identifier f,ret,i;
-expression e;
-constant c;
-@@
+The variable "status" will be set to an appropriate value a bit later.
+Thus let us omit the explicit initialisation at the beginning.
 
-// identify a function that returns a negative return value at least once.
-f(...) {
-... when any
-(
-return -c@i;
-|
-ret =3D -c@i;
-... when !=3D ret =3D e
-return ret;
-|
-if (ret < 0) { ... return ret; }
-)
-... when any
-}
-
-@r exists@
-identifier ret,ok.f,fn;
-expression e1,e2,e3,e4,e5,e6,x;
-statement S,S1;
-position p1,p2,p3;
-@@
-
-// identify a case where the return variable is set to a non-negative value
-// and then returned in error-handling code
-f(...) {
-... when any
-(
-if@p1 (\(ret < 0\|ret !=3D 0\))
- { ... return ret; }
-|
-ret@p1 =3D 0
-)
-... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
-    when !=3D &ret
-    when any
-(
- if (<+... ret =3D e5 ...+>) S1
-|
- if (<+... &ret ...+>) S1
-|
-if@p2(<+...x =3D fn(...)...+>)
- {
-  ... when !=3D ret =3D e6
-      when forall
- return@p3 ret;
-}
-|
-break;
-|
-x =3D fn(...)
-... when !=3D \(ret =3D e4\|ret++\|ret--\|ret+=E4\|ret-=E4\)
-    when !=3D &ret
-(
- if (<+... ret =3D e3 ...+>) S
-|
- if (<+... &ret ...+>) S
-|
-if@p2(<+...\(x !=3D 0\|x < 0\|x =3D NULL\|IS_ERR(x)\)...+>)
- {
-  ... when !=3D ret =3D e2
-      when forall
- return@p3 ret;
-}
-)
-)
-... when any
-}
-
-@printer depends on r@
-position p;
-identifier ok.f,pr;
-constant char [] c;
-@@
-
-f(...) { <...pr@p(...,c,...)...> }
-
-@bad0 exists@
-identifier r.ret,ok.f,g !=3D {ERR_PTR,IS_ERR};
-position p !=3D printer.p;
-@@
-
-f(...) { ... when any
-g@p(...,ret,...)
-... when any
- }
-
-@bad depends on !bad0 exists@
-position r.p1,r.p2;
-statement S1,S2;
-identifier r.ret;
-expression e1;
-@@
-
-// ignore the above if there is some path where the variable is set to
-// something else
-(
-if@p1 (\(ret < 0\|ret !=3D 0\)) S1
-|
-ret@p1 =3D 0
-)
-... when any
- \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\|&ret\)
-... when any
-if@p2(...) S2
-
-@bad1 depends on !bad0 && !bad exists@
-position r.p2;
-statement S2;
-identifier r.ret;
-expression e1;
-constant c;
-@@
-
-ret =3D -c
-... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
-    when !=3D &ret
-    when any
-if@p2(...) S2
-
-@bad2 depends on !bad0 && !bad && !bad1 exists@
-position r.p1,r.p2;
-identifier r.ret;
-expression e1;
-statement S2;
-constant c;
-@@
-
-// likewise ignore it if there has been an intervening return
-ret@p1 =3D 0
-... when !=3D if (...) { ... ret =3D e1 ... return ret; }
-    when !=3D if (...) { ... return -c; }
-    when any
-if@p2(...) S2
-
-@script:python depends on !bad0 && !bad && !bad1 && !bad2@
-p1 << r.p1;
-p2 << r.p2;
-p3 << r.p3;
-@@
-
-cocci.print_main("",p1)
-cocci.print_secs("",p2)
-cocci.print_secs("",p3)
-// </smpl>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/infiniband/hw/ocrdma/ocrdma_ah.c    |  2 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c    |  4 ++--
+ drivers/infiniband/hw/ocrdma/ocrdma_stats.c |  4 ++--
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 12 ++++++------
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
- drivers/block/rsxx/core.c                                     |    1=20
- drivers/block/umem.c                                          |    5 +++-
- drivers/cdrom/gdrom.c                                         |    8 +++++-
- drivers/net/ethernet/ti/cpsw.c                                |    8 +++++-
- drivers/soc/ti/knav_qmss_queue.c                              |    1=20
- drivers/soc/ti/wkup_m3_ipc.c                                  |    1=20
- drivers/usb/gadget/legacy/acm_ms.c                            |    4 ++-
- drivers/usb/gadget/legacy/audio.c                             |    4 ++-
- drivers/usb/gadget/legacy/cdc2.c                              |    4 ++-
- drivers/usb/gadget/legacy/ether.c                             |    4 ++-
- drivers/usb/gadget/legacy/hid.c                               |    4 ++-
- drivers/usb/gadget/legacy/mass_storage.c                      |    4 ++-
- drivers/usb/gadget/legacy/ncm.c                               |    4 ++-
- drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c |   12 +++++=
-++---
- 14 files changed, 49 insertions(+), 15 deletions(-)
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_ah.c b/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
+index 9820074..98c0abd 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
+@@ -59,7 +59,7 @@ static inline int set_av_attr(struct ocrdma_dev *dev, struct ocrdma_ah *ah,
+ 			struct ib_ah_attr *attr, union ib_gid *sgid,
+ 			int pdid, bool *isvlan, u16 vlan_tag)
+ {
+-	int status = 0;
++	int status;
+ 	struct ocrdma_eth_vlan eth;
+ 	struct ocrdma_grh grh;
+ 	int eth_sz;
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index 30f67be..6647aa6 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -1089,7 +1089,7 @@ mbx_err:
+ static int ocrdma_nonemb_mbx_cmd(struct ocrdma_dev *dev, struct ocrdma_mqe *mqe,
+ 				 void *payload_va)
+ {
+-	int status = 0;
++	int status;
+ 	struct ocrdma_mbx_rsp *rsp = payload_va;
+ 
+ 	if ((mqe->hdr.spcl_sge_cnt_emb & OCRDMA_MQE_HDR_EMB_MASK) >>
+@@ -2842,7 +2842,7 @@ int ocrdma_mbx_destroy_srq(struct ocrdma_dev *dev, struct ocrdma_srq *srq)
+ static int ocrdma_mbx_get_dcbx_config(struct ocrdma_dev *dev, u32 ptype,
+ 				      struct ocrdma_dcbx_cfg *dcbxcfg)
+ {
+-	int status = 0;
++	int status;
+ 	dma_addr_t pa;
+ 	struct ocrdma_mqe cmd;
+ 
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+index 86c303a..119baa3 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+@@ -608,7 +608,7 @@ static char *ocrdma_driver_dbg_stats(struct ocrdma_dev *dev)
+ static void ocrdma_update_stats(struct ocrdma_dev *dev)
+ {
+ 	ulong now = jiffies, secs;
+-	int status = 0;
++	int status;
+ 	struct ocrdma_rdma_stats_resp *rdma_stats  		      (struct ocrdma_rdma_stats_resp *)dev->stats_mem.va;
+ 	struct ocrdma_rsrc_stats *rsrc_stats = &rdma_stats->act_rsrc_stats;
+@@ -639,7 +639,7 @@ static ssize_t ocrdma_dbgfs_ops_write(struct file *filp,
+ {
+ 	char tmp_str[32];
+ 	long reset;
+-	int status = 0;
++	int status;
+ 	struct ocrdma_stats *pstats = filp->private_data;
+ 	struct ocrdma_dev *dev = pstats->dev;
+ 
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index 374c839..aba1b5a 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -419,7 +419,7 @@ static struct ocrdma_pd *_ocrdma_alloc_pd(struct ocrdma_dev *dev,
+ 					  struct ib_udata *udata)
+ {
+ 	struct ocrdma_pd *pd = NULL;
+-	int status = 0;
++	int status;
+ 
+ 	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+ 	if (!pd)
+@@ -468,7 +468,7 @@ static inline int is_ucontext_pd(struct ocrdma_ucontext *uctx,
+ static int _ocrdma_dealloc_pd(struct ocrdma_dev *dev,
+ 			      struct ocrdma_pd *pd)
+ {
+-	int status = 0;
++	int status;
+ 
+ 	if (dev->pd_mgr->pd_prealloc_valid)
+ 		status = ocrdma_put_pd_num(dev, pd->id, pd->dpp_enabled);
+@@ -592,7 +592,7 @@ map_err:
+ 
+ int ocrdma_dealloc_ucontext(struct ib_ucontext *ibctx)
+ {
+-	int status = 0;
++	int status;
+ 	struct ocrdma_mm *mm, *tmp;
+ 	struct ocrdma_ucontext *uctx = get_ocrdma_ucontext(ibctx);
+ 	struct ocrdma_dev *dev = get_ocrdma_dev(ibctx->device);
+@@ -619,7 +619,7 @@ int ocrdma_mmap(struct ib_ucontext *context, struct vm_area_struct *vma)
+ 	unsigned long vm_page = vma->vm_pgoff << PAGE_SHIFT;
+ 	u64 unmapped_db = (u64) dev->nic_info.unmapped_db;
+ 	unsigned long len = (vma->vm_end - vma->vm_start);
+-	int status = 0;
++	int status;
+ 	bool found;
+ 
+ 	if (vma->vm_start & (PAGE_SIZE - 1))
+@@ -1282,7 +1282,7 @@ static int ocrdma_copy_qp_uresp(struct ocrdma_qp *qp,
+ 				struct ib_udata *udata, int dpp_offset,
+ 				int dpp_credit_lmt, int srq)
+ {
+-	int status = 0;
++	int status;
+ 	u64 usr_db;
+ 	struct ocrdma_create_qp_uresp uresp;
+ 	struct ocrdma_pd *pd = qp->pd;
+@@ -1946,7 +1946,7 @@ int ocrdma_modify_srq(struct ib_srq *ibsrq,
+ 		      enum ib_srq_attr_mask srq_attr_mask,
+ 		      struct ib_udata *udata)
+ {
+-	int status = 0;
++	int status;
+ 	struct ocrdma_srq *srq;
+ 
+ 	srq = get_ocrdma_srq(ibsrq);
+-- 
+2.6.3
+
