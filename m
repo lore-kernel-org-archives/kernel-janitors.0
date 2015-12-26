@@ -1,27 +1,78 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 15 Dec 2015 17:51:33 +0000
-Subject: Re: [patch] mISDN: fix a loop count
-Message-Id: <20151215.125133.1380311053547267182.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 19:24:51 +0000
+Subject: [PATCH] coccinelle: api: check for propagation of error from platform_get_irq
+Message-Id: <1451157891-24881-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151215100752.GC20848@mwanda>
-In-Reply-To: <20151215100752.GC20848@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: isdn@linux-pingi.de, arnd@arndb.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Dec 2015 13:07:52 +0300
+The error return value of platform_get_irq seems to often get dropped.
 
-> There are two issue here.
-> 1)  cnt starts as maxloop + 1 so all these loops iterate one more time
->     than intended.
-> 2)  At the end of the loop we test for "if (maxloop && !cnt)" but for
->     the first two loops, we end with cnt equal to -1.  Changing this to
->     a pre-op means we end with cnt set to 0.
-> 
-> Fixes: cae86d4a4e56 ('mISDN: Add driver for Infineon ISDN chipset family')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied.
+---
+ scripts/coccinelle/api/platform_get_irq_return.cocci |   53 ++++++++++
+ 1 file changed, 53 insertions(+)
+
+diff --git a/scripts/coccinelle/api/platform_get_irq_return.cocci b/scripts/coccinelle/api/platform_get_irq_return.cocci
+new file mode 100644
+index 0000000..96fc560
+--- /dev/null
++++ b/scripts/coccinelle/api/platform_get_irq_return.cocci
+@@ -0,0 +1,53 @@
++/// Propagate the return value of platform_get_irq.
++//# Sometimes the return value of platform_get_irq is tested using <= 0, but 0
++//# might not be an appropriate return value in an error case.
++///
++// Confidence: Moderate
++// Copyright: (C) 2015 Julia Lawall, Inria. GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: --no-includes --include-headers
++
++virtual context
++virtual org
++virtual report
++
++// ----------------------------------------------------------------------------
++
++@r depends on context || org || report@
++constant C;
++expression e, ret;
++position j0, j1, j2;
++@@
++
++* e@j0 = platform_get_irq(...);
++if (...) {
++  ...
++  ret@j1 = -C;
++  ...
++  return ret@j2;
++}
++
++// ----------------------------------------------------------------------------
++
++@script:python r_org depends on org@
++j0 << r.j0;
++j1 << r.j1;
++j2 << r.j2;
++@@
++
++msg = "Propagate return value of platform_get_irq."
++coccilib.org.print_todo(j0[0], msg)
++coccilib.org.print_link(j1[0], "")
++coccilib.org.print_link(j2[0], "")
++
++// ----------------------------------------------------------------------------
++
++@script:python r_report depends on report@
++j0 << r.j0;
++j1 << r.j1;
++j2 << r.j2;
++@@
++
++msg = "Propagate return value of platform_get_irq around lines %s,%s." % (j1[0].line,j2[0].line)
++coccilib.report.print_report(j0[0], msg)
++
+
