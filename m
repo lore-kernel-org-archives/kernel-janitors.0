@@ -1,26 +1,70 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 17 Dec 2015 16:47:37 +0000
-Subject: Re: [patch] qla2xxx: fix a timeout loop
-Message-Id: <yq1si31rphy.fsf@sermon.lab.mkp.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 06:34:57 +0000
+Subject: [PATCH] i2c-core: One function call less in acpi_i2c_space_handler() after error detection
+Message-Id: <567E3511.6010606@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151216110746.GB21018@mwanda>
-	<yq1lh8ut3di.fsf@sermon.lab.mkp.net> <20151217104624.GO5177@mwanda>
-In-Reply-To: <20151217104624.GO5177@mwanda> (Dan Carpenter's message of "Thu,
-	17 Dec 2015 13:46:24 +0300")
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, qla2xxx-upstream@qlogic.com, Atul Deshmukh <atul.deshmukh@qlogic.com>, "James E.J. Bottomley" <JBottomley@odin.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 07:30:35 +0100
 
-Dan> The qlogic devs asked me to redo this patch but you have already
-Dan> applied it.  Should I resend or redo it on top of the earlier
-Dan> patch.  (James's tree was rebaseable for a day after a patch was
-Dan> "applied".)
+The kfree() function was called in one case by the
+acpi_i2c_space_handler() function during error handling
+even if the passed variable "client" contained a null pointer.
 
-I dropped it for now.
+Implementation details could be improved by the adjustment of jump targets.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/i2c/i2c-core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index 7349b00..a24e06c 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -313,18 +313,18 @@ acpi_i2c_space_handler(u32 function, acpi_physical_address command,
+ 	client = kzalloc(sizeof(*client), GFP_KERNEL);
+ 	if (!client) {
+ 		ret = AE_NO_MEMORY;
+-		goto err;
++		goto free_ares;
+ 	}
+ 
+ 	if (!value64 || ares->type != ACPI_RESOURCE_TYPE_SERIAL_BUS) {
+ 		ret = AE_BAD_PARAMETER;
+-		goto err;
++		goto free_client;
+ 	}
+ 
+ 	sb = &ares->data.i2c_serial_bus;
+ 	if (sb->type != ACPI_RESOURCE_SERIAL_TYPE_I2C) {
+ 		ret = AE_BAD_PARAMETER;
+-		goto err;
++		goto free_client;
+ 	}
+ 
+ 	client->adapter = adapter;
+@@ -405,9 +405,9 @@ acpi_i2c_space_handler(u32 function, acpi_physical_address command,
+ 	}
+ 
+ 	gsb->status = status;
+-
+- err:
++free_client:
+ 	kfree(client);
++free_ares:
+ 	ACPI_FREE(ares);
+ 	return ret;
+ }
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.6.3
+
