@@ -1,96 +1,188 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 23 Dec 2015 18:09:18 +0000
-Subject: [PATCH 2/5] block-LDM: Delete extra log messages for memory allocation failures
-Message-Id: <567AE34E.9000008@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 15:28:39 +0000
+Subject: [PATCH 0/7] fix error return code
+Message-Id: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <567A6CDB.4030703@users.sourceforge.net>
- <alpine.DEB.2.10.1512231140090.4367@hadrien>
- <567AE1C6.9020108@users.sourceforge.net>
-In-Reply-To: <567AE1C6.9020108@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-ntfs-dev@lists.sourceforge.net, linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Richard Russon <ldm@flatcap.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 23 Dec 2015 13:21:01 +0100
+The complate semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-A failed call of the kmalloc() function can generate appropriate
-information about insufficient memory already.
-Thus remove unnecessary log messages for such failures.
+// <smpl>
+@ok exists@
+identifier f,ret,i;
+expression e;
+constant c;
+@@
 
-Suggested-by: Julia Lawall <julia.lawall@lip6.fr>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// identify a function that returns a negative return value at least once.
+f(...) {
+... when any
+(
+return -c@i;
+|
+ret =3D -c@i;
+... when !=3D ret =3D e
+return ret;
+|
+if (ret < 0) { ... return ret; }
+)
+... when any
+}
+
+@r exists@
+identifier ret,ok.f,fn;
+expression e1,e2,e3,e4,e5,e6,x;
+statement S,S1;
+position p1,p2,p3;
+@@
+
+// identify a case where the return variable is set to a non-negative value
+// and then returned in error-handling code
+f(...) {
+... when any
+(
+if@p1 (\(ret < 0\|ret !=3D 0\))
+ { ... return ret; }
+|
+ret@p1 =3D 0
+)
+... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
+    when !=3D &ret
+    when any
+(
+ if (<+... ret =3D e5 ...+>) S1
+|
+ if (<+... &ret ...+>) S1
+|
+if@p2(<+...x =3D fn(...)...+>)
+ {
+  ... when !=3D ret =3D e6
+      when forall
+ return@p3 ret;
+}
+|
+break;
+|
+x =3D fn(...)
+... when !=3D \(ret =3D e4\|ret++\|ret--\|ret+=E4\|ret-=E4\)
+    when !=3D &ret
+(
+ if (<+... ret =3D e3 ...+>) S
+|
+ if (<+... &ret ...+>) S
+|
+if@p2(<+...\(x !=3D 0\|x < 0\|x =3D NULL\|IS_ERR(x)\)...+>)
+ {
+  ... when !=3D ret =3D e2
+      when forall
+ return@p3 ret;
+}
+)
+)
+... when any
+}
+
+@printer depends on r@
+position p;
+identifier ok.f,pr;
+constant char [] c;
+@@
+
+f(...) { <...pr@p(...,c,...)...> }
+
+@bad0 exists@
+identifier r.ret,ok.f,g !=3D {ERR_PTR,IS_ERR};
+position p !=3D printer.p;
+@@
+
+f(...) { ... when any
+g@p(...,ret,...)
+... when any
+ }
+
+@bad depends on !bad0 exists@
+position r.p1,r.p2;
+statement S1,S2;
+identifier r.ret;
+expression e1;
+@@
+
+// ignore the above if there is some path where the variable is set to
+// something else
+(
+if@p1 (\(ret < 0\|ret !=3D 0\)) S1
+|
+ret@p1 =3D 0
+)
+... when any
+ \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\|&ret\)
+... when any
+if@p2(...) S2
+
+@bad1 depends on !bad0 && !bad exists@
+position r.p2;
+statement S2;
+identifier r.ret;
+expression e1;
+constant c;
+@@
+
+ret =3D -c
+... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
+    when !=3D &ret
+    when any
+if@p2(...) S2
+
+@bad2 depends on !bad0 && !bad && !bad1 exists@
+position r.p1,r.p2;
+identifier r.ret;
+expression e1;
+statement S2;
+constant c;
+@@
+
+// likewise ignore it if there has been an intervening return
+ret@p1 =3D 0
+... when !=3D if (...) { ... ret =3D e1 ... return ret; }
+    when !=3D if (...) { ... return -c; }
+    when any
+if@p2(...) S2
+
+@script:python depends on !bad0 && !bad && !bad1 && !bad2@
+p1 << r.p1;
+p2 << r.p2;
+p3 << r.p3;
+@@
+
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+cocci.print_secs("",p3)
+// </smpl>
+
 ---
- block/partitions/ldm.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/block/partitions/ldm.c b/block/partitions/ldm.c
-index a50385c..856658a 100644
---- a/block/partitions/ldm.c
-+++ b/block/partitions/ldm.c
-@@ -343,10 +343,8 @@ static bool ldm_validate_privheads(struct parsed_partitions *state,
- 
- 	ph[1] = kmalloc (sizeof (*ph[1]), GFP_KERNEL);
- 	ph[2] = kmalloc (sizeof (*ph[2]), GFP_KERNEL);
--	if (!ph[1] || !ph[2]) {
--		ldm_crit ("Out of memory.");
-+	if (!ph[1] || !ph[2])
- 		goto out;
--	}
- 
- 	/* off[1 & 2] are relative to ph[0]->config_start */
- 	ph[0]->config_start = 0;
-@@ -431,10 +429,8 @@ static bool ldm_validate_tocblocks(struct parsed_partitions *state,
- 	ph = &ldb->ph;
- 	tb[0] = &ldb->toc;
- 	tb[1] = kmalloc(sizeof(*tb[1]) * 3, GFP_KERNEL);
--	if (!tb[1]) {
--		ldm_crit("Out of memory.");
-+	if (!tb[1])
- 		return false;
--	}
- 	tb[2] = (struct tocblock*)((u8*)tb[1] + sizeof(*tb[1]));
- 	tb[3] = (struct tocblock*)((u8*)tb[2] + sizeof(*tb[2]));
- 	/*
-@@ -1239,10 +1235,8 @@ static bool ldm_ldmdb_add (u8 *data, int len, struct ldmdb *ldb)
- 	BUG_ON (!data || !ldb);
- 
- 	vb = kmalloc (sizeof (*vb), GFP_KERNEL);
--	if (!vb) {
--		ldm_crit ("Out of memory.");
-+	if (!vb)
- 		return false;
--	}
- 
- 	if (!ldm_parse_vblk (data, len, vb)) {
- 		kfree(vb);
-@@ -1325,10 +1319,8 @@ static bool ldm_frag_add (const u8 *data, int size, struct list_head *frags)
- 	}
- 
- 	f = kmalloc (sizeof (*f) + size*num, GFP_KERNEL);
--	if (!f) {
--		ldm_crit ("Out of memory.");
-+	if (!f)
- 		return false;
--	}
- 
- 	f->group = group;
- 	f->num   = num;
-@@ -1519,10 +1511,8 @@ int ldm_partition(struct parsed_partitions *state)
- 		return 0;
- 
- 	ldb = kmalloc (sizeof (*ldb), GFP_KERNEL);
--	if (!ldb) {
--		ldm_crit ("Out of memory.");
-+	if (!ldb)
- 		goto out;
--	}
- 
- 	/* Parse and check privheads. */
- 	if (!ldm_validate_privheads(state, &ldb->ph))
--- 
-2.6.3
-
+ drivers/block/rsxx/core.c                                     |    1=20
+ drivers/block/umem.c                                          |    5 +++-
+ drivers/cdrom/gdrom.c                                         |    8 +++++-
+ drivers/net/ethernet/ti/cpsw.c                                |    8 +++++-
+ drivers/soc/ti/knav_qmss_queue.c                              |    1=20
+ drivers/soc/ti/wkup_m3_ipc.c                                  |    1=20
+ drivers/usb/gadget/legacy/acm_ms.c                            |    4 ++-
+ drivers/usb/gadget/legacy/audio.c                             |    4 ++-
+ drivers/usb/gadget/legacy/cdc2.c                              |    4 ++-
+ drivers/usb/gadget/legacy/ether.c                             |    4 ++-
+ drivers/usb/gadget/legacy/hid.c                               |    4 ++-
+ drivers/usb/gadget/legacy/mass_storage.c                      |    4 ++-
+ drivers/usb/gadget/legacy/ncm.c                               |    4 ++-
+ drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c |   12 +++++=
+++---
+ 14 files changed, 49 insertions(+), 15 deletions(-)
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
