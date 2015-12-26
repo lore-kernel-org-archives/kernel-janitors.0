@@ -1,30 +1,30 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 23 Dec 2015 06:58:11 +0000
-Subject: Re: [PATCH 4/4] ASoC: Intel: add NULL test
-Message-Id: <alpine.DEB.2.02.1512230757420.2081@localhost6.localdomain6>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 10:10:33 +0000
+Subject: [PATCH 0/3] IDE-ACPI: Fine-tuning for a function
+Message-Id: <567E6799.5070802@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450610153-7746-1-git-send-email-Julia.Lawall@lip6.fr>
- <1450610153-7746-5-git-send-email-Julia.Lawall@lip6.fr>
- <20151223000245.GF16023@sirena.org.uk>
-In-Reply-To: <20151223000245.GF16023@sirena.org.uk>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: linux-ide@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 11:04:56 +0100
 
+A few update suggestions were taken into account
+from static source code analysis.
 
-On Wed, 23 Dec 2015, Mark Brown wrote:
+Markus Elfring (3):
+  One function call less in ide_get_dev_handle() after error detection
+  Delete unnecessary null pointer checks in ide_get_dev_handle()
+  Move an assignment for one variable in ide_get_dev_handle()
 
-> On Sun, Dec 20, 2015 at 12:15:53PM +0100, Julia Lawall wrote:
-> > Add NULL test on call to devm_kzalloc.
-> > 
-> > The semantic match that finds this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> 
-> If there was a patch 3 in this series I seem to be missing it.
+ drivers/ide/ide-acpi.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-It's not for you (drivers/s390/char/con3215.c).  Sorry for the confusion.
+-- 
+2.6.3
 
-julia
