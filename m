@@ -1,44 +1,50 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 30 Dec 2015 20:59:34 +0000
-Subject: [PATCH] rtc: rtc-ds2404: constify ds2404_chip_ops structures
-Message-Id: <1451509174-6343-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 21:57:43 +0000
+Subject: [PATCH 1/2] ipc/mqueue: remove assignment from IS_ERR argument
+Message-Id: <1451167064-2288-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1451167064-2288-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451167064-2288-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>
-Cc: kernel-janitors@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-The ds2404_chip_ops structure is never modified, so declare it as const.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Done with the help of Coccinelle.
+// <smpl>
+@@
+expression e1,e2;
+statement S1,S2;
+@@
+
++e1 = e2;
+if (IS_ERR(
+    e1
+-   = e2
+   )) S1 else S2
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/rtc/rtc-ds2404.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ ipc/mqueue.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-ds2404.c b/drivers/rtc/rtc-ds2404.c
-index 7885edd..16310fe 100644
---- a/drivers/rtc/rtc-ds2404.c
-+++ b/drivers/rtc/rtc-ds2404.c
-@@ -48,7 +48,7 @@ struct ds2404_gpio {
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index f4617cf..3975abc 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -786,7 +786,8 @@ SYSCALL_DEFINE4(mq_open, const char __user *, u_name, int, oflag, umode_t, mode,
  
- struct ds2404 {
- 	struct ds2404_gpio *gpio;
--	struct ds2404_chip_ops *ops;
-+	const struct ds2404_chip_ops *ops;
- 	struct rtc_device *rtc;
- };
+ 	audit_mq_open(oflag, mode, u_attr ? &attr : NULL);
  
-@@ -95,7 +95,7 @@ static void ds2404_gpio_unmap(struct ds2404 *chip)
- 		gpio_free(ds2404_gpio[i].gpio);
- }
+-	if (IS_ERR(name = getname(u_name)))
++	name = getname(u_name);
++	if (IS_ERR(name))
+ 		return PTR_ERR(name);
  
--static struct ds2404_chip_ops ds2404_gpio_ops = {
-+static const struct ds2404_chip_ops ds2404_gpio_ops = {
- 	.map_io		= ds2404_gpio_map,
- 	.unmap_io	= ds2404_gpio_unmap,
- };
+ 	fd = get_unused_fd_flags(O_CLOEXEC);
 
