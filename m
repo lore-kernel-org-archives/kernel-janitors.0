@@ -1,42 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 14:40:28 +0000
-Subject: [PATCH 3/7] iscsi-target: Delete an unnecessary variable initialisation in iscsi_create_default_para
-Message-Id: <566C31DC.4090000@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 15:28:44 +0000
+Subject: [PATCH 5/7] rsxx: fix error return code
+Message-Id: <1451143726-28195-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566C2F7B.6030704@users.sourceforge.net>
-In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
+References: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Joshua Morris <josh.h.morris@us.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, Philip Kelleher <pjk1939@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 13:20:08 +0100
+Return a negative error code on failure.
 
-The variable "param" will eventually be set to an appropriate pointer
-from a call of the iscsi_set_default_param() function.
-Thus let us omit the explicit initialisation at the beginning.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/rsxx/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-index 15b2618..e0b173d 100644
---- a/drivers/target/iscsi/iscsi_target_parameters.c
-+++ b/drivers/target/iscsi/iscsi_target_parameters.c
-@@ -199,7 +199,7 @@ free_param:
- /* #warning Add extension keys */
- int iscsi_create_default_params(struct iscsi_param_list **param_list_ptr)
- {
--	struct iscsi_param *param = NULL;
-+	struct iscsi_param *param;
- 	struct iscsi_param_list *pl;
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index d8b2488..3801721 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -893,6 +893,7 @@ static int rsxx_pci_probe(struct pci_dev *dev,
+ 	card->event_wq = create_singlethread_workqueue(DRIVER_NAME"_event");
+ 	if (!card->event_wq) {
+ 		dev_err(CARD_TO_DEV(card), "Failed card event setup.\n");
++		st = -ENOMEM;
+ 		goto failed_event_handler;
+ 	}
  
- 	pl = kzalloc(sizeof(struct iscsi_param_list), GFP_KERNEL);
--- 
-2.6.3
 
