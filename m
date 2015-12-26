@@ -1,83 +1,81 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 13:04:19 +0000
-Subject: [PATCH] mfd-dm355evm_msp: One function call less in add_child() after error detection
-Message-Id: <568284D3.3060006@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 15:28:42 +0000
+Subject: [PATCH 3/7] omapfb: fix error return code
+Message-Id: <1451143726-28195-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+References: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 13:56:42 +0100
+Return a negative error code on failure.
 
-The platform_device_put() function was called in one case by the
-add_child() function during error handling even if the passed
-variable "pdev" contained a null pointer.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Implementation details could be improved by the adjustment of jump targets
-according to the Linux coding style convention.
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mfd/dm355evm_msp.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c |   12 +++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
-index bc90efe..e4aa1b8 100644
---- a/drivers/mfd/dm355evm_msp.c
-+++ b/drivers/mfd/dm355evm_msp.c
-@@ -202,7 +202,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
- 	if (!pdev) {
- 		dev_dbg(&client->dev, "can't alloc dev\n");
- 		status = -ENOMEM;
--		goto err;
-+		goto report_failure;
- 	}
+diff --git a/drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c b/drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c
+index 677e254..fc4cfa9 100644
+--- a/drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c
++++ b/drivers/video/fbdev/omap2/omapfb/displays/encoder-tpd12s015.c
+@@ -241,22 +241,28 @@ static int tpd_probe(struct platform_device *pdev)
  
- 	device_init_wakeup(&pdev->dev, can_wakeup);
-@@ -212,7 +212,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
- 		status = platform_device_add_data(pdev, pdata, pdata_len);
- 		if (status < 0) {
- 			dev_dbg(&pdev->dev, "can't add platform_data\n");
--			goto err;
-+			goto put_device;
- 		}
- 	}
+ 	gpio = devm_gpiod_get_index_optional(&pdev->dev, NULL, 0,
+ 		GPIOD_OUT_LOW);
+-	if (IS_ERR(gpio))
++	if (IS_ERR(gpio)) {
++		r = PTR_ERR(gpio);
+ 		goto err_gpio;
++	}
  
-@@ -225,19 +225,18 @@ static struct device *add_child(struct i2c_client *client, const char *name,
- 		status = platform_device_add_resources(pdev, &r, 1);
- 		if (status < 0) {
- 			dev_dbg(&pdev->dev, "can't add irq\n");
--			goto err;
-+			goto put_device;
- 		}
- 	}
+ 	ddata->ct_cp_hpd_gpio = gpio;
  
- 	status = platform_device_add(pdev);
--
--err:
--	if (status < 0) {
--		platform_device_put(pdev);
--		dev_err(&client->dev, "can't add %s dev\n", name);
--		return ERR_PTR(status);
--	}
--	return &pdev->dev;
-+	if (!status)
-+		return &pdev->dev;
-+put_device:
-+	platform_device_put(pdev);
-+report_failure:
-+	dev_err(&client->dev, "can't add %s dev\n", name);
-+	return ERR_PTR(status);
- }
+ 	gpio = devm_gpiod_get_index_optional(&pdev->dev, NULL, 1,
+ 		GPIOD_OUT_LOW);
+-	if (IS_ERR(gpio))
++	if (IS_ERR(gpio)) {
++		r = PTR_ERR(gpio);
+ 		goto err_gpio;
++	}
  
- static int add_children(struct i2c_client *client)
--- 
-2.6.3
+ 	ddata->ls_oe_gpio = gpio;
+ 
+ 	gpio = devm_gpiod_get_index(&pdev->dev, NULL, 2,
+ 		GPIOD_IN);
+-	if (IS_ERR(gpio))
++	if (IS_ERR(gpio)) {
++		r = PTR_ERR(gpio);
+ 		goto err_gpio;
++	}
+ 
+ 	ddata->hpd_gpio = gpio;
+ 
 
