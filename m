@@ -1,54 +1,50 @@
-From: Sebastian Reichel <sre@kernel.org>
-Date: Sat, 05 Dec 2015 00:41:52 +0000
-Subject: Re: [PATCH] ds2782_battery: constify ds278x_battery_ops structure
-Message-Id: <20151205004152.GC22936@earth>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="i7F3eY7HS/tUJxUd"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 10:17:35 +0000
+Subject: [PATCH 2/3] IDE-ACPI: Delete unnecessary null pointer checks in ide_get_dev_handle()
+Message-Id: <567E693F.4040909@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447440094-10105-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447440094-10105-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567E6799.5070802@users.sourceforge.net>
+In-Reply-To: <567E6799.5070802@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-ide@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 10:33:48 +0100
 
---i7F3eY7HS/tUJxUd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The variable "dinfo" will contain an appropropriate pointer after a call
+of the acpi_get_object_info() function succeeded.
+Thus remove two safety checks.
 
-Hi,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/ide/ide-acpi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Fri, Nov 13, 2015 at 07:41:34PM +0100, Julia Lawall wrote:
-> The ds278x_battery_ops structure is never modified, so declare it as cons=
-t.
->=20
-> Done with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+diff --git a/drivers/ide/ide-acpi.c b/drivers/ide/ide-acpi.c
+index 319b754..b6b2111 100644
+--- a/drivers/ide/ide-acpi.c
++++ b/drivers/ide/ide-acpi.c
+@@ -148,14 +148,14 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
+ 		DEBPRINT("get_object_info for device failed\n");
+ 		return -ENODEV;
+ 	}
+-	if (dinfo && (dinfo->valid & ACPI_VALID_ADR) &&
++	if ((dinfo->valid & ACPI_VALID_ADR) &&
+ 	    dinfo->address = addr) {
+ 		*pcidevfn = addr;
+ 		*handle = dev_handle;
+ 	} else {
+ 		DEBPRINT("get_object_info for device has wrong "
+ 			" address: %llu, should be %u\n",
+-			dinfo ? (unsigned long long)dinfo->address : -1ULL,
++			(unsigned long long)dinfo->address,
+ 			(unsigned int)addr);
+ 		ret = -ENODEV;
+ 		goto free_info;
+-- 
+2.6.3
 
-Thanks, queued.
-
--- Sebastian
-
---i7F3eY7HS/tUJxUd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJWYjLQAAoJENju1/PIO/qaRzMP/1pR2ms5h8ha+IpX1Pw/hqk+
-gQRVoQRIlJNPEN+Nx+GqX9rzm47cdWe65Ao7ZkaEvW29s00yeF0OKU7FFdRPZnxx
-YD+PsKEghGrxdL4hO6jB3qk5aG6EZhbXH9+jM4LLwCSaJ6s9yJY5vEOTPgEZrlgf
-RXkTqB5N9nLG7OwiMveW8shIgH3SBUpR4X1/YBm7jRJ3JAg4USDhcC4GXU9NdVbr
-COmiU9lofljzJOKpPrkrXNT/YSVb7QLYy0HArnIMywWMQik4qvPv9T6L4T5EvjXg
-HP0jSqbOxGhL9hlT7L+1w0OPDomdA4E1Am3oSQSD10+ZBqj8x/HhhH7hBLRJ8ik7
-mXSRgFtcOCBxicrdtoTLz10D58uWvLWAXuz2ZroUYMUs6y7+7A8T/ZjdswKeDPue
-Z0RqNGjX/DajC2Hg1UribaNLZDw0Dxkv5+7MDmIZoPZfL4lVod8zMHkbYGCwrOTB
-O/+rFXcrCv6MpYNSa7rWBqr90bw87mvn7AA5uMPSxcFNWazN8ufiH3Jjio8ckcF0
-lxGaN3ghC6mmOwR1K8tW3GHBBdjH1moyop45xFBE+OOLecXWKj6puufszHixM5ws
-YpbEpPqDzmGWwtzioD4r/vqoeIFCbNUwMnZVk8xpKOXDtwhVzuegfNENQDEMoTpR
-VO82irChw1qCgD+uKK41
-=A56Y
------END PGP SIGNATURE-----
-
---i7F3eY7HS/tUJxUd--
