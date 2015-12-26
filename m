@@ -1,42 +1,60 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 14:43:35 +0000
-Subject: [PATCH 6/7] iscsi-target: Delete unnecessary variable initialisations in iscsi_check_valuelist_for_s
-Message-Id: <566C3297.1040404@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 21:57:44 +0000
+Subject: [PATCH 2/2] USB: usbmon: remove assignment from IS_ERR argument
+Message-Id: <1451167064-2288-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566C2F7B.6030704@users.sourceforge.net>
-In-Reply-To: <566C2F7B.6030704@users.sourceforge.net>
+References: <1451167064-2288-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451167064-2288-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Dec 2015 14:34:26 +0100
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-The variables "tmp1" and "tmp2" will eventually be set to appropriate
-pointers from a call of the strchr() function.
-Thus let us omit the explicit initialisation at the beginning.
+// <smpl>
+@@
+expression e1,e2;
+statement S1,S2;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
++e1 = e2;
+if (IS_ERR(
+    e1
+-   = e2
+   )) S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/target/iscsi/iscsi_target_parameters.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/mon/mon_text.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-index 29ecf29..53e3345 100644
---- a/drivers/target/iscsi/iscsi_target_parameters.c
-+++ b/drivers/target/iscsi/iscsi_target_parameters.c
-@@ -920,7 +920,7 @@ static char *iscsi_check_valuelist_for_support(
- 	struct iscsi_param *param,
- 	char *value)
- {
--	char *tmp1 = NULL, *tmp2 = NULL;
-+	char *tmp1, *tmp2;
- 	char *acceptor_values = NULL, *proposer_values = NULL;
+diff --git a/drivers/usb/mon/mon_text.c b/drivers/usb/mon/mon_text.c
+index 98e4f63..e59334b 100644
+--- a/drivers/usb/mon/mon_text.c
++++ b/drivers/usb/mon/mon_text.c
+@@ -387,7 +387,8 @@ static ssize_t mon_text_read_t(struct file *file, char __user *buf,
+ 	struct mon_event_text *ep;
+ 	struct mon_text_ptr ptr;
  
- 	acceptor_values = param->value;
--- 
-2.6.3
+-	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
++	ep = mon_text_read_wait(rp, file);
++	if (IS_ERR(ep))
+ 		return PTR_ERR(ep);
+ 	mutex_lock(&rp->printf_lock);
+ 	ptr.cnt = 0;
+@@ -414,7 +415,8 @@ static ssize_t mon_text_read_u(struct file *file, char __user *buf,
+ 	struct mon_event_text *ep;
+ 	struct mon_text_ptr ptr;
+ 
+-	if (IS_ERR(ep = mon_text_read_wait(rp, file)))
++	ep = mon_text_read_wait(rp, file);
++	if (IS_ERR(ep))
+ 		return PTR_ERR(ep);
+ 	mutex_lock(&rp->printf_lock);
+ 	ptr.cnt = 0;
 
