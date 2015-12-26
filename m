@@ -1,41 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Dec 2015 18:49:11 +0000
-Subject: [PATCH] gpio-ucb1400: Delete an unnecessary variable initialisation in ucb1400_gpio_probe()
-Message-Id: <567D8FA7.2070701@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 21:57:42 +0000
+Subject: [PATCH 0/2] remove assignment from IS_ERR argument
+Message-Id: <1451167064-2288-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Dec 2015 19:36:20 +0100
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-The variable "err" will eventually be set to an appropriate value
-from a call of the gpiochip_add() function.
-Thus let us omit the explicit initialisation at the beginning.
+// <smpl>
+@@
+expression e1,e2;
+statement S1,S2;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
++e1 = e2;
+if (IS_ERR(
+    e1
+-   = e2
+   )) S1 else S2
+// </smpl>
+
 ---
- drivers/gpio/gpio-ucb1400.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-ucb1400.c b/drivers/gpio/gpio-ucb1400.c
-index d502825..c963517 100644
---- a/drivers/gpio/gpio-ucb1400.c
-+++ b/drivers/gpio/gpio-ucb1400.c
-@@ -46,7 +46,7 @@ static void ucb1400_gpio_set(struct gpio_chip *gc, unsigned off, int val)
- static int ucb1400_gpio_probe(struct platform_device *dev)
- {
- 	struct ucb1400_gpio *ucb = dev_get_platdata(&dev->dev);
--	int err = 0;
-+	int err;
- 
- 	if (!(ucb && ucb->gpio_offset)) {
- 		err = -EINVAL;
--- 
-2.6.3
-
+ drivers/usb/mon/mon_text.c |    6 ++++--
+ ipc/mqueue.c               |    3 ++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
