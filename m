@@ -1,49 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 21:00:35 +0000
-Subject: [PATCH 1/2] mmc-sdricoh_cs: Delete unnecessary variable initialisations in sdricoh_init_mmc()
-Message-Id: <5682F473.9040609@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 18:50:19 +0000
+Subject: [PATCH 5/6] InfiniBand-ocrdma: Returning only value constants in ocrdma_resize_cq()
+Message-Id: <567EE16B.9030808@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <5682F3AC.7050107@users.sourceforge.net>
-In-Reply-To: <5682F3AC.7050107@users.sourceforge.net>
+ <567EDED5.4040201@users.sourceforge.net>
+In-Reply-To: <567EDED5.4040201@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mmc@vger.kernel.org, Sascha Sommer <saschasommer@freenet.de>, Ulf Hansson <ulf.hansson@linaro.org>
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 29 Dec 2015 21:11:45 +0100
+Date: Sat, 26 Dec 2015 18:54:47 +0100
 
-These variables will eventually be set to an appropriate value a bit later.
-* host
-* iobase
-* result
-
-Thus let us omit the explicit initialisation at the beginning.
+Return constant integer values without storing them in the local
+variable "status".
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mmc/host/sdricoh_cs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mmc/host/sdricoh_cs.c b/drivers/mmc/host/sdricoh_cs.c
-index b7e3057..5e57d9f 100644
---- a/drivers/mmc/host/sdricoh_cs.c
-+++ b/drivers/mmc/host/sdricoh_cs.c
-@@ -398,10 +398,10 @@ static struct mmc_host_ops sdricoh_ops = {
- static int sdricoh_init_mmc(struct pci_dev *pci_dev,
- 			    struct pcmcia_device *pcmcia_dev)
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index 2de39d3..7bedf44 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -1120,15 +1120,12 @@ ctx_err:
+ int ocrdma_resize_cq(struct ib_cq *ibcq, int new_cnt,
+ 		     struct ib_udata *udata)
  {
--	int result = 0;
--	void __iomem *iobase = NULL;
-+	int result;
-+	void __iomem *iobase;
- 	struct mmc_host *mmc = NULL;
--	struct sdricoh_host *host = NULL;
-+	struct sdricoh_host *host;
- 	struct device *dev = &pcmcia_dev->dev;
- 	/* map iomem */
- 	if (pci_resource_len(pci_dev, SDRICOH_PCI_REGION) !-- 
+-	int status = 0;
+ 	struct ocrdma_cq *cq = get_ocrdma_cq(ibcq);
+ 
+-	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe) {
+-		status = -EINVAL;
+-		return status;
+-	}
++	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe)
++		return -EINVAL;
+ 	ibcq->cqe = new_cnt;
+-	return status;
++	return 0;
+ }
+ 
+ static void ocrdma_flush_cq(struct ocrdma_cq *cq)
+-- 
 2.6.3
 
