@@ -1,47 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 12 Dec 2015 12:59:14 +0000
-Subject: [patch 1/2] regmap: shift wrapping bugs in 64 bit code
-Message-Id: <20151212125914.GA22043@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 10:20:10 +0000
+Subject: [PATCH 3/3] IDE-ACPI: Move an assignment for one variable in ide_get_dev_handle()
+Message-Id: <567E69DA.5020409@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567E6799.5070802@users.sourceforge.net>
+In-Reply-To: <567E6799.5070802@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>, Xiubo Li <lixiubo@cmss.chinamobile.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-ide@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-We should cast these to 64bit so that we don't truncate away the high
-bits.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 10:50:33 +0100
 
-Fixes: afcc00b91f18 ('regmap: add 64-bit mode support')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Move the assignment for the variable "addr" to the statement
+where its value is used after previous function calls succeeded.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Not tested.
+ drivers/ide/ide-acpi.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 1791180..2d4cc70 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -250,20 +250,20 @@ static void regmap_format_64_be(void *buf, unsigned int val, unsigned int shift)
- {
- 	__be64 *b = buf;
+diff --git a/drivers/ide/ide-acpi.c b/drivers/ide/ide-acpi.c
+index b6b2111..c2de9f9 100644
+--- a/drivers/ide/ide-acpi.c
++++ b/drivers/ide/ide-acpi.c
+@@ -132,9 +132,6 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
+ 	bus = pdev->bus->number;
+ 	devnum = PCI_SLOT(pdev->devfn);
+ 	func = PCI_FUNC(pdev->devfn);
+-	/* ACPI _ADR encoding for PCI bus: */
+-	addr = (u64)(devnum << 16 | func);
+-
+ 	DEBPRINT("ENTER: pci %02x:%02x.%01x\n", bus, devnum, func);
  
--	b[0] = cpu_to_be64(val << shift);
-+	b[0] = cpu_to_be64((u64)val << shift);
- }
- 
- static void regmap_format_64_le(void *buf, unsigned int val, unsigned int shift)
- {
- 	__le64 *b = buf;
- 
--	b[0] = cpu_to_le64(val << shift);
-+	b[0] = cpu_to_le64((u64)val << shift);
- }
- 
- static void regmap_format_64_native(void *buf, unsigned int val,
- 				    unsigned int shift)
- {
--	*(u64 *)buf = val << shift;
-+	*(u64 *)buf = (u64)val << shift;
- }
- #endif
- 
+ 	dev_handle = ACPI_HANDLE(dev);
+@@ -148,6 +145,8 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
+ 		DEBPRINT("get_object_info for device failed\n");
+ 		return -ENODEV;
+ 	}
++	/* ACPI _ADR encoding for PCI bus: */
++	addr = (u64)(devnum << 16 | func);
+ 	if ((dinfo->valid & ACPI_VALID_ADR) &&
+ 	    dinfo->address = addr) {
+ 		*pcidevfn = addr;
+-- 
+2.6.3
+
