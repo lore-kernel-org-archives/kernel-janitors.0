@@ -1,67 +1,89 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 22 Dec 2015 08:00:15 +0000
-Subject: Re: [PATCH v2 3/4] staging: lustre: Less checks in mgc_process_recover_log() after error detection
-Message-Id: <20151222080015.GY5284@mwanda>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 20:58:58 +0000
+Subject: [PATCH v2] coccinelle: api: check for propagation of error from platform_get_irq
+Message-Id: <alpine.DEB.2.02.1512262156580.2070@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
- <56784F0C.6040007@users.sourceforge.net>
- <20151221234857.GA27079@kroah.com>
-In-Reply-To: <20151221234857.GA27079@kroah.com>
+References: <1451157891-24881-1-git-send-email-Julia.Lawall@lip6.fr>
+ <567EF188.7020203@cogentembedded.com>
+ <alpine.DEB.2.02.1512262107340.2070@localhost6.localdomain6>
+ <alpine.DEB.2.02.1512262123500.2070@localhost6.localdomain6>
+ <567EF895.6080702@cogentembedded.com>
+In-Reply-To: <567EF895.6080702@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, lustre-devel@lists.lustre.org
+To: cocci@systeme.lip6.fr
 
-On Mon, Dec 21, 2015 at 03:48:57PM -0800, Greg Kroah-Hartman wrote:
-> 
-> That's 6 different things, shouldn't this be 6 different patches?
-> 
+The error return value of platform_get_irq seems to often get dropped.
 
-Not really.  The patch could be described as just "change from using one
-exit label to using several."  Markus has sent a number of these patches
-and I am CC'd on them because of kernel-janitors, it's really painful to
-review when he breaks them up into tiny patches where he changes one
-label at a time.  It's like trying to put coleslaw back together into a
-head of cabbage.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> On Mon, Dec 21, 2015 at 08:12:12PM +0100, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Mon, 21 Dec 2015 18:58:51 +0100
-> > 
-> > A few checks would be performed by the mgc_process_recover_log() function
-> > even though it was determined that the passed variable "pages" contained
-> > a null pointer or a call of the alloc_page() function failed.
-> > 
-> > 1. Let us return directly if a call of the kcalloc() function failed.
-> > 
-> > 2. Corresponding implementation details could be improved by adjustments
-> >    for jump targets according to the Linux coding style convention.
-> > 
-> > 3. Delete sanity checks then.
+---
 
-These are not sanity checks, of course.  They were required because of a
-common exit path.
+v2: Check for the direct return case also.  Added some mailing lists of
+common offenders.
 
-> > 
-> > 4. Move an assignment for the variable "eof" behind memory allocations.
-
-I had asked Markus not to do this.  It is unrelated.
-
-> > 
-> > 5. The variable "req" will eventually be set to an appropriate pointer
-> >    from a call of the ptlrpc_request_alloc() function.
-> >    Thus let us omit the explicit initialisation before.
-
-Now that we use multiple labels it isn't necessary to initialize "req".
-
-> > 
-> > 6. Apply a recommendation from the script "checkpatch.pl".
-
-This is where he changed pages[i] = NULL to !(pages[i]).  It's not
-strictly related but it's minor and he was changing those lines anyway.
-
-regards,
-dan carpenter
+diff --git a/scripts/coccinelle/api/platform_get_irq_return.cocci b/scripts/coccinelle/api/platform_get_irq_return.cocci
+new file mode 100644
+index 0000000..44680d0
+--- /dev/null
++++ b/scripts/coccinelle/api/platform_get_irq_return.cocci
+@@ -0,0 +1,58 @@
++/// Propagate the return value of platform_get_irq.
++//# Sometimes the return value of platform_get_irq is tested using <= 0, but 0
++//# might not be an appropriate return value in an error case.
++///
++// Confidence: Moderate
++// Copyright: (C) 2015 Julia Lawall, Inria. GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: --no-includes --include-headers
++
++virtual context
++virtual org
++virtual report
++
++// ----------------------------------------------------------------------------
++
++@r depends on context || org || report@
++constant C;
++statement S;
++expression e, ret;
++position j0, j1;
++@@
++
++* e@j0 = platform_get_irq(...);
++(
++if@j1 (...) {
++  ...
++  return -C;
++} else S
++|
++if@j1 (...) {
++  ...
++  ret = -C;
++  ...
++  return ret;
++} else S
++)
++
++// ----------------------------------------------------------------------------
++
++@script:python r_org depends on org@
++j0 << r.j0;
++j1 << r.j1;
++@@
++
++msg = "Propagate return value of platform_get_irq."
++coccilib.org.print_todo(j0[0], msg)
++coccilib.org.print_link(j1[0], "")
++
++// ----------------------------------------------------------------------------
++
++@script:python r_report depends on report@
++j0 << r.j0;
++j1 << r.j1;
++@@
++
++msg = "Propagate return value of platform_get_irq around line %s." % (j1[0].line)
++coccilib.report.print_report(j0[0], msg)
++
