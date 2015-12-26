@@ -1,128 +1,73 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 Dec 2015 16:39:43 +0000
-Subject: [PATCH 0/5] add missing of_node_put
-Message-Id: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 26 Dec 2015 15:28:45 +0000
+Subject: [PATCH 6/7] drivers: net: cpsw: fix error return code
+Message-Id: <1451143726-28195-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444480254-14399-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The various for_each device_node iterators performs an of_node_get on each
-iteration, so a break out of the loop requires an of_node_put.
+Return a negative error code on failure.
 
-The complete semantic patch that fixes this problem is
-(http://coccinelle.lip6.fr):
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r@
-local idexpression n;
-expression e1,e2;
-iterator name for_each_node_by_name, for_each_node_by_type,
-for_each_compatible_node, for_each_matching_node,
-for_each_matching_node_and_match, for_each_child_of_node,
-for_each_available_child_of_node, for_each_node_with_property;
-iterator i;
-statement S;
-expression list [n1] es;
 @@
-
+identifier ret; expression e1,e2;
+@@
 (
-(
-for_each_node_by_name(n,e1) S
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
 |
-for_each_node_by_type(n,e1) S
-|
-for_each_compatible_node(n,e1,e2) S
-|
-for_each_matching_node(n,e1) S
-|
-for_each_matching_node_and_match(n,e1,e2) S
-|
-for_each_child_of_node(e1,n) S
-|
-for_each_available_child_of_node(e1,n) S
-|
-for_each_node_with_property(n,e1) S
+ret = 0
 )
-&
-i(es,n,...) S
-)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-   return n;
-|
-+  of_node_put(n);
-?  return ...;
-)
-   ...
- }
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-identifier l;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  goto l;
-)
-   ...
- }
-...
-l: ... when != n// </smpl>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
+ drivers/net/ethernet/ti/cpsw.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    1 +
- drivers/pinctrl/pinctrl-rockchip.c            |    5 ++++-
- drivers/pinctrl/pinctrl-tegra-xusb.c          |    4 +++-
- drivers/pinctrl/pinctrl-tegra.c               |    1 +
- drivers/pinctrl/sh-pfc/pinctrl.c              |    4 +++-
- drivers/pinctrl/sirf/pinctrl-sirf.c           |    8 ++++++--
- 6 files changed, 18 insertions(+), 5 deletions(-)
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 3409e80..6a76992 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -2448,8 +2448,10 @@ static int cpsw_probe(struct platform_device *pdev)
+ 
+ 	/* RX IRQ */
+ 	irq = platform_get_irq(pdev, 1);
+-	if (irq < 0)
++	if (irq < 0) {
++		ret = -ENOENT;
+ 		goto clean_ale_ret;
++	}
+ 
+ 	priv->irqs_table[0] = irq;
+ 	ret = devm_request_irq(&pdev->dev, irq, cpsw_rx_interrupt,
+@@ -2461,8 +2463,10 @@ static int cpsw_probe(struct platform_device *pdev)
+ 
+ 	/* TX IRQ */
+ 	irq = platform_get_irq(pdev, 2);
+-	if (irq < 0)
++	if (irq < 0) {
++		ret = -ENOENT;
+ 		goto clean_ale_ret;
++	}
+ 
+ 	priv->irqs_table[1] = irq;
+ 	ret = devm_request_irq(&pdev->dev, irq, cpsw_tx_interrupt,
+
