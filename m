@@ -1,26 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 22 Dec 2015 12:44:24 +0000
-Subject: Re: [PATCH 1/5] pinctrl-tegra: add missing of_node_put
-Message-Id: <CACRpkda33Jb7m1TWSy3MRjDEWPU9SU0L+ARN3O2Bjs8yato15g@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 07:08:35 +0000
+Subject: [PATCH v2] i2c-core: One function call less in acpi_i2c_space_handler() after error detection
+Message-Id: <567E3CF3.10606@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <201512261449.pmBxYtq3%fengguang.wu@intel.com>
+In-Reply-To: <201512261449.pmBxYtq3%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Dec 21, 2015 at 5:39 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 26 Dec 2015 08:00:52 +0100
 
-> for_each_child_of_node performs an of_node_get on each iteration, so a
-> return from the loop requires an of_node_put.
->
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
+The kfree() function was called in one case by the
+acpi_i2c_space_handler() function during error handling
+even if the passed variable "client" contained a null pointer.
 
-Patch applied.
+Implementation details could be improved by the adjustment of jump targets
+according to the Linux coding style convention.
 
-Yours,
-Linus Walleij
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/i2c/i2c-core.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index 7349b00..9996531 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -313,18 +313,18 @@ acpi_i2c_space_handler(u32 function, acpi_physical_address command,
+ 	client = kzalloc(sizeof(*client), GFP_KERNEL);
+ 	if (!client) {
+ 		ret = AE_NO_MEMORY;
+-		goto err;
++		goto free_ares;
+ 	}
+ 
+ 	if (!value64 || ares->type != ACPI_RESOURCE_TYPE_SERIAL_BUS) {
+ 		ret = AE_BAD_PARAMETER;
+-		goto err;
++		goto free_client;
+ 	}
+ 
+ 	sb = &ares->data.i2c_serial_bus;
+ 	if (sb->type != ACPI_RESOURCE_SERIAL_TYPE_I2C) {
+ 		ret = AE_BAD_PARAMETER;
+-		goto err;
++		goto free_client;
+ 	}
+ 
+ 	client->adapter = adapter;
+@@ -401,13 +401,13 @@ acpi_i2c_space_handler(u32 function, acpi_physical_address command,
+ 	default:
+ 		pr_info("protocol(0x%02x) is not supported.\n", accessor_type);
+ 		ret = AE_BAD_PARAMETER;
+-		goto err;
++		goto free_client;
+ 	}
+ 
+ 	gsb->status = status;
+-
+- err:
++free_client:
+ 	kfree(client);
++free_ares:
+ 	ACPI_FREE(ares);
+ 	return ret;
+ }
+-- 
+2.6.3
+
