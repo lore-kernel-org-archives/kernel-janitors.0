@@ -1,50 +1,57 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 10:17:35 +0000
-Subject: [PATCH 2/3] IDE-ACPI: Delete unnecessary null pointer checks in ide_get_dev_handle()
-Message-Id: <567E693F.4040909@users.sourceforge.net>
+Date: Sun, 27 Dec 2015 12:40:13 +0000
+Subject: [PATCH 1/2] InfiniBand-iSER: One jump label less in iser_reg_sig_mr()
+Message-Id: <567FDC2D.2090706@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <567E6799.5070802@users.sourceforge.net>
-In-Reply-To: <567E6799.5070802@users.sourceforge.net>
+ <567FDB4E.2040000@users.sourceforge.net>
+In-Reply-To: <567FDB4E.2040000@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ide@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagig@mellanox.com>, Sean Hefty <sean.hefty@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 10:33:48 +0100
+Date: Sun, 27 Dec 2015 11:41:42 +0100
 
-The variable "dinfo" will contain an appropropriate pointer after a call
-of the acpi_get_object_info() function succeeded.
-Thus remove two safety checks.
+This issue was detected by using the Coccinelle software.
+
+1. Let us return directly if a call of the iser_set_sig_attrs()
+   function failed.
+
+2. Delete the jump label "err" then.
+
+3. Return zero as a constant at the end.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/ide/ide-acpi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/ulp/iser/iser_memory.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ide/ide-acpi.c b/drivers/ide/ide-acpi.c
-index 319b754..b6b2111 100644
---- a/drivers/ide/ide-acpi.c
-+++ b/drivers/ide/ide-acpi.c
-@@ -148,14 +148,14 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
- 		DEBPRINT("get_object_info for device failed\n");
- 		return -ENODEV;
- 	}
--	if (dinfo && (dinfo->valid & ACPI_VALID_ADR) &&
-+	if ((dinfo->valid & ACPI_VALID_ADR) &&
- 	    dinfo->address = addr) {
- 		*pcidevfn = addr;
- 		*handle = dev_handle;
- 	} else {
- 		DEBPRINT("get_object_info for device has wrong "
- 			" address: %llu, should be %u\n",
--			dinfo ? (unsigned long long)dinfo->address : -1ULL,
-+			(unsigned long long)dinfo->address,
- 			(unsigned int)addr);
- 		ret = -ENODEV;
- 		goto free_info;
+diff --git a/drivers/infiniband/ulp/iser/iser_memory.c b/drivers/infiniband/ulp/iser/iser_memory.c
+index ea765fb..14e08b3 100644
+--- a/drivers/infiniband/ulp/iser/iser_memory.c
++++ b/drivers/infiniband/ulp/iser/iser_memory.c
+@@ -443,7 +443,7 @@ iser_reg_sig_mr(struct iscsi_iser_task *iser_task,
+ 	memset(sig_attrs, 0, sizeof(*sig_attrs));
+ 	ret = iser_set_sig_attrs(iser_task->sc, sig_attrs);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	iser_set_prot_checks(iser_task->sc, &sig_attrs->check_mask);
+ 
+@@ -475,8 +475,7 @@ iser_reg_sig_mr(struct iscsi_iser_task *iser_task,
+ 	iser_dbg("lkey=0x%x rkey=0x%x addr=0x%llx length=%u\n",
+ 		 sig_reg->sge.lkey, sig_reg->rkey, sig_reg->sge.addr,
+ 		 sig_reg->sge.length);
+-err:
+-	return ret;
++	return 0;
+ }
+ 
+ static int iser_fast_reg_mr(struct iscsi_iser_task *iser_task,
 -- 
 2.6.3
 
