@@ -1,53 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 Dec 2015 12:38:40 +0000
-Subject: Re: [PATCH 5/7] staging: lustre: Less checks in mgc_process_recover_log() after error detection
-Message-Id: <20151214123840.GX5284@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Dec 2015 07:58:33 +0000
+Subject: Re: [Cocci] [PATCH v2] coccinelle: api: check for propagation of error from platform_get_irq
+Message-Id: <567F9A29.50202@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <566D7952.7090401@users.sourceforge.net>
- <20151214110003.GV5284@mwanda>
- <566EB03E.2000007@users.sourceforge.net>
-In-Reply-To: <566EB03E.2000007@users.sourceforge.net>
+References: <1451157891-24881-1-git-send-email-Julia.Lawall@lip6.fr>
+ <567EF188.7020203@cogentembedded.com>
+ <alpine.DEB.2.02.1512262107340.2070@localhost6.localdomain6>
+ <alpine.DEB.2.02.1512262123500.2070@localhost6.localdomain6>
+ <567EF895.6080702@cogentembedded.com>
+ <alpine.DEB.2.02.1512262156580.2070@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1512262156580.2070@localhost6.localdomain6>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, Julia Lawall <julia.lawall@lip6.fr>, lustre-devel@lists.lustre.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: cocci@systeme.lip6.fr
 
-On Mon, Dec 14, 2015 at 01:04:14PM +0100, SF Markus Elfring wrote:
-> >> A few checks would be performed by the mgc_process_recover_log() function
-> >> even if it is known already that the passed variable "pages" contained
-> >> a null pointer.
-> >>
-> >> * Let us return directly if a call of the kcalloc() function failed.
-> >>
-> >> * Move assignments for the variables "eof" and "req" behind
-> >>   this memory allocation.
-> > 
-> > Why?
-> 
-> The positions of their initialisation depends on the selected exception 
-> handling implementation, doesn't it?
-> 
-> Can you accept the proposed changes around the affected memory allocations?
-> 
+> The error return value of platform_get_irq seems to often get dropped.
 
-Just leave it as-is if there is no reason.
+How do you think about any more fine-tuning here?
 
-> 
-> > Then in the next patch it moves again.
-> 
-> This detail is a matter of patch granularity.
-> 
-> 
-> > It's like cup shuffle to read these patches sometimes.
-> 
-> Do you prefer to stash any changes together for a bigger update step?
+Commit message:
+* =85 of the platform_get_irq() function seems to get dropped too often.
 
-Yes.  Patches 5 and 6 would be easier to review if they were folded into
-one patch.
+* Why do you concentrate on a single function name?
+  Do you plan to extend this source code analysis approach?
 
-regards,
-dan carpenter
 
+> +@script:python r_report depends on report@
+> +j0 << r.j0;
+> +j1 << r.j1;
+> +@@
+> +
+> +msg =3D "Propagate return value of platform_get_irq around line %s." % (=
+j1[0].line)
+
+Are there more unchecked return values which are interesting
+for further considerations?
+https://cwe.mitre.org/data/definitions/252.html
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
