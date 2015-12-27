@@ -1,31 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Dec 2015 12:36:30 +0000
-Subject: [PATCH 0/2] InfiniBand-iSER: Refactoring for two function implementations
-Message-Id: <567FDB4E.2040000@users.sourceforge.net>
+From: Leon Romanovsky <leon@leon.nu>
+Date: Sun, 27 Dec 2015 12:43:23 +0000
+Subject: Re: [PATCH 0/2] InfiniBand-iSER: Refactoring for two function implementations
+Message-Id: <20151227124323.GF8501@leon.nu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+ <567FDB4E.2040000@users.sourceforge.net>
+In-Reply-To: <567FDB4E.2040000-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagig@mellanox.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Roi Dayan <roid-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sagi Grimberg <sagig-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 27 Dec 2015 13:12:10 +0100
-Subject: [PATCH 0/2] InfiniBand-iSER: Refactoring for two function implementations
+On Sun, Dec 27, 2015 at 01:36:30PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 27 Dec 2015 13:12:10 +0100
+> Subject: [PATCH 0/2] InfiniBand-iSER: Refactoring for two function implementations
+Just a note for the future submissions (no need to respin), we are using
+different subject line: InfiniBand-iSER: --> IB/iser:
 
-I suggest to return directly instead of using the jump label "err"
-in two functions (which are working without clean-up there).
-
-Markus Elfring (2):
-  One jump label less in iser_reg_sig_mr()
-  One jump label less in isert_reg_sig_mr()
-
- drivers/infiniband/ulp/iser/iser_memory.c | 5 ++---
- drivers/infiniband/ulp/isert/ib_isert.c   | 7 +++----
- 2 files changed, 5 insertions(+), 7 deletions(-)
-
--- 
-2.6.3
-
+> 
+> I suggest to return directly instead of using the jump label "err"
+> in two functions (which are working without clean-up there).
+> 
+> Markus Elfring (2):
+>   One jump label less in iser_reg_sig_mr()
+>   One jump label less in isert_reg_sig_mr()
+> 
+>  drivers/infiniband/ulp/iser/iser_memory.c | 5 ++---
+>  drivers/infiniband/ulp/isert/ib_isert.c   | 7 +++----
+>  2 files changed, 5 insertions(+), 7 deletions(-)
+> 
+> -- 
+> 2.6.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
