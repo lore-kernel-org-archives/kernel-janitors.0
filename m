@@ -1,75 +1,58 @@
-From: Stefan Hajnoczi <stefanha@redhat.com>
-Date: Thu, 10 Dec 2015 02:21:12 +0000
-Subject: Re: [patch -next] VSOCK: signedness bug in virtio_transport_dgram_enqueue()
-Message-Id: <20151210022112.GB9577@stefanha-x1.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="eAbsdosE1cNLO4uF"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 27 Dec 2015 21:01:29 +0000
+Subject: [PATCH] qlcnic: constify qlcnic_dcb_ops structures
+Message-Id: <1451250089-6989-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151209102713.GG3173@mwanda>
-In-Reply-To: <20151209102713.GG3173@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Asias He <asias@redhat.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dept-GELinuxNICDev@qlogic.com
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+The qlcnic_dcb_ops structures are never modified, so declare them as const.
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Done with the help of Coccinelle.
 
-On Wed, Dec 09, 2015 at 01:27:13PM +0300, Dan Carpenter wrote:
-> "written" has to be signed for the error handling to work.
-> trans->ops->send_pkt() returns an int so that's fine.
->=20
-> Fixes: 80a19e338d45 ('VSOCK: Introduce virtio-vsock-common.ko')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virt=
-io_transport_common.c
-> index 28f790d..d9a2325 100644
-> --- a/net/vmw_vsock/virtio_transport_common.c
-> +++ b/net/vmw_vsock/virtio_transport_common.c
-> @@ -815,7 +815,8 @@ virtio_transport_dgram_enqueue(struct vsock_sock *vsk,
->  		.type =3D VIRTIO_VSOCK_TYPE_DGRAM,
->  		.msg =3D msg,
->  	};
-> -	size_t total_written =3D 0, pkt_off =3D 0, written;
-> +	size_t total_written =3D 0, pkt_off =3D 0;
-> +	int written;
->  	u16 dgram_id;
-> =20
->  	/* The max size of a single dgram we support is 64KB */
-> @@ -845,7 +846,7 @@ virtio_transport_dgram_enqueue(struct vsock_sock *vsk,
->  		}
->  		total_written +=3D written;
->  		pkt_off +=3D written;
-> -		pr_debug("%s:id=3D%d, dgram_len=3D%zu, off=3D%zu, total_written=3D%zu,=
- written=3D%zu\n",
-> +		pr_debug("%s:id=3D%d, dgram_len=3D%zu, off=3D%zu, total_written=3D%zu,=
- written=3D%d\n",
->  			  __func__, dgram_id, dgram_len, pkt_off, total_written, written);
->  	}
-> =20
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks!
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c |    4 ++--
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.h |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-The dgram functionality has been dropped in the latest patch revision
-but I'll keep your fix in mind if it's brought back.
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+index a72bcdd..4b76c69 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+@@ -167,7 +167,7 @@ struct qlcnic_dcb_cfg {
+ 	u32 version;
+ };
+ 
+-static struct qlcnic_dcb_ops qlcnic_83xx_dcb_ops = {
++static const struct qlcnic_dcb_ops qlcnic_83xx_dcb_ops = {
+ 	.init_dcbnl_ops		= __qlcnic_init_dcbnl_ops,
+ 	.free			= __qlcnic_dcb_free,
+ 	.attach			= __qlcnic_dcb_attach,
+@@ -180,7 +180,7 @@ static struct qlcnic_dcb_ops qlcnic_83xx_dcb_ops = {
+ 	.aen_handler		= qlcnic_83xx_dcb_aen_handler,
+ };
+ 
+-static struct qlcnic_dcb_ops qlcnic_82xx_dcb_ops = {
++static const struct qlcnic_dcb_ops qlcnic_82xx_dcb_ops = {
+ 	.init_dcbnl_ops		= __qlcnic_init_dcbnl_ops,
+ 	.free			= __qlcnic_dcb_free,
+ 	.attach			= __qlcnic_dcb_attach,
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.h
+index 3cf4a10..9777e57 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.h
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.h
+@@ -37,7 +37,7 @@ struct qlcnic_dcb {
+ 	struct qlcnic_adapter		*adapter;
+ 	struct delayed_work		aen_work;
+ 	struct workqueue_struct		*wq;
+-	struct qlcnic_dcb_ops		*ops;
++	const struct qlcnic_dcb_ops	*ops;
+ 	struct qlcnic_dcb_cfg		*cfg;
+ 	unsigned long			state;
+ };
 
-Stefan
-
---eAbsdosE1cNLO4uF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJWaOGYAAoJEJykq7OBq3PIrnEH/3TZVkB37oyI4pHJk/dfUNYt
-7bFi/LZMFNcBmeghQjSY92GPMBCQnVu2mLSHIbRC3ZCm2GolQMXmQj6z6pZ59ukk
-EHJrRaINCdNdXwCvuME6CPEGxbgU19WNlCxi88YgzYwViaa9P8UFocfwZYXvN1F4
-iTGkxMFdUAc1XQqitXTiI4ty+2lu7WM303VIZ1NuPKE+CMSu4YH1zdDH21RO9jry
-jM/UM1a8geJZctgBNnh0utQgbKjxy8G5fD7Xvv3dogV+tRGRt9KfdZGsLEavP4UB
-Bfm4Y+TWE20JIJ2FAm274xoaSwXbm/p4OvErWXyGhUIg41eMCTll+UnEyAfb9uE=
-=3zeQ
------END PGP SIGNATURE-----
-
---eAbsdosE1cNLO4uF--
