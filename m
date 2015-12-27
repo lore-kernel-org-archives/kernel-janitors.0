@@ -1,51 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 10:20:10 +0000
-Subject: [PATCH 3/3] IDE-ACPI: Move an assignment for one variable in ide_get_dev_handle()
-Message-Id: <567E69DA.5020409@users.sourceforge.net>
+Date: Sun, 27 Dec 2015 17:33:00 +0000
+Subject: [PATCH] [media] si2165: Refactoring for si2165_writereg_mask8()
+Message-Id: <568020CC.1060004@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <567E6799.5070802@users.sourceforge.net>
-In-Reply-To: <567E6799.5070802@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ide@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 10:50:33 +0100
+Date: Sun, 27 Dec 2015 18:23:57 +0100
 
-Move the assignment for the variable "addr" to the statement
-where its value is used after previous function calls succeeded.
+This issue was detected by using the Coccinelle software.
+
+1. Let us return directly if a call of the si2165_readreg8()
+   function failed.
+
+2. Reduce the scope for the local variables "ret" and "tmp" to one branch
+   of an if statement.
+
+3. Delete the jump label "err" then.
+
+4. Return the value from a call of the si2165_writereg8() function
+   without using an extra assignment for the variable "ret" at the end.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/ide/ide-acpi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/dvb-frontends/si2165.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/ide/ide-acpi.c b/drivers/ide/ide-acpi.c
-index b6b2111..c2de9f9 100644
---- a/drivers/ide/ide-acpi.c
-+++ b/drivers/ide/ide-acpi.c
-@@ -132,9 +132,6 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
- 	bus = pdev->bus->number;
- 	devnum = PCI_SLOT(pdev->devfn);
- 	func = PCI_FUNC(pdev->devfn);
--	/* ACPI _ADR encoding for PCI bus: */
--	addr = (u64)(devnum << 16 | func);
+diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-frontends/si2165.c
+index 2b93241..e8518ae 100644
+--- a/drivers/media/dvb-frontends/si2165.c
++++ b/drivers/media/dvb-frontends/si2165.c
+@@ -225,22 +225,18 @@ static int si2165_writereg32(struct si2165_state *state, const u16 reg, u32 val)
+ static int si2165_writereg_mask8(struct si2165_state *state, const u16 reg,
+ 				 u8 val, u8 mask)
+ {
+-	int ret;
+-	u8 tmp;
 -
- 	DEBPRINT("ENTER: pci %02x:%02x.%01x\n", bus, devnum, func);
+ 	if (mask != 0xff) {
+-		ret = si2165_readreg8(state, reg, &tmp);
++		u8 tmp;
++		int ret = si2165_readreg8(state, reg, &tmp);
++
+ 		if (ret < 0)
+-			goto err;
++			return ret;
  
- 	dev_handle = ACPI_HANDLE(dev);
-@@ -148,6 +145,8 @@ static int ide_get_dev_handle(struct device *dev, acpi_handle *handle,
- 		DEBPRINT("get_object_info for device failed\n");
- 		return -ENODEV;
+ 		val &= mask;
+ 		tmp &= ~mask;
+ 		val |= tmp;
  	}
-+	/* ACPI _ADR encoding for PCI bus: */
-+	addr = (u64)(devnum << 16 | func);
- 	if ((dinfo->valid & ACPI_VALID_ADR) &&
- 	    dinfo->address = addr) {
- 		*pcidevfn = addr;
+-
+-	ret = si2165_writereg8(state, reg, val);
+-err:
+-	return ret;
++	return si2165_writereg8(state, reg, val);
+ }
+ 
+ #define REG16(reg, val) { (reg), (val) & 0xff }, { (reg)+1, (val)>>8 & 0xff }
 -- 
 2.6.3
 
