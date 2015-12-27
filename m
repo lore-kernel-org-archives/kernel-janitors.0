@@ -1,119 +1,66 @@
-From: Benjamin Block <bblock@linux.vnet.ibm.com>
-Date: Fri, 04 Dec 2015 17:57:31 +0000
-Subject: Re: [PATCH] SCSI-zfcp: Delete unnecessary checks before the function call "mempool_destroy"
-Message-Id: <20151204175731.GA9185@bblock-ThinkPad-W530>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="r5Pyd7+fXNt84Ff3"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Dec 2015 12:41:46 +0000
+Subject: [PATCH 2/2] InfiniBand-iSER-target: One jump label less in isert_reg_sig_mr()
+Message-Id: <567FDC8A.6000602@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <5649D8DE.1030809@users.sourceforge.net>
-In-Reply-To: <5649D8DE.1030809@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Steffen Maier <maier@linux.vnet.ibm.com>, linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567FDB4E.2040000@users.sourceforge.net>
+In-Reply-To: <567FDB4E.2040000@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Sagi Grimberg <sagig@mellanox.com>, Sean Hefty <sean.hefty@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Dec 2015 12:54:52 +0100
 
-Hej Markus,
+This issue was detected by using the Coccinelle software.
 
-On 14:23 Mon 16 Nov     , SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Nov 2015 14:19:03 +0100
->=20
-> The mempool_destroy() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the calls is not neede=
-d.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/s390/scsi/zfcp_aux.c | 21 +++++++--------------
->  1 file changed, 7 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/s390/scsi/zfcp_aux.c b/drivers/s390/scsi/zfcp_aux.c
-> index c00ac46..abc9c93 100644
-> --- a/drivers/s390/scsi/zfcp_aux.c
-> +++ b/drivers/s390/scsi/zfcp_aux.c
-> @@ -248,20 +248,13 @@ static int zfcp_allocate_low_mem_buffers(struct zfc=
-p_adapter *adapter)
->=20
->  static void zfcp_free_low_mem_buffers(struct zfcp_adapter *adapter)
->  {
-> -	if (adapter->pool.erp_req)
-> -		mempool_destroy(adapter->pool.erp_req);
-> -	if (adapter->pool.scsi_req)
-> -		mempool_destroy(adapter->pool.scsi_req);
-> -	if (adapter->pool.scsi_abort)
-> -		mempool_destroy(adapter->pool.scsi_abort);
-> -	if (adapter->pool.qtcb_pool)
-> -		mempool_destroy(adapter->pool.qtcb_pool);
-> -	if (adapter->pool.status_read_req)
-> -		mempool_destroy(adapter->pool.status_read_req);
-> -	if (adapter->pool.sr_data)
-> -		mempool_destroy(adapter->pool.sr_data);
-> -	if (adapter->pool.gid_pn)
-> -		mempool_destroy(adapter->pool.gid_pn);
-> +	mempool_destroy(adapter->pool.erp_req);
-> +	mempool_destroy(adapter->pool.scsi_req);
-> +	mempool_destroy(adapter->pool.scsi_abort);
-> +	mempool_destroy(adapter->pool.qtcb_pool);
-> +	mempool_destroy(adapter->pool.status_read_req);
-> +	mempool_destroy(adapter->pool.sr_data);
-> +	mempool_destroy(adapter->pool.gid_pn);
->  }
->=20
->  /**
-> --=20
-> 2.6.2
+1. Let us return directly if a call of the function "isert_set_sig_attrs"
+   or "ib_post_send" failed.
 
-Looks good to me, will have to wait though till Steffen is back around.
+2. Delete the jump label "err" then.
 
-Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
+3. Return zero as a constant at the end.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/ulp/isert/ib_isert.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-                                                    Beste Gr=FC=DFe / Best =
-regards,
-                                                      - Benjamin Block
---=20
-Linux on z Systems Development         /         IBM Systems & Technology G=
-roup
-		  IBM Deutschland Research & Development GmbH=20
-Vorsitz. AufsR.: Martina Koederitz     /        Gesch=E4ftsf=FChrung: Dirk =
-Wittkopp
-Sitz der Gesellschaft: B=F6blingen / Registergericht: AmtsG Stuttgart, HRB =
-243294
-
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJWYdQLAAoJEPM2BBqBwGE1/u0QALS6GRu2f+8C1pzC9vo9/6/Z
-zWu7twgg5SRhSGhWyWIFHGK9JYJTn1rGhzusXFxxPT25CYdWRFtFZDY8w5kqOsJ6
-6rJE2jkCWSXXC4v9FP4DgffUUbH80ZKoE8TjnQFmnYTlPiZVFu9fBbuP1b3duBDy
-Q6L1HiFQ8uH5RIMKGzfNozMV0ogbN5BHTEZCPKWsPbUaPxQpWb99Z5E+i6nBBgaN
-jYbDQeu/DwNAZv8pmx0IJcvKU/oQQZH3Vt2lBvtEPmJgAlTBupOVaPqMvd+i/RCA
-z+8xOsYiWtZhqyY3GMyVvv+eyPTSsCwx9AsmkeV3YP1JXROM/pOqcxzsml2s0Ykt
-0Pl9es0HjEpJIlhOjLxqIjNXao2SCGjSunhBUwlz6rDdrh/WAdS9eGAu2outl33q
-Td35DsZSm5x1zC6MVPQ18TJHTotnch2j8uBAIxcbz+mQgon2LWfoUOsoRBvxMSUz
-jPJ/b6o7dmuS05gBp8VDCM/Jx7vO8CiAbos2fyCML0xlsC4vxnuXMGg5NuJQswaO
-biZt2snP4TezdxoXPzOTc8e8qJzPCsgkaACxip0PSAHO7fFc32JojEWBG2FUyOrA
-yHcRgObwU0oYztqPkJQlMmDc0OBCn1VIWrmEDDcChIc3Cg/wnbZlmSOnO8dAXQnG
-jYFSeySm2PwVrokfZak9
-=klwj
------END PGP SIGNATURE-----
-
---r5Pyd7+fXNt84Ff3--
+diff --git a/drivers/infiniband/ulp/isert/ib_isert.c b/drivers/infiniband/ulp/isert/ib_isert.c
+index 8a51c3b..9b22db0 100644
+--- a/drivers/infiniband/ulp/isert/ib_isert.c
++++ b/drivers/infiniband/ulp/isert/ib_isert.c
+@@ -2660,7 +2660,7 @@ isert_reg_sig_mr(struct isert_conn *isert_conn,
+ 	memset(&sig_attrs, 0, sizeof(sig_attrs));
+ 	ret = isert_set_sig_attrs(se_cmd, &sig_attrs);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	sig_attrs.check_mask = isert_set_prot_checks(se_cmd->prot_checks);
+ 
+@@ -2688,7 +2688,7 @@ isert_reg_sig_mr(struct isert_conn *isert_conn,
+ 	ret = ib_post_send(isert_conn->qp, wr, &bad_wr);
+ 	if (ret) {
+ 		isert_err("fast registration failed, ret:%d\n", ret);
+-		goto err;
++		return ret;
+ 	}
+ 	fr_desc->ind &= ~ISERT_SIG_KEY_VALID;
+ 
+@@ -2706,8 +2706,7 @@ isert_reg_sig_mr(struct isert_conn *isert_conn,
+ 	isert_dbg("sig_sge: addr: 0x%llx  length: %u lkey: %x\n",
+ 		  rdma_wr->ib_sg[SIG].addr, rdma_wr->ib_sg[SIG].length,
+ 		  rdma_wr->ib_sg[SIG].lkey);
+-err:
+-	return ret;
++	return 0;
+ }
+ 
+ static int
+-- 
+2.6.3
 
