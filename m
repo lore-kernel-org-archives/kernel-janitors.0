@@ -1,72 +1,84 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 26 Dec 2015 15:28:41 +0000
-Subject: [PATCH 2/7] gdrom: fix error return code
-Message-Id: <1451143726-28195-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Dec 2015 21:22:41 +0000
+Subject: [PATCH] [media] bttv: Returning only value constants in two functions
+Message-Id: <568056A1.8050602@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1451143726-28195-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Return a negative error code on failure.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 27 Dec 2015 22:02:21 +0100
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Return constant integer values without storing them in the local
+variable "err" or "rc".
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/cdrom/gdrom.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/media/pci/bt8xx/bttv-driver.c | 25 ++++++-------------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index 584bc31..46ecd95 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -807,16 +807,20 @@ static int probe_gdrom(struct platform_device *devptr)
- 	if (err)
- 		goto probe_fail_cmdirq_register;
- 	gd.gdrom_rq = blk_init_queue(gdrom_request, &gdrom_lock);
--	if (!gd.gdrom_rq)
-+	if (!gd.gdrom_rq) {
-+		err = -ENOMEM;
- 		goto probe_fail_requestq;
-+	}
+diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
+index 9400e99..cd7d6ef 100644
+--- a/drivers/media/pci/bt8xx/bttv-driver.c
++++ b/drivers/media/pci/bt8xx/bttv-driver.c
+@@ -1726,22 +1726,15 @@ static int bttv_s_std(struct file *file, void *priv, v4l2_std_id id)
+ 	struct bttv_fh *fh  = priv;
+ 	struct bttv *btv = fh->btv;
+ 	unsigned int i;
+-	int err = 0;
  
- 	err = probe_gdrom_setupqueue();
- 	if (err)
- 		goto probe_fail_toc;
+ 	for (i = 0; i < BTTV_TVNORMS; i++)
+ 		if (id & bttv_tvnorms[i].v4l2_id)
+ 			break;
+-	if (i = BTTV_TVNORMS) {
+-		err = -EINVAL;
+-		goto err;
+-	}
+-
++	if (i = BTTV_TVNORMS)
++		return -EINVAL;
+ 	btv->std = id;
+ 	set_tvnorm(btv, i);
+-
+-err:
+-
+-	return err;
++	return 0;
+ }
  
- 	gd.toc = kzalloc(sizeof(struct gdromtoc), GFP_KERNEL);
--	if (!gd.toc)
-+	if (!gd.toc) {
-+		err = -ENOMEM;
- 		goto probe_fail_toc;
-+	}
- 	add_disk(gd.disk);
- 	return 0;
+ static int bttv_g_std(struct file *file, void *priv, v4l2_std_id *id)
+@@ -1770,12 +1763,9 @@ static int bttv_enum_input(struct file *file, void *priv,
+ {
+ 	struct bttv_fh *fh = priv;
+ 	struct bttv *btv = fh->btv;
+-	int rc = 0;
  
+-	if (i->index >= bttv_tvcards[btv->c.type].video_inputs) {
+-		rc = -EINVAL;
+-		goto err;
+-	}
++	if (i->index >= bttv_tvcards[btv->c.type].video_inputs)
++		return -EINVAL;
+ 
+ 	i->type     = V4L2_INPUT_TYPE_CAMERA;
+ 	i->audioset = 0;
+@@ -1799,10 +1789,7 @@ static int bttv_enum_input(struct file *file, void *priv,
+ 	}
+ 
+ 	i->std = BTTV_NORMS;
+-
+-err:
+-
+-	return rc;
++	return 0;
+ }
+ 
+ static int bttv_g_input(struct file *file, void *priv, unsigned int *i)
+-- 
+2.6.3
 
