@@ -1,25 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 22 Dec 2015 12:45:19 +0000
-Subject: Re: [PATCH 2/5] pinctrl: sirf: add missing of_node_put
-Message-Id: <CACRpkdag9qaAiAqdGmFm9UMxzJ+S9DBs0Br2MdeE=x8_EYx2PA@mail.gmail.com>
+From: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
+Date: Mon, 28 Dec 2015 14:33:27 +0000
+Subject: On Lindent shortcomings and massive style fixing
+Message-Id: <CAM_ZknVmAnoa=+BA9Q+BSJ_dKwtBWWXHqZyJ_BH=FppqGLpFUg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
- <1450715988-4770-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450715988-4770-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, "kernel-mentors@selenic.com" <kernel-mentors@selenic.com>, Linux Media <linux-media@vger.kernel.org>, devel@driverdev.osuosl.org
+Cc: andrey.od.utkin@gmail.com
 
-On Mon, Dec 21, 2015 at 5:39 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+After some iterations of checkpatch.pl, on a new developed driver
+(tw5864), now I have the following:
 
-> for_each_child_of_node performs an of_node_get on each iteration, so a
-> return from the loop requires an of_node_put.
->
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
+ $ grep 'WARNING\|ERROR' /src/checkpatch.tw5864 | sort | uniq -c
+     31 ERROR: do not use C99 // comments
+    147 WARNING: Block comments use a trailing */ on a separate line
+    144 WARNING: Block comments use * on subsequent lines
+    435 WARNING: line over 80 characters
 
-Patch applied.
+At this point, Lindent was already used, and checkpatch.pl warnings
+introduced by Lindent itself were fixed. Usage of "indent
+--linux-style" (which behaves differently BTW) doesn't help anymore,
+too.
 
-Yours,
-Linus Walleij
+Could anybody please advise how to sort out these issues
+automatically, because they look like perfectly solvable in automated
+fashion. Of course manual work would result in more niceness, but I am
+not eager to go through hundreds of place of code just to fix "over 80
+characters" issues now.
+
+First one ("do not use C99 // comments") looks easy with regexps, but
+the other are not.
+
+Is there any known improvements or successors for Lindent? Or could we
+get indent/Lindent improved if we collect some money for this task?
+
+If anybody wants to look at actual code, here it is:
+https://github.com/bluecherrydvr/linux.git , branch tw5864_stable,
+drivers/staging/media/tw5864
+
+Current output of "checkpatch.pl -f" for all source files in the
+driver is here:
+https://gist.github.com/andrey-utkin/12295148475e34ef948b
+
+Thanks in advance.
