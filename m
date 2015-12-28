@@ -1,232 +1,416 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <deathsimple@vodafone.de>
-Date: Fri, 11 Dec 2015 13:59:57 +0000
-Subject: Re: [PATCH] ttm/drm: constify ttm_backend_func structures
-Message-Id: <566AD6DD.2000805@vodafone.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 14:38:54 +0000
+Subject: [PATCH 1/2] [media] m88rs6000t: Better exception handling in five functions
+Message-Id: <5681497E.7030702@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1449841067-3718-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1449841067-3718-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5680FDB3.7060305@users.sourceforge.net>
+ <alpine.DEB.2.10.1512281019050.2702@hadrien>
+ <56810F56.4080306@users.sourceforge.net>
+ <alpine.DEB.2.10.1512281134590.2702@hadrien>
+ <568148FD.7080209@users.sourceforge.net>
+In-Reply-To: <568148FD.7080209@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 11.12.2015 14:37, Julia Lawall wrote:
-> The ttm_backend_func structures are never modified, so declare them as
-> const.
->
-> Done with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 15:10:30 +0100
 
-Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+This issue was detected by using the Coccinelle software.
 
->
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c |    2 +-
->   drivers/gpu/drm/ast/ast_ttm.c           |    2 +-
->   drivers/gpu/drm/bochs/bochs_mm.c        |    2 +-
->   drivers/gpu/drm/cirrus/cirrus_ttm.c     |    2 +-
->   drivers/gpu/drm/mgag200/mgag200_ttm.c   |    2 +-
->   drivers/gpu/drm/nouveau/nouveau_sgdma.c |    4 ++--
->   drivers/gpu/drm/qxl/qxl_ttm.c           |    2 +-
->   drivers/gpu/drm/radeon/radeon_ttm.c     |    2 +-
->   drivers/gpu/drm/ttm/ttm_agp_backend.c   |    2 +-
->   drivers/gpu/drm/virtio/virtgpu_ttm.c    |    2 +-
->   drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c  |    2 +-
->   include/drm/ttm/ttm_bo_driver.h         |    2 +-
->   12 files changed, 13 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virti=
-o/virtgpu_ttm.c
-> index 9fd924c..a323422 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
-> @@ -319,7 +319,7 @@ static void virtio_gpu_ttm_backend_destroy(struct ttm=
-_tt *ttm)
->   	kfree(gtt);
->   }
->  =20
-> -static struct ttm_backend_func virtio_gpu_backend_func =3D {
-> +static const struct ttm_backend_func virtio_gpu_backend_func =3D {
->   	.bind =3D &virtio_gpu_ttm_backend_bind,
->   	.unbind =3D &virtio_gpu_ttm_backend_unbind,
->   	.destroy =3D &virtio_gpu_ttm_backend_destroy,
-> diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/radeon=
-/radeon_ttm.c
-> index e343074..9fa758c 100644
-> --- a/drivers/gpu/drm/radeon/radeon_ttm.c
-> +++ b/drivers/gpu/drm/radeon/radeon_ttm.c
-> @@ -666,7 +666,7 @@ static void radeon_ttm_backend_destroy(struct ttm_tt =
-*ttm)
->   	kfree(gtt);
->   }
->  =20
-> -static struct ttm_backend_func radeon_backend_func =3D {
-> +static const struct ttm_backend_func radeon_backend_func =3D {
->   	.bind =3D &radeon_ttm_backend_bind,
->   	.unbind =3D &radeon_ttm_backend_unbind,
->   	.destroy =3D &radeon_ttm_backend_destroy,
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/am=
-d/amdgpu/amdgpu_ttm.c
-> index d4bac5f..befa9c2 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> @@ -634,7 +634,7 @@ static void amdgpu_ttm_backend_destroy(struct ttm_tt =
-*ttm)
->   	kfree(gtt);
->   }
->  =20
-> -static struct ttm_backend_func amdgpu_backend_func =3D {
-> +static const struct ttm_backend_func amdgpu_backend_func =3D {
->   	.bind =3D &amdgpu_ttm_backend_bind,
->   	.unbind =3D &amdgpu_ttm_backend_unbind,
->   	.destroy =3D &amdgpu_ttm_backend_destroy,
-> diff --git a/drivers/gpu/drm/ast/ast_ttm.c b/drivers/gpu/drm/ast/ast_ttm.c
-> index 08f82ea..5840785 100644
-> --- a/drivers/gpu/drm/ast/ast_ttm.c
-> +++ b/drivers/gpu/drm/ast/ast_ttm.c
-> @@ -203,7 +203,7 @@ static void ast_ttm_backend_destroy(struct ttm_tt *tt)
->   	kfree(tt);
->   }
->  =20
-> -static struct ttm_backend_func ast_tt_backend_func =3D {
-> +static const struct ttm_backend_func ast_tt_backend_func =3D {
->   	.destroy =3D &ast_ttm_backend_destroy,
->   };
->  =20
-> diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/boc=
-hs_mm.c
-> index d812ad0..b5b782d 100644
-> --- a/drivers/gpu/drm/bochs/bochs_mm.c
-> +++ b/drivers/gpu/drm/bochs/bochs_mm.c
-> @@ -180,7 +180,7 @@ static void bochs_ttm_backend_destroy(struct ttm_tt *=
-tt)
->   	kfree(tt);
->   }
->  =20
-> -static struct ttm_backend_func bochs_tt_backend_func =3D {
-> +static const struct ttm_backend_func bochs_tt_backend_func =3D {
->   	.destroy =3D &bochs_ttm_backend_destroy,
->   };
->  =20
-> diff --git a/drivers/gpu/drm/cirrus/cirrus_ttm.c b/drivers/gpu/drm/cirrus=
-/cirrus_ttm.c
-> index dfffd52..da88541 100644
-> --- a/drivers/gpu/drm/cirrus/cirrus_ttm.c
-> +++ b/drivers/gpu/drm/cirrus/cirrus_ttm.c
-> @@ -203,7 +203,7 @@ static void cirrus_ttm_backend_destroy(struct ttm_tt =
-*tt)
->   	kfree(tt);
->   }
->  =20
-> -static struct ttm_backend_func cirrus_tt_backend_func =3D {
-> +static const struct ttm_backend_func cirrus_tt_backend_func =3D {
->   	.destroy =3D &cirrus_ttm_backend_destroy,
->   };
->  =20
-> diff --git a/drivers/gpu/drm/mgag200/mgag200_ttm.c b/drivers/gpu/drm/mgag=
-200/mgag200_ttm.c
-> index 05108b5..e368562 100644
-> --- a/drivers/gpu/drm/mgag200/mgag200_ttm.c
-> +++ b/drivers/gpu/drm/mgag200/mgag200_ttm.c
-> @@ -203,7 +203,7 @@ static void mgag200_ttm_backend_destroy(struct ttm_tt=
- *tt)
->   	kfree(tt);
->   }
->  =20
-> -static struct ttm_backend_func mgag200_tt_backend_func =3D {
-> +static const struct ttm_backend_func mgag200_tt_backend_func =3D {
->   	.destroy =3D &mgag200_ttm_backend_destroy,
->   };
->  =20
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_sgdma.c b/drivers/gpu/drm/no=
-uveau/nouveau_sgdma.c
-> index 8c3053a..3b8f556 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_sgdma.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_sgdma.c
-> @@ -51,7 +51,7 @@ nv04_sgdma_unbind(struct ttm_tt *ttm)
->   	return 0;
->   }
->  =20
-> -static struct ttm_backend_func nv04_sgdma_backend =3D {
-> +static const struct ttm_backend_func nv04_sgdma_backend =3D {
->   	.bind			=3D nv04_sgdma_bind,
->   	.unbind			=3D nv04_sgdma_unbind,
->   	.destroy		=3D nouveau_sgdma_destroy
-> @@ -82,7 +82,7 @@ nv50_sgdma_unbind(struct ttm_tt *ttm)
->   	return 0;
->   }
->  =20
-> -static struct ttm_backend_func nv50_sgdma_backend =3D {
-> +static const struct ttm_backend_func nv50_sgdma_backend =3D {
->   	.bind			=3D nv50_sgdma_bind,
->   	.unbind			=3D nv50_sgdma_unbind,
->   	.destroy		=3D nouveau_sgdma_destroy
-> diff --git a/drivers/gpu/drm/qxl/qxl_ttm.c b/drivers/gpu/drm/qxl/qxl_ttm.c
-> index 0cbc4c9..93dc45d 100644
-> --- a/drivers/gpu/drm/qxl/qxl_ttm.c
-> +++ b/drivers/gpu/drm/qxl/qxl_ttm.c
-> @@ -288,7 +288,7 @@ static void qxl_ttm_backend_destroy(struct ttm_tt *tt=
-m)
->   	kfree(gtt);
->   }
->  =20
-> -static struct ttm_backend_func qxl_backend_func =3D {
-> +static const struct ttm_backend_func qxl_backend_func =3D {
->   	.bind =3D &qxl_ttm_backend_bind,
->   	.unbind =3D &qxl_ttm_backend_unbind,
->   	.destroy =3D &qxl_ttm_backend_destroy,
-> diff --git a/drivers/gpu/drm/ttm/ttm_agp_backend.c b/drivers/gpu/drm/ttm/=
-ttm_agp_backend.c
-> index 764be36..5fdaba5 100644
-> --- a/drivers/gpu/drm/ttm/ttm_agp_backend.c
-> +++ b/drivers/gpu/drm/ttm/ttm_agp_backend.c
-> @@ -104,7 +104,7 @@ static void ttm_agp_destroy(struct ttm_tt *ttm)
->   	kfree(agp_be);
->   }
->  =20
-> -static struct ttm_backend_func ttm_agp_func =3D {
-> +static const struct ttm_backend_func ttm_agp_func =3D {
->   	.bind =3D ttm_agp_bind,
->   	.unbind =3D ttm_agp_unbind,
->   	.destroy =3D ttm_agp_destroy,
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c b/drivers/gpu/drm/vmw=
-gfx/vmwgfx_buffer.c
-> index 3329f62..d59572a 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
-> @@ -683,7 +683,7 @@ static void vmw_ttm_unpopulate(struct ttm_tt *ttm)
->   		ttm_pool_unpopulate(ttm);
->   }
->  =20
-> -static struct ttm_backend_func vmw_ttm_func =3D {
-> +static const struct ttm_backend_func vmw_ttm_func =3D {
->   	.bind =3D vmw_ttm_bind,
->   	.unbind =3D vmw_ttm_unbind,
->   	.destroy =3D vmw_ttm_destroy,
-> diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_dri=
-ver.h
-> index 813042c..c43efa4 100644
-> --- a/include/drm/ttm/ttm_bo_driver.h
-> +++ b/include/drm/ttm/ttm_bo_driver.h
-> @@ -113,7 +113,7 @@ enum ttm_caching_state {
->  =20
->   struct ttm_tt {
->   	struct ttm_bo_device *bdev;
-> -	struct ttm_backend_func *func;
-> +	const struct ttm_backend_func *func;
->   	struct page *dummy_read_page;
->   	struct page **pages;
->   	uint32_t page_flags;
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Move the jump label directly before the desired log statement
+so that the variable "ret" will not be checked once more
+after a function call.
+Use the identifier "report_failure" instead of "err".
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Suggested-by: Julia Lawall <julia.lawall@lip6.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/tuners/m88rs6000t.c | 154 +++++++++++++++++++-------------------
+ 1 file changed, 78 insertions(+), 76 deletions(-)
+
+diff --git a/drivers/media/tuners/m88rs6000t.c b/drivers/media/tuners/m88rs6000t.c
+index 504bfbc..7e59a9f 100644
+--- a/drivers/media/tuners/m88rs6000t.c
++++ b/drivers/media/tuners/m88rs6000t.c
+@@ -44,7 +44,7 @@ static int m88rs6000t_set_demod_mclk(struct dvb_frontend *fe)
+ 	/* select demod main mclk */
+ 	ret = regmap_read(dev->regmap, 0x15, &utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	reg15 = utmp;
+ 	if (c->symbol_rate > 45010000) {
+ 		reg11 = 0x0E;
+@@ -106,7 +106,7 @@ static int m88rs6000t_set_demod_mclk(struct dvb_frontend *fe)
+ 
+ 	ret = regmap_read(dev->regmap, 0x1D, &utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	reg1D = utmp;
+ 	reg1D &= ~0x03;
+ 	reg1D |= N - 1;
+@@ -116,42 +116,42 @@ static int m88rs6000t_set_demod_mclk(struct dvb_frontend *fe)
+ 	/* program and recalibrate demod PLL */
+ 	ret = regmap_write(dev->regmap, 0x05, 0x40);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x11, 0x08);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x15, reg15);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x16, reg16);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x1D, reg1D);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x1E, reg1E);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x1F, reg1F);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x17, 0xc1);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x17, 0x81);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	usleep_range(5000, 50000);
+ 	ret = regmap_write(dev->regmap, 0x05, 0x00);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x11, reg11);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	usleep_range(5000, 50000);
+-err:
+-	if (ret)
+-		dev_dbg(&dev->client->dev, "failed=%d\n", ret);
++	return 0;
++report_failure:
++	dev_dbg(&dev->client->dev, "failed=%d\n", ret);
+ 	return ret;
+ }
+ 
+@@ -169,13 +169,13 @@ static int m88rs6000t_set_pll_freq(struct m88rs6000t_dev *dev,
+ 
+ 	ret = regmap_write(dev->regmap, 0x36, (refDiv - 8));
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x31, 0x00);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x2c, 0x02);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 
+ 	if (tuner_freq_MHz >= 1550) {
+ 		ucLoDiv1 = 2;
+@@ -227,105 +227,105 @@ static int m88rs6000t_set_pll_freq(struct m88rs6000t_dev *dev,
+ 	reg27 = (((ulNDiv1 >> 8) & 0x0F) + ucLomod1) & 0x7F;
+ 	ret = regmap_write(dev->regmap, 0x27, reg27);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x28, (u8)(ulNDiv1 & 0xFF));
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	reg29 = (((ulNDiv2 >> 8) & 0x0F) + ucLomod2) & 0x7f;
+ 	ret = regmap_write(dev->regmap, 0x29, reg29);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x2a, (u8)(ulNDiv2 & 0xFF));
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x2F, 0xf5);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x30, 0x05);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x08, 0x1f);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x08, 0x3f);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x09, 0x20);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x09, 0x00);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x3e, 0x11);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x08, 0x2f);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x08, 0x3f);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x09, 0x10);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x09, 0x00);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	usleep_range(2000, 50000);
+ 
+ 	ret = regmap_read(dev->regmap, 0x42, &utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	reg42 = utmp;
+ 
+ 	ret = regmap_write(dev->regmap, 0x3e, 0x10);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x08, 0x2f);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x08, 0x3f);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x09, 0x10);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x09, 0x00);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	usleep_range(2000, 50000);
+ 
+ 	ret = regmap_read(dev->regmap, 0x42, &utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	reg42buf = utmp;
+ 	if (reg42buf < reg42) {
+ 		ret = regmap_write(dev->regmap, 0x3e, 0x11);
+ 		if (ret)
+-			goto err;
++			goto report_failure;
+ 	}
+ 	usleep_range(5000, 50000);
+ 
+ 	ret = regmap_read(dev->regmap, 0x2d, &utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x2d, utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_read(dev->regmap, 0x2e, &utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x2e, utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 
+ 	ret = regmap_read(dev->regmap, 0x27, &utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	reg27 = utmp & 0x70;
+ 	ret = regmap_read(dev->regmap, 0x83, &utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	if (reg27 = (utmp & 0x70)) {
+ 		ucLoDiv	= ucLoDiv1;
+ 		ulNDiv = ulNDiv1;
+@@ -340,7 +340,7 @@ static int m88rs6000t_set_pll_freq(struct m88rs6000t_dev *dev,
+ 		refDiv = 18;
+ 		ret = regmap_write(dev->regmap, 0x36, (refDiv - 8));
+ 		if (ret)
+-			goto err;
++			goto report_failure;
+ 		ulNDiv = ((tuner_freq_MHz * ucLoDiv * 1000) * refDiv
+ 				/ fcry_KHz - 1024) / 2;
+ 	}
+@@ -349,16 +349,16 @@ static int m88rs6000t_set_pll_freq(struct m88rs6000t_dev *dev,
+ 			+ ((ulNDiv >> 8) & 0x0F)) & 0xFF;
+ 	ret = regmap_write(dev->regmap, 0x27, reg27);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x28, (u8)(ulNDiv & 0xFF));
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x29, 0x80);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x31, 0x03);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 
+ 	if (ucLoDiv = 3)
+ 		utmp = 0xCE;
+@@ -366,15 +366,15 @@ static int m88rs6000t_set_pll_freq(struct m88rs6000t_dev *dev,
+ 		utmp = 0x8A;
+ 	ret = regmap_write(dev->regmap, 0x3b, utmp);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 
+ 	dev->frequency_khz = fcry_KHz * (ulNDiv * 2 + 1024) / refDiv / ucLoDiv;
+ 
+ 	dev_dbg(&dev->client->dev,
+ 		"actual tune frequency=%d\n", dev->frequency_khz);
+-err:
+-	if (ret)
+-		dev_dbg(&dev->client->dev, "failed=%d\n", ret);
++	return 0;
++report_failure:
++	dev_dbg(&dev->client->dev, "failed=%d\n", ret);
+ 	return ret;
+ }
+ 
+@@ -413,21 +413,23 @@ static int m88rs6000t_set_params(struct dvb_frontend *fe)
+ 	freq_MHz = (realFreq + 500) / 1000;
+ 	ret = m88rs6000t_set_pll_freq(dev, freq_MHz);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = m88rs6000t_set_bb(dev, c->symbol_rate / 1000, lpf_offset_KHz);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x00, 0x01);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	ret = regmap_write(dev->regmap, 0x00, 0x00);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	/* set demod mlck */
+ 	ret = m88rs6000t_set_demod_mclk(fe);
+-err:
+ 	if (ret)
+-		dev_dbg(&dev->client->dev, "failed=%d\n", ret);
++		goto report_failure;
++	return 0;
++report_failure:
++	dev_dbg(&dev->client->dev, "failed=%d\n", ret);
+ 	return ret;
+ }
+ 
+@@ -440,16 +442,16 @@ static int m88rs6000t_init(struct dvb_frontend *fe)
+ 
+ 	ret = regmap_update_bits(dev->regmap, 0x11, 0x08, 0x08);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	usleep_range(5000, 50000);
+ 	ret = regmap_update_bits(dev->regmap, 0x10, 0x01, 0x01);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	usleep_range(10000, 50000);
+ 	ret = regmap_write(dev->regmap, 0x07, 0x7d);
+-err:
+-	if (ret)
+-		dev_dbg(&dev->client->dev, "failed=%d\n", ret);
++	return 0;
++report_failure:
++	dev_dbg(&dev->client->dev, "failed=%d\n", ret);
+ 	return ret;
+ }
+ 
+@@ -510,27 +512,27 @@ static int m88rs6000t_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
+ 
+ 	ret = regmap_read(dev->regmap, 0x5A, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	RF_GC = val & 0x0f;
+ 
+ 	ret = regmap_read(dev->regmap, 0x5F, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	IF_GC = val & 0x0f;
+ 
+ 	ret = regmap_read(dev->regmap, 0x3F, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	TIA_GC = (val >> 4) & 0x07;
+ 
+ 	ret = regmap_read(dev->regmap, 0x77, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	BB_GC = (val >> 4) & 0x0f;
+ 
+ 	ret = regmap_read(dev->regmap, 0x76, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	PGA2_GC = val & 0x3f;
+ 	PGA2_cri = PGA2_GC >> 2;
+ 	PGA2_crf = PGA2_GC & 0x03;
+@@ -562,9 +564,9 @@ static int m88rs6000t_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
+ 	/* scale value to 0x0000-0xffff */
+ 	gain = clamp_val(gain, 1000U, 10500U);
+ 	*strength = (10500 - gain) * 0xffff / (10500 - 1000);
+-err:
+-	if (ret)
+-		dev_dbg(&dev->client->dev, "failed=%d\n", ret);
++	return 0;
++report_failure:
++	dev_dbg(&dev->client->dev, "failed=%d\n", ret);
+ 	return ret;
+ }
+ 
+-- 
+2.6.3
+
