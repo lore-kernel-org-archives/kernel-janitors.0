@@ -1,55 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 20 Dec 2015 11:15:49 +0000
-Subject: [PATCH 0/4] add NULL test
-Message-Id: <1450610153-7746-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 16:24:54 +0000
+Subject: [PATCH 0/2] [media] r820t: Fine-tuning for generic_set_freq()
+Message-Id: <56816256.70304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Add NULL tests on various calls to kzalloc and devm_kzalloc.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 17:18:34 +0100
 
-The semantic match that finds these problems is as follows:
-(http://coccinelle.lip6.fr/)
+A few update suggestions were taken into account
+from static source code analysis.
 
-// <smpl>
-@@
-expression x,y;
-identifier fld;
-@@
+Markus Elfring (2):
+  Delete an unnecessary variable initialisation
+  Better exception handling
 
-(
-x = \(vmalloc\|kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|krealloc\|
-        kmemdup\|kstrdup\|
-	devm_kzalloc\|devm_kmalloc\|devm_kcalloc\|devm_kasprintf\|
-	kmalloc_array\)(...,<+... __GFP_NOFAIL ...+>,...);
-|
-* x = \(vmalloc\|kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|krealloc\|
-        kmemdup\|kstrdup\|
-	devm_kzalloc\|devm_kmalloc\|devm_kcalloc\|devm_kasprintf\|
-	kmalloc_array\)(...);
-)
-  ... when != (x) = NULL
-      when != (x) != NULL
-      when != (x) = 0
-      when != (x) != 0
-      when != x = y
-(
-  x->fld
-|
-  *x
-|
-  x[...]
-)
-// </smpl>
+ drivers/media/tuners/r820t.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
----
+-- 
+2.6.3
 
- drivers/s390/char/con3215.c                 |    2 ++
- drivers/s390/char/raw3270.c                 |    2 ++
- sound/soc/fsl/imx-pcm-dma.c                 |    2 ++
- sound/soc/intel/baytrail/sst-baytrail-pcm.c |    2 ++
- sound/soc/omap/omap-hdmi-audio.c            |    2 ++
- 5 files changed, 10 insertions(+)
