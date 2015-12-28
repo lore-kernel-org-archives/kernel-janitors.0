@@ -1,145 +1,81 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 18:45:20 +0000
-Subject: [PATCH 2/6] InfiniBand-ocrdma: Delete unnecessary variable initialisations in 11 functions
-Message-Id: <567EE040.4020700@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 21:56:47 +0000
+Subject: [PATCH] [media] au0828: Refactoring for start_urb_transfer()
+Message-Id: <5681B01F.4070401@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <567EDED5.4040201@users.sourceforge.net>
-In-Reply-To: <567EDED5.4040201-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mitesh Ahuja <mitesh.ahuja-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 18:18:18 +0100
+Date: Mon, 28 Dec 2015 22:52:48 +0100
 
-The variable "status" will be set to an appropriate value a bit later.
-Thus let us omit the explicit initialisation at the beginning.
+This issue was detected by using the Coccinelle software.
+
+1. Let us return directly if a buffer allocation failed.
+
+2. Delete the jump label "err" then.
+
+3. Drop the explicit initialisation for the variable "ret"
+   at the beginning.
+
+4. Return zero as a constant at the end.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_ah.c    |  2 +-
- drivers/infiniband/hw/ocrdma/ocrdma_hw.c    |  4 ++--
- drivers/infiniband/hw/ocrdma/ocrdma_stats.c |  4 ++--
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 12 ++++++------
- 4 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/media/usb/au0828/au0828-dvb.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_ah.c b/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
-index 9820074..98c0abd 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_ah.c
-@@ -59,7 +59,7 @@ static inline int set_av_attr(struct ocrdma_dev *dev, struct ocrdma_ah *ah,
- 			struct ib_ah_attr *attr, union ib_gid *sgid,
- 			int pdid, bool *isvlan, u16 vlan_tag)
+diff --git a/drivers/media/usb/au0828/au0828-dvb.c b/drivers/media/usb/au0828/au0828-dvb.c
+index cd542b4..e5f1e20 100644
+--- a/drivers/media/usb/au0828/au0828-dvb.c
++++ b/drivers/media/usb/au0828/au0828-dvb.c
+@@ -181,7 +181,7 @@ static int stop_urb_transfer(struct au0828_dev *dev)
+ static int start_urb_transfer(struct au0828_dev *dev)
  {
--	int status = 0;
-+	int status;
- 	struct ocrdma_eth_vlan eth;
- 	struct ocrdma_grh grh;
- 	int eth_sz;
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-index 30f67be..6647aa6 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
-@@ -1089,7 +1089,7 @@ mbx_err:
- static int ocrdma_nonemb_mbx_cmd(struct ocrdma_dev *dev, struct ocrdma_mqe *mqe,
- 				 void *payload_va)
- {
--	int status = 0;
-+	int status;
- 	struct ocrdma_mbx_rsp *rsp = payload_va;
+ 	struct urb *purb;
+-	int i, ret = -ENOMEM;
++	int i, ret;
  
- 	if ((mqe->hdr.spcl_sge_cnt_emb & OCRDMA_MQE_HDR_EMB_MASK) >>
-@@ -2842,7 +2842,7 @@ int ocrdma_mbx_destroy_srq(struct ocrdma_dev *dev, struct ocrdma_srq *srq)
- static int ocrdma_mbx_get_dcbx_config(struct ocrdma_dev *dev, u32 ptype,
- 				      struct ocrdma_dcbx_cfg *dcbxcfg)
- {
--	int status = 0;
-+	int status;
- 	dma_addr_t pa;
- 	struct ocrdma_mqe cmd;
+ 	dprintk(2, "%s()\n", __func__);
  
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-index 86c303a..119baa3 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-@@ -608,7 +608,7 @@ static char *ocrdma_driver_dbg_stats(struct ocrdma_dev *dev)
- static void ocrdma_update_stats(struct ocrdma_dev *dev)
- {
- 	ulong now = jiffies, secs;
--	int status = 0;
-+	int status;
- 	struct ocrdma_rdma_stats_resp *rdma_stats  		      (struct ocrdma_rdma_stats_resp *)dev->stats_mem.va;
- 	struct ocrdma_rsrc_stats *rsrc_stats = &rdma_stats->act_rsrc_stats;
-@@ -639,7 +639,7 @@ static ssize_t ocrdma_dbgfs_ops_write(struct file *filp,
- {
- 	char tmp_str[32];
- 	long reset;
--	int status = 0;
-+	int status;
- 	struct ocrdma_stats *pstats = filp->private_data;
- 	struct ocrdma_dev *dev = pstats->dev;
+@@ -194,7 +194,7 @@ static int start_urb_transfer(struct au0828_dev *dev)
  
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index 374c839..aba1b5a 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -419,7 +419,7 @@ static struct ocrdma_pd *_ocrdma_alloc_pd(struct ocrdma_dev *dev,
- 					  struct ib_udata *udata)
- {
- 	struct ocrdma_pd *pd = NULL;
--	int status = 0;
-+	int status;
+ 		dev->urbs[i] = usb_alloc_urb(0, GFP_KERNEL);
+ 		if (!dev->urbs[i])
+-			goto err;
++			return -ENOMEM;
  
- 	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
- 	if (!pd)
-@@ -468,7 +468,7 @@ static inline int is_ucontext_pd(struct ocrdma_ucontext *uctx,
- static int _ocrdma_dealloc_pd(struct ocrdma_dev *dev,
- 			      struct ocrdma_pd *pd)
- {
--	int status = 0;
-+	int status;
+ 		purb = dev->urbs[i];
  
- 	if (dev->pd_mgr->pd_prealloc_valid)
- 		status = ocrdma_put_pd_num(dev, pd->id, pd->dpp_enabled);
-@@ -592,7 +592,7 @@ map_err:
+@@ -207,9 +207,10 @@ static int start_urb_transfer(struct au0828_dev *dev)
+ 		if (!purb->transfer_buffer) {
+ 			usb_free_urb(purb);
+ 			dev->urbs[i] = NULL;
++			ret = -ENOMEM;
+ 			pr_err("%s: failed big buffer allocation, err = %d\n",
+ 			       __func__, ret);
+-			goto err;
++			return ret;
+ 		}
  
- int ocrdma_dealloc_ucontext(struct ib_ucontext *ibctx)
- {
--	int status = 0;
-+	int status;
- 	struct ocrdma_mm *mm, *tmp;
- 	struct ocrdma_ucontext *uctx = get_ocrdma_ucontext(ibctx);
- 	struct ocrdma_dev *dev = get_ocrdma_dev(ibctx->device);
-@@ -619,7 +619,7 @@ int ocrdma_mmap(struct ib_ucontext *context, struct vm_area_struct *vma)
- 	unsigned long vm_page = vma->vm_pgoff << PAGE_SHIFT;
- 	u64 unmapped_db = (u64) dev->nic_info.unmapped_db;
- 	unsigned long len = (vma->vm_end - vma->vm_start);
--	int status = 0;
-+	int status;
- 	bool found;
+ 		purb->status = -EINPROGRESS;
+@@ -235,10 +236,7 @@ static int start_urb_transfer(struct au0828_dev *dev)
+ 	}
  
- 	if (vma->vm_start & (PAGE_SIZE - 1))
-@@ -1282,7 +1282,7 @@ static int ocrdma_copy_qp_uresp(struct ocrdma_qp *qp,
- 				struct ib_udata *udata, int dpp_offset,
- 				int dpp_credit_lmt, int srq)
- {
--	int status = 0;
-+	int status;
- 	u64 usr_db;
- 	struct ocrdma_create_qp_uresp uresp;
- 	struct ocrdma_pd *pd = qp->pd;
-@@ -1946,7 +1946,7 @@ int ocrdma_modify_srq(struct ib_srq *ibsrq,
- 		      enum ib_srq_attr_mask srq_attr_mask,
- 		      struct ib_udata *udata)
- {
--	int status = 0;
-+	int status;
- 	struct ocrdma_srq *srq;
+ 	dev->urb_streaming = true;
+-	ret = 0;
+-
+-err:
+-	return ret;
++	return 0;
+ }
  
- 	srq = get_ocrdma_srq(ibsrq);
+ static void au0828_start_transport(struct au0828_dev *dev)
 -- 
 2.6.3
 
