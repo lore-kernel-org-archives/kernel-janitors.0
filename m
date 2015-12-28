@@ -1,36 +1,77 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 30 Dec 2015 10:58:43 +0000
-Subject: [PATCH] Staging: ste_rmi4: constify synaptics_rmi4_platform_data structures
-Message-Id: <1451473123-29042-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 16:32:22 +0000
+Subject: [PATCH 2/2] [media] r820t: Better exception handling in generic_set_freq()
+Message-Id: <56816416.2060702@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56816256.70304@users.sourceforge.net>
+In-Reply-To: <56816256.70304@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This synaptics_rmi4_platform_data structure is never modified, so declare
-it as const.  Others are already const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 17:13:02 +0100
 
-Done with the help of Coccinelle.
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Move the jump label directly before the desired log statement
+so that the variable "rc" will not be checked once more
+after a function call.
+Use the identifier "report_failure" instead of "err".
 
+The error logging is performed in a separate section at the end now.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/tuners/r820t.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c b/drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c
-index 824d460..bbec0276 100644
---- a/drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c
-+++ b/drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c
-@@ -870,7 +870,7 @@ static int synaptics_rmi4_i2c_query_device(struct synaptics_rmi4_data *pdata)
-  * Descriptor structure.
-  * Describes the number of i2c devices on the bus that speak RMI.
-  */
--static struct synaptics_rmi4_platform_data synaptics_rmi4_platformdata = {
-+static const struct synaptics_rmi4_platform_data synaptics_rmi4_platformdata = {
- 	.irq_type       = (IRQF_TRIGGER_FALLING | IRQF_SHARED),
- 	.x_flip		= false,
- 	.y_flip		= true,
+diff --git a/drivers/media/tuners/r820t.c b/drivers/media/tuners/r820t.c
+index 6ab35e3..f71642e 100644
+--- a/drivers/media/tuners/r820t.c
++++ b/drivers/media/tuners/r820t.c
+@@ -1303,7 +1303,7 @@ static int generic_set_freq(struct dvb_frontend *fe,
+ 
+ 	rc = r820t_set_tv_standard(priv, bw, type, std, delsys);
+ 	if (rc < 0)
+-		goto err;
++		goto report_failure;
+ 
+ 	if ((type = V4L2_TUNER_ANALOG_TV) && (std = V4L2_STD_SECAM_LC))
+ 		lo_freq = freq - priv->int_freq;
+@@ -1312,23 +1312,21 @@ static int generic_set_freq(struct dvb_frontend *fe,
+ 
+ 	rc = r820t_set_mux(priv, lo_freq);
+ 	if (rc < 0)
+-		goto err;
++		goto report_failure;
+ 
+ 	rc = r820t_set_pll(priv, type, lo_freq);
+ 	if (rc < 0 || !priv->has_lock)
+-		goto err;
++		goto report_failure;
+ 
+ 	rc = r820t_sysfreq_sel(priv, freq, type, std, delsys);
+ 	if (rc < 0)
+-		goto err;
++		goto report_failure;
+ 
+ 	tuner_dbg("%s: PLL locked on frequency %d Hz, gain=%d\n",
+ 		  __func__, freq, r820t_read_gain(priv));
+-
+-err:
+-
+-	if (rc < 0)
+-		tuner_dbg("%s: failed=%d\n", __func__, rc);
++	return 0;
++report_failure:
++	tuner_dbg("%s: failed=%d\n", __func__, rc);
+ 	return rc;
+ }
+ 
+-- 
+2.6.3
 
