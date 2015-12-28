@@ -1,25 +1,81 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 11 Dec 2015 11:16:16 +0000
-Subject: Re: iwlegacy: cleanup end of il_send_add_sta()
-Message-Id: <20151211111616.B1A60141A6F@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 09:15:31 +0000
+Subject: [PATCH] [media] tuners: One check less in m88rs6000t_get_rf_strength() after error detection
+Message-Id: <5680FDB3.7060305@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20151204131645.GC12792@mwanda>
-References: <20151204131645.GC12792@mwanda>
-In-Reply-To: <20151204131645.GC12792@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 28 Dec 2015 10:10:34 +0100
 
-> This code causes a static checker warning because we check for
-> "if (ret = 0)" but we have already had verified that was true.  Clean
-> it up a little.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+This issue was detected by using the Coccinelle software.
 
-Thanks, applied to wireless-drivers-next.git.
+Move the jump label directly before the desired log statement
+so that the variable "ret" will not be checked once more
+after it was determined that a function call failed.
 
-Kalle Valo
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/tuners/m88rs6000t.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/tuners/m88rs6000t.c b/drivers/media/tuners/m88rs6000t.c
+index 504bfbc..b45594e 100644
+--- a/drivers/media/tuners/m88rs6000t.c
++++ b/drivers/media/tuners/m88rs6000t.c
+@@ -510,27 +510,27 @@ static int m88rs6000t_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
+ 
+ 	ret = regmap_read(dev->regmap, 0x5A, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	RF_GC = val & 0x0f;
+ 
+ 	ret = regmap_read(dev->regmap, 0x5F, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	IF_GC = val & 0x0f;
+ 
+ 	ret = regmap_read(dev->regmap, 0x3F, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	TIA_GC = (val >> 4) & 0x07;
+ 
+ 	ret = regmap_read(dev->regmap, 0x77, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	BB_GC = (val >> 4) & 0x0f;
+ 
+ 	ret = regmap_read(dev->regmap, 0x76, &val);
+ 	if (ret)
+-		goto err;
++		goto report_failure;
+ 	PGA2_GC = val & 0x3f;
+ 	PGA2_cri = PGA2_GC >> 2;
+ 	PGA2_crf = PGA2_GC & 0x03;
+@@ -562,9 +562,11 @@ static int m88rs6000t_get_rf_strength(struct dvb_frontend *fe, u16 *strength)
+ 	/* scale value to 0x0000-0xffff */
+ 	gain = clamp_val(gain, 1000U, 10500U);
+ 	*strength = (10500 - gain) * 0xffff / (10500 - 1000);
+-err:
+-	if (ret)
++
++	if (ret) {
++report_failure:
+ 		dev_dbg(&dev->client->dev, "failed=%d\n", ret);
++	}
+ 	return ret;
+ }
+ 
+-- 
+2.6.3
+
