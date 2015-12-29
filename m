@@ -1,35 +1,29 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 02 Dec 2015 06:27:37 +0000
-Subject: Re: MAINTAINERS: update a file name in drivers/acpi/
-Message-Id: <alpine.DEB.2.02.1512020727270.1996@localhost6.localdomain6>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 14:15:27 +0000
+Subject: [PATCH 0/2] mfd: smsc-ece1099: Fine-tuning for smsc_i2c_probe()
+Message-Id: <5682957F.5000604@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151201085840.GA26852@mwanda>
-In-Reply-To: <20151201085840.GA26852@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 15:10:48 +0100
 
+A few update suggestions were taken into account
+from static source code analysis.
 
-On Tue, 1 Dec 2015, Andrew Morton wrote:
+Markus Elfring (2):
+  Delete an unnecessary variable initialisation
+  Refactoring
 
-> On Tue, 1 Dec 2015 10:24:31 +0100 (CET) Julia Lawall <julia.lawall@lip6.fr> wrote:
-> 
-> > > We renamed drivers/acpi/video.c to drivers/acpi/acpi_video.c in commit
-> > > 14ca7a47d0ab ('acpi-video-detect: video: Make video_detect code part of
-> > > the video module').
-> > 
-> > Actually, someone asked me recently who is the maintainer of MAINTAINERS,
-> > and it didn't seem obvious.  Is it Andrew?
-> 
-> Generally I'd expect the subsystem maintainer team to directly keep
-> their MAINTAINERS record up to date.  But yes, I'll take updates which
-> fall through the many cracks.
-> 
-> Joe Perches does the heavy lifting when MAINTAINERS maintenance and
-> development is concerned.
+ drivers/mfd/smsc-ece1099.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-OK, thanks.
+-- 
+2.6.3
 
-julia
