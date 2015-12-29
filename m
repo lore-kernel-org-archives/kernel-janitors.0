@@ -1,151 +1,85 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 13 Dec 2015 13:58:33 +0000
-Subject: [PATCH 6/7] staging: lustre: A few checks less in mgc_process_recover_log() after error detection
-Message-Id: <566D7989.6090205@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 18:34:16 +0000
+Subject: [PATCH] mfd: twl-core: One function call less in add_numbered_child() after error detection
+Message-Id: <5682D228.7070902@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
-In-Reply-To: <566D7733.1030102@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org
+To: linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 13 Dec 2015 13:03:58 +0100
+Date: Tue, 29 Dec 2015 19:29:08 +0100
 
-A few checks would be performed by the mgc_process_recover_log() function
-even if it was determined that a call of the alloc_page() function failed.
+The platform_device_put() function was called in one case by the
+add_numbered_child() function during error handling even if the passed
+variable "pdev" contained a null pointer.
 
-* This implementation detail could be improved by adjustments
-  for jump targets according to the Linux coding style convention.
+Implementation details could be improved by the adjustment of jump targets
+according to the Linux coding style convention.
 
-* Move the assignment for the variable "eof" behind the memory allocation.
-
-* Delete another sanity check then.
-
-* The variable "req" will eventually be set to an appropriate pointer
-  from a call of the ptlrpc_request_alloc() function.
-  Thus let us omit the explicit initialisation before.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/lustre/lustre/mgc/mgc_request.c | 32 +++++++++++--------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+ drivers/mfd/twl-core.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-index f3b4c30..7048722 100644
---- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
-+++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-@@ -1312,17 +1312,15 @@ static int mgc_process_recover_log(struct obd_device *obd,
- 	if (!pages)
- 		return -ENOMEM;
+diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+index 831696e..0d9350c 100644
+--- a/drivers/mfd/twl-core.c
++++ b/drivers/mfd/twl-core.c
+@@ -625,7 +625,7 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
+ 	if (!pdev) {
+ 		dev_dbg(&twl->client->dev, "can't alloc dev\n");
+ 		status = -ENOMEM;
+-		goto err;
++		goto report_failure;
+ 	}
  
--	req = NULL;
--	eof = true;
--
- 	for (i = 0; i < nrpages; i++) {
- 		pages[i] = alloc_page(GFP_KERNEL);
- 		if (pages[i] = NULL) {
- 			rc = -ENOMEM;
--			goto out;
-+			goto free_pages;
+ 	pdev->dev.parent = &twl->client->dev;
+@@ -634,7 +634,7 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
+ 		status = platform_device_add_data(pdev, pdata, pdata_len);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add platform_data\n");
+-			goto err;
++			goto put_device;
  		}
  	}
  
-+	eof = true;
- again:
- 	LASSERT(cld_is_recover(cld));
- 	LASSERT(mutex_is_locked(&cld->cld_lock));
-@@ -1330,12 +1328,12 @@ again:
- 				   &RQF_MGS_CONFIG_READ);
- 	if (req = NULL) {
- 		rc = -ENOMEM;
--		goto out;
-+		goto free_pages;
+@@ -647,21 +647,20 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
+ 		status = platform_device_add_resources(pdev, r, irq1 ? 2 : 1);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add irqs\n");
+-			goto err;
++			goto put_device;
+ 		}
  	}
  
- 	rc = ptlrpc_request_pack(req, LUSTRE_MGS_VERSION, MGS_CONFIG_READ);
- 	if (rc)
--		goto out;
-+		goto finish_request;
- 
- 	/* pack request */
- 	body = req_capsule_client_get(&req->rq_pill, &RMF_MGS_CONFIG_BODY);
-@@ -1344,7 +1342,7 @@ again:
- 	if (strlcpy(body->mcb_name, cld->cld_logname, sizeof(body->mcb_name))
- 	    >= sizeof(body->mcb_name)) {
- 		rc = -E2BIG;
--		goto out;
-+		goto finish_request;
- 	}
- 	body->mcb_offset = cfg->cfg_last_idx + 1;
- 	body->mcb_type   = cld->cld_type;
-@@ -1356,7 +1354,7 @@ again:
- 				    MGS_BULK_PORTAL);
- 	if (desc = NULL) {
- 		rc = -ENOMEM;
--		goto out;
-+		goto finish_request;
- 	}
- 
- 	for (i = 0; i < nrpages; i++)
-@@ -1365,12 +1363,12 @@ again:
- 	ptlrpc_request_set_replen(req);
- 	rc = ptlrpc_queue_wait(req);
- 	if (rc)
--		goto out;
-+		goto finish_request;
- 
- 	res = req_capsule_server_get(&req->rq_pill, &RMF_MGS_CONFIG_RES);
- 	if (res->mcr_size < res->mcr_offset) {
- 		rc = -EINVAL;
--		goto out;
-+		goto finish_request;
- 	}
- 
- 	/* always update the index even though it might have errors with
-@@ -1384,18 +1382,18 @@ again:
- 	ealen = sptlrpc_cli_unwrap_bulk_read(req, req->rq_bulk, 0);
- 	if (ealen < 0) {
- 		rc = ealen;
--		goto out;
-+		goto finish_request;
- 	}
- 
- 	if (ealen > nrpages << PAGE_CACHE_SHIFT) {
- 		rc = -EINVAL;
--		goto out;
-+		goto finish_request;
- 	}
- 
- 	if (ealen = 0) { /* no logs transferred */
- 		if (!eof)
- 			rc = -EINVAL;
--		goto out;
-+		goto finish_request;
- 	}
- 
- 	mne_swab = !!ptlrpc_rep_need_swab(req);
-@@ -1425,14 +1423,12 @@ again:
- 
- 		ealen -= PAGE_CACHE_SIZE;
- 	}
+ 	status = platform_device_add(pdev);
+-	if (status = 0)
++	if (!status) {
+ 		device_init_wakeup(&pdev->dev, can_wakeup);
 -
--out:
--	if (req)
--		ptlrpc_req_finished(req);
-+finish_request:
-+	ptlrpc_req_finished(req);
+-err:
+-	if (status < 0) {
+-		platform_device_put(pdev);
+-		dev_err(&twl->client->dev, "can't add %s dev\n", name);
+-		return ERR_PTR(status);
++		return &pdev->dev;
+ 	}
+-	return &pdev->dev;
++put_device:
++	platform_device_put(pdev);
++report_failure:
++	dev_err(&twl->client->dev, "can't add %s dev\n", name);
++	return ERR_PTR(status);
+ }
  
- 	if (rc = 0 && !eof)
- 		goto again;
--
-+free_pages:
- 	for (i = 0; i < nrpages; i++) {
- 		if (pages[i] = NULL)
- 			break;
+ static inline struct device *add_child(unsigned mod_no, const char *name,
 -- 
 2.6.3
 
