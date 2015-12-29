@@ -1,79 +1,41 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Mon, 14 Dec 2015 13:35:39 +0000
-Subject: Re: [PATCH 5/9] drm/tegra: dc: add missing of_node_put
-Message-Id: <20151214133539.GA986@ulmo.nvidia.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="2fHTh5uZTiUOsy+g"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 14:17:01 +0000
+Subject: [PATCH 1/2] mfd: smsc-ece1099: Delete an unnecessary variable initialisation in smsc_i2c_probe()
+Message-Id: <568295DD.3090809@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445697755-26341-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445697755-26341-6-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5682957F.5000604@users.sourceforge.net>
+In-Reply-To: <5682957F.5000604@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: LKML <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 14:47:40 +0100
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The variable "ret" will be set to an appropriate value a bit later.
+Thus let us omit the explicit initialisation at the beginning.
 
-On Sat, Oct 24, 2015 at 04:42:31PM +0200, Julia Lawall wrote:
-> for_each_matching_node performs an of_node_get on each iteration, so
-> a break out of the loop requires an of_node_put.
->=20
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
->=20
-> // <smpl>
-> @@
-> local idexpression n;
-> expression e;
-> @@
->=20
->  for_each_matching_node(n,...) {
->    ...
-> (
->    of_node_put(n);
-> |
->    e =3D n
-> |
-> +  of_node_put(n);
-> ?  break;
-> )
->    ...
->  }
-> ... when !=3D n
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/gpu/drm/tegra/dc.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/smsc-ece1099.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+diff --git a/drivers/mfd/smsc-ece1099.c b/drivers/mfd/smsc-ece1099.c
+index a4c0df7..bcac488 100644
+--- a/drivers/mfd/smsc-ece1099.c
++++ b/drivers/mfd/smsc-ece1099.c
+@@ -36,7 +36,7 @@ static int smsc_i2c_probe(struct i2c_client *i2c,
+ {
+ 	struct smsc *smsc;
+ 	int devid, rev, venid_l, venid_h;
+-	int ret = 0;
++	int ret;
+ 
+ 	smsc = devm_kzalloc(&i2c->dev, sizeof(struct smsc),
+ 				GFP_KERNEL);
+-- 
+2.6.3
 
-Thierry
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWbsWoAAoJEN0jrNd/PrOhKcIP/iMrCcTQ8BLErzBzVdW+Ot1d
-hn94/vydY5aDdbvh1Qzj7WETUuSxiAXIDChETgxlvxliBNVFLPbwK4J8nIBMqsLE
-Zwz2yZWF5FzW9JZpHQF9uQDHZu2nhQ36iPnZpcSb1uQ9Um0+7HOBCPbT5qYwD+gW
-CNhHNG+ua1uLSKrfFdA7KtPM/ZuPon0Dj+RuCP/WIZ/JXwC2+ZRGxS2rUupMTbyB
-HbxkxWmlfrvSuD8LOqriv/qg3vPM2dmqaPpTbGzu7FeYu31lo00Y5Iki8g8OL6dz
-nxkCeDhUeFGhDkUggdin5x4xTzbE3oJlYRLr6r0FDwclFalpb9v8+2vpqjhcoB84
-BpFEV39qsT0srU2lLewbIWr8ioSjvL6LiE413XihR17N+Ezagn38FpEx/ZhnNSg6
-3m0Ydr1RFQUbHyQX7Za5hWhnENUXN9WBKO2Tr+o+j1CYNyMLBS6bhxjeAIF7nadC
-A6+EVN3pa/LZISdJ8qo7RcZmDkYU1nk9ZbJ86Eal3s7qSPiwG1nL2xqYVMBHWReI
-5lHL5g3GPIpatDzMYmn2HF0CTZTRL8cw6WYdwAGOyXMNHzqAYjCrgTOU8TwQhLHz
-jOmwsA8ztsiun1z1tftMuuZoEODV+d4ag9igfxgXljBYItxGG0GegOERuWaHiK8i
-xfEoAo8dtof2S6OCchnP
-=Enb3
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
