@@ -1,23 +1,36 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 10 Dec 2015 17:54:42 +0000
-Subject: Re: [PATCH RESEND] cxlflash: a couple off by one bugs
-Message-Id: <yq1h9jq2nq5.fsf@sermon.lab.mkp.net>
+From: Bojan Prtvar <prtvar.b@gmail.com>
+Date: Tue, 29 Dec 2015 13:24:53 +0000
+Subject: [PATCH] resources: Remove unneeded initialization of local variable
+Message-Id: <1451395493-22380-1-git-send-email-prtvar.b@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1449098788-21695-1-git-send-email-mrochs@linux.vnet.ibm.com>
-In-Reply-To: <1449098788-21695-1-git-send-email-mrochs@linux.vnet.ibm.com>
-	(Matthew R. Ochs's message of "Wed, 2 Dec 2015 17:26:28 -0600")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Dan Carpenter <dan.carpenter@oracle.com>, "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>, Wen Xiong <wenxiong@linux.vnet.ibm.com>, Michael Neuling <mikey@neuling.org>, Uma Krishnan <ukrishn@linux.vnet.ibm.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: toshi.kani@hp.com, dan.j.williams@intel.com, akpm@linux-foundation.org, jsitnicki@gmail.com, jiang.liu@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Bojan Prtvar <prtvar.b@gmail.com>
 
->>>>> "Matthew" = Matthew R Ochs <mrochs@linux.vnet.ibm.com> writes:
+Few lines below dr is reinitialized by devres_alloc()
+so we don't need to init it by NULL in the beginning of
+__devm_request_region()
 
-Matthew> The "> MAX_CONTEXT" should be ">= MAX_CONTEXT".  Otherwise we
-Matthew> go one step beyond the end of the cfg->ctx_tbl[] array.
+Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+---
+ kernel/resource.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 4.5/scsi-queue.
-
+diff --git a/kernel/resource.c b/kernel/resource.c
+index f150dbb..1e48ede 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1356,7 +1356,7 @@ struct resource * __devm_request_region(struct device *dev,
+ 				struct resource *parent, resource_size_t start,
+ 				resource_size_t n, const char *name)
+ {
+-	struct region_devres *dr = NULL;
++	struct region_devres *dr;
+ 	struct resource *res;
+ 
+ 	dr = devres_alloc(devm_region_release, sizeof(struct region_devres),
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.4.1
+
