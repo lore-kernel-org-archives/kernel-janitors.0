@@ -1,30 +1,83 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Tue, 22 Dec 2015 18:58:33 +0000
-Subject: Re: [PATCH] rtc: v3020: constify v3020_chip_ops structures
-Message-Id: <20151222185833.GD8623@piout.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 13:04:19 +0000
+Subject: [PATCH] mfd-dm355evm_msp: One function call less in add_child() after error detection
+Message-Id: <568284D3.3060006@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1449856250-24732-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1449856250-24732-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, kernel-janitors@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 11/12/2015 at 18:50:50 +0100, Julia Lawall wrote :
-> The v3020_chip_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/rtc/rtc-v3020.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-Applied, thanks.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 13:56:42 +0100
 
+The platform_device_put() function was called in one case by the
+add_child() function during error handling even if the passed
+variable "pdev" contained a null pointer.
+
+Implementation details could be improved by the adjustment of jump targets
+according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/dm355evm_msp.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
+index bc90efe..e4aa1b8 100644
+--- a/drivers/mfd/dm355evm_msp.c
++++ b/drivers/mfd/dm355evm_msp.c
+@@ -202,7 +202,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+ 	if (!pdev) {
+ 		dev_dbg(&client->dev, "can't alloc dev\n");
+ 		status = -ENOMEM;
+-		goto err;
++		goto report_failure;
+ 	}
+ 
+ 	device_init_wakeup(&pdev->dev, can_wakeup);
+@@ -212,7 +212,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+ 		status = platform_device_add_data(pdev, pdata, pdata_len);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add platform_data\n");
+-			goto err;
++			goto put_device;
+ 		}
+ 	}
+ 
+@@ -225,19 +225,18 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+ 		status = platform_device_add_resources(pdev, &r, 1);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add irq\n");
+-			goto err;
++			goto put_device;
+ 		}
+ 	}
+ 
+ 	status = platform_device_add(pdev);
+-
+-err:
+-	if (status < 0) {
+-		platform_device_put(pdev);
+-		dev_err(&client->dev, "can't add %s dev\n", name);
+-		return ERR_PTR(status);
+-	}
+-	return &pdev->dev;
++	if (!status)
++		return &pdev->dev;
++put_device:
++	platform_device_put(pdev);
++report_failure:
++	dev_err(&client->dev, "can't add %s dev\n", name);
++	return ERR_PTR(status);
+ }
+ 
+ static int add_children(struct i2c_client *client)
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.6.3
+
