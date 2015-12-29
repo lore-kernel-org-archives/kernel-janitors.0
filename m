@@ -1,30 +1,29 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Mon, 14 Dec 2015 14:45:00 +0000
-Subject: Re: [PATCH 2/3] iommu/amd: constify mmu_notifier_ops structures
-Message-Id: <20151214144500.GA11292@8bytes.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 20:57:16 +0000
+Subject: [PATCH 0/2] mmc-host: Fine-tuning for one function
+Message-Id: <5682F3AC.7050107@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1448834571-2988-1-git-send-email-Julia.Lawall@lip6.fr>
- <1448834571-2988-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1448834571-2988-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+To: linux-mmc@vger.kernel.org, Sascha Sommer <saschasommer@freenet.de>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, Nov 29, 2015 at 11:02:50PM +0100, Julia Lawall wrote:
-> This mmu_notifier_ops structure is never modified, so declare it as
-> const, like the other mmu_notifier_ops structures.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> The patches in this series are independent of each other.
-> 
->  drivers/iommu/amd_iommu_v2.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 21:54:14 +0100
 
-Applied, thanks.
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (2):
+  Delete unnecessary variable initialisations in sdricoh_init_mmc()
+  Less checks in sdricoh_init_mmc() after error detection
+
+ drivers/mmc/host/sdricoh_cs.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
+
+-- 
+2.6.3
 
