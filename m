@@ -1,36 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 18:39:17 +0000
-Subject: [PATCH 0/6] InfiniBand-ocrdma: Fine-tuning for some function implementations
-Message-Id: <567EDED5.4040201@users.sourceforge.net>
+Date: Tue, 29 Dec 2015 21:00:35 +0000
+Subject: [PATCH 1/2] mmc-sdricoh_cs: Delete unnecessary variable initialisations in sdricoh_init_mmc()
+Message-Id: <5682F473.9040609@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+ <5682F3AC.7050107@users.sourceforge.net>
+In-Reply-To: <5682F3AC.7050107@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
+To: linux-mmc@vger.kernel.org, Sascha Sommer <saschasommer@freenet.de>, Ulf Hansson <ulf.hansson@linaro.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 26 Dec 2015 19:30:54 +0100
+Date: Tue, 29 Dec 2015 21:11:45 +0100
 
-Several update suggestions were taken into account
-from static source code analysis.
+These variables will eventually be set to an appropriate value a bit later.
+* host
+* iobase
+* result
 
-Markus Elfring (6):
-  One variable and jump label less in ocrdma_alloc_ucontext_pd()
-  Delete unnecessary variable initialisations in 11 functions
-  Returning only value constants in ocrdma_qp_state_change()
-  Return a value from a function call in _ocrdma_modify_qp() directly
-  Returning only value constants in ocrdma_resize_cq()
-  Delete an unnecessary variable in ocrdma_dealloc_pd()
+Thus let us omit the explicit initialisation at the beginning.
 
- drivers/infiniband/hw/ocrdma/ocrdma_ah.c    |  2 +-
- drivers/infiniband/hw/ocrdma/ocrdma_hw.c    |  7 +++---
- drivers/infiniband/hw/ocrdma/ocrdma_stats.c |  4 +--
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 39 +++++++++++------------------
- 4 files changed, 20 insertions(+), 32 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/host/sdricoh_cs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
--- 
+diff --git a/drivers/mmc/host/sdricoh_cs.c b/drivers/mmc/host/sdricoh_cs.c
+index b7e3057..5e57d9f 100644
+--- a/drivers/mmc/host/sdricoh_cs.c
++++ b/drivers/mmc/host/sdricoh_cs.c
+@@ -398,10 +398,10 @@ static struct mmc_host_ops sdricoh_ops = {
+ static int sdricoh_init_mmc(struct pci_dev *pci_dev,
+ 			    struct pcmcia_device *pcmcia_dev)
+ {
+-	int result = 0;
+-	void __iomem *iobase = NULL;
++	int result;
++	void __iomem *iobase;
+ 	struct mmc_host *mmc = NULL;
+-	struct sdricoh_host *host = NULL;
++	struct sdricoh_host *host;
+ 	struct device *dev = &pcmcia_dev->dev;
+ 	/* map iomem */
+ 	if (pci_resource_len(pci_dev, SDRICOH_PCI_REGION) !-- 
 2.6.3
 
