@@ -1,32 +1,45 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Wed, 16 Dec 2015 15:56:43 +0000
-Subject: Re: [patch] ASoC: Intel: Skylake: Fix a couple signedness bugs
-Message-Id: <20151216155940.GQ1854@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 30 Dec 2015 11:28:49 +0000
+Subject: [PATCH] ALSA: dummy: constify dummy_timer_ops structures
+Message-Id: <1451474929-25424-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151212123815.GA21408@mwanda>
- <20151216144400.GN1854@localhost>
- <20151216145518.GM5177@mwanda>
-In-Reply-To: <20151216145518.GM5177@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Dharageswari R <dharageswari.r@intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
 
-On Wed, Dec 16, 2015 at 05:55:18PM +0300, Dan Carpenter wrote:
-> On Wed, Dec 16, 2015 at 08:14:00PM +0530, Vinod Koul wrote:
-> > On Sat, Dec 12, 2015 at 03:38:15PM +0300, Dan Carpenter wrote:
-> > > These need to be unsigned because they hold negative error codes.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Acked-by: Vinod Koul <vinod.koul@intel.com>
-> 
-> Sorry, I sent a v2 of this with "be unsigned" changed to "be signed" in
-> the changelog, but I messed up the In-Reply-To header so it was a new
-> thread.
+The dummy_timer_ops structures are never modified, so declare them as
+const.
 
-No issues, Acked v2 now :)
+Done with the help of Coccinelle.
 
--- 
-~Vinod
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/drivers/dummy.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
+index 016e451..75b7485 100644
+--- a/sound/drivers/dummy.c
++++ b/sound/drivers/dummy.c
+@@ -351,7 +351,7 @@ static void dummy_systimer_free(struct snd_pcm_substream *substream)
+ 	kfree(substream->runtime->private_data);
+ }
+ 
+-static struct dummy_timer_ops dummy_systimer_ops = {
++static const struct dummy_timer_ops dummy_systimer_ops = {
+ 	.create =	dummy_systimer_create,
+ 	.free =		dummy_systimer_free,
+ 	.prepare =	dummy_systimer_prepare,
+@@ -475,7 +475,7 @@ static void dummy_hrtimer_free(struct snd_pcm_substream *substream)
+ 	kfree(dpcm);
+ }
+ 
+-static struct dummy_timer_ops dummy_hrtimer_ops = {
++static const struct dummy_timer_ops dummy_hrtimer_ops = {
+ 	.create =	dummy_hrtimer_create,
+ 	.free =		dummy_hrtimer_free,
+ 	.prepare =	dummy_hrtimer_prepare,
+
