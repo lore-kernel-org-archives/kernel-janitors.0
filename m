@@ -1,27 +1,45 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 14 Dec 2015 13:33:18 +0000
-Subject: Re: [patch -next] crypto: qat - uint8_t is not large enough for accel_id
-Message-Id: <20151214133318.GC1829@gondor.apana.org.au>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 30 Dec 2015 10:44:53 +0000
+Subject: [PATCH] ALSA: cs5535audio: constify cs5535audio_dma_ops structures
+Message-Id: <1451472293-14168-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151210220044.GA21797@mwanda>
- <5669FB47.60308@intel.com>
-In-Reply-To: <5669FB47.60308@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tadeusz Struk <tadeusz.struk@intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Bruce Allan <bruce.w.allan@intel.com>, Pingchao Yang <pingchao.yang@intel.com>, qat-linux@intel.com, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaya Kumar <jayakumar.alsa@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Thu, Dec 10, 2015 at 02:23:03PM -0800, Tadeusz Struk wrote:
->
-> accel_id has to be large enough to hold ADF_MAX_DEVICES + 1
-> (which is > 1025) so uint8_t is too small.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+The cs5535audio_dma_ops structures are never modified, so declare them as
+const.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/cs5535audio/cs5535audio_pcm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/cs5535audio/cs5535audio_pcm.c b/sound/pci/cs5535audio/cs5535audio_pcm.c
+index 9c2dc91..27fa57d 100644
+--- a/sound/pci/cs5535audio/cs5535audio_pcm.c
++++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
+@@ -402,7 +402,7 @@ static struct snd_pcm_ops snd_cs5535audio_capture_ops = {
+ 	.pointer =	snd_cs5535audio_pcm_pointer,
+ };
+ 
+-static struct cs5535audio_dma_ops snd_cs5535audio_playback_dma_ops = {
++static const struct cs5535audio_dma_ops snd_cs5535audio_playback_dma_ops = {
+         .type = CS5535AUDIO_DMA_PLAYBACK,
+         .enable_dma = cs5535audio_playback_enable_dma,
+         .disable_dma = cs5535audio_playback_disable_dma,
+@@ -412,7 +412,7 @@ static struct cs5535audio_dma_ops snd_cs5535audio_playback_dma_ops = {
+         .read_dma_pntr = cs5535audio_playback_read_dma_pntr,
+ };
+ 
+-static struct cs5535audio_dma_ops snd_cs5535audio_capture_dma_ops = {
++static const struct cs5535audio_dma_ops snd_cs5535audio_capture_dma_ops = {
+         .type = CS5535AUDIO_DMA_CAPTURE,
+         .enable_dma = cs5535audio_capture_enable_dma,
+         .disable_dma = cs5535audio_capture_disable_dma,
+
