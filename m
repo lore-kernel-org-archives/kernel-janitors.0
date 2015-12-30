@@ -1,76 +1,88 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 30 Dec 2015 10:21:57 +0000
-Subject: [PATCH] ALSA: atiixp: constify atiixp_dma_ops structures
-Message-Id: <1451470917-30436-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Wed, 30 Dec 2015 21:50:52 +0000
+Subject: Re: [PATCH] ALSA: atiixp: constify atiixp_dma_ops structures
+Message-Id: <s5ha8ortxkz.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1451470917-30436-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451470917-30436-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The atiixp_dma_ops structures are never modified, so declare them as const.
+On Wed, 30 Dec 2015 11:21:57 +0100,
+Julia Lawall wrote:
+> 
+> The atiixp_dma_ops structures are never modified, so declare them as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done with the help of Coccinelle.
+Applied, thanks.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
- sound/pci/atiixp.c       |    6 +++---
- sound/pci/atiixp_modem.c |    4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Takashi
 
-diff --git a/sound/pci/atiixp.c b/sound/pci/atiixp.c
-index 1028fc8..2ce0022 100644
---- a/sound/pci/atiixp.c
-+++ b/sound/pci/atiixp.c
-@@ -1219,7 +1219,7 @@ static struct ac97_pcm atiixp_pcm_defs[] = {
- 	},
- };
- 
--static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
-+static const struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
- 	.type = ATI_DMA_PLAYBACK,
- 	.llp_offset = ATI_REG_OUT_DMA_LINKPTR,
- 	.dt_cur = ATI_REG_OUT_DMA_DT_CUR,
-@@ -1228,7 +1228,7 @@ static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
- 	.flush_dma = atiixp_out_flush_dma,
- };
- 	
--static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
-+static const struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
- 	.type = ATI_DMA_CAPTURE,
- 	.llp_offset = ATI_REG_IN_DMA_LINKPTR,
- 	.dt_cur = ATI_REG_IN_DMA_DT_CUR,
-@@ -1237,7 +1237,7 @@ static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
- 	.flush_dma = atiixp_in_flush_dma,
- };
- 	
--static struct atiixp_dma_ops snd_atiixp_spdif_dma_ops = {
-+static const struct atiixp_dma_ops snd_atiixp_spdif_dma_ops = {
- 	.type = ATI_DMA_SPDIF,
- 	.llp_offset = ATI_REG_SPDF_DMA_LINKPTR,
- 	.dt_cur = ATI_REG_SPDF_DMA_DT_CUR,
-diff --git a/sound/pci/atiixp_modem.c b/sound/pci/atiixp_modem.c
-index 27ed678..c534552 100644
---- a/sound/pci/atiixp_modem.c
-+++ b/sound/pci/atiixp_modem.c
-@@ -970,7 +970,7 @@ static struct snd_pcm_ops snd_atiixp_capture_ops = {
- 	.pointer =	snd_atiixp_pcm_pointer,
- };
- 
--static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
-+static const struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
- 	.type = ATI_DMA_PLAYBACK,
- 	.llp_offset = ATI_REG_MODEM_OUT_DMA1_LINKPTR,
- 	.dt_cur = ATI_REG_MODEM_OUT_DMA1_DT_CUR,
-@@ -979,7 +979,7 @@ static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
- 	.flush_dma = atiixp_out_flush_dma,
- };
- 	
--static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
-+static const struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
- 	.type = ATI_DMA_CAPTURE,
- 	.llp_offset = ATI_REG_MODEM_IN_DMA_LINKPTR,
- 	.dt_cur = ATI_REG_MODEM_IN_DMA_DT_CUR,
-
+> 
+> ---
+>  sound/pci/atiixp.c       |    6 +++---
+>  sound/pci/atiixp_modem.c |    4 ++--
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/sound/pci/atiixp.c b/sound/pci/atiixp.c
+> index 1028fc8..2ce0022 100644
+> --- a/sound/pci/atiixp.c
+> +++ b/sound/pci/atiixp.c
+> @@ -1219,7 +1219,7 @@ static struct ac97_pcm atiixp_pcm_defs[] = {
+>  	},
+>  };
+>  
+> -static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+> +static const struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+>  	.type = ATI_DMA_PLAYBACK,
+>  	.llp_offset = ATI_REG_OUT_DMA_LINKPTR,
+>  	.dt_cur = ATI_REG_OUT_DMA_DT_CUR,
+> @@ -1228,7 +1228,7 @@ static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+>  	.flush_dma = atiixp_out_flush_dma,
+>  };
+>  	
+> -static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
+> +static const struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
+>  	.type = ATI_DMA_CAPTURE,
+>  	.llp_offset = ATI_REG_IN_DMA_LINKPTR,
+>  	.dt_cur = ATI_REG_IN_DMA_DT_CUR,
+> @@ -1237,7 +1237,7 @@ static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
+>  	.flush_dma = atiixp_in_flush_dma,
+>  };
+>  	
+> -static struct atiixp_dma_ops snd_atiixp_spdif_dma_ops = {
+> +static const struct atiixp_dma_ops snd_atiixp_spdif_dma_ops = {
+>  	.type = ATI_DMA_SPDIF,
+>  	.llp_offset = ATI_REG_SPDF_DMA_LINKPTR,
+>  	.dt_cur = ATI_REG_SPDF_DMA_DT_CUR,
+> diff --git a/sound/pci/atiixp_modem.c b/sound/pci/atiixp_modem.c
+> index 27ed678..c534552 100644
+> --- a/sound/pci/atiixp_modem.c
+> +++ b/sound/pci/atiixp_modem.c
+> @@ -970,7 +970,7 @@ static struct snd_pcm_ops snd_atiixp_capture_ops = {
+>  	.pointer =	snd_atiixp_pcm_pointer,
+>  };
+>  
+> -static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+> +static const struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+>  	.type = ATI_DMA_PLAYBACK,
+>  	.llp_offset = ATI_REG_MODEM_OUT_DMA1_LINKPTR,
+>  	.dt_cur = ATI_REG_MODEM_OUT_DMA1_DT_CUR,
+> @@ -979,7 +979,7 @@ static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+>  	.flush_dma = atiixp_out_flush_dma,
+>  };
+>  	
+> -static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
+> +static const struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
+>  	.type = ATI_DMA_CAPTURE,
+>  	.llp_offset = ATI_REG_MODEM_IN_DMA_LINKPTR,
+>  	.dt_cur = ATI_REG_MODEM_IN_DMA_DT_CUR,
+> 
+> 
