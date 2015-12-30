@@ -1,37 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Dec 2015 10:35:29 +0000
-Subject: ACPI-fan: Another source code review around null pointer handling?
-Message-Id: <567D1BF1.6060701@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 30 Dec 2015 10:28:02 +0000
+Subject: [PATCH] xen/hvc: constify hv_ops structures
+Message-Id: <1451471282-5548-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-Hello,
+These hv_ops structures are never modified, so declare them as const.  Most
+were const already.
 
-I have looked at the source file for the ACPI fan driver once more.
-I would appreciate if a specific implementation detail can be clarified the=
-re.
+Done with the help of Coccinelle.
 
-Static source code analysis can point out that functions like the following
-share an approach for error detection and corresponding exception handling.
-* acpi_fan_get_fif
-* acpi_fan_get_fps
-* fan_get_state_acpi4
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/drive=
-rs/acpi/fan.c?id=80c75a0f1d81922bf322c0634d1e1a15825a89e6#n107
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Can it matter eventually to handle a detected null pointer differently from
-further checks for an attribute like "obj->type" or "obj->package"?
+---
+ drivers/tty/hvc/hvc_xen.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/tty/hvc/hvc_xen.c b/drivers/tty/hvc/hvc_xen.c
+index fa816b7..1505056 100644
+--- a/drivers/tty/hvc/hvc_xen.c
++++ b/drivers/tty/hvc/hvc_xen.c
+@@ -162,7 +162,7 @@ static int domU_read_console(uint32_t vtermno, char *buf, int len)
+ 	return recv;
+ }
+ 
+-static struct hv_ops domU_hvc_ops = {
++static const struct hv_ops domU_hvc_ops = {
+ 	.get_chars = domU_read_console,
+ 	.put_chars = domU_write_console,
+ 	.notifier_add = notifier_add_irq,
+@@ -188,7 +188,7 @@ static int dom0_write_console(uint32_t vtermno, const char *str, int len)
+ 	return len;
+ }
+ 
+-static struct hv_ops dom0_hvc_ops = {
++static const struct hv_ops dom0_hvc_ops = {
+ 	.get_chars = dom0_read_console,
+ 	.put_chars = dom0_write_console,
+ 	.notifier_add = notifier_add_irq,
+
