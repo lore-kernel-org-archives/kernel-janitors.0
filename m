@@ -1,57 +1,76 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Wed, 16 Dec 2015 15:56:01 +0000
-Subject: Re: [patch v2] ASoC: Intel: Skylake: Fix a couple signedness bugs
-Message-Id: <20151216155910.GP1854@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 30 Dec 2015 10:21:57 +0000
+Subject: [PATCH] ALSA: atiixp: constify atiixp_dma_ops structures
+Message-Id: <1451470917-30436-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151215092014.GG5177@mwanda>
-In-Reply-To: <20151215092014.GG5177@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Dharageswari R <dharageswari.r@intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeeja KP <jeeja.kp@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Tue, Dec 15, 2015 at 12:20:14PM +0300, Dan Carpenter wrote:
-> These need to be signed because they hold negative error codes.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The atiixp_dma_ops structures are never modified, so declare them as const.
 
-Acked-by Vinod Koul <vinod.koul@intel.com>
+Done with the help of Coccinelle.
 
-> ---
-> Fix a typo in the change log.  s/unsigned/signed/
-> 
-> diff --git a/sound/soc/intel/skylake/skl-sst.c b/sound/soc/intel/skylake/skl-sst.c
-> index 8cd5cdb..e26f474 100644
-> --- a/sound/soc/intel/skylake/skl-sst.c
-> +++ b/sound/soc/intel/skylake/skl-sst.c
-> @@ -208,7 +208,7 @@ static unsigned int skl_get_errorcode(struct sst_dsp *ctx)
->   * since get/set_module are called from DAPM context,
->   * we don't need lock for usage count
->   */
-> -static unsigned int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
-> +static int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
->  {
->  	struct skl_module_table *module;
->  
-> @@ -220,7 +220,7 @@ static unsigned int skl_get_module(struct sst_dsp *ctx, u16 mod_id)
->  	return -EINVAL;
->  }
->  
-> -static unsigned int skl_put_module(struct sst_dsp *ctx, u16 mod_id)
-> +static int skl_put_module(struct sst_dsp *ctx, u16 mod_id)
->  {
->  	struct skl_module_table *module;
->  
-> @@ -340,7 +340,7 @@ static int skl_load_module(struct sst_dsp *ctx, u16 mod_id, char *guid)
->  
->  static int skl_unload_module(struct sst_dsp *ctx, u16 mod_id)
->  {
-> -	unsigned int usage_cnt;
-> +	int usage_cnt;
->  	struct skl_sst *skl = ctx->thread_context;
->  	int ret = 0;
->  
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-~Vinod
+---
+ sound/pci/atiixp.c       |    6 +++---
+ sound/pci/atiixp_modem.c |    4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/sound/pci/atiixp.c b/sound/pci/atiixp.c
+index 1028fc8..2ce0022 100644
+--- a/sound/pci/atiixp.c
++++ b/sound/pci/atiixp.c
+@@ -1219,7 +1219,7 @@ static struct ac97_pcm atiixp_pcm_defs[] = {
+ 	},
+ };
+ 
+-static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
++static const struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+ 	.type = ATI_DMA_PLAYBACK,
+ 	.llp_offset = ATI_REG_OUT_DMA_LINKPTR,
+ 	.dt_cur = ATI_REG_OUT_DMA_DT_CUR,
+@@ -1228,7 +1228,7 @@ static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+ 	.flush_dma = atiixp_out_flush_dma,
+ };
+ 	
+-static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
++static const struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
+ 	.type = ATI_DMA_CAPTURE,
+ 	.llp_offset = ATI_REG_IN_DMA_LINKPTR,
+ 	.dt_cur = ATI_REG_IN_DMA_DT_CUR,
+@@ -1237,7 +1237,7 @@ static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
+ 	.flush_dma = atiixp_in_flush_dma,
+ };
+ 	
+-static struct atiixp_dma_ops snd_atiixp_spdif_dma_ops = {
++static const struct atiixp_dma_ops snd_atiixp_spdif_dma_ops = {
+ 	.type = ATI_DMA_SPDIF,
+ 	.llp_offset = ATI_REG_SPDF_DMA_LINKPTR,
+ 	.dt_cur = ATI_REG_SPDF_DMA_DT_CUR,
+diff --git a/sound/pci/atiixp_modem.c b/sound/pci/atiixp_modem.c
+index 27ed678..c534552 100644
+--- a/sound/pci/atiixp_modem.c
++++ b/sound/pci/atiixp_modem.c
+@@ -970,7 +970,7 @@ static struct snd_pcm_ops snd_atiixp_capture_ops = {
+ 	.pointer =	snd_atiixp_pcm_pointer,
+ };
+ 
+-static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
++static const struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+ 	.type = ATI_DMA_PLAYBACK,
+ 	.llp_offset = ATI_REG_MODEM_OUT_DMA1_LINKPTR,
+ 	.dt_cur = ATI_REG_MODEM_OUT_DMA1_DT_CUR,
+@@ -979,7 +979,7 @@ static struct atiixp_dma_ops snd_atiixp_playback_dma_ops = {
+ 	.flush_dma = atiixp_out_flush_dma,
+ };
+ 	
+-static struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
++static const struct atiixp_dma_ops snd_atiixp_capture_dma_ops = {
+ 	.type = ATI_DMA_CAPTURE,
+ 	.llp_offset = ATI_REG_MODEM_IN_DMA_LINKPTR,
+ 	.dt_cur = ATI_REG_MODEM_IN_DMA_DT_CUR,
+
