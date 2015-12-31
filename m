@@ -1,39 +1,25 @@
-From: "Haim, Maya" <merez@qti.qualcomm.com>
-Date: Wed, 16 Dec 2015 12:55:58 +0000
-Subject: RE: [patch] wil6210: fix a warning message condition
-Message-Id: <230d7346e47845fca26b7124ba898e20@euamsexm01a.eu.qualcomm.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 31 Dec 2015 13:13:16 +0000
+Subject: Re: [patch] wil6210: fix a warning message condition
+Message-Id: <87a8oqoj6b.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20151216111000.GC21018@mwanda>
-In-Reply-To: <20151216111000.GC21018@mwanda>
+In-Reply-To: <20151216111000.GC21018@mwanda> (Dan Carpenter's message of "Wed,
+	16 Dec 2015 14:10:00 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, qca_merez <qca_merez@qca.qualcomm.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, wil6210 <wil6210@qca.qualcomm.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Maya Erez <qca_merez@qca.qualcomm.com>, linux-wireless@vger.kernel.org, wil6210@qca.qualcomm.com, kernel-janitors@vger.kernel.org
 
-Acked-by: Maya Erez <qca_merez@qca.qualcomm.com>
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
------Original Message-----
-From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
-Sent: Wednesday, December 16, 2015 1:10 PM
-To: qca_merez
-Cc: Kalle Valo; linux-wireless@vger.kernel.org; wil6210; kernel-janitors@vger.kernel.org
-Subject: [patch] wil6210: fix a warning message condition
+> "iter" is -1 at the end of the loop and not zero.  It means we don't
+> print a warning message.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-"iter" is -1 at the end of the loop and not zero.  It means we don't print a warning message.
+Applied to ath.git, thanks.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless/ath/wil6210/main.c
-index 48687f1..4544e8c 100644
---- a/drivers/net/wireless/ath/wil6210/main.c
-+++ b/drivers/net/wireless/ath/wil6210/main.c
-@@ -985,7 +985,7 @@ int __wil_down(struct wil6210_priv *wil)
- 	}
- 	mutex_lock(&wil->mutex);
- 
--	if (!iter)
-+	if (iter < 0)
- 		wil_err(wil, "timeout waiting for idle FW/HW\n");
- 
- 	wil_reset(wil, false);
+-- 
+Kalle Valo
