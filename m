@@ -1,37 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 18 Jan 2016 19:12:53 +0000
-Subject: Re: [patch] ide: silence some underflow warnings
-Message-Id: <20160118.141253.803019327755668580.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 18:21:04 +0000
+Subject: [PATCH 0/2] net-ath9k_htc: Fine-tuning for two function implementations
+Message-Id: <5686C390.5060600@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151113143401.GC1445@mwanda>
-In-Reply-To: <20151113143401.GC1445@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ath9k-devel@lists.ath9k.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ath9k-devel@qca.qualcomm.com, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Nov 2015 17:34:01 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 19:16:05 +0100
 
-> Back in the day we used to just say this code was root only so it was
-> ok that the bounds checking was sloppy.  These days it annoys static
-> checkers so we fix it.
-> 
-> In the original code "c > INT_MAX" was never true since "c" was an int.
-> I am not sure what was intended so I left it alone.  But because I made
-> "c" unsigned it means we don't have a warning any more.
-> 
-> The second warning is that we cap "i" but allow negatives leading to an
-> underflow of the ide_disks_chs[] array.  The third set of warnings is
-> because these values come from the user and we cap most of the upper
-> bounds but allow negative values.  Negative cylinders doesn't make
-> sense.
-> 
-> drivers/ide/ide.c:262 ide_set_disk_chs() warn: impossible condition '(c > ((~0 >> 1))) => (s32min-s32max > s32max)'
-> drivers/ide/ide.c:270 ide_set_disk_chs() warn: check 'ide_disks_chs[i]' for negative offsets 'i' = s32min.  extra = 's32min-19'
-> drivers/ide/ide.c:271 ide_set_disk_chs() warn: no lower bound on 'h'
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A few update suggestions were taken into account
+from static source code analysis.
 
-Applied.
+Markus Elfring (2):
+  Delete an unnecessary variable initialisation in ath9k_hif_usb_rx_stream()
+  Replace a variable initialisation by an assignment in ath9k_htc_set_channel()
+
+ drivers/net/wireless/ath/ath9k/hif_usb.c      | 2 +-
+ drivers/net/wireless/ath/ath9k/htc_drv_main.c | 7 ++-----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+-- 
+2.6.3
+
