@@ -1,37 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 03 Jan 2016 12:27:53 +0000
-Subject: [PATCH] media: bt8xx: constify sp887x_config structure
-Message-Id: <1451824073-6962-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 12:24:27 +0000
+Subject: [PATCH 3/3] net-gianfar: Extend an initialisation clause of a for loop in gfar_ethflow_to_filer_tabl
+Message-Id: <56866FFB.7060909@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56866E7F.8080609@users.sourceforge.net>
+In-Reply-To: <56866E7F.8080609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This sp887x_config structure is never modified, so declare it as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 13:00:06 +0100
 
-Done with the help of Coccinelle.
+Move the assignment for the variable "j" from the beginning
+into an initialisation clause of a for loop.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-This patch and the previous one on the same file can be applied in any order.
+ drivers/net/ethernet/freescale/gianfar_ethtool.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- drivers/media/pci/bt8xx/dvb-bt8xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/pci/bt8xx/dvb-bt8xx.c b/drivers/media/pci/bt8xx/dvb-bt8xx.c
-index d407244..a3aa0cd 100644
---- a/drivers/media/pci/bt8xx/dvb-bt8xx.c
-+++ b/drivers/media/pci/bt8xx/dvb-bt8xx.c
-@@ -318,7 +318,7 @@ static int microtune_mt7202dtf_request_firmware(struct dvb_frontend* fe, const s
- 	return request_firmware(fw, name, &bt->bt->dev->dev);
- }
+diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+index 508be89..6a7b035 100644
+--- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
++++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+@@ -772,8 +772,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 	unsigned int cmp_rqfpr;
+ 	unsigned int *local_rqfpr;
+ 	unsigned int *local_rqfcr;
+-	int i, k, l;
+-	int j = MAX_FILER_IDX;
++	int i, j, k, l;
+ 	int ret = 1;
  
--static struct sp887x_config microtune_mt7202dtf_config = {
-+static const struct sp887x_config microtune_mt7202dtf_config = {
- 	.demod_address = 0x70,
- 	.request_firmware = microtune_mt7202dtf_request_firmware,
- };
+ 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
+@@ -807,7 +806,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 		goto free_fcr;
+ 	}
+ 
+-	for (i = 0; i < MAX_FILER_IDX + 1; i++) {
++	for (i = 0, j = MAX_FILER_IDX; i < MAX_FILER_IDX + 1; i++) {
+ 		local_rqfpr[j] = priv->ftp_rqfpr[i];
+ 		local_rqfcr[j] = priv->ftp_rqfcr[i];
+ 		j--;
+-- 
+2.6.3
 
