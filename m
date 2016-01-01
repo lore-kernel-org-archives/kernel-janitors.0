@@ -1,68 +1,70 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 07 Jan 2016 09:59:53 +0000
-Subject: Re: [patch] MAINTAINERS: fix MIC maintainers entry
-Message-Id: <1452160793.4028.13.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 21:33:38 +0000
+Subject: [PATCH] net-libertas: Better exception handling in if_spi_host_to_card_worker()
+Message-Id: <5686F0B2.5000000@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160107094001.GE27186@mwanda> <20160107094345.GB5177@mwanda>
-In-Reply-To: <20160107094345.GB5177@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Sudeep Dutt <sudeep.dutt@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, 2016-01-07 at 12:43 +0300, Dan Carpenter wrote:
-> I wrote some bash to find problems in MAINTAINERS.=A0=A0I'm not sure what=
- to
-> do with it.
->=20
-> # Grep for missing colons
-> for i in $(cut -b 1-2 MAINTAINERS | grep : | sort | uniq | cut -b 1) ; do
-> =A0=A0=A0=A0egrep "^$i[=A0	]" MAINTAINERS
-> done
->=20
-> # Grep for non-existing files
-> for i in $(grep ^F: MAINTAINERS | grep -v '\*' | cut -d : -f 2-) ; do
-> =A0=A0=A0=A0if ! test -e $i ; then
-> =A0=A0=A0=A0=A0=A0=A0=A0echo $i
-> =A0=A0=A0=A0fi
-> done
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 22:27:20 +0100
 
-I run a similar script every once in awhile.
+This issue was detected by using the Coccinelle software.
 
-Here's my current list with -next:
+Move the jump label directly before the desired log statement
+so that the variable "err" will not be checked once more
+after it was determined that a function call failed.
+Use the identifier "report_failure" instead of the label "err".
 
-$ verify_maintainer_patterns.pl
-0	drivers/infiniband/hw/amso1100/
-0	arch/arm/mach-pxa/include/mach/palmt5.h
-0	arch/arm/mach-pxa/include/mach/palmte2.h
-0	arch/arm/mach-pxa/include/mach/palmtreo.h
-0	arch/arm/mach-pxa/include/mach/palmz72.h
-0	arch/arm/plat-samsung/s5p-dev-mfc.c
-0	include/media/atmel-isi.h
-0	arch/mips/bcm3384/*
-0	arch/mips/include/asm/mach-bcm3384/*
-0	Documentation/cgroups/cpusets.txt
-0	drivers/media/i2c/cs3308.h
-0	include/media/cx2341x*
-0	include/uapi/scsi/cxlflash_ioctls.h
-0	Documentation/devicetree/bindings/drm/atmel/
-0	Documentation/devicetree/bindings/display/panel/nec,nl4827hc19_05b.txt
-0	include/drm/gma500*
-0	drivers/infiniband/hw/ehca/
-0	drivers/crypto/nx/nx_debugfs.h
-0	Documentation/devicetree/bindings/i2c/ina209.txt
-0	Documentation/s390/kvm.txt
-0	drivers/scsi/mpt2sas/
-0	drivers/hwmon/max20751.c
-0	Documentation/devicetree/bindings/i2c/max6697.txt
-0	include/media/saa7146*
-0	drivers/staging/ft1000/
-0	fs/hppfs/
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/marvell/libertas/if_spi.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c b/drivers/net/wireless/marvell/libertas/if_spi.c
+index 82c0796..c9ae27e 100644
+--- a/drivers/net/wireless/marvell/libertas/if_spi.c
++++ b/drivers/net/wireless/marvell/libertas/if_spi.c
+@@ -880,18 +880,18 @@ static void if_spi_host_to_card_worker(struct work_struct *work)
+ 				&hiStatus);
+ 	if (err) {
+ 		netdev_err(priv->dev, "I/O error\n");
+-		goto err;
++		goto report_failure;
+ 	}
+ 
+ 	if (hiStatus & IF_SPI_HIST_CMD_UPLOAD_RDY) {
+ 		err = if_spi_c2h_cmd(card);
+ 		if (err)
+-			goto err;
++			goto report_failure;
+ 	}
+ 	if (hiStatus & IF_SPI_HIST_RX_UPLOAD_RDY) {
+ 		err = if_spi_c2h_data(card);
+ 		if (err)
+-			goto err;
++			goto report_failure;
+ 	}
+ 
+ 	/*
+@@ -940,9 +940,10 @@ static void if_spi_host_to_card_worker(struct work_struct *work)
+ 	if (hiStatus & IF_SPI_HIST_CARD_EVENT)
+ 		if_spi_e2h(card);
+ 
+-err:
+-	if (err)
++	if (err) {
++report_failure:
+ 		netdev_err(priv->dev, "%s: got error %d\n", __func__, err);
++	}
+ 
+ 	lbs_deb_leave(LBS_DEB_SPI);
+ }
+-- 
+2.6.3
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
