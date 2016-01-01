@@ -1,34 +1,87 @@
-From: Devin Heitmueller <dheitmueller@kernellabs.com>
-Date: Mon, 25 Jan 2016 18:38:17 +0000
-Subject: Re: [PATCH] [media] xc5000: Faster result reporting in xc_load_fw_and_init_tuner()
-Message-Id: <CAGoCfix7eRYMiFRaoWn03rEt1bdQYz5YtaFyxLUAs=WZ9q9jwQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 13:04:12 +0000
+Subject: [PATCH v2 1/3] net-gianfar: Less function calls in gfar_ethflow_to_filer_table() after error detecti
+Message-Id: <5686794C.4080308@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-	<56818B7B.8040801@users.sourceforge.net>
-	<20160125150654.7ada12ac@recife.lan>
-	<56A6680B.9050200@users.sourceforge.net>
-In-Reply-To: <56A6680B.9050200@users.sourceforge.net>
+ <56866E7F.8080609@users.sourceforge.net>
+ <56866F68.6070904@users.sourceforge.net>
+ <alpine.DEB.2.02.1601011334200.2054@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1601011334200.2054@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> Are you interested in a bit of software optimisation for the implementation
-> of the function "xc_load_fw_and_init_tuner"?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 13:56:09 +0100
 
-To be clear, absolutely none of the code in question is performance
-sensitive (i.e. saving a couple of extra CPU cycles has no value in
-this case).  Hence given that I'm assuming you have no intention to
-actually test any of these patches with a real device I would
-recommend you do the bare minimum to prevent Coccinelle from
-complaining and not restructure any of the core business logic unless
-you plan to also do actual testing.
+The kfree() function was called in one case by the
+gfar_ethflow_to_filer_table() function during error handling
+even if a passed variable contained a null pointer.
 
-Thanks,
+* Return directly if a memory allocation failed at the beginning.
 
-Devin
+* Adjust jump targets according to the Linux coding style convention.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/freescale/gianfar_ethtool.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+index 4b0ee85..825b051 100644
+--- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
++++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+@@ -778,11 +778,13 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 
+ 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
+ 				    GFP_KERNEL);
++	if (!local_rqfpr)
++		return 0;
+ 	local_rqfcr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
+ 				    GFP_KERNEL);
+-	if (!local_rqfpr || !local_rqfcr) {
++	if (!local_rqfcr) {
+ 		ret = 0;
+-		goto err;
++		goto free_fpr;
+ 	}
+ 
+ 	switch (class) {
+@@ -802,7 +804,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 		netdev_err(priv->ndev,
+ 			   "Right now this class is not supported\n");
+ 		ret = 0;
+-		goto err;
++		goto free_fcr;
+ 	}
+ 
+ 	for (i = 0; i < MAX_FILER_IDX + 1; i++) {
+@@ -819,7 +821,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 		netdev_err(priv->ndev,
+ 			   "No parse rule found, can't create hash rules\n");
+ 		ret = 0;
+-		goto err;
++		goto free_fcr;
+ 	}
+ 
+ 	/* If a match was found, then it begins the starting of a cluster rule
+@@ -862,9 +864,9 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 			break;
+ 		priv->cur_filer_idx = priv->cur_filer_idx - 1;
+ 	}
+-
+-err:
++free_fcr:
+ 	kfree(local_rqfcr);
++free_fpr:
+ 	kfree(local_rqfpr);
+ 	return ret;
+ }
 -- 
-Devin J. Heitmueller - Kernel Labs
-http://www.kernellabs.com
+2.6.3
+
