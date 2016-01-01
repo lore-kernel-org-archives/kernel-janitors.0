@@ -1,46 +1,41 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Mon, 04 Jan 2016 11:18:30 +0000
-Subject: Re: net-libertas: Better exception handling in if_spi_host_to_card_worker()
-Message-Id: <CACna6rwAVhKX0KnW=BTBDvNe8aaSvQiuMSnMmbQ64Benm50g9w@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 01 Jan 2016 09:01:52 +0000
+Subject: [PATCH] OrangeFS: constify export_operations structures
+Message-Id: <1451638912-6613-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5686F0B2.5000000@users.sourceforge.net>
-	<56870866.7020000@cogentembedded.com>
-	<568785B3.5000905@users.sourceforge.net>
-	<alpine.DEB.2.02.1601020914100.2063@localhost6.localdomain6>
-	<5687939E.7010701@users.sourceforge.net>
-	<5687A2C7.3000704@gmail.com>
-	<5687B2BC.8090901@users.sourceforge.net>
-	<5688EBAC.5000701@gmail.com>
-	<CACna6rzoJLRuTTDi3JjXg1roDbk3HXcBhhe0iOUH9xRaGU5p7A@mail.gmail.com>
-	<568A4403.8020701@gmail.com>
-In-Reply-To: <568A4403.8020701@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Arend van Spriel <aspriel@gmail.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Julia Lawall <julia.lawall@lip6.fr>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, libertas-dev@lists.infradead.org, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, Kalle Valo <kvalo@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, Mike Marshall <hubcap@omnibond.com>
+Cc: kernel-janitors@vger.kernel.org
 
-On 4 January 2016 at 11:05, Arend van Spriel <aspriel@gmail.com> wrote:
-> On 03-01-16 16:18, Rafał Miłecki wrote:
->> On 3 January 2016 at 10:36, Arend van Spriel <aspriel@gmail.com> wrote:
->>> On 02-01-16 12:21, SF Markus Elfring wrote:
->>>>> Did you look at the resulting assembly code for different target architectures?
->>>>
->>>> Not yet. - Which execution system variants would you recommend for
->>>> further comparisons?
->>>
->>> Guess x86{,_64} and arm would be good candidates, ie. CISC vs. RISC.
->>
->> Oh, don't forget about MIPS with its fancy branches handling. You know
->> about it, don't you?
->
-> You are asking me, right ;-) ? I have come across my share of MIPS
-> platforms here at Broadcom, but I still try to avoid them as much as
-> possible.
+This export_operations structure is never modified, so declare it as const.
+Most other structures of this type are already const.
 
-I was more thinking about author on this patch. But it's indeed an
-interesting thing, just to know, how MIPS CPU handles branches ;)
+Done with the help of Coccinelle.
 
--- 
-Rafał
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+Mike, I saw your name on all of the patches for this driver, but you aren't
+in the MAINTAINERS file.  If you are the maintainer of this file, maybe you
+should add yourself there.
+
+ fs/orangefs/super.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/orangefs/super.c b/fs/orangefs/super.c
+index 52bc522..bee67b3 100644
+--- a/fs/orangefs/super.c
++++ b/fs/orangefs/super.c
+@@ -342,7 +342,7 @@ out:
+ 	return type;
+ }
+ 
+-static struct export_operations orangefs_export_ops = {
++static const struct export_operations orangefs_export_ops = {
+ 	.encode_fh = orangefs_encode_fh,
+ 	.fh_to_dentry = orangefs_fh_to_dentry,
+ };
+
