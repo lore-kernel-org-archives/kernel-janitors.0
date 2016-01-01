@@ -1,67 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 06 Jan 2016 10:03:46 +0000
-Subject: re: cxgb4: Update mps_tcam output to include T6 fields
-Message-Id: <20160106100346.GF23185@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 12:18:07 +0000
+Subject: [PATCH 0/3] net-gianfar: Fine-tuning for gfar_ethflow_to_filer_table()
+Message-Id: <56866E7F.8080609@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Hariprasad Shenai,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 13:15:34 +0100
 
-The patch 115b56af88b5: "cxgb4: Update mps_tcam output to include T6
-fields" from Dec 23, 2015, leads to the following static checker
-warning:
+A few update suggestions were taken into account
+from static source code analysis.
 
-	drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c:1735 mps_tcam_show()
-	warn: we tested 'lookup_type' before and it was 'true'
+Markus Elfring (3):
+  Less function calls after error detection
+  Delete unnecessary variable initialisations
+  Extend an initialisation clause of a for loop
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
-  1725                          if (lookup_type && (lookup_type != DATALKPTYPE_M)) {
-                                    ^^^^^^^^^^^
-Is non-zero.
+ drivers/net/ethernet/freescale/gianfar_ethtool.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-  1726                                  seq_printf(seq,
-  1727                                             "%3u %02x:%02x:%02x:%02x:%02x:%02x "
-  1728                                             "%012llx %06x %06x    -    -   %3c"
-  1729                                             "      %3c  %4x   "
-  1730                                             "%3c   %#x%4u%4d", idx, addr[0],
-  1731                                             addr[1], addr[2], addr[3],
-  1732                                             addr[4], addr[5],
-  1733                                             (unsigned long long)mask,
-  1734                                             vniy, vnix, dip_hit ? 'Y' : 'N',
-  1735                                             lookup_type ? 'I' : 'O', port_num,
-                                                   ^^^^^^^^^^^^^^^^^^^^^^^
-No need to check.
+-- 
+2.6.3
 
-  1736                                             (cls_lo & T6_SRAM_VLD_F) ? 'Y' : 'N',
-  1737                                             PORTMAP_G(cls_hi),
-  1738                                             T6_PF_G(cls_lo),
-  1739                                             (cls_lo & T6_VF_VALID_F) ?
-  1740                                             T6_VF_G(cls_lo) : -1);
-  1741                          } else {
-  1742                                  seq_printf(seq,
-  1743                                             "%3u %02x:%02x:%02x:%02x:%02x:%02x "
-  1744                                             "%012llx    -       -   ",
-  1745                                             idx, addr[0], addr[1], addr[2],
-  1746                                             addr[3], addr[4], addr[5],
-  1747                                             (unsigned long long)mask);
-  1748  
-  1749                                  if (vlan_vld)
-  1750                                          seq_printf(seq, "%4u   Y     ", ivlan);
-  1751                                  else
-  1752                                          seq_puts(seq, "  -    N     ");
-  1753  
-  1754                                  seq_printf(seq,
-  1755                                             "-      %3c  %4x   %3c   %#x%4u%4d",
-  1756                                             lookup_type ? 'I' : 'O', port_num,
-  1757                                             (cls_lo & T6_SRAM_VLD_F) ? 'Y' : 'N',
-  1758                                             PORTMAP_G(cls_hi),
-  1759                                             T6_PF_G(cls_lo),
-  1760                                             (cls_lo & T6_VF_VALID_F) ?
-  1761                                             T6_VF_G(cls_lo) : -1);
-  1762                          }
-
-regards,
-dan carpenter
