@@ -1,89 +1,41 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Date: Thu, 21 Jan 2016 21:35:00 +0000
-Subject: Re: [Xen-devel] [PATCH v2] cleancache: constify cleancache_ops structure
-Message-Id: <20160121213500.GF15622@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 18:23:38 +0000
+Subject: [PATCH 1/2] net-ath9k_htc: Delete an unnecessary variable initialisation in ath9k_hif_usb_rx_stream(
+Message-Id: <5686C42A.5000405@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450904784-17139-1-git-send-email-Julia.Lawall@lip6.fr>
- <56A0B6E7.9040201@citrix.com>
- <alpine.DEB.2.10.1601211646580.2530@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1601211646580.2530@hadrien>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5686C390.5060600@users.sourceforge.net>
+In-Reply-To: <5686C390.5060600@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: David Vrabel <david.vrabel@citrix.com>, linux-mm@kvack.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+To: ath9k-devel@lists.ath9k.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ath9k-devel@qca.qualcomm.com, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Jan 21, 2016 at 04:47:29PM +0100, Julia Lawall wrote:
-> The cleancache_ops structure is never modified, so declare it as const.
-> 
-> Done with the help of Coccinelle.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 19:00:53 +0100
 
-I will pull it in my tree and sent it to Linus.
+Omit explicit initialisation at the beginning for one local variable
+that is redefined before its first use.
 
-Thanks!
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> 
-> v2: put back the read mostly
-> 
->  drivers/xen/tmem.c         |    2 +-
->  include/linux/cleancache.h |    2 +-
->  mm/cleancache.c            |    4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/cleancache.h b/include/linux/cleancache.h
-> index bda5ec0b4..cb3e142 100644
-> --- a/include/linux/cleancache.h
-> +++ b/include/linux/cleancache.h
-> @@ -37,7 +37,7 @@ struct cleancache_ops {
->  	void (*invalidate_fs)(int);
->  };
-> 
-> -extern int cleancache_register_ops(struct cleancache_ops *ops);
-> +extern int cleancache_register_ops(const struct cleancache_ops *ops);
->  extern void __cleancache_init_fs(struct super_block *);
->  extern void __cleancache_init_shared_fs(struct super_block *);
->  extern int  __cleancache_get_page(struct page *);
-> diff --git a/drivers/xen/tmem.c b/drivers/xen/tmem.c
-> index 945fc43..4ac2ca8 100644
-> --- a/drivers/xen/tmem.c
-> +++ b/drivers/xen/tmem.c
-> @@ -242,7 +242,7 @@ static int tmem_cleancache_init_shared_fs(char *uuid, size_t pagesize)
->  	return xen_tmem_new_pool(shared_uuid, TMEM_POOL_SHARED, pagesize);
->  }
-> 
-> -static struct cleancache_ops tmem_cleancache_ops = {
-> +static const struct cleancache_ops tmem_cleancache_ops = {
->  	.put_page = tmem_cleancache_put_page,
->  	.get_page = tmem_cleancache_get_page,
->  	.invalidate_page = tmem_cleancache_flush_page,
-> diff --git a/mm/cleancache.c b/mm/cleancache.c
-> index 8fc5081..c6356d6 100644
-> --- a/mm/cleancache.c
-> +++ b/mm/cleancache.c
-> @@ -22,7 +22,7 @@
->   * cleancache_ops is set by cleancache_register_ops to contain the pointers
->   * to the cleancache "backend" implementation functions.
->   */
-> -static struct cleancache_ops *cleancache_ops __read_mostly;
-> +static const struct cleancache_ops *cleancache_ops __read_mostly;
-> 
->  /*
->   * Counters available via /sys/kernel/debug/cleancache (if debugfs is
-> @@ -49,7 +49,7 @@ static void cleancache_register_ops_sb(struct super_block *sb, void *unused)
->  /*
->   * Register operations for cleancache. Returns 0 on success.
->   */
-> -int cleancache_register_ops(struct cleancache_ops *ops)
-> +int cleancache_register_ops(const struct cleancache_ops *ops)
->  {
->  	if (cmpxchg(&cleancache_ops, NULL, ops))
->  		return -EBUSY;
-> 
-> 
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xen.org
-> http://lists.xen.org/xen-devel
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/ath/ath9k/hif_usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/hif_usb.c b/drivers/net/wireless/ath/ath9k/hif_usb.c
+index 165dd20..51bd61b 100644
+--- a/drivers/net/wireless/ath/ath9k/hif_usb.c
++++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
+@@ -525,7 +525,7 @@ static void ath9k_hif_usb_rx_stream(struct hif_device_usb *hif_dev,
+ 				    struct sk_buff *skb)
+ {
+ 	struct sk_buff *nskb, *skb_pool[MAX_PKT_NUM_IN_TRANSFER];
+-	int index = 0, i = 0, len = skb->len;
++	int index = 0, i, len = skb->len;
+ 	int rx_remain_len, rx_pkt_len;
+ 	u16 pool_index = 0;
+ 	u8 *ptr;
+-- 
+2.6.3
+
