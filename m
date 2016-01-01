@@ -1,23 +1,53 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Wed, 13 Jan 2016 22:09:23 +0000
-Subject: Re: fsl/fman: Clarification for implementation details in dtsec_config()
-Message-Id: <20160113220923.GE5527@lunn.ch>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 18:25:02 +0000
+Subject: [PATCH 2/2] net-ath9k_htc: Replace a variable initialisation by an assignment in ath9k_htc_set_chann
+Message-Id: <5686C47E.1040906@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5696BFAD.9030905@users.sourceforge.net>
- <20160113213537.GD4399@mwanda>
-In-Reply-To: <20160113213537.GD4399@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5686C390.5060600@users.sourceforge.net>
+In-Reply-To: <5686C390.5060600@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Igal Liberman <igal.liberman@freescale.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: ath9k-devel@lists.ath9k.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ath9k-devel@qca.qualcomm.com, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Jan 14, 2016 at 12:35:37AM +0300, Dan Carpenter wrote:
-> I think you can remove the put_device() line.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 19:09:32 +0100
 
-Agreed.
+Replace an explicit initialisation for one local variable at the beginning
+by a conditional assignment.
 
-of_phy_find_device() only does a get_device() when it finds a matching
-device.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/ath/ath9k/htc_drv_main.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-	Andrew
+diff --git a/drivers/net/wireless/ath/ath9k/htc_drv_main.c b/drivers/net/wireless/ath/ath9k/htc_drv_main.c
+index a680a97..30bd59e 100644
+--- a/drivers/net/wireless/ath/ath9k/htc_drv_main.c
++++ b/drivers/net/wireless/ath/ath9k/htc_drv_main.c
+@@ -246,7 +246,7 @@ static int ath9k_htc_set_channel(struct ath9k_htc_priv *priv,
+ 	struct ieee80211_conf *conf = &common->hw->conf;
+ 	bool fastcc;
+ 	struct ieee80211_channel *channel = hw->conf.chandef.chan;
+-	struct ath9k_hw_cal_data *caldata = NULL;
++	struct ath9k_hw_cal_data *caldata;
+ 	enum htc_phymode mode;
+ 	__be16 htc_mode;
+ 	u8 cmd_rsp;
+@@ -274,10 +274,7 @@ static int ath9k_htc_set_channel(struct ath9k_htc_priv *priv,
+ 		priv->ah->curchan->channel,
+ 		channel->center_freq, conf_is_ht(conf), conf_is_ht40(conf),
+ 		fastcc);
+-
+-	if (!fastcc)
+-		caldata = &priv->caldata;
+-
++	caldata = fastcc ? NULL : &priv->caldata;
+ 	ret = ath9k_hw_reset(ah, hchan, caldata, fastcc);
+ 	if (ret) {
+ 		ath_err(common,
+-- 
+2.6.3
+
