@@ -1,32 +1,26 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 14 Jan 2016 09:12:41 +0000
-Subject: Re: [PATCH 2/2] soc: versatile: Drop a useless static qualifier
-Message-Id: <CACRpkdbswphyz_CBdFKJae-FsLTKHKqzBDQQAmZbWfdXp5ho4w@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 14:51:11 +0000
+Subject: net-i40e: Reconsider further usage of variable "i" in i40e_vc_get_vf_resources_msg()
+Message-Id: <5686925F.5020508@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1452492975-8402-1-git-send-email-christophe.jaillet@wanadoo.fr>
-	<1452492975-8402-2-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1452492975-8402-2-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56868E0B.5040602@users.sourceforge.net>
+In-Reply-To: <56868E0B.5040602@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, Shannon Nelson <shannon.nelson@intel.com>
+Cc: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 11, 2016 at 7:16 AM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+Hello,
 
-> There is no need to have the 'struct regmap *syscon_regmap' variable
-> static in the probe function.
-> It only wastes a few bytes of memory.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+I have taken another look at the implementation of the
+function "i40e_vc_get_vf_resources_msg". I find the use of the variable "i"
+strange there. It seems that the value from the increment operation in an
+if branch is not reused so far.
 
-Sorry a copy-paste error ... used to have it as a global.
+I would appreciate a further clarification.
+Can this variable be eventually deleted?
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-I think you should send this to arm@kernel.org for application
-as a fixup to the ARM SoC tree. Include my Review tag.
-
-Yours,
-Linus Walleij
+Regards,
+Markus
