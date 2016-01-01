@@ -1,25 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 05 Jan 2016 10:19:57 +0000
-Subject: Re: [patch] gpio: pxa: checking IS_ERR() instead of NULL
-Message-Id: <CACRpkdY3Gv-pCh=LJ32AQpGd4qnoUB_-3WHZh1JX=H6cbQ4WYg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 20:32:35 +0000
+Subject: [PATCH 3/3] net-iwlegacy: Another refactoring for il_eeprom_init()
+Message-Id: <5686E263.1020901@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160105095637.GE23619@mwanda>
-In-Reply-To: <20160105095637.GE23619@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5686E13F.2010309@users.sourceforge.net>
+In-Reply-To: <5686E13F.2010309@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Jan 5, 2016 at 10:56 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 21:16:01 +0100
 
-> irq_domain_add_legacy() returns NULL on error, it doesn't return error
-> pointers.
->
-> Fixes: 384ca3c6a28d ('gpio: pxa: change the interrupt management')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Rename a jump label according to the current Linux coding style convention.
 
-Patch applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/intel/iwlegacy/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/net/wireless/intel/iwlegacy/common.c b/drivers/net/wireless/intel/iwlegacy/common.c
+index ae45fd3..660ab2b 100644
+--- a/drivers/net/wireless/intel/iwlegacy/common.c
++++ b/drivers/net/wireless/intel/iwlegacy/common.c
+@@ -759,7 +759,7 @@ il_eeprom_init(struct il_priv *il)
+ 				 IL_EEPROM_ACCESS_TIMEOUT);
+ 		if (ret < 0) {
+ 			IL_ERR("Time out reading EEPROM[%d]\n", addr);
+-			goto done;
++			goto release_semaphore;
+ 		}
+ 		r = _il_rd(il, CSR_EEPROM_REG);
+ 		e[addr / 2] = cpu_to_le16(r >> 16);
+@@ -769,7 +769,7 @@ il_eeprom_init(struct il_priv *il)
+ 		 il_eeprom_query16(il, EEPROM_VERSION));
+ 
+ 	ret = 0;
+-done:
++release_semaphore:
+ 	il->ops->eeprom_release_semaphore(il);
+ 
+ 	if (ret) {
+-- 
+2.6.3
+
