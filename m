@@ -1,111 +1,36 @@
-From: Steffen Maier <maier@linux.vnet.ibm.com>
-Date: Thu, 14 Jan 2016 14:56:05 +0000
-Subject: Re: [PATCH] SCSI-zfcp: Delete unnecessary checks before the function call "mempool_destroy"
-Message-Id: <5697B705.9020700@linux.vnet.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 01 Jan 2016 08:49:12 +0000
+Subject: [PATCH] dlm: constify kset_uevent_ops structures
+Message-Id: <1451638152-30707-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5649D8DE.1030809@users.sourceforge.net>
- <20151204175731.GA9185@bblock-ThinkPad-W530>
-In-Reply-To: <20151204175731.GA9185@bblock-ThinkPad-W530>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Benjamin Block <bblock@linux.vnet.ibm.com>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christine Caulfield <ccaulfie@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, David Teigland <teigland@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org
 
-Markus, thanks, I queued it for next time I send features upstream.
-Don't hold your breath, fixes will go first.
+This kset_uevent_ops structure is never modified, so declare it as const.
+Other structures of this type are already const.
 
-Benjamin, thanks for the review.
+Done with the help of Coccinelle.
 
-Will add an informational comment that this depends on 4e3ca3e033d1=20
-("mm/mempool: allow NULL `pool' pointer in mempool_destroy()").
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On 12/04/2015 06:57 PM, Benjamin Block wrote:
-> Hej Markus,
->
-> On 14:23 Mon 16 Nov     , SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Mon, 16 Nov 2015 14:19:03 +0100
->>
->> The mempool_destroy() function tests whether its argument is NULL
->> and then returns immediately. Thus the test around the calls is not need=
-ed.
->>
->> This issue was detected by using the Coccinelle software.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>   drivers/s390/scsi/zfcp_aux.c | 21 +++++++--------------
->>   1 file changed, 7 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/s390/scsi/zfcp_aux.c b/drivers/s390/scsi/zfcp_aux.c
->> index c00ac46..abc9c93 100644
->> --- a/drivers/s390/scsi/zfcp_aux.c
->> +++ b/drivers/s390/scsi/zfcp_aux.c
->> @@ -248,20 +248,13 @@ static int zfcp_allocate_low_mem_buffers(struct zf=
-cp_adapter *adapter)
->>
->>   static void zfcp_free_low_mem_buffers(struct zfcp_adapter *adapter)
->>   {
->> -	if (adapter->pool.erp_req)
->> -		mempool_destroy(adapter->pool.erp_req);
->> -	if (adapter->pool.scsi_req)
->> -		mempool_destroy(adapter->pool.scsi_req);
->> -	if (adapter->pool.scsi_abort)
->> -		mempool_destroy(adapter->pool.scsi_abort);
->> -	if (adapter->pool.qtcb_pool)
->> -		mempool_destroy(adapter->pool.qtcb_pool);
->> -	if (adapter->pool.status_read_req)
->> -		mempool_destroy(adapter->pool.status_read_req);
->> -	if (adapter->pool.sr_data)
->> -		mempool_destroy(adapter->pool.sr_data);
->> -	if (adapter->pool.gid_pn)
->> -		mempool_destroy(adapter->pool.gid_pn);
->> +	mempool_destroy(adapter->pool.erp_req);
->> +	mempool_destroy(adapter->pool.scsi_req);
->> +	mempool_destroy(adapter->pool.scsi_abort);
->> +	mempool_destroy(adapter->pool.qtcb_pool);
->> +	mempool_destroy(adapter->pool.status_read_req);
->> +	mempool_destroy(adapter->pool.sr_data);
->> +	mempool_destroy(adapter->pool.gid_pn);
->>   }
->>
->>   /**
->> --
->> 2.6.2
->
-> Looks good to me, will have to wait though till Steffen is back around.
->
-> Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
->
->
->                                                      Beste Gr=FC=DFe / Be=
-st regards,
->                                                        - Benjamin Block
->
+---
+ fs/dlm/lockspace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Mit freundlichen Gr=FC=DFen / Kind regards
-Steffen Maier
+diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
+index f3e7278..2ea1b77 100644
+--- a/fs/dlm/lockspace.c
++++ b/fs/dlm/lockspace.c
+@@ -233,7 +233,7 @@ static int dlm_uevent(struct kset *kset, struct kobject *kobj,
+ 	return 0;
+ }
+ 
+-static struct kset_uevent_ops dlm_uevent_ops = {
++static const struct kset_uevent_ops dlm_uevent_ops = {
+ 	.uevent = dlm_uevent,
+ };
+ 
 
-Linux on z Systems Development
-
-IBM Deutschland Research & Development GmbH
-Vorsitzende des Aufsichtsrats: Martina Koederitz
-Geschaeftsfuehrung: Dirk Wittkopp
-Sitz der Gesellschaft: Boeblingen
-Registergericht: Amtsgericht Stuttgart, HRB 243294
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
