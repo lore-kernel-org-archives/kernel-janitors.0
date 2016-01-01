@@ -1,74 +1,48 @@
-From: Selvin Xavier <selvin.xavier@avagotech.com>
-Date: Mon, 11 Jan 2016 13:23:07 +0000
-Subject: Re: [PATCH v2 1/6] InfiniBand-ocrdma: One jump label less in ocrdma_alloc_ucontext_pd()
-Message-Id: <CA+sbYW31rf614mozAmNHbTH=a06WWZ7D4fkBD+jaa=zCyqj2XA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 12:23:19 +0000
+Subject: [PATCH 2/3] net-gianfar: Delete unnecessary variable initialisations in gfar_ethflow_to_filer_table(
+Message-Id: <56866FB7.7080008@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201512270304.PMbiMdOa%fengguang.wu@intel.com>
-	<567F068C.9060507@users.sourceforge.net>
-In-Reply-To: <567F068C.9060507@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56866E7F.8080609@users.sourceforge.net>
+In-Reply-To: <56866E7F.8080609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This patch series looks good to me
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 12:56:23 +0100
 
-Thanks,
+Omit explicit initialisation at the beginning for four local variables
+which are redefined before their first use.
 
-Acked-by: Selvin Xavier <selvin.xavier@avagotech.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/freescale/gianfar_ethtool.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+index be4941e..508be89 100644
+--- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
++++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+@@ -768,12 +768,12 @@ static void ethflow_to_filer_rules (struct gfar_private *priv, u64 ethflow)
+ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 				       u64 class)
+ {
+-	unsigned int last_rule_idx = priv->cur_filer_idx;
++	unsigned int last_rule_idx;
+ 	unsigned int cmp_rqfpr;
+ 	unsigned int *local_rqfpr;
+ 	unsigned int *local_rqfcr;
+-	int i = 0x0, k = 0x0;
+-	int j = MAX_FILER_IDX, l = 0x0;
++	int i, k, l;
++	int j = MAX_FILER_IDX;
+ 	int ret = 1;
+ 
+ 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
+-- 
+2.6.3
 
-
-On Sun, Dec 27, 2015 at 2:58 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 26 Dec 2015 22:18:38 +0100
->
-> This issue was detected by using the Coccinelle software.
->
-> * Let us return directly if a call of the _ocrdma_alloc_pd()
->   function failed.
->
-> * Reduce the scope for the local variable "status" to one case
->   of an if statement.
->
-> * Delete the jump label "err" then.
->
-> * Return zero as a constant at the end.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> index 583001b..7f10cc47 100644
-> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-> @@ -483,19 +483,16 @@ static int ocrdma_alloc_ucontext_pd(struct ocrdma_dev *dev,
->                                     struct ocrdma_ucontext *uctx,
->                                     struct ib_udata *udata)
->  {
-> -       int status = 0;
-> -
->         uctx->cntxt_pd = _ocrdma_alloc_pd(dev, uctx, udata);
->         if (IS_ERR(uctx->cntxt_pd)) {
-> -               status = PTR_ERR(uctx->cntxt_pd);
-> +               int status = PTR_ERR(uctx->cntxt_pd);
->                 uctx->cntxt_pd = NULL;
-> -               goto err;
-> +               return status;
->         }
->
->         uctx->cntxt_pd->uctx = uctx;
->         uctx->cntxt_pd->ibpd.device = &dev->ibdev;
-> -err:
-> -       return status;
-> +       return 0;
->  }
->
->  static int ocrdma_dealloc_ucontext_pd(struct ocrdma_ucontext *uctx)
-> --
-> 2.6.3
->
