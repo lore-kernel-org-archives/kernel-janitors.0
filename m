@@ -1,27 +1,53 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Tue, 05 Jan 2016 07:54:46 +0000
-Subject: Re: 390/qeth: Refactoring for qeth_core_set_online()
-Message-Id: <20160105075446.GA3432@osiris>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jan 2016 20:30:10 +0000
+Subject: [PATCH 1/3] net-iwlegacy: Refactoring for il_eeprom_init()
+Message-Id: <5686E1D2.60107@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <5688F13A.70601@users.sourceforge.net>
- <5688F1D0.3090502@users.sourceforge.net>
- <20160104113046.GE4179@osiris>
- <568A6F4A.1000206@users.sourceforge.net>
- <20160104140447.GG4179@osiris>
- <568A7D61.90703@users.sourceforge.net>
-In-Reply-To: <568A7D61.90703@users.sourceforge.net>
+ <5686E13F.2010309@users.sourceforge.net>
+In-Reply-To: <5686E13F.2010309@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-s390@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Jan 04, 2016 at 03:10:41PM +0100, SF Markus Elfring wrote:
-> > In this case the function body is very small
-> > so I don't see any benefit at all.
-> 
-> Do you care for fine-tuning of variable placement occasionally?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Jan 2016 20:54:25 +0100
 
-No.
+Return directly if a memory allocation failed at the beginning.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/intel/iwlegacy/common.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlegacy/common.c b/drivers/net/wireless/intel/iwlegacy/common.c
+index eb5cb60..c3afaf7 100644
+--- a/drivers/net/wireless/intel/iwlegacy/common.c
++++ b/drivers/net/wireless/intel/iwlegacy/common.c
+@@ -723,10 +723,9 @@ il_eeprom_init(struct il_priv *il)
+ 	sz = il->cfg->eeprom_size;
+ 	D_EEPROM("NVM size = %d\n", sz);
+ 	il->eeprom = kzalloc(sz, GFP_KERNEL);
+-	if (!il->eeprom) {
+-		ret = -ENOMEM;
+-		goto alloc_err;
+-	}
++	if (!il->eeprom)
++		return -ENOMEM;
++
+ 	e = (__le16 *) il->eeprom;
+ 
+ 	il->ops->apm_init(il);
+@@ -778,7 +777,6 @@ err:
+ 		il_eeprom_free(il);
+ 	/* Reset chip to save power until we load uCode during "up". */
+ 	il_apm_stop(il);
+-alloc_err:
+ 	return ret;
+ }
+ EXPORT_SYMBOL(il_eeprom_init);
+-- 
+2.6.3
 
