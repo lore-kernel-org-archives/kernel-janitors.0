@@ -1,28 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Jan 2016 10:57:58 +0000
-Subject: [patch] staging: media: lirc: fix MODULE_PARM_DESC typo
-Message-Id: <20160108105758.GC32195@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jan 2016 17:57:08 +0000
+Subject: [PATCH 3/5] xen-netback: Replace a variable initialisation by an assignment in read_xenbus_vif_flags
+Message-Id: <56880F74.5040304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56880DD4.2090806@users.sourceforge.net>
+In-Reply-To: <56880DD4.2090806@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jarod Wilson <jarod@wilsonet.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Aya Mahfouz <mahfouz.saif.elyazal@gmail.com>, Tapasweni Pathak <tapaswenipathak@gmail.com>, Haneen Mohammed <hamohammed.sa@gmail.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: xen-devel@lists.xenproject.org, netdev@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Wei Liu <wei.liu2@citrix.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-It "tx_mask" was intended instead of "tx_maxk".
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Jan 2016 18:01:57 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Replace an explicit initialisation for one local variable at the beginning
+by an assignment.
 
-diff --git a/drivers/staging/media/lirc/lirc_parallel.c b/drivers/staging/media/lirc/lirc_parallel.c
-index d009bcb..19c101b 100644
---- a/drivers/staging/media/lirc/lirc_parallel.c
-+++ b/drivers/staging/media/lirc/lirc_parallel.c
-@@ -730,7 +730,7 @@ module_param(irq, int, S_IRUGO);
- MODULE_PARM_DESC(irq, "Interrupt (7 or 5)");
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/xen-netback/xenbus.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
+index d4947e1..aff963f 100644
+--- a/drivers/net/xen-netback/xenbus.c
++++ b/drivers/net/xen-netback/xenbus.c
+@@ -946,7 +946,7 @@ err: /* Regular return falls through with err = 0 */
  
- module_param(tx_mask, int, S_IRUGO);
--MODULE_PARM_DESC(tx_maxk, "Transmitter mask (default: 0x01)");
-+MODULE_PARM_DESC(tx_mask, "Transmitter mask (default: 0x01)");
+ static int read_xenbus_vif_flags(struct backend_info *be)
+ {
+-	struct xenvif *vif = be->vif;
++	struct xenvif *vif;
+ 	struct xenbus_device *dev = be->dev;
+ 	unsigned int rx_copy;
+ 	int err, val;
+@@ -968,13 +968,14 @@ static int read_xenbus_vif_flags(struct backend_info *be)
+ 	if (xenbus_scanf(XBT_NIL, dev->otherend,
+ 			 "feature-rx-notify", "%d", &val) < 0)
+ 		val = 0;
++	vif = be->vif;
+ 	if (!val) {
+ 		/* - Reduce drain timeout to poll more frequently for
+ 		 *   Rx requests.
+ 		 * - Disable Rx stall detection.
+ 		 */
+-		be->vif->drain_timeout = msecs_to_jiffies(30);
+-		be->vif->stall_timeout = 0;
++		vif->drain_timeout = msecs_to_jiffies(30);
++		vif->stall_timeout = 0;
+ 	}
  
- module_param(debug, bool, S_IRUGO | S_IWUSR);
- MODULE_PARM_DESC(debug, "Enable debugging messages");
+ 	if (xenbus_scanf(XBT_NIL, dev->otherend, "feature-sg",
+-- 
+2.6.3
+
