@@ -1,42 +1,51 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 11 Jan 2016 06:16:14 +0000
-Subject: [PATCH 1/2] soc: versatile: Add missing kfree in error path
-Message-Id: <1452492975-8402-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jan 2016 18:27:33 +0000
+Subject: [PATCH v2 1/3] rsi: Delete unnecessary variable initialisations in rsi_send_mgmt_pkt()
+Message-Id: <56881695.4030308@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201601030008.47CwzW9c%fengguang.wu@intel.com>
+In-Reply-To: <201601030008.47CwzW9c%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
+Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-If 'of_property_read_string' fails, then 'soc_dev_attr' should be freed,
-otherwise, there is a memory leak.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Jan 2016 19:22:36 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Omit explicit initialisation at the beginning for four local variables
+which are redefined before their first use.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-This patch has already been
-   Acked-by: Linus Walleij <linus.walleij@linaro.org>
-on 17/07/2015
----
- drivers/soc/versatile/soc-realview.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_pkt.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/versatile/soc-realview.c b/drivers/soc/versatile/soc-realview.c
-index c337764..39ffe18 100644
---- a/drivers/soc/versatile/soc-realview.c
-+++ b/drivers/soc/versatile/soc-realview.c
-@@ -113,8 +113,10 @@ static int realview_soc_probe(struct platform_device *pdev)
+diff --git a/drivers/net/wireless/rsi/rsi_91x_pkt.c b/drivers/net/wireless/rsi/rsi_91x_pkt.c
+index 702593f..571eaba 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_pkt.c
++++ b/drivers/net/wireless/rsi/rsi_91x_pkt.c
+@@ -123,15 +123,15 @@ int rsi_send_mgmt_pkt(struct rsi_common *common,
+ 		      struct sk_buff *skb)
+ {
+ 	struct rsi_hw *adapter = common->priv;
+-	struct ieee80211_hdr *wh = NULL;
++	struct ieee80211_hdr *wh;
+ 	struct ieee80211_tx_info *info;
+-	struct ieee80211_bss_conf *bss = NULL;
++	struct ieee80211_bss_conf *bss;
+ 	struct ieee80211_hw *hw = adapter->hw;
+ 	struct ieee80211_conf *conf = &hw->conf;
+ 	struct skb_info *tx_params;
+ 	int status = -E2BIG;
+-	__le16 *msg = NULL;
+-	u8 extnd_size = 0;
++	__le16 *msg;
++	u8 extnd_size;
+ 	u8 vap_id = 0;
  
- 	ret = of_property_read_string(np, "compatible",
- 				      &soc_dev_attr->soc_id);
--	if (ret)
-+	if (ret) {
-+		kfree(soc_dev_attr);
- 		return -EINVAL;
-+	}
- 
- 	soc_dev_attr->machine = "RealView";
- 	soc_dev_attr->family = "Versatile";
+ 	info = IEEE80211_SKB_CB(skb);
 -- 
-2.5.0
+2.6.3
 
