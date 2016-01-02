@@ -1,35 +1,42 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Fri, 01 Jan 2016 23:14:46 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jan 2016 08:09:23 +0000
 Subject: Re: [PATCH] net-libertas: Better exception handling in if_spi_host_to_card_worker()
-Message-Id: <56870866.7020000@cogentembedded.com>
+Message-Id: <568785B3.5000905@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <5686F0B2.5000000@users.sourceforge.net>
-In-Reply-To: <5686F0B2.5000000@users.sourceforge.net>
+ <56870866.7020000@cogentembedded.com>
+In-Reply-To: <56870866.7020000@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello
+>> Move the jump label directly before the desired log statement
+>> so that the variable "err" will not be checked once more
+>> after it was determined that a function call failed.
+>> Use the identifier "report_failure" instead of the label "err".
+> 
+>    Why?
 
-On 1/2/2016 12:33 AM, SF Markus Elfring wrote:
+I suggest to reconsider the places with which such a jump label
+is connected.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Jan 2016 22:27:20 +0100
->
-> This issue was detected by using the Coccinelle software.
->
-> Move the jump label directly before the desired log statement
-> so that the variable "err" will not be checked once more
-> after it was determined that a function call failed.
-> Use the identifier "report_failure" instead of the label "err".
 
-    Why? The code was smart enough and you're making it uglier that it needs 
-to be.
+> The code was smart enough
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Which action should really be performed after a failure was detected
+and handled a bit already?
 
-MBR, Sergei
+* Another condition check
 
+* Just additional error logging
+
+
+> and you're making it uglier that it needs to be.
+
+I assume that a software development taste can evolve, can't it?
+
+Regards,
+Markus
