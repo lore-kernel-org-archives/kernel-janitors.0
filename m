@@ -1,45 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 26 Jan 2016 01:12:41 +0000
-Subject: re: net/macb: better manage tx errors
-Message-Id: <20160126011241.GA27064@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jan 2016 20:55:35 +0000
+Subject: [PATCH 2/3] NFC-mei_phy: Refactoring for mei_nfc_if_version()
+Message-Id: <56883947.7050505@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56883849.2080304@users.sourceforge.net>
+In-Reply-To: <56883849.2080304@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-wireless@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Nicolas Ferre,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Jan 2016 21:33:04 +0100
 
-The patch e86cd53afc59: "net/macb: better manage tx errors" from Oct
-31, 2012, leads to the following static checker warning:
+Rename a jump label according to the current Linux coding style convention.
 
-	drivers/net/ethernet/cadence/macb.c:517 macb_halt_tx()
-	error: scheduling with locks held: 'spin_lock:lock'
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/nfc/mei_phy.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-drivers/net/ethernet/cadence/macb.c
-   503  static int macb_halt_tx(struct macb *bp)
-   504  {
-   505          unsigned long   halt_time, timeout;
-   506          u32             status;
-   507  
-   508          macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(THALT));
-   509  
-   510          timeout = jiffies + usecs_to_jiffies(MACB_HALT_TIMEOUT);
-   511          do {
-   512                  halt_time = jiffies;
-   513                  status = macb_readl(bp, TSR);
-   514                  if (!(status & MACB_BIT(TGO)))
-   515                          return 0;
-   516  
-   517                  usleep_range(10, 250);
-                        ^^^^^^^^^^^^^^^^^^^^^
-This function is called with a spinlock held so we are not allowed to
-sleep.
+diff --git a/drivers/nfc/mei_phy.c b/drivers/nfc/mei_phy.c
+index 8e3a69f..3c74028 100644
+--- a/drivers/nfc/mei_phy.c
++++ b/drivers/nfc/mei_phy.c
+@@ -136,7 +136,7 @@ static int mei_nfc_if_version(struct nfc_mei_phy *phy)
+ 	if (bytes_recv < 0 || bytes_recv < sizeof(struct mei_nfc_reply)) {
+ 		pr_err("Could not read IF version\n");
+ 		r = -EIO;
+-		goto err;
++		goto free_reply;
+ 	}
+ 
+ 	version = (struct mei_nfc_if_version *)reply->data;
+@@ -144,8 +144,7 @@ static int mei_nfc_if_version(struct nfc_mei_phy *phy)
+ 	phy->fw_ivn = version->fw_ivn;
+ 	phy->vendor_id = version->vendor_id;
+ 	phy->radio_type = version->radio_type;
+-
+-err:
++free_reply:
+ 	kfree(reply);
+ 	return r;
+ }
+-- 
+2.6.3
 
-   518          } while (time_before(halt_time, timeout));
-   519  
-   520          return -ETIMEDOUT;
-   521  }
-
-regards,
-dan carpenter
