@@ -1,72 +1,30 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Mon, 04 Jan 2016 22:49:07 +0000
-Subject: Re: [PATCH] lockd: constify nlmsvc_binding structure
-Message-Id: <20160104224907.GG30315@fieldses.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jan 2016 20:51:21 +0000
+Subject: [PATCH 0/3] NFC-mei_phy: Fine-tuning for two function implementations
+Message-Id: <56883849.2080304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450905913-657-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450905913-657-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-wireless@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Dec 23, 2015 at 10:25:13PM +0100, Julia Lawall wrote:
-> The nlmsvc_binding structure is never modified, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> 
-> This assumes that whoever takes advantage of the EXPORT_SYMBOL will also
-> not want to write in the fields.  Is that reasonable?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Jan 2016 21:47:30 +0100
 
-Looks right to me, thanks, applying.--b.
+A few update suggestions were taken into account
+from static source code analysis.
 
-> 
->  fs/lockd/svc.c             |    2 +-
->  fs/nfsd/lockd.c            |    2 +-
->  include/linux/lockd/bind.h |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
-> index 44d18ad..0c1a699 100644
-> --- a/fs/lockd/svc.c
-> +++ b/fs/lockd/svc.c
-> @@ -48,7 +48,7 @@
->  
->  static struct svc_program	nlmsvc_program;
->  
-> -struct nlmsvc_binding *		nlmsvc_ops;
-> +const struct nlmsvc_binding	*nlmsvc_ops;
->  EXPORT_SYMBOL_GPL(nlmsvc_ops);
->  
->  static DEFINE_MUTEX(nlmsvc_mutex);
-> diff --git a/include/linux/lockd/bind.h b/include/linux/lockd/bind.h
-> index 4d24d64..140edab6 100644
-> --- a/include/linux/lockd/bind.h
-> +++ b/include/linux/lockd/bind.h
-> @@ -29,7 +29,7 @@ struct nlmsvc_binding {
->  	void			(*fclose)(struct file *);
->  };
->  
-> -extern struct nlmsvc_binding *	nlmsvc_ops;
-> +extern const struct nlmsvc_binding *nlmsvc_ops;
->  
->  /*
->   * Similar to nfs_client_initdata, but without the NFS-specific
-> diff --git a/fs/nfsd/lockd.c b/fs/nfsd/lockd.c
-> index 77e7a5c..1a03bc3 100644
-> --- a/fs/nfsd/lockd.c
-> +++ b/fs/nfsd/lockd.c
-> @@ -58,7 +58,7 @@ nlm_fclose(struct file *filp)
->  	fput(filp);
->  }
->  
-> -static struct nlmsvc_binding	nfsd_nlm_ops = {
-> +static const struct nlmsvc_binding nfsd_nlm_ops = {
->  	.fopen		= nlm_fopen,		/* open file for locking */
->  	.fclose		= nlm_fclose,		/* close file */
->  };
+Markus Elfring (3):
+  Refactoring for mei_nfc_connect()
+  Refactoring for mei_nfc_if_version()
+  Delete an unnecessary variable initialisation in mei_nfc_if_version()
+
+ drivers/nfc/mei_phy.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+-- 
+2.6.3
+
