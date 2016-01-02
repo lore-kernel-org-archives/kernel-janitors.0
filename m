@@ -1,26 +1,41 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Tue, 05 Jan 2016 00:13:07 +0000
-Subject: Re: [PATCH 0/3] mtd-rfd_ftl: Fine-tuning for two function implementations
-Message-Id: <20160105001307.GE109450@google.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jan 2016 18:00:24 +0000
+Subject: [PATCH 5/5] xen-netback: Delete an unnecessary variable initialisation in xen_register_watchers()
+Message-Id: <56881038.7010800@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <56858E3A.7000706@users.sourceforge.net>
-In-Reply-To: <56858E3A.7000706@users.sourceforge.net>
+ <56880DD4.2090806@users.sourceforge.net>
+In-Reply-To: <56880DD4.2090806@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: xen-devel@lists.xenproject.org, netdev@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Wei Liu <wei.liu2@citrix.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Dec 31, 2015 at 09:21:14PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 31 Dec 2015 21:15:15 +0100
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Jan 2016 18:28:26 +0100
 
-Are you fixing anything? Have you tested your work?
+Omit explicit initialisation at the beginning for one local variable
+that is redefined before its first use.
 
-At the moment, I can't find any value in your patches.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/xen-netback/xenbus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Brian
+diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
+index e8dfc3d..55f0735 100644
+--- a/drivers/net/xen-netback/xenbus.c
++++ b/drivers/net/xen-netback/xenbus.c
+@@ -685,7 +685,7 @@ static void xen_net_rate_changed(struct xenbus_watch *watch,
+ 
+ static int xen_register_watchers(struct xenbus_device *dev, struct xenvif *vif)
+ {
+-	int err = 0;
++	int err;
+ 	char *node;
+ 	unsigned maxlen;
+ 
+-- 
+2.6.3
+
