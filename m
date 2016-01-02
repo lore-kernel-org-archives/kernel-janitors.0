@@ -1,70 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 06 Jan 2016 09:20:13 +0000
-Subject: Re: [PATCH] ALSA: emux: constify nrpn_conv_table structures
-Message-Id: <s5hk2nnrrn6.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jan 2016 09:08:46 +0000
+Subject: Re: net-libertas: Better exception handling in if_spi_host_to_card_worker()
+Message-Id: <5687939E.7010701@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451926247-29119-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1451926247-29119-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5686F0B2.5000000@users.sourceforge.net>
+ <56870866.7020000@cogentembedded.com>
+ <568785B3.5000905@users.sourceforge.net>
+ <alpine.DEB.2.02.1601020914100.2063@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1601020914100.2063@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, 04 Jan 2016 17:50:47 +0100,
-Julia Lawall wrote:
+>> I assume that a software development taste can evolve, can't it?
 > 
-> The nrpn_conv_table structures are never modified, so declare them as
-> const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> So far, you have gotten several down votes for this kind of change,
 
-Thanks, applied.
+I am curious when more contributors will share corresponding opinions.
 
 
-Takashi
+> and no enthusiasm.
 
-> 
-> ---
->  sound/synth/emux/emux_nrpn.c |    9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/sound/synth/emux/emux_nrpn.c b/sound/synth/emux/emux_nrpn.c
-> index 00fc005..9729a15 100644
-> --- a/sound/synth/emux/emux_nrpn.c
-> +++ b/sound/synth/emux/emux_nrpn.c
-> @@ -48,7 +48,8 @@ struct nrpn_conv_table {
->   * convert NRPN/control values
->   */
->  
-> -static int send_converted_effect(struct nrpn_conv_table *table, int num_tables,
-> +static int send_converted_effect(const struct nrpn_conv_table *table,
-> +				 int num_tables,
->  				 struct snd_emux_port *port,
->  				 struct snd_midi_channel *chan,
->  				 int type, int val, int mode)
-> @@ -179,7 +180,7 @@ static int fx_conv_Q(int val)
->  }
->  
->  
-> -static struct nrpn_conv_table awe_effects[] > +static const struct nrpn_conv_table awe_effects[] >  {
->  	{ 0, EMUX_FX_LFO1_DELAY,	fx_lfo1_delay},
->  	{ 1, EMUX_FX_LFO1_FREQ,	fx_lfo1_freq},
-> @@ -266,7 +267,7 @@ static int gs_vib_delay(int val)
->  	return -(val - 64) * gs_sense[FX_VIBDELAY] / 50;
->  }
->  
-> -static struct nrpn_conv_table gs_effects[] > +static const struct nrpn_conv_table gs_effects[] >  {
->  	{32, EMUX_FX_CUTOFF,	gs_cutoff},
->  	{33, EMUX_FX_FILTERQ,	gs_filterQ},
-> @@ -350,7 +351,7 @@ static int xg_release(int val)
->  	return -(val - 64) * xg_sense[FX_RELEASE] / 64;
->  }
->  
-> -static struct nrpn_conv_table xg_effects[] > +static const struct nrpn_conv_table xg_effects[] >  {
->  	{71, EMUX_FX_CUTOFF,	xg_cutoff},
->  	{74, EMUX_FX_FILTERQ,	xg_filterQ},
-> 
-> 
+How many software designers and developers can become enthusiastic
+about better exception handling to some degree?
+
+
+> The code that is performance critical, you should probably not touch, ever.
+
+I imagine that technical evolution will result in further considerations
+so that "unchangeable" components can be adjusted once more.
+
+
+> The people who wrote it knew what was important and what was not.
+
+I might come along at some places where the affected knowledge will also evolve.
+
+Regards,
+Markus
