@@ -1,37 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 30 Jan 2016 14:34:55 +0000
-Subject: [patch] USB: cxacru: fix an bounds check warning
-Message-Id: <20160130143455.GA3462@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jan 2016 17:54:40 +0000
+Subject: [PATCH 1/5] xen-netback: Delete an unnecessary assignment in connect_rings()
+Message-Id: <56880EE0.6080405@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56880DD4.2090806@users.sourceforge.net>
+In-Reply-To: <56880DD4.2090806@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Aaron Raimist <aaronraimist@riseup.net>, accessrunner-general@lists.sourceforge.net, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: xen-devel@lists.xenproject.org, netdev@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Wei Liu <wei.liu2@citrix.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This is a privileged operation so it doesn't matter much.  We use "tmp"
-as an offset into an array.  If it were invalid we could read out of
-bounds and trigger an oops if the memory is not mapped.  Plus it makes
-static checkers complain.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Jan 2016 17:32:40 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove the assignment for a local variable because its value is not
+changed compared to the one from a previous function call.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-This changes the behavior a little bit because in the original we could
-give slightly invalid "len" values and the function would still work...
+ drivers/net/xen-netback/xenbus.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Please review it extra carefully to make sure it doesn't break
-userspace.
-
-diff --git a/drivers/usb/atm/cxacru.c b/drivers/usb/atm/cxacru.c
-index 1173f9c..0a866e9 100644
---- a/drivers/usb/atm/cxacru.c
-+++ b/drivers/usb/atm/cxacru.c
-@@ -476,6 +476,8 @@ static ssize_t cxacru_sysfs_store_adsl_config(struct device *dev,
- 			return -EINVAL;
- 		if (index < 0 || index > 0x7f)
- 			return -EINVAL;
-+		if (tmp < 0 || tmp > len - pos)
-+			return -EINVAL;
- 		pos += tmp;
+diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
+index 56ebd82..7f2895d 100644
+--- a/drivers/net/xen-netback/xenbus.c
++++ b/drivers/net/xen-netback/xenbus.c
+@@ -941,7 +941,6 @@ static int connect_rings(struct backend_info *be, struct xenvif_queue *queue)
+ 		goto err;
+ 	}
  
- 		/* skip trailing newline */
+-	err = 0;
+ err: /* Regular return falls through with err = 0 */
+ 	kfree(xspath);
+ 	return err;
+-- 
+2.6.3
+
