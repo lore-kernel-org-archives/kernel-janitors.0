@@ -1,38 +1,105 @@
-From: Leon Romanovsky <leon@leon.nu>
-Date: Sun, 03 Jan 2016 05:38:10 +0000
+From: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
+Date: Sun, 03 Jan 2016 13:34:33 +0000
 Subject: Re: [RFC PATCH v0] Add tw5864 driver
-Message-Id: <20160103053810.GA18146@leon.nu>
+Message-Id: <CAM_ZknXVt=2VQtdMi6u=EgjEPSdru7Eupq9=Dc3WMNvrVMSXOQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1451785302-3173-1-git-send-email-andrey.utkin@corp.bluecherry.net>
-In-Reply-To: <1451785302-3173-1-git-send-email-andrey.utkin@corp.bluecherry.net>
+	<1451792869.4334.33.camel@perches.com>
+In-Reply-To: <1451792869.4334.33.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
+To: Joe Perches <joe@perches.com>
 Cc: Linux Media <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-mentors@selenic.com" <kernel-mentors@selenic.com>, devel@driverdev.osuosl.org, kernel-janitors <kernel-janitors@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrey Utkin <andrey.od.utkin@gmail.com>
 
-On Sun, Jan 03, 2016 at 03:41:42AM +0200, Andrey Utkin wrote:
-....
-> +/*
-> + *  TW5864 driver - Exp-Golomb code functions
-> + *
-> + *  Copyright (C) 2015 Bluecherry, LLC <maintainers@bluecherrydvr.com>
-> + *  Copyright (C) 2015 Andrey Utkin <andrey.utkin@corp.bluecherry.net>
+On Sun, Jan 3, 2016 at 5:47 AM, Joe Perches <joe@perches.com> wrote:
+> several of these have unnecessary parentheses
 
-I doubt that you have contract with your employer which permits you to
-claim copyright on the work/product.
-Signed-of-by != copyright.
+Thanks, fixed.
 
-----
-> + *
-> + *  This program is free software; you can redistribute it and/or modify
-> + *  it under the terms of the GNU General Public License as published by
-> + *  the Free Software Foundation; either version 2 of the License, or
-> + *  (at your option) any later version.
-> + *
-> + *  This program is distributed in the hope that it will be useful,
-> + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *  GNU General Public License for more details.
-> + */
-> +
+> Maybe use bool a bit more
+
+Thanks, fixed.
+
+> or maybe just use fls
+
+Thanks, fls() fit greatly, rewritten the function with compatibility testing.
+
+>> +static inline int bs_size_ue(unsigned int val)
+>> +{
+>> +     int i_size = 0;
+>> +     static const int i_size0_254[255] = {
+>
+> Same sort of thing
+
+Dropped this procedure because it is not used.
+Thanks.
+
+>> diff --git a/drivers/staging/media/tw5864/tw5864-config.c b/drivers/staging/media/tw5864/tw5864-config.c
+> []
+>> +u8 tw_indir_readb(struct tw5864_dev *dev, u16 addr)
+>> +{
+>> +     int timeout = 30000;
+>
+> misleading name, retries would be more proper,
+> or maybe use real timed loops.
+
+Thanks, renamed to "retries".
+
+> This seems a little repetitive.
+
+Thanks, reworked.
+
+> u16?
+
+Thanks, fixed.
+
+> odd indentation
+
+Indeed. For some mysterious reason, vim + syntastic insists on this way. Fixed.
+
+>> +#ifdef DEBUG
+>> +     dev_dbg(&input->root->pci->dev,
+>> +             "input %d, frame md stats: min %u, max %u, avg %u, cells above threshold: %u\n",
+>> +             input->input_number, min, max, sum / md_cells,
+>> +             cnt_above_thresh);
+>> +#endif
+>
+> unnecessary #ifdef
+
+Not quite. This debug printout works with variables which are declared
+in another "#ifdef DEBUG" clause. And it turns out that dev_dbg is
+compiled not only if DEBUG is declared, so when I remove this ifdef, I
+get "undefined variable" errors. It seems it is compiled if this
+condition is met:
+
+#if (defined DEBUG) || (defined CONFIG_DYNAMIC_DEBUG)
+
+so I can wrap my stats variables into this statement instead. But such
+change is not equivalent - I guess CONFIG_DYNAMIC_DEBUG is common to
+be enabled, so debug stats will be always calculated, even when module
+is not under debug. Except if I use DEFINE_DYNAMIC_DEBUG_METADATA etc.
+in my code. Please let me know if this can be sorted out in cleaner
+way.
+
+
+
+On Sun, Jan 3, 2016 at 7:38 AM, Leon Romanovsky <leon@leon.nu> wrote:
+> On Sun, Jan 03, 2016 at 03:41:42AM +0200, Andrey Utkin wrote:
+> ....
+>> +/*
+>> + *  TW5864 driver - Exp-Golomb code functions
+>> + *
+>> + *  Copyright (C) 2015 Bluecherry, LLC <maintainers@bluecherrydvr.com>
+>> + *  Copyright (C) 2015 Andrey Utkin <andrey.utkin@corp.bluecherry.net>
+>
+> I doubt that you have contract with your employer which permits you to
+> claim copyright on the work/product.
+
+Thank you for commenting.
+I have previously asked my employer to review copyright statment, and
+he told this is fine.
+Now I have requrested him again with reference to your comment.
+
+-- 
+Bluecherry developer.
