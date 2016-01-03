@@ -1,33 +1,44 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 06 Jan 2016 18:47:17 +0000
-Subject: Re: [PATCH 0/2] InfiniBand-iSER: Refactoring for two function implementations
-Message-Id: <1452106037.26125.29.camel@haakon3.risingtidesystems.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Jan 2016 10:02:56 +0000
+Subject: [PATCH 2/2] 390/qeth: Refactoring for qeth_core_set_online()
+Message-Id: <5688F1D0.3090502@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-	 <567FDB4E.2040000@users.sourceforge.net>
-In-Reply-To: <567FDB4E.2040000-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+ <5688F13A.70601@users.sourceforge.net>
+In-Reply-To: <5688F13A.70601@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Roi Dayan <roid-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sagi Grimberg <sagig-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, 2015-12-27 at 13:36 +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 27 Dec 2015 13:12:10 +0100
-> Subject: [PATCH 0/2] InfiniBand-iSER: Refactoring for two function implementations
-> 
-> I suggest to return directly instead of using the jump label "err"
-> in two functions (which are working without clean-up there).
-> 
-> Markus Elfring (2):
->   One jump label less in iser_reg_sig_mr()
->   One jump label less in isert_reg_sig_mr()
-> 
->  drivers/infiniband/ulp/iser/iser_memory.c | 5 ++---
->  drivers/infiniband/ulp/isert/ib_isert.c   | 7 +++----
->  2 files changed, 5 insertions(+), 7 deletions(-)
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 3 Jan 2016 10:50:11 +0100
 
-Doug, are you going to pick these two minor patches up, or shall I..?
+Reduce the scope for the local variable "def_discipline" to one branch
+of an if statement.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/s390/net/qeth_core_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index 54fde2e..3261977 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -5638,9 +5638,10 @@ static int qeth_core_set_online(struct ccwgroup_device *gdev)
+ {
+ 	struct qeth_card *card = dev_get_drvdata(&gdev->dev);
+ 	int rc;
+-	int def_discipline;
+ 
+ 	if (!card->discipline) {
++		int def_discipline;
++
+ 		if (card->info.type = QETH_CARD_TYPE_IQD)
+ 			def_discipline = QETH_DISCIPLINE_LAYER3;
+ 		else
+-- 
+2.6.3
 
