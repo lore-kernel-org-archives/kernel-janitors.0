@@ -1,40 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Jan 2016 15:57:49 +0000
-Subject: [PATCH] net-huawei_cdc_ncm: Delete an unnecessary variable initialisation in huawei_cdc_ncm_bind()
-Message-Id: <5686A1FD.1060207@users.sourceforge.net>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Sun, 03 Jan 2016 05:05:03 +0000
+Subject: Re: [PATCH] Input: bma150 - constify bma150_cfg structure
+Message-Id: <20160103050503.GE23680@dtor-ws>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+References: <1451473879-10443-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451473879-10443-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Jan 2016 16:54:13 +0100
+On Wed, Dec 30, 2015 at 12:11:19PM +0100, Julia Lawall wrote:
+> The bma150_cfg structure is never modified, so declare it as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Omit explicit initialisation at the beginning for one local variable
-that is redefined before its first use.
+Applied, thank you.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/usb/huawei_cdc_ncm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> ---
+>  drivers/input/misc/bma150.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/misc/bma150.c b/drivers/input/misc/bma150.c
+> index 1d0e61d..b0d4453 100644
+> --- a/drivers/input/misc/bma150.c
+> +++ b/drivers/input/misc/bma150.c
+> @@ -147,7 +147,7 @@ struct bma150_data {
+>   * are stated and verified by Bosch Sensortec where they are configured
+>   * to provide a generic sensitivity performance.
+>   */
+> -static struct bma150_cfg default_cfg = {
+> +static const struct bma150_cfg default_cfg = {
+>  	.any_motion_int = 1,
+>  	.hg_int = 1,
+>  	.lg_int = 1,
+> 
 
-diff --git a/drivers/net/usb/huawei_cdc_ncm.c b/drivers/net/usb/huawei_cdc_ncm.c
-index 2680a65..53caeb3 100644
---- a/drivers/net/usb/huawei_cdc_ncm.c
-+++ b/drivers/net/usb/huawei_cdc_ncm.c
-@@ -71,7 +71,7 @@ static int huawei_cdc_ncm_bind(struct usbnet *usbnet_dev,
- {
- 	struct cdc_ncm_ctx *ctx;
- 	struct usb_driver *subdriver = ERR_PTR(-ENODEV);
--	int ret = -ENODEV;
-+	int ret;
- 	struct huawei_cdc_ncm_state *drvstate = (void *)&usbnet_dev->data;
- 	int drvflags = 0;
- 
 -- 
-2.6.3
-
+Dmitry
