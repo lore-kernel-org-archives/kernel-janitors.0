@@ -1,62 +1,44 @@
-From: Karol Herbst <desurium@karolherbst.de>
-Date: Wed, 13 Jan 2016 12:33:57 +0000
-Subject: Re: [patch] drm/nouveau/pci: reversed condition in nvkm_pcie_set_link()
-Message-Id: <634207568.38837.1452688437432.JavaMail.open-xchange@www.ud-mail.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Jan 2016 20:10:45 +0000
+Subject: Re: staging-slicoss: Replace variable initialisations by assignments in slic_if_init()
+Message-Id: <56898045.9010907@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160113122152.GC19993@mwanda> <2041787627.38787.1452688210630.JavaMail.open-xchange@www.ud-mail.de>
-In-Reply-To: <2041787627.38787.1452688210630.JavaMail.open-xchange@www.ud-mail.de>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56894D2D.1010801@users.sourceforge.net>
+ <alpine.DEB.2.02.1601031741080.2074@localhost6.localdomain6>
+ <56895EE1.7080808@users.sourceforge.net> <20160103175816.GA21611@kroah.com>
+ <56896591.2030208@users.sourceforge.net> <20160103182640.GA30692@kroah.com>
+ <56896D6A.6020309@users.sourceforge.net> <20160103194522.GA31644@kroah.com>
+In-Reply-To: <20160103194522.GA31644@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Lior Dotan <liodot@gmail.com>, Christopher Harrer <charrer@alacritech.com>
 
-> Karol Herbst <nouveau@karolherbst.de> hat am 13. Januar 2016 um 13:30
-> geschrieben:
+>> Can such fine-tuning result in positive effects for the run-time behaviour?
 > 
-> Hi Dan,
-> 
-> yeah I also catched that. I assume something went wrong in the review process,
-> because I am sure I didn't added that "pci ||" check myself ;) but who knows,
-> maybe I was tired working with ben on that, cause it was like 4am while doing
+> If you can not benchmark and show the proof, don't even start to claim
+> such a thing.
 
-maybe I chose the wrong words here. Seems like I still need to improve my
-english here and there ;)
+Which measurement results would you accept for further discussion?
 
-I meant that I was literally tired, cause it was 4am, not that I was tired
-because of ben. Just clarify that before somebody thinks I am a mean person.
 
-> the last polishing steps.
+>> My suggestions can result in measurable differences.
 > 
-> nvm, I already send a patch to the nouveau ML:
-> http://lists.freedesktop.org/archives/nouveau/2016-January/023772.html
-> 
-> I just tried to poke ben the last day like several times, but he didn't seem
-> to
-> be there yesterday
-> 
-> > Dan Carpenter <dan.carpenter@oracle.com> hat am 13. Januar 2016 um 13:21
-> > geschrieben:
-> > 
-> > The condition is reversed so this function is a no-op.
-> > 
-> > Fixes: bcc19d9bf5cd ('drm/nouveau/pci: implement generic code for pcie speed
-> > change')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pci/pcie.c
-> > b/drivers/gpu/drm/nouveau/nvkm/subdev/pci/pcie.c
-> > index b32954f..d71e5db 100644
-> > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/pci/pcie.c
-> > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pci/pcie.c
-> > @@ -119,7 +119,7 @@ nvkm_pcie_set_link(struct nvkm_pci *pci, enum
-> > nvkm_pcie_speed speed, u8 width)
-> > struct pci_bus *pbus;
-> > int ret;
-> > 
-> > - if (pci || !pci_is_pcie(pci->pdev))
-> > + if (!pci || !pci_is_pcie(pci->pdev))
-> > return 0;
-> > pbus = pci->pdev->bus;
-> 
-> >
+> Show the proof please.
+
+Which information presentations would finally qualify for "the proof"
+you request now?
+
+Which test systems will be representative for you?
+
+
+> That's the only way I will ever accept anything else from you like this.
+
+Are there any update suggestions remaining in the waiting queue
+which have a higher chance of acceptance because their value might be
+a bit more obvious?
+
+Regards,
+Markus
