@@ -1,38 +1,41 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 07 Jan 2016 17:55:32 +0000
-Subject: Re: [patch] Input: omap-keypad: set tasklet data earlier
-Message-Id: <20160107175532.GA12332@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Jan 2016 10:02:00 +0000
+Subject: [PATCH 1/2] 390/qeth: Delete an unnecessary variable initialisation in qeth_core_set_online()
+Message-Id: <5688F198.4040109@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160107093648.GC27186@mwanda>
-In-Reply-To: <20160107093648.GC27186@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5688F13A.70601@users.sourceforge.net>
+In-Reply-To: <5688F13A.70601@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Komal Shah <komal_shah802003@yahoo.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Jan 07, 2016 at 12:36:48PM +0300, Dan Carpenter wrote:
-> It feels like we should set the tasklet data before enabling it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 3 Jan 2016 10:48:05 +0100
 
-Applied, thank you.
+Omit explicit initialisation at the beginning for one local variable
+that is redefined before its first use.
 
-> 
-> diff --git a/drivers/input/keyboard/omap-keypad.c b/drivers/input/keyboard/omap-keypad.c
-> index 7502e46..75ad666 100644
-> --- a/drivers/input/keyboard/omap-keypad.c
-> +++ b/drivers/input/keyboard/omap-keypad.c
-> @@ -292,8 +292,8 @@ static int omap_kp_probe(struct platform_device *pdev)
->  	setup_timer(&omap_kp->timer, omap_kp_timer, (unsigned long)omap_kp);
->  
->  	/* get the irq and init timer*/
-> -	tasklet_enable(&kp_tasklet);
->  	kp_tasklet.data = (unsigned long) omap_kp;
-> +	tasklet_enable(&kp_tasklet);
->  
->  	ret = device_create_file(&pdev->dev, &dev_attr_enable);
->  	if (ret < 0)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/s390/net/qeth_core_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index 7871537..54fde2e 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -5637,7 +5637,7 @@ static void qeth_core_remove_device(struct ccwgroup_device *gdev)
+ static int qeth_core_set_online(struct ccwgroup_device *gdev)
+ {
+ 	struct qeth_card *card = dev_get_drvdata(&gdev->dev);
+-	int rc = 0;
++	int rc;
+ 	int def_discipline;
+ 
+ 	if (!card->discipline) {
 -- 
-Dmitry
+2.6.3
+
