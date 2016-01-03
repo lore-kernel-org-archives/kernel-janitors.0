@@ -1,43 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Dec 2015 19:13:18 +0000
-Subject: [PATCH v2 4/4] staging: lustre: Fix a jump label position in osc_get_info()
-Message-Id: <56784F4E.3070808@users.sourceforge.net>
+Date: Sun, 03 Jan 2016 16:32:45 +0000
+Subject: [PATCH] staging-slicoss: Replace variable initialisations by assignments in slic_if_init()
+Message-Id: <56894D2D.1010801@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
-In-Reply-To: <56784D83.7080108@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
+To: devel@driverdev.osuosl.org, Christopher Harrer <charrer@alacritech.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lior Dotan <liodot@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 21 Dec 2015 19:30:42 +0100
+Date: Sun, 3 Jan 2016 17:25:59 +0100
 
-The script "checkpatch.pl" pointed out that labels should not be indented.
-Thus delete a horizontal tab before the jump label "out"
-in the function "osc_get_info".
+Replace explicit initialisation for two local variables at the beginning
+by assignments.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/lustre/lustre/osc/osc_request.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/slicoss/slicoss.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/osc/osc_request.c b/drivers/staging/lustre/lustre/osc/osc_request.c
-index d6c1447..85ab180 100644
---- a/drivers/staging/lustre/lustre/osc/osc_request.c
-+++ b/drivers/staging/lustre/lustre/osc/osc_request.c
-@@ -2727,7 +2727,7 @@ static int osc_get_info(const struct lu_env *env, struct obd_export *exp,
- 		}
+diff --git a/drivers/staging/slicoss/slicoss.c b/drivers/staging/slicoss/slicoss.c
+index b23a2d1..8fdcac8 100644
+--- a/drivers/staging/slicoss/slicoss.c
++++ b/drivers/staging/slicoss/slicoss.c
+@@ -2301,9 +2301,9 @@ static int slic_adapter_allocresources(struct adapter *adapter,
+  */
+ static int slic_if_init(struct adapter *adapter, unsigned long *flags)
+ {
+-	struct sliccard *card = adapter->card;
++	struct sliccard *card;
+ 	struct net_device *dev = adapter->netdev;
+-	__iomem struct slic_regs *slic_regs = adapter->slic_regs;
++	__iomem struct slic_regs *slic_regs;
+ 	struct slic_shmem *pshmem;
+ 	int rc;
  
- 		*((u64 *)val) = *reply;
--	out:
-+out:
- 		ptlrpc_req_finished(req);
- 		return rc;
- 	} else if (KEY_IS(KEY_FIEMAP)) {
+@@ -2348,6 +2348,7 @@ static int slic_if_init(struct adapter *adapter, unsigned long *flags)
+ 		adapter->queues_initialized = 1;
+ 	}
+ 
++	slic_regs = adapter->slic_regs;
+ 	slic_reg32_write(&slic_regs->slic_icr, ICR_INT_OFF, FLUSH);
+ 	mdelay(1);
+ 
+@@ -2374,6 +2375,7 @@ static int slic_if_init(struct adapter *adapter, unsigned long *flags)
+ 	}
+ 
+ 	adapter->state = ADAPT_UP;
++	card = adapter->card;
+ 	if (!card->loadtimerset) {
+ 		setup_timer(&card->loadtimer, &slic_timer_load_check,
+ 			    (ulong)card);
 -- 
 2.6.3
 
