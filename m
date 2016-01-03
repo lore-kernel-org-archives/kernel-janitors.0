@@ -1,44 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 Jan 2016 08:37:03 +0000
-Subject: [PATCH] staging: lustre: obdecho: constify lu_device_operations and cl_device_operations structures
-Message-Id: <1451637423-23153-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Jan 2016 08:43:25 +0000
+Subject: [PATCH 0/8] rtc-ab-b5ze-s3: Fine-tuning for some function implementations
+Message-Id: <5688DF2D.6090204@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-These lu_device_operations and cl_device_operations structures are never
-modified, so declare them as const.  Other structures of these types are
-already const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 3 Jan 2016 09:37:34 +0100
 
-Done with the help of Coccinelle.
+Several update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (8):
+  Better exception handling in abb5zes3_probe()
+  Delete an unnecessary variable in abb5zes3_rtc_set_alarm()
+  Delete an unnecessary variable initialisation in _abb5zes3_rtc_set_timer()
+  Replace a variable initialisation by an assignment in _abb5zes3_rtc_set_alarm()
+  Replace a variable initialisation by an assignment in _abb5zes3_rtc_read_alarm()
+  Delete an unnecessary variable in _abb5zes3_rtc_read_timer()
+  Delete an unnecessary variable in _abb5zes3_rtc_interrupt()
+  Delete an unnecessary variable in _abb5zes3_rtc_set_timer()
 
----
- drivers/staging/lustre/lustre/obdecho/echo_client.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-ab-b5ze-s3.c | 59 ++++++++++++++++++++------------------------
+ 1 file changed, 27 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdecho/echo_client.c b/drivers/staging/lustre/lustre/obdecho/echo_client.c
-index 7b53f7d..f32f1e7 100644
---- a/drivers/staging/lustre/lustre/obdecho/echo_client.c
-+++ b/drivers/staging/lustre/lustre/obdecho/echo_client.c
-@@ -582,13 +582,13 @@ static struct lu_object *echo_object_alloc(const struct lu_env *env,
- 	return obj;
- }
- 
--static struct lu_device_operations echo_device_lu_ops = {
-+static const struct lu_device_operations echo_device_lu_ops = {
- 	.ldo_object_alloc   = echo_object_alloc,
- };
- 
- /** @} echo_lu_dev_ops */
- 
--static struct cl_device_operations echo_device_cl_ops = {
-+static const struct cl_device_operations echo_device_cl_ops = {
- };
- 
- /** \defgroup echo_init Setup and teardown
+-- 
+2.6.3
 
