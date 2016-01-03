@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 03 Jan 2016 12:48:16 +0000
+Date: Sun, 03 Jan 2016 12:48:51 +0000
 Subject: Re: [PATCH 7/8] rtc-ab-b5ze-s3: Delete an unnecessary variable in _abb5zes3_rtc_interrupt()
-Message-Id: <alpine.DEB.2.02.1601031348040.2053@localhost6.localdomain6>
+Message-Id: <alpine.DEB.2.02.1601031348350.2053@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net> <5688DF2D.6090204@users.sourceforge.net> <5688E229.4010400@users.sourceforge.net>
 In-Reply-To: <5688E229.4010400@users.sourceforge.net>
@@ -20,10 +20,11 @@ On Sun, 3 Jan 2016, SF Markus Elfring wrote:
 > of the function "rtc_update_irq" instead of an extra initialisation
 > for one local variable at the beginning.
 
-Why is it better?
+Also, I don't see anything related to time in this patch.
 
 julia
- 
+
+> 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
 >  drivers/rtc/rtc-ab-b5ze-s3.c | 7 ++-----
