@@ -1,58 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 29 Jan 2016 15:04:50 +0000
-Subject: re: add driver for enc28j60 ethernet chip
-Message-Id: <20160129150449.GA20319@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Jan 2016 08:55:14 +0000
+Subject: [PATCH 6/8] rtc-ab-b5ze-s3: Delete an unnecessary variable in _abb5zes3_rtc_read_timer()
+Message-Id: <5688E1F2.1080705@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5688DF2D.6090204@users.sourceforge.net>
+In-Reply-To: <5688DF2D.6090204@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Claudio Lanconelli,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 3 Jan 2016 08:46:50 +0100
 
-The patch 3ec9c11da033: "add driver for enc28j60 ethernet chip" from
-Jan 14, 2008, leads to the following static checker warning:
+Pass the address of the data structure element "time" directly in a call
+of the function "rtc_time_to_tm" instead of an extra initialisation
+for one local variable at the beginning.
 
-	drivers/net/ethernet/microchip/enc28j60.c:107 spi_read_buf()
-	error: __memcpy() '&rx_buf[1]' too small (1517 vs 1518)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/rtc/rtc-ab-b5ze-s3.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-drivers/net/ethernet/microchip/enc28j60.c
-    87  static int
-    88  spi_read_buf(struct enc28j60_net *priv, int len, u8 *data)
-    89  {
-    90          u8 *rx_buf = priv->spi_transfer_buf + 4;
-    91          u8 *tx_buf = priv->spi_transfer_buf;
-    92          struct spi_transfer t = {
-    93                  .tx_buf = tx_buf,
-    94                  .rx_buf = rx_buf,
-    95                  .len = SPI_OPLEN + len,
-    96          };
-    97          struct spi_message msg;
-    98          int ret;
-    99  
-   100          tx_buf[0] = ENC28J60_READ_BUF_MEM;
-   101          tx_buf[1] = tx_buf[2] = tx_buf[3] = 0;  /* don't care */
-   102  
-   103          spi_message_init(&msg);
-   104          spi_message_add_tail(&t, &msg);
-   105          ret = spi_sync(priv->spi, &msg);
-   106          if (ret = 0) {
-   107                  memcpy(data, &rx_buf[SPI_OPLEN], len);
+diff --git a/drivers/rtc/rtc-ab-b5ze-s3.c b/drivers/rtc/rtc-ab-b5ze-s3.c
+index 02e3443..e3a015a 100644
+--- a/drivers/rtc/rtc-ab-b5ze-s3.c
++++ b/drivers/rtc/rtc-ab-b5ze-s3.c
+@@ -326,7 +326,7 @@ static int _abb5zes3_rtc_read_timer(struct device *dev,
+ 				    struct rtc_wkalrm *alarm)
+ {
+ 	struct abb5zes3_rtc_data *data = dev_get_drvdata(dev);
+-	struct rtc_time rtc_tm, *alarm_tm = &alarm->time;
++	struct rtc_time rtc_tm;
+ 	u8 regs[ABB5ZES3_TIMA_SEC_LEN + 1];
+ 	unsigned long rtc_secs;
+ 	unsigned int reg;
+@@ -362,7 +362,7 @@ static int _abb5zes3_rtc_read_timer(struct device *dev,
+ 		goto err;
+ 
+ 	/* ... and convert back. */
+-	rtc_time_to_tm(rtc_secs + timer_secs, alarm_tm);
++	rtc_time_to_tm(rtc_secs + timer_secs, &alarm->time);
+ 
+ 	ret = regmap_read(data->regmap, ABB5ZES3_REG_CTRL2, &reg);
+ 	if (ret) {
+-- 
+2.6.3
 
-The problem here is that len is sizeof(data) and sizeof(rx_buf), but we
-are copying from the SPI_OPLEN (1) byte offset so we're copying beyond
-the end of the array.
-
-It's not clear what the correct thing to do is.
-
-   108                  ret = msg.status;
-   109          }
-   110          if (ret && netif_msg_drv(priv))
-   111                  printk(KERN_DEBUG DRV_NAME ": %s() failed: ret = %d\n",
-   112                          __func__, ret);
-   113  
-   114          return ret;
-   115  }
-
-regards,
-dan carpenter
