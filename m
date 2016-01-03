@@ -1,30 +1,29 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Mon, 11 Jan 2016 19:25:30 +0000
-Subject: Re: [PATCH] rtc: rtc-ds2404: constify ds2404_chip_ops structures
-Message-Id: <20160111192530.GD3367@piout.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 03 Jan 2016 10:00:26 +0000
+Subject: [PATCH 0/2] 390/qeth: Fine-tuning for qeth_core_set_online()
+Message-Id: <5688F13A.70601@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451509174-6343-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1451509174-6343-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, kernel-janitors@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 30/12/2015 at 21:59:34 +0100, Julia Lawall wrote :
-> The ds2404_chip_ops structure is never modified, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/rtc/rtc-ds2404.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-Applied, thanks.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 3 Jan 2016 10:56:45 +0100
+
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (2):
+  Delete an unnecessary variable initialisation
+  Refactoring
+
+ drivers/s390/net/qeth_core_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.6.3
+
