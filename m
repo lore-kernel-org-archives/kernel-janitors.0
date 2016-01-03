@@ -1,34 +1,17 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Jan 2016 10:59:36 +0000
-Subject: [patch] usb: gadget: zero: fix MODULE_PARM_DESC typo
-Message-Id: <20160108105936.GE32195@mwanda>
+From: "Jeff Skoll" <s_w9gc9x@uni-kassel.de>
+Date: Sun, 03 Jan 2016 11:28:45 +0000
+Subject: Charity Donation
+Message-Id: <auto-000000771511@mailadmin.uni-kassel.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Opasiak <k.opasiak@samsung.com>, Li Jun <jun.li@freescale.com>, Roger Quadros <rogerq@ti.com>, Arnd Bergmann <arnd@arndb.de>, Igor Kotrasinski <i.kotrasinsk@samsung.com>, Peter Chen <peter.chen@freescale.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-The "ss_" prefixes were missing.  It was supposed to be "ss_bulk_qlen"
-instead of "bulk_qlen" and "ss_iso_qlen" instead of "iso_qlen".
+Hi,
+My name is Jeffrey Skoll, a philanthropist and the founder of one of the largest private foundations in the world. I believe strongly in ‘giving while living.’ I had one idea that never changed in my mind — that you should use your wealth to help people and I have decided to secretly give USD2.498 Million to a randomly selected individual. On receipt of this email, you should count yourself as the individual. Kindly get back to me at your earliest convenience, so I know your email address is valid.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Visit the web page to know more about me: http://www.theglobeandmail.com/news/national/meet-the-canadian-billionaire-whos-giving-it-all-away/article4209888/ or you can read an article of me on Wikipedia.
 
-diff --git a/drivers/usb/gadget/legacy/zero.c b/drivers/usb/gadget/legacy/zero.c
-index d02e2ce..ee3f491 100644
---- a/drivers/usb/gadget/legacy/zero.c
-+++ b/drivers/usb/gadget/legacy/zero.c
-@@ -259,11 +259,11 @@ MODULE_PARM_DESC(qlen, "depth of loopback queue");
- 
- module_param_named(ss_bulk_qlen, gzero_options.ss_bulk_qlen, uint,
- 		S_IRUGO|S_IWUSR);
--MODULE_PARM_DESC(bulk_qlen, "depth of sourcesink queue for bulk transfer");
-+MODULE_PARM_DESC(ss_bulk_qlen, "depth of sourcesink queue for bulk transfer");
- 
- module_param_named(ss_iso_qlen, gzero_options.ss_iso_qlen, uint,
- 		S_IRUGO|S_IWUSR);
--MODULE_PARM_DESC(iso_qlen, "depth of sourcesink queue for iso transfer");
-+MODULE_PARM_DESC(ss_iso_qlen, "depth of sourcesink queue for iso transfer");
- 
- static int zero_bind(struct usb_composite_dev *cdev)
- {
+Regards,
+Jeffrey Skoll.
