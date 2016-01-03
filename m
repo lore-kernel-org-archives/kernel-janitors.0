@@ -1,45 +1,31 @@
-From: Francois Romieu <romieu@fr.zoreil.com>
-Date: Fri, 01 Jan 2016 14:45:15 +0000
-Subject: Re: [PATCH 1/3] net-gianfar: Less function calls in gfar_ethflow_to_filer_table() after error detect
-Message-Id: <20160101144515.GA2273@electric-eye.fr.zoreil.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date: Sun, 03 Jan 2016 00:31:40 +0000
+Subject: Re: [PATCH 2/2] blackfin-cpufreq: Mark cpu_set_cclk() as static
+Message-Id: <2715978.vEuzRO1thj@vostro.rjw.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <56866E7F.8080609@users.sourceforge.net>
- <56866F68.6070904@users.sourceforge.net>
- <alpine.DEB.2.02.1601011334200.2054@localhost6.localdomain6>
- <56867607.4090907@users.sourceforge.net>
- <alpine.DEB.2.02.1601011405000.2054@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1601011405000.2054@localhost6.localdomain6>
+References: <5674598B.6020000@users.sourceforge.net> <56786FF6.4060900@users.sourceforge.net> <20151222053543.GB12364@ubuntu>
+In-Reply-To: <20151222053543.GB12364@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Julia Lawall <julia.lawall@lip6.fr> :
-> On Fri, 1 Jan 2016, SF Markus Elfring wrote:
-[...]
-> > > Normally, one returns -ENOMEM for this case, but it looks like this 
-> > > function is returning 0 on failure.
+On Tuesday, December 22, 2015 11:05:43 AM Viresh Kumar wrote:
+> On 21-12-15, 22:32, SF Markus Elfring wrote:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Mon, 21 Dec 2015 22:12:26 +0100
 > > 
-> > Should a symbol like "false" be used instead of such a special number?
+> > The cpu_set_cclk() function was only used in a single source file so far.
+> > Indicate this setting also by the corresponding linkage specifier.
+> > 
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 > 
-> Maybe it's better than 0 and 1...
+> Well, I never Acked this patch as such and you shouldn't have
+> mentioned it by yourself. But it looks fine otherwise and so
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Your suggestion about -ENOMEM is consistent with the callchain. Nothing
-else is needed.
+Series applied, thanks!
 
-Btw:
-1. kfree does not care about NULL parameter, especially in this hardly
-   timing sensitive path.
-2. kmalloc_array for small kernel controlled arrays of integers (see
-   drivers/net/ethernet/freescale/gianfar.h), seriously ?
-
-   I'd suggest the janitor to introduce a dedicated struct to embed both
-   gfar_private.ftp_rqf{p, c}r then use a single, plain kmalloc in
-   gfar_ethflow_to_filer_table.
-
-Happy tasteful 2016 :o)
-
--- 
-Ueimor
