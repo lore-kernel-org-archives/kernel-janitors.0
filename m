@@ -1,54 +1,35 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Date: Mon, 25 Jan 2016 17:01:36 +0000
-Subject: Re: [PATCH 1/2] [media] m88rs6000t: Better exception handling in five functions
-Message-Id: <20160125150136.449f2593@recife.lan>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 03 Jan 2016 12:19:52 +0000
+Subject: [PATCH] media: bt8xx: constify or51211_config structure
+Message-Id: <1451823592-31761-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5680FDB3.7060305@users.sourceforge.net>
-	<alpine.DEB.2.10.1512281019050.2702@hadrien>
-	<56810F56.4080306@users.sourceforge.net>
-	<alpine.DEB.2.10.1512281134590.2702@hadrien>
-	<568148FD.7080209@users.sourceforge.net>
-	<5681497E.7030702@users.sourceforge.net>
-In-Reply-To: <5681497E.7030702@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Em Mon, 28 Dec 2015 15:38:54 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> escreveu:
+The or51211_config structure is never modified, so declare it as const.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 28 Dec 2015 15:10:30 +0100
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Move the jump label directly before the desired log statement
-> so that the variable "ret" will not be checked once more
-> after a function call.
-> Use the identifier "report_failure" instead of "err".
-> 
-> Suggested-by: Julia Lawall <julia.lawall@lip6.fr>
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/media/tuners/m88rs6000t.c | 154 +++++++++++++++++++-------------------
->  1 file changed, 78 insertions(+), 76 deletions(-)
-> 
-> diff --git a/drivers/media/tuners/m88rs6000t.c b/drivers/media/tuners/m88rs6000t.c
-> index 504bfbc..7e59a9f 100644
-> --- a/drivers/media/tuners/m88rs6000t.c
-> +++ b/drivers/media/tuners/m88rs6000t.c
-> @@ -44,7 +44,7 @@ static int m88rs6000t_set_demod_mclk(struct dvb_frontend *fe)
->  	/* select demod main mclk */
->  	ret = regmap_read(dev->regmap, 0x15, &utmp);
->  	if (ret)
-> -		goto err;
-> +		goto report_failure;
+Done with the help of Coccinelle.
 
-Why to be so verbose? Calling it as "err" is enough, and it means less
-code to type if we need to add another goto.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Regards,
-Mauro
+---
+ drivers/media/pci/bt8xx/dvb-bt8xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/bt8xx/dvb-bt8xx.c b/drivers/media/pci/bt8xx/dvb-bt8xx.c
+index d407244..8aeb14c 100644
+--- a/drivers/media/pci/bt8xx/dvb-bt8xx.c
++++ b/drivers/media/pci/bt8xx/dvb-bt8xx.c
+@@ -458,7 +458,7 @@ static void or51211_sleep(struct dvb_frontend * fe)
+ 	bttv_write_gpio(bt->bttv_nr, 0x0001, 0x0000);
+ }
+ 
+-static struct or51211_config or51211_config = {
++static const struct or51211_config or51211_config = {
+ 	.demod_address = 0x15,
+ 	.request_firmware = or51211_request_firmware,
+ 	.setmode = or51211_setmode,
+
