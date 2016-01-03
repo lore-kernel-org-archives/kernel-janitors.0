@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jan 2016 11:21:32 +0000
+From: Arend van Spriel <aspriel@gmail.com>
+Date: Sun, 03 Jan 2016 09:36:44 +0000
 Subject: Re: net-libertas: Better exception handling in if_spi_host_to_card_worker()
-Message-Id: <5687B2BC.8090901@users.sourceforge.net>
+Message-Id: <5688EBAC.5000701@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <5686F0B2.5000000@users.sourceforge.net>
@@ -9,41 +9,55 @@ References: <566ABCD9.1060404@users.sourceforge.net>
  <568785B3.5000905@users.sourceforge.net>
  <alpine.DEB.2.02.1601020914100.2063@localhost6.localdomain6>
  <5687939E.7010701@users.sourceforge.net> <5687A2C7.3000704@gmail.com>
-In-Reply-To: <5687A2C7.3000704@gmail.com>
+ <5687B2BC.8090901@users.sourceforge.net>
+In-Reply-To: <5687B2BC.8090901@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <aspriel@gmail.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: Julia Lawall <julia.lawall@lip6.fr>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> I have never seen much evolution going on in this area.
-
-I can get an other impression from a specific document for example.
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/log/Documentation/CodingStyle
 
 
-> What the patch tries to do is avoid the extra 'if (err)'.
+On 02-01-16 12:21, SF Markus Elfring wrote:
+>> I have never seen much evolution going on in this area.
+> 
+> I can get an other impression from a specific document for example.
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/log/Documentation/CodingStyle
+> 
+> 
+>> What the patch tries to do is avoid the extra 'if (err)'.
+> 
+> Yes. - I propose to look at related consequences together with the usage
+> of a popular short jump label once more.
 
-Yes. - I propose to look at related consequences together with the usage
-of a popular short jump label once more.
+When I read a subject saying "Better exception handling" it sounds like
+a functional improvement. Your change does not change anything
+functionally and may or may not save a bit of execution time depending
+on how smart the compiler is. What you change does is confuse people
+reading the code. So please explain why your update improves exception
+handling here. I don't see it. The code is not making the driver more
+robust against failures in this function, which is what I think of
+reading "better exception handling".
 
+>> Setting coding style aside, the question is whether there is
+>> a good metric for the patch.
+> 
+> A software development challenge is to accept changes also around a topic
+> like "error handling". My update suggestion for the source file
+> "drivers/net/wireless/marvell/libertas/if_spi.c" should only improve
+> exception handling. (I came along other source files where more improvements
+> will eventually be possible.)
+> 
+> When will the run-time behaviour matter also for exceptional situations?
+> 
+> 
+>> Did you look at the resulting assembly code for different target architectures?
+> 
+> Not yet. - Which execution system variants would you recommend for
+> further comparisons?
 
-> Setting coding style aside, the question is whether there is
-> a good metric for the patch.
-
-A software development challenge is to accept changes also around a topic
-like "error handling". My update suggestion for the source file
-"drivers/net/wireless/marvell/libertas/if_spi.c" should only improve
-exception handling. (I came along other source files where more improvements
-will eventually be possible.)
-
-When will the run-time behaviour matter also for exceptional situations?
-
-
-> Did you look at the resulting assembly code for different target architectures?
-
-Not yet. - Which execution system variants would you recommend for
-further comparisons?
+Guess x86{,_64} and arm would be good candidates, ie. CISC vs. RISC.
 
 Regards,
-Markus
+Arend
