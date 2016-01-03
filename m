@@ -1,29 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Jan 2016 11:02:56 +0000
-Subject: [patch] [media] wl128x: fix typo in MODULE_PARM_DESC
-Message-Id: <20160108110256.GJ32195@mwanda>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date: Sun, 03 Jan 2016 00:58:18 +0000
+Subject: Re: [PATCH] PowerCap: constify powercap_zone_ops and powercap_zone_constraint_ops structures
+Message-Id: <2776851.fyhdtS7sMd@vostro.rjw.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1450907995-825-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450907995-825-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, Fabian Frederick <fabf@skynet.be>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The module_param() is "default_rds_buf" and the MODULE_PARM_DESC()
-should match.
+On Wednesday, December 23, 2015 10:59:55 PM Julia Lawall wrote:
+> The powercap_zone_ops and powercap_zone_constraint_ops structures are never
+> modified, so declare them as const.
+> 
+> Most of the actual changes adjust indentation to accomodate the const
+> keyword.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied, thanks!
 
-diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
-index ebc73b0..3f9e6df 100644
---- a/drivers/media/radio/wl128x/fmdrv_common.c
-+++ b/drivers/media/radio/wl128x/fmdrv_common.c
-@@ -68,7 +68,7 @@ MODULE_PARM_DESC(default_radio_region, "Region: 0=Europe/US, 1=Japan");
- /* RDS buffer blocks */
- static u32 default_rds_buf = 300;
- module_param(default_rds_buf, uint, 0444);
--MODULE_PARM_DESC(rds_buf, "RDS buffer entries");
-+MODULE_PARM_DESC(default_rds_buf, "RDS buffer entries");
- 
- /* Radio Nr */
- static u32 radio_nr = -1;
