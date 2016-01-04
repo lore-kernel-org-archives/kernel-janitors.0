@@ -1,38 +1,22 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 27 Jan 2016 14:15:07 +0000
-Subject: Re: [PATCH 0/2] mmc-host: Fine-tuning for one function
-Message-Id: <CAPDyKFrDuon00_ts-EgmtS1WJnC_sCBVwFyOeSZBB5FjpzFv7A@mail.gmail.com>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
+Date: Mon, 04 Jan 2016 09:37:38 +0000
+Subject: Re: [PATCH] iwlegacy: 4965-mac: constify il_sensitivity_ranges structure
+Message-Id: <20160104093737.GB2588@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5682F3AC.7050107@users.sourceforge.net>
-In-Reply-To: <5682F3AC.7050107@users.sourceforge.net>
+References: <1451474449-17912-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451474449-17912-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, Sascha Sommer <saschasommer@freenet.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 29 December 2015 at 21:57, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 29 Dec 2015 21:54:14 +0100
->
-> A few update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (2):
->   Delete unnecessary variable initialisations in sdricoh_init_mmc()
->   Less checks in sdricoh_init_mmc() after error detection
->
->  drivers/mmc/host/sdricoh_cs.c | 26 +++++++++++---------------
->  1 file changed, 11 insertions(+), 15 deletions(-)
->
-> --
-> 2.6.3
->
+On Wed, Dec 30, 2015 at 12:20:49PM +0100, Julia Lawall wrote:
+> The il_sensitivity_ranges is never modified, so declare it as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks, applied for next - with some minor change to the prefix of the
-commit message header.
+Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-Kind regards
-Uffe
