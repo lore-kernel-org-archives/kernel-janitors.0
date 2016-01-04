@@ -1,43 +1,23 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Thu, 28 Jan 2016 09:28:38 +0000
-Subject: Re: [patch] drm/vmwgfx: fix a NULL dereference
-Message-Id: <20160128092838.GT11240@phenom.ffwll.local>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 04 Jan 2016 14:10:41 +0000
+Subject: Re: 390/qeth: Refactoring for qeth_core_set_online()
+Message-Id: <568A7D61.90703@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160128090646.GA5824@mwanda>
-In-Reply-To: <20160128090646.GA5824@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5688F13A.70601@users.sourceforge.net>
+ <5688F1D0.3090502@users.sourceforge.net> <20160104113046.GE4179@osiris>
+ <568A6F4A.1000206@users.sourceforge.net> <20160104140447.GG4179@osiris>
+In-Reply-To: <20160104140447.GG4179@osiris>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, Daniel Stone <daniels@collabora.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-s390@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Jan 28, 2016 at 12:06:46PM +0300, Dan Carpenter wrote:
-> We dereference "eaction->event" inside the call to drm_send_event_locked()
-> so should hold off on setting it to NULL until afterward.
-> 
-> Fixes: fb740cf2492c ("drm: Create drm_send_event helpers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> In this case the function body is very small
+> so I don't see any benefit at all.
 
-Oh dear that's embarassing. Thanks for the patch, applied.
--Daniel
+Do you care for fine-tuning of variable placement occasionally?
 
-> 
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-> index e0edf14..37c305b 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-> @@ -880,8 +880,8 @@ static void vmw_event_fence_action_seq_passed(struct vmw_fence_action *action)
->  	}
->  
->  	list_del_init(&eaction->fpriv_head);
-> -	eaction->event = NULL;
->  	drm_send_event_locked(dev, eaction->event);
-> +	eaction->event = NULL;
->  	spin_unlock_irqrestore(&dev->event_lock, irq_flags);
->  }
->  
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Regards,
+Markus
