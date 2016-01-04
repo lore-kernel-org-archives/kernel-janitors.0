@@ -1,30 +1,70 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Jan 2016 12:18:07 +0000
-Subject: [PATCH 0/3] net-gianfar: Fine-tuning for gfar_ethflow_to_filer_table()
-Message-Id: <56866E7F.8080609@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 04 Jan 2016 16:36:01 +0000
+Subject: [PATCH] hwmon: ibmaem: constify aem_rw_sensor_template and aem_ro_sensor_template structures
+Message-Id: <1451925361-21182-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Jan 2016 13:15:34 +0100
+The aem_rw_sensor_template and aem_ro_sensor_template structures are never
+modified, so declare them as const.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Done with the help of Coccinelle.
 
-Markus Elfring (3):
-  Less function calls after error detection
-  Delete unnecessary variable initialisations
-  Extend an initialisation clause of a for loop
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- drivers/net/ethernet/freescale/gianfar_ethtool.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+---
+ drivers/hwmon/ibmaem.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
--- 
-2.6.3
+diff --git a/drivers/hwmon/ibmaem.c b/drivers/hwmon/ibmaem.c
+index 7a8a6fb..1f64378 100644
+--- a/drivers/hwmon/ibmaem.c
++++ b/drivers/hwmon/ibmaem.c
+@@ -920,8 +920,8 @@ static ssize_t aem_set_power_period(struct device *dev,
+ 
+ /* Discover sensors on an AEM device */
+ static int aem_register_sensors(struct aem_data *data,
+-				struct aem_ro_sensor_template *ro,
+-				struct aem_rw_sensor_template *rw)
++				const struct aem_ro_sensor_template *ro,
++				const struct aem_rw_sensor_template *rw)
+ {
+ 	struct device *dev = &data->pdev->dev;
+ 	struct sensor_device_attribute *sensors = data->sensors;
+@@ -1020,19 +1020,19 @@ static void aem_remove_sensors(struct aem_data *data)
+ /* Sensor probe functions */
+ 
+ /* Description of AEM1 sensors */
+-static struct aem_ro_sensor_template aem1_ro_sensors[] = {
++static const struct aem_ro_sensor_template aem1_ro_sensors[] = {
+ {"energy1_input",  aem_show_energy, 0},
+ {"power1_average", aem_show_power,  0},
+ {NULL,		   NULL,	    0},
+ };
+ 
+-static struct aem_rw_sensor_template aem1_rw_sensors[] = {
++static const struct aem_rw_sensor_template aem1_rw_sensors[] = {
+ {"power1_average_interval", aem_show_power_period, aem_set_power_period, 0},
+ {NULL,			    NULL,                  NULL,                 0},
+ };
+ 
+ /* Description of AEM2 sensors */
+-static struct aem_ro_sensor_template aem2_ro_sensors[] = {
++static const struct aem_ro_sensor_template aem2_ro_sensors[] = {
+ {"energy1_input",	  aem_show_energy,	0},
+ {"energy2_input",	  aem_show_energy,	1},
+ {"power1_average",	  aem_show_power,	0},
+@@ -1050,7 +1050,7 @@ static struct aem_ro_sensor_template aem2_ro_sensors[] = {
+ {NULL,                    NULL,                 0},
+ };
+ 
+-static struct aem_rw_sensor_template aem2_rw_sensors[] = {
++static const struct aem_rw_sensor_template aem2_rw_sensors[] = {
+ {"power1_average_interval", aem_show_power_period, aem_set_power_period, 0},
+ {"power2_average_interval", aem_show_power_period, aem_set_power_period, 1},
+ {NULL,			    NULL,                  NULL,                 0},
 
