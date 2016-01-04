@@ -1,41 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Jan 2016 08:52:30 +0000
-Subject: [PATCH 3/8] rtc-ab-b5ze-s3: Delete an unnecessary variable initialisation in _abb5zes3_rtc_set_timer
-Message-Id: <5688E14E.2070606@users.sourceforge.net>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Date: Mon, 04 Jan 2016 22:49:07 +0000
+Subject: Re: [PATCH] lockd: constify nlmsvc_binding structure
+Message-Id: <20160104224907.GG30315@fieldses.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5688DF2D.6090204@users.sourceforge.net>
-In-Reply-To: <5688DF2D.6090204@users.sourceforge.net>
+References: <1450905913-657-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450905913-657-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Jeff Layton <jlayton@poochiereds.net>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Jan 2016 07:42:18 +0100
+On Wed, Dec 23, 2015 at 10:25:13PM +0100, Julia Lawall wrote:
+> The nlmsvc_binding structure is never modified, so declare it as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+> 
+> This assumes that whoever takes advantage of the EXPORT_SYMBOL will also
+> not want to write in the fields.  Is that reasonable?
 
-Omit explicit initialisation at the beginning for one local variable
-that is redefined before its first use.
+Looks right to me, thanks, applying.--b.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/rtc/rtc-ab-b5ze-s3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-ab-b5ze-s3.c b/drivers/rtc/rtc-ab-b5ze-s3.c
-index ed9b873..33a7cf1 100644
---- a/drivers/rtc/rtc-ab-b5ze-s3.c
-+++ b/drivers/rtc/rtc-ab-b5ze-s3.c
-@@ -560,7 +560,7 @@ static int _abb5zes3_rtc_set_timer(struct device *dev, struct rtc_wkalrm *alarm,
- 	struct abb5zes3_rtc_data *data = dev_get_drvdata(dev);
- 	u8 regs[ABB5ZES3_TIMA_SEC_LEN];
- 	u8 mask = ABB5ZES3_REG_TIM_CLK_TAC0 | ABB5ZES3_REG_TIM_CLK_TAC1;
--	int ret = 0;
-+	int ret;
- 
- 	/* Program given number of seconds to Timer A registers */
- 	sec_to_timer_a(secs, &regs[0], &regs[1]);
--- 
-2.6.3
-
+> 
+>  fs/lockd/svc.c             |    2 +-
+>  fs/nfsd/lockd.c            |    2 +-
+>  include/linux/lockd/bind.h |    2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+> index 44d18ad..0c1a699 100644
+> --- a/fs/lockd/svc.c
+> +++ b/fs/lockd/svc.c
+> @@ -48,7 +48,7 @@
+>  
+>  static struct svc_program	nlmsvc_program;
+>  
+> -struct nlmsvc_binding *		nlmsvc_ops;
+> +const struct nlmsvc_binding	*nlmsvc_ops;
+>  EXPORT_SYMBOL_GPL(nlmsvc_ops);
+>  
+>  static DEFINE_MUTEX(nlmsvc_mutex);
+> diff --git a/include/linux/lockd/bind.h b/include/linux/lockd/bind.h
+> index 4d24d64..140edab6 100644
+> --- a/include/linux/lockd/bind.h
+> +++ b/include/linux/lockd/bind.h
+> @@ -29,7 +29,7 @@ struct nlmsvc_binding {
+>  	void			(*fclose)(struct file *);
+>  };
+>  
+> -extern struct nlmsvc_binding *	nlmsvc_ops;
+> +extern const struct nlmsvc_binding *nlmsvc_ops;
+>  
+>  /*
+>   * Similar to nfs_client_initdata, but without the NFS-specific
+> diff --git a/fs/nfsd/lockd.c b/fs/nfsd/lockd.c
+> index 77e7a5c..1a03bc3 100644
+> --- a/fs/nfsd/lockd.c
+> +++ b/fs/nfsd/lockd.c
+> @@ -58,7 +58,7 @@ nlm_fclose(struct file *filp)
+>  	fput(filp);
+>  }
+>  
+> -static struct nlmsvc_binding	nfsd_nlm_ops = {
+> +static const struct nlmsvc_binding nfsd_nlm_ops = {
+>  	.fopen		= nlm_fopen,		/* open file for locking */
+>  	.fclose		= nlm_fclose,		/* close file */
+>  };
