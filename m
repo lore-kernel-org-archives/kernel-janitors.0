@@ -1,23 +1,43 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 07 Jan 2016 09:10:31 +0000
-Subject: Re: iwlegacy: 4965-mac: constify il_sensitivity_ranges structure
-Message-Id: <20160107091031.BA568605BE@smtp.codeaurora.org>
+From: Matthias Schwarzott <zzam@gentoo.org>
+Date: Mon, 04 Jan 2016 08:39:21 +0000
+Subject: Re: [PATCH] [media] si2165: Refactoring for si2165_writereg_mask8()
+Message-Id: <568A2FB9.8040806@gentoo.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1451474449-17912-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <568020CC.1060004@users.sourceforge.net>
+In-Reply-To: <568020CC.1060004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-
-> The il_sensitivity_ranges is never modified, so declare it as const.
+Am 27.12.2015 um 18:33 schrieb SF Markus Elfring:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 27 Dec 2015 18:23:57 +0100
 > 
-> Done with the help of Coccinelle.
+> This issue was detected by using the Coccinelle software.
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+> 1. Let us return directly if a call of the si2165_readreg8()
+>    function failed.
+> 
+> 2. Reduce the scope for the local variables "ret" and "tmp" to one branch
+>    of an if statement.
+> 
+> 3. Delete the jump label "err" then.
+> 
+> 4. Return the value from a call of the si2165_writereg8() function
+>    without using an extra assignment for the variable "ret" at the end.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Thanks, applied to wireless-drivers-next.git.
+The patch looks fine.
 
-Kalle Valo
+Signed-off-by: Matthias Schwarzott <zzam@gentoo.org>
+
+Regards
+Matthias
+
+PS: I am going to switch to regmap, but this change is not yet polished
+and until now does not touch this function.
+
