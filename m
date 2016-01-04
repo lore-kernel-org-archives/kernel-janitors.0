@@ -1,56 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jan 2016 13:10:28 +0000
-Subject: [PATCH v3 2/3] rsi: Delete unnecessary variable initialisations in rsi_send_data_pkt()
-Message-Id: <5698EFC4.7000308@users.sourceforge.net>
+From: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
+Date: Mon, 04 Jan 2016 15:48:54 +0000
+Subject: RE: [PATCH] staging: rdma: hfi1: diag: constify hfi1_filter_array structure
+Message-Id: <32E1700B9017364D9B60AED9960492BC259E41B4@fmsmsx120.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5687E169.4070704@users.sourceforge.net>
- <5698EE65.7010607@users.sourceforge.net>
-In-Reply-To: <5698EE65.7010607@users.sourceforge.net>
+References: <1450903377-27803-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1450903377-27803-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Fariya Fatima <fariyaf@gmail.com>, Jahnavi Meher <jahnavi.meher@gmail.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, "John W. Linville" <linville@tuxdriver.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Doug Ledford <dledford@redhat.com>, "Hefty, Sean" <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
 
-From 017d1bb49f46266ffeb33178ddd3022d6b341d71 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jan 2016 13:35:47 +0100
-Subject: [PATCH 2/3] rsi: Delete unnecessary variable initialisations in
- rsi_send_data_pkt()
+> From: devel [mailto:driverdev-devel-bounces@linuxdriverproject.org] On
+> Behalf Of Julia Lawall
+> Subject: [PATCH] staging: rdma: hfi1: diag: constify hfi1_filter_array
+> structure
+> 
+> The hfi1_filter_array structure is never modified, so declare it as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
 
-Omit explicit initialisation at the beginning for four local variables
-which are redefined before their first use.
+Thanks for the patch!
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/wireless/rsi/rsi_91x_pkt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/wireless/rsi/rsi_91x_pkt.c b/drivers/net/wireless/rsi/rsi_91x_pkt.c
-index 571eaba..4322df1 100644
---- a/drivers/net/wireless/rsi/rsi_91x_pkt.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_pkt.c
-@@ -27,15 +27,15 @@
- int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
- {
- 	struct rsi_hw *adapter = common->priv;
--	struct ieee80211_hdr *tmp_hdr = NULL;
-+	struct ieee80211_hdr *tmp_hdr;
- 	struct ieee80211_tx_info *info;
- 	struct skb_info *tx_params;
--	struct ieee80211_bss_conf *bss = NULL;
-+	struct ieee80211_bss_conf *bss;
- 	int status = -EINVAL;
- 	u8 ieee80211_size = MIN_802_11_HDR_LEN;
--	u8 extnd_size = 0;
-+	u8 extnd_size;
- 	__le16 *frame_desc;
--	u16 seq_num = 0;
-+	u16 seq_num;
- 
- 	info = IEEE80211_SKB_CB(skb);
- 	bss = &info->control.vif->bss_conf;
--- 
-2.6.3
-
+Acked-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
