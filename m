@@ -1,47 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 04 Jan 2016 14:25:13 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 04 Jan 2016 17:14:10 +0000
 Subject: Re: [PATCH 1/3] rsi: Delete unnecessary variable initialisations in rsi_send_mgmt_pkt()
-Message-Id: <20160104142513.GL5284@mwanda>
+Message-Id: <20160104.121410.1963933976498579568.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5687E169.4070704@users.sourceforge.net>
- <5687E203.1070404@users.sourceforge.net>
- <20160104092857.GD5284@mwanda>
- <87poxhiivf.fsf@nemi.mork.no>
-In-Reply-To: <87poxhiivf.fsf@nemi.mork.no>
+References: <5687E169.4070704@users.sourceforge.net>
+	<5687E203.1070404@users.sourceforge.net>
+	<20160104092857.GD5284@mwanda>
+In-Reply-To: <20160104092857.GD5284@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dan.carpenter@oracle.com
+Cc: elfring@users.sourceforge.net, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kvalo@codeaurora.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
 
-On Mon, Jan 04, 2016 at 02:17:40PM +0100, Bj=F8rn Mork wrote:
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
->=20
-> > Please stop sending cleanup patches, Markus.  Just send fixes.
->=20
-> Thanks for your continued but unwarranted belief in AI.
->=20
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 4 Jan 2016 12:28:57 +0300
 
-I always tell people that I am very mechanical and you can rely on me to
-send predictable responses...
+> Please stop sending cleanup patches, Markus.  Just send fixes.
 
-> Do you mind if I remind you of https://lkml.org/lkml/2014/11/3/162 ?
-> I am sure there are lots and lots of other examples.  There is no reason
-> to believe this will ever stop.  He just goes into Eliza mode.
-
-Yup.
-
-I feel some sense of responsibility for any patches where kernel-janitors
-is on the CC but I'm having a hard time dealing with all of Markus's
-patches.  Normally you just respond to the first patch and people change
-the later patches but, as you put it, Markus just goes into ELIZA mode.
-
-regards,
-dan carpenter
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
++1
