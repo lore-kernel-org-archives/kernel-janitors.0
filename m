@@ -1,70 +1,45 @@
-From: Oleksij Rempel <linux@rempel-privat.de>
-Date: Fri, 01 Jan 2016 19:14:46 +0000
-Subject: Re: [PATCH 1/2] net-ath9k_htc: Delete an unnecessary variable initialisation in ath9k_hif_usb_rx_str
-Message-Id: <5686D026.6000706@rempel-privat.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8WhpjSiebErDkk2wTiJrdvjCVeaF7cdQR"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 04 Jan 2016 20:43:47 +0000
+Subject: [patch] drm/amdgpu/cgs: cleanup some indenting
+Message-Id: <20160104204347.GC19867@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5686C390.5060600@users.sourceforge.net>
- <5686C42A.5000405@users.sourceforge.net>
-In-Reply-To: <5686C42A.5000405@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>, ath9k-devel@lists.ath9k.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ath9k-devel@qca.qualcomm.com, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: Jammy Zhou <Jammy.Zhou@amd.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Eric Huang <JinHuiEric.Huang@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---8WhpjSiebErDkk2wTiJrdvjCVeaF7cdQR
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+This code is indented too far.  Also we normally use spaces to align if
+statement conditions.
 
-Am 01.01.2016 um 19:23 schrieb SF Markus Elfring:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Jan 2016 19:00:53 +0100
->=20
-> Omit explicit initialisation at the beginning for one local variable
-> that is redefined before its first use.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/wireless/ath/ath9k/hif_usb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/wireless/ath/ath9k/hif_usb.c b/drivers/net/wir=
-eless/ath/ath9k/hif_usb.c
-> index 165dd20..51bd61b 100644
-> --- a/drivers/net/wireless/ath/ath9k/hif_usb.c
-> +++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
-> @@ -525,7 +525,7 @@ static void ath9k_hif_usb_rx_stream(struct hif_devi=
-ce_usb *hif_dev,
->  				    struct sk_buff *skb)
->  {
->  	struct sk_buff *nskb, *skb_pool[MAX_PKT_NUM_IN_TRANSFER];
-> -	int index =3D 0, i =3D 0, len =3D skb->len;
-> +	int index =3D 0, i, len =3D skb->len;
->  	int rx_remain_len, rx_pkt_len;
->  	u16 pool_index =3D 0;
->  	u8 *ptr;
->=20
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Reviewed-by: Oleksij Rempel <linux@rempel-privat.de>
-
---=20
-Regards,
-Oleksij
-
-
---8WhpjSiebErDkk2wTiJrdvjCVeaF7cdQR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iF4EAREIAAYFAlaG0CYACgkQHwImuRkmbWmDhAD+KNPibYR3y8scvydLtCLRK6Im
-gug4CSunNSk9VLB7NmsA/RdOCOMFBzf9KhnRFhdFDyP7RxRTyCDmKKiyjXmhgigV
-=FDRM
------END PGP SIGNATURE-----
-
---8WhpjSiebErDkk2wTiJrdvjCVeaF7cdQR--
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+index 6fa0fea..59485d0 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+@@ -843,15 +843,15 @@ static int amdgpu_cgs_acpi_eval_object(void *cgs_device,
+ 	if (info->input_count > 0) {
+ 		if (info->pinput_argument = NULL)
+ 			return -EINVAL;
+-			argument = info->pinput_argument;
+-			func_no = argument->value;
+-			for (i = 0; i < info->input_count; i++) {
+-				if (((argument->type = ACPI_TYPE_STRING) ||
+-					(argument->type = ACPI_TYPE_BUFFER))
+-					&& (argument->pointer = NULL))
+-					return -EINVAL;
+-				argument++;
+-			}
++		argument = info->pinput_argument;
++		func_no = argument->value;
++		for (i = 0; i < info->input_count; i++) {
++			if (((argument->type = ACPI_TYPE_STRING) ||
++			     (argument->type = ACPI_TYPE_BUFFER)) &&
++			    (argument->pointer = NULL))
++				return -EINVAL;
++			argument++;
++		}
+ 	}
+ 
+ 	if (info->output_count > 0) {
