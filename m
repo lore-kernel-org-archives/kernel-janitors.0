@@ -1,23 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 12 Jan 2016 19:30:48 +0000
-Subject: Re: [patch 1/2 -next] mdio: remove an unneed condition
-Message-Id: <20160112.143048.1357041752363538499.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 04 Jan 2016 20:42:55 +0000
+Subject: [patch] drm/amd/powerplay: fix a reversed condition
+Message-Id: <20160104204255.GB19867@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160112093534.GE29804@mwanda>
-In-Reply-To: <20160112093534.GE29804@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org
-Cc: f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, andrew-g2DYL2Zd6BY@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Airlie <airlied@linux.ie>, Jammy Zhou <Jammy.Zhou@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, Rex Zhu <Rex.Zhu@amd.com>, dri-devel@lists.freedesktop.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Jan 2016 12:35:34 +0300
+This test was reversed so it would end up leading to a NULL dereference.
 
-> It used to be that mdio->irq was a pointer but after e7f4dc3536a4
-> ('mdio: Move allocation of interrupts into core') it's an array inside
-> the mdio struct so it can never be NULL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 4630f0faae80 ('drm/amd/powerplay: add Carrizo smu support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/cz_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/cz_smumgr.c
+index e74023b..873a8d2 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/cz_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/cz_smumgr.c
+@@ -818,7 +818,7 @@ static int cz_smu_fini(struct pp_smumgr *smumgr)
+ 		return -EINVAL;
+ 
+ 	cz_smu = (struct cz_smumgr *)smumgr->backend;
+-	if (!cz_smu) {
++	if (cz_smu) {
+ 		cgs_free_gpu_mem(smumgr->device,
+ 				cz_smu->toc_buffer.handle);
+ 		cgs_free_gpu_mem(smumgr->device,
