@@ -1,29 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Jan 2016 10:00:26 +0000
-Subject: [PATCH 0/2] 390/qeth: Fine-tuning for qeth_core_set_online()
-Message-Id: <5688F13A.70601@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Jan 2016 09:50:19 +0000
+Subject: [patch] svcrdma: signedness bug in xprt_rdma_bc_send_request()
+Message-Id: <20160105095019.GA23619@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Trond Myklebust <trond.myklebust@primarydata.com>, Chuck Lever <chuck.lever@oracle.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Jan 2016 10:56:45 +0100
+The "len" variable was unsigned so the error handling didn't work.  Also
+"len" was a misleading name because it's either a negative error code or
+it's zero.  It's never actually a length.  I've renamed it to "ret".
 
-A few update suggestions were taken into account
-from static source code analysis.
+Fixes: eb57be60eca9 ('svcrdma: Add class for RDMA backwards direction transport')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (2):
-  Delete an unnecessary variable initialisation
-  Refactoring
-
- drivers/s390/net/qeth_core_main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
--- 
-2.6.3
-
+diff --git a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
+index 417cec1..deff06a 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
+@@ -240,7 +240,7 @@ xprt_rdma_bc_send_request(struct rpc_task *task)
+ 	struct rpc_rqst *rqst = task->tk_rqstp;
+ 	struct svc_xprt *sxprt = rqst->rq_xprt->bc_xprt;
+ 	struct svcxprt_rdma *rdma;
+-	u32 len;
++	int ret;
+ 
+ 	dprintk("svcrdma: sending bc call with xid: %08x\n",
+ 		be32_to_cpu(rqst->rq_xid));
+@@ -252,15 +252,15 @@ xprt_rdma_bc_send_request(struct rpc_task *task)
+ 		rpc_wake_up_queued_task(&sxprt->xpt_bc_pending, task);
+ 	}
+ 
+-	len = -ENOTCONN;
++	ret = -ENOTCONN;
+ 	rdma = container_of(sxprt, struct svcxprt_rdma, sc_xprt);
+ 	if (!test_bit(XPT_DEAD, &sxprt->xpt_flags))
+-		len = rpcrdma_bc_send_request(rdma, rqst);
++		ret = rpcrdma_bc_send_request(rdma, rqst);
+ 
+ 	mutex_unlock(&sxprt->xpt_mutex);
+ 
+-	if (len < 0)
+-		return len;
++	if (ret < 0)
++		return ret;
+ 	return 0;
+ }
+ 
