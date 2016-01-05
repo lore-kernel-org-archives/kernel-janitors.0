@@ -1,86 +1,69 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Tue, 05 Jan 2016 09:47:42 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 05 Jan 2016 16:23:04 +0000
 Subject: Re: rsi: Delete unnecessary variable initialisations in rsi_send_mgmt_pkt()
-Message-Id: <CAGRGNgVVnFGt_mHV+ZrZW0HuGuuh++ohkkNMHPBFt73-+X3L8Q@mail.gmail.com>
+Message-Id: <568BEDE8.4010203@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <5687E169.4070704@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5687E169.4070704@users.sourceforge.net>
  <5687E203.1070404@users.sourceforge.net> <20160104092857.GD5284@mwanda>
  <568A4CFF.8060600@users.sourceforge.net> <20160104114849.GH5284@mwanda>
- <568A668D.8090007@users.sourceforge.net> <CAGRGNgXw+G6ZcmFmM=VWZT_jibuZyxe-kSvPSF8W7hPueLhNrw@mail.gmail.com>
+ <568A668D.8090007@users.sourceforge.net>
+ <CAGRGNgXw+G6ZcmFmM=VWZT_jibuZyxe-kSvPSF8W7hPueLhNrw@mail.gmail.com>
  <568B7F06.1010500@users.sourceforge.net>
-In-Reply-To: <568B7F06.1010500@users.sourceforge.net>
+ <CAGRGNgVVnFGt_mHV+ZrZW0HuGuuh++ohkkNMHPBFt73-+X3L8Q@mail.gmail.com>
+In-Reply-To: <CAGRGNgVVnFGt_mHV+ZrZW0HuGuuh++ohkkNMHPBFt73-+X3L8Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
+To: Julian Calaby <julian.calaby@gmail.com>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Kalle Valo <kvalo@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Markus,
+> Every time you send a set of patches,
 
-On Tue, Jan 5, 2016 at 7:29 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->> That said, if you figure out some change that produces significant
->> reductions in code or binary size on multiple architectures without
->> making things more complicated, less readable or making the code or
->> binary size larger, then by all means propose it.
->
-> Are you looking also for "a proof" that such changes are worthwhile?
+I suggested some updates for Linux source files since October 2014.
 
-It'd be better than "I think doing things this way is better", which
-is the hallmark of most of your patch sets. (Admittedly not this one,
-but this one is where the discussion is now, so that's where we're
-discussing it.)
 
->> "This makes things smaller" carries much more weight than
->> "I think this is better".
->
-> Can the discussed implementation of a function like "rsi_send_mgmt_pkt"
-> become a bit smaller by the deletion of extra variable initialisations
+> there are legitimate issues which people raise,
 
-I'm talking in general.
+There was usual feedback.
 
-In this case you're asking people to review a patch which requires a
-lot of careful review for a fairly minor improvement. I must also note
-that you haven't CC'd the people who wrote this driver, so it's
-possible that the only people who have reviewed it aren't experts in
-the code.
 
-The patches you sent recently which moved labels into if statements
-were a clear case of "I think this is better" where any actual benefit
-from the changes was eclipsed by the style and readability issues they
-introduced.
+> and every time they are discussed,
 
->> Almost all of the changes you've proposed that have seen any
->> discussion whatsoever fall into the latter category.
->
-> Thanks for your interesting feedback.
+The discussion results were mixed between acceptance
+and usual disagreement.
 
-No problem.
 
-> Can a further constructive dialogue evolve from the presented information?
+> you assert that your patches improve things
 
-Part of the issue here is that you don't seem to be listening to the
-discussion of your patches, or if you are, you're not significantly
-changing your approach or attitude in response.
+I guess that should be the default intention of every patch, shouldn't it?
 
-Every time you send a set of patches, there are legitimate issues
-which people raise, and every time they are discussed, you assert that
-your patches improve things and seem to ignore the concerns people
-raise.
 
-I've seen this same pattern of discussion here with these patches,
-with your patches to move labels into if statements, with the patches
-you sent late June last year, your patches to remove conditions before
-kfree() and friends, etc.
+> and seem to ignore the concerns people raise.
 
-You need to change you attitude: just because you can see some benefit
-from your patches doesn't mean others do and it doesn't mean that
-they're willing to accept them.
+I hope not. - But I can imagine that you might understand some responses
+from contributors in this way.
+Are you waiting for another clarification on a specific issue?
 
-Thanks,
 
--- 
-Julian Calaby
+> I've seen this same pattern of discussion here with these patches,
+> with your patches to move labels into if statements, with the patches
+> you sent late June last year, your patches to remove conditions before
+> kfree() and friends, etc.
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+It seems that communication difficulties come partly from the fact
+that I chose search patterns from static source code analysis so far
+which belong to an error category that gets a lower priority.
+
+
+> You need to change you attitude: just because you can see some benefit
+> from your patches doesn't mean others do and it doesn't mean that
+> they're willing to accept them.
+
+I understand your advice.
+
+Further update suggestions with higher importance might follow for various
+software areas in the future.
+
+Regards,
+Markus
