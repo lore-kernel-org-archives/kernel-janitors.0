@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 05 Jan 2016 21:21:57 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Jan 2016 22:08:27 +0000
 Subject: Re: [patch v2] usb: gadget: f_midi: missing unlock on error path
-Message-Id: <alpine.DEB.2.02.1601052220430.2342@localhost6.localdomain6>
+Message-Id: <20160105220827.GF23363@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160105102809.GA26420@mwanda>
 In-Reply-To: <20160105102809.GA26420@mwanda>
@@ -10,45 +10,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-
-On Tue, 5 Jan 2016, Felipe Ferreri Tonello wrote:
-
-> Hi Dan,
-> 
-> On 05/01/16 12:44, Dan Carpenter wrote:
-> > On Tue, Jan 05, 2016 at 01:28:11PM +0100, Julia Lawall wrote:
-> >>
-> >>
-> >> On Tue, 5 Jan 2016, kbuild test robot wrote:
-> >>
-> >>> Hi Dan,
-> >>>
-> >>> [auto build test WARNING on balbi-usb/next]
-> >>> [also build test WARNING on v4.4-rc8 next-20160105]
-> >>> [if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
-> >>>
-> >>> url:    https://github.com/0day-ci/linux/commits/Dan-Carpenter/usb-gadget-f_midi-missing-unlock-on-error-path/20160105-183115
-> >>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git next
-> >>>
-> >>>
-> >>> coccinelle warnings: (new ones prefixed by >>)
-> >>>
-> >>>>> drivers/usb/gadget/function/f_midi.c:1233:14-21: ERROR: midi is NULL but dereferenced.
-> >>
-> >> It's a false positive for coccinelle, but I wonder if avoiding duplicating
-> >> the mutex_lock is really worth it?
-> > 
-> > It's not the most beautiful code in the world.  I considered a bunch of
-> > different ways to write it...  This is what Felipe Tonello wanted,
-> > though.
-> 
+On Tue, Jan 05, 2016 at 08:51:18PM +0000, Felipe Ferreri Tonello wrote:
 > This case is not a matter of been pretty but a matter of been less error
 > prone.
 > 
 > What would you suggest?
 
-I thought to be a little less subtle about midi, it would be easier to 
-keep the first few mutex_unlocks up where they were.  But up to you.
+Normally it's better to unwind in the reverse order from how we
+allocated so it would be:
 
-julia
+	lock
+	allocate midi
+	allocate ports
+
+	free ports
+	free midi
+	unlock
+
+We could move the midi allocation outside the lock, but we can't move
+ports allocation.  And also we want to drop the lock as soon as we can
+so it's better to do that early like my patch does instead of after the
+frees.  It's less symetric that way and thus more error prone but it's
+better for performance.
+
+Anyway, I don't think it really matters, this is a minor thing.
+
+Also I hope that Smatch will be able to avoid that false positive about
+the midi dereference by the end of 2016. :)
+
+regards,
+dan carpenter
