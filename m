@@ -1,36 +1,78 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 07 Jan 2016 19:44:06 +0000
-Subject: Re: [PATCH] net-thunder: One check less in nicvf_register_interrupts() after error detection
-Message-Id: <1452195846.4028.24.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Jan 2016 10:28:09 +0000
+Subject: [patch v2] usb: gadget: f_midi: missing unlock on error path
+Message-Id: <20160105102809.GA26420@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5685A273.6070607@users.sourceforge.net>
- <20160107110701.GE25086@rric.localdomain>
- <568EBCE7.4060502@users.sourceforge.net>
-In-Reply-To: <568EBCE7.4060502@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 2016-01-07 at 20:30 +0100, SF Markus Elfring wrote:
-> > > Adjust a jump target to eliminate a check before error logging.
-> > > Use the identifier "report_failure" instead of "err".
-> > I don't see much value in those changes
-> Thanks for your feedback.
-> > Using the 'err' label is ok as it is not misleading and common use.
-> Is such a short jump label enough explanation for the information
-> "what" and "why"?
+We added a new error path to this function and we forgot to drop the
+lock.
 
-When there is only one type of error possible, yes.
+Fixes: e1e3d7ec5da3 ('usb: gadget: f_midi: pre-allocate IN requests')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Felipe asked for this to be fixed a different way.
 
-> > And, there is no need to optimize the check since this is not the
-> > fast path
-> Really? - Is it a bit more efficient to avoid a double check for the
-> variable "ret" at the end of the current implementation for the
-> discussed function?
-
-Before asking questions you could answer yourself,
-please look at object code produced by the compiler
-before and after your proposed changes.
-
+diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
+index fb1fe96d..7d28944 100644
+--- a/drivers/usb/gadget/function/f_midi.c
++++ b/drivers/usb/gadget/function/f_midi.c
+@@ -1163,24 +1163,25 @@ static void f_midi_unbind(struct usb_configuration *c, struct usb_function *f)
+ 
+ static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
+ {
+-	struct f_midi *midi;
++	struct f_midi *midi = NULL;
+ 	struct f_midi_opts *opts;
+-	int status, i;
++	int status;
++	int i = 0;
+ 
+ 	opts = container_of(fi, struct f_midi_opts, func_inst);
+ 
+ 	mutex_lock(&opts->lock);
+ 	/* sanity check */
+ 	if (opts->in_ports > MAX_PORTS || opts->out_ports > MAX_PORTS) {
+-		mutex_unlock(&opts->lock);
+-		return ERR_PTR(-EINVAL);
++		status = -EINVAL;
++		goto setup_fail;
+ 	}
+ 
+ 	/* allocate and initialize one new instance */
+ 	midi = kzalloc(sizeof(*midi), GFP_KERNEL);
+ 	if (!midi) {
+-		mutex_unlock(&opts->lock);
+-		return ERR_PTR(-ENOMEM);
++		status = -ENOMEM;
++		goto setup_fail;
+ 	}
+ 
+ 	for (i = 0; i < opts->in_ports; i++) {
+@@ -1188,7 +1189,6 @@ static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
+ 
+ 		if (!port) {
+ 			status = -ENOMEM;
+-			mutex_unlock(&opts->lock);
+ 			goto setup_fail;
+ 		}
+ 
+@@ -1202,7 +1202,6 @@ static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
+ 	midi->id = kstrdup(opts->id, GFP_KERNEL);
+ 	if (opts->id && !midi->id) {
+ 		status = -ENOMEM;
+-		mutex_unlock(&opts->lock);
+ 		goto setup_fail;
+ 	}
+ 	midi->in_ports = opts->in_ports;
+@@ -1229,6 +1228,7 @@ static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
+ 	return &midi->func;
+ 
+ setup_fail:
++	mutex_unlock(&opts->lock);
+ 	for (--i; i >= 0; i--)
+ 		kfree(midi->in_port[i]);
+ 	kfree(midi);
