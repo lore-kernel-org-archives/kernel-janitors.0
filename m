@@ -1,55 +1,32 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 21 Jan 2016 11:06:26 +0000
-Subject: Re: [Xen-devel] [PATCH] cleancache: constify cleancache_ops structure
-Message-Id: <alpine.DEB.2.10.1601211205540.2530@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Jan 2016 09:56:37 +0000
+Subject: [patch] gpio: pxa: checking IS_ERR() instead of NULL
+Message-Id: <20160105095637.GE23619@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450904784-17139-1-git-send-email-Julia.Lawall@lip6.fr> <56A0B6E7.9040201@citrix.com>
-In-Reply-To: <56A0B6E7.9040201@citrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Vrabel <david.vrabel@citrix.com>
-Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+irq_domain_add_legacy() returns NULL on error, it doesn't return error
+pointers.
 
+Fixes: 384ca3c6a28d ('gpio: pxa: change the interrupt management')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Thu, 21 Jan 2016, David Vrabel wrote:
-
-> On 23/12/15 21:06, Julia Lawall wrote:
-> > The cleancache_ops structure is never modified, so declare it as const.
-> >
-> > This also removes the __read_mostly declaration on the cleancache_ops
-> > variable declaration, since it seems redundant with const.
-> >
-> > Done with the help of Coccinelle.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >
-> > Not sure that the __read_mostly change is correct.  Does it apply to the
-> > variable, or to what the variable points to?
->
-> The variable, so...
-
-Thanks.  I'll update the patch, unless you have already fixed it.
-
-julia
-
-> > --- a/mm/cleancache.c
-> > +++ b/mm/cleancache.c
-> > @@ -22,7 +22,7 @@
-> >   * cleancache_ops is set by cleancache_register_ops to contain the pointers
-> >   * to the cleancache "backend" implementation functions.
-> >   */
-> > -static struct cleancache_ops *cleancache_ops __read_mostly;
-> > +static const struct cleancache_ops *cleancache_ops;
->
-> ...you want to retain the __read_mostly here.
->
-> David
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index c2d1a47..415852d 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -646,8 +646,8 @@ static int pxa_gpio_probe(struct platform_device *pdev)
+ 	pchip->irqdomain = irq_domain_add_legacy(pdev->dev.of_node,
+ 						 pxa_last_gpio + 1, irq_base,
+ 						 0, &pxa_irq_domain_ops, pchip);
+-	if (IS_ERR(pchip->irqdomain))
+-		return PTR_ERR(pchip->irqdomain);
++	if (!pchip->irqdomain)
++		return -ENOMEM;
+ 
+ 	irq0 = platform_get_irq_byname(pdev, "gpio0");
+ 	irq1 = platform_get_irq_byname(pdev, "gpio1");
