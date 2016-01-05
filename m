@@ -1,44 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 14 Jan 2016 06:58:40 +0000
-Subject: Re: [PATCH] net-brcmfmac: Delete an unnecessary variable initialisation in brcmf_sdio_download_firmw
-Message-Id: <871t9kd4v3.fsf@kamboji.qca.qualcomm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Jan 2016 09:57:19 +0000
+Subject: [patch] ext4 crypto: unlock on error in ext4_set_encryption_metadata()
+Message-Id: <20160105095719.GF23619@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5686D2E0.2010309@users.sourceforge.net>
-	<56878F52.5070308@broadcom.com>
-In-Reply-To: <56878F52.5070308@broadcom.com> (Arend van Spriel's message of
-	"Sat, 2 Jan 2016 09:50:26 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend@broadcom.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, brcm80211-dev-list@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Arend van Spriel <arend@broadcom.com> writes:
+There is a missing unlock if ext4_journal_start() fails.
 
-> On 01/01/2016 08:26 PM, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Fri, 1 Jan 2016 20:20:15 +0100
->
-> I think it has been said over and over, but please use driver name
-> only as prefix. I don't see value to prepend it with 'net-'.
+Fixes: 374431bae296 ('ext4 crypto: add ioctls to allow backup of encryption metadata')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Yes, please use existing naming schemes. This time I can fix it before
-I commit the patch, but in the future please use correct prefixes. It's
-easy to check what has been used previously:
-
-$ git log --oneline --no-merges --follow drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | head -10
-63ce3d5db093 brcmfmac: use msecs_to_jiffies() in macro definitions
-4011fc499690 brcmfmac: change brcmf_sdio_wd_timer() prototype
-a7decc44a002 brcmfmac: fix waitqueue_active without memory barrier in brcmfmac driver
-46d703a77539 brcmfmac: Unify methods to define and map firmware files.
-64d66c30c37e brcmfmac: no retries on rxglom superframe errors
-6866a64a0f9b brcmfmac: constify brcmf_bus_ops structures
-05491d2ccf20 brcm80211: move under broadcom vendor directory
-ff4445a8502c brcmfmac: expose device memory to devcoredump subsystem
-a32be0177252 brcmfmac: include linux/atomic.h
-9d6c1dc4f913 brcmfmac: add dedicated debug level for firmware console logging
-$
-
--- 
-Kalle Valo
+diff --git a/fs/ext4/crypto_key.c b/fs/ext4/crypto_key.c
+index 6e6fbcb..21fdcea 100644
+--- a/fs/ext4/crypto_key.c
++++ b/fs/ext4/crypto_key.c
+@@ -372,8 +372,10 @@ int ext4_set_encryption_metadata(struct inode *inode,
+ 
+ 	handle = ext4_journal_start(inode, EXT4_HT_MISC,
+ 				    ext4_jbd2_credits_xattr(inode));
+-	if (IS_ERR(handle))
+-		return PTR_ERR(handle);
++	if (IS_ERR(handle)) {
++		res = PTR_ERR(handle);
++		goto errout;
++	}
+ 	res = ext4_xattr_set(inode, EXT4_XATTR_INDEX_ENCRYPTION,
+ 			     EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, ctx,
+ 			     sizeof(struct ext4_encryption_context), 0);
