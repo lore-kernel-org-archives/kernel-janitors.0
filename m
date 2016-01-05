@@ -1,78 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Jan 2016 10:28:09 +0000
-Subject: [patch v2] usb: gadget: f_midi: missing unlock on error path
-Message-Id: <20160105102809.GA26420@mwanda>
+From: kbuild test robot <lkp@intel.com>
+Date: Tue, 05 Jan 2016 11:53:47 +0000
+Subject: Re: [patch v2] usb: gadget: f_midi: missing unlock on error path
+Message-Id: <201601051926.BEbGcnh7%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160105102809.GA26420@mwanda>
+In-Reply-To: <20160105102809.GA26420@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We added a new error path to this function and we forgot to drop the
-lock.
+Hi Dan,
 
-Fixes: e1e3d7ec5da3 ('usb: gadget: f_midi: pre-allocate IN requests')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[auto build test WARNING on balbi-usb/next]
+[also build test WARNING on v4.4-rc8 next-20160105]
+[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
+
+url:    https://github.com/0day-ci/linux/commits/Dan-Carpenter/usb-gadget-f_midi-missing-unlock-on-error-path/20160105-183115
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git next
+
+
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/usb/gadget/function/f_midi.c:1233:14-21: ERROR: midi is NULL but dereferenced.
+
+vim +1233 drivers/usb/gadget/function/f_midi.c
+
+e1e3d7ec Felipe F. Tonello     2015-12-01  1217  
+6f1de344 Andrzej Pietrasiewicz 2014-10-16  1218  	++opts->refcnt;
+6f1de344 Andrzej Pietrasiewicz 2014-10-16  1219  	mutex_unlock(&opts->lock);
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1220  
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1221  	midi->func.name		= "gmidi function";
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1222  	midi->func.bind		= f_midi_bind;
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1223  	midi->func.unbind	= f_midi_unbind;
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1224  	midi->func.set_alt	= f_midi_set_alt;
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1225  	midi->func.disable	= f_midi_disable;
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1226  	midi->func.free_func	= f_midi_free;
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1227  
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1228  	return &midi->func;
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1229  
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1230  setup_fail:
+39920a18 Dan Carpenter         2016-01-05  1231  	mutex_unlock(&opts->lock);
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1232  	for (--i; i >= 0; i--)
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16 @1233  		kfree(midi->in_port[i]);
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1234  	kfree(midi);
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1235  	return ERR_PTR(status);
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1236  }
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1237  
+b85e9de9 Andrzej Pietrasiewicz 2014-10-16  1238  DECLARE_USB_FUNCTION_INIT(midi, f_midi_alloc_inst, f_midi_alloc);
+
+:::::: The code at line 1233 was first introduced by commit
+:::::: b85e9de9e818de0dcbc50b7b4242192eb6194855 usb: gadget: f_midi: convert to new function interface with backward compatibility
+
+:::::: TO: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+:::::: CC: Felipe Balbi <balbi@ti.com>
+
 ---
-v2: Felipe asked for this to be fixed a different way.
-
-diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
-index fb1fe96d..7d28944 100644
---- a/drivers/usb/gadget/function/f_midi.c
-+++ b/drivers/usb/gadget/function/f_midi.c
-@@ -1163,24 +1163,25 @@ static void f_midi_unbind(struct usb_configuration *c, struct usb_function *f)
- 
- static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
- {
--	struct f_midi *midi;
-+	struct f_midi *midi = NULL;
- 	struct f_midi_opts *opts;
--	int status, i;
-+	int status;
-+	int i = 0;
- 
- 	opts = container_of(fi, struct f_midi_opts, func_inst);
- 
- 	mutex_lock(&opts->lock);
- 	/* sanity check */
- 	if (opts->in_ports > MAX_PORTS || opts->out_ports > MAX_PORTS) {
--		mutex_unlock(&opts->lock);
--		return ERR_PTR(-EINVAL);
-+		status = -EINVAL;
-+		goto setup_fail;
- 	}
- 
- 	/* allocate and initialize one new instance */
- 	midi = kzalloc(sizeof(*midi), GFP_KERNEL);
- 	if (!midi) {
--		mutex_unlock(&opts->lock);
--		return ERR_PTR(-ENOMEM);
-+		status = -ENOMEM;
-+		goto setup_fail;
- 	}
- 
- 	for (i = 0; i < opts->in_ports; i++) {
-@@ -1188,7 +1189,6 @@ static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
- 
- 		if (!port) {
- 			status = -ENOMEM;
--			mutex_unlock(&opts->lock);
- 			goto setup_fail;
- 		}
- 
-@@ -1202,7 +1202,6 @@ static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
- 	midi->id = kstrdup(opts->id, GFP_KERNEL);
- 	if (opts->id && !midi->id) {
- 		status = -ENOMEM;
--		mutex_unlock(&opts->lock);
- 		goto setup_fail;
- 	}
- 	midi->in_ports = opts->in_ports;
-@@ -1229,6 +1228,7 @@ static struct usb_function *f_midi_alloc(struct usb_function_instance *fi)
- 	return &midi->func;
- 
- setup_fail:
-+	mutex_unlock(&opts->lock);
- 	for (--i; i >= 0; i--)
- 		kfree(midi->in_port[i]);
- 	kfree(midi);
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
