@@ -1,49 +1,42 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Mon, 04 Jan 2016 23:54:19 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 05 Jan 2016 08:29:58 +0000
 Subject: Re: rsi: Delete unnecessary variable initialisations in rsi_send_mgmt_pkt()
-Message-Id: <CAGRGNgXw+G6ZcmFmM=VWZT_jibuZyxe-kSvPSF8W7hPueLhNrw@mail.gmail.com>
+Message-Id: <568B7F06.1010500@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <5687E169.4070704@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5687E169.4070704@users.sourceforge.net>
  <5687E203.1070404@users.sourceforge.net> <20160104092857.GD5284@mwanda>
- <568A4CFF.8060600@users.sourceforge.net> <20160104114849.GH5284@mwanda> <568A668D.8090007@users.sourceforge.net>
-In-Reply-To: <568A668D.8090007@users.sourceforge.net>
+ <568A4CFF.8060600@users.sourceforge.net> <20160104114849.GH5284@mwanda>
+ <568A668D.8090007@users.sourceforge.net>
+ <CAGRGNgXw+G6ZcmFmM=VWZT_jibuZyxe-kSvPSF8W7hPueLhNrw@mail.gmail.com>
+In-Reply-To: <CAGRGNgXw+G6ZcmFmM=VWZT_jibuZyxe-kSvPSF8W7hPueLhNrw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
+To: Julian Calaby <julian.calaby@gmail.com>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Kalle Valo <kvalo@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Markus,
+> That said, if you figure out some change that produces significant
+> reductions in code or binary size on multiple architectures without
+> making things more complicated, less readable or making the code or
+> binary size larger, then by all means propose it.
 
-On Mon, Jan 4, 2016 at 11:33 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>> May I resend a consistent patch series for the source file
->>> "drivers/net/wireless/rsi/rsi_91x_pkt.c" in the near future?
->>
->> If you were sending checkpatch.pl fixes that would be easier to deal with
->
-> Does this feedback mean that you would accept any more suggestions around
-> source code updates which are derived from recommendations of this script?
+Are you looking also for "a proof" that such changes are worthwhile?
 
-A good rule of thumb here would be that if people start complaining
-about a particular type of change, stop sending them.
 
-Another good rule of thumb is to try to "rock the boat" on coding
-style and conventions as little as possible. Just because it's
-possible doesn't mean that people want to do it.
+> "This makes things smaller" carries much more weight than
+> "I think this is better".
 
-That said, if you figure out some change that produces significant
-reductions in code or binary size on multiple architectures without
-making things more complicated, less readable or making the code or
-binary size larger, then by all means propose it. "This makes things
-smaller" carries much more weight than "I think this is better".
-Almost all of the changes you've proposed that have seen any
-discussion whatsoever fall into the latter category.
+Can the discussed implementation of a function like "rsi_send_mgmt_pkt"
+become a bit smaller by the deletion of extra variable initialisations
 
-Thanks,
 
--- 
-Julian Calaby
+> Almost all of the changes you've proposed that have seen any
+> discussion whatsoever fall into the latter category.
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+Thanks for your interesting feedback.
+
+Can a further constructive dialogue evolve from the presented information?
+
+Regards,
+Markus
