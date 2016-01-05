@@ -1,59 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Jan 2016 11:28:13 +0000
-Subject: Re: [PATCH 2/2] mfd: smsc-ece1099: Refactoring for smsc_i2c_probe()
-Message-Id: <5694E34D.9010609@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Jan 2016 09:52:49 +0000
+Subject: [patch -next] svcrdma: fix a couple warning messages
+Message-Id: <20160105095249.GB23619@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5682957F.5000604@users.sourceforge.net>
- <56829630.6030706@users.sourceforge.net> <20160111081059.GS3331@x1>
- <20160111081219.GT3331@x1> <5694BE21.3010504@users.sourceforge.net>
- <20160112090532.GS19803@x1>
-In-Reply-To: <20160112090532.GS19803@x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "J. Bruce Fields" <bfields@fieldses.org>, Chuck Lever <chuck.lever@oracle.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>, Jeff Layton <jlayton@poochiereds.net>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Doug Ledford <dledford@redhat.com>, Steve Wise <swise@opengridcomputing.com>, Sagi Grimberg <sagig@mellanox.com>, Michael Wang <yun.wang@profitbricks.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> Which topic would you prefer for my update suggestion instead?
->=20
-> This one.
->=20
-> "mfd: smsc-ece1099: Refactoring for smsc_i2c_probe()"
->=20
-> The function name and just describing the changes as "refactoring" do
-> not describe the changes in a helpful way.
+The WARN_ON_ONCE() macro takes a condition, passing it this string
+literal sort of works as intended but it's better to use WARN_ONCE()
+instead.
 
-Would you find a subject like "mfd: smsc-ece1099: Better exception handling
-in smsc_i2c_probe()" acceptable?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
->>>> Acked-by: Lee Jones <lee.jones@linaro.org>
->>
->> Do you really request that I should append this tag already to messages
->> for (my adjusted) commits you can not see so far?
->=20
-> Yes.
-
-Interesting =E2=80=A6
-
-
-> The code looks fine,
-
-Thanks for a bit of positive feedback.
-
-
-> and if the commit log is still not up to scratch I just won't apply it. :)
-
-Can we eventually agree on an useful message before I would dare another co=
-mmit?
-
-Will it be sufficient to delete the asterisks there?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/sunrpc/xprtrdma/svc_rdma_transport.c b/net/sunrpc/xprtrdma/svc_rdma_transport.c
+index abfbd02..4b397ad 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma_transport.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_transport.c
+@@ -221,7 +221,7 @@ out_empty:
+ 	spin_lock_bh(&xprt->sc_ctxt_lock);
+ 	xprt->sc_ctxt_used--;
+ 	spin_unlock_bh(&xprt->sc_ctxt_lock);
+-	WARN_ON_ONCE("svcrdma: empty RDMA ctxt list?\n");
++	WARN_ONCE(1, "svcrdma: empty RDMA ctxt list?\n");
+ 	return NULL;
+ }
+ 
+@@ -328,7 +328,7 @@ out_empty:
+ 	if (map)
+ 		goto out;
+ 
+-	WARN_ON_ONCE("svcrdma: empty request map list?\n");
++	WARN_ONCE(1, "svcrdma: empty request map list?\n");
+ 	return NULL;
+ }
+ 
