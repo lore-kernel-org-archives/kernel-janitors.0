@@ -1,52 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jan 2016 14:44:24 +0000
-Subject: [PATCH 2/3] rsi: Delete unnecessary variable initialisations in rsi_send_data_pkt()
-Message-Id: <5687E248.8040902@users.sourceforge.net>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Tue, 05 Jan 2016 00:13:07 +0000
+Subject: Re: [PATCH 0/3] mtd-rfd_ftl: Fine-tuning for two function implementations
+Message-Id: <20160105001307.GE109450@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <5687E169.4070704@users.sourceforge.net>
-In-Reply-To: <5687E169.4070704@users.sourceforge.net>
+ <56858E3A.7000706@users.sourceforge.net>
+In-Reply-To: <56858E3A.7000706@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Jan 2016 15:15:12 +0100
+On Thu, Dec 31, 2015 at 09:21:14PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 31 Dec 2015 21:15:15 +0100
+> 
+> A few update suggestions were taken into account
+> from static source code analysis.
 
-Omit explicit initialisation at the beginning for four local variables
-which are redefined before their first use.
+Are you fixing anything? Have you tested your work?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/wireless/rsi/rsi_91x_pkt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+At the moment, I can't find any value in your patches.
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_pkt.c b/drivers/net/wireless/rsi/rsi_91x_pkt.c
-index ee98f5b..ec65e1c 100644
---- a/drivers/net/wireless/rsi/rsi_91x_pkt.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_pkt.c
-@@ -27,15 +27,15 @@
- int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
- {
- 	struct rsi_hw *adapter = common->priv;
--	struct ieee80211_hdr *tmp_hdr = NULL;
-+	struct ieee80211_hdr *tmp_hdr;
- 	struct ieee80211_tx_info *info;
- 	struct skb_info *tx_params;
--	struct ieee80211_bss_conf *bss = NULL;
-+	struct ieee80211_bss_conf *bss;
- 	int status = -EINVAL;
- 	u8 ieee80211_size = MIN_802_11_HDR_LEN;
--	u8 extnd_size = 0;
-+	u8 extnd_size;
- 	__le16 *frame_desc;
--	u16 seq_num = 0;
-+	u16 seq_num;
- 
- 	info = IEEE80211_SKB_CB(skb);
- 	bss = &info->control.vif->bss_conf;
--- 
-2.6.3
-
+Brian
