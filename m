@@ -1,49 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Jan 2016 08:54:25 +0000
-Subject: [PATCH 5/8] rtc-ab-b5ze-s3: Replace a variable initialisation by an assignment in _abb5zes3_rtc_read
-Message-Id: <5688E1C1.3020401@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2016 09:56:30 +0000
+Subject: [patch -next] mlxsw: core: remove an unnecessary condition
+Message-Id: <20160106095630.GB23185@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5688DF2D.6090204@users.sourceforge.net>
-In-Reply-To: <5688DF2D.6090204@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Jan 2016 08:00:29 +0100
+We checked "err" on the lines before so we know it's zero here.
 
-Replace an explicit initialisation for one local variable at the beginning
-by an assignment.
+These cause a static checker warning because checking known things can
+indicate a bug.  Maybe there is a missing assignment or we are checking
+the wrong variable.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/rtc/rtc-ab-b5ze-s3.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/rtc/rtc-ab-b5ze-s3.c b/drivers/rtc/rtc-ab-b5ze-s3.c
-index 0986715..02e3443 100644
---- a/drivers/rtc/rtc-ab-b5ze-s3.c
-+++ b/drivers/rtc/rtc-ab-b5ze-s3.c
-@@ -382,7 +382,7 @@ static int _abb5zes3_rtc_read_alarm(struct device *dev,
- 				    struct rtc_wkalrm *alarm)
- {
- 	struct abb5zes3_rtc_data *data = dev_get_drvdata(dev);
--	struct rtc_time rtc_tm, *alarm_tm = &alarm->time;
-+	struct rtc_time rtc_tm, *alarm_tm;
- 	unsigned long rtc_secs, alarm_secs;
- 	u8 regs[ABB5ZES3_ALRM_SEC_LEN];
- 	unsigned int reg;
-@@ -396,6 +396,7 @@ static int _abb5zes3_rtc_read_alarm(struct device *dev,
- 		goto err;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c b/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
+index 5b9364f..1ac8bf1 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
+@@ -130,7 +130,7 @@ static ssize_t mlxsw_hwmon_temp_rst_store(struct device *dev,
+ 		dev_err(mlxsw_hwmon->bus_info->dev, "Failed to reset temp sensor history\n");
+ 		return err;
  	}
+-	return err ? err : len;
++	return len;
+ }
  
-+	alarm_tm = &alarm->time;
- 	alarm_tm->tm_sec  = 0;
- 	alarm_tm->tm_min  = bcd2bin(regs[0] & 0x7f);
- 	alarm_tm->tm_hour = bcd2bin(regs[1] & 0x3f);
--- 
-2.6.3
-
+ static ssize_t mlxsw_hwmon_fan_rpm_show(struct device *dev,
