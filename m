@@ -1,34 +1,34 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 23 Jan 2016 00:36:34 +0000
-Subject: Re: [PATCH] mtd: nand: mpc5121: use 'of_machine_is_compatible' to simplify code
-Message-Id: <20160123003634.GA16842@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2016 10:58:01 +0000
+Subject: re: mfd: PCF50633 core driver
+Message-Id: <20160106105801.GA1666@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1452408399-5840-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <20160111135558.6ebd1165@bbrezillon>
-In-Reply-To: <20160111135558.6ebd1165@bbrezillon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, dwmw2@infradead.org, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 11, 2016 at 01:55:58PM +0100, Boris Brezillon wrote:
-> On Sun, 10 Jan 2016 07:46:39 +0100
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> 
-> > The current code is the same as 'of_machine_is_compatible'.
-> > So use it in order to remove a few lines of code and to be more
-> > consistent with other parts of the kernel.
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Your patch looks good from a functional POV, but what is this board
-> detection hack doing in the NAND driver code in the first place?
-> 
-> Let's say I didn't see that :-).
+Hello Balaji Rao,
 
-:)
+The patch f52046b14b1e: "mfd: PCF50633 core driver" from Jan 9, 2009,
+leads to the following static checker warning:
 
-> Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+	drivers/mfd/pcf50633-core.c:224 pcf50633_probe()
+	warn: 'pcf50633_reg_read(pcf, 0)()' returns unsigned values
 
-Applied to l2-mtd.git/next
+drivers/mfd/pcf50633-core.c
+   221  
+   222          version = pcf50633_reg_read(pcf, 0);
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+These return 0xFF on error, they don't return negative values.
+
+   223          variant = pcf50633_reg_read(pcf, 1);
+   224          if (version < 0 || variant < 0) {
+   225                  dev_err(pcf->dev, "Unable to probe pcf50633\n");
+   226                  ret = -ENODEV;
+   227                  return ret;
+   228          }
+   229  
+
+regards,
+dan carpenter
