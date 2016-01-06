@@ -1,36 +1,27 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 Jan 2016 08:49:12 +0000
-Subject: [PATCH] dlm: constify kset_uevent_ops structures
-Message-Id: <1451638152-30707-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Sathya Perla <sathya.perla@avagotech.com>
+Date: Wed, 06 Jan 2016 06:37:11 +0000
+Subject: Re: [PATCH] be2net: Delete an unnecessary check in two functions
+Message-Id: <CAKvpyk1WPROG=FH0Wcvfdum3YTFprELNftzX0pT9-PU7TDz8jQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+	<5685B8AD.7010900@users.sourceforge.net>
+In-Reply-To: <5685B8AD.7010900@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christine Caulfield <ccaulfie@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, David Teigland <teigland@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: netdev@vger.kernel.org, Ajit Khaparde <ajit.khaparde@avagotech.com>, Padmanabh Ratnakar <padmanabh.ratnakar@avagotech.com>, Sriharsha Basavapatna <sriharsha.basavapatna@avagotech.com>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This kset_uevent_ops structure is never modified, so declare it as const.
-Other structures of this type are already const.
+On Fri, Jan 1, 2016 at 4:52 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 1 Jan 2016 00:11:57 +0100
+>
+> Remove two checks for null pointers which would be handled by usual
+> error detection before.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Done with the help of Coccinelle.
+Acked-by: Sathya Perla <sathya.perla@avagotech.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- fs/dlm/lockspace.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
-index f3e7278..2ea1b77 100644
---- a/fs/dlm/lockspace.c
-+++ b/fs/dlm/lockspace.c
-@@ -233,7 +233,7 @@ static int dlm_uevent(struct kset *kset, struct kobject *kobj,
- 	return 0;
- }
- 
--static struct kset_uevent_ops dlm_uevent_ops = {
-+static const struct kset_uevent_ops dlm_uevent_ops = {
- 	.uevent = dlm_uevent,
- };
- 
-
+This patch is suitable for the net-next tree. Thanks!
