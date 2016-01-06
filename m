@@ -1,50 +1,67 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 01 Jan 2016 09:02:03 +0000
-Subject: [PATCH] staging/lustre/llite: constify export_operations structures
-Message-Id: <1451638923-6644-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2016 10:03:46 +0000
+Subject: re: cxgb4: Update mps_tcam output to include T6 fields
+Message-Id: <20160106100346.GF23185@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This export_operations structure is never modified, so declare it as const.
-Most other structures of this type are already const.
+Hello Hariprasad Shenai,
 
-Done with the help of Coccinelle.
+The patch 115b56af88b5: "cxgb4: Update mps_tcam output to include T6
+fields" from Dec 23, 2015, leads to the following static checker
+warning:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+	drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c:1735 mps_tcam_show()
+	warn: we tested 'lookup_type' before and it was 'true'
 
----
- drivers/staging/lustre/lustre/llite/llite_internal.h |    2 +-
- drivers/staging/lustre/lustre/llite/llite_nfs.c      |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+  1725                          if (lookup_type && (lookup_type != DATALKPTYPE_M)) {
+                                    ^^^^^^^^^^^
+Is non-zero.
 
-diff --git a/drivers/staging/lustre/lustre/llite/llite_internal.h b/drivers/staging/lustre/lustre/llite/llite_internal.h
-index ee8a1d6..67f0832 100644
---- a/drivers/staging/lustre/lustre/llite/llite_internal.h
-+++ b/drivers/staging/lustre/lustre/llite/llite_internal.h
-@@ -798,7 +798,7 @@ char *ll_get_fsname(struct super_block *sb, char *buf, int buflen);
- void ll_open_cleanup(struct super_block *sb, struct ptlrpc_request *open_req);
- 
- /* llite/llite_nfs.c */
--extern struct export_operations lustre_export_operations;
-+extern const struct export_operations lustre_export_operations;
- __u32 get_uuid2int(const char *name, int len);
- void get_uuid2fsid(const char *name, int len, __kernel_fsid_t *fsid);
- struct inode *search_inode_for_lustre(struct super_block *sb,
-diff --git a/drivers/staging/lustre/lustre/llite/llite_nfs.c b/drivers/staging/lustre/lustre/llite/llite_nfs.c
-index e578a11..2de2964 100644
---- a/drivers/staging/lustre/lustre/llite/llite_nfs.c
-+++ b/drivers/staging/lustre/lustre/llite/llite_nfs.c
-@@ -323,7 +323,7 @@ static struct dentry *ll_get_parent(struct dentry *dchild)
- 	return result;
- }
- 
--struct export_operations lustre_export_operations = {
-+const struct export_operations lustre_export_operations = {
-        .get_parent = ll_get_parent,
-        .encode_fh  = ll_encode_fh,
-        .get_name   = ll_get_name,
+  1726                                  seq_printf(seq,
+  1727                                             "%3u %02x:%02x:%02x:%02x:%02x:%02x "
+  1728                                             "%012llx %06x %06x    -    -   %3c"
+  1729                                             "      %3c  %4x   "
+  1730                                             "%3c   %#x%4u%4d", idx, addr[0],
+  1731                                             addr[1], addr[2], addr[3],
+  1732                                             addr[4], addr[5],
+  1733                                             (unsigned long long)mask,
+  1734                                             vniy, vnix, dip_hit ? 'Y' : 'N',
+  1735                                             lookup_type ? 'I' : 'O', port_num,
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^
+No need to check.
 
+  1736                                             (cls_lo & T6_SRAM_VLD_F) ? 'Y' : 'N',
+  1737                                             PORTMAP_G(cls_hi),
+  1738                                             T6_PF_G(cls_lo),
+  1739                                             (cls_lo & T6_VF_VALID_F) ?
+  1740                                             T6_VF_G(cls_lo) : -1);
+  1741                          } else {
+  1742                                  seq_printf(seq,
+  1743                                             "%3u %02x:%02x:%02x:%02x:%02x:%02x "
+  1744                                             "%012llx    -       -   ",
+  1745                                             idx, addr[0], addr[1], addr[2],
+  1746                                             addr[3], addr[4], addr[5],
+  1747                                             (unsigned long long)mask);
+  1748  
+  1749                                  if (vlan_vld)
+  1750                                          seq_printf(seq, "%4u   Y     ", ivlan);
+  1751                                  else
+  1752                                          seq_puts(seq, "  -    N     ");
+  1753  
+  1754                                  seq_printf(seq,
+  1755                                             "-      %3c  %4x   %3c   %#x%4u%4d",
+  1756                                             lookup_type ? 'I' : 'O', port_num,
+  1757                                             (cls_lo & T6_SRAM_VLD_F) ? 'Y' : 'N',
+  1758                                             PORTMAP_G(cls_hi),
+  1759                                             T6_PF_G(cls_lo),
+  1760                                             (cls_lo & T6_VF_VALID_F) ?
+  1761                                             T6_VF_G(cls_lo) : -1);
+  1762                          }
+
+regards,
+dan carpenter
