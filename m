@@ -1,46 +1,23 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Mon, 04 Jan 2016 14:04:47 +0000
-Subject: Re: [PATCH 2/2] 390/qeth: Refactoring for qeth_core_set_online()
-Message-Id: <20160104140447.GG4179@osiris>
+From: Jiri Pirko <jiri@resnulli.us>
+Date: Wed, 06 Jan 2016 10:15:47 +0000
+Subject: Re: [patch -next] mlxsw: core: remove an unnecessary condition
+Message-Id: <20160106101547.GB2295@nanopsycho.orion>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5688F13A.70601@users.sourceforge.net>
- <5688F1D0.3090502@users.sourceforge.net>
- <20160104113046.GE4179@osiris>
- <568A6F4A.1000206@users.sourceforge.net>
-In-Reply-To: <568A6F4A.1000206@users.sourceforge.net>
+References: <20160106095630.GB23185@mwanda>
+In-Reply-To: <20160106095630.GB23185@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-s390@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jan 04, 2016 at 02:10:34PM +0100, SF Markus Elfring wrote:
-> >> +++ b/drivers/s390/net/qeth_core_main.c
-> >> @@ -5638,9 +5638,10 @@ static int qeth_core_set_online(struct ccwgroup_device *gdev)
-> >>  {
-> >>  	struct qeth_card *card = dev_get_drvdata(&gdev->dev);
-> >>  	int rc;
-> >> -	int def_discipline;
-> >>  
-> >>  	if (!card->discipline) {
-> >> +		int def_discipline;
-> >> +
-> >>  		if (card->info.type = QETH_CARD_TYPE_IQD)
-> >>  			def_discipline = QETH_DISCIPLINE_LAYER3;
-> > 
-> > Same here: I don't think we want to start with patches like this.
-> 
-> Thanks for your feedback.
-> 
-> 
-> > This going to be a never ending story without much benefit.
-> 
-> Is the source code a bit clearer and safer if it will be expressed
-> directly that the use of a specific variable is not intended for
-> a complete function implementation but for the smaller scope
-> of an if branch?
+Wed, Jan 06, 2016 at 10:56:30AM CET, dan.carpenter@oracle.com wrote:
+>We checked "err" on the lines before so we know it's zero here.
+>
+>These cause a static checker warning because checking known things can
+>indicate a bug.  Maybe there is a missing assignment or we are checking
+>the wrong variable.
+>
+>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This depends on the function and what the author prefers. In this case the
-function body is very small so I don't see any benefit at all.
-
+Acked-by: Jiri Pirko <jiri@mellanox.com>
