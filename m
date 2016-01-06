@@ -1,17 +1,29 @@
-From: "Skoll, Jeff" <simon.peter@inm.uni-stuttgart.de>
-Date: Wed, 06 Jan 2016 00:45:37 +0000
-Subject: Charity/Donation
-Message-Id: <auto-000204360096@uni-stuttgart.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2016 10:05:52 +0000
+Subject: [patch] [media] vpx3220: signedness bug in vpx3220_fp_read()
+Message-Id: <20160106100552.GI23185@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
-My name is Jeffrey Skoll, a philanthropist and the founder of one of the largest private foundations in the world. I believe strongly in ‘giving while living.’ I had one idea that never changed in my mind — that you should use your wealth to help people and I have decided to secretly give USD2.498 Million to a randomly selected individual. On receipt of this email, you should count yourself as the individual. Kindly get back to me at your earliest convenience, so I know your email address is valid.
+The intent was to return -1 on error and that's what the callers expect
+but the current code returns USHRT_MAX instead.
 
-Visit the web page to know more about me: http://www.theglobeandmail.com/news/national/meet-the-canadian-billionaire-whos-giving-it-all-away/article4209888/ or you can read an article of me on Wikipedia.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Jeffrey Skoll.
+diff --git a/drivers/media/i2c/vpx3220.c b/drivers/media/i2c/vpx3220.c
+index 4b564f1..90b693f 100644
+--- a/drivers/media/i2c/vpx3220.c
++++ b/drivers/media/i2c/vpx3220.c
+@@ -124,7 +124,7 @@ static int vpx3220_fp_write(struct v4l2_subdev *sd, u8 fpaddr, u16 data)
+ 	return 0;
+ }
+ 
+-static u16 vpx3220_fp_read(struct v4l2_subdev *sd, u16 fpaddr)
++static int vpx3220_fp_read(struct v4l2_subdev *sd, u16 fpaddr)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+ 	s16 data;
