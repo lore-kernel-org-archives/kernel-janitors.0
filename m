@@ -1,24 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 12 Jan 2016 19:31:12 +0000
-Subject: Re: [patch] mdio_bus: NULL dereference on allocation error
-Message-Id: <20160112.143112.1804837472013389455.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2016 09:59:10 +0000
+Subject: [patch -next] fsl/fman: double free on probe failure
+Message-Id: <20160106095910.GD23185@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160112093435.GD29804@mwanda>
-In-Reply-To: <20160112093435.GD29804@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: f.fainelli@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Igal Liberman <igal.liberman@freescale.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Jan 2016 12:34:36 +0300
+"priv" is allocated with devm_kzalloc() so freeing it here with kfree()
+will lead to a double free.
 
-> If bus = kzalloc() fails then we end up dereferencing bus when we do
-> "bus->irq[i] = PHY_POLL;".  The code is a little simpler if we reverse
-> the NULL check and return directly on failure.
-> 
-> Fixes: e7f4dc3536a4 ('mdio: Move allocation of interrupts into core')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 3933961682a3 ('fsl/fman: Add FMan MAC driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index 743a393..e33d9d2 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -961,7 +961,6 @@ _return_of_node_put:
+ 	of_node_put(dev_node);
+ _return_dev_set_drvdata:
+ 	kfree(priv->fixed_link);
+-	kfree(priv);
+ 	dev_set_drvdata(dev, NULL);
+ _return:
+ 	return err;
