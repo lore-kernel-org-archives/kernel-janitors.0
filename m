@@ -1,24 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 18 Jan 2016 19:12:59 +0000
-Subject: Re: [PATCH] ide: constify ide_dma_ops structures
-Message-Id: <20160118.141259.2240054190302250383.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2016 09:38:41 +0000
+Subject: [patch] ASoC: rsnd: precedence error in rsnd_ssiu_init()
+Message-Id: <20160106092855.GA23185@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1447619790-5203-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1447619790-5203-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 15 Nov 2015 21:36:30 +0100
+The bitwise OR has higher precedence than ?: so the val2 was always set
+to 0x2.
 
-> The ide_dma_ops structures are never modified, so declare these as const,
-> as is already done for the others.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: b4c83b171557 ('ASoC: rsnd: add Multi channel support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
+index 3fe9e08..06d7282 100644
+--- a/sound/soc/sh/rcar/ssiu.c
++++ b/sound/soc/sh/rcar/ssiu.c
+@@ -73,7 +73,7 @@ static int rsnd_ssiu_init(struct rsnd_mod *mod,
+ 		switch (multi_ssi_slaves) {
+ 		case 0x0206: /* SSI0/1/2/9 */
+ 			val2 = (1 << 4) | /* SSI0129 sync */
+-				rsnd_rdai_is_clk_master(rdai) ? 0x2 : 0x1;
++				(rsnd_rdai_is_clk_master(rdai) ? 0x2 : 0x1);
+ 			/* fall through */
+ 		case 0x0006: /* SSI0/1/2 */
+ 			val1 = rsnd_rdai_is_clk_master(rdai) ?
