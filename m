@@ -1,7 +1,7 @@
-From: "Jeff Skoll" <s_w9gc9x@uni-kassel.de>
-Date: Sun, 03 Jan 2016 11:28:45 +0000
-Subject: Charity Donation
-Message-Id: <auto-000000771511@mailadmin.uni-kassel.de>
+From: "Skoll, Jeff" <simon.peter@inm.uni-stuttgart.de>
+Date: Wed, 06 Jan 2016 00:45:37 +0000
+Subject: Charity/Donation
+Message-Id: <auto-000204360096@uni-stuttgart.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
