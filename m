@@ -1,58 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 12 Jan 2016 12:20:33 +0000
-Subject: Re: mfd-dm355evm_msp: One function call less in add_child() after error detection
-Message-Id: <5694EF91.70609@users.sourceforge.net>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Date: Wed, 06 Jan 2016 18:47:17 +0000
+Subject: Re: [PATCH 0/2] InfiniBand-iSER: Refactoring for two function implementations
+Message-Id: <1452106037.26125.29.camel@haakon3.risingtidesystems.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <568284D3.3060006@users.sourceforge.net> <20160112115906.GD27358@x1>
-In-Reply-To: <20160112115906.GD27358@x1>
+	 <567FDB4E.2040000@users.sourceforge.net>
+In-Reply-To: <567FDB4E.2040000-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Roi Dayan <roid-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sagi Grimberg <sagig-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-> The subject format is wrong
-
-Which format do you expect?
-
-
-> and the summary itself isn't very informative.
-
-Which wording do you find more useful?
-
-
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Tue, 29 Dec 2015 13:56:42 +0100
+On Sun, 2015-12-27 at 13:36 +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 27 Dec 2015 13:12:10 +0100
+> Subject: [PATCH 0/2] InfiniBand-iSER: Refactoring for two function implementations
 > 
-> This patch format is wrong,
-
-You might find the use of additional fields in the message body unusual.
-I have got an other impression from the canonical patch format.
-
-
-> please consider using `git format-patch` and `git send-email`.
-
-Thanks for your suggestion.
-
-
->> The platform_device_put() function was called in one case by the
->> add_child() function during error handling even if the passed
->> variable "pdev" contained a null pointer.
->>
->> Implementation details could be improved by the adjustment of jump targets
->> according to the Linux coding style convention.
-
-I am going to integrate the source code changes that you requested a bit later.
-
-
->> +report_failure:
->> +	dev_err(&client->dev, "can't add %s dev\n", name);
+> I suggest to return directly instead of using the jump label "err"
+> in two functions (which are working without clean-up there).
 > 
-> This isn't a very friendly error message.  Better to convert the
-> dev_dbg() calls to dev_err() and tell the user what the problem was.
+> Markus Elfring (2):
+>   One jump label less in iser_reg_sig_mr()
+>   One jump label less in isert_reg_sig_mr()
+> 
+>  drivers/infiniband/ulp/iser/iser_memory.c | 5 ++---
+>  drivers/infiniband/ulp/isert/ib_isert.c   | 7 +++----
+>  2 files changed, 5 insertions(+), 7 deletions(-)
+> 
 
-Which information display would be more appropriate here?
+Doug, are you going to pick these two minor patches up, or shall I..?
 
-Regards,
-Markus
