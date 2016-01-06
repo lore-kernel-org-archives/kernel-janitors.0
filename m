@@ -1,33 +1,44 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Mon, 04 Jan 2016 19:41:10 +0000
-Subject: Re: [PATCH] mac802154: constify ieee802154_llsec_ops structure
-Message-Id: <7E0080F5-62E2-475F-A861-7B58DC87131E@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Jan 2016 10:03:08 +0000
+Subject: [patch -next] fsl/fman: use the ALIGN() macro
+Message-Id: <20160106100308.GE23185@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1450906592-9203-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1450906592-9203-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Alexander Aring <alex.aring@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, linux-wpan@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Igal Liberman <igal.liberman@freescale.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-Hi Julia,
+The original code works fine but the issue is that static checkers
+complain about this:
 
-> The ieee802154_llsec_ops structure is never modified, so declare it as
-> const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> include/net/ieee802154_netdev.h |    2 +-
-> net/mac802154/mac_cmd.c         |    2 +-
-> 2 files changed, 2 insertions(+), 2 deletions(-)
+	~(u16)(OFFSET_UNITS - 1)
 
-patch has been applied to bluetooth-next tree.
+In that expression the cast to u16 is a no-op because we cast the value
+15 to a u16 but then type promotion rules automatically cast it back to
+an int and then we do the bitwise negate.
 
-Regards
+It's cleaner to use the kernel's ALIGN() macro instead.
 
-Marcel
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I think this patch is correct, but I haven't tested it, so please review
+carefully.
 
+diff --git a/drivers/net/ethernet/freescale/fman/fman_sp.c b/drivers/net/ethernet/freescale/fman/fman_sp.c
+index f9e7aa3..b527da1 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_sp.c
++++ b/drivers/net/ethernet/freescale/fman/fman_sp.c
+@@ -92,11 +92,8 @@ int fman_sp_build_buffer_struct(struct fman_sp_int_context_data_copy *
+ 	u32 tmp;
+ 
+ 	/* Align start of internal context data to 16 byte */
+-	int_context_data_copy->ext_buf_offset = (u16)
+-		((buffer_prefix_content->priv_data_size & (OFFSET_UNITS - 1)) ?
+-		((buffer_prefix_content->priv_data_size + OFFSET_UNITS) &
+-			~(u16)(OFFSET_UNITS - 1)) :
+-		buffer_prefix_content->priv_data_size);
++	int_context_data_copy->ext_buf_offset +		(u16)ALIGN(buffer_prefix_content->priv_data_size, 16);
+ 
+ 	/* Translate margin and int_context params to FM parameters */
+ 	/* Initialize with illegal value. Later we'll set legal values. */
