@@ -1,52 +1,38 @@
-From: Michal Nazarewicz <mina86@mina86.com>
-Date: Wed, 06 Jan 2016 00:02:57 +0000
-Subject: Re: [patch v2] usb: gadget: f_midi: missing unlock on error path
-Message-Id: <xa1t60z7tw0e.fsf@mina86.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Jan 2016 09:40:01 +0000
+Subject: [patch] MAINTAINERS: fix MIC maintainers entry
+Message-Id: <20160107094001.GE27186@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160105102809.GA26420@mwanda>
-In-Reply-To: <20160105102809.GA26420@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sudeep Dutt <sudeep.dutt@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>, Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, Jan 06 2016, Dan Carpenter wrote:
-> On Tue, Jan 05, 2016 at 08:51:18PM +0000, Felipe Ferreri Tonello wrote:
->> This case is not a matter of been pretty but a matter of been less error
->> prone.
->> 
->> What would you suggest?
->
-> Normally it's better to unwind in the reverse order from how we
-> allocated so it would be:
->
-> 	lock
-> 	allocate midi
-> 	allocate ports
->
-> 	free ports
-> 	free midi
-> 	unlock
->
-> We could move the midi allocation outside the lock, but we can't move
-> ports allocation.
+There were some missing colons so we stop parsing the MIC maintainers
+entry early.  It means that:
 
-I still think the easiest way to go is getting rid of ports allocation
-all together.  With that gone, it’s trivial to initialise midi to NULL
-and then we can do kfree whenever we want.
+    ./scripts/get_maintainer.pl -f drivers/misc/mic/card/mic_virtio.c
 
-> And also we want to drop the lock as soon as we can
-> so it's better to do that early like my patch does instead of after the
-> frees.  It's less symetric that way and thus more error prone but it's
-> better for performance.
->
-> Anyway, I don't think it really matters, this is a minor thing.
->
-> Also I hope that Smatch will be able to avoid that false positive about
-> the midi dereference by the end of 2016. :)
+doesn't work.
 
--- 
-Best regards,                                         _     _
-.o. | Liege of Serenely Enlightened Majesty of      o' \,=./ `o
-..o | Computer Science,  ミハウ “mina86” ナザレヴイツ  (o o)
-ooo +--<mpn@google.com>--<xmpp:mina86@jabber.org>--ooO--(_)--Ooo--
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 248828d..070346d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5749,11 +5749,11 @@ F:	include/linux/mic_bus.h
+ F:	include/linux/scif.h
+ F:	include/uapi/linux/mic_common.h
+ F: 	include/uapi/linux/mic_ioctl.h
+-F	include/uapi/linux/scif_ioctl.h
++F:	include/uapi/linux/scif_ioctl.h
+ F:	drivers/misc/mic/
+ F:	drivers/dma/mic_x100_dma.c
+ F:	drivers/dma/mic_x100_dma.h
+-F	Documentation/mic/
++F:	Documentation/mic/
+ 
+ INTEL PMC/P-Unit IPC DRIVER
+ M:	Zha Qipeng<qipeng.zha@intel.com>
