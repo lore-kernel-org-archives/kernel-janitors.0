@@ -1,19 +1,19 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Mon, 04 Jan 2016 11:29:48 +0000
+From: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Date: Thu, 07 Jan 2016 14:33:46 +0000
 Subject: Re: [PATCH 1/2] 390/qeth: Delete an unnecessary variable initialisation in qeth_core_set_online()
-Message-Id: <20160104112948.GD4179@osiris>
+Message-Id: <1452177226.1081.6.camel@BR9GV9YG.de.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <5688F13A.70601@users.sourceforge.net>
- <5688F198.4040109@users.sourceforge.net>
+	 <5688F13A.70601@users.sourceforge.net>
+	 <5688F198.4040109@users.sourceforge.net>
 In-Reply-To: <5688F198.4040109@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-s390@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ubraun@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, Jan 03, 2016 at 11:02:00AM +0100, SF Markus Elfring wrote:
+On Sun, 2016-01-03 at 11:02 +0100, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Sun, 3 Jan 2016 10:48:05 +0100
 > 
@@ -36,10 +36,12 @@ On Sun, Jan 03, 2016 at 11:02:00AM +0100, SF Markus Elfring wrote:
 > -	int rc = 0;
 > +	int rc;
 >  	int def_discipline;
+> 
+>  	if (!card->discipline) {
 
-You can generate hundreds of patches like this one. There are even plenty
-more opportunities within this same file. I don't think we need this.
-
-If at all then change all occurrences within a file at once, but that is
-Ursula's call.
+As Heiko already answered, you could propose a lot of this kind of
+changes with just minor benefit. I do not want to push them in single
+patches. Either there is a cleanup patch for explicit initialisation of
+local variables in the whole qeth driver, or we take care about such
+minor changes, once we touch the code anyway due to other reasons.
 
