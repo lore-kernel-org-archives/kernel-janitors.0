@@ -1,73 +1,24 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Jan 2016 14:32:43 +0000
-Subject: [PATCH] net-i40e: Replace variable initialisations by assignments in i40e_vc_get_vf_resources_msg()
-Message-Id: <56868E0B.5040602@users.sourceforge.net>
+From: "Nelson, Shannon" <shannon.nelson@intel.com>
+Date: Thu, 07 Jan 2016 22:43:20 +0000
+Subject: RE: [PATCH] net-i40e: Replace variable initialisations by assignments in i40e_vc_get_vf_resources_ms
+Message-Id: <FC41C24E35F18A40888AACA1A36F3E418AFE2AAD@fmsmsx115.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+ <56868E0B.5040602@users.sourceforge.net>
+In-Reply-To: <56868E0B.5040602@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, Shannon Nelson <shannon.nelson@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "Allan, Bruce W" <bruce.w.allan@intel.com>, "Wyborny, Carolyn" <carolyn.wyborny@intel.com>, "Skidmore, Donald C" <donald.c.skidmore@intel.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "Ronciak, John" <john.ronciak@intel.com>, "Williams, Mitch A" <mitch.a.williams@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Jan 2016 15:11:09 +0100
-
-Replace explicit initialisations for four local variables at the beginning
-by assignments that will only be performed if the corresponding code
-will really be executed.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index aa58a49..e0874f5 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -1172,16 +1172,18 @@ static int i40e_vc_get_version_msg(struct i40e_vf *vf, u8 *msg)
-  **/
- static int i40e_vc_get_vf_resources_msg(struct i40e_vf *vf, u8 *msg)
- {
--	struct i40e_virtchnl_vf_resource *vfres = NULL;
--	struct i40e_pf *pf = vf->pf;
--	i40e_status aq_ret = 0;
-+	struct i40e_virtchnl_vf_resource *vfres;
-+	struct i40e_pf *pf;
-+	i40e_status aq_ret;
- 	struct i40e_vsi *vsi;
--	int i = 0, len = 0;
-+	int i = 0;
- 	int num_vsis = 1;
--	int ret;
-+	int len, ret;
- 
- 	if (!test_bit(I40E_VF_STAT_INIT, &vf->vf_states)) {
- 		aq_ret = I40E_ERR_PARAM;
-+		vfres = NULL;
-+		len = 0;
- 		goto err;
- 	}
- 
-@@ -1202,6 +1204,7 @@ static int i40e_vc_get_vf_resources_msg(struct i40e_vf *vf, u8 *msg)
- 				  I40E_VIRTCHNL_VF_OFFLOAD_VLAN;
- 
- 	vfres->vf_offload_flags = I40E_VIRTCHNL_VF_OFFLOAD_L2;
-+	pf = vf->pf;
- 	vsi = pf->vsi[vf->lan_vsi_idx];
- 	if (!vsi->info.pvid)
- 		vfres->vf_offload_flags |= I40E_VIRTCHNL_VF_OFFLOAD_VLAN;
-@@ -1231,7 +1234,7 @@ static int i40e_vc_get_vf_resources_msg(struct i40e_vf *vf, u8 *msg)
- 		i++;
- 	}
- 	set_bit(I40E_VF_STAT_ACTIVE, &vf->vf_states);
--
-+	aq_ret = 0;
- err:
- 	/* send the response back to the VF */
- 	ret = i40e_vc_send_msg_to_vf(vf, I40E_VIRTCHNL_OP_GET_VF_RESOURCES,
--- 
-2.6.3
-
+PiBGcm9tOiBTRiBNYXJrdXMgRWxmcmluZyBbbWFpbHRvOmVsZnJpbmdAdXNlcnMuc291cmNlZm9y
+Z2UubmV0XQ0KPiBTZW50OiBGcmlkYXksIEphbnVhcnkgMDEsIDIwMTYgNjozMyBBTQ0KPiANCj4g
+RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBE
+YXRlOiBGcmksIDEgSmFuIDIwMTYgMTU6MTE6MDkgKzAxMDANCj4gDQo+IFJlcGxhY2UgZXhwbGlj
+aXQgaW5pdGlhbGlzYXRpb25zIGZvciBmb3VyIGxvY2FsIHZhcmlhYmxlcyBhdCB0aGUgYmVnaW5u
+aW5nDQo+IGJ5IGFzc2lnbm1lbnRzIHRoYXQgd2lsbCBvbmx5IGJlIHBlcmZvcm1lZCBpZiB0aGUg
+Y29ycmVzcG9uZGluZyBjb2RlDQo+IHdpbGwgcmVhbGx5IGJlIGV4ZWN1dGVkLg0KPiANCj4gU2ln
+bmVkLW9mZi1ieTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0
+Pg0KPiAtLS0NCg0KVGhpcyBzZWVtcyB0byBtZSB0byBiZSB1bm5lY2Vzc2FyeSBmdXNzaW5nIHdp
+dGggdGhlIGNvZGUuDQoNCnNsbg0KDQo
