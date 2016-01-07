@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 07 Jan 2016 20:38:43 +0000
+From: Joe Perches <joe@perches.com>
+Date: Thu, 07 Jan 2016 20:42:00 +0000
 Subject: Re: net-thunder: One check less in nicvf_register_interrupts() after error detection
-Message-Id: <568ECCD3.1020700@users.sourceforge.net>
+Message-Id: <1452199320.4028.46.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <5685A273.6070607@users.sourceforge.net>
@@ -11,31 +11,32 @@ References: <566ABCD9.1060404@users.sourceforge.net>
  <568EC2FD.9000702@users.sourceforge.net>
  <1452196790.4028.33.camel@perches.com> <568EC56A.402@users.sourceforge.net>
  <1452198530.4028.43.camel@perches.com>
-In-Reply-To: <1452198530.4028.43.camel@perches.com>
+ <568ECCD3.1020700@users.sourceforge.net>
+In-Reply-To: <568ECCD3.1020700@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-> Some prefer that source code be "templatized" regardless
-> of the number of exit points that any particular use of a
-> specific function type.
+On Thu, 2016-01-07 at 21:38 +0100, SF Markus Elfring wrote:
+> > Some prefer that source code be "templatized" regardless
+> > of the number of exit points that any particular use of a
+> > specific function type.
+[]
+> > Some of your patches are converting these templatized
+> > functions to a different form for no added value.
+> 
+> Would you like to distinguish a bit more between my evolving
+> collection of update suggestions and the concrete proposal
+> for the function "nicvf_register_interrupts"?
 
-This is another interesting view on involved implementation details.
+No.
 
+> > These patches make the local source code inconsistent
+> > and generally goes against the authors preferred style.
+> 
+> Which programming approach will be the leading one here finally?
 
-> Some of your patches are converting these templatized
-> functions to a different form for no added value.
+Whatever the developer wants.
 
-Would you like to distinguish a bit more between my evolving
-collection of update suggestions and the concrete proposal
-for the function "nicvf_register_interrupts"?
-
-
-> These patches make the local source code inconsistent
-> and generally goes against the authors preferred style.
-
-Which programming approach will be the leading one here finally?
-
-Regards,
-Markus
+There is no _best_ or _only_ style for this.
