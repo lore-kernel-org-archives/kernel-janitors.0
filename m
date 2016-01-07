@@ -1,70 +1,25 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 04 Jan 2016 16:36:01 +0000
-Subject: [PATCH] hwmon: ibmaem: constify aem_rw_sensor_template and aem_ro_sensor_template structures
-Message-Id: <1451925361-21182-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Thu, 07 Jan 2016 13:05:13 +0000
+Subject: Re: [patch -next] ath9k: fix ath9k_hw_nvram_check_version()
+Message-Id: <87wprlk0ae.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20151219105919.GB3749@mwanda>
+In-Reply-To: <20151219105919.GB3749@mwanda> (Dan Carpenter's message of "Sat,
+	19 Dec 2015 13:59:19 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
-The aem_rw_sensor_template and aem_ro_sensor_template structures are never
-modified, so declare them as const.
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-Done with the help of Coccinelle.
+> There is a type bug so it always returns success.
+>
+> Fixes: 6fa658fd5ab2 ('ath9k: Simplify and fix eeprom endianness swapping')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Applied to ath.git, thanks.
 
----
- drivers/hwmon/ibmaem.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/hwmon/ibmaem.c b/drivers/hwmon/ibmaem.c
-index 7a8a6fb..1f64378 100644
---- a/drivers/hwmon/ibmaem.c
-+++ b/drivers/hwmon/ibmaem.c
-@@ -920,8 +920,8 @@ static ssize_t aem_set_power_period(struct device *dev,
- 
- /* Discover sensors on an AEM device */
- static int aem_register_sensors(struct aem_data *data,
--				struct aem_ro_sensor_template *ro,
--				struct aem_rw_sensor_template *rw)
-+				const struct aem_ro_sensor_template *ro,
-+				const struct aem_rw_sensor_template *rw)
- {
- 	struct device *dev = &data->pdev->dev;
- 	struct sensor_device_attribute *sensors = data->sensors;
-@@ -1020,19 +1020,19 @@ static void aem_remove_sensors(struct aem_data *data)
- /* Sensor probe functions */
- 
- /* Description of AEM1 sensors */
--static struct aem_ro_sensor_template aem1_ro_sensors[] = {
-+static const struct aem_ro_sensor_template aem1_ro_sensors[] = {
- {"energy1_input",  aem_show_energy, 0},
- {"power1_average", aem_show_power,  0},
- {NULL,		   NULL,	    0},
- };
- 
--static struct aem_rw_sensor_template aem1_rw_sensors[] = {
-+static const struct aem_rw_sensor_template aem1_rw_sensors[] = {
- {"power1_average_interval", aem_show_power_period, aem_set_power_period, 0},
- {NULL,			    NULL,                  NULL,                 0},
- };
- 
- /* Description of AEM2 sensors */
--static struct aem_ro_sensor_template aem2_ro_sensors[] = {
-+static const struct aem_ro_sensor_template aem2_ro_sensors[] = {
- {"energy1_input",	  aem_show_energy,	0},
- {"energy2_input",	  aem_show_energy,	1},
- {"power1_average",	  aem_show_power,	0},
-@@ -1050,7 +1050,7 @@ static struct aem_ro_sensor_template aem2_ro_sensors[] = {
- {NULL,                    NULL,                 0},
- };
- 
--static struct aem_rw_sensor_template aem2_rw_sensors[] = {
-+static const struct aem_rw_sensor_template aem2_rw_sensors[] = {
- {"power1_average_interval", aem_show_power_period, aem_set_power_period, 0},
- {"power2_average_interval", aem_show_power_period, aem_set_power_period, 1},
- {NULL,			    NULL,                  NULL,                 0},
-
+-- 
+Kalle Valo
