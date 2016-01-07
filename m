@@ -1,50 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 03 Jan 2016 06:44:56 +0000
-Subject: [PATCH] igb: constify e1000_phy_operations structure
-Message-Id: <1451803496-16693-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Date: Thu, 07 Jan 2016 07:03:07 +0000
+Subject: RE: [PATCH] usb: renesas_usbhs: constify usbhs_pkt_handle structures
+Message-Id: <SG2PR06MB0919E199F0B836E624EFC07DD8F50@SG2PR06MB0919.apcprd06.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1451249429-17205-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451249429-17205-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, Shannon Nelson <shannon.nelson@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-This e1000_phy_operations structure is never modified, so declare it as
-const.  Other structures of this type are already const.
+Hi Julia,
 
-Done with the help of Coccinelle.
+> From: linux-usb-owner@vger.kernel.org [mailto:linux-usb-owner@vger.kernel.org] On Behalf Of Julia Lawall
+> Sent: Monday, December 28, 2015 5:50 AM
+> 
+> The usbhs_pkt_handle structures are never modified, so declare them as
+> const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Thank you for the patch!
 
----
- drivers/net/ethernet/intel/igb/e1000_82575.c |    2 +-
- drivers/net/ethernet/intel/igb/e1000_hw.h    |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-diff --git a/drivers/net/ethernet/intel/igb/e1000_82575.c b/drivers/net/ethernet/intel/igb/e1000_82575.c
-index adb33e2..1ea27bf 100644
---- a/drivers/net/ethernet/intel/igb/e1000_82575.c
-+++ b/drivers/net/ethernet/intel/igb/e1000_82575.c
-@@ -2889,7 +2889,7 @@ static struct e1000_mac_operations e1000_mac_ops_82575 = {
- #endif
- };
- 
--static struct e1000_phy_operations e1000_phy_ops_82575 = {
-+static const struct e1000_phy_operations e1000_phy_ops_82575 = {
- 	.acquire              = igb_acquire_phy_82575,
- 	.get_cfg_done         = igb_get_cfg_done_82575,
- 	.release              = igb_release_phy_82575,
-diff --git a/drivers/net/ethernet/intel/igb/e1000_hw.h b/drivers/net/ethernet/intel/igb/e1000_hw.h
-index 4034207..a34d640 100644
---- a/drivers/net/ethernet/intel/igb/e1000_hw.h
-+++ b/drivers/net/ethernet/intel/igb/e1000_hw.h
-@@ -372,7 +372,7 @@ struct e1000_thermal_sensor_data {
- struct e1000_info {
- 	s32 (*get_invariants)(struct e1000_hw *);
- 	struct e1000_mac_operations *mac_ops;
--	struct e1000_phy_operations *phy_ops;
-+	const struct e1000_phy_operations *phy_ops;
- 	struct e1000_nvm_operations *nvm_ops;
- };
- 
+Best regards,
+Yoshihiro Shimoda
 
