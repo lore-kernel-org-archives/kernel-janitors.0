@@ -1,61 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Jan 2016 18:15:08 +0000
-Subject: Re: [PATCH 1/2] [media] m88rs6000t: Better exception handling in five functions
-Message-Id: <56A6662C.3000804@users.sourceforge.net>
+Date: Fri, 08 Jan 2016 07:18:40 +0000
+Subject: Re: 390/qeth: Delete an unnecessary variable initialisation in qeth_core_set_online()
+Message-Id: <568F62D0.9050806@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <5680FDB3.7060305@users.sourceforge.net>
- <alpine.DEB.2.10.1512281019050.2702@hadrien>
- <56810F56.4080306@users.sourceforge.net>
- <alpine.DEB.2.10.1512281134590.2702@hadrien>
- <568148FD.7080209@users.sourceforge.net>
- <5681497E.7030702@users.sourceforge.net> <20160125150136.449f2593@recife.lan>
-In-Reply-To: <20160125150136.449f2593@recife.lan>
+ <5688F13A.70601@users.sourceforge.net>
+ <5688F198.4040109@users.sourceforge.net>
+ <1452177226.1081.6.camel@BR9GV9YG.de.ibm.com>
+In-Reply-To: <1452177226.1081.6.camel@BR9GV9YG.de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->> This issue was detected by using the Coccinelle software.
->>
->> Move the jump label directly before the desired log statement
->> so that the variable "ret" will not be checked once more
->> after a function call.
->> Use the identifier "report_failure" instead of "err".
->>
->> Suggested-by: Julia Lawall <julia.lawall@lip6.fr>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  drivers/media/tuners/m88rs6000t.c | 154 +++++++++++++++++++-------------------
->>  1 file changed, 78 insertions(+), 76 deletions(-)
->>
->> diff --git a/drivers/media/tuners/m88rs6000t.c b/drivers/media/tuners/m88rs6000t.c
->> index 504bfbc..7e59a9f 100644
->> --- a/drivers/media/tuners/m88rs6000t.c
->> +++ b/drivers/media/tuners/m88rs6000t.c
->> @@ -44,7 +44,7 @@ static int m88rs6000t_set_demod_mclk(struct dvb_frontend *fe)
->>  	/* select demod main mclk */
->>  	ret = regmap_read(dev->regmap, 0x15, &utmp);
->>  	if (ret)
->> -		goto err;
->> +		goto report_failure;
-> 
-> Why to be so verbose?
+> As Heiko already answered, you could propose a lot of this kind of changes
+> with just minor benefit. I do not want to push them in single patches.
 
-Does the document "CodingStyle" give an indication in the section "Chapter 7:
-Centralized exiting of functions"?
+Thanks for your clarification.
 
 
-> Calling it as "err" is enough,
+> Either there is a cleanup patch for explicit initialisation of
+> local variables in the whole qeth driver,
 
-It seems that some short identifiers are popular during software development.
+Is there any more fine-tuning cooking in the background?
 
 
-> and it means less code to type if we need to add another goto.
+> or we take care about such minor changes, once we touch the code anyway
 
-Would you like to increase the usage of jump labels which will contain
-only a single character?
+How often will this really happen?
+
+
+> due to other reasons.
+
+I am curious which ones will trigger further related software improvements.
 
 Regards,
 Markus
