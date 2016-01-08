@@ -1,29 +1,15 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Jan 2016 11:02:04 +0000
-Subject: [patch] storvsc: fix typo in MODULE_PARM_DESC
-Message-Id: <20160108110204.GH32195@mwanda>
+From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
+Date: Fri, 08 Jan 2016 16:37:34 +0000
+Subject: Re: [patch] storvsc: fix typo in MODULE_PARM_DESC
+Message-Id: <07DCF8C1-3666-4B8A-9111-89D3F26F44FF@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160108110204.GH32195@mwanda>
+In-Reply-To: <20160108110204.GH32195@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>, "James E.J. Bottomley" <JBottomley@odin.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, devel@linuxdriverproject.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>, devel@linuxdriverproject.org
 
-The module_param is "storvsc_vcpus_per_sub_channel" so we need to use
-that for MODULE_PARM_DESC() as well.
+Reviewed-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com> 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-index c41f674..5c6233a 100644
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -390,7 +390,7 @@ module_param(storvsc_ringbuffer_size, int, S_IRUGO);
- MODULE_PARM_DESC(storvsc_ringbuffer_size, "Ring buffer size (bytes)");
- 
- module_param(storvsc_vcpus_per_sub_channel, int, S_IRUGO);
--MODULE_PARM_DESC(vcpus_per_sub_channel, "Ratio of VCPUs to subchannels");
-+MODULE_PARM_DESC(storvsc_vcpus_per_sub_channel, "Ratio of VCPUs to subchannels");
- /*
-  * Timeout in seconds for all devices managed by this driver.
-  */
