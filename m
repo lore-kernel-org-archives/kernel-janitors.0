@@ -1,29 +1,15 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Jan 2016 11:01:36 +0000
-Subject: [patch] cxgbi: typo in MODULE_PARM_DESC
-Message-Id: <20160108110136.GG32195@mwanda>
+From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
+Date: Fri, 08 Jan 2016 16:37:01 +0000
+Subject: Re: [patch] cxgbi: typo in MODULE_PARM_DESC
+Message-Id: <5EF9B846-BF22-4D71-A572-98ADD394FB42@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160108110136.GG32195@mwanda>
+In-Reply-To: <20160108110136.GG32195@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karen Xie <kxie@chelsio.com>
-Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Karen Xie <kxie@chelsio.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The module_param is "cxgb3i_rx_credit_thres" so the MODULE_PARM_DESC()
-should match that.
+Reviewed-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com> 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
-index 0e2bee9..e22a268 100644
---- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
-+++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
-@@ -57,7 +57,7 @@ MODULE_PARM_DESC(cxgb3i_snd_win, "TCP send window in bytes (default8KB)");
- 
- static int cxgb3i_rx_credit_thres = 10 * 1024;
- module_param(cxgb3i_rx_credit_thres, int, 0644);
--MODULE_PARM_DESC(rx_credit_thres,
-+MODULE_PARM_DESC(cxgb3i_rx_credit_thres,
- 		 "RX credits return threshold in bytes (defaultKB)");
- 
- static unsigned int cxgb3i_max_connect = 8 * 1024;
