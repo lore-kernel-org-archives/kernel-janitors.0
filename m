@@ -1,26 +1,25 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Jan 2016 14:51:11 +0000
-Subject: net-i40e: Reconsider further usage of variable "i" in i40e_vc_get_vf_resources_msg()
-Message-Id: <5686925F.5020508@users.sourceforge.net>
+From: "Nelson, Shannon" <shannon.nelson@intel.com>
+Date: Fri, 08 Jan 2016 20:51:40 +0000
+Subject: RE: net-i40e: Reconsider further usage of variable "i" in i40e_vc_get_vf_resources_msg()
+Message-Id: <FC41C24E35F18A40888AACA1A36F3E418AFE3115@fmsmsx115.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <56868E0B.5040602@users.sourceforge.net>
-In-Reply-To: <56868E0B.5040602@users.sourceforge.net>
+ <5686925F.5020508@users.sourceforge.net>
+In-Reply-To: <5686925F.5020508@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, Shannon Nelson <shannon.nelson@intel.com>
-Cc: kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "Allan, Bruce W" <bruce.w.allan@intel.com>, "Wyborny, Carolyn" <carolyn.wyborny@intel.com>, "Skidmore, Donald C" <donald.c.skidmore@intel.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "Ronciak, John" <john.ronciak@intel.com>, "Williams, Mitch A" <mitch.a.williams@intel.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Hello,
-
-I have taken another look at the implementation of the
-function "i40e_vc_get_vf_resources_msg". I find the use of the variable "i"
-strange there. It seems that the value from the increment operation in an
-if branch is not reused so far.
-
-I would appreciate a further clarification.
-Can this variable be eventually deleted?
-
-Regards,
-Markus
+PiBGcm9tOiBTRiBNYXJrdXMgRWxmcmluZyBbbWFpbHRvOmVsZnJpbmdAdXNlcnMuc291cmNlZm9y
+Z2UubmV0XQ0KPiANCj4gSGVsbG8sDQo+IA0KPiBJIGhhdmUgdGFrZW4gYW5vdGhlciBsb29rIGF0
+IHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUNCj4gZnVuY3Rpb24gImk0MGVfdmNfZ2V0X3ZmX3Jl
+c291cmNlc19tc2ciLiBJIGZpbmQgdGhlIHVzZSBvZiB0aGUgdmFyaWFibGUNCj4gImkiDQo+IHN0
+cmFuZ2UgdGhlcmUuIEl0IHNlZW1zIHRoYXQgdGhlIHZhbHVlIGZyb20gdGhlIGluY3JlbWVudCBv
+cGVyYXRpb24gaW4NCj4gYW4NCj4gaWYgYnJhbmNoIGlzIG5vdCByZXVzZWQgc28gZmFyLg0KPiAN
+Cj4gSSB3b3VsZCBhcHByZWNpYXRlIGEgZnVydGhlciBjbGFyaWZpY2F0aW9uLg0KPiBDYW4gdGhp
+cyB2YXJpYWJsZSBiZSBldmVudHVhbGx5IGRlbGV0ZWQ/DQoNClRoYW5rcyBmb3IgcG9pbnRpbmcg
+dGhpcyBvdXQuICBXZSd2ZSBnb3QgYW4gaW50ZXJuYWwgcGF0Y2ggY29taW5nIHRoYXQgd2lsbCBh
+ZGRyZXNzIHRoaXMuDQoNCkNoZWVycywNCnNsbg0K
