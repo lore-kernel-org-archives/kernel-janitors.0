@@ -1,55 +1,28 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Fri, 01 Jan 2016 23:13:07 +0000
-Subject: Re: [PATCH 2/3] net-iwlegacy: One check less in il_eeprom_init() after error detection
-Message-Id: <56870803.7010807@cogentembedded.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jan 2016 11:03:21 +0000
+Subject: [patch] hwmon: (emc2103) Fix typo in MODULE_PARM_DESC
+Message-Id: <20160108110321.GK32195@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5686E13F.2010309@users.sourceforge.net>
- <5686E21E.4090901@users.sourceforge.net>
-In-Reply-To: <5686E21E.4090901@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Steve Glendinning <steve.glendinning@shawell.net>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello.
+"apd" was intended here instead of "init".
 
-On 1/1/2016 11:31 PM, SF Markus Elfring wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Jan 2016 21:12:29 +0100
->
-> This issue was detected by using the Coccinelle software.
->
-> Adjust a jump target to avoid a check repetition before the function
-> call "il_eeprom_free".
-
-    One question: why?
-
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/net/wireless/intel/iwlegacy/common.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/wireless/intel/iwlegacy/common.c b/drivers/net/wireless/intel/iwlegacy/common.c
-> index c3afaf7..ae45fd3 100644
-> --- a/drivers/net/wireless/intel/iwlegacy/common.c
-> +++ b/drivers/net/wireless/intel/iwlegacy/common.c
-[...]
-> @@ -772,9 +772,11 @@ il_eeprom_init(struct il_priv *il)
->   done:
->   	il->ops->eeprom_release_semaphore(il);
->
-> -err:
-> -	if (ret)
-> +	if (ret) {
-> +free_eeprom:
-
-    This is ugly, I'd say.
-
-[...]
-
-MBR, Sergei
-
+diff --git a/drivers/hwmon/emc2103.c b/drivers/hwmon/emc2103.c
+index 952fe69..24e395c 100644
+--- a/drivers/hwmon/emc2103.c
++++ b/drivers/hwmon/emc2103.c
+@@ -58,7 +58,7 @@ static const u8 REG_TEMP_MAX[4] = { 0x34, 0x30, 0x31, 0x32 };
+  */
+ static int apd = -1;
+ module_param(apd, bint, 0);
+-MODULE_PARM_DESC(init, "Set to zero to disable anti-parallel diode mode");
++MODULE_PARM_DESC(apd, "Set to zero to disable anti-parallel diode mode");
+ 
+ struct temperature {
+ 	s8	degrees;
