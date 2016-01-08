@@ -1,25 +1,29 @@
-From: Stanislaw Gruszka <sgruszka@redhat.com>
-Date: Mon, 04 Jan 2016 09:33:06 +0000
-Subject: Re: [PATCH 1/3] net-iwlegacy: Refactoring for il_eeprom_init()
-Message-Id: <20160104093305.GA2588@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jan 2016 11:01:36 +0000
+Subject: [patch] cxgbi: typo in MODULE_PARM_DESC
+Message-Id: <20160108110136.GG32195@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5686E13F.2010309@users.sourceforge.net>
- <5686E1D2.60107@users.sourceforge.net>
-In-Reply-To: <5686E1D2.60107@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Karen Xie <kxie@chelsio.com>
+Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 01, 2016 at 09:30:10PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Jan 2016 20:54:25 +0100
-> 
-> Return directly if a memory allocation failed at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The module_param is "cxgb3i_rx_credit_thres" so the MODULE_PARM_DESC()
+should match that.
 
-Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+index 0e2bee9..e22a268 100644
+--- a/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
++++ b/drivers/scsi/cxgbi/cxgb3i/cxgb3i.c
+@@ -57,7 +57,7 @@ MODULE_PARM_DESC(cxgb3i_snd_win, "TCP send window in bytes (default8KB)");
+ 
+ static int cxgb3i_rx_credit_thres = 10 * 1024;
+ module_param(cxgb3i_rx_credit_thres, int, 0644);
+-MODULE_PARM_DESC(rx_credit_thres,
++MODULE_PARM_DESC(cxgb3i_rx_credit_thres,
+ 		 "RX credits return threshold in bytes (defaultKB)");
+ 
+ static unsigned int cxgb3i_max_connect = 8 * 1024;
