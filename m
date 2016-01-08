@@ -1,63 +1,62 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 03 Jan 2016 06:55:29 +0000
-Subject: [PATCH] ixgbe: constify ixgbe_mbx_operations structure
-Message-Id: <1451804129-32213-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Date: Fri, 08 Jan 2016 08:25:42 +0000
+Subject: Re: [PATCH] ixgbe: constify ixgbe_mbx_operations structure
+Message-Id: <1452241542.19358.30.camel@intel.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-HujZiObMIwXNRgw4Hj1C"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+References: <1451804129-32213-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451804129-32213-1-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, Shannon Nelson <shannon.nelson@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This ixgbe_mbx_operations structure is never modified, so declare it as
-const.  The other structure of this type is already const.
 
-Done with the help of Coccinelle.
+--=-HujZiObMIwXNRgw4Hj1C
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, 2016-01-03 at 07:55 +0100, Julia Lawall wrote:
+> This ixgbe_mbx_operations structure is never modified, so declare it
+> as
+> const.=C2=A0 The other structure of this type is already const.
+>=20
+> Done with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+> =C2=A0drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.c=C2=A0 |=C2=A0=C2=A0=C2=
+=A0 2 +-
+> =C2=A0drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.h=C2=A0 |=C2=A0=C2=A0=C2=
+=A0 2 +-
+> =C2=A0drivers/net/ethernet/intel/ixgbe/ixgbe_type.h |=C2=A0=C2=A0=C2=A0 2=
+ +-
+> =C2=A03 files changed, 3 insertions(+), 3 deletions(-)
 
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.c  |    2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.h  |    2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_type.h |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Dropping this patch since Mark has provided a more in-depth patch to
+fix the entire driver.
+--=-HujZiObMIwXNRgw4Hj1C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.c
-index 9993a47..4a769db 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.c
-@@ -446,7 +446,7 @@ void ixgbe_init_mbx_params_pf(struct ixgbe_hw *hw)
- }
- #endif /* CONFIG_PCI_IOV */
- 
--struct ixgbe_mbx_operations mbx_ops_generic = {
-+const struct ixgbe_mbx_operations mbx_ops_generic = {
- 	.read                   = ixgbe_read_mbx_pf,
- 	.write                  = ixgbe_write_mbx_pf,
- 	.read_posted            = ixgbe_read_posted_mbx,
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.h
-index 8daa95f..9119cb8 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_mbx.h
-@@ -123,6 +123,6 @@ s32 ixgbe_check_for_rst(struct ixgbe_hw *, u16);
- void ixgbe_init_mbx_params_pf(struct ixgbe_hw *);
- #endif /* CONFIG_PCI_IOV */
- 
--extern struct ixgbe_mbx_operations mbx_ops_generic;
-+extern const struct ixgbe_mbx_operations mbx_ops_generic;
- 
- #endif /* _IXGBE_MBX_H_ */
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-index 5f53cc6..0edc2c2 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-@@ -3477,7 +3477,7 @@ struct ixgbe_info {
- 	struct ixgbe_mac_operations	*mac_ops;
- 	struct ixgbe_eeprom_operations	*eeprom_ops;
- 	struct ixgbe_phy_operations	*phy_ops;
--	struct ixgbe_mbx_operations	*mbx_ops;
-+	const struct ixgbe_mbx_operations *mbx_ops;
- 	const u32			*mvals;
- };
- 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAABCgAGBQJWj3KGAAoJEOVv75VaS+3Ou5gP/0cUBuVDqfV+A1OaFgvwslBs
+81Ybi2GBd2FydLRgQBDYNsExVAZfBzPkUwy4EDJebSeOSjqsi+PEpRkGkZ9gFd6r
+xIf7JJQtd5cNScKbozfcX7ptnwT7NDAm+Tsx1rruws+RVEnFcrTpqUy/t4hyKA79
+pYbh8NASmO3Apuzpv4rJ2vQgoZT3XOW7ZxTfRU8w74wvWX7QVhbThGMjJQOBKeAq
+9mVaXvoyC62jtMFJ1c//sEzyh92SVhRtH4lSSbeIIsLPtCtKZvq3vQUtjse24XeY
+TYQxbTiGd1w5aJOoueYvqCWOJKgQu2SEDf0tKhl4YnnPg3RR582vaFTH6hkEewDP
+oHhaUrEtkTAUeWHezSJpUqcSEvzswhaoumeydB+FHMHfyer8IUTkedgFwTcyV3VT
+odKZvGKSUq3qPRsQwV/2GQd0Wb5fS6IeajMc0KdXvWX/vloD8nthxTliw0iVHam5
+45GhhbRoVP+oargbXfEBX3UVLUXcoX4s6d560L/h6HFHpin8KRX6YYuF4cd1SMFF
+3QAkwtQN9GPwINJX7ngGPQKXSRGc7XylnXID2dSYz48tEiu+c8c5+FgbKMUdNGx1
+ooFSPBTTvsAUZWoc6HOxKb7Kwo7UCfhOAqrzeghGYQmXKhItITr7gyaUnbB1CHSo
+XX4U3h+dhpdXxV4rEOci
+=KOlC
+-----END PGP SIGNATURE-----
+
+--=-HujZiObMIwXNRgw4Hj1C--
 
