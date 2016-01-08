@@ -1,51 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jan 2016 18:27:33 +0000
-Subject: [PATCH v2 1/3] rsi: Delete unnecessary variable initialisations in rsi_send_mgmt_pkt()
-Message-Id: <56881695.4030308@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jan 2016 10:59:36 +0000
+Subject: [patch] usb: gadget: zero: fix MODULE_PARM_DESC typo
+Message-Id: <20160108105936.GE32195@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201601030008.47CwzW9c%fengguang.wu@intel.com>
-In-Reply-To: <201601030008.47CwzW9c%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Felipe Balbi <balbi@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Opasiak <k.opasiak@samsung.com>, Li Jun <jun.li@freescale.com>, Roger Quadros <rogerq@ti.com>, Arnd Bergmann <arnd@arndb.de>, Igor Kotrasinski <i.kotrasinsk@samsung.com>, Peter Chen <peter.chen@freescale.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Jan 2016 19:22:36 +0100
+The "ss_" prefixes were missing.  It was supposed to be "ss_bulk_qlen"
+instead of "bulk_qlen" and "ss_iso_qlen" instead of "iso_qlen".
 
-Omit explicit initialisation at the beginning for four local variables
-which are redefined before their first use.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/wireless/rsi/rsi_91x_pkt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/wireless/rsi/rsi_91x_pkt.c b/drivers/net/wireless/rsi/rsi_91x_pkt.c
-index 702593f..571eaba 100644
---- a/drivers/net/wireless/rsi/rsi_91x_pkt.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_pkt.c
-@@ -123,15 +123,15 @@ int rsi_send_mgmt_pkt(struct rsi_common *common,
- 		      struct sk_buff *skb)
- {
- 	struct rsi_hw *adapter = common->priv;
--	struct ieee80211_hdr *wh = NULL;
-+	struct ieee80211_hdr *wh;
- 	struct ieee80211_tx_info *info;
--	struct ieee80211_bss_conf *bss = NULL;
-+	struct ieee80211_bss_conf *bss;
- 	struct ieee80211_hw *hw = adapter->hw;
- 	struct ieee80211_conf *conf = &hw->conf;
- 	struct skb_info *tx_params;
- 	int status = -E2BIG;
--	__le16 *msg = NULL;
--	u8 extnd_size = 0;
-+	__le16 *msg;
-+	u8 extnd_size;
- 	u8 vap_id = 0;
+diff --git a/drivers/usb/gadget/legacy/zero.c b/drivers/usb/gadget/legacy/zero.c
+index d02e2ce..ee3f491 100644
+--- a/drivers/usb/gadget/legacy/zero.c
++++ b/drivers/usb/gadget/legacy/zero.c
+@@ -259,11 +259,11 @@ MODULE_PARM_DESC(qlen, "depth of loopback queue");
  
- 	info = IEEE80211_SKB_CB(skb);
--- 
-2.6.3
-
+ module_param_named(ss_bulk_qlen, gzero_options.ss_bulk_qlen, uint,
+ 		S_IRUGO|S_IWUSR);
+-MODULE_PARM_DESC(bulk_qlen, "depth of sourcesink queue for bulk transfer");
++MODULE_PARM_DESC(ss_bulk_qlen, "depth of sourcesink queue for bulk transfer");
+ 
+ module_param_named(ss_iso_qlen, gzero_options.ss_iso_qlen, uint,
+ 		S_IRUGO|S_IWUSR);
+-MODULE_PARM_DESC(iso_qlen, "depth of sourcesink queue for iso transfer");
++MODULE_PARM_DESC(ss_iso_qlen, "depth of sourcesink queue for iso transfer");
+ 
+ static int zero_bind(struct usb_composite_dev *cdev)
+ {
