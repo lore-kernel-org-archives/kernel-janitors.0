@@ -1,46 +1,38 @@
-From: Liu Bo <bo.li.liu@oracle.com>
-Date: Wed, 13 Jan 2016 18:16:11 +0000
-Subject: Re: [patch] Btrfs: clean up an error code in btrfs_init_space_info()
-Message-Id: <20160113181611.GB13918@localhost.localdomain>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jan 2016 11:04:04 +0000
+Subject: [patch] irda: toim3232-sir: delete some dead code
+Message-Id: <20160108110404.GL32195@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160113122117.GB19993@mwanda>
-In-Reply-To: <20160113122117.GB19993@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Samuel Ortiz <samuel@sortiz.org>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 13, 2016 at 03:21:17PM +0300, Dan Carpenter wrote:
-> If we return 1 here, then the caller treats it as an error and returns
-> -EINVAL.  It causes a static checker warning to treat positive returns
-> as an error.
-> 
-> Fixes: 1aba86d67f34 ('Btrfs: fix easily get into ENOSPC in mixed case')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I would appreciate a little review here.  This patch doesn't change
-> behavior, but it's possible that we had intended to do something else.
-> 
-> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-> index 60cc139..64649f8e 100644
-> --- a/fs/btrfs/extent-tree.c
-> +++ b/fs/btrfs/extent-tree.c
-> @@ -10586,7 +10586,7 @@ int btrfs_init_space_info(struct btrfs_fs_info *fs_info)
->  
->  	disk_super = fs_info->super_copy;
->  	if (!btrfs_super_root(disk_super))
-> -		return 1;
-> +		return -EINVAL;
+I noticed this code because it has a typo in the module_param(),
+the "trs" at the end of "toim3232fliptrs" should be "rts".  But it's
+dead code so instead of fixing it, I just deleted it.
 
-Thank you for this, Dan.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-While we're here, I'd suggest to remove this check as tree_root->node has already been readed from btrfs_super_root().
-
-Thanks,
-
--liubo
-
->  
->  	features = btrfs_super_incompat_flags(disk_super);
->  	if (features & BTRFS_FEATURE_INCOMPAT_MIXED_GROUPS)
+diff --git a/drivers/net/irda/toim3232-sir.c b/drivers/net/irda/toim3232-sir.c
+index 6d2f559..b977d6d 100644
+--- a/drivers/net/irda/toim3232-sir.c
++++ b/drivers/net/irda/toim3232-sir.c
+@@ -130,16 +130,6 @@ static int toim3232delay = 150;	/* default is 150 ms */
+ module_param(toim3232delay, int, 0);
+ MODULE_PARM_DESC(toim3232delay, "toim3232 dongle write complete delay");
+ 
+-#if 0
+-static int toim3232flipdtr = 0;	/* default is DTR high to reset */
+-module_param(toim3232flipdtr, int, 0);
+-MODULE_PARM_DESC(toim3232flipdtr, "toim3232 dongle invert DTR (Reset)");
+-
+-static int toim3232fliprts = 0;	/* default is RTS high for baud change */
+-module_param(toim3232fliptrs, int, 0);
+-MODULE_PARM_DESC(toim3232fliprts, "toim3232 dongle invert RTS (BR/D)");
+-#endif
+-
+ static int toim3232_open(struct sir_dev *);
+ static int toim3232_close(struct sir_dev *);
+ static int toim3232_change_speed(struct sir_dev *, unsigned);
