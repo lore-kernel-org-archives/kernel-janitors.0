@@ -1,34 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 14 Jan 2016 21:51:21 +0000
-Subject: Re: [PATCH] fsl/fman: Delete one function call "put_device" in dtsec_config()
-Message-Id: <20160114.165121.1797769104831484799.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jan 2016 11:49:36 +0000
+Subject: [patch] staging: rdma: shift wrapping bug in c2_get_dma_mr()
+Message-Id: <20160108114936.GA3802@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160113213537.GD4399@mwanda>
-	<20160113220923.GE5527@lunn.ch>
-	<5697B81E.4050303@users.sourceforge.net>
-In-Reply-To: <5697B81E.4050303@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: andrew@lunn.ch, dan.carpenter@oracle.com, igal.liberman@freescale.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: Doug Ledford <dledford@redhat.com>, Christoph Hellwig <hch@lst.de>
+Cc: devel@driverdev.osuosl.org, linux-rdma@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steve Wise <swise@opengridcomputing.com>, kernel-janitors@vger.kernel.org, Matan Barak <matanb@mellanox.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Geliang Tang <geliangtang@163.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Jan 2016 16:00:46 +0100
+We should be using all 64 bits of page_list[i] instead of just the lower
+32.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 14 Jan 2016 15:46:28 +0100
-> 
-> The Coccinelle semantic patch script "deref_null.cocci" pointed a problem
-> out in the implementation of the function "dtsec_config".
-> 
-> A null pointer was assigned to the data structure member "tbiphy" of the
-> variable "dtsec" if a matching device was not found.
-> A call of the function "put_device" was unnecessary then because
-> a previous call of the function "get_device" was not triggered.
-> Thus remove the function call "put_device" after the printing of the
-> desired error message.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/staging/rdma/amso1100/c2_provider.c b/drivers/staging/rdma/amso1100/c2_provider.c
+index de8d10e..ac6a6ff 100644
+--- a/drivers/staging/rdma/amso1100/c2_provider.c
++++ b/drivers/staging/rdma/amso1100/c2_provider.c
+@@ -361,7 +361,7 @@ static struct ib_mr *c2_get_dma_mr(struct ib_pd *pd, int acc)
+ 	}
+ 
+ 	for (i = 0; i < pbl_depth; i++)
+-		page_list[i] = (i << page_shift);
++		page_list[i] = ((u64)i << page_shift);
+ 
+ 	mr = kmalloc(sizeof(*mr), GFP_KERNEL);
+ 	if (!mr) {
