@@ -1,30 +1,34 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed, 27 Jan 2016 20:58:55 +0000
-Subject: Re: perf: Fix perf_event_exit_task() race
-Message-Id: <20160127205855.GA6357@twins.programming.kicks-ass.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 10 Jan 2016 07:20:16 +0000
+Subject: [PATCH] [media] netup_unidvb: Remove a useless memset
+Message-Id: <1452410416-6362-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160127202422.GA7045@mwanda>
-In-Reply-To: <20160127202422.GA7045@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: serjk@netup.ru, mchehab@osg.samsung.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, Jan 27, 2016 at 11:24:22PM +0300, Dan Carpenter wrote:
+This memory is allocated using kzalloc so there is no need to call
+memset(..., 0, ...)
 
->   1229                  if (ctx->task = TASK_TOMBSTONE ||
->   1230                      !atomic_inc_not_zero(&ctx->refcount)) {
->   1231                          raw_spin_unlock(&ctx->lock);
->   1232                          ctx = NULL;
->                                 ^^^^^^^^^^
-> ctx is NULL.
-> 
->   1233                  }
->   1234  
->   1235                  WARN_ON_ONCE(ctx->task != task);
->                                      ^^^^^^^^^^^^^^^^^
-> The patch adds a NULL dereference.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/pci/netup_unidvb/netup_unidvb_core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Clearly I didn't manage to trigger that in testing :/
+diff --git a/drivers/media/pci/netup_unidvb/netup_unidvb_core.c b/drivers/media/pci/netup_unidvb/netup_unidvb_core.c
+index 525ebfe..d919080 100644
+--- a/drivers/media/pci/netup_unidvb/netup_unidvb_core.c
++++ b/drivers/media/pci/netup_unidvb/netup_unidvb_core.c
+@@ -774,7 +774,6 @@ static int netup_unidvb_initdev(struct pci_dev *pci_dev,
+ 
+ 	if (!ndev)
+ 		goto dev_alloc_err;
+-	memset(ndev, 0, sizeof(*ndev));
+ 	ndev->old_fw = old_firmware;
+ 	ndev->wq = create_singlethread_workqueue(NETUP_UNIDVB_NAME);
+ 	if (!ndev->wq) {
+-- 
+2.5.0
 
-Thanks!
