@@ -1,29 +1,110 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 06 Jan 2016 10:05:52 +0000
-Subject: [patch] [media] vpx3220: signedness bug in vpx3220_fp_read()
-Message-Id: <20160106100552.GI23185@mwanda>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 11 Jan 2016 08:29:22 +0000
+Subject: Re: [PATCH] mfd: twl-core: One function call less in add_numbered_child() after error detection
+Message-Id: <20160111082922.GB14104@x1>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5682D228.7070902@users.sourceforge.net>
+In-Reply-To: <5682D228.7070902@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The intent was to return -1 on error and that's what the callers expect
-but the current code returns USHRT_MAX instead.
+On Tue, 29 Dec 2015, SF Markus Elfring wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 29 Dec 2015 19:29:08 +0100
+>=20
+> The platform_device_put() function was called in one case by the
+> add_numbered_child() function during error handling even if the passed
+> variable "pdev" contained a null pointer.
+>=20
+> Implementation details could be improved by the adjustment of jump targets
+> according to the Linux coding style convention.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/mfd/twl-core.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+> index 831696e..0d9350c 100644
+> --- a/drivers/mfd/twl-core.c
+> +++ b/drivers/mfd/twl-core.c
+> @@ -625,7 +625,7 @@ add_numbered_child(unsigned mod_no, const char *name,=
+ int num,
+>  	if (!pdev) {
+>  		dev_dbg(&twl->client->dev, "can't alloc dev\n");
 
-diff --git a/drivers/media/i2c/vpx3220.c b/drivers/media/i2c/vpx3220.c
-index 4b564f1..90b693f 100644
---- a/drivers/media/i2c/vpx3220.c
-+++ b/drivers/media/i2c/vpx3220.c
-@@ -124,7 +124,7 @@ static int vpx3220_fp_write(struct v4l2_subdev *sd, u8 fpaddr, u16 data)
- 	return 0;
- }
- 
--static u16 vpx3220_fp_read(struct v4l2_subdev *sd, u16 fpaddr)
-+static int vpx3220_fp_read(struct v4l2_subdev *sd, u16 fpaddr)
- {
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
- 	s16 data;
+Change this to be dev_err()
+
+>  		status =3D -ENOMEM;
+> -		goto err;
+> +		goto report_failure;
+
+... and just return status from here.
+
+>  	}
+> =20
+>  	pdev->dev.parent =3D &twl->client->dev;
+> @@ -634,7 +634,7 @@ add_numbered_child(unsigned mod_no, const char *name,=
+ int num,
+>  		status =3D platform_device_add_data(pdev, pdata, pdata_len);
+>  		if (status < 0) {
+>  			dev_dbg(&pdev->dev, "can't add platform_data\n");
+> -			goto err;
+> +			goto put_device;
+>  		}
+>  	}
+> =20
+> @@ -647,21 +647,20 @@ add_numbered_child(unsigned mod_no, const char *nam=
+e, int num,
+>  		status =3D platform_device_add_resources(pdev, r, irq1 ? 2 : 1);
+>  		if (status < 0) {
+>  			dev_dbg(&pdev->dev, "can't add irqs\n");
+> -			goto err;
+> +			goto put_device;
+>  		}
+>  	}
+> =20
+>  	status =3D platform_device_add(pdev);
+> -	if (status =3D 0)
+> +	if (!status) {
+
+You've changed the way you handle errors from this point.  To be more
+consistent it would be better if you checked for status, then jump to
+put_device in the case of a failure, as you do above.
+
+>  		device_init_wakeup(&pdev->dev, can_wakeup);
+> -
+> -err:
+> -	if (status < 0) {
+> -		platform_device_put(pdev);
+> -		dev_err(&twl->client->dev, "can't add %s dev\n", name);
+> -		return ERR_PTR(status);
+> +		return &pdev->dev;
+>  	}
+> -	return &pdev->dev;
+> +put_device:
+> +	platform_device_put(pdev);
+> +report_failure:
+> +	dev_err(&twl->client->dev, "can't add %s dev\n", name);
+> +	return ERR_PTR(status);
+>  }
+> =20
+>  static inline struct device *add_child(unsigned mod_no, const char *name,
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
