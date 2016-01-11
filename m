@@ -1,51 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Jan 2016 12:24:27 +0000
-Subject: [PATCH 3/3] net-gianfar: Extend an initialisation clause of a for loop in gfar_ethflow_to_filer_tabl
-Message-Id: <56866FFB.7060909@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 11 Jan 2016 06:16:14 +0000
+Subject: [PATCH 1/2] soc: versatile: Add missing kfree in error path
+Message-Id: <1452492975-8402-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <56866E7F.8080609@users.sourceforge.net>
-In-Reply-To: <56866E7F.8080609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Jan 2016 13:00:06 +0100
+If 'of_property_read_string' fails, then 'soc_dev_attr' should be freed,
+otherwise, there is a memory leak.
 
-Move the assignment for the variable "j" from the beginning
-into an initialisation clause of a for loop.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/freescale/gianfar_ethtool.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+This patch has already been
+   Acked-by: Linus Walleij <linus.walleij@linaro.org>
+on 17/07/2015
+---
+ drivers/soc/versatile/soc-realview.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
-index 508be89..6a7b035 100644
---- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
-+++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
-@@ -772,8 +772,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
- 	unsigned int cmp_rqfpr;
- 	unsigned int *local_rqfpr;
- 	unsigned int *local_rqfcr;
--	int i, k, l;
--	int j = MAX_FILER_IDX;
-+	int i, j, k, l;
- 	int ret = 1;
+diff --git a/drivers/soc/versatile/soc-realview.c b/drivers/soc/versatile/soc-realview.c
+index c337764..39ffe18 100644
+--- a/drivers/soc/versatile/soc-realview.c
++++ b/drivers/soc/versatile/soc-realview.c
+@@ -113,8 +113,10 @@ static int realview_soc_probe(struct platform_device *pdev)
  
- 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
-@@ -807,7 +806,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
- 		goto free_fcr;
- 	}
+ 	ret = of_property_read_string(np, "compatible",
+ 				      &soc_dev_attr->soc_id);
+-	if (ret)
++	if (ret) {
++		kfree(soc_dev_attr);
+ 		return -EINVAL;
++	}
  
--	for (i = 0; i < MAX_FILER_IDX + 1; i++) {
-+	for (i = 0, j = MAX_FILER_IDX; i < MAX_FILER_IDX + 1; i++) {
- 		local_rqfpr[j] = priv->ftp_rqfpr[i];
- 		local_rqfcr[j] = priv->ftp_rqfcr[i];
- 		j--;
+ 	soc_dev_attr->machine = "RealView";
+ 	soc_dev_attr->family = "Versatile";
 -- 
-2.6.3
+2.5.0
 
