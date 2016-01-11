@@ -1,40 +1,99 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 15 Jan 2016 16:42:53 +0000
-Subject: Re: [PATCH v3 2/3] gianfar: Delete unnecessary variable initialisations in gfar_ethflow_to_filer_tab
-Message-Id: <20160115.114253.673366436532953675.davem@davemloft.net>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 11 Jan 2016 08:31:08 +0000
+Subject: Re: [PATCH] mfd-dm355evm_msp: One function call less in add_child() after error detection
+Message-Id: <20160111083108.GC14104@x1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5698C61A.90504@users.sourceforge.net>
-	<20160115102947.GI4764@mwanda>
-	<5698D949.6000404@users.sourceforge.net>
-In-Reply-To: <5698D949.6000404@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <568284D3.3060006@users.sourceforge.net>
+In-Reply-To: <568284D3.3060006@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: dan.carpenter@oracle.com, netdev@vger.kernel.org, claudiu.manoil@freescale.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jan 2016 12:34:33 +0100
+On Tue, 29 Dec 2015, SF Markus Elfring wrote:
 
->>> +++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
->>> @@ -768,12 +768,12 @@ static void ethflow_to_filer_rules (struct gfar_private *priv, u64 ethflow)
->>>  static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
->>>  				       u64 class)
->>>  {
->>> -	unsigned int last_rule_idx = priv->cur_filer_idx;
->>> +	unsigned int last_rule_idx;
->> 
->> This is a write only variable.  We can just remove it.
-> 
-> Can a static source code analysis tool like the software "http://smatch.sourceforge.net/"
-> detect that such a variable is not read by this function implementation so far?
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 29 Dec 2015 13:56:42 +0100
+>=20
+> The platform_device_put() function was called in one case by the
+> add_child() function during error handling even if the passed
+> variable "pdev" contained a null pointer.
+>=20
+> Implementation details could be improved by the adjustment of jump targets
+> according to the Linux coding style convention.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/mfd/dm355evm_msp.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
 
-No, but a human can.
+Same comments as before.
 
-And a human should fully analyze any change he writes based upon static
-analysis tool results.
+> diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
+> index bc90efe..e4aa1b8 100644
+> --- a/drivers/mfd/dm355evm_msp.c
+> +++ b/drivers/mfd/dm355evm_msp.c
+> @@ -202,7 +202,7 @@ static struct device *add_child(struct i2c_client *cl=
+ient, const char *name,
+>  	if (!pdev) {
+>  		dev_dbg(&client->dev, "can't alloc dev\n");
+>  		status =3D -ENOMEM;
+> -		goto err;
+> +		goto report_failure;
+>  	}
+> =20
+>  	device_init_wakeup(&pdev->dev, can_wakeup);
+> @@ -212,7 +212,7 @@ static struct device *add_child(struct i2c_client *cl=
+ient, const char *name,
+>  		status =3D platform_device_add_data(pdev, pdata, pdata_len);
+>  		if (status < 0) {
+>  			dev_dbg(&pdev->dev, "can't add platform_data\n");
+> -			goto err;
+> +			goto put_device;
+>  		}
+>  	}
+> =20
+> @@ -225,19 +225,18 @@ static struct device *add_child(struct i2c_client *=
+client, const char *name,
+>  		status =3D platform_device_add_resources(pdev, &r, 1);
+>  		if (status < 0) {
+>  			dev_dbg(&pdev->dev, "can't add irq\n");
+> -			goto err;
+> +			goto put_device;
+>  		}
+>  	}
+> =20
+>  	status =3D platform_device_add(pdev);
+> -
+> -err:
+> -	if (status < 0) {
+> -		platform_device_put(pdev);
+> -		dev_err(&client->dev, "can't add %s dev\n", name);
+> -		return ERR_PTR(status);
+> -	}
+> -	return &pdev->dev;
+> +	if (!status)
+> +		return &pdev->dev;
+> +put_device:
+> +	platform_device_put(pdev);
+> +report_failure:
+> +	dev_err(&client->dev, "can't add %s dev\n", name);
+> +	return ERR_PTR(status);
+>  }
+> =20
+>  static int add_children(struct i2c_client *client)
 
-I am going to be honest, and say that I am completely ignoring most of
-your static checker patches.  You don't put enough care and consideration
-into them, and I really don't have time to waste on looking at something
-like that.
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
