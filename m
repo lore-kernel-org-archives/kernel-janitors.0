@@ -1,53 +1,74 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jan 2016 17:15:14 +0000
-Subject: Re: gianfar: Delete unnecessary variable initialisations in gfar_ethflow_to_filer_table()
-Message-Id: <56992922.4080500@users.sourceforge.net>
+From: Selvin Xavier <selvin.xavier@avagotech.com>
+Date: Mon, 11 Jan 2016 13:23:07 +0000
+Subject: Re: [PATCH v2 1/6] InfiniBand-ocrdma: One jump label less in ocrdma_alloc_ucontext_pd()
+Message-Id: <CA+sbYW31rf614mozAmNHbTH=a06WWZ7D4fkBD+jaa=zCyqj2XA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5698C61A.90504@users.sourceforge.net>
- <20160115102947.GI4764@mwanda> <5698D949.6000404@users.sourceforge.net>
- <20160115.114253.673366436532953675.davem@davemloft.net>
-In-Reply-To: <20160115.114253.673366436532953675.davem@davemloft.net>
+References: <201512270304.PMbiMdOa%fengguang.wu@intel.com>
+	<567F068C.9060507@users.sourceforge.net>
+In-Reply-To: <567F068C.9060507@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->>> This is a write only variable.  We can just remove it.
->>
->> Can a static source code analysis tool like the software "http://smatch.sourceforge.net/"
->> detect that such a variable is not read by this function implementation so far?
-> 
-> No,
+This patch series looks good to me
 
-I imagine that there are a few tools available which can point such update candidates out.
-There are various software development challenges to consider.
+Thanks,
+
+Acked-by: Selvin Xavier <selvin.xavier@avagotech.com>
 
 
-> but a human can.
 
-Some software developers and source code reviewers are struggling with mentioned
-implementation details as usual. Do they also wonder how the discussed variable assignment
-was left over in a specific function?
-
-
-> I am going to be honest, and say that I am completely ignoring most of
-> your static checker patches.
-
-I am curious if you would reconsider the affected source code places once more
-when you will be notified about related issues by other tools or persons.
-
-
-> You don't put enough care and consideration into them,
-
-Would you like to explain this impression a bit more?
-
-
-> and I really don't have time to waste on looking at something like that.
-
-Thanks for your feedback.
-
-Various open issues are competing for our attention as usual.
-
-Regards,
-Markus
+On Sun, Dec 27, 2015 at 2:58 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 26 Dec 2015 22:18:38 +0100
+>
+> This issue was detected by using the Coccinelle software.
+>
+> * Let us return directly if a call of the _ocrdma_alloc_pd()
+>   function failed.
+>
+> * Reduce the scope for the local variable "status" to one case
+>   of an if statement.
+>
+> * Delete the jump label "err" then.
+>
+> * Return zero as a constant at the end.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+> index 583001b..7f10cc47 100644
+> --- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+> +++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+> @@ -483,19 +483,16 @@ static int ocrdma_alloc_ucontext_pd(struct ocrdma_dev *dev,
+>                                     struct ocrdma_ucontext *uctx,
+>                                     struct ib_udata *udata)
+>  {
+> -       int status = 0;
+> -
+>         uctx->cntxt_pd = _ocrdma_alloc_pd(dev, uctx, udata);
+>         if (IS_ERR(uctx->cntxt_pd)) {
+> -               status = PTR_ERR(uctx->cntxt_pd);
+> +               int status = PTR_ERR(uctx->cntxt_pd);
+>                 uctx->cntxt_pd = NULL;
+> -               goto err;
+> +               return status;
+>         }
+>
+>         uctx->cntxt_pd->uctx = uctx;
+>         uctx->cntxt_pd->ibpd.device = &dev->ibdev;
+> -err:
+> -       return status;
+> +       return 0;
+>  }
+>
+>  static int ocrdma_dealloc_ucontext_pd(struct ocrdma_ucontext *uctx)
+> --
+> 2.6.3
+>
