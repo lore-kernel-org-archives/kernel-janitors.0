@@ -1,60 +1,87 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Date: Fri, 08 Jan 2016 10:42:50 +0000
-Subject: Re: [PATCH] net-i40e: Replace variable initialisations by assignments in i40e_vc_get_vf_resources_ms
-Message-Id: <1452249770.19358.34.camel@intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-lN5SgUWDmEYPt25O9lRx"
+From: Lee Jones <lee.jones@linaro.org>
+Date: Mon, 11 Jan 2016 08:10:59 +0000
+Subject: Re: [PATCH 2/2] mfd: smsc-ece1099: Refactoring for smsc_i2c_probe()
+Message-Id: <20160111081059.GS3331@x1>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-	 <56868E0B.5040602@users.sourceforge.net>
-In-Reply-To: <56868E0B.5040602@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, Shannon Nelson <shannon.nelson@intel.com>
+ <5682957F.5000604@users.sourceforge.net>
+ <56829630.6030706@users.sourceforge.net>
+In-Reply-To: <56829630.6030706@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+On Tue, 29 Dec 2015, SF Markus Elfring wrote:
 
---=-lN5SgUWDmEYPt25O9lRx
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 2016-01-01 at 15:32 +0100, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Jan 2016 15:11:09 +0100
+> Date: Tue, 29 Dec 2015 15:03:31 +0100
 >=20
-> Replace explicit initialisations for four local variables at the
-> beginning
-> by assignments that will only be performed if the corresponding code
-> will really be executed.
+> This issue was detected by using the Coccinelle software.
 >=20
+> * Let us return directly if a call of the function "devm_regmap_init_i2c"
+>   or "regmap_write" failed.
+>=20
+> * Delete the jump label "err" then.
+
+Why are you bullet pointing here?
+
+Just use proper sentences to tell us what's going on.
+
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
-> =C2=A0drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 15 +++++++++--=
--
-> ---
-> =C2=A01 file changed, 9 insertions(+), 6 deletions(-)
+>  drivers/mfd/smsc-ece1099.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 
-Dropping this patch based on feedback from Shannon.
---=-lN5SgUWDmEYPt25O9lRx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Code looks fine however.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Please re-submit the set with the aforementioned changes along with my:
 
-iQIcBAABCgAGBQJWj5KqAAoJEOVv75VaS+3OGMwP/0F3ODML8eXK6HdmMVIPwGR5
-qIJv+5c0CBIPcRBEfT9OhMgY1b2To2GYBIvE4PXoDzPF7IhpB89ekSjXRehn06Qg
-J3rlRh+msCzGYNLrGh1a92MfsMHAi91g2U/WBLEyrnkyP+W9Vvd9AeYczyEz/IEs
-7VdDZqQ68uRTUj6VaExjhowMgJxXps/GHbLelZrOYrskLam1cXofqJCNLMcIAZdE
-SL6PNPV3vOKThOvUfoxokVvPrTEONsyn/QdBhEJiatwMXiyAc/fssBUH//9GbeTA
-dmVgbi6hPz9PqgQuIrLC6HCmYB/++JWCcNxvwe/bpVeR6Wh/j4dN52KJTwLE9RbQ
-FIcE0rMBDq3GbFvLKo73BlL8afMSyNvBwunmPJkBdKcPIVB8F5sKlnPi6GXWPN0E
-f8+RaiWNT341d7a9jL9BtD5OQSBh2QeY2nnoe5bIR0owNHB/gX4J+TDfBVEJt1jH
-YLcUKCoCZ7LPghu5ykR3oZEBxb2Uj9m9qplrIkktrzkNBiYW2y3rofPy309zMIkJ
-Zg8Eajlj4AhAyMRreJ/VPCjkp4Ch48ZX+Io1hrKJIF+x6BM/Kv/XE7Nx0bC04urR
-6/fuAjryJMqsz4PryVSZi2uOwCN6FXOmBrTxo3QS3vj0NWMA7pQHb7yRUE01tMF/
-VgkDG0wm9ReUad16AjLx
-=1Uqp
------END PGP SIGNATURE-----
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
---=-lN5SgUWDmEYPt25O9lRx--
+> diff --git a/drivers/mfd/smsc-ece1099.c b/drivers/mfd/smsc-ece1099.c
+> index bcac488..951333a 100644
+> --- a/drivers/mfd/smsc-ece1099.c
+> +++ b/drivers/mfd/smsc-ece1099.c
+> @@ -46,10 +46,8 @@ static int smsc_i2c_probe(struct i2c_client *i2c,
+>  	}
+> =20
+>  	smsc->regmap =3D devm_regmap_init_i2c(i2c, &smsc_regmap_config);
+> -	if (IS_ERR(smsc->regmap)) {
+> -		ret =3D PTR_ERR(smsc->regmap);
+> -		goto err;
+> -	}
+> +	if (IS_ERR(smsc->regmap))
+> +		return PTR_ERR(smsc->regmap);
+> =20
+>  	i2c_set_clientdata(i2c, smsc);
+>  	smsc->dev =3D &i2c->dev;
+> @@ -68,7 +66,7 @@ static int smsc_i2c_probe(struct i2c_client *i2c,
+> =20
+>  	ret =3D regmap_write(smsc->regmap, SMSC_CLK_CTRL, smsc->clk);
+>  	if (ret)
+> -		goto err;
+> +		return ret;
+> =20
+>  #ifdef CONFIG_OF
+>  	if (i2c->dev.of_node)
+> @@ -76,7 +74,6 @@ static int smsc_i2c_probe(struct i2c_client *i2c,
+>  					   NULL, NULL, &i2c->dev);
+>  #endif
+> =20
+> -err:
+>  	return ret;
+>  }
+> =20
 
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
