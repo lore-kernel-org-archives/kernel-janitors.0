@@ -1,51 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 03 Jan 2016 08:55:14 +0000
-Subject: [PATCH 6/8] rtc-ab-b5ze-s3: Delete an unnecessary variable in _abb5zes3_rtc_read_timer()
-Message-Id: <5688E1F2.1080705@users.sourceforge.net>
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+Date: Tue, 12 Jan 2016 03:44:08 +0000
+Subject: RE: [Intel-wired-lan] [PATCH] igb: constify e1000_phy_operations structure
+Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B81E4D3B1@ORSMSX101.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5688DF2D.6090204@users.sourceforge.net>
-In-Reply-To: <5688DF2D.6090204@users.sourceforge.net>
+References: <1451803496-16693-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1451803496-16693-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Jan 2016 08:46:50 +0100
+> From: Intel-wired-lan [intel-wired-lan-bounces@lists.osuosl.org] on behalf of Julia Lawall [Julia.Lawall@lip6.fr]
+> Sent: Saturday, January 02, 2016 10:44 PM
+> To: Kirsher, Jeffrey T
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org; intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH] igb: constify e1000_phy_operations   structure
+> 
+> This e1000_phy_operations structure is never modified, so declare it as
+> const.  Other structures of this type are already const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/net/ethernet/intel/igb/e1000_82575.c |    2 +-
+>  drivers/net/ethernet/intel/igb/e1000_hw.h    |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Pass the address of the data structure element "time" directly in a call
-of the function "rtc_time_to_tm" instead of an extra initialisation
-for one local variable at the beginning.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/rtc/rtc-ab-b5ze-s3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-ab-b5ze-s3.c b/drivers/rtc/rtc-ab-b5ze-s3.c
-index 02e3443..e3a015a 100644
---- a/drivers/rtc/rtc-ab-b5ze-s3.c
-+++ b/drivers/rtc/rtc-ab-b5ze-s3.c
-@@ -326,7 +326,7 @@ static int _abb5zes3_rtc_read_timer(struct device *dev,
- 				    struct rtc_wkalrm *alarm)
- {
- 	struct abb5zes3_rtc_data *data = dev_get_drvdata(dev);
--	struct rtc_time rtc_tm, *alarm_tm = &alarm->time;
-+	struct rtc_time rtc_tm;
- 	u8 regs[ABB5ZES3_TIMA_SEC_LEN + 1];
- 	unsigned long rtc_secs;
- 	unsigned int reg;
-@@ -362,7 +362,7 @@ static int _abb5zes3_rtc_read_timer(struct device *dev,
- 		goto err;
- 
- 	/* ... and convert back. */
--	rtc_time_to_tm(rtc_secs + timer_secs, alarm_tm);
-+	rtc_time_to_tm(rtc_secs + timer_secs, &alarm->time);
- 
- 	ret = regmap_read(data->regmap, ABB5ZES3_REG_CTRL2, &reg);
- 	if (ret) {
--- 
-2.6.3
-
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
