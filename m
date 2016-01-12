@@ -1,57 +1,36 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 04 Jan 2016 21:19:10 +0000
-Subject: Re: [patch] drm/amdgpu/cgs: cleanup some indenting
-Message-Id: <CADnq5_MbPu9TCjKr2xuiM3hJvDaniB-Cu8bYYsuKDpnoUyp8HA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Jan 2016 08:34:40 +0000
+Subject: Re: mfd-dm355evm_msp: One function call less in add_child() after error detection
+Message-Id: <5694BAA0.80004@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160104204347.GC19867@mwanda>
-In-Reply-To: <20160104204347.GC19867@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <568284D3.3060006@users.sourceforge.net> <20160111083108.GC14104@x1>
+In-Reply-To: <20160111083108.GC14104@x1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jammy Zhou <Jammy.Zhou@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Alex Deucher <alexander.deucher@amd.com>, Eric Huang <JinHuiEric.Huang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Jan 4, 2016 at 3:43 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> This code is indented too far.  Also we normally use spaces to align if
-> statement conditions.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> The platform_device_put() function was called in one case by the
+>> add_child() function during error handling even if the passed
+>> variable "pdev" contained a null pointer.
+>>
+>> Implementation details could be improved by the adjustment of jump targets
+>> according to the Linux coding style convention.
+>>
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  drivers/mfd/dm355evm_msp.c | 21 ++++++++++-----------
+>>  1 file changed, 10 insertions(+), 11 deletions(-)
+> 
+> Same comments as before.
 
-Applied.  thanks!
+To which comments do you refer here?
 
-Alex
+Are you interested in any further clarification of open issues?
 
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-> index 6fa0fea..59485d0 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-> @@ -843,15 +843,15 @@ static int amdgpu_cgs_acpi_eval_object(void *cgs_device,
->         if (info->input_count > 0) {
->                 if (info->pinput_argument = NULL)
->                         return -EINVAL;
-> -                       argument = info->pinput_argument;
-> -                       func_no = argument->value;
-> -                       for (i = 0; i < info->input_count; i++) {
-> -                               if (((argument->type = ACPI_TYPE_STRING) ||
-> -                                       (argument->type = ACPI_TYPE_BUFFER))
-> -                                       && (argument->pointer = NULL))
-> -                                       return -EINVAL;
-> -                               argument++;
-> -                       }
-> +               argument = info->pinput_argument;
-> +               func_no = argument->value;
-> +               for (i = 0; i < info->input_count; i++) {
-> +                       if (((argument->type = ACPI_TYPE_STRING) ||
-> +                            (argument->type = ACPI_TYPE_BUFFER)) &&
-> +                           (argument->pointer = NULL))
-> +                               return -EINVAL;
-> +                       argument++;
-> +               }
->         }
->
->         if (info->output_count > 0) {
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Regards,
+Markus
