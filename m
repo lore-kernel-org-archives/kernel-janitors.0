@@ -1,60 +1,70 @@
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Sat, 02 Jan 2016 18:30:58 +0000
-Subject: Re: [PATCH 3/3] net-iwlegacy: Another refactoring for il_eeprom_init()
-Message-Id: <CAFqt6za=NzwNC2myx95OxffpVzfyuPWLJfjx_nDHXsGE=myvfg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Jan 2016 09:29:21 +0000
+Subject: [patch] IB/cma: allocating too much memory in make_cma_ports()
+Message-Id: <20160112092921.GB29804@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5686E13F.2010309@users.sourceforge.net>
-	<5686E263.1020901@users.sourceforge.net>
-In-Reply-To: <5686E263.1020901@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, Stanislaw Gruszka <sgruszka@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Doug Ledford <dledford@redhat.com>
+Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Matan Barak <matanb@mellanox.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jan 2, 2016 at 2:02 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Jan 2016 21:16:01 +0100
->
-> Rename a jump label according to the current Linux coding style convention.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/wireless/intel/iwlegacy/common.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/wireless/intel/iwlegacy/common.c b/drivers/net/wireless/intel/iwlegacy/common.c
-> index ae45fd3..660ab2b 100644
-> --- a/drivers/net/wireless/intel/iwlegacy/common.c
-> +++ b/drivers/net/wireless/intel/iwlegacy/common.c
-> @@ -759,7 +759,7 @@ il_eeprom_init(struct il_priv *il)
->                                  IL_EEPROM_ACCESS_TIMEOUT);
->                 if (ret < 0) {
->                         IL_ERR("Time out reading EEPROM[%d]\n", addr);
-> -                       goto done;
-> +                       goto release_semaphore;
+The issue here is that there is a cut and paste bug.  When we allocate
+cma_dev_group->default_ports_group we use "sizeof(*cma_dev_group->ports)"
+instead of "sizeof(*cma_dev_group->default_ports_group)".
 
-Current code looks good.
->                 }
->                 r = _il_rd(il, CSR_EEPROM_REG);
->                 e[addr / 2] = cpu_to_le16(r >> 16);
-> @@ -769,7 +769,7 @@ il_eeprom_init(struct il_priv *il)
->                  il_eeprom_query16(il, EEPROM_VERSION));
->
->         ret = 0;
-> -done:
-> +release_semaphore:
->         il->ops->eeprom_release_semaphore(il);
->
->         if (ret) {
-> --
-> 2.6.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+We're bumping up against the 80 character limit so I introduced a new
+local pointer "ports_group" to get around that.
 
--Souptick
+Fixes: 045959db65c6 ('IB/cma: Add configfs for rdma_cm')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
+
+diff --git a/drivers/infiniband/core/cma_configfs.c b/drivers/infiniband/core/cma_configfs.c
+index bd1d640..18b112a 100644
+--- a/drivers/infiniband/core/cma_configfs.c
++++ b/drivers/infiniband/core/cma_configfs.c
+@@ -158,6 +158,7 @@ static int make_cma_ports(struct cma_dev_group *cma_dev_group,
+ 	unsigned int i;
+ 	unsigned int ports_num;
+ 	struct cma_dev_port_group *ports;
++	struct config_group **ports_group;
+ 	int err;
+ 
+ 	ibdev = cma_get_ib_dev(cma_dev);
+@@ -168,12 +169,9 @@ static int make_cma_ports(struct cma_dev_group *cma_dev_group,
+ 	ports_num = ibdev->phys_port_cnt;
+ 	ports = kcalloc(ports_num, sizeof(*cma_dev_group->ports),
+ 			GFP_KERNEL);
++	ports_group = kcalloc(ports_num + 1, sizeof(*ports_group), GFP_KERNEL);
+ 
+-	cma_dev_group->default_ports_group = kcalloc(ports_num + 1,
+-						     sizeof(*cma_dev_group->ports),
+-						     GFP_KERNEL);
+-
+-	if (!ports || !cma_dev_group->default_ports_group) {
++	if (!ports || !ports_group) {
+ 		err = -ENOMEM;
+ 		goto free;
+ 	}
+@@ -187,15 +185,16 @@ static int make_cma_ports(struct cma_dev_group *cma_dev_group,
+ 		config_group_init_type_name(&ports[i].group,
+ 					    port_str,
+ 					    &cma_port_group_type);
+-		cma_dev_group->default_ports_group[i] = &ports[i].group;
++		ports_group[i] = &ports[i].group;
+ 	}
+-	cma_dev_group->default_ports_group[i] = NULL;
++	ports_group[i] = NULL;
++	cma_dev_group->default_ports_group = ports_group;
+ 	cma_dev_group->ports = ports;
+ 
+ 	return 0;
+ free:
+ 	kfree(ports);
+-	kfree(cma_dev_group->default_ports_group);
++	kfree(ports_group);
+ 	cma_dev_group->ports = NULL;
+ 	cma_dev_group->default_ports_group = NULL;
+ 	return err;
