@@ -1,64 +1,35 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Tue, 19 Jan 2016 20:59:48 +0000
-Subject: Re: [patch] RDMA/nes: checking for NULL instead of IS_ERR
-Message-Id: <569EA3C4.5080902@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="5OOt16dfvhmRXhIc3n479WCNatjaGFjmC"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Jan 2016 09:35:34 +0000
+Subject: [patch 1/2 -next] mdio: remove an unneed condition
+Message-Id: <20160112093534.GE29804@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160112092743.GA29804@mwanda> <20160112151252.GA2294@lst.de>
-In-Reply-To: <20160112151252.GA2294@lst.de>
-To: Christoph Hellwig <hch@lst.de>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Faisal Latif <faisal.latif@intel.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---5OOt16dfvhmRXhIc3n479WCNatjaGFjmC
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+It used to be that mdio->irq was a pointer but after e7f4dc3536a4
+('mdio: Move allocation of interrupts into core') it's an array inside
+the mdio struct so it can never be NULL.
 
-On 01/12/2016 10:12 AM, Christoph Hellwig wrote:
-> On Tue, Jan 12, 2016 at 12:27:43PM +0300, Dan Carpenter wrote:
->> nes_reg_phys_mr() returns ERR_PTRs on error.  It doesn't return NULL.
->>
->> This bug has been there for a while, but we recently changed from
->> calling a function pointer to calling nes_reg_phys_mr() directly so no=
-w
->> Smatch is able to detect the bug.
->=20
-> Looks fine,
->=20
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
->=20
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied.
-
---=20
-Doug Ledford <dledford@redhat.com>
-              GPG KeyID: 0E572FDD
-
-
-
---5OOt16dfvhmRXhIc3n479WCNatjaGFjmC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJWnqPFAAoJELgmozMOVy/d818QAMNI59hKApaDB9Kr8bhoMeKs
-gkkzHVo86rAVQPdbJzg6JMppK619UKwsNaitcj4EsqTF8lJT4cfsftf6aCmnqy/g
-zPmZR9DjgBWW8r5aeNIyGWI6ukse091P9LtodlS461QXpzASqynCdbiGELSfmkDG
-XK9RF8krxOi7/FHxlvAkNtKKpKBMwRxDXQVajeGnGKx6UD3QeNq70s5uTc87qL1R
-TUg23+3R4b0LOmxKWUpXNfllJYQFtgRDMK4Jt1AWrK3yRsHMS/6/49iTN5Equ7v/
-M53t5RX/0AH/YoRhSclrakzmZwbc/IQwD9az+IM3MxX89IbHbF7j05mCZy+8mZB7
-R+YZRs2Jk3n/ya9noZoC8+1pBcKFDD+NDbUYWjqKDYxjVUeKkPjNGd9GO3qHJde7
-qd+q/TfFBevsQAA+tS5naNY9uTJt3Q4E7EvCzj8DjBkKYs3upRqHSwk+izMnoD9v
-xWOa/18fS556P7lXftMYfeaEqRd/CvS9ud/QkGPvmfHlWORyXiTEswERV77XtFLJ
-HNW/KkE5pvL3x0GZoksRTGBthL3EUpRa9kYnU7RRTEMMVT84JO5NTqfKB5WSOJKK
-bWvoXDzUFWiTPRD6/AetAcuhDGEcQFw7YaIcnCvVQYlgIwhS+6JUXytmNtyb2KYb
-Rm+ft5pNDZMGM8KQ9Ib7
-=FE7S
------END PGP SIGNATURE-----
-
---5OOt16dfvhmRXhIc3n479WCNatjaGFjmC--
+diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+index c0a8f84..86829f8 100644
+--- a/drivers/of/of_mdio.c
++++ b/drivers/of/of_mdio.c
+@@ -62,11 +62,9 @@ static int of_mdiobus_register_phy(struct mii_bus *mdio, struct device_node *chi
+ 	rc = irq_of_parse_and_map(child, 0);
+ 	if (rc > 0) {
+ 		phy->irq = rc;
+-		if (mdio->irq)
+-			mdio->irq[addr] = rc;
++		mdio->irq[addr] = rc;
+ 	} else {
+-		if (mdio->irq)
+-			phy->irq = mdio->irq[addr];
++		phy->irq = mdio->irq[addr];
+ 	}
+ 
+ 	if (of_property_read_bool(child, "broken-turn-around"))
