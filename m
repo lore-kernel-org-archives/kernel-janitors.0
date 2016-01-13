@@ -1,34 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Jan 2016 12:21:17 +0000
-Subject: [patch] Btrfs: clean up an error code in btrfs_init_space_info()
-Message-Id: <20160113122117.GB19993@mwanda>
+From: David Sterba <dsterba@suse.cz>
+Date: Wed, 13 Jan 2016 13:31:02 +0000
+Subject: Re: [patch] Btrfs: clean up an error code in btrfs_init_space_info()
+Message-Id: <20160113133102.GQ4227@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160113122117.GB19993@mwanda>
+In-Reply-To: <20160113122117.GB19993@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <clm@fb.com>, Liu Bo <bo.li.liu@oracle.com>
-Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Chris Mason <clm@fb.com>, Liu Bo <bo.li.liu@oracle.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If we return 1 here, then the caller treats it as an error and returns
--EINVAL.  It causes a static checker warning to treat positive returns
-as an error.
+On Wed, Jan 13, 2016 at 03:21:17PM +0300, Dan Carpenter wrote:
+> If we return 1 here, then the caller treats it as an error and returns
+> -EINVAL.  It causes a static checker warning to treat positive returns
+> as an error.
+> 
+> Fixes: 1aba86d67f34 ('Btrfs: fix easily get into ENOSPC in mixed case')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I would appreciate a little review here.  This patch doesn't change
+> behavior, but it's possible that we had intended to do something else.
 
-Fixes: 1aba86d67f34 ('Btrfs: fix easily get into ENOSPC in mixed case')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I would appreciate a little review here.  This patch doesn't change
-behavior, but it's possible that we had intended to do something else.
+No, it makes sense to switch it to -EINVAL. Thanks.
 
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 60cc139..64649f8e 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -10586,7 +10586,7 @@ int btrfs_init_space_info(struct btrfs_fs_info *fs_info)
- 
- 	disk_super = fs_info->super_copy;
- 	if (!btrfs_super_root(disk_super))
--		return 1;
-+		return -EINVAL;
- 
- 	features = btrfs_super_incompat_flags(disk_super);
- 	if (features & BTRFS_FEATURE_INCOMPAT_MIXED_GROUPS)
+Reviewed-by: David Sterba <dsterba@suse.com>
