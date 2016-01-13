@@ -1,22 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 13 Jan 2016 15:35:29 +0000
-Subject: Re: [patch] mlxsw: fix SWITCHDEV_OBJ_ID_PORT_MDB
-Message-Id: <20160113.103529.1906079275568373739.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Jan 2016 12:21:52 +0000
+Subject: [patch] drm/nouveau/pci: reversed condition in nvkm_pcie_set_link()
+Message-Id: <20160113122152.GC19993@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160113122823.GD19993@mwanda>
-In-Reply-To: <20160113122823.GD19993@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jiri@mellanox.com, eladr@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Karol Herbst <nouveau@karolherbst.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Jan 2016 15:28:23 +0300
+The condition is reversed so this function is a no-op.
 
-> There is a missing break statement so we always return -EOPNOTSUPP.
-> 
-> Fixes: 3a49b4fde2a1 ('mlxsw: Adding layer 2 multicast support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: bcc19d9bf5cd ('drm/nouveau/pci: implement generic code for pcie speed change')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/pci/pcie.c b/drivers/gpu/drm/nouveau/nvkm/subdev/pci/pcie.c
+index b32954f..d71e5db 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/pci/pcie.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pci/pcie.c
+@@ -119,7 +119,7 @@ nvkm_pcie_set_link(struct nvkm_pci *pci, enum nvkm_pcie_speed speed, u8 width)
+ 	struct pci_bus *pbus;
+ 	int ret;
+ 
+-	if (pci || !pci_is_pcie(pci->pdev))
++	if (!pci || !pci_is_pcie(pci->pdev))
+ 		return 0;
+ 	pbus = pci->pdev->bus;
+ 
