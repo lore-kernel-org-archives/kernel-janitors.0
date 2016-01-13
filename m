@@ -1,51 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Jan 2016 09:50:19 +0000
-Subject: [patch] svcrdma: signedness bug in xprt_rdma_bc_send_request()
-Message-Id: <20160105095019.GA23619@mwanda>
+Date: Wed, 13 Jan 2016 12:20:02 +0000
+Subject: [patch] ASoC: AMD: free memory on error
+Message-Id: <20160113122002.GA19993@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@primarydata.com>, Chuck Lever <chuck.lever@oracle.com>
-Cc: Anna Schumaker <anna.schumaker@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Alex Deucher <alexander.deucher@amd.com>, Murali Krishna Vemuri <murali-krishna.vemuri@amd.com>, Guenter Roeck <linux@roeck-us.net>
 
-The "len" variable was unsigned so the error handling didn't work.  Also
-"len" was a misleading name because it's either a negative error code or
-it's zero.  It's never actually a length.  I've renamed it to "ret".
+Static checkers complain if we don't free "adata" before returning.
 
-Fixes: eb57be60eca9 ('svcrdma: Add class for RDMA backwards direction transport')
+Fixes: 7c31335a03b6 ('ASoC: AMD: add AMD ASoC ACP 2.x DMA driver')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-index 417cec1..deff06a 100644
---- a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-@@ -240,7 +240,7 @@ xprt_rdma_bc_send_request(struct rpc_task *task)
- 	struct rpc_rqst *rqst = task->tk_rqstp;
- 	struct svc_xprt *sxprt = rqst->rq_xprt->bc_xprt;
- 	struct svcxprt_rdma *rdma;
--	u32 len;
-+	int ret;
- 
- 	dprintk("svcrdma: sending bc call with xid: %08x\n",
- 		be32_to_cpu(rqst->rq_xid));
-@@ -252,15 +252,15 @@ xprt_rdma_bc_send_request(struct rpc_task *task)
- 		rpc_wake_up_queued_task(&sxprt->xpt_bc_pending, task);
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index 3191e0a..d1fb035 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -635,6 +635,7 @@ static int acp_dma_open(struct snd_pcm_substream *substream)
+ 					    SNDRV_PCM_HW_PARAM_PERIODS);
+ 	if (ret < 0) {
+ 		dev_err(prtd->platform->dev, "set integer constraint failed\n");
++		kfree(adata);
+ 		return ret;
  	}
- 
--	len = -ENOTCONN;
-+	ret = -ENOTCONN;
- 	rdma = container_of(sxprt, struct svcxprt_rdma, sc_xprt);
- 	if (!test_bit(XPT_DEAD, &sxprt->xpt_flags))
--		len = rpcrdma_bc_send_request(rdma, rqst);
-+		ret = rpcrdma_bc_send_request(rdma, rqst);
- 
- 	mutex_unlock(&sxprt->xpt_mutex);
- 
--	if (len < 0)
--		return len;
-+	if (ret < 0)
-+		return ret;
- 	return 0;
- }
  
