@@ -1,31 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Jan 2016 09:55:14 +0000
-Subject: [patch -next] bcache: cleanup indenting in bch_btree_insert_check_key()
-Message-Id: <20160105095514.GD23619@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 17:50:11 +0000
+Subject: [PATCH v3 5/6] InfiniBand-ocrdma: Returning only value constants in ocrdma_resize_cq()
+Message-Id: <5697DFD3.3000705@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567EDED5.4040201@users.sourceforge.net>
+ <5697D865.5010507@users.sourceforge.net>
+In-Reply-To: <5697D865.5010507-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Neil Brown <neilb@suse.com>, linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mitesh Ahuja <mitesh.ahuja-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-This was causing a static checker complaint because the indenting wasn't
-consistent.  Also it used spaces instead of tabs.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 18:04:17 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Return constant integer values without storing them in the local
+variable "status".
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 22b9e34..d493913 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -2163,8 +2163,8 @@ int bch_btree_insert_check_key(struct btree *b, struct btree_op *op,
- 		rw_lock(true, b, b->level);
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index 5f2a34a..d87985b 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -1121,15 +1121,12 @@ ctx_err:
+ int ocrdma_resize_cq(struct ib_cq *ibcq, int new_cnt,
+ 		     struct ib_udata *udata)
+ {
+-	int status = 0;
+ 	struct ocrdma_cq *cq = get_ocrdma_cq(ibcq);
  
- 		if (b->key.ptr[0] != btree_ptr ||
--                   b->seq != seq + 1) {
--                       op->lock = b->level;
-+		    b->seq != seq + 1) {
-+			op->lock = b->level;
- 			goto out;
-                }
- 	}
+-	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe) {
+-		status = -EINVAL;
+-		return status;
+-	}
++	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe)
++		return -EINVAL;
+ 	ibcq->cqe = new_cnt;
+-	return status;
++	return 0;
+ }
+ 
+ static void ocrdma_flush_cq(struct ocrdma_cq *cq)
+-- 
+2.6.3
+
