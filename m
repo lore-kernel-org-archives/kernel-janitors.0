@@ -1,45 +1,47 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Date: Wed, 20 Jan 2016 23:14:25 +0000
-Subject: Re: [patch] drm: rockchip: signedness bug in dw_mipi_dsi_get_lane_bps()
-Message-Id: <181674264.ynnWZU1Yz8@phil>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 15:00:46 +0000
+Subject: [PATCH] fsl/fman: Delete one function call "put_device" in dtsec_config()
+Message-Id: <5697B81E.4050303@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160120095352.GA19898@mwanda>
-In-Reply-To: <20160120095352.GA19898@mwanda>
+References: <5696BFAD.9030905@users.sourceforge.net>
+ <20160113213537.GD4399@mwanda> <20160113220923.GE5527@lunn.ch>
+In-Reply-To: <20160113220923.GE5527@lunn.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, Chris Zhong <zyw@rock-chips.com>, linux-arm-kernel@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Igal Liberman <igal.liberman@freescale.com>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 15:46:28 +0100
 
-Am Mittwoch, 20. Januar 2016, 12:53:52 schrieb Dan Carpenter:
-> "bpp" needs to be signed for the error handling to work.
-> 
-> Fixes: 84e05408fcfe ('drm: rockchip: Support Synopsys DW MIPI DSI')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The Coccinelle semantic patch script "deref_null.cocci" pointed a problem
+out in the implementation of the function "dtsec_config".
 
-There's also "drm/rockchip/dsi: fix handling mipi_dsi_pixel_format_to_bpp 
-result" from Andrzej Hajda from january the 14th doing the same change.
+A null pointer was assigned to the data structure member "tbiphy" of the
+variable "dtsec" if a matching device was not found.
+A call of the function "put_device" was unnecessary then because
+a previous call of the function "get_device" was not triggered.
+Thus remove the function call "put_device" after the printing of the
+desired error message.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/freescale/fman/fman_dtsec.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Heiko
-
-> 
-> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-> b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c index 7bfe243..c35e5af 100644
-> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-> @@ -461,7 +461,8 @@ static int dw_mipi_dsi_phy_init(struct dw_mipi_dsi
-> *dsi)
-> 
->  static int dw_mipi_dsi_get_lane_bps(struct dw_mipi_dsi *dsi)
->  {
-> -	unsigned int bpp, i, pre;
-> +	int bpp;
-> +	unsigned int i, pre;
->  	unsigned long mpclk, pllref, tmp;
->  	unsigned int m = 1, n = 1, target_mbps = 1000;
->  	unsigned int max_mbps = dptdin_map[ARRAY_SIZE(dptdin_map) - 
-1].max_mbps;
+diff --git a/drivers/net/ethernet/freescale/fman/fman_dtsec.c b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
+index 6b1261c..7c92eb8 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_dtsec.c
++++ b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
+@@ -1434,7 +1434,6 @@ struct fman_mac *dtsec_config(struct fman_mac_params *params)
+ 	dtsec->tbiphy = of_phy_find_device(params->internal_phy_node);
+ 	if (!dtsec->tbiphy) {
+ 		pr_err("of_phy_find_device (TBI PHY) failed\n");
+-		put_device(&dtsec->tbiphy->mdio.dev);
+ 		goto err_dtsec_drv_param;
+ 	}
+ 
+-- 
+2.6.3
 
