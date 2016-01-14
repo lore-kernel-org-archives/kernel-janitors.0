@@ -1,32 +1,65 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 06 Jan 2016 09:56:30 +0000
-Subject: [patch -next] mlxsw: core: remove an unnecessary condition
-Message-Id: <20160106095630.GB23185@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 17:38:21 +0000
+Subject: [PATCH v3 1/6] InfiniBand-ocrdma: One jump label less in ocrdma_alloc_ucontext_pd()
+Message-Id: <5697DD0D.9030308@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567EDED5.4040201@users.sourceforge.net>
+ <5697D865.5010507@users.sourceforge.net>
+In-Reply-To: <5697D865.5010507-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Pirko <jiri@mellanox.com>
-Cc: Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mitesh Ahuja <mitesh.ahuja-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-We checked "err" on the lines before so we know it's zero here.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 17:17:44 +0100
 
-These cause a static checker warning because checking known things can
-indicate a bug.  Maybe there is a missing assignment or we are checking
-the wrong variable.
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* Let us return directly if a call of the _ocrdma_alloc_pd()
+  function failed.
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c b/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
-index 5b9364f..1ac8bf1 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core_hwmon.c
-@@ -130,7 +130,7 @@ static ssize_t mlxsw_hwmon_temp_rst_store(struct device *dev,
- 		dev_err(mlxsw_hwmon->bus_info->dev, "Failed to reset temp sensor history\n");
- 		return err;
+* Reduce the scope for the local variable "status" to one case
+  of an if statement.
+
+* Delete the jump label "err" then.
+
+* Return zero as a constant at the end.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index d4c687b..4caf167 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -483,19 +483,16 @@ static int ocrdma_alloc_ucontext_pd(struct ocrdma_dev *dev,
+ 				    struct ocrdma_ucontext *uctx,
+ 				    struct ib_udata *udata)
+ {
+-	int status = 0;
+-
+ 	uctx->cntxt_pd = _ocrdma_alloc_pd(dev, uctx, udata);
+ 	if (IS_ERR(uctx->cntxt_pd)) {
+-		status = PTR_ERR(uctx->cntxt_pd);
++		int status = PTR_ERR(uctx->cntxt_pd);
+ 		uctx->cntxt_pd = NULL;
+-		goto err;
++		return status;
  	}
--	return err ? err : len;
-+	return len;
+ 
+ 	uctx->cntxt_pd->uctx = uctx;
+ 	uctx->cntxt_pd->ibpd.device = &dev->ibdev;
+-err:
+-	return status;
++	return 0;
  }
  
- static ssize_t mlxsw_hwmon_fan_rpm_show(struct device *dev,
+ static int ocrdma_dealloc_ucontext_pd(struct ocrdma_ucontext *uctx)
+-- 
+2.6.3
+
