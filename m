@@ -1,20 +1,21 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Thu, 14 Jan 2016 16:27:41 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 14 Jan 2016 21:51:21 +0000
 Subject: Re: [PATCH] fsl/fman: Delete one function call "put_device" in dtsec_config()
-Message-Id: <20160114162741.GC19773@lunn.ch>
+Message-Id: <20160114.165121.1797769104831484799.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5696BFAD.9030905@users.sourceforge.net>
- <20160113213537.GD4399@mwanda>
- <20160113220923.GE5527@lunn.ch>
- <5697B81E.4050303@users.sourceforge.net>
+References: <20160113213537.GD4399@mwanda>
+	<20160113220923.GE5527@lunn.ch>
+	<5697B81E.4050303@users.sourceforge.net>
 In-Reply-To: <5697B81E.4050303@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Igal Liberman <igal.liberman@freescale.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: elfring@users.sourceforge.net
+Cc: andrew@lunn.ch, dan.carpenter@oracle.com, igal.liberman@freescale.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
 
-On Thu, Jan 14, 2016 at 04:00:46PM +0100, SF Markus Elfring wrote:
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 16:00:46 +0100
+
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Thu, 14 Jan 2016 15:46:28 +0100
 > 
@@ -30,26 +31,4 @@ On Thu, Jan 14, 2016 at 04:00:46PM +0100, SF Markus Elfring wrote:
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Fixes: 57ba4c9b56d8 ("fsl/fman: Add FMan MAC support")
-Reviewd-by: Andrew Lunn <andrew@lunn.ch>
-
-	    Andrew
-> ---
->  drivers/net/ethernet/freescale/fman/fman_dtsec.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/fman/fman_dtsec.c b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-> index 6b1261c..7c92eb8 100644
-> --- a/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-> +++ b/drivers/net/ethernet/freescale/fman/fman_dtsec.c
-> @@ -1434,7 +1434,6 @@ struct fman_mac *dtsec_config(struct fman_mac_params *params)
->  	dtsec->tbiphy = of_phy_find_device(params->internal_phy_node);
->  	if (!dtsec->tbiphy) {
->  		pr_err("of_phy_find_device (TBI PHY) failed\n");
-> -		put_device(&dtsec->tbiphy->mdio.dev);
->  		goto err_dtsec_drv_param;
->  	}
->  
-> -- 
-> 2.6.3
-> 
+Applied, thanks.
