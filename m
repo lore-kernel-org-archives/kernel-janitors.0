@@ -1,58 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jan 2016 17:57:08 +0000
-Subject: [PATCH 3/5] xen-netback: Replace a variable initialisation by an assignment in read_xenbus_vif_flags
-Message-Id: <56880F74.5040304@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 17:51:35 +0000
+Subject: [PATCH v3 6/6] InfiniBand-ocrdma: Delete an unnecessary variable in ocrdma_dealloc_pd()
+Message-Id: <5697E027.30603@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <56880DD4.2090806@users.sourceforge.net>
-In-Reply-To: <56880DD4.2090806@users.sourceforge.net>
+ <567EDED5.4040201@users.sourceforge.net>
+ <5697D865.5010507@users.sourceforge.net>
+In-Reply-To: <5697D865.5010507@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: xen-devel@lists.xenproject.org, netdev@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Wei Liu <wei.liu2@citrix.com>
+To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Jan 2016 18:01:57 +0100
+Date: Thu, 14 Jan 2016 18:08:08 +0100
 
-Replace an explicit initialisation for one local variable at the beginning
-by an assignment.
+1. Return zero in one case directly.
+
+2. Return the value from a call of the _ocrdma_dealloc_pd() function
+   without using an extra assignment for the local variable.
+
+3. Remove the variable "status" in this function then.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/xen-netback/xenbus.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
-index d4947e1..aff963f 100644
---- a/drivers/net/xen-netback/xenbus.c
-+++ b/drivers/net/xen-netback/xenbus.c
-@@ -946,7 +946,7 @@ err: /* Regular return falls through with err = 0 */
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index d87985b..e6e1b51 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -751,7 +751,6 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
+ 	struct ocrdma_pd *pd = get_ocrdma_pd(ibpd);
+ 	struct ocrdma_dev *dev = get_ocrdma_dev(ibpd->device);
+ 	struct ocrdma_ucontext *uctx = NULL;
+-	int status = 0;
+ 	u64 usr_db;
  
- static int read_xenbus_vif_flags(struct backend_info *be)
- {
--	struct xenvif *vif = be->vif;
-+	struct xenvif *vif;
- 	struct xenbus_device *dev = be->dev;
- 	unsigned int rx_copy;
- 	int err, val;
-@@ -968,13 +968,14 @@ static int read_xenbus_vif_flags(struct backend_info *be)
- 	if (xenbus_scanf(XBT_NIL, dev->otherend,
- 			 "feature-rx-notify", "%d", &val) < 0)
- 		val = 0;
-+	vif = be->vif;
- 	if (!val) {
- 		/* - Reduce drain timeout to poll more frequently for
- 		 *   Rx requests.
- 		 * - Disable Rx stall detection.
- 		 */
--		be->vif->drain_timeout = msecs_to_jiffies(30);
--		be->vif->stall_timeout = 0;
-+		vif->drain_timeout = msecs_to_jiffies(30);
-+		vif->stall_timeout = 0;
+ 	uctx = pd->uctx;
+@@ -765,11 +764,10 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
+ 
+ 		if (is_ucontext_pd(uctx, pd)) {
+ 			ocrdma_release_ucontext_pd(uctx);
+-			return status;
++			return 0;
+ 		}
  	}
+-	status = _ocrdma_dealloc_pd(dev, pd);
+-	return status;
++	return _ocrdma_dealloc_pd(dev, pd);
+ }
  
- 	if (xenbus_scanf(XBT_NIL, dev->otherend, "feature-sg",
+ static int ocrdma_alloc_lkey(struct ocrdma_dev *dev, struct ocrdma_mr *mr,
 -- 
 2.6.3
 
