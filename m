@@ -1,25 +1,46 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 07 Jan 2016 13:05:13 +0000
-Subject: Re: [patch -next] ath9k: fix ath9k_hw_nvram_check_version()
-Message-Id: <87wprlk0ae.fsf@kamboji.qca.qualcomm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 17:18:29 +0000
+Subject: [PATCH v3 0/6] InfiniBand-ocrdma: Fine-tuning for some function implementations
+Message-Id: <5697D865.5010507@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20151219105919.GB3749@mwanda>
-In-Reply-To: <20151219105919.GB3749@mwanda> (Dan Carpenter's message of "Sat,
-	19 Dec 2015 13:59:19 +0300")
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567EDED5.4040201@users.sourceforge.net>
+In-Reply-To: <567EDED5.4040201-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mitesh Ahuja <mitesh.ahuja-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 14 Jan 2016 18:15:54 +0100
 
-> There is a type bug so it always returns success.
->
-> Fixes: 6fa658fd5ab2 ('ath9k: Simplify and fix eeprom endianness swapping')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Several update suggestions were taken into account
+from static source code analysis.
 
-Applied to ath.git, thanks.
+Markus Elfring (6):
+  One variable and jump label less in ocrdma_alloc_ucontext_pd()
+  Delete unnecessary variable initialisations in 11 functions
+  Returning only value constants in ocrdma_qp_state_change()
+  Return a value from a function call in _ocrdma_modify_qp() directly
+  Returning only value constants in ocrdma_resize_cq()
+  Delete an unnecessary variable in ocrdma_dealloc_pd()
+
+---
+
+v3: Rebase proposed changes on the source files for the software
+    "Linux next-20160114".
+    
+v2: Unfortunately, the first update step from this series contained
+    an inappropriate suggestion.
+    Thus fix that.
+
+ drivers/infiniband/hw/ocrdma/ocrdma_ah.c    |  2 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c    |  7 +++---
+ drivers/infiniband/hw/ocrdma/ocrdma_stats.c |  4 +--
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 39 +++++++++++------------------
+ 4 files changed, 20 insertions(+), 32 deletions(-)
 
 -- 
-Kalle Valo
+2.6.3
+
