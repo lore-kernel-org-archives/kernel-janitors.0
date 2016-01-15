@@ -1,86 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jan 2016 10:11:23 +0000
-Subject: [PATCH v3 1/3] gianfar: Less function calls in gfar_ethflow_to_filer_table() after error detection
-Message-Id: <5698C5CB.80305@users.sourceforge.net>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 15 Jan 2016 10:37:09 +0000
+Subject: Re: [PATCH v3 1/3] gianfar: Less function calls in gfar_ethflow_to_filer_table() after error detecti
+Message-Id: <1452854229.8586.48.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <56866E7F.8080609@users.sourceforge.net>
- <5698C53C.8060204@users.sourceforge.net>
-In-Reply-To: <5698C53C.8060204@users.sourceforge.net>
+	 <56866E7F.8080609@users.sourceforge.net>
+	 <5698C53C.8060204@users.sourceforge.net>
+	 <5698C5CB.80305@users.sourceforge.net>
+In-Reply-To: <5698C5CB.80305@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jan 2016 10:30:37 +0100
+On Fri, 2016-01-15 at 11:11 +0100, SF Markus Elfring wrote:
+> The kfree() function was called in one case by the
+> gfar_ethflow_to_filer_table() function during error handling
+> even if a passed variable contained a null pointer.
+>=20
+> * Return directly if a memory allocation failed at the beginning.
+>=20
+> * Adjust jump targets according to the Linux coding style convention.
+>=20
+> This issue was detected by using the Coccinelle software.
 
-The kfree() function was called in one case by the
-gfar_ethflow_to_filer_table() function during error handling
-even if a passed variable contained a null pointer.
+Is this really better?
 
-* Return directly if a memory allocation failed at the beginning.
+Perhaps this particular static analysis isn't too useful.
 
-* Adjust jump targets according to the Linux coding style convention.
+Why not just allocate once and assign a second pointer?
 
-This issue was detected by using the Coccinelle software.
+	local_rqfpr =3D kmalloc_array(2 * (MAX_FILER_IDX + 1),
+				=A0 =A0 sizeof(unsigned int), GFP_KERNEL);
+	if (!local_rqfpr)
+		goto err;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/freescale/gianfar_ethtool.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+	local_rqfcr =3D &local_rqfpr[MAX_FILER_IDX + 1];
 
-diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
-index 4b0ee85..825b051 100644
---- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
-+++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
-@@ -778,11 +778,13 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
- 
- 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
- 				    GFP_KERNEL);
-+	if (!local_rqfpr)
-+		return 0;
- 	local_rqfcr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
- 				    GFP_KERNEL);
--	if (!local_rqfpr || !local_rqfcr) {
-+	if (!local_rqfcr) {
- 		ret = 0;
--		goto err;
-+		goto free_fpr;
- 	}
- 
- 	switch (class) {
-@@ -802,7 +804,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
- 		netdev_err(priv->ndev,
- 			   "Right now this class is not supported\n");
- 		ret = 0;
--		goto err;
-+		goto free_fcr;
- 	}
- 
- 	for (i = 0; i < MAX_FILER_IDX + 1; i++) {
-@@ -819,7 +821,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
- 		netdev_err(priv->ndev,
- 			   "No parse rule found, can't create hash rules\n");
- 		ret = 0;
--		goto err;
-+		goto free_fcr;
- 	}
- 
- 	/* If a match was found, then it begins the starting of a cluster rule
-@@ -862,9 +864,9 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
- 			break;
- 		priv->cur_filer_idx = priv->cur_filer_idx - 1;
- 	}
--
--err:
-+free_fcr:
- 	kfree(local_rqfcr);
-+free_fpr:
- 	kfree(local_rqfpr);
- 	return ret;
- }
--- 
-2.6.3
+Perhaps this would be better removing the ret variable
+and using something like:
 
+int gfar_ethflow_to_filer_table(...)
+{
+	...
+
+	return 0;
+
+err:
+	kfree(local_rqfpt);
+	return 1;
+}
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
