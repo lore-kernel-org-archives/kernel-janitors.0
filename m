@@ -1,48 +1,86 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 30 Jan 2016 15:39:17 +0000
-Subject: Re: [patch] iio: inkern: fix a NULL dereference on error
-Message-Id: <56ACD925.3010006@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 10:11:23 +0000
+Subject: [PATCH v3 1/3] gianfar: Less function calls in gfar_ethflow_to_filer_table() after error detection
+Message-Id: <5698C5CB.80305@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160126092521.GC15717@mwanda>
-In-Reply-To: <20160126092521.GC15717@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56866E7F.8080609@users.sourceforge.net>
+ <5698C53C.8060204@users.sourceforge.net>
+In-Reply-To: <5698C53C.8060204@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Marek Belisko <marek@goldelico.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 26/01/16 09:25, Dan Carpenter wrote:
-> In twl4030_bci_probe() there are some failure paths where we call
-> iio_channel_release() with a NULL pointer.  (Apparently, that driver can
-> opperate without a valid channel pointer).  Let's fix it by adding a
-> NULL check in iio_channel_release().
-> 
-> Fixes: 2202e1fc5a29 ('drivers: power: twl4030_charger: fix link problems when building as module')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Whilst I'd prefer to see the driver calling this have balanced
-calls, I can see that having this sanity check in here is
-probably sensible.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 10:30:37 +0100
 
-Applied to the fixes-togreg tree and marked for stable.
+The kfree() function was called in one case by the
+gfar_ethflow_to_filer_table() function during error handling
+even if a passed variable contained a null pointer.
 
-Jonathan
-> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> index 80fbbfd..734a004 100644
-> --- a/drivers/iio/inkern.c
-> +++ b/drivers/iio/inkern.c
-> @@ -349,6 +349,8 @@ EXPORT_SYMBOL_GPL(iio_channel_get);
->  
->  void iio_channel_release(struct iio_channel *channel)
->  {
-> +	if (!channel)
-> +		return;
->  	iio_device_put(channel->indio_dev);
->  	kfree(channel);
->  }
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+* Return directly if a memory allocation failed at the beginning.
+
+* Adjust jump targets according to the Linux coding style convention.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/freescale/gianfar_ethtool.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+index 4b0ee85..825b051 100644
+--- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
++++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+@@ -778,11 +778,13 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 
+ 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
+ 				    GFP_KERNEL);
++	if (!local_rqfpr)
++		return 0;
+ 	local_rqfcr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
+ 				    GFP_KERNEL);
+-	if (!local_rqfpr || !local_rqfcr) {
++	if (!local_rqfcr) {
+ 		ret = 0;
+-		goto err;
++		goto free_fpr;
+ 	}
+ 
+ 	switch (class) {
+@@ -802,7 +804,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 		netdev_err(priv->ndev,
+ 			   "Right now this class is not supported\n");
+ 		ret = 0;
+-		goto err;
++		goto free_fcr;
+ 	}
+ 
+ 	for (i = 0; i < MAX_FILER_IDX + 1; i++) {
+@@ -819,7 +821,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 		netdev_err(priv->ndev,
+ 			   "No parse rule found, can't create hash rules\n");
+ 		ret = 0;
+-		goto err;
++		goto free_fcr;
+ 	}
+ 
+ 	/* If a match was found, then it begins the starting of a cluster rule
+@@ -862,9 +864,9 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 			break;
+ 		priv->cur_filer_idx = priv->cur_filer_idx - 1;
+ 	}
+-
+-err:
++free_fcr:
+ 	kfree(local_rqfcr);
++free_fpr:
+ 	kfree(local_rqfpr);
+ 	return ret;
+ }
+-- 
+2.6.3
 
