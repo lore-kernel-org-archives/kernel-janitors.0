@@ -1,42 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jan 2016 15:12:27 +0000
-Subject: net-rsi: Reconsider usage of variable "vap_id" in rsi_send_mgmt_pkt()
-Message-Id: <5687E8DB.3080706@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 13:10:28 +0000
+Subject: [PATCH v3 2/3] rsi: Delete unnecessary variable initialisations in rsi_send_data_pkt()
+Message-Id: <5698EFC4.7000308@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <5687E169.4070704@users.sourceforge.net>
- <5687E203.1070404@users.sourceforge.net>
-In-Reply-To: <5687E203.1070404@users.sourceforge.net>
+ <5698EE65.7010607@users.sourceforge.net>
+In-Reply-To: <5698EE65.7010607@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Fariya Fatima <fariyaf@gmail.com>, Jahnavi Meher <jahnavi.meher@gmail.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, "John W. Linville" <linville@tuxdriver.com>
 
-Hello,
+From 017d1bb49f46266ffeb33178ddd3022d6b341d71 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 13:35:47 +0100
+Subject: [PATCH 2/3] rsi: Delete unnecessary variable initialisations in
+ rsi_send_data_pkt()
 
-I have taken another look at the implementation of the function "rsi_send_m=
-gmt_pkt".
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/drive=
-rs/net/wireless/rsi/rsi_91x_pkt.c?id=E8c58e7a5a106c3d557fccd01cd4d1128f9bab=
-38#n114
+Omit explicit initialisation at the beginning for four local variables
+which are redefined before their first use.
 
-I find the following statement combination interesting there.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/wireless/rsi/rsi_91x_pkt.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-=E2=80=A6
-	u8 vap_id =3D 0;
-=E2=80=A6
-	msg[7] |=3D cpu_to_le16(vap_id << 8);
-=E2=80=A6
+diff --git a/drivers/net/wireless/rsi/rsi_91x_pkt.c b/drivers/net/wireless/rsi/rsi_91x_pkt.c
+index 571eaba..4322df1 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_pkt.c
++++ b/drivers/net/wireless/rsi/rsi_91x_pkt.c
+@@ -27,15 +27,15 @@
+ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
+ {
+ 	struct rsi_hw *adapter = common->priv;
+-	struct ieee80211_hdr *tmp_hdr = NULL;
++	struct ieee80211_hdr *tmp_hdr;
+ 	struct ieee80211_tx_info *info;
+ 	struct skb_info *tx_params;
+-	struct ieee80211_bss_conf *bss = NULL;
++	struct ieee80211_bss_conf *bss;
+ 	int status = -EINVAL;
+ 	u8 ieee80211_size = MIN_802_11_HDR_LEN;
+-	u8 extnd_size = 0;
++	u8 extnd_size;
+ 	__le16 *frame_desc;
+-	u16 seq_num = 0;
++	u16 seq_num;
+ 
+ 	info = IEEE80211_SKB_CB(skb);
+ 	bss = &info->control.vif->bss_conf;
+-- 
+2.6.3
 
-I would appreciate a further clarification.
-Does a shift operation for a variable which contains zero indicate an open =
-issue?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
