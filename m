@@ -1,49 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 30 Jan 2016 14:44:32 +0000
-Subject: [patch] video: fbdev: metronomefb: two harmless off by one bugs
-Message-Id: <20160130144432.GF3462@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 10:14:02 +0000
+Subject: [PATCH v3 3/3] gianfar: Extend an initialisation clause of a for loop in gfar_ethflow_to_filer_table
+Message-Id: <5698C66A.9000003@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56866E7F.8080609@users.sourceforge.net>
+ <5698C53C.8060204@users.sourceforge.net>
+In-Reply-To: <5698C53C.8060204@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jaya Kumar <jayakumar.lkml@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-par->metromem_cmd->args[] is an array of 31 elements of size u16.  Here
-we have initialized the first "i" elements and want to set the rest to
-zero.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 10:50:34 +0100
 
-The issue here is that ARRAY_SIZE(par->metromem_cmd->args) is 31 and not
-32 as in the original code.  It means that we set ->csum to zero, but
-that is harmless because we immediately set it to the correct value on
-the next line.
+Move the assignment for the variable "j" from the beginning
+into an initialisation clause of a for loop.
 
-Still, the buffer overflow upsets static checkers so let's correct the
-math.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/freescale/gianfar_ethtool.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/video/fbdev/metronomefb.c b/drivers/video/fbdev/metronomefb.c
-index ad04a01..abb6bbf 100644
---- a/drivers/video/fbdev/metronomefb.c
-+++ b/drivers/video/fbdev/metronomefb.c
-@@ -354,7 +354,8 @@ static int metronome_powerup_cmd(struct metronomefb_par *par)
+diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+index 8302f7d..2162adc 100644
+--- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
++++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+@@ -772,8 +772,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 	unsigned int cmp_rqfpr;
+ 	unsigned int *local_rqfpr;
+ 	unsigned int *local_rqfcr;
+-	int i, k, l;
+-	int j = MAX_FILER_IDX;
++	int i, j, k, l;
+ 	int ret = 1;
+ 
+ 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
+@@ -807,7 +806,7 @@ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 		goto free_fcr;
  	}
  
- 	/* the rest are 0 */
--	memset((u8 *) (par->metromem_cmd->args + i), 0, (32-i)*2);
-+	memset(&par->metromem_cmd->args[i], 0,
-+	       (ARRAY_SIZE(par->metromem_cmd->args) - i) * 2);
- 
- 	par->metromem_cmd->csum = cs;
- 
-@@ -376,7 +377,8 @@ static int metronome_config_cmd(struct metronomefb_par *par)
- 	memcpy(par->metromem_cmd->args, epd_frame_table[par->dt].config,
- 		sizeof(epd_frame_table[par->dt].config));
- 	/* the rest are 0 */
--	memset((u8 *) (par->metromem_cmd->args + 4), 0, (32-4)*2);
-+	memset(&par->metromem_cmd->args[4], 0,
-+	       (ARRAY_SIZE(par->metromem_cmd->args) - 4) * 2);
- 
- 	par->metromem_cmd->csum = 0xCC10;
- 	par->metromem_cmd->csum += calc_img_cksum(par->metromem_cmd->args, 4);
+-	for (i = 0; i < MAX_FILER_IDX + 1; i++) {
++	for (i = 0, j = MAX_FILER_IDX; i < MAX_FILER_IDX + 1; i++) {
+ 		local_rqfpr[j] = priv->ftp_rqfpr[i];
+ 		local_rqfcr[j] = priv->ftp_rqfcr[i];
+ 		j--;
+-- 
+2.6.3
+
