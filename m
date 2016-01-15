@@ -1,42 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 03 Jan 2016 01:45:35 +0000
-Subject: Re: [PATCH 2/2] net-qmi_wwan: Delete an unnecessary variable initialisation in qmi_wwan_register_sub
-Message-Id: <20160102.204535.816844219039778167.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 11:47:30 +0000
+Subject: Re: gianfar: Less function calls in gfar_ethflow_to_filer_table() after error detection
+Message-Id: <5698DC52.4050808@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5686AE52.1020008@users.sourceforge.net>
-	<5686AFAE.7020401@users.sourceforge.net>
-	<87ziwnpt2v.fsf@nemi.mork.no>
-In-Reply-To: <87ziwnpt2v.fsf@nemi.mork.no>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56866E7F.8080609@users.sourceforge.net>
+ <5698C53C.8060204@users.sourceforge.net>
+ <5698C5CB.80305@users.sourceforge.net> <1452854229.8586.48.camel@perches.com>
+In-Reply-To: <1452854229.8586.48.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: bjorn@mork.no
-Cc: elfring@users.sourceforge.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joe Perches <joe@perches.com>, netdev@vger.kernel.org
+Cc: Claudiu Manoil <claudiu.manoil@freescale.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Bj=F8rn Mork <bjorn@mork.no>
-Date: Sat, 02 Jan 2016 22:30:48 +0100
-
-> SF Markus Elfring <elfring@users.sourceforge.net> writes:
->=20
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Fri, 1 Jan 2016 17:35:03 +0100
+>> * Return directly if a memory allocation failed at the beginning.
 >>
->> Omit explicit initialisation at the beginning for one local variable
->> that is redefined before its first use.
->=20
->=20
-> This patch is unnecessary. The variable initialisation is redundant.
-> See the difference?  Sending an unnecessary patch causes unnecessary
-> load on reviewers and maintainers.  Keeping redundant code has no
-> measurable cost, and can save the same maintainers a lot of trouble
-> later.
+>> * Adjust jump targets according to the Linux coding style convention.
+>>
+>> This issue was detected by using the Coccinelle software.
+> 
+> Is this really better?
+> 
+> Perhaps this particular static analysis isn't too useful.
 
-+1
+The opinions are still evolving for such a kind of search pattern.
 
-I'm getting really tired of these changes.  And a lot of them are
-coming in right now...
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+> Why not just allocate once and assign a second pointer?
+> 
+> 	local_rqfpr = kmalloc_array(2 * (MAX_FILER_IDX + 1),
+> 				    sizeof(unsigned int), GFP_KERNEL);
+> 	if (!local_rqfpr)
+> 		goto err;
+> 
+> 	local_rqfcr = &local_rqfpr[MAX_FILER_IDX + 1];
+
+Do you suggest to use only one array (instead of two as before) here?
+
+Regards,
+Markus
