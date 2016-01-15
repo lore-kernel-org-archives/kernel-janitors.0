@@ -1,32 +1,28 @@
-From: Aravind Gopalakrishnan <aravind.gopalakrishnan@amd.com>
-Date: Thu, 21 Jan 2016 15:29:55 +0000
-Subject: Re: [patch] amd64_edac: shift wrapping issue in f1x_get_norm_dct_addr()
-Message-Id: <56A0F973.2040906@amd.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 14:50:27 +0000
+Subject: Re: InfiniBand-ocrdma: Delete unnecessary variable initialisations in 11 functions
+Message-Id: <56990733.7000506@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160120095451.GB19898@mwanda> <20160121123205.GE21930@pd.tnic>
-In-Reply-To: <20160121123205.GE21930@pd.tnic>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <567EDED5.4040201@users.sourceforge.net>
+ <5697D865.5010507@users.sourceforge.net>
+ <5697DE31.9040309@users.sourceforge.net> <20160115132014.GC30615@leon.nu>
+In-Reply-To: <20160115132014.GC30615-2ukJVAZIZ/Y@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Borislav Petkov <bp@alien8.de>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Doug Thompson <dougthompson@xmission.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Cc: Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mitesh Ahuja <mitesh.ahuja-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-On 1/21/2016 6:32 AM, Borislav Petkov wrote:
-> On Wed, Jan 20, 2016 at 12:54:51PM +0300, Dan Carpenter wrote:
->> +	u64 dct_sel_base_off	= (u64)(pvt->dct_sel_hi & 0xFFFFFC00) << 16;
->
->
-> @Aravind: do you have a box with
->
-> setpci -s 18.2 0x114.l
->
-> bits [31:16] not 0?
->
->
->
+>> The variable "status" will be set to an appropriate value a bit later.
+>> Thus omit the explicit initialisation at the beginning.
+> 
+> What did you try to achieve by this patch?
 
-Nope. I don't see it set on my Fam10h and Fam15h Model 00-0fh systems.
+I would like to optimise the affected source files a bit.
+Would you like to clarify any measurable effects around the implementation
+detail when various variables will only be initialised immediately
+before they will be read again?
 
-But yes, nice catch!
-
--Aravind.
+Regards,
+Markus
