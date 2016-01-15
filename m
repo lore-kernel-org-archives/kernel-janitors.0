@@ -1,32 +1,53 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Tue, 12 Jan 2016 03:44:08 +0000
-Subject: RE: [Intel-wired-lan] [PATCH] igb: constify e1000_phy_operations structure
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B81E4D3B1@ORSMSX101.amr.corp.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 17:15:14 +0000
+Subject: Re: gianfar: Delete unnecessary variable initialisations in gfar_ethflow_to_filer_table()
+Message-Id: <56992922.4080500@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451803496-16693-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1451803496-16693-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5698C61A.90504@users.sourceforge.net>
+ <20160115102947.GI4764@mwanda> <5698D949.6000404@users.sourceforge.net>
+ <20160115.114253.673366436532953675.davem@davemloft.net>
+In-Reply-To: <20160115.114253.673366436532953675.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> From: Intel-wired-lan [intel-wired-lan-bounces@lists.osuosl.org] on behalf of Julia Lawall [Julia.Lawall@lip6.fr]
-> Sent: Saturday, January 02, 2016 10:44 PM
-> To: Kirsher, Jeffrey T
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org; intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH] igb: constify e1000_phy_operations   structure
+>>> This is a write only variable.  We can just remove it.
+>>
+>> Can a static source code analysis tool like the software "http://smatch.sourceforge.net/"
+>> detect that such a variable is not read by this function implementation so far?
 > 
-> This e1000_phy_operations structure is never modified, so declare it as
-> const.  Other structures of this type are already const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/net/ethernet/intel/igb/e1000_82575.c |    2 +-
->  drivers/net/ethernet/intel/igb/e1000_hw.h    |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> No,
 
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+I imagine that there are a few tools available which can point such update candidates out.
+There are various software development challenges to consider.
+
+
+> but a human can.
+
+Some software developers and source code reviewers are struggling with mentioned
+implementation details as usual. Do they also wonder how the discussed variable assignment
+was left over in a specific function?
+
+
+> I am going to be honest, and say that I am completely ignoring most of
+> your static checker patches.
+
+I am curious if you would reconsider the affected source code places once more
+when you will be notified about related issues by other tools or persons.
+
+
+> You don't put enough care and consideration into them,
+
+Would you like to explain this impression a bit more?
+
+
+> and I really don't have time to waste on looking at something like that.
+
+Thanks for your feedback.
+
+Various open issues are competing for our attention as usual.
+
+Regards,
+Markus
