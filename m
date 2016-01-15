@@ -1,55 +1,49 @@
-From: huangdaode <huangdaode@hisilicon.com>
-Date: Wed, 20 Jan 2016 10:48:20 +0000
-Subject: Re: [PATCH] net: hisilicon: constify hnae_buf_ops and hnae_ae_ops structures
-Message-Id: <569F65F4.7060509@hisilicon.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 10:12:42 +0000
+Subject: [PATCH v3 2/3] gianfar: Delete unnecessary variable initialisations in gfar_ethflow_to_filer_table()
+Message-Id: <5698C61A.90504@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1449419097-19032-1-git-send-email-Julia.Lawall@lip6.fr>
- <20151206.225144.1422377179689530868.davem@davemloft.net>
- <alpine.DEB.2.02.1512070704360.2037@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1512070704360.2037@localhost6.localdomain6>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <56866E7F.8080609@users.sourceforge.net>
+ <5698C53C.8060204@users.sourceforge.net>
+In-Reply-To: <5698C53C.8060204@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Julia,
-This patch is OK for me.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jan 2016 10:40:24 +0100
 
-thanks
-Ddaode Huang
+Omit explicit initialisation at the beginning for four local variables
+which are redefined before their first use.
 
-On 2015/12/7 14:05, Julia Lawall wrote:
->
-> On Sun, 6 Dec 2015, David Miller wrote:
->
->> From: Julia Lawall <Julia.Lawall@lip6.fr>
->> Date: Sun,  6 Dec 2015 17:24:57 +0100
->>
->>> The hnae_buf_ops and hnae_ae_ops structures are never modified, so declare
->>> them as const.
->>>
->>> Done with the help of Coccinelle.
->>>
->>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->> This doesn't apply to net-next.
-> OK, will check on it.
->
-> julia
->
->>> I have the impression that this driver is not recorded properly in the
->>> MAINTAINERS file.
->> Patches welcome.
-> Who is the mintainer?  huangdaode?
->
-> thanks,
-> julia
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-> .
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/freescale/gianfar_ethtool.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+index 825b051..8302f7d 100644
+--- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
++++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+@@ -768,12 +768,12 @@ static void ethflow_to_filer_rules (struct gfar_private *priv, u64 ethflow)
+ static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
+ 				       u64 class)
+ {
+-	unsigned int last_rule_idx = priv->cur_filer_idx;
++	unsigned int last_rule_idx;
+ 	unsigned int cmp_rqfpr;
+ 	unsigned int *local_rqfpr;
+ 	unsigned int *local_rqfcr;
+-	int i = 0x0, k = 0x0;
+-	int j = MAX_FILER_IDX, l = 0x0;
++	int i, k, l;
++	int j = MAX_FILER_IDX;
+ 	int ret = 1;
+ 
+ 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
+-- 
+2.6.3
 
