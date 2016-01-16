@@ -1,62 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jan 2016 18:19:31 +0000
+From: Leon Romanovsky <leon@leon.nu>
+Date: Sat, 16 Jan 2016 06:18:43 +0000
 Subject: Re: InfiniBand-ocrdma: Delete unnecessary variable initialisations in 11 functions
-Message-Id: <56993833.2050809@users.sourceforge.net>
+Message-Id: <20160116061843.GE32346@leon.nu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <567EDED5.4040201@users.sourceforge.net>
- <5697D865.5010507@users.sourceforge.net>
- <5697DE31.9040309@users.sourceforge.net> <20160115132014.GC30615@leon.nu>
- <56990733.7000506@users.sourceforge.net> <20160115150935.GA32346@leon.nu>
- <56990FAC.6000506@users.sourceforge.net> <20160115155938.GB32346@leon.nu>
- <56991D52.8030808@users.sourceforge.net> <20160115170048.GC32346@leon.nu>
-In-Reply-To: <20160115170048.GC32346@leon.nu>
+References: <5697D865.5010507@users.sourceforge.net>
+ <5697DE31.9040309@users.sourceforge.net>
+ <20160115132014.GC30615@leon.nu>
+ <56990733.7000506@users.sourceforge.net>
+ <20160115150935.GA32346@leon.nu>
+ <56990FAC.6000506@users.sourceforge.net>
+ <20160115155938.GB32346@leon.nu>
+ <56991D52.8030808@users.sourceforge.net>
+ <20160115170048.GC32346@leon.nu>
+ <56993833.2050809@users.sourceforge.net>
+In-Reply-To: <56993833.2050809@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Leon Romanovsky <leon@leon.nu>
-Cc: Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> [Q.] What did you try to achieve by this patch?
+On Fri, Jan 15, 2016 at 07:19:31PM +0100, SF Markus Elfring wrote:
+> > [Q.] What did you try to achieve by this patch?
+> 
+> I would appreciate a bit more fine-tuning in the affected source files.
 
-I would appreciate a bit more fine-tuning in the affected source files.
+Please provide the numbers BEFORE and AFTER your change which can
+support that your so called "fine-tuning" worked.
 
+We are waiting to see it together with Tested-By tag to emphasize
+that your code was tested on real HW and passed minimal sanity checks.
 
-> P.S. This is mailing list for developers
-
-Do you try to express any further restrictions?
-
-
-> and not for patch bots.
-
-Would you like to explain such an information a bit more?
-
-
-> We are glad to see patches that clean the code, but they need to
-> be meaningful.
-
-This is usual.
-
-
-> Your automated patches add noise without any real benefit.
-
-Are you expecting a kind of special proof?
-
-
-> You was suggested to be ignored in MTD mailing list exactly
-> for this type of patches,
-
-Will the acceptance increase a bit for similar issues over time?
-
-
-> did you learn anything from that experience?
-
-Will another acknowledgement by Selvin Xavier influence any corresponding
-software improvements?
-
-
-How do you think about to add any further constructive comments
-also for the other proposed update steps?
-
-Regards,
-Markus
+NAK on this patch.
