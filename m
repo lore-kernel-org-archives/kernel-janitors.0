@@ -1,52 +1,24 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Jan 2016 17:50:11 +0000
-Subject: [PATCH v3 5/6] InfiniBand-ocrdma: Returning only value constants in ocrdma_resize_cq()
-Message-Id: <5697DFD3.3000705@users.sourceforge.net>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 18 Jan 2016 19:12:59 +0000
+Subject: Re: [PATCH] ide: constify ide_dma_ops structures
+Message-Id: <20160118.141259.2240054190302250383.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <567EDED5.4040201@users.sourceforge.net>
- <5697D865.5010507@users.sourceforge.net>
-In-Reply-To: <5697D865.5010507-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <1447619790-5203-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1447619790-5203-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devesh Sharma <devesh.sharma-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mitesh Ahuja <mitesh.ahuja-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Selvin Xavier <selvin.xavier-1wcpHE2jlwO1Z/+hSey0Gg@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+To: Julia.Lawall@lip6.fr
+Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Jan 2016 18:04:17 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 15 Nov 2015 21:36:30 +0100
 
-Return constant integer values without storing them in the local
-variable "status".
+> The ide_dma_ops structures are never modified, so declare these as const,
+> as is already done for the others.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index 5f2a34a..d87985b 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -1121,15 +1121,12 @@ ctx_err:
- int ocrdma_resize_cq(struct ib_cq *ibcq, int new_cnt,
- 		     struct ib_udata *udata)
- {
--	int status = 0;
- 	struct ocrdma_cq *cq = get_ocrdma_cq(ibcq);
- 
--	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe) {
--		status = -EINVAL;
--		return status;
--	}
-+	if (new_cnt < 1 || new_cnt > cq->max_hw_cqe)
-+		return -EINVAL;
- 	ibcq->cqe = new_cnt;
--	return status;
-+	return 0;
- }
- 
- static void ocrdma_flush_cq(struct ocrdma_cq *cq)
--- 
-2.6.3
-
+Applied.
