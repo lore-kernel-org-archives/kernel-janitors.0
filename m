@@ -1,48 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Jan 2016 12:23:19 +0000
-Subject: [PATCH 2/3] net-gianfar: Delete unnecessary variable initialisations in gfar_ethflow_to_filer_table(
-Message-Id: <56866FB7.7080008@users.sourceforge.net>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 18 Jan 2016 19:12:53 +0000
+Subject: Re: [patch] ide: silence some underflow warnings
+Message-Id: <20160118.141253.803019327755668580.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <56866E7F.8080609@users.sourceforge.net>
-In-Reply-To: <56866E7F.8080609@users.sourceforge.net>
+References: <20151113143401.GC1445@mwanda>
+In-Reply-To: <20151113143401.GC1445@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Claudiu Manoil <claudiu.manoil@freescale.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: dan.carpenter@oracle.com
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Jan 2016 12:56:23 +0100
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Nov 2015 17:34:01 +0300
 
-Omit explicit initialisation at the beginning for four local variables
-which are redefined before their first use.
+> Back in the day we used to just say this code was root only so it was
+> ok that the bounds checking was sloppy.  These days it annoys static
+> checkers so we fix it.
+> 
+> In the original code "c > INT_MAX" was never true since "c" was an int.
+> I am not sure what was intended so I left it alone.  But because I made
+> "c" unsigned it means we don't have a warning any more.
+> 
+> The second warning is that we cap "i" but allow negatives leading to an
+> underflow of the ide_disks_chs[] array.  The third set of warnings is
+> because these values come from the user and we cap most of the upper
+> bounds but allow negative values.  Negative cylinders doesn't make
+> sense.
+> 
+> drivers/ide/ide.c:262 ide_set_disk_chs() warn: impossible condition '(c > ((~0 >> 1))) => (s32min-s32max > s32max)'
+> drivers/ide/ide.c:270 ide_set_disk_chs() warn: check 'ide_disks_chs[i]' for negative offsets 'i' = s32min.  extra = 's32min-19'
+> drivers/ide/ide.c:271 ide_set_disk_chs() warn: no lower bound on 'h'
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/freescale/gianfar_ethtool.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
-index be4941e..508be89 100644
---- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
-+++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
-@@ -768,12 +768,12 @@ static void ethflow_to_filer_rules (struct gfar_private *priv, u64 ethflow)
- static int gfar_ethflow_to_filer_table(struct gfar_private *priv, u64 ethflow,
- 				       u64 class)
- {
--	unsigned int last_rule_idx = priv->cur_filer_idx;
-+	unsigned int last_rule_idx;
- 	unsigned int cmp_rqfpr;
- 	unsigned int *local_rqfpr;
- 	unsigned int *local_rqfcr;
--	int i = 0x0, k = 0x0;
--	int j = MAX_FILER_IDX, l = 0x0;
-+	int i, k, l;
-+	int j = MAX_FILER_IDX;
- 	int ret = 1;
- 
- 	local_rqfpr = kmalloc_array(MAX_FILER_IDX + 1, sizeof(unsigned int),
--- 
-2.6.3
-
+Applied.
