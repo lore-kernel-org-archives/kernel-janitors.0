@@ -1,23 +1,32 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Fri, 08 Jan 2016 20:36:26 +0000
-Subject: Re: [patch] ext4 crypto: unlock on error in ext4_set_encryption_metadata()
-Message-Id: <20160108203626.GD28412@thunk.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Jan 2016 09:54:51 +0000
+Subject: [patch] amd64_edac: shift wrapping issue in f1x_get_norm_dct_addr()
+Message-Id: <20160120095451.GB19898@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160105095719.GF23619@mwanda>
-In-Reply-To: <20160105095719.GF23619@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Doug Thompson <dougthompson@xmission.com>, Borislav Petkov <bp@alien8.de>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 05, 2016 at 12:57:19PM +0300, Dan Carpenter wrote:
-> There is a missing unlock if ext4_journal_start() fails.
-> 
-> Fixes: 374431bae296 ('ext4 crypto: add ioctls to allow backup of encryption metadata')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+dct_sel_base_off is declared as a u64 but we're only using the lower 32
+bits because of a shift wrapping bug.
 
-Thanks for pointing this out!  I've fixed this by folded this into the
-appropriate commit.
+Fixes: c8e518d5673d ('amd64_edac: Sanitize f10_get_base_addr_offset')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Not tested.
 
-       	   	    	 	     	    - Ted
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 9eee13e..d87a475 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -1452,7 +1452,7 @@ static u64 f1x_get_norm_dct_addr(struct amd64_pvt *pvt, u8 range,
+ 	u64 chan_off;
+ 	u64 dram_base		= get_dram_base(pvt, range);
+ 	u64 hole_off		= f10_dhar_offset(pvt);
+-	u64 dct_sel_base_off	= (pvt->dct_sel_hi & 0xFFFFFC00) << 16;
++	u64 dct_sel_base_off	= (u64)(pvt->dct_sel_hi & 0xFFFFFC00) << 16;
+ 
+ 	if (hi_rng) {
+ 		/*
