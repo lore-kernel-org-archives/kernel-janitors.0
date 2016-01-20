@@ -1,59 +1,30 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Mon, 04 Jan 2016 14:34:32 +0000
-Subject: Re: [patch] drm/etnaviv: unlock on error in etnaviv_gem_get_iova()
-Message-Id: <20160104143432.GF19062@n2100.arm.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Jan 2016 09:53:52 +0000
+Subject: [patch] drm: rockchip: signedness bug in dw_mipi_dsi_get_lane_bps()
+Message-Id: <20160120095352.GA19898@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160104131024.GA13563@mwanda>
- <20160104135445.GD19062@n2100.arm.linux.org.uk>
- <1451916802.6048.6.camel@lynxeye.de>
-In-Reply-To: <1451916802.6048.6.camel@lynxeye.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lucas Stach <dev@lynxeye.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Mark Yao <mark.yao@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-On Mon, Jan 04, 2016 at 03:13:22PM +0100, Lucas Stach wrote:
-> Am Montag, den 04.01.2016, 13:54 +0000 schrieb Russell King - ARM
-> Linux:
-> > On Mon, Jan 04, 2016 at 04:10:24PM +0300, Dan Carpenter wrote:
-> > > We have to drop a lock before returning -ENOMEM here.
-> > > 
-> > > Fixes: a8c21a5451d8 ('drm/etnaviv: add initial etnaviv DRM driver')
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diffstat missing?
-> > 
-> > In any case, the patch is correct, thanks.
-> > 
-> > Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > 
-> > Lucas,
-> > 
-> > I guess you'll be picking this patch up, or shall we ask David to
-> > take
-> > it directly?
-> > 
-> I'm still on vacation until Wednesday, but after this I'll start to
-> sort through the outstanding etnaviv requests that need attention. I'll
-> pick up this patch along with some other things that I need to send out
-> for review and will issue a pull to Dave then.
+"bpp" needs to be signed for the error handling to work.
 
-I'm not aware of any other changes which are outstanding for etnaviv.
-If we're supposed to be working together, would you mind sharing them
-with the other etnaviv authors?
+Fixes: 84e05408fcfe ('drm: rockchip: Support Synopsys DW MIPI DSI')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Note that the merge window is probably opening next Sunday, and that's
-really tight to get development into maintainers trees, especially as
-the final -next prior to the merge window will involve pulling trees
-around midnight (GMT) on Thursday.
-
-I also have a pile of patches, but they're development stuff, which I'm
-holding off until we get etnaviv merged into mainline - I'd suggest
-treating everything that same way at this point, and only ask David to
-merge changes which are fixes - exactly like this one.
-
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+index 7bfe243..c35e5af 100644
+--- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
++++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+@@ -461,7 +461,8 @@ static int dw_mipi_dsi_phy_init(struct dw_mipi_dsi *dsi)
+ 
+ static int dw_mipi_dsi_get_lane_bps(struct dw_mipi_dsi *dsi)
+ {
+-	unsigned int bpp, i, pre;
++	int bpp;
++	unsigned int i, pre;
+ 	unsigned long mpclk, pllref, tmp;
+ 	unsigned int m = 1, n = 1, target_mbps = 1000;
+ 	unsigned int max_mbps = dptdin_map[ARRAY_SIZE(dptdin_map) - 1].max_mbps;
