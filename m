@@ -1,62 +1,77 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 03 Jan 2016 17:29:24 +0000
-Subject: Re: [PATCH 8/8] rtc-ab-b5ze-s3: Delete an unnecessary variable in _abb5zes3_rtc_set_timer()
-Message-Id: <alpine.DEB.2.02.1601031827340.2074@localhost6.localdomain6>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323328-719743927-1451842165=:2074"
+Date: Thu, 21 Jan 2016 15:47:29 +0000
+Subject: [Xen-devel] [PATCH v2] cleancache: constify cleancache_ops structure
+Message-Id: <alpine.DEB.2.10.1601211646580.2530@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <5688DF2D.6090204@users.sourceforge.net> <5688E268.9090600@users.sourceforge.net> <alpine.DEB.2.02.1601031345240.2053@localhost6.localdomain6> <56895976.5040009@users.sourceforge.net>
-In-Reply-To: <56895976.5040009@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <1450904784-17139-1-git-send-email-Julia.Lawall@lip6.fr> <56A0B6E7.9040201@citrix.com>
+In-Reply-To: <56A0B6E7.9040201@citrix.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Vrabel <david.vrabel@citrix.com>
+Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The cleancache_ops structure is never modified, so declare it as const.
 
---8323328-719743927-1451842165=:2074
-Content-Type: TEXT/PLAIN; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Done with the help of Coccinelle.
 
-On Sun, 3 Jan 2016, SF Markus Elfring wrote:
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> >>  	ret =3D regmap_update_bits(data->regmap, ABB5ZES3_REG_TIM_CLK,
-> >> -				 mask, ABB5ZES3_REG_TIM_CLK_TAC1);
-> >> +				 ABB5ZES3_REG_TIM_CLK_TAC0
-> >> +				 | ABB5ZES3_REG_TIM_CLK_TAC1,
-> >> +				 ABB5ZES3_REG_TIM_CLK_TAC1);
-> >=20
-> > This doesn't seem like an improvement.
->=20
-> Interesting =85
->=20
->=20
-> > The concept (mask) has disappeared,
->=20
-> I suggest to drop another local variable.
-> Can the operator "Bitwise OR" be sufficient to indicate the concept "mask=
-"?
->=20
->=20
-> > the binary operation is strangely broken,
->=20
-> Do you prefer an other source code formatting within the usual line lengt=
-h range?
->=20
->=20
-> > and the function call has one more line of arguments,
->=20
-> How should several long preprocessor symbols be combined together with in=
-dentation
-> so that they will fit into the limit of 80 characters?
->=20
->=20
-> > which all look sort of the same and thus are hard to understand.
->=20
-> Is this an usual consequence from an ordinary name pattern?
+---
 
-The original code was better.  No 80 character problem, easy to=20
-distinguish one argument from another, moderately meaningful variable=20
-name, etc.
+v2: put back the read mostly
 
-julia
---8323328-719743927-1451842165=:2074--
+ drivers/xen/tmem.c         |    2 +-
+ include/linux/cleancache.h |    2 +-
+ mm/cleancache.c            |    4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/cleancache.h b/include/linux/cleancache.h
+index bda5ec0b4..cb3e142 100644
+--- a/include/linux/cleancache.h
++++ b/include/linux/cleancache.h
+@@ -37,7 +37,7 @@ struct cleancache_ops {
+ 	void (*invalidate_fs)(int);
+ };
+
+-extern int cleancache_register_ops(struct cleancache_ops *ops);
++extern int cleancache_register_ops(const struct cleancache_ops *ops);
+ extern void __cleancache_init_fs(struct super_block *);
+ extern void __cleancache_init_shared_fs(struct super_block *);
+ extern int  __cleancache_get_page(struct page *);
+diff --git a/drivers/xen/tmem.c b/drivers/xen/tmem.c
+index 945fc43..4ac2ca8 100644
+--- a/drivers/xen/tmem.c
++++ b/drivers/xen/tmem.c
+@@ -242,7 +242,7 @@ static int tmem_cleancache_init_shared_fs(char *uuid, size_t pagesize)
+ 	return xen_tmem_new_pool(shared_uuid, TMEM_POOL_SHARED, pagesize);
+ }
+
+-static struct cleancache_ops tmem_cleancache_ops = {
++static const struct cleancache_ops tmem_cleancache_ops = {
+ 	.put_page = tmem_cleancache_put_page,
+ 	.get_page = tmem_cleancache_get_page,
+ 	.invalidate_page = tmem_cleancache_flush_page,
+diff --git a/mm/cleancache.c b/mm/cleancache.c
+index 8fc5081..c6356d6 100644
+--- a/mm/cleancache.c
++++ b/mm/cleancache.c
+@@ -22,7 +22,7 @@
+  * cleancache_ops is set by cleancache_register_ops to contain the pointers
+  * to the cleancache "backend" implementation functions.
+  */
+-static struct cleancache_ops *cleancache_ops __read_mostly;
++static const struct cleancache_ops *cleancache_ops __read_mostly;
+
+ /*
+  * Counters available via /sys/kernel/debug/cleancache (if debugfs is
+@@ -49,7 +49,7 @@ static void cleancache_register_ops_sb(struct super_block *sb, void *unused)
+ /*
+  * Register operations for cleancache. Returns 0 on success.
+  */
+-int cleancache_register_ops(struct cleancache_ops *ops)
++int cleancache_register_ops(const struct cleancache_ops *ops)
+ {
+ 	if (cmpxchg(&cleancache_ops, NULL, ops))
+ 		return -EBUSY;
+
