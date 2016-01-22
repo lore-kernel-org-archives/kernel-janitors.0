@@ -1,67 +1,65 @@
-From: Claudiu Manoil <claudiu.manoil@nxp.com>
-Date: Mon, 18 Jan 2016 13:11:54 +0000
-Subject: RE: gianfar: Less function calls in gfar_ethflow_to_filer_table() after error detection
-Message-Id: <DB4PR04MB379C759FAC390B043575A1296C00@DB4PR04MB379.eurprd04.prod.outlook.com>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 22 Jan 2016 00:52:45 +0000
+Subject: Re: wireless-drivers: random cleanup patches piling up
+Message-Id: <1453423965.3856.22.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <56866E7F.8080609@users.sourceforge.net>
- <5698C53C.8060204@users.sourceforge.net>
- <5698C5CB.80305@users.sourceforge.net> <1452854229.8586.48.camel@perches.com>
- <5698DC52.4050808@users.sourceforge.net>
- <1452859429.8586.52.camel@perches.com>
- <56992D46.8070102@users.sourceforge.net>
-In-Reply-To: <56992D46.8070102@users.sourceforge.net>
+References: <87wpr3x9ln.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <87wpr3x9ln.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Claudiu Manoil <claudiu.manoil@freescale.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org
+Cc: kbuild test robot <lkp@intel.com>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
->-----Original Message-----
->From: SF Markus Elfring [mailto:elfring@users.sourceforge.net]
->Sent: Friday, January 15, 2016 7:33 PM
->To: Joe Perches <joe@perches.com>; netdev@vger.kernel.org
->Cc: Claudiu Manoil <claudiu.manoil@freescale.com>; LKML <linux-
->kernel@vger.kernel.org>; kernel-janitors@vger.kernel.org; Julia Lawall
-><julia.lawall@lip6.fr>
->Subject: Re: gianfar: Less function calls in gfar_ethflow_to_filer_table() after
->error detection
->
->>>> 	local_rqfpr = kmalloc_array(2 * (MAX_FILER_IDX + 1),
->>>> 				    sizeof(unsigned int), GFP_KERNEL);
->>>> 	if (!local_rqfpr)
->>>> 		goto err;
->>>>
->>>> 	local_rqfcr = &local_rqfpr[MAX_FILER_IDX + 1];
->>>
->>> Do you suggest to use only one array (instead of two as before) here?
->>
->> That's a possibility.
->
->Thanks for your clarification.
->
->
->> If, as your title suggests, you really want fewer function calls,
->
->I am unsure at the moment if more changes will make sense in
->this function implementation.
->
->
->> (which as far as I saw, you didn't do)
->
->Is my wording "after error detection" insufficient eventually?
->
->
->> that could be a mechanism to remove both an allocation and a free.
->
->Would any more software developers or source code reviewers like
->to share their opinions in such a direction?
->
+On Thu, 2016-01-21 at 16:58 +0200, Kalle Valo wrote:
+> Hi,
+>=20
+> I have quite a lot of random cleanup patches from new developers waiting
+> in my queue:
+>=20
+> https://patchwork.kernel.org/project/linux-wireless/list/?state=10&delega=
+te%621&order=DAte
+>=20
+> (Not all of them are cleanup patches, there are also few patches
+> deferred due to other reasons, but you get the idea.)
+>=20
+> These cleanup patches usually take quite a lot of my time and I'm
+> starting to doubt the benefit, compared to the time needed to dig
+> through them and figuring out what to apply. And this is of course time
+> away from other patches, so it's slowing down "real" development.
+>=20
+> I really don't know what to do. Part of me is saying that I just should
+> drop them unless it's reviewed by a more experienced developer but on
+> the other hand this is a good way get new developers onboard.
+>=20
+> What others think? Are these kind of patches useful?
 
-Hi,
-This kind of fixes are net-next stuff at best, no need to push them into
-the net tree right now.
-So please wait with these submissions until net-next re-opens at least.
-Thanks.
+Some yes, mostly not really.
 
+While whitespace style patches have some small value,
+very few of the new contributors that use tools like
+"scripts/checkpatch.pl -f" on various kernel files=A0
+actually continue on to submit actual defect fixing
+or optimization or code clarity patches.
 
+Whitespace patches, where git diff -w does not show
+any difference and objdiff on the objects for a few
+randconfigs are identical, maybe could be sifted
+into a separate category from other patches.
+
+Maybe the kbuild test robot could help identify the
+whitespace style
+patches that can be easily applied.
+
+Maybe the kernel-janitors list should be used and
+also maybe some maintainers that want these style
+patches could opt-in to getting these applied after
+some milestone like an -rc1.
+
+Fengguang?
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
