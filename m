@@ -1,58 +1,61 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 10 Jan 2016 07:29:41 +0000
-Subject: Re: [PATCH] [media] netup_unidvb: Remove a useless memset
-Message-Id: <1452410981.7773.10.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 25 Jan 2016 18:15:08 +0000
+Subject: Re: [PATCH 1/2] [media] m88rs6000t: Better exception handling in five functions
+Message-Id: <56A6662C.3000804@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1452410416-6362-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1452410416-6362-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5680FDB3.7060305@users.sourceforge.net>
+ <alpine.DEB.2.10.1512281019050.2702@hadrien>
+ <56810F56.4080306@users.sourceforge.net>
+ <alpine.DEB.2.10.1512281134590.2702@hadrien>
+ <568148FD.7080209@users.sourceforge.net>
+ <5681497E.7030702@users.sourceforge.net> <20160125150136.449f2593@recife.lan>
+In-Reply-To: <20160125150136.449f2593@recife.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, serjk@netup.ru, mchehab@osg.samsung.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, 2016-01-10 at 08:20 +0100, Christophe JAILLET wrote:
-> This memory is allocated using kzalloc so there is no need to call
-> memset(..., 0, ...)
-[]
-> diff --git a/drivers/media/pci/netup_unidvb/netup_unidvb_core.c b/drivers=
-/media/pci/netup_unidvb/netup_unidvb_core.c
-[]
-> @@ -774,7 +774,6 @@ static int netup_unidvb_initdev(struct pci_dev *pci_d=
-ev,
-> =A0
-> =A0	if (!ndev)
-> =A0		goto dev_alloc_err;
-> -	memset(ndev, 0, sizeof(*ndev));
-> =A0	ndev->old_fw =3D old_firmware;
-> =A0	ndev->wq =3D create_singlethread_workqueue(NETUP_UNIDVB_NAME);
-> =A0	if (!ndev->wq) {
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Move the jump label directly before the desired log statement
+>> so that the variable "ret" will not be checked once more
+>> after a function call.
+>> Use the identifier "report_failure" instead of "err".
+>>
+>> Suggested-by: Julia Lawall <julia.lawall@lip6.fr>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> ---
+>>  drivers/media/tuners/m88rs6000t.c | 154 +++++++++++++++++++-------------------
+>>  1 file changed, 78 insertions(+), 76 deletions(-)
+>>
+>> diff --git a/drivers/media/tuners/m88rs6000t.c b/drivers/media/tuners/m88rs6000t.c
+>> index 504bfbc..7e59a9f 100644
+>> --- a/drivers/media/tuners/m88rs6000t.c
+>> +++ b/drivers/media/tuners/m88rs6000t.c
+>> @@ -44,7 +44,7 @@ static int m88rs6000t_set_demod_mclk(struct dvb_frontend *fe)
+>>  	/* select demod main mclk */
+>>  	ret = regmap_read(dev->regmap, 0x15, &utmp);
+>>  	if (ret)
+>> -		goto err;
+>> +		goto report_failure;
+> 
+> Why to be so verbose?
 
-It's unusual to not see the alloc above the if
+Does the document "CodingStyle" give an indication in the section "Chapter 7:
+Centralized exiting of functions"?
 
-Perhaps it'd be more standard to do something like:
----
-diff --git a/drivers/media/pci/netup_unidvb/netup_unidvb_core.c b/drivers/m=
-edia/pci/netup_unidvb/netup_unidvb_core.c
-index 525ebfe..c94cecd 100644
---- a/drivers/media/pci/netup_unidvb/netup_unidvb_core.c
-+++ b/drivers/media/pci/netup_unidvb/netup_unidvb_core.c
-@@ -771,10 +771,9 @@ static int netup_unidvb_initdev(struct pci_dev *pci_de=
-v,
-=A0
-=A0	/* allocate device context */
-=A0	ndev =3D kzalloc(sizeof(*ndev), GFP_KERNEL);
--
-=A0	if (!ndev)
-=A0		goto dev_alloc_err;
--	memset(ndev, 0, sizeof(*ndev));
-+
-=A0	ndev->old_fw =3D old_firmware;
-=A0	ndev->wq =3D create_singlethread_workqueue(NETUP_UNIDVB_NAME);
-=A0	if (!ndev->wq) {
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Calling it as "err" is enough,
+
+It seems that some short identifiers are popular during software development.
+
+
+> and it means less code to type if we need to add another goto.
+
+Would you like to increase the usage of jump labels which will contain
+only a single character?
+
+Regards,
+Markus
