@@ -1,59 +1,60 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Jan 2016 17:51:35 +0000
-Subject: [PATCH v3 6/6] InfiniBand-ocrdma: Delete an unnecessary variable in ocrdma_dealloc_pd()
-Message-Id: <5697E027.30603@users.sourceforge.net>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Mon, 25 Jan 2016 14:05:05 +0000
+Subject: Re: [PATCH] GPU-host1x: Use a signed return type for do_relocs()
+Message-Id: <20160125140505.GC7014@ulmo.nvidia.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="4jXrM3lyYWu4nBt5"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <567EDED5.4040201@users.sourceforge.net>
- <5697D865.5010507@users.sourceforge.net>
-In-Reply-To: <5697D865.5010507@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Devesh Sharma <devesh.sharma@avagotech.com>, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mitesh Ahuja <mitesh.ahuja@avagotech.com>, Sean Hefty <sean.hefty@intel.com>, Selvin Xavier <selvin.xavier@avagotech.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+References: <56754606.6060201@users.sourceforge.net>
+In-Reply-To: <56754606.6060201-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 14 Jan 2016 18:08:08 +0100
 
-1. Return zero in one case directly.
+--4jXrM3lyYWu4nBt5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2. Return the value from a call of the _ocrdma_dealloc_pd() function
-   without using an extra assignment for the local variable.
+On Sat, Dec 19, 2015 at 12:56:54PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 19 Dec 2015 12:48:31 +0100
+>=20
+> The return type "unsigned int" was used by the do_relocs() function
+> despite of the aspect that it will eventually return a negative error cod=
+e.
+> Improve this implementation detail by deletion of the type qualifier then.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/host1x/job.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-3. Remove the variable "status" in this function then.
+Good catch. Applied, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Thierry
 
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index d87985b..e6e1b51 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -751,7 +751,6 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
- 	struct ocrdma_pd *pd = get_ocrdma_pd(ibpd);
- 	struct ocrdma_dev *dev = get_ocrdma_dev(ibpd->device);
- 	struct ocrdma_ucontext *uctx = NULL;
--	int status = 0;
- 	u64 usr_db;
- 
- 	uctx = pd->uctx;
-@@ -765,11 +764,10 @@ int ocrdma_dealloc_pd(struct ib_pd *ibpd)
- 
- 		if (is_ucontext_pd(uctx, pd)) {
- 			ocrdma_release_ucontext_pd(uctx);
--			return status;
-+			return 0;
- 		}
- 	}
--	status = _ocrdma_dealloc_pd(dev, pd);
--	return status;
-+	return _ocrdma_dealloc_pd(dev, pd);
- }
- 
- static int ocrdma_alloc_lkey(struct ocrdma_dev *dev, struct ocrdma_mr *mr,
--- 
-2.6.3
+--4jXrM3lyYWu4nBt5
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWpiuQAAoJEN0jrNd/PrOhDIYP/Ru9zk+R0zm6MOIPWGhaJZ81
+ZaQ/yjejYi0gNlCepK7pdcOl2cpQnI3uOPC1PH8Gg+hYshiI3qaH9DBOIVim2zqQ
+RWRrFZ7Tn+tstGfRQF34OjqkQVgm1wYkCXkpSCtKTTMRtFDKYBUQpo65LiGLV/+K
+sF7HEBXovKeRnCQIVDChNBOTWzlOCPayeJkcQoVnMvWx3XGP4hL2laFmrGHLDAnH
+aaprD7bTiAd6FuOHPCTK3Ai+kBO95lekxr/DGeMWIAiFvX7HiABzzSLG0LNenUZk
+TFzph/xyYccV2uH/2iOy4yDQ/DJgq3oEbdAK0D2HRd7t5nE84ZAmsNrUZXiZdubE
+z7BxM347NBijs478FoAxm8zX8VrHm/8aIoWJ7pfNNAeXN/0li5sfxYquJ0YaNOm4
+qf7HFet+oiN6ELypBvCMivfYxcn1gcyn6cPhZ2L+l9qmui+3SDfZ0MQtZywcZn36
+XS1n0JAzTz7f8nTLgn9JfMau216oEf9FaY4BwUYYyEmcqQOArWWhsxfLH2Fj9U94
+A5cBRfLyk1xk1XW4Jp1XHSZ1IpngZ6mnI8/qcQlDNOyTevnkx4SGpJP7nmlPhPcn
+IdYG0XvSy/HQxfptucmSrJrF+8l/u8rT9/oXc6kmg2482z0DqG0a5FImKezHPnhQ
+GlSwVe7oh4d/h4O/hA3C
+=T+B9
+-----END PGP SIGNATURE-----
+
+--4jXrM3lyYWu4nBt5--
