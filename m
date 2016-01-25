@@ -1,57 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 04 Jan 2016 20:42:01 +0000
-Subject: [patch] drm/amdgpu: double unlock in amdgpu_set_dpm_forced_performance_level()
-Message-Id: <20160104204201.GA19867@mwanda>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Date: Mon, 25 Jan 2016 17:01:36 +0000
+Subject: Re: [PATCH 1/2] [media] m88rs6000t: Better exception handling in five functions
+Message-Id: <20160125150136.449f2593@recife.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+	<5680FDB3.7060305@users.sourceforge.net>
+	<alpine.DEB.2.10.1512281019050.2702@hadrien>
+	<56810F56.4080306@users.sourceforge.net>
+	<alpine.DEB.2.10.1512281134590.2702@hadrien>
+	<568148FD.7080209@users.sourceforge.net>
+	<5681497E.7030702@users.sourceforge.net>
+In-Reply-To: <5681497E.7030702@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Jammy Zhou <Jammy.Zhou@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sonny Jiang <sonny.jiang@amd.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-media@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We recently moved the locking around and accidentally introduced a
-double unlock bug.
+Em Mon, 28 Dec 2015 15:38:54 +0100
+SF Markus Elfring <elfring@users.sourceforge.net> escreveu:
 
-Fixes: 1b5708ffb103 ('drm/amdgpu: export amd_powerplay_func to amdgpu and other ip block')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 28 Dec 2015 15:10:30 +0100
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Move the jump label directly before the desired log statement
+> so that the variable "ret" will not be checked once more
+> after a function call.
+> Use the identifier "report_failure" instead of "err".
+> 
+> Suggested-by: Julia Lawall <julia.lawall@lip6.fr>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/media/tuners/m88rs6000t.c | 154 +++++++++++++++++++-------------------
+>  1 file changed, 78 insertions(+), 76 deletions(-)
+> 
+> diff --git a/drivers/media/tuners/m88rs6000t.c b/drivers/media/tuners/m88rs6000t.c
+> index 504bfbc..7e59a9f 100644
+> --- a/drivers/media/tuners/m88rs6000t.c
+> +++ b/drivers/media/tuners/m88rs6000t.c
+> @@ -44,7 +44,7 @@ static int m88rs6000t_set_demod_mclk(struct dvb_frontend *fe)
+>  	/* select demod main mclk */
+>  	ret = regmap_read(dev->regmap, 0x15, &utmp);
+>  	if (ret)
+> -		goto err;
+> +		goto report_failure;
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-index 3b78982..872e586 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
-@@ -147,8 +147,7 @@ static ssize_t amdgpu_set_dpm_forced_performance_level(struct device *dev,
- 	} else if (strncmp("auto", buf, strlen("auto")) = 0) {
- 		level = AMDGPU_DPM_FORCED_LEVEL_AUTO;
- 	} else {
--		count = -EINVAL;
--		goto fail;
-+		return -EINVAL;
- 	}
- 
- 	if (adev->pp_enabled)
-@@ -157,18 +156,18 @@ static ssize_t amdgpu_set_dpm_forced_performance_level(struct device *dev,
- 		mutex_lock(&adev->pm.mutex);
- 		if (adev->pm.dpm.thermal_active) {
- 			count = -EINVAL;
--			goto fail;
-+			goto unlock;
- 		}
- 		ret = amdgpu_dpm_force_performance_level(adev, level);
--		if (ret)
-+		if (ret) {
- 			count = -EINVAL;
--		else
--			adev->pm.dpm.forced_level = level;
-+			goto unlock;
-+		}
-+		adev->pm.dpm.forced_level = level;
-+
-+unlock:
- 		mutex_unlock(&adev->pm.mutex);
- 	}
--fail:
--	mutex_unlock(&adev->pm.mutex);
--
- 	return count;
- }
- 
+Why to be so verbose? Calling it as "err" is enough, and it means less
+code to type if we need to add another goto.
+
+Regards,
+Mauro
