@@ -1,57 +1,31 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Tue, 19 Jan 2016 18:13:34 +0000
-Subject: Re: [patch] staging: rdma: shift wrapping bug in c2_get_dma_mr()
-Message-Id: <569E7CCE.5020709@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="x5hcpMXkninCGO4SrscS5gBTUGnCLOJd6"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Jan 2016 09:26:11 +0000
+Subject: [patch] hfs: fix hfs_readdir()
+Message-Id: <20160126092611.GD15717@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160108114936.GA3802@mwanda> <20160108132932.GA5658@lst.de>
-In-Reply-To: <20160108132932.GA5658@lst.de>
-To: Christoph Hellwig <hch@lst.de>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ira Weiny <ira.weiny@intel.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Steve Wise <swise@opengridcomputing.com>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, Matan Barak <matanb@mellanox.com>, Geliang Tang <geliangtang@163.com>, linux-rdma@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chengyu Song <csong84@gatech.edu>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---x5hcpMXkninCGO4SrscS5gBTUGnCLOJd6
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+I was looking through static analysis warnings and we seem to be copying
+garbage into &rd->key.  This goes back to before the start of git...
 
-On 01/08/2016 08:29 AM, Christoph Hellwig wrote:
-> Looks fine.
->=20
-> Doug: what's the status of the staged out drivers?  I thought we were
-> going to delete them for 4.5?
->=20
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.  Please review carefully.
 
-I am.  They will be going away shortly.
-
---=20
-Doug Ledford <dledford@redhat.com>
-              GPG KeyID: 0E572FDD
-
-
-
---x5hcpMXkninCGO4SrscS5gBTUGnCLOJd6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJWnnzOAAoJELgmozMOVy/dUDIQAIjPXIqa3TIaGe8vyUKqZOK7
-AMVo5udwIBRYpTdSskD/ey/OOlnY9NIsP6SwW0y2bMRvm2fiV0xBxj7Lg043najH
-hbIxEWx2ySRNGgZgHKwDdQpdfZSRgBoiG62JhpEyayUXbT4++E8T3cLLbHf+5wAR
-gMWvsAh4vbrkGXIKeQ/x4I1+Y/Gfnh/raJawDNqsu+yVfh8GbPJksSReqf7O2fWc
-aT8WxJZCfuSO4orRUFKSGY+SpXErS+nUDnR0uGd94fNzu+j503YSVxXb0p0dCDSG
-We3Wml7wAIkkwfsn1RoPWcB4GELf+yrzNiRydQMAxAbRGyCKtagx1FZoy1fyLuyL
-QbI1MaD8HxzyRQTk7S4+0abAYjU8MxPve7cBybXRGnxxIF0pqpqFTSLe1p7P/lXg
-htPsSYHaTaNdPc3AbiOvFkDIxHXbg65rHkFtLW3KwUYDnaNO5x80Cld6WZcIoCMT
-I3IgfI0jA65oJokKfVgt/N/PwGRoX1I/ScZ+I8uN7xO27HxSnpKN1zjcF78WkWDC
-OxCAdgh8a8OiyttnhNzTEqQ1XYiU1+JlKmgMqn/N8+Y7+VpoczujFiPctUxNBbcO
-/d/dN1nlk516SS6EFLEIR9d4u54BZcqJq9DTlS+kvM+DwInsyIwZ8cW9/anTVkRc
-79vGbEHHg0OVVXE6pY9Z
-=FUMX
------END PGP SIGNATURE-----
-
---x5hcpMXkninCGO4SrscS5gBTUGnCLOJd6--
+diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+index 70788e0..66485d7 100644
+--- a/fs/hfs/dir.c
++++ b/fs/hfs/dir.c
+@@ -163,7 +163,7 @@ static int hfs_readdir(struct file *file, struct dir_context *ctx)
+ 		rd->file = file;
+ 		list_add(&rd->list, &HFS_I(inode)->open_dir_list);
+ 	}
+-	memcpy(&rd->key, &fd.key, sizeof(struct hfs_cat_key));
++	memcpy(&rd->key, &fd.key->cat, sizeof(struct hfs_cat_key));
+ out:
+ 	hfs_find_exit(&fd);
+ 	return err;
