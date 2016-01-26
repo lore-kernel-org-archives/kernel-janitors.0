@@ -1,21 +1,31 @@
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <m@bjorling.me>
-Date: Tue, 26 Jan 2016 09:56:57 +0000
-Subject: Re: [patch] nvme: lightnvm: buffer overflow in nvme_nvm_identity()
-Message-Id: <56A742E9.3040108@bjorling.me>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Jan 2016 09:24:25 +0000
+Subject: [patch] intel_scu_ipcutil: underflow in scu_reg_access()
+Message-Id: <20160126092425.GA15717@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160126092734.GE15717@mwanda>
-In-Reply-To: <20160126092734.GE15717@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>, Sreedhara DS <sreedhara.ds@intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 01/26/2016 10:27 AM, Dan Carpenter wrote:
-> nvme_nvm_id->ppaf is 4 bytes larger than nvm_id->ppaf.  We're using the
-> larger size struct for the sizeof() so we end up corrupting the
-> first four bytes of nvm_id->groups[].  It doesn't look like we actually
-> want to copy those last bytes anyway.
-> 
+"count" is controlled by the user and it can be negative.  Let's prevent
+that by making it unsigned.  You have to have CAP_SYS_RAWIO to call this
+function so the bug is not as serious as it could be.
 
-Thanks, Dan. You are right. The four bytes are overwritten afterwards
-and hid the issue.
+Fixes: 5369c02d951a ('intel_scu_ipc: Utility driver for intel scu ipc')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/platform/x86/intel_scu_ipcutil.c b/drivers/platform/x86/intel_scu_ipcutil.c
+index 02bc5a6..aa45424 100644
+--- a/drivers/platform/x86/intel_scu_ipcutil.c
++++ b/drivers/platform/x86/intel_scu_ipcutil.c
+@@ -49,7 +49,7 @@ struct scu_ipc_data {
+ 
+ static int scu_reg_access(u32 cmd, struct scu_ipc_data  *data)
+ {
+-	int count = data->count;
++	unsigned int count = data->count;
+ 
+ 	if (count = 0 || count = 3 || count > 4)
+ 		return -EINVAL;
