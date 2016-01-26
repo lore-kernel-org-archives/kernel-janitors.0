@@ -1,31 +1,32 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Thu, 28 Jan 2016 12:35:12 +0000
-Subject: Re: [PATCH] net/mac80211/agg-rx.c: fix use of uninitialised values
-Message-Id: <1453984512.2217.15.camel@sipsolutions.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Jan 2016 09:25:21 +0000
+Subject: [patch] iio: inkern: fix a NULL dereference on error
+Message-Id: <20160126092521.GC15717@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160126111730.GA6765@localhost>
-	 <20160127154618.GA5717@localhost>
-	 <CAGRGNgXkvNfzM9Q1RO5kFwUWpFZbQ3mNQi3aVHcPTCw0A9fyFA@mail.gmail.com>
-	 <20160128123022.GB13219@mwanda>
-In-Reply-To: <20160128123022.GB13219@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Julian Calaby <julian.calaby@gmail.com>
-Cc: Chris Bainbridge <chris.bainbridge@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, aryabinin@virtuozzo.com, Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Cameron <jic23@kernel.org>, Marek Belisko <marek@goldelico.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2016-01-28 at 15:30 +0300, Dan Carpenter wrote:
-> It's not the return where we should trigger the warning it's at the
-> 
-> 	rcu_assign_pointer(sta->ampdu_mlme.tid_rx[tid], tid_agg_rx);
-> 
-> line.  That's for correctness, but also it should be slightly easier.
-> Or it should cut down on false positives if we ignored returns and
-> only looked global scope type assignements.
+In twl4030_bci_probe() there are some failure paths where we call
+iio_channel_release() with a NULL pointer.  (Apparently, that driver can
+opperate without a valid channel pointer).  Let's fix it by adding a
+NULL check in iio_channel_release().
 
-That's a good idea! But even that will probably get you a lot of false
-positives. For example, in this structure, the rcu_head is never
-initialized until we need it for kfree_rcu() or call_rcu(). I'm sure
-there are other places like it.
+Fixes: 2202e1fc5a29 ('drivers: power: twl4030_charger: fix link problems when building as module')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-johannes
+diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+index 80fbbfd..734a004 100644
+--- a/drivers/iio/inkern.c
++++ b/drivers/iio/inkern.c
+@@ -349,6 +349,8 @@ EXPORT_SYMBOL_GPL(iio_channel_get);
+ 
+ void iio_channel_release(struct iio_channel *channel)
+ {
++	if (!channel)
++		return;
+ 	iio_device_put(channel->indio_dev);
+ 	kfree(channel);
+ }
