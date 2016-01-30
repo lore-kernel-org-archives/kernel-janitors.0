@@ -1,23 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 08 Jan 2016 18:27:41 +0000
-Subject: Re: [patch] irda: toim3232-sir: delete some dead code
-Message-Id: <20160108.132741.1446598974134094010.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 30 Jan 2016 14:38:28 +0000
+Subject: [patch] crypto: keywrap - memzero the correct memory
+Message-Id: <20160130143828.GC3462@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160108110404.GL32195@mwanda>
-In-Reply-To: <20160108110404.GL32195@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: samuel@sortiz.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Stephan Mueller <smueller@chronox.de>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 8 Jan 2016 14:04:04 +0300
+We're clearing the wrong memory.  The memory corruption is likely
+harmless because we weren't going to use that stack memory again but not
+zeroing is a potential information leak.
 
-> I noticed this code because it has a typo in the module_param(),
-> the "trs" at the end of "toim3232fliptrs" should be "rts".  But it's
-> dead code so instead of fixing it, I just deleted it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: e28facde3c39 ('crypto: keywrap - add key wrapping block chaining mode')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Also applied, thanks Dan.
+diff --git a/crypto/keywrap.c b/crypto/keywrap.c
+index b1d106c..72014f9 100644
+--- a/crypto/keywrap.c
++++ b/crypto/keywrap.c
+@@ -212,7 +212,7 @@ static int crypto_kw_decrypt(struct blkcipher_desc *desc,
+ 			  SEMIBSIZE))
+ 		ret = -EBADMSG;
+ 
+-	memzero_explicit(&block, sizeof(struct crypto_kw_block));
++	memzero_explicit(block, sizeof(struct crypto_kw_block));
+ 
+ 	return ret;
+ }
+@@ -297,7 +297,7 @@ static int crypto_kw_encrypt(struct blkcipher_desc *desc,
+ 	/* establish the IV for the caller to pick up */
+ 	memcpy(desc->info, block->A, SEMIBSIZE);
+ 
+-	memzero_explicit(&block, sizeof(struct crypto_kw_block));
++	memzero_explicit(block, sizeof(struct crypto_kw_block));
+ 
+ 	return 0;
+ }
