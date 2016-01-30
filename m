@@ -1,53 +1,39 @@
-From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-Date: Sat, 02 Jan 2016 21:38:30 +0000
-Subject: Re: [PATCH 1/2] net-qmi_wwan: Refactoring for qmi_wwan_bind()
-Message-Id: <87vb7bpsq1.fsf@nemi.mork.no>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 30 Jan 2016 14:41:10 +0000
+Subject: [patch] staging: rtl8712: memory corruption in wpa_set_encryption()
+Message-Id: <20160130144110.GE3462@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5686AE52.1020008@users.sourceforge.net>
-	<5686AF55.5020801@users.sourceforge.net>
-In-Reply-To: <5686AF55.5020801@users.sourceforge.net> (SF Markus Elfring's
-	message of "Fri, 1 Jan 2016 17:54:45 +0100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Luis de Bethencourt <luisbg@osg.samsung.com>, Joshua Clayton <stillcompiling@gmail.com>, Punit Vara <punitvara@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Aya Mahfouz <mahfouz.saif.elyazal@gmail.com>, Alison Schofield <amsfield22@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-SF Markus Elfring <elfring@users.sourceforge.net> writes:
+->KeyMaterial is declared as a 16 byte array, but we only ever allocate
+either 5 or 13 bytes of it.  The problem is that we memset() all 16
+bytes to zero so we're memsetting past the end of the allocated memory.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Jan 2016 17:32:07 +0100
->
-> Reduce the scope for the local variable "desc" to one branch
-> of an if statement.
+I fixed this in slightly lazy way, by just allocating 16 bytes.  This
+works but there is a lot more cleanup you could do to this code if you
+wanted.  Which is why this code is in staging.
 
-This patch is harmless.  But is also pointless.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-You could at least try to explain why this must be changed.  I'm not
-interested in why you think it is better this way - I might agree with
-that.  what I am interested in is the advantage changing the code gives
-us.  Some analysis of the risk and work involved would also be nice.  Is
-this change really worth it?
-
-Personally I am convinced that I wasted any time I used writing this,
-and you wasted any time you used reading it.  Sorry.
-
-Note:  This patch would have been fine if it was a natural part of some
-*improvement* of the driver, i.e. a bugfix or feaure addition. As a
-standalone patch I see it as noise.
-
-Please stop the noise and start writing something useful.  I'm sure you
-can fix bugs instead.  Wouldn't that be more interesting?  More
-challenging?  These mindless robotic code refactoring patches are really
-best left for robots.
-
-
-
-
-Bj=C3=B8rn
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+index edfc680..db2e31bc 100644
+--- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
++++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+@@ -398,12 +398,9 @@ static int wpa_set_encryption(struct net_device *dev, struct ieee_param *param,
+ 			wep_key_idx = 0;
+ 		if (wep_key_len > 0) {
+ 			wep_key_len = wep_key_len <= 5 ? 5 : 13;
+-			pwep = kmalloc((u32)(wep_key_len +
+-				FIELD_OFFSET(struct NDIS_802_11_WEP,
+-				KeyMaterial)), GFP_ATOMIC);
++			pwep = kzalloc(sizeof(*pwep), GFP_ATOMIC);
+ 			if (pwep = NULL)
+ 				return -ENOMEM;
+-			memset(pwep, 0, sizeof(struct NDIS_802_11_WEP));
+ 			pwep->KeyLength = wep_key_len;
+ 			pwep->Length = wep_key_len +
+ 				 FIELD_OFFSET(struct NDIS_802_11_WEP,
