@@ -1,30 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jan 2016 14:40:41 +0000
-Subject: [PATCH 0/3] net-rsi: Fine-tuning for two function implementations
-Message-Id: <5687E169.4070704@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 30 Jan 2016 15:27:04 +0000
+Subject: [PATCH] Coccinelle: reduce rule applicability
+Message-Id: <1454167624-22409-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: cocci@systeme.lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Jan 2016 15:36:25 +0100
+Rule r is only use in org or report mode, so only execute it in those
+cases.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Markus Elfring (3):
-  Delete unnecessary variable initialisations in rsi_send_mgmt_pkt()
-  Delete unnecessary variable initialisations in rsi_send_data_pkt()
-  Replace variable initialisations by assignments in rsi_send_data_pkt()
+---
+ scripts/coccinelle/misc/badty.cocci |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/net/wireless/rsi/rsi_91x_pkt.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
-
--- 
-2.6.3
+diff --git a/scripts/coccinelle/misc/badty.cocci b/scripts/coccinelle/misc/badty.cocci
+index 2fc06fc..481cf30 100644
+--- a/scripts/coccinelle/misc/badty.cocci
++++ b/scripts/coccinelle/misc/badty.cocci
+@@ -50,7 +50,7 @@ T **x;
+ //  For org and report mode
+ //----------------------------------------------------------
+ 
+-@r disable sizeof_type_expr@
++@r depends on (org || report) disable sizeof_type_expr@
+ type T;
+ T **x;
+ position p;
 
