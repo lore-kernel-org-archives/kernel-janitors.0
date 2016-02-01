@@ -1,33 +1,55 @@
-From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 25 Feb 2016 08:17:53 +0000
-Subject: Re: [patch 1/2] ASoC: max9867: signedness bug in max9867_dai_hw_params()
-Message-Id: <CAFRkauCNUFVCm589530DDmOJ8qPx53w8_bPSctG_S+PvNggTOA@mail.gmail.com>
+From: DingXiang <dingxiang@huawei.com>
+Date: Mon, 01 Feb 2016 07:05:58 +0000
+Subject: [PATCH] [dm]fix NULL pointer in dm_exception_store_create() when create dm device
+Message-Id: <1454310358-755-1-git-send-email-dingxiang@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160225074810.GB7333@mwanda>
-In-Reply-To: <20160225074810.GB7333@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, anish kumar <yesanishhere@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, kernel-janitors@vger.kernel.org
+To: snitzer@redhat.com
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, DingXiang <dingxiang@huawei.com>
 
-2016-02-25 15:48 GMT+08:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> "value" needs to be signed for the error handling to work.
->
-> Fixes: 805d132dcbbd ('ASoC: Add max9867 codec driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/sound/soc/codecs/max9867.c b/sound/soc/codecs/max9867.c
-> index ab7a94d..4fb6fc7 100755
-> --- a/sound/soc/codecs/max9867.c
-> +++ b/sound/soc/codecs/max9867.c
-> @@ -180,7 +180,8 @@ static int max9867_dai_hw_params(struct snd_pcm_substream *substream,
->  {
->         struct snd_soc_codec *codec = dai->codec;
->         struct max9867_priv *max9867 = snd_soc_codec_get_drvdata(codec);
-> -       unsigned int ni_h, ni_l, value;
-> +       unsigned int ni_h, ni_l;
-> +       int value;
+In some conditions(such as umount fs failed),origin path or origin bdev or both of the two is same
+as cow's.If this happens, origin dev will be freed when get cow dev in function "dm_get_device" ,
+then "s->origin->dev" which used by "dm_exception_store_create" will be a NULL pointer.
 
-Already fixed by
-http://git.kernel.org/cgit/linux/kernel/git/broonie/sound.git/commit/?h=topic/max9867&id7a9cbb5860a7cf15f4d4703ab0454e4603e8ac
+Signed-off-by:Ding Xiang <dingxiang@huawei.com>
+---
+ drivers/md/dm-snap.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index 3766386..ccf97d8 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -1102,6 +1102,7 @@ static void stop_merge(struct dm_snapshot *s)
+ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ {
+ 	struct dm_snapshot *s;
++	struct block_device *origin_bdev, *cow_bdev;
+ 	int i;
+ 	int r = -EINVAL;
+ 	char *origin_path, *cow_path;
+@@ -1136,10 +1137,19 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 		goto bad_origin;
+ 	}
+ 
++	origin_bdev = s->origin->bdev;
+ 	cow_path = argv[0];
+ 	argv++;
+ 	argc--;
+ 
++	/*check cow dev is available*/
++	cow_bdev = lookup_bdev(cow_path);
++	if(cow_bdev->bd_dev = origin_bdev->bd_dev){
++		ti->error = "Invalid COW device";
++		r = -EINVAL;
++		goto bad_cow;
++	}
++
+ 	r = dm_get_device(ti, cow_path, dm_table_get_mode(ti->table), &s->cow);
+ 	if (r) {
+ 		ti->error = "Cannot get COW device";
+-- 
+1.7.1
+
