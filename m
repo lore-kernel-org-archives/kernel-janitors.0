@@ -1,22 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 27 Feb 2016 19:06:48 +0000
-Subject: Re: [patch] rocker: fix an error code
-Message-Id: <20160227.140648.1005754769609600947.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Feb 2016 10:00:05 +0000
+Subject: [patch] mwifiex: fix a reversed condition
+Message-Id: <20160202100005.GA3040@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160227113143.GA19177@mwanda>
-In-Reply-To: <20160227113143.GA19177@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jiri@resnulli.us, ying.xue@windriver.com, sfeldma@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>, chunfan chen <jeffc@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 27 Feb 2016 14:31:43 +0300
+The NULL test here is reversed.
 
-> We intended to return PTR_ERR() here instead of 1.
-> 
-> Fixes: 1f9993f6825f ('rocker: fix a neigh entry leak issue')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 7d7f07d8c5d3 ('mwifiex: add wowlan net-detect support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
+index fc8d8ca..489f7a9 100644
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -2196,7 +2196,7 @@ int mwifiex_ret_802_11_scan(struct mwifiex_private *priv,
+ 
+ 			pmatch = adapter->nd_info->matches[idx];
+ 
+-			if (!pmatch) {
++			if (pmatch) {
+ 				memset(pmatch, 0, sizeof(*pmatch));
+ 				if (chan_band_tlv) {
+ 					pmatch->n_channels = 1;
