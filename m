@@ -1,40 +1,77 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 01 Feb 2016 08:21:48 +0000
-Subject: Re: wireless-drivers: random cleanup patches piling up
-Message-Id: <878u34j0wz.fsf@kamboji.qca.qualcomm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Feb 2016 04:34:08 +0000
+Subject: re: rcutorture: Add RCU grace-period performance tests
+Message-Id: <20160203043407.GA32754@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87wpr3x9ln.fsf@kamboji.qca.qualcomm.com>
-	<1453423965.3856.22.camel@perches.com>
-	<87k2n1x0sf.fsf@kamboji.qca.qualcomm.com>
-	<20160122151211.GB1500@tuxdriver.com>
-	<87si1pvcd7.fsf@kamboji.qca.qualcomm.com>
-	<20160126052823.GA2053@sudip-laptop>
-	<87bn84kdu0.fsf@kamboji.qca.qualcomm.com>
-	<20160201044142.GC4072@sudip-pc>
-In-Reply-To: <20160201044142.GC4072@sudip-pc> (Sudip Mukherjee's message of
-	"Mon, 1 Feb 2016 10:11:42 +0530")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Joe Perches <joe@perches.com>, linux-wireless@vger.kernel.org, kbuild test robot <lkp@intel.com>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Sudip Mukherjee <sudipm.mukherjee@gmail.com> writes:
+Hello Paul E. McKenney,
 
-> Sure, I am starting that way. I checked in patchwork and I do not see
-> any checkpatch related patch pending (except staging, which Greg will
-> handle). I think you must have cleared all of them.
+This is a semi-automatic email about new static checker warnings.
 
-They are in deferred state. The search functionality in patchwork is not
-that intuitive and they are not easy to find so here's a direct link:
+The patch 7f68f317a3d9: "rcutorture: Add RCU grace-period performance 
+tests" from Dec 31, 2015, leads to the following Smatch complaint:
 
-https://patchwork.kernel.org/project/linux-wireless/list/?state=10&order=DA=
-te
+kernel/rcu/rcuperf.c:486 rcu_perf_cleanup()
+	 error: we previously assumed 'writer_n_durations' could be null (see line 465)
 
---=20
-Kalle Valo
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+kernel/rcu/rcuperf.c
+   442  static void
+   443  rcu_perf_cleanup(void)
+   444  {
+   445          int i;
+   446          int j;
+   447          int ngps = 0;
+   448          u64 *wdp;
+   449          u64 *wdpp;
+   450  
+   451          if (torture_cleanup_begin())
+   452                  return;
+   453  
+   454          if (reader_tasks) {
+   455                  for (i = 0; i < nrealreaders; i++)
+   456                          torture_stop_kthread(rcu_perf_reader,
+   457                                               reader_tasks[i]);
+   458                  kfree(reader_tasks);
+   459          }
+   460  
+   461          if (writer_tasks) {
+   462                  for (i = 0; i < nrealwriters; i++) {
+   463                          torture_stop_kthread(rcu_perf_writer,
+   464						     writer_tasks[i]);
+   465				if (!writer_n_durations)
+                                     ^^^^^^^^^^^^^^^^^^
+Can be NULL here.
+
+   466					continue;
+   467				j = writer_n_durations[i];
+   468				pr_alert("%s%s writer %d gps: %d\n",
+   469					 perf_type, PERF_FLAG, i, j);
+   470				ngps += j;
+   471			}
+   472			pr_alert("%s%s start: %llu end: %llu duration: %llu gps: %d batches: %ld\n",
+   473				 perf_type, PERF_FLAG,
+   474				 t_rcu_perf_writer_started, t_rcu_perf_writer_finished,
+   475				 t_rcu_perf_writer_finished -
+   476				 t_rcu_perf_writer_started,
+   477				 ngps,
+   478				 b_rcu_perf_writer_finished -
+   479				 b_rcu_perf_writer_started);
+   480			for (i = 0; i < nrealwriters; i++) {
+   481				if (!writer_durations)
+   482					break;
+   483				wdpp = writer_durations[i];
+   484				if (!wdpp)
+   485					continue;
+   486				for (j = 0; j <= writer_n_durations[i]; j++) {
+                                                 ^^^^^^^^^^^^^^^^^^^^^
+Unchecked dereference.
+
+   487					wdp = &wdpp[j];
+   488					pr_alert("%s%s %4d writer-duration: %5d %llu\n",
+
+regards,
+dan carpenter
