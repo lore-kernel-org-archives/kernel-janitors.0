@@ -1,24 +1,33 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 04 Feb 2016 02:54:05 +0000
-Subject: Re: [patch] bfa: use strncpy() instead of memcpy()
-Message-Id: <yq1twlpi3si.fsf@sermon.lab.mkp.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 03 Feb 2016 18:05:46 +0000
+Subject: [PATCH] coccinelle: bugon: reduce rule applicability
+Message-Id: <1454522746-396-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160130143603.GB3462@mwanda>
-In-Reply-To: <20160130143603.GB3462@mwanda> (Dan Carpenter's message of "Sat,
-	30 Jan 2016 17:36:03 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <JBottomley@odin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+Rule r is only use in org or report mode, so only execute it in those
+cases.
 
-Dan> BFA_MFG_NAME is "QLogic" which is only 7 bytes, but we are copying
-Dan> 8 bytes.  It's harmless because the badding byte is likely zero but
-Dan> it makes static checkers complain.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied to 4.6/scsi-queue.
+---
+ scripts/coccinelle/misc/bugon.cocci |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/scripts/coccinelle/misc/bugon.cocci b/scripts/coccinelle/misc/bugon.cocci
+index 27c97f1..7415860 100644
+--- a/scripts/coccinelle/misc/bugon.cocci
++++ b/scripts/coccinelle/misc/bugon.cocci
+@@ -40,7 +40,7 @@ expression e;
+ //  For org and report mode
+ //----------------------------------------------------------
+ 
+-@r@
++@r depends on (org || report)@
+ expression e;
+ position p;
+ @@
+
