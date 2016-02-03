@@ -1,32 +1,41 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 27 Feb 2016 10:47:52 +0000
-Subject: [patch] [media] v4l2-mc: using logical instead of bitwise OR
-Message-Id: <20160227104752.GC14086@mwanda>
+Date: Wed, 03 Feb 2016 15:34:00 +0000
+Subject: [patch] [media] xc2028: unlock on error in xc2028_set_config()
+Message-Id: <20160203153359.GA2884@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We intended to do a bitwise OR here but there is a typo so we do a
-logical || instead.
+We have to unlock before returning -ENOMEM.
 
-Fixes: 7047f2982a22 ('[media] v4l2-mc: add an ancillary routine for PCI-based MC')
+Fixes: 8dfbcc4351a0 ('[media] xc2028: avoid use after free')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/v4l2-core/v4l2-mc.c b/drivers/media/v4l2-core/v4l2-mc.c
-index a7f41b3..523998a 100644
---- a/drivers/media/v4l2-core/v4l2-mc.c
-+++ b/drivers/media/v4l2-core/v4l2-mc.c
-@@ -40,8 +40,8 @@ struct media_device *v4l2_mc_pci_media_device_init(struct pci_dev *pci_dev,
+diff --git a/drivers/media/tuners/tuner-xc2028.c b/drivers/media/tuners/tuner-xc2028.c
+index 082ff56..317ef63 100644
+--- a/drivers/media/tuners/tuner-xc2028.c
++++ b/drivers/media/tuners/tuner-xc2028.c
+@@ -1407,8 +1407,10 @@ static int xc2028_set_config(struct dvb_frontend *fe, void *priv_cfg)
+ 	memcpy(&priv->ctrl, p, sizeof(priv->ctrl));
+ 	if (p->fname) {
+ 		priv->ctrl.fname = kstrdup(p->fname, GFP_KERNEL);
+-		if (priv->ctrl.fname = NULL)
+-			return -ENOMEM;
++		if (priv->ctrl.fname = NULL) {
++			rc = -ENOMEM;
++			goto unlock;
++		}
+ 	}
  
- 	sprintf(mdev->bus_info, "PCI:%s", pci_name(pci_dev));
+ 	/*
+@@ -1440,6 +1442,7 @@ static int xc2028_set_config(struct dvb_frontend *fe, void *priv_cfg)
+ 		} else
+ 			priv->state = XC2028_WAITING_FIRMWARE;
+ 	}
++unlock:
+ 	mutex_unlock(&priv->lock);
  
--	mdev->hw_revision = pci_dev->subsystem_vendor << 16
--			    || pci_dev->subsystem_device;
-+	mdev->hw_revision = pci_dev->subsystem_vendor << 16 |
-+			    pci_dev->subsystem_device;
- 
- 	mdev->driver_version = LINUX_VERSION_CODE;
- 
+ 	return rc;
