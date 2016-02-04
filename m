@@ -1,42 +1,37 @@
-From: Sascha Sommer <saschasommer@freenet.de>
-Date: Sun, 21 Feb 2016 09:15:53 +0000
-Subject: Re: [PATCH 2/2] mmc-sdricoh_cs: Less checks in sdricoh_init_mmc() after, error detection
-Message-Id: <20160221101553.7fd64e70@madeira.sommer.dynalias.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Feb 2016 11:40:09 +0000
+Subject: [patch] fs/compat: fix a bug in do_ncp_super_data_conv()
+Message-Id: <20160204114009.GB11239@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5682F3AC.7050107@users.sourceforge.net>
-	<5682F4ED.4070803@users.sourceforge.net>
-In-Reply-To: <5682F4ED.4070803@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+We are trying to copy the c_n->mounted_vol[] array and the three integer
+struct members that follow it.  The problem is that there is a 3 byte
+struct hole after c_n->mounted_vol[] so we don't copy the lower 3 bytes
+of c_n->flags.
 
-Am Tue, 29 Dec 2015 22:02:37 +0100
-schrieb SF Markus Elfring <elfring@users.sourceforge.net>:
+I fixed it by doing the assignments one at a time.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 29 Dec 2015 21:45:34 +0100
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Two pointer checks could be repeated by the sdricoh_init_mmc()
-> function during error handling even if the relevant properties can be
-> determined for the involved variables before by source code analysis.
-> 
-> * This implementation detail could be improved by adjustments
->   for jump targets according to the Linux coding style convention.
-> 
-> * Drop an unnecessary initialisation for the variable "mmc" then.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Sascha Sommer <saschasommer@freenet.de>
-
-Best regards
-
-Sascha
+diff --git a/fs/compat.c b/fs/compat.c
+index a71936a..355ab04 100644
+--- a/fs/compat.c
++++ b/fs/compat.c
+@@ -693,7 +693,11 @@ static void *do_ncp_super_data_conv(void *raw_data)
+ 		n->file_mode = c_n->file_mode;
+ 		n->gid = c_n->gid;
+ 		n->uid = c_n->uid;
+-		memmove (n->mounted_vol, c_n->mounted_vol, (sizeof (c_n->mounted_vol) + 3 * sizeof (unsigned int)));
++		memmove(n->mounted_vol, c_n->mounted_vol,
++			sizeof(c_n->mounted_vol));
++		n->time_out = c_n->time_out;
++		n->retry_count = c_n->retry_count;
++		n->flags = c_n->flags;
+ 		n->wdog_pid = c_n->wdog_pid;
+ 		n->mounted_uid = c_n->mounted_uid;
+ 	} else if (version = 4) {
