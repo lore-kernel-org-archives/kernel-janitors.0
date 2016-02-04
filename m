@@ -1,47 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jan 2016 17:55:29 +0000
-Subject: [PATCH 2/5] xen-netback: Delete an unnecessary goto statement in connect_rings()
-Message-Id: <56880F11.7030303@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Feb 2016 11:36:09 +0000
+Subject: [patch] extcon: use correct size
+Message-Id: <20160204113609.GA11239@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <56880DD4.2090806@users.sourceforge.net>
-In-Reply-To: <56880DD4.2090806@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: xen-devel@lists.xenproject.org, netdev@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Wei Liu <wei.liu2@citrix.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Jan 2016 17:50:21 +0100
+The info->status[] array has 3 elements.  We are using size
+MAX77843_MUIC_IRQ_NUM (16) instead of MAX77843_MUIC_STATUS_NUM (3) as
+intended.
 
-One goto statement referred to a source code position directly behind it.
-Thus omit such an unnecessary jump.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 135d9f7d135a ('extcon: max77843: Clear IRQ bits state before request IRQ')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/xen-netback/xenbus.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This is from static analysis and *NOT TESTED*.  Please review carefully.
 
-diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
-index 7f2895d..d4947e1 100644
---- a/drivers/net/xen-netback/xenbus.c
-+++ b/drivers/net/xen-netback/xenbus.c
-@@ -933,13 +933,11 @@ static int connect_rings(struct backend_info *be, struct xenvif_queue *queue)
- 	/* Map the shared frame, irq etc. */
- 	err = xenvif_connect(queue, tx_ring_ref, rx_ring_ref,
- 			     tx_evtchn, rx_evtchn);
--	if (err) {
-+	if (err)
- 		xenbus_dev_fatal(dev, err,
- 				 "mapping shared-frames %lu/%lu port tx %u rx %u",
- 				 tx_ring_ref, rx_ring_ref,
- 				 tx_evtchn, rx_evtchn);
--		goto err;
--	}
- 
- err: /* Regular return falls through with err = 0 */
- 	kfree(xspath);
--- 
-2.6.3
-
+diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
+index 7bbc300..b188bd6 100644
+--- a/drivers/extcon/extcon-max77843.c
++++ b/drivers/extcon/extcon-max77843.c
+@@ -806,7 +806,7 @@ static int max77843_muic_probe(struct platform_device *pdev)
+ 	/* Clear IRQ bits before request IRQs */
+ 	ret = regmap_bulk_read(max77843->regmap_muic,
+ 			MAX77843_MUIC_REG_INT1, info->status,
+-			MAX77843_MUIC_IRQ_NUM);
++			MAX77843_MUIC_STATUS_NUM);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to Clear IRQ bits\n");
+ 		goto err_muic_irq;
