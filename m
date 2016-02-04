@@ -1,30 +1,44 @@
-From: Michal Marek <mmarek@suse.com>
-Date: Fri, 19 Feb 2016 13:09:44 +0000
-Subject: Re: [PATCH] scripts/coccinelle: modernize &
-Message-Id: <56C71418.1020904@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Feb 2016 11:57:03 +0000
+Subject: re: kernel/locking/lockdep.c: convert hash tables to hlists
+Message-Id: <20160204115703.GA3734@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1455750974-24339-1-git-send-email-Julia.Lawall@lip6.fr>
- <56C50699.6000007@ti.com>
-In-Reply-To: <56C50699.6000007@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: kernel-janitors@vger.kernel.org
 
-On 2016-02-18 00:47, Nishanth Menon wrote:
-> On 02/17/2016 05:16 PM, Julia Lawall wrote:
->> & is no longer allowed in column 0, since Coccinelle 1.0.4.
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-[...]
-> Verified with:
-> spatch --version
-> spatch byte-code version 1.0.4-00118-gc7cf750d1c44 compiled with OCaml
-> version 4.01.0
-> 
-> 
-> Tested-by: Nishanth Menon <nm@ti.com>
+Hello Andrew Morton,
 
-Applied to kbuild.git#misc with Cc: stable.
+The patch 680a50c9271b: "kernel/locking/lockdep.c: convert hash
+tables to hlists" from Feb 4, 2016, leads to the following static
+checker warning:
 
-Michal
+	kernel/locking/lockdep.c:3933 lockdep_free_key_range()
+	warn: 'head' can't be NULL.
+
+kernel/locking/lockdep.c
+  3928          /*
+  3929           * Unhash all classes that were created by this module:
+  3930           */
+  3931          for (i = 0; i < CLASSHASH_SIZE; i++) {
+  3932                  head = classhash_table + i;
+  3933                  if (!head)
+
+classhash_table is an array.
+
+  3934                          continue;
+  3935                  hlist_for_each_entry_rcu(class, head, hash_entry) {
+  3936                          if (within(class->key, start, size))
+  3937                                  zap_class(class);
+  3938                          else if (within(class->name, start, size))
+  3939                                  zap_class(class);
+  3940                  }
+  3941          }
+
+Also:
+kernel/locking/lockdep.c:3990 lockdep_reset_lock() warn: 'head' can't be NULL.
+
+
+regards,
+dan carpenter
