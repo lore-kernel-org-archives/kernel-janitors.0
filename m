@@ -1,23 +1,48 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sat, 06 Feb 2016 12:01:41 +0000
-Subject: Re: mwifiex: fix a reversed condition
-Message-Id: <20160206120141.65A2B60445@smtp.codeaurora.org>
+From: Kevin Wern <kevin.m.wern@gmail.com>
+Date: Fri, 05 Feb 2016 08:29:52 +0000
+Subject: [PATCH] checkpatch.pl: fix naked sscanf false positives
+Message-Id: <20160205082952.GA18361@kwern-VirtualBox>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20160202100005.GA3040@mwanda>
-References: <20160202100005.GA3040@mwanda>
-In-Reply-To: <20160202100005.GA3040@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amitkumar Karwar <akarwar@marvell.com>, chunfan chen <jeffc@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+There is a section of checkpatch.pl that intends to ensure the return
+value of sscanf is always checked.  However, in certain cases, like in
+drivers/staging/dgnc/dgnc.mod.c, the symbol for sscanf is used without
+calling the function:
 
-> The NULL test here is reversed.
-> 
-> Fixes: 7d7f07d8c5d3 ('mwifiex: add wowlan net-detect support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+static const struct modversion_info ____versions[]
+__used
+__attribute__((section("__versions"))) = {
+...
+{ 0x20c55ae0, __VMLINUX_SYMBOL_STR(sscanf) },
+...
+};
 
-Thanks, applied to wireless-drivers-next.git.
+This currently results in a warning, which is undesirable. We should
+adjust the script's first regex condition to match *calls* to sscanf,
+not just the symbol itself.
 
-Kalle Valo
+Signed-off-by: Kevin Wern <kevin.m.wern@gmail.com>
+---
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 0147c91..199247d 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5452,7 +5452,7 @@ sub process {
+ # check for naked sscanf
+ 		if ($^V && $^V ge 5.10.0 &&
+ 		    defined $stat &&
+-		    $line =~ /\bsscanf\b/ &&
++		    $line =~ /\bsscanf\b\s*$balanced_parens/ &&
+ 		    ($stat !~ /$Ident\s*=\s*sscanf\s*$balanced_parens/ &&
+ 		     $stat !~ /\bsscanf\s*$balanced_parens\s*(?:$Compare)/ &&
+ 		     $stat !~ /(?:$Compare)\s*\bsscanf\s*$balanced_parens/)) {
+-- 
+1.9.1
+
