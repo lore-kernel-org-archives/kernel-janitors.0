@@ -1,32 +1,68 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Date: Sun, 28 Feb 2016 14:43:41 +0000
-Subject: Re: [patch 1/2] [media] tvp5150: off by one
-Message-Id: <56D3079D.4040306@osg.samsung.com>
+From: =?UTF-8?q?Jakob=20=C3=98stergaard=20Jensen?=  <jakob.jensen.91@gmail.com>
+Date: Fri, 05 Feb 2016 14:21:03 +0000
+Subject: [PATCH v2] tty: serial: jsm_tty: fixed redundant variable issue.
+Message-Id: <1454682063-3630-1-git-send-email-jakob.jensen.91@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160227105109.GD14086@mwanda>
-In-Reply-To: <20160227105109.GD14086@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: cascardo@linux.vnet.ibm.com, gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Jakob=20=C3=98stergaard=20Jensen?= <jakob.jensen.91@gmail.com>
 
-Hello Dan,
+Fixes unnecessary variable reassignment to a new redundant variable.
 
-On 02/27/2016 07:51 AM, Dan Carpenter wrote:
-> The ->input_ent[] array has TVP5150_INPUT_NUM elements so the > here
-> should be >=.
->
-> Fixes: f7b4b54e6364 ('[media] tvp5150: add HW input connectors support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+Signed-off-by: Jakob =C3=98stergaard Jensen <jakob.jensen.91@gmail.com>
+---
+ drivers/tty/serial/jsm/jsm_tty.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Thanks for the patch but Mauro already posted the same change before:
+diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_=
+tty.c
+index 524e86a..723169a 100644
+--- a/drivers/tty/serial/jsm/jsm_tty.c
++++ b/drivers/tty/serial/jsm/jsm_tty.c
+@@ -529,7 +529,6 @@ void jsm_input(struct jsm_channel *ch)
+ 	int data_len;
+ 	unsigned long lock_flags;
+ 	int len =3D 0;
+-	int n =3D 0;
+ 	int s =3D 0;
+ 	int i =3D 0;
+=20
+@@ -598,16 +597,15 @@ void jsm_input(struct jsm_channel *ch)
+ 	jsm_dbg(READ, &ch->ch_bd->pci_dev, "start 2\n");
+=20
+ 	len =3D tty_buffer_request_room(port, data_len);
+-	n =3D len;
+=20
+ 	/*
+-	 * n now contains the most amount of data we can copy,
++	 * len now contains the most amount of data we can copy,
+ 	 * bounded either by the flip buffer size or the amount
+ 	 * of data the card actually has pending...
+ 	 */
+-	while (n) {
++	while (len) {
+ 		s =3D ((head >=3D tail) ? head : RQUEUESIZE) - tail;
+-		s =3D min(s, n);
++		s =3D min(s, len);
+=20
+ 		if (s <=3D 0)
+ 			break;
+@@ -638,7 +636,7 @@ void jsm_input(struct jsm_channel *ch)
+ 			tty_insert_flip_string(port, ch->ch_rqueue + tail, s);
+ 		}
+ 		tail +=3D s;
+-		n -=3D s;
++		len -=3D s;
+ 		/* Flip queue if needed */
+ 		tail &=3D rmask;
+ 	}
+--=20
+2.5.0
 
-http://www.spinics.net/lists/linux-media/msg97721.html
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
