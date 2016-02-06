@@ -1,49 +1,47 @@
-From: Kevin Wern <kevin.m.wern@gmail.com>
-Date: Sat, 06 Feb 2016 21:24:38 +0000
+From: Joe Perches <joe@perches.com>
+Date: Sat, 06 Feb 2016 23:08:50 +0000
 Subject: Re: [PATCH] checkpatch.pl: fix naked sscanf false positives
-Message-Id: <CANtyZjQqnvU60Mc_cJcrtWYZvRFBsgTz-CLehT8qX0erDo4J_g@mail.gmail.com>
+Message-Id: <1454800130.21293.6.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160205082952.GA18361@kwern-VirtualBox>
 In-Reply-To: <20160205082952.GA18361@kwern-VirtualBox>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Sorry, I think the Andy thing was the gmail client auto-filling contacts when I
-reply all...
+On Sat, 2016-02-06 at 13:24 -0800, Kevin Wern wrote:
+> On Sat, Feb 6, 2016 at 9:20 AM, Joe Perches <joe@perches.com> wrote:
+> >=20
+> > It's a single line sscanf vs multi-line sscanf issue
+> >=20
+> > $line works on
+> > =A0=A0=A0=A0=A0=A0=A0=A0ret =3D sscanf(buf, &foo, &bar);
+> >=20
+> > $stat works on that and
+> > =A0=A0=A0=A0=A0=A0=A0=A0ret =3D sscanf(buf,
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0&foo,
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0&bar);
+> >=20
+>=20
+> Ah, ok. I dont think having just the ending paren will work though
+> because the
+> paren can be on the next line, so the pre-patch statement is most
+> correct.
+> What we should do, then, is something like:
 
-On Sat, Feb 6, 2016 at 9:20 AM, Joe Perches <joe@perches.com> wrote:
->
-> It's a single line sscanf vs multi-line sscanf issue
->
-> $line works on
->         ret = sscanf(buf, &foo, &bar);
->
-> $stat works on that and
->         ret = sscanf(buf,
->                      &foo,
->                      &bar);
->
+Not really.
 
-Ah, ok. I dont think having just the ending paren will work though because the
-paren can be on the next line, so the pre-patch statement is most correct.
-What we should do, then, is something like:
+That'd only find an additional
+	sscanf
+		(buf,
+		=A0foo,
+		=A0bar);
 
-        [snip]
-        $line =~ /\bsscanf\b/ &&
--       ($stat !~ /$Ident\s*=\s*sscanf\s*$balanced_parens/ &&
-+       ($stat =~ /\bsscanf\b\s*$balanced_parens/ &&
-+       $stat !~ /$Ident\s*=\s*sscanf\s*$balanced_parens/ &&
-        $stat !~ /\bsscanf\s*$balanced_parens\s*(?:$Compare)/ &&
-        $stat !~ /(?:$Compare)\s*\bsscanf\s*$balanced_parens/)) {
-        [snip]
+And that's quite unlikely.
 
-That way, we know we are evaluating a sscanf on the current line, but also
-ensure that it is a function call in the current statement.
-
-Would this work?  It seems to on my end.
-
-I can send over the amended patch.
-
-- Kevin
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
