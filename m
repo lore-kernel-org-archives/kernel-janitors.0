@@ -1,36 +1,23 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 02 Feb 2016 14:33:05 +0000
-Subject: Re: [patch] mwifiex: fix a reversed condition
-Message-Id: <1454423585.7291.16.camel@perches.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Sat, 06 Feb 2016 12:01:41 +0000
+Subject: Re: mwifiex: fix a reversed condition
+Message-Id: <20160206120141.65A2B60445@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20160202100005.GA3040@mwanda>
 References: <20160202100005.GA3040@mwanda>
 In-Reply-To: <20160202100005.GA3040@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Amitkumar Karwar <akarwar@marvell.com>, chunfan chen <jeffc@marvell.com>
-Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Amitkumar Karwar <akarwar@marvell.com>, chunfan chen <jeffc@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2016-02-02 at 13:00 +0300, Dan Carpenter wrote:
+
 > The NULL test here is reversed.
-[]
-> diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wi=
-reless/marvell/mwifiex/scan.c
-[]
-> @@ -2196,7 +2196,7 @@ int mwifiex_ret_802_11_scan(struct mwifiex_private =
-*priv,
-> =A0
-> =A0			pmatch =3D adapter->nd_info->matches[idx];
-> =A0
-> -			if (!pmatch) {
-> +			if (pmatch) {
-> =A0				memset(pmatch, 0, sizeof(*pmatch));
+> 
+> Fixes: 7d7f07d8c5d3 ('mwifiex: add wowlan net-detect support')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-As it's just been kzalloc'ed,
-this memset seems unnecessary as well.
+Thanks, applied to wireless-drivers-next.git.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kalle Valo
