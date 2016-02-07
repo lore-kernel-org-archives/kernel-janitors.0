@@ -1,66 +1,30 @@
-From: =?UTF-8?q?Jakob=20=C3=98stergaard=20Jensen?=  <jakob.jensen.91@gmail.com>
-Date: Fri, 05 Feb 2016 14:21:03 +0000
-Subject: [PATCH v2] tty: serial: jsm_tty: fixed redundant variable issue.
-Message-Id: <1454682063-3630-1-git-send-email-jakob.jensen.91@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Sun, 07 Feb 2016 06:14:00 +0000
+Subject: Re: [PATCH v2] tty: serial: jsm_tty: fixed redundant variable issue.
+Message-Id: <20160207061400.GA30939@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1454682063-3630-1-git-send-email-jakob.jensen.91@gmail.com>
+In-Reply-To: <1454682063-3630-1-git-send-email-jakob.jensen.91@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: cascardo@linux.vnet.ibm.com, gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Jakob=20=C3=98stergaard=20Jensen?= <jakob.jensen.91@gmail.com>
+To: Jakob =?iso-8859-1?Q?=D8stergaard?= Jensen <jakob.jensen.91@gmail.com>
+Cc: cascardo@linux.vnet.ibm.com, jslaby@suse.com, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes unnecessary variable reassignment to a new redundant variable.
+On Fri, Feb 05, 2016 at 03:21:03PM +0100, Jakob =D8stergaard Jensen wrote:
+> Fixes unnecessary variable reassignment to a new redundant variable.
+>=20
+> Signed-off-by: Jakob =D8stergaard Jensen <jakob.jensen.91@gmail.com>
+> ---
+>  drivers/tty/serial/jsm/jsm_tty.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
 
-Signed-off-by: Jakob =C3=98stergaard Jensen <jakob.jensen.91@gmail.com>
----
- drivers/tty/serial/jsm/jsm_tty.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+What changed in v2?  Please always be specific.  I'll drop this, please
+resend v3 and describe what changed in the proper way.
 
-diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_=
-tty.c
-index 524e86a..723169a 100644
---- a/drivers/tty/serial/jsm/jsm_tty.c
-+++ b/drivers/tty/serial/jsm/jsm_tty.c
-@@ -529,7 +529,6 @@ void jsm_input(struct jsm_channel *ch)
- 	int data_len;
- 	unsigned long lock_flags;
- 	int len =3D 0;
--	int n =3D 0;
- 	int s =3D 0;
- 	int i =3D 0;
-=20
-@@ -598,16 +597,15 @@ void jsm_input(struct jsm_channel *ch)
- 	jsm_dbg(READ, &ch->ch_bd->pci_dev, "start 2\n");
-=20
- 	len =3D tty_buffer_request_room(port, data_len);
--	n =3D len;
-=20
- 	/*
--	 * n now contains the most amount of data we can copy,
-+	 * len now contains the most amount of data we can copy,
- 	 * bounded either by the flip buffer size or the amount
- 	 * of data the card actually has pending...
- 	 */
--	while (n) {
-+	while (len) {
- 		s =3D ((head >=3D tail) ? head : RQUEUESIZE) - tail;
--		s =3D min(s, n);
-+		s =3D min(s, len);
-=20
- 		if (s <=3D 0)
- 			break;
-@@ -638,7 +636,7 @@ void jsm_input(struct jsm_channel *ch)
- 			tty_insert_flip_string(port, ch->ch_rqueue + tail, s);
- 		}
- 		tail +=3D s;
--		n -=3D s;
-+		len -=3D s;
- 		/* Flip queue if needed */
- 		tail &=3D rmask;
- 	}
---=20
-2.5.0
+thanks,
 
+greg k-h
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
