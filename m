@@ -1,32 +1,29 @@
-From: Kevin Wern <kevin.m.wern@gmail.com>
-Date: Fri, 12 Feb 2016 05:35:19 +0000
-Subject: Re: [PATCH] checkpatch.pl: fix naked sscanf false positives
-Message-Id: <CANtyZjQg4NL1N_ZrJep522C1YHfGWHNznwSn4MKaeTKiTA-sfw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Feb 2016 11:15:36 +0000
+Subject: [patch] mwifiex: fix an indenting mistake
+Message-Id: <20160209111536.GC23998@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160205082952.GA18361@kwern-VirtualBox>
-In-Reply-To: <20160205082952.GA18361@kwern-VirtualBox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>, Xinming Hu <huxm@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Not really.
->
-> That'd only find an additional
->         sscanf
->                 (buf,
->                  foo,
->                  bar);
->
-> And that's quite unlikely.
->
+We recently added an indent level here but missed this line.  It needs
+another tab.
 
-I fail to see the issue if it matches everything matched by /\bsscanf\b\s*(/,
-plus one additional case that is unlikey, but still valid.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I can do a patch the $line match you described, but I'd prefer to do what I
-previously described.
-
-Thanks again for your feedback.
-
-Kevin
+diff --git a/drivers/net/wireless/marvell/mwifiex/pcie.c b/drivers/net/wireless/marvell/mwifiex/pcie.c
+index cc07214..efb19e2 100644
+--- a/drivers/net/wireless/marvell/mwifiex/pcie.c
++++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
+@@ -2452,7 +2452,7 @@ static void mwifiex_pcie_fw_dump(struct mwifiex_adapter *adapter)
+ 			for (i = 0; i < 4; i++) {
+ 				mwifiex_read_reg_byte(adapter, reg, &read_reg);
+ 				memory_size |= (read_reg << (i * 8));
+-			reg++;
++				reg++;
+ 			}
+ 		} else {
+ 			memory_size = MWIFIEX_FW_DUMP_MAX_MEMSIZE;
