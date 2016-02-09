@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Feb 2016 15:34:00 +0000
-Subject: [patch] [media] xc2028: unlock on error in xc2028_set_config()
-Message-Id: <20160203153359.GA2884@mwanda>
+Date: Tue, 09 Feb 2016 11:14:12 +0000
+Subject: [patch] [media] usb/cpia2_core: clean up a min_t() cast
+Message-Id: <20160209111411.GA23998@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,33 +9,24 @@ Content-Transfer-Encoding: 7bit
 To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We have to unlock before returning -ENOMEM.
+It makes sense to make the min_t() cast unsigned here since we don't
+really want negative sizes.  Making it signed causes a static checker
+warning in Smatch.  Smatch knows "fw->size - i" is positive but it
+doesn't know that fw->size is less than INT_MAX so in theory casting it
+to int might lead to a negative.
 
-Fixes: 8dfbcc4351a0 ('[media] xc2028: avoid use after free')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/tuners/tuner-xc2028.c b/drivers/media/tuners/tuner-xc2028.c
-index 082ff56..317ef63 100644
---- a/drivers/media/tuners/tuner-xc2028.c
-+++ b/drivers/media/tuners/tuner-xc2028.c
-@@ -1407,8 +1407,10 @@ static int xc2028_set_config(struct dvb_frontend *fe, void *priv_cfg)
- 	memcpy(&priv->ctrl, p, sizeof(priv->ctrl));
- 	if (p->fname) {
- 		priv->ctrl.fname = kstrdup(p->fname, GFP_KERNEL);
--		if (priv->ctrl.fname = NULL)
--			return -ENOMEM;
-+		if (priv->ctrl.fname = NULL) {
-+			rc = -ENOMEM;
-+			goto unlock;
-+		}
+diff --git a/drivers/media/usb/cpia2/cpia2_core.c b/drivers/media/usb/cpia2/cpia2_core.c
+index 187012c..0310fd6 100644
+--- a/drivers/media/usb/cpia2/cpia2_core.c
++++ b/drivers/media/usb/cpia2/cpia2_core.c
+@@ -923,7 +923,7 @@ static int apply_vp_patch(struct camera_data *cam)
+ 	/* ... followed by the data payload */
+ 	for (i = 2; i < fw->size; i += 64) {
+ 		cmd.start = 0x0C; /* Data */
+-		cmd.reg_count = min_t(int, 64, fw->size - i);
++		cmd.reg_count = min_t(uint, 64, fw->size - i);
+ 		memcpy(cmd.buffer.block_data, &fw->data[i], cmd.reg_count);
+ 		cpia2_send_command(cam, &cmd);
  	}
- 
- 	/*
-@@ -1440,6 +1442,7 @@ static int xc2028_set_config(struct dvb_frontend *fe, void *priv_cfg)
- 		} else
- 			priv->state = XC2028_WAITING_FIRMWARE;
- 	}
-+unlock:
- 	mutex_unlock(&priv->lock);
- 
- 	return rc;
