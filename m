@@ -1,23 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 25 Feb 2016 10:01:21 +0000
-Subject: Re: mwifiex: fix an indenting mistake
-Message-Id: <20160225100121.B9C60603D8@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Feb 2016 09:05:40 +0000
+Subject: [patch] staging: wilc1000: fix mgmt_tx()
+Message-Id: <20160210090540.GA1253@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20160209111536.GC23998@mwanda>
-References: <20160209111536.GC23998@mwanda>
-In-Reply-To: <20160209111536.GC23998@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Amitkumar Karwar <akarwar@marvell.com>, Xinming Hu <huxm@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+There was a missing curly brace so this function returns failure instead
+of succeeding.
 
-> We recently added an indent level here but missed this line.  It needs
-> another tab.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 06fb9336acdc ('staging: wilc1000: wilc_wfi_cfgoperations.c: replaces PRINT_ER with netdev_err')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied to wireless-drivers-next.git.
-
-Kalle Valo
+diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+index bf264d3..97d1b80 100644
+--- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
++++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+@@ -1832,9 +1832,10 @@ static int mgmt_tx(struct wiphy *wiphy,
+ 			return -EFAULT;
+ 
+ 		mgmt_tx->buff = kmalloc(buf_len, GFP_KERNEL);
+-		if (!mgmt_tx->buff)
++		if (!mgmt_tx->buff) {
+ 			kfree(mgmt_tx);
+-			return -EFAULT;
++			return -ENOMEM;
++		}
+ 
+ 		memcpy(mgmt_tx->buff, buf, len);
+ 		mgmt_tx->size = len;
