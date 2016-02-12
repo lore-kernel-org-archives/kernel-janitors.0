@@ -1,67 +1,48 @@
-From: Christoffer Dall <christoffer.dall@linaro.org>
-Date: Tue, 02 Feb 2016 11:41:24 +0000
-Subject: Re: [patch] goldfish: locking bugs in goldfish_pipe_read_write()
-Message-Id: <20160202114124.GB6190@cbox>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 12 Feb 2016 06:37:09 +0000
+Subject: [patch] rapidio: mport_cdev: fix some error codes
+Message-Id: <20160212063709.GA22756@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160202094809.GA2902@mwanda>
-In-Reply-To: <20160202094809.GA2902@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>, Jin Qian <jinqian@android.com>, Greg Hackmann <ghackmann@google.com>, Yu Ning <yu.ning@intel.com>, Peter Senna Tschudin <peter.senna@gmail.com>, Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>, Jason Hu <jia-cheng.hu@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matt Porter <mporter@kernel.crashing.org>, Alexandre Bounine <alexandre.bounine@idt.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 02, 2016 at 12:48:09PM +0300, Dan Carpenter wrote:
-> We recently messed up the error handling here.  We can return with the
-> pipe->lock held or sometimes we unlock twice by mistake.
-> 
-> Fixes: 2f3be88237a3 ('goldfish_pipe: Pin pages to memory while copying and other cleanups')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-> index e3fab9a..839df4a 100644
-> --- a/drivers/platform/goldfish/goldfish_pipe.c
-> +++ b/drivers/platform/goldfish/goldfish_pipe.c
-> @@ -313,7 +313,7 @@ static ssize_t goldfish_pipe_read_write(struct file *filp, char __user *buffer,
->  				     !is_write, 0, &page, NULL);
->  		up_read(&current->mm->mmap_sem);
->  		if (ret < 0)
-> -			return ret;
-> +			break;
->  
->  		if (dev->version) {
->  			/* Device version 1 or newer (qemu-android) expects the
-> @@ -400,22 +400,16 @@ static ssize_t goldfish_pipe_read_write(struct file *filp, char __user *buffer,
->  		while (test_bit(wakeBit, &pipe->flags)) {
->  			if (wait_event_interruptible(
->  					pipe->wake_queue,
-> -					!test_bit(wakeBit, &pipe->flags))) {
-> -				ret = -ERESTARTSYS;
-> -				break;
-> -			}
-> -
-> -			if (test_bit(BIT_CLOSED_ON_HOST, &pipe->flags)) {
-> -				ret = -EIO;
-> -				break;
-> -			}
-> +					!test_bit(wakeBit, &pipe->flags)))
-> +				return -ERESTARTSYS;
-> +
-> +			if (test_bit(BIT_CLOSED_ON_HOST, &pipe->flags))
-> +				return -EIO;
->  		}
->  
->  		/* Try to re-acquire the lock */
-> -		if (mutex_lock_interruptible(&pipe->lock)) {
-> -			ret = -ERESTARTSYS;
-> -			break;
-> -		}
-> +		if (mutex_lock_interruptible(&pipe->lock))
-> +			return -ERESTARTSYS;
->  	}
->  	mutex_unlock(&pipe->lock);
->  
+copy_to_user() returns the number of bytes not copied but we want to
+return an error code.
 
-yeah, that was pretty broken, thanks for fixing this.
+Fixes: a45bfc36bf0d ('rapidio: add mport char device driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index 6d56725..a3369d1 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -2140,9 +2140,10 @@ static long mport_cdev_ioctl(struct file *filp,
+ 		return maint_port_idx_get(data, (void __user *)arg);
+ 	case RIO_MPORT_GET_PROPERTIES:
+ 		md->properties.hdid = md->mport->host_deviceid;
+-		err = copy_to_user((void __user *)arg, &(data->md->properties),
+-				   sizeof(data->md->properties));
+-		break;
++		if (copy_to_user((void __user *)arg, &(data->md->properties),
++				 sizeof(data->md->properties)))
++			return -EFAULT;
++		return 0;
+ 	case RIO_ENABLE_DOORBELL_RANGE:
+ 		return rio_mport_add_db_filter(data, (void __user *)arg);
+ 	case RIO_DISABLE_DOORBELL_RANGE:
+@@ -2155,8 +2156,10 @@ static long mport_cdev_ioctl(struct file *filp,
+ 		data->event_mask = arg;
+ 		return 0;
+ 	case RIO_GET_EVENT_MASK:
+-		return copy_to_user((void __user *)arg, &data->event_mask,
+-				    sizeof(data->event_mask));
++		if (copy_to_user((void __user *)arg, &data->event_mask,
++				    sizeof(data->event_mask)))
++			return -EFAULT;
++		return 0;
+ 	case RIO_MAP_OUTBOUND:
+ 		return rio_mport_obw_map(filp, (void __user *)arg);
+ 	case RIO_MAP_INBOUND:
