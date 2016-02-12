@@ -1,39 +1,39 @@
-From: Sascha Sommer <saschasommer@freenet.de>
-Date: Sun, 21 Feb 2016 09:11:19 +0000
-Subject: Re: [PATCH 1/2] mmc-sdricoh_cs: Delete unnecessary variable initialisations in sdricoh_init_mmc()
-Message-Id: <20160221101119.7b0ef9aa@madeira.sommer.dynalias.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 12 Feb 2016 06:44:34 +0000
+Subject: [patch 2/2] misc: mic: silence an overflow warning
+Message-Id: <20160212064434.GE22756@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5682F3AC.7050107@users.sourceforge.net>
-	<5682F473.9040609@users.sourceforge.net>
-In-Reply-To: <5682F473.9040609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Sudeep Dutt <sudeep.dutt@intel.com>
+Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+Static checkers complain that the this is a potential array overflow.
+We verify that it's not on the next line so this code is OK, but
+static checker warnings are annoying.
 
-Am Tue, 29 Dec 2015 22:00:35 +0100
-schrieb SF Markus Elfring <elfring@users.sourceforge.net>:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+We would have caught CVE-2015-5327 if we had ordered it to check first
+before using the offset.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 29 Dec 2015 21:11:45 +0100
-> 
-> These variables will eventually be set to an appropriate value a bit
-> later.
-> * host
-> * iobase
-> * result
-> 
-> Thus let us omit the explicit initialisation at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Acked-by: Sascha Sommer <saschasommer@freenet.de>
-
-
-Best regards
-
-Sascha
+diff --git a/drivers/misc/mic/vop/vop_vringh.c b/drivers/misc/mic/vop/vop_vringh.c
+index c3613f3..e94c7fb 100644
+--- a/drivers/misc/mic/vop/vop_vringh.c
++++ b/drivers/misc/mic/vop/vop_vringh.c
+@@ -848,12 +848,13 @@ static int vop_virtio_copy_desc(struct vop_vdev *vdev,
+ 				struct mic_copy_desc *copy)
+ {
+ 	int err;
+-	struct vop_vringh *vvr = &vdev->vvr[copy->vr_idx];
++	struct vop_vringh *vvr;
+ 
+ 	err = vop_verify_copy_args(vdev, copy);
+ 	if (err)
+ 		return err;
+ 
++	vvr = &vdev->vvr[copy->vr_idx];
+ 	mutex_lock(&vvr->vr_mutex);
+ 	if (!vop_vdevup(vdev)) {
+ 		err = -ENODEV;
