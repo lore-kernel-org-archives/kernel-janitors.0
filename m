@@ -1,26 +1,38 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 01 Feb 2016 14:35:21 +0000
-Subject: Re: [patch] crypto: keywrap - memzero the correct memory
-Message-Id: <20160201143521.GD11410@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 16 Feb 2016 20:06:58 +0000
+Subject: [patch] pinctrl: mediatek: signedness bug in mtk_pmx_gpio_request_enable()
+Message-Id: <20160216200658.GA9223@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160130143828.GC3462@mwanda>
-In-Reply-To: <20160130143828.GC3462@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephan Mueller <smueller@chronox.de>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-On Sat, Jan 30, 2016 at 05:38:28PM +0300, Dan Carpenter wrote:
-> We're clearing the wrong memory.  The memory corruption is likely
-> harmless because we weren't going to use that stack memory again but not
-> zeroing is a potential information leak.
-> 
-> Fixes: e28facde3c39 ('crypto: keywrap - add key wrapping block chaining mode')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"muxval" stores a value from 0-255 or a negative error code.  It has to
+be signed for the error handling to work.
 
-Applied.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes: 59ee9c96dd5d ('pinctrl: mediatek: Add gpio_request_enable support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index cbc2204..1fbaf28 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -755,14 +755,14 @@ static int mtk_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 				    struct pinctrl_gpio_range *range,
+ 				    unsigned offset)
+ {
+-	unsigned long muxval;
++	int muxval;
+ 	struct mtk_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
+ 
+ 	muxval = mtk_pmx_find_gpio_mode(pctl, offset);
+ 
+ 	if (muxval < 0) {
+ 		dev_err(pctl->dev, "invalid gpio pin %d.\n", offset);
+-		return -EINVAL;
++		return muxval;
+ 	}
+ 
+ 	mtk_pmx_set_mode(pctldev, offset, muxval);
