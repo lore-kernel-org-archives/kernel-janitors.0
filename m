@@ -1,75 +1,62 @@
-From: =?UTF-8?q?Jakob=20=C3=98stergaard=20Jensen?=  <jakob.jensen.91@gmail.com>
-Date: Sun, 07 Feb 2016 11:36:12 +0000
-Subject: [PATCH v3] tty: serial: jsm_tty: fixed redundant variable issue.
-Message-Id: <1454844972-23207-1-git-send-email-jakob.jensen.91@gmail.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Date: Tue, 16 Feb 2016 12:53:30 +0000
+Subject: Re: [patch] video: fbdev: metronomefb: two harmless off by one bugs
+Message-Id: <56C31BCA.2020606@ti.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="PcdhGRTfgmFqTPB1eXbrHsFMTBttBa4Xm"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+References: <20160130144432.GF3462@mwanda>
+In-Reply-To: <20160130144432.GF3462@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jaya Kumar <jayakumar.lkml@gmail.com>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+--PcdhGRTfgmFqTPB1eXbrHsFMTBttBa4Xm
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-To: cascardo@linux.vnet.ibm.com, gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Jakob=20=C3=98stergaard=20Jensen?= <jakob.jensen.91@gmail.com>
 
-The variable "len" gets assigned once and it's value copied to
-"n", which is then used for the rest of the function.
 
-This patch fixes the unnecessary variable reassignment by using "len"
-throughout the function instead.
 
-Signed-off-by: Jakob =C3=98stergaard Jensen <jakob.jensen.91@gmail.com>
----
-v2: Changed variable name in comment to reflect code change.
-v3: Wrote proper patch description.
+On 30/01/16 16:44, Dan Carpenter wrote:
+> par->metromem_cmd->args[] is an array of 31 elements of size u16.  Here=
 
- drivers/tty/serial/jsm/jsm_tty.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> we have initialized the first "i" elements and want to set the rest to
+> zero.
+>=20
+> The issue here is that ARRAY_SIZE(par->metromem_cmd->args) is 31 and no=
+t
+> 32 as in the original code.  It means that we set ->csum to zero, but
+> that is harmless because we immediately set it to the correct value on
+> the next line.
+>=20
+> Still, the buffer overflow upsets static checkers so let's correct the
+> math.
 
-diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_=
-tty.c
-index 524e86a..723169a 100644
---- a/drivers/tty/serial/jsm/jsm_tty.c
-+++ b/drivers/tty/serial/jsm/jsm_tty.c
-@@ -529,7 +529,6 @@ void jsm_input(struct jsm_channel *ch)
- 	int data_len;
- 	unsigned long lock_flags;
- 	int len =3D 0;
--	int n =3D 0;
- 	int s =3D 0;
- 	int i =3D 0;
-=20
-@@ -598,16 +597,15 @@ void jsm_input(struct jsm_channel *ch)
- 	jsm_dbg(READ, &ch->ch_bd->pci_dev, "start 2\n");
-=20
- 	len =3D tty_buffer_request_room(port, data_len);
--	n =3D len;
-=20
- 	/*
--	 * n now contains the most amount of data we can copy,
-+	 * len now contains the most amount of data we can copy,
- 	 * bounded either by the flip buffer size or the amount
- 	 * of data the card actually has pending...
- 	 */
--	while (n) {
-+	while (len) {
- 		s =3D ((head >=3D tail) ? head : RQUEUESIZE) - tail;
--		s =3D min(s, n);
-+		s =3D min(s, len);
-=20
- 		if (s <=3D 0)
- 			break;
-@@ -638,7 +636,7 @@ void jsm_input(struct jsm_channel *ch)
- 			tty_insert_flip_string(port, ch->ch_rqueue + tail, s);
- 		}
- 		tail +=3D s;
--		n -=3D s;
-+		len -=3D s;
- 		/* Flip queue if needed */
- 		tail &=3D rmask;
- 	}
---=20
-2.5.0
+Thanks, queued for 4.6.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ Tomi
+
+
+--PcdhGRTfgmFqTPB1eXbrHsFMTBttBa4Xm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJWwxvKAAoJEPo9qoy8lh71lOAP/0AuEcz5V27euHhiqhd+wZ2O
+hjOboSKvTWImlmQfGXFPtYrTaCfSDkn5iVfONJxe9O25u2KXw0aOSCx1xMt0kiqB
+GV6IWaGH4eGcavf1h/RPqhwUiXk+DIrGiY735th9FB0zVSXqwaOG543x3d5EnMc/
+qd+CykpZ/Pt7INAEH4ak5Mb7IEfHeT5+us5bditbr5vscRvdLy9UdrV1DPMsIuE/
+jv3rp05+EeTs4msDUw1af4686EbS7nyyVHwfMN2mwSaG2JDFB4EE+AsxSuepKwZn
+QfKgdduNajLOdWU7NhUkcbas8K0CugHEsXu/Q11ZqiC1DbNsjbADoS0cCw228719
+nFm4wWuk+xKqfj5B9MgEb6aAf+l1SIJE+aDX0JA9Dv94iMT8QKELp+VJdb6h/HqI
+7Psk2lYRVGJSQgbSSHaSNIyZBudC9+V5sW+sjS5JPyeaB9Sl8z5xfNWsBF7WHQgK
+G+poURIEeJkbPGiwQepw53R5CLmabCfBfpENCxXRj5/Y66gnUY1YORJjgBM4aWYF
+JgxeWwDq6ceyhO71GCLduOIGf4bzO3HQ4A2QAEFAie9F1wqVfHlh4tG+QuxdxTgD
+EcyqKJawX5JjioGnyzobIJa/8kkwExxsuhTqW5cWyYj4i1T07sOCLC2uvqgb5quS
+SNMk3vKHxr3zl/AXUPnO
+=i3DT
+-----END PGP SIGNATURE-----
+
+--PcdhGRTfgmFqTPB1eXbrHsFMTBttBa4Xm--
