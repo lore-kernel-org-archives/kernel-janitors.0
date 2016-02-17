@@ -1,38 +1,20 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 16 Feb 2016 20:06:58 +0000
-Subject: [patch] pinctrl: mediatek: signedness bug in mtk_pmx_gpio_request_enable()
-Message-Id: <20160216200658.GA9223@mwanda>
+From: Axel Lin <axel.lin@ingics.com>
+Date: Wed, 17 Feb 2016 01:44:43 +0000
+Subject: Re: [patch] pinctrl: mediatek: signedness bug in mtk_pmx_gpio_request_enable()
+Message-Id: <CAFRkauCMTv3DqeKBSx6z4ZJKUVmO38Bm+5bwc0pBbHnr-LQJZg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160216200658.GA9223@mwanda>
+In-Reply-To: <20160216200658.GA9223@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Biao Huang <biao.huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Jonas Gorski <jogo@openwrt.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-"muxval" stores a value from 0-255 or a negative error code.  It has to
-be signed for the error handling to work.
-
-Fixes: 59ee9c96dd5d ('pinctrl: mediatek: Add gpio_request_enable support')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index cbc2204..1fbaf28 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -755,14 +755,14 @@ static int mtk_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
- 				    struct pinctrl_gpio_range *range,
- 				    unsigned offset)
- {
--	unsigned long muxval;
-+	int muxval;
- 	struct mtk_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	muxval = mtk_pmx_find_gpio_mode(pctl, offset);
- 
- 	if (muxval < 0) {
- 		dev_err(pctl->dev, "invalid gpio pin %d.\n", offset);
--		return -EINVAL;
-+		return muxval;
- 	}
- 
- 	mtk_pmx_set_mode(pctldev, offset, muxval);
+2016-02-17 4:06 GMT+08:00 Dan Carpenter <dan.carpenter@oracle.com>:
+> "muxval" stores a value from 0-255 or a negative error code.  It has to
+> be signed for the error handling to work.
+>
+> Fixes: 59ee9c96dd5d ('pinctrl: mediatek: Add gpio_request_enable support')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
