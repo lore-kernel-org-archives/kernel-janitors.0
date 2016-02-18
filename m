@@ -1,33 +1,21 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 03 Feb 2016 18:05:46 +0000
-Subject: [PATCH] coccinelle: bugon: reduce rule applicability
-Message-Id: <1454522746-396-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Michal Marek <mmarek@suse.com>
+Date: Thu, 18 Feb 2016 21:10:54 +0000
+Subject: Re: [PATCH] coccinelle: bugon: reduce rule applicability
+Message-Id: <56C6335E.2010006@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1454522746-396-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1454522746-396-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-Rule r is only use in org or report mode, so only execute it in those
-cases.
+Dne 3.2.2016 v 19:05 Julia Lawall napsal(a):
+> Rule r is only use in org or report mode, so only execute it in those
+> cases.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+I applied this and the previous three patches to kbuild.git#misc.
 
----
- scripts/coccinelle/misc/bugon.cocci |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/coccinelle/misc/bugon.cocci b/scripts/coccinelle/misc/bugon.cocci
-index 27c97f1..7415860 100644
---- a/scripts/coccinelle/misc/bugon.cocci
-+++ b/scripts/coccinelle/misc/bugon.cocci
-@@ -40,7 +40,7 @@ expression e;
- //  For org and report mode
- //----------------------------------------------------------
- 
--@r@
-+@r depends on (org || report)@
- expression e;
- position p;
- @@
+Thanks,
+Michal
 
