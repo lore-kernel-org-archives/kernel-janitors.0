@@ -1,23 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 23 Feb 2016 18:12:53 +0000
-Subject: Re: [patch] rocker: fix rocker_world_port_obj_vlan_add()
-Message-Id: <20160223.131253.1345433336482609987.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 18 Feb 2016 05:01:09 +0000
+Subject: [patch] btrfs: array overflow in btrfs_ioctl_rm_dev_v2()
+Message-Id: <20160218050109.GA7781@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160223093752.GA4030@mwanda>
-In-Reply-To: <20160223093752.GA4030@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jiri@resnulli.us, sfeldma@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Anand Jain <anand.jain@oracle.com>
+Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 23 Feb 2016 12:37:52 +0300
+We were putting the NUL terminator at BTRFS_PATH_NAME_MAX (4087) bytes
+instead of BTRFS_SUBVOL_NAME_MAX (4039) so it corrupted memory.
 
-> We were changing return values and accidentally made
-> rocker_world_port_obj_vlan_add() into a no-op.
-> 
-> Fixes: fccd84d44912 ('rocker: return -EOPNOTSUPP for undefined world ops')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 22af1a869288 ('btrfs: introduce device delete by devid')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 5224fc8..77c61b4 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -2700,7 +2700,7 @@ static long btrfs_ioctl_rm_dev_v2(struct file *file, void __user *arg)
+ 	if (vol_args->flags & BTRFS_DEVICE_SPEC_BY_ID) {
+ 		ret = btrfs_rm_device(root, NULL, vol_args->devid);
+ 	} else {
+-		vol_args->name[BTRFS_PATH_NAME_MAX] = '\0';
++		vol_args->name[BTRFS_SUBVOL_NAME_MAX] = '\0';
+ 		ret = btrfs_rm_device(root, vol_args->name, 0);
+ 	}
+ 	mutex_unlock(&root->fs_info->volume_mutex);
