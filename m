@@ -1,51 +1,51 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 18 Feb 2016 00:46:26 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Feb 2016 12:25:05 +0000
 Subject: Re: [PATCH] scripts/coccinelle: modernize &
-Message-Id: <alpine.DEB.2.10.1602171946150.2506@hadrien>
+Message-Id: <56C709A1.6060004@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1455750974-24339-1-git-send-email-Julia.Lawall@lip6.fr>
- <56C50699.6000007@ti.com>
-In-Reply-To: <56C50699.6000007@ti.com>
+In-Reply-To: <1455750974-24339-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-On Wed, 17 Feb 2016, Nishanth Menon wrote:
+> & is no longer allowed in column 0, since Coccinelle 1.0.4.
 
-> On 02/17/2016 05:16 PM, Julia Lawall wrote:
-> > & is no longer allowed in column 0, since Coccinelle 1.0.4.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >  scripts/coccinelle/iterators/use_after_iter.cocci |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/coccinelle/iterators/use_after_iter.cocci b/scripts/coccinelle/iterators/use_after_iter.cocci
-> > index f085f59..ce8cc9c 100644
-> > --- a/scripts/coccinelle/iterators/use_after_iter.cocci
-> > +++ b/scripts/coccinelle/iterators/use_after_iter.cocci
-> > @@ -123,7 +123,7 @@ list_remove_head(x,c,...)
-> >  |
-> >  sizeof(<+...c...+>)
-> >  |
-> > -&c->member
-> > + &c->member
-> >  |
-> >  c = E
-> >  |
-> >
->
->
-> Verified with:
-> spatch --version
-> spatch byte-code version 1.0.4-00118-gc7cf750d1c44 compiled with OCaml
-> version 4.01.0
->
->
-> Tested-by: Nishanth Menon <nm@ti.com>
+This information corresponds to the support for handling of conjunctions
+in the semantic patch language which was added with the software
+release "Coccinelle 1.0.3".
+https://systeme.lip6.fr/pipermail/cocci/2015-October/002634.html
 
-Thanks!
 
-julia
+> diff --git a/scripts/coccinelle/iterators/use_after_iter.cocci b/scripts/coccinelle/iterators/use_after_iter.cocci
+> index f085f59..ce8cc9c 100644
+> --- a/scripts/coccinelle/iterators/use_after_iter.cocci
+> +++ b/scripts/coccinelle/iterators/use_after_iter.cocci
+> @@ -123,7 +123,7 @@ list_remove_head(x,c,...)
+>  |
+>  sizeof(<+...c...+>)
+>  |
+> -&c->member
+> + &c->member
+
+The added space character is not in the first column of this SmPL script.
+
+* Can it be that the additional character will be transformed according to
+  special pretty-printing rules?
+  https://github.com/coccinelle/coccinelle/issues/37
+
+* Is such a change a possible workaround for open issues around
+  the message "minus: parse error" (or software improvements
+  which were developed in the meantime)?
+
+
+>  |
+>  c = E
+>  |
+
+
+Does the shown tweak need any further considerations?
+
+Regards,
+Markus
