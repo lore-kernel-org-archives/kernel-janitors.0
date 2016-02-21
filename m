@@ -1,39 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 12 Feb 2016 06:44:34 +0000
-Subject: [patch 2/2] misc: mic: silence an overflow warning
-Message-Id: <20160212064434.GE22756@mwanda>
+From: Sascha Sommer <saschasommer@freenet.de>
+Date: Sun, 21 Feb 2016 09:15:53 +0000
+Subject: Re: [PATCH 2/2] mmc-sdricoh_cs: Less checks in sdricoh_init_mmc() after, error detection
+Message-Id: <20160221101553.7fd64e70@madeira.sommer.dynalias.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+	<5682F3AC.7050107@users.sourceforge.net>
+	<5682F4ED.4070803@users.sourceforge.net>
+In-Reply-To: <5682F4ED.4070803@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Static checkers complain that the this is a potential array overflow.
-We verify that it's not on the next line so this code is OK, but
-static checker warnings are annoying.
+Hello,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-We would have caught CVE-2015-5327 if we had ordered it to check first
-before using the offset.
+Am Tue, 29 Dec 2015 22:02:37 +0100
+schrieb SF Markus Elfring <elfring@users.sourceforge.net>:
 
-diff --git a/drivers/misc/mic/vop/vop_vringh.c b/drivers/misc/mic/vop/vop_vringh.c
-index c3613f3..e94c7fb 100644
---- a/drivers/misc/mic/vop/vop_vringh.c
-+++ b/drivers/misc/mic/vop/vop_vringh.c
-@@ -848,12 +848,13 @@ static int vop_virtio_copy_desc(struct vop_vdev *vdev,
- 				struct mic_copy_desc *copy)
- {
- 	int err;
--	struct vop_vringh *vvr = &vdev->vvr[copy->vr_idx];
-+	struct vop_vringh *vvr;
- 
- 	err = vop_verify_copy_args(vdev, copy);
- 	if (err)
- 		return err;
- 
-+	vvr = &vdev->vvr[copy->vr_idx];
- 	mutex_lock(&vvr->vr_mutex);
- 	if (!vop_vdevup(vdev)) {
- 		err = -ENODEV;
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 29 Dec 2015 21:45:34 +0100
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Two pointer checks could be repeated by the sdricoh_init_mmc()
+> function during error handling even if the relevant properties can be
+> determined for the involved variables before by source code analysis.
+> 
+> * This implementation detail could be improved by adjustments
+>   for jump targets according to the Linux coding style convention.
+> 
+> * Drop an unnecessary initialisation for the variable "mmc" then.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+
+Acked-by: Sascha Sommer <saschasommer@freenet.de>
+
+Best regards
+
+Sascha
