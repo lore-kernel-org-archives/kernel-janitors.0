@@ -1,32 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Feb 2016 19:33:33 +0000
-Subject: [patch 6/6] Staging: gdm72xx: remove duplicate condition
-Message-Id: <20160222193333.GF23565@mwanda>
+From: Sascha Sommer <saschasommer@freenet.de>
+Date: Sun, 21 Feb 2016 09:11:19 +0000
+Subject: Re: [PATCH 1/2] mmc-sdricoh_cs: Delete unnecessary variable initialisations in sdricoh_init_mmc()
+Message-Id: <20160221101119.7b0ef9aa@madeira.sommer.dynalias.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+	<5682F3AC.7050107@users.sourceforge.net>
+	<5682F473.9040609@users.sourceforge.net>
+In-Reply-To: <5682F473.9040609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Somya Anand <somyaanand214@gmail.com>, Shraddha Barke <shraddha.6596@gmail.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, Wim de With <nauxuron@wimdewith.com>, Alison Schofield <amsfield22@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-We know "len" is not zero because we tested for that at the beginning of
-the function so this test can be removed.
+Hello,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Am Tue, 29 Dec 2015 22:00:35 +0100
+schrieb SF Markus Elfring <elfring@users.sourceforge.net>:
 
-diff --git a/drivers/staging/gdm72xx/gdm_wimax.c b/drivers/staging/gdm72xx/gdm_wimax.c
-index 6d647d6..09bf64e 100644
---- a/drivers/staging/gdm72xx/gdm_wimax.c
-+++ b/drivers/staging/gdm72xx/gdm_wimax.c
-@@ -667,9 +667,8 @@ static void gdm_wimax_transmit_pkt(struct net_device *dev, char *buf, int len)
- 	cmd_len = be16_to_cpup((const __be16 *)&buf[2]);
- 
- 	if (len < cmd_len + HCI_HEADER_SIZE) {
--		if (len)
--			netdev_err(dev, "%s: invalid length [%d/%d]\n",
--				   __func__, cmd_len + HCI_HEADER_SIZE, len);
-+		netdev_err(dev, "%s: invalid length [%d/%d]\n",
-+			   __func__, cmd_len + HCI_HEADER_SIZE, len);
- 		return;
- 	}
- 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 29 Dec 2015 21:11:45 +0100
+> 
+> These variables will eventually be set to an appropriate value a bit
+> later.
+> * host
+> * iobase
+> * result
+> 
+> Thus let us omit the explicit initialisation at the beginning.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Acked-by: Sascha Sommer <saschasommer@freenet.de>
+
+
+Best regards
+
+Sascha
