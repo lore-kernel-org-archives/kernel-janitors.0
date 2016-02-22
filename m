@@ -1,31 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 12 Feb 2016 06:40:26 +0000
-Subject: [patch 1/2] misc: mic: use after free printing error message
-Message-Id: <20160212064026.GD22756@mwanda>
+Date: Mon, 22 Feb 2016 19:33:09 +0000
+Subject: [patch 5/6] Staging: gdm72xx: underflow bug in gdm_wimax_ioctl_get_data()
+Message-Id: <20160222193309.GE23565@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wim de With <nauxuron@wimdewith.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
 
-Swap the printk and kfree() to avoid a use after free bug.
+"size" here should be unsigned, otherwise we might end up trying to copy
+negative bytes in gdm_wimax_ioctl_get_data() resulting in an information
+leak.
 
-Fixes: 61e9c905df78 ('misc: mic: Enable VOP host side functionality')
+Reported-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/misc/mic/vop/vop_vringh.c b/drivers/misc/mic/vop/vop_vringh.c
-index c1dd000..c3613f3 100644
---- a/drivers/misc/mic/vop/vop_vringh.c
-+++ b/drivers/misc/mic/vop/vop_vringh.c
-@@ -290,9 +290,9 @@ static int vop_virtio_add_device(struct vop_vdev *vdev,
+diff --git a/drivers/staging/gdm72xx/wm_ioctl.h b/drivers/staging/gdm72xx/wm_ioctl.h
+index 631cb1d..032cb07 100644
+--- a/drivers/staging/gdm72xx/wm_ioctl.h
++++ b/drivers/staging/gdm72xx/wm_ioctl.h
+@@ -74,12 +74,12 @@ struct fsm_s {
+ };
  
- 	ret = vop_copy_dp_entry(vdev, argp, &type, &dd);
- 	if (ret) {
--		kfree(vdev);
- 		dev_err(vop_dev(vdev), "%s %d err %d\n",
- 			__func__, __LINE__, ret);
-+		kfree(vdev);
- 		return ret;
- 	}
+ struct data_s {
+-	int	size;
++	unsigned int size;
+ 	void	*buf;
+ };
+ 
+ struct udata_s {
+-	int		size;
++	unsigned int	size;
+ 	void __user	*buf;
+ };
  
