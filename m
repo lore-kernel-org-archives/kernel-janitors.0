@@ -1,31 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 25 Feb 2016 21:32:21 +0000
-Subject: [patch] mailbox/xgene-slimpro: Checking for IS_ERR instead of NULL
-Message-Id: <20160225213221.GC18267@mwanda>
+Date: Mon, 22 Feb 2016 19:32:38 +0000
+Subject: [patch 4/6] staging: gdm72xx: zero out padding
+Message-Id: <20160222193238.GD23565@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jassi Brar <jassisinghbrar@gmail.com>, Duc Dang <dhdang@apm.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Alison Schofield <amsfield22@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-devm_ioremap() returns NULL, it never returns an ERR_PTR.
+We pad the start of this buffer with 256 bytes of padding.   It's not
+clear to me exactly what's going on or how it's used but let's zero it
+out.
 
-Fixes: f700e84f417b ('mailbox: Add support for APM X-Gene platform mailbox driver')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/mailbox/mailbox-xgene-slimpro.c b/drivers/mailbox/mailbox-xgene-slimpro.c
-index b5f5106..bd07f39 100644
---- a/drivers/mailbox/mailbox-xgene-slimpro.c
-+++ b/drivers/mailbox/mailbox-xgene-slimpro.c
-@@ -196,8 +196,8 @@ static int slimpro_mbox_probe(struct platform_device *pdev)
+diff --git a/drivers/staging/gdm72xx/usb_boot.c b/drivers/staging/gdm72xx/usb_boot.c
+index 3082987..4431a80 100644
+--- a/drivers/staging/gdm72xx/usb_boot.c
++++ b/drivers/staging/gdm72xx/usb_boot.c
+@@ -286,7 +286,7 @@ static int em_download_image(struct usb_device *usbdev, const char *img_name,
+ 		return ret;
+ 	}
  
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mb_base = devm_ioremap(&pdev->dev, regs->start, resource_size(regs));
--	if (IS_ERR(mb_base))
--		return PTR_ERR(mb_base);
-+	if (!mb_base)
-+		return -ENOMEM;
- 
- 	/* Setup mailbox links */
- 	for (i = 0; i < MBOX_CNT; i++) {
+-	buf = kmalloc(DOWNLOAD_CHUCK + pad_size, GFP_KERNEL);
++	buf = kzalloc(DOWNLOAD_CHUCK + pad_size, GFP_KERNEL);
+ 	if (!buf) {
+ 		release_firmware(firm);
+ 		return -ENOMEM;
