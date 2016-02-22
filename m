@@ -1,28 +1,46 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 25 Feb 2016 21:31:16 +0000
-Subject: [patch] soc: ti: wkup_m3_ipc: Fix an error code
-Message-Id: <20160225213116.GB18267@mwanda>
+Date: Mon, 22 Feb 2016 19:31:31 +0000
+Subject: [patch 2/6] Staging: gdm72xx: silence underflow warning in netlink_send()
+Message-Id: <20160222193131.GB23565@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alison Schofield <amsfield22@gmail.com>, Masanari Iida <standby24x7@gmail.com>, Shraddha Barke <shraddha.6596@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We accidentally return success if we can't load firmware but we intended
-to return a negative error code.
+The value of "group" comes from "idx" in __gdm_wimax_event_send():
 
-Fixes: cdd5de500b2c ('soc: ti: Add wkup_m3_ipc driver')
+	if (sscanf(e->dev->name, "wm%d", &idx) = 1)
+
+Smatch marks sscanf values as user controlled.  It's supposed to be a
+number in 0-30 range.  We cap the upper bound but allow negatives.  Fix
+this by making it type u16 instead.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index 8823cc8..5bb3760 100644
---- a/drivers/soc/ti/wkup_m3_ipc.c
-+++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -459,6 +459,7 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
+diff --git a/drivers/staging/gdm72xx/netlink_k.h b/drivers/staging/gdm72xx/netlink_k.h
+index 1fe7198..1914347 100644
+--- a/drivers/staging/gdm72xx/netlink_k.h
++++ b/drivers/staging/gdm72xx/netlink_k.h
+@@ -20,6 +20,6 @@
+ struct sock *netlink_init(int unit, void (*cb)(struct net_device *dev, u16 type,
+ 					       void *msg, int len));
+ void netlink_exit(struct sock *sock);
+-int netlink_send(struct sock *sock, int group, u16 type, void *msg, int len);
++int netlink_send(struct sock *sock, u16 group, u16 type, void *msg, int len);
  
- 	if (IS_ERR(task)) {
- 		dev_err(dev, "can't create rproc_boot thread\n");
-+		ret = PTR_ERR(task);
- 		goto err_put_rproc;
- 	}
+ #endif /* __GDM72XX_NETLINK_K_H__ */
+diff --git a/drivers/staging/gdm72xx/netlink_k.c b/drivers/staging/gdm72xx/netlink_k.c
+index 4089b17..96c9034 100644
+--- a/drivers/staging/gdm72xx/netlink_k.c
++++ b/drivers/staging/gdm72xx/netlink_k.c
+@@ -114,7 +114,7 @@ void netlink_exit(struct sock *sock)
+ 	netlink_kernel_release(sock);
+ }
  
+-int netlink_send(struct sock *sock, int group, u16 type, void *msg, int len)
++int netlink_send(struct sock *sock, u16 group, u16 type, void *msg, int len)
+ {
+ 	static u32 seq;
+ 	struct sk_buff *skb = NULL;
