@@ -1,67 +1,32 @@
-From: =?UTF-8?q?Jakob=20=C3=98stergaard=20Jensen?=  <jakob.jensen.91@gmail.com>
-Date: Fri, 05 Feb 2016 13:22:56 +0000
-Subject: [PATCH] tty: serial: jsm_tty: fixed redundant variable issue.
-Message-Id: <1454678576-2232-1-git-send-email-jakob.jensen.91@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Feb 2016 19:33:33 +0000
+Subject: [patch 6/6] Staging: gdm72xx: remove duplicate condition
+Message-Id: <20160222193333.GF23565@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: cascardo@linux.vnet.ibm.com, gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Jakob=20=C3=98stergaard=20Jensen?= <jakob.jensen.91@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Somya Anand <somyaanand214@gmail.com>, Shraddha Barke <shraddha.6596@gmail.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, Wim de With <nauxuron@wimdewith.com>, Alison Schofield <amsfield22@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixes unnecessary variable reassignment to a new redundant variable.
+We know "len" is not zero because we tested for that at the beginning of
+the function so this test can be removed.
 
-Signed-off-by: Jakob =C3=98stergaard Jensen <jakob.jensen.91@gmail.com>
----
- drivers/tty/serial/jsm/jsm_tty.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_=
-tty.c
-index 524e86a..8ac669b 100644
---- a/drivers/tty/serial/jsm/jsm_tty.c
-+++ b/drivers/tty/serial/jsm/jsm_tty.c
-@@ -529,7 +529,6 @@ void jsm_input(struct jsm_channel *ch)
- 	int data_len;
- 	unsigned long lock_flags;
- 	int len =3D 0;
--	int n =3D 0;
- 	int s =3D 0;
- 	int i =3D 0;
-=20
-@@ -598,16 +597,15 @@ void jsm_input(struct jsm_channel *ch)
- 	jsm_dbg(READ, &ch->ch_bd->pci_dev, "start 2\n");
-=20
- 	len =3D tty_buffer_request_room(port, data_len);
--	n =3D len;
-=20
- 	/*
- 	 * n now contains the most amount of data we can copy,
- 	 * bounded either by the flip buffer size or the amount
- 	 * of data the card actually has pending...
- 	 */
--	while (n) {
-+	while (len) {
- 		s =3D ((head >=3D tail) ? head : RQUEUESIZE) - tail;
--		s =3D min(s, n);
-+		s =3D min(s, len);
-=20
- 		if (s <=3D 0)
- 			break;
-@@ -638,7 +636,7 @@ void jsm_input(struct jsm_channel *ch)
- 			tty_insert_flip_string(port, ch->ch_rqueue + tail, s);
- 		}
- 		tail +=3D s;
--		n -=3D s;
-+		len -=3D s;
- 		/* Flip queue if needed */
- 		tail &=3D rmask;
+diff --git a/drivers/staging/gdm72xx/gdm_wimax.c b/drivers/staging/gdm72xx/gdm_wimax.c
+index 6d647d6..09bf64e 100644
+--- a/drivers/staging/gdm72xx/gdm_wimax.c
++++ b/drivers/staging/gdm72xx/gdm_wimax.c
+@@ -667,9 +667,8 @@ static void gdm_wimax_transmit_pkt(struct net_device *dev, char *buf, int len)
+ 	cmd_len = be16_to_cpup((const __be16 *)&buf[2]);
+ 
+ 	if (len < cmd_len + HCI_HEADER_SIZE) {
+-		if (len)
+-			netdev_err(dev, "%s: invalid length [%d/%d]\n",
+-				   __func__, cmd_len + HCI_HEADER_SIZE, len);
++		netdev_err(dev, "%s: invalid length [%d/%d]\n",
++			   __func__, cmd_len + HCI_HEADER_SIZE, len);
+ 		return;
  	}
---=20
-2.5.0
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ 
