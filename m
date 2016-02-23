@@ -1,49 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 23 Feb 2016 09:44:50 +0000
-Subject: [patch] gpiolib: shifters used as flags in gpio_ioctl()
-Message-Id: <20160223094450.GB4030@mwanda>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 23 Feb 2016 12:58:44 +0000
+Subject: Re: [patch] gpiolib: shifters used as flags in gpio_ioctl()
+Message-Id: <CACRpkdYTgvXDZjwi9TLkmwU+Afh1fBRFNNddrk_GRvZ3mQGcjg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160223094450.GB4030@mwanda>
+In-Reply-To: <20160223094450.GB4030@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We weren't testing whether the bits were set correctly because we used
-shifters as flags.  It means that we give the user incorrect line
-information in this new ioctl.
+On Tue, Feb 23, 2016 at 10:44 AM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
 
-Fixes: 521a2ad6f862 ('gpio: add userspace ABI for GPIO line information')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> We weren't testing whether the bits were set correctly because we used
+> shifters as flags.  It means that we give the user incorrect line
+> information in this new ioctl.
+>
+> Fixes: 521a2ad6f862 ('gpio: add userspace ABI for GPIO line information')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b816469..d609e03 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -380,17 +380,19 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		 * this GPIO so it can't use it.
- 		 */
- 		lineinfo.flags = 0;
--		if (desc->flags & (FLAG_REQUESTED | FLAG_IS_HOGGED |
--				   FLAG_USED_AS_IRQ | FLAG_EXPORT |
--				   FLAG_SYSFS))
-+		if (desc->flags & ((1 << FLAG_REQUESTED) |
-+				   (1 << FLAG_IS_HOGGED) |
-+				   (1 << FLAG_USED_AS_IRQ) |
-+				   (1 << FLAG_EXPORT) |
-+				   (1 << FLAG_SYSFS)))
- 			lineinfo.flags |= GPIOLINE_FLAG_KERNEL;
--		if (desc->flags & FLAG_IS_OUT)
-+		if (test_bit(FLAG_IS_OUT, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_IS_OUT;
--		if (desc->flags & FLAG_ACTIVE_LOW)
-+		if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_ACTIVE_LOW;
--		if (desc->flags & FLAG_OPEN_DRAIN)
-+		if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_OPEN_DRAIN;
--		if (desc->flags & FLAG_OPEN_SOURCE)
-+		if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_OPEN_SOURCE;
- 
- 		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
+Already wrote and queued a similar patch yesterday, but thanks anyway Dan!
+
+Yours,
+Linus Walleij
