@@ -1,21 +1,49 @@
-From: fu.zhongjun@execs.com
-Date: Wed, 10 Feb 2016 15:51:02 +0000
-Subject: Good day
-Message-Id: <TRU-DC2iEuWtDFM3PYw000097e9@TRU-DC2.utu-trust.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 23 Feb 2016 09:44:50 +0000
+Subject: [patch] gpiolib: shifters used as flags in gpio_ioctl()
+Message-Id: <20160223094450.GB4030@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <TRU-DC2M4BAyxJMXehY00009148@TRU-DC2.utu-trust.com>
-In-Reply-To: <TRU-DC2M4BAyxJMXehY00009148@TRU-DC2.utu-trust.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Good day,
+We weren't testing whether the bits were set correctly because we used
+shifters as flags.  It means that we give the user incorrect line
+information in this new ioctl.
 
-I need a foreign partner for a proposed mutual business, which refers to the transfer of a large sum of money to an account abroad, as the beneficiary of the funds. Everything about this operation, will be legally done without any bridge financial authority, both in my country and yours.I wil indulge you exercise the utmost discretion in all matters concerning this issue. If you are interested, please reply back through my private email address written down, I'll give you more information about myself with the financial institution I represented and the actual amounts involved about the project so I receive your positive response.
+Fixes: 521a2ad6f862 ('gpio: add userspace ABI for GPIO line information')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Private E-mail: fu.zhong@fuzhongjun.net
-
-Friendly greeting,
-
-Executive director.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index b816469..d609e03 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -380,17 +380,19 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		 * this GPIO so it can't use it.
+ 		 */
+ 		lineinfo.flags = 0;
+-		if (desc->flags & (FLAG_REQUESTED | FLAG_IS_HOGGED |
+-				   FLAG_USED_AS_IRQ | FLAG_EXPORT |
+-				   FLAG_SYSFS))
++		if (desc->flags & ((1 << FLAG_REQUESTED) |
++				   (1 << FLAG_IS_HOGGED) |
++				   (1 << FLAG_USED_AS_IRQ) |
++				   (1 << FLAG_EXPORT) |
++				   (1 << FLAG_SYSFS)))
+ 			lineinfo.flags |= GPIOLINE_FLAG_KERNEL;
+-		if (desc->flags & FLAG_IS_OUT)
++		if (test_bit(FLAG_IS_OUT, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_IS_OUT;
+-		if (desc->flags & FLAG_ACTIVE_LOW)
++		if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_ACTIVE_LOW;
+-		if (desc->flags & FLAG_OPEN_DRAIN)
++		if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_OPEN_DRAIN;
+-		if (desc->flags & FLAG_OPEN_SOURCE)
++		if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_OPEN_SOURCE;
+ 
+ 		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
