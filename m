@@ -1,47 +1,30 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Sun, 28 Feb 2016 14:05:21 +0000
-Subject: Re: [patch] vfio/pci: return -EFAULT if copy_to_user fails
-Message-Id: <20160228080521.3bf04d83@ul30vt.home>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Feb 2016 07:48:10 +0000
+Subject: [patch 1/2] ASoC: max9867: signedness bug in max9867_dai_hw_params()
+Message-Id: <20160225074810.GB7333@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160225075212.GD7333@mwanda>
-In-Reply-To: <20160225075212.GD7333@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eric Auger <eric.auger@linaro.org>, "Michael S. Tsirkin" <mst@redhat.com>, Baptiste Reynal <b.reynal@virtualopensystems.com>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, anish kumar <yesanishhere@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Axel Lin <axel.lin@ingics.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Thu, 25 Feb 2016 10:52:12 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+"value" needs to be signed for the error handling to work.
 
-> The copy_to_user() function returns the number of bytes that were not
-> copied but we want to return -EFAULT on error here.
-> 
-> Fixes: 188ad9d6cbbc ('vfio/pci: Include sparse mmap capability for MSI-X table regions')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> index 1ce1d36..98059df 100644
-> --- a/drivers/vfio/pci/vfio_pci.c
-> +++ b/drivers/vfio/pci/vfio_pci.c
-> @@ -664,12 +664,11 @@ static long vfio_pci_ioctl(void *device_data,
->  				info.cap_offset = 0;
->  			} else {
->  				vfio_info_cap_shift(&caps, sizeof(info));
-> -				ret = copy_to_user((void __user *)arg +
-> -						   sizeof(info), caps.buf,
-> -						   caps.size);
-> -				if (ret) {
-> +				if (copy_to_user((void __user *)arg +
-> +						  sizeof(info), caps.buf,
-> +						  caps.size)) {
->  					kfree(caps.buf);
-> -					return ret;
-> +					return -EFAULT;
->  				}
->  				info.cap_offset = sizeof(info);
->  			}
+Fixes: 805d132dcbbd ('ASoC: Add max9867 codec driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to next.  Thanks,
-
-Alex
+diff --git a/sound/soc/codecs/max9867.c b/sound/soc/codecs/max9867.c
+index ab7a94d..4fb6fc7 100755
+--- a/sound/soc/codecs/max9867.c
++++ b/sound/soc/codecs/max9867.c
+@@ -180,7 +180,8 @@ static int max9867_dai_hw_params(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_codec *codec = dai->codec;
+ 	struct max9867_priv *max9867 = snd_soc_codec_get_drvdata(codec);
+-	unsigned int ni_h, ni_l, value;
++	unsigned int ni_h, ni_l;
++	int value;
+ 
+ 	value = get_ni_value(max9867->sysclk, params_rate(params));
+ 	if (value < 0)
