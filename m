@@ -1,21 +1,29 @@
-From: Michal Marek <mmarek@suse.com>
-Date: Thu, 18 Feb 2016 21:10:54 +0000
-Subject: Re: [PATCH] coccinelle: bugon: reduce rule applicability
-Message-Id: <56C6335E.2010006@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Feb 2016 07:50:38 +0000
+Subject: [patch 2/2] ASoC: max9867: silence and array overflow warning
+Message-Id: <20160225075038.GC7333@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1454522746-396-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1454522746-396-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, Axel Lin <axel.lin@ingics.com>, anish kumar <yesanishhere@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-Dne 3.2.2016 v 19:05 Julia Lawall napsal(a):
-> Rule r is only use in org or report mode, so only execute it in those
-> cases.
+Smatch complains that we might reach the end of this loop without
+finding what we're looking for leading to a buffer overflow.
 
-I applied this and the previous three patches to kbuild.git#misc.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Michal
-
+diff --git a/sound/soc/codecs/max9867.c b/sound/soc/codecs/max9867.c
+index 4fb6fc7..9fb03c6 100755
+--- a/sound/soc/codecs/max9867.c
++++ b/sound/soc/codecs/max9867.c
+@@ -156,6 +156,8 @@ static inline int get_ni_value(int mclk, int rate)
+ 		if (ni_div[i].mclk >= mclk)
+ 			break;
+ 	}
++	if (i = ARRAY_SIZE(ni_div))
++		return -EINVAL;
+ 
+ 	switch (rate) {
+ 	case 8000:
