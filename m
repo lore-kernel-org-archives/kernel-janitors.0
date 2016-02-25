@@ -1,36 +1,47 @@
 From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Thu, 25 Feb 2016 11:33:55 +0000
+Date: Thu, 25 Feb 2016 11:34:25 +0000
 Subject: Re: [patch] vfio/pci: return -EFAULT if copy_to_user fails
-Message-Id: <20160225132107-mutt-send-email-mst@redhat.com>
+Message-Id: <20160225133405-mutt-send-email-mst@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160225075212.GD7333@mwanda>
- <20160225111630-mutt-send-email-mst@redhat.com>
- <20160225110944.GH5273@mwanda>
-In-Reply-To: <20160225110944.GH5273@mwanda>
+In-Reply-To: <20160225075212.GD7333@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Alex Williamson <alex.williamson@redhat.com>, Eric Auger <eric.auger@linaro.org>, Baptiste Reynal <b.reynal@virtualopensystems.com>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 25, 2016 at 02:09:44PM +0300, Dan Carpenter wrote:
-> On Thu, Feb 25, 2016 at 11:28:54AM +0200, Michael S. Tsirkin wrote:
-> > On Thu, Feb 25, 2016 at 10:52:12AM +0300, Dan Carpenter wrote:
-> > > The copy_to_user() function returns the number of bytes that were not
-> > > copied but we want to return -EFAULT on error here.
-> > > 
-> > > Fixes: 188ad9d6cbbc ('vfio/pci: Include sparse mmap capability for MSI-X table regions')
-> > 
-> > Where's this commit? In which tree?
+On Thu, Feb 25, 2016 at 10:52:12AM +0300, Dan Carpenter wrote:
+> The copy_to_user() function returns the number of bytes that were not
+> copied but we want to return -EFAULT on error here.
 > 
-> linux-next.  It only has Alex's signed off by.  So likely my patch will
-> be folded in?
-> 
-> regards,
-> dan carpenter
+> Fixes: 188ad9d6cbbc ('vfio/pci: Include sparse mmap capability for MSI-X table regions')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-BTW, vfio repeats this in otherplaces.
-I'll fix it up.
 
--- 
-MST
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
+I posted a patch to fix up all other places.
+
+
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index 1ce1d36..98059df 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+> @@ -664,12 +664,11 @@ static long vfio_pci_ioctl(void *device_data,
+>  				info.cap_offset = 0;
+>  			} else {
+>  				vfio_info_cap_shift(&caps, sizeof(info));
+> -				ret = copy_to_user((void __user *)arg +
+> -						   sizeof(info), caps.buf,
+> -						   caps.size);
+> -				if (ret) {
+> +				if (copy_to_user((void __user *)arg +
+> +						  sizeof(info), caps.buf,
+> +						  caps.size)) {
+>  					kfree(caps.buf);
+> -					return ret;
+> +					return -EFAULT;
+>  				}
+>  				info.cap_offset = sizeof(info);
+>  			}
