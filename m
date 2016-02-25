@@ -1,57 +1,31 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Mon, 08 Feb 2016 10:29:14 +0000
-Subject: Re: [RFC PATCH v0] Add tw5864 driver
-Message-Id: <56B86DFA.6090600@xs4all.nl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Feb 2016 21:32:21 +0000
+Subject: [patch] mailbox/xgene-slimpro: Checking for IS_ERR instead of NULL
+Message-Id: <20160225213221.GC18267@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451785302-3173-1-git-send-email-andrey.utkin@corp.bluecherry.net>
- <56938969.30104@xs4all.nl>
- <CAM_ZknVgTETBNXu+8N6eJa=cf_Mmj=+tA=ocKB9SJL5rkSyijQ@mail.gmail.com>
- <56B866D9.5070606@xs4all.nl>
- <CAM_ZknVjRo0vo2_SLmZSW7R_8LpNkmj-c3q1uBahEa_bSBK0hQ@mail.gmail.com>
-In-Reply-To: <CAM_ZknVjRo0vo2_SLmZSW7R_8LpNkmj-c3q1uBahEa_bSBK0hQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
-Cc: Linux Media <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-mentors@selenic.com" <kernel-mentors@selenic.com>, devel@driverdev.osuosl.org, kernel-janitors <kernel-janitors@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrey Utkin <andrey.od.utkin@gmail.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Duc Dang <dhdang@apm.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 02/08/2016 11:23 AM, Andrey Utkin wrote:
-> On Mon, Feb 8, 2016 at 11:58 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> Hi Andrey,
->>
->> Hmm, it looks like I forgot to reply. Sorry about that.
-> 
-> Thank you very much anyway.
-> 
->> I wouldn't change the memcpy: in my experience it is very useful to get a
->> well-formed compressed stream out of the hardware. And the overhead of
->> having to do a memcpy is a small price to pay and on modern CPUs should
->> be barely noticeable for SDTV inputs.
-> 
-> So there's no usecase for scatter-gather approach, right?
+devm_ioremap() returns NULL, it never returns an ERR_PTR.
 
-The only advantage scatter-gather would bring is more efficient memory usage:
-dma-contig requires physically contiguous memory, dma-sg doesn't. If you need
-a lot of contiguous memory you can run into out-of-memory situations. The
-alternative is to build a kernel with CMA enabled and reserve memory that way.
+Fixes: f700e84f417b ('mailbox: Add support for APM X-Gene platform mailbox driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-dma-sg doesn't have these problems, so that can be a good alternative, but it
-comes at the price of higher complexity.
-
-> 
->> I don't believe that the lockups you see are related to the memcpy as
->> such. The trace says that a cpu is stuck for 22s, no way that is related
->> to something like that. It looks more like a deadlock somewhere.
-> 
-> There was a locking issue (lack of _irqsave) and was fixed since then.
-> 
->> Regarding the compliance tests: don't pass VB2_USERPTR (doesn't work well
->> with videobuf2-dma-contig). Also add vidioc_expbuf = vb2_ioctl_expbuf for
->> the DMABUF support. That should clear up some of the errors you see.
-> 
-> Thank you!
-> 
-
-Regards,
-
-	Hans
+diff --git a/drivers/mailbox/mailbox-xgene-slimpro.c b/drivers/mailbox/mailbox-xgene-slimpro.c
+index b5f5106..bd07f39 100644
+--- a/drivers/mailbox/mailbox-xgene-slimpro.c
++++ b/drivers/mailbox/mailbox-xgene-slimpro.c
+@@ -196,8 +196,8 @@ static int slimpro_mbox_probe(struct platform_device *pdev)
+ 
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	mb_base = devm_ioremap(&pdev->dev, regs->start, resource_size(regs));
+-	if (IS_ERR(mb_base))
+-		return PTR_ERR(mb_base);
++	if (!mb_base)
++		return -ENOMEM;
+ 
+ 	/* Setup mailbox links */
+ 	for (i = 0; i < MBOX_CNT; i++) {
