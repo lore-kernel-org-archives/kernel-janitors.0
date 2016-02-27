@@ -1,19 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 29 Feb 2016 19:38:55 +0000
-Subject: Re: [patch] PCI: hv: potential use after free
-Message-Id: <20160229193855.GP5273@mwanda>
+Date: Sat, 27 Feb 2016 10:51:09 +0000
+Subject: [patch 1/2] [media] tvp5150: off by one
+Message-Id: <20160227105109.GD14086@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160227104357.GA14086@mwanda>
- <DM2PR0301MB1232C919B7845FAEC0B36BF3ABBA0@DM2PR0301MB1232.namprd03.prod.outlook.com>
-In-Reply-To: <DM2PR0301MB1232C919B7845FAEC0B36BF3ABBA0@DM2PR0301MB1232.namprd03.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jake Oshins <jakeo@microsoft.com>
-Cc: KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Bjorn Helgaas <bhelgaas@google.com>, "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hans.verkuil@cisco.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-You're right.  My bad.
+The ->input_ent[] array has TVP5150_INPUT_NUM elements so the > here
+should be >=.
 
-regards,
-dan carpenter
+Fixes: f7b4b54e6364 ('[media] tvp5150: add HW input connectors support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+index ef393f5..ff18444 100644
+--- a/drivers/media/i2c/tvp5150.c
++++ b/drivers/media/i2c/tvp5150.c
+@@ -1386,7 +1386,7 @@ static int tvp5150_parse_dt(struct tvp5150 *decoder, struct device_node *np)
+ 			goto err_connector;
+ 		}
+ 
+-		if (input_type > TVP5150_INPUT_NUM) {
++		if (input_type >= TVP5150_INPUT_NUM) {
+ 			ret = -EINVAL;
+ 			goto err_connector;
+ 		}
