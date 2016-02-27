@@ -1,37 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 04 Feb 2016 11:40:09 +0000
-Subject: [patch] fs/compat: fix a bug in do_ncp_super_data_conv()
-Message-Id: <20160204114009.GB11239@mwanda>
+Date: Sat, 27 Feb 2016 10:47:52 +0000
+Subject: [patch] [media] v4l2-mc: using logical instead of bitwise OR
+Message-Id: <20160227104752.GC14086@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We are trying to copy the c_n->mounted_vol[] array and the three integer
-struct members that follow it.  The problem is that there is a 3 byte
-struct hole after c_n->mounted_vol[] so we don't copy the lower 3 bytes
-of c_n->flags.
+We intended to do a bitwise OR here but there is a typo so we do a
+logical || instead.
 
-I fixed it by doing the assignments one at a time.
-
+Fixes: 7047f2982a22 ('[media] v4l2-mc: add an ancillary routine for PCI-based MC')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/fs/compat.c b/fs/compat.c
-index a71936a..355ab04 100644
---- a/fs/compat.c
-+++ b/fs/compat.c
-@@ -693,7 +693,11 @@ static void *do_ncp_super_data_conv(void *raw_data)
- 		n->file_mode = c_n->file_mode;
- 		n->gid = c_n->gid;
- 		n->uid = c_n->uid;
--		memmove (n->mounted_vol, c_n->mounted_vol, (sizeof (c_n->mounted_vol) + 3 * sizeof (unsigned int)));
-+		memmove(n->mounted_vol, c_n->mounted_vol,
-+			sizeof(c_n->mounted_vol));
-+		n->time_out = c_n->time_out;
-+		n->retry_count = c_n->retry_count;
-+		n->flags = c_n->flags;
- 		n->wdog_pid = c_n->wdog_pid;
- 		n->mounted_uid = c_n->mounted_uid;
- 	} else if (version = 4) {
+diff --git a/drivers/media/v4l2-core/v4l2-mc.c b/drivers/media/v4l2-core/v4l2-mc.c
+index a7f41b3..523998a 100644
+--- a/drivers/media/v4l2-core/v4l2-mc.c
++++ b/drivers/media/v4l2-core/v4l2-mc.c
+@@ -40,8 +40,8 @@ struct media_device *v4l2_mc_pci_media_device_init(struct pci_dev *pci_dev,
+ 
+ 	sprintf(mdev->bus_info, "PCI:%s", pci_name(pci_dev));
+ 
+-	mdev->hw_revision = pci_dev->subsystem_vendor << 16
+-			    || pci_dev->subsystem_device;
++	mdev->hw_revision = pci_dev->subsystem_vendor << 16 |
++			    pci_dev->subsystem_device;
+ 
+ 	mdev->driver_version = LINUX_VERSION_CODE;
+ 
