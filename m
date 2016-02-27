@@ -1,30 +1,32 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 01 Feb 2016 20:42:53 +0000
-Subject: Re: [PATCH] [dm]fix NULL pointer in dm_exception_store_create() when create dm device
-Message-Id: <20160201204253.GD18440@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 27 Feb 2016 11:31:43 +0000
+Subject: [patch] rocker: fix an error code
+Message-Id: <20160227113143.GA19177@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1454310358-755-1-git-send-email-dingxiang@huawei.com>
-In-Reply-To: <1454310358-755-1-git-send-email-dingxiang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: DingXiang <dingxiang@huawei.com>
-Cc: snitzer@redhat.com, stable@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Pirko <jiri@resnulli.us>, Ying Xue <ying.xue@windriver.com>
+Cc: Scott Feldman <sfeldma@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 01, 2016 at 03:05:58PM +0800, DingXiang wrote:
-> In some conditions(such as umount fs failed),origin path or origin bdev or both of the two is same
-> as cow's.If this happens, origin dev will be freed when get cow dev in function "dm_get_device" ,
-> then "s->origin->dev" which used by "dm_exception_store_create" will be a NULL pointer.
-> 
-> Signed-off-by:Ding Xiang <dingxiang@huawei.com>
-> ---
->  drivers/md/dm-snap.c |   10 ++++++++++
->  1 files changed, 10 insertions(+), 0 deletions(-)
+We intended to return PTR_ERR() here instead of 1.
 
-<formletter>
+Fixes: 1f9993f6825f ('rocker: fix a neigh entry leak issue')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+We recently moved rocker files around so this only applies to -next.
+Probably returning the wrong error code is harmless.
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
-
-</formletter>
+diff --git a/drivers/net/ethernet/rocker/rocker_ofdpa.c b/drivers/net/ethernet/rocker/rocker_ofdpa.c
+index 099008a..07218c3 100644
+--- a/drivers/net/ethernet/rocker/rocker_ofdpa.c
++++ b/drivers/net/ethernet/rocker/rocker_ofdpa.c
+@@ -1449,7 +1449,7 @@ static int ofdpa_port_ipv4_resolve(struct ofdpa_port *ofdpa_port,
+ 	if (!n) {
+ 		n = neigh_create(&arp_tbl, &ip_addr, dev);
+ 		if (IS_ERR(n))
+-			return IS_ERR(n);
++			return PTR_ERR(n);
+ 	}
+ 
+ 	/* If the neigh is already resolved, then go ahead and
