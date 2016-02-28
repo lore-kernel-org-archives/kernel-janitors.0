@@ -1,7 +1,7 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Thu, 25 Feb 2016 11:34:25 +0000
+From: Alex Williamson <alex.williamson@redhat.com>
+Date: Sun, 28 Feb 2016 14:05:21 +0000
 Subject: Re: [patch] vfio/pci: return -EFAULT if copy_to_user fails
-Message-Id: <20160225133405-mutt-send-email-mst@redhat.com>
+Message-Id: <20160228080521.3bf04d83@ul30vt.home>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160225075212.GD7333@mwanda>
 In-Reply-To: <20160225075212.GD7333@mwanda>
@@ -9,21 +9,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, Eric Auger <eric.auger@linaro.org>, Baptiste Reynal <b.reynal@virtualopensystems.com>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Eric Auger <eric.auger@linaro.org>, "Michael S. Tsirkin" <mst@redhat.com>, Baptiste Reynal <b.reynal@virtualopensystems.com>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 25, 2016 at 10:52:12AM +0300, Dan Carpenter wrote:
+On Thu, 25 Feb 2016 10:52:12 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
 > The copy_to_user() function returns the number of bytes that were not
 > copied but we want to return -EFAULT on error here.
 > 
 > Fixes: 188ad9d6cbbc ('vfio/pci: Include sparse mmap capability for MSI-X table regions')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-
-I posted a patch to fix up all other places.
-
-
+> 
 > diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
 > index 1ce1d36..98059df 100644
 > --- a/drivers/vfio/pci/vfio_pci.c
@@ -45,3 +41,7 @@ I posted a patch to fix up all other places.
 >  				}
 >  				info.cap_offset = sizeof(info);
 >  			}
+
+Applied to next.  Thanks,
+
+Alex
