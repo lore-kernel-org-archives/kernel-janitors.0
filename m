@@ -1,33 +1,181 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 27 Feb 2016 10:46:16 +0000
-Subject: [patch] [media] saa7134: Fix analog TV demod detection.
-Message-Id: <20160227104616.GB14086@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 29 Feb 2016 02:16:14 +0000
+Subject: [PATCH 2/2] staging: dgap: use tty_alloc_driver instead of kcalloc
+Message-Id: <20160229021614.GA12240@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Geunyoung Kim <nenggun.kim@samsung.com>, Hans Verkuil <hansverk@cisco.com>, Junghak Sung <jh1009.sung@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There is a missing curly brace so we only look at the first item in the
-list and then exit.
+From 60b1e6e5d9401f10f584928d4feeb8a3b72b46a9 Mon Sep 17 00:00:00 2001
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 29 Feb 2016 11:04:02 +0900
+Subject: [PATCH 2/2] staging: dgap: use tty_alloc_driver instead of kcalloc
 
-Fixes: ac90aa02d5b9 ('[media] saa7134: add media controller support')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+the tty_alloc_driver() can allocate memory for ttys and termios.
+And also it can release allocated memory easly with using
+put_tty_driver().
 
-diff --git a/drivers/media/pci/saa7134/saa7134-core.c b/drivers/media/pci/saa7134/saa7134-core.c
-index 42bc417..8f3ba40 100644
---- a/drivers/media/pci/saa7134/saa7134-core.c
-+++ b/drivers/media/pci/saa7134/saa7134-core.c
-@@ -838,9 +838,10 @@ static void saa7134_create_entities(struct saa7134_dev *dev)
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_tty.c | 86 +++++++++++++++--------------------------
+ 1 file changed, 31 insertions(+), 55 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 01a0018..da5cba7 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -176,9 +176,15 @@ int dgnc_tty_preinit(void)
+  */
+ int dgnc_tty_register(struct dgnc_board *brd)
+ {
+-	int rc = 0;
++	int rc;
++
++	brd->serial_driver = tty_alloc_driver(brd->maxports,
++					      TTY_DRIVER_REAL_RAW |
++					      TTY_DRIVER_DYNAMIC_DEV |
++					      TTY_DRIVER_HARDWARE_BREAK);
  
- 	/* Check if it is using an external analog TV demod */
- 	media_device_for_each_entity(entity, dev->media_dev) {
--		if (entity->function = MEDIA_ENT_F_ATV_DECODER)
-+		if (entity->function = MEDIA_ENT_F_ATV_DECODER) {
- 			decoder = entity;
- 			break;
-+		}
- 	}
+-	brd->serial_driver->magic = TTY_DRIVER_MAGIC;
++	if (IS_ERR(brd->serial_driver))
++		return PTR_ERR(brd->serial_driver);
+ 
+ 	snprintf(brd->SerialName, MAXTTYNAMELEN, "tty_dgnc_%d_", brd->boardnum);
+ 
+@@ -186,31 +192,10 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 	brd->serial_driver->name_base = 0;
+ 	brd->serial_driver->major = 0;
+ 	brd->serial_driver->minor_start = 0;
+-	brd->serial_driver->num = brd->maxports;
+ 	brd->serial_driver->type = TTY_DRIVER_TYPE_SERIAL;
+ 	brd->serial_driver->subtype = SERIAL_TYPE_NORMAL;
+ 	brd->serial_driver->init_termios = DgncDefaultTermios;
+ 	brd->serial_driver->driver_name = DRVSTR;
+-	brd->serial_driver->flags = (TTY_DRIVER_REAL_RAW |
+-				   TTY_DRIVER_DYNAMIC_DEV |
+-				   TTY_DRIVER_HARDWARE_BREAK);
+-
+-	/*
+-	 * The kernel wants space to store pointers to
+-	 * tty_struct's and termios's.
+-	 */
+-	brd->serial_driver->ttys = kcalloc(brd->maxports,
+-					 sizeof(*brd->serial_driver->ttys),
+-					 GFP_KERNEL);
+-	if (!brd->serial_driver->ttys)
+-		return -ENOMEM;
+-
+-	kref_init(&brd->serial_driver->kref);
+-	brd->serial_driver->termios = kcalloc(brd->maxports,
+-					    sizeof(*brd->serial_driver->termios),
+-					    GFP_KERNEL);
+-	if (!brd->serial_driver->termios)
+-		return -ENOMEM;
  
  	/*
+ 	 * Entry points for driver.  Called by the kernel from
+@@ -224,7 +209,7 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 		if (rc < 0) {
+ 			dev_dbg(&brd->pdev->dev,
+ 				"Can't register tty device (%d)\n", rc);
+-			return rc;
++			goto free_serial_driver;
+ 		}
+ 		brd->dgnc_Major_Serial_Registered = true;
+ 	}
+@@ -234,38 +219,26 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 	 * again, separately so we don't get the LD confused about what major
+ 	 * we are when we get into the dgnc_tty_open() routine.
+ 	 */
+-	brd->print_driver->magic = TTY_DRIVER_MAGIC;
++	brd->print_driver = tty_alloc_driver(brd->maxports,
++					     TTY_DRIVER_REAL_RAW |
++					     TTY_DRIVER_DYNAMIC_DEV |
++					     TTY_DRIVER_HARDWARE_BREAK);
++
++	if (IS_ERR(brd->print_driver)) {
++		rc = PTR_ERR(brd->print_driver);
++		goto unregister_serial_driver;
++	}
++
+ 	snprintf(brd->PrintName, MAXTTYNAMELEN, "pr_dgnc_%d_", brd->boardnum);
+ 
+ 	brd->print_driver->name = brd->PrintName;
+ 	brd->print_driver->name_base = 0;
+ 	brd->print_driver->major = brd->serial_driver->major;
+ 	brd->print_driver->minor_start = 0x80;
+-	brd->print_driver->num = brd->maxports;
+ 	brd->print_driver->type = TTY_DRIVER_TYPE_SERIAL;
+ 	brd->print_driver->subtype = SERIAL_TYPE_NORMAL;
+ 	brd->print_driver->init_termios = DgncDefaultTermios;
+ 	brd->print_driver->driver_name = DRVSTR;
+-	brd->print_driver->flags = (TTY_DRIVER_REAL_RAW |
+-				  TTY_DRIVER_DYNAMIC_DEV |
+-				  TTY_DRIVER_HARDWARE_BREAK);
+-
+-	/*
+-	 * The kernel wants space to store pointers to
+-	 * tty_struct's and termios's.  Must be separated from
+-	 * the Serial Driver so we don't get confused
+-	 */
+-	brd->print_driver->ttys = kcalloc(brd->maxports,
+-					sizeof(*brd->print_driver->ttys),
+-					GFP_KERNEL);
+-	if (!brd->print_driver->ttys)
+-		return -ENOMEM;
+-	kref_init(&brd->print_driver->kref);
+-	brd->print_driver->termios = kcalloc(brd->maxports,
+-					   sizeof(*brd->print_driver->termios),
+-					   GFP_KERNEL);
+-	if (!brd->print_driver->termios)
+-		return -ENOMEM;
+ 
+ 	/*
+ 	 * Entry points for driver.  Called by the kernel from
+@@ -280,7 +253,7 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 			dev_dbg(&brd->pdev->dev,
+ 				"Can't register Transparent Print device(%d)\n",
+ 				rc);
+-			return rc;
++			goto free_print_driver;
+ 		}
+ 		brd->dgnc_Major_TransparentPrint_Registered = true;
+ 	}
+@@ -289,6 +262,15 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 	brd->dgnc_Serial_Major = brd->serial_driver->major;
+ 	brd->dgnc_TransparentPrint_Major = brd->print_driver->major;
+ 
++	return 0;
++
++free_print_driver:
++	put_tty_driver(brd->print_driver);
++unregister_serial_driver:
++	tty_unregister_driver(brd->serial_driver);
++free_serial_driver:
++	put_tty_driver(brd->serial_driver);
++
+ 	return rc;
+ }
+ 
+@@ -433,14 +415,8 @@ void dgnc_tty_uninit(struct dgnc_board *brd)
+ 		brd->dgnc_Major_TransparentPrint_Registered = false;
+ 	}
+ 
+-	kfree(brd->serial_driver->ttys);
+-	brd->serial_driver->ttys = NULL;
+-	kfree(brd->serial_driver->termios);
+-	brd->serial_driver->termios = NULL;
+-	kfree(brd->print_driver->ttys);
+-	brd->print_driver->ttys = NULL;
+-	kfree(brd->print_driver->termios);
+-	brd->print_driver->termios = NULL;
++	put_tty_driver(brd->serial_driver);
++	put_tty_driver(brd->print_driver);
+ }
+ 
+ /*===================================-- 
+1.9.1
+
