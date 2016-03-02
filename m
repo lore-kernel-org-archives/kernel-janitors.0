@@ -1,23 +1,33 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Mon, 14 Mar 2016 20:02:04 +0000
-Subject: Re: [patch v2] scsi_dh_alua: uninitialized variable in alua_check_vpd()
-Message-Id: <yq1io0oj0ar.fsf@sermon.lab.mkp.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Mar 2016 10:11:10 +0000
+Subject: [patch] net: moxa: fix an error code
+Message-Id: <20160302101110.GI5533@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160311111903.GA12332@mwanda>
-In-Reply-To: <20160311111903.GA12332@mwanda> (Dan Carpenter's message of "Fri,
-	11 Mar 2016 14:19:03 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Bart Van Assche <bart.vanassche@sandisk.com>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Jonas Jensen <jonas.jensen@gmail.com>
+Cc: Luis de Bethencourt <luis@debethencourt.com>, Arnd Bergmann <arnd@arndb.de>, =?iso-8859-1?Q?fran=E7ois?= romieu <romieu@fr.zoreil.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+We accidentally return IS_ERR(priv->base) which is 1 instead of
+PTR_ERR(priv->base) which is the error code.
 
-Dan> The pg_updated variable is support to be set to false at the start
-Dan> but it is uninitialized.
+Fixes: 6c821bd9edc9 ('net: Add MOXA ART SoCs ethernet driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 4.6/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/net/ethernet/moxa/moxart_ether.c b/drivers/net/ethernet/moxa/moxart_ether.c
+index 00cfd95..3e67f45 100644
+--- a/drivers/net/ethernet/moxa/moxart_ether.c
++++ b/drivers/net/ethernet/moxa/moxart_ether.c
+@@ -474,9 +474,9 @@ static int moxart_mac_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	ndev->base_addr = res->start;
+ 	priv->base = devm_ioremap_resource(p_dev, res);
+-	ret = IS_ERR(priv->base);
+-	if (ret) {
++	if (IS_ERR(priv->base)) {
+ 		dev_err(p_dev, "devm_ioremap_resource failed\n");
++		ret = PTR_ERR(priv->base);
+ 		goto init_fail;
+ 	}
+ 
