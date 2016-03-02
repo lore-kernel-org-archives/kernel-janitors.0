@@ -1,27 +1,32 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Wed, 02 Mar 2016 23:36:09 +0000
-Subject: Re: [patch] rtc: ds1685: passing bogus values to irq_restore
-Message-Id: <20160302233609.GC2567@piout.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Mar 2016 10:10:47 +0000
+Subject: [patch] iommu/exynos: checking for IS_ERR() instead of NULL
+Message-Id: <20160302101047.GH5533@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160302100745.GB5533@mwanda>
-In-Reply-To: <20160302100745.GB5533@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Joshua Kinard <kumba@gentoo.org>, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-On 02/03/2016 at 13:07:45 +0300, Dan Carpenter wrote :
-> We call spin_lock_irqrestore with "flags" set to zero instead of to the
-> value from spin_lock_irqsave().
-> 
-> Fixes: aaaf5fbf56f1 ('rtc: add driver for DS1685 family of real time clocks')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/rtc/rtc-ds1685.c b/drivers/rtc/rtc-ds1685.c
-Applied, thanks.
+of_platform_device_create() returns NULL on error, it never returns
+error pointers.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Fixes: 8ed55c812fa8 ('iommu/exynos: Init from dt-specific callback instead of initcall')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index b066504..cb57bda 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -1347,8 +1347,8 @@ static int __init exynos_iommu_of_setup(struct device_node *np)
+ 		exynos_iommu_init();
+ 
+ 	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
+-	if (IS_ERR(pdev))
+-		return PTR_ERR(pdev);
++	if (!pdev)
++		return -ENOMEM;
+ 
+ 	/*
+ 	 * use the first registered sysmmu device for performing
