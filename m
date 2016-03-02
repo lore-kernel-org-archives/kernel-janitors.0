@@ -1,72 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 02 Mar 2016 11:36:05 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Mar 2016 12:15:26 +0000
 Subject: Re: [patch] net: moxa: fix an error code
-Message-Id: <2743496.LmeGdM2Ipd@wuerfel>
+Message-Id: <20160302121526.GS5273@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160302101110.GI5533@mwanda> <7083740.CtlZQWRYiM@wuerfel> <20160302112129.GQ5273@mwanda>
-In-Reply-To: <20160302112129.GQ5273@mwanda>
+References: <20160302101110.GI5533@mwanda>
+ <7083740.CtlZQWRYiM@wuerfel>
+ <20160302112129.GQ5273@mwanda>
+ <2743496.LmeGdM2Ipd@wuerfel>
+In-Reply-To: <2743496.LmeGdM2Ipd@wuerfel>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jonas Jensen <jonas.jensen@gmail.com>, Luis de Bethencourt <luis@debethencourt.com>, =?ISO-8859-1?Q?fran=E7ois?= romieu <romieu@fr.zoreil.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Jonas Jensen <jonas.jensen@gmail.com>, Luis de Bethencourt <luis@debethencourt.com>, =?iso-8859-1?Q?fran=E7ois?= romieu <romieu@fr.zoreil.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wednesday 02 March 2016 14:21:29 Dan Carpenter wrote:
-> On Wed, Mar 02, 2016 at 11:52:29AM +0100, Arnd Bergmann wrote:
-> > Did you find more of these?
-> > 
-> > it doesn't matter much either way, but if you do multiple such patches,
-> 
-> One or two.  I already sent the fixes.  I think it was applied.
-> 
-> > I'd suggest using a single PTR_ERR_OR_ZERO() instead of IS_ERR()+PTR_ERR().
-> > 
-> > I have found a couple of drivers in which that leads to better object
-> > code, and avoids a warning about a possibly uninitialized variable
-> > when the function gets inlined into another one (which won't happen
-> > for this driver).
-> 
-> Huh?  I sent one where I could have done that but I deliberately didn't
-> because I wanted the uninitialized warning if I made a mistake.  It
-> sounds like you're working around a GCC bug...
+On Wed, Mar 02, 2016 at 12:36:05PM +0100, Arnd Bergmann wrote:
+> The uninitialized warning here is about a type mismatch preventing
+> gcc from noticing that two conditions are the same, I'm not sure
+> if this is a bug in gcc, or required by the C standard.
 
-The uninitialized warning here is about a type mismatch preventing
-gcc from noticing that two conditions are the same, I'm not sure
-if this is a bug in gcc, or required by the C standard.
+I wouldn't call it a bug, because everyone has to make trade offs
+between how fast the program runs and how accurate it is.  And trade
+offs between how ambitious your warnings are vs how many false positives
+you can tolerate.
 
-I don't think there is a way in which you would hide a correct
-warning about an uninitialized warning.
+Anyway, I feel like we should just work around GCC on a case by case
+basis instead of always using PTR_ERR_OR_ZERO().  The next version of
+GCC will fix some false positives and introduce new ones...  Next time
+using PTR_ERR_OR_ZERO() could cause warnings instead of fixing them.
 
-Have a look at
-https://git.kernel.org/cgit/linux/kernel/git/gfs2/linux-gfs2.git/commit/fs/gfs2?h=for-next&idcfdc3071432a07713e4d007c2811e0224490b0
+Smatch works in a different way and it parse the code correctly.  But
+Smatch is slow and sometimes runs out of memory and gives up trying to
+parse large functions.  Smatch sees the two returns and tries to figure
+out the implications of each (uninitialized vs initialized).  If you
+change the code to:
 
-in which get_leaf_nr() uses the IS_ERR()/PTR_ERR() combo to return
-an error from a pointer, or return success when the pointer was set,
-followed by a warning about the use of the pointer in another
-function. My original patch avoided the warning by using IS_ERR_VALUE()
-in the caller, but in retrospect, IS_ERR_OR_ZERO() would have been
-a nicer solution:
+	error = PTR_ERR_OR_ZERO(hash);
 
-@@ -783,12 +783,15 @@ static int get_leaf_nr(struct gfs2_inode *dip, u32 index,
-                       u64 *leaf_out)
- {
-        __be64 *hash;
-+       int error;
- 
-        hash = gfs2_dir_get_hash_table(dip);
--       if (IS_ERR(hash))
--               return PTR_ERR(hash);
--       *leaf_out = be64_to_cpu(*(hash + index));
--       return 0;
-+       error = PTR_ERR_OR_ZERO(hash);
-+
-+       if (!error)
-+               *leaf_out = be64_to_cpu(*(hash + index));
-+
-+       return error;
- }
+	if (!error)
+		*leaf_out = be64_to_cpu(*(hash + index));
 
-and I've used that elsewhere now when I ran into this kind of
-false positive warning.
+	return error;
 
-	Arnd
+then Smatch still breaks that up into two separate returns which imply
+initialized vs uninitialized.
+
+regards,
+dan carpenter
+
