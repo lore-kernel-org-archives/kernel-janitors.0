@@ -1,28 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 18 Mar 2016 23:40:47 +0000
-Subject: Re: [patch] ethernet: micrel: fix some error codes
-Message-Id: <20160318.194047.1657460162512006177.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Mar 2016 10:10:27 +0000
+Subject: [patch 2/2] iommu/mediatek: checking for IS_ERR() instead of NULL
+Message-Id: <20160302101027.GG5533@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160316074510.GF12860@mwanda>
-In-Reply-To: <20160316074510.GF12860@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: richard.rojfors@pelagicore.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Yong Wu <yong.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Mar 2016 10:45:10 +0300
+of_platform_device_create() returns NULL on error, it never returns
+error pointers.
 
-> There were two issues here:
-> 1) dma_mapping_error() return true/false but we want to return -ENOMEM
-> 2) If dmaengine_prep_slave_sg() failed then "err" wasn't set but
->    presumably that should be -ENOMEM as well.
-> 
-> I changed the success path to "return 0;" instead of "return ret;" for
-> clarity.
-> 
-> Fixes: 94fe8c683cea ('ks8842: Support DMA when accessed via timberdale')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 0df4fabe208d ('iommu/mediatek: Add mt8173 IOMMU driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+index 1a4022c..4682da4 100644
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -628,7 +628,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
+ 			plarbdev = of_platform_device_create(
+ 						larbnode, NULL,
+ 						platform_bus_type.dev_root);
+-			if (IS_ERR(plarbdev))
++			if (!plarbdev)
+ 				return -EPROBE_DEFER;
+ 		}
+ 		data->smi_imu.larb_imu[i].dev = &plarbdev->dev;
+@@ -721,8 +721,8 @@ static int mtk_iommu_init_fn(struct device_node *np)
+ 	struct platform_device *pdev;
+ 
+ 	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
+-	if (IS_ERR(pdev))
+-		return PTR_ERR(pdev);
++	if (!pdev)
++		return -ENOMEM;
+ 
+ 	ret = platform_driver_register(&mtk_iommu_driver);
+ 	if (ret) {
