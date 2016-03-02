@@ -1,67 +1,58 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Mar 2016 21:16:24 +0000
-Subject: re: kcm: Splice support
-Message-Id: <20160315211624.GA17646@mwanda>
+Date: Wed, 02 Mar 2016 10:00:55 +0000
+Subject: [patch] thermal: ti-soc-thermal: clean up the error handling a bit
+Message-Id: <20160302100055.GA5533@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[ Someone probably already fixed this, but I'm not on netdev. -dan ]
+We don't need to initialize "ret".  We can move the IS_ERR() checks into
+the if condition instead of doing an assignment first.  Also there is a
+check for "ret" when we know it is zero so we can remove that.
 
-Hello Tom Herbert,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The patch 91687355b927: "kcm: Splice support" from Mar 7, 2016, leads
-to the following static checker warning:
-
-	net/kcm/kcmsock.c:1508 kcm_splice_read()
-	warn: unsigned 'copied' is never less than zero.
-
-net/kcm/kcmsock.c
-  1477  static ssize_t kcm_splice_read(struct socket *sock, loff_t *ppos,
-  1478                                 struct pipe_inode_info *pipe, size_t len,
-  1479                                 unsigned int flags)
-  1480  {
-  1481          struct sock *sk = sock->sk;
-  1482          struct kcm_sock *kcm = kcm_sk(sk);
-  1483          long timeo;
-  1484          struct kcm_rx_msg *rxm;
-  1485          int err = 0;
-  1486          size_t copied;
-                ^^^^^^^^^^^^^
-
-  1487          struct sk_buff *skb;
-  1488  
-  1489          /* Only support splice for SOCKSEQPACKET */
-  1490  
-  1491          timeo = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
-  1492  
-  1493          lock_sock(sk);
-  1494  
-  1495          skb = kcm_wait_data(sk, flags, timeo, &err);
-  1496          if (!skb)
-  1497                  goto err_out;
-  1498  
-  1499          /* Okay, have a message on the receive queue */
-  1500  
-  1501          rxm = kcm_rx_msg(skb);
-  1502  
-  1503          if (len > rxm->full_len)
-  1504                  len = rxm->full_len;
-  1505  
-  1506          copied = skb_splice_bits(skb, sk, rxm->offset, pipe, len, flags,
-  1507                                   kcm_sock_splice);
-  1508          if (copied < 0) {
-                    ^^^^^^^^^
-Never true.
-
-I feel like skb_splice_bits() should return ssize_t instead of int just
-so that everything is consistent.
-
-  1509                  err = copied;
-  1510                  goto err_out;
-  1511          }
-
-regards,
-dan carpenter
+diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+index 1e34a1e..06ea976 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
++++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+@@ -1265,7 +1265,7 @@ static
+ int ti_bandgap_probe(struct platform_device *pdev)
+ {
+ 	struct ti_bandgap *bgp;
+-	int clk_rate, ret = 0, i;
++	int clk_rate, ret, i;
+ 
+ 	bgp = ti_bandgap_build(pdev);
+ 	if (IS_ERR(bgp)) {
+@@ -1288,16 +1288,14 @@ int ti_bandgap_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	bgp->fclock = clk_get(NULL, bgp->conf->fclock_name);
+-	ret = IS_ERR(bgp->fclock);
+-	if (ret) {
++	if (IS_ERR(bgp->fclock)) {
+ 		dev_err(&pdev->dev, "failed to request fclock reference\n");
+ 		ret = PTR_ERR(bgp->fclock);
+ 		goto free_irqs;
+ 	}
+ 
+ 	bgp->div_clk = clk_get(NULL, bgp->conf->div_ck_name);
+-	ret = IS_ERR(bgp->div_clk);
+-	if (ret) {
++	if (IS_ERR(bgp->div_clk)) {
+ 		dev_err(&pdev->dev, "failed to request div_ts_ck clock ref\n");
+ 		ret = PTR_ERR(bgp->div_clk);
+ 		goto free_irqs;
+@@ -1314,7 +1312,7 @@ int ti_bandgap_probe(struct platform_device *pdev)
+ 		 * may not be accurate
+ 		 */
+ 		val = ti_bandgap_readl(bgp, tsr->bgap_efuse);
+-		if (ret || !val)
++		if (!val)
+ 			dev_info(&pdev->dev,
+ 				 "Non-trimmed BGAP, Temp not accurate\n");
+ 	}
