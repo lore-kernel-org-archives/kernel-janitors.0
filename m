@@ -1,50 +1,66 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Sat, 05 Mar 2016 07:33:34 +0000
+From: Chris Boot <bootc@bootc.net>
+Date: Sat, 05 Mar 2016 08:45:42 +0000
 Subject: Re: [patch] sbp-target: checking for NULL instead of IS_ERR
-Message-Id: <1457163214.19657.288.camel@haakon3.risingtidesystems.com>
+Message-Id: <2A1ED37C-C556-4B3D-A59B-3369E5DFB4D5@bootc.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160302100912.GD5533@mwanda>
-In-Reply-To: <20160302100912.GD5533@mwanda>
+References: <20160302100912.GD5533@mwanda> <1457163214.19657.288.camel@haakon3.risingtidesystems.com>
+In-Reply-To: <1457163214.19657.288.camel@haakon3.risingtidesystems.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Boot <bootc@bootc.net>, target-devel@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, target-devel@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan + BootC,
-
-On Wed, 2016-03-02 at 13:09 +0300, Dan Carpenter wrote:
-> We changed this from kzalloc to sbp_mgt_get_req() so we need to change
-> from checking for NULL to check for error pointers.
+On 5 Mar 2016, at 07:33, Nicholas A. Bellinger <nab@linux-iscsi.org> wrote:
 > 
-> Fixes: c064b2a78989 ('sbp-target: Conversion to percpu_ida tag pre-allocation')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Hi Dan + BootC,
 > 
-> diff --git a/drivers/target/sbp/sbp_target.c b/drivers/target/sbp/sbp_target.c
-> index 251d532..a04b0605f 100644
-> --- a/drivers/target/sbp/sbp_target.c
-> +++ b/drivers/target/sbp/sbp_target.c
-> @@ -951,7 +951,7 @@ static void tgt_agent_fetch_work(struct work_struct *work)
->  
->  	while (next_orb && tgt_agent_check_active(agent)) {
->  		req = sbp_mgt_get_req(sess, sess->card, next_orb);
-> -		if (!req) {
-> +		if (IS_ERR(req)) {
->  			spin_lock_bh(&agent->lock);
->  			agent->state = AGENT_STATE_DEAD;
->  			spin_unlock_bh(&agent->lock);
+> On Wed, 2016-03-02 at 13:09 +0300, Dan Carpenter wrote:
+>> We changed this from kzalloc to sbp_mgt_get_req() so we need to change
+>> from checking for NULL to check for error pointers.
+>> 
+>> Fixes: c064b2a78989 ('sbp-target: Conversion to percpu_ida tag pre-allocation')
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> 
+>> diff --git a/drivers/target/sbp/sbp_target.c b/drivers/target/sbp/sbp_target.c
+>> index 251d532..a04b0605f 100644
+>> --- a/drivers/target/sbp/sbp_target.c
+>> +++ b/drivers/target/sbp/sbp_target.c
+>> @@ -951,7 +951,7 @@ static void tgt_agent_fetch_work(struct work_struct *work)
+>> 
+>> 	while (next_orb && tgt_agent_check_active(agent)) {
+>> 		req = sbp_mgt_get_req(sess, sess->card, next_orb);
+>> -		if (!req) {
+>> +		if (IS_ERR(req)) {
+>> 			spin_lock_bh(&agent->lock);
+>> 			agent->state = AGENT_STATE_DEAD;
+>> 			spin_unlock_bh(&agent->lock);
+> 
+> Fixed + folded into the original patch.
+> 
+> Thanks Dan.
+> 
+> Chris, would you be so kind to review the original changes here:
+> 
+> sbp-target: Conversion to percpu_ida tag pre-allocation
+> http://www.spinics.net/lists/target-devel/msg11778.html
+> 
+> sbp-target: Convert to TARGET_SCF_ACK_KREF I/O krefs
+> http://www.spinics.net/lists/target-devel/msg11780.html
+> 
+> and verify on your local IEEE1394 target setup..?
 
-Fixed + folded into the original patch.
+Hi Nic, Dan,
 
-Thanks Dan.
+I’m away this weekend so I can’t test these for a few days at least, unfortunately. I must admit I only vaguely follow the changes here as I haven’t been keeping up with the pace of change in target-devel lately, but it generally looks OK I think.
 
-Chris, would you be so kind to review the original changes here:
+Are these in linux-next or another branch somewhere I can easily clone them from?
 
-sbp-target: Conversion to percpu_ida tag pre-allocation
-http://www.spinics.net/lists/target-devel/msg11778.html
+How soon do you need my ACK/NAK on these?
 
- sbp-target: Convert to TARGET_SCF_ACK_KREF I/O krefs
-http://www.spinics.net/lists/target-devel/msg11780.html
+Cheers,
+Chris
 
-and verify on your local IEEE1394 target setup..?
-
+-- 
+Chris Boot
+bootc@bootc.net
