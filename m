@@ -1,47 +1,24 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 16 Mar 2016 08:22:53 +0000
-Subject: Re: [patch] ALSA: mixart: silence an uninitialized variable warning
-Message-Id: <56E917DD.3050901@bfs.de>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date: Mon, 07 Mar 2016 07:22:44 +0000
+Subject: Re: [PATCH 1/2] staging: dgnc: use pointer type of tty_struct
+Message-Id: <20160307071044.GA29426@sudip-pc>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160316074213.GC12860@mwanda>
-In-Reply-To: <20160316074213.GC12860@mwanda>
+References: <20160229021551.GA12190@SEL-JYOUN-D1>
+In-Reply-To: <20160229021551.GA12190@SEL-JYOUN-D1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Quentin Lambert <lambert.quentin@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daeseok Youn <daeseok.youn@gmail.com>
+Cc: devel@driverdev.osuosl.org, lidza.louina@gmail.com, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
 
+On Mon, Feb 29, 2016 at 11:15:51AM +0900, Daeseok Youn wrote:
+> From 70f8703b3bd73fa56f4ea91e98967b8925550aa6 Mon Sep 17 00:00:00 2001
+> From: Daeseok Youn <daeseok.youn@gmail.com>
+> Date: Thu, 25 Feb 2016 14:53:37 +0900
+> Subject: [PATCH 1/2] staging: dgnc: use pointer type of tty_struct
 
+These lines above are not required in the commit log. Please send v2 of
+both your patches without these lines.
 
-Am 16.03.2016 08:42, schrieb Dan Carpenter:
-> We could print the uninitialized value of "stat" in the error message.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/sound/pci/mixart/mixart.c b/sound/pci/mixart/mixart.c
-> index bc81b9f..25c0ddd 100644
-> --- a/sound/pci/mixart/mixart.c
-> +++ b/sound/pci/mixart/mixart.c
-> @@ -132,7 +132,7 @@ static int mixart_set_pipe_state(struct mixart_mgr *mgr,
->  	}
->  
->  	if(start) {
-> -		u32 stat;
-> +		u32 stat = 0;
->  
->  		group_state.pipe_count = 0; /* in case of start same command once again with pipe_count=0 */
->  
-
-@maintainer:
-can someone please fix/remove the comment here ? it read like if (pipe_count=0) pipe_count = 0.
-
-just my 2 cents,
-
-re,
- wh
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+regards
+sudip
