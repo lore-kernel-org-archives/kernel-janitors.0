@@ -1,13 +1,15 @@
 From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 02 Mar 2016 02:55:19 +0000
-Subject: [PATCH 2/2 v2] staging: dgnc: use tty_alloc_driver instead of kcalloc
-Message-Id: <20160302025519.GA14596@SEL-JYOUN-D1>
+Date: Mon, 07 Mar 2016 07:55:38 +0000
+Subject: [PATCH 2/2 V2] staging: dgnc: use tty_alloc_driver instead of kcalloc
+Message-Id: <20160307075537.GA23008@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160302025519.GA14596@SEL-JYOUN-D1>
+In-Reply-To: <20160302025519.GA14596@SEL-JYOUN-D1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, sudipm.mukherjee@gmail.com
 
 the tty_alloc_driver() can allocate memory for ttys and termios.
 And also it can release allocated memory easly with using
@@ -15,7 +17,7 @@ put_tty_driver().
 
 Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
-v2 : typo in subject, changed from dgap to dgnc
+V2: removes appended email header on top of commit log
 
  drivers/staging/dgnc/dgnc_tty.c | 86 +++++++++++++++--------------------------
  1 file changed, 31 insertions(+), 55 deletions(-)
