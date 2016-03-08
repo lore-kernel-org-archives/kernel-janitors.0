@@ -1,23 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 Mar 2016 22:17:39 +0000
-Subject: Re: [patch] net: moxa: fix an error code
-Message-Id: <20160303.171739.1237357288526058790.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 08 Mar 2016 12:07:36 +0000
+Subject: [patch] crypto: rsa-pkcs1pad: indent a couple statements
+Message-Id: <20160308120736.GC28684@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160302101110.GI5533@mwanda>
-In-Reply-To: <20160302101110.GI5533@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jonas.jensen@gmail.com, luis@debethencourt.com, arnd@arndb.de, romieu@fr.zoreil.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 2 Mar 2016 13:11:10 +0300
+These if statements aren't indented far enough and it makes static
+checkers complain.
 
-> We accidentally return IS_ERR(priv->base) which is 1 instead of
-> PTR_ERR(priv->base) which is the error code.
-> 
-> Fixes: 6c821bd9edc9 ('net: Add MOXA ART SoCs ethernet driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Hopefully GCC6 will start complaining about these as well?
 
-Applied, thank you Dan.
+diff --git a/crypto/rsa-pkcs1pad.c b/crypto/rsa-pkcs1pad.c
+index 1cea67d..1eb5cbe 100644
+--- a/crypto/rsa-pkcs1pad.c
++++ b/crypto/rsa-pkcs1pad.c
+@@ -705,7 +705,7 @@ static int pkcs1pad_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 			     CRYPTO_MAX_ALG_NAME, "pkcs1pad(%s)",
+ 			     rsa_alg->base.cra_driver_name) > 					CRYPTO_MAX_ALG_NAME)
+-		goto out_drop_alg;
++			goto out_drop_alg;
+ 	} else {
+ 		if (snprintf(inst->alg.base.cra_name,
+ 			     CRYPTO_MAX_ALG_NAME, "pkcs1pad(%s,%s)",
+@@ -715,7 +715,7 @@ static int pkcs1pad_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 			     CRYPTO_MAX_ALG_NAME, "pkcs1pad(%s,%s)",
+ 			     rsa_alg->base.cra_driver_name, hash_name) > 					CRYPTO_MAX_ALG_NAME)
+-		goto out_free_hash;
++			goto out_free_hash;
+ 	}
+ 
+ 	inst->alg.base.cra_flags = rsa_alg->base.cra_flags & CRYPTO_ALG_ASYNC;
