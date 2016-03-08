@@ -1,70 +1,29 @@
-From: Sabrina Dubroca <sd@queasysnail.net>
-Date: Wed, 16 Mar 2016 10:22:44 +0000
-Subject: Re: macsec: introduce IEEE 802.1AE driver
-Message-Id: <20160316102244.GA20043@bistromath>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 08 Mar 2016 12:04:08 +0000
+Subject: [patch] libertas: fix an error code in probe
+Message-Id: <20160308120408.GA28684@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160315211241.GA17317@mwanda>
-In-Reply-To: <20160315211241.GA17317@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Dan,
+We accidentally return success instead of a negative error code.
 
-2016-03-16, 00:12:41 +0300, Dan Carpenter wrote:
-> Hello Sabrina Dubroca,
-> 
-> The patch c09440f7dcb3: "macsec: introduce IEEE 802.1AE driver" from
-> Mar 11, 2016, leads to the following Smatch warnings:
-> 
->     drivers/net/macsec.c:714 macsec_encrypt()
->     warn: 'skb->dev' held on error path.
-> 
-> drivers/net/macsec.c
->    711          dev_hold(skb->dev);
->                 ^^^^^^^^^^^^^^^^^^
->    712          ret = crypto_aead_encrypt(req);
->    713          if (ret = -EINPROGRESS) {
->    714                  return ERR_PTR(ret);
-> 
-> Need to dev_put() before returning.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-In this case, no.  We want to hold a reference on the netdevice, and
-it is released by the crypto callback (macsec_encrypt_done(), or
-macsec_decrypt_done() in the second case).
-
-[snip second case]
-
-
->     drivers/net/macsec.c:1624 macsec_add_rxsa()
->     error: potential null dereference 'rx_sa'.  (kmalloc returns null)
-
-Right, I'm missing a NULL check here.  I'll send a fix.
-
-
->   1616          }
->   1617  
->   1618          rx_sa = rtnl_dereference(rx_sc->sa[assoc_num]);
->   1619          if (rx_sa) {
->   1620                  rtnl_unlock();
->   1621                  return -EBUSY;
->   1622          }
->   1623  
->   1624          rx_sa = kmalloc(sizeof(*rx_sa), GFP_KERNEL);
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->   1625          if (init_rx_sa(rx_sa, nla_data(tb_sa[MACSEC_SA_ATTR_KEY]), secy->key_len,
->                                ^^^^^
-> Dereferenced inside function.
-> 
->   1626                         secy->icv_len)) {
->   1627                  rtnl_unlock();
->   1628                  return -ENOMEM;
->   1629          }
->   1630  
-
-
-Thanks for the report!
-
--- 
-Sabrina
+diff --git a/drivers/net/wireless/marvell/libertas/main.c b/drivers/net/wireless/marvell/libertas/main.c
+index b35b8bc..8541cbe 100644
+--- a/drivers/net/wireless/marvell/libertas/main.c
++++ b/drivers/net/wireless/marvell/libertas/main.c
+@@ -1118,7 +1118,8 @@ int lbs_start_card(struct lbs_private *priv)
+ 	else
+ 		pr_info("%s: mesh disabled\n", dev->name);
+ 
+-	if (lbs_cfg_register(priv)) {
++	ret = lbs_cfg_register(priv);
++	if (ret) {
+ 		pr_err("cannot register device\n");
+ 		goto done;
+ 	}
