@@ -1,22 +1,67 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Wed, 02 Mar 2016 14:53:55 +0000
-Subject: Re: [patch] iommu/exynos: checking for IS_ERR() instead of NULL
-Message-Id: <20160302145355.GE20213@8bytes.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Mar 2016 19:44:03 +0000
+Subject: re: tracing: Make tracer_flags use the right set_flag callback
+Message-Id: <20160310194403.GA17979@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160302101047.GH5533@mwanda>
-In-Reply-To: <20160302101047.GH5533@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 02, 2016 at 01:10:47PM +0300, Dan Carpenter wrote:
-> of_platform_device_create() returns NULL on error, it never returns
-> error pointers.
-> 
-> Fixes: 8ed55c812fa8 ('iommu/exynos: Init from dt-specific callback instead of initcall')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hello Chunyu Hu,
 
-Applied, thanks.
+The patch d39cdd2036a6: "tracing: Make tracer_flags use the right
+set_flag callback" from Mar 8, 2016, leads to the following
+Smatch warning:
 
+kernel/trace/trace.c:1303 register_tracer()
+warn: inconsistent returns 'mutex:&trace_types_lock'.
+  Locked on:   line 1260
+  Unlocked on: line 1232
+               line 1237
+               line 1303
+
+
+kernel/trace/trace.c
+  1253  
+  1254          if (!type->set_flag)
+  1255                  type->set_flag = &dummy_set_flag;
+  1256          if (!type->flags) {
+  1257                  /*allocate a dummy tracer_flags*/
+  1258                  type->flags = kmalloc(sizeof(*type->flags), GFP_KERNEL);
+  1259                  if (!type->flags)
+  1260                          return -ENOMEM;
+
+Should probably be a goto out.
+
+  1261                  type->flags->val = 0;
+  1262                  type->flags->opts = dummy_tracer_opt;
+  1263          } else
+  1264                  if (!type->flags->opts)
+  1265                          type->flags->opts = dummy_tracer_opt;
+  1266  
+  1267          /* store the tracer for __set_tracer_option */
+  1268          type->flags->trace = type;
+  1269  
+  1270          ret = run_tracer_selftest(type);
+  1271          if (ret < 0)
+  1272                  goto out;
+  1273  
+  1274          type->next = trace_types;
+  1275          trace_types = type;
+  1276          add_tracer_options(&global_trace, type);
+  1277  
+  1278   out:
+  1279          tracing_selftest_running = false;
+  1280          mutex_unlock(&trace_types_lock);
+  1281  
+  1282          if (ret || !default_bootup_tracer)
+  1283                  goto out_unlock;
+
+It's weird that goto out_unlock doesn't unlock.
+
+
+  1284  
+
+regards,
+dan carpenter
