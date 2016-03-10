@@ -1,44 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Mar 2016 11:19:09 +0000
-Subject: Re: [patch] scsi_dh_alua: uninitialized variable in alua_check_vpd()
-Message-Id: <20160311111909.GE5273@mwanda>
+Date: Thu, 10 Mar 2016 07:45:32 +0000
+Subject: [patch] ata: ahci_xgene: dereferencing uninitialized pointer in probe
+Message-Id: <20160310074532.GA7163@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160311101756.GA9384@mwanda>
- <56E2A2F6.30308@suse.de>
-In-Reply-To: <56E2A2F6.30308@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.de>
-Cc: "James E.J. Bottomley" <JBottomley@odin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Suman Tripathi <stripathi@apm.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 11, 2016 at 11:50:30AM +0100, Hannes Reinecke wrote:
-> On 03/11/2016 11:17 AM, Dan Carpenter wrote:
-> > The pg_updated variable is support to be set to zero at the start but
-> > it is uninitialized.
-> > 
-> > Fixes: cb0a168cb6b8 ('scsi_dh_alua: update 'access_state' field')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
-> > index 5bcdf8d..e4f6174 100644
-> > --- a/drivers/scsi/device_handler/scsi_dh_alua.c
-> > +++ b/drivers/scsi/device_handler/scsi_dh_alua.c
-> > @@ -332,7 +332,7 @@ static int alua_check_vpd(struct scsi_device *sdev, struct alua_dh_data *h,
-> >  {
-> >  	int rel_port = -1, group_id;
-> >  	struct alua_port_group *pg, *old_pg = NULL;
-> > -	bool pg_updated;
-> > +	bool pg_updated = 0;
-> >  	unsigned long flags;
-> >  
-> >  	group_id = scsi_vpd_tpg_id(sdev, &rel_port);
-> > 
-> I'd prefer 'pg_updated = false'.
-> Not that we trip over a static code analyser here :-)
+If the call to acpi_get_object_info() fails then "info" hasn't been
+initialized.  In that situation, we already know that "version" should
+be XGENE_AHCI_V1 so we don't actually need to dereference "info".
 
-Duh...  Sorry about that.
+Fixes: c9802a4be661 ('ata: ahci_xgene: Add AHCI Support for 2nd HW version of APM X-Gene SoC AHCI SATA Host controller.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+index 8e3f7fa..73b19b2 100644
+--- a/drivers/ata/ahci_xgene.c
++++ b/drivers/ata/ahci_xgene.c
+@@ -821,9 +821,9 @@ static int xgene_ahci_probe(struct platform_device *pdev)
+ 				dev_warn(&pdev->dev, "%s: Error reading device info. Assume version1\n",
+ 					__func__);
+ 				version = XGENE_AHCI_V1;
+-			}
+-			if (info->valid & ACPI_VALID_CID)
++			} else if (info->valid & ACPI_VALID_CID) {
+ 				version = XGENE_AHCI_V2;
++			}
+ 		}
+ 	}
+ #endif
