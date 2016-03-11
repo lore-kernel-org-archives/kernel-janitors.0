@@ -1,37 +1,31 @@
-From: Clifton Barnes <clifton.a.barnes@gmail.com>
-Date: Sun, 27 Mar 2016 19:13:00 +0000
-Subject: [PATCH 2/5] staging: xgifb: fix 'line over 80 characters'
-Message-Id: <1459105983-17251-2-git-send-email-clifton.a.barnes@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Mar 2016 08:14:43 +0000
+Subject: [patch] irqchip: irq-alpine-msi: releasing the wrong variable on error
+Message-Id: <20160311081442.GE31887@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1459105983-17251-1-git-send-email-clifton.a.barnes@gmail.com>
-In-Reply-To: <1459105983-17251-1-git-send-email-clifton.a.barnes@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: arnaud.patard@rtp-net.org
-Cc: kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, Clifton Barnes <clifton.a.barnes@gmail.com>
+To: Tsahee Zidenberg <tsahee@annapurnalabs.com>, Antoine Tenart <antoine.tenart@free-electrons.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-fix checkpatch.pl warning about 'line over 80 characters'
+The "msi_domain" variable is NULL here so it leads to a NULL
+dereference.  It looks like we actually intended to free
+"middle_domain".
 
-Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
----
- drivers/staging/xgifb/vb_init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Fixes: e6b78f2c3e14 ('irqchip: Add the Alpine MSIX interrupt controller')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/xgifb/vb_init.c b/drivers/staging/xgifb/vb_init.c
-index 1ef2bfb..062ece2 100644
---- a/drivers/staging/xgifb/vb_init.c
-+++ b/drivers/staging/xgifb/vb_init.c
-@@ -552,7 +552,8 @@ static int XGINew_ReadWriteRest(unsigned short StopAddr,
- 		writel(Position, fbaddr + Position);
+diff --git a/drivers/irqchip/irq-alpine-msi.c b/drivers/irqchip/irq-alpine-msi.c
+index f871272..2538425 100644
+--- a/drivers/irqchip/irq-alpine-msi.c
++++ b/drivers/irqchip/irq-alpine-msi.c
+@@ -220,7 +220,7 @@ static int alpine_msix_init_domains(struct alpine_msix_data *priv,
+ 					       middle_domain);
+ 	if (!msi_domain) {
+ 		pr_err("Failed to create MSI domain\n");
+-		irq_domain_remove(msi_domain);
++		irq_domain_remove(middle_domain);
+ 		return -ENOMEM;
  	}
  
--	usleep_range(500, 1500); /* Fix #1759 Memory Size error in Multi-Adapter. */
-+	/* Fix #1759 Memory Size error in Multi-Adapter. */
-+	usleep_range(500, 1500);
- 
- 	Position = 0;
- 
--- 
-1.9.1
-
