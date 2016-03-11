@@ -1,75 +1,43 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Fri, 11 Mar 2016 09:59:02 +0000
+From: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
+Date: Fri, 11 Mar 2016 13:23:34 +0000
 Subject: Re: [RFC PATCH v0] Add tw5864 driver
-Message-Id: <56E296E6.8000709@xs4all.nl>
+Message-Id: <20160311152334.1c053054@zver>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1451785302-3173-1-git-send-email-andrey.utkin@corp.bluecherry.net>
- <56938969.30104@xs4all.nl>
- <CAM_ZknVgTETBNXu+8N6eJa=cf_Mmj=+tA=ocKB9SJL5rkSyijQ@mail.gmail.com>
- <56B866D9.5070606@xs4all.nl> <20160309162924.6e6ebddf@zver>
- <56E27B12.1000803@xs4all.nl> <20160311104003.1cad89f3@zver>
-In-Reply-To: <20160311104003.1cad89f3@zver>
+	<56938969.30104@xs4all.nl>
+	<CAM_ZknVgTETBNXu+8N6eJa=cf_Mmj=+tA=ocKB9SJL5rkSyijQ@mail.gmail.com>
+	<56B866D9.5070606@xs4all.nl>
+	<20160309162924.6e6ebddf@zver>
+	<56E27B12.1000803@xs4all.nl>
+	<20160311104003.1cad89f3@zver>
+	<56E296E6.8000709@xs4all.nl>
+In-Reply-To: <56E296E6.8000709@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
+To: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Linux Media <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-mentors@selenic.com" <kernel-mentors@selenic.com>, devel@driverdev.osuosl.org, kernel-janitors <kernel-janitors@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Andrey Utkin <andrey_utkin@fastmail.com>
 
-On 03/11/2016 09:40 AM, Andrey Utkin wrote:
-> On Fri, 11 Mar 2016 09:00:18 +0100
-> Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> The reason is likely to be the tw5864_queue_setup function which has
->> not been updated to handle CREATE_BUFS support correctly. It should
->> look like this:
->>
->> static int tw5864_queue_setup(struct vb2_queue *q,
->> 			      unsigned int *num_buffers,
->> 			      unsigned int *num_planes, unsigned int
->> sizes[], void *alloc_ctxs[])
->> {
->> 	struct tw5864_input *dev = vb2_get_drv_priv(q);
->>
->> 	if (q->num_buffers + *num_buffers < 12)
->> 		*num_buffers = 12 - q->num_buffers;
->>
->> 	alloc_ctxs[0] = dev->alloc_ctx;
->> 	if (*num_planes)
->> 		return sizes[0] < H264_VLC_BUF_SIZE ? -EINVAL : 0;
->>
->> 	sizes[0] = H264_VLC_BUF_SIZE;
->> 	*num_planes = 1;
->>
->> 	return 0;
->> }
+On Fri, 11 Mar 2016 10:59:02 +0100
+Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> While userspace may specify FIELD_ANY when setting a format, the
+> driver should always map that to a specific field setting and should
+> never return FIELD_ANY back to userspace.
 > 
-> Thanks for suggestion, but now the failure looks this way:
+> In this case, the 'field' field of the v4l2_buffer struct has
+> FIELD_ANY which means it is not set correctly (or at all) in the
+> driver.
 > 
-> Streaming ioctls:
->         test read/write: OK
->                 fail: v4l2-test-buffers.cpp(297): g_field() = V4L2_FIELD_ANY
+> It's a common mistake, which is why v4l2-compliance tests for it :-)
 
-While userspace may specify FIELD_ANY when setting a format, the driver should
-always map that to a specific field setting and should never return FIELD_ANY
-back to userspace.
+Thanks for great guidance Hans, finally I have solved all issues.
 
-In this case, the 'field' field of the v4l2_buffer struct has FIELD_ANY which
-means it is not set correctly (or at all) in the driver.
+You can review latest state at tw5864 branch, also you can review
+changelog of v4l2-compliance fixing at tags tw5864_pre_1.11,
+tw5864_pre_1.10 of https://github.com/bluecherrydvr/linux .
 
-It's a common mistake, which is why v4l2-compliance tests for it :-)
+I will make a final internal review before submission, and try
+to submit the driver for inclusion.
 
-Regards,
-
-	Hans
-
->                 fail: v4l2-test-buffers.cpp(703): buf.check(q, last_seq)
->                 fail: v4l2-test-buffers.cpp(976): captureBufs(node, q, m2m_q, frame_count, false)
->         test MMAP: FAIL
-> 
-> Will check that later. If you have any suggestions, I would be very
-> grateful.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
+Everybody is appreciated to make any comments even before submission,
+the actual code to review is at tw5864 branch.
