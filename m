@@ -1,34 +1,35 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 24 Mar 2016 06:11:08 +0000
-Subject: [PATCH 2/2] staging: dgnc: remove unused variable in dgnc_board
-Message-Id: <20160324061108.GA12250@SEL-JYOUN-D1>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Mar 2016 08:13:01 +0000
+Subject: [patch] [media] em28xx-i2c: rt_mutex_trylock() returns zero on failure
+Message-Id: <20160311081301.GD31887@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-TtyRefCnt was not used anywhere in dgnc.
+The code is checking for negative returns but it should be checking for
+zero.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Fixes: aab3125c43d8 ('[media] em28xx: add support for registering multiple i2c buses')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/dgnc/dgnc_driver.h | 2 --
- 1 file changed, 2 deletions(-)
+Is -EBUSY correct?  -EAGAIN?
 
-diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
-index 3d8e15f..44216ae 100644
---- a/drivers/staging/dgnc/dgnc_driver.h
-+++ b/drivers/staging/dgnc/dgnc_driver.h
-@@ -213,8 +213,6 @@ struct dgnc_board {
- 	uint		dgnc_serial_major;
- 	uint		dgnc_transparent_print_major;
+diff --git a/drivers/media/usb/em28xx/em28xx-i2c.c b/drivers/media/usb/em28xx/em28xx-i2c.c
+index a19b5c8..f80dd3a 100644
+--- a/drivers/media/usb/em28xx/em28xx-i2c.c
++++ b/drivers/media/usb/em28xx/em28xx-i2c.c
+@@ -507,9 +507,8 @@ static int em28xx_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 	if (dev->disconnected)
+ 		return -ENODEV;
  
--	uint		TtyRefCnt;
--
- 	u16		dpatype;	/* The board "type",
- 					 * as defined by DPA
- 					 */
--- 
-1.9.1
-
+-	rc = rt_mutex_trylock(&dev->i2c_bus_lock);
+-	if (rc < 0)
+-		return rc;
++	if (!rt_mutex_trylock(&dev->i2c_bus_lock))
++		return -EBUSY;
+ 
+ 	/* Switch I2C bus if needed */
+ 	if (bus != dev->cur_i2c_bus &&
