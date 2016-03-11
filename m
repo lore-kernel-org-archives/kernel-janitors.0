@@ -1,46 +1,86 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 15 Mar 2016 23:45:36 +0000
-Subject: Re: [patch] Input: synaptics-rmi4 - using logical instead of bitwise AND
-Message-Id: <20160315234536.GA29178@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Mar 2016 12:40:56 +0000
+Subject: [PATCH] batman-adv: Less function calls in batadv_is_ap_isolated() after error detection
+Message-Id: <56E2BCD8.9010200@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160315071140.GF13560@mwanda>
- <56E87C82.7080105@synaptics.com>
-In-Reply-To: <56E87C82.7080105@synaptics.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <564EDE1D.7070809@meshcoding.com> <564EFC67.7050307@users.sourceforge.net>
+ <1655341.WCvHHx7pqD@bentobox>
+In-Reply-To: <1655341.WCvHHx7pqD@bentobox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Duggan <aduggan@synaptics.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Henrik Rydberg <rydberg@bitmath.org>, Christopher Heiny <cheiny@synaptics.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org, Antonio Quartulli <a@unstable.cc>, "David S. Miller" <davem@davemloft.net>, Marek Lindner <mareklindner@neomailbox.ch>, Simon Wunderlich <sw@simonwunderlich.de>, Sven Eckelmann <sven@narfation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Mar 15, 2016 at 02:20:02PM -0700, Andrew Duggan wrote:
-> On 03/15/2016 12:11 AM, Dan Carpenter wrote:
-> >There is a typo so we have && instead of &.
-> >
-> >Fixes: ff8f83708b3e ('Input: synaptics-rmi4 - add support for 2D sensors and F11')
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Andrew Duggan <aduggan@synaptics.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 11 Mar 2016 13:10:20 +0100
 
-Applied, thank you.
+The variables "tt_local_entry" and "tt_global_entry" were eventually
+checked again despite of a corresponding null pointer test before.
 
-> 
-> >diff --git a/drivers/input/rmi4/rmi_f11.c b/drivers/input/rmi4/rmi_f11.c
-> >index 77a5eb8..ec8a10d 100644
-> >--- a/drivers/input/rmi4/rmi_f11.c
-> >+++ b/drivers/input/rmi4/rmi_f11.c
-> >@@ -775,7 +775,7 @@ static int rmi_f11_get_query_parameters(struct rmi_device *rmi_dev,
-> >  	sensor_query->has_abs = !!(query_buf[0] & RMI_F11_HAS_ABS);
-> >  	sensor_query->has_gestures = !!(query_buf[0] & RMI_F11_HAS_GESTURES);
-> >  	sensor_query->has_sensitivity_adjust > >-		!!(query_buf[0] && RMI_F11_HAS_SENSITIVITY_ADJ);
-> >+		!!(query_buf[0] & RMI_F11_HAS_SENSITIVITY_ADJ);
-> >  	sensor_query->configurable = !!(query_buf[0] & RMI_F11_CONFIGURABLE);
-> >  	sensor_query->nr_x_electrodes > >@@ -803,7 +803,7 @@ static int rmi_f11_get_query_parameters(struct rmi_device *rmi_dev,
-> >  		sensor_query->has_bending_correction > >  			!!(query_buf[0] & RMI_F11_HAS_BENDING_CORRECTION);
-> >  		sensor_query->has_large_object_suppression > >-		!!(query_buf[0] && RMI_F11_HAS_LARGE_OBJECT_SUPPRESSION);
-> >+			!!(query_buf[0] & RMI_F11_HAS_LARGE_OBJECT_SUPPRESSION);
-> >  		sensor_query->has_jitter_filter > >  			!!(query_buf[0] & RMI_F11_HAS_JITTER_FILTER);
-> >  		query_size++;
-> 
+* Avoid this double check by reordering a function call sequence
+  and the better selection of jump targets.
 
+* Omit the initialisation for these variables at the beginning then.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/batman-adv/translation-table.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+index 0b43e86..9c0193ee 100644
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -3403,8 +3403,8 @@ void batadv_tt_local_commit_changes(struct batadv_priv *bat_priv)
+ bool batadv_is_ap_isolated(struct batadv_priv *bat_priv, u8 *src, u8 *dst,
+ 			   unsigned short vid)
+ {
+-	struct batadv_tt_local_entry *tt_local_entry = NULL;
+-	struct batadv_tt_global_entry *tt_global_entry = NULL;
++	struct batadv_tt_local_entry *tt_local_entry;
++	struct batadv_tt_global_entry *tt_global_entry;
+ 	struct batadv_softif_vlan *vlan;
+ 	bool ret = false;
+ 
+@@ -3413,27 +3413,24 @@ bool batadv_is_ap_isolated(struct batadv_priv *bat_priv, u8 *src, u8 *dst,
+ 		return false;
+ 
+ 	if (!atomic_read(&vlan->ap_isolation))
+-		goto out;
++		goto vlan_put;
+ 
+ 	tt_local_entry = batadv_tt_local_hash_find(bat_priv, dst, vid);
+ 	if (!tt_local_entry)
+-		goto out;
++		goto vlan_put;
+ 
+ 	tt_global_entry = batadv_tt_global_hash_find(bat_priv, src, vid);
+ 	if (!tt_global_entry)
+-		goto out;
+-
+-	if (!_batadv_is_ap_isolated(tt_local_entry, tt_global_entry))
+-		goto out;
++		goto local_entry_put;
+ 
+-	ret = true;
++	if (_batadv_is_ap_isolated(tt_local_entry, tt_global_entry))
++		ret = true;
+ 
+-out:
++	batadv_tt_global_entry_put(tt_global_entry);
++local_entry_put:
++	batadv_tt_local_entry_put(tt_local_entry);
++vlan_put:
+ 	batadv_softif_vlan_put(vlan);
+-	if (tt_global_entry)
+-		batadv_tt_global_entry_put(tt_global_entry);
+-	if (tt_local_entry)
+-		batadv_tt_local_entry_put(tt_local_entry);
+ 	return ret;
+ }
+ 
 -- 
-Dmitry
+2.7.2
+
