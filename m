@@ -1,79 +1,30 @@
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-Date: Fri, 18 Mar 2016 19:38:09 +0000
-Subject: Re: [lustre-devel] [patch] staging: lustre: checking for NULL instead of IS_ERR
-Message-Id: <D311B485.137187%andreas.dilger@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Mar 2016 10:17:56 +0000
+Subject: [patch] scsi_dh_alua: uninitialized variable in alua_check_vpd()
+Message-Id: <20160311101756.GA9384@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160318054247.GF2111@mwanda>
-	<D311B2C7.13716D%andreas.dilger@intel.com>
-In-Reply-To: <D311B2C7.13716D%andreas.dilger@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: "James E.J. Bottomley" <JBottomley@odin.com>, Hannes Reinecke <hare@suse.de>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2016/03/18, 13:28, "lustre-devel on behalf of Dilger, Andreas"
-<lustre-devel-bounces@lists.lustre.org on behalf of
-andreas.dilger@intel.com> wrote:
+The pg_updated variable is support to be set to zero at the start but
+it is uninitialized.
 
->On 2016/03/17, 23:42, "Dan Carpenter" <dan.carpenter@oracle.com> wrote:
->
->>lustre_cfg_new() returns error pointers on error, it never returns NULL.
+Fixes: cb0a168cb6b8 ('scsi_dh_alua: update 'access_state' field')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hmm, looking at the broader context, I see there are other callers of
-lustre_cfg_new() that are checking for NULL, and in some cases not
-checking the return code at all.
-
-I'm not sure why Peng Tao changed the return value of this function to
-ERR_PTR() instead of NULL, but it may be better to have lustre_cfg_new()
-return NULL on failure to avoid changing more code, and because it is
-essentially an alloc+init function and the only error it could ever
-return is -ENOMEM and typically allocator functions return NULL.
-
-Cheers, Andreas
-
->>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->>diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c
->>b/drivers/staging/lustre/lustre/mgc/mgc_request.c
->>index 65caffe..b7dc872 100644
->>--- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
->>+++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
->>@@ -1282,7 +1282,7 @@ static int mgc_apply_recover_logs(struct obd_device
->>*mgc,
->> 
->> 		rc = -ENOMEM;
->> 		lcfg = lustre_cfg_new(LCFG_PARAM, &bufs);
->>-		if (!lcfg) {
->>+		if (IS_ERR(lcfg)) {
->> 			CERROR("mgc: cannot allocate memory\n");
->> 			break;
->> 		}
->
->Looks good.  Thanks for the patch.
->
->Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
->
->
->Cheers, Andreas
->-- 
->Andreas Dilger
->
->Lustre Principal Architect
->Intel High Performance Data Division
->
->
->_______________________________________________
->lustre-devel mailing list
->lustre-devel@lists.lustre.org
->http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org
->
-
-
-Cheers, Andreas
--- 
-Andreas Dilger
-
-Lustre Principal Architect
-Intel High Performance Data Division
-
-
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index 5bcdf8d..e4f6174 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -332,7 +332,7 @@ static int alua_check_vpd(struct scsi_device *sdev, struct alua_dh_data *h,
+ {
+ 	int rel_port = -1, group_id;
+ 	struct alua_port_group *pg, *old_pg = NULL;
+-	bool pg_updated;
++	bool pg_updated = 0;
+ 	unsigned long flags;
+ 
+ 	group_id = scsi_vpd_tpg_id(sdev, &rel_port);
