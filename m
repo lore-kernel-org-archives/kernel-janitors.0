@@ -1,27 +1,32 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Fri, 11 Mar 2016 17:41:04 +0000
-Subject: Re: [patch] ata: ahci_xgene: dereferencing uninitialized pointer in probe
-Message-Id: <20160311174104.GH24046@htj.duckdns.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Mar 2016 11:19:03 +0000
+Subject: [patch v2] scsi_dh_alua: uninitialized variable in alua_check_vpd()
+Message-Id: <20160311111903.GA12332@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160310074532.GA7163@mwanda>
-In-Reply-To: <20160310074532.GA7163@mwanda>
+References: <56E2A2F6.30308@suse.de>
+In-Reply-To: <56E2A2F6.30308@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Suman Tripathi <stripathi@apm.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@odin.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Bart Van Assche <bart.vanassche@sandisk.com>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 10, 2016 at 10:45:32AM +0300, Dan Carpenter wrote:
-> If the call to acpi_get_object_info() fails then "info" hasn't been
-> initialized.  In that situation, we already know that "version" should
-> be XGENE_AHCI_V1 so we don't actually need to dereference "info".
-> 
-> Fixes: c9802a4be661 ('ata: ahci_xgene: Add AHCI Support for 2nd HW version of APM X-Gene SoC AHCI SATA Host controller.')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The pg_updated variable is support to be set to false at the start but
+it is uninitialized.
 
-Applied to libata/for-4.6.
+Fixes: cb0a168cb6b8 ('scsi_dh_alua: update 'access_state' field')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
-
--- 
-tejun
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index 5bcdf8d..a404a41 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -332,7 +332,7 @@ static int alua_check_vpd(struct scsi_device *sdev, struct alua_dh_data *h,
+ {
+ 	int rel_port = -1, group_id;
+ 	struct alua_port_group *pg, *old_pg = NULL;
+-	bool pg_updated;
++	bool pg_updated = false;
+ 	unsigned long flags;
+ 
+ 	group_id = scsi_vpd_tpg_id(sdev, &rel_port);
