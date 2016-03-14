@@ -1,67 +1,42 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 31 Mar 2016 08:03:35 +0000
-Subject: [PATCH 1/2] staging: dgnc: remove useless variables for saving tty's
-Message-Id: <20160331080335.GA27013@SEL-JYOUN-D1>
+From: Chunyu Hu <chuhu@redhat.com>
+Date: Mon, 14 Mar 2016 12:35:41 +0000
+Subject: [PATCH] tracing: fix a potential mutex deadlock in register_tracer
+Message-Id: <1457958941-30265-1-git-send-email-chuhu@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: rostedt@goodmis.org
+Cc: mingo@redhat.com, dan.carpenter@oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-It doesn't need to save major number with variable.
-And there are no use of these variables(dgnc_serial_major and
-dgnc_transparent_print_major)
+commit d39cdd2036a63eef17a14efbd969405ca5612886 ("tracing: Make
+tracer_flags use the right set_flag callback")  introduces a potential
+mutex deadlock issue, as it forgets to free the mutex when allocaing
+the tracer_flags gets fail. This patch fix the issue. The issue was
+found by Dan Carpenter through Smatch static code check tool.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Chunyu Hu <chuhu@redhat.com>
 ---
- drivers/staging/dgnc/dgnc_driver.h | 3 ---
- drivers/staging/dgnc/dgnc_tty.c    | 4 ----
- 2 files changed, 7 deletions(-)
+ kernel/trace/trace.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
-index 44216ae..6609ba5 100644
---- a/drivers/staging/dgnc/dgnc_driver.h
-+++ b/drivers/staging/dgnc/dgnc_driver.h
-@@ -210,9 +210,6 @@ struct dgnc_board {
- 	bool		dgnc_major_serial_registered;
- 	bool		dgnc_major_transparent_print_registered;
- 
--	uint		dgnc_serial_major;
--	uint		dgnc_transparent_print_major;
--
- 	u16		dpatype;	/* The board "type",
- 					 * as defined by DPA
- 					 */
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 98b88d1..5097208 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -286,8 +286,6 @@ int dgnc_tty_register(struct dgnc_board *brd)
- 	}
- 
- 	dgnc_BoardsByMajor[brd->serial_driver.major] = brd;
--	brd->dgnc_serial_major = brd->serial_driver.major;
--	brd->dgnc_transparent_print_major = brd->print_driver.major;
- 
- 	return rc;
- }
-@@ -409,7 +407,6 @@ void dgnc_tty_uninit(struct dgnc_board *brd)
- 
- 	if (brd->dgnc_major_serial_registered) {
- 		dgnc_BoardsByMajor[brd->serial_driver.major] = NULL;
--		brd->dgnc_serial_major = 0;
- 		for (i = 0; i < brd->nasync; i++) {
- 			if (brd->channels[i])
- 				dgnc_remove_tty_sysfs(brd->channels[i]->
-@@ -422,7 +419,6 @@ void dgnc_tty_uninit(struct dgnc_board *brd)
- 
- 	if (brd->dgnc_major_transparent_print_registered) {
- 		dgnc_BoardsByMajor[brd->print_driver.major] = NULL;
--		brd->dgnc_transparent_print_major = 0;
- 		for (i = 0; i < brd->nasync; i++) {
- 			if (brd->channels[i])
- 				dgnc_remove_tty_sysfs(brd->channels[i]->
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index b401a18..0ae4604 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1256,8 +1256,10 @@ int __init register_tracer(struct tracer *type)
+ 	if (!type->flags) {
+ 		/*allocate a dummy tracer_flags*/
+ 		type->flags = kmalloc(sizeof(*type->flags), GFP_KERNEL);
+-		if (!type->flags)
+-			return -ENOMEM;
++		if (!type->flags) {
++			ret = -ENOMEM;
++			goto out;
++		}
+ 		type->flags->val = 0;
+ 		type->flags->opts = dummy_tracer_opt;
+ 	} else
 -- 
-1.9.1
+1.8.3.1
 
