@@ -1,45 +1,92 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 21 Mar 2016 18:50:13 +0000
-Subject: Re: [patch] mfd: lp8788-irq: uninitialized variable in irq handler
-Message-Id: <20160321185012.GJ4140@x1>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Mar 2016 21:12:41 +0000
+Subject: re: macsec: introduce IEEE 802.1AE driver
+Message-Id: <20160315211241.GA17317@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160311081139.GC31887@mwanda>
- <20160321115457.GH4140@x1>
- <20160321123013.GW5273@mwanda>
-In-Reply-To: <20160321123013.GW5273@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Milo Kim <milo.kim@ti.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 21 Mar 2016, Dan Carpenter wrote:
+Hello Sabrina Dubroca,
 
-> Gar, the truth is I'm never going to remember to capitalize patches for
-> you.  No one else has that rule.  Plus the last two times we had this
+The patch c09440f7dcb3: "macsec: introduce IEEE 802.1AE driver" from
+Mar 11, 2016, leads to the following Smatch warnings:
 
-It's an awesome rule.  Everyone should have that rule. ;)
+    drivers/net/macsec.c:714 macsec_encrypt()
+    warn: 'skb->dev' held on error path.
 
-> discussion the patches I was fixing were not capitalized either.
->=20
-> git log -p --author=3D"Dan Carpenter" drivers/mfd | grep Fixes | head
-> -n 2
+drivers/net/macsec.c
+   711          dev_hold(skb->dev);
+                ^^^^^^^^^^^^^^^^^^
+   712          ret = crypto_aead_encrypt(req);
+   713          if (ret = -EINPROGRESS) {
+   714                  return ERR_PTR(ret);
 
-Not sure what you think the output of this command is meant to show,
-but I get this:=20
+Need to dev_put() before returning.
 
-$ git log -p --author=3D"Dan Carpenter" drivers/mfd | grep Fixes | head -n 2
-    Fixes: c013f0a56c56 ('mfd: Add pm8xxx irq support')
+   715          } else if (ret != 0) {
+   716                  dev_put(skb->dev);
+   717                  kfree_skb(skb);
+   718                  aead_request_free(req);
+   719                  macsec_txsa_put(tx_sa);
+   720                  return ERR_PTR(-EINVAL);
+   721          }
+   722  
+   723          dev_put(skb->dev);
+   724          aead_request_free(req);
+   725          macsec_txsa_put(tx_sa);
+   726  
+   727          return skb;
+   728  }
 
-... which seems to go against your statement.
+    drivers/net/macsec.c:923 macsec_decrypt()
+    warn: 'dev' held on error path.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+   921          dev_hold(dev);
+                ^^^^^^^^^^^^^
+   922          ret = crypto_aead_decrypt(req);
+   923          if (ret = -EINPROGRESS) {
+   924                  return NULL;
+
+Same.
+
+   925          } else if (ret != 0) {
+   926                  /* decryption/authentication failed
+   927                   * 10.6 if validateFrames is disabled, deliver anyway
+   928                   */
+   929                  if (ret != -EBADMSG) {
+   930                          kfree_skb(skb);
+   931                          skb = NULL;
+   932                  }
+   933          } else {
+   934                  macsec_skb_cb(skb)->valid = true;
+   935          }
+   936          dev_put(dev);
+   937  
+
+    drivers/net/macsec.c:1624 macsec_add_rxsa()
+    error: potential null dereference 'rx_sa'.  (kmalloc returns null)
+
+  1616          }
+  1617  
+  1618          rx_sa = rtnl_dereference(rx_sc->sa[assoc_num]);
+  1619          if (rx_sa) {
+  1620                  rtnl_unlock();
+  1621                  return -EBUSY;
+  1622          }
+  1623  
+  1624          rx_sa = kmalloc(sizeof(*rx_sa), GFP_KERNEL);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  1625          if (init_rx_sa(rx_sa, nla_data(tb_sa[MACSEC_SA_ATTR_KEY]), secy->key_len,
+                               ^^^^^
+Dereferenced inside function.
+
+  1626                         secy->icv_len)) {
+  1627                  rtnl_unlock();
+  1628                  return -ENOMEM;
+  1629          }
+  1630  
+
+regards,
+dan carpenter
