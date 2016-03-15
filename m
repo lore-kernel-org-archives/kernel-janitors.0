@@ -1,30 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 08 Mar 2016 12:05:46 +0000
-Subject: [patch] block-dev: checking for NULL instead of IS_ERR()
-Message-Id: <20160308120546.GB28684@mwanda>
+From: Christoph Hellwig <hch@infradead.org>
+Date: Tue, 15 Mar 2016 07:26:03 +0000
+Subject: Re: [patch] block-dev: checking for NULL instead of IS_ERR()
+Message-Id: <20160315072603.GC11669@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160308120546.GB28684@mwanda>
+In-Reply-To: <20160308120546.GB28684@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Shaohua Li <shli@fb.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Shaohua Li <shli@fb.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This should be an IS_ERR() check.  mount_pseudo() returns error pointers
-and this function should return the error pointer to its caller as well.
+On Tue, Mar 08, 2016 at 03:05:46PM +0300, Dan Carpenter wrote:
+> This should be an IS_ERR() check.  mount_pseudo() returns error pointers
+> and this function should return the error pointer to its caller as well.
+> 
+> Fixes: 3684aa7099e0 ('block-dev: enable writeback cgroup support')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 3684aa7099e0 ('block-dev: enable writeback cgroup support')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Looks fine.  Would be much nicer to simply pass possible flags as an
+argument to mount_pseudo to avoid this whole dance..
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 3172c4e..2de969e 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -577,7 +577,7 @@ static struct dentry *bd_mount(struct file_system_type *fs_type,
- {
- 	struct dentry *dent;
- 	dent = mount_pseudo(fs_type, "bdev:", &bdev_sops, NULL, BDEVFS_MAGIC);
--	if (dent)
-+	if (!IS_ERR(dent))
- 		dent->d_sb->s_iflags |= SB_I_CGROUPWB;
- 	return dent;
- }
+Reviewed-by: Christoph Hellwig <hch@lst.de>
