@@ -1,35 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Mar 2016 08:13:01 +0000
-Subject: [patch] [media] em28xx-i2c: rt_mutex_trylock() returns zero on failure
-Message-Id: <20160311081301.GD31887@mwanda>
+Date: Tue, 15 Mar 2016 07:05:20 +0000
+Subject: [patch] [media] cx23885: uninitialized variable in cx23885_av_work_handler()
+Message-Id: <20160315070520.GB13560@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The code is checking for negative returns but it should be checking for
-zero.
+The "handled" variable could be uninitialized if the
+interrupt_service_routine() call back hasn't been implimented or if it
+has been implemented but doesn't initialize "handled" to zero at the
+start.  For example, adv76xx_isr() only sets "handled" to true.
 
-Fixes: aab3125c43d8 ('[media] em28xx: add support for registering multiple i2c buses')
+Fixes: 44b153ca639f ('[media] m5mols: Add ISO sensitivity controls')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Is -EBUSY correct?  -EAGAIN?
 
-diff --git a/drivers/media/usb/em28xx/em28xx-i2c.c b/drivers/media/usb/em28xx/em28xx-i2c.c
-index a19b5c8..f80dd3a 100644
---- a/drivers/media/usb/em28xx/em28xx-i2c.c
-+++ b/drivers/media/usb/em28xx/em28xx-i2c.c
-@@ -507,9 +507,8 @@ static int em28xx_i2c_xfer(struct i2c_adapter *i2c_adap,
- 	if (dev->disconnected)
- 		return -ENODEV;
+diff --git a/drivers/media/pci/cx23885/cx23885-av.c b/drivers/media/pci/cx23885/cx23885-av.c
+index 877dad8..e7d4406 100644
+--- a/drivers/media/pci/cx23885/cx23885-av.c
++++ b/drivers/media/pci/cx23885/cx23885-av.c
+@@ -24,7 +24,7 @@ void cx23885_av_work_handler(struct work_struct *work)
+ {
+ 	struct cx23885_dev *dev  			   container_of(work, struct cx23885_dev, cx25840_work);
+-	bool handled;
++	bool handled = false;
  
--	rc = rt_mutex_trylock(&dev->i2c_bus_lock);
--	if (rc < 0)
--		return rc;
-+	if (!rt_mutex_trylock(&dev->i2c_bus_lock))
-+		return -EBUSY;
- 
- 	/* Switch I2C bus if needed */
- 	if (bus != dev->cur_i2c_bus &&
+ 	v4l2_subdev_call(dev->sd_cx25840, core, interrupt_service_routine,
+ 			 PCI_MSK_AV_CORE, &handled);
