@@ -1,33 +1,67 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Mar 2016 20:05:59 +0000
-Subject: [patch 2/2 v2] drm/exynos: fix a warning message
-Message-Id: <20160325200559.GA22090@mwanda>
+Date: Tue, 15 Mar 2016 21:16:24 +0000
+Subject: re: kcm: Splice support
+Message-Id: <20160315211624.GA17646@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <56F4FC08.6090009@samsung.com>
-In-Reply-To: <56F4FC08.6090009@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The "ret = regmap_write()" assignment was missing so this error message
-is never printed.
+[ Someone probably already fixed this, but I'm not on netdev. -dan ]
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: in v1 I just deleted the error message
+Hello Tom Herbert,
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index 9869d70..ea2ea17 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -129,7 +129,7 @@ static void mic_set_path(struct exynos_mic *mic, bool enable)
- 	} else
- 		val &= ~(MIC0_RGB_MUX | MIC0_I80_MUX | MIC0_ON_MUX);
- 
--	regmap_write(mic->sysreg, DSD_CFG_MUX, val);
-+	ret = regmap_write(mic->sysreg, DSD_CFG_MUX, val);
- 	if (ret)
- 		DRM_ERROR("mic: Failed to read system register\n");
- }
+The patch 91687355b927: "kcm: Splice support" from Mar 7, 2016, leads
+to the following static checker warning:
+
+	net/kcm/kcmsock.c:1508 kcm_splice_read()
+	warn: unsigned 'copied' is never less than zero.
+
+net/kcm/kcmsock.c
+  1477  static ssize_t kcm_splice_read(struct socket *sock, loff_t *ppos,
+  1478                                 struct pipe_inode_info *pipe, size_t len,
+  1479                                 unsigned int flags)
+  1480  {
+  1481          struct sock *sk = sock->sk;
+  1482          struct kcm_sock *kcm = kcm_sk(sk);
+  1483          long timeo;
+  1484          struct kcm_rx_msg *rxm;
+  1485          int err = 0;
+  1486          size_t copied;
+                ^^^^^^^^^^^^^
+
+  1487          struct sk_buff *skb;
+  1488  
+  1489          /* Only support splice for SOCKSEQPACKET */
+  1490  
+  1491          timeo = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
+  1492  
+  1493          lock_sock(sk);
+  1494  
+  1495          skb = kcm_wait_data(sk, flags, timeo, &err);
+  1496          if (!skb)
+  1497                  goto err_out;
+  1498  
+  1499          /* Okay, have a message on the receive queue */
+  1500  
+  1501          rxm = kcm_rx_msg(skb);
+  1502  
+  1503          if (len > rxm->full_len)
+  1504                  len = rxm->full_len;
+  1505  
+  1506          copied = skb_splice_bits(skb, sk, rxm->offset, pipe, len, flags,
+  1507                                   kcm_sock_splice);
+  1508          if (copied < 0) {
+                    ^^^^^^^^^
+Never true.
+
+I feel like skb_splice_bits() should return ssize_t instead of int just
+so that everything is consistent.
+
+  1509                  err = copied;
+  1510                  goto err_out;
+  1511          }
+
+regards,
+dan carpenter
