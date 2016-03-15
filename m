@@ -1,45 +1,29 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Sat, 05 Mar 2016 07:21:15 +0000
-Subject: Re: [patch] tcm_loop: use after free on error
-Message-Id: <1457162475.19657.278.camel@haakon3.risingtidesystems.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Mar 2016 07:04:12 +0000
+Subject: [patch] [media] am437x-vpfe: fix an uninitialized variable bug
+Message-Id: <20160315070412.GA13560@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160302100941.GE5533@mwanda>
-In-Reply-To: <20160302100941.GE5533@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>, Bart Van Assche <bart.vanassche@sandisk.com>, Sheng Yang <sheng@yasker.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Benoit Parrot <bparrot@ti.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2016-03-02 at 13:09 +0300, Dan Carpenter wrote:
-> We dereference "tl_nexus" to get the error code.
-> 
-> Fixes: 1b418a8fcbc0 ('target: Convert demo-mode only drivers to target_alloc_session')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
-> index 0216c75..e0ffb03 100644
-> --- a/drivers/target/loopback/tcm_loop.c
-> +++ b/drivers/target/loopback/tcm_loop.c
-> @@ -808,6 +808,7 @@ static int tcm_loop_make_nexus(
->  {
->  	struct tcm_loop_hba *tl_hba = tl_tpg->tl_hba;
->  	struct tcm_loop_nexus *tl_nexus;
-> +	int ret;
->  
->  	if (tl_tpg->tl_nexus) {
->  		pr_debug("tl_tpg->tl_nexus already exists\n");
-> @@ -824,8 +825,9 @@ static int tcm_loop_make_nexus(
->  					TARGET_PROT_DIN_PASS | TARGET_PROT_DOUT_PASS,
->  					name, tl_nexus, NULL);
->  	if (IS_ERR(tl_nexus->se_sess)) {
-> +		ret = PTR_ERR(tl_nexus->se_sess);
->  		kfree(tl_nexus);
-> -		return PTR_ERR(tl_nexus->se_sess);
-> +		return ret;
->  	}
->  
->  	tl_tpg->tl_nexus = tl_nexus;
+If we are doing V4L2_FIELD_NONE then "ret" is used uninitialized.
 
-Also fixed + squashed into HCH's original patch.
+Fixes: 417d2e507edc ('[media] media: platform: add VPFE capture driver support for AM437X')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+index de32e3a..7d14732 100644
+--- a/drivers/media/platform/am437x/am437x-vpfe.c
++++ b/drivers/media/platform/am437x/am437x-vpfe.c
+@@ -1047,7 +1047,7 @@ static int vpfe_get_ccdc_image_format(struct vpfe_device *vpfe,
+ static int vpfe_config_ccdc_image_format(struct vpfe_device *vpfe)
+ {
+ 	enum ccdc_frmfmt frm_fmt = CCDC_FRMFMT_INTERLACED;
+-	int ret;
++	int ret = 0;
+ 
+ 	vpfe_dbg(2, vpfe, "vpfe_config_ccdc_image_format\n");
+ 
