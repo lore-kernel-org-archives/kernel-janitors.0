@@ -1,34 +1,38 @@
-From: DaeSeok Youn <daeseok.youn@gmail.com>
-Date: Mon, 07 Mar 2016 07:50:14 +0000
-Subject: Re: [PATCH 1/2] staging: dgnc: use pointer type of tty_struct
-Message-Id: <CAHb8M2DyEuv8RL=g7jKOHu1TDba6r+Wd-gBuS63rHBf-a_jCUQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Mar 2016 07:09:17 +0000
+Subject: [patch] ALSA: mixart: silence unitialized variable warnings
+Message-Id: <20160315070917.GE13560@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160229021551.GA12190@SEL-JYOUN-D1>
- <20160307071044.GA29426@sudip-pc>
-In-Reply-To: <20160307071044.GA29426@sudip-pc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: devel <devel@driverdev.osuosl.org>, Lidza Louina <lidza.louina@gmail.com>, "driverdev-devel@linuxdriverproject.org" <driverdev-devel@linuxdriverproject.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-2016-03-07 16:10 GMT+09:00 Sudip Mukherjee <sudipm.mukherjee@gmail.com>:
->
-> On Mon, Feb 29, 2016 at 11:15:51AM +0900, Daeseok Youn wrote:
-> > From 70f8703b3bd73fa56f4ea91e98967b8925550aa6 Mon Sep 17 00:00:00 2001
-> > From: Daeseok Youn <daeseok.youn@gmail.com>
-> > Date: Thu, 25 Feb 2016 14:53:37 +0900
-> > Subject: [PATCH 1/2] staging: dgnc: use pointer type of tty_struct
->
-> These lines above are not required in the commit log. Please send v2 of
-> both your patches without these lines.
+We print can print the uninitialized memory on error.  Which is an info
+leak, I suppose but it's basically harmless.
 
-ok. I will send my patches again.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
-
-regards,
-Daeseok.
->
-> regards
-> sudip
+diff --git a/sound/pci/mixart/mixart_mixer.c b/sound/pci/mixart/mixart_mixer.c
+index 24a1955..58fd79eb 100644
+--- a/sound/pci/mixart/mixart_mixer.c
++++ b/sound/pci/mixart/mixart_mixer.c
+@@ -726,7 +726,7 @@ int mixart_update_playback_stream_level(struct snd_mixart* chip, int is_aes, int
+ 	int volume[2];
+ 	struct mixart_msg request;
+ 	struct mixart_set_out_stream_level_req set_level;
+-	u32 status;
++	u32 status = 0;
+ 	struct mixart_pipe *pipe;
+ 
+ 	memset(&set_level, 0, sizeof(set_level));
+@@ -778,7 +778,7 @@ int mixart_update_capture_stream_level(struct snd_mixart* chip, int is_aes)
+ 	struct mixart_pipe *pipe;
+ 	struct mixart_msg request;
+ 	struct mixart_set_in_audio_level_req set_level;
+-	u32 status;
++	u32 status = 0;
+ 
+ 	if(is_aes) {
+ 		idx = 1;
