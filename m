@@ -1,44 +1,82 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Mar 2016 20:09:15 +0000
-Subject: Re: [patch 2/2] drm/exynos: mic: remove some dead code
-Message-Id: <20160325200915.GG30221@mwanda>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 16 Mar 2016 09:22:18 +0000
+Subject: Re: wireless-drivers: random cleanup patches piling up
+Message-Id: <87pouulqut.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160317103912.GB3100@mwanda>
- <56F4FC08.6090009@samsung.com>
-In-Reply-To: <56F4FC08.6090009@samsung.com>
+References: <87wpr3x9ln.fsf@kamboji.qca.qualcomm.com>
+	<1453423965.3856.22.camel@perches.com>
+	<87k2n1x0sf.fsf@kamboji.qca.qualcomm.com>
+	<20160122151211.GB1500@tuxdriver.com>
+	<87si1pvcd7.fsf@kamboji.qca.qualcomm.com>
+	<20160126052823.GA2053@sudip-laptop>
+	<87bn84kdu0.fsf@kamboji.qca.qualcomm.com>
+	<20160201044142.GC4072@sudip-pc>
+	<878u34j0wz.fsf@kamboji.qca.qualcomm.com>
+	<CAGRGNgWkqApcjtEq_K8PQugoHxUSBxfSGJE1Mc+3_W2H9J8GrQ@mail.gmail.com>
+In-Reply-To: <CAGRGNgWkqApcjtEq_K8PQugoHxUSBxfSGJE1Mc+3_W2H9J8GrQ@mail.gmail.com>
+	(Julian Calaby's message of "Wed, 16 Mar 2016 11:57:52 +1100")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, Joe Perches <joe@perches.com>, linux-wireless <linux-wireless@vger.kernel.org>, kbuild test robot <lkp@intel.com>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Mar 25, 2016 at 05:51:20PM +0900, Inki Dae wrote:
-> Hi Dan,
-> 
-> 2016년 03월 17일 19:39에 Dan Carpenter 이(가) 쓴 글:
-> > We know "ret" is zero and the test makes static checkers complain so
-> > let's delete this printk.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> > index 890c9b1..12db353 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> > @@ -130,8 +130,6 @@ static void mic_set_path(struct exynos_mic *mic, bool enable)
-> >  		val &= ~(MIC0_RGB_MUX | MIC0_I80_MUX | MIC0_ON_MUX);
-> >  
-> >  	regmap_write(mic->sysreg, DSD_CFG_MUX, val);
-> > -	if (ret)
-> > -		DRM_ERROR("mic: Failed to read system register\n");
-> 
-> I think we missed to keep return value from regmap_write function,
-> 	ret = regmap_write(mic->sysreg, ....);
-> 	if (ret)
-> 		...
+Julian Calaby <julian.calaby@gmail.com> writes:
 
-Yeah.  You're right.
+> Hi Kalle,
+>
+> On Mon, Feb 1, 2016 at 7:21 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
+>> Sudip Mukherjee <sudipm.mukherjee@gmail.com> writes:
+>>
+>>> Sure, I am starting that way. I checked in patchwork and I do not see
+>>> any checkpatch related patch pending (except staging, which Greg will
+>>> handle). I think you must have cleared all of them.
+>>
+>> They are in deferred state. The search functionality in patchwork is not
+>> that intuitive and they are not easy to find so here's a direct link:
+>>
+>> https://patchwork.kernel.org/project/linux-wireless/list/?state=10&order=
+=DAte
+>
+> I'm currently going through that list and producing a bundle of
+> "applyable" patches.
 
-regards,
-dan carpenter
+Nice.
 
+> My criteria is:
+> 1. The change is sane.
+> 2. It's either obviously correct, I can review it, or someone else has
+> reviewed or acked it.
+> 3. No changes other than rebasing and fixing commit messages are
+> required to apply it.
+
+BTW, 'git am -s -3' is the best way to apply a patch. The three way
+merge is awesome (if the submitter has sent the patch correctly).
+
+> Some of these patches need work on their commit messages, some are
+> complicated enough that I feel I should be providing review notes so
+> someone else can double check my review, and all of them should be
+> rebased and compile tested. Also, some are controversial, so I'll be
+> segregating them from the main set.
+>
+> How would you like me to communicate this list to you? I'm happy to
+> provide branches you can pull from or I could just post updated
+> versions to the list and give reviewed-by tags to those that don't
+> need more work.
+>
+> Every patch will get an email on linux-wireless regardless.
+
+I guess posting the patches to linux-wireless is the easiest for
+everyone? I have a script which automatically takes patches from
+patchwork so that's very easy for me. But remember to use Signed-off-by
+instead of Reviewed-by as you are resending the patches.
+
+Thanks you, your help here is very much appreciated.
+
+--=20
+Kalle Valo
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
