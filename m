@@ -1,60 +1,58 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Date: Sun, 06 Mar 2016 20:33:32 +0000
-Subject: Re: [patch] watchdog: pnx833x_wdt: fix typo in MODULE_PARM_DESC
-Message-Id: <20160306203331.GA6048@spo001.leaseweb.nl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Mar 2016 07:45:10 +0000
+Subject: [patch] ethernet: micrel: fix some error codes
+Message-Id: <20160316074510.GF12860@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160108110239.GI32195@mwanda> <568FCC65.6010106@roeck-us.net>
-In-Reply-To: <568FCC65.6010106@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Richard =?iso-8859-1?Q?R=F6jfors?= <richard.rojfors@pelagicore.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi all,
+There were two issues here:
+1) dma_mapping_error() return true/false but we want to return -ENOMEM
+2) If dmaengine_prep_slave_sg() failed then "err" wasn't set but
+   presumably that should be -ENOMEM as well.
 
-> On 01/08/2016 03:02 AM, Dan Carpenter wrote:
-> >The module_param() is "pnx833x_wdt_timeout" and MODULE_PARM_DESC()
-> >should match.
-> >
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> >diff --git a/drivers/watchdog/pnx833x_wdt.c 
-> >b/drivers/watchdog/pnx833x_wdt.c
-> >index 882fdcb..69da25a 100644
-> >--- a/drivers/watchdog/pnx833x_wdt.c
-> >+++ b/drivers/watchdog/pnx833x_wdt.c
-> >@@ -52,8 +52,9 @@ static int pnx833x_wdt_alive;
-> >  /* Set default timeout in MHZ.*/
-> >  static int pnx833x_wdt_timeout = PNX_WATCHDOG_TIMEOUT;
-> >  module_param(pnx833x_wdt_timeout, int, 0);
-> >-MODULE_PARM_DESC(timeout, "Watchdog timeout in Mhz. (68Mhz clock), 
-> >default="
-> >-			__MODULE_STRING(PNX_TIMEOUT_VALUE) "(30 seconds).");
-> >+MODULE_PARM_DESC(pnx833x_wdt_timeout,
-> >+		 "Watchdog timeout in Mhz. (68Mhz clock), default="
-> >+		 __MODULE_STRING(PNX_TIMEOUT_VALUE) "(30 seconds).");
-> 
-> The intent here was to have a module parameter named 'timeout'.
-> Of course that was never the case. Wonder if anyone ever noticed.
-> The correct fix would be to use something like
-> 	module_param_named(timeout, pnx833x_wdt_timeout, int, 0);
-> but of course that would change the ABI. On the other side,
-> 'timeout' is the documented module parameter in
-> Documentation/watchdog/watchdog-parameters.txt, so one could argue
-> that using module_param_named() would be a bug fix and not an ABI change.
-> 
-> Not really sure what the best approach is here. Wim, any comments ?
-> Provide module_param_named() in _addition_ to the existing module_param(),
-> maybe, if that is possible ?
-> 
+I changed the success path to "return 0;" instead of "return ret;" for
+clarity.
 
-I would keep the userspace variable the same.
-So keep: MODULE_PARM_DESC(timeout, "Watchdog timeout in Mhz. (68Mhz clock),
-and fix the internal variables...
+Fixes: 94fe8c683cea ('ks8842: Support DMA when accessed via timberdale')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-That will give us no userspace changes and no additional fixes.
-
-Kind regards,
-Wim.
-
+diff --git a/drivers/net/ethernet/micrel/ks8842.c b/drivers/net/ethernet/micrel/ks8842.c
+index 09d2e16..cb0102d 100644
+--- a/drivers/net/ethernet/micrel/ks8842.c
++++ b/drivers/net/ethernet/micrel/ks8842.c
+@@ -561,8 +561,8 @@ static int __ks8842_start_new_rx_dma(struct net_device *netdev)
+ 		sg_init_table(sg, 1);
+ 		sg_dma_address(sg) = dma_map_single(adapter->dev,
+ 			ctl->skb->data, DMA_BUFFER_SIZE, DMA_FROM_DEVICE);
+-		err = dma_mapping_error(adapter->dev, sg_dma_address(sg));
+-		if (unlikely(err)) {
++		if (dma_mapping_error(adapter->dev, sg_dma_address(sg))) {
++			err = -ENOMEM;
+ 			sg_dma_address(sg) = 0;
+ 			goto out;
+ 		}
+@@ -572,8 +572,10 @@ static int __ks8842_start_new_rx_dma(struct net_device *netdev)
+ 		ctl->adesc = dmaengine_prep_slave_sg(ctl->chan,
+ 			sg, 1, DMA_DEV_TO_MEM, DMA_PREP_INTERRUPT);
+ 
+-		if (!ctl->adesc)
++		if (!ctl->adesc) {
++			err = -ENOMEM;
+ 			goto out;
++		}
+ 
+ 		ctl->adesc->callback_param = netdev;
+ 		ctl->adesc->callback = ks8842_dma_rx_cb;
+@@ -584,7 +586,7 @@ static int __ks8842_start_new_rx_dma(struct net_device *netdev)
+ 		goto out;
+ 	}
+ 
+-	return err;
++	return 0;
+ out:
+ 	if (sg_dma_address(sg))
+ 		dma_unmap_single(adapter->dev, sg_dma_address(sg),
