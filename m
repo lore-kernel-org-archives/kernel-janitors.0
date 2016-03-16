@@ -1,25 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 Mar 2016 08:42:46 +0000
-Subject: Re: tracing: Make tracer_flags use the right set_flag callback
-Message-Id: <20160314084246.GF5273@mwanda>
+Date: Wed, 16 Mar 2016 19:50:12 +0000
+Subject: re: net: add a hardware buffer management helper API
+Message-Id: <20160316195012.GB20386@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160310194403.GA17979@mwanda>
-In-Reply-To: <20160310194403.GA17979@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 11, 2016 at 06:50:07AM -0500, Chunyu Hu wrote:
-> Thanks so much for catching this. I missed this check. I was just
-> thinking that this fail was nearly impossible, and during my tests
-> I didn't hit any warn, so i missed this. You taught me a lesson. 
-> BTW, How did you hit the warn? a special gcc version / feature?
+Hello Gregory CLEMENT,
 
-This is a Smatch thing.
+The patch 8cb2d8bf57e6: "net: add a hardware buffer management helper
+API" from Mar 14, 2016, leads to the following static checker warning:
 
-https://blogs.oracle.com/linuxkernel/entry/smatch_static_analysis_tool_overview
+	net/core/hwbm.c:46 hwbm_pool_refill()
+	warn: possible memory leak of 'buf'
+
+net/core/hwbm.c
+    26  /* Refill processing for HW buffer management */
+    27  int hwbm_pool_refill(struct hwbm_pool *bm_pool, gfp_t gfp)
+    28  {
+    29          int frag_size = bm_pool->frag_size;
+    30          void *buf;
+    31  
+    32          if (likely(frag_size <= PAGE_SIZE))
+    33                  buf = netdev_alloc_frag(frag_size);
+    34          else
+    35                  buf = kmalloc(frag_size, gfp);
+    36  
+    37          if (!buf)
+    38                  return -ENOMEM;
+    39  
+    40          if (bm_pool->construct)
+
+If we don't have a ->construct() then we leak memory.  This test should
+probably be moved to the start of the function or deleted.
+
+    41                  if (bm_pool->construct(bm_pool, buf)) {
+    42                          hwbm_buf_free(bm_pool, buf);
+    43                          return -ENOMEM;
+    44                  }
+    45  
+    46          return 0;
+    47  }
+    48  EXPORT_SYMBOL_GPL(hwbm_pool_refill);
 
 regards,
 dan carpenter
-
