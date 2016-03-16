@@ -1,260 +1,66 @@
-From: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
-Date: Wed, 09 Mar 2016 14:29:24 +0000
-Subject: Re: [RFC PATCH v0] Add tw5864 driver
-Message-Id: <20160309162924.6e6ebddf@zver>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Wed, 16 Mar 2016 00:57:52 +0000
+Subject: Re: wireless-drivers: random cleanup patches piling up
+Message-Id: <CAGRGNgWkqApcjtEq_K8PQugoHxUSBxfSGJE1Mc+3_W2H9J8GrQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1451785302-3173-1-git-send-email-andrey.utkin@corp.bluecherry.net>
-	<56938969.30104@xs4all.nl>
-	<CAM_ZknVgTETBNXu+8N6eJa=cf_Mmj=+tA=ocKB9SJL5rkSyijQ@mail.gmail.com>
-	<56B866D9.5070606@xs4all.nl>
-In-Reply-To: <56B866D9.5070606@xs4all.nl>
+References: <87wpr3x9ln.fsf@kamboji.qca.qualcomm.com> <1453423965.3856.22.camel@perches.com>
+ <87k2n1x0sf.fsf@kamboji.qca.qualcomm.com> <20160122151211.GB1500@tuxdriver.com>
+ <87si1pvcd7.fsf@kamboji.qca.qualcomm.com> <20160126052823.GA2053@sudip-laptop>
+ <87bn84kdu0.fsf@kamboji.qca.qualcomm.com> <20160201044142.GC4072@sudip-pc> <878u34j0wz.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <878u34j0wz.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Linux Media <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-mentors@selenic.com" <kernel-mentors@selenic.com>, devel@driverdev.osuosl.org, kernel-janitors <kernel-janitors@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Andrey Utkin <andrey_utkin@fastmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, Joe Perches <joe@perches.com>, linux-wireless <linux-wireless@vger.kernel.org>, kbuild test robot <lkp@intel.com>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Hi Hans!
+Hi Kalle,
 
-Some improvements took place on the driver, including cleaner
-v4l2-compliance tests passing. But there's a single test failure I
-don't understand.
+On Mon, Feb 1, 2016 at 7:21 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
+> Sudip Mukherjee <sudipm.mukherjee@gmail.com> writes:
+>
+>> Sure, I am starting that way. I checked in patchwork and I do not see
+>> any checkpatch related patch pending (except staging, which Greg will
+>> handle). I think you must have cleared all of them.
+>
+> They are in deferred state. The search functionality in patchwork is not
+> that intuitive and they are not easy to find so here's a direct link:
+>
+> https://patchwork.kernel.org/project/linux-wireless/list/?state=10&order=
+=DAte
 
-In the code of v4l2-compliance, it seems like an API
-call CREATE_BUFS is supposed to fail with EINVAL. But in case of my
-driver, which simply uses vb2_ioctl_create_bufs(), the call returns 0.
+I'm currently going through that list and producing a bundle of
+"applyable" patches.
 
-Please review the below report.
+My criteria is:
+1. The change is sane.
+2. It's either obviously correct, I can review it, or someone else has
+reviewed or acked it.
+3. No changes other than rebasing and fixing commit messages are
+required to apply it.
 
-The report is produced by fresh v4l-utils from git:
-v4l-utils-1.10.0-59-g1388c0a
+Some of these patches need work on their commit messages, some are
+complicated enough that I feel I should be providing review notes so
+someone else can double check my review, and all of them should be
+rebased and compile tested. Also, some are controversial, so I'll be
+segregating them from the main set.
 
-The actual code which was tested is at tag release/tw5864/1.10 of
-https://github.com/bluecherrydvr/linux.git , see
-drivers/staging/media/tw5864 . If we sort this out, I am considering
-resubmit the driver for merging upstream.
+How would you like me to communicate this list to you? I'm happy to
+provide branches you can pull from or I could just post updated
+versions to the list and give reviewed-by tags to those that don't
+need more work.
 
-There's also another issue with v4l2-compliance. At some moment the
-driver receives S_PARM command with timeperframe 0/0, by which reason I
-added special handling, but I guess there's something out of my
-knowledge which caused this and which should be fixed.
+Every patch will get an email on linux-wireless regardless.
 
+Thanks,
 
- # v4l2-compliance -d /dev/video6 -s
-Driver Info:
-        Driver name   : tw5864
-        Card type     : TW5864 Encoder 2
-        Bus info      : PCI:0000:06:05.0
-        Driver version: 4.5.0
-        Capabilities  : 0x85200001
-                Video Capture
-                Read/Write
-                Streaming
-                Extended Pix Format
-                Device Capabilities
-        Device Caps   : 0x05200001
-                Video Capture
-                Read/Write
-                Streaming
-                Extended Pix Format
+--=20
+Julian Calaby
 
-Compliance test for device /dev/video6 (not using libv4l2):
-
-Required ioctls:
-        test VIDIOC_QUERYCAP: OK
-
-Allow for multiple opens:
-        test second video open: OK
-        test VIDIOC_QUERYCAP: OK
-        test VIDIOC_G/S_PRIORITY: OK
-
-Debug ioctls:
-        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
-        test VIDIOC_LOG_STATUS: OK
-
-Input ioctls:
-        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-        test VIDIOC_ENUMAUDIO: OK (Not Supported)
-        test VIDIOC_G/S/ENUMINPUT: OK
-        test VIDIOC_G/S_AUDIO: OK (Not Supported)
-        Inputs: 1 Audio Inputs: 0 Tuners: 0
-
-Output ioctls:
-        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-        Outputs: 0 Audio Outputs: 0 Modulators: 0
-
-Input/Output configuration ioctls:
-        test VIDIOC_ENUM/G/S/QUERY_STD: OK
-        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
-        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-        test VIDIOC_G/S_EDID: OK (Not Supported)
-
-Test input 0:
-
-        Control ioctls:
-                test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-                test VIDIOC_QUERYCTRL: OK
-                test VIDIOC_G/S_CTRL: OK
-                test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-                test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
-                test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-                Standard Controls: 11 Private Controls: 0
-
-        Format ioctls:
-                test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-                test VIDIOC_G/S_PARM: OK
-                test VIDIOC_G_FBUF: OK (Not Supported)
-                test VIDIOC_G_FMT: OK
-                test VIDIOC_TRY_FMT: OK
-                test VIDIOC_S_FMT: OK
-                test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-                test Cropping: OK (Not Supported)
-                test Composing: OK (Not Supported)
-                test Scaling: OK (Not Supported)
-
-        Codec ioctls:
-                test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-                test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-                test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-
-        Buffer ioctls:
-                test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-                test VIDIOC_EXPBUF: OK
-
-Test input 0:
-
-Streaming ioctls:
-        test read/write: OK
-                fail: v4l2-test-buffers.cpp(959): ret != EINVAL
-        test MMAP: FAIL
-        test USERPTR: OK (Not Supported)
-        test DMABUF: Cannot test, specify --expbuf-device
-
-
-Total: 45, Succeeded: 44, Failed: 1, Warnings: 0
-[ERR]
-14:14:15root@tw ~
- # gdb v4l2-compliance 
-GNU gdb (Ubuntu 7.10-1ubuntu3) 7.10
-Copyright (C) 2015 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later
-<http://gnu.org/licenses/gpl.html> This is free software: you are free
-to change and redistribute it. There is NO WARRANTY, to the extent
-permitted by law.  Type "show copying" and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
-Type "show configuration" for configuration details.
-For bug reporting instructions, please see:
-<http://www.gnu.org/software/gdb/bugs/>.
-Find the GDB manual and other documentation resources online at:
-<http://www.gnu.org/software/gdb/documentation/>.
-For help, type "help".
-Type "apropos word" to search for commands related to "word"...
-Reading symbols from v4l2-compliance...done.
-(gdb) break v4l2-test-buffers.cpp:959
-Breakpoint 1 at 0x8071469: file v4l2-test-buffers.cpp, line 959.
-(gdb) run  -d /dev/video6 -s
-Starting program: /usr/local/bin/v4l2-compliance -d /dev/video6 -s
-[Thread debugging using libthread_db enabled]
-Using host libthread_db library "/lib/i386-linux-gnu/libthread_db.so.1".
-Driver Info:
-        Driver name   : tw5864
-        Card type     : TW5864 Encoder 2
-        Bus info      : PCI:0000:06:05.0
-        Driver version: 4.5.0
-        Capabilities  : 0x85200001
-                Video Capture
-                Read/Write
-                Streaming
-                Extended Pix Format
-                Device Capabilities
-        Device Caps   : 0x05200001
-                Video Capture
-                Read/Write
-                Streaming
-                Extended Pix Format
-
-Compliance test for device /dev/video6 (not using libv4l2):
-
-Required ioctls:
-        test VIDIOC_QUERYCAP: OK
-
-Allow for multiple opens:
-        test second video open: OK
-        test VIDIOC_QUERYCAP: OK
-        test VIDIOC_G/S_PRIORITY: OK
-
-Debug ioctls:
-        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
-        test VIDIOC_LOG_STATUS: OK
-
-Input ioctls:
-        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-        test VIDIOC_ENUMAUDIO: OK (Not Supported)
-        test VIDIOC_G/S/ENUMINPUT: OK
-        test VIDIOC_G/S_AUDIO: OK (Not Supported)
-        Inputs: 1 Audio Inputs: 0 Tuners: 0
-
-Output ioctls:
-        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-        Outputs: 0 Audio Outputs: 0 Modulators: 0
-
-Input/Output configuration ioctls:
-        test VIDIOC_ENUM/G/S/QUERY_STD: OK
-        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
-        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-        test VIDIOC_G/S_EDID: OK (Not Supported)
-
-Test input 0:
-
-        Control ioctls:
-                test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-                test VIDIOC_QUERYCTRL: OK
-                test VIDIOC_G/S_CTRL: OK
-                test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-                test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
-                test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-                Standard Controls: 11 Private Controls: 0
-
-        Format ioctls:
-                test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-                test VIDIOC_G/S_PARM: OK
-                test VIDIOC_G_FBUF: OK (Not Supported)
-                test VIDIOC_G_FMT: OK
-                test VIDIOC_TRY_FMT: OK
-                test VIDIOC_S_FMT: OK
-                test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-                test Cropping: OK (Not Supported)
-                test Composing: OK (Not Supported)
-                test Scaling: OK (Not Supported)
-
-        Codec ioctls:
-                test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-                test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-                test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-
-        Buffer ioctls:
-                test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-                test VIDIOC_EXPBUF: OK
-
-Test input 0:
-
-Streaming ioctls:
-        test read/write: OK
-
-Breakpoint 1, testMmap (node=0xbfffd1e4, frame_count`) at v4l2-test-buffers.cpp:959
-959                                     fail_on_test(ret != EINVAL);
-(gdb) print ret
-$1 = 0
-(gdb)
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
