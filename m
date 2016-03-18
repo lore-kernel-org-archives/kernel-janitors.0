@@ -1,47 +1,22 @@
-From: John Crispin <blogic@openwrt.org>
-Date: Tue, 15 Mar 2016 07:27:47 +0000
+From: David Miller <davem@davemloft.net>
+Date: Fri, 18 Mar 2016 22:31:08 +0000
 Subject: Re: [patch 1/2 net-next] mediatek: checking for IS_ERR() instead of NULL
-Message-Id: <56E7B973.4050604@openwrt.org>
+Message-Id: <20160318.183108.984979448291543214.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160315071849.GH13560@mwanda>
 In-Reply-To: <20160315071849.GH13560@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Felix Fietkau <nbd@openwrt.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mediatek@lists.infradead.org
+To: dan.carpenter@oracle.com
+Cc: nbd@openwrt.org, blogic@openwrt.org, matthias.bgg@gmail.com, netdev@vger.kernel.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
 
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Mar 2016 10:18:49 +0300
 
-
-On 15/03/2016 08:18, Dan Carpenter wrote:
 > of_phy_connect() returns NULL on error, it never returns error pointers.
 > 
 > Fixes: 656e705243fd ('net-next: mediatek: add support for MT7623 ethernet')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Acked-by: John Crispin <blogic@openwrt.org>
 
-Thanks !
-
-> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> index ba3afa5..9759fe5 100644
-> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> @@ -186,9 +186,9 @@ static int mtk_phy_connect_node(struct mtk_eth *eth, struct mtk_mac *mac,
->  
->  	phydev = of_phy_connect(eth->netdev[mac->id], phy_node,
->  				mtk_phy_link_adjust, 0, phy_mode);
-> -	if (IS_ERR(phydev)) {
-> +	if (!phydev) {
->  		dev_err(eth->dev, "could not connect to PHY\n");
-> -		return PTR_ERR(phydev);
-> +		return -ENODEV;
->  	}
->  
->  	dev_info(eth->dev,
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-> 
+Applied.
