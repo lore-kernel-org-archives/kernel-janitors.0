@@ -1,22 +1,27 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 10 Mar 2016 12:57:24 +0000
-Subject: Re: libertas: fix an error code in probe
-Message-Id: <20160310125724.879A060DB3@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Mar 2016 05:42:47 +0000
+Subject: [patch] staging: lustre: checking for NULL instead of IS_ERR
+Message-Id: <20160318054247.GF2111@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20160308120408.GA28684@mwanda>
-References: <20160308120408.GA28684@mwanda>
-In-Reply-To: <20160308120408.GA28684@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Kemnade <andreas@kemnade.info>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lustre-devel@lists.lustre.org
 
+lustre_cfg_new() returns error pointers on error, it never returns NULL.
 
-> We accidentally return success instead of a negative error code.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied to wireless-drivers-next.git.
-
-Kalle Valo
+diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+index 65caffe..b7dc872 100644
+--- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
++++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+@@ -1282,7 +1282,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
+ 
+ 		rc = -ENOMEM;
+ 		lcfg = lustre_cfg_new(LCFG_PARAM, &bufs);
+-		if (!lcfg) {
++		if (IS_ERR(lcfg)) {
+ 			CERROR("mgc: cannot allocate memory\n");
+ 			break;
+ 		}
