@@ -1,32 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 09 Feb 2016 11:14:12 +0000
-Subject: [patch] [media] usb/cpia2_core: clean up a min_t() cast
-Message-Id: <20160209111411.GA23998@mwanda>
+Date: Tue, 22 Mar 2016 11:40:02 +0000
+Subject: [patch] ufs: silence uninitialized warnings
+Message-Id: <20160322114001.GB4519@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Evgeniy Dushistov <dushistov@mail.ru>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-It makes sense to make the min_t() cast unsigned here since we don't
-really want negative sizes.  Making it signed causes a static checker
-warning in Smatch.  Smatch knows "fw->size - i" is positive but it
-doesn't know that fw->size is less than INT_MAX so in theory casting it
-to int might lead to a negative.
+Static checkers complain that we can use "tmp" without initializing it.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/usb/cpia2/cpia2_core.c b/drivers/media/usb/cpia2/cpia2_core.c
-index 187012c..0310fd6 100644
---- a/drivers/media/usb/cpia2/cpia2_core.c
-+++ b/drivers/media/usb/cpia2/cpia2_core.c
-@@ -923,7 +923,7 @@ static int apply_vp_patch(struct camera_data *cam)
- 	/* ... followed by the data payload */
- 	for (i = 2; i < fw->size; i += 64) {
- 		cmd.start = 0x0C; /* Data */
--		cmd.reg_count = min_t(int, 64, fw->size - i);
-+		cmd.reg_count = min_t(uint, 64, fw->size - i);
- 		memcpy(cmd.buffer.block_data, &fw->data[i], cmd.reg_count);
- 		cpia2_send_command(cam, &cmd);
- 	}
+diff --git a/fs/ufs/util.h b/fs/ufs/util.h
+index 9541759..8aa8812 100644
+--- a/fs/ufs/util.h
++++ b/fs/ufs/util.h
+@@ -88,7 +88,7 @@ ufs_get_fs_npsect(struct super_block *sb, struct ufs_super_block_first *usb1,
+ static inline u64
+ ufs_get_fs_qbmask(struct super_block *sb, struct ufs_super_block_third *usb3)
+ {
+-	__fs64 tmp;
++	__fs64 tmp = 0;
+ 
+ 	switch (UFS_SB(sb)->s_flags & UFS_ST_MASK) {
+ 	case UFS_ST_SUNOS:
+@@ -112,7 +112,7 @@ ufs_get_fs_qbmask(struct super_block *sb, struct ufs_super_block_third *usb3)
+ static inline u64
+ ufs_get_fs_qfmask(struct super_block *sb, struct ufs_super_block_third *usb3)
+ {
+-	__fs64 tmp;
++	__fs64 tmp = 0;
+ 
+ 	switch (UFS_SB(sb)->s_flags & UFS_ST_MASK) {
+ 	case UFS_ST_SUNOS:
