@@ -1,28 +1,40 @@
-From: Pratyush Patel <pratyushpatel.1995@gmail.com>
-Date: Tue, 01 Mar 2016 17:40:49 +0000
-Subject: [PATCH] hrtimer: redundant #ifdef block
-Message-Id: <20160301172849.GA18152@cyborg>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 25 Mar 2016 02:44:34 +0000
+Subject: [PATCH 2/2] staging: dgnc: fix Logical continuations should be on the
+Message-Id: <20160325024434.GA24156@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Only need CONFIG_NO_HZ_COMMON as this block is already in a
-CONFIG_SMP block.
+fix checkpatch.pl warning about 'Logical continuations
+should be on the previous line' in dgnc_neo.c file.
 
-Signed-off-by: Pratyush Patel <pratyushpatel.1995@gmail.com>
+I think the 'force' need to check first, because if the 'force' is true,
+it doesn't need to call another function call.
 
-diff -urpN a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
---- a/kernel/time/hrtimer.c	2016-02-28 22:11:20.000000000 +0530
-+++ b/kernel/time/hrtimer.c	2016-03-01 22:01:29.538877512 +0530
-@@ -177,7 +177,7 @@ hrtimer_check_target(struct hrtimer *tim
- #endif
- }
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_neo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index 10b596f..d732e6e 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -359,8 +359,8 @@ static inline void neo_clear_break(struct channel_t *ch, int force)
  
--#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
-+#ifdef CONFIG_NO_HZ_COMMON
- static inline
- struct hrtimer_cpu_base *get_target_base(struct hrtimer_cpu_base *base,
- 					 int pinned)
+ 	/* Turn break off, and unset some variables */
+ 	if (ch->ch_flags & CH_BREAK_SENDING) {
+-		if (time_after_eq(jiffies, ch->ch_stop_sending_break)
+-		    || force) {
++		if (force ||
++		    time_after_eq(jiffies, ch->ch_stop_sending_break)) {
+ 			unsigned char temp = readb(&ch->ch_neo_uart->lcr);
+ 
+ 			writeb((temp & ~UART_LCR_SBC), &ch->ch_neo_uart->lcr);
+-- 
+1.9.1
+
