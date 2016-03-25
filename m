@@ -1,116 +1,107 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Fri, 18 Mar 2016 01:06:00 +0000
-Subject: Re: wireless-drivers: random cleanup patches piling up
-Message-Id: <CAGRGNgUWJoo7zktRsPHmeJ=9EEhGu4hA042Y37_0sDVQCW8p-Q@mail.gmail.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 25 Mar 2016 11:33:47 +0000
+Subject: [PATCH] staging: dgnc: replace dgnc_offset_table with bit shift.
+Message-Id: <20160325113347.GA21951@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87wpr3x9ln.fsf@kamboji.qca.qualcomm.com> <1453423965.3856.22.camel@perches.com>
- <87k2n1x0sf.fsf@kamboji.qca.qualcomm.com> <20160122151211.GB1500@tuxdriver.com>
- <87si1pvcd7.fsf@kamboji.qca.qualcomm.com> <20160126052823.GA2053@sudip-laptop>
- <87bn84kdu0.fsf@kamboji.qca.qualcomm.com> <20160201044142.GC4072@sudip-pc>
- <878u34j0wz.fsf@kamboji.qca.qualcomm.com> <CAGRGNgWkqApcjtEq_K8PQugoHxUSBxfSGJE1Mc+3_W2H9J8GrQ@mail.gmail.com>
- <87pouulqut.fsf@kamboji.qca.qualcomm.com> <CAGRGNgX=a9gfnYG6eW2p1CnHnH22pFO7_pDcF4pHSieeUC2s-Q@mail.gmail.com>
-In-Reply-To: <CAGRGNgX=a9gfnYG6eW2p1CnHnH22pFO7_pDcF4pHSieeUC2s-Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, Joe Perches <joe@perches.com>, linux-wireless <linux-wireless@vger.kernel.org>, kbuild test robot <lkp@intel.com>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kalle,
+the dgnc_offset_table has a same value with (1 << port).
+So I tried to replace dgnc_offset_table array with 1 << port.
+And also there are redundant assignments(tmp and current_port)
+inside while loop for checking uart port, and remove them.
 
-On Wed, Mar 16, 2016 at 8:42 PM, Julian Calaby <julian.calaby@gmail.com> wr=
-ote:
-> Hi Kalle,
->
-> On Wed, Mar 16, 2016 at 8:22 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
->> Julian Calaby <julian.calaby@gmail.com> writes:
->>
->>> Hi Kalle,
->>>
->>> On Mon, Feb 1, 2016 at 7:21 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
->>>> Sudip Mukherjee <sudipm.mukherjee@gmail.com> writes:
->>>>
->>>>> Sure, I am starting that way. I checked in patchwork and I do not see
->>>>> any checkpatch related patch pending (except staging, which Greg will
->>>>> handle). I think you must have cleared all of them.
->>>>
->>>> They are in deferred state. The search functionality in patchwork is n=
-ot
->>>> that intuitive and they are not easy to find so here's a direct link:
->>>>
->>>> https://patchwork.kernel.org/project/linux-wireless/list/?state=10&ord=
-er=DAte
->>>
->>> I'm currently going through that list and producing a bundle of
->>> "applyable" patches.
->>
->> Nice.
->
-> Thanks, I figured that checking the deferred list on patchwork at some
-> point would be a good plan. After a release seemed like a good time to
-> do it.
->
->>> My criteria is:
->>> 1. The change is sane.
->>> 2. It's either obviously correct, I can review it, or someone else has
->>> reviewed or acked it.
->>> 3. No changes other than rebasing and fixing commit messages are
->>> required to apply it.
->>
->> BTW, 'git am -s -3' is the best way to apply a patch. The three way
->> merge is awesome (if the submitter has sent the patch correctly).
->>
->>> Some of these patches need work on their commit messages, some are
->>> complicated enough that I feel I should be providing review notes so
->>> someone else can double check my review, and all of them should be
->>> rebased and compile tested. Also, some are controversial, so I'll be
->>> segregating them from the main set.
->>>
->>> How would you like me to communicate this list to you? I'm happy to
->>> provide branches you can pull from or I could just post updated
->>> versions to the list and give reviewed-by tags to those that don't
->>> need more work.
->>>
->>> Every patch will get an email on linux-wireless regardless.
->>
->> I guess posting the patches to linux-wireless is the easiest for
->> everyone? I have a script which automatically takes patches from
->> patchwork so that's very easy for me. But remember to use Signed-off-by
->> instead of Reviewed-by as you are resending the patches.
->
-> If they end up being exactly identical to the original, I'll just add
-> reviewed-bys to the original patches, otherwise I'll do exactly that.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+Greg, This patch depends on previous patches.
+here are links(previous):
+1. https://lkml.org/lkml/2016/3/24/661
+2. https://lkml.org/lkml/2016/3/24/663
 
-I'm going to just repost everything as it'll just be easier at my end.
+if those patches are failed to merge, I will send them again after
+fixing them.
 
-Git tree: https://github.com/SkUrRiEr/wireless-drivers-pending
+thanks.
 
-I've split the pending patches into 4 sets:
+ drivers/staging/dgnc/dgnc_neo.c | 44 +++++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 24 deletions(-)
 
-1. Cleanup: patches that weren't reviewed or were just forgotten.
-2. Detail: patches that needed a detailed review
-3. More Work: patches that only partially fix a problem
-4. Controversial: patches people hated but fit my criteria
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index d732e6e..8b6bc73 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -77,9 +77,6 @@ struct board_ops dgnc_neo_ops = {
+ 	.send_immediate_char =		neo_send_immediate_char
+ };
+ 
+-static uint dgnc_offset_table[8] = { 0x01, 0x02, 0x04, 0x08,
+-				     0x10, 0x20, 0x40, 0x80 };
+-
+ /*
+  * This function allows calls to ensure that all outstanding
+  * PCI writes have been completed, by doing a PCI read against
+@@ -923,9 +920,7 @@ static irqreturn_t neo_intr(int irq, void *voidbrd)
+ 	struct dgnc_board *brd = voidbrd;
+ 	struct channel_t *ch;
+ 	int port = 0;
+-	int type = 0;
+-	int current_port;
+-	u32 tmp;
++	int type;
+ 	u32 uart_poll;
+ 	unsigned long flags;
+ 	unsigned long flags2;
+@@ -960,28 +955,29 @@ static irqreturn_t neo_intr(int irq, void *voidbrd)
+ 
+ 	/* At this point, we have at least SOMETHING to service, dig further... */
+ 
+-	current_port = 0;
+-
+ 	/* Loop on each port */
+ 	while ((uart_poll & 0xff) != 0) {
+-		tmp = uart_poll;
+-
+-		/* Check current port to see if it has interrupt pending */
+-		if ((tmp & dgnc_offset_table[current_port]) != 0) {
+-			port = current_port;
+-			type = tmp >> (8 + (port * 3));
+-			type &= 0x7;
+-		} else {
+-			current_port++;
+-			continue;
+-		}
++		int i;
+ 
+-		/* Remove this port + type from uart_poll */
+-		uart_poll &= ~(dgnc_offset_table[port]);
++		type = 0;
+ 
+-		if (!type) {
+-			/* If no type, just ignore it, and move onto next port */
+-			continue;
++		for (i = port; i < MAXPORTS; i++) {
++			unsigned int offset_table = 0x1 << i;
++
++			/* Check current port to see
++			 * if it has interrupt pending
++			 */
++			if ((uart_poll & offset_table) != 0) {
++				port = i;
++				type = uart_poll >> (8 + (port * 3));
++				type &= 0x7;
++
++				/* Remove this port + type from uart_poll */
++				uart_poll &= ~(offset_table);
++			}
++
++			if (type)
++				break;
+ 		}
+ 
+ 		/* Switch on type of interrupt we have */
+-- 
+1.9.1
 
-I'll go into a lot more detail in my cover letter.
-
-At this point, everything in patchwork that's deferred is either:
-1. Unreviewable by me (I poked the authors of most of the older
-patches yesterday)
-2. An earlier version of a patch I picked up
-3. Too "new" (less than a couple of months old)
-
-I'll start sending stuff shortly.
-
-Thanks,
-
---=20
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
