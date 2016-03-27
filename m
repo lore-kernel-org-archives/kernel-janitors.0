@@ -1,39 +1,37 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Tue, 29 Mar 2016 04:48:57 +0000
-Subject: [PATCH 3/3] staging: dgnc: fix Logical continuations.
-Message-Id: <20160329044857.GA23442@SEL-JYOUN-D1>
+From: Clifton Barnes <clifton.a.barnes@gmail.com>
+Date: Sun, 27 Mar 2016 19:13:00 +0000
+Subject: [PATCH 2/5] staging: xgifb: fix 'line over 80 characters'
+Message-Id: <1459105983-17251-2-git-send-email-clifton.a.barnes@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1459105983-17251-1-git-send-email-clifton.a.barnes@gmail.com>
+In-Reply-To: <1459105983-17251-1-git-send-email-clifton.a.barnes@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: arnaud.patard@rtp-net.org
+Cc: kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, Clifton Barnes <clifton.a.barnes@gmail.com>
 
-fix checkpatch.pl warning about
-'Logical continuations should be on the previous line'
+fix checkpatch.pl warning about 'line over 80 characters'
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
 ---
- drivers/staging/dgnc/dgnc_neo.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/xgifb/vb_init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index 9412d25..3e490de 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -1811,9 +1811,9 @@ static void neo_vpd(struct dgnc_board *brd)
- 	 * 0x10 : long resource name tage (PCI-66 files)
- 	 * 0x7F : small resource end tag
- 	 */
--	if  (((brd->vpd[0x08] != 0x82)
--		&&  (brd->vpd[0x10] != 0x82))
--		||  (brd->vpd[0x7F] != 0x78)) {
-+	if  (((brd->vpd[0x08] != 0x82) &&
-+	      (brd->vpd[0x10] != 0x82)) ||
-+	     (brd->vpd[0x7F] != 0x78)) {
+diff --git a/drivers/staging/xgifb/vb_init.c b/drivers/staging/xgifb/vb_init.c
+index 1ef2bfb..062ece2 100644
+--- a/drivers/staging/xgifb/vb_init.c
++++ b/drivers/staging/xgifb/vb_init.c
+@@ -552,7 +552,8 @@ static int XGINew_ReadWriteRest(unsigned short StopAddr,
+ 		writel(Position, fbaddr + Position);
+ 	}
  
- 		memset(brd->vpd, '\0', NEO_VPD_IMAGESIZE);
- 	} else {
+-	usleep_range(500, 1500); /* Fix #1759 Memory Size error in Multi-Adapter. */
++	/* Fix #1759 Memory Size error in Multi-Adapter. */
++	usleep_range(500, 1500);
+ 
+ 	Position = 0;
+ 
 -- 
 1.9.1
 
