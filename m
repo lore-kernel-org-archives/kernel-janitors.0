@@ -1,31 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Mar 2016 07:05:20 +0000
-Subject: [patch] [media] cx23885: uninitialized variable in cx23885_av_work_handler()
-Message-Id: <20160315070520.GB13560@mwanda>
+From: Clifton Barnes <clifton.a.barnes@gmail.com>
+Date: Sun, 27 Mar 2016 19:13:01 +0000
+Subject: [PATCH 3/5] staging: xgifb: fix code indent
+Message-Id: <1459105983-17251-3-git-send-email-clifton.a.barnes@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1459105983-17251-1-git-send-email-clifton.a.barnes@gmail.com>
+In-Reply-To: <1459105983-17251-1-git-send-email-clifton.a.barnes@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: arnaud.patard@rtp-net.org
+Cc: kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, Clifton Barnes <clifton.a.barnes@gmail.com>
 
-The "handled" variable could be uninitialized if the
-interrupt_service_routine() call back hasn't been implimented or if it
-has been implemented but doesn't initialize "handled" to zero at the
-start.  For example, adv76xx_isr() only sets "handled" to true.
+fix checkpatch.pl warning about 'suspect code indent for conditional
+statements'
 
-Fixes: 44b153ca639f ('[media] m5mols: Add ISO sensitivity controls')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
+---
+ drivers/staging/xgifb/vb_setmode.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/pci/cx23885/cx23885-av.c b/drivers/media/pci/cx23885/cx23885-av.c
-index 877dad8..e7d4406 100644
---- a/drivers/media/pci/cx23885/cx23885-av.c
-+++ b/drivers/media/pci/cx23885/cx23885-av.c
-@@ -24,7 +24,7 @@ void cx23885_av_work_handler(struct work_struct *work)
- {
- 	struct cx23885_dev *dev  			   container_of(work, struct cx23885_dev, cx25840_work);
--	bool handled;
-+	bool handled = false;
+diff --git a/drivers/staging/xgifb/vb_setmode.c b/drivers/staging/xgifb/vb_setmode.c
+index 0f9c300..50c8ea4 100644
+--- a/drivers/staging/xgifb/vb_setmode.c
++++ b/drivers/staging/xgifb/vb_setmode.c
+@@ -108,9 +108,9 @@ static void XGI_SetATTRegs(unsigned short ModeIdIndex,
+ 			if (pVBInfo->VBInfo & XGI_SetCRT2ToLCDA) {
+ 				ARdata = 0;
+ 			} else if ((pVBInfo->VBInfo &
+-				     (SetCRT2ToTV | SetCRT2ToLCD)) &&
+-				    (pVBInfo->VBInfo & SetInSlaveMode)) {
+-					ARdata = 0;
++				   (SetCRT2ToTV | SetCRT2ToLCD)) &&
++				   (pVBInfo->VBInfo & SetInSlaveMode)) {
++				ARdata = 0;
+ 			}
+ 		}
  
- 	v4l2_subdev_call(dev->sd_cx25840, core, interrupt_service_routine,
- 			 PCI_MSK_AV_CORE, &handled);
+@@ -2984,7 +2984,7 @@ static void XGI_SetLockRegs(unsigned short ModeNo, unsigned short ModeIdIndex,
+ 
+ 		if ((pVBInfo->VBInfo & SetCRT2ToHiVision) &&
+ 		    !(pVBInfo->VBType & VB_SIS301LV) && (resinfo = 7))
+-				temp -= 2;
++			temp -= 2;
+ 	}
+ 
+ 	/* 0x05 Horizontal Display Start */
+-- 
+1.9.1
+
