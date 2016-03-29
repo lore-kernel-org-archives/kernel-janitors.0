@@ -1,30 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 Mar 2016 07:12:48 +0000
-Subject: [patch] PCI: xilinx-nwl: fix an error code in nwl_pcie_init_irq_domain()
-Message-Id: <20160315071248.GG13560@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Tue, 29 Mar 2016 04:48:57 +0000
+Subject: [PATCH 3/3] staging: dgnc: fix Logical continuations.
+Message-Id: <20160329044857.GA23442@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <bhelgaas@google.com>, Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-Cc: Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh@kernel.org>, Ravi Kiran Gummaluri <rgummal@xilinx.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Returning PTR_ERR(legacy_intc_node) is zero which is success but we want
-to return a negative error code.
+fix checkpatch.pl warning about
+'Logical continuations should be on the previous line'
 
-Fixes: 4337ea1d4b10 ('PCI: xilinx-nwl: Add support for Xilinx NWL PCIe Host Controller')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_neo.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-xilinx-nwl.c
-index 7a2dc2e..5139e64 100644
---- a/drivers/pci/host/pcie-xilinx-nwl.c
-+++ b/drivers/pci/host/pcie-xilinx-nwl.c
-@@ -525,7 +525,7 @@ static int nwl_pcie_init_irq_domain(struct nwl_pcie *pcie)
- 	legacy_intc_node = of_get_next_child(node, NULL);
- 	if (!legacy_intc_node) {
- 		dev_err(pcie->dev, "No legacy intc node found\n");
--		return PTR_ERR(legacy_intc_node);
-+		return -EINVAL;
- 	}
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index 9412d25..3e490de 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -1811,9 +1811,9 @@ static void neo_vpd(struct dgnc_board *brd)
+ 	 * 0x10 : long resource name tage (PCI-66 files)
+ 	 * 0x7F : small resource end tag
+ 	 */
+-	if  (((brd->vpd[0x08] != 0x82)
+-		&&  (brd->vpd[0x10] != 0x82))
+-		||  (brd->vpd[0x7F] != 0x78)) {
++	if  (((brd->vpd[0x08] != 0x82) &&
++	      (brd->vpd[0x10] != 0x82)) ||
++	     (brd->vpd[0x7F] != 0x78)) {
  
- 	pcie->legacy_irq_domain = irq_domain_add_linear(legacy_intc_node,
+ 		memset(brd->vpd, '\0', NEO_VPD_IMAGESIZE);
+ 	} else {
+-- 
+1.9.1
+
