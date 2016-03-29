@@ -1,80 +1,110 @@
 From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 31 Mar 2016 08:03:59 +0000
-Subject: [PATCH 2/2] staging: dgnc: clean up dgnc_input function
-Message-Id: <20160331080359.GA27366@SEL-JYOUN-D1>
+Date: Tue, 29 Mar 2016 04:47:59 +0000
+Subject: [PATCH 1/3] staging: dgnc: remove parenthesis around the CONST |
+Message-Id: <20160329044759.GA22649@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is for fixing checkpatch.pl warning about
-"Alignment should match open parenthesis" but if that is
-fixed, code line is over 80 characters.
-I think "ch->ch_rqueue + tail + i" could be declared once in
-the begining of loop.
+remove parenthesis around the CONST | CONST.
+It will be also fixed checkpatch.pl warning about
+"Alignment should match open parenthesis" becasue
+parenthesis were removed by this patch.
 
 Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/staging/dgnc/dgnc_tty.c | 35 ++++++++++++++---------------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
+ drivers/staging/dgnc/dgnc_neo.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 5097208..d617fca 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -602,6 +602,8 @@ void dgnc_input(struct channel_t *ch)
- 	 * or the amount of data the card actually has pending...
- 	 */
- 	while (n) {
-+		unsigned char *ch_pos = ch->ch_equeue + tail;
-+
- 		s = ((head >= tail) ? head : RQUEUESIZE) - tail;
- 		s = min(s, n);
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index d732e6e..c3bb1b4 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -117,8 +117,8 @@ static inline void neo_set_cts_flow_control(struct channel_t *ch)
+ 	writeb(efr, &ch->ch_neo_uart->efr);
  
-@@ -616,29 +618,20 @@ void dgnc_input(struct channel_t *ch)
- 		 */
- 		if (I_PARMRK(tp) || I_BRKINT(tp) || I_INPCK(tp)) {
- 			for (i = 0; i < s; i++) {
--				if (*(ch->ch_equeue + tail + i) & UART_LSR_BI)
--					tty_insert_flip_char(tp->port,
--						*(ch->ch_rqueue + tail + i),
--						TTY_BREAK);
--				else if (*(ch->ch_equeue + tail + i) &
--						UART_LSR_PE)
--					tty_insert_flip_char(tp->port,
--						*(ch->ch_rqueue + tail + i),
--						TTY_PARITY);
--				else if (*(ch->ch_equeue + tail + i) &
--						UART_LSR_FE)
--					tty_insert_flip_char(tp->port,
--						*(ch->ch_rqueue + tail + i),
--						TTY_FRAME);
--				else
--					tty_insert_flip_char(tp->port,
--						*(ch->ch_rqueue + tail + i),
--						TTY_NORMAL);
-+				unsigned char ch = *(ch_pos + i);
-+				char flag = TTY_NORMAL;
-+
-+				if (ch & UART_LSR_BI)
-+					flag = TTY_BREAK;
-+				else if (ch & UART_LSR_PE)
-+					flag = TTY_PARITY;
-+				else if (ch & UART_LSR_FE)
-+					flag = TTY_FRAME;
-+
-+				tty_insert_flip_char(tp->port, ch, flag);
- 			}
- 		} else {
--			tty_insert_flip_string(tp->port,
--					       ch->ch_rqueue + tail,
--					       s);
-+			tty_insert_flip_string(tp->port, ch_pos, s);
- 		}
+ 	/* Turn on table D, with 8 char hi/low watermarks */
+-	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_4DELAY),
+-		&ch->ch_neo_uart->fctr);
++	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_4DELAY,
++	       &ch->ch_neo_uart->fctr);
  
- 		tail += s;
+ 	/* Feed the UART our trigger levels */
+ 	writeb(8, &ch->ch_neo_uart->tfifo);
+@@ -152,8 +152,8 @@ static inline void neo_set_rts_flow_control(struct channel_t *ch)
+ 	/* Turn on UART enhanced bits */
+ 	writeb(efr, &ch->ch_neo_uart->efr);
+ 
+-	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_4DELAY),
+-		&ch->ch_neo_uart->fctr);
++	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_4DELAY,
++	       &ch->ch_neo_uart->fctr);
+ 	ch->ch_r_watermark = 4;
+ 
+ 	writeb(32, &ch->ch_neo_uart->rfifo);
+@@ -190,7 +190,7 @@ static inline void neo_set_ixon_flow_control(struct channel_t *ch)
+ 	/* Turn on UART enhanced bits */
+ 	writeb(efr, &ch->ch_neo_uart->efr);
+ 
+-	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY),
++	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY,
+ 	       &ch->ch_neo_uart->fctr);
+ 	ch->ch_r_watermark = 4;
+ 
+@@ -229,8 +229,8 @@ static inline void neo_set_ixoff_flow_control(struct channel_t *ch)
+ 	writeb(efr, &ch->ch_neo_uart->efr);
+ 
+ 	/* Turn on table D, with 8 char hi/low watermarks */
+-	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY),
+-		&ch->ch_neo_uart->fctr);
++	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY,
++	       &ch->ch_neo_uart->fctr);
+ 
+ 	writeb(8, &ch->ch_neo_uart->tfifo);
+ 	ch->ch_t_tlevel = 8;
+@@ -270,8 +270,8 @@ static inline void neo_set_no_input_flow_control(struct channel_t *ch)
+ 	writeb(efr, &ch->ch_neo_uart->efr);
+ 
+ 	/* Turn on table D, with 8 char hi/low watermarks */
+-	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY),
+-		&ch->ch_neo_uart->fctr);
++	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY,
++	       &ch->ch_neo_uart->fctr);
+ 
+ 	ch->ch_r_watermark = 0;
+ 
+@@ -308,8 +308,8 @@ static inline void neo_set_no_output_flow_control(struct channel_t *ch)
+ 	writeb(efr, &ch->ch_neo_uart->efr);
+ 
+ 	/* Turn on table D, with 8 char hi/low watermarks */
+-	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY),
+-		&ch->ch_neo_uart->fctr);
++	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY,
++	       &ch->ch_neo_uart->fctr);
+ 
+ 	ch->ch_r_watermark = 0;
+ 
+@@ -1373,7 +1373,7 @@ static void neo_flush_uart_read(struct channel_t *ch)
+ 	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
+ 		return;
+ 
+-	writeb((UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR),
++	writeb(UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR,
+ 	       &ch->ch_neo_uart->isr_fcr);
+ 	neo_pci_posting_flush(ch->ch_bd);
+ 
+@@ -1648,7 +1648,7 @@ static void neo_uart_init(struct channel_t *ch)
+ 
+ 	/* Clear out UART and FIFO */
+ 	readb(&ch->ch_neo_uart->txrx);
+-	writeb((UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT),
++	writeb(UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
+ 	       &ch->ch_neo_uart->isr_fcr);
+ 	readb(&ch->ch_neo_uart->lsr);
+ 	readb(&ch->ch_neo_uart->msr);
 -- 
 1.9.1
 
