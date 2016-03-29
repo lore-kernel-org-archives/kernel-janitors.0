@@ -1,116 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 09 Mar 2016 09:19:10 +0000
-Subject: re: irda: Remove BKL instances from af_irda.c
-Message-Id: <20160309091910.GA6821@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Tue, 29 Mar 2016 04:48:31 +0000
+Subject: [PATCH 2/3] staging: dgnc: fix 'line over 80 characters'
+Message-Id: <20160329044831.GA23068@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Samuel Ortiz,
+fix checkpatch.pl warning about 'line over 80 characters'.
+I just moved all line comment to above if statement.
 
-This is a semi-automatic email about new static checker warnings.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_neo.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-The patch 5b40964eadea: "irda: Remove BKL instances from af_irda.c"
-from Oct 11, 2010, leads to the following Smatch complaint:
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index c3bb1b4..9412d25 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -1805,9 +1805,15 @@ static void neo_vpd(struct dgnc_board *brd)
+ 		brd->vpd[(i * 2) + 1] = (a >> 8) & 0xff;
+ 	}
+ 
+-	if  (((brd->vpd[0x08] != 0x82)	   /* long resource name tag */
+-		&&  (brd->vpd[0x10] != 0x82))   /* long resource name tag (PCI-66 files)*/
+-		||  (brd->vpd[0x7F] != 0x78)) { /* small resource end tag */
++	/*
++	 * brd->vpd has different name tags by below index.
++	 * 0x08 : long resource name tag
++	 * 0x10 : long resource name tage (PCI-66 files)
++	 * 0x7F : small resource end tag
++	 */
++	if  (((brd->vpd[0x08] != 0x82)
++		&&  (brd->vpd[0x10] != 0x82))
++		||  (brd->vpd[0x7F] != 0x78)) {
+ 
+ 		memset(brd->vpd, '\0', NEO_VPD_IMAGESIZE);
+ 	} else {
+-- 
+1.9.1
 
-net/irda/af_irda.c:930 irda_accept()
-	 error: we previously assumed 'sk' could be null (see line 848)
-
-net/irda/af_irda.c
-   847	
-   848		if ((sk = sock->sk) = NULL)
-   849			goto out;
-
-sk is NULL here.  Oh how I love goto out.
-
-   850	
-   851		err = -EOPNOTSUPP;
-   852		if ((sk->sk_type != SOCK_STREAM) && (sk->sk_type != SOCK_SEQPACKET) &&
-   853		    (sk->sk_type != SOCK_DGRAM))
-   854			goto out;
-   855	
-   856		err = -EINVAL;
-   857		if (sk->sk_state != TCP_LISTEN)
-   858			goto out;
-   859	
-   860		/*
-   861		 *	The read queue this time is holding sockets ready to use
-   862		 *	hooked into the SABM we saved
-   863		 */
-   864	
-   865		/*
-   866		 * We can perform the accept only if there is incoming data
-   867		 * on the listening socket.
-   868		 * So, we will block the caller until we receive any data.
-   869		 * If the caller was waiting on select() or poll() before
-   870		 * calling us, the data is waiting for us ;-)
-   871		 * Jean II
-   872		 */
-   873		while (1) {
-   874			skb = skb_dequeue(&sk->sk_receive_queue);
-   875			if (skb)
-   876				break;
-   877	
-   878			/* Non blocking operation */
-   879			err = -EWOULDBLOCK;
-   880			if (flags & O_NONBLOCK)
-   881				goto out;
-   882	
-   883			err = wait_event_interruptible(*(sk_sleep(sk)),
-   884						skb_peek(&sk->sk_receive_queue));
-   885			if (err)
-   886				goto out;
-   887		}
-   888	
-   889		newsk = newsock->sk;
-   890		err = -EIO;
-   891		if (newsk = NULL)
-   892			goto out;
-   893	
-   894		newsk->sk_state = TCP_ESTABLISHED;
-   895	
-   896		new = irda_sk(newsk);
-   897	
-   898		/* Now attach up the new socket */
-   899		new->tsap = irttp_dup(self->tsap, new);
-   900		err = -EPERM; /* value does not seem to make sense. -arnd */
-   901		if (!new->tsap) {
-   902			pr_debug("%s(), dup failed!\n", __func__);
-   903			kfree_skb(skb);
-   904			goto out;
-   905		}
-   906	
-   907		new->stsap_sel = new->tsap->stsap_sel;
-   908		new->dtsap_sel = new->tsap->dtsap_sel;
-   909		new->saddr = irttp_get_saddr(new->tsap);
-   910		new->daddr = irttp_get_daddr(new->tsap);
-   911	
-   912		new->max_sdu_size_tx = self->max_sdu_size_tx;
-   913		new->max_sdu_size_rx = self->max_sdu_size_rx;
-   914		new->max_data_size   = self->max_data_size;
-   915		new->max_header_size = self->max_header_size;
-   916	
-   917		memcpy(&new->qos_tx, &self->qos_tx, sizeof(struct qos_info));
-   918	
-   919		/* Clean up the original one to keep it in listen state */
-   920		irttp_listen(self->tsap);
-   921	
-   922		kfree_skb(skb);
-   923		sk->sk_ack_backlog--;
-   924	
-   925		newsock->state = SS_CONNECTED;
-   926	
-   927		irda_connect_response(new);
-   928		err = 0;
-   929	out:
-   930		release_sock(sk);
-                             ^^
-Dereferenced inside the function.
-
-   931		return err;
-   932	}
-
-regards,
-dan carpenter
