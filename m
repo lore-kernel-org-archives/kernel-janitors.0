@@ -1,31 +1,67 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Mar 2016 10:32:15 +0000
-Subject: [patch 1/2] drm/exynos: mic: fix an error code
-Message-Id: <20160317103214.GA3100@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 31 Mar 2016 08:03:35 +0000
+Subject: [PATCH 1/2] staging: dgnc: remove useless variables for saving tty's
+Message-Id: <20160331080335.GA27013@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We accidentally return success instead of a negative error code here.
+It doesn't need to save major number with variable.
+And there are no use of these variables(dgnc_serial_major and
+dgnc_transparent_print_major)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
-This is the common problem introduced by do nothing gotos.  The other
-issue with do nothing gotos is that they are annoying and don't actually
-prevent people from putting a direct return in the middle of functions.
+ drivers/staging/dgnc/dgnc_driver.h | 3 ---
+ drivers/staging/dgnc/dgnc_tty.c    | 4 ----
+ 2 files changed, 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index 9869d70..890c9b1 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -457,6 +457,7 @@ static int exynos_mic_probe(struct platform_device *pdev)
- 							"samsung,disp-syscon");
- 	if (IS_ERR(mic->sysreg)) {
- 		DRM_ERROR("mic: Failed to get system register.\n");
-+		ret = PTR_ERR(mic->sysreg);
- 		goto err;
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index 44216ae..6609ba5 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -210,9 +210,6 @@ struct dgnc_board {
+ 	bool		dgnc_major_serial_registered;
+ 	bool		dgnc_major_transparent_print_registered;
+ 
+-	uint		dgnc_serial_major;
+-	uint		dgnc_transparent_print_major;
+-
+ 	u16		dpatype;	/* The board "type",
+ 					 * as defined by DPA
+ 					 */
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 98b88d1..5097208 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -286,8 +286,6 @@ int dgnc_tty_register(struct dgnc_board *brd)
  	}
  
+ 	dgnc_BoardsByMajor[brd->serial_driver.major] = brd;
+-	brd->dgnc_serial_major = brd->serial_driver.major;
+-	brd->dgnc_transparent_print_major = brd->print_driver.major;
+ 
+ 	return rc;
+ }
+@@ -409,7 +407,6 @@ void dgnc_tty_uninit(struct dgnc_board *brd)
+ 
+ 	if (brd->dgnc_major_serial_registered) {
+ 		dgnc_BoardsByMajor[brd->serial_driver.major] = NULL;
+-		brd->dgnc_serial_major = 0;
+ 		for (i = 0; i < brd->nasync; i++) {
+ 			if (brd->channels[i])
+ 				dgnc_remove_tty_sysfs(brd->channels[i]->
+@@ -422,7 +419,6 @@ void dgnc_tty_uninit(struct dgnc_board *brd)
+ 
+ 	if (brd->dgnc_major_transparent_print_registered) {
+ 		dgnc_BoardsByMajor[brd->print_driver.major] = NULL;
+-		brd->dgnc_transparent_print_major = 0;
+ 		for (i = 0; i < brd->nasync; i++) {
+ 			if (brd->channels[i])
+ 				dgnc_remove_tty_sysfs(brd->channels[i]->
+-- 
+1.9.1
+
