@@ -1,48 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 19 Apr 2016 09:51:18 +0000
-Subject: re: fjes: Introduce spinlock for rx_status
-Message-Id: <20160419095118.GA1977@mwanda>
+Date: Fri, 01 Apr 2016 11:03:30 +0000
+Subject: [patch] drm/nouveau/gem: silence uninitialized variable warning
+Message-Id: <20160401110330.GB6048@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Pekka Enberg <penberg@kernel.org>, Ben Skeggs <bskeggs@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-Hello Taku Izumi,
+The static checker checker is warning that we could hit the first
+continue; on every iteration through the loop and never initialize
+"ret".  It seems unlikely but we may as well silence the warning.
 
-The patch bd5a256991f9: "fjes: Introduce spinlock for rx_status" from
-Apr 15, 2016, leads to the following static checker warning:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	drivers/net/fjes/fjes_main.c:827 fjes_change_mtu()
-	error: double lock 'spin_lock:&hw->rx_status_lock'
-
-drivers/net/fjes/fjes_main.c
-
-   822                  spin_lock_irqsave(&hw->rx_status_lock, flags);
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Locked.
-
-   823                  for (epidx = 0; epidx < hw->max_epid; epidx++) {
-   824                          if (epidx = hw->my_epid)
-   825                                  continue;
-   826  
-   827                          spin_lock_irqsave(&hw->rx_status_lock, flags);
-                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Deadlocked.
-
-   828                          fjes_hw_setup_epbuf(&hw->ep_shm_info[epidx].tx,
-   829                                              netdev->dev_addr,
-   830                                              netdev->mtu);
-   831  
-   832                          hw->ep_shm_info[epidx].tx.info->v1i.rx_status |   833                                  FJES_RX_MTU_CHANGING_DONE;
-   834                          spin_unlock_irqrestore(&hw->rx_status_lock, flags);
-   835                  }
-   836  
-   837                  netif_tx_wake_all_queues(netdev);
-   838                  netif_carrier_on(netdev);
-   839                  napi_enable(&adapter->napi);
-   840                  napi_schedule(&adapter->napi);
-   841          }
-
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
+index a0865c4..fd36b24 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_gem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
+@@ -370,7 +370,8 @@ validate_init(struct nouveau_channel *chan, struct drm_file *file_priv,
+ 	struct nouveau_cli *cli = nouveau_cli(file_priv);
+ 	struct drm_device *dev = chan->drm->dev;
+ 	int trycnt = 0;
+-	int ret, i;
++	int ret = -ENOENT;
++	int i;
+ 	struct nouveau_bo *res_bo = NULL;
+ 	LIST_HEAD(gart_list);
+ 	LIST_HEAD(vram_list);
