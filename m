@@ -1,71 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 29 Apr 2016 19:22:39 +0000
-Subject: [PATCH] Bluetooth: Use hci_conn_hash_lookup_le
-Message-Id: <1461957760-753-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 02 Apr 2016 04:49:16 +0000
+Subject: [patch] ext4 crypto: fix some error handling
+Message-Id: <20160402044916.GC11775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: kernel-janitors@vger.kernel.org, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use the function hci_conn_hash_lookup_le that integrates type testing for
-looking up LE connections.  See the patch 1b51c7b6 that introduced this
-function for more details.
+We should be testing for -ENOMEM but the minus sign is missing.
 
-The semantic patch that (sort of) fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Fixes: c9af28fdd449 ('ext4 crypto: don't let data integrity writebacks fail with ENOMEM')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-expression hdev,addr;
-symbol UNKNOWN;
-@@
-
--       hci_conn_hash_lookup_ba(hdev, LE_LINK, addr)
-+       hci_conn_hash_lookup_le(hdev, addr, UNKNOWN)
-// </smpl>
-
-UNKNOWN has to be replaced by the address type from the usage context.  In
-the second case, a subsequent test on the address type is removed also.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-
-This was done by analogy with f5ad4ff and from the explanation in
-1b51c7b6.  It is not tested, and I don't really know if it is correct.
-
- net/bluetooth/mgmt.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 9e4b931..5a61245 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -4773,7 +4773,8 @@ static int get_conn_info(struct sock *sk, struct hci_dev *hdev, void *data,
- 		conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK,
- 					       &cp->addr.bdaddr);
- 	else
--		conn = hci_conn_hash_lookup_ba(hdev, LE_LINK, &cp->addr.bdaddr);
-+		conn = hci_conn_hash_lookup_le(hdev, &cp->addr.bdaddr,
-+					       cp->addr.type);
- 
- 	if (!conn || conn->state != BT_CONNECTED) {
- 		err = mgmt_cmd_complete(sk, hdev->id, MGMT_OP_GET_CONN_INFO,
-@@ -5009,13 +5010,10 @@ static bool is_connected(struct hci_dev *hdev, bdaddr_t *addr, u8 type)
- {
- 	struct hci_conn *conn;
- 
--	conn = hci_conn_hash_lookup_ba(hdev, LE_LINK, addr);
-+	conn = hci_conn_hash_lookup_le(hdev, addr, type);
- 	if (!conn)
- 		return false;
- 
--	if (conn->dst_type != type)
--		return false;
--
- 	if (conn->state != BT_CONNECTED)
- 		return false;
- 
-
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index 51b3492..b39d9c7 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -477,7 +477,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 		data_page = ext4_encrypt(inode, page, gfp_flags);
+ 		if (IS_ERR(data_page)) {
+ 			ret = PTR_ERR(data_page);
+-			if (ret = ENOMEM && wbc->sync_mode = WB_SYNC_ALL) {
++			if (ret = -ENOMEM && wbc->sync_mode = WB_SYNC_ALL) {
+ 				if (io->io_bio) {
+ 					ext4_io_submit(io);
+ 					congestion_wait(BLK_RW_ASYNC, HZ/50);
