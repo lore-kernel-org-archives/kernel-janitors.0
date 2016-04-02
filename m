@@ -1,25 +1,38 @@
-From: Jiri Benc <jbenc@redhat.com>
-Date: Mon, 11 Apr 2016 12:59:46 +0000
-Subject: Re: vxlan: implement GPE
-Message-Id: <20160411145946.0fc8f876@griffin>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 02 Apr 2016 04:44:32 +0000
+Subject: [patch] HID: roccat: silence an uninitialized variable warning
+Message-Id: <20160402044432.GA11775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160411072718.GA14676@mwanda>
-In-Reply-To: <20160411072718.GA14676@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Stefan Achatz <erazor_de@users.sourceforge.net>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 11 Apr 2016 10:27:18 +0300, Dan Carpenter wrote:
-> Hello Jiri Benc,
-> 
-> The patch e1e5314de08b: "vxlan: implement GPE" from Apr 5, 2016,
-> leads to the following static checker warning:
-> 
-> 	drivers/net/vxlan.c:1206 vxlan_parse_gpe_hdr()
-> 	error: wrong number of bits for 'htons' (32 vs 16) left= '*protocol' *protocol = (())
+My static checker complains because we use "dev_id" before we check for
+errors so it could be uninitialized.  Fix this by moving the error
+handling forward a couple lines.
 
-Thanks a lot, Dan. It should be __be16. I don't know what I was
-thinking. I'll submit a fix.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
- Jiri
+diff --git a/drivers/hid/hid-roccat.c b/drivers/hid/hid-roccat.c
+index 65c4ccfc..76d06cf 100644
+--- a/drivers/hid/hid-roccat.c
++++ b/drivers/hid/hid-roccat.c
+@@ -421,14 +421,13 @@ static int __init roccat_init(void)
+ 
+ 	retval = alloc_chrdev_region(&dev_id, ROCCAT_FIRST_MINOR,
+ 			ROCCAT_MAX_DEVICES, "roccat");
+-
+-	roccat_major = MAJOR(dev_id);
+-
+ 	if (retval < 0) {
+ 		pr_warn("can't get major number\n");
+ 		goto error;
+ 	}
+ 
++	roccat_major = MAJOR(dev_id);
++
+ 	cdev_init(&roccat_cdev, &roccat_ops);
+ 	retval = cdev_add(&roccat_cdev, dev_id, ROCCAT_MAX_DEVICES);
+ 
