@@ -1,89 +1,59 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 25 Apr 2016 11:00:21 +0000
-Subject: Re: [patch v2] mfd: wm8400-core: delete wm8400_reg_read()
-Message-Id: <20160425110021.GD2713@dell>
+From: Martyn Welch <mwelchuk@gmail.com>
+Date: Sun, 03 Apr 2016 20:36:31 +0000
+Subject: Re: [PATCH] staging: vme: fix bare use of 'unsigned'
+Message-Id: <57017ECF.1060404@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160414100135.GS31814@localhost.localdomain>
- <20160415144418.GA8953@mwanda>
-In-Reply-To: <20160415144418.GA8953@mwanda>
+References: <1459464794-27986-1-git-send-email-clifton.a.barnes@gmail.com>
+In-Reply-To: <1459464794-27986-1-git-send-email-clifton.a.barnes@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Clifton Barnes <clifton.a.barnes@gmail.com>, martyn@welchs.me.uk, manohar.vanga@gmail.com, gregkh@linuxfoundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
 
-On Fri, 15 Apr 2016, Dan Carpenter wrote:
 
-> There was a static checker warning in wm8400_reg_read() because we were
-> returning u16 and that can't hold the negative error codes.  The
-> function isn't used, so let's just delete it.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+On 31/03/16 23:53, Clifton Barnes wrote:
+> fix checkpatch.pl warning about 'Prefer 'unsigned int' to bare use of
+> 'unsigned''
+>
+> Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
+
+Acked-by: Martyn Welch <martyn@welchs.me.uk>
+
+Greg: Whilst this patch seems valid and compiles fine, I no longer have 
+access to the hardware for this driver. I'm aware this driver has been 
+in the staging tree for a rather long time. I will check to see if 
+there's any intention for further work to be done on this driver, if not 
+I guess we should be looking to delete it from the staging tree.
+
+Martyn
+
 > ---
-> v2: just delete the function
+>   drivers/staging/vme/devices/vme_pio2_gpio.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/staging/vme/devices/vme_pio2_gpio.c b/drivers/staging/vme/devices/vme_pio2_gpio.c
+> index df992c3..f52a9ed 100644
+> --- a/drivers/staging/vme/devices/vme_pio2_gpio.c
+> +++ b/drivers/staging/vme/devices/vme_pio2_gpio.c
+> @@ -97,7 +97,7 @@ static void pio2_gpio_set(struct gpio_chip *chip,
+>   }
+>   
+>   /* Directionality configured at board build - send appropriate response */
+> -static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+> +static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned int offset)
+>   {
+>   	int data;
+>   	struct pio2_card *card = gpio_to_pio2_card(chip);
+> @@ -116,7 +116,8 @@ static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+>   }
+>   
+>   /* Directionality configured at board build - send appropriate response */
+> -static int pio2_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int value)
+> +static int pio2_gpio_dir_out(struct gpio_chip *chip,
+> +			     unsigned int offset, int value)
+>   {
+>   	int data;
+>   	struct pio2_card *card = gpio_to_pio2_card(chip);
 
-No diff?
-
-I've fixed the $SUBJECT line and applied the patch.
-
-> diff --git a/include/linux/mfd/wm8400-private.h b/include/linux/mfd/wm840=
-0-private.h
-> index 2de565b..4ee908f 100644
-> --- a/include/linux/mfd/wm8400-private.h
-> +++ b/include/linux/mfd/wm8400-private.h
-> @@ -923,7 +923,6 @@ struct wm8400 {
->  #define WM8400_LINE_CMP_VTHD_SHIFT                   0  /* LINE_CMP_VTHD=
- - [3:0] */
->  #define WM8400_LINE_CMP_VTHD_WIDTH                   4  /* LINE_CMP_VTHD=
- - [3:0] */
-> =20
-> -u16 wm8400_reg_read(struct wm8400 *wm8400, u8 reg);
->  int wm8400_block_read(struct wm8400 *wm8400, u8 reg, int count, u16 *dat=
-a);
-> =20
->  static inline int wm8400_set_bits(struct wm8400 *wm8400, u8 reg,
-> diff --git a/drivers/mfd/wm8400-core.c b/drivers/mfd/wm8400-core.c
-> index 3bd44a4..c1adfc1 100644
-> --- a/drivers/mfd/wm8400-core.c
-> +++ b/drivers/mfd/wm8400-core.c
-> @@ -35,27 +35,6 @@ static bool wm8400_volatile(struct device *dev, unsign=
-ed int reg)
->  	}
->  }
-> =20
-> -/**
-> - * wm8400_reg_read - Single register read
-> - *
-> - * @wm8400: Pointer to wm8400 control structure
-> - * @reg:    Register to read
-> - *
-> - * @return  Read value
-> - */
-> -u16 wm8400_reg_read(struct wm8400 *wm8400, u8 reg)
-> -{
-> -	unsigned int val;
-> -	int ret;
-> -
-> -	ret =3D regmap_read(wm8400->regmap, reg, &val);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return val;
-> -}
-> -EXPORT_SYMBOL_GPL(wm8400_reg_read);
-> -
->  int wm8400_block_read(struct wm8400 *wm8400, u8 reg, int count, u16 *dat=
-a)
->  {
->  	return regmap_bulk_read(wm8400->regmap, reg, data, count);
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
