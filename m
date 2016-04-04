@@ -1,30 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Apr 2016 06:41:55 +0000
-Subject: [patch] UBI: silence an unintialized variable warning
-Message-Id: <20160413064155.GD8092@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 04 Apr 2016 09:52:03 +0000
+Subject: [PATCH 1/2] staging: dgnc: remove parenthesis around the CONST |
+Message-Id: <20160404095202.GA4030@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-My static checker complains that "val" is uninitialized when kstrtoint()
-fails.
+remove parenthesis around the CONST | CONST.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_cls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/ubi/debug.c b/drivers/mtd/ubi/debug.c
-index c4cb15a..f101a49 100644
---- a/drivers/mtd/ubi/debug.c
-+++ b/drivers/mtd/ubi/debug.c
-@@ -352,7 +352,8 @@ static ssize_t dfs_file_write(struct file *file, const char __user *user_buf,
- 	} else if (dent = d->dfs_emulate_power_cut) {
- 		if (kstrtoint(buf, 0, &val) != 0)
- 			count = -EINVAL;
--		d->emulate_power_cut = val;
-+		else
-+			d->emulate_power_cut = val;
- 		goto out;
- 	}
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index 5e46ac8..46c050c 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -1168,7 +1168,7 @@ static void cls_uart_init(struct channel_t *ch)
+ 	/* Clear out UART and FIFO */
+ 	readb(&ch->ch_cls_uart->txrx);
  
+-	writeb((UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT),
++	writeb(UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
+ 	       &ch->ch_cls_uart->isr_fcr);
+ 	udelay(10);
+ 
+-- 
+1.9.1
+
