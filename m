@@ -1,38 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 02 Apr 2016 04:44:32 +0000
-Subject: [patch] HID: roccat: silence an uninitialized variable warning
-Message-Id: <20160402044432.GA11775@mwanda>
+From: Jiri Kosina <jikos@kernel.org>
+Date: Mon, 04 Apr 2016 07:50:01 +0000
+Subject: Re: [patch] HID: roccat: silence an uninitialized variable warning
+Message-Id: <alpine.LNX.2.00.1604040949540.16158@cbobk.fhfr.pm>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160402044432.GA11775@mwanda>
+In-Reply-To: <20160402044432.GA11775@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefan Achatz <erazor_de@users.sourceforge.net>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Stefan Achatz <erazor_de@users.sourceforge.net>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker complains because we use "dev_id" before we check for
-errors so it could be uninitialized.  Fix this by moving the error
-handling forward a couple lines.
+On Sat, 2 Apr 2016, Dan Carpenter wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> My static checker complains because we use "dev_id" before we check for
+> errors so it could be uninitialized.  Fix this by moving the error
+> handling forward a couple lines.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/hid/hid-roccat.c b/drivers/hid/hid-roccat.c
-index 65c4ccfc..76d06cf 100644
---- a/drivers/hid/hid-roccat.c
-+++ b/drivers/hid/hid-roccat.c
-@@ -421,14 +421,13 @@ static int __init roccat_init(void)
- 
- 	retval = alloc_chrdev_region(&dev_id, ROCCAT_FIRST_MINOR,
- 			ROCCAT_MAX_DEVICES, "roccat");
--
--	roccat_major = MAJOR(dev_id);
--
- 	if (retval < 0) {
- 		pr_warn("can't get major number\n");
- 		goto error;
- 	}
- 
-+	roccat_major = MAJOR(dev_id);
-+
- 	cdev_init(&roccat_cdev, &roccat_ops);
- 	retval = cdev_add(&roccat_cdev, dev_id, ROCCAT_MAX_DEVICES);
- 
+Applied, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
