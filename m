@@ -1,83 +1,34 @@
-From: Jarno Rajahalme <jarno@ovn.org>
-Date: Fri, 29 Apr 2016 21:17:28 +0000
-Subject: [PATCH net 1/3] udp_tunnel: Remove redundant udp_tunnel_gro_complete().
-Message-Id: <1461964650-4779-1-git-send-email-jarno@ovn.org>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 04 Apr 2016 09:52:30 +0000
+Subject: [PATCH 2/2] staging: dgnc: remove blank line
+Message-Id: <20160404095230.GA4421@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The setting of the UDP tunnel GSO type is already performed by
-udp[46]_gro_complete().
+fix checkpatch.pl warning:
+Blank lines aren't necessary after an open brace '{'
 
-Signed-off-by: Jarno Rajahalme <jarno@ovn.org>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/net/geneve.c     | 2 --
- drivers/net/vxlan.c      | 2 --
- include/net/udp_tunnel.h | 9 ---------
- net/ipv4/fou.c           | 2 --
- 4 files changed, 15 deletions(-)
+ drivers/staging/dgnc/dgnc_neo.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
-index bc16889..98f1224 100644
---- a/drivers/net/geneve.c
-+++ b/drivers/net/geneve.c
-@@ -504,8 +504,6 @@ static int geneve_gro_complete(struct sk_buff *skb, int nhoff,
- 	int gh_len;
- 	int err = -ENOSYS;
- 
--	udp_tunnel_gro_complete(skb, nhoff);
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index 2da6a72..3b8ce38 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -1794,7 +1794,6 @@ static void neo_vpd(struct dgnc_board *brd)
+ 	if  (((brd->vpd[0x08] != 0x82) &&
+ 	      (brd->vpd[0x10] != 0x82)) ||
+ 	     (brd->vpd[0x7F] != 0x78)) {
 -
- 	gh = (struct genevehdr *)(skb->data + nhoff);
- 	gh_len = geneve_hlen(gh);
- 	type = gh->proto_type;
-diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
-index 1c0fa36..dd2d032 100644
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -616,8 +616,6 @@ out:
- static int vxlan_gro_complete(struct sk_buff *skb, int nhoff,
- 			      struct udp_offload *uoff)
- {
--	udp_tunnel_gro_complete(skb, nhoff);
--
- 	return eth_gro_complete(skb, nhoff + sizeof(struct vxlanhdr));
- }
- 
-diff --git a/include/net/udp_tunnel.h b/include/net/udp_tunnel.h
-index b831140..a114024 100644
---- a/include/net/udp_tunnel.h
-+++ b/include/net/udp_tunnel.h
-@@ -106,15 +106,6 @@ static inline struct sk_buff *udp_tunnel_handle_offloads(struct sk_buff *skb,
- 	return iptunnel_handle_offloads(skb, type);
- }
- 
--static inline void udp_tunnel_gro_complete(struct sk_buff *skb, int nhoff)
--{
--	struct udphdr *uh;
--
--	uh = (struct udphdr *)(skb->data + nhoff - sizeof(struct udphdr));
--	skb_shinfo(skb)->gso_type |= uh->check ?
--				SKB_GSO_UDP_TUNNEL_CSUM : SKB_GSO_UDP_TUNNEL;
--}
--
- static inline void udp_tunnel_encap_enable(struct socket *sock)
- {
- #if IS_ENABLED(CONFIG_IPV6)
-diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
-index a39068b..305d9ac 100644
---- a/net/ipv4/fou.c
-+++ b/net/ipv4/fou.c
-@@ -228,8 +228,6 @@ static int fou_gro_complete(struct sk_buff *skb, int nhoff,
- 	int err = -ENOSYS;
- 	const struct net_offload **offloads;
- 
--	udp_tunnel_gro_complete(skb, nhoff);
--
- 	rcu_read_lock();
- 	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
- 	ops = rcu_dereference(offloads[proto]);
+ 		memset(brd->vpd, '\0', NEO_VPD_IMAGESIZE);
+ 	} else {
+ 		/* Search for the serial number */
 -- 
-2.7.4
+1.9.1
 
