@@ -1,51 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 18 Apr 2016 14:55:38 +0000
-Subject: [PATCH 5/5] cmd640: add __init attribute
-Message-Id: <1460991338-9845-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 04 Apr 2016 11:17:36 +0000
+Subject: [patch] irqchip/mbigen: checking for IS_ERR() instead of NULL
+Message-Id: <20160404111736.GB26910@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R . Rodriguez" <mcgrof@kernel.org>, Josh Triplett <josh@joshtriplett.org>
+To: Thomas Gleixner <tglx@linutronix.de>, MaJun <majun258@huawei.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Add __init attribute on a function that is only called from other __init
-functions and that is not inlined, at least with gcc version 4.8.4 on an
-x86 machine with allyesconfig.  Currently, the function is put in the
-.text.unlikely segment.  Declaring it as __init will cause it to be put in
-the .init.text and to disappear after initialization.
+of_platform_device_create() returns NULL on error, it never returns
+error pointers.
 
-The result of objdump -x on the function before the change is as follows:
+Fixes: ed2a1002d25c ('irqchip/mbigen: Handle multiple device nodes in a mbigen module')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-0000000000000000 l     F .text.unlikely 00000000000000e4 cmd640x_init_one
-
-And after the change it is as follows:
-
-00000000000000d2 l     F .init.text	00000000000000df cmd640x_init_one
-
-Done with the help of Coccinelle.  The semantic patch checks for local
-static non-init functions that are called from an __init function and are
-not called from any other function.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/ide/cmd640.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/ide/cmd640.c b/drivers/ide/cmd640.c
-index 70f0a27..004243b 100644
---- a/drivers/ide/cmd640.c
-+++ b/drivers/ide/cmd640.c
-@@ -695,7 +695,7 @@ static const struct ide_port_info cmd640_port_info __initconst = {
- 	.pio_mask		= ATA_PIO5,
- };
+diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
+index d67baa2..03b79b0 100644
+--- a/drivers/irqchip/irq-mbigen.c
++++ b/drivers/irqchip/irq-mbigen.c
+@@ -263,8 +263,8 @@ static int mbigen_device_probe(struct platform_device *pdev)
  
--static int cmd640x_init_one(unsigned long base, unsigned long ctl)
-+static int __init cmd640x_init_one(unsigned long base, unsigned long ctl)
- {
- 	if (!request_region(base, 8, DRV_NAME)) {
- 		printk(KERN_ERR "%s: I/O resource 0x%lX-0x%lX not free.\n",
-
+ 		parent = platform_bus_type.dev_root;
+ 		child = of_platform_device_create(np, NULL, parent);
+-		if (IS_ERR(child))
+-			return PTR_ERR(child);
++		if (!child)
++			return -ENOMEM;
+ 
+ 		if (of_property_read_u32(child->dev.of_node, "num-pins",
+ 					 &num_pins) < 0) {
