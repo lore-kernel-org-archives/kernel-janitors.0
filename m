@@ -1,28 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Apr 2016 20:05:00 +0000
-Subject: Re: [patch] firmware: qemu_fw_cfg.c: potential unintialized variable
-Message-Id: <20160414200500.GI4247@mwanda>
+Date: Mon, 04 Apr 2016 11:16:57 +0000
+Subject: [patch] ipmi_ssif: silence an uninitialized variable warning
+Message-Id: <20160404111657.GA26910@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160414093337.GD16549@mwanda>
- <20160414184005.GC7821@HEDWIG.INI.CMU.EDU>
- <20160414191253.GH4247@mwanda>
- <20160414193614.GE7821@HEDWIG.INI.CMU.EDU>
-In-Reply-To: <20160414193614.GE7821@HEDWIG.INI.CMU.EDU>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Gabriel L. Somlo" <somlo@cmu.edu>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, qemu-devel@nongnu.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Corey Minyard <minyard@acm.org>
+Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Ah...  I see now.  You're right.  Thanks for the explanation.
+My static checker complains that "ret" could be zero here.  (Presumably
+that means the hardware is badly busted).  But the result would be that
+the caller assumes *resp_len is initialized when it's not and it leads
+to a warning.  Let's just silence the warning.
 
-On my config those functions are no-ops so the variable isn't
-initialized.  If they were enabled then *probably* it wouldn't generate
-a warning.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Probably just silencing the warning is the way to go though...  I bet
-GCC optimizes it away.  Let me think about this some more...
-
-regards,
-dan carpenter
-
+diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+index 8b3be8b..512c5b6 100644
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -1232,6 +1232,8 @@ static int do_cmd(struct i2c_client *client, int len, unsigned char *msg,
+ 			break;
+ 	}
+ 
++	if (ret = 0)
++		ret = -EINVAL;
+ 	if (ret > 0) {
+ 		/* Validate that the response is correct. */
+ 		if (ret < 3 ||
