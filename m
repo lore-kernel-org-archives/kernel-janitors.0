@@ -1,32 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Apr 2016 09:37:03 +0000
-Subject: [patch] scsi: ufs: silence uninitialized variable warning
-Message-Id: <20160414093703.GI16549@mwanda>
+From: Clifton Barnes <clifton.a.barnes@gmail.com>
+Date: Tue, 05 Apr 2016 21:37:37 +0000
+Subject: [PATCH 1/2] staging: slicoss: fix bare use of 'unsigned'
+Message-Id: <1459892258-18789-1-git-send-email-clifton.a.barnes@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinayak Holikatti <vinholikatti@gmail.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: liodot@gmail.com, charrer@alacritech.com
+Cc: kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, Clifton Barnes <clifton.a.barnes@gmail.com>
 
-If ufshcd_dme_get() fails then "tx_lanes" can be uninitialized.  I've
-initialized it to zero so that the rest of the function turns into a
-no-op in that situation.
+fix checkpatch.pl warning about 'Prefer 'unsigned int' to bare use of
+'unsigned''
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
+---
+ drivers/staging/slicoss/slicoss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index f8fa72c..6741d9e 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -3038,7 +3038,9 @@ static int ufshcd_hba_enable(struct ufs_hba *hba)
- 
- static int ufshcd_disable_tx_lcc(struct ufs_hba *hba, bool peer)
+diff --git a/drivers/staging/slicoss/slicoss.c b/drivers/staging/slicoss/slicoss.c
+index fa61e8e..cb1ad76 100644
+--- a/drivers/staging/slicoss/slicoss.c
++++ b/drivers/staging/slicoss/slicoss.c
+@@ -1144,7 +1144,7 @@ static int slic_config_get(struct adapter *adapter, u32 config, u32 config_h)
+ /*
+  * Compute a checksum of the EEPROM according to RFC 1071.
+  */
+-static u16 slic_eeprom_cksum(void *eeprom, unsigned len)
++static u16 slic_eeprom_cksum(void *eeprom, unsigned int len)
  {
--	int tx_lanes, i, err = 0;
-+	int tx_lanes = 0;
-+	int err = 0;
-+	int i;
- 
- 	if (!peer)
- 		ufshcd_dme_get(hba, UIC_ARG_MIB(PA_CONNECTEDTXDATALANES),
+ 	u16 *wp = eeprom;
+ 	u32 checksum = 0;
+-- 
+1.9.1
+
