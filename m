@@ -1,51 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 19 Apr 2016 12:33:34 +0000
-Subject: [PATCH 3/4] mtd: pmc551: add __init attribute
-Message-Id: <1461069215-22795-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Clifton Barnes <clifton.a.barnes@gmail.com>
+Date: Tue, 05 Apr 2016 21:37:38 +0000
+Subject: [PATCH 2/2] staging: slicoss: fix missing blank line
+Message-Id: <1459892258-18789-2-git-send-email-clifton.a.barnes@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1461069215-22795-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1461069215-22795-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1459892258-18789-1-git-send-email-clifton.a.barnes@gmail.com>
+In-Reply-To: <1459892258-18789-1-git-send-email-clifton.a.barnes@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, "Luis R . Rodriguez" <mcgrof@kernel.org>, Josh Triplett <josh@joshtriplett.org>
+To: liodot@gmail.com, charrer@alacritech.com
+Cc: kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, Clifton Barnes <clifton.a.barnes@gmail.com>
 
-Add __init attribute on a function that is only called from other __init
-functions and that is not inlined, at least with gcc version 4.8.4 on an
-x86 machine with allyesconfig.  Currently, the function is put in the
-.text.unlikely segment.  Declaring it as __init will cause it to be put in
-the .init.text and to disappear after initialization.
+fix checkpatch.pl warning about 'Missing a blank line after
+declarations'
 
-The result of objdump -x on the function before the change is as follows:
-
-00000000000000c6 l     F .text.unlikely 000000000000091c fixup_pmc551
-
-And after the change it is as follows:
-
-0000000000000000 l     F .init.text	0000000000000917 fixup_pmc551
-
-Done with the help of Coccinelle.  The semantic patch checks for local
-static non-init functions that are called from an __init function and are
-not called from any other function.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
 ---
- drivers/mtd/devices/pmc551.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/slicoss/slicoss.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mtd/devices/pmc551.c b/drivers/mtd/devices/pmc551.c
-index 708b7e8..220f920 100644
---- a/drivers/mtd/devices/pmc551.c
-+++ b/drivers/mtd/devices/pmc551.c
-@@ -353,7 +353,7 @@ static int pmc551_write(struct mtd_info *mtd, loff_t to, size_t len,
-  * mechanism
-  * returns the size of the memory region found.
-  */
--static int fixup_pmc551(struct pci_dev *dev)
-+static int __init fixup_pmc551(struct pci_dev *dev)
+diff --git a/drivers/staging/slicoss/slicoss.c b/drivers/staging/slicoss/slicoss.c
+index cb1ad76..ac126d4 100644
+--- a/drivers/staging/slicoss/slicoss.c
++++ b/drivers/staging/slicoss/slicoss.c
+@@ -898,6 +898,7 @@ static void slic_upr_start(struct adapter *adapter)
  {
- #ifdef CONFIG_MTD_PMC551_BUGFIX
- 	u32 dram_data;
+ 	struct slic_upr *upr;
+ 	__iomem struct slic_regs *slic_regs = adapter->slic_regs;
++
+ 	upr = adapter->upr_list;
+ 	if (!upr)
+ 		return;
+-- 
+1.9.1
 
