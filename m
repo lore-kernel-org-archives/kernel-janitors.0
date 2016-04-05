@@ -1,40 +1,48 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 26 Apr 2016 09:30:10 +0000
-Subject: Re: brcmfmac: testing the wrong variable in brcmf_rx_hdrpull()
-Message-Id: <20160426093010.1EFA76029D@smtp.codeaurora.org>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Tue, 05 Apr 2016 09:30:02 +0000
+Subject: [PATCH 2/2] staging: dgnc: remove redundant NULL check in
+Message-Id: <20160405093002.GA25395@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20160419142543.GC4876@mwanda>
-References: <20160419142543.GC4876@mwanda>
-In-Reply-To: <20160419142543.GC4876@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Brett Rudley <brudley@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+There were already checking NULL about channel_t / un_t
+before calling dgnc_maxcps_room().
 
-> Smatch complains about this code:
-> 
->     drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c:335 brcmf_rx_hdrpull()
->     error: we previously assumed '*ifp' could be null (see line 333)
-> 
-> The problem is that we recently changed these from "ifp" to "*ifp" but
-> there was one that we didn't update.
-> 
-> -       if (ret || !ifp || !ifp->ndev) {
-> +       if (ret || !(*ifp) || !(*ifp)->ndev) {
->                 if (ret != -ENODATA && ifp)
->                                        ^^^
-> -                       ifp->stats.rx_errors++;
-> +                       (*ifp)->stats.rx_errors++;
-> 
-> I have updated it to *ifp as well.  We always call this function is a
-> non-NULL "ifp" pointer, btw.
-> 
-> Fixes: c462ebcdfe42 ('brcmfmac: create common function for handling brcmf_proto_hdrpull()')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Arend van Spriel <arend@broadcom.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_tty.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-Thanks, applied to wireless-drivers-next.git.
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index e97faaa..200d3aa 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1536,19 +1536,8 @@ static int dgnc_tty_chars_in_buffer(struct tty_struct *tty)
+  */
+ static int dgnc_maxcps_room(struct tty_struct *tty, int bytes_available)
+ {
+-	struct channel_t *ch = NULL;
+-	struct un_t *un = NULL;
+-
+-	if (!tty)
+-		return bytes_available;
+-
+-	un = tty->driver_data;
+-	if (!un || un->magic != DGNC_UNIT_MAGIC)
+-		return bytes_available;
+-
+-	ch = un->un_ch;
+-	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
+-		return bytes_available;
++	struct un_t *un = tty->driver_data;
++	struct channel_t *ch = un->un_ch;
+ 
+ 	/*
+ 	 * If its not the Transparent print device, return
+-- 
+1.9.1
 
-Kalle Valo
