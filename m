@@ -1,38 +1,24 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 20 Apr 2016 00:18:01 +0000
-Subject: Re: [PATCH 2/5] arcnet: com90xx: add __init attribute
-Message-Id: <20160419.201801.1678960326029844695.davem@davemloft.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Tue, 05 Apr 2016 12:46:36 +0000
+Subject: Re: [patch] crypto: marvell/cesa - remove unneeded condition
+Message-Id: <20160405124636.GG13048@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1460991338-9845-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1460991338-9845-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <20160321090342.GB31670@mwanda>
+In-Reply-To: <20160321090342.GB31670@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: m.grzeschik@pengutronix.de, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mcgrof@kernel.org, josh@joshtriplett.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Arnaud Ebalard <arno@natisbad.org>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 18 Apr 2016 16:55:35 +0200
+On Mon, Mar 21, 2016 at 12:03:43PM +0300, Dan Carpenter wrote:
+> creq->cache[] is an array inside the struct, it's not a pointer and it
+> can't be NULL.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Add __init attribute on a function that is only called from other __init
-> functions and that is not inlined, at least with gcc version 4.8.4 on an
-> x86 machine with allyesconfig.  Currently, the function is put in the
-> .text.unlikely segment.  Declaring it as __init will cause it to be put in
-> the .init.text and to disappear after initialization.
-> 
-> The result of objdump -x on the function before the change is as follows:
-> 
-> 0000000000000000 l     F .text.unlikely 00000000000000bf check_mirror
-> 
-> And after the change it is as follows:
-> 
-> 0000000000000000 l     F .init.text	00000000000000ba check_mirror
-> 
-> Done with the help of Coccinelle.  The semantic patch checks for local
-> static non-init functions that are called from an __init function and are
-> not called from any other function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Applied to net-next, thanks.
+Applied.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
