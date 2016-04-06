@@ -1,22 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 28 Apr 2016 20:54:54 +0000
-Subject: Re: [patch] tipc: remove an unnecessary NULL check
-Message-Id: <20160428.165454.1105669734912206052.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Apr 2016 11:36:06 +0000
+Subject: [patch] ASoC: Intel: sst: fix a loop timeout in sst_hsw_stream_reset()
+Message-Id: <20160406113606.GA23032@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160427080528.GA22469@mwanda>
-In-Reply-To: <20160427080528.GA22469@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jon.maloy@ericsson.com, ying.xue@windriver.com, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: Jie Yang <yang.jie@linux.intel.com>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Apr 2016 11:05:28 +0300
+In the original code we ended the loop with tries set to -1 instead of
+zero.
 
-> This is never called with a NULL "buf" and anyway, we dereference 's' on
-> the lines before so it would Oops before we reach the check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
-Applied to net-next, thanks.
+diff --git a/sound/soc/intel/haswell/sst-haswell-ipc.c b/sound/soc/intel/haswell/sst-haswell-ipc.c
+index ac60f13..9156522 100644
+--- a/sound/soc/intel/haswell/sst-haswell-ipc.c
++++ b/sound/soc/intel/haswell/sst-haswell-ipc.c
+@@ -1345,7 +1345,7 @@ int sst_hsw_stream_reset(struct sst_hsw *hsw, struct sst_hsw_stream *stream)
+ 		return 0;
+ 
+ 	/* wait for pause to complete before we reset the stream */
+-	while (stream->running && tries--)
++	while (stream->running && --tries)
+ 		msleep(1);
+ 	if (!tries) {
+ 		dev_err(hsw->dev, "error: reset stream %d still running\n",
