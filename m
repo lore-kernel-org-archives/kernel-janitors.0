@@ -1,43 +1,30 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Fri, 15 Apr 2016 15:29:59 +0000
-Subject: Re: [patch] hp_accel: Silence an uninitialized variable warning
-Message-Id: <20160415152959.GC16654@f23x64.localdomain>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 06 Apr 2016 18:38:56 +0000
+Subject: [patch] iommu/vt-d: silence an uninitialized variable warning
+Message-Id: <20160406183856.GB9593@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160415144720.GF8953@mwanda>
-In-Reply-To: <20160415144720.GF8953@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eric Piel <eric.piel@tremplin-utc.net>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Fri, Apr 15, 2016 at 05:47:20PM +0300, Dan Carpenter wrote:
-> If acpi_evaluate_integer() fails then "lret" isn't initialized.  I've
-> tweaked the error handling to avoid this issue.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+My static checker complains that "dma_alias" is uninitialized unless we
+are dealing with a pci device.  This is true but harmless.  Anyway, we
+can flip the condition around to silence the warning.
 
-Thanks Dan, I verified and queued all 3 patches to fixes for 4.6.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> diff --git a/drivers/platform/x86/hp_accel.c b/drivers/platform/x86/hp_accel.c
-> index 10ce6cb..746918e 100644
-> --- a/drivers/platform/x86/hp_accel.c
-> +++ b/drivers/platform/x86/hp_accel.c
-> @@ -127,8 +127,10 @@ static int lis3lv02d_acpi_read(struct lis3lv02d *lis3, int reg, u8 *ret)
->  	arg0.integer.value = reg;
->  
->  	status = acpi_evaluate_integer(dev->handle, "ALRD", &args, &lret);
-> +	if (ACPI_FAILURE(status))
-> +		return -EINVAL;
->  	*ret = lret;
-> -	return (status != AE_OK) ? -EINVAL : 0;
-> +	return 0;
->  }
->  
->  /**
-> 
-
--- 
-Darren Hart
-Intel Open Source Technology Center
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index a2e1b7f..e1852e8 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2458,7 +2458,7 @@ static struct dmar_domain *get_domain_for_dev(struct device *dev, int gaw)
+ 	}
+ 
+ 	/* register PCI DMA alias device */
+-	if (req_id != dma_alias && dev_is_pci(dev)) {
++	if (dev_is_pci(dev) && req_id != dma_alias) {
+ 		tmp = dmar_insert_one_dev_info(iommu, PCI_BUS_NUM(dma_alias),
+ 					       dma_alias & 0xff, NULL, domain);
+ 
