@@ -1,69 +1,29 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Fri, 29 Apr 2016 20:37:50 +0000
-Subject: Re: [PATCH 4/5] crypto: Use dma_pool_zalloc
-Message-Id: <20160429223750.3a7b6849@bbrezillon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Apr 2016 13:02:35 +0000
+Subject: [patch] staging: lowmemorykiller: remove bogus NULL check
+Message-Id: <20160408130235.GA9376@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1461960552-7429-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1461960552-7429-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Arnaud Ebalard <arno@natisbad.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 29 Apr 2016 22:09:11 +0200
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+The NULL checking here doesn't make sense, so it causes a static checker
+warning.  It turns out that p->mm can't be NULL so the inconsistency is
+harmless and we should just remove the check.
 
-> Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
-> that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression d,e;
-> statement S;
-> @@
-> 
->         d > -            dma_pool_alloc
-> +            dma_pool_zalloc
->              (...);
->         if (!d) S
-> -       memset(d, 0, sizeof(*d));
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-> 
-> ---
-> 
->  drivers/crypto/marvell/tdma.c |    5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/crypto/marvell/tdma.c b/drivers/crypto/marvell/tdma.c
-> index 7642798..0ad8f1e 100644
-> --- a/drivers/crypto/marvell/tdma.c
-> +++ b/drivers/crypto/marvell/tdma.c
-> @@ -99,12 +99,11 @@ mv_cesa_dma_add_desc(struct mv_cesa_tdma_chain *chain, gfp_t flags)
->  	struct mv_cesa_tdma_desc *new_tdma = NULL;
->  	dma_addr_t dma_handle;
->  
-> -	new_tdma = dma_pool_alloc(cesa_dev->dma->tdma_desc_pool, flags,
-> -				  &dma_handle);
-> +	new_tdma = dma_pool_zalloc(cesa_dev->dma->tdma_desc_pool, flags,
-> +				   &dma_handle);
->  	if (!new_tdma)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	memset(new_tdma, 0, sizeof(*new_tdma));
->  	new_tdma->cur_dma = dma_handle;
->  	if (chain->last) {
->  		chain->last->next_dma = cpu_to_le32(dma_handle);
-
-
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+diff --git a/drivers/staging/android/lowmemorykiller.c b/drivers/staging/android/lowmemorykiller.c
+index c79f224..24d2745 100644
+--- a/drivers/staging/android/lowmemorykiller.c
++++ b/drivers/staging/android/lowmemorykiller.c
+@@ -131,7 +131,7 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
+ 		if (!p)
+ 			continue;
+ 
+-		if (task_lmk_waiting(p) && p->mm &&
++		if (task_lmk_waiting(p) &&
+ 		    time_before_eq(jiffies, lowmem_deathpending_timeout)) {
+ 			task_unlock(p);
+ 			rcu_read_unlock();
