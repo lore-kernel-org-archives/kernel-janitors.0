@@ -1,22 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 28 Apr 2016 20:38:15 +0000
-Subject: Re: [PATCH] ps3_gelic: fix memcpy parameter
-Message-Id: <20160428.163815.1737125177217196446.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 09 Apr 2016 08:36:15 +0000
+Subject: [PATCH] ALSA: constify ct_timer_ops structures
+Message-Id: <1460190975-16270-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1461638023-2986-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1461638023-2986-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 26 Apr 2016 04:33:43 +0200
+The ct_timer_ops structures are never modified, so declare them as const.
 
-> The size allocated for target->hwinfo and the number of bytes copied in it
-> should be consistent.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Done with the help of Coccinelle.
 
-Applied, thanks.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/ctxfi/cttimer.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/sound/pci/ctxfi/cttimer.c b/sound/pci/ctxfi/cttimer.c
+index a5d4604..8f94534 100644
+--- a/sound/pci/ctxfi/cttimer.c
++++ b/sound/pci/ctxfi/cttimer.c
+@@ -49,7 +49,7 @@ struct ct_timer {
+ 	spinlock_t lock;		/* global timer lock (for xfitimer) */
+ 	spinlock_t list_lock;		/* lock for instance list */
+ 	struct ct_atc *atc;
+-	struct ct_timer_ops *ops;
++	const struct ct_timer_ops *ops;
+ 	struct list_head instance_head;
+ 	struct list_head running_head;
+ 	unsigned int wc;		/* current wallclock */
+@@ -128,7 +128,7 @@ static void ct_systimer_prepare(struct ct_timer_instance *ti)
+ 
+ #define ct_systimer_free	ct_systimer_prepare
+ 
+-static struct ct_timer_ops ct_systimer_ops = {
++static const struct ct_timer_ops ct_systimer_ops = {
+ 	.init = ct_systimer_init,
+ 	.free_instance = ct_systimer_free,
+ 	.prepare = ct_systimer_prepare,
+@@ -322,7 +322,7 @@ static void ct_xfitimer_free_global(struct ct_timer *atimer)
+ 	ct_xfitimer_irq_stop(atimer);
+ }
+ 
+-static struct ct_timer_ops ct_xfitimer_ops = {
++static const struct ct_timer_ops ct_xfitimer_ops = {
+ 	.prepare = ct_xfitimer_prepare,
+ 	.start = ct_xfitimer_start,
+ 	.stop = ct_xfitimer_stop,
+
