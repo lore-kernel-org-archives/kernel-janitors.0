@@ -1,35 +1,62 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Mon, 04 Apr 2016 19:26:09 +0000
-Subject: Re: [PATCH] staging: vme: fix bare use of 'unsigned'
-Message-Id: <20160404192609.GA10731@kroah.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 09 Apr 2016 08:49:22 +0000
+Subject: [PATCH] qdisc: constify meta_type_ops structures
+Message-Id: <1460191762-10986-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1459464794-27986-1-git-send-email-clifton.a.barnes@gmail.com>
- <57017ECF.1060404@gmail.com>
-In-Reply-To: <57017ECF.1060404@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martyn Welch <mwelchuk@gmail.com>
-Cc: Clifton Barnes <clifton.a.barnes@gmail.com>, martyn@welchs.me.uk, manohar.vanga@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+To: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Apr 03, 2016 at 09:36:31PM +0100, Martyn Welch wrote:
-> 
-> 
-> On 31/03/16 23:53, Clifton Barnes wrote:
-> > fix checkpatch.pl warning about 'Prefer 'unsigned int' to bare use of
-> > 'unsigned''
-> > 
-> > Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
-> 
-> Acked-by: Martyn Welch <martyn@welchs.me.uk>
-> 
-> Greg: Whilst this patch seems valid and compiles fine, I no longer have
-> access to the hardware for this driver. I'm aware this driver has been in
-> the staging tree for a rather long time. I will check to see if there's any
-> intention for further work to be done on this driver, if not I guess we
-> should be looking to delete it from the staging tree.
-> 
+The meta_type_ops structures are never modified, so declare them as const.
 
-Thanks, let me know if you want it deleted.
+Done with the help of Coccinelle.
 
-greg k-h
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ net/sched/em_meta.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/net/sched/em_meta.c b/net/sched/em_meta.c
+index f2aabc0..a309a07 100644
+--- a/net/sched/em_meta.c
++++ b/net/sched/em_meta.c
+@@ -796,7 +796,7 @@ struct meta_type_ops {
+ 	int	(*dump)(struct sk_buff *, struct meta_value *, int);
+ };
+ 
+-static struct meta_type_ops __meta_type_ops[TCF_META_TYPE_MAX + 1] = {
++static const struct meta_type_ops __meta_type_ops[TCF_META_TYPE_MAX + 1] = {
+ 	[TCF_META_TYPE_VAR] = {
+ 		.destroy = meta_var_destroy,
+ 		.compare = meta_var_compare,
+@@ -812,7 +812,7 @@ static struct meta_type_ops __meta_type_ops[TCF_META_TYPE_MAX + 1] = {
+ 	}
+ };
+ 
+-static inline struct meta_type_ops *meta_type_ops(struct meta_value *v)
++static inline const struct meta_type_ops *meta_type_ops(struct meta_value *v)
+ {
+ 	return &__meta_type_ops[meta_type(v)];
+ }
+@@ -870,7 +870,7 @@ static int em_meta_match(struct sk_buff *skb, struct tcf_ematch *m,
+ static void meta_delete(struct meta_match *meta)
+ {
+ 	if (meta) {
+-		struct meta_type_ops *ops = meta_type_ops(&meta->lvalue);
++		const struct meta_type_ops *ops = meta_type_ops(&meta->lvalue);
+ 
+ 		if (ops && ops->destroy) {
+ 			ops->destroy(&meta->lvalue);
+@@ -964,7 +964,7 @@ static int em_meta_dump(struct sk_buff *skb, struct tcf_ematch *em)
+ {
+ 	struct meta_match *meta = (struct meta_match *) em->data;
+ 	struct tcf_meta_hdr hdr;
+-	struct meta_type_ops *ops;
++	const struct meta_type_ops *ops;
+ 
+ 	memset(&hdr, 0, sizeof(hdr));
+ 	memcpy(&hdr.left, &meta->lvalue.hdr, sizeof(hdr.left));
+
