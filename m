@@ -1,62 +1,56 @@
-From: Jarno Rajahalme <jarno@ovn.org>
-Date: Fri, 29 Apr 2016 21:17:30 +0000
-Subject: [PATCH net 3/3] ip_tunnel_core: Scrub skb encap when decapsulating.
-Message-Id: <1461964650-4779-3-git-send-email-jarno@ovn.org>
+From: Sebastian Reichel <sre@kernel.org>
+Date: Sun, 10 Apr 2016 16:27:29 +0000
+Subject: Re: [patch] power/max8925: freeing wrong variable
+Message-Id: <20160410162729.GB25923@earth>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="3uo+9/B/ebqu+fSQ"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+References: <20160318054016.GD2111@mwanda>
+In-Reply-To: <20160318054016.GD2111@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Haojian Zhuang <haojian.zhuang@marvell.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Later processing of the skb may get confused if the skb looks like it
-has encapsulation after the tunnel headers have been pulled away.  As
-an example the decapsulated GSO packet could be segmented if
-transmitted to a virtio_net device since the device would not have the
-tunnel GSO feature.  Furthermore, the segmentation may fail if the
-segmentation code sees the skb as having encapsulation even after
-decapsulation.
 
-Signed-off-by: Jarno Rajahalme <jarno@ovn.org>
----
- include/linux/skbuff.h    | 4 ++++
- net/ipv4/ip_tunnel_core.c | 9 +++++++++
- 2 files changed, 13 insertions(+)
+--3uo+9/B/ebqu+fSQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 15d0df9..93e08ab 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -484,6 +484,10 @@ enum {
- 	SKB_GSO_TUNNEL_REMCSUM = 1 << 12,
- };
- 
-+#define SKB_GSO_ENCAP_MASK (SKB_GSO_GRE | SKB_GSO_GRE_CSUM | SKB_GSO_IPIP | \
-+			    SKB_GSO_SIT | SKB_GSO_UDP_TUNNEL | \
-+			    SKB_GSO_UDP_TUNNEL_CSUM | SKB_GSO_TUNNEL_REMCSUM)
-+
- #if BITS_PER_LONG > 32
- #define NET_SKBUFF_DATA_USES_OFFSET 1
- #endif
-diff --git a/net/ipv4/ip_tunnel_core.c b/net/ipv4/ip_tunnel_core.c
-index 6165f30..2f6da7f 100644
---- a/net/ipv4/ip_tunnel_core.c
-+++ b/net/ipv4/ip_tunnel_core.c
-@@ -94,6 +94,15 @@ int iptunnel_pull_header(struct sk_buff *skb, int hdr_len, __be16 inner_proto,
- 
- 	skb_pull_rcsum(skb, hdr_len);
- 
-+	/* Remove tunnel encapsulation. */
-+	skb->encapsulation = 0;
-+	skb->inner_protocol = 0;
-+	skb->inner_mac_header = 0;
-+	skb->inner_network_header = 0;
-+	skb->inner_transport_header = 0;
-+	if (skb_is_gso(skb))
-+		skb_shinfo(skb)->gso_type &= ~SKB_GSO_ENCAP_MASK;
-+
- 	if (inner_proto = htons(ETH_P_TEB)) {
- 		struct ethhdr *eh;
- 
--- 
-2.7.4
+Hi,
 
+On Fri, Mar 18, 2016 at 08:40:16AM +0300, Dan Carpenter wrote:
+> We were freeing "info->battery" instead of "info->usb", which leads to
+> an OOps and a resource leak.
+>=20
+> The labels were wonky, "out_battery" did release the battery but out_usb
+> did not release usb.  I was introducing a call to free usb so it sort
+> conflicted with existing misleading name.  I renamed them.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Thanks, queued.
+
+-- Sebastian
+
+--3uo+9/B/ebqu+fSQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXCn7xAAoJENju1/PIO/qabqMP/A5t/AhmRkQyYpKS8jobps/+
+OSZRnonZhLwBXvh4tqkfzDhRntcNN9sqGDH4w2Sd4mudT+9NWUiJCxLgO5dsVnZB
+bh2dGvfiHvj60G2VIiyR1VLUY3qKRYNJBA3YzkS9z0dJ8ep8hKyAdZ9C0cIp9r5s
+aZ/z+bl9RS/RtHxC6dJluhtInVrBrRX9pcKLJuId8P1aydaTWCDOwhtA9zvZyzsx
+Ry2Xa3sfQOofUizaCdr1ZKT6y/dn4SCv9MeLBAyuQLIKF9YAoGEgmcghtTIvSZCT
+MJ0CUGbxRHhWDyp+ogktIE3tTNXv3mg+9b2TLBDTbd/0uS8L4Ni12xx+IiZrZ28X
+84Q8BtN7zqHqa7FSVP3fziKPSnw1ohGW5FI3Yv2bCtUTg/UULzWDePb/5TS8zsNx
+1yTf1orChqwh7jSCjBRShXGgAOCJZO4fS0yUKoTjpPj+0Ree8yrfP/ihItThpp9e
+s3TSmFr1HqMft2Q545xWd+UauSRA/rSEpnb5cOz29XLZfL3PGPxlO7N6PoqTzu5c
+oF+02st6lHQhro71n7woQmx3/0z4HxMKrqIS9/A8F5/7A9uljaHDgaKsju4JhbV0
+fCRa/eX66h44GOIhUNYPylXilLC3LhKpyu8jyq5pusmVGgY+D+5Ywb5QxGUxYz2b
+zIXDQx/BiKGmkqoKAekS
+=WSN4
+-----END PGP SIGNATURE-----
+
+--3uo+9/B/ebqu+fSQ--
