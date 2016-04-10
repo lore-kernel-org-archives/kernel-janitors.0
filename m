@@ -1,44 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 09 Apr 2016 11:17:29 +0000
-Subject: [PATCH] uprobes/x86: constify uprobe_xol_ops structures
-Message-Id: <1460200649-32526-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Sebastian Reichel <sre@kernel.org>
+Date: Sun, 10 Apr 2016 16:27:46 +0000
+Subject: Re: [patch] power: ipaq-micro-battery: freeing the wrong variable
+Message-Id: <20160410162745.GC25923@earth>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="PuGuTyElPB9bOcsM"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <20160318090051.GA19233@mwanda>
+In-Reply-To: <20160318090051.GA19233@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The uprobe_xol_ops structures are never modified, so declare them as const.
 
-Done with the help of Coccinelle.
+--PuGuTyElPB9bOcsM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi,
 
----
- arch/x86/kernel/uprobes.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Mar 18, 2016 at 12:00:51PM +0300, Dan Carpenter wrote:
+> We accidentally free "micro_ac_power" which is an error pointer and it
+> leads to an oops.  We intended to free "micro_batt_power".
 
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index bf4db6e..bd07415 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -578,7 +578,7 @@ static void default_abort_op(struct arch_uprobe *auprobe, struct pt_regs *regs)
- 	riprel_post_xol(auprobe, regs);
- }
- 
--static struct uprobe_xol_ops default_xol_ops = {
-+static const struct uprobe_xol_ops default_xol_ops = {
- 	.pre_xol  = default_pre_xol_op,
- 	.post_xol = default_post_xol_op,
- 	.abort	  = default_abort_op,
-@@ -695,7 +695,7 @@ static void branch_clear_offset(struct arch_uprobe *auprobe, struct insn *insn)
- 		0, insn->immediate.nbytes);
- }
- 
--static struct uprobe_xol_ops branch_xol_ops = {
-+static const struct uprobe_xol_ops branch_xol_ops = {
- 	.emulate  = branch_emulate_op,
- 	.post_xol = branch_post_xol_op,
- };
+Thanks, queued.
 
+-- Sebastian
+
+--PuGuTyElPB9bOcsM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXCn8BAAoJENju1/PIO/qaRYkP/A8SQvFNLDsjS9t5WeSTcTfh
+SqSPVAczVbmQtH4dSA3K8UFZn6Oh3qTIGwi1x7LLKcO0ftbRIDC6OSNwteUiUdn6
+adzoZ5qvRrnRm+9vU7PrmlDSQVu/LuywCWr9Wbjl5Th1hC5CkIxoFK9ghJhsy3Sq
+YBPjouvgQ269Ii5LB2f+ZZ4gHr5E5v2QW9ejkfAXZ4sPO4AeSuNrmJwSqr7mS3le
+UlLK1Qpmyhbe3WjK9M5cYNUkNwz1V1+iC9p6Q3mJzK1l+2kMXon34AMaGLRYuQhk
+w6nElGTVmp68hQdBp2RCAgngTr2Jmoirbs2NF+jCs/WdAOgg4r69NxLMa6bTnHEd
+oZMsURS0g2Ndg66nsAh1okMZX50rROqFOkwI5DHs75BiXGvOlUnx2gacFsWYXUyk
+8daJnzKzJ0NkwDQywx7nk7rGiU0UbRNdGwW7SC6OK91d+Gqfj/4XZjt0fFxZb1dQ
+l+i+47euxYmxtfu/Ue25+yWCsRVJuanO95y7fArc4WYuglnCDjoahKaMVk2Rca55
+DieimTnBpqJ6sqqW9jaZdgl7GYlgVypf1l2cGQxvDMO1EC4IRJXoh5l11iXuKEYZ
+qLu5viRAPJd3F3iBboE8x8vNc1w1sD562BFByAilCDtFRzipNAI1fObLyX11r2Ed
+YttDaA7bVLL14sbxsjPs
+=qbKa
+-----END PGP SIGNATURE-----
+
+--PuGuTyElPB9bOcsM--
