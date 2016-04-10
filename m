@@ -1,61 +1,43 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 16 Apr 2016 12:40:07 +0000
-Subject: Re: [PATCH 10/10] iio: pressure: ms5611: use tab for indention
-Message-Id: <571232A7.10001@kernel.org>
+From: coypu@SDF.ORG
+Date: Sun, 10 Apr 2016 23:32:05 +0000
+Subject: Widespread misuse of GFP_ATOMIC
+Message-Id: <20160410233205.GA19912@SDF.ORG>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
- <1460662602-2951-11-git-send-email-sst@poczta.fm>
-In-Reply-To: <1460662602-2951-11-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Slawomir Stepien <sst@poczta.fm>, knaack.h@gmx.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 14/04/16 20:36, Slawomir Stepien wrote:
-> This fixes the errors reported by checkpatch.pl:
-> 
-> ERROR: code indent should use tabs where possible
-> 
-> Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-I modified this one slightly to add the 'extra' spaces needed to maintain the
-alignment of the parameters with the open bracket.
+Hello linux janitors,
 
-Otherwise, good and applied.
+from kmalloc man page:
 
-Thanks,
+GFP_ATOMIC - Allocation will not sleep. May use emergency pools. For
+example, use this inside interrupt handlers.
+GFP_NOWAIT - Allocation will not sleep.
 
-Jonathan
-> ---
->  drivers/iio/pressure/ms5611_core.c | 2 +-
->  drivers/iio/pressure/ms5611_spi.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/ms5611_core.c b/drivers/iio/pressure/ms5611_core.c
-> index c4e6586..9d192bf 100644
-> --- a/drivers/iio/pressure/ms5611_core.c
-> +++ b/drivers/iio/pressure/ms5611_core.c
-> @@ -429,7 +429,7 @@ static void ms5611_fini(const struct iio_dev *indio_dev)
->  }
->  
->  int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
-> -                 const char *name, int type)
-> +		const char *name, int type)
->  {
->  	int ret;
->  	struct ms5611_state *st = iio_priv(indio_dev);
-> diff --git a/drivers/iio/pressure/ms5611_spi.c b/drivers/iio/pressure/ms5611_spi.c
-> index 7600483..8f75532 100644
-> --- a/drivers/iio/pressure/ms5611_spi.c
-> +++ b/drivers/iio/pressure/ms5611_spi.c
-> @@ -108,7 +108,7 @@ static int ms5611_spi_probe(struct spi_device *spi)
->  	st->client = spi;
->  
->  	return ms5611_probe(indio_dev, &spi->dev, spi_get_device_id(spi)->name,
-> -	                    spi_get_device_id(spi)->driver_data);
-> +			spi_get_device_id(spi)->driver_data);
->  }
->  
->  static int ms5611_spi_remove(struct spi_device *spi)
-> 
+grepping linux kernel tree:
 
+[0:/usr/linux-src> ]$ grep -R GFP_ATOMIC . |wc -l
+4452
+[0:/usr/linux-src> ]$ grep -R GFP_NOWAIT . |wc -l
+220
+
+(alternative flags and some accounting:
+total k.*alloc calls:   34320
+GFP_KERNEL appearances: 23819
+GDP_ATOMIC appearances: 4452
+GFP_NOWAIT appearances: 220
+
+unaccounted: 5829)
+
+GFP_ATOMIC is meant for interrupt handlers and emergency pool.
+Widespread misuse renders the emergency pool useless.
+
+I believe the vast majority of such uses can be converted to GFP_NOWAIT.
+Even valid uses of GFP_ATOMIC are likely rendered useless by this
+widespread misuse.
+
+You may wish to replace such calls.
+
+Cheers, coypu
