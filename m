@@ -1,24 +1,29 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 05 Apr 2016 12:46:36 +0000
-Subject: Re: [patch] crypto: marvell/cesa - remove unneeded condition
-Message-Id: <20160405124636.GG13048@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Apr 2016 07:14:46 +0000
+Subject: [patch] iommu/amd: Signedness bug in acpihid_device_group()
+Message-Id: <20160411071446.GB10739@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160321090342.GB31670@mwanda>
-In-Reply-To: <20160321090342.GB31670@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Arnaud Ebalard <arno@natisbad.org>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Wan Zongshun <Vincent.Wan-5C7GfCeVMHo@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, Mar 21, 2016 at 12:03:43PM +0300, Dan Carpenter wrote:
-> creq->cache[] is an array inside the struct, it's not a pointer and it
-> can't be NULL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"devid" needs to be signed for the error handling to work.
 
-Applied.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes:b097d11a0fa3f ('iommu/amd: Manage iommu_group for ACPI HID devices')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index c430c10..12f7779 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -283,7 +283,7 @@ static struct iommu_dev_data *get_dev_data(struct device *dev)
+ static struct iommu_group *acpihid_device_group(struct device *dev)
+ {
+ 	struct acpihid_map_entry *p, *entry = NULL;
+-	u16 devid;
++	int devid;
+ 
+ 	devid = get_acpihid_device_id(dev, &entry);
+ 	if (devid < 0)
