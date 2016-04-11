@@ -1,25 +1,42 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 15 Apr 2016 20:26:51 +0000
-Subject: Re: [patch v2] scsi_dh_alua: uninitialized variable in alua_rtpg()
-Message-Id: <yq1r3e6pqic.fsf@sermon.lab.mkp.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Apr 2016 07:44:38 +0000
+Subject: [patch] ath10k: add some sanity checks
+Message-Id: <20160411074438.GA15227@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160414182034.GA32469@mwanda>
-In-Reply-To: <20160414182034.GA32469@mwanda> (Dan Carpenter's message of "Thu,
-	14 Apr 2016 21:20:34 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Bart Van Assche <bart.vanassche@sandisk.com>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>, Michal Kazior <michal.kazior@tieto.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+Smatch complains that since "ev->peer_id" comes from skb->data that
+means we can't trust it and have to do a bounds check on it to prevent
+an array overflow.
 
-Dan> It's possible to use "err" without initializing it.  If it happens
-Dan> to be a 2 which is SCSI_DH_RETRY then that could cause a bug.  Bart
-Dan> Van Assche pointed out that we should probably re-initialize it for
-Dan> every iteration through the retry loop.
+Fixes: 6942726f7f7b ('ath10k: add fast peer_map lookup')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 4.6/scsi-fixes.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/net/wireless/ath/ath10k/txrx.c b/drivers/net/wireless/ath/ath10k/txrx.c
+index 9369411..fd6ba69 100644
+--- a/drivers/net/wireless/ath/ath10k/txrx.c
++++ b/drivers/net/wireless/ath/ath10k/txrx.c
+@@ -190,6 +190,9 @@ void ath10k_peer_map_event(struct ath10k_htt *htt,
+ 	struct ath10k *ar = htt->ar;
+ 	struct ath10k_peer *peer;
+ 
++	if (ev->peer_id >= ATH10K_MAX_NUM_PEER_IDS)
++		return;
++
+ 	spin_lock_bh(&ar->data_lock);
+ 	peer = ath10k_peer_find(ar, ev->vdev_id, ev->addr);
+ 	if (!peer) {
+@@ -218,6 +221,9 @@ void ath10k_peer_unmap_event(struct ath10k_htt *htt,
+ 	struct ath10k *ar = htt->ar;
+ 	struct ath10k_peer *peer;
+ 
++	if (ev->peer_id >= ATH10K_MAX_NUM_PEER_IDS)
++		return;
++
+ 	spin_lock_bh(&ar->data_lock);
+ 	peer = ath10k_peer_find_by_id(ar, ev->peer_id);
+ 	if (!peer) {
