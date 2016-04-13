@@ -1,30 +1,77 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 15 Apr 2016 22:25:51 +0000
-Subject: Re: [patch] gpio: brcmstb: missing error code
-Message-Id: <20160415222551.GL4247@mwanda>
+Date: Wed, 13 Apr 2016 06:46:45 +0000
+Subject: [patch] md/raid0: check for create_strip_zones() errors
+Message-Id: <20160413064645.GH8092@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160415144528.GC8953@mwanda>
- <57116564.4000002@gmail.com>
-In-Reply-To: <57116564.4000002@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Gregory Fong <gregory.0xf0@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Brian Norris <computersforpeace@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Shaohua Li <shli@kernel.org>, Krzysztof Wojcik <krzysztof.wojcik@intel.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 15, 2016 at 03:04:20PM -0700, Florian Fainelli wrote:
-> On 15/04/16 07:45, Dan Carpenter wrote:
-> > We should set the error code before returning here.  Otherwise "err"
-> > could be uninitialized or zero.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Axel just sent an identical patch which Linus picked already:
-> 
-> http://www.spinics.net/lists/linux-gpio/msg13728.html
+My static checker complains that if create_strip_zones() fails then we
+use "priv_conf" without initializing it.  Fix this by checking for
+failure.
 
-Heh.  Weird timing.  That bug has been there for 11 months...
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index 2ea12c6..1d80e3c 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -507,6 +507,7 @@ static void *raid0_takeover_raid45(struct mddev *mddev)
+ {
+ 	struct md_rdev *rdev;
+ 	struct r0conf *priv_conf;
++	int ret;
+ 
+ 	if (mddev->degraded != 1) {
+ 		printk(KERN_ERR "md/raid0:%s: raid5 must be degraded! Degraded disks: %d\n",
+@@ -534,13 +535,16 @@ static void *raid0_takeover_raid45(struct mddev *mddev)
+ 	/* make sure it will be not marked as dirty */
+ 	mddev->recovery_cp = MaxSector;
+ 
+-	create_strip_zones(mddev, &priv_conf);
++	ret = create_strip_zones(mddev, &priv_conf);
++	if (ret)
++		return ERR_PTR(ret);
+ 	return priv_conf;
+ }
+ 
+ static void *raid0_takeover_raid10(struct mddev *mddev)
+ {
+ 	struct r0conf *priv_conf;
++	int ret;
+ 
+ 	/* Check layout:
+ 	 *  - far_copies must be 1
+@@ -575,7 +579,9 @@ static void *raid0_takeover_raid10(struct mddev *mddev)
+ 	/* make sure it will be not marked as dirty */
+ 	mddev->recovery_cp = MaxSector;
+ 
+-	create_strip_zones(mddev, &priv_conf);
++	ret = create_strip_zones(mddev, &priv_conf);
++	if (ret)
++		return ERR_PTR(ret);
+ 	return priv_conf;
+ }
+ 
+@@ -583,6 +589,7 @@ static void *raid0_takeover_raid1(struct mddev *mddev)
+ {
+ 	struct r0conf *priv_conf;
+ 	int chunksect;
++	int ret;
+ 
+ 	/* Check layout:
+ 	 *  - (N - 1) mirror drives must be already faulty
+@@ -617,7 +624,9 @@ static void *raid0_takeover_raid1(struct mddev *mddev)
+ 	/* make sure it will be not marked as dirty */
+ 	mddev->recovery_cp = MaxSector;
+ 
+-	create_strip_zones(mddev, &priv_conf);
++	ret = create_strip_zones(mddev, &priv_conf);
++	if (ret)
++		return ERR_PTR(ret);
+ 	return priv_conf;
+ }
+ 
