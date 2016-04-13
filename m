@@ -1,27 +1,35 @@
-From: "Valo, Kalle" <kvalo@qca.qualcomm.com>
-Date: Tue, 19 Apr 2016 15:47:53 +0000
-Subject: Re: [patch v2] ath10k: add some sanity checks
-Message-Id: <87vb3diore.fsf@kamboji.qca.qualcomm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Apr 2016 06:40:59 +0000
+Subject: [patch] btrfs: send: silence an integer overflow warning
+Message-Id: <20160413064059.GB8092@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160411081520.GA17911@mwanda>
-In-Reply-To: <20160411081520.GA17911@mwanda> (Dan Carpenter's message of "Mon, 
- 11 Apr 2016 11:15:20 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "michal.kazior@tieto.com" <michal.kazior@tieto.com>, "ath10k@lists.infradead.org" <ath10k@lists.infradead.org>
+To: Chris Mason <clm@fb.com>
+Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+The "sizeof(*arg->clone_sources) * arg->clone_sources_count" expression
+can overflow.  It causes several static checker warnings.  It's all
+under CAP_SYS_ADMIN so it's not that serious but lets silence the
+warnings.
 
-> Smatch complains that since "ev->peer_id" comes from skb->data that
-> means we can't trust it and have to do a bounds check on it to prevent
-> an array overflow.
->
-> Fixes: 6942726f7f7b ('ath10k: add fast peer_map lookup')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
-
--- 
-Kalle Valo
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 73dd5d6..6a8c860 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -5979,6 +5979,12 @@ long btrfs_ioctl_send(struct file *mnt_file, void __user *arg_)
+ 		goto out;
+ 	}
+ 
++	if (arg->clone_sources_count >
++	    ULLONG_MAX / sizeof(*arg->clone_sources)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	if (!access_ok(VERIFY_READ, arg->clone_sources,
+ 			sizeof(*arg->clone_sources) *
+ 			arg->clone_sources_count)) {
