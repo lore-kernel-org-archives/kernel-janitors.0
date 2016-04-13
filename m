@@ -1,77 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Apr 2016 06:46:45 +0000
-Subject: [patch] md/raid0: check for create_strip_zones() errors
-Message-Id: <20160413064645.GH8092@mwanda>
+From: Shaohua Li <shli@kernel.org>
+Date: Wed, 13 Apr 2016 17:02:40 +0000
+Subject: Re: [patch] md/raid0: check for create_strip_zones() errors
+Message-Id: <20160413170240.GB6186@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160413064645.GH8092@mwanda>
+In-Reply-To: <20160413064645.GH8092@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shaohua Li <shli@kernel.org>, Krzysztof Wojcik <krzysztof.wojcik@intel.com>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Krzysztof Wojcik <krzysztof.wojcik@intel.com>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker complains that if create_strip_zones() fails then we
-use "priv_conf" without initializing it.  Fix this by checking for
-failure.
+On Wed, Apr 13, 2016 at 09:46:45AM +0300, Dan Carpenter wrote:
+> My static checker complains that if create_strip_zones() fails then we
+> use "priv_conf" without initializing it.  Fix this by checking for
+> failure.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's more convenient setting '*private_conf = ERR_PTR(-ENOMEM);' at the
+begining of create_strip_zones() when it returns -ENOMEM. create_strip_zones
+already sets private_conf correctly in other cases.
 
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 2ea12c6..1d80e3c 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -507,6 +507,7 @@ static void *raid0_takeover_raid45(struct mddev *mddev)
- {
- 	struct md_rdev *rdev;
- 	struct r0conf *priv_conf;
-+	int ret;
- 
- 	if (mddev->degraded != 1) {
- 		printk(KERN_ERR "md/raid0:%s: raid5 must be degraded! Degraded disks: %d\n",
-@@ -534,13 +535,16 @@ static void *raid0_takeover_raid45(struct mddev *mddev)
- 	/* make sure it will be not marked as dirty */
- 	mddev->recovery_cp = MaxSector;
- 
--	create_strip_zones(mddev, &priv_conf);
-+	ret = create_strip_zones(mddev, &priv_conf);
-+	if (ret)
-+		return ERR_PTR(ret);
- 	return priv_conf;
- }
- 
- static void *raid0_takeover_raid10(struct mddev *mddev)
- {
- 	struct r0conf *priv_conf;
-+	int ret;
- 
- 	/* Check layout:
- 	 *  - far_copies must be 1
-@@ -575,7 +579,9 @@ static void *raid0_takeover_raid10(struct mddev *mddev)
- 	/* make sure it will be not marked as dirty */
- 	mddev->recovery_cp = MaxSector;
- 
--	create_strip_zones(mddev, &priv_conf);
-+	ret = create_strip_zones(mddev, &priv_conf);
-+	if (ret)
-+		return ERR_PTR(ret);
- 	return priv_conf;
- }
- 
-@@ -583,6 +589,7 @@ static void *raid0_takeover_raid1(struct mddev *mddev)
- {
- 	struct r0conf *priv_conf;
- 	int chunksect;
-+	int ret;
- 
- 	/* Check layout:
- 	 *  - (N - 1) mirror drives must be already faulty
-@@ -617,7 +624,9 @@ static void *raid0_takeover_raid1(struct mddev *mddev)
- 	/* make sure it will be not marked as dirty */
- 	mddev->recovery_cp = MaxSector;
- 
--	create_strip_zones(mddev, &priv_conf);
-+	ret = create_strip_zones(mddev, &priv_conf);
-+	if (ret)
-+		return ERR_PTR(ret);
- 	return priv_conf;
- }
- 
+Thanks,
+Shaohua
