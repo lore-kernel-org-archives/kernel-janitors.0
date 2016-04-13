@@ -1,30 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Apr 2016 06:47:42 +0000
-Subject: [patch] misc: mic: silence uninitialized variable warning
-Message-Id: <20160413064742.GI8092@mwanda>
+Date: Wed, 13 Apr 2016 06:41:26 +0000
+Subject: [patch] UBI: clean up return in ubi_remove_volume()
+Message-Id: <20160413064126.GC8092@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>, Jacek Lawrynowicz <jacek.lawrynowicz@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nikhil Rao <nikhil.rao@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>, Dmitry Pervushin <dpervushin@embeddedalley.com>
+Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-My static checker complains that we still use "mark" even when the
-_scif_fence_mark() call fails so it can be uninitialized.
+My static checker says that "err" can be uninitialized if
+"vol->reserved_pebs" is <= 0.  I don't think that can happen but
+returning a literal is cleaner anyway.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/misc/mic/scif/scif_fence.c b/drivers/misc/mic/scif/scif_fence.c
-index 7f2c96f..cac3bcc 100644
---- a/drivers/misc/mic/scif/scif_fence.c
-+++ b/drivers/misc/mic/scif/scif_fence.c
-@@ -27,7 +27,8 @@
- void scif_recv_mark(struct scif_dev *scifdev, struct scifmsg *msg)
- {
- 	struct scif_endpt *ep = (struct scif_endpt *)msg->payload[0];
--	int mark, err;
-+	int mark = 0;
-+	int err;
+diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+index 1ae17bb..10059df 100644
+--- a/drivers/mtd/ubi/vmt.c
++++ b/drivers/mtd/ubi/vmt.c
+@@ -405,7 +405,7 @@ int ubi_remove_volume(struct ubi_volume_desc *desc, int no_vtbl)
+ 	if (!no_vtbl)
+ 		self_check_volumes(ubi);
  
- 	err = _scif_fence_mark(ep, &mark);
- 	if (err)
+-	return err;
++	return 0;
+ 
+ out_err:
+ 	ubi_err(ubi, "cannot remove volume %d, error %d", vol_id, err);
