@@ -1,110 +1,85 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Tue, 29 Mar 2016 04:47:59 +0000
-Subject: [PATCH 1/3] staging: dgnc: remove parenthesis around the CONST |
-Message-Id: <20160329044759.GA22649@SEL-JYOUN-D1>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Apr 2016 11:14:41 +0000
+Subject: [PATCH resend v2] [SCSI] bfa: fix bfa_fcb_itnim_alloc() error handling
+Message-Id: <20160413111441.GC4247@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160413105946.GA1895@mwanda>
+In-Reply-To: <20160413105946.GA1895@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
+Cc: Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-remove parenthesis around the CONST | CONST.
-It will be also fixed checkpatch.pl warning about
-"Alignment should match open parenthesis" becasue
-parenthesis were removed by this patch.
+The caller assumes that "itnim" is NULL on error and non-NULL on
+success but really "itnim" is uninitialized on error.  This
+function should just use normal error handling where it returns zero on
+success and negative on failure.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/dgnc/dgnc_neo.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+v2: fix up the subject and CC list.
 
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index d732e6e..c3bb1b4 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -117,8 +117,8 @@ static inline void neo_set_cts_flow_control(struct channel_t *ch)
- 	writeb(efr, &ch->ch_neo_uart->efr);
+diff --git a/drivers/scsi/bfa/bfa_fcs.h b/drivers/scsi/bfa/bfa_fcs.h
+index 42bcb97..af220e9 100644
+--- a/drivers/scsi/bfa/bfa_fcs.h
++++ b/drivers/scsi/bfa/bfa_fcs.h
+@@ -873,8 +873,8 @@ bfa_status_t bfa_fcb_rport_alloc(struct bfad_s *bfad,
+ /*
+  * itnim callbacks
+  */
+-void bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
+-			 struct bfad_itnim_s **itnim_drv);
++int bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
++			struct bfad_itnim_s **itnim_drv);
+ void bfa_fcb_itnim_free(struct bfad_s *bfad,
+ 			struct bfad_itnim_s *itnim_drv);
+ void bfa_fcb_itnim_online(struct bfad_itnim_s *itnim_drv);
+diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
+index 7223b00..31426ae 100644
+--- a/drivers/scsi/bfa/bfad_im.c
++++ b/drivers/scsi/bfa/bfad_im.c
+@@ -413,13 +413,13 @@ bfad_im_slave_destroy(struct scsi_device *sdev)
+  * BFA FCS itnim alloc callback, after successful PRLI
+  * Context: Interrupt
+  */
+-void
++int
+ bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
+ 		    struct bfad_itnim_s **itnim_drv)
+ {
+ 	*itnim_drv = kzalloc(sizeof(struct bfad_itnim_s), GFP_ATOMIC);
+ 	if (*itnim_drv = NULL)
+-		return;
++		return -ENOMEM;
  
- 	/* Turn on table D, with 8 char hi/low watermarks */
--	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_4DELAY),
--		&ch->ch_neo_uart->fctr);
-+	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_4DELAY,
-+	       &ch->ch_neo_uart->fctr);
+ 	(*itnim_drv)->im = bfad->im;
+ 	*itnim = &(*itnim_drv)->fcs_itnim;
+@@ -430,6 +430,7 @@ bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
+ 	 */
+ 	INIT_WORK(&(*itnim_drv)->itnim_work, bfad_im_itnim_work_handler);
+ 	bfad->bfad_flags |= BFAD_RPORT_ONLINE;
++	return 0;
+ }
  
- 	/* Feed the UART our trigger levels */
- 	writeb(8, &ch->ch_neo_uart->tfifo);
-@@ -152,8 +152,8 @@ static inline void neo_set_rts_flow_control(struct channel_t *ch)
- 	/* Turn on UART enhanced bits */
- 	writeb(efr, &ch->ch_neo_uart->efr);
+ /*
+diff --git a/drivers/scsi/bfa/bfa_fcs_fcpim.c b/drivers/scsi/bfa/bfa_fcs_fcpim.c
+index 6dc7926..829247e 100644
+--- a/drivers/scsi/bfa/bfa_fcs_fcpim.c
++++ b/drivers/scsi/bfa/bfa_fcs_fcpim.c
+@@ -587,12 +587,13 @@ bfa_fcs_itnim_create(struct bfa_fcs_rport_s *rport)
+ 	struct bfa_fcs_lport_s *port = rport->port;
+ 	struct bfa_fcs_itnim_s *itnim;
+ 	struct bfad_itnim_s   *itnim_drv;
++	int ret;
  
--	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_4DELAY),
--		&ch->ch_neo_uart->fctr);
-+	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_4DELAY,
-+	       &ch->ch_neo_uart->fctr);
- 	ch->ch_r_watermark = 4;
- 
- 	writeb(32, &ch->ch_neo_uart->rfifo);
-@@ -190,7 +190,7 @@ static inline void neo_set_ixon_flow_control(struct channel_t *ch)
- 	/* Turn on UART enhanced bits */
- 	writeb(efr, &ch->ch_neo_uart->efr);
- 
--	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY),
-+	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY,
- 	       &ch->ch_neo_uart->fctr);
- 	ch->ch_r_watermark = 4;
- 
-@@ -229,8 +229,8 @@ static inline void neo_set_ixoff_flow_control(struct channel_t *ch)
- 	writeb(efr, &ch->ch_neo_uart->efr);
- 
- 	/* Turn on table D, with 8 char hi/low watermarks */
--	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY),
--		&ch->ch_neo_uart->fctr);
-+	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY,
-+	       &ch->ch_neo_uart->fctr);
- 
- 	writeb(8, &ch->ch_neo_uart->tfifo);
- 	ch->ch_t_tlevel = 8;
-@@ -270,8 +270,8 @@ static inline void neo_set_no_input_flow_control(struct channel_t *ch)
- 	writeb(efr, &ch->ch_neo_uart->efr);
- 
- 	/* Turn on table D, with 8 char hi/low watermarks */
--	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY),
--		&ch->ch_neo_uart->fctr);
-+	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY,
-+	       &ch->ch_neo_uart->fctr);
- 
- 	ch->ch_r_watermark = 0;
- 
-@@ -308,8 +308,8 @@ static inline void neo_set_no_output_flow_control(struct channel_t *ch)
- 	writeb(efr, &ch->ch_neo_uart->efr);
- 
- 	/* Turn on table D, with 8 char hi/low watermarks */
--	writeb((UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY),
--		&ch->ch_neo_uart->fctr);
-+	writeb(UART_17158_FCTR_TRGD | UART_17158_FCTR_RTS_8DELAY,
-+	       &ch->ch_neo_uart->fctr);
- 
- 	ch->ch_r_watermark = 0;
- 
-@@ -1373,7 +1373,7 @@ static void neo_flush_uart_read(struct channel_t *ch)
- 	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
- 		return;
- 
--	writeb((UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR),
-+	writeb(UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR,
- 	       &ch->ch_neo_uart->isr_fcr);
- 	neo_pci_posting_flush(ch->ch_bd);
- 
-@@ -1648,7 +1648,7 @@ static void neo_uart_init(struct channel_t *ch)
- 
- 	/* Clear out UART and FIFO */
- 	readb(&ch->ch_neo_uart->txrx);
--	writeb((UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT),
-+	writeb(UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
- 	       &ch->ch_neo_uart->isr_fcr);
- 	readb(&ch->ch_neo_uart->lsr);
- 	readb(&ch->ch_neo_uart->msr);
--- 
-1.9.1
-
+ 	/*
+ 	 * call bfad to allocate the itnim
+ 	 */
+-	bfa_fcb_itnim_alloc(port->fcs->bfad, &itnim, &itnim_drv);
+-	if (itnim = NULL) {
++	ret = bfa_fcb_itnim_alloc(port->fcs->bfad, &itnim, &itnim_drv);
++	if (ret) {
+ 		bfa_trc(port->fcs, rport->pwwn);
+ 		return NULL;
+ 	}
