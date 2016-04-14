@@ -1,38 +1,38 @@
-From: Purna Chandra Mandal <purna.mandal@microchip.com>
-Date: Fri, 22 Apr 2016 10:10:13 +0000
-Subject: Re: [patch] spi: pic32-sqi: silence array overflow warning
-Message-Id: <5719F5B5.2030101@microchip.com>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:40 +0000
+Subject: [PATCH 08/10] iio: common: hid-sensors: use tab for indention
+Message-Id: <1460662602-2951-9-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160422095524.GB11398@mwanda>
-In-Reply-To: <20160422095524.GB11398@mwanda>
+References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
+In-Reply-To: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-On 04/22/2016 03:25 PM, Dan Carpenter wrote:
+This fixes the error reported by checkpatch.pl:
 
-> We read one element beyond the end of the array when we access
-> "rdesc[i + 1]" so it causes a static checker warning.  It's harmless
-> because we write over it again on the next line.  But let's just silence
-> the warning.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/spi/spi-pic32-sqi.c b/drivers/spi/spi-pic32-sqi.c
-> index b215347..74b9e68 100644
-> --- a/drivers/spi/spi-pic32-sqi.c
-> +++ b/drivers/spi/spi-pic32-sqi.c
-> @@ -537,7 +537,7 @@ static int ring_desc_ring_alloc(struct pic32_sqi *sqi)
->  	}
->  
->  	/* Prepare BD: chain to next BD(s) */
-> -	for (i = 0, rdesc = sqi->ring; i < PESQI_BD_COUNT; i++)
-> +	for (i = 0, rdesc = sqi->ring; i < PESQI_BD_COUNT - 1; i++)
->  		bd[i].bd_nextp = rdesc[i + 1].bd_dma;
->  	bd[PESQI_BD_COUNT - 1].bd_nextp = 0;
->
-Reviewed-by: Purna Chandra Mandal <purna.mandal@microchip.com>
+ERROR: code indent should use tabs where possible
 
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+index 5955110..5b41f9d 100644
+--- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
++++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+@@ -115,7 +115,7 @@ int hid_sensor_power_state(struct hid_sensor_common *st, bool state)
+ 		return ret;
+ 	}
+ 
+- 	return 0;
++	return 0;
+ #else
+ 	atomic_set(&st->user_requested_state, state);
+ 	return _hid_sensor_power_state(st, state);
+-- 
+2.8.0
 
