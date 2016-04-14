@@ -1,38 +1,29 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Fri, 15 Apr 2016 15:34:22 +0000
-Subject: Re: [patch] PCI: acpiphp_ibm: potential uninitialized variable bug
-Message-Id: <20160415153422.GB7973@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Apr 2016 09:36:16 +0000
+Subject: [patch] leds: tca6507: silence an uninitialized variable warning
+Message-Id: <20160414093616.GH16549@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160415145106.GH8953@mwanda>
-In-Reply-To: <20160415145106.GH8953@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 15, 2016 at 05:51:06PM +0300, Dan Carpenter wrote:
-> If ibm_get_table_from_acpi() fails then "table" isn't initialized.  I
-> fixed this by adding a check for failure.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If choose_times() returns -EINVAL that means "c1" and "c2" haven't been
+initialized.  I've added a check for that.
 
-Applied to pci/hotplug for v4.7, thanks, Dan!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/pci/hotplug/acpiphp_ibm.c b/drivers/pci/hotplug/acpiphp_ibm.c
-> index 2f6d3a1..f6221d7 100644
-> --- a/drivers/pci/hotplug/acpiphp_ibm.c
-> +++ b/drivers/pci/hotplug/acpiphp_ibm.c
-> @@ -138,6 +138,8 @@ static union apci_descriptor *ibm_slot_from_id(int id)
->  	char *table;
->  
->  	size = ibm_get_table_from_acpi(&table);
-> +	if (size < 0)
-> +		return NULL;
->  	des = (union apci_descriptor *)table;
->  	if (memcmp(des->header.sig, "aPCI", 4) != 0)
->  		goto ibm_slot_done;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+index c548ea1..45222a7 100644
+--- a/drivers/leds/leds-tca6507.c
++++ b/drivers/leds/leds-tca6507.c
+@@ -327,6 +327,8 @@ static void set_times(struct tca6507_chip *tca, int bank)
+ 	int result;
+ 
+ 	result = choose_times(tca->bank[bank].ontime, &c1, &c2);
++	if (result < 0)
++		return;
+ 	dev_dbg(&tca->client->dev,
+ 		"Chose on  times %d(%d) %d(%d) for %dms\n",
+ 		c1, time_codes[c1],
