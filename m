@@ -1,42 +1,38 @@
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Sat, 09 Apr 2016 00:52:24 +0000
-Subject: Re: [patch] staging: lowmemorykiller: remove bogus NULL check
-Message-Id: <201604090952.GHB69729.OHVFLJQFOMtSOF@I-love.SAKURA.ne.jp>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:34 +0000
+Subject: [PATCH 02/10] iio: inkern: add a missing space before if
+Message-Id: <1460662602-2951-3-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160408130235.GA9376@mwanda>
-In-Reply-To: <20160408130235.GA9376@mwanda>
+References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
+In-Reply-To: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-Dan Carpenter wrote:
-> The NULL checking here doesn't make sense, so it causes a static checker
-> warning.  It turns out that p->mm can't be NULL so the inconsistency is
-> harmless and we should just remove the check.
+This fixes the error reported by checkpatch.pl:
 
-Commit 77ed2c5745d9 ("android,lowmemorykiller: Don't abuse TIF_MEMDIE.")
-replaced test_tsk_thread_flag(p, TIF_MEMDIE) with task_lmk_waiting(p) && p->mm
-because TIF_MEMDIE is cleared after p->mm became NULL whereas
-PFA_LMK_WAITING is not cleared after p->mm became NULL.
-But p is a thread which is guaranteed to be p->mm != NULL.
+ERROR: space required before the open parenthesis '('
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/inkern.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> diff --git a/drivers/staging/android/lowmemorykiller.c b/drivers/staging/android/lowmemorykiller.c
-> index c79f224..24d2745 100644
-> --- a/drivers/staging/android/lowmemorykiller.c
-> +++ b/drivers/staging/android/lowmemorykiller.c
-> @@ -131,7 +131,7 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
->  		if (!p)
->  			continue;
->  
-> -		if (task_lmk_waiting(p) && p->mm &&
-> +		if (task_lmk_waiting(p) &&
->  		    time_before_eq(jiffies, lowmem_deathpending_timeout)) {
->  			task_unlock(p);
->  			rcu_read_unlock();
-> 
+diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+index 734a004..2fc7928 100644
+--- a/drivers/iio/inkern.c
++++ b/drivers/iio/inkern.c
+@@ -452,7 +452,7 @@ static int iio_channel_read(struct iio_channel *chan, int *val, int *val2,
+ 	if (val2 = NULL)
+ 		val2 = &unused;
+ 
+-	if(!iio_channel_has_info(chan->channel, info))
++	if (!iio_channel_has_info(chan->channel, info))
+ 		return -EINVAL;
+ 
+ 	if (chan->indio_dev->info->read_raw_multi) {
+-- 
+2.8.0
+
