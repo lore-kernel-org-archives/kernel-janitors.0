@@ -1,43 +1,58 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 23 Apr 2016 21:18:38 +0000
-Subject: Re: [patch] iio: light: apds9960: silence uninitialized variable warning
-Message-Id: <9772b4fa-8a26-9ddd-7a16-c6f404cccbc1@kernel.org>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:37 +0000
+Subject: [PATCH 05/10] iio: adc: at91_adc: fix errors reported by checkpatch.pl
+Message-Id: <1460662602-2951-6-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160422100414.GG11398@mwanda>
-In-Reply-To: <20160422100414.GG11398@mwanda>
+References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
+In-Reply-To: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Matt Ranostay <mranostay@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-On 22/04/16 11:04, Dan Carpenter wrote:
-> It causes a static checker warning if we use "buf" on the failure path
-> so move that inside the if statement.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Applied to the togreg branch of iio.git,
+This fixes the errors reported by checkpatch.pl:
 
-Thanks,
+ERROR: space prohibited before that ',' (ctx:WxW)
+ERROR: code indent should use tabs where possible
 
-Jonathan
-> 
-> diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
-> index a6af56a..fbdd172 100644
-> --- a/drivers/iio/light/apds9960.c
-> +++ b/drivers/iio/light/apds9960.c
-> @@ -491,9 +491,10 @@ static int apds9960_read_raw(struct iio_dev *indio_dev,
->  		case IIO_INTENSITY:
->  			ret = regmap_bulk_read(data->regmap, chan->address,
->  					       &buf, 2);
-> -			if (!ret)
-> +			if (!ret) {
->  				ret = IIO_VAL_INT;
-> -			*val = le16_to_cpu(buf);
-> +				*val = le16_to_cpu(buf);
-> +			}
->  			break;
->  		default:
->  			ret = -EINVAL;
-> 
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/adc/at91_adc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+index f284cd6..52430ba 100644
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
+@@ -797,8 +797,8 @@ static u32 calc_startup_ticks_9x5(u32 startup_time, u32 adc_clk_khz)
+ 	 * Startup Time = <lookup_table_value> / ADC Clock
+ 	 */
+ 	const int startup_lookup[] = {
+-		0  , 8  , 16 , 24 ,
+-		64 , 80 , 96 , 112,
++		0,   8,   16,  24,
++		64,  80,  96,  112,
+ 		512, 576, 640, 704,
+ 		768, 832, 896, 960
+ 		};
+@@ -924,14 +924,14 @@ static int at91_adc_probe_dt(struct at91_adc_state *st,
+ 			ret = -EINVAL;
+ 			goto error_ret;
+ 		}
+-	        trig->name = name;
++		trig->name = name;
+ 
+ 		if (of_property_read_u32(trig_node, "trigger-value", &prop)) {
+ 			dev_err(&idev->dev, "Missing trigger-value property in the DT.\n");
+ 			ret = -EINVAL;
+ 			goto error_ret;
+ 		}
+-	        trig->value = prop;
++		trig->value = prop;
+ 		trig->is_external = of_property_read_bool(trig_node, "trigger-external");
+ 		i++;
+ 	}
+-- 
+2.8.0
 
