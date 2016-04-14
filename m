@@ -1,34 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 26 Apr 2016 05:11:30 +0000
-Subject: Re: [PATCH] net: tsi108: use NULL for pointer-typed argument
-Message-Id: <20160426.011130.579576502644948065.davem@davemloft.net>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:39 +0000
+Subject: [PATCH 07/10] iio: common: ms_sensors: use tab for indention
+Message-Id: <1460662602-2951-8-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1461402422-10879-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1461402422-10879-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
+In-Reply-To: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Apr 2016 11:07:02 +0200
+This fixes the error reported by checkpatch.pl:
 
-> The first argument of pci_free_consistent has type struct pci_dev *, so use
-> NULL instead of 0.
-> 
-> The semantic patch that performs this transformation is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> @@
-> pci_free_consistent(
-> - 0
-> + NULL
->   , ...)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+ERROR: code indent should use tabs where possible
 
-Applied.
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/common/ms_sensors/ms_sensors_i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/common/ms_sensors/ms_sensors_i2c.c b/drivers/iio/common/ms_sensors/ms_sensors_i2c.c
+index 669dc7c..ecf7721 100644
+--- a/drivers/iio/common/ms_sensors/ms_sensors_i2c.c
++++ b/drivers/iio/common/ms_sensors/ms_sensors_i2c.c
+@@ -106,7 +106,7 @@ int ms_sensors_convert_and_read(void *cli, u8 conv, u8 rd,
+ 				unsigned int delay, u32 *adc)
+ {
+ 	int ret;
+-        __be32 buf = 0;
++	__be32 buf = 0;
+ 	struct i2c_client *client = (struct i2c_client *)cli;
+ 
+ 	/* Trigger conversion */
+-- 
+2.8.0
+
