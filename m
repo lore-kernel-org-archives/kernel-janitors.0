@@ -1,53 +1,61 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Mon, 25 Apr 2016 09:15:43 +0000
-Subject: Re: [patch] drm: atmel-hlcdc: fix a NULL check
-Message-Id: <20160425111543.5677b80a@bbrezillon>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:35 +0000
+Subject: [PATCH 03/10] iio: adc: vf610_adc: fix case label indent
+Message-Id: <1460662602-2951-4-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160425090454.GA25366@mwanda>
-In-Reply-To: <20160425090454.GA25366@mwanda>
+References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
+In-Reply-To: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-Hi Daniel,
+This fixes the error reported by checkpatch.pl:
 
-On Mon, 25 Apr 2016 12:04:54 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+ERROR: switch and case should be at the same indent
 
-> If kmalloc() returned NULL we would end up dereferencing "state" a
-> couple lines later.
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/adc/vf610_adc.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-Can you take this patch in drm-misc, or should I send a PR?
-
-Regards,
-
-Boris
-
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> index 8df0aaf..867069b 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-> @@ -415,8 +415,9 @@ atmel_hlcdc_crtc_duplicate_state(struct drm_crtc *crtc)
->  		return NULL;
->  
->  	state = kmalloc(sizeof(*state), GFP_KERNEL);
-> -	if (state)
-> -		__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
-> +	if (!state)
-> +		return NULL;
-> +	__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
->  
->  	cur = drm_crtc_state_to_atmel_hlcdc_crtc_state(crtc->state);
->  	state->output_mode = cur->output_mode;
-
-
-
+diff --git a/drivers/iio/adc/vf610_adc.c b/drivers/iio/adc/vf610_adc.c
+index b10f629..653bf13 100644
+--- a/drivers/iio/adc/vf610_adc.c
++++ b/drivers/iio/adc/vf610_adc.c
+@@ -714,19 +714,19 @@ static int vf610_write_raw(struct iio_dev *indio_dev,
+ 	int i;
+ 
+ 	switch (mask) {
+-		case IIO_CHAN_INFO_SAMP_FREQ:
+-			for (i = 0;
+-				i < ARRAY_SIZE(info->sample_freq_avail);
+-				i++)
+-				if (val = info->sample_freq_avail[i]) {
+-					info->adc_feature.sample_rate = i;
+-					vf610_adc_sample_set(info);
+-					return 0;
+-				}
+-			break;
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		for (i = 0;
++			i < ARRAY_SIZE(info->sample_freq_avail);
++			i++)
++			if (val = info->sample_freq_avail[i]) {
++				info->adc_feature.sample_rate = i;
++				vf610_adc_sample_set(info);
++				return 0;
++			}
++		break;
+ 
+-		default:
+-			break;
++	default:
++		break;
+ 	}
+ 
+ 	return -EINVAL;
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.8.0
+
