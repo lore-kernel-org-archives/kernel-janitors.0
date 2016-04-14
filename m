@@ -1,56 +1,52 @@
-From: Michal Nazarewicz <mina86@mina86.com>
-Date: Mon, 04 Apr 2016 19:25:24 +0000
-Subject: Re: [patch] usb: gadget: f_midi: unlock on error
-Message-Id: <xa1toa9pi3bv.fsf@mina86.com>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:42 +0000
+Subject: [PATCH 10/10] iio: pressure: ms5611: use tab for indention
+Message-Id: <1460662602-2951-11-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160402045108.GD11775@mwanda>
-In-Reply-To: <20160402045108.GD11775@mwanda>
+References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
+In-Reply-To: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-PiBPbiAwNC8wNC8xNiAxMzoxMSwgTWljaGFsIE5hemFyZXdpY3ogd3JvdGU6Cj4+IE9yIG1heWJl
-IGV2ZW4gdGhpcyB3aGljaCBnZXRzIGF3YXkgd2l0aCBnb3RvcyBhbGwgdG9nZXRoZXI6Cj4+IAo+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfbWlkaS5jIGIvZHJp
-dmVycy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfbWlkaS5jCj4+IGluZGV4IDU2ZTJkZGUuLjkxY2Fl
-NjAgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX21pZGkuYwo+
-PiArKysgYi9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vZl9taWRpLmMKPj4gQEAgLTU5OCwy
-NyArNTk4LDIwIEBAIGRvbmU6Cj4+ICBzdGF0aWMgdm9pZCBmX21pZGlfdHJhbnNtaXQoc3RydWN0
-IGZfbWlkaSAqbWlkaSkKPj4gIHsKPj4gICAgICAgICBzdHJ1Y3QgdXNiX2VwICplcCA9IG1pZGkt
-PmluX2VwOwo+PiAtICAgICAgIGludCByZXQ7Cj4+ICAgICAgICAgdW5zaWduZWQgbG9uZyBmbGFn
-czsKPj4gKyAgICAgICBpbnQgcmV0ID0gLTE7Cj4+ICAKPj4gICAgICAgICAvKiBXZSBvbmx5IGNh
-cmUgYWJvdXQgVVNCIHJlcXVlc3RzIGlmIElOIGVuZHBvaW50IGlzIGVuYWJsZWQgKi8KPj4gLSAg
-ICAgICBpZiAoIWVwIHx8ICFlcC0+ZW5hYmxlZCkKPj4gLSAgICAgICAgICAgICAgIGdvdG8gZHJv
-cF9vdXQ7Cj4+IC0KPj4gLSAgICAgICBzcGluX2xvY2tfaXJxc2F2ZSgmbWlkaS0+dHJhbnNtaXRf
-bG9jaywgZmxhZ3MpOwo+PiAtCj4+IC0gICAgICAgZG8gewo+PiAtICAgICAgICAgICAgICAgcmV0
-ID0gZl9taWRpX2RvX3RyYW5zbWl0KG1pZGksIGVwKTsKPj4gLSAgICAgICAgICAgICAgIGlmIChy
-ZXQgPCAwKQo+PiAtICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGRyb3Bfb3V0Owo+PiAtICAg
-ICAgIH0gd2hpbGUgKHJldCk7Cj4+IC0KPj4gLSAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3Jl
-KCZtaWRpLT50cmFuc21pdF9sb2NrLCBmbGFncyk7Cj4+IC0KPj4gLSAgICAgICByZXR1cm47Cj4+
-ICsgICAgICAgaWYgKGVwICYmIGVwLT5lbmFibGVkKSB7Cj4+ICsgICAgICAgICAgICAgICBzcGlu
-X2xvY2tfaXJxc2F2ZSgmbWlkaS0+dHJhbnNtaXRfbG9jaywgZmxhZ3MpOwo+PiArICAgICAgICAg
-ICAgICAgd2hpbGUgKChyZXQgPSBmX21pZGlfZG9fdHJhbnNtaXQobWlkaSwgZXApKSA+IDApIHsK
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgLyogbm9wICovCj4+ICsgICAgICAgICAgICAgICB9
-Cj4+ICsgICAgICAgICAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZtaWRpLT50cmFuc21p
-dF9sb2NrLCBmbGFncyk7Cj4+ICsgICAgICAgfQo+PiAgCj4+IC1kcm9wX291dDoKPj4gLSAgICAg
-ICBmX21pZGlfZHJvcF9vdXRfc3Vic3RyZWFtcyhtaWRpKTsKPj4gKyAgICAgICBpZiAocmV0IDwg
-MCkKPj4gKyAgICAgICAgICAgICAgIGZfbWlkaV9kcm9wX291dF9zdWJzdHJlYW1zKG1pZGkpOwo+
-PiAgfQo+PiAgCj4+ICBzdGF0aWMgdm9pZCBmX21pZGlfaW5fdGFza2xldCh1bnNpZ25lZCBsb25n
-IGRhdGEpCgpPbiBNb24sIEFwciAwNCAyMDE2LCBGZWxpcGUgRmVycmVyaSBUb25lbGxvIHdyb3Rl
-Ogo+IEkgYW0gZmluZSB3aXRoIHRoZXNlIG9wdGlvbnMsIHByb2JhYmx5IHRoZSBzZWNvbmQsIGJ1
-dCBJIGRvbid0IHRoaW5rCj4gdGhleSBhcmUgYW55IGNsZWFyZXIgdGhhbiBiZWZvcmUsIHNvIEkg
-ZG9uJ3Qgc2VlIGFueSByZWFsIGJlbmVmaXRzIHdpdGgKPiB0aGUgY2hhbmdlcy4KClRoZSBzcGlu
-X2xvY2tfaXJxc2F2ZSBpcyBwYWlyZWQgd2l0aCBleGFjdGx5IG9uZSBzcGluX3VubG9ja19pcnFy
-ZXN0b3JlCndoaWNoIGlzIGNsZWFuZXIgaW4gbXkgYm9vay4gIEkgZG9u4oCZdCBoYXZlIHN0cm9u
-ZyBmZWVsaW5ncyBhYm91dCB0aGlzCnRob3VnaC4KCj4gSW4gZmFjdCwgSSB0aGluayBmX21pZGlf
-ZG9fdHJhbnNtaXQgc2hvdWxkIGJlIGRvY3VtZW50ZWQsIHNpbmNlIHRoZXJlCj4gYXJlIDMgcG9z
-c2libGUgcmV0dXJuIGNvbmRpdGlvbjoKPiA8MCBicmVha3MgdGhlIGxvb3AgYW5kIGRyb3Agb3V0
-IHN1YnN0cmVhbXMKPiAwIGJyZWFrcyB0aGUgbG9vcAo+ID4wIGNvbnRpbnVlcyB0aGUgbG9vcAoK
-VGhhdOKAmXMgb2YgY291cnNlIHNlcGFyYXRlIGlzc3VlLgoKLS0gCkJlc3QgcmVnYXJkcwrjg5/j
-g4/jgqYg4oCc8J2TtvCdk7LwnZO38J2Tqjg24oCdIOODiuOCtuODrOODtOOCpOODhArCq0lmIGF0
-IGZpcnN0IHlvdSBkb27igJl0IHN1Y2NlZWQsIGdpdmUgdXAgc2t5ZGl2aW5nwrsKLS0KVG8gdW5z
-dWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5l
-bC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtl
-cm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9t
-YWpvcmRvbW8taW5mby5odG1s
+This fixes the errors reported by checkpatch.pl:
+
+ERROR: code indent should use tabs where possible
+
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/pressure/ms5611_core.c | 2 +-
+ drivers/iio/pressure/ms5611_spi.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/pressure/ms5611_core.c b/drivers/iio/pressure/ms5611_core.c
+index c4e6586..9d192bf 100644
+--- a/drivers/iio/pressure/ms5611_core.c
++++ b/drivers/iio/pressure/ms5611_core.c
+@@ -429,7 +429,7 @@ static void ms5611_fini(const struct iio_dev *indio_dev)
+ }
+ 
+ int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
+-                 const char *name, int type)
++		const char *name, int type)
+ {
+ 	int ret;
+ 	struct ms5611_state *st = iio_priv(indio_dev);
+diff --git a/drivers/iio/pressure/ms5611_spi.c b/drivers/iio/pressure/ms5611_spi.c
+index 7600483..8f75532 100644
+--- a/drivers/iio/pressure/ms5611_spi.c
++++ b/drivers/iio/pressure/ms5611_spi.c
+@@ -108,7 +108,7 @@ static int ms5611_spi_probe(struct spi_device *spi)
+ 	st->client = spi;
+ 
+ 	return ms5611_probe(indio_dev, &spi->dev, spi_get_device_id(spi)->name,
+-	                    spi_get_device_id(spi)->driver_data);
++			spi_get_device_id(spi)->driver_data);
+ }
+ 
+ static int ms5611_spi_remove(struct spi_device *spi)
+-- 
+2.8.0
+
