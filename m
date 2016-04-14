@@ -1,25 +1,98 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 25 Apr 2016 11:22:52 +0000
-Subject: Re: [patch 1/2] crypto: mxc-scc - signedness bugs in mxc_scc_ablkcipher_req_init()
-Message-Id: <20160425112252.GC10114@gondor.apana.org.au>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 15:40:24 +0000
+Subject: [PATCH] iio: frequency: ad9523: use unsigned int rather then bare unsigned
+Message-Id: <20160414154024.GA16253@x220.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160422095631.GC11398@mwanda>
-In-Reply-To: <20160422095631.GC11398@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 22, 2016 at 12:56:31PM +0300, Dan Carpenter wrote:
-> ->src_nents and ->dst_nents are unsigned so they can't be less than
-> zero.  I fixed this by introducing a temporary "nents" variable.
-> 
-> Fixes: d293b640ebd5 ('crypto: mxc-scc - add basic driver for the MXC SCC')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This fix checkpatch warnings:
 
-Both applied.
+WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/frequency/ad9523.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/iio/frequency/ad9523.c b/drivers/iio/frequency/ad9523.c
+index 44a30f2..99eba52 100644
+--- a/drivers/iio/frequency/ad9523.c
++++ b/drivers/iio/frequency/ad9523.c
+@@ -284,7 +284,7 @@ struct ad9523_state {
+ 	} data[2] ____cacheline_aligned;
+ };
+ 
+-static int ad9523_read(struct iio_dev *indio_dev, unsigned addr)
++static int ad9523_read(struct iio_dev *indio_dev, unsigned int addr)
+ {
+ 	struct ad9523_state *st = iio_priv(indio_dev);
+ 	int ret;
+@@ -318,7 +318,8 @@ static int ad9523_read(struct iio_dev *indio_dev, unsigned addr)
+ 	return ret;
+ };
+ 
+-static int ad9523_write(struct iio_dev *indio_dev, unsigned addr, unsigned val)
++static int ad9523_write(struct iio_dev *indio_dev,
++		unsigned int addr, unsigned int val)
+ {
+ 	struct ad9523_state *st = iio_priv(indio_dev);
+ 	int ret;
+@@ -351,11 +352,11 @@ static int ad9523_io_update(struct iio_dev *indio_dev)
+ }
+ 
+ static int ad9523_vco_out_map(struct iio_dev *indio_dev,
+-			      unsigned ch, unsigned out)
++			      unsigned int ch, unsigned int out)
+ {
+ 	struct ad9523_state *st = iio_priv(indio_dev);
+ 	int ret;
+-	unsigned mask;
++	unsigned int mask;
+ 
+ 	switch (ch) {
+ 	case 0 ... 3:
+@@ -405,7 +406,7 @@ static int ad9523_vco_out_map(struct iio_dev *indio_dev,
+ }
+ 
+ static int ad9523_set_clock_provider(struct iio_dev *indio_dev,
+-			      unsigned ch, unsigned long freq)
++			      unsigned int ch, unsigned long freq)
+ {
+ 	struct ad9523_state *st = iio_priv(indio_dev);
+ 	long tmp1, tmp2;
+@@ -619,7 +620,7 @@ static int ad9523_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
+ {
+ 	struct ad9523_state *st = iio_priv(indio_dev);
+-	unsigned code;
++	unsigned int code;
+ 	int ret;
+ 
+ 	mutex_lock(&indio_dev->mlock);
+@@ -655,7 +656,7 @@ static int ad9523_write_raw(struct iio_dev *indio_dev,
+ 			    long mask)
+ {
+ 	struct ad9523_state *st = iio_priv(indio_dev);
+-	unsigned reg;
++	unsigned int reg;
+ 	int ret, tmp, code;
+ 
+ 	mutex_lock(&indio_dev->mlock);
+@@ -709,8 +710,8 @@ out:
+ }
+ 
+ static int ad9523_reg_access(struct iio_dev *indio_dev,
+-			      unsigned reg, unsigned writeval,
+-			      unsigned *readval)
++			      unsigned int reg, unsigned int writeval,
++			      unsigned int *readval)
+ {
+ 	int ret;
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.8.0
+
