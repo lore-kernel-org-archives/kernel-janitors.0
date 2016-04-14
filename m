@@ -1,64 +1,29 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 16 Apr 2016 12:33:32 +0000
-Subject: Re: [PATCH 05/10] iio: adc: at91_adc: fix errors reported by checkpatch.pl
-Message-Id: <5712311C.7080709@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Apr 2016 09:33:37 +0000
+Subject: [patch] firmware: qemu_fw_cfg.c: potential unintialized variable
+Message-Id: <20160414093337.GD16549@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
- <1460662602-2951-6-git-send-email-sst@poczta.fm>
-In-Reply-To: <1460662602-2951-6-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Slawomir Stepien <sst@poczta.fm>, knaack.h@gmx.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Gabriel Somlo <somlo@cmu.edu>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, qemu-devel@nongnu.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 14/04/16 20:36, Slawomir Stepien wrote:
-> This fixes the errors reported by checkpatch.pl:
-> 
-> ERROR: space prohibited before that ',' (ctx:WxW)
-> ERROR: code indent should use tabs where possible
-Ouch - not sure how that one snuck in!
+It acpi_acquire_global_lock() return AE_NOT_CONFIGURED then "glk" isn't
+initialized, which, if you got very unlucky, could cause a bug.
 
-Applied and thanks,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Jonathan
-> 
-> Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-> ---
->  drivers/iio/adc/at91_adc.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-> index f284cd6..52430ba 100644
-> --- a/drivers/iio/adc/at91_adc.c
-> +++ b/drivers/iio/adc/at91_adc.c
-> @@ -797,8 +797,8 @@ static u32 calc_startup_ticks_9x5(u32 startup_time, u32 adc_clk_khz)
->  	 * Startup Time = <lookup_table_value> / ADC Clock
->  	 */
->  	const int startup_lookup[] = {
-> -		0  , 8  , 16 , 24 ,
-> -		64 , 80 , 96 , 112,
-> +		0,   8,   16,  24,
-> +		64,  80,  96,  112,
->  		512, 576, 640, 704,
->  		768, 832, 896, 960
->  		};
-> @@ -924,14 +924,14 @@ static int at91_adc_probe_dt(struct at91_adc_state *st,
->  			ret = -EINVAL;
->  			goto error_ret;
->  		}
-> -	        trig->name = name;
-> +		trig->name = name;
->  
->  		if (of_property_read_u32(trig_node, "trigger-value", &prop)) {
->  			dev_err(&idev->dev, "Missing trigger-value property in the DT.\n");
->  			ret = -EINVAL;
->  			goto error_ret;
->  		}
-> -	        trig->value = prop;
-> +		trig->value = prop;
->  		trig->is_external = of_property_read_bool(trig_node, "trigger-external");
->  		i++;
->  	}
-> 
-
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index d999fe3..0e20116 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -77,7 +77,7 @@ static inline u16 fw_cfg_sel_endianness(u16 key)
+ static inline void fw_cfg_read_blob(u16 key,
+ 				    void *buf, loff_t pos, size_t count)
+ {
+-	u32 glk;
++	u32 glk = -1U;
+ 	acpi_status status;
+ 
+ 	/* If we have ACPI, ensure mutual exclusion against any potential
