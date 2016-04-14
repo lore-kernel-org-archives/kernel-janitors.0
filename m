@@ -1,23 +1,29 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Mon, 25 Apr 2016 10:38:58 +0000
-Subject: Re: [PATCH] USB: ftdi_sio: constify ftdi_sio_quirk structures
-Message-Id: <20160425103858.GM18866@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Apr 2016 09:37:44 +0000
+Subject: [patch] hpsa: set the enclosure identifier to zero
+Message-Id: <20160414093744.GJ16549@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460199748-14466-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1460199748-14466-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Johan Hovold <johan@kernel.org>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Don Brace <don.brace@microsemi.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, iss_storagedev@hp.com, esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Apr 09, 2016 at 01:02:28PM +0200, Julia Lawall wrote:
-> The ftdi_sio_quirk structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This has only called from show_sas_rphy_enclosure_identifier().  The
+caller expects that we set an identifier, otherwise it uses an
+unintialized variable.
 
-Now applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Johan
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 5be944c..25aa219 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -9602,6 +9602,7 @@ hpsa_sas_get_linkerrors(struct sas_phy *phy)
+ static int
+ hpsa_sas_get_enclosure_identifier(struct sas_rphy *rphy, u64 *identifier)
+ {
++	*identifier = 0;
+ 	return 0;
+ }
+ 
