@@ -1,28 +1,43 @@
-From: Florian Westphal <fw@strlen.de>
-Date: Sat, 30 Apr 2016 07:57:43 +0000
-Subject: Re: [PATCH] nf_nat_packet: Clear skb hash after modifying packet headers.
-Message-Id: <20160430075743.GA26902@breakpoint.cc>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:33 +0000
+Subject: [PATCH 01/10] iio: light apds9960: fix wrong use of brace
+Message-Id: <1460662602-2951-2-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1461187870-54322-1-git-send-email-jarno@ovn.org>
- <20160429090959.GA7236@salvia>
- <20160429091212.GL17538@breakpoint.cc>
- <BF2D351F-29C4-49BA-9C97-231BB513DD23@ovn.org>
-In-Reply-To: <BF2D351F-29C4-49BA-9C97-231BB513DD23@ovn.org>
+References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
+In-Reply-To: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jarno Rajahalme <jarno@ovn.org>
-Cc: Florian Westphal <fw@strlen.de>, Pablo Neira Ayuso <pablo@netfilter.org>, netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, dev@openvswitch.org
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-Jarno Rajahalme <jarno@ovn.org> wrote:
-> In the OVS datapath we clear the skb hash whenever we change any of the fields that may be used to compute it. This guarantees that any given flow will get the same hash value when assigning packets to bond interfaces based on the skb hash. If the hash is not cleared, some packets may use the pre-nat hash provided by a nic, for example, while others may not have the nic provided hash and compute a new one post-nat. Also, if DNAT is used for load balancing, the hash should be computed after the NAT for the difference in the destination address to make a difference in the hash value.
-> 
-> We could also clear the hash in the OVS datapath code after calling into nf nat, but could that still have the same issue with affecting the nf_tables tracing (of which I know nothing about)?
+This fixes the error reported by checkpatch.pl:
 
-No, that would not affect nft.
+ERROR: that open brace { should be on the previous line
 
-Note that we could also remove the skb_get_hash() usage in nf trace (we
-want to compute a pseudo-id that doesn't change while skb travels the
-netfilter hooks).
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/light/apds9960.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-For now I'd prefer if the hash reset would happen in OVS.
+diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
+index a6af56a..ade18aa 100644
+--- a/drivers/iio/light/apds9960.c
++++ b/drivers/iio/light/apds9960.c
+@@ -321,8 +321,12 @@ static const struct iio_chan_spec apds9960_channels[] = {
+ };
+ 
+ /* integration time in us */
+-static const int apds9960_int_time[][2] -	{ {28000, 246}, {100000, 219}, {200000, 182}, {700000, 0} };
++static const int apds9960_int_time[][2] = {
++	{ 28000, 246},
++	{100000, 219},
++	{200000, 182},
++	{700000,   0}
++};
+ 
+ /* gain mapping */
+ static const int apds9960_pxs_gain_map[] = {1, 2, 4, 8};
+-- 
+2.8.0
+
