@@ -1,33 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Apr 2016 09:31:49 +0000
-Subject: [patch v2] md/raid0: fix uninitialized variable bug
-Message-Id: <20160414093149.GA16549@mwanda>
+From: Shaohua Li <shli@kernel.org>
+Date: Thu, 14 Apr 2016 16:57:00 +0000
+Subject: Re: [patch v2] md/raid0: fix uninitialized variable bug
+Message-Id: <20160414165700.GA2006@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160413170240.GB6186@kernel.org>
-In-Reply-To: <20160413170240.GB6186@kernel.org>
+ <20160414093149.GA16549@mwanda>
+In-Reply-To: <20160414093149.GA16549@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shaohua Li <shli@kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If this function fails the callers expect that *private_conf is set to
-an ERR_PTR() but that isn't true for the first error path where we can't
-allocate "conf".  It leads to some uninitialized variable bugs.
+On Thu, Apr 14, 2016 at 12:31:49PM +0300, Dan Carpenter wrote:
+> If this function fails the callers expect that *private_conf is set to
+> an ERR_PTR() but that isn't true for the first error path where we can't
+> allocate "conf".  It leads to some uninitialized variable bugs.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: Shaohua suggested a different fix
-
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 2ea12c6..f63dbb6 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -85,6 +85,7 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
- 	struct r0conf *conf = kzalloc(sizeof(*conf), GFP_KERNEL);
- 	unsigned short blksize = 512;
- 
-+	*private_conf = ERR_PTR(-ENOMEM);
- 	if (!conf)
- 		return -ENOMEM;
- 	rdev_for_each(rdev1, mddev) {
+Applied, thanks!
