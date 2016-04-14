@@ -1,43 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Apr 2016 10:01:39 +0000
-Subject: [patch 2/2] crypto: mxc-scc - fix unwinding in mxc_scc_crypto_register()
-Message-Id: <20160422100139.GD11398@mwanda>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:32 +0000
+Subject: [PATCH 00/10] iio: fix errors reported by checkpatch.pl
+Message-Id: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-There are two issues here:
+Simple fixes of errors reported by checkpatch.pl.
 
-1) We need to decrement "i" otherwise we unregister something that was
-   not successfully registered.
-2) The original code did not unregister the first element in the array
-   where i is zero.
+Slawomir Stepien (10):
+  iio: light apds9960: fix wrong use of brace
+  iio: inkern: add a missing space before if
+  iio: adc: vf610_adc: fix case label indent
+  iio: adc: mcp3422: remove spaces before comma
+  iio: adc: at91_adc: fix errors reported by checkpatch.pl
+  iio: adc: ad799x: remove space before comma
+  iio: common: ms_sensors: use tab for indention
+  iio: common: hid-sensors: use tab for indention
+  iio: magnetometer: ak8975: put else and brace at the same line
+  iio: pressure: ms5611: use tab for indention
 
-Fixes: d293b640ebd5 ('crypto: mxc-scc - add basic driver for the MXC SCC')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+ drivers/iio/adc/ad799x.c                           |  2 +-
+ drivers/iio/adc/at91_adc.c                         |  8 ++++----
+ drivers/iio/adc/mcp3422.c                          |  6 +++---
+ drivers/iio/adc/vf610_adc.c                        | 24 +++++++++++-----------
+ .../iio/common/hid-sensors/hid-sensor-trigger.c    |  2 +-
+ drivers/iio/common/ms_sensors/ms_sensors_i2c.c     |  2 +-
+ drivers/iio/inkern.c                               |  2 +-
+ drivers/iio/light/apds9960.c                       |  8 ++++++--
+ drivers/iio/magnetometer/ak8975.c                  |  3 +--
+ drivers/iio/pressure/ms5611_core.c                 |  2 +-
+ drivers/iio/pressure/ms5611_spi.c                  |  2 +-
+ 11 files changed, 32 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/crypto/mxc-scc.c b/drivers/crypto/mxc-scc.c
-index 9b348a7..ff383ef 100644
---- a/drivers/crypto/mxc-scc.c
-+++ b/drivers/crypto/mxc-scc.c
-@@ -616,7 +616,7 @@ static struct mxc_scc_crypto_tmpl *scc_crypto_algs[] = {
- 
- static int mxc_scc_crypto_register(struct mxc_scc *scc)
- {
--	unsigned int i;
-+	int i;
- 	int err = 0;
- 
- 	for (i = 0; i < ARRAY_SIZE(scc_crypto_algs); i++) {
-@@ -629,7 +629,7 @@ static int mxc_scc_crypto_register(struct mxc_scc *scc)
- 	return 0;
- 
- err_out:
--	for (; i > 0; i--)
-+	while (--i >= 0)
- 		crypto_unregister_alg(&scc_crypto_algs[i]->alg);
- 
- 	return err;
+-- 
+2.8.0
+
