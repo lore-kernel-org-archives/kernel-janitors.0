@@ -1,44 +1,28 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Mon, 04 Apr 2016 13:03:32 +0000
-Subject: Re: [patch] ipmi_ssif: silence an uninitialized variable warning
-Message-Id: <57026624.7000007@acm.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Apr 2016 09:35:48 +0000
+Subject: [patch] w1: silence an uninitialized variable warning
+Message-Id: <20160414093548.GG16549@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160404111657.GA26910@mwanda>
-In-Reply-To: <20160404111657.GA26910@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Evgeniy Polyakov <zbr@ioremap.net>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/04/2016 06:16 AM, Dan Carpenter wrote:
-> My static checker complains that "ret" could be zero here.  (Presumably
-> that means the hardware is badly busted).  But the result would be that
-> the caller assumes *resp_len is initialized when it's not and it leads
-> to a warning.  Let's just silence the warning.
+If kstrtoint() returns -ERANGE then "tmp" is uninitialized.
 
-I don't think i2c_smbus_read_block_data() can return a zero, it's either 
-an error or a message.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I'm ok with this, but can you add a comment saying why this is here?  I 
-don't like strange looking code without explanations.
-
-Thanks,
--corey
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-> index 8b3be8b..512c5b6 100644
-> --- a/drivers/char/ipmi/ipmi_ssif.c
-> +++ b/drivers/char/ipmi/ipmi_ssif.c
-> @@ -1232,6 +1232,8 @@ static int do_cmd(struct i2c_client *client, int len, unsigned char *msg,
->   			break;
->   	}
->   
-> +	if (ret = 0)
-> +		ret = -EINVAL;
->   	if (ret > 0) {
->   		/* Validate that the response is correct. */
->   		if (ret < 3 ||
-
+diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+index 89a7847..bb34362 100644
+--- a/drivers/w1/w1.c
++++ b/drivers/w1/w1.c
+@@ -335,7 +335,7 @@ static ssize_t w1_master_attribute_store_max_slave_count(struct device *dev,
+ 	int tmp;
+ 	struct w1_master *md = dev_to_w1_master(dev);
+ 
+-	if (kstrtoint(buf, 0, &tmp) = -EINVAL || tmp < 1)
++	if (kstrtoint(buf, 0, &tmp) || tmp < 1)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&md->mutex);
