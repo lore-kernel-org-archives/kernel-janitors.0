@@ -1,42 +1,34 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Mon, 18 Apr 2016 18:53:39 +0000
-Subject: Re: [PATCH 1/5] clk: qoriq: add __init attribute
-Message-Id: <20160418185339.GC15324@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Apr 2016 09:33:03 +0000
+Subject: [patch] target: Silence an uninitialized variable warning
+Message-Id: <20160414093303.GC16549@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
- <1460991338-9845-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1460991338-9845-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>, kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R . Rodriguez" <mcgrof@kernel.org>, Josh Triplett <josh@joshtriplett.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/18, Julia Lawall wrote:
-> Add __init attribute on a function that is only called from other __init
-> functions and that is not inlined, at least with gcc version 4.8.4 on an
-> x86 machine with allyesconfig.  Currently, the function is put in the
-> .text.unlikely segment.  Declaring it as __init will cause it to be put in
-> the .init.text and to disappear after initialization.
-> 
-> The result of objdump -x on the function before the change is as follows:
-> 
-> 0000000000000000 l     F .text.unlikely 0000000000000071 sysclk_from_fixed.constprop.5
-> 
-> And after the change it is as follows:
-> 
-> 0000000000000480 l     F .init.text	000000000000006c sysclk_from_fixed.constprop.5
-> 
-> Done with the help of Coccinelle.  The semantic patch checks for local
-> static non-init functions that are called from an __init function and are
-> not called from any other function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+I'm getting a static checker warning:
 
-Applied to clk-next
+    drivers/target/target_core_sbc.c:1150 sbc_parse_cdb()
+    error: uninitialized variable 'size'.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+It looks like a possible bug but wouldn't it have shown up in testing?
+Anyway let's just silence it by setting size to zero.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/target/target_core_sbc.c b/drivers/target/target_core_sbc.c
+index a9057aa..0c6e55f 100644
+--- a/drivers/target/target_core_sbc.c
++++ b/drivers/target/target_core_sbc.c
+@@ -828,7 +828,7 @@ sbc_parse_cdb(struct se_cmd *cmd, struct sbc_ops *ops)
+ {
+ 	struct se_device *dev = cmd->se_dev;
+ 	unsigned char *cdb = cmd->t_task_cdb;
+-	unsigned int size;
++	unsigned int size = 0;
+ 	u32 sectors = 0;
+ 	sense_reason_t ret;
+ 
