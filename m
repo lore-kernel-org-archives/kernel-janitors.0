@@ -1,43 +1,34 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Date: Thu, 14 Apr 2016 11:12:38 +0000
-Subject: Re: [patch] leds: tca6507: silence an uninitialized variable warning
-Message-Id: <570F7B26.2090202@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Apr 2016 18:20:34 +0000
+Subject: [patch v2] scsi_dh_alua: uninitialized variable in alua_rtpg()
+Message-Id: <20160414182034.GA32469@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160414093616.GH16549@mwanda>
-In-Reply-To: <20160414093616.GH16549@mwanda>
+References: <570FBB0E.9030902@sandisk.com>
+In-Reply-To: <570FBB0E.9030902@sandisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Bart Van Assche <bart.vanassche@sandisk.com>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+It's possible to use "err" without initializing it.  If it happens to be
+a 2 which is SCSI_DH_RETRY then that could cause a bug.  Bart Van Assche
+pointed out that we should probably re-initialize it for every iteration
+through the retry loop.
 
-Thanks for the patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: The first version just initialized it at the start of the function.
 
-Applied to the for-next branch of linux-leds.git.
-
-Thanks,
-Jacek Anaszewski
-
-On 04/14/2016 11:36 AM, Dan Carpenter wrote:
-> If choose_times() returns -EINVAL that means "c1" and "c2" haven't been
-> initialized.  I've added a check for that.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-> index c548ea1..45222a7 100644
-> --- a/drivers/leds/leds-tca6507.c
-> +++ b/drivers/leds/leds-tca6507.c
-> @@ -327,6 +327,8 @@ static void set_times(struct tca6507_chip *tca, int bank)
->   	int result;
->
->   	result = choose_times(tca->bank[bank].ontime, &c1, &c2);
-> +	if (result < 0)
-> +		return;
->   	dev_dbg(&tca->client->dev,
->   		"Chose on  times %d(%d) %d(%d) for %dms\n",
->   		c1, time_codes[c1],
->
->
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index 8eaed05..a655cf2 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -532,6 +532,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 		return SCSI_DH_DEV_TEMP_BUSY;
+ 
+  retry:
++	err = 0;
+ 	retval = submit_rtpg(sdev, buff, bufflen, &sense_hdr, pg->flags);
+ 
+ 	if (retval) {
