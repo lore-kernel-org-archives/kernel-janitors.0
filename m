@@ -1,29 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Apr 2016 17:53:57 +0000
-Subject: Re: [patch] md/raid0: check for create_strip_zones() errors
-Message-Id: <20160413175356.GE4247@mwanda>
+From: Slawomir Stepien <sst@poczta.fm>
+Date: Thu, 14 Apr 2016 19:36:38 +0000
+Subject: [PATCH 06/10] iio: adc: ad799x: remove space before comma
+Message-Id: <1460662602-2951-7-git-send-email-sst@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160413064645.GH8092@mwanda>
- <20160413170240.GB6186@kernel.org>
-In-Reply-To: <20160413170240.GB6186@kernel.org>
+References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
+In-Reply-To: <1460662602-2951-1-git-send-email-sst@poczta.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shaohua Li <shli@kernel.org>
-Cc: Krzysztof Wojcik <krzysztof.wojcik@intel.com>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>
 
-On Wed, Apr 13, 2016 at 10:02:40AM -0700, Shaohua Li wrote:
-> On Wed, Apr 13, 2016 at 09:46:45AM +0300, Dan Carpenter wrote:
-> > My static checker complains that if create_strip_zones() fails then we
-> > use "priv_conf" without initializing it.  Fix this by checking for
-> > failure.
-> 
-> It's more convenient setting '*private_conf = ERR_PTR(-ENOMEM);' at the
-> begining of create_strip_zones() when it returns -ENOMEM. create_strip_zones
-> already sets private_conf correctly in other cases.
-> 
+This fixes the error reported by checkpatch.pl:
 
-Yeah.  I'll send v2.
+ERROR: space prohibited before that ',' (ctx:WxW)
 
-regards,
-dan carpenter
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+---
+ drivers/iio/adc/ad799x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/ad799x.c b/drivers/iio/adc/ad799x.c
+index 01d7158..a3f5254 100644
+--- a/drivers/iio/adc/ad799x.c
++++ b/drivers/iio/adc/ad799x.c
+@@ -477,7 +477,7 @@ static int ad799x_read_event_value(struct iio_dev *indio_dev,
+ 	if (ret < 0)
+ 		return ret;
+ 	*val = (ret >> chan->scan_type.shift) &
+-		GENMASK(chan->scan_type.realbits - 1 , 0);
++		GENMASK(chan->scan_type.realbits - 1, 0);
+ 
+ 	return IIO_VAL_INT;
+ }
+-- 
+2.8.0
+
