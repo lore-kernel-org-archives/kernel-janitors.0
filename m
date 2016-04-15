@@ -1,65 +1,32 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Date: Tue, 05 Apr 2016 09:24:06 +0000
-Subject: Re: stmmac: add descriptors function for GMAC 4.xx
-Message-Id: <57038436.8060004@st.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Apr 2016 14:45:58 +0000
+Subject: [patch] intel_telemetry_pltdrv: silence an unintialized variable warning
+Message-Id: <20160415144558.GD8953@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160404204609.GA9128@mwanda>
-In-Reply-To: <20160404204609.GA9128@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
+Cc: Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Dan,
+Presumably "pss_period" and "ioss_period" can't both be zero, but this
+function is never called so we can't infer that using static analysis
+alone.
 
-On 04/04/2016 10:46 PM, Dan Carpenter wrote:
-> Hello Alexandre TORGUE,
->
-> The patch 753a71090f33: "stmmac: add descriptors function for GMAC
-> 4.xx" from Apr 1, 2016, leads to the following static checker warning:
->
-> 	drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:261 dwmac4_rd_prepare_tx_desc()
-> 	warn: odd binop '0x4000 & 0x3fff'
->
-> drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
->     251  static void dwmac4_rd_prepare_tx_desc(struct dma_desc *p, int is_fs, int len,
->     252                                        bool csum_flag, int mode, bool tx_own,
->     253                                        bool ls)
->     254  {
->     255          unsigned int tdes3 = p->des3;
->     256
->     257          if (unlikely(len > BUF_SIZE_16KiB)) {
->     258                  p->des2 |= (((len - BUF_SIZE_16KiB) <<
->     259                               TDES2_BUFFER2_SIZE_MASK_SHIFT)
->     260                              & TDES2_BUFFER2_SIZE_MASK)
->     261                              | (BUF_SIZE_16KiB & TDES2_BUFFER1_SIZE_MASK);
->                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Should this be "len & TDES2_BUFFER1_SIZE_MASK" or are you rounding down
-> the length deliberately?
+Let's silence the warning by setting "ret" to zero.
 
-It is a mistake. Could be "len & TDES2_BUFFER1_SIZE_MASK" or 
-"(BUF_SIZE_16KiB - 1) & TDES2_BUFFER1_SIZE_MASK".
-I will send a fix.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
-
-regards,
-
-Alex
-
->
->     262          } else {
->     263                  p->des2 |= (len & TDES2_BUFFER1_SIZE_MASK);
->     264          }
->     265
->     266          if (is_fs)
->     267                  tdes3 |= TDES3_FIRST_DESCRIPTOR;
->     268          else
->     269                  tdes3 &= ~TDES3_FIRST_DESCRIPTOR;
->     270
->
-> regards,
-> dan carpenter
->
-
-
+diff --git a/drivers/platform/x86/intel_telemetry_pltdrv.c b/drivers/platform/x86/intel_telemetry_pltdrv.c
+index 397119f..781bd10 100644
+--- a/drivers/platform/x86/intel_telemetry_pltdrv.c
++++ b/drivers/platform/x86/intel_telemetry_pltdrv.c
+@@ -659,7 +659,7 @@ static int telemetry_plt_update_events(struct telemetry_evtconfig pss_evtconfig,
+ static int telemetry_plt_set_sampling_period(u8 pss_period, u8 ioss_period)
+ {
+ 	u32 telem_ctrl = 0;
+-	int ret;
++	int ret = 0;
+ 
+ 	mutex_lock(&(telm_conf->telem_lock));
+ 	if (ioss_period) {
