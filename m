@@ -1,42 +1,54 @@
-From: Bart Van Assche <bart.vanassche@sandisk.com>
-Date: Thu, 14 Apr 2016 18:55:40 +0000
+From: Hannes Reinecke <hare@suse.de>
+Date: Fri, 15 Apr 2016 05:59:30 +0000
 Subject: Re: [patch v2] scsi_dh_alua: uninitialized variable in alua_rtpg()
-Message-Id: <570FE7AC.9000309@sandisk.com>
+Message-Id: <57108342.2070106@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160414182034.GA32469@mwanda>
 In-Reply-To: <20160414182034.GA32469@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Bart Van Assche <bart.vanassche@sandisk.com>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/14/2016 11:20 AM, Dan Carpenter wrote:
+On 04/14/2016 08:20 PM, Dan Carpenter wrote:
 > It's possible to use "err" without initializing it.  If it happens to be
 > a 2 which is SCSI_DH_RETRY then that could cause a bug.  Bart Van Assche
 > pointed out that we should probably re-initialize it for every iteration
 > through the retry loop.
->
+>=20
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
 > v2: The first version just initialized it at the start of the function.
->
-> diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+>=20
+> diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/de=
+vice_handler/scsi_dh_alua.c
 > index 8eaed05..a655cf2 100644
 > --- a/drivers/scsi/device_handler/scsi_dh_alua.c
 > +++ b/drivers/scsi/device_handler/scsi_dh_alua.c
-> @@ -532,6 +532,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
->   		return SCSI_DH_DEV_TEMP_BUSY;
->
->    retry:
-> +	err = 0;
->   	retval = submit_rtpg(sdev, buff, bufflen, &sense_hdr, pg->flags);
->
->   	if (retval) {
+> @@ -532,6 +532,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct=
+ alua_port_group *pg)
+>  		return SCSI_DH_DEV_TEMP_BUSY;
+> =20
+>   retry:
+> +	err =3D 0;
+>  	retval =3D submit_rtpg(sdev, buff, bufflen, &sense_hdr, pg->flags);
+> =20
+>  	if (retval) {
+>=20
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-Although I would have preferred that that initialization would have been 
-closer to the other 'err' assignments this patch looks fine to me. If 
-this patch does not get integrated in kernel v4.6 a "Cc: stable" tag 
-will be needed.
+Cheers,
 
-Bart.
+Hannes
+--=20
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
+GF: F. Imend=F6rffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG N=FCrnberg)
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
