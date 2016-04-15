@@ -1,41 +1,49 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Fri, 15 Apr 2016 12:09:23 +0000
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Fri, 15 Apr 2016 14:34:25 +0000
 Subject: Re: [PATCH 2/2] net-ath9k_htc: Replace a variable initialisation by an assignment in ath9k_htc_set_c
-Message-Id: <87ega7qdjg.fsf@kamboji.qca.qualcomm.com>
+Message-Id: <CAGRGNgUWZobf1-xiSfPVxBxktEW1Zh37bGEdpNte1rUdVeNOdg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5686C390.5060600@users.sourceforge.net>
-	<5686C47E.1040906@users.sourceforge.net>
-	<CAGRGNgXR_OoER0rN5Z8n_5VtZimpU7WDNZuc4vkdb2eKDT2frQ@mail.gmail.com>
-In-Reply-To: <CAGRGNgXR_OoER0rN5Z8n_5VtZimpU7WDNZuc4vkdb2eKDT2frQ@mail.gmail.com>
-	(Julian Calaby's message of "Fri, 8 Apr 2016 11:40:45 +1000")
+References: <566ABCD9.1060404@users.sourceforge.net> <5686C390.5060600@users.sourceforge.net>
+ <5686C47E.1040906@users.sourceforge.net> <CAGRGNgXR_OoER0rN5Z8n_5VtZimpU7WDNZuc4vkdb2eKDT2frQ@mail.gmail.com>
+ <87ega7qdjg.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <87ega7qdjg.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Calaby <julian.calaby@gmail.com>
+To: Kalle Valo <kvalo@codeaurora.org>
 Cc: ath9k-devel@lists.ath9k.org, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, LKML <linux-kernel@vger.kernel.org>, SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-Julian Calaby <julian.calaby@gmail.com> writes:
+Hi Kalle,
 
-> Hi Kalle,
+On Fri, Apr 15, 2016 at 10:09 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
+> Julian Calaby <julian.calaby@gmail.com> writes:
 >
-> On Sat, Jan 2, 2016 at 5:25 AM, SF Markus Elfring
-> <elfring@users.sourceforge.net> wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Fri, 1 Jan 2016 19:09:32 +0100
+>> Hi Kalle,
 >>
->> Replace an explicit initialisation for one local variable at the beginning
->> by a conditional assignment.
+>> On Sat, Jan 2, 2016 at 5:25 AM, SF Markus Elfring
+>> <elfring@users.sourceforge.net> wrote:
+>>> From: Markus Elfring <elfring@users.sourceforge.net>
+>>> Date: Fri, 1 Jan 2016 19:09:32 +0100
+>>>
+>>> Replace an explicit initialisation for one local variable at the beginning
+>>> by a conditional assignment.
+>>>
+>>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 >>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>> This looks sane to me.
+>>
+>> Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
 >
-> This looks sane to me.
+> Before I commit I'll just change the commit title to:
 >
-> Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+> ath9k_htc: Replace a variable initialisation by an assignment in ath9k_htc_set_channel()
 
-Before I commit I'll just change the commit title to:
+Sounds good to me.
 
-ath9k_htc: Replace a variable initialisation by an assignment in ath9k_htc_set_channel()
+Thanks,
 
 -- 
-Kalle Valo
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
