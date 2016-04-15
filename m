@@ -1,57 +1,29 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 16 Apr 2016 12:30:03 +0000
-Subject: Re: [PATCH 01/10] iio: light apds9960: fix wrong use of brace
-Message-Id: <5712304B.90709@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Apr 2016 14:51:06 +0000
+Subject: [patch] PCI: acpiphp_ibm: potential uninitialized variable bug
+Message-Id: <20160415145106.GH8953@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
- <1460662602-2951-2-git-send-email-sst@poczta.fm>
- <CAKzfze8PtR559e2gjbWnZ=KHqETKr56tYUAyH7kJxwfQi=5tFg@mail.gmail.com>
- <20160415145641.GA19346@x220.localdomain>
-In-Reply-To: <20160415145641.GA19346@x220.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Slawomir Stepien <sst@poczta.fm>, Matt Ranostay <mranostay@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 15/04/16 15:56, Slawomir Stepien wrote:
-> On Apr 14, 2016 16:29, Matt Ranostay wrote:
->> On Thu, Apr 14, 2016 at 12:36 PM, Slawomir Stepien <sst@poczta.fm> wrote:
->>> This fixes the error reported by checkpatch.pl:
->>>
->>> ERROR: that open brace { should be on the previous line
->>>
->>> Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-I find it rather hard to care about this, but perhaps it is just a 'tiny' bit
-more readable and there are definite advantages in suppressing some of the
-output of checkpatch so the 'real' issues are easily spotted!
+If ibm_get_table_from_acpi() fails then "table" isn't initialized.  I
+fixed this by adding a check for failure.
 
-Applied to the togreg branch of iio.git - initially pushed out as testing
-for the autobuilders to play with it.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-
-Jonathan
->>> ---
->>>  drivers/iio/light/apds9960.c | 8 ++++++--
->>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
->>> index a6af56a..ade18aa 100644
->>> --- a/drivers/iio/light/apds9960.c
->>> +++ b/drivers/iio/light/apds9960.c
->>> @@ -321,8 +321,12 @@ static const struct iio_chan_spec apds9960_channels[] = {
->>>  };
->>>
->>>  /* integration time in us */
->>> -static const int apds9960_int_time[][2] >>> -       { {28000, 246}, {100000, 219}, {200000, 182}, {700000, 0} };
->>> +static const int apds9960_int_time[][2] = {
->>> +       { 28000, 246},
->>> +       {100000, 219},
->>> +       {200000, 182},
->>> +       {700000,   0}
->> Extra space between the comma and zero. Or was this intended for alignment?
-> 
-> Just for alignment. Are you OK with that?
-> 
-
+diff --git a/drivers/pci/hotplug/acpiphp_ibm.c b/drivers/pci/hotplug/acpiphp_ibm.c
+index 2f6d3a1..f6221d7 100644
+--- a/drivers/pci/hotplug/acpiphp_ibm.c
++++ b/drivers/pci/hotplug/acpiphp_ibm.c
+@@ -138,6 +138,8 @@ static union apci_descriptor *ibm_slot_from_id(int id)
+ 	char *table;
+ 
+ 	size = ibm_get_table_from_acpi(&table);
++	if (size < 0)
++		return NULL;
+ 	des = (union apci_descriptor *)table;
+ 	if (memcmp(des->header.sig, "aPCI", 4) != 0)
+ 		goto ibm_slot_done;
