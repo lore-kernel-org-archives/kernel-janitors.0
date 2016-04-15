@@ -1,22 +1,28 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Mon, 04 Apr 2016 06:19:34 +0000
-Subject: Re: [patch] ext4 crypto: fix some error handling
-Message-Id: <20160404061934.GA4939@thunk.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Apr 2016 14:45:28 +0000
+Subject: [patch] gpio: brcmstb: missing error code
+Message-Id: <20160415144528.GC8953@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160402044916.GC11775@mwanda>
-In-Reply-To: <20160402044916.GC11775@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Gregory Fong <gregory.0xf0@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Apr 02, 2016 at 07:49:16AM +0300, Dan Carpenter wrote:
-> We should be testing for -ENOMEM but the minus sign is missing.
-> 
-> Fixes: c9af28fdd449 ('ext4 crypto: don't let data integrity writebacks fail with ENOMEM')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We should set the error code before returning here.  Otherwise "err"
+could be uninitialized or zero.
 
-Thanks, applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-					- Ted
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 42d51c5..e648914 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -461,6 +461,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 		bank->id = num_banks;
+ 		if (bank_width <= 0 || bank_width > MAX_GPIO_PER_BANK) {
+ 			dev_err(dev, "Invalid bank width %d\n", bank_width);
++			err = -EINVAL;
+ 			goto fail;
+ 		} else {
+ 			bank->width = bank_width;
