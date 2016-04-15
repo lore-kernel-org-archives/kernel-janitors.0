@@ -1,34 +1,30 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 04 Apr 2016 09:52:03 +0000
-Subject: [PATCH 1/2] staging: dgnc: remove parenthesis around the CONST |
-Message-Id: <20160404095202.GA4030@SEL-JYOUN-D1>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Apr 2016 14:50:32 +0000
+Subject: [patch] memory: of_memory: Silence uninitialized variable warning
+Message-Id: <20160415145032.GG8953@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Aneesh V <aneesh@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-remove parenthesis around the CONST | CONST.
+Presumably we never use the default: case statement which prints a
+warning message.  But my static checker complains that if we do, we will
+hit an uninitialized variable warning.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- drivers/staging/dgnc/dgnc_cls.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
-index 5e46ac8..46c050c 100644
---- a/drivers/staging/dgnc/dgnc_cls.c
-+++ b/drivers/staging/dgnc/dgnc_cls.c
-@@ -1168,7 +1168,7 @@ static void cls_uart_init(struct channel_t *ch)
- 	/* Clear out UART and FIFO */
- 	readb(&ch->ch_cls_uart->txrx);
+diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
+index 6007435..9daf94b 100644
+--- a/drivers/memory/of_memory.c
++++ b/drivers/memory/of_memory.c
+@@ -109,7 +109,7 @@ const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
+ 	struct lpddr2_timings	*timings = NULL;
+ 	u32			arr_sz = 0, i = 0;
+ 	struct device_node	*np_tim;
+-	char			*tim_compat;
++	char			*tim_compat = NULL;
  
--	writeb((UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT),
-+	writeb(UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
- 	       &ch->ch_cls_uart->isr_fcr);
- 	udelay(10);
- 
--- 
-1.9.1
-
+ 	switch (device_type) {
+ 	case DDR_TYPE_LPDDR2_S2:
