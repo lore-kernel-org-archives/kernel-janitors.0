@@ -1,60 +1,64 @@
-From: Liviu Dudau <liviu.dudau@arm.com>
-Date: Mon, 04 Apr 2016 09:17:05 +0000
-Subject: Re: [patch] drm: ARM HDLCD - fix an error code
-Message-Id: <20160404091705.GH27137@e106497-lin.cambridge.arm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Apr 2016 14:44:18 +0000
+Subject: [patch v2] mfd: wm8400-core: delete wm8400_reg_read()
+Message-Id: <20160415144418.GA8953@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160402054224.GA19162@mwanda>
-In-Reply-To: <20160402054224.GA19162@mwanda>
+In-Reply-To: <20160414100135.GS31814@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>
+Cc: patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-On Sat, Apr 02, 2016 at 08:42:24AM +0300, Dan Carpenter wrote:
-> We accidentally return PTR_ERR(NULL) which is success instead of a
-> negative error code.
-> 
-> Fixes: 879e40bea6f2 ('drm: ARM HDLCD - get rid of devm_clk_put()')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/arm/hdlcd_drv.c b/drivers/gpu/drm/arm/hdlcd_drv.c
-> index 734849f..3ac1ae4 100644
-> --- a/drivers/gpu/drm/arm/hdlcd_drv.c
-> +++ b/drivers/gpu/drm/arm/hdlcd_drv.c
-> @@ -55,8 +55,9 @@ static int hdlcd_load(struct drm_device *drm, unsigned long flags)
->  	hdlcd->mmio = devm_ioremap_resource(drm->dev, res);
->  	if (IS_ERR(hdlcd->mmio)) {
->  		DRM_ERROR("failed to map control registers area\n");
-> +		ret = PTR_ERR(hdlcd->mmio);
->  		hdlcd->mmio = NULL;
-> -		return PTR_ERR(hdlcd->mmio);
-> +		return ret;
+There was a static checker warning in wm8400_reg_read() because we were
+returning u16 and that can't hold the negative error codes.  The
+function isn't used, so let's just delete it.
 
-Good catch, thanks for that!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: just delete the function
 
-Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
-
-I've pulled your patch and sent an updated pull request.
-
-Best regards,
-Liviu
-
-
->  	}
->  
->  	version = hdlcd_read(hdlcd, HDLCD_REG_VERSION);
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-==========
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+diff --git a/include/linux/mfd/wm8400-private.h b/include/linux/mfd/wm8400-private.h
+index 2de565b..4ee908f 100644
+--- a/include/linux/mfd/wm8400-private.h
++++ b/include/linux/mfd/wm8400-private.h
+@@ -923,7 +923,6 @@ struct wm8400 {
+ #define WM8400_LINE_CMP_VTHD_SHIFT                   0  /* LINE_CMP_VTHD - [3:0] */
+ #define WM8400_LINE_CMP_VTHD_WIDTH                   4  /* LINE_CMP_VTHD - [3:0] */
+ 
+-u16 wm8400_reg_read(struct wm8400 *wm8400, u8 reg);
+ int wm8400_block_read(struct wm8400 *wm8400, u8 reg, int count, u16 *data);
+ 
+ static inline int wm8400_set_bits(struct wm8400 *wm8400, u8 reg,
+diff --git a/drivers/mfd/wm8400-core.c b/drivers/mfd/wm8400-core.c
+index 3bd44a4..c1adfc1 100644
+--- a/drivers/mfd/wm8400-core.c
++++ b/drivers/mfd/wm8400-core.c
+@@ -35,27 +35,6 @@ static bool wm8400_volatile(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-/**
+- * wm8400_reg_read - Single register read
+- *
+- * @wm8400: Pointer to wm8400 control structure
+- * @reg:    Register to read
+- *
+- * @return  Read value
+- */
+-u16 wm8400_reg_read(struct wm8400 *wm8400, u8 reg)
+-{
+-	unsigned int val;
+-	int ret;
+-
+-	ret = regmap_read(wm8400->regmap, reg, &val);
+-	if (ret < 0)
+-		return ret;
+-
+-	return val;
+-}
+-EXPORT_SYMBOL_GPL(wm8400_reg_read);
+-
+ int wm8400_block_read(struct wm8400 *wm8400, u8 reg, int count, u16 *data)
+ {
+ 	return regmap_bulk_read(wm8400->regmap, reg, data, count);
