@@ -1,44 +1,50 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 16 Apr 2016 12:32:31 +0000
-Subject: Re: [PATCH 04/10] iio: adc: mcp3422: remove spaces before comma
-Message-Id: <571230DF.6060602@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 18 Apr 2016 14:55:36 +0000
+Subject: [PATCH 3/5] clocksource/drivers/mtk_timer: add __init attribute
+Message-Id: <1460991338-9845-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
- <1460662602-2951-5-git-send-email-sst@poczta.fm>
-In-Reply-To: <1460662602-2951-5-git-send-email-sst@poczta.fm>
+References: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Slawomir Stepien <sst@poczta.fm>, knaack.h@gmx.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 14/04/16 20:36, Slawomir Stepien wrote:
-> This fixes the error reported by checkpatch.pl:
-> 
-> ERROR: space prohibited before that ',' (ctx:WxW)
-> 
-> Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-Applied - thanks
-> ---
->  drivers/iio/adc/mcp3422.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/mcp3422.c b/drivers/iio/adc/mcp3422.c
-> index d7b36ef..d1172dc 100644
-> --- a/drivers/iio/adc/mcp3422.c
-> +++ b/drivers/iio/adc/mcp3422.c
-> @@ -61,9 +61,9 @@
->  
->  static const int mcp3422_scales[4][4] = {
->  	{ 1000000, 500000, 250000, 125000 },
-> -	{ 250000 , 125000, 62500 , 31250  },
-> -	{ 62500  , 31250 , 15625 , 7812   },
-> -	{ 15625  , 7812  , 3906  , 1953   } };
-> +	{ 250000,  125000, 62500,  31250  },
-> +	{ 62500,   31250,  15625,  7812   },
-> +	{ 15625,   7812,   3906,   1953   } };
->  
->  /* Constant msleep times for data acquisitions */
->  static const int mcp3422_read_times[4] = {
-> 
+Add __init attribute on a function that is only called from other __init
+functions and that is not inlined, at least with gcc version 4.8.4 on an
+x86 machine with allyesconfig.  Currently, the function is put in the
+.text.unlikely segment.  Declaring it as __init will cause it to be put in
+the .init.text and to disappear after initialization.
+
+The result of objdump -x on the function before the change is as follows:
+
+0000000000000000 l     F .text.unlikely 000000000000006f mtk_timer_setup.isra.4
+
+And after the change it is as follows:
+
+0000000000000000 l     F .init.text	000000000000006a mtk_timer_setup.isra.4
+
+Done with the help of Coccinelle.  The semantic patch checks for local
+static non-init functions that are called from an __init function and are
+not called from any other function.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/clocksource/mtk_timer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
+index d67bc35..7e583f8 100644
+--- a/drivers/clocksource/mtk_timer.c
++++ b/drivers/clocksource/mtk_timer.c
+@@ -152,7 +152,7 @@ static irqreturn_t mtk_timer_interrupt(int irq, void *dev_id)
+ }
+ 
+ static void
+-mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
++__init mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+ {
+ 	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+ 		evt->gpt_base + TIMER_CTRL_REG(timer));
 
