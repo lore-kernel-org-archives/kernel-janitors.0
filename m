@@ -1,54 +1,23 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 29 Apr 2016 20:09:10 +0000
-Subject: [PATCH 3/5] dmaengine: ioatdma: Use dma_pool_zalloc
-Message-Id: <1461960552-7429-4-git-send-email-Julia.Lawall@lip6.fr>
+From: andreas122@elisaandreas.biz
+Date: Mon, 18 Apr 2016 20:11:39 +0000
+Subject: Greetings!!!
+Message-Id: <81373.35773.qm@smtp105.biz.mail.ne1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
-that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression d,e;
-statement S;
-@@
-
-        d -            dma_pool_alloc
-+            dma_pool_zalloc
-             (...);
-        if (!d) S
--       memset(d, 0, sizeof(*d));
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-
- drivers/dma/ioat/init.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index efdee1a..d4c63d4 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -690,12 +690,11 @@ static int ioat_alloc_chan_resources(struct dma_chan *c)
- 	/* allocate a completion writeback area */
- 	/* doing 2 32bit writes to mmio since 1 64b write doesn't work */
- 	ioat_chan->completion -		dma_pool_alloc(ioat_chan->ioat_dma->completion_pool,
--			       GFP_KERNEL, &ioat_chan->completion_dma);
-+		dma_pool_zalloc(ioat_chan->ioat_dma->completion_pool,
-+				GFP_KERNEL, &ioat_chan->completion_dma);
- 	if (!ioat_chan->completion)
- 		return -ENOMEM;
- 
--	memset(ioat_chan->completion, 0, sizeof(*ioat_chan->completion));
- 	writel(((u64)ioat_chan->completion_dma) & 0x00000000FFFFFFFF,
- 	       ioat_chan->reg_base + IOAT_CHANCMP_OFFSET_LOW);
- 	writel(((u64)ioat_chan->completion_dma) >> 32,
+Hi, how are you? My name is J Eric Denials, External Financial Auditor at L=
+loyds Banking Group plc., London. It is a pleasure to contact you at this t=
+ime through this medium. I have a cool and legitimate deal to do with you a=
+s you're a foreigner, it will be mutually beneficial to both. If you=E2=80=
+=99re interested, urgently, get back to me for more explanation about the d=
+eal.
+Regards
+Eric
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
