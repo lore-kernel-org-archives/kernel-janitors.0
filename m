@@ -1,85 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Apr 2016 10:59:46 +0000
-Subject: [SCSI resend] bfa: fix bfa_fcb_itnim_alloc() error handling
-Message-Id: <20160413105946.GA1895@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 19 Apr 2016 12:33:32 +0000
+Subject: [PATCH 1/4] thermal: of: add __init attribute
+Message-Id: <1461069215-22795-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1461069215-22795-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1461069215-22795-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
-Cc: Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R . Rodriguez" <mcgrof@kernel.org>, Josh Triplett <josh@joshtriplett.org>
 
-The caller assumes that "itnim" is NULL on error and non-NULL on
-success but really "itnim" is uninitialized on error.  This
-function should just use normal error handling where it returns zero on
-success and negative on failure.
+Add __init attribute on a function that is only called from other __init
+functions and that is not inlined, at least with gcc version 4.8.4 on an
+x86 machine with allyesconfig.  Currently, the function is put in the
+.text.unlikely segment.  Declaring it as __init will cause it to be put in
+the .init.text and to disappear after initialization.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The result of objdump -x on the function before the change is as follows:
+
+0000000000000086 l     F .text.unlikely 0000000000000739 thermal_of_build_thermal_zone
+
+And after the change it is as follows:
+
+0000000000000000 l     F .init.text	0000000000000734 thermal_of_build_thermal_zone
+
+Done with the help of Coccinelle.  The semantic patch checks for local
+static non-init functions that are called from an __init function and are
+not called from any other function.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Static checker stuff.  Not tested.
+ drivers/thermal/of-thermal.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I sent this originally in 2014 but it still seems to apply fine.
-
-diff --git a/drivers/scsi/bfa/bfa_fcs.h b/drivers/scsi/bfa/bfa_fcs.h
-index 42bcb97..af220e9 100644
---- a/drivers/scsi/bfa/bfa_fcs.h
-+++ b/drivers/scsi/bfa/bfa_fcs.h
-@@ -873,8 +873,8 @@ bfa_status_t bfa_fcb_rport_alloc(struct bfad_s *bfad,
- /*
-  * itnim callbacks
+diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+index 8528802..b8e509c 100644
+--- a/drivers/thermal/of-thermal.c
++++ b/drivers/thermal/of-thermal.c
+@@ -811,8 +811,8 @@ static int thermal_of_populate_trip(struct device_node *np,
+  * otherwise, it returns a corresponding ERR_PTR(). Caller must
+  * check the return value with help of IS_ERR() helper.
   */
--void bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
--			 struct bfad_itnim_s **itnim_drv);
-+int bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
-+			struct bfad_itnim_s **itnim_drv);
- void bfa_fcb_itnim_free(struct bfad_s *bfad,
- 			struct bfad_itnim_s *itnim_drv);
- void bfa_fcb_itnim_online(struct bfad_itnim_s *itnim_drv);
-diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
-index 7223b00..31426ae 100644
---- a/drivers/scsi/bfa/bfad_im.c
-+++ b/drivers/scsi/bfa/bfad_im.c
-@@ -413,13 +413,13 @@ bfad_im_slave_destroy(struct scsi_device *sdev)
-  * BFA FCS itnim alloc callback, after successful PRLI
-  * Context: Interrupt
-  */
--void
-+int
- bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
- 		    struct bfad_itnim_s **itnim_drv)
+-static struct __thermal_zone *
+-thermal_of_build_thermal_zone(struct device_node *np)
++static struct __thermal_zone
++__init *thermal_of_build_thermal_zone(struct device_node *np)
  {
- 	*itnim_drv = kzalloc(sizeof(struct bfad_itnim_s), GFP_ATOMIC);
- 	if (*itnim_drv = NULL)
--		return;
-+		return -ENOMEM;
- 
- 	(*itnim_drv)->im = bfad->im;
- 	*itnim = &(*itnim_drv)->fcs_itnim;
-@@ -430,6 +430,7 @@ bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
- 	 */
- 	INIT_WORK(&(*itnim_drv)->itnim_work, bfad_im_itnim_work_handler);
- 	bfad->bfad_flags |= BFAD_RPORT_ONLINE;
-+	return 0;
- }
- 
- /*
-diff --git a/drivers/scsi/bfa/bfa_fcs_fcpim.c b/drivers/scsi/bfa/bfa_fcs_fcpim.c
-index 6dc7926..829247e 100644
---- a/drivers/scsi/bfa/bfa_fcs_fcpim.c
-+++ b/drivers/scsi/bfa/bfa_fcs_fcpim.c
-@@ -587,12 +587,13 @@ bfa_fcs_itnim_create(struct bfa_fcs_rport_s *rport)
- 	struct bfa_fcs_lport_s *port = rport->port;
- 	struct bfa_fcs_itnim_s *itnim;
- 	struct bfad_itnim_s   *itnim_drv;
-+	int ret;
- 
- 	/*
- 	 * call bfad to allocate the itnim
- 	 */
--	bfa_fcb_itnim_alloc(port->fcs->bfad, &itnim, &itnim_drv);
--	if (itnim = NULL) {
-+	ret = bfa_fcb_itnim_alloc(port->fcs->bfad, &itnim, &itnim_drv);
-+	if (ret) {
- 		bfa_trc(port->fcs, rport->pwwn);
- 		return NULL;
- 	}
+ 	struct device_node *child = NULL, *gchild;
+ 	struct __thermal_zone *tz;
+
