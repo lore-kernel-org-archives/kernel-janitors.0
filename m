@@ -1,181 +1,48 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 19 Apr 2016 12:33:31 +0000
-Subject: [PATCH 0/4] add __init attribute
-Message-Id: <1461069215-22795-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Apr 2016 09:51:18 +0000
+Subject: re: fjes: Introduce spinlock for rx_status
+Message-Id: <20160419095118.GA1977@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Add __init attribute on a function that is only called from other __init
-functions and that is not inlined.
+Hello Taku Izumi,
 
-The complete semantic patch used to detect the need for this change is
-below.  This semantic patch checks for local static non-init functions that
-are called from an __init function and are not called from any other
-function.
+The patch bd5a256991f9: "fjes: Introduce spinlock for rx_status" from
+Apr 15, 2016, leads to the following static checker warning:
 
-<smpl>
-@initialize:ocaml@
-@@
+	drivers/net/fjes/fjes_main.c:827 fjes_change_mtu()
+	error: double lock 'spin_lock:&hw->rx_status_lock'
 
-let itbl = Hashtbl.create 101
-let ltbl = Hashtbl.create 101
-let thefile = ref ""
+drivers/net/fjes/fjes_main.c
 
-let hashadd t k   let cell     try Hashtbl.find t k
-    with Not_found ->
-      let cell = ref 0 in
-      Hashtbl.add t k cell;
-      cell in
-  cell := !cell + 1
+   822                  spin_lock_irqsave(&hw->rx_status_lock, flags);
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Locked.
 
-let hashget t k = try !(Hashtbl.find t k) with Not_found -> 0
+   823                  for (epidx = 0; epidx < hw->max_epid; epidx++) {
+   824                          if (epidx = hw->my_epid)
+   825                                  continue;
+   826  
+   827                          spin_lock_irqsave(&hw->rx_status_lock, flags);
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Deadlocked.
 
-let seen  = ref []
+   828                          fjes_hw_setup_epbuf(&hw->ep_shm_info[epidx].tx,
+   829                                              netdev->dev_addr,
+   830                                              netdev->mtu);
+   831  
+   832                          hw->ep_shm_info[epidx].tx.info->v1i.rx_status |   833                                  FJES_RX_MTU_CHANGING_DONE;
+   834                          spin_unlock_irqrestore(&hw->rx_status_lock, flags);
+   835                  }
+   836  
+   837                  netif_tx_wake_all_queues(netdev);
+   838                  netif_carrier_on(netdev);
+   839                  napi_enable(&adapter->napi);
+   840                  napi_schedule(&adapter->napi);
+   841          }
 
-@script:ocaml@
-@@
-
-(let file = List.hd (Coccilib.files()) in
-thefile := file;
-let file     try List.hd(List.tl (Str.split (Str.regexp "/linux-next/") file))
-    with _ -> file in
-let ofile = "/var/julia/linux-next/" ^
-      (Filename.chop_extension file) ^ ".o" in
-if not(Sys.file_exists ofile)
-then Coccilib.exit());
-
-Hashtbl.clear itbl;
-Hashtbl.clear ltbl;
-seen := []
-
-@r@
-identifier f;
-@@
-
-__init f(...) { ... }
-
-@script:ocaml@
-f << r.f;
-@@
-
-Hashtbl.add itbl f ()
-
-@s disable optional_attributes@
-identifier f;
-@@
-
-static f(...) { ... }
-
-@script:ocaml@
-f << s.f;
-@@
-
-Hashtbl.add ltbl f ()
-
-@t exists@
-identifier f,g;
-position p;
-@@
-
-__init f(...) { ... when any
-   g@p(...)
-   ... when any
- }
-
-@script:ocaml@
-g << t.g;
-_p << t.p;
-@@
-
-if not (Hashtbl.mem ltbl g) || Hashtbl.mem itbl g
-then Coccilib.include_match false
-
-@ok1 disable optional_attributes exists@
-identifier f,t.g;
-@@
-
-f(...) { ... when any
-   g
-   ... when any
- }
-
-@ok2 disable optional_attributes exists@
-identifier i,j,fld,t.g;
-@@
-
-struct i j = { .fld = g, };
-
-@ok3 disable optional_attributes exists@
-identifier t.g;
-declarer d;
-@@
-
-d(...,g,...);
-
-@ok4 disable optional_attributes exists@
-identifier t.g;
-expression e;
-@@
-
-(
-e(...,g,...)
-|
-e(...,&g,...)
-|
-e = &g
-|
-e = g
-)
-
-@script:ocaml depends on !ok1 && !ok2 && !ok3 && !ok4@
-g << t.g;
-@@
-
-let file = !thefile in
-let file     try List.hd(List.tl (Str.split (Str.regexp "/linux-next/") file))
-    with _ -> file in
-if not(List.mem (g,file) !seen)
-then
-  begin
-    seen := (g,file) :: !seen;
-    let ofile = "/var/julia/linux-next/" ^
-      (Filename.chop_extension file) ^ ".o" in
-    if Sys.file_exists ofile
-    then
-      let l 	Common.cmd_to_list
-	  (Printf.sprintf
-	     "objdump -x %s | grep -w %s | grep -w F | grep .text.unlikely"
-	     ofile g) in
-      match l with
-	[] -> Coccilib.include_match false
-      | _ ->
-	  Printf.printf "Info for %s %s\n" file g;
-	  List.iter
-	    (function l -> Printf.printf "%s\n" l)
-	    l;
-	  Printf.printf "\n"; flush stdout
-    else Coccilib.include_match false
-  end
-else Coccilib.include_match false
-
-@depends on !ok1 && !ok2 && !ok3 && !ok4@
-identifier t.g;
-@@
-
-- g
-+__init g
- (...) { ... }
-</smpl>
-
----
-
- drivers/mtd/maps/ck804xrom.c |    4 ++--
- drivers/mtd/maps/esb2rom.c   |    4 ++--
- drivers/mtd/maps/ichxrom.c   |    4 ++--
- drivers/thermal/of-thermal.c |    4 ++--
- drivers/mtd/devices/pmc551.c |    2 +-
- drivers/mtd/nand/nandsim.c |    6 +++---
+regards,
+dan carpenter
