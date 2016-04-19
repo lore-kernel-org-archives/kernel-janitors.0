@@ -1,43 +1,45 @@
-From: Evgeniy Polyakov <zbr@ioremap.net>
-Date: Wed, 27 Apr 2016 11:14:55 +0000
-Subject: Re: [patch] w1: silence an uninitialized variable warning
-Message-Id: <514231461755695@web6g.yandex.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Apr 2016 14:25:43 +0000
+Subject: [patch] brcmfmac: testing the wrong variable in brcmf_rx_hdrpull()
+Message-Id: <20160419142543.GC4876@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160414093548.GG16549@mwanda>
-In-Reply-To: <20160414093548.GG16549@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Brett Rudley <brudley@broadcom.com>, Arend van Spriel <arend@broadcom.com>
+Cc: "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, Kalle Valo <kvalo@codeaurora.org>, Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>, Franky Lin <franky.lin@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
 
-Hi Dan
+Smatch complains about this code:
 
-14.04.2016, 12:36, "Dan Carpenter" <dan.carpenter@oracle.com>:
-> If kstrtoint() returns -ERANGE then "tmp" is uninitialized.
+    drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c:335 brcmf_rx_hdrpull()
+    error: we previously assumed '*ifp' could be null (see line 333)
 
-Looks good to me, please pull it into janitors tree
+The problem is that we recently changed these from "ifp" to "*ifp" but
+there was one that we didn't update.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+-       if (ret || !ifp || !ifp->ndev) {
++       if (ret || !(*ifp) || !(*ifp)->ndev) {
+                if (ret != -ENODATA && ifp)
+                                       ^^^
+-                       ifp->stats.rx_errors++;
++                       (*ifp)->stats.rx_errors++;
 
-Acked-by: Evgeniy Polaykov <zbr@ioremap.net>
+I have updated it to *ifp as well.  We always call this function is a
+non-NULL "ifp" pointer, btw.
 
-> diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-> index 89a7847..bb34362 100644
-> --- a/drivers/w1/w1.c
-> +++ b/drivers/w1/w1.c
-> @@ -335,7 +335,7 @@ static ssize_t w1_master_attribute_store_max_slave_co=
-unt(struct device *dev,
-> =9A=9A=9A=9A=9A=9A=9A=9A=9Aint tmp;
-> =9A=9A=9A=9A=9A=9A=9A=9A=9Astruct w1_master *md =3D dev_to_w1_master(dev);
->
-> - if (kstrtoint(buf, 0, &tmp) =3D -EINVAL || tmp < 1)
-> + if (kstrtoint(buf, 0, &tmp) || tmp < 1)
-> =9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9A=9Areturn -EINVAL;
->
-> =9A=9A=9A=9A=9A=9A=9A=9A=9Amutex_lock(&md->mutex);
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Fixes: c462ebcdfe42 ('brcmfmac: create common function for handling brcmf_proto_hdrpull()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
+index 1b476d1..b590499 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
+@@ -331,7 +331,7 @@ static int brcmf_rx_hdrpull(struct brcmf_pub *drvr, struct sk_buff *skb,
+ 	ret = brcmf_proto_hdrpull(drvr, true, skb, ifp);
+ 
+ 	if (ret || !(*ifp) || !(*ifp)->ndev) {
+-		if (ret != -ENODATA && ifp)
++		if (ret != -ENODATA && *ifp)
+ 			(*ifp)->stats.rx_errors++;
+ 		brcmu_pkt_buf_free_skb(skb);
+ 		return -ENODATA;
