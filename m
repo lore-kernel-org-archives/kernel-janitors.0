@@ -1,34 +1,29 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Tue, 26 Apr 2016 13:41:07 +0000
-Subject: Re: [patch] tracing: checking for NULL instead of IS_ERR()
-Message-Id: <20160426094107.52dc2ea0@gandalf.local.home>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Apr 2016 14:30:56 +0000
+Subject: [patch -next] geneve: testing the wrong variable in geneve6_build_skb()
+Message-Id: <20160419143056.GD4876@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160423102347.GA11136@mwanda>
-	<571E6914.90708@linux.intel.com>
-In-Reply-To: <571E6914.90708@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Alexander Duyck <aduyck@mirantis.com>
+Cc: Jesse Gross <jesse@kernel.org>, "John W. Linville" <linville@tuxdriver.com>, Pravin B Shelar <pshelar@nicira.com>, Jiri Benc <jbenc@redhat.com>, Daniel Borkmann <daniel@iogearbox.net>, Tom Herbert <tom@herbertland.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 25 Apr 2016 13:59:32 -0500
-Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+We intended to test "err" and not "skb".
 
-> Hi Dan,
-> 
-> On 04/23/2016 05:23 AM, Dan Carpenter wrote:
-> > tracing_map_elt_alloc() returns ERR_PTRs on error, never NULL.
-> >
-> > Fixes: 08d43a5fa063 ('tracing: Add lock-free tracing_map')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
+Fixes: aed069df099c ('ip_tunnel_core: iptunnel_handle_offloads returns int and doesn't free skb')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-
-Applied.
-
-Thanks Dan and Tom,
-
--- Steve
+diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
+index efbc7ce..512dbe0 100644
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@ -733,7 +733,7 @@ static int geneve6_build_skb(struct dst_entry *dst, struct sk_buff *skb,
+ 		goto free_dst;
+ 
+ 	err = udp_tunnel_handle_offloads(skb, udp_sum);
+-	if (IS_ERR(skb))
++	if (err)
+ 		goto free_dst;
+ 
+ 	gnvh = (struct genevehdr *)__skb_push(skb, sizeof(*gnvh) + opt_len);
