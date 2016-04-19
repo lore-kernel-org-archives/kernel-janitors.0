@@ -1,30 +1,53 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Apr 2016 06:41:26 +0000
-Subject: [patch] UBI: clean up return in ubi_remove_volume()
-Message-Id: <20160413064126.GC8092@mwanda>
+Date: Tue, 19 Apr 2016 14:23:44 +0000
+Subject: [patch 2/2] mwifiex: fix loop timeout in mwifiex_prog_fw_w_helper()
+Message-Id: <20160419142344.GB4876@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>, Dmitry Pervushin <dpervushin@embeddedalley.com>
-Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker says that "err" can be uninitialized if
-"vol->reserved_pebs" is <= 0.  I don't think that can happen but
-returning a literal is cleaner anyway.
+USB8XXX_FW_MAX_RETRY is 3.  We were using a post-op loop
+"while (retries--) {" but then the lines after that assume the loop
+exits with retries set to zero.
+
+I've fixed this by changing to a pre-op loop.  I started with retries
+set to 4 instead of 3 so that we still go through the loop the same
+number of times.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
-index 1ae17bb..10059df 100644
---- a/drivers/mtd/ubi/vmt.c
-+++ b/drivers/mtd/ubi/vmt.c
-@@ -405,7 +405,7 @@ int ubi_remove_volume(struct ubi_volume_desc *desc, int no_vtbl)
- 	if (!no_vtbl)
- 		self_check_volumes(ubi);
+diff --git a/drivers/net/wireless/marvell/mwifiex/usb.c b/drivers/net/wireless/marvell/mwifiex/usb.c
+index cdd8f9a..0857575 100644
+--- a/drivers/net/wireless/marvell/mwifiex/usb.c
++++ b/drivers/net/wireless/marvell/mwifiex/usb.c
+@@ -995,7 +995,8 @@ static int mwifiex_prog_fw_w_helper(struct mwifiex_adapter *adapter,
+ {
+ 	int ret = 0;
+ 	u8 *firmware = fw->fw_buf, *recv_buff;
+-	u32 retries = USB8XXX_FW_MAX_RETRY, dlen;
++	u32 retries = USB8XXX_FW_MAX_RETRY + 1;
++	u32 dlen;
+ 	u32 fw_seqnum = 0, tlen = 0, dnld_cmd = 0;
+ 	struct fw_data *fwdata;
+ 	struct fw_sync_header sync_fw;
+@@ -1043,7 +1044,7 @@ static int mwifiex_prog_fw_w_helper(struct mwifiex_adapter *adapter,
+ 		}
  
--	return err;
-+	return 0;
+ 		/* If the send/receive fails or CRC occurs then retry */
+-		while (retries--) {
++		while (--retries) {
+ 			u8 *buf = (u8 *)fwdata;
+ 			u32 len = FW_DATA_XMIT_SIZE;
  
- out_err:
- 	ubi_err(ubi, "cannot remove volume %d, error %d", vol_id, err);
+@@ -1103,7 +1104,7 @@ static int mwifiex_prog_fw_w_helper(struct mwifiex_adapter *adapter,
+ 				continue;
+ 			}
+ 
+-			retries = USB8XXX_FW_MAX_RETRY;
++			retries = USB8XXX_FW_MAX_RETRY + 1;
+ 			break;
+ 		}
+ 		fw_seqnum++;
