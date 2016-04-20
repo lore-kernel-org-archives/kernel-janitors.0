@@ -1,48 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Apr 2016 18:20:49 +0000
-Subject: Re: [patch] scsi_dh_alua: uninitialized variable in alua_rtpg()
-Message-Id: <20160414182049.GG4247@mwanda>
+From: Jarno Rajahalme <jarno@ovn.org>
+Date: Wed, 20 Apr 2016 21:31:10 +0000
+Subject: [PATCH] nf_nat_packet: Clear skb hash after modifying packet headers.
+Message-Id: <1461187870-54322-1-git-send-email-jarno@ovn.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160414093917.GA16891@mwanda>
- <570FBB0E.9030902@sandisk.com>
-In-Reply-To: <570FBB0E.9030902@sandisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bart Van Assche <bart.vanassche@sandisk.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Johannes Thumshirn <jthumshirn@suse.de>, Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netfilter-devel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, dev@openvswitch.org, jarno@ovn.org
 
-On Thu, Apr 14, 2016 at 08:45:18AM -0700, Bart Van Assche wrote:
-> On 04/14/2016 02:39 AM, Dan Carpenter wrote:
-> >It's possible to use "err" without initializing it.  If it happens to be
-> >a 2 which is SCSI_DH_RETRY then that could cause a bug.
-> >
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> >diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
-> >index 8eaed05..f3c994f 100644
-> >--- a/drivers/scsi/device_handler/scsi_dh_alua.c
-> >+++ b/drivers/scsi/device_handler/scsi_dh_alua.c
-> >@@ -513,7 +513,8 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
-> >  	struct alua_port_group *tmp_pg;
-> >  	int len, k, off, valid_states = 0, bufflen = ALUA_RTPG_SIZE;
-> >  	unsigned char *desc, *buff;
-> >-	unsigned err, retval;
-> >+	unsigned int err = 0;
-> >+	unsigned int retval;
-> >  	unsigned int tpg_desc_tbl_off;
-> >  	unsigned char orig_transition_tmo;
-> >  	unsigned long flags;
-> 
-> Hello Dan,
-> 
-> The code that uses the 'err' variable occurs in a loop. I think the
-> initialization of 'err' should occur after the "retry:" label.
+Clear the skb hash when it does not reflect the actual header values
+any more.
 
-It looks like you're right.  I'll resend.  I don't know this code very
-well, obviously and it's a static checker fix not something I have
-tested.
+Signed-off-by: Jarno Rajahalme <jarno@ovn.org>
+---
+ net/netfilter/nf_nat_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-regards,
-dan carpenter
+diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
+index 06a9f45..3c2302f 100644
+--- a/net/netfilter/nf_nat_core.c
++++ b/net/netfilter/nf_nat_core.c
+@@ -505,6 +505,7 @@ unsigned int nf_nat_packet(struct nf_conn *ct,
+ 		if (!l3proto->manip_pkt(skb, 0, l4proto, &target, mtype))
+ 			return NF_DROP;
+ 	}
++	skb_clear_hash(skb);
+ 	return NF_ACCEPT;
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_packet);
+-- 
+2.1.4
 
