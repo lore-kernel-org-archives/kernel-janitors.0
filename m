@@ -1,31 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Apr 2016 09:55:24 +0000
-Subject: [patch] spi: pic32-sqi: silence array overflow warning
-Message-Id: <20160422095524.GB11398@mwanda>
+From: Purna Chandra Mandal <purna.mandal@microchip.com>
+Date: Fri, 22 Apr 2016 10:10:13 +0000
+Subject: Re: [patch] spi: pic32-sqi: silence array overflow warning
+Message-Id: <5719F5B5.2030101@microchip.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160422095524.GB11398@mwanda>
+In-Reply-To: <20160422095524.GB11398@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>, Purna Chandra Mandal <purna.mandal@microchip.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We read one element beyond the end of the array when we access
-"rdesc[i + 1]" so it causes a static checker warning.  It's harmless
-because we write over it again on the next line.  But let's just silence
-the warning.
+On 04/22/2016 03:25 PM, Dan Carpenter wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> We read one element beyond the end of the array when we access
+> "rdesc[i + 1]" so it causes a static checker warning.  It's harmless
+> because we write over it again on the next line.  But let's just silence
+> the warning.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/spi/spi-pic32-sqi.c b/drivers/spi/spi-pic32-sqi.c
+> index b215347..74b9e68 100644
+> --- a/drivers/spi/spi-pic32-sqi.c
+> +++ b/drivers/spi/spi-pic32-sqi.c
+> @@ -537,7 +537,7 @@ static int ring_desc_ring_alloc(struct pic32_sqi *sqi)
+>  	}
+>  
+>  	/* Prepare BD: chain to next BD(s) */
+> -	for (i = 0, rdesc = sqi->ring; i < PESQI_BD_COUNT; i++)
+> +	for (i = 0, rdesc = sqi->ring; i < PESQI_BD_COUNT - 1; i++)
+>  		bd[i].bd_nextp = rdesc[i + 1].bd_dma;
+>  	bd[PESQI_BD_COUNT - 1].bd_nextp = 0;
+>
+Reviewed-by: Purna Chandra Mandal <purna.mandal@microchip.com>
 
-diff --git a/drivers/spi/spi-pic32-sqi.c b/drivers/spi/spi-pic32-sqi.c
-index b215347..74b9e68 100644
---- a/drivers/spi/spi-pic32-sqi.c
-+++ b/drivers/spi/spi-pic32-sqi.c
-@@ -537,7 +537,7 @@ static int ring_desc_ring_alloc(struct pic32_sqi *sqi)
- 	}
- 
- 	/* Prepare BD: chain to next BD(s) */
--	for (i = 0, rdesc = sqi->ring; i < PESQI_BD_COUNT; i++)
-+	for (i = 0, rdesc = sqi->ring; i < PESQI_BD_COUNT - 1; i++)
- 		bd[i].bd_nextp = rdesc[i + 1].bd_dma;
- 	bd[PESQI_BD_COUNT - 1].bd_nextp = 0;
- 
+
