@@ -1,22 +1,39 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Thu, 07 Apr 2016 12:52:24 +0000
-Subject: Re: [patch] iommu/vt-d: silence an uninitialized variable warning
-Message-Id: <20160407125224.GC31146@8bytes.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Apr 2016 10:02:55 +0000
+Subject: [patch] Bluetooth: ath3k: Silence uninitialized variable warning
+Message-Id: <20160422100255.GE11398@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160406183856.GB9593@mwanda>
-In-Reply-To: <20160406183856.GB9593@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 06, 2016 at 09:38:56PM +0300, Dan Carpenter wrote:
-> My static checker complains that "dma_alias" is uninitialized unless we
-> are dealing with a pci device.  This is true but harmless.  Anyway, we
-> can flip the condition around to silence the warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We could print an uninitialized value in the error message.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/bluetooth/ath3k.c b/drivers/bluetooth/ath3k.c
+index 47ca4b3..641c2d1 100644
+--- a/drivers/bluetooth/ath3k.c
++++ b/drivers/bluetooth/ath3k.c
+@@ -206,7 +206,8 @@ static int ath3k_load_firmware(struct usb_device *udev,
+ 				const struct firmware *firmware)
+ {
+ 	u8 *send_buf;
+-	int err, pipe, len, size, sent = 0;
++	int len = 0;
++	int err, pipe, size, sent = 0;
+ 	int count = firmware->size;
+ 
+ 	BT_DBG("udev %p", udev);
+@@ -302,7 +303,8 @@ static int ath3k_load_fwfile(struct usb_device *udev,
+ 		const struct firmware *firmware)
+ {
+ 	u8 *send_buf;
+-	int err, pipe, len, size, count, sent = 0;
++	int len = 0;
++	int err, pipe, size, count, sent = 0;
+ 	int ret;
+ 
+ 	count = firmware->size;
