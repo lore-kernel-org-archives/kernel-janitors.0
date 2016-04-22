@@ -1,37 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Tue, 19 Apr 2016 16:13:20 +0000
-Subject: Re: [PATCH 2/2] net-ath9k_htc: Replace a variable initialisation by an assignment in ath9k_htc_set_c
-Message-Id: <87mvopinkv.fsf@kamboji.qca.qualcomm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Apr 2016 10:04:14 +0000
+Subject: [patch] iio: light: apds9960: silence uninitialized variable warning
+Message-Id: <20160422100414.GG11398@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	<5686C390.5060600@users.sourceforge.net>
-	<5686C47E.1040906@users.sourceforge.net>
-	<CAGRGNgXR_OoER0rN5Z8n_5VtZimpU7WDNZuc4vkdb2eKDT2frQ@mail.gmail.com>
-In-Reply-To: <CAGRGNgXR_OoER0rN5Z8n_5VtZimpU7WDNZuc4vkdb2eKDT2frQ@mail.gmail.com>
-	(Julian Calaby's message of "Fri, 8 Apr 2016 11:40:45 +1000")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: ath9k-devel@lists.ath9k.org, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, LKML <linux-kernel@vger.kernel.org>, SF Markus Elfring <elfring@users.sourceforge.net>, kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Matt Ranostay <mranostay@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julian Calaby <julian.calaby@gmail.com> writes:
+It causes a static checker warning if we use "buf" on the failure path
+so move that inside the if statement.
 
-> On Sat, Jan 2, 2016 at 5:25 AM, SF Markus Elfring
-> <elfring@users.sourceforge.net> wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Fri, 1 Jan 2016 19:09:32 +0100
->>
->> Replace an explicit initialisation for one local variable at the beginning
->> by a conditional assignment.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->
-> This looks sane to me.
->
-> Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
-
--- 
-Kalle Valo
+diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
+index a6af56a..fbdd172 100644
+--- a/drivers/iio/light/apds9960.c
++++ b/drivers/iio/light/apds9960.c
+@@ -491,9 +491,10 @@ static int apds9960_read_raw(struct iio_dev *indio_dev,
+ 		case IIO_INTENSITY:
+ 			ret = regmap_bulk_read(data->regmap, chan->address,
+ 					       &buf, 2);
+-			if (!ret)
++			if (!ret) {
+ 				ret = IIO_VAL_INT;
+-			*val = le16_to_cpu(buf);
++				*val = le16_to_cpu(buf);
++			}
+ 			break;
+ 		default:
+ 			ret = -EINVAL;
