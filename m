@@ -1,48 +1,31 @@
-From: Yang Jie <yang.jie@linux.intel.com>
-Date: Thu, 07 Apr 2016 01:21:02 +0000
-Subject: Re: [alsa-devel] [patch] ASoC: Intel: sst: fix a loop timeout in sst_hsw_stream_reset()
-Message-Id: <5705B5FE.8030105@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Apr 2016 09:55:24 +0000
+Subject: [patch] spi: pic32-sqi: silence array overflow warning
+Message-Id: <20160422095524.GB11398@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160406113606.GA23032@mwanda>
-In-Reply-To: <20160406113606.GA23032@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Brown <broonie@kernel.org>, Purna Chandra Mandal <purna.mandal@microchip.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We read one element beyond the end of the array when we access
+"rdesc[i + 1]" so it causes a static checker warning.  It's harmless
+because we write over it again on the next line.  But let's just silence
+the warning.
 
-On 2016年04月06日 19:36, Dan Carpenter wrote:
-> In the original code we ended the loop with tries set to -1 instead of
-> zero.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Jie Yang <yang.jie@intel.com>
-
-Dan, thanks for finding and correcting it.
-
-Thanks,
-~Keyon
-
-> ---
-> Not tested.
->
-> diff --git a/sound/soc/intel/haswell/sst-haswell-ipc.c b/sound/soc/intel/haswell/sst-haswell-ipc.c
-> index ac60f13..9156522 100644
-> --- a/sound/soc/intel/haswell/sst-haswell-ipc.c
-> +++ b/sound/soc/intel/haswell/sst-haswell-ipc.c
-> @@ -1345,7 +1345,7 @@ int sst_hsw_stream_reset(struct sst_hsw *hsw, struct sst_hsw_stream *stream)
->   		return 0;
->
->   	/* wait for pause to complete before we reset the stream */
-> -	while (stream->running && tries--)
-> +	while (stream->running && --tries)
->   		msleep(1);
->   	if (!tries) {
->   		dev_err(hsw->dev, "error: reset stream %d still running\n",
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
->
+diff --git a/drivers/spi/spi-pic32-sqi.c b/drivers/spi/spi-pic32-sqi.c
+index b215347..74b9e68 100644
+--- a/drivers/spi/spi-pic32-sqi.c
++++ b/drivers/spi/spi-pic32-sqi.c
+@@ -537,7 +537,7 @@ static int ring_desc_ring_alloc(struct pic32_sqi *sqi)
+ 	}
+ 
+ 	/* Prepare BD: chain to next BD(s) */
+-	for (i = 0, rdesc = sqi->ring; i < PESQI_BD_COUNT; i++)
++	for (i = 0, rdesc = sqi->ring; i < PESQI_BD_COUNT - 1; i++)
+ 		bd[i].bd_nextp = rdesc[i + 1].bd_dma;
+ 	bd[PESQI_BD_COUNT - 1].bd_nextp = 0;
+ 
