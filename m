@@ -1,52 +1,29 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Fri, 22 Apr 2016 09:13:24 +0000
-Subject: Re: [PATCH 4/4] mtd: nandsim: add __init attribute
-Message-Id: <20160422111324.3fa42372@bbrezillon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 23 Apr 2016 10:23:47 +0000
+Subject: [patch] tracing: checking for NULL instead of IS_ERR()
+Message-Id: <20160423102347.GA11136@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1461069215-22795-1-git-send-email-Julia.Lawall@lip6.fr>
- <1461069215-22795-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1461069215-22795-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, "Luis R . Rodriguez" <mcgrof@kernel.org>, Josh Triplett <josh@joshtriplett.org>
+To: Steven Rostedt <rostedt@goodmis.org>, Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 19 Apr 2016 14:33:35 +0200
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+tracing_map_elt_alloc() returns ERR_PTRs on error, never NULL.
 
-> Add __init attribute on functions that are only called from other __init
-> functions and that are not inlined, at least with gcc version 4.8.4 on an
-> x86 machine with allyesconfig.  Currently, the functions are put in the
-> .text.unlikely segment.  Declaring them as __init will cause them to be
-> put in the .init.text and to disappear after initialization.
-> 
-> The result of objdump -x on the functions before the change is as follows:
-> 
-> 000000000000059a l     F .text.unlikely 0000000000000239 alloc_device
-> 000000000000034e l     F .text.unlikely 000000000000002e get_partition_name
-> 00000000000007d3 l     F .text.unlikely 00000000000005da init_nandsim
-> 
-> And after the change it is as follows:
-> 
-> 0000000000000029 l     F .init.text	0000000000000234 alloc_device
-> 0000000000000000 l     F .init.text	0000000000000029 get_partition_name
-> 000000000000025d l     F .init.text	00000000000005d5 init_nandsim
-> 
-> Done with the help of Coccinelle.  The semantic patch checks for local
-> static non-init functions that are called from an __init function and are
-> not called from any other function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/mtd/nand/nandsim.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Fixes: 08d43a5fa063 ('tracing: Add lock-free tracing_map')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
-
-Boris
--- 
-Boris Brezillon, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+diff --git a/kernel/trace/tracing_map.c b/kernel/trace/tracing_map.c
+index e0f1729..e7dfc5e 100644
+--- a/kernel/trace/tracing_map.c
++++ b/kernel/trace/tracing_map.c
+@@ -814,7 +814,7 @@ static struct tracing_map_elt *copy_elt(struct tracing_map_elt *elt)
+ 	unsigned int i;
+ 
+ 	dup_elt = tracing_map_elt_alloc(elt->map);
+-	if (!dup_elt)
++	if (IS_ERR(dup_elt))
+ 		return NULL;
+ 
+ 	if (elt->map->ops && elt->map->ops->elt_copy)
