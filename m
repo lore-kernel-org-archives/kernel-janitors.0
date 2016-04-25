@@ -1,22 +1,62 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Mon, 25 Apr 2016 12:49:05 +0000
-Subject: Re: [patch] btrfs: send: silence an integer overflow warning
-Message-Id: <20160425124905.GJ23222@twin.jikos.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Apr 2016 11:34:08 +0000
+Subject: re: device property: fix for a case of use-after-free
+Message-Id: <20160425113408.GA6175@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160413064059.GB8092@mwanda>
-In-Reply-To: <20160413064059.GB8092@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 13, 2016 at 09:40:59AM +0300, Dan Carpenter wrote:
-> The "sizeof(*arg->clone_sources) * arg->clone_sources_count" expression
-> can overflow.  It causes several static checker warnings.  It's all
-> under CAP_SYS_ADMIN so it's not that serious but lets silence the
-> warnings.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hi Heikki Krogerus,
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+The patch 0d67e0fa1664: "device property: fix for a case of
+use-after-free" from Mar 10, 2016, has an issue.
+
+Assume "fwnode" is an ERR_PTR>
+
+drivers/base/property.c
+   204  static bool __fwnode_property_present(struct fwnode_handle *fwnode,
+   205                                        const char *propname)
+   206  {
+   207          if (is_of_node(fwnode))
+                               ^^^^^^
+We dereference it here.
+
+   208                  return of_property_read_bool(to_of_node(fwnode), propname);
+   209          else if (is_acpi_node(fwnode))
+   210                  return !acpi_node_prop_get(fwnode, propname, NULL);
+   211          else if (is_pset_node(fwnode))
+   212                  return !!pset_prop_get(to_pset_node(fwnode), propname);
+   213          return false;
+
+Some of these depend on the .config but I don't see a path through this
+function where fwnode can be an ERR_PTR and we don't oops.
+
+   214  }
+   215  
+   216  /**
+   217   * fwnode_property_present - check if a property of a firmware node is present
+   218   * @fwnode: Firmware node whose property to check
+   219   * @propname: Name of the property
+   220   */
+   221  bool fwnode_property_present(struct fwnode_handle *fwnode, const char *propname)
+   222  {
+   223          bool ret;
+   224  
+   225          ret = __fwnode_property_present(fwnode, propname);
+                                                ^^^^^^^
+We oops here.
+
+   226          if (ret = false && !IS_ERR_OR_NULL(fwnode) &&
+                                     ^^^^^^^^^^^^^^^^^^^^^^
+This check for IS_ERR is too late because we already oopsed on the line
+before.
+
+   227              !IS_ERR_OR_NULL(fwnode->secondary))
+   228                  ret = __fwnode_property_present(fwnode->secondary, propname);
+   229          return ret;
+   230  }
+
+regards,
+dan carpenter
