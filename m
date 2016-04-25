@@ -1,20 +1,53 @@
-From: Eric Engestrom <eric.engestrom@imgtec.com>
-Date: Mon, 25 Apr 2016 09:11:29 +0000
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Date: Mon, 25 Apr 2016 09:15:43 +0000
 Subject: Re: [patch] drm: atmel-hlcdc: fix a NULL check
-Message-Id: <20160425091129.GN32731@imgtec.com>
+Message-Id: <20160425111543.5677b80a@bbrezillon>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160425090454.GA25366@mwanda>
 In-Reply-To: <20160425090454.GA25366@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel@ffwll.ch>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Mon, Apr 25, 2016 at 12:04:54PM +0300, Dan Carpenter wrote:
+Hi Daniel,
+
+On Mon, 25 Apr 2016 12:04:54 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
 > If kmalloc() returned NULL we would end up dereferencing "state" a
 > couple lines later.
+
+Can you take this patch in drm-misc, or should I send a PR?
+
+Regards,
+
+Boris
+
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> index 8df0aaf..867069b 100644
+> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> @@ -415,8 +415,9 @@ atmel_hlcdc_crtc_duplicate_state(struct drm_crtc *crtc)
+>  		return NULL;
+>  
+>  	state = kmalloc(sizeof(*state), GFP_KERNEL);
+> -	if (state)
+> -		__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
+> +	if (!state)
+> +		return NULL;
+> +	__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
+>  
+>  	cur = drm_crtc_state_to_atmel_hlcdc_crtc_state(crtc->state);
+>  	state->output_mode = cur->output_mode;
 
-Reviewed-by: Eric Engestrom <eric.engestrom@imgtec.com>
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
