@@ -1,25 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 14 Apr 2016 02:43:48 +0000
-Subject: Re: [PATCH net-next] net: ethernet: stmmac: GMAC4.xx: Fix TX descriptor preparation
-Message-Id: <20160413.224348.277274080784977510.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Apr 2016 09:04:54 +0000
+Subject: [patch] drm: atmel-hlcdc: fix a NULL check
+Message-Id: <20160425090454.GA25366@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460107083-25577-1-git-send-email-alexandre.torgue@st.com>
-In-Reply-To: <1460107083-25577-1-git-send-email-alexandre.torgue@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alexandre.torgue@st.com
-Cc: netdev@vger.kernel.org, peppe.cavallaro@st.com, dan.carpenter@oracle.com, kernel-janitors@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Alexandre TORGUE <alexandre.torgue@st.com>
-Date: Fri, 8 Apr 2016 11:18:03 +0200
+If kmalloc() returned NULL we would end up dereferencing "state" a
+couple lines later.
 
-> On GMAC4.xx each descriptor contains 2 buffers of 16KB (each).
-> Initially, those 2 buffers was filled in dwmac4_rd_prepare_tx_desc but
-> it is actually not needed. Indeed, stmmac driver supports frame up to
-> 9000 bytes (jumbo). So only one buffer is needed.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+index 8df0aaf..867069b 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+@@ -415,8 +415,9 @@ atmel_hlcdc_crtc_duplicate_state(struct drm_crtc *crtc)
+ 		return NULL;
+ 
+ 	state = kmalloc(sizeof(*state), GFP_KERNEL);
+-	if (state)
+-		__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
++	if (!state)
++		return NULL;
++	__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
+ 
+ 	cur = drm_crtc_state_to_atmel_hlcdc_crtc_state(crtc->state);
+ 	state->output_mode = cur->output_mode;
