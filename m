@@ -1,49 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Apr 2016 09:56:31 +0000
-Subject: [patch 1/2] crypto: mxc-scc - signedness bugs in mxc_scc_ablkcipher_req_init()
-Message-Id: <20160422095631.GC11398@mwanda>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 25 Apr 2016 11:22:52 +0000
+Subject: Re: [patch 1/2] crypto: mxc-scc - signedness bugs in mxc_scc_ablkcipher_req_init()
+Message-Id: <20160425112252.GC10114@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160422095631.GC11398@mwanda>
+In-Reply-To: <20160422095631.GC11398@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-->src_nents and ->dst_nents are unsigned so they can't be less than
-zero.  I fixed this by introducing a temporary "nents" variable.
+On Fri, Apr 22, 2016 at 12:56:31PM +0300, Dan Carpenter wrote:
+> ->src_nents and ->dst_nents are unsigned so they can't be less than
+> zero.  I fixed this by introducing a temporary "nents" variable.
+> 
+> Fixes: d293b640ebd5 ('crypto: mxc-scc - add basic driver for the MXC SCC')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: d293b640ebd5 ('crypto: mxc-scc - add basic driver for the MXC SCC')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/crypto/mxc-scc.c b/drivers/crypto/mxc-scc.c
-index 38b01bf..9b348a7 100644
---- a/drivers/crypto/mxc-scc.c
-+++ b/drivers/crypto/mxc-scc.c
-@@ -210,18 +210,21 @@ static int mxc_scc_ablkcipher_req_init(struct ablkcipher_request *req,
- 				       struct mxc_scc_ctx *ctx)
- {
- 	struct mxc_scc *scc = ctx->scc;
-+	int nents;
- 
--	ctx->src_nents = sg_nents_for_len(req->src, req->nbytes);
--	if (ctx->src_nents < 0) {
-+	nents = sg_nents_for_len(req->src, req->nbytes);
-+	if (nents < 0) {
- 		dev_err(scc->dev, "Invalid number of src SC");
--		return ctx->src_nents;
-+		return nents;
- 	}
-+	ctx->src_nents = nents;
- 
--	ctx->dst_nents = sg_nents_for_len(req->dst, req->nbytes);
--	if (ctx->dst_nents < 0) {
-+	nents = sg_nents_for_len(req->dst, req->nbytes);
-+	if (nents < 0) {
- 		dev_err(scc->dev, "Invalid number of dst SC");
--		return ctx->dst_nents;
-+		return nents;
- 	}
-+	ctx->dst_nents = nents;
- 
- 	ctx->size = 0;
- 	ctx->offset = 0;
+Both applied.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
