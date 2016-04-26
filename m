@@ -1,41 +1,37 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Mon, 18 Apr 2016 16:44:48 +0000
-Subject: Re: [PATCH 3/5] clocksource/drivers/mtk_timer: add __init attribute
-Message-Id: <20160418164448.GB2820@linaro.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 26 Apr 2016 02:33:43 +0000
+Subject: [PATCH] ps3_gelic: fix memcpy parameter
+Message-Id: <1461638023-2986-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460991338-9845-1-git-send-email-Julia.Lawall@lip6.fr>
- <1460991338-9845-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1460991338-9845-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, Apr 18, 2016 at 04:55:36PM +0200, Julia Lawall wrote:
-> Add __init attribute on a function that is only called from other __init
-> functions and that is not inlined, at least with gcc version 4.8.4 on an
-> x86 machine with allyesconfig.  Currently, the function is put in the
-> .text.unlikely segment.  Declaring it as __init will cause it to be put in
-> the .init.text and to disappear after initialization.
-> 
-> The result of objdump -x on the function before the change is as follows:
-> 
-> 0000000000000000 l     F .text.unlikely 000000000000006f mtk_timer_setup.isra.4
-> 
-> And after the change it is as follows:
-> 
-> 0000000000000000 l     F .init.text	000000000000006a mtk_timer_setup.isra.4
-> 
-> Done with the help of Coccinelle.  The semantic patch checks for local
-> static non-init functions that are called from an __init function and are
-> not called from any other function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> ---
+The size allocated for target->hwinfo and the number of bytes copied in it
+should be consistent.
 
-Applied for 4.7.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Untested
 
-Thanks !
+ drivers/net/ethernet/toshiba/ps3_gelic_wireless.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  -- Daniel
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_wireless.c b/drivers/net/ethernet/toshiba/ps3_gelic_wireless.c
+index 13214a6..743b182 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_wireless.c
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_wireless.c
+@@ -1622,7 +1622,7 @@ static void gelic_wl_scan_complete_event(struct gelic_wl_info *wl)
+ 			continue;
+ 
+ 		/* copy hw scan info */
+-		memcpy(target->hwinfo, scan_info, scan_info->size);
++		memcpy(target->hwinfo, scan_info, be16_to_cpu(scan_info->size));
+ 		target->essid_len = strnlen(scan_info->essid,
+ 					    sizeof(scan_info->essid));
+ 		target->rate_len = 0;
+-- 
+2.7.4
 
