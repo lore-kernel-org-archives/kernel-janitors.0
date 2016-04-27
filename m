@@ -1,26 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 30 Apr 2016 11:35:30 +0000
-Subject: Re: [patch] pinctrl: baytrail: fix some error handling in debugfs
-Message-Id: <CACRpkdagyyeTTieGNNdT-O2pQAZBAnKtUkTBzAc_0Fdq_w-7aA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Apr 2016 08:09:28 +0000
+Subject: [patch] [media] tw686x: off by one bugs in tw686x_fields_map()
+Message-Id: <20160427080928.GC22469@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160427080835.GB22469@mwanda>
-In-Reply-To: <20160427080835.GB22469@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 27, 2016 at 10:08 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
+The > ARRAY_SIZE() should be >= ARRAY_SIZE().  Also this is a slightly
+unrelated cleanup but I replaced the magic numbers 30 and 25 with
+ARRAY_SIZE() - 1.
 
-> We need to unlock before continuing.  Also the continue was accidentally
-> left out on one error path which would lead to a NULL dereference.
->
-> Fixes: 86e3ef812fe3 ('pinctrl: baytrail: Update gpio chip operations')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 363d79f1d5bd ('[media] tw686x: Don't go past array')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied with Mika's ACK.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/media/pci/tw686x/tw686x-video.c b/drivers/media/pci/tw686x/tw686x-video.c
+index d2a0147..7b87f27 100644
+--- a/drivers/media/pci/tw686x/tw686x-video.c
++++ b/drivers/media/pci/tw686x/tw686x-video.c
+@@ -64,12 +64,12 @@ static unsigned int tw686x_fields_map(v4l2_std_id std, unsigned int fps)
+ 	unsigned int i;
+ 
+ 	if (std & V4L2_STD_525_60) {
+-		if (fps > ARRAY_SIZE(std_525_60))
+-			fps = 30;
++		if (fps >= ARRAY_SIZE(std_525_60))
++			fps = ARRAY_SIZE(std_525_60) - 1;
+ 		i = std_525_60[fps];
+ 	} else {
+-		if (fps > ARRAY_SIZE(std_625_50))
+-			fps = 25;
++		if (fps >= ARRAY_SIZE(std_625_50))
++			fps = ARRAY_SIZE(std_625_50) - 1;
+ 		i = std_625_50[fps];
+ 	}
+ 
