@@ -1,32 +1,22 @@
-From: "Xue, Ying" <Ying.Xue@windriver.com>
-Date: Wed, 27 Apr 2016 10:51:13 +0000
-Subject: RE: [patch] tipc: remove an unnecessary NULL check
-Message-Id: <25A14D9CFAB7B34FB9440F90AFD35233DD19B29C@ALA-MBA.corp.ad.wrs.com>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 28 Apr 2016 20:54:54 +0000
+Subject: Re: [patch] tipc: remove an unnecessary NULL check
+Message-Id: <20160428.165454.1105669734912206052.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160427080528.GA22469@mwanda>
 In-Reply-To: <20160427080528.GA22469@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jon Maloy <jon.maloy@ericsson.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "tipc-discussion@lists.sourceforge.net" <tipc-discussion@lists.sourceforge.net>, "David S. Miller" <davem@davemloft.net>
+To: dan.carpenter@oracle.com
+Cc: jon.maloy@ericsson.com, ying.xue@windriver.com, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
-PiBGcm9tOiBEYW4gQ2FycGVudGVyIFttYWlsdG86ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tXQ0K
-PiBTZW50OiAyMDE2xOo01MIyN8jVIDE2OjA1DQo+IFRvOiBKb24gTWFsb3kNCj4gQ2M6IFh1ZSwg
-WWluZzsgRGF2aWQgUy4gTWlsbGVyOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyB0aXBjLQ0KPiBk
-aXNjdXNzaW9uQGxpc3RzLnNvdXJjZWZvcmdlLm5ldDsga2VybmVsLWphbml0b3JzQHZnZXIua2Vy
-bmVsLm9yZw0KPiBTdWJqZWN0OiBbcGF0Y2hdIHRpcGM6IHJlbW92ZSBhbiB1bm5lY2Vzc2FyeSBO
-VUxMIGNoZWNrDQo+IA0KPiBUaGlzIGlzIG5ldmVyIGNhbGxlZCB3aXRoIGEgTlVMTCAiYnVmIiBh
-bmQgYW55d2F5LCB3ZSBkZXJlZmVyZW5jZSAncycgb24gdGhlDQo+IGxpbmVzIGJlZm9yZSBzbyBp
-dCB3b3VsZCBPb3BzIGJlZm9yZSB3ZSByZWFjaCB0aGUgY2hlY2suDQo+IA0KPiBTaWduZWQtb2Zm
-LWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQoNCkFja2VkLWJ5
-OiBZaW5nIFh1ZSA8eWluZy54dWVAd2luZHJpdmVyLmNvbT4NCg0KPiANCj4gZGlmZiAtLWdpdCBh
-L25ldC90aXBjL3N1YnNjci5jIGIvbmV0L3RpcGMvc3Vic2NyLmMgaW5kZXggNzlkZTU4OC4uMGRk
-MDIyNA0KPiAxMDA2NDQNCj4gLS0tIGEvbmV0L3RpcGMvc3Vic2NyLmMNCj4gKysrIGIvbmV0L3Rp
-cGMvc3Vic2NyLmMNCj4gQEAgLTMyNiw4ICszMjYsNyBAQCBzdGF0aWMgdm9pZCB0aXBjX3N1YnNj
-cmJfcmN2X2NiKHN0cnVjdCBuZXQgKm5ldCwgaW50DQo+IGNvbmlkLA0KPiAgCQlyZXR1cm4gdGlw
-Y19zdWJzY3JwX2NhbmNlbChzLCBzdWJzY3JpYmVyKTsNCj4gIAl9DQo+IA0KPiAtCWlmIChzKQ0K
-PiAtCQl0aXBjX3N1YnNjcnBfc3Vic2NyaWJlKG5ldCwgcywgc3Vic2NyaWJlciwgc3dhcCk7DQo+
-ICsJdGlwY19zdWJzY3JwX3N1YnNjcmliZShuZXQsIHMsIHN1YnNjcmliZXIsIHN3YXApOw0KPiAg
-fQ0KPiANCj4gIC8qIEhhbmRsZSBvbmUgcmVxdWVzdCB0byBlc3RhYmxpc2ggYSBuZXcgc3Vic2Ny
-aWJlciAqLw0K
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Apr 2016 11:05:28 +0300
+
+> This is never called with a NULL "buf" and anyway, we dereference 's' on
+> the lines before so it would Oops before we reach the check.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Applied to net-next, thanks.
