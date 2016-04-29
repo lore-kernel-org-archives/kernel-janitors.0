@@ -1,30 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Apr 2016 06:44:31 +0000
-Subject: [patch] tty: hvc_console: silence unintialized variable warning
-Message-Id: <20160413064431.GF8092@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 29 Apr 2016 20:09:08 +0000
+Subject: [PATCH 1/5] dmaengine: mmp_pdma: Use dma_pool_zalloc
+Message-Id: <1461960552-7429-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Anton Blanchard <anton@samba.org>
-Cc: Jiri Slaby <jslaby@suse.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peter Hurley <peter@hurleysoftware.com>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If ->get_char() returns a negative error code and that can mean that
-"ch" is uninitialized.  The callers of this function expect NO_POLL_CHAR
-on error so let's return that.
+Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
+that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@@
+expression d,e;
+statement S;
+@@
 
-diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-index e46d628..325747a 100644
---- a/drivers/tty/hvc/hvc_console.c
-+++ b/drivers/tty/hvc/hvc_console.c
-@@ -814,7 +814,7 @@ static int hvc_poll_get_char(struct tty_driver *driver, int line)
+        d -            dma_pool_alloc
++            dma_pool_zalloc
+             (...);
+        if (!d) S
+-       memset(d, 0, sizeof(*d));
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/dma/mmp_pdma.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/dma/mmp_pdma.c b/drivers/dma/mmp_pdma.c
+index e39457f..56f1fd6 100644
+--- a/drivers/dma/mmp_pdma.c
++++ b/drivers/dma/mmp_pdma.c
+@@ -364,13 +364,12 @@ mmp_pdma_alloc_descriptor(struct mmp_pdma_chan *chan)
+ 	struct mmp_pdma_desc_sw *desc;
+ 	dma_addr_t pdesc;
  
- 	n = hp->ops->get_chars(hp->vtermno, &ch, 1);
+-	desc = dma_pool_alloc(chan->desc_pool, GFP_ATOMIC, &pdesc);
++	desc = dma_pool_zalloc(chan->desc_pool, GFP_ATOMIC, &pdesc);
+ 	if (!desc) {
+ 		dev_err(chan->dev, "out of memory for link descriptor\n");
+ 		return NULL;
+ 	}
  
--	if (n = 0)
-+	if (n <= 0)
- 		return NO_POLL_CHAR;
- 
- 	return ch;
+-	memset(desc, 0, sizeof(*desc));
+ 	INIT_LIST_HEAD(&desc->tx_list);
+ 	dma_async_tx_descriptor_init(&desc->async_tx, &chan->chan);
+ 	/* each desc has submit */
+
