@@ -1,67 +1,52 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 16 Apr 2016 12:31:49 +0000
-Subject: Re: [PATCH 03/10] iio: adc: vf610_adc: fix case label indent
-Message-Id: <571230B5.1040207@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 29 Apr 2016 20:09:09 +0000
+Subject: [PATCH 2/5] dmaengine: vdma: Use dma_pool_zalloc
+Message-Id: <1461960552-7429-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
- <1460662602-2951-4-git-send-email-sst@poczta.fm>
-In-Reply-To: <1460662602-2951-4-git-send-email-sst@poczta.fm>
+References: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Slawomir Stepien <sst@poczta.fm>, knaack.h@gmx.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 14/04/16 20:36, Slawomir Stepien wrote:
-> This fixes the error reported by checkpatch.pl:
-> 
-> ERROR: switch and case should be at the same indent
-> 
-> Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-Applied.
+Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
+that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
 
-Thanks,
+// <smpl>
+@@
+expression d,e;
+statement S;
+@@
 
-Jonathan
-> ---
->  drivers/iio/adc/vf610_adc.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/vf610_adc.c b/drivers/iio/adc/vf610_adc.c
-> index b10f629..653bf13 100644
-> --- a/drivers/iio/adc/vf610_adc.c
-> +++ b/drivers/iio/adc/vf610_adc.c
-> @@ -714,19 +714,19 @@ static int vf610_write_raw(struct iio_dev *indio_dev,
->  	int i;
->  
->  	switch (mask) {
-> -		case IIO_CHAN_INFO_SAMP_FREQ:
-> -			for (i = 0;
-> -				i < ARRAY_SIZE(info->sample_freq_avail);
-> -				i++)
-> -				if (val = info->sample_freq_avail[i]) {
-> -					info->adc_feature.sample_rate = i;
-> -					vf610_adc_sample_set(info);
-> -					return 0;
-> -				}
-> -			break;
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		for (i = 0;
-> +			i < ARRAY_SIZE(info->sample_freq_avail);
-> +			i++)
-> +			if (val = info->sample_freq_avail[i]) {
-> +				info->adc_feature.sample_rate = i;
-> +				vf610_adc_sample_set(info);
-> +				return 0;
-> +			}
-> +		break;
->  
-> -		default:
-> -			break;
-> +	default:
-> +		break;
->  	}
->  
->  	return -EINVAL;
-> 
+        d -            dma_pool_alloc
++            dma_pool_zalloc
+             (...);
+        if (!d) S
+-       memset(d, 0, sizeof(*d));
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/dma/xilinx/xilinx_vdma.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/dma/xilinx/xilinx_vdma.c b/drivers/dma/xilinx/xilinx_vdma.c
+index a95d603..6a70987 100644
+--- a/drivers/dma/xilinx/xilinx_vdma.c
++++ b/drivers/dma/xilinx/xilinx_vdma.c
+@@ -343,11 +343,10 @@ xilinx_vdma_alloc_tx_segment(struct xilinx_vdma_chan *chan)
+ 	struct xilinx_vdma_tx_segment *segment;
+ 	dma_addr_t phys;
+ 
+-	segment = dma_pool_alloc(chan->desc_pool, GFP_ATOMIC, &phys);
++	segment = dma_pool_zalloc(chan->desc_pool, GFP_ATOMIC, &phys);
+ 	if (!segment)
+ 		return NULL;
+ 
+-	memset(segment, 0, sizeof(*segment));
+ 	segment->phys = phys;
+ 
+ 	return segment;
 
