@@ -1,31 +1,83 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Apr 2016 09:32:31 +0000
-Subject: [patch] target/transport: Silence unitialized variable warnings
-Message-Id: <20160414093231.GB16549@mwanda>
+From: Jarno Rajahalme <jarno@ovn.org>
+Date: Fri, 29 Apr 2016 21:17:28 +0000
+Subject: [PATCH net 1/3] udp_tunnel: Remove redundant udp_tunnel_gro_complete().
+Message-Id: <1461964650-4779-1-git-send-email-jarno@ovn.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Bart Van Assche <bart.vanassche@sandisk.com>
-Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The core_scsi3_ua_for_check_condition() can return without initializing
-these variables.  I have initialized them to zero so that it triggers a
-WARN_ON_ONCE() in that situation.
+The setting of the UDP tunnel GSO type is already performed by
+udp[46]_gro_complete().
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jarno Rajahalme <jarno@ovn.org>
+---
+ drivers/net/geneve.c     | 2 --
+ drivers/net/vxlan.c      | 2 --
+ include/net/udp_tunnel.h | 9 ---------
+ net/ipv4/fou.c           | 2 --
+ 4 files changed, 15 deletions(-)
 
-diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-index ab2bf12..851e634 100644
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -2884,7 +2884,8 @@ static int translate_sense_reason(struct se_cmd *cmd, sense_reason_t reason)
- 	const struct sense_info *si;
- 	u8 *buffer = cmd->sense_buffer;
- 	int r = (__force int)reason;
--	u8 asc, ascq;
-+	u8 asc = 0;
-+	u8 ascq = 0;
- 	bool desc_format = target_sense_desc_format(cmd->se_dev);
+diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
+index bc16889..98f1224 100644
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@ -504,8 +504,6 @@ static int geneve_gro_complete(struct sk_buff *skb, int nhoff,
+ 	int gh_len;
+ 	int err = -ENOSYS;
  
- 	if (r < ARRAY_SIZE(sense_info_table) && sense_info_table[r].key)
+-	udp_tunnel_gro_complete(skb, nhoff);
+-
+ 	gh = (struct genevehdr *)(skb->data + nhoff);
+ 	gh_len = geneve_hlen(gh);
+ 	type = gh->proto_type;
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index 1c0fa36..dd2d032 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -616,8 +616,6 @@ out:
+ static int vxlan_gro_complete(struct sk_buff *skb, int nhoff,
+ 			      struct udp_offload *uoff)
+ {
+-	udp_tunnel_gro_complete(skb, nhoff);
+-
+ 	return eth_gro_complete(skb, nhoff + sizeof(struct vxlanhdr));
+ }
+ 
+diff --git a/include/net/udp_tunnel.h b/include/net/udp_tunnel.h
+index b831140..a114024 100644
+--- a/include/net/udp_tunnel.h
++++ b/include/net/udp_tunnel.h
+@@ -106,15 +106,6 @@ static inline struct sk_buff *udp_tunnel_handle_offloads(struct sk_buff *skb,
+ 	return iptunnel_handle_offloads(skb, type);
+ }
+ 
+-static inline void udp_tunnel_gro_complete(struct sk_buff *skb, int nhoff)
+-{
+-	struct udphdr *uh;
+-
+-	uh = (struct udphdr *)(skb->data + nhoff - sizeof(struct udphdr));
+-	skb_shinfo(skb)->gso_type |= uh->check ?
+-				SKB_GSO_UDP_TUNNEL_CSUM : SKB_GSO_UDP_TUNNEL;
+-}
+-
+ static inline void udp_tunnel_encap_enable(struct socket *sock)
+ {
+ #if IS_ENABLED(CONFIG_IPV6)
+diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
+index a39068b..305d9ac 100644
+--- a/net/ipv4/fou.c
++++ b/net/ipv4/fou.c
+@@ -228,8 +228,6 @@ static int fou_gro_complete(struct sk_buff *skb, int nhoff,
+ 	int err = -ENOSYS;
+ 	const struct net_offload **offloads;
+ 
+-	udp_tunnel_gro_complete(skb, nhoff);
+-
+ 	rcu_read_lock();
+ 	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+ 	ops = rcu_dereference(offloads[proto]);
+-- 
+2.7.4
+
