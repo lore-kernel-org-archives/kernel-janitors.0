@@ -1,85 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Apr 2016 11:14:41 +0000
-Subject: [PATCH resend v2] [SCSI] bfa: fix bfa_fcb_itnim_alloc() error handling
-Message-Id: <20160413111441.GC4247@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 29 Apr 2016 20:09:12 +0000
+Subject: [PATCH 5/5] dmaengine: fsldma: Use dma_pool_zalloc
+Message-Id: <1461960552-7429-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160413105946.GA1895@mwanda>
-In-Reply-To: <20160413105946.GA1895@mwanda>
+References: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
-Cc: Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Li Yang <leoli@freescale.com>
+Cc: kernel-janitors@vger.kernel.org, Zhang Wei <zw@zh-kernel.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, linuxppc-dev@lists.ozlabs.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The caller assumes that "itnim" is NULL on error and non-NULL on
-success but really "itnim" is uninitialized on error.  This
-function should just use normal error handling where it returns zero on
-success and negative on failure.
+Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
+that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@@
+expression d,e;
+statement S;
+@@
+
+        d -            dma_pool_alloc
++            dma_pool_zalloc
+             (...);
+        if (!d) S
+-       memset(d, 0, sizeof(*d));
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-v2: fix up the subject and CC list.
+ drivers/dma/fsldma.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/bfa/bfa_fcs.h b/drivers/scsi/bfa/bfa_fcs.h
-index 42bcb97..af220e9 100644
---- a/drivers/scsi/bfa/bfa_fcs.h
-+++ b/drivers/scsi/bfa/bfa_fcs.h
-@@ -873,8 +873,8 @@ bfa_status_t bfa_fcb_rport_alloc(struct bfad_s *bfad,
- /*
-  * itnim callbacks
-  */
--void bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
--			 struct bfad_itnim_s **itnim_drv);
-+int bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
-+			struct bfad_itnim_s **itnim_drv);
- void bfa_fcb_itnim_free(struct bfad_s *bfad,
- 			struct bfad_itnim_s *itnim_drv);
- void bfa_fcb_itnim_online(struct bfad_itnim_s *itnim_drv);
-diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
-index 7223b00..31426ae 100644
---- a/drivers/scsi/bfa/bfad_im.c
-+++ b/drivers/scsi/bfa/bfad_im.c
-@@ -413,13 +413,13 @@ bfad_im_slave_destroy(struct scsi_device *sdev)
-  * BFA FCS itnim alloc callback, after successful PRLI
-  * Context: Interrupt
-  */
--void
-+int
- bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
- 		    struct bfad_itnim_s **itnim_drv)
- {
- 	*itnim_drv = kzalloc(sizeof(struct bfad_itnim_s), GFP_ATOMIC);
- 	if (*itnim_drv = NULL)
--		return;
-+		return -ENOMEM;
+diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
+index aac85c3..a8828ed 100644
+--- a/drivers/dma/fsldma.c
++++ b/drivers/dma/fsldma.c
+@@ -462,13 +462,12 @@ static struct fsl_desc_sw *fsl_dma_alloc_descriptor(struct fsldma_chan *chan)
+ 	struct fsl_desc_sw *desc;
+ 	dma_addr_t pdesc;
  
- 	(*itnim_drv)->im = bfad->im;
- 	*itnim = &(*itnim_drv)->fcs_itnim;
-@@ -430,6 +430,7 @@ bfa_fcb_itnim_alloc(struct bfad_s *bfad, struct bfa_fcs_itnim_s **itnim,
- 	 */
- 	INIT_WORK(&(*itnim_drv)->itnim_work, bfad_im_itnim_work_handler);
- 	bfad->bfad_flags |= BFAD_RPORT_ONLINE;
-+	return 0;
- }
- 
- /*
-diff --git a/drivers/scsi/bfa/bfa_fcs_fcpim.c b/drivers/scsi/bfa/bfa_fcs_fcpim.c
-index 6dc7926..829247e 100644
---- a/drivers/scsi/bfa/bfa_fcs_fcpim.c
-+++ b/drivers/scsi/bfa/bfa_fcs_fcpim.c
-@@ -587,12 +587,13 @@ bfa_fcs_itnim_create(struct bfa_fcs_rport_s *rport)
- 	struct bfa_fcs_lport_s *port = rport->port;
- 	struct bfa_fcs_itnim_s *itnim;
- 	struct bfad_itnim_s   *itnim_drv;
-+	int ret;
- 
- 	/*
- 	 * call bfad to allocate the itnim
- 	 */
--	bfa_fcb_itnim_alloc(port->fcs->bfad, &itnim, &itnim_drv);
--	if (itnim = NULL) {
-+	ret = bfa_fcb_itnim_alloc(port->fcs->bfad, &itnim, &itnim_drv);
-+	if (ret) {
- 		bfa_trc(port->fcs, rport->pwwn);
+-	desc = dma_pool_alloc(chan->desc_pool, GFP_ATOMIC, &pdesc);
++	desc = dma_pool_zalloc(chan->desc_pool, GFP_ATOMIC, &pdesc);
+ 	if (!desc) {
+ 		chan_dbg(chan, "out of memory for link descriptor\n");
  		return NULL;
  	}
+ 
+-	memset(desc, 0, sizeof(*desc));
+ 	INIT_LIST_HEAD(&desc->tx_list);
+ 	dma_async_tx_descriptor_init(&desc->async_tx, &chan->common);
+ 	desc->async_tx.tx_submit = fsl_dma_tx_submit;
+
