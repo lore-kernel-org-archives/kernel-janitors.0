@@ -1,34 +1,47 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 04 Apr 2016 09:52:30 +0000
-Subject: [PATCH 2/2] staging: dgnc: remove blank line
-Message-Id: <20160404095230.GA4421@SEL-JYOUN-D1>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 29 Apr 2016 20:09:07 +0000
+Subject: [PATCH 0/5] Use dma_pool_zalloc
+Message-Id: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-fix checkpatch.pl warning:
-Blank lines aren't necessary after an open brace '{'
+Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
+that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+// <smpl>
+@@
+type T;
+T *d;
+expression e;
+statement S;
+@@
+
+        d -            dma_pool_alloc
++            dma_pool_zalloc
+             (...);
+        if (!d) S
+-       memset(d, 0, sizeof(T));
+
+@@
+expression d,e;
+statement S;
+@@
+
+        d -            dma_pool_alloc
++            dma_pool_zalloc
+             (...);
+        if (!d) S
+-       memset(d, 0, sizeof(*d));
+// </smpl>
+
 ---
- drivers/staging/dgnc/dgnc_neo.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index 2da6a72..3b8ce38 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -1794,7 +1794,6 @@ static void neo_vpd(struct dgnc_board *brd)
- 	if  (((brd->vpd[0x08] != 0x82) &&
- 	      (brd->vpd[0x10] != 0x82)) ||
- 	     (brd->vpd[0x7F] != 0x78)) {
--
- 		memset(brd->vpd, '\0', NEO_VPD_IMAGESIZE);
- 	} else {
- 		/* Search for the serial number */
--- 
-1.9.1
-
+ drivers/crypto/marvell/tdma.c    |    5 ++---
+ drivers/dma/fsldma.c             |    3 +--
+ drivers/dma/ioat/init.c          |    5 ++---
+ drivers/dma/mmp_pdma.c           |    3 +--
+ drivers/dma/xilinx/xilinx_vdma.c |    3 +--
+ 5 files changed, 7 insertions(+), 12 deletions(-)
