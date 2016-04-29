@@ -1,43 +1,55 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 16 Apr 2016 12:35:47 +0000
-Subject: Re: [PATCH 09/10] iio: magnetometer: ak8975: put else and brace at the same line
-Message-Id: <571231A3.10601@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 29 Apr 2016 20:09:11 +0000
+Subject: [PATCH 4/5] crypto: Use dma_pool_zalloc
+Message-Id: <1461960552-7429-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1460662602-2951-1-git-send-email-sst@poczta.fm>
- <1460662602-2951-10-git-send-email-sst@poczta.fm>
-In-Reply-To: <1460662602-2951-10-git-send-email-sst@poczta.fm>
+References: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Slawomir Stepien <sst@poczta.fm>, knaack.h@gmx.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: kernel-janitors@vger.kernel.org, Arnaud Ebalard <arno@natisbad.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 14/04/16 20:36, Slawomir Stepien wrote:
-> This fixes the error reported by checkpatch.pl:
-> 
-> ERROR: else should follow close brace '}'
-> 
-> Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-Applied and thanks,
+Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
+that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
 
-Jonathan
-> ---
->  drivers/iio/magnetometer/ak8975.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/magnetometer/ak8975.c b/drivers/iio/magnetometer/ak8975.c
-> index 48d127a..6bc855f 100644
-> --- a/drivers/iio/magnetometer/ak8975.c
-> +++ b/drivers/iio/magnetometer/ak8975.c
-> @@ -810,8 +810,7 @@ static int ak8975_probe(struct i2c_client *client,
->  		name = ak8975_match_acpi_device(&client->dev, &chipset);
->  		if (!name)
->  			return -ENODEV;
-> -	}
-> -	else
-> +	} else
->  		return -ENOSYS;
->  
->  	if (chipset >= AK_MAX_TYPE) {
-> 
+// <smpl>
+@@
+expression d,e;
+statement S;
+@@
 
+        d -            dma_pool_alloc
++            dma_pool_zalloc
+             (...);
+        if (!d) S
+-       memset(d, 0, sizeof(*d));
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+ drivers/crypto/marvell/tdma.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/marvell/tdma.c b/drivers/crypto/marvell/tdma.c
+index 7642798..0ad8f1e 100644
+--- a/drivers/crypto/marvell/tdma.c
++++ b/drivers/crypto/marvell/tdma.c
+@@ -99,12 +99,11 @@ mv_cesa_dma_add_desc(struct mv_cesa_tdma_chain *chain, gfp_t flags)
+ 	struct mv_cesa_tdma_desc *new_tdma = NULL;
+ 	dma_addr_t dma_handle;
+ 
+-	new_tdma = dma_pool_alloc(cesa_dev->dma->tdma_desc_pool, flags,
+-				  &dma_handle);
++	new_tdma = dma_pool_zalloc(cesa_dev->dma->tdma_desc_pool, flags,
++				   &dma_handle);
+ 	if (!new_tdma)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	memset(new_tdma, 0, sizeof(*new_tdma));
+ 	new_tdma->cur_dma = dma_handle;
+ 	if (chain->last) {
+ 		chain->last->next_dma = cpu_to_le32(dma_handle);
