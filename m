@@ -1,43 +1,28 @@
 From: Florian Westphal <fw@strlen.de>
-Date: Fri, 29 Apr 2016 09:12:12 +0000
+Date: Sat, 30 Apr 2016 07:57:43 +0000
 Subject: Re: [PATCH] nf_nat_packet: Clear skb hash after modifying packet headers.
-Message-Id: <20160429091212.GL17538@breakpoint.cc>
+Message-Id: <20160430075743.GA26902@breakpoint.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1461187870-54322-1-git-send-email-jarno@ovn.org>
  <20160429090959.GA7236@salvia>
-In-Reply-To: <20160429090959.GA7236@salvia>
+ <20160429091212.GL17538@breakpoint.cc>
+ <BF2D351F-29C4-49BA-9C97-231BB513DD23@ovn.org>
+In-Reply-To: <BF2D351F-29C4-49BA-9C97-231BB513DD23@ovn.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Jarno Rajahalme <jarno@ovn.org>, netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, dev@openvswitch.org, fw@strlen.de
+To: Jarno Rajahalme <jarno@ovn.org>
+Cc: Florian Westphal <fw@strlen.de>, Pablo Neira Ayuso <pablo@netfilter.org>, netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, dev@openvswitch.org
 
-Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> On Wed, Apr 20, 2016 at 02:31:10PM -0700, Jarno Rajahalme wrote:
-> > Clear the skb hash when it does not reflect the actual header values
-> > any more.
-> > 
-> > Signed-off-by: Jarno Rajahalme <jarno@ovn.org>
-> > ---
-> >  net/netfilter/nf_nat_core.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
-> > index 06a9f45..3c2302f 100644
-> > --- a/net/netfilter/nf_nat_core.c
-> > +++ b/net/netfilter/nf_nat_core.c
-> > @@ -505,6 +505,7 @@ unsigned int nf_nat_packet(struct nf_conn *ct,
-> >  		if (!l3proto->manip_pkt(skb, 0, l4proto, &target, mtype))
-> >  			return NF_DROP;
-> >  	}
-> > +	skb_clear_hash(skb);
-> >  	return NF_ACCEPT;
-> >  }
+Jarno Rajahalme <jarno@ovn.org> wrote:
+> In the OVS datapath we clear the skb hash whenever we change any of the fields that may be used to compute it. This guarantees that any given flow will get the same hash value when assigning packets to bond interfaces based on the skb hash. If the hash is not cleared, some packets may use the pre-nat hash provided by a nic, for example, while others may not have the nic provided hash and compute a new one post-nat. Also, if DNAT is used for load balancing, the hash should be computed after the NAT for the difference in the destination address to make a difference in the hash value.
 > 
-> Cc'ing Florian.
-> 
-> This seems to affect the new tracing infrastructure for nf_tables:
+> We could also clear the hash in the OVS datapath code after calling into nf nat, but could that still have the same issue with affecting the nf_tables tracing (of which I know nothing about)?
 
-Right.
+No, that would not affect nft.
 
-Jarno, what is your patch trying to fix?
+Note that we could also remove the skb_get_hash() usage in nf trace (we
+want to compute a pseudo-id that doesn't change while skb travels the
+netfilter hooks).
+
+For now I'd prefer if the hash reset would happen in OVS.
