@@ -1,65 +1,63 @@
-From: Luis de Bethencourt <luisbg@osg.samsung.com>
-Date: Fri, 27 May 2016 11:54:42 +0000
-Subject: Re: [PATCH 2/7] staging: dgnc: remove unused variable 'intr_modem'
-Message-Id: <57483582.2080307@osg.samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 01 May 2016 12:36:28 +0000
+Subject: [PATCH] drivers: net: xgene: constify xgene_cle_ops structure
+Message-Id: <1462106189-14277-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160527065317.GA2966@SEL-JYOUN-D1>
-In-Reply-To: <20160527065317.GA2966@SEL-JYOUN-D1>
+References: <1449605905-32342-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1449605905-32342-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daeseok Youn <daeseok.youn@gmail.com>, lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Iyappan Subramanian <isubramanian@apm.com>
+Cc: kernel-janitors@vger.kernel.org, Keyur Chudgar <kchudgar@apm.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 27/05/16 07:53, Daeseok Youn wrote:
-> The 'intr_modem' variable was used only for increasing.
-> So the 'intr_modem' variable is not useful for this driver.
-> 
-> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
-> ---
->  drivers/staging/dgnc/dgnc_cls.c    | 1 -
->  drivers/staging/dgnc/dgnc_driver.h | 1 -
->  drivers/staging/dgnc/dgnc_neo.c    | 1 -
->  3 files changed, 3 deletions(-)
-> 
-> diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
-> index dcb808f..8cb7361 100644
-> --- a/drivers/staging/dgnc/dgnc_cls.c
-> +++ b/drivers/staging/dgnc/dgnc_cls.c
-> @@ -406,7 +406,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
->  
->  		/* CTS/RTS change of state */
->  		if (isr & UART_IIR_CTSRTS) {
-> -			brd->intr_modem++;
->  			ch->ch_intr_modem++;
->  			/*
->  			 * Don't need to do anything, the cls_parse_modem
-> diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
-> index 7ac33ed..2caeff7 100644
-> --- a/drivers/staging/dgnc/dgnc_driver.h
-> +++ b/drivers/staging/dgnc/dgnc_driver.h
-> @@ -183,7 +183,6 @@ struct dgnc_board {
->  	uint		nasync;		/* Number of ports on card */
->  
->  	uint		irq;		/* Interrupt request number */
-> -	ulong		intr_modem;	/* Count of interrupts */
->  	ulong		intr_tx;	/* Count of interrupts */
->  	ulong		intr_rx;	/* Count of interrupts */
->  
-> diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-> index 3f8bbb3..a3e100b 100644
-> --- a/drivers/staging/dgnc/dgnc_neo.c
-> +++ b/drivers/staging/dgnc/dgnc_neo.c
-> @@ -452,7 +452,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
->  			 * If we get here, this means the hardware is doing auto flow control.
->  			 * Check to see whether RTS/DTR or CTS/DSR caused this interrupt.
->  			 */
-> -			brd->intr_modem++;
->  			ch->ch_intr_modem++;
->  			cause = readb(&ch->ch_neo_uart->mcr);
->  			/* Which pin is doing auto flow? RTS or DTR? */
-> 
+The xgene_cle_ops structure is never modified, so declare it as const.
 
-Looks good.
+Done with the help of Coccinelle.
 
-Luis
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/apm/xgene/xgene_enet_cle.c  |    2 +-
+ drivers/net/ethernet/apm/xgene/xgene_enet_cle.h  |    2 +-
+ drivers/net/ethernet/apm/xgene/xgene_enet_main.h |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_cle.c b/drivers/net/ethernet/apm/xgene/xgene_enet_cle.c
+index b2124886..6479288 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_cle.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_cle.c
+@@ -729,6 +729,6 @@ static int xgene_enet_cle_init(struct xgene_enet_pdata *pdata)
+ 	return xgene_cle_setup_ptree(pdata, enet_cle);
+ }
+ 
+-struct xgene_cle_ops xgene_cle3in_ops = {
++const struct xgene_cle_ops xgene_cle3in_ops = {
+ 	.cle_init = xgene_enet_cle_init,
+ };
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_cle.h b/drivers/net/ethernet/apm/xgene/xgene_enet_cle.h
+index 29a17ab..13e829a 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_cle.h
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_cle.h
+@@ -290,6 +290,6 @@ struct xgene_enet_cle {
+ 	u32 jump_bytes;
+ };
+ 
+-extern struct xgene_cle_ops xgene_cle3in_ops;
++extern const struct xgene_cle_ops xgene_cle3in_ops;
+ 
+ #endif /* __XGENE_ENET_CLE_H__ */
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.h b/drivers/net/ethernet/apm/xgene/xgene_enet_main.h
+index 175d188..0a2887b 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.h
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.h
+@@ -191,7 +191,7 @@ struct xgene_enet_pdata {
+ 	const struct xgene_mac_ops *mac_ops;
+ 	const struct xgene_port_ops *port_ops;
+ 	struct xgene_ring_ops *ring_ops;
+-	struct xgene_cle_ops *cle_ops;
++	const struct xgene_cle_ops *cle_ops;
+ 	struct delayed_work link_work;
+ 	u32 port_id;
+ 	u8 cpu_bufnum;
+
