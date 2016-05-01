@@ -1,21 +1,49 @@
-From: "Coelho, Luciano" <luciano.coelho@intel.com>
-Date: Mon, 09 May 2016 11:44:11 +0000
-Subject: Re: [patch] iwlwifi: mvm: remove an unused variable
-Message-Id: <1462794250.3545.9.camel@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 01 May 2016 12:07:23 +0000
+Subject: [PATCH] i40e: constify i40e_client_ops structure
+Message-Id: <1462104443-30724-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160504061913.GC22064@mwanda>
-In-Reply-To: <20160504061913.GC22064@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "Berg, Johannes" <johannes.berg@intel.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linuxwifi <linuxwifi@intel.com>, "Ben Ami, Golan" <golan.ben.ami@intel.com>, "Altman, Avri" <avri.altman@intel.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "Sharon, Sara" <sara.sharon@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jeff Kirsher <jeffrey.t.kirsher-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jesse Brandeburg <jesse.brandeburg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shannon Nelson <shannon.nelson-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Carolyn Wyborny <carolyn.wyborny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Don Skidmore <donald.c.skidmore-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Bruce Allan <bruce.w.allan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, John Ronciak <john.ronciak-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mitch Williams <mitch.a.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, intel-wired-lan-qjLDD68F18P21nG7glBr7A@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-T24gV2VkLCAyMDE2LTA1LTA0IGF0IDA5OjE5ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBXZSBuZXZlciBpbml0YWxpemUgYW1wZHVfc3RhdHVzIHNvIGl0IGNhdXNlcyBhIHN0YXRpYyBj
-aGVja2VyIHdhcm5pbmcNCj4gd2hlbiB3ZSBwYXNzIGl0IHRvIGl3bF9tdm1fcGFzc19wYWNrZXRf
-dG9fbWFjODAyMTEoKS7CoMKgRm9ydHVuYXRlbHksDQo+IGl0J3MNCj4gbmV2ZXIgdXNlZCBzbyB3
-ZSBjYW4ganVzdCByZW1vdmUgaXQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVy
-IDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQoNClRoYW5rcyBEYW4hDQoNCkknbGwgcHVzaCB0
-aGlzIHBhdGNoIHRocm91Z2ggb3VyIGludGVybmFsIHRyZWUuDQoNCi0tDQpDaGVlcnMsDQpMdWNh
-Lg=
+The i40e_client_ops structure is never modified, so declare it as const.
+
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/infiniband/hw/i40iw/i40iw_main.c      |    2 +-
+ drivers/net/ethernet/intel/i40e/i40e_client.h |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_main.c b/drivers/infiniband/hw/i40iw/i40iw_main.c
+index 90e5af2..e41fae24 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_main.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_main.c
+@@ -1863,7 +1863,7 @@ static enum i40iw_status_code i40iw_virtchnl_send(struct i40iw_sc_dev *dev,
+ }
+ 
+ /* client interface functions */
+-static struct i40e_client_ops i40e_ops = {
++static const struct i40e_client_ops i40e_ops = {
+ 	.open = i40iw_open,
+ 	.close = i40iw_close,
+ 	.l2_param_change = i40iw_l2param_change,
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_client.h b/drivers/net/ethernet/intel/i40e/i40e_client.h
+index bf6b453..a4601d9 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_client.h
++++ b/drivers/net/ethernet/intel/i40e/i40e_client.h
+@@ -217,7 +217,7 @@ struct i40e_client {
+ #define I40E_CLIENT_FLAGS_LAUNCH_ON_PROBE	BIT(0)
+ #define I40E_TX_FLAGS_NOTIFY_OTHER_EVENTS	BIT(2)
+ 	enum i40e_client_type type;
+-	struct i40e_client_ops *ops;	/* client ops provided by the client */
++	const struct i40e_client_ops *ops; /* client ops provided by the client */
+ };
+ 
+ static inline bool i40e_client_is_registered(struct i40e_client *client)
+
