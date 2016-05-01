@@ -1,36 +1,34 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Mon, 23 May 2016 15:13:48 +0000
-Subject: Re: [PATCH 2/2] s390: use canonical include guard style
-Message-Id: <20160523171348.10de76eb@mschwide>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 01 May 2016 12:49:15 +0000
+Subject: [PATCH] VSOCK: constify vsock_transport structure
+Message-Id: <1462106955-22131-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160523151938.661e2bfb@newton>
-In-Reply-To: <20160523151938.661e2bfb@newton>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, 23 May 2016 17:01:53 +0200
-Peter Oberparleiter <oberpar@linux.vnet.ibm.com> wrote:
+The vsock_transport structure is never modified, so declare it as const.
 
-> On 23.05.2016 15:19, Daniel van Gerpen wrote:
-> > Signed-off-by: Daniel van Gerpen <daniel@vangerpen.de>
-> > ---
-> >  arch/s390/include/asm/fcx.h | 2 +-
-> >  drivers/s390/cio/chp.h      | 2 +-
-> >  drivers/s390/cio/idset.h    | 2 +-
-> >  3 files changed, 3 insertions(+), 3 deletions(-)
-> > 
-> 
-> Acked-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-> 
-> Martin, could you pick this up via the s390 tree?
+Done with the help of Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ net/vmw_vsock/vmci_transport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
+index 5621473..4120b7a 100644
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -2051,7 +2051,7 @@ static u32 vmci_transport_get_local_cid(void)
+ 	return vmci_get_context_id();
+ }
  
-Add to the linux-s390:features branch for the 4.8 merge window.
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+-static struct vsock_transport vmci_transport = {
++static const struct vsock_transport vmci_transport = {
+ 	.init = vmci_transport_socket_init,
+ 	.destruct = vmci_transport_destruct,
+ 	.release = vmci_transport_release,
 
