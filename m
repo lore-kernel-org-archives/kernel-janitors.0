@@ -1,26 +1,61 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Tue, 03 May 2016 16:18:12 +0000
-Subject: Re: [patch] ASoC: hdac_hdmi: Potential NULL deref in hdac_hdmi_get_spk_alloc()
-Message-Id: <20160503160611.GU2274@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 01 May 2016 12:22:21 +0000
+Subject: [PATCH] i40iw: constify i40iw_vf_cqp_ops structure
+Message-Id: <1462105341-6299-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160503074258.GA9722@mwanda>
- <20160503095639.GS2274@localhost>
-In-Reply-To: <20160503095639.GS2274@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeeja KP <jeeja.kp@intel.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sachin Mokashi <sachinx.mokashi@intel.com>, patches.audio@intel.com
+To: Faisal Latif <faisal.latif@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>, Mustafa Ismail <mustafa.ismail@intel.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 03, 2016 at 03:26:39PM +0530, Vinod Koul wrote:
-> On Tue, May 03, 2016 at 10:42:58AM +0300, Dan Carpenter wrote:
-> > We intended || here instead of &&.  The original code potentially leads
-> > to a NULL dereference.
-> 
-> This looks good to me, I will test this and get back
+The i40iw_vf_cqp_ops structure is never modified, so declare it as const.
 
-Acked-by: Vinod Koul <vinod.koul@intel.com>
-Tested-by: Sachin Mokashi <sachinx.mokashi@intel.com>
+Done with the help of Coccinelle.
 
--- 
-~Vinod
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/infiniband/hw/i40iw/i40iw_type.h |    2 +-
+ drivers/infiniband/hw/i40iw/i40iw_vf.c   |    2 +-
+ drivers/infiniband/hw/i40iw/i40iw_vf.h   |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_type.h b/drivers/infiniband/hw/i40iw/i40iw_type.h
+index edb3a8c..7f935ec 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_type.h
++++ b/drivers/infiniband/hw/i40iw/i40iw_type.h
+@@ -479,7 +479,7 @@ struct i40iw_sc_dev {
+ 	struct i40iw_virt_mem ieq_mem;
+ 	struct i40iw_puda_rsrc *ieq;
+ 
+-	struct i40iw_vf_cqp_ops *iw_vf_cqp_ops;
++	const struct i40iw_vf_cqp_ops *iw_vf_cqp_ops;
+ 
+ 	struct i40iw_hmc_fpm_misc hmc_fpm_misc;
+ 	u16 qs_handle;
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_vf.c b/drivers/infiniband/hw/i40iw/i40iw_vf.c
+index cb0f183..e33d481 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_vf.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_vf.c
+@@ -80,6 +80,6 @@ enum i40iw_status_code i40iw_manage_vf_pble_bp(struct i40iw_sc_cqp *cqp,
+ 	return 0;
+ }
+ 
+-struct i40iw_vf_cqp_ops iw_vf_cqp_ops = {
++const struct i40iw_vf_cqp_ops iw_vf_cqp_ops = {
+ 	i40iw_manage_vf_pble_bp
+ };
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_vf.h b/drivers/infiniband/hw/i40iw/i40iw_vf.h
+index f649f3a..4359559 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_vf.h
++++ b/drivers/infiniband/hw/i40iw/i40iw_vf.h
+@@ -57,6 +57,6 @@ enum i40iw_status_code i40iw_manage_vf_pble_bp(struct i40iw_sc_cqp *cqp,
+ 					       u64 scratch,
+ 					       bool post_sq);
+ 
+-extern struct i40iw_vf_cqp_ops iw_vf_cqp_ops;
++extern const struct i40iw_vf_cqp_ops iw_vf_cqp_ops;
+ 
+ #endif
+
