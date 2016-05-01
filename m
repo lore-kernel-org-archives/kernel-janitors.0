@@ -1,54 +1,39 @@
-From: Craig Inches <craig@craiginches.com>
-Date: Sat, 21 May 2016 13:15:58 +0000
-Subject: [PATCH] Staging: Android: Fix bracket alignment style issue in sync.c
-Message-Id: <1463836558-7905-1-git-send-email-craig@craiginches.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 01 May 2016 19:04:32 +0000
+Subject: Re: [patch] iio: dac: ad5592r: Off by one bug in ad5592r_alloc_channels()
+Message-Id: <dd84eb1c-277e-78f0-24b1-8a170e4d8730@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1463165927-14288-1-git-send-email-craig@craiginches.com>
-In-Reply-To: <1463165927-14288-1-git-send-email-craig@craiginches.com>
+References: <20160429090330.GB18656@mwanda>
+In-Reply-To: <20160429090330.GB18656@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: arve@android.com, riandrews@android.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org, Craig Inches <craig@craiginches.com>, Craig Inches <Craig@craiginches.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch changes 3 bracket alignment errors found by checkpatch.
-
-Signed-off-by: Craig Inches <Craig@craiginches.com>
----
- drivers/staging/android/sync.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/android/sync.c b/drivers/staging/android/sync.c
-index 3a8f210..4a64bdd 100644
---- a/drivers/staging/android/sync.c
-+++ b/drivers/staging/android/sync.c
-@@ -430,7 +430,7 @@ static unsigned int sync_file_poll(struct file *file, poll_table *wait)
- }
- 
- static long sync_file_ioctl_merge(struct sync_file *sync_file,
--				   unsigned long arg)
-+				  unsigned long arg)
- {
- 	int fd = get_unused_fd_flags(O_CLOEXEC);
- 	int err;
-@@ -500,7 +500,7 @@ static int sync_fill_fence_info(struct fence *fence, void *data, int size)
- }
- 
- static long sync_file_ioctl_fence_info(struct sync_file *sync_file,
--					unsigned long arg)
-+				       unsigned long arg)
- {
- 	struct sync_file_info *info;
- 	__u32 size;
-@@ -552,7 +552,7 @@ out:
- }
- 
- static long sync_file_ioctl(struct file *file, unsigned int cmd,
--			     unsigned long arg)
-+			    unsigned long arg)
- {
- 	struct sync_file *sync_file = file->private_data;
- 
--- 
-2.7.3
+On 29/04/16 10:03, Dan Carpenter wrote:
+> The > here should be >= or we go beyond the end for the array.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Good spot - marked it to pick up when I am back on the internet soonish....
+(though perhaps not when I my computer manages to sneak this lot out!)
+> 
+> diff --git a/drivers/iio/dac/ad5592r-base.c b/drivers/iio/dac/ad5592r-base.c
+> index 948f600..69bde59 100644
+> --- a/drivers/iio/dac/ad5592r-base.c
+> +++ b/drivers/iio/dac/ad5592r-base.c
+> @@ -525,7 +525,7 @@ static int ad5592r_alloc_channels(struct ad5592r_state *st)
+>  
+>  	device_for_each_child_node(st->dev, child) {
+>  		ret = fwnode_property_read_u32(child, "reg", &reg);
+> -		if (ret || reg > ARRAY_SIZE(st->channel_modes))
+> +		if (ret || reg >= ARRAY_SIZE(st->channel_modes))
+>  			continue;
+>  
+>  		ret = fwnode_property_read_u32(child, "adi,mode", &tmp);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
