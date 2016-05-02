@@ -1,61 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 01 May 2016 12:22:21 +0000
-Subject: [PATCH] i40iw: constify i40iw_vf_cqp_ops structure
-Message-Id: <1462105341-6299-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Leon Romanovsky <leon@kernel.org>
+Date: Mon, 02 May 2016 05:19:32 +0000
+Subject: Re: [PATCH] i40iw: constify i40iw_vf_cqp_ops structure
+Message-Id: <20160502051932.GB10276@leon.nu>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="+pHx0qQiF2pBVqBT"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Faisal Latif <faisal.latif@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Chien Tin Tung <chien.tin.tung@intel.com>, Mustafa Ismail <mustafa.ismail@intel.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1462105341-6299-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1462105341-6299-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The i40iw_vf_cqp_ops structure is never modified, so declare it as const.
 
-Done with the help of Coccinelle.
+--+pHx0qQiF2pBVqBT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, May 01, 2016 at 02:22:21PM +0200, Julia Lawall wrote:
+> The i40iw_vf_cqp_ops structure is never modified, so declare it as const.
+>=20
+> Done with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
 
----
- drivers/infiniband/hw/i40iw/i40iw_type.h |    2 +-
- drivers/infiniband/hw/i40iw/i40iw_vf.c   |    2 +-
- drivers/infiniband/hw/i40iw/i40iw_vf.h   |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Thanks Julia,
 
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_type.h b/drivers/infiniband/hw/i40iw/i40iw_type.h
-index edb3a8c..7f935ec 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_type.h
-+++ b/drivers/infiniband/hw/i40iw/i40iw_type.h
-@@ -479,7 +479,7 @@ struct i40iw_sc_dev {
- 	struct i40iw_virt_mem ieq_mem;
- 	struct i40iw_puda_rsrc *ieq;
- 
--	struct i40iw_vf_cqp_ops *iw_vf_cqp_ops;
-+	const struct i40iw_vf_cqp_ops *iw_vf_cqp_ops;
- 
- 	struct i40iw_hmc_fpm_misc hmc_fpm_misc;
- 	u16 qs_handle;
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_vf.c b/drivers/infiniband/hw/i40iw/i40iw_vf.c
-index cb0f183..e33d481 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_vf.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_vf.c
-@@ -80,6 +80,6 @@ enum i40iw_status_code i40iw_manage_vf_pble_bp(struct i40iw_sc_cqp *cqp,
- 	return 0;
- }
- 
--struct i40iw_vf_cqp_ops iw_vf_cqp_ops = {
-+const struct i40iw_vf_cqp_ops iw_vf_cqp_ops = {
- 	i40iw_manage_vf_pble_bp
- };
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_vf.h b/drivers/infiniband/hw/i40iw/i40iw_vf.h
-index f649f3a..4359559 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_vf.h
-+++ b/drivers/infiniband/hw/i40iw/i40iw_vf.h
-@@ -57,6 +57,6 @@ enum i40iw_status_code i40iw_manage_vf_pble_bp(struct i40iw_sc_cqp *cqp,
- 					       u64 scratch,
- 					       bool post_sq);
- 
--extern struct i40iw_vf_cqp_ops iw_vf_cqp_ops;
-+extern const struct i40iw_vf_cqp_ops iw_vf_cqp_ops;
- 
- #endif
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 
+--+pHx0qQiF2pBVqBT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXJuNkAAoJEORje4g2clin+QQP/2pac6QJxWmNO12AadwjhZGb
+3oKzvhPi5yjbTVljcL4tS9+MbwGwWJV0eOPjUDREDc6DW3uPgGcLnVf1yRx+jCPP
+g9vAzN773cLN0+umkd6Ptf7E2j43UeHQsVYRsqwd11ZEM+D37E/nBr5ISUzMNjoU
+X8zF9bxye5F+lx4qtbW/fhSP5ic6yn3hsfW3pWPtqV0sWWaW278Hbx0sXCwdY1ns
+oDMrdkLwcUkpOl+jLmy8501QT0NZUXYWff75zfh5OJHCWR+fzUbLC67cUDf5w8vI
+To69JClmNci5f1PRgnhkpIV6RxB+/GeduJK5OvR+GUgEA8ndU15EnDzHMEuyGG0o
+rAmXs6AkgBMH3km/7UgN7JMj/S94QHBrGjlSRQkPnUFxo5LJ9NjuxTvnlnh78sUR
+Ng/ehrma7gUdAEzyatYj4y3SVxvVfbXui9ocNotzSFzRIvpYGWds4sA9vxMPZRI3
+G4GfaGmyJdtA4/C8FWP15zMZUVazGdigrpojg+VP5qdLd2dDSoLdz0SsQDBdo9l0
+WOg5ko25b7rWfWRwXSmDD+op3qY62MLUS9/42me+0o3x3iB/3hMIiakzcrtG3w7c
+h58AxjY6hHvspNJoiq/njiBX7mrQDbmGx5XiaOsU+oh0nqYDqvrXNa6DIeC1lWsc
+4HIsD7UWwZyxpu4Zb9bT
+=WVyq
+-----END PGP SIGNATURE-----
+
+--+pHx0qQiF2pBVqBT--
