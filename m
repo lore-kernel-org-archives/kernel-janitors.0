@@ -1,28 +1,28 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 11 May 2016 19:02:11 +0000
-Subject: Re: airo: prevent potential underflow in airo_set_freq()
-Message-Id: <20160511190211.9054D6133D@smtp.codeaurora.org>
+From: Jarno Rajahalme <jarno@ovn.org>
+Date: Mon, 02 May 2016 20:41:35 +0000
+Subject: Re: [PATCH net 2/3] udp_offload: Set encapsulation before inner completes.
+Message-Id: <44C57D21-2DE3-4E7B-839F-AD875248FF06@ovn.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20160510192037.GB30712@mwanda>
-References: <20160510192037.GB30712@mwanda>
-In-Reply-To: <20160510192037.GB30712@mwanda>
+References: <1461964650-4779-2-git-send-email-jarno@ovn.org>
+In-Reply-To: <1461964650-4779-2-git-send-email-jarno@ovn.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ondrej Zary <linux@rainbow-software.org>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, Felipe Balbi <felipe.balbi@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> I'm not sure if this can underflow but Smatch complains.  It seems
-> harmless to add a check for negatives.
+
+> On Apr 30, 2016, at 12:32 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> These patches look reasonable.  But can you update the changelogs for 2
+> and 3 to say the user visible effects of these bugs.
+> 
+> Resend it to the people from ./scripts/get_maintainer.pl -f net/ipv4/udp_offload.c
+> 
+> regards,
+> dan carpenter
+> 
 
-Thanks, 1 patch applied to wireless-drivers-next.git:
+Thanks, I send a v2 with a better commit message to the email addresses returned by the get_maintainer script.
 
-03ba4a1b718e airo: prevent potential underflow in airo_set_freq()
-
--- 
-Sent by pwcli
-https://patchwork.kernel.org/patch/9061381/
+   Jarno
 
