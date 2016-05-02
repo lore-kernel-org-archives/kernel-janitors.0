@@ -1,49 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 01 May 2016 12:07:23 +0000
-Subject: [PATCH] i40e: constify i40e_client_ops structure
-Message-Id: <1462104443-30724-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Leon Romanovsky <leon@kernel.org>
+Date: Mon, 02 May 2016 06:06:53 +0000
+Subject: Re: [PATCH] i40e: constify i40e_client_ops structure
+Message-Id: <20160502060653.GD10276@leon.nu>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="VMt1DrMGOVs3KQwf"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jeff Kirsher <jeffrey.t.kirsher-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jesse Brandeburg <jesse.brandeburg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shannon Nelson <shannon.nelson-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Carolyn Wyborny <carolyn.wyborny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Don Skidmore <donald.c.skidmore-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Bruce Allan <bruce.w.allan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, John Ronciak <john.ronciak-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mitch Williams <mitch.a.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, intel-wired-lan-qjLDD68F18P21nG7glBr7A@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <1462104443-30724-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1462104443-30724-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jeff Kirsher <jeffrey.t.kirsher-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jesse Brandeburg <jesse.brandeburg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shannon Nelson <shannon.nelson-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Carolyn Wyborny <carolyn.wyborny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Don Skidmore <donald.c.skidmore-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Bruce Allan <bruce.w.allan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, John Ronciak <john.ronciak-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mitch Williams <mitch.a.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, intel-wired-lan-qjLDD68F18P21nG7glBr7A@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The i40e_client_ops structure is never modified, so declare it as const.
 
-Done with the help of Coccinelle.
+--VMt1DrMGOVs3KQwf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, May 01, 2016 at 02:07:23PM +0200, Julia Lawall wrote:
+> The i40e_client_ops structure is never modified, so declare it as const.
+>=20
+> Done with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
 
----
- drivers/infiniband/hw/i40iw/i40iw_main.c      |    2 +-
- drivers/net/ethernet/intel/i40e/i40e_client.h |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Thanks Julia,
 
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_main.c b/drivers/infiniband/hw/i40iw/i40iw_main.c
-index 90e5af2..e41fae24 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_main.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_main.c
-@@ -1863,7 +1863,7 @@ static enum i40iw_status_code i40iw_virtchnl_send(struct i40iw_sc_dev *dev,
- }
- 
- /* client interface functions */
--static struct i40e_client_ops i40e_ops = {
-+static const struct i40e_client_ops i40e_ops = {
- 	.open = i40iw_open,
- 	.close = i40iw_close,
- 	.l2_param_change = i40iw_l2param_change,
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_client.h b/drivers/net/ethernet/intel/i40e/i40e_client.h
-index bf6b453..a4601d9 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_client.h
-+++ b/drivers/net/ethernet/intel/i40e/i40e_client.h
-@@ -217,7 +217,7 @@ struct i40e_client {
- #define I40E_CLIENT_FLAGS_LAUNCH_ON_PROBE	BIT(0)
- #define I40E_TX_FLAGS_NOTIFY_OTHER_EVENTS	BIT(2)
- 	enum i40e_client_type type;
--	struct i40e_client_ops *ops;	/* client ops provided by the client */
-+	const struct i40e_client_ops *ops; /* client ops provided by the client */
- };
- 
- static inline bool i40e_client_is_registered(struct i40e_client *client)
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 
+--VMt1DrMGOVs3KQwf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXJu59AAoJEORje4g2clinhJoP/2+modFRod8LDdSSNrs1IExN
+9QIw0jHlFDck1DyuoBqX5Ag6zNcq5ryNEOhZLI8XO7BgWZDm49A5wfiAU4f/Bjj7
+aCTZCNZZvrUGtg8htWoykeSsbWI/SuRPEIokUGFLJBc5eE3haf+PINmM/CRGFBoB
+a8eWhOf70F2mge9oKBnqHFBBcu7A0o0NsUCcBK2BrMCWebjYJaBVStStq+TKJAmO
+PArwoQDtuT1kiOfzSCAuWZGCPFEiyt6968wq1xCaYrFR81CbGihAdO1xfaFjTPtt
+DWnhrsda0CG5R5Zf6/URaDJhZJ+rE0trh4PiaVAsDJPJ2QENKayYaM/DluvIDkxQ
+0wz3f96Fs7OJFQvVyRF12TLQZjlBmZYpJS8d0Xd/A+vDg64OmSUTbJPVLAmh1vJ/
+w7+csJ3IQaGka2v7yyIJIinafUJO+IsOjv87FbpAq1rbBVDIZsmqX14GLHXThSHC
+wsuB7pQEF+/r1dSKgIWPZm1Mrio2l3F8CTpUeg8p7H4AmMrtYIh6hRyHXr6xuUAR
+HFKBd6So1Z8+SSNYd+sUqM9MWV+tPvvrd241N6IjmlPYS4OEBr5TGkGrpm8MZpJM
+WD0LOl4sPfPDNyvQu8oSyleM3OdKgMpaOR9xyRRz3vIdUGbHnsou6BWju4Rb5VGa
+ch/KWbeusn0hKx5HHLEb
+=LMvE
+-----END PGP SIGNATURE-----
+
+--VMt1DrMGOVs3KQwf--
