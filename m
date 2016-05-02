@@ -1,29 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 May 2016 13:18:02 +0000
-Subject: [patch] i40e: fix an uninitialized variable bug
-Message-Id: <20160505131802.GA3038@mwanda>
+Date: Mon, 02 May 2016 08:34:58 +0000
+Subject: [patch] [SCSI] aic94xx: silence a static checker warning
+Message-Id: <20160502083458.GA19792@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>
-Cc: Shannon Nelson <shannon.nelson@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We removed this initialization but it is required.  Let's put it back.
+"ddb" is a number between 0-64.  It can't ever be >= 0xFFFF.  But the
+static checker complains that since we're capping the upper bound, we
+may as well cap the lower bound and disallow negatives as well.
 
-Fixes: 895106a577c4 ('i40e: trivial fixes')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_hmc.c b/drivers/net/ethernet/intel/i40e/i40e_hmc.c
-index 5ebe12d..a7c7b1d 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_hmc.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_hmc.c
-@@ -49,7 +49,7 @@ i40e_status i40e_add_sd_table_entry(struct i40e_hw *hw,
- 	struct i40e_hmc_sd_entry *sd_entry;
- 	bool dma_mem_alloc_done = false;
- 	struct i40e_dma_mem mem;
--	i40e_status ret_code;
-+	i40e_status ret_code = I40E_SUCCESS;
- 	u64 alloc_len;
+diff --git a/drivers/scsi/aic94xx/aic94xx_dev.c b/drivers/scsi/aic94xx/aic94xx_dev.c
+index 3307238..84eba3e 100644
+--- a/drivers/scsi/aic94xx/aic94xx_dev.c
++++ b/drivers/scsi/aic94xx/aic94xx_dev.c
+@@ -73,7 +73,7 @@ out:
  
- 	if (NULL = hmc_info->sd_table.sd_entry) {
+ static void asd_free_ddb(struct asd_ha_struct *asd_ha, int ddb)
+ {
+-	if (!ddb || ddb >= 0xFFFF)
++	if (ddb <= 0 || ddb >= 0xFFFF)
+ 		return;
+ 	asd_ddbsite_write_byte(asd_ha, ddb, DDB_TYPE, DDB_TYPE_UNUSED);
+ 	CLEAR_DDB(ddb, asd_ha);
