@@ -1,14 +1,38 @@
-From: program12@uscombat.info
-Date: Sun, 29 May 2016 00:44:31 +0000
-Subject: Hello
-Message-Id: <414539.7733.bm@smtp113.mail.ne1.yahoo.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Tue, 03 May 2016 08:17:17 +0000
+Subject: Re: [PATCH 4/5] crypto: Use dma_pool_zalloc
+Message-Id: <20160503081717.GE17166@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <78525548330.aj761KKLtwgY78041@vesper8.clergy36hotmail.com>
-In-Reply-To: <78525548330.aj761KKLtwgY78041@vesper8.clergy36hotmail.com>
+References: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1461960552-7429-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1461960552-7429-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Recipients <program12@uscombat.info>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, kernel-janitors@vger.kernel.org, Arnaud Ebalard <arno@natisbad.org>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-I am Kristi and i saw your contact through google page of your country which impress me and i feel we can be friends to share ideals and reason together for good,if not bad then let us know more about each other and i hope there will be no problem for us to be friend with no bad intention.You can also reply me through email(cplkristibakar@outlook.com) so that i can share details about myself, i will be waiting to hear from you soon. 
+On Fri, Apr 29, 2016 at 10:09:11PM +0200, Julia Lawall wrote:
+> Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
+> that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression d,e;
+> statement S;
+> @@
+> 
+>         d > -            dma_pool_alloc
+> +            dma_pool_zalloc
+>              (...);
+>         if (!d) S
+> -       memset(d, 0, sizeof(*d));
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Applied.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
