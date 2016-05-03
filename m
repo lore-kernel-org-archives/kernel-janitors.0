@@ -1,35 +1,20 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 17 May 2016 14:38:46 +0000
-Subject: [PATCH 7/7] mwifiex: fix typo
-Message-Id: <1463495926-13728-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Tue, 03 May 2016 06:50:00 +0000
+Subject: Re: [PATCH 0/5] Use dma_pool_zalloc
+Message-Id: <20160503065533.GO2274@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1461960552-7429-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <akarwar@marvell.com>
-Cc: kernel-janitors@vger.kernel.org, Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-firmare -> firmware
+On Fri, Apr 29, 2016 at 10:09:07PM +0200, Julia Lawall wrote:
+> Dma_pool_zalloc combines dma_pool_alloc and memset 0.  The semantic patch
+> that makes this transformation is as follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Applied all dmaengine patches
 
----
- drivers/net/wireless/marvell/mwifiex/pcie.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/marvell/mwifiex/pcie.c b/drivers/net/wireless/marvell/mwifiex/pcie.c
-index 0c7937e..9246ce8 100644
---- a/drivers/net/wireless/marvell/mwifiex/pcie.c
-+++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
-@@ -2804,7 +2804,7 @@ static int mwifiex_pcie_request_irq(struct mwifiex_adapter *adapter)
- }
- 
- /*
-- * This function get firmare name for downloading by revision id
-+ * This function gets the firmware name for downloading by revision id
-  *
-  * Read revision id register to get revision id
-  */
-
+-- 
+~Vinod
