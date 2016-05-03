@@ -1,27 +1,26 @@
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Date: Tue, 03 May 2016 07:58:07 +0000
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Tue, 03 May 2016 09:50:58 +0000
 Subject: Re: [patch] ASoC: hdac_hdmi: Potential NULL deref in hdac_hdmi_get_spk_alloc()
-Message-Id: <57285A0F.7060603@sakamocchi.jp>
+Message-Id: <20160503095639.GS2274@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160503074258.GA9722@mwanda>
 In-Reply-To: <20160503074258.GA9722@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-Cc: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vinod.koul@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, Jeeja KP <jeeja.kp@intel.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeeja KP <jeeja.kp@intel.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On May 03 2016 16:42, Dan Carpenter wrote:
+On Tue, May 03, 2016 at 10:42:58AM +0300, Dan Carpenter wrote:
 > We intended || here instead of &&.  The original code potentially leads
 > to a NULL dereference.
+
+This looks good to me, I will test this and get back
+
 > 
 > Fixes: 2889099eb8cd ('ASoC: hdac_hdmi: Register chmap controls and ops')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Indeed.
-
-Reviewd-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-
+> 
 > diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
 > index 3043120..7e7ff1b 100644
 > --- a/sound/soc/codecs/hdac_hdmi.c
@@ -36,7 +35,5 @@ Reviewd-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 >  
 >  	return pin->eld.info.spk_alloc;
 
-
-Regards
-
-Takashi Sakamoto
+-- 
+~Vinod
