@@ -1,39 +1,26 @@
 From: Vinod Koul <vinod.koul@intel.com>
-Date: Tue, 03 May 2016 09:50:58 +0000
+Date: Tue, 03 May 2016 16:18:12 +0000
 Subject: Re: [patch] ASoC: hdac_hdmi: Potential NULL deref in hdac_hdmi_get_spk_alloc()
-Message-Id: <20160503095639.GS2274@localhost>
+Message-Id: <20160503160611.GU2274@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160503074258.GA9722@mwanda>
-In-Reply-To: <20160503074258.GA9722@mwanda>
+ <20160503095639.GS2274@localhost>
+In-Reply-To: <20160503095639.GS2274@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeeja KP <jeeja.kp@intel.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jeeja KP <jeeja.kp@intel.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sachin Mokashi <sachinx.mokashi@intel.com>, patches.audio@intel.com
 
-On Tue, May 03, 2016 at 10:42:58AM +0300, Dan Carpenter wrote:
-> We intended || here instead of &&.  The original code potentially leads
-> to a NULL dereference.
-
-This looks good to me, I will test this and get back
-
+On Tue, May 03, 2016 at 03:26:39PM +0530, Vinod Koul wrote:
+> On Tue, May 03, 2016 at 10:42:58AM +0300, Dan Carpenter wrote:
+> > We intended || here instead of &&.  The original code potentially leads
+> > to a NULL dereference.
 > 
-> Fixes: 2889099eb8cd ('ASoC: hdac_hdmi: Register chmap controls and ops')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
-> index 3043120..7e7ff1b 100644
-> --- a/sound/soc/codecs/hdac_hdmi.c
-> +++ b/sound/soc/codecs/hdac_hdmi.c
-> @@ -1609,7 +1609,7 @@ static int hdac_hdmi_get_spk_alloc(struct hdac_device *hdac, int pcm_idx)
->  	struct hdac_hdmi_pcm *pcm = get_hdmi_pcm_from_id(hdmi, pcm_idx);
->  	struct hdac_hdmi_pin *pin = pcm->pin;
->  
-> -	if (!pin && !pin->eld.eld_valid)
-> +	if (!pin || !pin->eld.eld_valid)
->  		return 0;
->  
->  	return pin->eld.info.spk_alloc;
+> This looks good to me, I will test this and get back
+
+Acked-by: Vinod Koul <vinod.koul@intel.com>
+Tested-by: Sachin Mokashi <sachinx.mokashi@intel.com>
 
 -- 
 ~Vinod
