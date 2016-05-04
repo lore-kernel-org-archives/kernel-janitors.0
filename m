@@ -1,52 +1,46 @@
-From: Clifton Barnes <clifton.a.barnes@gmail.com>
-Date: Sat, 07 May 2016 19:59:18 +0000
-Subject: [PATCH] Input: rotary-encoder: fix bare use of 'unsigned'
-Message-Id: <1462651158-27929-1-git-send-email-clifton.a.barnes@gmail.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 04 May 2016 05:13:48 +0000
+Subject: [PATCH 3/3] staging: dgnc: clean up the dgnc_get_modem_info()
+Message-Id: <20160504051348.GA21479@certreview.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitry.torokhov@gmail.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Clifton Barnes <clifton.a.barnes@gmail.com>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-fix checkpatch.pl warning about 'Prefer 'unsigned int' to bare use of
-'unsigned''
+the "ch" in dgnc_get_modem_info() was already checked before calling
+this function and also if "ch" is not NULL, dgnc_get_mstat() returns
+valid value so it doesn't need to check an error.
 
-Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/input/misc/rotary_encoder.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/dgnc/dgnc_tty.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/input/misc/rotary_encoder.c b/drivers/input/misc/rotary_encoder.c
-index 96c486d..c7fc8d4 100644
---- a/drivers/input/misc/rotary_encoder.c
-+++ b/drivers/input/misc/rotary_encoder.c
-@@ -47,13 +47,13 @@ struct rotary_encoder {
- 	bool armed;
- 	signed char dir;	/* 1 - clockwise, -1 - CCW */
- 
--	unsigned last_stable;
-+	unsigned int last_stable;
- };
- 
--static unsigned rotary_encoder_get_state(struct rotary_encoder *encoder)
-+static unsigned int rotary_encoder_get_state(struct rotary_encoder *encoder)
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 46ca01d..f67d7d4 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -2013,17 +2013,7 @@ static inline int dgnc_get_mstat(struct channel_t *ch)
+ static int dgnc_get_modem_info(struct channel_t *ch,
+ 			       unsigned int  __user *value)
  {
- 	int i;
--	unsigned ret = 0;
-+	unsigned int ret = 0;
+-	int result;
+-
+-	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
+-		return -ENXIO;
+-
+-	result = dgnc_get_mstat(ch);
+-
+-	if (result < 0)
+-		return -ENXIO;
+-
+-	return put_user(result, value);
++	return put_user(dgnc_get_mstat(ch), value);
+ }
  
- 	for (i = 0; i < encoder->gpios->ndescs; ++i) {
- 		int val = gpiod_get_value_cansleep(encoder->gpios->desc[i]);
-@@ -100,7 +100,7 @@ static void rotary_encoder_report_event(struct rotary_encoder *encoder)
- static irqreturn_t rotary_encoder_irq(int irq, void *dev_id)
- {
- 	struct rotary_encoder *encoder = dev_id;
--	unsigned state;
-+	unsigned int state;
- 
- 	mutex_lock(&encoder->access_mutex);
- 
+ /*
 -- 
-1.9.1
+2.8.2
 
