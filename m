@@ -1,27 +1,50 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 11 May 2016 18:43:18 +0000
-Subject: Re: rtlwifi: rtl818x: constify rtl_intf_ops structures
-Message-Id: <20160511184318.B822E6133D@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 May 2016 06:25:46 +0000
+Subject: [patch] spi: rockchip: potential NULL dereference on error
+Message-Id: <20160504062546.GG22064@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1462132664-1619-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, kernel-janitors@vger.kernel.org, Chaoming Li <chaoming_li@realsil.com.cn>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> The rtl_intf_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+We were calling dma_release_channel(rs->dma_tx.ch) when "rs->dma_tx.ch"
+is potentially NULL.  There is actually a call to that in the unwind
+code at the bottom of the function so we can just re-arrange this a bit
+and remove the call.  Also there is no need to set rs->dma_tx.ch to
+NULL on this error path.
 
-Thanks, 1 patch applied to wireless-drivers-next.git:
+Fixes: e4c0e06f949b ('spi: rockchip: fix probe deferral handling')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-1bfcfdcca142 rtlwifi: rtl818x: constify rtl_intf_ops structures
-
--- 
-Sent by pwcli
-https://patchwork.kernel.org/patch/8989291/
-
+diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+index 6c6c001..cd89682 100644
+--- a/drivers/spi/spi-rockchip.c
++++ b/drivers/spi/spi-rockchip.c
+@@ -744,10 +744,8 @@ static int rockchip_spi_probe(struct platform_device *pdev)
+ 	rs->dma_rx.ch = dma_request_chan(rs->dev, "rx");
+ 	if (IS_ERR(rs->dma_rx.ch)) {
+ 		if (PTR_ERR(rs->dma_rx.ch) = -EPROBE_DEFER) {
+-			dma_release_channel(rs->dma_tx.ch);
+-			rs->dma_tx.ch = NULL;
+ 			ret = -EPROBE_DEFER;
+-			goto err_get_fifo_len;
++			goto err_free_dma_tx;
+ 		}
+ 		dev_warn(rs->dev, "Failed to request RX DMA channel\n");
+ 		rs->dma_rx.ch = NULL;
+@@ -775,10 +773,11 @@ static int rockchip_spi_probe(struct platform_device *pdev)
+ 
+ err_register_master:
+ 	pm_runtime_disable(&pdev->dev);
+-	if (rs->dma_tx.ch)
+-		dma_release_channel(rs->dma_tx.ch);
+ 	if (rs->dma_rx.ch)
+ 		dma_release_channel(rs->dma_rx.ch);
++err_free_dma_tx:
++	if (rs->dma_tx.ch)
++		dma_release_channel(rs->dma_tx.ch);
+ err_get_fifo_len:
+ 	clk_disable_unprepare(rs->spiclk);
+ err_spiclk_enable:
