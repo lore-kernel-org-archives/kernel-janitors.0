@@ -1,22 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 03 May 2016 17:03:23 +0000
-Subject: Re: [PATCH] VSOCK: constify vsock_transport structure
-Message-Id: <20160503.130323.1929865256655720740.davem@davemloft.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 04 May 2016 05:13:04 +0000
+Subject: [PATCH 1/3] staging: dgnc: remove redundant NULL check in
+Message-Id: <20160504051304.GA20929@certreview.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1462106955-22131-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1462106955-22131-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun,  1 May 2016 14:49:15 +0200
+tty and ch are already checked for NULL
+before calling dgnc_block_til_ready().
 
-> The vsock_transport structure is never modified, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_tty.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Applied.
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 2cecdb0..d85d005 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1172,17 +1172,12 @@ static int dgnc_block_til_ready(struct tty_struct *tty,
+ 				struct channel_t *ch)
+ {
+ 	int retval = 0;
+-	struct un_t *un = NULL;
++	struct un_t *un = tty->driver_data;
+ 	unsigned long flags;
+ 	uint	old_flags = 0;
+ 	int	sleep_on_un_flags = 0;
+ 
+-	if (!tty || tty->magic != TTY_MAGIC || !file || !ch ||
+-	    ch->magic != DGNC_CHANNEL_MAGIC)
+-		return -ENXIO;
+-
+-	un = tty->driver_data;
+-	if (!un || un->magic != DGNC_UNIT_MAGIC)
++	if (!file)
+ 		return -ENXIO;
+ 
+ 	spin_lock_irqsave(&ch->ch_lock, flags);
+-- 
+2.8.2
+
