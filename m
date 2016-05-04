@@ -1,26 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 May 2016 16:06:12 +0000
-Subject: Re: [patch v2] PM / devfreq: exynos-nocp: Remove incorrect IS_ERR() check
-Message-Id: <20160526160612.GF10957@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 04 May 2016 05:41:22 +0000
+Subject: [PATCH] staging: dgnc: Fix a NULL pointer dereference
+Message-Id: <20160504054122.GA11128@certreview.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20160526064612epcas1p4cb0d45fa11deafea51fa84974132afed@epcas1p4.samsung.com>
- <20160526064541.GA6680@mwanda>
- <5746AFE3.6030606@samsung.com>
- <20160526115629.GD10957@mwanda>
- <CAGTfZH2rqD_91D_Vt8EgXDO4ACJ-OKD5Os9RA4Mk7hg0EHzfcg@mail.gmail.com>
- <20160526135600.GE10957@mwanda>
- <CAGTfZH31_OOSg-kJ1tp8pCv55nWZbcd6dG2zXrtov8BGh0udcw@mail.gmail.com>
-In-Reply-To: <CAGTfZH31_OOSg-kJ1tp8pCv55nWZbcd6dG2zXrtov8BGh0udcw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cw00.choi@samsung.com
-Cc: Julia Lawall <julia.lawall@lip6.fr>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
 
-The only duplicates that I know about currently are Dan Williams and Xi
-Wang.  I do sometimes get those people mixed up.  I hope someday there
-will be another Julia Lawall duplicate as well.  :)
+The error handling for print_drive after calling tty_alloc_driver()
+was needed. But there was error handling but too late for this.
+Error handling code moved after tty_alloc_driver() call.
 
-regards,
-dan carpenter
+Fixes: 60b3109e5e2d ("staging: dgnc: use tty_alloc_driver instead of kcalloc")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_tty.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 2cecdb0..392d532 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -224,6 +224,11 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 					     TTY_DRIVER_DYNAMIC_DEV |
+ 					     TTY_DRIVER_HARDWARE_BREAK);
+ 
++	if (IS_ERR(brd->print_driver)) {
++		rc = PTR_ERR(brd->print_driver);
++		goto unregister_serial_driver;
++	}
++
+ 	snprintf(brd->print_name, MAXTTYNAMELEN, "pr_dgnc_%d_", brd->boardnum);
+ 
+ 	brd->print_driver->name = brd->print_name;
+@@ -235,11 +240,6 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 	brd->print_driver->init_termios = DgncDefaultTermios;
+ 	brd->print_driver->driver_name = DRVSTR;
+ 
+-	if (IS_ERR(brd->print_driver)) {
+-		rc = PTR_ERR(brd->print_driver);
+-		goto unregister_serial_driver;
+-	}
+-
+ 	/*
+ 	 * Entry points for driver.  Called by the kernel from
+ 	 * tty_io.c and n_tty.c.
+-- 
+2.8.2
 
