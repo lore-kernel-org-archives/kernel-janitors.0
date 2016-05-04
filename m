@@ -1,62 +1,44 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 08 May 2016 09:39:56 +0000
-Subject: Re: [patch] ALSA: isa/wavefront: prevent some out of bound writes
-Message-Id: <s5heg9csxar.wl-tiwai@suse.de>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 04 May 2016 05:13:26 +0000
+Subject: [PATCH 2/3] staging: dgnc: remove useless assigned error value in
+Message-Id: <20160504051326.GA21217@certreview.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160504062737.GI22064@mwanda>
-In-Reply-To: <20160504062737.GI22064@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 04 May 2016 08:27:37 +0200,
-Dan Carpenter wrote:
-> 
-> "header->number" can be up to USHRT_MAX and it comes from the ioctl so
-> it needs to be capped.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+the result in dgnc_get_mstat() was initialized with -EIO but
+there are no use of EIO as a result in this function.
 
-Applied, thanks.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_tty.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index d85d005..46ca01d 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1979,7 +1979,7 @@ static void dgnc_tty_send_xchar(struct tty_struct *tty, char c)
+ static inline int dgnc_get_mstat(struct channel_t *ch)
+ {
+ 	unsigned char mstat;
+-	int result = -EIO;
++	int result = 0;
+ 	unsigned long flags;
+ 
+ 	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
+@@ -1991,8 +1991,6 @@ static inline int dgnc_get_mstat(struct channel_t *ch)
+ 
+ 	spin_unlock_irqrestore(&ch->ch_lock, flags);
+ 
+-	result = 0;
+-
+ 	if (mstat & UART_MCR_DTR)
+ 		result |= TIOCM_DTR;
+ 	if (mstat & UART_MCR_RTS)
+-- 
+2.8.2
 
-Takashi
-
-> 
-> diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
-> index 69f76ff..718d5e3 100644
-> --- a/sound/isa/wavefront/wavefront_synth.c
-> +++ b/sound/isa/wavefront/wavefront_synth.c
-> @@ -785,6 +785,9 @@ wavefront_send_patch (snd_wavefront_t *dev, wavefront_patch_info *header)
->  	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading patch %d\n",
->  				      header->number);
->  
-> +	if (header->number >= ARRAY_SIZE(dev->patch_status))
-> +		return -EINVAL;
-> +
->  	dev->patch_status[header->number] |= WF_SLOT_FILLED;
->  
->  	bptr = buf;
-> @@ -809,6 +812,9 @@ wavefront_send_program (snd_wavefront_t *dev, wavefront_patch_info *header)
->  	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading program %d\n",
->  		header->number);
->  
-> +	if (header->number >= ARRAY_SIZE(dev->prog_status))
-> +		return -EINVAL;
-> +
->  	dev->prog_status[header->number] = WF_SLOT_USED;
->  
->  	/* XXX need to zero existing SLOT_USED bit for program_status[i]
-> @@ -898,6 +904,9 @@ wavefront_send_sample (snd_wavefront_t *dev,
->  		header->number = x;
->  	}
->  
-> +	if (header->number >= WF_MAX_SAMPLE)
-> +		return -EINVAL;
-> +
->  	if (header->size) {
->  
->  		/* XXX it's a debatable point whether or not RDONLY semantics
-> 
