@@ -1,31 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 31 May 2016 16:05:56 +0000
-Subject: [patch] IB/core: fix an error code in ib_core_init()
-Message-Id: <20160531160556.GA23959@mwanda>
+Date: Wed, 04 May 2016 06:16:39 +0000
+Subject: [patch] rtlwifi: rtl818x: silence uninitialized variable warning
+Message-Id: <20160504061639.GB22064@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Mark Bloch <markb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Ira Weiny <ira.weiny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Yotam Kenneth <yotamke-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We should return the error code if ib_add_ibnl_clients() fails.  The
-current code returns success.
+What about if "rtlphy->pwrgroup_cnt" is 2?  In that case we would use an
+uninitialized "chnlgroup" variable and probably crash.  Maybe that can't
+happen for some reason which is not obvious but in that case this patch
+is harmless.
 
-Fixes: 735c631ae99d ('IB/core: Register SA ibnl client during ib_core initialization')
+Setting it to zero seems like a standard default in the surrounding code
+so it's probably fine here as well.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index 5516fb0..8b8a8d9 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -1024,7 +1024,8 @@ static int __init ib_core_init(void)
- 		goto err_mad;
- 	}
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/rf.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/rf.c
+index 78a81c1..9475aa2 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/rf.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/rf.c
+@@ -208,8 +208,7 @@ static void _rtl92s_get_txpower_writeval_byregulatory(struct ieee80211_hw *hw,
+ 				 "Realtek regulatory, 40MHz, writeval = 0x%x\n",
+ 				 writeval);
+ 		} else {
+-			if (rtlphy->pwrgroup_cnt = 1)
+-				chnlgroup = 0;
++			chnlgroup = 0;
  
--	if (ib_add_ibnl_clients()) {
-+	ret = ib_add_ibnl_clients();
-+	if (ret) {
- 		pr_warn("Couldn't register ibnl clients\n");
- 		goto err_sa;
- 	}
+ 			if (rtlphy->pwrgroup_cnt >= 3) {
+ 				if (chnl <= 3)
