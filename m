@@ -1,18 +1,53 @@
-From: "Coelho, Luciano" <luciano.coelho@intel.com>
-Date: Mon, 09 May 2016 11:45:59 +0000
-Subject: Re: [patch] iwlwifi: mvm: silence unintialized variable warning
-Message-Id: <1462794358.3545.10.camel@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 May 2016 13:23:04 +0000
+Subject: [patch] ACPI / sysfs: fix error code in get_status()
+Message-Id: <20160505132304.GF3038@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160504061954.GD22064@mwanda>
-In-Reply-To: <20160504061954.GD22064@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "Berg, Johannes" <johannes.berg@intel.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linuxwifi <linuxwifi@intel.com>, "Ben Ami, Golan" <golan.ben.ami@intel.com>, "Harel, Moshe" <moshe.harel@intel.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "Sharon, Sara" <sara.sharon@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gV2VkLCAyMDE2LTA1LTA0IGF0IDA5OjE5ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiAibWF4X2Ftc2R1X2xlbiIgaXNuJ3Qgc2V0IGlmIGtzdHJ0b3VpbnQoKSBmYWlscy4NCj4gDQo+
-IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4N
-Cg0KSSdtIGFsc28gcHVzaGluZyB0aGlzIG9uZSB2aWEgb3VyIGludGVybmFsIHRyZWUuIMKgVGhh
-bmtzIQ0KDQotLQ0KTHVjYS4
+The problem with ornamental, do-nothing gotos is that they lead to
+"forgot to set the error code" bugs.  We should be returning -EINVAL
+here but we don't.  It leads to an uninitalized variable in
+counter_show():
+
+    drivers/acpi/sysfs.c:603 counter_show()
+    error: uninitialized symbol 'status'.
+
+Fixes: 1c8fce27e275 ('ACPI: introduce drivers/acpi/sysfs.c')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
+index 0243d37..4b3a9e2 100644
+--- a/drivers/acpi/sysfs.c
++++ b/drivers/acpi/sysfs.c
+@@ -555,23 +555,22 @@ static void acpi_global_event_handler(u32 event_type, acpi_handle device,
+ static int get_status(u32 index, acpi_event_status *status,
+ 		      acpi_handle *handle)
+ {
+-	int result = 0;
++	int result;
+ 
+ 	if (index >= num_gpes + ACPI_NUM_FIXED_EVENTS)
+-		goto end;
++		return -EINVAL;
+ 
+ 	if (index < num_gpes) {
+ 		result = acpi_get_gpe_device(index, handle);
+ 		if (result) {
+ 			ACPI_EXCEPTION((AE_INFO, AE_NOT_FOUND,
+ 					"Invalid GPE 0x%x", index));
+-			goto end;
++			return result;
+ 		}
+ 		result = acpi_get_gpe_status(*handle, index, status);
+ 	} else if (index < (num_gpes + ACPI_NUM_FIXED_EVENTS))
+ 		result = acpi_get_event_status(index - num_gpes, status);
+ 
+-end:
+ 	return result;
+ }
+ 
