@@ -1,23 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 12 May 2016 03:45:19 +0000
-Subject: Re: [patch -mainline] qlcnic: potential NULL dereference in qlcnic_83xx_get_minidump_template()
-Message-Id: <20160511.234519.219883219155587882.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 May 2016 13:20:20 +0000
+Subject: [patch] netxen: netxen_rom_fast_read() doesn't return -1
+Message-Id: <20160505132019.GD3038@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160510192004.GA30712@mwanda>
-In-Reply-To: <20160510192004.GA30712@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Dept-GELinuxNICDev@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Manish Chopra <manish.chopra@qlogic.com>
+Cc: Sony Chacko <sony.chacko@qlogic.com>, Rajesh Borundia <rajesh.borundia@qlogic.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 May 2016 22:20:04 +0300
+The error handling is broken here.  netxen_rom_fast_read() returns zero
+on success and -EIO on error.  It never returns -1.
 
-> If qlcnic_fw_cmd_get_minidump_temp() fails then "fw_dump->tmpl_hdr" is
-> NULL or possibly freed.  It can lead to an oops later.
-> 
-> Fixes: d01a6d3c8ae1 ('qlcnic: Add support to enable capability to extend minidump for iSCSI')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
+index fd362b6..9c6eed9 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
+@@ -852,7 +852,8 @@ netxen_check_options(struct netxen_adapter *adapter)
+ 	ptr32 = (__le32 *)&serial_num;
+ 	offset = NX_FW_SERIAL_NUM_OFFSET;
+ 	for (i = 0; i < 8; i++) {
+-		if (netxen_rom_fast_read(adapter, offset, &val) = -1) {
++		err = netxen_rom_fast_read(adapter, offset, &val);
++		if (err) {
+ 			dev_err(&pdev->dev, "error reading board info\n");
+ 			adapter->driver_mismatch = 1;
+ 			return;
