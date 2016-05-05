@@ -1,33 +1,30 @@
-From: Bart Van Assche <bart.vanassche@sandisk.com>
-Date: Tue, 31 May 2016 18:06:08 +0000
-Subject: Re: [patch] IB/hfi1: fix some indenting
-Message-Id: <ac61d4a9-fc38-9d33-a95b-6cb29b04866a@sandisk.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 May 2016 13:19:44 +0000
+Subject: [patch 2/2] netxen: reversed condition in netxen_nic_set_link_parameters()
+Message-Id: <20160505131944.GC3038@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160528050120.GB4107@mwanda>
-In-Reply-To: <20160528050120.GB4107@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Manish Chopra <manish.chopra@qlogic.com>
+Cc: Sony Chacko <sony.chacko@qlogic.com>, Rajesh Borundia <rajesh.borundia@qlogic.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/27/2016 10:01 PM, Dan Carpenter wrote:
-> That extra tabs are misleading.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/infiniband/hw/hfi1/init.c b/drivers/infiniband/hw/hfi1/init.c
-> index 5cc492e..0d28a5a 100644
-> --- a/drivers/infiniband/hw/hfi1/init.c
-> +++ b/drivers/infiniband/hw/hfi1/init.c
-> @@ -1337,7 +1337,7 @@ static void cleanup_device_data(struct hfi1_devdata *dd)
->  		dma_free_coherent(&dd->pcidev->dev, sizeof(u64),
->  				  (void *)dd->rcvhdrtail_dummy_kvaddr,
->  				  dd->rcvhdrtail_dummy_physaddr);
-> -				  dd->rcvhdrtail_dummy_kvaddr = NULL;
-> +		dd->rcvhdrtail_dummy_kvaddr = NULL;
->  	}
->
->  	for (ctxt = 0; tmp && ctxt < dd->num_rcv_contexts; ctxt++) {
+My static checker complains that we are using "autoneg" without
+initializing it.  The problem is the ->phy_read() condition is reversed
+so we only set this on error instead of success.
 
-Reviewed-by: Bart Van Assche <bart.vanassche@sandisk.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+index a320541..2b10f1b 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+@@ -1944,7 +1944,7 @@ void netxen_nic_set_link_parameters(struct netxen_adapter *adapter)
+ 				if (adapter->phy_read &&
+ 				    adapter->phy_read(adapter,
+ 						      NETXEN_NIU_GB_MII_MGMT_ADDR_AUTONEG,
+-						      &autoneg) != 0)
++						      &autoneg) = 0)
+ 					adapter->link_autoneg = autoneg;
+ 			} else
+ 				goto link_down;
