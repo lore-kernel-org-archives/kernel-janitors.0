@@ -1,35 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 17 May 2016 14:38:43 +0000
-Subject: [PATCH 4/7] staging: wilc1000: fix typo
-Message-Id: <1463495926-13728-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 06 May 2016 08:35:28 +0000
+Subject: re: x86/platform/UV: Support UV4 socket address changes
+Message-Id: <20160506083528.GA10231@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johnny Kim <johnny.kim@atmel.com>
-Cc: kernel-janitors@vger.kernel.org, Austin Shin <austin.shin@atmel.com>, Chris Park <chris.park@atmel.com>, Tony Cho <tony.cho@atmel.com>, Glen Lee <glen.lee@atmel.com>, Leo Kim <leo.kim@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-firmare -> firmware
+Hello Mike Travis,
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This is a semi-automatic email about new static checker warnings.
 
----
- drivers/staging/wilc1000/linux_wlan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 1de329c10d9f: "x86/platform/UV: Support UV4 socket address 
+changes" from Apr 29, 2016, leads to the following Smatch complaint:
 
-diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
-index 4f93c11..274c390 100644
---- a/drivers/staging/wilc1000/linux_wlan.c
-+++ b/drivers/staging/wilc1000/linux_wlan.c
-@@ -362,7 +362,7 @@ int wilc_wlan_get_firmware(struct net_device *dev)
- 		goto _fail_;
- 
- 	if (request_firmware(&wilc_firmware, firmware, wilc->dev) != 0) {
--		netdev_err(dev, "%s - firmare not available\n", firmware);
-+		netdev_err(dev, "%s - firmware not available\n", firmware);
- 		ret = -1;
- 		goto _fail_;
- 	}
+arch/x86/kernel/apic/x2apic_uv_x.c:1201 decode_uv_systab()
+	 error: we previously assumed 'st' could be null (see line 1199)
 
+arch/x86/kernel/apic/x2apic_uv_x.c
+  1198		st = uv_systab;
+  1199		if ((!st || st->revision < UV_SYSTAB_VERSION_UV4) && !is_uv4_hub())
+                      ^^
+New check for NULL.
+
+  1200			return;
+  1201		if (st->revision != UV_SYSTAB_VERSION_UV4_LATEST) {
+                    ^^^^^^^^^^^^
+Unchecked dereference in the is_uv4_hub() case.  Perhaps the parenthesis
+are not in the right place or the check for NULL can be removed?
+
+  1202			pr_crit(
+  1203			"UV: BIOS UVsystab version(%x) mismatch, expecting(%x)\n",
+
+regards,
+dan carpenter
