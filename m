@@ -1,23 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 07 May 2016 19:16:11 +0000
-Subject: Re: [patch 1/2] netxen: fix error handling in netxen_get_flash_block()
-Message-Id: <20160507.151611.103826673825266201.davem@davemloft.net>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Fri, 06 May 2016 01:23:53 +0000
+Subject: Re: [PATCH resend v2] [SCSI] bfa: fix bfa_fcb_itnim_alloc() error handling
+Message-Id: <yq1inysvv12.fsf@sermon.lab.mkp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160505131846.GB3038@mwanda>
-In-Reply-To: <20160505131846.GB3038@mwanda>
+References: <20160413111441.GC4247@mwanda>
+In-Reply-To: <20160413111441.GC4247@mwanda> (Dan Carpenter's message of "Wed,
+	13 Apr 2016 14:14:41 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: manish.chopra@qlogic.com, sony.chacko@qlogic.com, rajesh.borundia@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 5 May 2016 16:18:46 +0300
+>>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-> My static checker complained that "v" can be used unintialized if
-> netxen_rom_fast_read() returns -EIO.  That function never actually
-> returns -1.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Dan> The caller assumes that "itnim" is NULL on error and non-NULL on
+Dan> success but really "itnim" is uninitialized on error.  This
+Dan> function should just use normal error handling where it returns
+Dan> zero on success and negative on failure.
 
-Applied.
+Anil, please review:
+
+	https://patchwork.kernel.org/patch/8820751/
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
