@@ -1,49 +1,36 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Tue, 10 May 2016 06:46:41 +0000
-Subject: [PATCH 2/2 RESEND] staging: dgnc: remove useless error value assignment
-Message-Id: <20160510064641.GA25675@certreview.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 06 May 2016 08:39:42 +0000
+Subject: re: x86/platform/UV: Add obtaining GAM Range Table from UV BIOS
+Message-Id: <20160506083942.GA10649@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The "result" variable in dgnc_get_mstat() was initialized with
-"-EIO". But if the "ch" is not null, "result" will be set to zero
-and if the "ch" is null, dgnc_get_mstat() will return "-ENXIO" as
-an error. So "-EIO" error value was useless in dgnc_get_mstat().
+Hello Mike Travis,
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
-RESEND: update subject and change log
-origin patch : https://lkml.org/lkml/2016/5/4/13
+This is a semi-automatic email about new static checker warnings.
 
- drivers/staging/dgnc/dgnc_tty.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+The patch ef93bf803999: "x86/platform/UV: Add obtaining GAM Range 
+Table from UV BIOS" from Apr 29, 2016, leads to the following Smatch 
+complaint:
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index cff34d4..30db091 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -1979,7 +1979,7 @@ static void dgnc_tty_send_xchar(struct tty_struct *tty, char c)
- static inline int dgnc_get_mstat(struct channel_t *ch)
- {
- 	unsigned char mstat;
--	int result = -EIO;
-+	int result = 0;
- 	unsigned long flags;
- 
- 	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
-@@ -1991,8 +1991,6 @@ static inline int dgnc_get_mstat(struct channel_t *ch)
- 
- 	spin_unlock_irqrestore(&ch->ch_lock, flags);
- 
--	result = 0;
--
- 	if (mstat & UART_MCR_DTR)
- 		result |= TIOCM_DTR;
- 	if (mstat & UART_MCR_RTS)
--- 
-2.8.2
+arch/x86/platform/uv/bios_uv.c:207 uv_bios_init()
+	 error: we previously assumed 'uv_systab' could be null (see line 206)
 
+arch/x86/platform/uv/bios_uv.c
+   205			uv_systab = ioremap(efi.uv_systab, uv_systab->size);
+   206			if (!uv_systab) {
+                             ^^^^^^^^^
+Check.
+
+   207				pr_err("UV: UVsystab: ioremap(%d) failed!\n",
+   208					uv_systab->size);
+                                        ^^^^^^^^^^^^^^^
+NULL deref.
+
+   209				return;
+
+regards,
+dan carpenter
