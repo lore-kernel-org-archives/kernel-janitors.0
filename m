@@ -1,50 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 May 2016 06:27:37 +0000
-Subject: [patch] ALSA: isa/wavefront: prevent some out of bound writes
-Message-Id: <20160504062737.GI22064@mwanda>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Sun, 08 May 2016 09:39:56 +0000
+Subject: Re: [patch] ALSA: isa/wavefront: prevent some out of bound writes
+Message-Id: <s5heg9csxar.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160504062737.GI22064@mwanda>
+In-Reply-To: <20160504062737.GI22064@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"header->number" can be up to USHRT_MAX and it comes from the ioctl so
-it needs to be capped.
+On Wed, 04 May 2016 08:27:37 +0200,
+Dan Carpenter wrote:
+> 
+> "header->number" can be up to USHRT_MAX and it comes from the ioctl so
+> it needs to be capped.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied, thanks.
 
-diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
-index 69f76ff..718d5e3 100644
---- a/sound/isa/wavefront/wavefront_synth.c
-+++ b/sound/isa/wavefront/wavefront_synth.c
-@@ -785,6 +785,9 @@ wavefront_send_patch (snd_wavefront_t *dev, wavefront_patch_info *header)
- 	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading patch %d\n",
- 				      header->number);
- 
-+	if (header->number >= ARRAY_SIZE(dev->patch_status))
-+		return -EINVAL;
-+
- 	dev->patch_status[header->number] |= WF_SLOT_FILLED;
- 
- 	bptr = buf;
-@@ -809,6 +812,9 @@ wavefront_send_program (snd_wavefront_t *dev, wavefront_patch_info *header)
- 	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading program %d\n",
- 		header->number);
- 
-+	if (header->number >= ARRAY_SIZE(dev->prog_status))
-+		return -EINVAL;
-+
- 	dev->prog_status[header->number] = WF_SLOT_USED;
- 
- 	/* XXX need to zero existing SLOT_USED bit for program_status[i]
-@@ -898,6 +904,9 @@ wavefront_send_sample (snd_wavefront_t *dev,
- 		header->number = x;
- 	}
- 
-+	if (header->number >= WF_MAX_SAMPLE)
-+		return -EINVAL;
-+
- 	if (header->size) {
- 
- 		/* XXX it's a debatable point whether or not RDONLY semantics
+
+Takashi
+
+> 
+> diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
+> index 69f76ff..718d5e3 100644
+> --- a/sound/isa/wavefront/wavefront_synth.c
+> +++ b/sound/isa/wavefront/wavefront_synth.c
+> @@ -785,6 +785,9 @@ wavefront_send_patch (snd_wavefront_t *dev, wavefront_patch_info *header)
+>  	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading patch %d\n",
+>  				      header->number);
+>  
+> +	if (header->number >= ARRAY_SIZE(dev->patch_status))
+> +		return -EINVAL;
+> +
+>  	dev->patch_status[header->number] |= WF_SLOT_FILLED;
+>  
+>  	bptr = buf;
+> @@ -809,6 +812,9 @@ wavefront_send_program (snd_wavefront_t *dev, wavefront_patch_info *header)
+>  	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading program %d\n",
+>  		header->number);
+>  
+> +	if (header->number >= ARRAY_SIZE(dev->prog_status))
+> +		return -EINVAL;
+> +
+>  	dev->prog_status[header->number] = WF_SLOT_USED;
+>  
+>  	/* XXX need to zero existing SLOT_USED bit for program_status[i]
+> @@ -898,6 +904,9 @@ wavefront_send_sample (snd_wavefront_t *dev,
+>  		header->number = x;
+>  	}
+>  
+> +	if (header->number >= WF_MAX_SAMPLE)
+> +		return -EINVAL;
+> +
+>  	if (header->size) {
+>  
+>  		/* XXX it's a debatable point whether or not RDONLY semantics
+> 
