@@ -1,49 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 May 2016 06:19:13 +0000
-Subject: [patch] iwlwifi: mvm: remove an unused variable
-Message-Id: <20160504061913.GC22064@mwanda>
+From: "Coelho, Luciano" <luciano.coelho@intel.com>
+Date: Mon, 09 May 2016 11:44:11 +0000
+Subject: Re: [patch] iwlwifi: mvm: remove an unused variable
+Message-Id: <1462794250.3545.9.camel@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160504061913.GC22064@mwanda>
+In-Reply-To: <20160504061913.GC22064@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <linuxwifi@intel.com>, Kalle Valo <kvalo@codeaurora.org>, Luca Coelho <luciano.coelho@intel.com>, Sara Sharon <sara.sharon@intel.com>, Golan Ben-Ami <golan.ben.ami@intel.com>, Avri Altman <avri.altman@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "Berg, Johannes" <johannes.berg@intel.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linuxwifi <linuxwifi@intel.com>, "Ben Ami, Golan" <golan.ben.ami@intel.com>, "Altman, Avri" <avri.altman@intel.com>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "Sharon, Sara" <sara.sharon@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
 
-We never initalize ampdu_status so it causes a static checker warning
-when we pass it to iwl_mvm_pass_packet_to_mac80211().  Fortunately, it's
-never used so we can just remove it.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rx.c b/drivers/net/wireless/intel/iwlwifi/mvm/rx.c
-index 263e8a8..c9d419f 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rx.c
-@@ -100,7 +100,7 @@ static void iwl_mvm_pass_packet_to_mac80211(struct iwl_mvm *mvm,
- 					    struct napi_struct *napi,
- 					    struct sk_buff *skb,
- 					    struct ieee80211_hdr *hdr, u16 len,
--					    u32 ampdu_status, u8 crypt_len,
-+					    u8 crypt_len,
- 					    struct iwl_rx_cmd_buffer *rxb)
- {
- 	unsigned int hdrlen, fraglen;
-@@ -267,7 +267,6 @@ void iwl_mvm_rx_rx_mpdu(struct iwl_mvm *mvm, struct napi_struct *napi,
- 	struct ieee80211_sta *sta = NULL;
- 	struct sk_buff *skb;
- 	u32 len;
--	u32 ampdu_status;
- 	u32 rate_n_flags;
- 	u32 rx_pkt_status;
- 	u8 crypt_len = 0;
-@@ -453,8 +452,8 @@ void iwl_mvm_rx_rx_mpdu(struct iwl_mvm *mvm, struct napi_struct *napi,
- 		     mvm->sched_scan_pass_all = SCHED_SCAN_PASS_ALL_ENABLED))
- 		mvm->sched_scan_pass_all = SCHED_SCAN_PASS_ALL_FOUND;
- 
--	iwl_mvm_pass_packet_to_mac80211(mvm, napi, skb, hdr, len, ampdu_status,
--					crypt_len, rxb);
-+	iwl_mvm_pass_packet_to_mac80211(mvm, napi, skb, hdr, len, crypt_len,
-+					rxb);
- }
- 
- static void iwl_mvm_update_rx_statistics(struct iwl_mvm *mvm,
+T24gV2VkLCAyMDE2LTA1LTA0IGF0IDA5OjE5ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
+PiBXZSBuZXZlciBpbml0YWxpemUgYW1wZHVfc3RhdHVzIHNvIGl0IGNhdXNlcyBhIHN0YXRpYyBj
+aGVja2VyIHdhcm5pbmcNCj4gd2hlbiB3ZSBwYXNzIGl0IHRvIGl3bF9tdm1fcGFzc19wYWNrZXRf
+dG9fbWFjODAyMTEoKS7CoMKgRm9ydHVuYXRlbHksDQo+IGl0J3MNCj4gbmV2ZXIgdXNlZCBzbyB3
+ZSBjYW4ganVzdCByZW1vdmUgaXQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVy
+IDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQoNClRoYW5rcyBEYW4hDQoNCkknbGwgcHVzaCB0
+aGlzIHBhdGNoIHRocm91Z2ggb3VyIGludGVybmFsIHRyZWUuDQoNCi0tDQpDaGVlcnMsDQpMdWNh
+Lg=
