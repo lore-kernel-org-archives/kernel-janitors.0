@@ -1,30 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 02 May 2016 08:34:58 +0000
-Subject: [patch] [SCSI] aic94xx: silence a static checker warning
-Message-Id: <20160502083458.GA19792@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 09 May 2016 02:47:11 +0000
+Subject: [PATCH 2/3] staging: dgnc: remove redundant condition check
+Message-Id: <20160509024711.GA6911@certreview.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"ddb" is a number between 0-64.  It can't ever be >= 0xFFFF.  But the
-static checker complains that since we're capping the upper bound, we
-may as well cap the lower bound and disallow negatives as well.
+dgnc_board(brd) was already checked for NULL before calling
+neo_parse_isr(). And also port doesn't need to check.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_neo.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/scsi/aic94xx/aic94xx_dev.c b/drivers/scsi/aic94xx/aic94xx_dev.c
-index 3307238..84eba3e 100644
---- a/drivers/scsi/aic94xx/aic94xx_dev.c
-+++ b/drivers/scsi/aic94xx/aic94xx_dev.c
-@@ -73,7 +73,7 @@ out:
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index 3b8ce38..9eae1a6 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -379,12 +379,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
+ 	unsigned char cause;
+ 	unsigned long flags;
  
- static void asd_free_ddb(struct asd_ha_struct *asd_ha, int ddb)
- {
--	if (!ddb || ddb >= 0xFFFF)
-+	if (ddb <= 0 || ddb >= 0xFFFF)
+-	if (!brd || brd->magic != DGNC_BOARD_MAGIC)
+-		return;
+-
+-	if (port >= brd->maxports)
+-		return;
+-
+ 	ch = brd->channels[port];
+ 	if (ch->magic != DGNC_CHANNEL_MAGIC)
  		return;
- 	asd_ddbsite_write_byte(asd_ha, ddb, DDB_TYPE, DDB_TYPE_UNUSED);
- 	CLEAR_DDB(ddb, asd_ha);
+-- 
+2.8.2
+
