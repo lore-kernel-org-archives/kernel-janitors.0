@@ -1,35 +1,55 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 09 May 2016 02:47:34 +0000
-Subject: [PATCH 3/3] staging: dgnc: Need to check for NULL of ch
-Message-Id: <20160509024734.GA6926@certreview.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 May 2016 20:03:59 +0000
+Subject: re: qlcnic: Add support to enable capability to extend minidump for iSCSI
+Message-Id: <20160509200359.GA24843@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-the "ch" from brd structure could be NULL, it need to
-check for NULL.
+Hello Shahed Shaikh,
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- drivers/staging/dgnc/dgnc_neo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch d01a6d3c8ae1: "qlcnic: Add support to enable capability to
+extend minidump for iSCSI" from Aug 7, 2015, leads to the following
+static checker warning:
 
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index 9eae1a6..ba57e95 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -380,7 +380,7 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
- 	unsigned long flags;
- 
- 	ch = brd->channels[port];
--	if (ch->magic != DGNC_CHANNEL_MAGIC)
-+	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
- 		return;
- 
- 	/* Here we try to figure out what caused the interrupt to happen */
--- 
-2.8.2
+	drivers/net/ethernet/qlogic/qlcnic/qlcnic_minidump.c:1441 qlcnic_83xx_get_minidump_template()
+	error: we previously assumed 'hdr' could be null (see line 1440)
 
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_minidump.c
+  1424          if (fw_dump->tmpl_hdr = NULL || current_version > prev_version) {
+                     ^^^^^^^^^^^^^^^^
+This could be NULL.
+
+  1425                  vfree(fw_dump->tmpl_hdr);
+                              ^^^^^^^^^^^^^^^^^
+Or freed.
+
+  1426  
+  1427                  if (qlcnic_83xx_md_check_extended_dump_capability(adapter))
+  1428                          extended = !qlcnic_83xx_extend_md_capab(adapter);
+  1429  
+  1430                  if (!qlcnic_fw_cmd_get_minidump_temp(adapter))
+  1431                          dev_info(&pdev->dev, "Supports FW dump capability\n");
+  1432  
+  1433                  /* Once we have minidump template with extended iSCSI dump
+  1434                   * capability, update the minidump capture mask to 0x1f as
+  1435                   * per FW requirement
+  1436                   */
+  1437                  if (extended) {
+  1438                          struct qlcnic_83xx_dump_template_hdr *hdr;
+  1439  
+  1440                          hdr = fw_dump->tmpl_hdr;
+                                ^^^^^^^^^^^^^^^^^^^^^^^^
+But we are still dereferencing it here.
+
+  1441                          hdr->drv_cap_mask = 0x1f;
+  1442                          fw_dump->cap_mask = 0x1f;
+  1443                          dev_info(&pdev->dev,
+  1444                                   "Extended iSCSI dump capability and updated capture mask to 0x1f\n");
+  1445                  }
+  1446          }
+
+regards,
+dan carpenter
