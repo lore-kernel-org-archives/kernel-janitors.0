@@ -1,23 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Wed, 11 May 2016 02:01:26 +0000
-Subject: Re: [patch] [SCSI] eata_pio: missing break statement
-Message-Id: <yq1twi5nyix.fsf@sermon.lab.mkp.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 10 May 2016 19:20:37 +0000
+Subject: [patch] airo: prevent potential underflow in airo_set_freq()
+Message-Id: <20160510192037.GB30712@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160504061341.GA22064@mwanda>
-In-Reply-To: <20160504061341.GA22064@mwanda> (Dan Carpenter's message of "Wed,
-	4 May 2016 09:13:41 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Ondrej Zary <linux@rainbow-software.org>, Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, Felipe Balbi <felipe.balbi@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+I'm not sure if this can underflow but Smatch complains.  It seems
+harmless to add a check for negatives.
 
-Dan> This missing break statement bug predates git.  It's a very minor
-Dan> thing, it means that we print a '?' instead of a 'z' in dmesg.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 4.7/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
+index 55456f7..ca3cd21 100644
+--- a/drivers/net/wireless/cisco/airo.c
++++ b/drivers/net/wireless/cisco/airo.c
+@@ -5794,7 +5794,7 @@ static int airo_set_freq(struct net_device *dev,
+ 		fwrq->m = ieee80211_frequency_to_channel(f);
+ 	}
+ 	/* Setting by channel number */
+-	if((fwrq->m > 1000) || (fwrq->e > 0))
++	if (fwrq->m < 0 || fwrq->m > 1000 || fwrq->e > 0)
+ 		rc = -EOPNOTSUPP;
+ 	else {
+ 		int channel = fwrq->m;
