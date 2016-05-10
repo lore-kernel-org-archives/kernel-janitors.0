@@ -1,23 +1,31 @@
-From: Yuval Mintz <Yuval.Mintz@qlogic.com>
-Date: Tue, 17 May 2016 07:38:49 +0000
-Subject: RE: [patch] qed: Remove a stray tab
-Message-Id: <CO2PR11MB00880C22B76A203A30BCDF8297480@CO2PR11MB0088.namprd11.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 10 May 2016 08:01:33 +0000
+Subject: [patch] phy: bcm-ns-usb2: checking the wrong variable
+Message-Id: <20160510080133.GA4191@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160517073450.GE10872@mwanda>
-In-Reply-To: <20160517073450.GE10872@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ariel Elior <Ariel.Elior@qlogic.com>, Dept-Eng Everest Linux L2 <everest-linux-l2@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> This line was intended more than it should be.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We intended to test "usb2->phy" here instead of "dev".
 
-No, we've actually intended this line just fine.
-But it is indented too much. ;-)
-Thanks.
+Fixes: d3feb4067335 ('phy: bcm-ns-usb2: new driver for USB 2.0 PHY on Northstar')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Yuval Mintz <Yuval.Mintz@qlogic.com>
-
+diff --git a/drivers/phy/phy-bcm-ns-usb2.c b/drivers/phy/phy-bcm-ns-usb2.c
+index 95ab6b2..58dff80 100644
+--- a/drivers/phy/phy-bcm-ns-usb2.c
++++ b/drivers/phy/phy-bcm-ns-usb2.c
+@@ -109,8 +109,8 @@ static int bcm_ns_usb2_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	usb2->phy = devm_phy_create(dev, NULL, &ops);
+-	if (IS_ERR(dev))
+-		return PTR_ERR(dev);
++	if (IS_ERR(usb2->phy))
++		return PTR_ERR(usb2->phy);
+ 
+ 	phy_set_drvdata(usb2->phy, usb2);
+ 	platform_set_drvdata(pdev, usb2);
