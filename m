@@ -1,34 +1,51 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 03 May 2016 21:19:24 +0000
-Subject: Re: [patch] usb: dwc3: gadget: fix mask and shift order in DWC3_DCFG_NUMP()
-Message-Id: <20160503211924.GB10279@kroah.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Tue, 10 May 2016 06:44:50 +0000
+Subject: [PATCH 1/2 RESEND] staging: dgnc: remove redundant NULL checks in
+Message-Id: <20160510064450.GA25522@certreview.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160503074900.GA9816@mwanda>
- <87shxzfuhq.fsf@intel.com>
-In-Reply-To: <87shxzfuhq.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 03, 2016 at 10:53:05AM +0300, Felipe Balbi wrote:
-> 
-> Hi,
-> 
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
-> > In the original DWC3_DCFG_NUMP() was always zero.  It looks like the
-> > intent was to shift first and then do the mask.
-> >
-> > Fixes: 2a58f9c12bb3 ('usb: dwc3: gadget: disable automatic calculation of ACK TP NUMP')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Thanks for this fix, I completely missed it :-) Greg, if you want to
-> take this as a patch, that's fine by me. Otherwise I can queue it for
-> -rc1. In any case, S-o-B below:
-> 
-> Signed-off-by: Felipe Balbi <balbi@kernel.org>
+The dgnc_block_til_ready() is only used in dgnc_tty_open().
+The unit data(struct un_t) was stored into tty->driver_data in dgnc_tty_open().
+And also tty and un were tested about NULL so these variables doesn't
+need to check for NULL in dgnc_block_til_ready().
 
-I'll take it, thanks.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+RESEND: more explanation about this patch.
+origin patch : https://lkml.org/lkml/2016/5/4/12
 
-greg k-h
+ drivers/staging/dgnc/dgnc_tty.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index a505775..cff34d4 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1172,17 +1172,12 @@ static int dgnc_block_til_ready(struct tty_struct *tty,
+ 				struct channel_t *ch)
+ {
+ 	int retval = 0;
+-	struct un_t *un = NULL;
++	struct un_t *un = tty->driver_data;
+ 	unsigned long flags;
+ 	uint	old_flags = 0;
+ 	int	sleep_on_un_flags = 0;
+ 
+-	if (!tty || tty->magic != TTY_MAGIC || !file || !ch ||
+-	    ch->magic != DGNC_CHANNEL_MAGIC)
+-		return -ENXIO;
+-
+-	un = tty->driver_data;
+-	if (!un || un->magic != DGNC_UNIT_MAGIC)
++	if (!file)
+ 		return -ENXIO;
+ 
+ 	spin_lock_irqsave(&ch->ch_lock, flags);
+-- 
+2.8.2
+
