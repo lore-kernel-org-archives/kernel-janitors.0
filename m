@@ -1,22 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 30 May 2016 05:32:58 +0000
-Subject: Re: [patch] ptp: oops in ptp_ioctl()
-Message-Id: <20160529.223258.480260903888395056.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 May 2016 20:37:38 +0000
+Subject: [patch 1/2] mpt3sas: add missing curly braces
+Message-Id: <20160512203738.GB26894@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160526064622.GA6776@mwanda>
-In-Reply-To: <20160526064622.GA6776@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: richardcochran@gmail.com, falakreyaz@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sathya Prakash <sathya.prakash@broadcom.com>, Chaitra P B <chaitra.basappa@broadcom.com>
+Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 May 2016 09:46:22 +0300
+There are some missing curly braces on this if statement, so we end up
+printing when we shouldn't.
 
-> If we pass ERR_PTR(-EFAULT) to kfree() then it's going to oops.
-> 
-> Fixes: 2ece068e1b1d ('ptp: use memdup_user().')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: a470a51cd648 ('mpt3sas: Handle active cable exception event')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index 6a4df5a..6bff13e 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -7975,13 +7975,14 @@ mpt3sas_scsih_event_callback(struct MPT3SAS_ADAPTER *ioc, u8 msix_index,
+ 		ActiveCableEventData  		    (Mpi26EventDataActiveCableExcept_t *) mpi_reply->EventData;
+ 		if (ActiveCableEventData->ReasonCode =
+-				MPI26_EVENT_ACTIVE_CABLE_INSUFFICIENT_POWER)
++				MPI26_EVENT_ACTIVE_CABLE_INSUFFICIENT_POWER) {
+ 			pr_info(MPT3SAS_FMT "Currently an active cable with ReceptacleID %d",
+ 			    ioc->name, ActiveCableEventData->ReceptacleID);
+ 			pr_info("cannot be powered and devices connected to this active cable");
+ 			pr_info("will not be seen. This active cable");
+ 			pr_info("requires %d mW of power",
+ 			    ActiveCableEventData->ActiveCablePowerRequirement);
++		}
+ 		break;
+ 
+ 	default: /* ignore the rest */
