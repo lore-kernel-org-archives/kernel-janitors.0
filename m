@@ -1,53 +1,59 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Mon, 02 May 2016 05:19:32 +0000
+From: Doug Ledford <dledford@redhat.com>
+Date: Fri, 13 May 2016 16:49:10 +0000
 Subject: Re: [PATCH] i40iw: constify i40iw_vf_cqp_ops structure
-Message-Id: <20160502051932.GB10276@leon.nu>
+Message-Id: <20702354-cb48-8711-240f-3ac4006c6cbb@redhat.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="+pHx0qQiF2pBVqBT"
+Content-Type: multipart/mixed; boundary="cAc0sqKHIVB8EgLlpPBEiUJca6KSL2akh"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1462105341-6299-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1462105341-6299-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-
---+pHx0qQiF2pBVqBT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--cAc0sqKHIVB8EgLlpPBEiUJca6KSL2akh
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 01, 2016 at 02:22:21PM +0200, Julia Lawall wrote:
-> The i40iw_vf_cqp_ops structure is never modified, so declare it as const.
+On 05/01/2016 08:22 AM, Julia Lawall wrote:
+> The i40iw_vf_cqp_ops structure is never modified, so declare it as cons=
+t.
 >=20
 > Done with the help of Coccinelle.
 >=20
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
 
-Thanks Julia,
+Thanks, applied.
 
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 
---+pHx0qQiF2pBVqBT
+--=20
+Doug Ledford <dledford@redhat.com>
+              GPG KeyID: 0E572FDD
+
+
+
+--cAc0sqKHIVB8EgLlpPBEiUJca6KSL2akh
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJXJuNkAAoJEORje4g2clin+QQP/2pac6QJxWmNO12AadwjhZGb
-3oKzvhPi5yjbTVljcL4tS9+MbwGwWJV0eOPjUDREDc6DW3uPgGcLnVf1yRx+jCPP
-g9vAzN773cLN0+umkd6Ptf7E2j43UeHQsVYRsqwd11ZEM+D37E/nBr5ISUzMNjoU
-X8zF9bxye5F+lx4qtbW/fhSP5ic6yn3hsfW3pWPtqV0sWWaW278Hbx0sXCwdY1ns
-oDMrdkLwcUkpOl+jLmy8501QT0NZUXYWff75zfh5OJHCWR+fzUbLC67cUDf5w8vI
-To69JClmNci5f1PRgnhkpIV6RxB+/GeduJK5OvR+GUgEA8ndU15EnDzHMEuyGG0o
-rAmXs6AkgBMH3km/7UgN7JMj/S94QHBrGjlSRQkPnUFxo5LJ9NjuxTvnlnh78sUR
-Ng/ehrma7gUdAEzyatYj4y3SVxvVfbXui9ocNotzSFzRIvpYGWds4sA9vxMPZRI3
-G4GfaGmyJdtA4/C8FWP15zMZUVazGdigrpojg+VP5qdLd2dDSoLdz0SsQDBdo9l0
-WOg5ko25b7rWfWRwXSmDD+op3qY62MLUS9/42me+0o3x3iB/3hMIiakzcrtG3w7c
-h58AxjY6hHvspNJoiq/njiBX7mrQDbmGx5XiaOsU+oh0nqYDqvrXNa6DIeC1lWsc
-4HIsD7UWwZyxpu4Zb9bT
-=WVyq
+iQIcBAEBCAAGBQJXNgWGAAoJELgmozMOVy/d2E4P/RpEphJ+tOoLI0vZ9fMtKjkh
+KgFHdaChF5+nG7sUx1+K12efI2Eo/bVTWgA5vpb0CTVhp0aoZdWKDEoNxWQLBZvS
+Kjz9l/slNwusuU5SyxVEHS3ar8BAbC5uBK4MJRUjUcqu/Rj23fbF+MEdLqObIAi8
+fZ7XVL/VqWS8RdP1h1+A6NDvN0vka/R/pMYiy06TsInJuQv43Cl7zACJ9zTqP6sy
+ZTdEWbKYvm1t+3JqozEZ7NToMXuIaRcavGBhcCuTEc2uXwfcslP44Ogpsf1rnpBm
+Nw2lr+HOynthYHLYGPuZ2NzZdXbV3znu4ieoTc+07OxJu8Y++76wPYyH4zY8BBrg
+oz3uGF/7sWBhz1+NeLH+u2rl6QYb1Ffx7aR9m+k8MubCaDtRO7e6tH7Q71U4l1Mx
+G98/kyYbp8oTrSHTzrZm59FDiCwQKa7IXh7rktlhb0QPfhKh+jeJ92FZ+QfBANox
+Ga8IjpvI4PkY1ZYiL1RoxcyBDAmRGIwfVDljiP+dPNFBJsDSbtAzvDQ7ilo7AcBM
+WxB7wT3g3sLUHmZlNugjxykpSzwzH1uUqJ67PEn3LOii2SSVD5hm0MmUwPYqs3zs
+gbtsfyeGfYwiFHQH3aNQEqBPzQZpLztpqkZfoNDAqen7ksTV6tNTcniwi9ArVoQH
+H/9ZMuU7Tdyix7QW6jZ4
+=+Bl3
 -----END PGP SIGNATURE-----
 
---+pHx0qQiF2pBVqBT--
+--cAc0sqKHIVB8EgLlpPBEiUJca6KSL2akh--
