@@ -1,53 +1,59 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Mon, 02 May 2016 06:06:53 +0000
+From: Doug Ledford <dledford@redhat.com>
+Date: Fri, 13 May 2016 16:50:02 +0000
 Subject: Re: [PATCH] i40e: constify i40e_client_ops structure
-Message-Id: <20160502060653.GD10276@leon.nu>
+Message-Id: <0c2df9ca-64bd-ac73-9071-f4d619887df8@redhat.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="VMt1DrMGOVs3KQwf"
+Content-Type: multipart/mixed; boundary="KIq23I7uJlgtpVQ3upPcLUR6LFqpNk20Q"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1462104443-30724-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1462104443-30724-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jeff Kirsher <jeffrey.t.kirsher-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jesse Brandeburg <jesse.brandeburg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shannon Nelson <shannon.nelson-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Carolyn Wyborny <carolyn.wyborny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Don Skidmore <donald.c.skidmore-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Bruce Allan <bruce.w.allan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, John Ronciak <john.ronciak-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mitch Williams <mitch.a.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, intel-wired-lan-qjLDD68F18P21nG7glBr7A@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1462104443-30724-1-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <julia.lawall@lip6.fr>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Mustafa Ismail <mustafa.ismail@intel.com>, Chien Tin Tung <chien.tin.tung@intel.com>, Faisal Latif <faisal.latif@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, Shannon Nelson <shannon.nelson@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
 
-
---VMt1DrMGOVs3KQwf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--KIq23I7uJlgtpVQ3upPcLUR6LFqpNk20Q
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 01, 2016 at 02:07:23PM +0200, Julia Lawall wrote:
-> The i40e_client_ops structure is never modified, so declare it as const.
+On 05/01/2016 08:07 AM, Julia Lawall wrote:
+> The i40e_client_ops structure is never modified, so declare it as const=
+=2E
 >=20
 > Done with the help of Coccinelle.
 >=20
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
 
-Thanks Julia,
+Thanks, applied.
 
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 
---VMt1DrMGOVs3KQwf
+--=20
+Doug Ledford <dledford@redhat.com>
+              GPG KeyID: 0E572FDD
+
+
+
+--KIq23I7uJlgtpVQ3upPcLUR6LFqpNk20Q
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJXJu59AAoJEORje4g2clinhJoP/2+modFRod8LDdSSNrs1IExN
-9QIw0jHlFDck1DyuoBqX5Ag6zNcq5ryNEOhZLI8XO7BgWZDm49A5wfiAU4f/Bjj7
-aCTZCNZZvrUGtg8htWoykeSsbWI/SuRPEIokUGFLJBc5eE3haf+PINmM/CRGFBoB
-a8eWhOf70F2mge9oKBnqHFBBcu7A0o0NsUCcBK2BrMCWebjYJaBVStStq+TKJAmO
-PArwoQDtuT1kiOfzSCAuWZGCPFEiyt6968wq1xCaYrFR81CbGihAdO1xfaFjTPtt
-DWnhrsda0CG5R5Zf6/URaDJhZJ+rE0trh4PiaVAsDJPJ2QENKayYaM/DluvIDkxQ
-0wz3f96Fs7OJFQvVyRF12TLQZjlBmZYpJS8d0Xd/A+vDg64OmSUTbJPVLAmh1vJ/
-w7+csJ3IQaGka2v7yyIJIinafUJO+IsOjv87FbpAq1rbBVDIZsmqX14GLHXThSHC
-wsuB7pQEF+/r1dSKgIWPZm1Mrio2l3F8CTpUeg8p7H4AmMrtYIh6hRyHXr6xuUAR
-HFKBd6So1Z8+SSNYd+sUqM9MWV+tPvvrd241N6IjmlPYS4OEBr5TGkGrpm8MZpJM
-WD0LOl4sPfPDNyvQu8oSyleM3OdKgMpaOR9xyRRz3vIdUGbHnsou6BWju4Rb5VGa
-ch/KWbeusn0hKx5HHLEb
-=LMvE
+iQIcBAEBCAAGBQJXNgW6AAoJELgmozMOVy/dOV0P/0iVg0kXe+OFbLc5ujtbRv39
+PfCWAClChayvvw88B4yD2vSAAGSvYpQf3qcCJpajbbpupatlU9+HMXMT0Ii8KIxK
++eF6kjR4PwH6+IpVqHQT7ct9A8odATVfTfkxQoN0VsRZjNUQe4sCKie9iIH40V8O
+oSPkpR3ttPuPLofjx6mVFIJkGxMKXzGVwJSyPcn3AedCQP2Ose54io3oIkP3/RR4
+BhjdEV95PVVQmhzl3eTCxE0eA1egQ7z9p/VO/uPE/6YBhjlraBchAMmJgARITxGO
+pYzimvnsOVAqx2omxx+5i5Xg/lkWl4MqXQIMY++RUCmQVn8XLhIeS1AqIivamKXa
+RjJzQFynowtkvVKpwZJ0XUK2PmW5jT9KdfKKQjQ3ymFM2FXHJHbHHFlJp5NvtHfm
+eM1F5goWMBwoL2ne40vUZObim7yRHAL7feAnb65qORmmYnSxyGytPOTchWbEw4E6
+UhjkErNWKGp5MqllLCrLYmwa6x8S5rHBoR6tTW2b/HcnjGeYwbA0TeODj31Sxr89
+qV5qohdwluhCFzNtCUXZY6jy2aqvlcjFGLfvSmTrcDERxDtlsvJbaje7/rOnIf9N
+GZtXz7Vbkd9HRtegSktmEub6ynN7QYnD7PgYg3ykqpQWeRbBHa3MS5yOHEGimsZp
+BQw+po00sWvDxPenfRVq
+=A+KN
 -----END PGP SIGNATURE-----
 
---VMt1DrMGOVs3KQwf--
+--KIq23I7uJlgtpVQ3upPcLUR6LFqpNk20Q--
