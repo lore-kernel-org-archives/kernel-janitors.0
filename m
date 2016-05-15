@@ -1,77 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 01 May 2016 19:57:44 +0000
-Subject: [PATCH] rtlwifi: rtl818x: constify rtl_intf_ops structures
-Message-Id: <1462132664-1619-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 May 2016 18:11:15 +0000
+Subject: [PATCH 0/2] mfd: twl-core: Fine-tuning for add_numbered_child()
+Message-Id: <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5682D228.7070902@users.sourceforge.net> <20160111082922.GB14104@x1>
+In-Reply-To: <20160111082922.GB14104@x1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: kernel-janitors@vger.kernel.org, Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The rtl_intf_ops structures are never modified, so declare them as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 May 2016 19:55:30 +0200
 
-Done with the help of Coccinelle.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (2):
+  Return directly after a failed platform_device_alloc() in add_numbered_child()
+  Refactoring for add_numbered_child()
 
----
- drivers/net/wireless/realtek/rtlwifi/pci.c  |    2 +-
- drivers/net/wireless/realtek/rtlwifi/pci.h  |    2 +-
- drivers/net/wireless/realtek/rtlwifi/usb.c  |    2 +-
- drivers/net/wireless/realtek/rtlwifi/wifi.h |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/mfd/twl-core.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/pci.c b/drivers/net/wireless/realtek/rtlwifi/pci.c
-index 1ac41b8..66030ea 100644
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -2456,7 +2456,7 @@ int rtl_pci_resume(struct device *dev)
- EXPORT_SYMBOL(rtl_pci_resume);
- #endif /* CONFIG_PM_SLEEP */
- 
--struct rtl_intf_ops rtl_pci_ops = {
-+const struct rtl_intf_ops rtl_pci_ops = {
- 	.read_efuse_byte = read_efuse_byte,
- 	.adapter_start = rtl_pci_start,
- 	.adapter_stop = rtl_pci_stop,
-diff --git a/drivers/net/wireless/realtek/rtlwifi/pci.h b/drivers/net/wireless/realtek/rtlwifi/pci.h
-index 5da6703..b951eba 100644
---- a/drivers/net/wireless/realtek/rtlwifi/pci.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.h
-@@ -286,7 +286,7 @@ struct rtl_pci_priv {
- 
- int rtl_pci_reset_trx_ring(struct ieee80211_hw *hw);
- 
--extern struct rtl_intf_ops rtl_pci_ops;
-+extern const struct rtl_intf_ops rtl_pci_ops;
- 
- int rtl_pci_probe(struct pci_dev *pdev,
- 			    const struct pci_device_id *id);
-diff --git a/drivers/net/wireless/realtek/rtlwifi/usb.c b/drivers/net/wireless/realtek/rtlwifi/usb.c
-index aac1ed3..41617b7 100644
---- a/drivers/net/wireless/realtek/rtlwifi/usb.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
-@@ -1049,7 +1049,7 @@ static void rtl_fill_h2c_cmd_work_callback(struct work_struct *work)
- 	rtlpriv->cfg->ops->fill_h2c_cmd(hw, H2C_RA_MASK, 5, rtlpriv->rate_mask);
- }
- 
--static struct rtl_intf_ops rtl_usb_ops = {
-+static const struct rtl_intf_ops rtl_usb_ops = {
- 	.adapter_start = rtl_usb_start,
- 	.adapter_stop = rtl_usb_stop,
- 	.adapter_tx = rtl_usb_tx,
-diff --git a/drivers/net/wireless/realtek/rtlwifi/wifi.h b/drivers/net/wireless/realtek/rtlwifi/wifi.h
-index 11d9c23..4e0ab4d 100644
---- a/drivers/net/wireless/realtek/rtlwifi/wifi.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/wifi.h
-@@ -2593,7 +2593,7 @@ struct rtl_priv {
- 	 *intf_ops : for diff interrface usb/pcie
- 	 */
- 	struct rtl_hal_cfg *cfg;
--	struct rtl_intf_ops *intf_ops;
-+	const struct rtl_intf_ops *intf_ops;
- 
- 	/*this var will be set by set_bit,
- 	   and was used to indicate status of
+-- 
+2.8.2
 
