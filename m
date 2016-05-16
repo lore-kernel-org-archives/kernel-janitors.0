@@ -1,25 +1,26 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 03 May 2016 08:17:35 +0000
-Subject: Re: [PATCH] crypto: constify ccp_actions structure
-Message-Id: <20160503081735.GF17166@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 May 2016 07:54:31 +0000
+Subject: Re: mfd: twl-core: Return directly after a failed platform_device_alloc() in add_numbered_child()
+Message-Id: <9f94708f-6433-5227-78ee-52fbfb30fdaf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1462103575-21705-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1462103575-21705-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5682D228.7070902@users.sourceforge.net> <20160111082922.GB14104@x1>
+ <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
+ <3c168185-ec2d-f1f7-fe70-8a230b884ed2@users.sourceforge.net>
+ <alpine.DEB.2.02.1605160845050.2060@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1605160845050.2060@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, kernel-janitors@vger.kernel.org, Gary Hook <gary.hook@amd.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, May 01, 2016 at 01:52:55PM +0200, Julia Lawall wrote:
-> The ccp_actions structure is never modified, so declare it as const.
+>> * Change an error message.
 > 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> Why?  Is dev_err needed?
 
-Applied.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I interpreted Lee's response in this way.
+https://lkml.org/lkml/2016/1/11/104
+
+Regards,
+Markus
