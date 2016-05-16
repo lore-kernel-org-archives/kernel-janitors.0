@@ -1,45 +1,54 @@
-From: Michal Nazarewicz <mina86@mina86.com>
-Date: Sat, 28 May 2016 10:16:26 +0000
-Subject: Re: [patch v2] usb: f_fs: off by one bug in _ffs_func_bind()
-Message-Id: <xa1t1t4mwkqt.fsf@mina86.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 16 May 2016 06:26:11 +0000
+Subject: [PATCH 1/2] mfd: twl-core: Return directly after a failed platform_device_alloc() in add_numbered_ch
+Message-Id: <3c168185-ec2d-f1f7-fe70-8a230b884ed2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160528044810.GA4107@mwanda>
-In-Reply-To: <20160528044810.GA4107@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5682D228.7070902@users.sourceforge.net> <20160111082922.GB14104@x1>
+ <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
+In-Reply-To: <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Dan Carpenter <dan.carpenter@oracle.com>, Felipe Balbi <balbi@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lars-Peter Clausen <lars@metafoo.de>, Robert Baldyga <r.baldyga@samsung.com>, Al Viro <viro@ZenIV.linux.org.uk>, Daniel Walter <dwalter@sigma-star.at>, "Du, Changbin" <changbin.du@intel.com>, Rui Miguel Silva <rui.silva@linaro.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-T24gU2F0LCBNYXkgMjggMjAxNiwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBUaGlzIGxvb3AgaXMg
-c3VwcG9zZWQgdG8gc2V0IGFsbCB0aGUgLm51bVtdIHZhbHVlcyB0byAtMSBidXQgaXQncyBvZmYg
-YnkKPiBvbmUgc28gaXQgc2tpcHMgdGhlIGZpcnN0IGVsZW1lbnQgYW5kIHNldHMgb25lIGVsZW1l
-bnQgcGFzdCB0aGUgZW5kIG9mCj4gdGhlIGFycmF5Lgo+Cj4gSSd2ZSBjbGVhbmVkIHVwIHRoZSBs
-b29wIGEgbGl0dGxlIGFzIHdlbGwuCj4KPiBGaXhlczogZGRmOGFiZDI1OTk0ICgnVVNCOiBmX2Zz
-OiB0aGUgRnVuY3Rpb25GUyBkcml2ZXInKQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIg
-PGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KCkFja2VkLWJ5OiBNaWNoYWwgTmF6YXJld2ljeiA8
-bWluYTg2QG1pbmE4Ni5jb20+Cgo+IC0tLQo+IHYyOiBtb3ZlIHRoZSBlcHNfcHRyIGFzc2lnbm1l
-bnQgb3V0c2lkZSB0aGUgbG9vcC4KPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9nYWRnZXQv
-ZnVuY3Rpb24vZl9mcy5jIGIvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfZnMuYwo+IGlu
-ZGV4IDczNTE1ZDUuLmQyNmViNjQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1
-bmN0aW9uL2ZfZnMuYwo+ICsrKyBiL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX2ZzLmMK
-PiBAQCAtMjcyOSw2ICsyNzI5LDcgQEAgc3RhdGljIGludCBfZmZzX2Z1bmNfYmluZChzdHJ1Y3Qg
-dXNiX2NvbmZpZ3VyYXRpb24gKmMsCj4gIAkJZnVuYy0+ZmZzLT5zc19kZXNjc19jb3VudDsKPiAg
-Cj4gIAlpbnQgZnNfbGVuLCBoc19sZW4sIHNzX2xlbiwgcmV0LCBpOwo+ICsJc3RydWN0IGZmc19l
-cCAqZXBzX3B0cjsKPiAgCj4gIAkvKiBNYWtlIGl0IGEgc2luZ2xlIGNodW5rLCBsZXNzIG1hbmFn
-ZW1lbnQgbGF0ZXIgb24gKi8KPiAgCXZsYV9ncm91cChkKTsKPiBAQCAtMjc3NywxMiArMjc3OCw5
-IEBAIHN0YXRpYyBpbnQgX2Zmc19mdW5jX2JpbmQoc3RydWN0IHVzYl9jb25maWd1cmF0aW9uICpj
-LAo+ICAJICAgICAgIGZmcy0+cmF3X2Rlc2NzX2xlbmd0aCk7Cj4gIAo+ICAJbWVtc2V0KHZsYV9w
-dHIodmxhYnVmLCBkLCBpbnVtcyksIDB4ZmYsIGRfaW51bXNfX3N6KTsKPiAtCWZvciAocmV0ID0g
-ZmZzLT5lcHNfY291bnQ7IHJldDsgLS1yZXQpIHsKPiAtCQlzdHJ1Y3QgZmZzX2VwICpwdHI7Cj4g
-LQo+IC0JCXB0ciA9IHZsYV9wdHIodmxhYnVmLCBkLCBlcHMpOwo+IC0JCXB0cltyZXRdLm51bSA9
-IC0xOwo+IC0JfQo+ICsJZXBzX3B0ciA9IHZsYV9wdHIodmxhYnVmLCBkLCBlcHMpOwo+ICsJZm9y
-IChpID0gMDsgaSA8IGZmcy0+ZXBzX2NvdW50OyBpKyspCj4gKwkJZXBzX3B0cltpXS5udW0gPSAt
-MTsKPiAgCj4gIAkvKiBTYXZlIHBvaW50ZXJzCj4gIAkgKiBkX2VwcyA9IHZsYWJ1ZiwgZnVuYy0+
-ZXBzIHVzZWQgdG8ga2ZyZWUgdmxhYnVmIGxhdGVyCgotLSAKQmVzdCByZWdhcmRzCuODn+ODj+OC
-piDigJzwnZO28J2TsvCdk7fwnZOqODbigJ0g44OK44K244Os44O044Kk44OECsKrSWYgYXQgZmly
-c3QgeW91IGRvbuKAmXQgc3VjY2VlZCwgZ2l2ZSB1cCBza3lkaXZpbmfCuwotLQpUbyB1bnN1YnNj
-cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWph
-bml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
-Lm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
-ZG9tby1pbmZvLmh0bWw=
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 May 2016 19:20:28 +0200
+
+The platform_device_put() function was called in one case by the
+add_numbered_child() function during error handling even if the passed
+variable "pdev" contained a null pointer.
+
+* Change an error message.
+
+* Return directly in this case.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/twl-core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+index 831696e..dc34e69 100644
+--- a/drivers/mfd/twl-core.c
++++ b/drivers/mfd/twl-core.c
+@@ -623,9 +623,10 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
+ 
+ 	pdev = platform_device_alloc(name, num);
+ 	if (!pdev) {
+-		dev_dbg(&twl->client->dev, "can't alloc dev\n");
+-		status = -ENOMEM;
+-		goto err;
++		dev_err(&twl->client->dev,
++			"Allocation failed for device: %s\n",
++			name);
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	pdev->dev.parent = &twl->client->dev;
+-- 
+2.8.2
+
