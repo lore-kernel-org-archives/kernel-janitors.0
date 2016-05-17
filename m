@@ -1,68 +1,43 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 27 May 2016 06:54:20 +0000
-Subject: [PATCH 5/7] staging: dgnc: remove useless variable 'ch_intr_modem'
-Message-Id: <20160527065420.GA3023@SEL-JYOUN-D1>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 May 2016 07:32:19 +0000
+Subject: [patch] NFC: pn533: double free on error in probe()
+Message-Id: <20160517073219.GC10872@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
+Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Michael Thalmeier <michael.thalmeier@hale.at>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The 'ch_intr_modem' variable was used only for increasing.
-So the 'ch_intr_modem' variable is not useful for this driver.
+We can't pass devm_ allocated pointers to kfree() because they will be
+freed again after the drive is unloaded.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- drivers/staging/dgnc/dgnc_cls.c    | 9 ---------
- drivers/staging/dgnc/dgnc_driver.h | 1 -
- drivers/staging/dgnc/dgnc_neo.c    | 1 -
- 3 files changed, 11 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
-index 35526f8..d7ff5fa 100644
---- a/drivers/staging/dgnc/dgnc_cls.c
-+++ b/drivers/staging/dgnc/dgnc_cls.c
-@@ -402,15 +402,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
- 			cls_copy_data_from_queue_to_uart(ch);
- 		}
+diff --git a/drivers/nfc/pn533/usb.c b/drivers/nfc/pn533/usb.c
+index 8ca0603..33ed78b 100644
+--- a/drivers/nfc/pn533/usb.c
++++ b/drivers/nfc/pn533/usb.c
+@@ -464,10 +464,8 @@ static int pn533_usb_probe(struct usb_interface *interface,
+ 		return -ENOMEM;
  
--		/* CTS/RTS change of state */
--		if (isr & UART_IIR_CTSRTS) {
--			ch->ch_intr_modem++;
--			/*
--			 * Don't need to do anything, the cls_parse_modem
--			 * below will grab the updated modem signals.
--			 */
--		}
--
- 		/* Parse any modem signal changes */
- 		cls_parse_modem(ch, readb(&ch->ch_cls_uart->msr));
- 	}
-diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
-index 914130d..1063388 100644
---- a/drivers/staging/dgnc/dgnc_driver.h
-+++ b/drivers/staging/dgnc/dgnc_driver.h
-@@ -377,7 +377,6 @@ struct channel_t {
- 	ulong		ch_xon_sends;	/* Count of xons transmitted */
- 	ulong		ch_xoff_sends;	/* Count of xoffs transmitted */
+ 	in_buf = kzalloc(in_buf_len, GFP_KERNEL);
+-	if (!in_buf) {
+-		rc = -ENOMEM;
+-		goto out_free_phy;
+-	}
++	if (!in_buf)
++		return -ENOMEM;
  
--	ulong		ch_intr_modem;	/* Count of interrupts */
- 	ulong		ch_intr_tx;	/* Count of interrupts */
- 	ulong		ch_intr_rx;	/* Count of interrupts */
+ 	phy->udev = usb_get_dev(interface_to_usbdev(interface));
+ 	phy->interface = interface;
+@@ -554,8 +552,7 @@ error:
+ 	usb_free_urb(phy->out_urb);
+ 	usb_put_dev(phy->udev);
+ 	kfree(in_buf);
+-out_free_phy:
+-	kfree(phy);
++
+ 	return rc;
+ }
  
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index f99c0db..9b3264c 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -450,7 +450,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
- 			 * If we get here, this means the hardware is doing auto flow control.
- 			 * Check to see whether RTS/DTR or CTS/DSR caused this interrupt.
- 			 */
--			ch->ch_intr_modem++;
- 			cause = readb(&ch->ch_neo_uart->mcr);
- 			/* Which pin is doing auto flow? RTS or DTR? */
- 			if ((cause & 0x4) = 0) {
--- 
-1.9.1
-
