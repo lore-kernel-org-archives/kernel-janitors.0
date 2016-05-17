@@ -1,75 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 03 May 2016 16:31:04 +0000
-Subject: Applied "ASoC: hdac_hdmi: Potential NULL deref in hdac_hdmi_get_spk_alloc()" to the asoc tree
-Message-Id: <E1axdE0-0007md-6S@debutante>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 17 May 2016 14:38:46 +0000
+Subject: [PATCH 7/7] mwifiex: fix typo
+Message-Id: <1463495926-13728-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160503074258.GA9722@mwanda>
-In-Reply-To: <20160503074258.GA9722@mwanda>
+References: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, Sachin Mokashi <sachinx.mokashi@intel.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>, alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>, Jeeja KP <jeeja.kp@intel.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: kernel-janitors@vger.kernel.org, Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The patch
+firmare -> firmware
 
-   ASoC: hdac_hdmi: Potential NULL deref in hdac_hdmi_get_spk_alloc()
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 8f658815da156a9239b98b34e5ba1d3db71a2f6e Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 3 May 2016 10:42:58 +0300
-Subject: [PATCH] ASoC: hdac_hdmi: Potential NULL deref in
- hdac_hdmi_get_spk_alloc()
-
-We intended || here instead of &&.  The original code potentially leads
-to a NULL dereference.
-
-Fixes: 2889099eb8cd ('ASoC: hdac_hdmi: Register chmap controls and ops')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewd-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
-Tested-by: Sachin Mokashi <sachinx.mokashi@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/hdac_hdmi.c | 2 +-
+ drivers/net/wireless/marvell/mwifiex/pcie.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
-index 0ed39753c871..f1170e060230 100644
---- a/sound/soc/codecs/hdac_hdmi.c
-+++ b/sound/soc/codecs/hdac_hdmi.c
-@@ -1614,7 +1614,7 @@ static int hdac_hdmi_get_spk_alloc(struct hdac_device *hdac, int pcm_idx)
- 	struct hdac_hdmi_pcm *pcm = get_hdmi_pcm_from_id(hdmi, pcm_idx);
- 	struct hdac_hdmi_pin *pin = pcm->pin;
+diff --git a/drivers/net/wireless/marvell/mwifiex/pcie.c b/drivers/net/wireless/marvell/mwifiex/pcie.c
+index 0c7937e..9246ce8 100644
+--- a/drivers/net/wireless/marvell/mwifiex/pcie.c
++++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
+@@ -2804,7 +2804,7 @@ static int mwifiex_pcie_request_irq(struct mwifiex_adapter *adapter)
+ }
  
--	if (!pin && !pin->eld.eld_valid)
-+	if (!pin || !pin->eld.eld_valid)
- 		return 0;
- 
- 	return pin->eld.info.spk_alloc;
--- 
-2.8.1
+ /*
+- * This function get firmare name for downloading by revision id
++ * This function gets the firmware name for downloading by revision id
+  *
+  * Read revision id register to get revision id
+  */
 
