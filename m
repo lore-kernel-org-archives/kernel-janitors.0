@@ -1,33 +1,33 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 11 May 2016 18:54:33 +0000
-Subject: Re: rtlwifi: rtl818x: silence uninitialized variable warning
-Message-Id: <20160511185433.DE30C61344@smtp.codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 May 2016 08:09:20 +0000
+Subject: [patch v2] qed: Remove a stray tab
+Message-Id: <20160517080920.GD11011@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20160504061639.GB22064@mwanda>
-References: <20160504061639.GB22064@mwanda>
-In-Reply-To: <20160504061639.GB22064@mwanda>
+References: <CO2PR11MB00880C22B76A203A30BCDF8297480@CO2PR11MB0088.namprd11.prod.outlook.com>
+In-Reply-To: <CO2PR11MB00880C22B76A203A30BCDF8297480@CO2PR11MB0088.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Chaoming Li <chaoming_li@realsil.com.cn>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Yuval Mintz <Yuval.Mintz@qlogic.com>
+Cc: Ariel Elior <Ariel.Elior@qlogic.com>, everest-linux-l2@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> What about if "rtlphy->pwrgroup_cnt" is 2?  In that case we would use an
-> uninitialized "chnlgroup" variable and probably crash.  Maybe that can't
-> happen for some reason which is not obvious but in that case this patch
-> is harmless.
-> 
-> Setting it to zero seems like a standard default in the surrounding code
-> so it's probably fine here as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This line was indented more than it should be.
 
-Thanks, 1 patch applied to wireless-drivers-next.git:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Yuval Mintz <Yuval.Mintz@qlogic.com>
+---
+v2: fix a typo
 
-2f8514b8b036 rtlwifi: rtl818x: silence uninitialized variable warning
-
--- 
-Sent by pwcli
-https://patchwork.kernel.org/patch/9010761/
-
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
+index 6ffc21d..05fcb25 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -177,7 +177,7 @@ static int qed_init_pci(struct qed_dev *cdev,
+ 	}
+ 
+ 	if (IS_PF(cdev)) {
+-			cdev->db_phys_addr = pci_resource_start(cdev->pdev, 2);
++		cdev->db_phys_addr = pci_resource_start(cdev->pdev, 2);
+ 		cdev->db_size = pci_resource_len(cdev->pdev, 2);
+ 		cdev->doorbells = ioremap_wc(cdev->db_phys_addr, cdev->db_size);
+ 		if (!cdev->doorbells) {
