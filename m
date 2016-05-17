@@ -1,23 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 17 May 2016 14:38:39 +0000
-Subject: [PATCH 0/7] fix typo
-Message-Id: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Tue, 17 May 2016 15:07:37 +0000
+Subject: Re: [PATCH 0/7] fix typo
+Message-Id: <874m9wpvt2.fsf@purkki.adurom.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr> (Julia
+	Lawall's message of "Tue, 17 May 2016 16:38:39 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, devel@driverdev.osuosl.org, pmchba@pmcs.com
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, devel@driverdev.osuosl.org, pmchba@pmcs.com
 
-firmare -> firmware
+Julia Lawall <Julia.Lawall@lip6.fr> writes:
 
----
+> firmare -> firmware
+>
+> ---
+>
+>  drivers/media/dvb-frontends/mn88473.c       |    2 +-
+>  drivers/net/wireless/ath/ath6kl/core.h      |    2 +-
+>  drivers/net/wireless/marvell/mwifiex/pcie.c |    2 +-
 
- drivers/media/dvb-frontends/mn88473.c       |    2 +-
- drivers/net/wireless/ath/ath6kl/core.h      |    2 +-
- drivers/net/wireless/marvell/mwifiex/pcie.c |    2 +-
- drivers/scsi/pm8001/pm8001_init.c           |    2 +-
- drivers/scsi/snic/snic_fwint.h              |    2 +-
- drivers/staging/media/mn88472/mn88472.c     |    2 +-
- drivers/staging/wilc1000/linux_wlan.c       |    2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
+It would be good to know in advance what tree you are planning to submit
+these for. For example, should I take ath6kl and mwifiex patches or
+someone else?
+
+-- 
+Kalle Valo
