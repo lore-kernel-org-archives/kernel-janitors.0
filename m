@@ -1,37 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 06 May 2016 08:35:28 +0000
-Subject: re: x86/platform/UV: Support UV4 socket address changes
-Message-Id: <20160506083528.GA10231@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 17 May 2016 14:38:45 +0000
+Subject: [PATCH 6/7] ath6kl: fix typo
+Message-Id: <1463495926-13728-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Mike Travis,
+firmare -> firmware
 
-This is a semi-automatic email about new static checker warnings.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The patch 1de329c10d9f: "x86/platform/UV: Support UV4 socket address 
-changes" from Apr 29, 2016, leads to the following Smatch complaint:
+---
+ drivers/net/wireless/ath/ath6kl/core.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-arch/x86/kernel/apic/x2apic_uv_x.c:1201 decode_uv_systab()
-	 error: we previously assumed 'st' could be null (see line 1199)
+diff --git a/drivers/net/wireless/ath/ath6kl/core.h b/drivers/net/wireless/ath/ath6kl/core.h
+index 713a571..ebc40f6 100644
+--- a/drivers/net/wireless/ath/ath6kl/core.h
++++ b/drivers/net/wireless/ath/ath6kl/core.h
+@@ -148,7 +148,7 @@ enum ath6kl_fw_capability {
+ 	/* ratetable is the 2 stream version (max MCS15) */
+ 	ATH6KL_FW_CAPABILITY_RATETABLE_MCS15,
+ 
+-	/* firmare doesn't support IP checksumming */
++	/* firmware doesn't support IP checksumming */
+ 	ATH6KL_FW_CAPABILITY_NO_IP_CHECKSUM,
+ 
+ 	/* this needs to be last */
 
-arch/x86/kernel/apic/x2apic_uv_x.c
-  1198		st = uv_systab;
-  1199		if ((!st || st->revision < UV_SYSTAB_VERSION_UV4) && !is_uv4_hub())
-                      ^^
-New check for NULL.
-
-  1200			return;
-  1201		if (st->revision != UV_SYSTAB_VERSION_UV4_LATEST) {
-                    ^^^^^^^^^^^^
-Unchecked dereference in the is_uv4_hub() case.  Perhaps the parenthesis
-are not in the right place or the check for NULL can be removed?
-
-  1202			pr_crit(
-  1203			"UV: BIOS UVsystab version(%x) mismatch, expecting(%x)\n",
-
-regards,
-dan carpenter
