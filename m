@@ -1,24 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 31 May 2016 18:53:18 +0000
-Subject: Re: [patch] atm: iphase: off by one in rx_pkt()
-Message-Id: <20160531.115318.1748170211000331540.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 May 2016 08:02:56 +0000
+Subject: [patch v2] iio: humidity: am2315: Remove a stray unlock
+Message-Id: <20160517080256.GC11011@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160527103435.GB3255@mwanda>
-In-Reply-To: <20160527103435.GB3255@mwanda>
+In-Reply-To: <4586F61A4A291F4DA44D32824E7C0F4023597A48@IRSMSX109.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Tiberiu Breana <tiberiu.a.breana@intel.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 27 May 2016 13:34:35 +0300
+We haven't taken the lock yet so we don't need to unlock here.
 
-> The iadev->rx_open[] array holds "iadev->num_vc" pointers (this code
-> assumes that pointers are 32 bits).  So the > here should be >= or else
-> we could end up reading a garbage pointer from one element beyond the
-> end of the array.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 0d96d5ead3f7 ('iio: humidity: Add triggered buffer support for AM2315')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Tiberiu Breana <tiberiu.a.breana@intel.com>
+---
+v2: update subject
 
-Applied.
+diff --git a/drivers/iio/humidity/am2315.c b/drivers/iio/humidity/am2315.c
+index 3be6d20..1153591 100644
+--- a/drivers/iio/humidity/am2315.c
++++ b/drivers/iio/humidity/am2315.c
+@@ -165,10 +165,8 @@ static irqreturn_t am2315_trigger_handler(int irq, void *p)
+ 	struct am2315_sensor_data sensor_data;
+ 
+ 	ret = am2315_read_data(data, &sensor_data);
+-	if (ret < 0) {
+-		mutex_unlock(&data->lock);
++	if (ret < 0)
+ 		goto err;
+-	}
+ 
+ 	mutex_lock(&data->lock);
+ 	if (*(indio_dev->active_scan_mask) = AM2315_ALL_CHANNEL_MASK) {
