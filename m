@@ -1,35 +1,35 @@
-From: Jinbum Park <jinb.park7@gmail.com>
-Date: Sun, 29 May 2016 14:42:21 +0000
-Subject: [PATCH] kprobes: fix a comment typo
-Message-Id: <20160529144221.GA14080@pjb1027-Latitude-E5410>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 17 May 2016 14:38:40 +0000
+Subject: [PATCH 1/7] snic: fix typo
+Message-Id: <1463495926-13728-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160524170829.GA6931@pjb1027-Latitude-E5410>
-In-Reply-To: <20160524170829.GA6931@pjb1027-Latitude-E5410>
+References: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1463495926-13728-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Narsimhulu Musini <nmusini@cisco.com>
+Cc: kernel-janitors@vger.kernel.org, Sesidhar Baddela <sebaddel@cisco.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Just fix a typo in the code comment.
+firmare -> firmware
 
-Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/arm/probes/kprobes/opt-arm.c | 2 +-
+ drivers/scsi/snic/snic_fwint.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
-index bcdecc2..073c0ba 100644
---- a/arch/arm/probes/kprobes/opt-arm.c
-+++ b/arch/arm/probes/kprobes/opt-arm.c
-@@ -223,7 +223,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *or
- 	 *
- 	 * So the maximum forward branch should be:
- 	 *   (0x007fffff << 2) = 0x01fffffc =  0x1fffffc
--	 * The maximum backword branch should be:
-+	 * The maximum backward branch should be:
- 	 *   (0xff800000 << 2) = 0xfe000000 = -0x2000000
- 	 *
- 	 * We can simply check (rel & 0xfe000003):
--- 
-1.9.1
+diff --git a/drivers/scsi/snic/snic_fwint.h b/drivers/scsi/snic/snic_fwint.h
+index c5f9e19..2a045a5 100644
+--- a/drivers/scsi/snic/snic_fwint.h
++++ b/drivers/scsi/snic/snic_fwint.h
+@@ -92,7 +92,7 @@ enum snic_io_status {
+ }; /* end of enum snic_io_status */
+ 
+ /*
+- * snic_io_hdr : host <--> firmare
++ * snic_io_hdr : host <--> firmware
+  *
+  * for any other message that will be queued to firmware should
+  *  have the following request header
 
