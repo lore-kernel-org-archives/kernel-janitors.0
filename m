@@ -1,97 +1,37 @@
-From: Jeff Moyer <jmoyer@redhat.com>
-Date: Mon, 23 May 2016 15:20:19 +0000
-Subject: Re: [PATCH] blk: remove NULL check before freeing functions
-Message-Id: <x4937p86bt8.fsf@segfault.boston.devel.redhat.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 20 May 2016 09:51:28 +0000
+Subject: [PATCH 2/2] staging: dgnc: remove redundant null check in
+Message-Id: <20160520095128.GA30102@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1463987633-125741-1-git-send-email-mikedanese@google.com>
-In-Reply-To: <1463987633-125741-1-git-send-email-mikedanese@google.com> (Mike
-	Danese's message of "Mon, 23 May 2016 00:13:53 -0700")
+References: <20160405093002.GA25395@SEL-JYOUN-D1>
+In-Reply-To: <20160405093002.GA25395@SEL-JYOUN-D1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Danese <mikedanese@google.com>
-Cc: kernel-janitors@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, "open list:BLOCK LAYER" <linux-block@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: lidza.louina@gmail.com
+Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Mike Danese <mikedanese@google.com> writes:
+the "brd" was already checked for NULL before calling dgnc_do_remap().
 
-> Coccinelle complains:
->
-> WARNING: NULL check before freeing functions like kfree, debugfs_remove,
-> debugfs_remove_recursive or usb_free_urb is not needed. Maybe consider
-> reorganizing relevant code to avoid passing NULL values.
->
-> Signed-off-by: Mike Danese <mikedanese@google.com>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Acked-by: Jeff Moyer <jmoyer@redhat.com>
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index 22257d2..1882ef5 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -599,9 +599,6 @@ static int dgnc_finalize_board_init(struct dgnc_board *brd)
+  */
+ static void dgnc_do_remap(struct dgnc_board *brd)
+ {
+-	if (!brd || brd->magic != DGNC_BOARD_MAGIC)
+-		return;
+-
+ 	brd->re_map_membase = ioremap(brd->membase, 0x1000);
+ }
+ 
+-- 
+1.9.1
 
-> ---
->  block/bio-integrity.c | 7 ++-----
->  block/bio.c           | 7 ++-----
->  block/blk-core.c      | 3 +--
->  block/elevator.c      | 3 +--
->  4 files changed, 6 insertions(+), 14 deletions(-)
->
-> diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-> index 711e4d8d..27bf4e7 100644
-> --- a/block/bio-integrity.c
-> +++ b/block/bio-integrity.c
-> @@ -499,11 +499,8 @@ EXPORT_SYMBOL(bioset_integrity_create);
->  
->  void bioset_integrity_free(struct bio_set *bs)
->  {
-> -	if (bs->bio_integrity_pool)
-> -		mempool_destroy(bs->bio_integrity_pool);
-> -
-> -	if (bs->bvec_integrity_pool)
-> -		mempool_destroy(bs->bvec_integrity_pool);
-> +	mempool_destroy(bs->bio_integrity_pool);
-> +	mempool_destroy(bs->bvec_integrity_pool);
->  }
->  EXPORT_SYMBOL(bioset_integrity_free);
->  
-> diff --git a/block/bio.c b/block/bio.c
-> index 0e4aa42..e1e1773 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1844,11 +1844,8 @@ void bioset_free(struct bio_set *bs)
->  	if (bs->rescue_workqueue)
->  		destroy_workqueue(bs->rescue_workqueue);
->  
-> -	if (bs->bio_pool)
-> -		mempool_destroy(bs->bio_pool);
-> -
-> -	if (bs->bvec_pool)
-> -		mempool_destroy(bs->bvec_pool);
-> +	mempool_destroy(bs->bio_pool);
-> +	mempool_destroy(bs->bvec_pool);
->  
->  	bioset_integrity_free(bs);
->  	bio_put_slab(bs);
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 2475b1c7..916e7c3 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -636,8 +636,7 @@ int blk_init_rl(struct request_list *rl, struct request_queue *q,
->  
->  void blk_exit_rl(struct request_list *rl)
->  {
-> -	if (rl->rq_pool)
-> -		mempool_destroy(rl->rq_pool);
-> +	mempool_destroy(rl->rq_pool);
->  }
->  
->  struct request_queue *blk_alloc_queue(gfp_t gfp_mask)
-> diff --git a/block/elevator.c b/block/elevator.c
-> index c3555c9..5dc91ca 100644
-> --- a/block/elevator.c
-> +++ b/block/elevator.c
-> @@ -847,8 +847,7 @@ int elv_register(struct elevator_type *e)
->  	spin_lock(&elv_list_lock);
->  	if (elevator_find(e->elevator_name)) {
->  		spin_unlock(&elv_list_lock);
-> -		if (e->icq_cache)
-> -			kmem_cache_destroy(e->icq_cache);
-> +		kmem_cache_destroy(e->icq_cache);
->  		return -EBUSY;
->  	}
->  	list_add_tail(&e->list, &elv_list);
