@@ -1,12 +1,15 @@
 From: Craig Inches <craig@craiginches.com>
-Date: Fri, 13 May 2016 18:58:47 +0000
+Date: Sat, 21 May 2016 13:15:58 +0000
 Subject: [PATCH] Staging: Android: Fix bracket alignment style issue in sync.c
-Message-Id: <1463165927-14288-1-git-send-email-craig@craiginches.com>
+Message-Id: <1463836558-7905-1-git-send-email-craig@craiginches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1463165927-14288-1-git-send-email-craig@craiginches.com>
+In-Reply-To: <1463165927-14288-1-git-send-email-craig@craiginches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: arve@android.com, riandrews@android.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org, Craig Inches <craig@craiginches.com>, Craig Inches <Craig@craiginches.com>
 
 This patch changes 3 bracket alignment errors found by checkpatch.
 
