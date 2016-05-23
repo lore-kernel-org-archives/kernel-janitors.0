@@ -1,29 +1,32 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Wed, 11 May 2016 19:03:34 +0000
-Subject: Re: atmel: potential underflow in atmel_set_freq()
-Message-Id: <20160511190334.5797D61322@smtp.codeaurora.org>
+From: Daniel van Gerpen <daniel@vangerpen.de>
+Date: Mon, 23 May 2016 13:19:14 +0000
+Subject: [PATCH 1/2] gcov: use canonical include guard style
+Message-Id: <20160523151914.2d1e0fa9@newton>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20160510192117.GC30712@mwanda>
-References: <20160510192117.GC30712@mwanda>
-In-Reply-To: <20160510192117.GC30712@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Simon Kelley <simon@thekelleys.org.uk>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Smatch complains that we cap the upper bound of "fwrq->m" but not the
-> lower bound.  I don't know if it can actually happen but it's simple
-> enough to check for negatives.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Daniel van Gerpen <daniel@vangerpen.de>
+---
+ kernel/gcov/gcov.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, 1 patch applied to wireless-drivers-next.git:
-
-d9739a26fbca atmel: potential underflow in atmel_set_freq()
-
+diff --git a/kernel/gcov/gcov.h b/kernel/gcov/gcov.h
+index 92c8e22..5e8fa86 100644
+--- a/kernel/gcov/gcov.h
++++ b/kernel/gcov/gcov.h
+@@ -12,7 +12,7 @@
+  */
+ 
+ #ifndef GCOV_H
+-#define GCOV_H GCOV_H
++#define GCOV_H
+ 
+ #include <linux/types.h>
+ 
 -- 
-Sent by pwcli
-https://patchwork.kernel.org/patch/9061371/
+1.9.1
+
 
