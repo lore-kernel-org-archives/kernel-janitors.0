@@ -1,60 +1,29 @@
-From: Daniel van Gerpen <daniel@vangerpen.de>
-Date: Mon, 23 May 2016 13:19:38 +0000
-Subject: [PATCH 2/2] s390: use canonical include guard style
-Message-Id: <20160523151938.661e2bfb@newton>
+From: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
+Date: Mon, 23 May 2016 15:01:53 +0000
+Subject: Re: [PATCH 2/2] s390: use canonical include guard style
+Message-Id: <2d995178-289a-3d5c-2ac4-6d0336c22f07@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160523151938.661e2bfb@newton>
+In-Reply-To: <20160523151938.661e2bfb@newton>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Daniel van Gerpen <daniel@vangerpen.de>
----
- arch/s390/include/asm/fcx.h | 2 +-
- drivers/s390/cio/chp.h      | 2 +-
- drivers/s390/cio/idset.h    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+On 23.05.2016 15:19, Daniel van Gerpen wrote:
+> Signed-off-by: Daniel van Gerpen <daniel@vangerpen.de>
+> ---
+>  arch/s390/include/asm/fcx.h | 2 +-
+>  drivers/s390/cio/chp.h      | 2 +-
+>  drivers/s390/cio/idset.h    | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
 
-diff --git a/arch/s390/include/asm/fcx.h b/arch/s390/include/asm/fcx.h
-index 7ecb92b..04cb4b4 100644
---- a/arch/s390/include/asm/fcx.h
-+++ b/arch/s390/include/asm/fcx.h
-@@ -6,7 +6,7 @@
-  */
- 
- #ifndef _ASM_S390_FCX_H
--#define _ASM_S390_FCX_H _ASM_S390_FCX_H
-+#define _ASM_S390_FCX_H
- 
- #include <linux/types.h>
- 
-diff --git a/drivers/s390/cio/chp.h b/drivers/s390/cio/chp.h
-index af02322..bb5a682 100644
---- a/drivers/s390/cio/chp.h
-+++ b/drivers/s390/cio/chp.h
-@@ -4,7 +4,7 @@
-  */
- 
- #ifndef S390_CHP_H
--#define S390_CHP_H S390_CHP_H
-+#define S390_CHP_H
- 
- #include <linux/types.h>
- #include <linux/device.h>
-diff --git a/drivers/s390/cio/idset.h b/drivers/s390/cio/idset.h
-index 22b5810..89a7877 100644
---- a/drivers/s390/cio/idset.h
-+++ b/drivers/s390/cio/idset.h
-@@ -4,7 +4,7 @@
-  */
- 
- #ifndef S390_IDSET_H
--#define S390_IDSET_H S390_IDSET_H
-+#define S390_IDSET_H
- 
- #include <asm/schid.h>
- 
+Acked-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
+
+Martin, could you pick this up via the s390 tree?
+
 -- 
-1.9.1
-
+Peter Oberparleiter
+Linux on z Systems Development - IBM Germany
 
