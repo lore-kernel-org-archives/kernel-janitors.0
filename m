@@ -1,45 +1,22 @@
-From: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
-Date: Mon, 23 May 2016 11:06:05 +0000
-Subject: RE: [patch] qed: signedness bug in qed_dcbx_process_tlv()
-Message-Id: <BY2PR1101MB11429E95A017F91699293F7A904E0@BY2PR1101MB1142.namprd11.prod.outlook.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 23 May 2016 22:11:41 +0000
+Subject: Re: [patch] qed: signedness bug in qed_dcbx_process_tlv()
+Message-Id: <20160523.151141.2041940312643695129.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160523101935.GA10712@mwanda>
 In-Reply-To: <20160523101935.GA10712@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Yuval Mintz <Yuval.Mintz@qlogic.com>
-Cc: Ariel Elior <Ariel.Elior@qlogic.com>, Dept-Eng Everest Linux L2 <everest-linux-l2@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: dan.carpenter@oracle.com
+Cc: Yuval.Mintz@qlogic.com, sudarsana.kalluru@qlogic.com, Ariel.Elior@qlogic.com, everest-linux-l2@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks, Dan.
-Acked-by: Sudarsana Reddy Kalluru <sudarsana.kalluru@qlogic.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 May 2016 13:19:35 +0300
 
------Original Message-----
-From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
-Sent: 23 May 2016 15:50
-To: Yuval Mintz <Yuval.Mintz@qlogic.com>; Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
-Cc: Ariel Elior <Ariel.Elior@qlogic.com>; Dept-Eng Everest Linux L2 <everest-linux-l2@qlogic.com>; netdev <netdev@vger.kernel.org>; kernel-janitors@vger.kernel.org
-Subject: [patch] qed: signedness bug in qed_dcbx_process_tlv()
+> "priority" needs to be signed for the error handling to work.
+> 
+> Fixes: 39651abd2814 ('qed: add support for dcbx.')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-"priority" needs to be signed for the error handling to work.
-
-Fixes: 39651abd2814 ('qed: add support for dcbx.')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Applies to the main net tree.
-
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-index cbf58e1..a06d19a 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-@@ -192,9 +192,10 @@ qed_dcbx_process_tlv(struct qed_hwfn *p_hwfn,
- 		     struct dcbx_app_priority_entry *p_tbl,
- 		     u32 pri_tc_tbl, int count, bool dcbx_enabled)  {
--	u8 tc, priority, priority_map;
-+	u8 tc, priority_map;
- 	enum dcbx_protocol_type type;
- 	u16 protocol_id;
-+	int priority;
- 	bool enable;
- 	int i;
- 
+Applied.
