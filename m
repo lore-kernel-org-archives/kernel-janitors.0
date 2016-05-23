@@ -1,46 +1,31 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 04 May 2016 05:13:48 +0000
-Subject: [PATCH 3/3] staging: dgnc: clean up the dgnc_get_modem_info()
-Message-Id: <20160504051348.GA21479@certreview.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 May 2016 10:21:01 +0000
+Subject: [patch] NFS: checking for NULL instead of IS_ERR() in nfs_commit_file()
+Message-Id: <20160523102101.GC10712@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-the "ch" in dgnc_get_modem_info() was already checked before calling
-this function and also if "ch" is not NULL, dgnc_get_mstat() returns
-valid value so it doesn't need to check an error.
+nfs_create_request() doesn't return NULL, it returns error pointers.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- drivers/staging/dgnc/dgnc_tty.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+Fixes: 67911c8f18b5 ('NFS: Add nfs_commit_file()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 46ca01d..f67d7d4 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -2013,17 +2013,7 @@ static inline int dgnc_get_mstat(struct channel_t *ch)
- static int dgnc_get_modem_info(struct channel_t *ch,
- 			       unsigned int  __user *value)
- {
--	int result;
--
--	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
--		return -ENXIO;
--
--	result = dgnc_get_mstat(ch);
--
--	if (result < 0)
--		return -ENXIO;
--
--	return put_user(result, value);
-+	return put_user(dgnc_get_mstat(ch), value);
- }
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 4dac51b..54a4eb6 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1735,8 +1735,8 @@ int nfs_commit_file(struct file *file, struct nfs_write_verifier *verf)
  
- /*
--- 
-2.8.2
-
+ 	open = get_nfs_open_context(nfs_file_open_context(file));
+ 	req  = nfs_create_request(open, NULL, NULL, 0, i_size_read(inode));
+-	if (!req) {
+-		ret = -ENOMEM;
++	if (IS_ERR(req)) {
++		ret = PTR_ERR(req);
+ 		goto out_put;
+ 	}
+ 
