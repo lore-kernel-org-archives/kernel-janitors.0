@@ -1,26 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 May 2016 14:15:32 +0000
-Subject: Re: mfd: twl-core: Return directly after a failed platform_device_alloc() in add_numbered_child()
-Message-Id: <1af9287a-2899-fe47-6e47-59ee7cc8f883@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 May 2016 10:20:10 +0000
+Subject: [patch] svm: bitwise vs logical AND typo
+Message-Id: <20160523102010.GB10712@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5682D228.7070902@users.sourceforge.net> <20160111082922.GB14104@x1>
- <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
- <3c168185-ec2d-f1f7-fe70-8a230b884ed2@users.sourceforge.net>
- <alpine.DEB.2.02.1605160845050.2060@localhost6.localdomain6>
- <9f94708f-6433-5227-78ee-52fbfb30fdaf@users.sourceforge.net>
- <alpine.DEB.2.02.1605161006350.2060@localhost6.localdomain6>
- <20160517060059.GB17238@dell>
-In-Reply-To: <20160517060059.GB17238@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Please remove the print altogether.
+This was supposed to be a bitwise AND but there is a typo.
 
-Would you like to omit any extra logging statements at more source code places?
+Fixes: 18f40c53e10f ('svm: Add VMEXIT handlers for AVIC')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 2214214..2eb615e 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3597,7 +3597,7 @@ static int avic_incomplete_ipi_interception(struct vcpu_svm *svm)
+ 	u32 icrh = svm->vmcb->control.exit_info_1 >> 32;
+ 	u32 icrl = svm->vmcb->control.exit_info_1;
+ 	u32 id = svm->vmcb->control.exit_info_2 >> 32;
+-	u32 index = svm->vmcb->control.exit_info_2 && 0xFF;
++	u32 index = svm->vmcb->control.exit_info_2 & 0xFF;
+ 	struct kvm_lapic *apic = svm->vcpu.arch.apic;
+ 
+ 	trace_kvm_avic_incomplete_ipi(svm->vcpu.vcpu_id, icrh, icrl, id, index);
