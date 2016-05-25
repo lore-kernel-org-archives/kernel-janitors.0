@@ -1,7 +1,7 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Wed, 18 May 2016 10:57:28 +0000
+Date: Wed, 25 May 2016 12:34:28 +0000
 Subject: Re: [patch] PM / devfreq: exynos-nocp: Checking for IS_ERR instead of NULL
-Message-Id: <573C4A98.9060500@samsung.com>
+Message-Id: <57459BD4.1030201@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160518103707.GA9436@mwanda>
 In-Reply-To: <20160518103707.GA9436@mwanda>
@@ -10,8 +10,6 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-Hi Dan,
 
 On 2016년 05월 18일 19:37, Dan Carpenter wrote:
 > The platform_get_resource() function returns NULL on error, it never
@@ -36,9 +34,10 @@ On 2016년 05월 18일 19:37, Dan Carpenter wrote:
 >  	base = devm_ioremap_resource(dev, res);
 >  	if (IS_ERR(base))
 
+Looks good to me.
+
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 Thanks,
 Chanwoo Choi
-
 
