@@ -1,34 +1,45 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Thu, 26 May 2016 11:01:01 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Thu, 26 May 2016 11:13:00 +0000
 Subject: Re: [patch v2] PM / devfreq: exynos-nocp: Remove incorrect IS_ERR() check
-Message-Id: <5746D76D.9060802@samsung.com>
+Message-Id: <alpine.DEB.2.10.1605261312400.3786@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CGME20160526064612epcas1p4cb0d45fa11deafea51fa84974132afed@epcas1p4.samsung.com>
- <20160526064541.GA6680@mwanda> <5746AFE3.6030606@samsung.com>
- <20160526100238.GN11011@mwanda> <5746CCE3.5010701@samsung.com>
- <20160526105135.GC10957@mwanda> <5746D6A8.2030400@samsung.com>
-In-Reply-To: <5746D6A8.2030400@samsung.com>
+References: <20160526064541.GA6680@mwanda>
+In-Reply-To: <20160526064541.GA6680@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Julia Lawall <julia.lawall@lip6.fr>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2016년 05월 26일 19:57, Chanwoo Choi wrote:
-> On 2016년 05월 26일 19:51, Dan Carpenter wrote:
->> Signed-off-by is like signing a legal document to say that you haven't
->> stolen any of the code from SCO Unix.  Please don't put sign for other
->> people.
-> 
-> You're right. I'm forcing to put the Sign-off. It is just example.
-> 
-> But, I still think that patch description including the engineer's name is not appropriate
-> to give the credit someone.
-> 
+Reviewed-by: Julia Lawall <julia.lawall@lip6.fr>
 
-Also, If Julia review this patch, you just can add the reviewed-by tag.
-I think that it is enough.
+On Thu, 26 May 2016, Dan Carpenter wrote:
 
-Thanks,
-Chanwoo Choi
-
+> Smatch complains because platform_get_resource() returns NULL on error
+> and not an error pointer so the check is wrong.  Julia Lawall pointed
+> out that normally we don't check these, because devm_ioremap_resource()
+> has a check for NULL.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: just remove the check
+>
+> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
+> index 6b6a5f3..a584140 100644
+> --- a/drivers/devfreq/event/exynos-nocp.c
+> +++ b/drivers/devfreq/event/exynos-nocp.c
+> @@ -220,9 +220,6 @@ static int exynos_nocp_parse_dt(struct platform_device *pdev,
+>
+>  	/* Maps the memory mapped IO to control nocp register */
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (IS_ERR(res))
+> -		return PTR_ERR(res);
+> -
+>  	base = devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
