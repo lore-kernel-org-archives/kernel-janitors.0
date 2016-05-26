@@ -1,25 +1,28 @@
-From: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-Date: Mon, 23 May 2016 14:59:10 +0000
-Subject: Re: [PATCH 1/2] gcov: use canonical include guard style
-Message-Id: <944f50cb-f6a6-bb8a-332a-1b28cd0edaa6@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 May 2016 06:46:22 +0000
+Subject: [patch] ptp: oops in ptp_ioctl()
+Message-Id: <20160526064622.GA6776@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160523151914.2d1e0fa9@newton>
-In-Reply-To: <20160523151914.2d1e0fa9@newton>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>, Muhammad Falak R Wani <falakreyaz@gmail.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 23.05.2016 15:19, Daniel van Gerpen wrote:
-> Signed-off-by: Daniel van Gerpen <daniel@vangerpen.de>
-> ---
->  kernel/gcov/gcov.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+If we pass ERR_PTR(-EFAULT) to kfree() then it's going to oops.
 
-Acked-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
+Fixes: 2ece068e1b1d ('ptp: use memdup_user().')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Peter Oberparleiter
-Linux on z Systems Development - IBM Germany
-
+diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+index 0b1ac6b..d637c93 100644
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -211,6 +211,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		sysoff = memdup_user((void __user *)arg, sizeof(*sysoff));
+ 		if (IS_ERR(sysoff)) {
+ 			err = PTR_ERR(sysoff);
++			sysoff = NULL;
+ 			break;
+ 		}
+ 		if (sysoff->n_samples > PTP_MAX_SAMPLES) {
