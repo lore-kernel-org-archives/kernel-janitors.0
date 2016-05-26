@@ -1,28 +1,19 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 May 2016 06:46:22 +0000
-Subject: [patch] ptp: oops in ptp_ioctl()
-Message-Id: <20160526064622.GA6776@mwanda>
+From: Richard Cochran <richardcochran@gmail.com>
+Date: Thu, 26 May 2016 17:42:26 +0000
+Subject: Re: [patch] ptp: oops in ptp_ioctl()
+Message-Id: <20160526174226.GA1997@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160526064622.GA6776@mwanda>
+In-Reply-To: <20160526064622.GA6776@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Cochran <richardcochran@gmail.com>, Muhammad Falak R Wani <falakreyaz@gmail.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Muhammad Falak R Wani <falakreyaz@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If we pass ERR_PTR(-EFAULT) to kfree() then it's going to oops.
+On Thu, May 26, 2016 at 09:46:22AM +0300, Dan Carpenter wrote:
+> If we pass ERR_PTR(-EFAULT) to kfree() then it's going to oops.
 
-Fixes: 2ece068e1b1d ('ptp: use memdup_user().')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks for catching this.
 
-diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
-index 0b1ac6b..d637c93 100644
---- a/drivers/ptp/ptp_chardev.c
-+++ b/drivers/ptp/ptp_chardev.c
-@@ -211,6 +211,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
- 		sysoff = memdup_user((void __user *)arg, sizeof(*sysoff));
- 		if (IS_ERR(sysoff)) {
- 			err = PTR_ERR(sysoff);
-+			sysoff = NULL;
- 			break;
- 		}
- 		if (sysoff->n_samples > PTP_MAX_SAMPLES) {
+Acked-by: Richard Cochran <richardcochran@gmail.com>
