@@ -1,23 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 03 May 2016 17:03:16 +0000
-Subject: Re: [PATCH] drivers: net: xgene: constify xgene_cle_ops structure
-Message-Id: <20160503.130316.1835415809247008167.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 May 2016 06:45:59 +0000
+Subject: [patch] KEYS: potential uninitialized variable
+Message-Id: <20160526064559.GA6738@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1462106189-14277-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1462106189-14277-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: isubramanian@apm.com, kernel-janitors@vger.kernel.org, kchudgar@apm.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun,  1 May 2016 14:36:28 +0200
+If __key_link_begin() failed then "edit" would be uninitialized.  I've
+added a check to fix that.
 
-> The xgene_cle_ops structure is never modified, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: f70e2e06196a ('KEYS: Do preallocation for __key_link()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/security/keys/key.c b/security/keys/key.c
+index bd5a272..346fbf2 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -597,7 +597,7 @@ int key_reject_and_link(struct key *key,
+ 
+ 	mutex_unlock(&key_construction_mutex);
+ 
+-	if (keyring)
++	if (keyring && link_ret = 0)
+ 		__key_link_end(keyring, &key->index_key, edit);
+ 
+ 	/* wake up anyone waiting for a key to be constructed */
