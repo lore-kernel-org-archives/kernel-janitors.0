@@ -1,49 +1,69 @@
-From: Michal Nazarewicz <mina86@mina86.com>
-Date: Fri, 27 May 2016 12:23:09 +0000
+From: walter harms <wharms@bfs.de>
+Date: Fri, 27 May 2016 17:25:30 +0000
 Subject: Re: [patch] usb: f_fs: off by one bug in _ffs_func_bind()
-Message-Id: <xa1t8tyvpu4y.fsf@mina86.com>
+Message-Id: <5748830A.2040606@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160527112311.GC3255@mwanda>
 In-Reply-To: <20160527112311.GC3255@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-T24gRnJpLCBNYXkgMjcgMjAxNiwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBUaGlzIGxvb3AgaXMg
-c3VwcG9zZWQgdG8gc2V0IGFsbCB0aGUgLm51bSB2YWx1ZXMgdG8gLTEgYnV0IGl0J3MgZG9lc24n
-dAo+IHNldCB0aGUgZmlyc3QgZWxlbWVudCBhbmQgaXQgc2V0cyBvbmUgZWxlbWVudCBiZXlvbmQg
-dGhlIGVuZCBvZiB0aGUKPiBhcnJheS4gIFJlYWxseSB0aGVyZSBpcyBubyByZWFzb24gZm9yIGl0
-IHRvIGJlIGRvbmUgYmFja3dhcmRzLiAgQW5kCj4gInJldCIgaXMgdGhlIHdyb25nIHZhcmlhYmxl
-IHRvIHVzZSBmb3IgYW4gaXRlcmF0b3IuCj4KPiBGaXhlczogZGRmOGFiZDI1OTk0ICgnVVNCOiBm
-X2ZzOiB0aGUgRnVuY3Rpb25GUyBkcml2ZXInKQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50
-ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KCkFja2VkLWJ5OiBNaWNoYWwgTmF6YXJld2lj
-eiA8bWluYTg2QG1pbmE4Ni5jb20+CgpIb3cgb24gRWFydGggY291bGQgSSBoYXZlIG1hZGUgdGhh
-dCBtaXN0YWtlIGlzIGJleW9uZCBteQpjb21wcmVoZW5zaW9uLiBPX28gT24gc2Vjb25kIHRob3Vn
-aHQsIHRoaW5ncyBiZWluZyBiZXlvbmQgb25l4oCZcwpjb21wcmVoZW5zaW9uIGlzIHByb2JhYmx5
-IGhvdyBidWdzIGFyZSBpbnRyb2R1Y2Vk4oCmCgo+IC0tLQo+IEkganVzdCBzcG90dGVkIHRoaXMg
-cmV2aWV3aW5nIHRoZSBjb2RlLCBJIGhhdmUgbm90IHRlc3RlZCBpdC4gIFBsZWFzZQo+IHJldmll
-dyBjYXJlZnVsbHksIHRoZSB2bGFfcHRyKCkgbWFjcm8gaXMgZGlmZmljdWx0IHRvIHVuZGVyc3Rh
-bmQuCgpZZWFoLiAgSW4gcmV0cm9zcGVjdCBJ4oCZbSBub3Qgc3VyZSBzYXZpbmdzIGluIG1lbW9y
-eSB0aG9zZSBtYWNyb3MgYnJpbmcKb2Zmc2V0IHRpbWUgZW5naW5lZXJzIHNwZW50IHRyeWluZyB0
-byB1bmRlcnN0YW5kIHRoZW0uICBEYW1uIHlvdSBjbGFuZyEKCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX2ZzLmMgYi9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rp
-b24vZl9mcy5jCj4gaW5kZXggNzM1MTVkNS4uN2ZmZjgxYSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
-L3VzYi9nYWRnZXQvZnVuY3Rpb24vZl9mcy5jCj4gKysrIGIvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1
-bmN0aW9uL2ZfZnMuYwo+IEBAIC0yNzc3LDExICsyNzc3LDExIEBAIHN0YXRpYyBpbnQgX2Zmc19m
-dW5jX2JpbmQoc3RydWN0IHVzYl9jb25maWd1cmF0aW9uICpjLAo+ICAJICAgICAgIGZmcy0+cmF3
-X2Rlc2NzX2xlbmd0aCk7Cj4gIAo+ICAJbWVtc2V0KHZsYV9wdHIodmxhYnVmLCBkLCBpbnVtcyks
-IDB4ZmYsIGRfaW51bXNfX3N6KTsKPiAtCWZvciAocmV0ID0gZmZzLT5lcHNfY291bnQ7IHJldDsg
-LS1yZXQpIHsKPiArCWZvciAoaSA9IDA7IGkgPCBmZnMtPmVwc19jb3VudDsgaSsrKSB7Cj4gIAkJ
-c3RydWN0IGZmc19lcCAqcHRyOwo+ICAKPiAgCQlwdHIgPSB2bGFfcHRyKHZsYWJ1ZiwgZCwgZXBz
-KTsKCkFzIHBvaW50ZWQgYnkgV2FsdGVyLCB0aGlzIGNvdWxkIGJlIG1vdmVkIG91dHNpZGUuICBN
-YXliZQoKCWkgPSBmZnMtPmVwc19jb3VudDsKCWZvciAoc3RydWN0IGZmc19lcCAqcHRyID0gdmxh
-X3B0cih2bGFidWYsIGQsIGVwcyk7IGk7ICsrcHRyLCAtLWkpCgkJcHRyLT5udW0gPSAtMTsKCj4g
-LQkJcHRyW3JldF0ubnVtID0gLTE7Cj4gKwkJcHRyW2ldLm51bSA9IC0xOwo+ICAJfQo+ICAKPiAg
-CS8qIFNhdmUgcG9pbnRlcnMKCi0tIApCZXN0IHJlZ2FyZHMK44Of44OP44KmIOKAnPCdk7bwnZOy
-8J2Tt/Cdk6o4NuKAnSDjg4rjgrbjg6zjg7TjgqTjg4QKwqtJZiBhdCBmaXJzdCB5b3UgZG9u4oCZ
-dCBzdWNjZWVkLCBnaXZlIHVwIHNreWRpdmluZ8K7Ci0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhp
-cyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRo
-ZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFq
-b3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
-bA==
+
+
+Am 27.05.2016 14:23, schrieb Michal Nazarewicz:
+> On Fri, May 27 2016, Dan Carpenter wrote:
+>> This loop is supposed to set all the .num values to -1 but it's doesn't
+>> set the first element and it sets one element beyond the end of the
+>> array.  Really there is no reason for it to be done backwards.  And
+>> "ret" is the wrong variable to use for an iterator.
+>>
+>> Fixes: ddf8abd25994 ('USB: f_fs: the FunctionFS driver')
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Acked-by: Michal Nazarewicz <mina86@mina86.com>
+> 
+> How on Earth could I have made that mistake is beyond my
+> comprehension. O_o On second thought, things being beyond one’s
+> comprehension is probably how bugs are introduced…
+> 
+>> ---
+>> I just spotted this reviewing the code, I have not tested it.  Please
+>> review carefully, the vla_ptr() macro is difficult to understand.
+> 
+> Yeah.  In retrospect I’m not sure savings in memory those macros bring
+> offset time engineers spent trying to understand them.  Damn you clang!
+> 
+>> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+>> index 73515d5..7fff81a 100644
+>> --- a/drivers/usb/gadget/function/f_fs.c
+>> +++ b/drivers/usb/gadget/function/f_fs.c
+>> @@ -2777,11 +2777,11 @@ static int _ffs_func_bind(struct usb_configuration *c,
+>>  	       ffs->raw_descs_length);
+>>  
+>>  	memset(vla_ptr(vlabuf, d, inums), 0xff, d_inums__sz);
+>> -	for (ret = ffs->eps_count; ret; --ret) {
+>> +	for (i = 0; i < ffs->eps_count; i++) {
+>>  		struct ffs_ep *ptr;
+>>  
+>>  		ptr = vla_ptr(vlabuf, d, eps);
+> 
+> As pointed by Walter, this could be moved outside.  Maybe
+> 
+> 	i = ffs->eps_count;
+> 	for (struct ffs_ep *ptr = vla_ptr(vlabuf, d, eps); i; ++ptr, --i)
+> 		ptr->num = -1;
+> 
+
+I think staying with an array here improves readability.
+
+re,
+ wh
+
+>> -		ptr[ret].num = -1;
+>> +		ptr[i].num = -1;
+>>  	}
+>>  
+>>  	/* Save pointers
+> 
