@@ -1,59 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 24 May 2016 08:30:07 +0000
-Subject: re: firmware: qcom: scm: Add support for ARM64 SoCs
-Message-Id: <20160524083007.GA23462@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 27 May 2016 06:54:01 +0000
+Subject: [PATCH 4/7] staging: dgnc: remove useless variable 'intr_rx'
+Message-Id: <20160527065401.GA3009@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Kumar Gala,
+The 'intr_rx' variable was used only for increasing.
+So the 'intr_rx' variable is not useful for this driver.
 
-The patch 93a30f70d97e: "firmware: qcom: scm: Add support for ARM64
-SoCs" from May 12, 2016, leads to the following static checker
-warning:
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_cls.c    | 1 -
+ drivers/staging/dgnc/dgnc_driver.h | 1 -
+ drivers/staging/dgnc/dgnc_neo.c    | 2 --
+ 3 files changed, 4 deletions(-)
 
-	drivers/firmware/qcom_scm-64.c:154 qcom_scm_call()
-	warn: unsigned 'desc->res.a0' is never less than zero.
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index 415a739..35526f8 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -387,7 +387,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
+ 		/* Receive Interrupt pending */
+ 		if (isr & (UART_IIR_RDI | UART_IIR_RDI_TIMEOUT)) {
+ 			/* Read data from uart -> queue */
+-			brd->intr_rx++;
+ 			ch->ch_intr_rx++;
+ 			cls_copy_data_from_uart_to_queue(ch);
+ 			dgnc_check_queue_flow_control(ch);
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index a8d823b..914130d 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -183,7 +183,6 @@ struct dgnc_board {
+ 	uint		nasync;		/* Number of ports on card */
+ 
+ 	uint		irq;		/* Interrupt request number */
+-	ulong		intr_rx;	/* Count of interrupts */
+ 
+ 	ulong		membase;	/* Start of base memory of the card */
+ 	ulong		membase_end;	/* End of base memory of the card */
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index 5f3eacdf..f99c0db 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -399,7 +399,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
+ 
+ 		if (isr & (UART_17158_IIR_RDI_TIMEOUT | UART_IIR_RDI)) {
+ 			/* Read data from uart -> queue */
+-			brd->intr_rx++;
+ 			ch->ch_intr_rx++;
+ 			neo_copy_data_from_uart_to_queue(ch);
+ 
+@@ -515,7 +514,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
+ 	ch->ch_cached_lsr |= linestatus;
+ 
+ 	if (ch->ch_cached_lsr & UART_LSR_DR) {
+-		brd->intr_rx++;
+ 		ch->ch_intr_rx++;
+ 		/* Read data from uart -> queue */
+ 		neo_copy_data_from_uart_to_queue(ch);
+-- 
+1.9.1
 
-drivers/firmware/qcom_scm-64.c
-   127          do {
-   128                  mutex_lock(&qcom_scm_lock);
-   129  
-   130                  cmd = ARM_SMCCC_CALL_VAL(ARM_SMCCC_STD_CALL,
-   131                                           qcom_smccc_convention,
-   132                                           ARM_SMCCC_OWNER_SIP, fn_id);
-   133  
-   134                  do {
-   135                          arm_smccc_smc(cmd, desc->arginfo, desc->args[0],
-   136                                        desc->args[1], desc->args[2], x5, 0, 0,
-   137                                        &desc->res);
-   138                  } while (desc->res.a0 = QCOM_SCM_INTERRUPTED);
-   139  
-   140                  mutex_unlock(&qcom_scm_lock);
-   141  
-   142                  if (desc->res.a0 = QCOM_SCM_V2_EBUSY) {
-   143                          if (retry_count++ > QCOM_SCM_EBUSY_MAX_RETRY)
-   144                                  break;
-   145                          msleep(QCOM_SCM_EBUSY_WAIT_MS);
-   146                  }
-   147          }  while (desc->res.a0 = QCOM_SCM_V2_EBUSY);
-   148  
-   149          if (args_virt) {
-   150                  dma_unmap_single(dev, args_phys, alloc_len, DMA_TO_DEVICE);
-   151                  kfree(args_virt);
-   152          }
-   153  
-   154          if (desc->res.a0 < 0)
-                    ^^^^^^^^^^^^^^^^
-This is never true.  It's an unsigned long now but probably it should be
-changed to an int?
-
-   155                  return qcom_scm_remap_error(desc->res.a0);
-   156  
-   157          return 0;
-   158  }
-
-regards,
-dan carpenter
