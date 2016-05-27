@@ -1,41 +1,76 @@
 From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 12 May 2016 11:12:02 +0000
-Subject: [PATCH 2/3] staging: dgnc: remove redundant variable null check
-Message-Id: <20160512111202.GA28296@certreview.com>
+Date: Fri, 27 May 2016 06:54:41 +0000
+Subject: [PATCH 6/7] staging: dgnc: remove useless variable 'ch_intr_tx'
+Message-Id: <20160527065441.GA3037@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The unit struct(un_t) was not used in dgnc_tty_hangup().
+The 'ch_intr_tx' variable was used only for increasing.
+So the 'ch_intr_tx' variable is not useful for this driver.
 
 Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/staging/dgnc/dgnc_tty.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/staging/dgnc/dgnc_cls.c    | 1 -
+ drivers/staging/dgnc/dgnc_driver.h | 1 -
+ drivers/staging/dgnc/dgnc_neo.c    | 3 ---
+ 3 files changed, 5 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 52a1613..5119bcb 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -1294,15 +1294,9 @@ static int dgnc_block_til_ready(struct tty_struct *tty,
-  */
- static void dgnc_tty_hangup(struct tty_struct *tty)
- {
--	struct un_t	*un;
--
- 	if (!tty || tty->magic != TTY_MAGIC)
- 		return;
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index d7ff5fa..695f8ce 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -397,7 +397,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
+ 			/* Transfer data (if any) from Write Queue -> UART. */
+ 			spin_lock_irqsave(&ch->ch_lock, flags);
+ 			ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
+-			ch->ch_intr_tx++;
+ 			spin_unlock_irqrestore(&ch->ch_lock, flags);
+ 			cls_copy_data_from_queue_to_uart(ch);
+ 		}
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index 1063388..8bdf556 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -377,7 +377,6 @@ struct channel_t {
+ 	ulong		ch_xon_sends;	/* Count of xons transmitted */
+ 	ulong		ch_xoff_sends;	/* Count of xoffs transmitted */
  
--	un = tty->driver_data;
--	if (!un || un->magic != DGNC_UNIT_MAGIC)
--		return;
--
- 	/* flush the transmit queues */
- 	dgnc_tty_flush_buffer(tty);
- }
+-	ulong		ch_intr_tx;	/* Count of interrupts */
+ 	ulong		ch_intr_rx;	/* Count of interrupts */
+ 
+ 	/* /proc/<board>/<channel> entries */
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index 9b3264c..574a227 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -409,7 +409,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
+ 		}
+ 
+ 		if (isr & UART_IIR_THRI) {
+-			ch->ch_intr_tx++;
+ 			/* Transfer data (if any) from Write Queue -> UART. */
+ 			spin_lock_irqsave(&ch->ch_lock, flags);
+ 			ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
+@@ -546,7 +545,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
+ 	}
+ 
+ 	if (linestatus & UART_LSR_THRE) {
+-		ch->ch_intr_tx++;
+ 		spin_lock_irqsave(&ch->ch_lock, flags);
+ 		ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
+ 		spin_unlock_irqrestore(&ch->ch_lock, flags);
+@@ -554,7 +552,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
+ 		/* Transfer data (if any) from Write Queue -> UART. */
+ 		neo_copy_data_from_queue_to_uart(ch);
+ 	} else if (linestatus & UART_17158_TX_AND_FIFO_CLR) {
+-		ch->ch_intr_tx++;
+ 		spin_lock_irqsave(&ch->ch_lock, flags);
+ 		ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
+ 		spin_unlock_irqrestore(&ch->ch_lock, flags);
 -- 
-2.8.2
+1.9.1
 
