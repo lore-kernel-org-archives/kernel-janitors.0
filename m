@@ -1,7 +1,7 @@
 From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 27 May 2016 06:53:36 +0000
-Subject: [PATCH 3/7] staging: dgnc: remove useless variable 'intr_tx'
-Message-Id: <20160527065336.GA2991@SEL-JYOUN-D1>
+Date: Fri, 27 May 2016 06:54:20 +0000
+Subject: [PATCH 5/7] staging: dgnc: remove useless variable 'ch_intr_modem'
+Message-Id: <20160527065420.GA3023@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,68 +9,60 @@ Content-Transfer-Encoding: 7bit
 To: lidza.louina@gmail.com
 Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The 'intr_tx' variable was used only for increasing.
-So the 'intr_tx' variable is not useful for this driver.
+The 'ch_intr_modem' variable was used only for increasing.
+So the 'ch_intr_modem' variable is not useful for this driver.
 
 Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/staging/dgnc/dgnc_cls.c    | 1 -
+ drivers/staging/dgnc/dgnc_cls.c    | 9 ---------
  drivers/staging/dgnc/dgnc_driver.h | 1 -
- drivers/staging/dgnc/dgnc_neo.c    | 3 ---
- 3 files changed, 5 deletions(-)
+ drivers/staging/dgnc/dgnc_neo.c    | 1 -
+ 3 files changed, 11 deletions(-)
 
 diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
-index 8cb7361..415a739 100644
+index 35526f8..d7ff5fa 100644
 --- a/drivers/staging/dgnc/dgnc_cls.c
 +++ b/drivers/staging/dgnc/dgnc_cls.c
-@@ -398,7 +398,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
- 			/* Transfer data (if any) from Write Queue -> UART. */
- 			spin_lock_irqsave(&ch->ch_lock, flags);
- 			ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
--			brd->intr_tx++;
- 			ch->ch_intr_tx++;
- 			spin_unlock_irqrestore(&ch->ch_lock, flags);
+@@ -402,15 +402,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
  			cls_copy_data_from_queue_to_uart(ch);
-diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
-index 2caeff7..a8d823b 100644
---- a/drivers/staging/dgnc/dgnc_driver.h
-+++ b/drivers/staging/dgnc/dgnc_driver.h
-@@ -183,7 +183,6 @@ struct dgnc_board {
- 	uint		nasync;		/* Number of ports on card */
- 
- 	uint		irq;		/* Interrupt request number */
--	ulong		intr_tx;	/* Count of interrupts */
- 	ulong		intr_rx;	/* Count of interrupts */
- 
- 	ulong		membase;	/* Start of base memory of the card */
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index a3e100b..5f3eacdf 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -410,7 +410,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
  		}
  
- 		if (isr & UART_IIR_THRI) {
--			brd->intr_tx++;
- 			ch->ch_intr_tx++;
- 			/* Transfer data (if any) from Write Queue -> UART. */
- 			spin_lock_irqsave(&ch->ch_lock, flags);
-@@ -550,7 +549,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
+-		/* CTS/RTS change of state */
+-		if (isr & UART_IIR_CTSRTS) {
+-			ch->ch_intr_modem++;
+-			/*
+-			 * Don't need to do anything, the cls_parse_modem
+-			 * below will grab the updated modem signals.
+-			 */
+-		}
+-
+ 		/* Parse any modem signal changes */
+ 		cls_parse_modem(ch, readb(&ch->ch_cls_uart->msr));
  	}
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index 914130d..1063388 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -377,7 +377,6 @@ struct channel_t {
+ 	ulong		ch_xon_sends;	/* Count of xons transmitted */
+ 	ulong		ch_xoff_sends;	/* Count of xoffs transmitted */
  
- 	if (linestatus & UART_LSR_THRE) {
--		brd->intr_tx++;
- 		ch->ch_intr_tx++;
- 		spin_lock_irqsave(&ch->ch_lock, flags);
- 		ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
-@@ -559,7 +557,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
- 		/* Transfer data (if any) from Write Queue -> UART. */
- 		neo_copy_data_from_queue_to_uart(ch);
- 	} else if (linestatus & UART_17158_TX_AND_FIFO_CLR) {
--		brd->intr_tx++;
- 		ch->ch_intr_tx++;
- 		spin_lock_irqsave(&ch->ch_lock, flags);
- 		ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
+-	ulong		ch_intr_modem;	/* Count of interrupts */
+ 	ulong		ch_intr_tx;	/* Count of interrupts */
+ 	ulong		ch_intr_rx;	/* Count of interrupts */
+ 
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index f99c0db..9b3264c 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -450,7 +450,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
+ 			 * If we get here, this means the hardware is doing auto flow control.
+ 			 * Check to see whether RTS/DTR or CTS/DSR caused this interrupt.
+ 			 */
+-			ch->ch_intr_modem++;
+ 			cause = readb(&ch->ch_neo_uart->mcr);
+ 			/* Which pin is doing auto flow? RTS or DTR? */
+ 			if ((cause & 0x4) = 0) {
 -- 
 1.9.1
 
