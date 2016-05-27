@@ -1,51 +1,62 @@
 From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Tue, 10 May 2016 06:44:50 +0000
-Subject: [PATCH 1/2 RESEND] staging: dgnc: remove redundant NULL checks in
-Message-Id: <20160510064450.GA25522@certreview.com>
+Date: Fri, 27 May 2016 06:52:58 +0000
+Subject: [PATCH 1/7] staging: dgnc: remove useless variable 'intr_count'
+Message-Id: <20160527065258.GA2945@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The dgnc_block_til_ready() is only used in dgnc_tty_open().
-The unit data(struct un_t) was stored into tty->driver_data in dgnc_tty_open().
-And also tty and un were tested about NULL so these variables doesn't
-need to check for NULL in dgnc_block_til_ready().
+The 'intr_count' variable was used only for increasing.
+So the 'intr_count' variable is not useful for this driver.
 
 Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
-RESEND: more explanation about this patch.
-origin patch : https://lkml.org/lkml/2016/5/4/12
+ drivers/staging/dgnc/dgnc_cls.c    | 2 --
+ drivers/staging/dgnc/dgnc_driver.h | 1 -
+ drivers/staging/dgnc/dgnc_neo.c    | 2 --
+ 3 files changed, 5 deletions(-)
 
- drivers/staging/dgnc/dgnc_tty.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index a505775..cff34d4 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -1172,17 +1172,12 @@ static int dgnc_block_til_ready(struct tty_struct *tty,
- 				struct channel_t *ch)
- {
- 	int retval = 0;
--	struct un_t *un = NULL;
-+	struct un_t *un = tty->driver_data;
- 	unsigned long flags;
- 	uint	old_flags = 0;
- 	int	sleep_on_un_flags = 0;
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index 46c050c..dcb808f 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -760,8 +760,6 @@ static irqreturn_t cls_intr(int irq, void *voidbrd)
  
--	if (!tty || tty->magic != TTY_MAGIC || !file || !ch ||
--	    ch->magic != DGNC_CHANNEL_MAGIC)
--		return -ENXIO;
+ 	spin_lock_irqsave(&brd->bd_intr_lock, flags);
+ 
+-	brd->intr_count++;
 -
--	un = tty->driver_data;
--	if (!un || un->magic != DGNC_UNIT_MAGIC)
-+	if (!file)
- 		return -ENXIO;
+ 	/*
+ 	 * Check the board's global interrupt offset to see if we
+ 	 * we actually do have an interrupt pending for us.
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index 95ec729..7ac33ed 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -183,7 +183,6 @@ struct dgnc_board {
+ 	uint		nasync;		/* Number of ports on card */
  
- 	spin_lock_irqsave(&ch->ch_lock, flags);
+ 	uint		irq;		/* Interrupt request number */
+-	ulong		intr_count;	/* Count of interrupts */
+ 	ulong		intr_modem;	/* Count of interrupts */
+ 	ulong		intr_tx;	/* Count of interrupts */
+ 	ulong		intr_rx;	/* Count of interrupts */
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index ba57e95..3f8bbb3 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -926,8 +926,6 @@ static irqreturn_t neo_intr(int irq, void *voidbrd)
+ 	if (!brd || brd->magic != DGNC_BOARD_MAGIC)
+ 		return IRQ_NONE;
+ 
+-	brd->intr_count++;
+-
+ 	/* Lock out the slow poller from running on this board. */
+ 	spin_lock_irqsave(&brd->bd_intr_lock, flags);
+ 
 -- 
-2.8.2
+1.9.1
 
