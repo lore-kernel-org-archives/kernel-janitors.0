@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 28 May 2016 10:53:39 +0000
+Date: Sat, 28 May 2016 11:05:14 +0000
 Subject: Re: [patch] usb: f_fs: off by one bug in _ffs_func_bind()
-Message-Id: <20160528105339.GG10957@mwanda>
+Message-Id: <20160528110514.GS11011@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160527112311.GC3255@mwanda>
 In-Reply-To: <20160527112311.GC3255@mwanda>
@@ -26,7 +26,8 @@ c -l
 > (albeit mostly in tools and scripts), CodingStyle is silent on that
 > front and checkpatch.pl doesn=E2=80=99t complain about it.
 
-Try compiling the code you suggested.
+There is one in Documentation, the rest are basically all in tools or
+ifdef 0.  Otherwise it causes a GCC warning.
 
 regards,
 dan carpenter
