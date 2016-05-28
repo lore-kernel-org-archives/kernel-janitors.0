@@ -1,64 +1,45 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 28 May 2016 09:05:33 +0000
+From: Michal Nazarewicz <mina86@mina86.com>
+Date: Sat, 28 May 2016 10:16:26 +0000
 Subject: Re: [patch v2] usb: f_fs: off by one bug in _ffs_func_bind()
-Message-Id: <57495F5D.1040607@bfs.de>
+Message-Id: <xa1t1t4mwkqt.fsf@mina86.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160528044810.GA4107@mwanda>
 In-Reply-To: <20160528044810.GA4107@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Nazarewicz <mina86@mina86.com>, Lars-Peter Clausen <lars@metafoo.de>, Robert Baldyga <r.baldyga@samsung.com>, Al Viro <viro@ZenIV.linux.org.uk>, Daniel Walter <dwalter@sigma-star.at>, "Du, Changbin" <changbin.du@intel.com>, Rui Miguel Silva <rui.silva@linaro.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Dan Carpenter <dan.carpenter@oracle.com>, Felipe Balbi <balbi@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lars-Peter Clausen <lars@metafoo.de>, Robert Baldyga <r.baldyga@samsung.com>, Al Viro <viro@ZenIV.linux.org.uk>, Daniel Walter <dwalter@sigma-star.at>, "Du, Changbin" <changbin.du@intel.com>, Rui Miguel Silva <rui.silva@linaro.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-much better readable than the original.
-nice work
-
-re,
- wh
-
-Am 28.05.2016 06:48, schrieb Dan Carpenter:
-> This loop is supposed to set all the .num[] values to -1 but it's off by
-> one so it skips the first element and sets one element past the end of
-> the array.
-> 
-> I've cleaned up the loop a little as well.
-> 
-> Fixes: ddf8abd25994 ('USB: f_fs: the FunctionFS driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: move the eps_ptr assignment outside the loop.
-> 
-> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-> index 73515d5..d26eb64 100644
-> --- a/drivers/usb/gadget/function/f_fs.c
-> +++ b/drivers/usb/gadget/function/f_fs.c
-> @@ -2729,6 +2729,7 @@ static int _ffs_func_bind(struct usb_configuration *c,
->  		func->ffs->ss_descs_count;
->  
->  	int fs_len, hs_len, ss_len, ret, i;
-> +	struct ffs_ep *eps_ptr;
->  
->  	/* Make it a single chunk, less management later on */
->  	vla_group(d);
-> @@ -2777,12 +2778,9 @@ static int _ffs_func_bind(struct usb_configuration *c,
->  	       ffs->raw_descs_length);
->  
->  	memset(vla_ptr(vlabuf, d, inums), 0xff, d_inums__sz);
-> -	for (ret = ffs->eps_count; ret; --ret) {
-> -		struct ffs_ep *ptr;
-> -
-> -		ptr = vla_ptr(vlabuf, d, eps);
-> -		ptr[ret].num = -1;
-> -	}
-> +	eps_ptr = vla_ptr(vlabuf, d, eps);
-> +	for (i = 0; i < ffs->eps_count; i++)
-> +		eps_ptr[i].num = -1;
->  
->  	/* Save pointers
->  	 * d_eps = vlabuf, func->eps used to kfree vlabuf later
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+T24gU2F0LCBNYXkgMjggMjAxNiwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBUaGlzIGxvb3AgaXMg
+c3VwcG9zZWQgdG8gc2V0IGFsbCB0aGUgLm51bVtdIHZhbHVlcyB0byAtMSBidXQgaXQncyBvZmYg
+YnkKPiBvbmUgc28gaXQgc2tpcHMgdGhlIGZpcnN0IGVsZW1lbnQgYW5kIHNldHMgb25lIGVsZW1l
+bnQgcGFzdCB0aGUgZW5kIG9mCj4gdGhlIGFycmF5Lgo+Cj4gSSd2ZSBjbGVhbmVkIHVwIHRoZSBs
+b29wIGEgbGl0dGxlIGFzIHdlbGwuCj4KPiBGaXhlczogZGRmOGFiZDI1OTk0ICgnVVNCOiBmX2Zz
+OiB0aGUgRnVuY3Rpb25GUyBkcml2ZXInKQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIg
+PGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KCkFja2VkLWJ5OiBNaWNoYWwgTmF6YXJld2ljeiA8
+bWluYTg2QG1pbmE4Ni5jb20+Cgo+IC0tLQo+IHYyOiBtb3ZlIHRoZSBlcHNfcHRyIGFzc2lnbm1l
+bnQgb3V0c2lkZSB0aGUgbG9vcC4KPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9nYWRnZXQv
+ZnVuY3Rpb24vZl9mcy5jIGIvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfZnMuYwo+IGlu
+ZGV4IDczNTE1ZDUuLmQyNmViNjQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1
+bmN0aW9uL2ZfZnMuYwo+ICsrKyBiL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX2ZzLmMK
+PiBAQCAtMjcyOSw2ICsyNzI5LDcgQEAgc3RhdGljIGludCBfZmZzX2Z1bmNfYmluZChzdHJ1Y3Qg
+dXNiX2NvbmZpZ3VyYXRpb24gKmMsCj4gIAkJZnVuYy0+ZmZzLT5zc19kZXNjc19jb3VudDsKPiAg
+Cj4gIAlpbnQgZnNfbGVuLCBoc19sZW4sIHNzX2xlbiwgcmV0LCBpOwo+ICsJc3RydWN0IGZmc19l
+cCAqZXBzX3B0cjsKPiAgCj4gIAkvKiBNYWtlIGl0IGEgc2luZ2xlIGNodW5rLCBsZXNzIG1hbmFn
+ZW1lbnQgbGF0ZXIgb24gKi8KPiAgCXZsYV9ncm91cChkKTsKPiBAQCAtMjc3NywxMiArMjc3OCw5
+IEBAIHN0YXRpYyBpbnQgX2Zmc19mdW5jX2JpbmQoc3RydWN0IHVzYl9jb25maWd1cmF0aW9uICpj
+LAo+ICAJICAgICAgIGZmcy0+cmF3X2Rlc2NzX2xlbmd0aCk7Cj4gIAo+ICAJbWVtc2V0KHZsYV9w
+dHIodmxhYnVmLCBkLCBpbnVtcyksIDB4ZmYsIGRfaW51bXNfX3N6KTsKPiAtCWZvciAocmV0ID0g
+ZmZzLT5lcHNfY291bnQ7IHJldDsgLS1yZXQpIHsKPiAtCQlzdHJ1Y3QgZmZzX2VwICpwdHI7Cj4g
+LQo+IC0JCXB0ciA9IHZsYV9wdHIodmxhYnVmLCBkLCBlcHMpOwo+IC0JCXB0cltyZXRdLm51bSA9
+IC0xOwo+IC0JfQo+ICsJZXBzX3B0ciA9IHZsYV9wdHIodmxhYnVmLCBkLCBlcHMpOwo+ICsJZm9y
+IChpID0gMDsgaSA8IGZmcy0+ZXBzX2NvdW50OyBpKyspCj4gKwkJZXBzX3B0cltpXS5udW0gPSAt
+MTsKPiAgCj4gIAkvKiBTYXZlIHBvaW50ZXJzCj4gIAkgKiBkX2VwcyA9IHZsYWJ1ZiwgZnVuYy0+
+ZXBzIHVzZWQgdG8ga2ZyZWUgdmxhYnVmIGxhdGVyCgotLSAKQmVzdCByZWdhcmRzCuODn+ODj+OC
+piDigJzwnZO28J2TsvCdk7fwnZOqODbigJ0g44OK44K244Os44O044Kk44OECsKrSWYgYXQgZmly
+c3QgeW91IGRvbuKAmXQgc3VjY2VlZCwgZ2l2ZSB1cCBza3lkaXZpbmfCuwotLQpUbyB1bnN1YnNj
+cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWph
+bml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
+Lm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
+ZG9tby1pbmZvLmh0bWw=
