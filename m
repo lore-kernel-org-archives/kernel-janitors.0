@@ -1,60 +1,32 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Thu, 05 May 2016 13:57:18 +0000
-Subject: Re: [patch] ACPI / sysfs: fix error code in get_status()
-Message-Id: <5672229.qojIpb3PLe@vostro.rjw.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 28 May 2016 05:01:46 +0000
+Subject: [patch] i2c: dev: use after free in detach
+Message-Id: <20160528050146.GC4107@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160505132304.GF3038@mwanda>
-In-Reply-To: <20160505132304.GF3038@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Erico Nunes <erico.nunes@datacom.ind.br>
+Cc: linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thursday, May 05, 2016 04:23:04 PM Dan Carpenter wrote:
-> The problem with ornamental, do-nothing gotos is that they lead to
-> "forgot to set the error code" bugs.  We should be returning -EINVAL
-> here but we don't.  It leads to an uninitalized variable in
-> counter_show():
-> 
->     drivers/acpi/sysfs.c:603 counter_show()
->     error: uninitialized symbol 'status'.
-> 
-> Fixes: 1c8fce27e275 ('ACPI: introduce drivers/acpi/sysfs.c')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The call to return_i2c_dev() frees "i2c_dev" so there is a use after
+free when we call cdev_del(&i2c_dev->cdev).
 
-Good catch!
+Fixes: d6760b14d4a1 ('i2c: dev: switch from register_chrdev to cdev API')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
-> index 0243d37..4b3a9e2 100644
-> --- a/drivers/acpi/sysfs.c
-> +++ b/drivers/acpi/sysfs.c
-> @@ -555,23 +555,22 @@ static void acpi_global_event_handler(u32 event_type, acpi_handle device,
->  static int get_status(u32 index, acpi_event_status *status,
->  		      acpi_handle *handle)
->  {
-> -	int result = 0;
-> +	int result;
->  
->  	if (index >= num_gpes + ACPI_NUM_FIXED_EVENTS)
-> -		goto end;
-> +		return -EINVAL;
->  
->  	if (index < num_gpes) {
->  		result = acpi_get_gpe_device(index, handle);
->  		if (result) {
->  			ACPI_EXCEPTION((AE_INFO, AE_NOT_FOUND,
->  					"Invalid GPE 0x%x", index));
-> -			goto end;
-> +			return result;
->  		}
->  		result = acpi_get_gpe_status(*handle, index, status);
->  	} else if (index < (num_gpes + ACPI_NUM_FIXED_EVENTS))
->  		result = acpi_get_event_status(index - num_gpes, status);
->  
-> -end:
->  	return result;
->  }
-
-Applied, thanks!
-
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index 2562a45..3bf4f0d 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -592,9 +592,9 @@ static int i2cdev_detach_adapter(struct device *dev, void *dummy)
+ 	if (!i2c_dev) /* attach_adapter must have failed */
+ 		return 0;
+ 
++	cdev_del(&i2c_dev->cdev);
+ 	return_i2c_dev(i2c_dev);
+ 	device_destroy(i2c_dev_class, MKDEV(I2C_MAJOR, adap->nr));
+-	cdev_del(&i2c_dev->cdev);
+ 
+ 	pr_debug("i2c-dev: adapter [%s] unregistered\n", adap->name);
+ 	return 0;
