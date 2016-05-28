@@ -1,50 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 28 May 2016 04:46:18 +0000
+From: Michal Nazarewicz <mina86@mina86.com>
+Date: Sat, 28 May 2016 10:15:24 +0000
 Subject: Re: [patch] usb: f_fs: off by one bug in _ffs_func_bind()
-Message-Id: <20160528044618.GQ11011@mwanda>
+Message-Id: <xa1t4m9iwksj.fsf@mina86.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160527112311.GC3255@mwanda>
 In-Reply-To: <20160527112311.GC3255@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-On Fri, May 27, 2016 at 07:25:30PM +0200, walter harms wrote:
-> 
-> 
-> Am 27.05.2016 14:23, schrieb Michal Nazarewicz:
-> > On Fri, May 27 2016, Dan Carpenter wrote:
-> >> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-> >> index 73515d5..7fff81a 100644
-> >> --- a/drivers/usb/gadget/function/f_fs.c
-> >> +++ b/drivers/usb/gadget/function/f_fs.c
-> >> @@ -2777,11 +2777,11 @@ static int _ffs_func_bind(struct usb_configuration *c,
-> >>  	       ffs->raw_descs_length);
-> >>  
-> >>  	memset(vla_ptr(vlabuf, d, inums), 0xff, d_inums__sz);
-> >> -	for (ret = ffs->eps_count; ret; --ret) {
-> >> +	for (i = 0; i < ffs->eps_count; i++) {
-> >>  		struct ffs_ep *ptr;
-> >>  
-> >>  		ptr = vla_ptr(vlabuf, d, eps);
-> > 
-> > As pointed by Walter, this could be moved outside.  Maybe
-> > 
-> > 	i = ffs->eps_count;
-> > 	for (struct ffs_ep *ptr = vla_ptr(vlabuf, d, eps); i; ++ptr, --i)
-> > 		ptr->num = -1;
-> > 
-> 
-> I think staying with an array here improves readability.
-> 
-
-I'm surprised you didn't comment on the --i.  I was thinking about you
-when I changed it to a ++ loop.  Also in the kernel we have to declare
-variables at the start of the block.
-
-Anyway, let me send a v2.
-
-regards,
-dan carpenter
-
+T24gU2F0LCBNYXkgMjggMjAxNiwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBBbHNvIGluIHRoZSBr
+ZXJuZWwgd2UgaGF2ZSB0byBkZWNsYXJlIHZhcmlhYmxlcyBhdCB0aGUgc3RhcnQgb2YgdGhlCj4g
+YmxvY2suCgovbWUgc2hydWdzCgpJIGxvb2tlZCBhdCB0aGlzIG91dCBvZiBjdXJpb3NpdHkgYW5k
+IHRoZXJlIGFyZSBwcmVjZWRlbnRzOgoKICAgICQgZ2l0IGdyZXAgJ2ZvciAoXChpbnRcfHVuc2ln
+bmVkXHxzaWduZWRcfGxvbmdcfGNoYXJcKVtbOnNwYWNlOl1dJyB8d2MgLWwKICAgIDE5CgooYWxi
+ZWl0IG1vc3RseSBpbiB0b29scyBhbmQgc2NyaXB0cyksIENvZGluZ1N0eWxlIGlzIHNpbGVudCBv
+biB0aGF0CmZyb250IGFuZCBjaGVja3BhdGNoLnBsIGRvZXNu4oCZdCBjb21wbGFpbiBhYm91dCBp
+dC4KCi0tIApCZXN0IHJlZ2FyZHMK44Of44OP44KmIOKAnPCdk7bwnZOy8J2Tt/Cdk6o4NuKAnSDj
+g4rjgrbjg6zjg7TjgqTjg4QKwqtJZiBhdCBmaXJzdCB5b3UgZG9u4oCZdCBzdWNjZWVkLCBnaXZl
+IHVwIHNreWRpdmluZ8K7Ci0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRo
+ZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVz
+c2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
+IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
