@@ -1,39 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 28 May 2016 11:05:14 +0000
+From: Michal Nazarewicz <mina86@mina86.com>
+Date: Sat, 28 May 2016 12:01:55 +0000
 Subject: Re: [patch] usb: f_fs: off by one bug in _ffs_func_bind()
-Message-Id: <20160528110514.GS11011@mwanda>
+Message-Id: <xa1tshx2v1ak.fsf@mina86.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160527112311.GC3255@mwanda>
 In-Reply-To: <20160527112311.GC3255@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-On Sat, May 28, 2016 at 12:15:24PM +0200, Michal Nazarewicz wrote:
-> On Sat, May 28 2016, Dan Carpenter wrote:
-> > Also in the kernel we have to declare variables at the start of the
-> > block.
->=20
-> /me shrugs
->=20
-> I looked at this out of curiosity and there are precedents:
->=20
->     $ git grep 'for (\(int\|unsigned\|signed\|long\|char\)[[:space:]]' |w=
-c -l
->     19
->=20
-> (albeit mostly in tools and scripts), CodingStyle is silent on that
-> front and checkpatch.pl doesn=E2=80=99t complain about it.
-
-There is one in Documentation, the rest are basically all in tools or
-ifdef 0.  Otherwise it causes a GCC warning.
-
-regards,
-dan carpenter
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gU2F0LCBNYXkgMjggMjAxNiwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBUcnkgY29tcGlsaW5n
+IHRoZSBjb2RlIHlvdSBzdWdnZXN0ZWQuCgpJIGZpbmQgdGhpcyBhbXVzaW5nIHRvIGJlIHBlcmZl
+Y3RseSBob25lc3QuCgpLZXJuZWwgdXNlcyBkZXNpZ25hdGVkIGluaXRpYWxpc2VycywgZmxleGli
+bGUgYXJyYXkgbWVtYmVycywgc3RkaW50LmgsCmNvbXBvdW5kIGxpdGVyYWxzIGFuZCB2YXJpYWRp
+YyBtYWNyb3MsIHlldCBzdGlsbCBmb3Igc29tZSByZWFzb24gc3RpY2tzCnRvIC1zdGQ9Z251ODku
+CgpObyBtYXR0ZXIsIHRoaXMgaXMgYSByYXRoZXIgb2ZmIHRvcGljIGRpc2N1c3Npb24uCgotLSAK
+QmVzdCByZWdhcmRzCuODn+ODj+OCpiDigJzwnZO28J2TsvCdk7fwnZOqODbigJ0g44OK44K244Os
+44O044Kk44OECsKrSWYgYXQgZmlyc3QgeW91IGRvbuKAmXQgc3VjY2VlZCwgZ2l2ZSB1cCBza3lk
+aXZpbmfCuwotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAi
+dW5zdWJzY3JpYmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8g
+bWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8v
+dmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
