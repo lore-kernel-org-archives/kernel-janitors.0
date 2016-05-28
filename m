@@ -1,25 +1,38 @@
-From: Michal Nazarewicz <mina86@mina86.com>
-Date: Sat, 28 May 2016 10:15:24 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 28 May 2016 10:53:39 +0000
 Subject: Re: [patch] usb: f_fs: off by one bug in _ffs_func_bind()
-Message-Id: <xa1t4m9iwksj.fsf@mina86.com>
+Message-Id: <20160528105339.GG10957@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160527112311.GC3255@mwanda>
 In-Reply-To: <20160527112311.GC3255@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-T24gU2F0LCBNYXkgMjggMjAxNiwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBBbHNvIGluIHRoZSBr
-ZXJuZWwgd2UgaGF2ZSB0byBkZWNsYXJlIHZhcmlhYmxlcyBhdCB0aGUgc3RhcnQgb2YgdGhlCj4g
-YmxvY2suCgovbWUgc2hydWdzCgpJIGxvb2tlZCBhdCB0aGlzIG91dCBvZiBjdXJpb3NpdHkgYW5k
-IHRoZXJlIGFyZSBwcmVjZWRlbnRzOgoKICAgICQgZ2l0IGdyZXAgJ2ZvciAoXChpbnRcfHVuc2ln
-bmVkXHxzaWduZWRcfGxvbmdcfGNoYXJcKVtbOnNwYWNlOl1dJyB8d2MgLWwKICAgIDE5CgooYWxi
-ZWl0IG1vc3RseSBpbiB0b29scyBhbmQgc2NyaXB0cyksIENvZGluZ1N0eWxlIGlzIHNpbGVudCBv
-biB0aGF0CmZyb250IGFuZCBjaGVja3BhdGNoLnBsIGRvZXNu4oCZdCBjb21wbGFpbiBhYm91dCBp
-dC4KCi0tIApCZXN0IHJlZ2FyZHMK44Of44OP44KmIOKAnPCdk7bwnZOy8J2Tt/Cdk6o4NuKAnSDj
-g4rjgrbjg6zjg7TjgqTjg4QKwqtJZiBhdCBmaXJzdCB5b3UgZG9u4oCZdCBzdWNjZWVkLCBnaXZl
-IHVwIHNreWRpdmluZ8K7Ci0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRo
-ZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVz
-c2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
-IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+On Sat, May 28, 2016 at 12:15:24PM +0200, Michal Nazarewicz wrote:
+> On Sat, May 28 2016, Dan Carpenter wrote:
+> > Also in the kernel we have to declare variables at the start of the
+> > block.
+>=20
+> /me shrugs
+>=20
+> I looked at this out of curiosity and there are precedents:
+>=20
+>     $ git grep 'for (\(int\|unsigned\|signed\|long\|char\)[[:space:]]' |w=
+c -l
+>     19
+>=20
+> (albeit mostly in tools and scripts), CodingStyle is silent on that
+> front and checkpatch.pl doesn=E2=80=99t complain about it.
+
+Try compiling the code you suggested.
+
+regards,
+dan carpenter
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
