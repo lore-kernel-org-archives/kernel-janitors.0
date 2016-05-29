@@ -1,12 +1,14 @@
 From: Jinbum Park <jinb.park7@gmail.com>
-Date: Tue, 24 May 2016 17:08:29 +0000
+Date: Sun, 29 May 2016 14:42:21 +0000
 Subject: [PATCH] kprobes: fix a comment typo
-Message-Id: <20160524170829.GA6931@pjb1027-Latitude-E5410>
+Message-Id: <20160529144221.GA14080@pjb1027-Latitude-E5410>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160524170829.GA6931@pjb1027-Latitude-E5410>
+In-Reply-To: <20160524170829.GA6931@pjb1027-Latitude-E5410>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 Just fix a typo in the code comment.
 
