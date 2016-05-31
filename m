@@ -1,38 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 30 May 2016 07:05:47 +0000
-Subject: Re: [PATCH] Revert "i2c: dev: switch from register_chrdev to cdev API"
-Message-Id: <20160530070547.GA18199@mwanda>
+Date: Tue, 31 May 2016 16:05:56 +0000
+Subject: [patch] IB/core: fix an error code in ib_core_init()
+Message-Id: <20160531160556.GA23959@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1464426467-1824-1-git-send-email-wsa@the-dreams.de>
- <20160528091559.GR11011@mwanda>
- <20160528160458.GA1614@katana>
-In-Reply-To: <20160528160458.GA1614@katana>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Erico Nunes <erico.nunes@datacom.ind.br>, kernel-janitors@vger.kernel.org, LKP <lkp@01.org>
+To: Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Mark Bloch <markb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Ira Weiny <ira.weiny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Yotam Kenneth <yotamke-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sat, May 28, 2016 at 06:04:58PM +0200, Wolfram Sang wrote:
-> 
-> > These kinds of use after frees don't always cause a runtime problem.  I
-> > found it using static analysis, but I bet you could detect it if you
-> > enabled kasan.  The other option is to enable PAGE_POISONING?
-> 
-> Thanks, PAGE_POISONING did trigger the issue. So, I now picked up your
-> patch instead of the revert because I could verify the problem and the
-> proper solution. Thanks again.
-> 
-> What I still wonder: Which analysis reported the problem to you? I
-> always run sparse, smatch, cppcheck, and coccicheck on the patches when
-> applying and no-one reported the issue.
+We should return the error code if ib_add_ibnl_clients() fails.  The
+current code returns success.
 
-It's a Smatch warning but you have to build the cross function db to
-detect this.  It takes a while (a few hours) but the command is simple
-enough.
+Fixes: 735c631ae99d ('IB/core: Register SA ibnl client during ib_core initialization')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	./smatch_scripts/build_kernel_data.sh
-
-regards,
-dan carpenter
-
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index 5516fb0..8b8a8d9 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -1024,7 +1024,8 @@ static int __init ib_core_init(void)
+ 		goto err_mad;
+ 	}
+ 
+-	if (ib_add_ibnl_clients()) {
++	ret = ib_add_ibnl_clients();
++	if (ret) {
+ 		pr_warn("Couldn't register ibnl clients\n");
+ 		goto err_sa;
+ 	}
