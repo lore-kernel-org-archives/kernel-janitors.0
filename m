@@ -1,22 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 30 Jun 2016 12:56:26 +0000
-Subject: Re: [patch] be2net: signedness bug in be_msix_enable()
-Message-Id: <20160630.085626.1553236786452459332.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Jun 2016 12:04:16 +0000
+Subject: [patch -next] qed: potential overflow in qed_cxt_src_t2_alloc()
+Message-Id: <20160607120416.GA2175@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160629143943.GA22818@mwanda>
-In-Reply-To: <20160629143943.GA22818@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: sathya.perla@broadcom.com, ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Yuval Mintz <Yuval.Mintz@qlogic.com>
+Cc: Ariel Elior <Ariel.Elior@qlogic.com>, everest-linux-l2@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Jun 2016 17:39:43 +0300
+In the current code "ent_per_page" could be more than "conn_num" making
+"conn_num" negative after the subtraction.  In the next iteration
+through the loop then the negative is treated as a very high positive
+meaning we don't put a limit on "ent_num".  It could lead to memory
+corruption.
 
-> "num_vec" needs to be signed for the error handling to work.
-> 
-> Fixes: e261768e9e39 ('be2net: support asymmetric rx/tx queue counts')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: dbb799c39717 ('qed: Initialize hardware for new protocols')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_cxt.c b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+index d85b7ba..1c35f37 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+@@ -850,7 +850,7 @@ static int qed_cxt_src_t2_alloc(struct qed_hwfn *p_hwfn)
+ 			val = 0;
+ 		entries[j].next = cpu_to_be64(val);
+ 
+-		conn_num -= ent_per_page;
++		conn_num -= ent_num;
+ 	}
+ 
+ 	return 0;
