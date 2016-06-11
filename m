@@ -1,25 +1,41 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 20 Jun 2016 11:35:35 +0000
-Subject: Re: [patch] crypto: drbg - fix an error code in drbg_init_sym_kernel()
-Message-Id: <20160620113535.GE10773@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 11 Jun 2016 19:56:32 +0000
+Subject: [patch] media: s5p-mfc: fix a couple double frees in probe
+Message-Id: <20160611195632.GA1403@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160617091618.GC25609@mwanda>
-In-Reply-To: <20160617091618.GC25609@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephan Mueller <smueller@chronox.de>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kyungmin Park <kyungmin.park@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 17, 2016 at 12:16:19PM +0300, Dan Carpenter wrote:
-> We accidentally return PTR_ERR(NULL) which is success but we should
-> return -ENOMEM.
-> 
-> Fixes: 355912852115 ('crypto: drbg - use CTR AES instead of ECB AES')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The extra calls to video_device_release() are a bug, we free these after
+the goto.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Fixes: c974c436eaf4 ('s5p-mfc: Fix race between s5p_mfc_probe() and s5p_mfc_open()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This code would be easier to understand if it didn't use "come from"
+style label names so that "goto release_dec;" would release dec etc
+instead of "goto register_dec;"
+
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 6ee620e..274b4f1 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1266,7 +1266,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 	ret = video_register_device(dev->vfd_dec, VFL_TYPE_GRABBER, 0);
+ 	if (ret) {
+ 		v4l2_err(&dev->v4l2_dev, "Failed to register video device\n");
+-		video_device_release(dev->vfd_dec);
+ 		goto err_dec_reg;
+ 	}
+ 	v4l2_info(&dev->v4l2_dev,
+@@ -1275,7 +1274,6 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 	ret = video_register_device(dev->vfd_enc, VFL_TYPE_GRABBER, 0);
+ 	if (ret) {
+ 		v4l2_err(&dev->v4l2_dev, "Failed to register video device\n");
+-		video_device_release(dev->vfd_enc);
+ 		goto err_enc_reg;
+ 	}
+ 	v4l2_info(&dev->v4l2_dev,
