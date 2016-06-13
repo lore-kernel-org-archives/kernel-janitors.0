@@ -1,16 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 22 Jun 2016 20:21:23 +0000
-Subject: Re: [patch 1/3 -next] liquidio: a couple indenting tweaks
-Message-Id: <20160622.162123.1555917570649747643.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jun 2016 06:57:55 +0000
+Subject: [patch] x86/ldt: silence a static checker warning
+Message-Id: <20160613065755.GC5993@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160618084920.GD21713@mwanda>
-In-Reply-To: <20160618084920.GD21713@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: derek.chickles@caviumnetworks.com, satananda.burla@caviumnetworks.com, felix.manlunas@caviumnetworks.com, raghu.vatsavayi@caviumnetworks.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Jan Beulich <JBeulich@suse.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+It likely doesn't make a difference but my static checker complains
+that we put an upper bound on "size" but not a lower bound.  Let's just
+make it unsigned.
 
-Dan, please don't mix bug fixes and cleanups in the same patch
-series.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 6707039b..e25b668 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -34,7 +34,7 @@ static void flush_ldt(void *current_mm)
+ }
+ 
+ /* The caller must call finalize_ldt_struct on the result. LDT starts zeroed. */
+-static struct ldt_struct *alloc_ldt_struct(int size)
++static struct ldt_struct *alloc_ldt_struct(unsigned int size)
+ {
+ 	struct ldt_struct *new_ldt;
+ 	int alloc_size;
