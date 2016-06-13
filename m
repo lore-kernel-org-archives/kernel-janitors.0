@@ -1,25 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 29 Jun 2016 09:48:01 +0000
-Subject: Re: [patch] qlcnic: use the correct ring in qlcnic_83xx_process_rcv_ring_diag()
-Message-Id: <20160629.054801.713412217544385924.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jun 2016 06:54:22 +0000
+Subject: [patch] drm/i915/mocs: || vs | typo in get_mocs_settings()
+Message-Id: <20160613065422.GB5993@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160627205029.GA22095@mwanda>
-In-Reply-To: <20160627205029.GA22095@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: Dept-GELinuxNICDev@qlogic.com, sony.chacko@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@intel.com>, Mika Kuoppala <mika.kuoppala@linux.intel.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 27 Jun 2016 23:50:29 +0300
+It seems pretty clear that bitwise OR was intended here and not logical
+OR.
 
-> There is a static checker warning here "warn: mask and shift to zero"
-> and the code sets "ring" to zero every time.  From looking at how
-> QLCNIC_FETCH_RING_ID() is used in qlcnic_83xx_process_rcv_ring() the
-> qlcnic_83xx_hndl() should be removed.
-> 
-> Fixes: 4be41e92f7c6 ('qlcnic: 83xx data path routines')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 6fc29133eafb ('drm/i915/gen9: Add WaDisableSkipCaching')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/gpu/drm/i915/intel_mocs.c b/drivers/gpu/drm/i915/intel_mocs.c
+index 8f96c40..3c1482b 100644
+--- a/drivers/gpu/drm/i915/intel_mocs.c
++++ b/drivers/gpu/drm/i915/intel_mocs.c
+@@ -162,7 +162,7 @@ static bool get_mocs_settings(struct drm_i915_private *dev_priv,
+ 
+ 		for (i = 0; i < table->size; i++)
+ 			if (WARN_ON(table->table[i].l3cc_value &
+-				    (L3_ESC(1) || L3_SCC(0x7))))
++				    (L3_ESC(1) | L3_SCC(0x7))))
+ 				return false;
+ 	}
+ 
