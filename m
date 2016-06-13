@@ -1,30 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Jun 2016 06:57:55 +0000
-Subject: [patch] x86/ldt: silence a static checker warning
-Message-Id: <20160613065755.GC5993@mwanda>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Mon, 13 Jun 2016 21:14:39 +0000
+Subject: Re: [patch] x86/ldt: silence a static checker warning
+Message-Id: <CALCETrV0h+rAFBsjFGeLFGhzVOs3snHGVV=ECKDeXhpC1-mkjA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160613065755.GC5993@mwanda>
+In-Reply-To: <20160613065755.GC5993@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Jan Beulich <JBeulich@suse.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>, Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Jan Beulich <JBeulich@suse.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-It likely doesn't make a difference but my static checker complains
-that we put an upper bound on "size" but not a lower bound.  Let's just
-make it unsigned.
+On Sun, Jun 12, 2016 at 11:57 PM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
+> It likely doesn't make a difference but my static checker complains
+> that we put an upper bound on "size" but not a lower bound.  Let's just
+> make it unsigned.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Shouldn't oldsize and newsize in write_ldt as well as the "size"
+member in ldt_struct change, too?
 
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index 6707039b..e25b668 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -34,7 +34,7 @@ static void flush_ldt(void *current_mm)
- }
- 
- /* The caller must call finalize_ldt_struct on the result. LDT starts zeroed. */
--static struct ldt_struct *alloc_ldt_struct(int size)
-+static struct ldt_struct *alloc_ldt_struct(unsigned int size)
- {
- 	struct ldt_struct *new_ldt;
- 	int alloc_size;
+--Andy
