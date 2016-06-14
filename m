@@ -1,75 +1,37 @@
-From: DaeSeok Youn <daeseok.youn@gmail.com>
-Date: Tue, 21 Jun 2016 02:15:50 +0000
-Subject: Re: [PATCH 1/2 RESEND] staging: dgnc: remove redundant NULL checks in
-Message-Id: <CAHb8M2CrPUN4q42-9Yfm9cunF2BSvkcv408+uzKmvDd-LA256w@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Jun 2016 11:16:30 +0000
+Subject: [patch 1/2] staging: ks7010: parsing bugs in ks_wlan_read_config_file()
+Message-Id: <20160614111630.GA25457@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160510064450.GA25522@certreview.com> <CAHb8M2CnYfqtRUAnx8C4TVUCtkYyQs7Fbr6wT1==kbTtqehjEw@mail.gmail.com>
-In-Reply-To: <CAHb8M2CnYfqtRUAnx8C4TVUCtkYyQs7Fbr6wT1==kbTtqehjEw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Mark Hounschell <markh@compro.net>, Lidza Louina <lidza.louina@gmail.com>, "driverdev-devel@linuxdriverproject.org" <driverdev-devel@linuxdriverproject.org>, devel <devel@driverdev.osuosl.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-2016-06-16 18:23 GMT+09:00 DaeSeok Youn <daeseok.youn@gmail.com>:
-> 2016-05-10 15:44 GMT+09:00 Daeseok Youn <daeseok.youn@gmail.com>:
->> The dgnc_block_til_ready() is only used in dgnc_tty_open().
->> The unit data(struct un_t) was stored into tty->driver_data in dgnc_tty_open().
->> And also tty and un were tested about NULL so these variables doesn't
->> need to check for NULL in dgnc_block_til_ready().
->>
->> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
->> ---
-> Hello Greg,
->
-> This patch and patches from this were not merged into your tree for a one month.
-> Can you tell me why these are still waiting to merge?
+The check for the NUL terminator is wrong so it looks like this could
+read beyond the end of the buffer.
 
-Hello Greg,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Please have a look my comment. My patches have been waiting to merge
-your staging tree for a month.
-If you don't have pending patches from me, I can send those again.
-
-Thanks.
-regards,
-Daeseok.
->
-> Thanks.
-> regards,
-> Daeseok.
->
->
->> RESEND: more explanation about this patch.
->> origin patch : https://lkml.org/lkml/2016/5/4/12
->>
->>  drivers/staging/dgnc/dgnc_tty.c | 9 ++-------
->>  1 file changed, 2 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
->> index a505775..cff34d4 100644
->> --- a/drivers/staging/dgnc/dgnc_tty.c
->> +++ b/drivers/staging/dgnc/dgnc_tty.c
->> @@ -1172,17 +1172,12 @@ static int dgnc_block_til_ready(struct tty_struct *tty,
->>                                 struct channel_t *ch)
->>  {
->>         int retval = 0;
->> -       struct un_t *un = NULL;
->> +       struct un_t *un = tty->driver_data;
->>         unsigned long flags;
->>         uint    old_flags = 0;
->>         int     sleep_on_un_flags = 0;
->>
->> -       if (!tty || tty->magic != TTY_MAGIC || !file || !ch ||
->> -           ch->magic != DGNC_CHANNEL_MAGIC)
->> -               return -ENXIO;
->> -
->> -       un = tty->driver_data;
->> -       if (!un || un->magic != DGNC_UNIT_MAGIC)
->> +       if (!file)
->>                 return -ENXIO;
->>
->>         spin_lock_irqsave(&ch->ch_lock, flags);
->> --
->> 2.8.2
->>
+diff --git a/drivers/staging/ks7010/ks7010_config.c b/drivers/staging/ks7010/ks7010_config.c
+index 4b495cb..fb90012 100644
+--- a/drivers/staging/ks7010/ks7010_config.c
++++ b/drivers/staging/ks7010/ks7010_config.c
+@@ -358,7 +358,7 @@ int ks_wlan_read_config_file(struct ks_wlan_private *priv)
+ 					break;
+ 				wk_p++;
+ 				for (j = 0; *wk_p != '"'; j++) {
+-					if (wk_p = '\0') {
++					if (*wk_p = '\0') {
+ 						break;
+ 					}
+ 					priv->reg.ssid.body[j] = *wk_p++;
+@@ -443,7 +443,7 @@ int ks_wlan_read_config_file(struct ks_wlan_private *priv)
+ 					break;
+ 				wk_p++;
+ 				for (j = 0; *wk_p != '"'; j++) {
+-					if (wk_p = '\0') {
++					if (*wk_p = '\0') {
+ 						break;
+ 					}
+ 					priv->reg.rom_file[j] = *wk_p++;
