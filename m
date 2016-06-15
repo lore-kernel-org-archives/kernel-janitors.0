@@ -1,39 +1,35 @@
-From: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Date: Mon, 13 Jun 2016 14:40:06 +0000
-Subject: Re: [patch] drm/i915/mocs: || vs | typo in get_mocs_settings()
-Message-Id: <87wpltw3sp.fsf@intel.com>
+From: Jinbum Park <jinb.park7@gmail.com>
+Date: Wed, 15 Jun 2016 15:19:22 +0000
+Subject: [PATCH] kprobes: fix a comment typo
+Message-Id: <20160615151922.GA30806@pjb1027-Latitude-E5410>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160613065422.GB5993@mwanda>
-In-Reply-To: <20160613065422.GB5993@mwanda>
+References: <20160524170829.GA6931@pjb1027-Latitude-E5410>
+In-Reply-To: <20160524170829.GA6931@pjb1027-Latitude-E5410>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel.vetter@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+Just fix a typo in the code comment.
 
-> It seems pretty clear that bitwise OR was intended here and not logical
-> OR.
->
-> Fixes: 6fc29133eafb ('drm/i915/gen9: Add WaDisableSkipCaching')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+---
+ arch/arm/probes/kprobes/opt-arm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Pushed to drm-intel-next-queued. Thanks for patch.
--Mika
+diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
+index bcdecc2..073c0ba 100644
+--- a/arch/arm/probes/kprobes/opt-arm.c
++++ b/arch/arm/probes/kprobes/opt-arm.c
+@@ -223,7 +223,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *or
+ 	 *
+ 	 * So the maximum forward branch should be:
+ 	 *   (0x007fffff << 2) = 0x01fffffc =  0x1fffffc
+-	 * The maximum backword branch should be:
++	 * The maximum backward branch should be:
+ 	 *   (0xff800000 << 2) = 0xfe000000 = -0x2000000
+ 	 *
+ 	 * We can simply check (rel & 0xfe000003):
+-- 
+1.9.1
 
-
->
-> diff --git a/drivers/gpu/drm/i915/intel_mocs.c b/drivers/gpu/drm/i915/intel_mocs.c
-> index 8f96c40..3c1482b 100644
-> --- a/drivers/gpu/drm/i915/intel_mocs.c
-> +++ b/drivers/gpu/drm/i915/intel_mocs.c
-> @@ -162,7 +162,7 @@ static bool get_mocs_settings(struct drm_i915_private *dev_priv,
->  
->  		for (i = 0; i < table->size; i++)
->  			if (WARN_ON(table->table[i].l3cc_value &
-> -				    (L3_ESC(1) || L3_SCC(0x7))))
-> +				    (L3_ESC(1) | L3_SCC(0x7))))
->  				return false;
->  	}
->  
