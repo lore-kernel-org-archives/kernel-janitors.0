@@ -1,33 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 18 Jun 2016 08:57:31 +0000
-Subject: Re: [patch] gpiolib: potential oops on failure path
-Message-Id: <CACRpkdZB22aKoui-5t7h61k4JmLh9nShgcQUmc2LrGv490uGxA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Jun 2016 10:42:25 +0000
+Subject: [patch] clocksource: timer-imx-gpt: make driver work again
+Message-Id: <20160616104225.GA24067@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160617091550.GB25609@mwanda> <CACRpkdbYYyH805OGa-gkWkj0+JiApKo-kND=h1Oaycd86EcLRw@mail.gmail.com>
-In-Reply-To: <CACRpkdbYYyH805OGa-gkWkj0+JiApKo-kND=h1Oaycd86EcLRw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jun 18, 2016 at 10:52 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Fri, Jun 17, 2016 at 11:15 AM, Dan Carpenter
-> <dan.carpenter@oracle.com> wrote:
->
->> If anon_inode_getfd() fails then "i" is set to GPIOHANDLES_MAX.  It
->> means that we will read beyond the end of the array and dereference an
->> invalid pointer.
->>
->> Fixes: d7c51b47ac11 ('gpio: userspace ABI for reading/writing GPIO lines')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Ouch, yeah that happens when you request max number of handles, thanks.
->
-> Patch applied.
+We accidentally made mxc_timer_init_dt() return unconditionally.
 
-Ah no, I saw the real problem now. Sending another patch.
+Fixes: e93432390ec1 ('clocksource/drivers/timer-imx-gpt: Convert init function to return error')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Yours,
-Linus Walleij
+diff --git a/drivers/clocksource/timer-imx-gpt.c b/drivers/clocksource/timer-imx-gpt.c
+index 5f64dff..f595460 100644
+--- a/drivers/clocksource/timer-imx-gpt.c
++++ b/drivers/clocksource/timer-imx-gpt.c
+@@ -485,7 +485,8 @@ static int __init mxc_timer_init_dt(struct device_node *np,  enum imx_gpt_type t
+ 		return 0;
+ 
+ 	imxtm = kzalloc(sizeof(*imxtm), GFP_KERNEL);
+-	return -ENOMEM;
++	if (!imxtm)
++		return -ENOMEM;
+ 
+ 	imxtm->base = of_iomap(np, 0);
+ 	if (!imxtm->base)
