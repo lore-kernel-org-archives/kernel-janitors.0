@@ -1,94 +1,52 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 28 Jun 2016 15:03:36 +0000
-Subject: Re: [PATCH 2/6] mfd: twl-core: Refactoring for add_numbered_child()
-Message-Id: <20160628150336.GJ24982@dell>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Jun 2016 10:44:34 +0000
+Subject: [patch] bfa: clean up some bounds checking
+Message-Id: <20160616104434.GB24067@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5682D228.7070902@users.sourceforge.net>
- <20160111082922.GB14104@x1>
- <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
- <de3598c4-f85a-6807-303a-55ee0ac707f2@users.sourceforge.net>
- <20160608111442.GB14888@dell>
- <e4eaf0b4-e539-b400-c8a2-70f210cee1fa@users.sourceforge.net>
- <9cf59380-e999-0cf8-9b8d-106691b86d0b@users.sourceforge.net>
-In-Reply-To: <9cf59380-e999-0cf8-9b8d-106691b86d0b@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
+Cc: Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 26 Jun 2016, SF Markus Elfring wrote:
+This code is supposed to search ->adapter_hwpath[] and replace the
+second colon with a NUL character.  Unfortunately, the boundary checks
+that ensure we don't go beyond the end of the buffer have a couple
+problems.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 26 Jun 2016 13:03:59 +0200
->=20
-> Adjust jump targets according to the Linux coding style convention.
-> Another check for the variable "status" can be omitted then at the end.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mfd/twl-core.c | 21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
+Imagine that the string has no colons.  In that case, in the first loop,
+we read one space beyond the end of the buffer and then exit the loop.
+In the next loop, we increment once, read two characters beyond the end
+of the buffer and then exit.  Then after the loop we put a NUL character
+two characters past the end of the buffer.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is from static analysis and not tested.  Caveat emptor.
 
-> diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
-> index 9458c6d..a49d3db 100644
-> --- a/drivers/mfd/twl-core.c
-> +++ b/drivers/mfd/twl-core.c
-> @@ -631,7 +631,7 @@ add_numbered_child(unsigned mod_no, const char *name,=
- int num,
->  		status =3D platform_device_add_data(pdev, pdata, pdata_len);
->  		if (status < 0) {
->  			dev_dbg(&pdev->dev, "can't add platform_data\n");
-> -			goto err;
-> +			goto put_device;
->  		}
->  	}
-> =20
-> @@ -644,21 +644,22 @@ add_numbered_child(unsigned mod_no, const char *nam=
-e, int num,
->  		status =3D platform_device_add_resources(pdev, r, irq1 ? 2 : 1);
->  		if (status < 0) {
->  			dev_dbg(&pdev->dev, "can't add irqs\n");
-> -			goto err;
-> +			goto put_device;
->  		}
->  	}
-> =20
->  	status =3D platform_device_add(pdev);
-> -	if (status =3D 0)
-> -		device_init_wakeup(&pdev->dev, can_wakeup);
-> +	if (status)
-> +		goto put_device;
-> +
-> +	device_init_wakeup(&pdev->dev, can_wakeup);
-> =20
-> -err:
-> -	if (status < 0) {
-> -		platform_device_put(pdev);
-> -		dev_err(&twl->client->dev, "can't add %s dev\n", name);
-> -		return ERR_PTR(status);
-> -	}
->  	return &pdev->dev;
-> +
-> +put_device:
-> +	platform_device_put(pdev);
-> +	dev_err(&twl->client->dev, "failed to add device %s\n", name);
-> +	return ERR_PTR(status);
->  }
-> =20
->  static inline struct device *add_child(unsigned mod_no, const char *name,
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c
+index d1ad020..dfb26f0 100644
+--- a/drivers/scsi/bfa/bfad_bsg.c
++++ b/drivers/scsi/bfa/bfad_bsg.c
+@@ -106,10 +106,17 @@ bfad_iocmd_ioc_get_info(struct bfad_s *bfad, void *cmd)
+ 
+ 	/* set adapter hw path */
+ 	strcpy(iocmd->adapter_hwpath, bfad->pci_name);
+-	for (i = 0; iocmd->adapter_hwpath[i] != ':' && i < BFA_STRING_32; i++)
+-		;
+-	for (; iocmd->adapter_hwpath[++i] != ':' && i < BFA_STRING_32; )
+-		;
++	i = -1;
++	while (++i < BFA_STRING_32) {
++		if (iocmd->adapter_hwpath[i] = ':')
++			break;
++	}
++	while (++i < BFA_STRING_32) {
++		if (iocmd->adapter_hwpath[i] = ':')
++			break;
++	}
++	if (i >= BFA_STRING_32)
++		i = BFA_STRING_32 - 1;
+ 	iocmd->adapter_hwpath[i] = '\0';
+ 	iocmd->status = BFA_STATUS_OK;
+ 	return 0;
