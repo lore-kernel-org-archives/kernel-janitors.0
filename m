@@ -1,23 +1,29 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 29 Jun 2016 14:43:36 +0000
-Subject: Re: [patch] crypto: tcrypt - add a missing tab
-Message-Id: <20160629144336.GA29198@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Jun 2016 07:07:09 +0000
+Subject: [patch] ext4: underflow in alignment check
+Message-Id: <20160616070709.GC23129@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160629144130.GC22818@mwanda>
-In-Reply-To: <20160629144130.GC22818@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 29, 2016 at 05:41:30PM +0300, Dan Carpenter wrote:
-> The "goto out;" line isn't indented far enough.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+My static checker complains that this can underflow if arg is negative
+which is true.
 
-Sorry, but this has already been fixed :)
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index b1a3471..a2a17e9 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1576,7 +1576,7 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
+ 	} else if (token = Opt_min_batch_time) {
+ 		sbi->s_min_batch_time = arg;
+ 	} else if (token = Opt_inode_readahead_blks) {
+-		if (arg && (arg > (1 << 30) || !is_power_of_2(arg))) {
++		if (arg && (arg > (1U << 30) || !is_power_of_2(arg))) {
+ 			ext4_msg(sb, KERN_ERR,
+ 				 "EXT4-fs: inode_readahead_blks must be "
+ 				 "0 or a power of 2 smaller than 2^31");
