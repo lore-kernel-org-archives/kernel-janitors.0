@@ -1,22 +1,62 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 18 Jun 2016 04:21:51 +0000
-Subject: Re: [PATCH] Staging: Android: Fix bracket alignment style issue in sync.c
-Message-Id: <20160618042151.GA9821@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Jun 2016 06:41:19 +0000
+Subject: [patch] drm/amdgpu: missing bounds check in amdgpu_set_pp_force_state()
+Message-Id: <20160616064119.GA23129@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1463165927-14288-1-git-send-email-craig@craiginches.com>
-In-Reply-To: <1463165927-14288-1-git-send-email-craig@craiginches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>, Eric Huang <JinHuiEric.Huang@amd.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, Jammy Zhou <Jammy.Zhou@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Harry Wentland <harry.wentland@amd.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On Sat, May 14, 2016 at 02:58:47AM +0800, Craig Inches wrote:
-> This patch changes 3 bracket alignment errors found by checkpatch.
-> 
-> Signed-off-by: Craig Inches <Craig@craiginches.com>
-> ---
->  drivers/staging/android/sync.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+There is no limit on high "idx" can go.  It should be less than
+ARRAY_SIZE(data.states) which is 16.
 
-This file is no longer in my tree :(
+The "data" variable wasn't declared in that scope so I shifted the code
+around a bit to make it work.
 
+Fixes: f3898ea12fc1 ('drm/amd/powerplay: add some sysfs interfaces for powerplay.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+index 589b36e..ce9e97f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+@@ -275,25 +275,23 @@ static ssize_t amdgpu_set_pp_force_state(struct device *dev,
+ 
+ 	if (strlen(buf) = 1)
+ 		adev->pp_force_state_enabled = false;
+-	else {
+-		ret = kstrtol(buf, 0, &idx);
++	else if (adev->pp_enabled) {
++		struct pp_states_info data;
+ 
+-		if (ret) {
++		ret = kstrtol(buf, 0, &idx);
++		if (ret || idx >= ARRAY_SIZE(data.states)) {
+ 			count = -EINVAL;
+ 			goto fail;
+ 		}
+ 
+-		if (adev->pp_enabled) {
+-			struct pp_states_info data;
+-			amdgpu_dpm_get_pp_num_states(adev, &data);
+-			state = data.states[idx];
+-			/* only set user selected power states */
+-			if (state != POWER_STATE_TYPE_INTERNAL_BOOT &&
+-				state != POWER_STATE_TYPE_DEFAULT) {
+-				amdgpu_dpm_dispatch_task(adev,
+-						AMD_PP_EVENT_ENABLE_USER_STATE, &state, NULL);
+-				adev->pp_force_state_enabled = true;
+-			}
++		amdgpu_dpm_get_pp_num_states(adev, &data);
++		state = data.states[idx];
++		/* only set user selected power states */
++		if (state != POWER_STATE_TYPE_INTERNAL_BOOT &&
++		    state != POWER_STATE_TYPE_DEFAULT) {
++			amdgpu_dpm_dispatch_task(adev,
++					AMD_PP_EVENT_ENABLE_USER_STATE, &state, NULL);
++			adev->pp_force_state_enabled = true;
+ 		}
+ 	}
+ fail:
