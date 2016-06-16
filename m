@@ -1,69 +1,72 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 28 Jun 2016 15:03:57 +0000
-Subject: Re: [PATCH 3/6] mfd: dm355evm_msp: Return directly after a failed platform_device_alloc() in add_chi
-Message-Id: <20160628150357.GK24982@dell>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Jun 2016 08:30:23 +0000
+Subject: [patch v2] drm/amdgpu: missing bounds check in amdgpu_set_pp_force_state()
+Message-Id: <20160616083023.GA7046@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5682D228.7070902@users.sourceforge.net>
- <20160111082922.GB14104@x1>
- <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
- <de3598c4-f85a-6807-303a-55ee0ac707f2@users.sourceforge.net>
- <20160608111442.GB14888@dell>
- <e4eaf0b4-e539-b400-c8a2-70f210cee1fa@users.sourceforge.net>
- <2fec6004-8191-c117-94c3-86524cfb4780@users.sourceforge.net>
-In-Reply-To: <2fec6004-8191-c117-94c3-86524cfb4780@users.sourceforge.net>
+References: <20160616080949.GI32247@mwanda>
+In-Reply-To: <20160616080949.GI32247@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: Jammy Zhou <Jammy.Zhou@amd.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Geliang Tang <geliangtang@163.com>, Eric Huang <JinHuiEric.Huang@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
 
-On Sun, 26 Jun 2016, SF Markus Elfring wrote:
+There is no limit on high "idx" can go.  It should be less than
+ARRAY_SIZE(data.states) which is 16.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 26 Jun 2016 13:40:35 +0200
->=20
-> The platform_device_put() function was called in one case by the
-> add_child() function during error handling even if the passed
-> variable "pdev" contained a null pointer.
-> Return directly in this case.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mfd/dm355evm_msp.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+The "data" variable wasn't declared in that scope so I shifted the code
+around a bit to make it work.  Also I made "idx" unsigned.
 
-Applied, thanks.
+Fixes: f3898ea12fc1 ('drm/amd/powerplay: add some sysfs interfaces for powerplay.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: make idx unsigned
 
-> diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
-> index 14661ec..270e19c 100644
-> --- a/drivers/mfd/dm355evm_msp.c
-> +++ b/drivers/mfd/dm355evm_msp.c
-> @@ -199,11 +199,8 @@ static struct device *add_child(struct i2c_client *c=
-lient, const char *name,
->  	int			status;
-> =20
->  	pdev =3D platform_device_alloc(name, -1);
-> -	if (!pdev) {
-> -		dev_dbg(&client->dev, "can't alloc dev\n");
-> -		status =3D -ENOMEM;
-> -		goto err;
-> -	}
-> +	if (!pdev)
-> +		return ERR_PTR(-ENOMEM);
-> =20
->  	device_init_wakeup(&pdev->dev, can_wakeup);
->  	pdev->dev.parent =3D &client->dev;
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+index 589b36e..0e13d80 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+@@ -270,30 +270,28 @@ static ssize_t amdgpu_set_pp_force_state(struct device *dev,
+ 	struct drm_device *ddev = dev_get_drvdata(dev);
+ 	struct amdgpu_device *adev = ddev->dev_private;
+ 	enum amd_pm_state_type state = 0;
+-	long idx;
++	unsigned long idx;
+ 	int ret;
+ 
+ 	if (strlen(buf) = 1)
+ 		adev->pp_force_state_enabled = false;
+-	else {
+-		ret = kstrtol(buf, 0, &idx);
++	else if (adev->pp_enabled) {
++		struct pp_states_info data;
+ 
+-		if (ret) {
++		ret = kstrtoul(buf, 0, &idx);
++		if (ret || idx >= ARRAY_SIZE(data.states)) {
+ 			count = -EINVAL;
+ 			goto fail;
+ 		}
+ 
+-		if (adev->pp_enabled) {
+-			struct pp_states_info data;
+-			amdgpu_dpm_get_pp_num_states(adev, &data);
+-			state = data.states[idx];
+-			/* only set user selected power states */
+-			if (state != POWER_STATE_TYPE_INTERNAL_BOOT &&
+-				state != POWER_STATE_TYPE_DEFAULT) {
+-				amdgpu_dpm_dispatch_task(adev,
+-						AMD_PP_EVENT_ENABLE_USER_STATE, &state, NULL);
+-				adev->pp_force_state_enabled = true;
+-			}
++		amdgpu_dpm_get_pp_num_states(adev, &data);
++		state = data.states[idx];
++		/* only set user selected power states */
++		if (state != POWER_STATE_TYPE_INTERNAL_BOOT &&
++		    state != POWER_STATE_TYPE_DEFAULT) {
++			amdgpu_dpm_dispatch_task(adev,
++					AMD_PP_EVENT_ENABLE_USER_STATE, &state, NULL);
++			adev->pp_force_state_enabled = true;
+ 		}
+ 	}
+ fail:
