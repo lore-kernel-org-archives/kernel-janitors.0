@@ -1,43 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 May 2016 07:32:19 +0000
-Subject: [patch] NFC: pn533: double free on error in probe()
-Message-Id: <20160517073219.GC10872@mwanda>
+Date: Fri, 17 Jun 2016 09:15:50 +0000
+Subject: [patch] gpiolib: potential oops on failure path
+Message-Id: <20160617091550.GB25609@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
-Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Michael Thalmeier <michael.thalmeier@hale.at>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We can't pass devm_ allocated pointers to kfree() because they will be
-freed again after the drive is unloaded.
+If anon_inode_getfd() fails then "i" is set to GPIOHANDLES_MAX.  It
+means that we will read beyond the end of the array and dereference an
+invalid pointer.
 
+Fixes: d7c51b47ac11 ('gpio: userspace ABI for reading/writing GPIO lines')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/nfc/pn533/usb.c b/drivers/nfc/pn533/usb.c
-index 8ca0603..33ed78b 100644
---- a/drivers/nfc/pn533/usb.c
-+++ b/drivers/nfc/pn533/usb.c
-@@ -464,10 +464,8 @@ static int pn533_usb_probe(struct usb_interface *interface,
- 		return -ENOMEM;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 8b3db59..8578b7f 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -495,6 +495,8 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ 	return 0;
  
- 	in_buf = kzalloc(in_buf_len, GFP_KERNEL);
--	if (!in_buf) {
--		rc = -ENOMEM;
--		goto out_free_phy;
--	}
-+	if (!in_buf)
-+		return -ENOMEM;
- 
- 	phy->udev = usb_get_dev(interface_to_usbdev(interface));
- 	phy->interface = interface;
-@@ -554,8 +552,7 @@ error:
- 	usb_free_urb(phy->out_urb);
- 	usb_put_dev(phy->udev);
- 	kfree(in_buf);
--out_free_phy:
--	kfree(phy);
-+
- 	return rc;
- }
- 
+ out_free_descs:
++	if (i = GPIOHANDLES_MAX)
++		i--;
+ 	for (; i >= 0; i--)
+ 		gpiod_free(lh->descs[i]);
+ 	kfree(lh->label);
