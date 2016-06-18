@@ -1,41 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 28 Jun 2016 09:15:22 +0000
-Subject: [patch] tty/serial/8250: unlock on error in serial8250_register_8250_port()
-Message-Id: <20160628091522.GA7720@mwanda>
+Date: Sat, 18 Jun 2016 08:40:21 +0000
+Subject: [patch] ib/rxe: double free on error
+Message-Id: <20160618084021.GB21713@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yegor Yefremov <yegorslists@googlemail.com>
-Cc: Jiri Slaby <jslaby@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Anton Wuerfel <anton.wuerfel@fau.de>, Phillip Raffeck <phillip.raffeck@fau.de>, Peter Hurley <peter@hurleysoftware.com>, Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Moni Shoua <monis@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We need to unlock before returning here.
+"goto err1" could probably be remained "goto free_pkey_tbl" since
+that's what it does.  This is a double free.
 
-Fixes: 4ef03d328769 ('tty/serial/8250: use mctrl_gpio helpers')
+Fixes: 0784481b2f32 ('Add initialization for Soft RoCE driver, pools constants etc.')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index 13ad5c3..a2b849e 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -1015,8 +1015,10 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
+diff --git a/drivers/infiniband/hw/rxe/rxe.c b/drivers/infiniband/hw/rxe/rxe.c
+index 48c41e00..50e25b0 100644
+--- a/drivers/infiniband/hw/rxe/rxe.c
++++ b/drivers/infiniband/hw/rxe/rxe.c
+@@ -187,7 +187,6 @@ static int rxe_init_ports(struct rxe_dev *rxe)
+ 	port->pkey_tbl[0] = 0xffff;
  
- 		gpios = mctrl_gpio_init(&uart->port, 0);
- 		if (IS_ERR(gpios)) {
--			if (PTR_ERR(gpios) != -ENOSYS)
--				return PTR_ERR(gpios);
-+			if (PTR_ERR(gpios) != -ENOSYS) {
-+				ret = PTR_ERR(gpios);
-+				goto unlock;
-+			}
- 		} else
- 			uart->gpios = gpios;
- 
-@@ -1068,6 +1070,7 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 			ret = 0;
- 		}
+ 	if (!port->attr.gid_tbl_len) {
+-		kfree(port->pkey_tbl);
+ 		err = -EINVAL;
+ 		goto err1;
  	}
-+unlock:
- 	mutex_unlock(&serial_mutex);
- 
- 	return ret;
