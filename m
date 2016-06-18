@@ -1,29 +1,36 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Jun 2016 14:42:17 +0000
-Subject: [patch] crypto: sha1-mb - cleanup a small | vs || typo
-Message-Id: <20160629144216.GD22818@mwanda>
+Date: Sat, 18 Jun 2016 08:49:45 +0000
+Subject: [patch 2/3] liquidio: remove an unused variable
+Message-Id: <20160618084945.GE21713@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Megha Dey <megha.dey@linux.intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, Xiaodong Liu <xiaodong.liu@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>
+Cc: Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-|| and | behave basically the same here but || was intended.  It causes
-a static checker warning when we mix up logical and bitwise operations.
+We don't use "i" in this function.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/arch/x86/crypto/sha1-mb/sha1_mb.c b/arch/x86/crypto/sha1-mb/sha1_mb.c
-index 561b286..96d80ad 100644
---- a/arch/x86/crypto/sha1-mb/sha1_mb.c
-+++ b/arch/x86/crypto/sha1-mb/sha1_mb.c
-@@ -304,7 +304,7 @@ static struct sha1_hash_ctx *sha1_ctx_mgr_submit(struct sha1_ctx_mgr *mgr,
- 	 * Or if the user's buffer contains less than a whole block,
- 	 * append as much as possible to the extra block.
- 	 */
--	if ((ctx->partial_block_buffer_length) | (len < SHA1_BLOCK_SIZE)) {
-+	if ((ctx->partial_block_buffer_length) || (len < SHA1_BLOCK_SIZE)) {
- 		/*
- 		 * Compute how many bytes to copy from user buffer into
- 		 * extra block
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+index 715ddfa..1126422 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+@@ -2354,7 +2354,7 @@ static void liquidio_set_mcast_list(struct net_device *netdev)
+ 	struct octnic_ctrl_pkt nctrl;
+ 	struct netdev_hw_addr *ha;
+ 	u64 *mc;
+-	int ret, i;
++	int ret;
+ 	int mc_count = min(netdev_mc_count(netdev), MAX_OCTEON_MULTICAST_ADDR);
+ 
+ 	memset(&nctrl, 0, sizeof(struct octnic_ctrl_pkt));
+@@ -2370,7 +2370,6 @@ static void liquidio_set_mcast_list(struct net_device *netdev)
+ 	nctrl.cb_fn = liquidio_link_ctrl_cmd_completion;
+ 
+ 	/* copy all the addresses into the udd */
+-	i = 0;
+ 	mc = &nctrl.udd[0];
+ 	netdev_for_each_mc_addr(ha, netdev) {
+ 		*mc = 0;
