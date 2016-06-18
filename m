@@ -1,75 +1,44 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 16 Jun 2016 12:20:13 +0000
-Subject: Re: [patch] bfa: clean up some bounds checking
-Message-Id: <5762997D.3020302@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 18 Jun 2016 08:49:20 +0000
+Subject: [patch 1/3 -next] liquidio: a couple indenting tweaks
+Message-Id: <20160618084920.GD21713@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160616104434.GB24067@mwanda>
-In-Reply-To: <20160616104434.GB24067@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>
+Cc: Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Remove a stray space character and fix an if statement that wasn't
+indented.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Speaking of style issues, this whole file follows return 1 on error
+and 0 on success.  It was confusing for me.  It's not too late to change
+it to use correct error codes.  ;)
 
-Am 16.06.2016 12:44, schrieb Dan Carpenter:
-> This code is supposed to search ->adapter_hwpath[] and replace the
-> second colon with a NUL character.  Unfortunately, the boundary checks
-> that ensure we don't go beyond the end of the buffer have a couple
-> problems.
-> 
-> Imagine that the string has no colons.  In that case, in the first loop,
-> we read one space beyond the end of the buffer and then exit the loop.
-> In the next loop, we increment once, read two characters beyond the end
-> of the buffer and then exit.  Then after the loop we put a NUL character
-> two characters past the end of the buffer.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is from static analysis and not tested.  Caveat emptor.
-> 
-> diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c
-> index d1ad020..dfb26f0 100644
-> --- a/drivers/scsi/bfa/bfad_bsg.c
-> +++ b/drivers/scsi/bfa/bfad_bsg.c
-> @@ -106,10 +106,17 @@ bfad_iocmd_ioc_get_info(struct bfad_s *bfad, void *cmd)
->  
->  	/* set adapter hw path */
->  	strcpy(iocmd->adapter_hwpath, bfad->pci_name);
-> -	for (i = 0; iocmd->adapter_hwpath[i] != ':' && i < BFA_STRING_32; i++)
-> -		;
-> -	for (; iocmd->adapter_hwpath[++i] != ':' && i < BFA_STRING_32; )
-> -		;
-> +	i = -1;
-> +	while (++i < BFA_STRING_32) {
-> +		if (iocmd->adapter_hwpath[i] = ':')
-> +			break;
-> +	}
-> +	while (++i < BFA_STRING_32) {
-> +		if (iocmd->adapter_hwpath[i] = ':')
-> +			break;
-> +	}
-> +	if (i >= BFA_STRING_32)
-> +		i = BFA_STRING_32 - 1;
->  	iocmd->adapter_hwpath[i] = '\0';
->  	iocmd->status = BFA_STATUS_OK;
->  	return 0;
-
-
-I do not see the use case but i assume
-the idea is to have a string like aa:bb:something
-and kill everyhing after the second ':' ?
-/*
-	a few word may help here also inside the code
-*/
-
-
-second: maybe we can us strchr here ?
-	s1=strchr(iocmd->adapter_hwpath,':');
-	if (s1 != NULL ) s1=strchr(s1,":");
-
-
-
-re,
- wh
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+index d0ab97c..715ddfa 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+@@ -365,7 +365,7 @@ static int wait_for_pending_requests(struct octeon_device *oct)
+ 				[OCTEON_ORDERED_SC_LIST].pending_req_count);
+ 		if (pcount)
+ 			schedule_timeout_uninterruptible(HZ / 10);
+-		 else
++		else
+ 			break;
+ 	}
+ 
+@@ -3351,8 +3351,8 @@ static int setup_nic_devices(struct octeon_device *octeon_dev)
+ 		liquidio_set_ethtool_ops(netdev);
+ 
+ 		if (netdev->features & NETIF_F_LRO)
+-		liquidio_set_feature(netdev, OCTNET_CMD_LRO_ENABLE,
+-				     OCTNIC_LROIPV4 | OCTNIC_LROIPV6);
++			liquidio_set_feature(netdev, OCTNET_CMD_LRO_ENABLE,
++					     OCTNIC_LROIPV4 | OCTNIC_LROIPV6);
+ 
+ 		if ((debug != -1) && (debug & NETIF_MSG_HW))
+ 			liquidio_set_feature(netdev, OCTNET_CMD_VERBOSE_ENABLE,
