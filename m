@@ -1,38 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 24 Jun 2016 12:24:03 +0000
-Subject: [patch] mtd: nand: sunxi: prevent a small memory leak
-Message-Id: <20160624122403.GC23169@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Jun 2016 06:44:23 +0000
+Subject: [PATCH] drm/nouveau/gr/gk20a: delete unneeded second newline
+Message-Id: <1466318663-2670-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: Ben Skeggs <bskeggs@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-I moved the sanity check on ecc->size before the allocation so that we
-don't leak memory on error.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Fixes: 05af074a4b73 ('mtd: nand: sunxi: check ecc->size values')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/gr/gk20a.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/sunxi_nand.c b/drivers/mtd/nand/sunxi_nand.c
-index f582fe4..9f4e1c7 100644
---- a/drivers/mtd/nand/sunxi_nand.c
-+++ b/drivers/mtd/nand/sunxi_nand.c
-@@ -1812,13 +1812,13 @@ static int sunxi_nand_hw_common_ecc_ctrl_init(struct mtd_info *mtd,
- 	int ret;
- 	int i;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk20a.c
+index 4ca8ed1..de8b806 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk20a.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gk20a.c
+@@ -361,6 +361,5 @@ gk20a_gr_new(struct nvkm_device *device, int index, struct nvkm_gr **pgr)
+ 	if (ret)
+ 		return ret;
  
-+	if (ecc->size != 512 && ecc->size != 1024)
-+		return -EINVAL;
-+
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--	if (ecc->size != 512 && ecc->size != 1024)
--		return -EINVAL;
 -
- 	/* Prefer 1k ECC chunk over 512 ones */
- 	if (ecc->size = 512 && mtd->writesize > 512) {
- 		ecc->size = 1024;
+ 	return 0;
+ }
+
