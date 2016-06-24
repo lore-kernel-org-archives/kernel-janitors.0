@@ -1,28 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 24 Jun 2016 12:23:16 +0000
-Subject: [patch] usb: gadget: f_fs: check for allocation failure
-Message-Id: <20160624122316.GB23169@mwanda>
+From: Michal Nazarewicz <mina86@mina86.com>
+Date: Fri, 24 Jun 2016 20:20:46 +0000
+Subject: Re: [patch] usb: gadget: f_fs: check for allocation failure
+Message-Id: <xa1twple49up.fsf@mina86.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160624122316.GB23169@mwanda>
+In-Reply-To: <20160624122316.GB23169@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-Return -ENOMEM if kmalloc() fails.
-
-Fixes: 9353afbbfa7b ('usb: gadget: f_fs: buffer data from ‘oversized’ OUT requests')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index a91fcb0..5c8429f 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -775,6 +775,8 @@ static ssize_t __ffs_epfile_read_data(struct ffs_epfile *epfile,
- 
- 	data_len -= ret;
- 	buf = kmalloc(sizeof(*buf) + data_len, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
- 	buf->length = data_len;
- 	buf->data = buf->storage;
- 	memcpy(buf->storage, data + ret, data_len);
+T24gRnJpLCBKdW4gMjQgMjAxNiwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBSZXR1cm4gLUVOT01F
+TSBpZiBrbWFsbG9jKCkgZmFpbHMuCj4KPiBGaXhlczogOTM1M2FmYmJmYTdiICgndXNiOiBnYWRn
+ZXQ6IGZfZnM6IGJ1ZmZlciBkYXRhIGZyb20g4oCYb3ZlcnNpemVk4oCZIE9VVCByZXF1ZXN0cycp
+Cj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29t
+Pgo+CgpBY2tlZC1ieTogTWljaGFsIE5hemFyZXdpY3ogPG1pbmE4NkBtaW5hODYuY29tPgoKPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfZnMuYyBiL2RyaXZlcnMv
+dXNiL2dhZGdldC9mdW5jdGlvbi9mX2ZzLmMKPiBpbmRleCBhOTFmY2IwLi41Yzg0MjlmIDEwMDY0
+NAo+IC0tLSBhL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX2ZzLmMKPiArKysgYi9kcml2
+ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vZl9mcy5jCj4gQEAgLTc3NSw2ICs3NzUsOCBAQCBzdGF0
+aWMgc3NpemVfdCBfX2Zmc19lcGZpbGVfcmVhZF9kYXRhKHN0cnVjdCBmZnNfZXBmaWxlICplcGZp
+bGUsCj4gIAo+ICAJZGF0YV9sZW4gLT0gcmV0Owo+ICAJYnVmID0ga21hbGxvYyhzaXplb2YoKmJ1
+ZikgKyBkYXRhX2xlbiwgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIWJ1ZikKPiArCQlyZXR1cm4gLUVO
+T01FTTsKPiAgCWJ1Zi0+bGVuZ3RoID0gZGF0YV9sZW47Cj4gIAlidWYtPmRhdGEgPSBidWYtPnN0
+b3JhZ2U7Cj4gIAltZW1jcHkoYnVmLT5zdG9yYWdlLCBkYXRhICsgcmV0LCBkYXRhX2xlbik7Cgot
+LSAKQmVzdCByZWdhcmRzCuODn+ODj+OCpiDigJzwnZO28J2TsvCdk7fwnZOqODbigJ0g44OK44K2
+44Os44O044Kk44OECsKrSWYgYXQgZmlyc3QgeW91IGRvbuKAmXQgc3VjY2VlZCwgZ2l2ZSB1cCBz
+a3lkaXZpbmfCuwotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
+ZSAidW5zdWJzY3JpYmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2Ug
+dG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
+Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
