@@ -1,13 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 24 Jun 2016 12:22:34 +0000
-Subject: [patch] xfs: don't allow negative error tags
-Message-Id: <20160624122234.GA23169@mwanda>
+From: Jeff Liu <jeff.liu@easystack.cn>
+Date: Fri, 24 Jun 2016 13:12:25 +0000
+Subject: Re: [patch] xfs: don't allow negative error tags
+Message-Id: <576D31B9.8010908@easystack.cn>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160624122234.GA23169@mwanda>
+In-Reply-To: <20160624122234.GA23169@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dave Chinner <david@fromorbit.com>
-Cc: kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
+
+Hi Dan,
+
+xfs_errortag_add() is called by xfs_file_ioctl(), which accept the 1st
+argument as signed, i.e,
+
+typedef struct xfs_error_injection {
+__s32 fd;
+__s32 errtag;
+} xfs_error_injection_t;
+
+Should we make it happy as well? Also, the typedef can be converted to
+to struct xfs_error_injection by removing the depreciated
+xfs_error_injection_t
+syntax if so.
+
+On 2016年06月24日 20:22, Dan Carpenter wrote:
 
 Errors go from zero which means no error to XFS_ERRTAG_MAX (22).  My
 static checker complains that xfs_errortag_add() puts an upper bound on
@@ -41,3 +59,15 @@ index 355619a..ed7ee4e 100644
  {
  	int i;
  	int len;
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
+
+
+-- 
+Cheers,
+
+Jeff Liu
+
