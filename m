@@ -1,50 +1,43 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 28 Jun 2016 07:13:25 +0000
-Subject: Re: [PATCH] ALSA: echoaudio: Fix memory allocation
-Message-Id: <57722395.8080706@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Jun 2016 13:34:34 +0000
+Subject: [PATCH 0/6] mfd: Fine-tuning for three function implementations
+Message-Id: <e4eaf0b4-e539-b400-c8a2-70f210cee1fa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1467054411-19752-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1467054411-19752-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5682D228.7070902@users.sourceforge.net> <20160111082922.GB14104@x1>
+ <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
+ <de3598c4-f85a-6807-303a-55ee0ac707f2@users.sourceforge.net>
+ <20160608111442.GB14888@dell>
+In-Reply-To: <20160608111442.GB14888@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Jun 2016 15:25:43 +0200
 
+Several update suggestions were taken into account
+from static source code analysis.
 
-Am 27.06.2016 21:06, schrieb Christophe JAILLET:
-> 'commpage_bak' is allocated with 'sizeof(struct echoaudio)' bytes.
-> We then copy 'sizeof(struct comm_page)' bytes in it.
-> On my system, smatch complains because one is 2960 and the other is 3072.
-> 
-> This would result in memory corruption or a oops.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  sound/pci/echoaudio/echoaudio.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
-> index 1cb85ae..286f5e3 100644
-> --- a/sound/pci/echoaudio/echoaudio.c
-> +++ b/sound/pci/echoaudio/echoaudio.c
-> @@ -2200,11 +2200,11 @@ static int snd_echo_resume(struct device *dev)
->  	u32 pipe_alloc_mask;
->  	int err;
->  
-> -	commpage_bak = kmalloc(sizeof(struct echoaudio), GFP_KERNEL);
-> +	commpage_bak = kmalloc(sizeof(*commpage), GFP_KERNEL);
->  	if (commpage_bak = NULL)
->  		return -ENOMEM;
->  	commpage = chip->comm_page;
-> -	memcpy(commpage_bak, commpage, sizeof(struct comm_page));
-> +	memcpy(commpage_bak, commpage, sizeof(*commpage));
->  
->  	err = init_hw(chip, chip->pci->device, chip->pci->subsystem_device);
->  	if (err < 0) {
+Markus Elfring (6):
+  twl-core: Return directly after a failed platform_device_alloc()
+    in add_numbered_child()
+  twl-core: Refactoring for add_numbered_child()
+  dm355evm_msp: Return directly after a failed platform_device_alloc()
+    in add_child()
+  dm355evm_msp: Refactoring for add_child()
+  smsc-ece1099: Delete an unnecessary variable initialisation
+    in smsc_i2c_probe()
+  smsc-ece1099: Return directly after a function failure
+    in smsc_i2c_probe()
 
-perhaps you can use here kmemdup() ?
+ drivers/mfd/dm355evm_msp.c | 25 ++++++++++++-------------
+ drivers/mfd/smsc-ece1099.c | 11 ++++-------
+ drivers/mfd/twl-core.c     | 28 +++++++++++++---------------
+ 3 files changed, 29 insertions(+), 35 deletions(-)
 
-re,
- wh
+-- 
+2.9.0
+
