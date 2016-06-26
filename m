@@ -1,67 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jun 2016 22:16:54 +0000
-Subject: Re: [patch] crypto: sha256-mb - cleanup a || vs | typo
-Message-Id: <20160630221654.GE32301@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Jun 2016 13:48:48 +0000
+Subject: [PATCH 3/6] mfd: dm355evm_msp: Return directly after a failed platform_device_alloc() in add_child()
+Message-Id: <2fec6004-8191-c117-94c3-86524cfb4780@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160629144242.GE22818@mwanda>
- <8538242a-eab7-127e-e47e-26027fee4f6d@zytor.com>
- <1467319339.22178.256.camel@linux.intel.com>
-In-Reply-To: <1467319339.22178.256.camel@linux.intel.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5682D228.7070902@users.sourceforge.net> <20160111082922.GB14104@x1>
+ <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
+ <de3598c4-f85a-6807-303a-55ee0ac707f2@users.sourceforge.net>
+ <20160608111442.GB14888@dell>
+ <e4eaf0b4-e539-b400-c8a2-70f210cee1fa@users.sourceforge.net>
+In-Reply-To: <e4eaf0b4-e539-b400-c8a2-70f210cee1fa@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Megha Dey <megha.dey@intel.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, Xiaodong Liu <xiaodong.liu@intel.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Jun 30, 2016 at 01:42:19PM -0700, Tim Chen wrote:
-> On Wed, 2016-06-29 at 10:05 -0700, H. Peter Anvin wrote:
-> > On 06/29/16 07:42, Dan Carpenter wrote:
-> > >=20
-> > > >=20
-> > > > >=20
-> > > > > and | behave basically the same here but || is intended.=A0=A0It =
-causes a
-> > > static checker warning to mix up bitwise and logical operations.
-> > >=20
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > >=20
-> > > diff --git a/arch/x86/crypto/sha256-mb/sha256_mb.c b/arch/x86/crypto/=
-sha256-mb/sha256_mb.c
-> > > index c9d5dcc..4ec895a 100644
-> > > --- a/arch/x86/crypto/sha256-mb/sha256_mb.c
-> > > +++ b/arch/x86/crypto/sha256-mb/sha256_mb.c
-> > > @@ -299,7 +299,7 @@ static struct sha256_hash_ctx *sha256_ctx_mgr_sub=
-mit(struct sha256_ctx_mgr *mgr,
-> > > =A0	=A0* Or if the user's buffer contains less than a whole block,
-> > > =A0	=A0* append as much as possible to the extra block.
-> > > =A0	=A0*/
-> > > -	if ((ctx->partial_block_buffer_length) | (len < SHA256_BLOCK_SIZE))=
- {
-> > > +	if ((ctx->partial_block_buffer_length) || (len < SHA256_BLOCK_SIZE)=
-) {
-> > > =A0		/* Compute how many bytes to copy from user buffer into
-> > > =A0		=A0* extra block
-> > > =A0		=A0*/
-> > >=20
-> > As far as I know the | was an intentional optimization, so you may way
-> > to look at the generated code.
-> >=20
-> > 	-hpa
-> >=20
->=20
-> Yes, this is an intentional optimization. =A0Is there any scenario where =
-things may
-> break with the compiler?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Jun 2016 13:40:35 +0200
 
-No.  I'm going to remove the warning from the static checker like I said
-earlier.  It should only complain for && vs & typos, || vs | is
-harmless.
+The platform_device_put() function was called in one case by the
+add_child() function during error handling even if the passed
+variable "pdev" contained a null pointer.
+Return directly in this case.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mfd/dm355evm_msp.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
+index 14661ec..270e19c 100644
+--- a/drivers/mfd/dm355evm_msp.c
++++ b/drivers/mfd/dm355evm_msp.c
+@@ -199,11 +199,8 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+ 	int			status;
+ 
+ 	pdev = platform_device_alloc(name, -1);
+-	if (!pdev) {
+-		dev_dbg(&client->dev, "can't alloc dev\n");
+-		status = -ENOMEM;
+-		goto err;
+-	}
++	if (!pdev)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	device_init_wakeup(&pdev->dev, can_wakeup);
+ 	pdev->dev.parent = &client->dev;
+-- 
+2.9.0
+
