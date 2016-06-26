@@ -1,32 +1,78 @@
-From: Michal Nazarewicz <mina86@mina86.com>
-Date: Fri, 24 Jun 2016 20:20:46 +0000
-Subject: Re: [patch] usb: gadget: f_fs: check for allocation failure
-Message-Id: <xa1twple49up.fsf@mina86.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Jun 2016 13:47:27 +0000
+Subject: [PATCH 2/6] mfd: twl-core: Refactoring for add_numbered_child()
+Message-Id: <9cf59380-e999-0cf8-9b8d-106691b86d0b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160624122316.GB23169@mwanda>
-In-Reply-To: <20160624122316.GB23169@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5682D228.7070902@users.sourceforge.net> <20160111082922.GB14104@x1>
+ <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
+ <de3598c4-f85a-6807-303a-55ee0ac707f2@users.sourceforge.net>
+ <20160608111442.GB14888@dell>
+ <e4eaf0b4-e539-b400-c8a2-70f210cee1fa@users.sourceforge.net>
+In-Reply-To: <e4eaf0b4-e539-b400-c8a2-70f210cee1fa@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-T24gRnJpLCBKdW4gMjQgMjAxNiwgRGFuIENhcnBlbnRlciB3cm90ZToKPiBSZXR1cm4gLUVOT01F
-TSBpZiBrbWFsbG9jKCkgZmFpbHMuCj4KPiBGaXhlczogOTM1M2FmYmJmYTdiICgndXNiOiBnYWRn
-ZXQ6IGZfZnM6IGJ1ZmZlciBkYXRhIGZyb20g4oCYb3ZlcnNpemVk4oCZIE9VVCByZXF1ZXN0cycp
-Cj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29t
-Pgo+CgpBY2tlZC1ieTogTWljaGFsIE5hemFyZXdpY3ogPG1pbmE4NkBtaW5hODYuY29tPgoKPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfZnMuYyBiL2RyaXZlcnMv
-dXNiL2dhZGdldC9mdW5jdGlvbi9mX2ZzLmMKPiBpbmRleCBhOTFmY2IwLi41Yzg0MjlmIDEwMDY0
-NAo+IC0tLSBhL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX2ZzLmMKPiArKysgYi9kcml2
-ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vZl9mcy5jCj4gQEAgLTc3NSw2ICs3NzUsOCBAQCBzdGF0
-aWMgc3NpemVfdCBfX2Zmc19lcGZpbGVfcmVhZF9kYXRhKHN0cnVjdCBmZnNfZXBmaWxlICplcGZp
-bGUsCj4gIAo+ICAJZGF0YV9sZW4gLT0gcmV0Owo+ICAJYnVmID0ga21hbGxvYyhzaXplb2YoKmJ1
-ZikgKyBkYXRhX2xlbiwgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIWJ1ZikKPiArCQlyZXR1cm4gLUVO
-T01FTTsKPiAgCWJ1Zi0+bGVuZ3RoID0gZGF0YV9sZW47Cj4gIAlidWYtPmRhdGEgPSBidWYtPnN0
-b3JhZ2U7Cj4gIAltZW1jcHkoYnVmLT5zdG9yYWdlLCBkYXRhICsgcmV0LCBkYXRhX2xlbik7Cgot
-LSAKQmVzdCByZWdhcmRzCuODn+ODj+OCpiDigJzwnZO28J2TsvCdk7fwnZOqODbigJ0g44OK44K2
-44Os44O044Kk44OECsKrSWYgYXQgZmlyc3QgeW91IGRvbuKAmXQgc3VjY2VlZCwgZ2l2ZSB1cCBz
-a3lkaXZpbmfCuwotLQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
-ZSAidW5zdWJzY3JpYmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2Ug
-dG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
-Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 26 Jun 2016 13:03:59 +0200
+
+Adjust jump targets according to the Linux coding style convention.
+Another check for the variable "status" can be omitted then at the end.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/twl-core.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+index 9458c6d..a49d3db 100644
+--- a/drivers/mfd/twl-core.c
++++ b/drivers/mfd/twl-core.c
+@@ -631,7 +631,7 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
+ 		status = platform_device_add_data(pdev, pdata, pdata_len);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add platform_data\n");
+-			goto err;
++			goto put_device;
+ 		}
+ 	}
+ 
+@@ -644,21 +644,22 @@ add_numbered_child(unsigned mod_no, const char *name, int num,
+ 		status = platform_device_add_resources(pdev, r, irq1 ? 2 : 1);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add irqs\n");
+-			goto err;
++			goto put_device;
+ 		}
+ 	}
+ 
+ 	status = platform_device_add(pdev);
+-	if (status = 0)
+-		device_init_wakeup(&pdev->dev, can_wakeup);
++	if (status)
++		goto put_device;
++
++	device_init_wakeup(&pdev->dev, can_wakeup);
+ 
+-err:
+-	if (status < 0) {
+-		platform_device_put(pdev);
+-		dev_err(&twl->client->dev, "can't add %s dev\n", name);
+-		return ERR_PTR(status);
+-	}
+ 	return &pdev->dev;
++
++put_device:
++	platform_device_put(pdev);
++	dev_err(&twl->client->dev, "failed to add device %s\n", name);
++	return ERR_PTR(status);
+ }
+ 
+ static inline struct device *add_child(unsigned mod_no, const char *name,
+-- 
+2.9.0
+
