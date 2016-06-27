@@ -1,36 +1,39 @@
-From: Or Gerlitz <ogerlitz@mellanox.com>
-Date: Thu, 16 Jun 2016 14:15:49 +0000
-Subject: Re: [patch] devlink: clean up a condition
-Message-Id: <326e2050-176c-291a-a1ec-2d5f13930657@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 27 Jun 2016 19:42:10 +0000
+Subject: re: qede: Add support for coalescing config read/update.
+Message-Id: <20160627194210.GA30526@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160616065032.GB23129@mwanda>
-In-Reply-To: <20160616065032.GB23129@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>, Hadar Har-Zion <hadarh@mellanox.com>
+To: kernel-janitors@vger.kernel.org
 
-On 6/16/2016 9:50 AM, Dan Carpenter wrote:
-> Presumably having a _get() function implies that we also have a _set()
-> function but lets make it match when we're calling.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/net/core/devlink.c b/net/core/devlink.c
-> index a4f88cb..b2e592a 100644
-> --- a/net/core/devlink.c
-> +++ b/net/core/devlink.c
-> @@ -1461,7 +1461,7 @@ static int devlink_nl_cmd_eswitch_mode_set_doit(struct sk_buff *skb,
->   
->   	mode = nla_get_u16(info->attrs[DEVLINK_ATTR_ESWITCH_MODE]);
->   
-> -	if (ops && ops->eswitch_mode_get)
-> +	if (ops && ops->eswitch_mode_set)
->   		return ops->eswitch_mode_set(devlink, mode);
->   	return -EOPNOTSUPP;
->   }
+Hello Sudarsana Reddy Kalluru,
 
+The patch d552fa84cb35: "qede: Add support for coalescing config
+read/update." from Jun 21, 2016, leads to the following static
+checker warning:
 
-good catch Dan, we will incorporate that into the patch set
+	drivers/net/ethernet/qlogic/qede/qede_ethtool.c:435 qede_get_coalesce()
+	warn: passing casted pointer '&coal->rx_coalesce_usecs' to 'edev->ops->common->get_coalesce()' 32 vs 16.
 
+drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+   429  static int qede_get_coalesce(struct net_device *dev,
+   430                               struct ethtool_coalesce *coal)
+   431  {
+   432          struct qede_dev *edev = netdev_priv(dev);
+   433  
+   434          memset(coal, 0, sizeof(struct ethtool_coalesce));
+   435          edev->ops->common->get_coalesce(edev->cdev,
+   436                                          (u16 *)&coal->rx_coalesce_usecs,
+   437                                          (u16 *)&coal->tx_coalesce_usecs);
+
+This won't work on big endian systems.  Fix it so the function takes a
+u32 or make ->rx_coalesce_usecs a u16.
+
+   438  
+   439          return 0;
+   440  }
+
+regards,
+dan carpenter
