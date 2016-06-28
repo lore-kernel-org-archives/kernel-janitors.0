@@ -1,18 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 27 Jun 2016 19:42:10 +0000
-Subject: re: qede: Add support for coalescing config read/update.
-Message-Id: <20160627194210.GA30526@mwanda>
+From: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
+Date: Tue, 28 Jun 2016 04:41:17 +0000
+Subject: RE: qede: Add support for coalescing config read/update.
+Message-Id: <BY1PR11MB04225716450C469AC33A447990220@BY1PR11MB0422.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160627194210.GA30526@mwanda>
+In-Reply-To: <20160627194210.GA30526@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi Dan carpenter,
+    Thanks for your mail. Will address it.
+
+Thanks,
+Sudarsana
+
+-----Original Message-----
+From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
+Sent: 28 June 2016 01:12
+To: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: re: qede: Add support for coalescing config read/update.
+
 Hello Sudarsana Reddy Kalluru,
 
-The patch d552fa84cb35: "qede: Add support for coalescing config
-read/update." from Jun 21, 2016, leads to the following static
-checker warning:
+The patch d552fa84cb35: "qede: Add support for coalescing config read/update." from Jun 21, 2016, leads to the following static checker warning:
 
 	drivers/net/ethernet/qlogic/qede/qede_ethtool.c:435 qede_get_coalesce()
 	warn: passing casted pointer '&coal->rx_coalesce_usecs' to 'edev->ops->common->get_coalesce()' 32 vs 16.
