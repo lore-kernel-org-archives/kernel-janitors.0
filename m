@@ -1,18 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 27 Jun 2016 19:50:58 +0000
-Subject: re: qed: Add support for coalescing config read/update.
-Message-Id: <20160627195058.GA4081@mwanda>
+From: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
+Date: Tue, 28 Jun 2016 04:40:58 +0000
+Subject: RE: qed: Add support for coalescing config read/update.
+Message-Id: <BY1PR11MB04225C11633C6816F0C335BC90220@BY1PR11MB0422.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160627195058.GA4081@mwanda>
+In-Reply-To: <20160627195058.GA4081@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi Dan carpenter,
+     Thanks for your mail. Will submit the fix.
+
+Thanks,
+Sudarsana
+
+-----Original Message-----
+From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
+Sent: 28 June 2016 01:21
+To: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>; Yuval Mintz <Yuval.Mintz@qlogic.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: re: qed: Add support for coalescing config read/update.
+
 Hello Sudarsana Reddy Kalluru,
 
-The patch 722003ac40c2: "qed: Add support for coalescing config
-read/update." from Jun 21, 2016, leads to the following static
-checker warning:
+The patch 722003ac40c2: "qed: Add support for coalescing config read/update." from Jun 21, 2016, leads to the following static checker warning:
 
 	drivers/net/ethernet/qlogic/qed/qed_int.c:2450 qed_init_cau_sb_entry()
 	warn: always true condition '(cdev->rx_coalesce_usecs <= 255) => (0-255 <= 255)'
