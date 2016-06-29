@@ -1,74 +1,29 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 14 Jun 2016 09:38:38 +0000
-Subject: Re: [PATCH 1/2] memory: tegra: delete unneeded of_node_put
-Message-Id: <20160614093838.GC22567@ulmo.ba.sec>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="rQ2U398070+RC21q"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Jun 2016 14:42:17 +0000
+Subject: [patch] crypto: sha1-mb - cleanup a small | vs || typo
+Message-Id: <20160629144216.GD22818@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
- <1444412861-2580-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444412861-2580-2-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Megha Dey <megha.dey@linux.intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, Xiaodong Liu <xiaodong.liu@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+|| and | behave basically the same here but || was intended.  It causes
+a static checker warning when we mix up logical and bitwise operations.
 
---rQ2U398070+RC21q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, Oct 09, 2015 at 07:47:40PM +0200, Julia Lawall wrote:
-> for_each_child_of_node performs an of_node_put on each iteration, so
-> putting an of_node_put before a continue results in a double put.
->=20
-> The semantic match that finds this problem is as follows
-> (http://coccinelle.lip6.fr):
->=20
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> iterator name for_each_child_of_node;
-> @@
->=20
->  for_each_child_of_node(root, child) {
->    ... when !=3D of_node_get(child)
-> *  of_node_put(child);
->    ...
-> *  continue;
-> }
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/memory/tegra/mc.c           |    4 +---
->  drivers/memory/tegra/tegra124-emc.c |    4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---rQ2U398070+RC21q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXX9CeAAoJEN0jrNd/PrOhvN4P/3Rp1fGCzC2Epyc58Cv7ACNz
-IGxwuZApdOhvshR/DGLpxhSULJlvUXtI9MBJ6kK56lGUoTYAppH3KKl0KGLKlAHw
-df80hjG59Pu1atjGt9LdEk98kqCXjmoSTR5Gy7sfIxRwoP2lL8VwiwsB/41H2ZYT
-BhFVc//9+bLYWgFDetbKrKiNzziRy6oRdSXuhNsYqW5FCvBbzypCflzD39IkOrKW
-hDef60Dk9SbqCGXEAPL/2XOiUMMUYYcMLDOATvTe3yCxpd6klNS4dnUQoRiWl2pc
-DosJdCLRX8REdELiACxRboHHqNoZxuw6h+xdjIhvbOOqh9oZdBac9jEUknAv0WUZ
-9XJC7PO99hF4pExV/Y8CnIQUhLMevnI7x3LmjpsJGGbjXw6fNhEw90PwuwWOie4I
-F7BU554VKHURj3oUhSBFBze6asiOB4Foeh+abI2fGtwGK9GQi8Sx6NJ1ApGL3I7w
-YkOuXczdc/7n48aOA06gHGBwnbsc5Cr/Kb5otMo5kP1UKXQK436PwbC2VomFWQgL
-y61Yf+xTLECeDcEuemgRVSJeBGthUgc7brOq5Dnwy+hMiGW9RkOWCkmp5Kr7JCXv
-XwRkQA5Tb025TXX0xxm6+U88zQX54gNNew21Yr6zf0Olsggq2mvDMT4rY2agULVW
-6n3D8Coy5frp20laFxTO
-=H3GI
------END PGP SIGNATURE-----
-
---rQ2U398070+RC21q--
+diff --git a/arch/x86/crypto/sha1-mb/sha1_mb.c b/arch/x86/crypto/sha1-mb/sha1_mb.c
+index 561b286..96d80ad 100644
+--- a/arch/x86/crypto/sha1-mb/sha1_mb.c
++++ b/arch/x86/crypto/sha1-mb/sha1_mb.c
+@@ -304,7 +304,7 @@ static struct sha1_hash_ctx *sha1_ctx_mgr_submit(struct sha1_ctx_mgr *mgr,
+ 	 * Or if the user's buffer contains less than a whole block,
+ 	 * append as much as possible to the extra block.
+ 	 */
+-	if ((ctx->partial_block_buffer_length) | (len < SHA1_BLOCK_SIZE)) {
++	if ((ctx->partial_block_buffer_length) || (len < SHA1_BLOCK_SIZE)) {
+ 		/*
+ 		 * Compute how many bytes to copy from user buffer into
+ 		 * extra block
