@@ -1,23 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jun 2016 12:33:27 +0000
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Date: Thu, 30 Jun 2016 20:42:19 +0000
 Subject: Re: [patch] crypto: sha256-mb - cleanup a || vs | typo
-Message-Id: <20160630123327.GD32301@mwanda>
+Message-Id: <1467319339.22178.256.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160629144242.GE22818@mwanda>
- <8538242a-eab7-127e-e47e-26027fee4f6d@zytor.com>
- <20160630075056.GR32247@mwanda>
- <1467285386.24287.143.camel@perches.com>
- <57750665.7000703@bfs.de>
-In-Reply-To: <57750665.7000703@bfs.de>
+	 <8538242a-eab7-127e-e47e-26027fee4f6d@zytor.com>
+In-Reply-To: <8538242a-eab7-127e-e47e-26027fee4f6d@zytor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Joe Perches <joe@perches.com>, "H. Peter Anvin" <hpa@zytor.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Tim Chen <tim.c.chen@linux.intel.com>, Megha Dey <megha.dey@intel.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, Xiaodong Liu <xiaodong.liu@intel.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "H. Peter Anvin" <hpa@zytor.com>, Dan Carpenter <dan.carpenter@oracle.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Megha Dey <megha.dey@intel.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, Xiaodong Liu <xiaodong.liu@intel.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The difference between | and || is that || has ordering constraints.
-It's from the C standard, and not the compiler version.
+On Wed, 2016-06-29 at 10:05 -0700, H. Peter Anvin wrote:
+> On 06/29/16 07:42, Dan Carpenter wrote:
+> > 
+> > > 
+> > > > 
+> > > > and | behave basically the same here but || is intended.  It causes a
+> > static checker warning to mix up bitwise and logical operations.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > 
+> > diff --git a/arch/x86/crypto/sha256-mb/sha256_mb.c b/arch/x86/crypto/sha256-mb/sha256_mb.c
+> > index c9d5dcc..4ec895a 100644
+> > --- a/arch/x86/crypto/sha256-mb/sha256_mb.c
+> > +++ b/arch/x86/crypto/sha256-mb/sha256_mb.c
+> > @@ -299,7 +299,7 @@ static struct sha256_hash_ctx *sha256_ctx_mgr_submit(struct sha256_ctx_mgr *mgr,
+> >  	 * Or if the user's buffer contains less than a whole block,
+> >  	 * append as much as possible to the extra block.
+> >  	 */
+> > -	if ((ctx->partial_block_buffer_length) | (len < SHA256_BLOCK_SIZE)) {
+> > +	if ((ctx->partial_block_buffer_length) || (len < SHA256_BLOCK_SIZE)) {
+> >  		/* Compute how many bytes to copy from user buffer into
+> >  		 * extra block
+> >  		 */
+> > 
+> As far as I know the | was an intentional optimization, so you may way
+> to look at the generated code.
+> 
+> 	-hpa
+> 
 
-regards,
-dan carpenter
+Yes, this is an intentional optimization.  Is there any scenario where things may
+break with the compiler?
 
+Tim
