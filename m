@@ -1,46 +1,69 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Wed, 20 Jul 2016 11:44:37 +0000
-Subject: Re: [PATCH v2 3/3] xen-scsiback: Pass a failure indication as a constant
-Message-Id: <a295159a-b292-fdbd-6aac-5b37b49f094b@suse.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 01 Jul 2016 17:29:24 +0000
+Subject: [PATCH v4] mfd: dm355evm_msp: Refactoring for add_child()
+Message-Id: <4dcb4cab-e2cc-87c0-9cfc-d140f185254b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
- <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
- <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
- <8806e9cb-4200-8154-7914-6735805dfbe0@users.sourceforge.net>
- <83b0b1e2-900b-eefc-160b-7d837730571c@suse.com>
- <18256bfc-c6f9-8802-8d7d-55766f0b3624@users.sourceforge.net>
- <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
- <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
- <b025aa24-63c9-4b2e-5035-9da278f968e5@users.sourceforge.net>
-In-Reply-To: <b025aa24-63c9-4b2e-5035-9da278f968e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Lee Jones <lee.jones@linaro.org>, kernel-janitors@vger.kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On 20/07/16 13:36, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 20 Jul 2016 13:12:33 +0200
-> 
-> Pass the constant "FAILED" in a function call directly instead of
-> using an intialisation for a local variable.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-Even if already given, here it is again:
+Adjust jump targets according to the Linux coding style convention.
+Another check for the variable "status" can be omitted then at the end.
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+v4: Further feedback was integrated into this message.
+v3: Deletion of another blank line
+v2: Rebasing
 
+ drivers/mfd/dm355evm_msp.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-Juergen
+diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
+index 270e19c..86eca61 100644
+--- a/drivers/mfd/dm355evm_msp.c
++++ b/drivers/mfd/dm355evm_msp.c
+@@ -209,7 +209,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+ 		status = platform_device_add_data(pdev, pdata, pdata_len);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add platform_data\n");
+-			goto err;
++			goto put_device;
+ 		}
+ 	}
+ 
+@@ -222,19 +222,20 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+ 		status = platform_device_add_resources(pdev, &r, 1);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add irq\n");
+-			goto err;
++			goto put_device;
+ 		}
+ 	}
+ 
+ 	status = platform_device_add(pdev);
++	if (status)
++		goto put_device;
+ 
+-err:
+-	if (status < 0) {
+-		platform_device_put(pdev);
+-		dev_err(&client->dev, "can't add %s dev\n", name);
+-		return ERR_PTR(status);
+-	}
+ 	return &pdev->dev;
++
++put_device:
++	platform_device_put(pdev);
++	dev_err(&client->dev, "failed to add device %s\n", name);
++	return ERR_PTR(status);
+ }
+ 
+ static int add_children(struct i2c_client *client)
+-- 
+2.9.0
+
