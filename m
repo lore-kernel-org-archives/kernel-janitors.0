@@ -1,86 +1,86 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Thu, 21 Jul 2016 07:29:11 +0000
-Subject: Re: [PATCH 5/9] staging: ks7010: Delete unnecessary uses of the variable "retval"
-Message-Id: <20160721072911.GF1664@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="z0eOaCaDLjvTGF2l"
+From: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
+Date: Fri, 01 Jul 2016 13:12:58 +0000
+Subject: RE: [patch] bfa: clean up some bounds checking
+Message-Id: <SN1PR11MB042975C2DD9F663AD3D1551D90250@SN1PR11MB0429.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <6a8f4258-188e-36f6-28fa-1626c29cf361@users.sourceforge.net>
- <alpine.DEB.2.10.1607172056220.3177@hadrien>
- <20160720155333.GE1688@katana>
- <b249584b-47b8-ffd9-432e-986d69260ff1@users.sourceforge.net>
- <20160721062726.GC1664@katana>
- <alpine.DEB.2.10.1607210925200.2927@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1607210925200.2927@hadrien>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20160616104434.GB24067@mwanda> <5762997D.3020302@bfs.de>
+In-Reply-To: <5762997D.3020302@bfs.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "wharms@bfs.de" <wharms@bfs.de>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Anil Gurumurthy <Anil.Gurumurthy@qlogic.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+
+    Both the approaches (i.e., using a loop or the strchr()) look fine to me.
+
+Thanks,
+Sudarsana
+
+-----Original Message-----
+From: walter harms [mailto:wharms@bfs.de] 
+Sent: 16 June 2016 17:50
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Anil Gurumurthy <Anil.Gurumurthy@qlogic.com>; Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>; James E.J. Bottomley <jejb@linux.vnet.ibm.com>; Martin K. Petersen <martin.petersen@oracle.com>; linux-scsi <linux-scsi@vger.kernel.org>; kernel-janitors@vger.kernel.org
+Subject: Re: [patch] bfa: clean up some bounds checking
 
 
---z0eOaCaDLjvTGF2l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 21, 2016 at 09:26:33AM +0200, Julia Lawall wrote:
->=20
->=20
-> On Thu, 21 Jul 2016, Wolfram Sang wrote:
->=20
-> >
-> > > >>>  	if (atomic_read(&priv->sleepstatus.status) =3D=3D 0) {
-> > > >>>  		rw_data =3D GCR_B_DOZE;
-> > > >>> -		retval =3D
-> > > >>> -		    ks7010_sdio_write(priv, GCR_B, &rw_data, sizeof(rw_data));
-> > > >>> -		if (retval) {
-> > > >>> +		if (ks7010_sdio_write(priv,
-> > > >>> +				      GCR_B,
-> > > >>> +				      &rw_data,
-> > > >>> +				      sizeof(rw_data))) {
-> > > >>
-> > > >> A multi-line function call in an if test does not look nice at all=
-=2E  The
-> > > >> original code was an easy-to-read expectable pattern.
-> > > >
-> > > > I agree. I am not strict on the 80 char limit, especially in cases =
-like
-> > > > the above.
-> > >
-> > > Would you try an other source code formatting for the suggested chang=
-e pattern?
-> >
-> > I don't understand the question?
->=20
-> I think the original code was fine.  x =3D blah(); if (x) ... is a perfec=
-tly
-> familiar kernel coding pattern.  There is no benefit in terms of
-> performance or understandability in dropping the variable.
+Am 16.06.2016 12:44, schrieb Dan Carpenter:
+> This code is supposed to search ->adapter_hwpath[] and replace the 
+> second colon with a NUL character.  Unfortunately, the boundary checks 
+> that ensure we don't go beyond the end of the buffer have a couple 
+> problems.
+> 
+> Imagine that the string has no colons.  In that case, in the first 
+> loop, we read one space beyond the end of the buffer and then exit the loop.
+> In the next loop, we increment once, read two characters beyond the 
+> end of the buffer and then exit.  Then after the loop we put a NUL 
+> character two characters past the end of the buffer.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This is from static analysis and not tested.  Caveat emptor.
+> 
+> diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c 
+> index d1ad020..dfb26f0 100644
+> --- a/drivers/scsi/bfa/bfad_bsg.c
+> +++ b/drivers/scsi/bfa/bfad_bsg.c
+> @@ -106,10 +106,17 @@ bfad_iocmd_ioc_get_info(struct bfad_s *bfad, 
+> void *cmd)
+>  
+>  	/* set adapter hw path */
+>  	strcpy(iocmd->adapter_hwpath, bfad->pci_name);
+> -	for (i = 0; iocmd->adapter_hwpath[i] != ':' && i < BFA_STRING_32; i++)
+> -		;
+> -	for (; iocmd->adapter_hwpath[++i] != ':' && i < BFA_STRING_32; )
+> -		;
+> +	i = -1;
+> +	while (++i < BFA_STRING_32) {
+> +		if (iocmd->adapter_hwpath[i] = ':')
+> +			break;
+> +	}
+> +	while (++i < BFA_STRING_32) {
+> +		if (iocmd->adapter_hwpath[i] = ':')
+> +			break;
+> +	}
+> +	if (i >= BFA_STRING_32)
+> +		i = BFA_STRING_32 - 1;
+>  	iocmd->adapter_hwpath[i] = '\0';
+>  	iocmd->status = BFA_STATUS_OK;
+>  	return 0;
 
-I certainly agree to that.
+
+I do not see the use case but i assume
+the idea is to have a string like aa:bb:something and kill everyhing after the second ':' ?
+/*
+	a few word may help here also inside the code */
 
 
---z0eOaCaDLjvTGF2l
-Content-Type: application/pgp-signature; name="signature.asc"
+second: maybe we can us strchr here ?
+	s1=strchr(iocmd->adapter_hwpath,':');
+	if (s1 != NULL ) s1=strchr(s1,":");
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXkHnHAAoJEBQN5MwUoCm2Vn0P/i86vLhkB6CnmLv773nhFmUh
-ze8TyG9d2bLukVUGBAw2uQ/Xkns9AWmobBCEis/3dcvxbSyeXU9gATamxEiKkggb
-N6BCtEd1f98KK30oGqGLSgFjCM+fHXxgEHKw2ILUSwkCZgY14EnH1Hs+XMf6UbzL
-pDghLCw7B19NcWnYm+me4JultieLnTmdYXfPfqCpK5l/bDV4fTU/zWNaqzkme23V
-zx1jvfGtmEKIH1AVFB8sPphmcCoKjz3owApIxvCt5AexiT9XMB0Ha0+S2XyuBqwP
-7EZyXjvpsSo/16Q+qaz+uihTkYGdSfwAaLkY3Ozhah+gTP5h9KQd/WPRWDb0/Qeg
-oNS5zaKn2ZT3rGQMjdifuDniVOIWTZJVcn9Q7LQhxXXhmjaBARRhxstSw4yUmyib
-bVvqm++cKJ/smCqZKmAbvgGyWIQGyHCRyY/Fq3si7npTFcwp2cSFO1YxN1Ovj3Pw
-L0cCt/SfmPzZQlBDAJ9TSKP7uo/9jvKvBLEBcvmbpR2NYDufrJ17ZNfetH7C4GBR
-S+3YDAji42GwrrEtAiXdENxIG7uDJxwcUTlrzXkrv3/v7dHo9/R9UmcMtXwXHk7O
-XR3xZZmvcJgDQEdFZVlbORCjY8rG175/mwgtout/Gzqe5Gfh1AaZxd3cAwt3eXqd
-Z3qEMrszHk61rC1LHYog
-=rmsX
------END PGP SIGNATURE-----
 
---z0eOaCaDLjvTGF2l--
+re,
+ wh
