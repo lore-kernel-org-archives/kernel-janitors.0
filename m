@@ -1,26 +1,98 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 15 Jul 2016 18:43:08 +0000
-Subject: Re: [patch v2 -next] wan/fsl_ucc_hdlc: info leak in uhdlc_ioctl()
-Message-Id: <20160715.114308.1901247006216834380.davem@davemloft.net>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Fri, 01 Jul 2016 07:55:59 +0000
+Subject: Re: [patch] crypto: sha256-mb - cleanup a || vs | typo
+Message-Id: <20160701075559.GA11902@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <57876EE0.10603@bfs.de>
-	<20160714111653.GA30452@mwanda>
-In-Reply-To: <20160714111653.GA30452@mwanda>
+References: <20160629144242.GE22818@mwanda>
+ <8538242a-eab7-127e-e47e-26027fee4f6d@zytor.com>
+ <1467319339.22178.256.camel@linux.intel.com>
+In-Reply-To: <1467319339.22178.256.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: qiang.zhao@nxp.com, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, wharms@bfs.de
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Dan Carpenter <dan.carpenter@oracle.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Megha Dey <megha.dey@intel.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, Xiaodong Liu <xiaodong.liu@intel.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Jul 2016 14:16:53 +0300
 
-> There is a 2 byte struct whole after line.loopback so we need to clear
-> that out to avoid disclosing stack information.
-> 
-> Fixes: c19b6d246a35 ('drivers/net: support hdlc function for QE-UCC')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: remove the other initialization to zero
+* Tim Chen <tim.c.chen@linux.intel.com> wrote:
 
-Applied.
+> On Wed, 2016-06-29 at 10:05 -0700, H. Peter Anvin wrote:
+> > On 06/29/16 07:42, Dan Carpenter wrote:
+> > >=20
+> > > >=20
+> > > > >=20
+> > > > > and | behave basically the same here but || is intended.=A0=A0It =
+causes a
+> > > static checker warning to mix up bitwise and logical operations.
+> > >=20
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > >=20
+> > > diff --git a/arch/x86/crypto/sha256-mb/sha256_mb.c b/arch/x86/crypto/=
+sha256-mb/sha256_mb.c
+> > > index c9d5dcc..4ec895a 100644
+> > > --- a/arch/x86/crypto/sha256-mb/sha256_mb.c
+> > > +++ b/arch/x86/crypto/sha256-mb/sha256_mb.c
+> > > @@ -299,7 +299,7 @@ static struct sha256_hash_ctx *sha256_ctx_mgr_sub=
+mit(struct sha256_ctx_mgr *mgr,
+> > > =A0	=A0* Or if the user's buffer contains less than a whole block,
+> > > =A0	=A0* append as much as possible to the extra block.
+> > > =A0	=A0*/
+> > > -	if ((ctx->partial_block_buffer_length) | (len < SHA256_BLOCK_SIZE))=
+ {
+> > > +	if ((ctx->partial_block_buffer_length) || (len < SHA256_BLOCK_SIZE)=
+) {
+> > > =A0		/* Compute how many bytes to copy from user buffer into
+> > > =A0		=A0* extra block
+> > > =A0		=A0*/
+> > >=20
+> > As far as I know the | was an intentional optimization, so you may way
+> > to look at the generated code.
+> >=20
+> > 	-hpa
+> >=20
+>=20
+> Yes, this is an intentional optimization. [...]
+
+Please don't do intentional optimizations while mixing them with a very ugl=
+y=20
+coding style:
+
+	if ((ctx->partial_block_buffer_length) | (len < SHA256_BLOCK_SIZE)) {
+
+The extra, unnecessary parantheses around ctx->partial_block_buffer_length =
+will=20
+make the ordinary reader assume that the person who wrote the code was unsu=
+re=20
+about basic C syntax details and typoed the '|' as well ...
+
+Also, for heaven's (and readability's) sake, pick shorter structure field n=
+ames.=20
+What's wrong with ctx->partial_block_buf_len?
+
+Also, even if the '|' was intentional - wouldn't it result in better code t=
+o use=20
+'||'?
+
+Plus:
+
+> > > =A0		/* Compute how many bytes to copy from user buffer into
+> > > =A0		=A0* extra block
+> > > =A0		=A0*/
+
+please use the customary (multi-line) comment style:
+
+  /*
+   * Comment .....
+   * ...... goes here.
+   */
+
+specified in Documentation/CodingStyle.
+
+Thanks,
+
+        Ingo
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
