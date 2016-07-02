@@ -1,23 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 28 Jul 2016 05:55:33 +0000
-Subject: Re: [patch -old] sparc: serial: sunhv: fix a double lock bug
-Message-Id: <20160727.225533.598242834832960771.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 02 Jul 2016 19:07:25 +0000
+Subject: [PATCH 2/2] Input-at32psif: Remove OOM messages in psif_probe()
+Message-Id: <1c2a98cb-e853-7b4c-3c5b-1e3ee70c67fb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160715111733.GB13153@mwanda>
-In-Reply-To: <20160715111733.GB13153@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <4471604f-f401-bed9-39be-1aff2a92edf6@users.sourceforge.net>
+In-Reply-To: <4471604f-f401-bed9-39be-1aff2a92edf6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: gregkh@linuxfoundation.org, jslaby@suse.com, sparclinux@vger.kernel.org, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 15 Jul 2016 14:17:33 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Jul 2016 20:34:18 +0200
 
-> We accidentally take the "port->lock" twice in a row.  This old code
-> was supposed to be deleted.
-> 
-> Fixes: e58e241c1788 ('sparc: serial: Clean up the locking for -rt')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Delete two debug messages because Linux will usually provide
+an appropriate information for a memory allocation failure.
 
-Applied and queued up for -stable, thanks Dan.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/serio/at32psif.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/input/serio/at32psif.c b/drivers/input/serio/at32psif.c
+index fcb769a..b30503d 100644
+--- a/drivers/input/serio/at32psif.c
++++ b/drivers/input/serio/at32psif.c
+@@ -210,15 +210,13 @@ static int __init psif_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	psif = kzalloc(sizeof(struct psif), GFP_KERNEL);
+-	if (!psif) {
+-		dev_dbg(&pdev->dev, "out of memory\n");
++	if (!psif)
+ 		return -ENOMEM;
+-	}
++
+ 	psif->pdev = pdev;
+ 
+ 	io = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!io) {
+-		dev_dbg(&pdev->dev, "out of memory\n");
+ 		ret = -ENOMEM;
+ 		goto out_free_psif;
+ 	}
+-- 
+2.9.0
+
