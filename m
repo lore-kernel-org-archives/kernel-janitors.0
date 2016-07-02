@@ -1,29 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jul 2016 19:00:36 +0000
-Subject: [PATCH 0/2] Input-at32psif: Fine-tuning for OOM handling in psif_probe()
-Message-Id: <4471604f-f401-bed9-39be-1aff2a92edf6@users.sourceforge.net>
+From: Joe Perches <joe@perches.com>
+Date: Sat, 02 Jul 2016 20:45:33 +0000
+Subject: Re: [PATCH 0/2] Input-at32psif: Fine-tuning for OOM handling in psif_probe()
+Message-Id: <1467492333.1968.5.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+	 <4471604f-f401-bed9-39be-1aff2a92edf6@users.sourceforge.net>
+In-Reply-To: <4471604f-f401-bed9-39be-1aff2a92edf6@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Jul 2016 20:50:09 +0200
+On Sat, 2016-07-02 at 21:00 +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 2 Jul 2016 20:50:09 +0200
+>=20
+> A few update suggestions were taken into account
+> from static source code analysis.
+>=20
+> Markus Elfring (2):
+> =A0 Return directly after a failed kzalloc()
+> =A0 Remove two OOM messages
+>=20
+> =A0drivers/input/serio/at32psif.c | 10 +++-------
+> =A01 file changed, 3 insertions(+), 7 deletions(-)
 
-A few update suggestions were taken into account
-from static source code analysis.
+What possible rationale is there for including this "references" header?
+566ABCD9.1060404@users.sourceforge.net
 
-Markus Elfring (2):
-  Return directly after a failed kzalloc()
-  Remove two OOM messages
+This message id is for your message:
+	"Source code review around jump label usage"
+sent December 11, 2015!
 
- drivers/input/serio/at32psif.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
--- 
-2.9.0
-
+Please stop adding unnecessary and useless email headers.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
