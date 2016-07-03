@@ -1,34 +1,34 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sun, 17 Jul 2016 03:54:04 +0000
-Subject: Re: [patch] mtd: maps: sa1100-flash: potential NULL dereference
-Message-Id: <20160717035404.GA14744@brian-ubuntu>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 03 Jul 2016 06:06:43 +0000
+Subject: [PATCH] clk: stm32f4: fix error handling
+Message-Id: <1467526003-13318-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160715110629.GB9258@mwanda> <20160716003209.GC76613@google.com>
- <20160716090041.GC32247@mwanda>
-In-Reply-To: <20160716090041.GC32247@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Frans Klaver <fransklaver@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Sat, Jul 16, 2016 at 12:00:41PM +0300, Dan Carpenter wrote:
-> I like the Fixes tag because it was my invention.  :)  It's a separate
-> thing from -stable.
+This is likely that checking 'clks[idx]' instead of 'clks[n]' is
+expected here.
 
-Ha, nice. Well I have nothing against the tag, and nothing against this
-patch. It's good to know that the Fixes tag is not (necessarily) a
-request-for-stable tag.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clk/clk-stm32f4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> It's nice for reviewing so you can see the original intent of the patch
-> you're fixing.  Also it forces you to find the original authors and CC
-> them so hopefully they Ack the patch.  The other thing is it lets you
-> collect data about which patches introduce bugs and how quickly they
-> get fixed.  So for example, lwn.net recently had an article about bug
-> that are backported into the -stable tree.
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index b6ca33f..02d6810 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -364,7 +364,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 		    NULL, gd->name, gd->parent_name, gd->flags,
+ 		    base + gd->offset, gd->bit_idx, 0, &stm32f4_clk_lock);
+ 
+-		if (IS_ERR(clks[n])) {
++		if (IS_ERR(clks[idx])) {
+ 			pr_err("%s: Unable to register leaf clock %s\n",
+ 			       np->full_name, gd->name);
+ 			goto fail;
+-- 
+2.7.4
 
-All good things. I know personally it's helpful when tracking down bugs,
-or backporting drivers or features.
-
-Regards,
-Brian
