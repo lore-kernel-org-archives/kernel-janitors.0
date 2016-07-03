@@ -1,48 +1,39 @@
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Date: Sat, 16 Jul 2016 03:34:19 +0000
-Subject: Re: [patch] tools/vm/slabinfo: fix an unintentional printf
-Message-Id: <20160716033419.GA493@swordfish>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 03 Jul 2016 06:18:57 +0000
+Subject: [PATCH] drm/tegra: fix error handling
+Message-Id: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160715211243.GE19522@mwanda>
-In-Reply-To: <20160715211243.GE19522@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Colin Ian King <colin.king@canonical.com>, Laura Abbott <labbott@fedoraproject.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On (07/16/16 00:12), Dan Carpenter wrote:
-> The curly braces are missing here so we print stuff unintentionally.
-> 
-> Fixes: 9da4714a2d4f ('slub: slabinfo update for cmpxchg handling')
-
-Hello,
-
-a minor correction:
-it's 	9da4714a2d44
-
-not 	9da4714a2d4f
-
-	-ss
+This is likely that checking 'gr3d->clk_secondary' instead of 'gr3d->clk'
+is expected here.
 
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
-> index 7cf6e17..b9d34b3 100644
-> --- a/tools/vm/slabinfo.c
-> +++ b/tools/vm/slabinfo.c
-> @@ -510,10 +510,11 @@ static void slab_stats(struct slabinfo *s)
->  			s->alloc_node_mismatch, (s->alloc_node_mismatch * 100) / total);
->  	}
->  
-> -	if (s->cmpxchg_double_fail || s->cmpxchg_double_cpu_fail)
-> +	if (s->cmpxchg_double_fail || s->cmpxchg_double_cpu_fail) {
->  		printf("\nCmpxchg_double Looping\n------------------------\n");
->  		printf("Locked Cmpxchg Double redos   %lu\nUnlocked Cmpxchg Double redos %lu\n",
->  			s->cmpxchg_double_fail, s->cmpxchg_double_cpu_fail);
-> +	}
->  }
->  
->  static void report(struct slabinfo *s)
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/tegra/gr3d.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
+index 0b3f2b9..13f0d1b 100644
+--- a/drivers/gpu/drm/tegra/gr3d.c
++++ b/drivers/gpu/drm/tegra/gr3d.c
+@@ -268,9 +268,9 @@ static int gr3d_probe(struct platform_device *pdev)
+ 
+ 	if (of_device_is_compatible(np, "nvidia,tegra30-gr3d")) {
+ 		gr3d->clk_secondary = devm_clk_get(&pdev->dev, "3d2");
+-		if (IS_ERR(gr3d->clk)) {
++		if (IS_ERR(gr3d->clk_secondary)) {
+ 			dev_err(&pdev->dev, "cannot get secondary clock\n");
+-			return PTR_ERR(gr3d->clk);
++			return PTR_ERR(gr3d->clk_secondary);
+ 		}
+ 
+ 		gr3d->rst_secondary = devm_reset_control_get(&pdev->dev,
+-- 
+2.7.4
+
