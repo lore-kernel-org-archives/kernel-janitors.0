@@ -1,34 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 07 Jul 2016 08:12:41 +0000
-Subject: [patch] ocfs2: silence an integer overflow warning
-Message-Id: <20160707081241.GA16645@mwanda>
+Date: Mon, 04 Jul 2016 07:47:48 +0000
+Subject: [patch] spi: s3c64xx: indent an if statement
+Message-Id: <20160704074748.GB4849@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Fasheh <mfasheh@suse.com>
-Cc: Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi.shyti@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker complains that ->me_start + ->me_len can overflow.
-I haven't followed it through to see the implications but it seems
-simple enough to prevent the overflow.
+It generates a static checker warning if an if statement isn't indented.
+I think the code is fine except for the white space issue.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-move_extents in other less common file systems have this same warning as
-well.
 
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index e3d05d9..9ff405a 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -1014,7 +1014,8 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
- 		goto out_free;
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 6d8486f..9f0119f 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -330,8 +330,8 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
+ 		}
+ 	} else {
+ 		if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
+-		writel(S3C64XX_SPI_SLAVE_SIG_INACT,
+-		sdd->regs + S3C64XX_SPI_SLAVE_SEL);
++			writel(S3C64XX_SPI_SLAVE_SIG_INACT,
++			       sdd->regs + S3C64XX_SPI_SLAVE_SEL);
  	}
+ }
  
--	if (range.me_start > i_size_read(inode)) {
-+	if (range.me_start > i_size_read(inode) ||
-+	    range.me_len > i_size_read(inode)) {
- 		status = -EINVAL;
- 		goto out_free;
- 	}
