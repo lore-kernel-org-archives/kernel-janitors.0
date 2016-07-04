@@ -1,39 +1,23 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 03 Jul 2016 06:18:57 +0000
-Subject: [PATCH] drm/tegra: fix error handling
-Message-Id: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Alexandre Courbot <gnurou@gmail.com>
+Date: Mon, 04 Jul 2016 01:39:36 +0000
+Subject: Re: [PATCH] drm/tegra: fix error handling
+Message-Id: <CAAVeFuLNgjqYtjoDD3Kxr04c8PSyLptX2RXM6a_m2epADEdvkg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1467526737-13591-1-git-send-email-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-This is likely that checking 'gr3d->clk_secondary' instead of 'gr3d->clk'
-is expected here.
+On Sun, Jul 3, 2016 at 3:18 PM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> This is likely that checking 'gr3d->clk_secondary' instead of 'gr3d->clk'
+> is expected here.
 
+Very likely indeed.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/tegra/gr3d.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 0b3f2b9..13f0d1b 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -268,9 +268,9 @@ static int gr3d_probe(struct platform_device *pdev)
- 
- 	if (of_device_is_compatible(np, "nvidia,tegra30-gr3d")) {
- 		gr3d->clk_secondary = devm_clk_get(&pdev->dev, "3d2");
--		if (IS_ERR(gr3d->clk)) {
-+		if (IS_ERR(gr3d->clk_secondary)) {
- 			dev_err(&pdev->dev, "cannot get secondary clock\n");
--			return PTR_ERR(gr3d->clk);
-+			return PTR_ERR(gr3d->clk_secondary);
- 		}
- 
- 		gr3d->rst_secondary = devm_reset_control_get(&pdev->dev,
--- 
-2.7.4
-
+Thanks!
