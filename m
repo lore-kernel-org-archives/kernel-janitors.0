@@ -1,63 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 24 Jul 2016 09:45:40 +0000
-Subject: Re: [PATCH] cdrom: Delete an unnecessary check before unregister_sysctl_table()
-Message-Id: <e2d8fe80-bbbe-0f39-e4c4-d0e68749de39@users.sourceforge.net>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Date: Mon, 04 Jul 2016 12:42:07 +0000
+Subject: Re: [patch] mtd: nand: sunxi: prevent a small memory leak
+Message-Id: <20160704144207.369cdd48@bbrezillon>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <559E2A11.60105@users.sourceforge.net>
-In-Reply-To: <559E2A11.60105@users.sourceforge.net>
+References: <20160624122403.GC23169@mwanda>
+In-Reply-To: <20160624122403.GC23169@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 9 Jul 2015 09:52:24 +0200
+On Fri, 24 Jun 2016 15:24:03 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> I moved the sanity check on ecc->size before the allocation so that we
+> don't leak memory on error.
 > 
-> The unregister_sysctl_table() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
+> Fixes: 05af074a4b73 ('mtd: nand: sunxi: check ecc->size values')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Applied.
+
+Thanks,
+
+Boris
+
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/cdrom/cdrom.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-> index 5d28a45..e43e84d 100644
-> --- a/drivers/cdrom/cdrom.c
-> +++ b/drivers/cdrom/cdrom.c
-> @@ -3698,8 +3698,7 @@ static void cdrom_sysctl_register(void)
+> diff --git a/drivers/mtd/nand/sunxi_nand.c b/drivers/mtd/nand/sunxi_nand.c
+> index f582fe4..9f4e1c7 100644
+> --- a/drivers/mtd/nand/sunxi_nand.c
+> +++ b/drivers/mtd/nand/sunxi_nand.c
+> @@ -1812,13 +1812,13 @@ static int sunxi_nand_hw_common_ecc_ctrl_init(struct mtd_info *mtd,
+>  	int ret;
+>  	int i;
 >  
->  static void cdrom_sysctl_unregister(void)
->  {
-> -	if (cdrom_sysctl_header)
-> -		unregister_sysctl_table(cdrom_sysctl_header);
-> +	unregister_sysctl_table(cdrom_sysctl_header);
->  }
+> +	if (ecc->size != 512 && ecc->size != 1024)
+> +		return -EINVAL;
+> +
+>  	data = kzalloc(sizeof(*data), GFP_KERNEL);
+>  	if (!data)
+>  		return -ENOMEM;
 >  
->  #else /* CONFIG_SYSCTL */
-> 
+> -	if (ecc->size != 512 && ecc->size != 1024)
+> -		return -EINVAL;
+> -
+>  	/* Prefer 1k ECC chunk over 512 ones */
+>  	if (ecc->size = 512 && mtd->writesize > 512) {
+>  		ecc->size = 1024;
 
-How do you think about to integrate this update suggestion
-into another source code repository?
-
-Regards,
-Markus
