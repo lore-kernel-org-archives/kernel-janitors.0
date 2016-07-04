@@ -1,24 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 09 Jul 2016 04:02:30 +0000
-Subject: Re: [patch -next] bnxt: fix a condition
-Message-Id: <20160709.000230.1944126559698750228.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 04 Jul 2016 05:46:42 +0000
+Subject: [PATCH] fsl/fman: fix error handling
+Message-Id: <1467611202-15168-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160707082309.GC16742@mwanda>
-In-Reply-To: <20160707082309.GC16742@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: michael.chan@broadcom.com, huangjw@broadcom.com, aduyck@mirantis.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, igal.liberman@freescale.com, rdunlap@infradead.org, standby24x7@gmail.com, arnd@arndb.de
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 7 Jul 2016 11:23:09 +0300
+This is likely that checking 'fman->fifo_offset' instead of
+'fman->cam_offset' is expected here.
 
-> This code generates as static checker warning because htons(ETH_P_IPV6)
-> is always true.  From the context it looks like the && was intended to
-> be !=.
-> 
-> Fixes: 94758f8de037 ('bnxt_en: Add GRO logic for BCM5731X chips.')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied.
+---
+
+The type of 'fifo_offset' may also need to be changed.
+---
+ drivers/net/ethernet/freescale/fman/fman.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
+index 1de2e1e..f634e769 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.c
++++ b/drivers/net/ethernet/freescale/fman/fman.c
+@@ -2036,7 +2036,7 @@ static int fman_init(struct fman *fman)
+ 	/* allocate MURAM for FIFO according to total size */
+ 	fman->fifo_offset = fman_muram_alloc(fman->muram,
+ 					     fman->state->total_fifo_size);
+-	if (IS_ERR_VALUE(fman->cam_offset)) {
++	if (IS_ERR_VALUE(fman->fifo_offset)) {
+ 		free_init_resources(fman);
+ 		dev_err(fman->dev, "%s: MURAM alloc for BMI FIFO failed\n",
+ 			__func__);
+-- 
+2.7.4
+
