@@ -1,62 +1,51 @@
-From: Sean Paul <seanpaul@chromium.org>
-Date: Fri, 22 Jul 2016 15:25:15 +0000
-Subject: Re: [PATCH] drm/mgag200: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
-Message-Id: <CAOw6vbJMqFjxnd_qCtBRctaWLDcr--1FSB-3RSVscvYVm9-xuA@mail.gmail.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 04 Jul 2016 11:36:46 +0000
+Subject: [PATCH 01/15 RESEND] staging: dgnc: remove redundant NULL checks in
+Message-Id: <20160704113645.GA10177@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <05b266e4-2bae-b70b-5a96-ae609496d173@users.sourceforge.net>
-In-Reply-To: <05b266e4-2bae-b70b-5a96-ae609496d173@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 22, 2016 at 5:32 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 22 Jul 2016 11:20:27 +0200
->
-> The drm_gem_object_unreference_unlocked() function tests whether
-> its argument is NULL and then returns immediately.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The dgnc_block_til_ready() is only used in dgnc_tty_open().
+The unit data(struct un_t) was stored into tty->driver_data in dgnc_tty_open().
+And also tty and un were tested about NULL so these variables doesn't
+need to check for NULL in dgnc_block_til_ready().
 
-Applied to drm-misc
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+This patch seems to be missed for a long time.
+I resend this patch without any updates.
 
-> ---
->  drivers/gpu/drm/mgag200/mgag200_main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mgag200/mgag200_main.c b/drivers/gpu/drm/mgag200/mgag200_main.c
-> index 615cbb0..13798b3 100644
-> --- a/drivers/gpu/drm/mgag200/mgag200_main.c
-> +++ b/drivers/gpu/drm/mgag200/mgag200_main.c
-> @@ -17,8 +17,8 @@
->  static void mga_user_framebuffer_destroy(struct drm_framebuffer *fb)
->  {
->         struct mga_framebuffer *mga_fb = to_mga_framebuffer(fb);
-> -       if (mga_fb->obj)
-> -               drm_gem_object_unreference_unlocked(mga_fb->obj);
-> +
-> +       drm_gem_object_unreference_unlocked(mga_fb->obj);
->         drm_framebuffer_cleanup(fb);
->         kfree(fb);
->  }
-> --
-> 2.9.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+ drivers/staging/dgnc/dgnc_tty.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 4eeecc9..6758859 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1172,17 +1172,12 @@ static int dgnc_block_til_ready(struct tty_struct *tty,
+ 				struct channel_t *ch)
+ {
+ 	int retval = 0;
+-	struct un_t *un = NULL;
++	struct un_t *un = tty->driver_data;
+ 	unsigned long flags;
+ 	uint	old_flags = 0;
+ 	int	sleep_on_un_flags = 0;
+ 
+-	if (!tty || tty->magic != TTY_MAGIC || !file || !ch ||
+-	    ch->magic != DGNC_CHANNEL_MAGIC)
+-		return -ENXIO;
+-
+-	un = tty->driver_data;
+-	if (!un || un->magic != DGNC_UNIT_MAGIC)
++	if (!file)
+ 		return -ENXIO;
+ 
+ 	spin_lock_irqsave(&ch->ch_lock, flags);
+-- 
+1.9.1
+
