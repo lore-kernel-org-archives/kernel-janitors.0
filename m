@@ -1,31 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 04 Jul 2016 07:47:48 +0000
-Subject: [patch] spi: s3c64xx: indent an if statement
-Message-Id: <20160704074748.GB4849@mwanda>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Date: Tue, 05 Jul 2016 23:43:15 +0000
+Subject: Re: [patch] remoteproc: qcom: remove some bogus error handling
+Message-Id: <20160705234315.GP1190@tuxbot>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160629144055.GB22818@mwanda>
+In-Reply-To: <20160629144055.GB22818@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi.shyti@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-It generates a static checker warning if an if statement isn't indented.
-I think the code is fine except for the white space issue.
+On Wed 29 Jun 07:40 PDT 2016, Dan Carpenter wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> "val" can't be negative because it's unsigned and also readl() doesn't
+> return negative error codes.
+> 
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 6d8486f..9f0119f 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -330,8 +330,8 @@ static void s3c64xx_spi_set_cs(struct spi_device *spi, bool enable)
- 		}
- 	} else {
- 		if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
--		writel(S3C64XX_SPI_SLAVE_SIG_INACT,
--		sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-+			writel(S3C64XX_SPI_SLAVE_SIG_INACT,
-+			       sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 	}
- }
- 
+Thanks for catching this. Unfortunately a successful validation will
+result in status becoming 4 and I check if the return value is non-zero
+(rather than negative) in q6v5_mpss_load().
+
+However, the next step in the process is to do a timed wait for the
+status to turn 4 or negative, so we should treat that snippet (check for
+MBA_AUTH_COMPLETE) as part of the validation and move it in here from
+q6v5_mpss_load().
+
+Regards,
+Bjorn
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+> index fb4c56c..8abc369 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+> @@ -386,7 +386,6 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+>  	phys_addr_t fw_addr;
+>  	bool relocate;
+>  	size_t size;
+> -	u32 val;
+>  	int ret;
+>  	int i;
+>  
+> @@ -425,8 +424,7 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+>  		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>  	}
+>  
+> -	val = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
+> -	return val < 0 ? val : 0;
+> +	return readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
+>  }
+>  
+>  static int q6v5_mpss_load(struct q6v5 *qproc)
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
