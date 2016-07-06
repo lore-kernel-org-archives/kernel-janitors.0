@@ -1,51 +1,49 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Mon, 04 Jul 2016 12:42:07 +0000
-Subject: Re: [patch] mtd: nand: sunxi: prevent a small memory leak
-Message-Id: <20160704144207.369cdd48@bbrezillon>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 06 Jul 2016 06:15:34 +0000
+Subject: [PATCH 07/15 RESEND] staging: dgnc: remove redundant NULL check for brd
+Message-Id: <20160706061534.GA18613@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160624122403.GC23169@mwanda>
-In-Reply-To: <20160624122403.GC23169@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 24 Jun 2016 15:24:03 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+the "brd" value cannot be NULL in dgnc_finalize_board_init().
+Because "brd" as a parameter of this function was already
+checked for NULL.
 
-> I moved the sanity check on ecc->size before the allocation so that we
-> don't leak memory on error.
-> 
-> Fixes: 05af074a4b73 ('mtd: nand: sunxi: check ecc->size values')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+the dgnc_finalize_board_init() as a static function was called
+only from dgnc_found_board() function and brd->magic value
+was assigned once in dgnc_found_board(). So it doesn't need to
+check for DGNC_BOARD_MAGIC value.
 
-Applied.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+RESEND: This patch was not merged for a long time, if there is any reason
+why this patch could NOT be merged into staging tree, let me know.
+There were no comment for this patch.
+I cannot understand why this patch have to wait long time to merge.
+And I also sent emails to mailing-lists for reminding this patch...
+please let me know, what is the problem to merge this patch into staging tree.
 
-Thanks,
+ drivers/staging/dgnc/dgnc_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Boris
-
-> 
-> diff --git a/drivers/mtd/nand/sunxi_nand.c b/drivers/mtd/nand/sunxi_nand.c
-> index f582fe4..9f4e1c7 100644
-> --- a/drivers/mtd/nand/sunxi_nand.c
-> +++ b/drivers/mtd/nand/sunxi_nand.c
-> @@ -1812,13 +1812,13 @@ static int sunxi_nand_hw_common_ecc_ctrl_init(struct mtd_info *mtd,
->  	int ret;
->  	int i;
->  
-> +	if (ecc->size != 512 && ecc->size != 1024)
-> +		return -EINVAL;
-> +
->  	data = kzalloc(sizeof(*data), GFP_KERNEL);
->  	if (!data)
->  		return -ENOMEM;
->  
-> -	if (ecc->size != 512 && ecc->size != 1024)
-> -		return -EINVAL;
-> -
->  	/* Prefer 1k ECC chunk over 512 ones */
->  	if (ecc->size = 512 && mtd->writesize > 512) {
->  		ecc->size = 1024;
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index af2e835..22257d2 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -579,9 +579,6 @@ static int dgnc_finalize_board_init(struct dgnc_board *brd)
+ {
+ 	int rc = 0;
+ 
+-	if (!brd || brd->magic != DGNC_BOARD_MAGIC)
+-		return -ENODEV;
+-
+ 	if (brd->irq) {
+ 		rc = request_irq(brd->irq, brd->bd_ops->intr,
+ 				 IRQF_SHARED, "DGNC", brd);
+-- 
+1.9.1
 
