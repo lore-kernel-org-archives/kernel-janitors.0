@@ -1,113 +1,83 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 19:00:15 +0000
-Subject: [PATCH 02/12] staging: lustre: Delete unnecessary checks before the function call "kobject_put"
-Message-Id: <48f00283-1648-e3f5-a76c-1ced01a4f231@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 06 Jul 2016 06:17:53 +0000
+Subject: [PATCH 11/15 RESEND] staging: dgnc: remove useless variable 'intr_tx'
+Message-Id: <20160706061753.GA18690@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
- <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
- <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
-In-Reply-To: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 13:00:32 +0200
+The 'intr_tx' variable was used only for increasing.
+So the 'intr_tx' variable is not useful for this driver.
 
-The kobject_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the calls is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c | 4 +---
- drivers/staging/lustre/lustre/lmv/lmv_obd.c     | 5 ++---
- drivers/staging/lustre/lustre/lov/lov_obd.c     | 4 +---
- drivers/staging/lustre/lustre/obdclass/genops.c | 6 ++----
- 4 files changed, 6 insertions(+), 13 deletions(-)
+RESEND: This patch was not merged for a long time, if there is any reason
+why this patch could NOT be merged into staging tree, let me know.
+There were no comment for this patch.
+I cannot understand why this patch have to wait long time to merge.
+And I also sent emails to mailing-lists for reminding this patch...
+please let me know, what is the problem to merge this patch into staging tree.
 
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
-index 2c1c2fc..52c5dd4 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
-@@ -1069,9 +1069,7 @@ static int ldlm_cleanup(void)
+ drivers/staging/dgnc/dgnc_cls.c    | 1 -
+ drivers/staging/dgnc/dgnc_driver.h | 1 -
+ drivers/staging/dgnc/dgnc_neo.c    | 3 ---
+ 3 files changed, 5 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index 449a6bb..088b546 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -595,7 +595,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
+ 			/* Transfer data (if any) from Write Queue -> UART. */
+ 			spin_lock_irqsave(&ch->ch_lock, flags);
+ 			ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
+-			brd->intr_tx++;
+ 			ch->ch_intr_tx++;
+ 			spin_unlock_irqrestore(&ch->ch_lock, flags);
+ 			cls_copy_data_from_queue_to_uart(ch);
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index 2caeff7..a8d823b 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -183,7 +183,6 @@ struct dgnc_board {
+ 	uint		nasync;		/* Number of ports on card */
  
- 	kset_unregister(ldlm_ns_kset);
- 	kset_unregister(ldlm_svc_kset);
--	if (ldlm_kobj)
--		kobject_put(ldlm_kobj);
--
-+	kobject_put(ldlm_kobj);
- 	ldlm_debugfs_cleanup();
+ 	uint		irq;		/* Interrupt request number */
+-	ulong		intr_tx;	/* Count of interrupts */
+ 	ulong		intr_rx;	/* Count of interrupts */
  
- 	kfree(ldlm_state);
-diff --git a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-index 0e1588a..8c2e5b3 100644
---- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-+++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-@@ -238,7 +238,7 @@ static int lmv_connect(const struct lu_env *env,
- 	if (data && data->ocd_connect_flags & OBD_CONNECT_REAL)
- 		rc = lmv_check_connect(obd);
- 
--	if (rc && lmv->lmv_tgts_kobj)
-+	if (rc)
- 		kobject_put(lmv->lmv_tgts_kobj);
- 
- 	return rc;
-@@ -648,8 +648,7 @@ static int lmv_disconnect(struct obd_export *exp)
- 		lmv_disconnect_mdc(obd, lmv->tgts[i]);
- 	}
- 
--	if (lmv->lmv_tgts_kobj)
--		kobject_put(lmv->lmv_tgts_kobj);
-+	kobject_put(lmv->lmv_tgts_kobj);
- 
- out_local:
- 	/*
-diff --git a/drivers/staging/lustre/lustre/lov/lov_obd.c b/drivers/staging/lustre/lustre/lov/lov_obd.c
-index 9b92d55..df701f7 100644
---- a/drivers/staging/lustre/lustre/lov/lov_obd.c
-+++ b/drivers/staging/lustre/lustre/lov/lov_obd.c
-@@ -106,9 +106,7 @@ static void lov_putref(struct obd_device *obd)
- 			__lov_del_obd(obd, tgt);
+ 	ulong		membase;	/* Start of base memory of the card */
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index a3e100b..5f3eacdf 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -410,7 +410,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
  		}
  
--		if (lov->lov_tgts_kobj)
--			kobject_put(lov->lov_tgts_kobj);
--
-+		kobject_put(lov->lov_tgts_kobj);
- 	} else {
- 		mutex_unlock(&lov->lov_lock);
- 	}
-diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
-index 99c2da6..1b5aa9b 100644
---- a/drivers/staging/lustre/lustre/obdclass/genops.c
-+++ b/drivers/staging/lustre/lustre/obdclass/genops.c
-@@ -203,8 +203,7 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
- 	return 0;
- 
-  failed:
--	if (type->typ_kobj)
--		kobject_put(type->typ_kobj);
-+	kobject_put(type->typ_kobj);
- 	kfree(type->typ_name);
- 	kfree(type->typ_md_ops);
- 	kfree(type->typ_dt_ops);
-@@ -231,8 +230,7 @@ int class_unregister_type(const char *name)
- 		return -EBUSY;
+ 		if (isr & UART_IIR_THRI) {
+-			brd->intr_tx++;
+ 			ch->ch_intr_tx++;
+ 			/* Transfer data (if any) from Write Queue -> UART. */
+ 			spin_lock_irqsave(&ch->ch_lock, flags);
+@@ -550,7 +549,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
  	}
  
--	if (type->typ_kobj)
--		kobject_put(type->typ_kobj);
-+	kobject_put(type->typ_kobj);
- 
- 	if (!IS_ERR_OR_NULL(type->typ_debugfs_entry))
- 		ldebugfs_remove(&type->typ_debugfs_entry);
+ 	if (linestatus & UART_LSR_THRE) {
+-		brd->intr_tx++;
+ 		ch->ch_intr_tx++;
+ 		spin_lock_irqsave(&ch->ch_lock, flags);
+ 		ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
+@@ -559,7 +557,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
+ 		/* Transfer data (if any) from Write Queue -> UART. */
+ 		neo_copy_data_from_queue_to_uart(ch);
+ 	} else if (linestatus & UART_17158_TX_AND_FIFO_CLR) {
+-		brd->intr_tx++;
+ 		ch->ch_intr_tx++;
+ 		spin_lock_irqsave(&ch->ch_lock, flags);
+ 		ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
 -- 
-2.9.2
+1.9.1
 
