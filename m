@@ -1,92 +1,88 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Jul 2016 18:01:27 +0000
-Subject: [PATCH 2/3] drm/msm: Delete unnecessary checks before drm_gem_object_unreference_unlocked()
-Message-Id: <9120ad90-45d1-1c01-fc84-65c431b5ca4f@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 06 Jul 2016 06:13:55 +0000
+Subject: [PATCH 05/15 RESEND] staging: dgnc: removes redundant null check and change
+Message-Id: <20160706061355.GA18560@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <351a1279-b0ca-5f5e-d175-28c9de8406f6@users.sourceforge.net>
-In-Reply-To: <351a1279-b0ca-5f5e-d175-28c9de8406f6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Jul 2016 19:15:35 +0200
+The dgnc_set_modem_info() used only channel_t variable.
+Any other variables were used only for checking NULL.
 
-The drm_gem_object_unreference_unlocked() function tests whether
-its argument is NULL and then returns immediately.
-Thus the test around the calls is not needed.
+So fist parameter changed from "tty_struct" to "channel_t" and
+useless NULL checks and variables are removed.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c | 3 +--
- drivers/gpu/drm/msm/msm_fb.c            | 4 ++--
- drivers/gpu/drm/msm/msm_gem.c           | 4 +---
- 3 files changed, 4 insertions(+), 7 deletions(-)
+RESEND: This patch was not merged for a long time, if there is any reason
+why this patch could NOT be merged into staging tree, let me know.
+There were no comment for this patch.
+I cannot understand why this patch have to wait long time to merge.
+And I also sent emails to mailing-lists for reminding this patch...
+please let me know, what is the problem to merge this patch into staging tree.
 
-diff --git a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
-index ba8df15..7b39e89 100644
---- a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_kms.c
-@@ -168,8 +168,7 @@ static void mdp4_destroy(struct msm_kms *kms)
+ drivers/staging/dgnc/dgnc_tty.c | 24 +++---------------------
+ 1 file changed, 3 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index b33b07c..e4c6c3f 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -100,7 +100,7 @@ static void dgnc_tty_unthrottle(struct tty_struct *tty);
+ static void dgnc_tty_flush_chars(struct tty_struct *tty);
+ static void dgnc_tty_flush_buffer(struct tty_struct *tty);
+ static void dgnc_tty_hangup(struct tty_struct *tty);
+-static int dgnc_set_modem_info(struct tty_struct *tty, unsigned int command,
++static int dgnc_set_modem_info(struct channel_t *ch, unsigned int command,
+ 			       unsigned int __user *value);
+ static int dgnc_get_modem_info(struct channel_t *ch,
+ 			       unsigned int __user *value);
+@@ -2008,32 +2008,14 @@ static int dgnc_get_modem_info(struct channel_t *ch,
+  *
+  * Set modem signals, called by ld.
+  */
+-static int dgnc_set_modem_info(struct tty_struct *tty,
++static int dgnc_set_modem_info(struct channel_t *ch,
+ 			       unsigned int command,
+ 			       unsigned int __user *value)
+ {
+-	struct dgnc_board *bd;
+-	struct channel_t *ch;
+-	struct un_t *un;
+ 	int ret = -ENXIO;
+ 	unsigned int arg = 0;
+ 	unsigned long flags;
  
- 	if (mdp4_kms->blank_cursor_iova)
- 		msm_gem_put_iova(mdp4_kms->blank_cursor_bo, mdp4_kms->id);
--	if (mdp4_kms->blank_cursor_bo)
--		drm_gem_object_unreference_unlocked(mdp4_kms->blank_cursor_bo);
-+	drm_gem_object_unreference_unlocked(mdp4_kms->blank_cursor_bo);
- 
- 	if (mdp4_kms->rpm_enabled)
- 		pm_runtime_disable(dev);
-diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
-index 7919c24..95cf8fe 100644
---- a/drivers/gpu/drm/msm/msm_fb.c
-+++ b/drivers/gpu/drm/msm/msm_fb.c
-@@ -49,8 +49,8 @@ static void msm_framebuffer_destroy(struct drm_framebuffer *fb)
- 
- 	for (i = 0; i < n; i++) {
- 		struct drm_gem_object *bo = msm_fb->planes[i];
--		if (bo)
--			drm_gem_object_unreference_unlocked(bo);
-+
-+		drm_gem_object_unreference_unlocked(bo);
- 	}
- 
- 	kfree(msm_fb);
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index 886cfe0..9a713fb 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -875,8 +875,6 @@ struct drm_gem_object *msm_gem_import(struct drm_device *dev,
- 	return obj;
- 
- fail:
--	if (obj)
--		drm_gem_object_unreference_unlocked(obj);
+-	if (!tty || tty->magic != TTY_MAGIC)
+-		return ret;
 -
-+	drm_gem_object_unreference_unlocked(obj);
- 	return ERR_PTR(ret);
- }
+-	un = tty->driver_data;
+-	if (!un || un->magic != DGNC_UNIT_MAGIC)
+-		return ret;
+-
+-	ch = un->un_ch;
+-	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
+-		return ret;
+-
+-	bd = ch->ch_bd;
+-	if (!bd || bd->magic != DGNC_BOARD_MAGIC)
+-		return ret;
+-
+ 	ret = get_user(arg, value);
+ 	if (ret)
+ 		return ret;
+@@ -2600,7 +2582,7 @@ static int dgnc_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 	case TIOCMBIC:
+ 	case TIOCMSET:
+ 		spin_unlock_irqrestore(&ch->ch_lock, flags);
+-		return dgnc_set_modem_info(tty, cmd, uarg);
++		return dgnc_set_modem_info(ch, cmd, uarg);
+ 
+ 		/*
+ 		 * Here are any additional ioctl's that we want to implement
 -- 
-2.9.0
+1.9.1
 
