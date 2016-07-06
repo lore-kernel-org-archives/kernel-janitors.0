@@ -1,60 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 17:09:10 +0000
-Subject: [PATCH] memory: omap-gpmc: Delete an unnecessary check before the function call "gpiochip_free_own_d
-Message-Id: <e3f6205c-39a0-b9f7-5290-be4c6cbb2f0b@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 06 Jul 2016 06:13:14 +0000
+Subject: [PATCH 04/15 RESEND] staging: dgnc: remove redundant variable null check
+Message-Id: <20160706061314.GA18536@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 18:54:02 +0200
+The unit struct(un_t) was not used in dgnc_tty_hangup().
 
-The gpiochip_free_own_desc() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/memory/omap-gpmc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+RESEND: This patch was not merged for a long time, if there is any reason
+why this patch could NOT be merged into staging tree, let me know.
+There were no comment for this patch.
+I cannot understand why this patch have to wait long time to merge.
+And I also sent emails to mailing-lists for reminding this patch...
+please let me know, what is the problem to merge this patch into staging tree.
 
-diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index 869c83f..e138875 100644
---- a/drivers/memory/omap-gpmc.c
-+++ b/drivers/memory/omap-gpmc.c
-@@ -2143,9 +2143,7 @@ err_child_fail:
- 	ret = -ENODEV;
- 
- err_cs:
--	if (waitpin_desc)
--		gpiochip_free_own_desc(waitpin_desc);
+ drivers/staging/dgnc/dgnc_tty.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 1387041..b33b07c 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1289,15 +1289,9 @@ static int dgnc_block_til_ready(struct tty_struct *tty,
+  */
+ static void dgnc_tty_hangup(struct tty_struct *tty)
+ {
+-	struct un_t	*un;
 -
-+	gpiochip_free_own_desc(waitpin_desc);
- err:
- 	gpmc_cs_free(cs);
+ 	if (!tty || tty->magic != TTY_MAGIC)
+ 		return;
  
+-	un = tty->driver_data;
+-	if (!un || un->magic != DGNC_UNIT_MAGIC)
+-		return;
+-
+ 	/* flush the transmit queues */
+ 	dgnc_tty_flush_buffer(tty);
+ }
 -- 
-2.9.2
+1.9.1
 
