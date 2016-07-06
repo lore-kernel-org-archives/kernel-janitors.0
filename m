@@ -1,42 +1,20 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 06 Jul 2016 06:00:06 +0000
-Subject: [PATCH] phy: sun9i-usb: fix error handling
-Message-Id: <1467784806-17091-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 06 Jul 2016 06:06:04 +0000
+Subject: Re: [PATCH] phy: sun9i-usb: fix error handling
+Message-Id: <CAGb2v64D-AcrG8Xot79_7PnUKFnHonU65Crfw7QONj_TFLwv5A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1467784806-17091-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1467784806-17091-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-This is likely that checking 'phy->hsic_clk' instead of 'phy->clk' is
-expected here.
+On Wed, Jul 6, 2016 at 2:00 PM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> This is likely that checking 'phy->hsic_clk' instead of 'phy->clk' is
+> expected here.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
----
-
-v2: Also fix the variable name used by PTR_ERR
-    Update $subject
----
- drivers/phy/phy-sun9i-usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/phy-sun9i-usb.c b/drivers/phy/phy-sun9i-usb.c
-index ac4f31a..28fce4b 100644
---- a/drivers/phy/phy-sun9i-usb.c
-+++ b/drivers/phy/phy-sun9i-usb.c
-@@ -141,9 +141,9 @@ static int sun9i_usb_phy_probe(struct platform_device *pdev)
- 		}
- 
- 		phy->hsic_clk = devm_clk_get(dev, "hsic_12M");
--		if (IS_ERR(phy->clk)) {
-+		if (IS_ERR(phy->hsic_clk)) {
- 			dev_err(dev, "failed to get hsic_12M clock\n");
--			return PTR_ERR(phy->clk);
-+			return PTR_ERR(phy->hsic_clk);
- 		}
- 
- 		phy->reset = devm_reset_control_get(dev, "hsic");
--- 
-2.7.4
-
+Acked-by: Chen-Yu Tsai <wens@csie.org>
