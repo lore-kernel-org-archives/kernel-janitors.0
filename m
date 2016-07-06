@@ -1,31 +1,42 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sat, 16 Jul 2016 05:45:39 +0000
-Subject: Re: [patch] mtd: pmcmsp-flash: Allocating too much in init_msp_flash()
-Message-Id: <20160716054539.GA20393@google.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 06 Jul 2016 06:00:06 +0000
+Subject: [PATCH] phy: sun9i-usb: fix error handling
+Message-Id: <1467784806-17091-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714104456.GG18175@mwanda>
-In-Reply-To: <20160714104456.GG18175@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Marc St-Jean <stjeanma@pmc-sierra.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Jul 14, 2016 at 01:44:56PM +0300, Dan Carpenter wrote:
-> There is a cut and paste issue here.  The bug is that we are allocating
-> more memory than necessary for msp_maps.  We should be allocating enough
-> space for a map_info struct (144 bytes) but we instead allocate enough
-> for an mtd_info struct (1840 bytes).  It's a small waste.
-> 
-> The other part of this is not harmful but when we allocated msp_flash
-> then we allocated enough space fro a map_info pointer instead of an
-> mtd_info pointer.  But since pointers are the same size it works out
-> fine.
-> 
-> Anyway, I decided to clean up all three allocations a bit to make them
-> a bit more consistent and clear.
-> 
-> Fixes: 68aa0fa87f6d ('[MTD] PMC MSP71xx flash/rootfs mappings')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This is likely that checking 'phy->hsic_clk' instead of 'phy->clk' is
+expected here.
 
-Applied to l2-mtd.git.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+---
+
+v2: Also fix the variable name used by PTR_ERR
+    Update $subject
+---
+ drivers/phy/phy-sun9i-usb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/phy/phy-sun9i-usb.c b/drivers/phy/phy-sun9i-usb.c
+index ac4f31a..28fce4b 100644
+--- a/drivers/phy/phy-sun9i-usb.c
++++ b/drivers/phy/phy-sun9i-usb.c
+@@ -141,9 +141,9 @@ static int sun9i_usb_phy_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		phy->hsic_clk = devm_clk_get(dev, "hsic_12M");
+-		if (IS_ERR(phy->clk)) {
++		if (IS_ERR(phy->hsic_clk)) {
+ 			dev_err(dev, "failed to get hsic_12M clock\n");
+-			return PTR_ERR(phy->clk);
++			return PTR_ERR(phy->hsic_clk);
+ 		}
+ 
+ 		phy->reset = devm_reset_control_get(dev, "hsic");
+-- 
+2.7.4
+
