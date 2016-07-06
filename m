@@ -1,46 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 19:14:48 +0000
-Subject: [PATCH 12/12] staging: lustre: Delete an unnecessary variable initialisation in mgc_process_recover_
-Message-Id: <2ea70f05-14de-7d93-83da-26e2439a7239@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 06 Jul 2016 06:19:58 +0000
+Subject: [PATCH 15/15 RESEND] staging: dgnc: remove useless variable 'ch_intr_rx'
+Message-Id: <20160706061958.GA18765@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
- <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
- <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
-In-Reply-To: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 19:50:40 +0200
+The 'ch_intr_rx' variable was used only for increasing.
+So the 'ch_intr_rx' variable is not useful for this driver.
 
-The variable "req" will eventually be set to an appropriate pointer
-from a call of the ptlrpc_request_alloc() function.
-Thus omit the explicit initialisation which became unnecessary with
-a previous update step.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/staging/lustre/lustre/mgc/mgc_request.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+RESEND: This patch was not merged for a long time, if there is any reason
+why this patch could NOT be merged into staging tree, let me know.
+There were no comment for this patch.
+I cannot understand why this patch have to wait long time to merge.
+And I also sent emails to mailing-lists for reminding this patch...
+please let me know, what is the problem to merge this patch into staging tree.
 
-diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-index 8f5db79..6e8368e 100644
---- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
-+++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-@@ -1315,7 +1315,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
- static int mgc_process_recover_log(struct obd_device *obd,
- 				   struct config_llog_data *cld)
- {
--	struct ptlrpc_request *req = NULL;
-+	struct ptlrpc_request *req;
- 	struct config_llog_instance *cfg = &cld->cld_cfg;
- 	struct mgs_config_body *body;
- 	struct mgs_config_res  *res;
+ drivers/staging/dgnc/dgnc_cls.c    | 1 -
+ drivers/staging/dgnc/dgnc_driver.h | 2 --
+ drivers/staging/dgnc/dgnc_neo.c    | 2 --
+ 3 files changed, 5 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index 35b59ca..4e1e0dc6 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -584,7 +584,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
+ 		/* Receive Interrupt pending */
+ 		if (isr & (UART_IIR_RDI | UART_IIR_RDI_TIMEOUT)) {
+ 			/* Read data from uart -> queue */
+-			ch->ch_intr_rx++;
+ 			cls_copy_data_from_uart_to_queue(ch);
+ 			dgnc_check_queue_flow_control(ch);
+ 		}
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index 8bdf556..3092abe 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -377,8 +377,6 @@ struct channel_t {
+ 	ulong		ch_xon_sends;	/* Count of xons transmitted */
+ 	ulong		ch_xoff_sends;	/* Count of xoffs transmitted */
+ 
+-	ulong		ch_intr_rx;	/* Count of interrupts */
+-
+ 	/* /proc/<board>/<channel> entries */
+ 	struct proc_dir_entry *proc_entry_pointer;
+ 	struct dgnc_proc_entry *dgnc_channel_table;
+diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
+index 574a227..5ef5b3e 100644
+--- a/drivers/staging/dgnc/dgnc_neo.c
++++ b/drivers/staging/dgnc/dgnc_neo.c
+@@ -399,7 +399,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
+ 
+ 		if (isr & (UART_17158_IIR_RDI_TIMEOUT | UART_IIR_RDI)) {
+ 			/* Read data from uart -> queue */
+-			ch->ch_intr_rx++;
+ 			neo_copy_data_from_uart_to_queue(ch);
+ 
+ 			/* Call our tty layer to enforce queue flow control if needed. */
+@@ -512,7 +511,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
+ 	ch->ch_cached_lsr |= linestatus;
+ 
+ 	if (ch->ch_cached_lsr & UART_LSR_DR) {
+-		ch->ch_intr_rx++;
+ 		/* Read data from uart -> queue */
+ 		neo_copy_data_from_uart_to_queue(ch);
+ 		spin_lock_irqsave(&ch->ch_lock, flags);
 -- 
-2.9.2
+1.9.1
 
