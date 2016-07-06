@@ -1,42 +1,20 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 04 Jul 2016 07:45:01 +0000
-Subject: [patch] drm/tegra: sor: Double free on error
-Message-Id: <20160704074501.GA4849@mwanda>
+From: Alexandre Courbot <gnurou@gmail.com>
+Date: Wed, 06 Jul 2016 14:17:30 +0000
+Subject: Re: [patch] drm/tegra: sor: Double free on error
+Message-Id: <CAAVeFuJhsGjGyK4Fk5qAk3jp9L5LnnuVCg8srwibg1hjWfvpEg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160704074501.GA4849@mwanda>
+In-Reply-To: <20160704074501.GA4849@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-"brick" is allocated with devm_kzalloc() so freeing it with kfree()
-leads to a double free.  We can just delete it.
+On Mon, Jul 4, 2016 at 4:45 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> "brick" is allocated with devm_kzalloc() so freeing it with kfree()
+> leads to a double free.  We can just delete it.
 
-Fixes: a7ba8310c7f5 ('drm/tegra: sor: Implement sor1_brick clock')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+That makes perfect sense.
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 8425eda..e750ced 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -345,7 +345,6 @@ static struct clk *tegra_clk_sor_brick_register(struct tegra_sor *sor,
- {
- 	struct tegra_clk_sor_brick *brick;
- 	struct clk_init_data init;
--	struct clk *clk;
- 
- 	brick = devm_kzalloc(sor->dev, sizeof(*brick), GFP_KERNEL);
- 	if (!brick)
-@@ -361,11 +360,7 @@ static struct clk *tegra_clk_sor_brick_register(struct tegra_sor *sor,
- 
- 	brick->hw.init = &init;
- 
--	clk = devm_clk_register(sor->dev, &brick->hw);
--	if (IS_ERR(clk))
--		kfree(brick);
--
--	return clk;
-+	return devm_clk_register(sor->dev, &brick->hw);
- }
- 
- static int tegra_sor_dp_train_fast(struct tegra_sor *sor,
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
