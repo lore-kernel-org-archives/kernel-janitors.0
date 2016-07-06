@@ -1,19 +1,53 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 22 Jul 2016 13:32:40 +0000
-Subject: [PATCH 0/2] Fix a resource release omission in error handling code
-Message-Id: <20160722133242.21916-1-lambert.quentin@gmail.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Wed, 06 Jul 2016 06:11:52 +0000
+Subject: [PATCH 02/15 RESEND] staging: dgnc: remove useless error value assignment
+Message-Id: <20160706061152.GA18496@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The first patch is a style fix, the second add calls to npe_release.
-The reason for me thinking that they are necessary is that every other branches
-leading to an error return are calling this function.
+The "result" variable in dgnc_get_mstat() was initialized with
+"-EIO". But if the "ch" is not null, "result" will be set to zero
+and if the "ch" is null, dgnc_get_mstat() will return "-ENXIO" as
+an error. So "-EIO" error value was useless in dgnc_get_mstat().
 
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/crypto/ixp4xx_crypto.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
----
+RESEND: This patch was not merged for a long time, if there is any reason
+why this patch could NOT be merged into staging tree, let me know.
+There were no comment for this patch.
+I cannot understand why this patch have to wait long time to merge.
+And I also sent emails to mailing-lists for reminding this patch...
+please let me know, what is the problem to merge this patch into staging tree.
+
+ drivers/staging/dgnc/dgnc_tty.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 6758859..17ba966 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1979,7 +1979,7 @@ static void dgnc_tty_send_xchar(struct tty_struct *tty, char c)
+ static inline int dgnc_get_mstat(struct channel_t *ch)
+ {
+ 	unsigned char mstat;
+-	int result = -EIO;
++	int result = 0;
+ 	unsigned long flags;
+ 
+ 	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
+@@ -1991,8 +1991,6 @@ static inline int dgnc_get_mstat(struct channel_t *ch)
+ 
+ 	spin_unlock_irqrestore(&ch->ch_lock, flags);
+ 
+-	result = 0;
+-
+ 	if (mstat & UART_MCR_DTR)
+ 		result |= TIOCM_DTR;
+ 	if (mstat & UART_MCR_RTS)
+-- 
+1.9.1
+
