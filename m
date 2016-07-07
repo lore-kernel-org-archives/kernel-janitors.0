@@ -1,68 +1,31 @@
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 13 Jul 2016 12:56:45 +0000
-Subject: Re: [patch] drm/msm: return -EFAULT instead of bytes remaining
-Message-Id: <CAF6AEGvL_zPTNd961vedKkjLUuXV4Qfj-JQL0b5RsQx_cxZjBg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Jul 2016 08:20:28 +0000
+Subject: [patch -next] mlxsw: spectrum_router: fix a use after free
+Message-Id: <20160707082027.GB16742@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160713103529.GL29468@mwanda>
-In-Reply-To: <20160713103529.GL29468@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Jiri Pirko <jiri@mellanox.com>
+Cc: Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 13, 2016 at 6:35 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> copy_to/from_user returns the number of bytes remaining to be copied but
-> we want to return -EFAULT.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+mlxsw_sp_fib_entry_destroy() frees "fib_entry" but we dereference it on
+the next line.
 
-thanks, I've added to msm-next
+Fixes: 61c503f976b5 ('mlxsw: spectrum_router: Implement fib4 add/del switchdev obj ops')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-BR,
--R
-
->
-> diff --git a/drivers/gpu/drm/msm/msm_perf.c b/drivers/gpu/drm/msm/msm_perf.c
-> index 830857c..17fe4e5 100644
-> --- a/drivers/gpu/drm/msm/msm_perf.c
-> +++ b/drivers/gpu/drm/msm/msm_perf.c
-> @@ -132,7 +132,7 @@ static ssize_t perf_read(struct file *file, char __user *buf,
->                 size_t sz, loff_t *ppos)
->  {
->         struct msm_perf_state *perf = file->private_data;
-> -       int n = 0, ret;
-> +       int n = 0, ret = 0;
->
->         mutex_lock(&perf->read_lock);
->
-> @@ -143,9 +143,10 @@ static ssize_t perf_read(struct file *file, char __user *buf,
->         }
->
->         n = min((int)sz, perf->buftot - perf->bufpos);
-> -       ret = copy_to_user(buf, &perf->buf[perf->bufpos], n);
-> -       if (ret)
-> +       if (copy_to_user(buf, &perf->buf[perf->bufpos], n)) {
-> +               ret = -EFAULT;
->                 goto out;
-> +       }
->
->         perf->bufpos += n;
->         *ppos += n;
-> diff --git a/drivers/gpu/drm/msm/msm_rd.c b/drivers/gpu/drm/msm/msm_rd.c
-> index 24254e0..3a5fdfc 100644
-> --- a/drivers/gpu/drm/msm/msm_rd.c
-> +++ b/drivers/gpu/drm/msm/msm_rd.c
-> @@ -149,9 +149,10 @@ static ssize_t rd_read(struct file *file, char __user *buf,
->                 goto out;
->
->         n = min_t(int, sz, circ_count_to_end(&rd->fifo));
-> -       ret = copy_to_user(buf, fptr, n);
-> -       if (ret)
-> +       if (copy_to_user(buf, fptr, n)) {
-> +               ret = -EFAULT;
->                 goto out;
-> +       }
->
->         fifo->tail = (fifo->tail + n) & (BUF_SZ - 1);
->         *ppos += n;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+index e084ea5..adb481a 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+@@ -1652,8 +1652,8 @@ static void mlxsw_sp_router_fib4_add_info_destroy(void const *data)
+ 	struct mlxsw_sp_fib_entry *fib_entry = info->fib_entry;
+ 	struct mlxsw_sp *mlxsw_sp = info->mlxsw_sp;
+ 
+-	mlxsw_sp_fib_entry_destroy(fib_entry);
+ 	mlxsw_sp_vr_put(mlxsw_sp, fib_entry->vr);
++	mlxsw_sp_fib_entry_destroy(fib_entry);
+ 	kfree(info);
+ }
+ 
