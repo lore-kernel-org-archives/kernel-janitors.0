@@ -1,59 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Jul 2016 19:35:34 +0000
-Subject: [PATCH] [media] tw686x: Delete an unnecessary check before the function call "video_unregister_devic
-Message-Id: <5fa61665-b5c6-4085-e054-b96bc8ef1f87@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Jul 2016 08:12:41 +0000
+Subject: [patch] ocfs2: silence an integer overflow warning
+Message-Id: <20160707081241.GA16645@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Mark Fasheh <mfasheh@suse.com>
+Cc: Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Jul 2016 21:24:26 +0200
+My static checker complains that ->me_start + ->me_len can overflow.
+I haven't followed it through to see the implications but it seems
+simple enough to prevent the overflow.
 
-The video_unregister_device() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/pci/tw686x/tw686x-video.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+move_extents in other less common file systems have this same warning as
+well.
 
-diff --git a/drivers/media/pci/tw686x/tw686x-video.c b/drivers/media/pci/tw686x/tw686x-video.c
-index cdb16de..4475a9d9 100644
---- a/drivers/media/pci/tw686x/tw686x-video.c
-+++ b/drivers/media/pci/tw686x/tw686x-video.c
-@@ -1093,8 +1093,7 @@ void tw686x_video_free(struct tw686x_dev *dev)
- 	for (ch = 0; ch < max_channels(dev); ch++) {
- 		struct tw686x_video_channel *vc = &dev->video_channels[ch];
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index e3d05d9..9ff405a 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -1014,7 +1014,8 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 		goto out_free;
+ 	}
  
--		if (vc->device)
--			video_unregister_device(vc->device);
-+		video_unregister_device(vc->device);
- 
- 		if (dev->dma_ops->free)
- 			for (pb = 0; pb < 2; pb++)
--- 
-2.9.2
-
+-	if (range.me_start > i_size_read(inode)) {
++	if (range.me_start > i_size_read(inode) ||
++	    range.me_len > i_size_read(inode)) {
+ 		status = -EINVAL;
+ 		goto out_free;
+ 	}
