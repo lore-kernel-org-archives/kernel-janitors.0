@@ -1,103 +1,47 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 08 Jul 2016 17:19:26 +0000
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Jul 2016 06:40:15 +0000
 Subject: Re: [patch] crypto: sha256-mb - cleanup a || vs | typo
-Message-Id: <CA+55aFyQYJerovMsSoSKS7PessZBr4vNp-3QUUwhqk4A4_jcbg@mail.gmail.com>
+Message-Id: <CAMuHMdUHD-h=GdSyAXpPiHNrGH46xxsmVpS6Xnqoqa1fYAHD8A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160629144242.GE22818@mwanda> <8538242a-eab7-127e-e47e-26027fee4f6d@zytor.com>
  <1467319339.22178.256.camel@linux.intel.com> <20160701075559.GA11902@gmail.com>
  <20160701092806.GA13424@gondor.apana.org.au> <20160701101329.GA3833@gmail.com>
  <20160708162803.GA29111@linux.intel.com> <20160708164502.GA3064@gondor.apana.org.au>
-In-Reply-To: <20160708164502.GA3064@gondor.apana.org.au>
+ <CA+55aFyQYJerovMsSoSKS7PessZBr4vNp-3QUUwhqk4A4_jcbg@mail.gmail.com>
+In-Reply-To: <CA+55aFyQYJerovMsSoSKS7PessZBr4vNp-3QUUwhqk4A4_jcbg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, the arch/x86 maintainers <x86@kernel.org>, Megha Dey <megha.dey@intel.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, Xiaodong Liu <xiaodong.liu@intel.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, the arch/x86 maintainers <x86@kernel.org>, Megha Dey <megha.dey@intel.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, Xiaodong Liu <xiaodong.liu@intel.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-[ rare comment rant. I think I'll do this once, and then ignore the discussion ]
+Hi Linus,
 
-On Fri, Jul 8, 2016 at 9:45 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> Nack.  As I said the commenting style in the crypto API is the
-> same as the network stack.  So unless we decide to change both
-> please stick to the current style.
+On Fri, Jul 8, 2016 at 7:19 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>  (c)
+>       // This can be a single line. Or many. Your choice.
 
-Can we please get rid of the brain-damaged stupid networking comment
-syntax style, PLEASE?
+> The (c) form is particularly good for things like enum or structure
+> member comments at the end of code, where you might want to align
+> things up, but the ending comment marker ends up being visually pretty
+> distracting (and lining _that_ up is too much make-believe work).
 
-If the networking people cannot handle the pure awesomeness that is a
-balanced and symmetric traditional multi-line C style comments, then
-instead of the disgusting unbalanced crap that you guys use now,
-please just go all the way to the C++ mode.
+While I'm a fan of the (c) form myself, I became used to not using it for
+kernel code. Except for internal comments that are not intended to be sent
+out. This works fine, as checkpatch will complain if I ever forget to remove
+them while preparing patches.
 
-In other words, these three models are good:
+The alternative would be to teach checkpatch to complain about FIXME, TODO,
+and XXX in comments...
 
- (a)
-      /* This is a comment *./
+Gr{oetje,eeting}s,
 
- (b)
-      /*
-       * This is also a comment, but it can now be cleanly
-       * split over multiple lines
-       */
+                        Geert
 
- (c)
-      // This can be a single line. Or many. Your choice.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-and they are all obviously visually balanced. Sometimes you want (b)
-even for a single line, if you want the white-space to make it stand
-out more, but you can obviously do that with (c) too, by just
-surrounding it with two empty (comment) lines.
-
-The (c) form is particularly good for things like enum or structure
-member comments at the end of code, where you might want to align
-things up, but the ending comment marker ends up being visually pretty
-distracting (and lining _that_ up is too much make-believe work).
-
-There's also another acceptablr traditional multi-line style that
-you'll find in some places, but it's not the common kernel style:
-
- (d)
-      /* This is an alternate multi-line format
-         that isn't horrible, but not kernel style */
-
-Note how all the above comment styles have a certain visual symmatry
-and balance.
-
-But no, the networking code picked *none* of the above sane formats.
-Instead, it picked these two models that are just half-arsed
-shit-for-brains:
-
- (no)
-     /* This is disgusting drug-induced
-       * crap, and should die
-       */
-
-  (no-no-no)
-      /* This is also very nasty
-       * and visually unbalanced */
-
-Please. The networking code actually has the *worst* possible comment
-style. You can literally find that (no-no-no) style, which is just
-really horribly disgusting and worse than the otherwise fairly similar
-(d) in pretty much every way.
-
-I'm not even going to start talking about the people who prefer to
-"box in" their comments, and line up both ends and have fancy boxes of
-stars around the whole thing. I'm sure that looks really nice if you
-are out of your mind on LSD, and have nothing better to do than to
-worry about the right alignment of the asterisks.
-
-I'd be happy to start moving the whole kernel over to the C++ style,
-it's been many many years since we had compatibility issues and we are
-all used to it by now, even if we weren't all fans originally.
-
-I really don't understand why the networking people think that their
-particularly ugly styles are fine. They are the most visually
-unbalanced version of _all_ the common comment styles, and have no
-actual advantages.
-
-So just get rid of the (no-no) and (no-no-no) forms. Not in one big
-go, but as people touch the code, just fix that mess up.
-
-                 Linus
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
