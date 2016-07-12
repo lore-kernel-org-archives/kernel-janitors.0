@@ -1,23 +1,61 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Date: Mon, 04 Jul 2016 01:39:36 +0000
-Subject: Re: [PATCH] drm/tegra: fix error handling
-Message-Id: <CAAVeFuLNgjqYtjoDD3Kxr04c8PSyLptX2RXM6a_m2epADEdvkg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Jul 2016 20:22:13 +0000
+Subject: [PATCH] GPU-DRM-Radeon: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
+Message-Id: <a844238b-7f5d-e528-5010-b55551e30723@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1467526737-13591-1-git-send-email-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, Jul 3, 2016 at 3:18 PM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> This is likely that checking 'gr3d->clk_secondary' instead of 'gr3d->clk'
-> is expected here.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 12 Jul 2016 22:00:55 +0200
 
-Very likely indeed.
+The drm_gem_object_unreference_unlocked() function tests whether
+its argument is NULL and then returns immediately.
+Thus the test around the call is not needed.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+This issue was detected by using the Coccinelle software.
 
-Thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/radeon/radeon_display.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
+index 5f1cd69..1efab5f 100644
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -1324,9 +1324,7 @@ static void radeon_user_framebuffer_destroy(struct drm_framebuffer *fb)
+ {
+ 	struct radeon_framebuffer *radeon_fb = to_radeon_framebuffer(fb);
+ 
+-	if (radeon_fb->obj) {
+-		drm_gem_object_unreference_unlocked(radeon_fb->obj);
+-	}
++	drm_gem_object_unreference_unlocked(radeon_fb->obj);
+ 	drm_framebuffer_cleanup(fb);
+ 	kfree(radeon_fb);
+ }
+-- 
+2.9.0
+
