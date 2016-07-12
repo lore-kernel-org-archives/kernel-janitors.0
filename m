@@ -1,59 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Jul 2016 21:00:15 +0000
-Subject: [PATCH] [media] cec: Delete an unnecessary check before the function call "rc_free_device"
-Message-Id: <b97432a8-7a2d-66ea-c2a0-110cc63673e3@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Jul 2016 14:14:05 +0000
+Subject: [patch] rxrpc: checking for IS_ERR() instead of NULL
+Message-Id: <20160712141405.GA21045@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Jul 2016 22:52:49 +0200
+The rxrpc_lookup_peer() function returns NULL on error, it never returns
+error pointers.
 
-The rc_free_device() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 8496af50eb38 ('rxrpc: Use RCU to access a peer's service connection tree')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/media/cec/cec-core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I don't think this has been merged with net-next so I didn't CC David or
+netdev.  Feel free to fold this into the original commit.
 
-diff --git a/drivers/staging/media/cec/cec-core.c b/drivers/staging/media/cec/cec-core.c
-index 61a1e69..123e1bf 100644
---- a/drivers/staging/media/cec/cec-core.c
-+++ b/drivers/staging/media/cec/cec-core.c
-@@ -354,8 +354,7 @@ void cec_delete_adapter(struct cec_adapter *adap)
- 	if (adap->kthread_config)
- 		kthread_stop(adap->kthread_config);
- #if IS_ENABLED(CONFIG_RC_CORE)
--	if (adap->rc)
--		rc_free_device(adap->rc);
-+	rc_free_device(adap->rc);
- #endif
- 	kfree(adap);
- }
--- 
-2.9.1
-
+diff --git a/net/rxrpc/conn_service.c b/net/rxrpc/conn_service.c
+index 7cbd612..fd9027c 100644
+--- a/net/rxrpc/conn_service.c
++++ b/net/rxrpc/conn_service.c
+@@ -163,7 +163,7 @@ struct rxrpc_connection *rxrpc_incoming_connection(struct rxrpc_local *local,
+ 
+ 	if (!peer) {
+ 		peer = rxrpc_lookup_peer(local, srx, GFP_NOIO);
+-		if (IS_ERR(peer))
++		if (!peer)
+ 			goto enomem;
+ 	}
+ 
