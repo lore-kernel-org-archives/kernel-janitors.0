@@ -1,64 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Jul 2016 12:34:45 +0000
-Subject: Re: [PATCH] SRAM: Delete an unnecessary check before the function call "of_node_put"
-Message-Id: <cc5d5494-9454-86ca-a351-1627ace4e241@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Jul 2016 22:26:44 +0000
+Subject: [bug report] cdrom: Add support for Sega Dreamcast GD-ROM.
+Message-Id: <20160712222643.GA16176@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563C7652.6080609@users.sourceforge.net>
-In-Reply-To: <563C7652.6080609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 6 Nov 2015 10:36:49 +0100
-> 
-> The of_node_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/misc/sram.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
-> index 736dae7..34287f7 100644
-> --- a/drivers/misc/sram.c
-> +++ b/drivers/misc/sram.c
-> @@ -326,9 +326,7 @@ static int sram_reserve_regions(struct sram_dev *sram, struct resource *res)
->  	}
->  
->   err_chunks:
-> -	if (child)
-> -		of_node_put(child);
-> -
-> +	of_node_put(child);
->  	kfree(rblocks);
->  
->  	return ret;
-> 
+Hello Adrian McMenamin,
 
-How do you think about to integrate this update suggestion
-into another source code repository?
+The patch 74ee1a7590b7: "cdrom: Add support for Sega Dreamcast
+GD-ROM." from Jan 21, 2008, leads to the following static checker
+warning:
 
-Regards,
-Markus
+	drivers/cdrom/gdrom.c:457 gdrom_getsense()
+	warn: was hexadecimal intended '40'
+
+drivers/cdrom/gdrom.c
+   456          insw(GDROM_DATA_REG, &sense, sense_command->buflen/2);
+   457          if (sense[1] & 40) {
+
+Yeah.  It looks like 0x40 was actually intended.
+
+   458                  pr_info("Drive not ready - command aborted\n");
+   459                  goto cleanup_sense;
+   460          }
+   461          sense_key = sense[1] & 0x0F;
+   462          if (sense_key < ARRAY_SIZE(sense_texts))
+   463                  pr_info("%s\n", sense_texts[sense_key].text);
+   464          else
+   465                  pr_err("Unknown sense key: %d\n", sense_key);
+   466          if (bufstring) /* return addional sense data */
+   467                  memcpy(bufstring, &sense[4], 2);
+   468          if (sense_key < 2)
+   469                  err = 0;
+
+regards,
+dan carpenter
