@@ -1,37 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 15 Jul 2016 11:08:17 +0000
-Subject: [patch] fb: adv7393: off by one in probe function
-Message-Id: <20160715110817.GD9258@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 13 Jul 2016 18:00:11 +0000
+Subject: [PATCH 1/3] drm/msm/hdmi: Delete an unnecessary check before the function call "kfree"
+Message-Id: <a9dc2934-7b76-8426-1a0f-22284a46e58c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <351a1279-b0ca-5f5e-d175-28c9de8406f6@users.sourceforge.net>
+In-Reply-To: <351a1279-b0ca-5f5e-d175-28c9de8406f6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-This should be >= instead of >.  It's a little bit clearer if we just
-get rid of the temporary variable and just use ARRAY_SIZE() directly.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 13 Jul 2016 18:54:11 +0200
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-diff --git a/drivers/video/fbdev/bfin_adv7393fb.c b/drivers/video/fbdev/bfin_adv7393fb.c
-index 8fe41ca..c846021 100644
---- a/drivers/video/fbdev/bfin_adv7393fb.c
-+++ b/drivers/video/fbdev/bfin_adv7393fb.c
-@@ -373,7 +373,6 @@ static int bfin_adv7393_fb_probe(struct i2c_client *client,
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c b/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
+index 0baaaaa..6e76797 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
+@@ -1430,7 +1430,7 @@ struct hdmi_hdcp_ctrl *msm_hdmi_hdcp_init(struct hdmi *hdmi)
+ 
+ void msm_hdmi_hdcp_destroy(struct hdmi *hdmi)
  {
- 	int ret = 0;
- 	struct proc_dir_entry *entry;
--	int num_modes = ARRAY_SIZE(known_modes);
- 
- 	struct adv7393fb_device *fbdev = NULL;
- 
-@@ -382,7 +381,7 @@ static int bfin_adv7393_fb_probe(struct i2c_client *client,
- 		return -EINVAL;
+-	if (hdmi && hdmi->hdcp_ctrl) {
++	if (hdmi) {
+ 		kfree(hdmi->hdcp_ctrl);
+ 		hdmi->hdcp_ctrl = NULL;
  	}
- 
--	if (mode > num_modes) {
-+	if (mode >= ARRAY_SIZE(known_modes)) {
- 		dev_err(&client->dev, "mode %d: not supported", mode);
- 		return -EFAULT;
- 	}
+-- 
+2.9.0
+
