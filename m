@@ -1,35 +1,39 @@
-From: Matan Barak <matanb@mellanox.com>
-Date: Wed, 13 Jul 2016 13:17:05 +0000
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Date: Wed, 13 Jul 2016 17:54:54 +0000
 Subject: Re: [patch v2] net/mlx5: missing error code in esw_create_offloads_fdb_table()
-Message-Id: <83288161-1577-4092-6d6d-125b219cedf9@mellanox.com>
+Message-Id: <20160713175454.GF19657@obsidianresearch.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <83d5a5bb-dbf5-6c8f-39ea-320d55026a9d@mellanox.com>
- <20160713100825.GD29468@mwanda> <20160713130459.GF10079@leon.nu>
-In-Reply-To: <20160713130459.GF10079-2ukJVAZIZ/Y@public.gmane.org>
+ <20160713100825.GD29468@mwanda>
+In-Reply-To: <20160713100825.GD29468@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Matan Barak <matanb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 13/07/2016 16:04, Leon Romanovsky wrote:
-> On Wed, Jul 13, 2016 at 02:48:44PM +0300, Dan Carpenter wrote:
->> We accidentally return success when we had intended to return an error
->> code.
->>
->> Fixes: 69697b6e2086 ('net/mlx5: E-Switch, Add support for the sriov offloads mode')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> v2: return -ENOTSUPP instead --EINVAL
->
-> I'm a little bit confused. Why did you prefer ENOTSUPP over EOPNOTSUPP?
+On Wed, Jul 13, 2016 at 02:48:44PM +0300, Dan Carpenter wrote:
+> We accidentally return success when we had intended to return an error
+> code.
+> 
+> Fixes: 69697b6e2086 ('net/mlx5: E-Switch, Add support for the sriov offloads mode')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> v2: return -ENOTSUPP instead --EINVAL
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+> index 1842dfb..7d982cf 100644
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+> @@ -183,6 +183,7 @@ static int esw_create_offloads_fdb_table(struct mlx5_eswitch *esw, int nvports)
+>  
+>  	root_ns = mlx5_get_flow_namespace(dev, MLX5_FLOW_NAMESPACE_FDB);
+>  	if (!root_ns) {
+> +		err = -ENOTSUPP;
 
-According to [1], it fits our case better - operation is valid and make 
-sense, but isn't supported.
+Did you mean ENOTSUP?
 
-[1] https://lists.gnu.org/archive/html/bug-glibc/2002-08/msg00017.html
+I thought ENOTSUPP was not to be used outside NFS, and isn't properly
+exported to userspace..
 
->
-> Thanks.
->
+$ find /usr/include -name "*errno*" | xargs grep 524
 
+Jason
