@@ -1,12 +1,17 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 13 Jul 2016 04:47:35 +0000
+Date: Wed, 13 Jul 2016 04:59:32 +0000
 Subject: Error handling in drivers/pci/host/pci-dra7xx.c
-Message-Id: <nm4h5b$ssj$1@ger.gmane.org>
+Message-Id: <edb7b73b-3880-23a5-99ff-2b5b30f45ace@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <nm4h5b$ssj$1@ger.gmane.org>
+In-Reply-To: <nm4h5b$ssj$1@ger.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-omap@vger.kernel.org, linux-pci@vger.kernel.org
+
+(resent because of broken cc)
+
 
 Hi,
 
