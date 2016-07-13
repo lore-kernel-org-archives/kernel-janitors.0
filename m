@@ -1,75 +1,42 @@
-From: Sean Paul <seanpaul@chromium.org>
-Date: Fri, 22 Jul 2016 17:53:45 +0000
-Subject: Re: [PATCH 1/4] GPU-DRM-Etnaviv: Delete unnecessary checks before two function calls
-Message-Id: <CAOw6vbKVuo9iDou_U3V23a5eQW0dUfgoy6J6HBjg-vgNLAHm-w@mail.gmail.com>
+From: Matan Barak <matanb@mellanox.com>
+Date: Wed, 13 Jul 2016 11:19:06 +0000
+Subject: Re: [patch] net/mlx5: missing error code in esw_create_offloads_fdb_table()
+Message-Id: <83d5a5bb-dbf5-6c8f-39ea-320d55026a9d@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <00ca5af9-674a-73ce-b423-1ce41d426942@users.sourceforge.net>
- <9638cd74-ffc5-d9ee-a40c-9b60e860ad8b@users.sourceforge.net>
-In-Reply-To: <9638cd74-ffc5-d9ee-a40c-9b60e860ad8b@users.sourceforge.net>
+References: <20160713100825.GD29468@mwanda>
+In-Reply-To: <20160713100825.GD29468@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Fri, Jul 22, 2016 at 11:47 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 22 Jul 2016 15:56:15 +0200
+On 13/07/2016 13:08, Dan Carpenter wrote:
+> We accidentally return success when we had intended to return an error
+> code.
 >
-> The functions drm_gem_object_unreference_unlocked() and vunmap() perform
-> also input parameter validation.
-> Thus the tests around their calls are not needed.
+> Fixes: 69697b6e2086 ('net/mlx5: E-Switch, Add support for the sriov offloads mode')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 >
-> This issue was detected by using the Coccinelle software.
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+> index 1842dfb..7d982cf 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+> @@ -183,6 +183,7 @@ static int esw_create_offloads_fdb_table(struct mlx5_eswitch *esw, int nvports)
 >
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>  	root_ns = mlx5_get_flow_namespace(dev, MLX5_FLOW_NAMESPACE_FDB);
+>  	if (!root_ns) {
+> +		err = -EINVAL;
+>  		esw_warn(dev, "Failed to get FDB flow namespace\n");
+>  		goto ns_err;
+>  	}
+>
 
-Applied to drm-misc. In the future, could you please format your
-subjects starting with "drm/<driver>"? I've fixed this one and the
-next, but it'd be nice not to have to do that going forward.
+Hi,
 
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> index 8c6f750..8eee742 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -535,8 +535,7 @@ void etnaviv_gem_describe_objects(struct etnaviv_drm_private *priv,
->
->  static void etnaviv_gem_shmem_release(struct etnaviv_gem_object *etnaviv_obj)
->  {
-> -       if (etnaviv_obj->vaddr)
-> -               vunmap(etnaviv_obj->vaddr);
-> +       vunmap(etnaviv_obj->vaddr);
->         put_pages(etnaviv_obj);
->  }
->
-> @@ -670,9 +669,7 @@ static struct drm_gem_object *__etnaviv_gem_new(struct drm_device *dev,
->         return obj;
->
->  fail:
-> -       if (obj)
-> -               drm_gem_object_unreference_unlocked(obj);
-> -
-> +       drm_gem_object_unreference_unlocked(obj);
->         return ERR_PTR(ret);
->  }
->
-> --
-> 2.9.2
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thanks for the patch.
+I'm not sure EINVAL is the right error here though.
+Maybe -ENOTSUPP is a bit more appropriate here.
+
+Regards,
+Matan
