@@ -1,44 +1,32 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Mon, 18 Jul 2016 05:05:38 +0000
-Subject: Re: [PATCH 3/3] xen-scsiback: Pass a failure indication as a constant
-Message-Id: <c9b3ed98-5d54-86bb-0416-1df008e382c0@suse.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 13 Jul 2016 04:33:40 +0000
+Subject: Error handling in drivers/pci/host/pcie-xilinx.c
+Message-Id: <nm4gb7$hvv$1@ger.gmane.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
- <e447cf62-ffc7-4b82-cff2-947c8874756a@users.sourceforge.net>
-In-Reply-To: <e447cf62-ffc7-4b82-cff2-947c8874756a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-On 16/07/16 22:24, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 16 Jul 2016 21:55:01 +0200
-> 
-> Pass the constant "FAILED" in a function call directly instead of
-> using an intialisation for a local variable.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Hi,
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+in file 'drivers/pci/host/pcie-xilinx.c', error handling in 
+'xilinx_pcie_init_irq_domain()' seams to be broken.
+
+The pattern used is:
+
+    if (!var) {
+       ...
+       dev_err(...);
+       return PTR_ERR(var);
+    }
+
+so we always return '0', which means success.
+
+Returning PTR_ERR(-EINVAL) or PTR_ERR(-ENODEV) could be, IMHO, better.
+
+Best regards,
+
+CJ
 
 
-Juergen
