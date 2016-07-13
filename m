@@ -1,42 +1,51 @@
-From: Matan Barak <matanb@mellanox.com>
-Date: Wed, 13 Jul 2016 11:19:06 +0000
+From: Leon Romanovsky <leonro@mellanox.com>
+Date: Wed, 13 Jul 2016 11:29:08 +0000
 Subject: Re: [patch] net/mlx5: missing error code in esw_create_offloads_fdb_table()
-Message-Id: <83d5a5bb-dbf5-6c8f-39ea-320d55026a9d@mellanox.com>
+Message-Id: <20160713112907.GE10079@leon.nu>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="ffoCPvUAPMgSXi6H"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160713100825.GD29468@mwanda>
 In-Reply-To: <20160713100825.GD29468@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
-Cc: Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Matan Barak <matanb@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 13/07/2016 13:08, Dan Carpenter wrote:
+--ffoCPvUAPMgSXi6H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jul 13, 2016 at 01:08:25PM +0300, Dan Carpenter wrote:
 > We accidentally return success when we had intended to return an error
 > code.
->
-> Fixes: 69697b6e2086 ('net/mlx5: E-Switch, Add support for the sriov offloads mode')
+>=20
+> Fixes: 69697b6e2086 ('net/mlx5: E-Switch, Add support for the sriov offlo=
+ads mode')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-> index 1842dfb..7d982cf 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-> @@ -183,6 +183,7 @@ static int esw_create_offloads_fdb_table(struct mlx5_eswitch *esw, int nvports)
->
->  	root_ns = mlx5_get_flow_namespace(dev, MLX5_FLOW_NAMESPACE_FDB);
->  	if (!root_ns) {
-> +		err = -EINVAL;
->  		esw_warn(dev, "Failed to get FDB flow namespace\n");
->  		goto ns_err;
->  	}
->
 
-Hi,
+Thanks Dan,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 
-Thanks for the patch.
-I'm not sure EINVAL is the right error here though.
-Maybe -ENOTSUPP is a bit more appropriate here.
+--ffoCPvUAPMgSXi6H
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Regards,
-Matan
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXhiYDAAoJEORje4g2clinLZQP/izHp2P94sUzjmAd17y2rdUH
+DvLaReGHx5GUlEcNdILzO1ynqDzs/euq4w8pILWTx/R+Wyr0hvdtSRwUMnKLkF2y
+1/q6EJUS4rFKEVRdgsv1TmnC1y3ey+BOLCyZ8O7p7I1JswjVBNOR+aCl8c6p4AQv
+meY805Z3/TchoBBzzhYaE6nEwVOhPzyrSf3qcOcDxD0dm8CrZEsMOAjEzn3+Aycb
+b0kM49MV0tc7oZMvEPqSwiSRUZ66T4PGPTpxmzDe3uN4LZhG2fAK0PY4NMQA6daw
+WKZl6SA+MA70eXCLxRDi63n2EM4n0y8wYwJXZXLSHVOGc6HWHCbpbxcEQ9f+zwuQ
+JhxWvW3WpluXQH2YXmNyKTmwxyjYknXCP5pN31YG8tSs3PBCMTw3qWHDFJSxv8rb
+gpdUmb7iUlnZrjkzq9lEqCoBUfx/j6nKkFag0vL32xyZhzIEqICmJpKvUHhFe4gH
+9CHLn4xRJHjbG8FUKaoN0F6Fe+D8Z7D3JlX8YN950bcCe6+7522bhAfvCI1lQA3w
+tg46jaBQQi7mqbhGnbCzZcIw5A5hFC3s2xXpWPSj7B1pbGj1jpvUCIgXxGq4U1hG
+VcQvY+QvLNBKudO6iTSnWNPEA+izsKcsBYoGCKd0y5mam/nYyQC62v2Ufy4DYOPX
+gxpzN1LAg+EaGeJMIYUb
+=MLz5
+-----END PGP SIGNATURE-----
+
+--ffoCPvUAPMgSXi6H--
