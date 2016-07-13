@@ -1,24 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 26 Jul 2016 22:26:24 +0000
-Subject: Re: [patch] ide: missing break statement in set_timings_mdma()
-Message-Id: <20160726.152624.1129190524778208462.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 13 Jul 2016 04:47:35 +0000
+Subject: Error handling in drivers/pci/host/pci-dra7xx.c
+Message-Id: <nm4h5b$ssj$1@ger.gmane.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714104802.GI18175@mwanda>
-In-Reply-To: <20160714104802.GI18175@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linux-ide@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Jul 2016 13:48:02 +0300
+Hi,
 
-> There was clearly supposed to be a break statement here.  Currently we
-> use the k2 ata timings instead of sh ata ones we intended.  Probably no
-> one has this hardware anymore so it likely doesn't make a difference
-> beyond the static checker warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+in file 'drivers/pci/host/pci-dra7xx.c', error handling in 
+'dra7xx_pcie_init_irq_domain()' seams to be broken.
 
-Applied.
+The pattern used is:
+
+    if (!var) {
+       ...
+       dev_err(...);
+       return PTR_ERR(var);
+    }
+
+so we always return '0', which means success.
+
+Returning PTR_ERR(-EINVAL) or PTR_ERR(-ENODEV) could be, IMHO, better.
+
+Best regards,
+
+CJ
+
+
