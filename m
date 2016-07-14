@@ -1,44 +1,52 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Thu, 14 Jul 2016 21:31:34 +0000
-Subject: Re: [patch] mtd: nand: omap2: Cleanup a curly brace issue
-Message-Id: <20160714213134.GA108554@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Jul 2016 10:44:56 +0000
+Subject: [patch] mtd: pmcmsp-flash: Allocating too much in init_msp_flash()
+Message-Id: <20160714104456.GG18175@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714212608.GA10856@mwanda>
-In-Reply-To: <20160714212608.GA10856@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Teresa Remmet <t.remmet@phytec.de>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: David Woodhouse <dwmw2@infradead.org>, Marc St-Jean <stjeanma@pmc-sierra.com>
+Cc: Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jul 15, 2016 at 12:26:08AM +0300, Dan Carpenter wrote:
-> It doesn't affect runtime, but curly braces were obviously intended.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a cut and paste issue here.  The bug is that we are allocating
+more memory than necessary for msp_maps.  We should be allocating enough
+space for a map_info struct (144 bytes) but we instead allocate enough
+for an mtd_info struct (1840 bytes).  It's a small waste.
 
-Thanks, but you're just a tad late ;)
+The other part of this is not harmful but when we allocated msp_flash
+then we allocated enough space fro a map_info pointer instead of an
+mtd_info pointer.  But since pointers are the same size it works out
+fine.
 
-http://patchwork.ozlabs.org/patch/648283/
+Anyway, I decided to clean up all three allocations a bit to make them
+a bit more consistent and clear.
 
-Nice to point out that technically, the behavior doesn't really change
-though.
+Fixes: 68aa0fa87f6d ('[MTD] PMC MSP71xx flash/rootfs mappings')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested!!
 
-Brian
-
-> diff --git a/drivers/mtd/nand/omap2.c b/drivers/mtd/nand/omap2.c
-> index a36ad3d..ab7c340 100644
-> --- a/drivers/mtd/nand/omap2.c
-> +++ b/drivers/mtd/nand/omap2.c
-> @@ -1655,10 +1655,11 @@ static int omap_get_dt_info(struct device *dev, struct omap_nand_info *info)
->  
->  	/* detect availability of ELM module. Won't be present pre-OMAP4 */
->  	info->elm_of_node = of_parse_phandle(child, "ti,elm-id", 0);
-> -	if (!info->elm_of_node)
-> +	if (!info->elm_of_node) {
->  		info->elm_of_node = of_parse_phandle(child, "elm_id", 0);
->  		if (!info->elm_of_node)
->  			dev_dbg(dev, "ti,elm-id not in DT\n");
-> +	}
->  
->  	/* select ecc-scheme for NAND */
->  	if (of_property_read_string(child, "ti,nand-ecc-opt", &s)) {
+diff --git a/drivers/mtd/maps/pmcmsp-flash.c b/drivers/mtd/maps/pmcmsp-flash.c
+index 744ca5c..f9fa3fa 100644
+--- a/drivers/mtd/maps/pmcmsp-flash.c
++++ b/drivers/mtd/maps/pmcmsp-flash.c
+@@ -75,15 +75,15 @@ static int __init init_msp_flash(void)
+ 
+ 	printk(KERN_NOTICE "Found %d PMC flash devices\n", fcnt);
+ 
+-	msp_flash = kmalloc(fcnt * sizeof(struct map_info *), GFP_KERNEL);
++	msp_flash = kcalloc(fcnt, sizeof(*msp_flash), GFP_KERNEL);
+ 	if (!msp_flash)
+ 		return -ENOMEM;
+ 
+-	msp_parts = kmalloc(fcnt * sizeof(struct mtd_partition *), GFP_KERNEL);
++	msp_parts = kcalloc(fcnt, sizeof(*msp_parts), GFP_KERNEL);
+ 	if (!msp_parts)
+ 		goto free_msp_flash;
+ 
+-	msp_maps = kcalloc(fcnt, sizeof(struct mtd_info), GFP_KERNEL);
++	msp_maps = kcalloc(fcnt, sizeof(*msp_maps), GFP_KERNEL);
+ 	if (!msp_maps)
+ 		goto free_msp_parts;
+ 
