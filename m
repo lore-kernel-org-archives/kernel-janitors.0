@@ -1,43 +1,30 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Sun, 24 Jul 2016 15:17:52 +0000
-Subject: Re: [PATCH] libnvdimm-btt: Delete an unnecessary check before the function call "__nd_device_registe
-Message-Id: <CAPcyv4iC3uSv=nM3ZBrA+nBswLHdxqEg9q6TO7nNTVi7BpG04Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Jul 2016 10:15:46 +0000
+Subject: [patch] KVM: PPC: fix a sanity check
+Message-Id: <20160714101545.GB18175@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <0844e82c-8ab1-d88d-879b-145b9add327d@users.sourceforge.net>
-In-Reply-To: <0844e82c-8ab1-d88d-879b-145b9add327d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Alexander Graf <agraf@suse.com>, Bharat Bhushan <r65777@freescale.com>
+Cc: kvm@vger.kernel.org, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, kernel-janitors@vger.kernel.org, kvm-ppc@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Paolo Bonzini <pbonzini@redhat.com>, linuxppc-dev@lists.ozlabs.org
 
-On Sun, Jul 24, 2016 at 2:16 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 24 Jul 2016 11:05:34 +0200
->
-> The __nd_device_register() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+We use logical negate where bitwise negate was intended.  It means that
+we never return -EINVAL here.
 
-Thanks, applied.
+Fixes: ce11e48b7fdd ('KVM: PPC: E500: Add userspace debug stub support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/arch/powerpc/kvm/booke.c b/arch/powerpc/kvm/booke.c
+index 02b4672..df3f270 100644
+--- a/arch/powerpc/kvm/booke.c
++++ b/arch/powerpc/kvm/booke.c
+@@ -2038,7 +2038,7 @@ int kvm_arch_vcpu_ioctl_set_guest_debug(struct kvm_vcpu *vcpu,
+ 		if (type = KVMPPC_DEBUG_NONE)
+ 			continue;
+ 
+-		if (type & !(KVMPPC_DEBUG_WATCH_READ |
++		if (type & ~(KVMPPC_DEBUG_WATCH_READ |
+ 			     KVMPPC_DEBUG_WATCH_WRITE |
+ 			     KVMPPC_DEBUG_BREAKPOINT))
+ 			return -EINVAL;
