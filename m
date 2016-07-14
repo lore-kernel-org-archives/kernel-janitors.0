@@ -1,54 +1,110 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Fri, 22 Jul 2016 05:56:08 +0000
-Subject: Re: staging: ks7010: Delete unnecessary uses of the variable "retval"
-Message-Id: <20160722055607.GA1605@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PNTmBPCT7hxwcZjr"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Jul 2016 11:41:39 +0000
+Subject: [patch 1/2] drivers/virt: fix the error handling in ioctl_dtprop()
+Message-Id: <20160714114139.GK18175@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <6a8f4258-188e-36f6-28fa-1626c29cf361@users.sourceforge.net>
- <alpine.DEB.2.10.1607172056220.3177@hadrien>
- <20160720155333.GE1688@katana>
- <b249584b-47b8-ffd9-432e-986d69260ff1@users.sourceforge.net>
- <20160721062726.GC1664@katana>
- <b221aadb-2af7-8d0f-ce8e-99b1efa31edd@users.sourceforge.net>
- <20160721163714.GB1616@katana>
- <f5224d82-c25e-3ab0-c0a5-85042664f953@users.sourceforge.net>
-In-Reply-To: <f5224d82-c25e-3ab0-c0a5-85042664f953@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dave Hansen <dave.hansen@linux.intel.com>, Timur Tabi <timur@freescale.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+If strndup_user() user fails then it returns an error pointer and we
+pass that to kfree() which causes an oops.
 
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've shifted this code around so that we keep only free things which
+have been allocated.  We don't need to initialize the pointers at the
+start any more.  We can also move the check for invalid proplen earlier
+so it's before the allocations.
 
+Fixes: 6db7199407ca ('drivers/virt: introduce Freescale hypervisor management driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I have to be honest here.  I haven't "properly" compiled this.  I hacked
+up Smatch to do a best effort compile of code even if there were include
+files missing etc.
 
-> Do you find such a source code transformation useful?
-
-No. I already gave that answer by agreeing to Julia's viewpoint.
-
-
---PNTmBPCT7hxwcZjr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXkbV3AAoJEBQN5MwUoCm2BioQAKhdZmsGr3fPwfPdcdaEgthD
-0mMR84/CVpe0FW3q09j0qhukJW05mmvL09UG8g4qhV6xKq1orlAIBBW5EpOnG+7t
-NKMy/BHrk7K0MRUWbDPt81/kYX4L2ZCdjrsDli+ZP7XMMb05n7ix3A+wUSmqUWwW
-L10lB0D9HNAqOMYDkRg4NSY/50VThLiwk2PfMExmz5CSTG0n+EklIrwWYTcW9p97
-joJjjxJhI42YdSkU/+wERRNXV+KepuPuUsy8HeFx8chJHoVdxEQXWo1080CaMdLH
-MVaetYXVYi4oPM6V6RNI01gPiu4Np2n9yTZKHi9oNPG0Iuzc+ZRB8zH/NXhKiSyr
-PN0cWjxrqeknXkiFHZhfbEJXuYKBPM9h3M+nvvKxc9mfhlw7ccucH4AOdNMuKS4P
-o6SNUGf+sypSuSH5ev0uaiYOx7NzIgLG9RNBELktpSjojq2ZwuIrOPZmM7/N0yuf
-u7ccwuohtTj8s6LoC4yPxGEsWPZWpOHY53LfWKJayNDsAeBU3Px8QFkbS4M+zWT3
-GXekva10EQsKXmrls7+K5WaqhPlEtceyPl7URFWiw73gaU2I/0Th911713JJu8C7
-apqqC6iU9sX9uyx6fJiQ29gDQL8sdUPWpkGworJkko6hnKQZwNsgUbXgIN7MOiSR
-xFIqqy/vFSPEm5l+7tRd
-=p6Qz
------END PGP SIGNATURE-----
-
---PNTmBPCT7hxwcZjr--
+diff --git a/drivers/virt/fsl_hypervisor.c b/drivers/virt/fsl_hypervisor.c
+index 60bdad3..146f531 100644
+--- a/drivers/virt/fsl_hypervisor.c
++++ b/drivers/virt/fsl_hypervisor.c
+@@ -334,45 +334,41 @@ static long ioctl_dtprop(struct fsl_hv_ioctl_prop __user *p, int set)
+ 	struct fsl_hv_ioctl_prop param;
+ 	char __user *upath, *upropname;
+ 	void __user *upropval;
+-	char *path = NULL, *propname = NULL;
+-	void *propval = NULL;
++	char *path, *propname;
++	void *propval;
+ 	int ret = 0;
+ 
+ 	/* Get the parameters from the user. */
+ 	if (copy_from_user(&param, p, sizeof(struct fsl_hv_ioctl_prop)))
+ 		return -EFAULT;
+ 
++	if (param.proplen > FH_DTPROP_MAX_PROPLEN)
++		return -EINVAL;
++
+ 	upath = (char __user *)(uintptr_t)param.path;
+ 	upropname = (char __user *)(uintptr_t)param.propname;
+ 	upropval = (void __user *)(uintptr_t)param.propval;
+ 
+ 	path = strndup_user(upath, FH_DTPROP_MAX_PATHLEN);
+-	if (IS_ERR(path)) {
+-		ret = PTR_ERR(path);
+-		goto out;
+-	}
++	if (IS_ERR(path))
++		return PTR_ERR(path);
+ 
+ 	propname = strndup_user(upropname, FH_DTPROP_MAX_PATHLEN);
+ 	if (IS_ERR(propname)) {
+ 		ret = PTR_ERR(propname);
+-		goto out;
+-	}
+-
+-	if (param.proplen > FH_DTPROP_MAX_PROPLEN) {
+-		ret = -EINVAL;
+-		goto out;
++		goto free_path;
+ 	}
+ 
+ 	propval = kmalloc(param.proplen, GFP_KERNEL);
+ 	if (!propval) {
+ 		ret = -ENOMEM;
+-		goto out;
++		goto free_propname;
+ 	}
+ 
+ 	if (set) {
+ 		if (copy_from_user(propval, upropval, param.proplen)) {
+ 			ret = -EFAULT;
+-			goto out;
++			goto free_propval;
+ 		}
+ 
+ 		param.ret = fh_partition_set_dtprop(param.handle,
+@@ -391,7 +387,7 @@ static long ioctl_dtprop(struct fsl_hv_ioctl_prop __user *p, int set)
+ 			if (copy_to_user(upropval, propval, param.proplen) ||
+ 			    put_user(param.proplen, &p->proplen)) {
+ 				ret = -EFAULT;
+-				goto out;
++				goto free_propval;
+ 			}
+ 		}
+ 	}
+@@ -399,10 +395,12 @@ static long ioctl_dtprop(struct fsl_hv_ioctl_prop __user *p, int set)
+ 	if (put_user(param.ret, &p->ret))
+ 		ret = -EFAULT;
+ 
+-out:
+-	kfree(path);
++free_propval:
+ 	kfree(propval);
++free_propname:
+ 	kfree(propname);
++free_path:
++	kfree(path);
+ 
+ 	return ret;
+ }
