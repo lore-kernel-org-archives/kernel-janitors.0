@@ -1,66 +1,29 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Date: Mon, 25 Jul 2016 08:43:32 +0000
-Subject: Re: [PATCH] GPU-DRM: Delete an unnecessary check before drm_property_unreference_blob()
-Message-Id: <69fe77a4-d9fd-83b4-7821-f0a3c13d737f@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Jul 2016 10:34:16 +0000
+Subject: [patch -next] wan/fsl_ucc_hdlc: info leak in uhdlc_ioctl()
+Message-Id: <20160714103415.GE18175@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <515bcb7e-3e00-3438-cc47-227cfcd41990@users.sourceforge.net>
-In-Reply-To: <515bcb7e-3e00-3438-cc47-227cfcd41990@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, CK Hu <ck.hu@mediatek.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Zhao Qiang <qiang.zhao@nxp.com>
+Cc: netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
+There is a 2 byte struct whole after line.loopback so we need to clear
+that out to avoid disclosing stack information.
 
+Fixes: c19b6d246a35 ('drivers/net: support hdlc function for QE-UCC')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 22/07/16 12:56, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 22 Jul 2016 12:48:12 +0200
->
-> The drm_property_unreference_blob() function tests whether its argument
-> is NULL and then returns immediately.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> index 24aa3ba..07541d0 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> @@ -112,9 +112,7 @@ static void mtk_drm_crtc_reset(struct drm_crtc *crtc)
->  	struct mtk_crtc_state *state;
->
->  	if (crtc->state) {
-> -		if (crtc->state->mode_blob)
-> -			drm_property_unreference_blob(crtc->state->mode_blob);
-> -
-> +		drm_property_unreference_blob(crtc->state->mode_blob);
->  		state = to_mtk_crtc_state(crtc->state);
->  		memset(state, 0, sizeof(*state));
->  	} else {
->
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+index 19174ac..7608561 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -635,6 +635,7 @@ static int uhdlc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 			ifr->ifr_settings.size = size; /* data size wanted */
+ 			return -ENOBUFS;
+ 		}
++		memset(&line, 0, sizeof(line));
+ 		line.clock_type = priv->clocking;
+ 		line.clock_rate = 0;
+ 		line.loopback = 0;
