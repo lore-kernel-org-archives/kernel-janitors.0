@@ -1,39 +1,35 @@
-From: Peter Chen <hzpeterchen@gmail.com>
-Date: Fri, 15 Jul 2016 06:34:29 +0000
-Subject: Re: [patch] usb: gadget: fsl_qe_udc: off by one in setup_received_handle()
-Message-Id: <20160715063429.GD817@shlinux2>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Jul 2016 11:16:53 +0000
+Subject: [patch v2 -next] wan/fsl_ucc_hdlc: info leak in uhdlc_ioctl()
+Message-Id: <20160714111653.GA30452@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160713101433.GI29468@mwanda>
-In-Reply-To: <20160713101433.GI29468@mwanda>
+In-Reply-To: <57876EE0.10603@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Li Yang <leoli@freescale.com>, Xie Xiaobo <X.Xie@freescale.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Zhao Qiang <qiang.zhao@nxp.com>
+Cc: netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
 
-On Wed, Jul 13, 2016 at 01:14:33PM +0300, Dan Carpenter wrote:
-> The udc->eps[] array has USB_MAX_ENDPOINTS elements so > should be >=.
-> 
-> Fixes: 3948f0e0c999 ('usb: add Freescale QE/CPM USB peripheral controller driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/usb/gadget/udc/fsl_qe_udc.c b/drivers/usb/gadget/udc/fsl_qe_udc.c
-> index 93d28cb..cf8819a 100644
-> --- a/drivers/usb/gadget/udc/fsl_qe_udc.c
-> +++ b/drivers/usb/gadget/udc/fsl_qe_udc.c
-> @@ -2053,7 +2053,7 @@ static void setup_received_handle(struct qe_udc *udc,
->  			struct qe_ep *ep;
->  
->  			if (wValue != 0 || wLength != 0
-> -				|| pipe > USB_MAX_ENDPOINTS)
-> +				|| pipe >= USB_MAX_ENDPOINTS)
->  				break;
->  			ep = &udc->eps[pipe];
->  
+There is a 2 byte struct whole after line.loopback so we need to clear
+that out to avoid disclosing stack information.
 
-Acked-by: Peter Chen <peter.chen@nxp.com>
+Fixes: c19b6d246a35 ('drivers/net: support hdlc function for QE-UCC')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: remove the other initialization to zero
 
--- 
-
-Best Regards,
-Peter Chen
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+index 19174ac..6edd48a 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -635,9 +635,8 @@ static int uhdlc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 			ifr->ifr_settings.size = size; /* data size wanted */
+ 			return -ENOBUFS;
+ 		}
++		memset(&line, 0, sizeof(line));
+ 		line.clock_type = priv->clocking;
+-		line.clock_rate = 0;
+-		line.loopback = 0;
+ 
+ 		if (copy_to_user(ifr->ifr_settings.ifs_ifsu.sync, &line, size))
+ 			return -EFAULT;
