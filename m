@@ -1,40 +1,28 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 14 Jul 2016 06:18:45 +0000
-Subject: [PATCH] mlxsw: spectrum_router: Return -ENOENT in case of error
-Message-Id: <1468477125-3153-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Jiri Pirko <jiri@resnulli.us>
+Date: Thu, 14 Jul 2016 06:28:19 +0000
+Subject: Re: [PATCH] mlxsw: spectrum_router: Return -ENOENT in case of error
+Message-Id: <20160714062819.GB2228@nanopsycho.orion>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1468477125-3153-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1468477125-3153-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: jiri@mellanox.com, idosch@mellanox.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: jiri@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-'vr' should be a valid pointer here, so returning 'PTR_ERR(vr)' is wrong.
-Return an explicit error code (-ENOENT) instead.
+Thu, Jul 14, 2016 at 08:18:45AM CEST, christophe.jaillet@wanadoo.fr wrote:
+>'vr' should be a valid pointer here, so returning 'PTR_ERR(vr)' is wrong.
+>Return an explicit error code (-ENOENT) instead.
+>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is fo net-next.
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-index e084ea5..81418d6 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-@@ -1803,7 +1803,7 @@ int mlxsw_sp_router_fib4_del(struct mlxsw_sp_port *mlxsw_sp_port,
- 					      sizeof(fib4->dst), fib4->dst_len);
- 	if (!fib_entry) {
- 		dev_warn(mlxsw_sp->bus_info->dev, "Failed to find FIB4 entry being removed.\n");
--		return PTR_ERR(vr);
-+		return -ENOENT;
- 	}
- 	mlxsw_sp_fib_entry_del(mlxsw_sp_port->mlxsw_sp, fib_entry);
- 	mlxsw_sp_fib_entry_remove(vr->fib, fib_entry);
--- 
-2.7.4
+Fixes: 61c503f976 ("mlxsw: spectrum_router: Implement fib4 add/del switchdev obj ops")
+
+>Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 
 
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
-
+Thanks.
