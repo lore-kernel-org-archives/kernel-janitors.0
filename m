@@ -1,24 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 28 Jul 2016 05:53:35 +0000
-Subject: Re: [patch] sparc32: off by ones in BUG_ON()
-Message-Id: <20160727.225335.1873128652868360558.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Jul 2016 10:40:22 +0000
+Subject: [patch] s390/smp: clean up a condition
+Message-Id: <20160714104022.GF18175@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160715110533.GA9258@mwanda>
-In-Reply-To: <20160715110533.GA9258@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Michael Holzheu <holzheu@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Christian Borntraeger <borntraeger@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 15 Jul 2016 14:05:33 +0300
+I can never remember precedence rules.  Let's add some parenthesis so
+this code is more clear.
 
-> Smatch complains that these tests are off by one, which is true but not
-> life threatening.
-> 
-> 	arch/sparc/kernel/irq_32.c:169 irq_link()
-> 	error: buffer overflow 'irq_map' 384 <= 384
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The original code is correct right?  We didn't intend to say:
 
-Applied, thanks Dan.
+	sclp_max = sclp.max_cores * (sclp_max ?: nr_cpu_ids);
+
+diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
+index 5c8f7ca..35531fe 100644
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -887,7 +887,7 @@ void __init smp_fill_possible_mask(void)
+ 
+ 	sclp_max = max(sclp.mtid, sclp.mtid_cp) + 1;
+ 	sclp_max = min(smp_max_threads, sclp_max);
+-	sclp_max = sclp.max_cores * sclp_max ?: nr_cpu_ids;
++	sclp_max = (sclp.max_cores * sclp_max) ?: nr_cpu_ids;
+ 	possible = setup_possible_cpus ?: nr_cpu_ids;
+ 	possible = min(possible, sclp_max);
+ 	for (cpu = 0; cpu < possible && cpu < nr_cpu_ids; cpu++)
