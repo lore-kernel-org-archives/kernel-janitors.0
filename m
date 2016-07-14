@@ -1,48 +1,65 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Thu, 28 Jul 2016 12:02:29 +0000
-Subject: Re: [PATCH 2/3] staging: wilc1000: One function call less in mac_ioctl() after error detection
-Message-Id: <CAGRGNgUvEYG8fkruQCd-JxA5d=EjrK92A-mZ1rxUj39S5hdtbw@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 14 Jul 2016 10:10:46 +0000
+Subject: [PATCH] PCI: xilinx: Fix return value in case of error
+Message-Id: <1468491046-1427-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <558EB32E.6090003@users.sourceforge.net>
- <dbc8c4f3-a234-9b6a-b6a4-9c7ef45d5d31@users.sourceforge.net> <590e0614-db41-a193-5463-9e3ad2630489@users.sourceforge.net>
-In-Reply-To: <590e0614-db41-a193-5463-9e3ad2630489@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Austin Shin <austin.shin@atmel.com>, Chris Park <chris.park@atmel.com>, Glen Lee <glen.lee@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johnny Kim <johnny.kim@atmel.com>, Leo Kim <leo.kim@atmel.com>, Tony Cho <tony.cho@atmel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Marcus,
+In function 'xilinx_pcie_init_irq_domain', the pattern used to check and
+return error is:
 
-On Mon, Jul 25, 2016 at 6:22 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 24 Jul 2016 21:15:23 +0200
->
-> The kfree() function was called in two cases by the mac_ioctl() function
-> during error handling even if the passed variable did not contain a pointer
-> for a valid data item.
->
-> Improve this implementation detail by the introduction of another
-> jump label.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   if (!var) {
+      dev_err(...);
+      return PTR_ERR(var);
+   }
 
-This is pointless micro-optimisation: kfree(NULL) is perfectly valid
-and buff is either malloc'd memory or NULL when it's called.
+So the returned value in case of error is always 0, which means 'success'.
+Change it to return -ENODEV instead.
 
-Thanks,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pci/host/pcie-xilinx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
+index 4703aa3..a30e016 100644
+--- a/drivers/pci/host/pcie-xilinx.c
++++ b/drivers/pci/host/pcie-xilinx.c
+@@ -550,7 +550,7 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_pcie_port *port)
+ 	pcie_intc_node = of_get_next_child(node, NULL);
+ 	if (!pcie_intc_node) {
+ 		dev_err(dev, "No PCIe Intc node found\n");
+-		return PTR_ERR(pcie_intc_node);
++		return -ENODEV;
+ 	}
+ 
+ 	port->irq_domain = irq_domain_add_linear(pcie_intc_node, 4,
+@@ -558,7 +558,7 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_pcie_port *port)
+ 						 port);
+ 	if (!port->irq_domain) {
+ 		dev_err(dev, "Failed to get a INTx IRQ domain\n");
+-		return PTR_ERR(port->irq_domain);
++		return -ENODEV;
+ 	}
+ 
+ 	/* Setup MSI */
+@@ -569,7 +569,7 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_pcie_port *port)
+ 							 &xilinx_pcie_msi_chip);
+ 		if (!port->irq_domain) {
+ 			dev_err(dev, "Failed to get a MSI IRQ domain\n");
+-			return PTR_ERR(port->irq_domain);
++			return -ENODEV;
+ 		}
+ 
+ 		xilinx_pcie_enable_msi(port);
 -- 
-Julian Calaby
+2.7.4
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
