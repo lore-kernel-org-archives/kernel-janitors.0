@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Jul 2016 18:05:06 +0000
-Subject: [PATCH 0/9] staging: ks7010: Fine-tuning for a SDIO card driver
-Message-Id: <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+Date: Fri, 15 Jul 2016 12:30:19 +0000
+Subject: [PATCH] drm/bochs: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
+Message-Id: <1e3a8c0d-e737-f092-727e-af7e3810b8dc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,29 +24,38 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>, devel@driverdev.osuosl.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Jul 2016 19:54:32 +0200
+Date: Fri, 15 Jul 2016 14:23:15 +0200
 
-Further update suggestions were taken into account
-after a patch was applied from static source code analysis.
+The drm_gem_object_unreference_unlocked() function tests whether
+its argument is NULL and then returns immediately.
+Thus the test around the call is not needed.
 
-Markus Elfring (9):
-  Delete unnecessary checks before the function call "kfree"
-  Delete unnecessary assignments for buffer variables
-  Return directly after a failed kmalloc()
-  Rename jump labels
-  Delete unnecessary uses of the variable "retval"
-  Delete unnecessary braces
-  Replace three printk() calls by pr_err()
-  Delete a variable in write_to_device()
-  Delete three unnecessary variable initialisations
+This issue was detected by using the Coccinelle software.
 
- drivers/staging/ks7010/ks7010_sdio.c | 263 ++++++++++++++---------------------
- 1 file changed, 107 insertions(+), 156 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/bochs/bochs_mm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
+index 6cf912c..28a60a7 100644
+--- a/drivers/gpu/drm/bochs/bochs_mm.c
++++ b/drivers/gpu/drm/bochs/bochs_mm.c
+@@ -474,8 +474,8 @@ int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
+ static void bochs_user_framebuffer_destroy(struct drm_framebuffer *fb)
+ {
+ 	struct bochs_framebuffer *bochs_fb = to_bochs_framebuffer(fb);
+-	if (bochs_fb->obj)
+-		drm_gem_object_unreference_unlocked(bochs_fb->obj);
++
++	drm_gem_object_unreference_unlocked(bochs_fb->obj);
+ 	drm_framebuffer_cleanup(fb);
+ 	kfree(fb);
+ }
 -- 
 2.9.1
 
