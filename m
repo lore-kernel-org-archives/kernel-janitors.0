@@ -1,41 +1,40 @@
-From: Pratyush Patel <pratyushpatel.1995@gmail.com>
-Date: Thu, 23 Jun 2016 18:50:37 +0000
-Subject: [PATCH] hrtimer: spelling fixes
-Message-Id: <20160623185037.GA12650@cyborg>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Jul 2016 11:05:33 +0000
+Subject: [patch] sparc32: off by ones in BUG_ON()
+Message-Id: <20160715110533.GA9258@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, john.stultz@linaro.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Pratyush Patel <pratyushpatel.1995@gmail.com>
----
- kernel/time/hrtimer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Smatch complains that these tests are off by one, which is true but not
+life threatening.
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index e99df0f..c7f6f5b 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -703,7 +703,7 @@ static void clock_was_set_work(struct work_struct *work)
- static DECLARE_WORK(hrtimer_work, clock_was_set_work);
+	arch/sparc/kernel/irq_32.c:169 irq_link()
+	error: buffer overflow 'irq_map' 384 <= 384
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/arch/sparc/kernel/irq_32.c b/arch/sparc/kernel/irq_32.c
+index a979e99..cac4a55 100644
+--- a/arch/sparc/kernel/irq_32.c
++++ b/arch/sparc/kernel/irq_32.c
+@@ -165,7 +165,7 @@ void irq_link(unsigned int irq)
  
- /*
-- * Called from timekeeping and resume code to reprogramm the hrtimer
-+ * Called from timekeeping and resume code to reprogram the hrtimer
-  * interrupt device on all cpus.
-  */
- void clock_was_set_delayed(void)
-@@ -1241,7 +1241,7 @@ static void __run_hrtimer(struct hrtimer_cpu_base *cpu_base,
+ 	p = &irq_table[irq];
+ 	pil = p->pil;
+-	BUG_ON(pil > SUN4D_MAX_IRQ);
++	BUG_ON(pil >= SUN4D_MAX_IRQ);
+ 	p->next = irq_map[pil];
+ 	irq_map[pil] = p;
  
- 	/*
- 	 * Note: We clear the running state after enqueue_hrtimer and
--	 * we do not reprogramm the event hardware. Happens either in
-+	 * we do not reprogram the event hardware. Happens either in
- 	 * hrtimer_start_range_ns() or in hrtimer_interrupt()
- 	 *
- 	 * Note: Because we dropped the cpu_base->lock above,
--- 
-2.7.4
-
+@@ -182,7 +182,7 @@ void irq_unlink(unsigned int irq)
+ 	spin_lock_irqsave(&irq_map_lock, flags);
+ 
+ 	p = &irq_table[irq];
+-	BUG_ON(p->pil > SUN4D_MAX_IRQ);
++	BUG_ON(p->pil >= SUN4D_MAX_IRQ);
+ 	pnext = &irq_map[p->pil];
+ 	while (*pnext != p)
+ 		pnext = &(*pnext)->next;
