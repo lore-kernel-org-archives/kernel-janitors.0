@@ -1,27 +1,33 @@
-From: Alexander Graf <agraf@suse.de>
-Date: Thu, 14 Jul 2016 11:10:13 +0000
-Subject: Re: [patch] KVM: PPC: fix a sanity check
-Message-Id: <57877315.5060903@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Jul 2016 21:12:43 +0000
+Subject: [patch] tools/vm/slabinfo: fix an unintentional printf
+Message-Id: <20160715211243.GE19522@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714101545.GB18175@mwanda>
-In-Reply-To: <20160714101545.GB18175@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Bharat Bhushan <r65777@freescale.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com, Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, kvm-ppc@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Colin Ian King <colin.king@canonical.com>, Laura Abbott <labbott@fedoraproject.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 07/14/2016 12:15 PM, Dan Carpenter wrote:
-> We use logical negate where bitwise negate was intended.  It means that
-> we never return -EINVAL here.
->
-> Fixes: ce11e48b7fdd ('KVM: PPC: E500: Add userspace debug stub support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The curly braces are missing here so we print stuff unintentionally.
 
-Oops :).
+Fixes: 9da4714a2d4f ('slub: slabinfo update for cmpxchg handling')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Alexander Graf <agraf@suse.de>
-
-
-Alex
-
+diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
+index 7cf6e17..b9d34b3 100644
+--- a/tools/vm/slabinfo.c
++++ b/tools/vm/slabinfo.c
+@@ -510,10 +510,11 @@ static void slab_stats(struct slabinfo *s)
+ 			s->alloc_node_mismatch, (s->alloc_node_mismatch * 100) / total);
+ 	}
+ 
+-	if (s->cmpxchg_double_fail || s->cmpxchg_double_cpu_fail)
++	if (s->cmpxchg_double_fail || s->cmpxchg_double_cpu_fail) {
+ 		printf("\nCmpxchg_double Looping\n------------------------\n");
+ 		printf("Locked Cmpxchg Double redos   %lu\nUnlocked Cmpxchg Double redos %lu\n",
+ 			s->cmpxchg_double_fail, s->cmpxchg_double_cpu_fail);
++	}
+ }
+ 
+ static void report(struct slabinfo *s)
