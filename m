@@ -1,59 +1,70 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date: Tue, 05 Jul 2016 23:43:15 +0000
-Subject: Re: [patch] remoteproc: qcom: remove some bogus error handling
-Message-Id: <20160705234315.GP1190@tuxbot>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jul 2016 20:44:32 +0000
+Subject: [PATCH] drm/virtgpu: Delete unnecessary checks before drm_gem_object_unreference_unlocked()
+Message-Id: <5e3dafff-72bb-e616-e84a-368f78fa66b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160629144055.GB22818@mwanda>
-In-Reply-To: <20160629144055.GB22818@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed 29 Jun 07:40 PDT 2016, Dan Carpenter wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 15 Jul 2016 22:38:42 +0200
 
-> "val" can't be negative because it's unsigned and also readl() doesn't
-> return negative error codes.
-> 
+The drm_gem_object_unreference_unlocked() function tests whether
+its argument is NULL and then returns immediately.
+Thus the test around the calls is not needed.
 
-Thanks for catching this. Unfortunately a successful validation will
-result in status becoming 4 and I check if the return value is non-zero
-(rather than negative) in q6v5_mpss_load().
+This issue was detected by using the Coccinelle software.
 
-However, the next step in the process is to do a timed wait for the
-status to turn 4 or negative, so we should treat that snippet (check for
-MBA_AUTH_COMPLETE) as part of the validation and move it in here from
-q6v5_mpss_load().
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/virtio/virtgpu_display.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Regards,
-Bjorn
+diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
+index ac758cd..fdfc711 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_display.c
++++ b/drivers/gpu/drm/virtio/virtgpu_display.c
+@@ -53,8 +53,7 @@ static void virtio_gpu_user_framebuffer_destroy(struct drm_framebuffer *fb)
+ 	struct virtio_gpu_framebuffer *virtio_gpu_fb
+ 		= to_virtio_gpu_framebuffer(fb);
+ 
+-	if (virtio_gpu_fb->obj)
+-		drm_gem_object_unreference_unlocked(virtio_gpu_fb->obj);
++	drm_gem_object_unreference_unlocked(virtio_gpu_fb->obj);
+ 	drm_framebuffer_cleanup(fb);
+ 	kfree(virtio_gpu_fb);
+ }
+@@ -326,8 +325,7 @@ virtio_gpu_user_framebuffer_create(struct drm_device *dev,
+ 	ret = virtio_gpu_framebuffer_init(dev, virtio_gpu_fb, mode_cmd, obj);
+ 	if (ret) {
+ 		kfree(virtio_gpu_fb);
+-		if (obj)
+-			drm_gem_object_unreference_unlocked(obj);
++		drm_gem_object_unreference_unlocked(obj);
+ 		return NULL;
+ 	}
+ 
+-- 
+2.9.1
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index fb4c56c..8abc369 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -386,7 +386,6 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
->  	phys_addr_t fw_addr;
->  	bool relocate;
->  	size_t size;
-> -	u32 val;
->  	int ret;
->  	int i;
->  
-> @@ -425,8 +424,7 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
->  		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
->  	}
->  
-> -	val = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
-> -	return val < 0 ? val : 0;
-> +	return readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
->  }
->  
->  static int q6v5_mpss_load(struct q6v5 *qproc)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
