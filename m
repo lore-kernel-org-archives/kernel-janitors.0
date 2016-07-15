@@ -1,26 +1,34 @@
-From: Ingo Molnar <mingo@kernel.org>
-Date: Thu, 14 Jul 2016 12:59:49 +0000
-Subject: Re: [patch 1/2] drivers/virt: fix the error handling in ioctl_dtprop()
-Message-Id: <20160714125949.GB21281@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Jul 2016 11:15:47 +0000
+Subject: [patch] usb: gadget: fsl_qe_udc: signedness bug in qe_get_frame()
+Message-Id: <20160715111547.GF9258@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714114139.GK18175@mwanda>
-In-Reply-To: <20160714114139.GK18175@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Timur Tabi <timur@freescale.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Li Yang <leoli@freescale.com>
+Cc: Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
+We can't assign -EINVAL to a u16.
 
-* Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Fixes: 3948f0e0c999 ('usb: add Freescale QE/CPM USB peripheral controller driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> If strndup_user() user fails then it returns an error pointer and we
-> pass that to kfree() which causes an oops.
-
-Hm, in addition to this fix wouldn't it be better to not crash if kfree() gets 
-passed an error pointer? Would that have changed the pattern of this particular 
-bug?
-
-Thanks,
-
-	Ingo
+diff --git a/drivers/usb/gadget/udc/fsl_qe_udc.c b/drivers/usb/gadget/udc/fsl_qe_udc.c
+index 93d28cb..901366f 100644
+--- a/drivers/usb/gadget/udc/fsl_qe_udc.c
++++ b/drivers/usb/gadget/udc/fsl_qe_udc.c
+@@ -1878,11 +1878,8 @@ static int qe_get_frame(struct usb_gadget *gadget)
+ 
+ 	tmp = in_be16(&udc->usb_param->frame_n);
+ 	if (tmp & 0x8000)
+-		tmp = tmp & 0x07ff;
+-	else
+-		tmp = -EINVAL;
+-
+-	return (int)tmp;
++		return tmp & 0x07ff;
++	return -EINVAL;
+ }
+ 
+ static int fsl_qe_start(struct usb_gadget *gadget,
