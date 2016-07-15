@@ -1,54 +1,34 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Mon, 18 Jul 2016 07:07:35 +0000
-Subject: Re: [patch] s390/smp: clean up a condition
-Message-Id: <20160718090735.103390c9@mschwide>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Jul 2016 11:17:33 +0000
+Subject: [patch -old] sparc: serial: sunhv: fix a double lock bug
+Message-Id: <20160715111733.GB13153@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714104022.GF18175@mwanda>
-In-Reply-To: <20160714104022.GF18175@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Michael Holzheu <holzheu@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Christian Borntraeger <borntraeger@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, sparclinux@vger.kernel.org, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 14 Jul 2016 13:40:22 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+We accidentally take the "port->lock" twice in a row.  This old code
+was supposed to be deleted.
 
-> I can never remember precedence rules.  Let's add some parenthesis so
-> this code is more clear.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The original code is correct right?  We didn't intend to say:
-> 
-> 	sclp_max = sclp.max_cores * (sclp_max ?: nr_cpu_ids);
-> 
-> diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
-> index 5c8f7ca..35531fe 100644
-> --- a/arch/s390/kernel/smp.c
-> +++ b/arch/s390/kernel/smp.c
-> @@ -887,7 +887,7 @@ void __init smp_fill_possible_mask(void)
-> 
->  	sclp_max = max(sclp.mtid, sclp.mtid_cp) + 1;
->  	sclp_max = min(smp_max_threads, sclp_max);
-> -	sclp_max = sclp.max_cores * sclp_max ?: nr_cpu_ids;
-> +	sclp_max = (sclp.max_cores * sclp_max) ?: nr_cpu_ids;
->  	possible = setup_possible_cpus ?: nr_cpu_ids;
->  	possible = min(possible, sclp_max);
->  	for (cpu = 0; cpu < possible && cpu < nr_cpu_ids; cpu++)
-> 
+Fixes: e58e241c1788 ('sparc: serial: Clean up the locking for -rt')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The code calculates the number of threads to use, then multiplies
-it with the number of cores to get the number of logical CPUs.
-If the product happens to be zero because the number of cores
-could not be determined, then nr_cpu_ids is going to be used.
-
-So the code is correct but with the parenthesis it is easier to
-read. Applied & thanks.
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+diff --git a/drivers/tty/serial/sunhv.c b/drivers/tty/serial/sunhv.c
+index ca0d380..4e603d0 100644
+--- a/drivers/tty/serial/sunhv.c
++++ b/drivers/tty/serial/sunhv.c
+@@ -490,12 +490,6 @@ static void sunhv_console_write_bychar(struct console *con, const char *s, unsig
+ 		locked = spin_trylock_irqsave(&port->lock, flags);
+ 	else
+ 		spin_lock_irqsave(&port->lock, flags);
+-	if (port->sysrq) {
+-		locked = 0;
+-	} else if (oops_in_progress) {
+-		locked = spin_trylock(&port->lock);
+-	} else
+-		spin_lock(&port->lock);
+ 
+ 	for (i = 0; i < n; i++) {
+ 		if (*s = '\n')
