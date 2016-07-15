@@ -1,41 +1,32 @@
-From: David Daney <ddaney.cavm@gmail.com>
-Date: Thu, 14 Jul 2016 15:38:46 +0000
-Subject: Re: [patch] MIPS: OCTEON: Off by one in octeon_irq_gpio_map()
-Message-Id: <5787B206.3030902@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Jul 2016 11:06:30 +0000
+Subject: [patch] mtd: maps: sa1100-flash: potential NULL dereference
+Message-Id: <20160715110629.GB9258@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714101429.GA18175@mwanda>
-In-Reply-To: <20160714101429.GA18175@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, David Daney <david.daney@cavium.com>, Rob Herring <robh@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, Frans Klaver <fransklaver@gmail.com>
+Cc: Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-On 07/14/2016 03:14 AM, Dan Carpenter wrote:
-> It should be >= ARRAY_SIZE() instead of > ARRAY_SIZE().
->
-> Fixes: 64b139f97c01 ('MIPS: OCTEON: irq: add CIB and other fixes')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We check for NULL but then dereference "info->mtd" on the next line.
 
-Good catch.  This would probably only matter if a malformed device tree, 
-or buggy device driver were encountered.
+Fixes: 72169755cf36 ('mtd: maps: sa1100-flash: show parent device in sysfs')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: David Daney <david.daney@cavium.com>
-
-
->
-> diff --git a/arch/mips/cavium-octeon/octeon-irq.c b/arch/mips/cavium-octeon/octeon-irq.c
-> index 368eb49..75a4add 100644
-> --- a/arch/mips/cavium-octeon/octeon-irq.c
-> +++ b/arch/mips/cavium-octeon/octeon-irq.c
-> @@ -1260,7 +1260,7 @@ static int octeon_irq_gpio_map(struct irq_domain *d,
->
->   	line = (hw + gpiod->base_hwirq) >> 6;
->   	bit = (hw + gpiod->base_hwirq) & 63;
-> -	if (line > ARRAY_SIZE(octeon_irq_ciu_to_irq) ||
-> +	if (line >= ARRAY_SIZE(octeon_irq_ciu_to_irq) ||
->   		octeon_irq_ciu_to_irq[line][bit] != 0)
->   		return -EINVAL;
->
->
-
+diff --git a/drivers/mtd/maps/sa1100-flash.c b/drivers/mtd/maps/sa1100-flash.c
+index 142fc3d..784c6e1 100644
+--- a/drivers/mtd/maps/sa1100-flash.c
++++ b/drivers/mtd/maps/sa1100-flash.c
+@@ -230,8 +230,10 @@ static struct sa_info *sa1100_setup_mtd(struct platform_device *pdev,
+ 
+ 		info->mtd = mtd_concat_create(cdev, info->num_subdev,
+ 					      plat->name);
+-		if (info->mtd = NULL)
++		if (info->mtd = NULL) {
+ 			ret = -ENXIO;
++			goto err;
++		}
+ 	}
+ 	info->mtd->dev.parent = &pdev->dev;
+ 
