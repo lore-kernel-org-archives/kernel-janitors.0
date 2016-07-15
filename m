@@ -1,59 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 17:07:04 +0000
-Subject: [PATCH] ASoC: Intel: Skylake: Delete an unnecessary check before the function call "release_firmware
-Message-Id: <2c4f9e3a-96d7-36e1-379e-282353ea09b2@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 15 Jul 2016 11:08:17 +0000
+Subject: [patch] fb: adv7393: off by one in probe function
+Message-Id: <20160715110817.GD9258@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 18:58:14 +0200
+This should be >= instead of >.  It's a little bit clearer if we just
+get rid of the temporary variable and just use ARRAY_SIZE() directly.
 
-The release_firmware() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/intel/skylake/skl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
-index 2337748..cd59536 100644
---- a/sound/soc/intel/skylake/skl.c
-+++ b/sound/soc/intel/skylake/skl.c
-@@ -781,8 +781,7 @@ static void skl_remove(struct pci_dev *pci)
- 	struct hdac_ext_bus *ebus = pci_get_drvdata(pci);
- 	struct skl *skl = ebus_to_skl(ebus);
+diff --git a/drivers/video/fbdev/bfin_adv7393fb.c b/drivers/video/fbdev/bfin_adv7393fb.c
+index 8fe41ca..c846021 100644
+--- a/drivers/video/fbdev/bfin_adv7393fb.c
++++ b/drivers/video/fbdev/bfin_adv7393fb.c
+@@ -373,7 +373,6 @@ static int bfin_adv7393_fb_probe(struct i2c_client *client,
+ {
+ 	int ret = 0;
+ 	struct proc_dir_entry *entry;
+-	int num_modes = ARRAY_SIZE(known_modes);
  
--	if (skl->tplg)
--		release_firmware(skl->tplg);
-+	release_firmware(skl->tplg);
+ 	struct adv7393fb_device *fbdev = NULL;
  
- 	if (pci_dev_run_wake(pci))
- 		pm_runtime_get_noresume(&pci->dev);
--- 
-2.9.2
-
+@@ -382,7 +381,7 @@ static int bfin_adv7393_fb_probe(struct i2c_client *client,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (mode > num_modes) {
++	if (mode >= ARRAY_SIZE(known_modes)) {
+ 		dev_err(&client->dev, "mode %d: not supported", mode);
+ 		return -EFAULT;
+ 	}
