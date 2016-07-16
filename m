@@ -1,48 +1,80 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Sat, 16 Jul 2016 12:36:21 +0000
-Subject: Re: [PATCH] usb: gadget: uvc: Fix return value in case of error
-Message-Id: <4105543.bTmzcC8hNY@avalon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 20:23:47 +0000
+Subject: [PATCH 2/3] xen-scsiback: One function call less in scsiback_device_action() after error detection
+Message-Id: <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1468652680-15781-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1468652680-15781-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
+In-Reply-To: <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: balbi@kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Christophe,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 21:42:42 +0200
 
-Thank you for the patch.
+The kfree() function was called in one case by the
+scsiback_device_action() function during error handling
+even if the passed variable "tmr" contained a null pointer.
 
-On Saturday 16 Jul 2016 09:04:40 Christophe JAILLET wrote:
-> If this memory allocation fail, we will return 0, which means success.
-> Return -ENOMEM instead.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Adjust jump targets according to the Linux coding style convention.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/xen/xen-scsiback.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> ---
->  drivers/usb/gadget/function/uvc_configfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/gadget/function/uvc_configfs.c
-> b/drivers/usb/gadget/function/uvc_configfs.c index 66753ba..31125a4 100644
-> --- a/drivers/usb/gadget/function/uvc_configfs.c
-> +++ b/drivers/usb/gadget/function/uvc_configfs.c
-> @@ -2023,7 +2023,7 @@ static int uvcg_streaming_class_allow_link(struct
-> config_item *src, if (!data) {
->  		kfree(*class_array);
->  		*class_array = NULL;
-> -		ret = PTR_ERR(data);
-> +		ret = -ENOMEM;
->  		goto unlock;
->  	}
->  	cl_arr = *class_array;
-
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index 4a48c06..7612bc9 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -606,7 +606,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
+ 	tmr = kzalloc(sizeof(struct scsiback_tmr), GFP_KERNEL);
+ 	if (!tmr) {
+ 		target_put_sess_cmd(se_cmd);
+-		goto err;
++		goto do_resp;
+ 	}
+ 
+ 	init_waitqueue_head(&tmr->tmr_wait);
+@@ -616,7 +616,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
+ 			       unpacked_lun, tmr, act, GFP_KERNEL,
+ 			       tag, TARGET_SCF_ACK_KREF);
+ 	if (rc)
+-		goto err;
++		goto free_tmr;
+ 
+ 	wait_event(tmr->tmr_wait, atomic_read(&tmr->tmr_complete));
+ 
+@@ -626,8 +626,9 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
+ 	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
+ 	transport_generic_free_cmd(&pending_req->se_cmd, 1);
+ 	return;
+-err:
++free_tmr:
+ 	kfree(tmr);
++do_resp:
+ 	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
+ }
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.9.1
 
