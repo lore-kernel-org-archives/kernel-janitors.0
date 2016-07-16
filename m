@@ -1,30 +1,39 @@
-From: Evgeniy Polyakov <zbr@ioremap.net>
-Date: Sat, 23 Jul 2016 04:40:17 +0000
-Subject: Re: [PATCH 0/3] drivers: w1: coding style corrections
-Message-Id: <69831469248817@web8g.yandex.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 16 Jul 2016 12:20:02 +0000
+Subject: [patch v2] tools/vm/slabinfo: fix an unintentional printf
+Message-Id: <20160716122001.GI32301@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1469162015-10497-1-git-send-email-ben.werbowyj@gmail.com>
-In-Reply-To: <1469162015-10497-1-git-send-email-ben.werbowyj@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Colin Ian King <colin.king@canonical.com>, Laura Abbott <labbott@fedoraproject.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Ben
+The curly braces are missing here so we print stuff unintentionally.
 
-22.07.2016, 07:34, "Ben Werbowyj" <ben.werbowyj@gmail.com>:
-> Coding style corrections for the Dallas 1-Wire driver.
-> Sections changed were reported by checkpatch.pl script.
-> Broken up into separate patches to hopefully make checking/review
-> a little easier. All three patches are for the w1_therm.c file
->
-> Ben Werbowyj (3):
->   drivers: w1: style corrections for parenthesis and braces
->   drivers: w1: removed assignment from within if statement
->   drivers: w1: style corrections-pointers-blanklines-comparisons
->
->  drivers/w1/slaves/w1_therm.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
+Fixes: 9da4714a2d44 ('slub: slabinfo update for cmpxchg handling')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Fix typo in git hash
 
-Looks good to me, thank you
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
+index 7cf6e17..b9d34b3 100644
+--- a/tools/vm/slabinfo.c
++++ b/tools/vm/slabinfo.c
+@@ -510,10 +510,11 @@ static void slab_stats(struct slabinfo *s)
+ 			s->alloc_node_mismatch, (s->alloc_node_mismatch * 100) / total);
+ 	}
+ 
+-	if (s->cmpxchg_double_fail || s->cmpxchg_double_cpu_fail)
++	if (s->cmpxchg_double_fail || s->cmpxchg_double_cpu_fail) {
+ 		printf("\nCmpxchg_double Looping\n------------------------\n");
+ 		printf("Locked Cmpxchg Double redos   %lu\nUnlocked Cmpxchg Double redos %lu\n",
+ 			s->cmpxchg_double_fail, s->cmpxchg_double_cpu_fail);
++	}
+ }
+ 
+ static void report(struct slabinfo *s)
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
