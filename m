@@ -1,45 +1,65 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 18:54:17 +0000
-Subject: [PATCH 00/12] staging-Lustre: Fine-tuning for seven function implementations
-Message-Id: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 15:05:41 +0000
+Subject: [PATCH 6/8] drm/amdgpu: Change assignment for a variable in amdgpu_cgs_acpi_eval_object()
+Message-Id: <5a7d8d95-0167-2bdc-784f-e1df6e49ad2b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
- <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
-In-Reply-To: <20151221234857.GA27079@kroah.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
+ <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
+In-Reply-To: <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 15:05:45 +0200
 
-Further update suggestions were taken into account
-after a patch was applied from static source code analysis.
+Indicate successful function execution only at the end.
+Thus omit initialisation for the variable "result" at the beginning.
 
-Markus Elfring (12):
-  ldlm: Delete unnecessary checks before the function call "kset_unregister"
-  Delete unnecessary checks before the function call "kobject_put"
-  One function call less in class_register_type() after error detection
-  Split a condition check in class_register_type()
-  Optimize error handling in class_register_type()
-  Return directly after a failed kcalloc() in mgc_process_recover_log()
-  Less checks after a failed alloc_page() in mgc_process_recover_log()
-  Less checks after a failed ptlrpc_request_alloc() inmgc_process_recover_log()
-  Delete a check for the variable "req" in mgc_process_recover_log()
-  Rename jump labels in mgc_process_recover_log()
-  Move an assignment for the variable "eof" in mgc_process_recover_log()
-  Delete an unnecessary variable initialisation in mgc_process_recover_log()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c | 10 ++---
- drivers/staging/lustre/lustre/lmv/lmv_obd.c     |  5 +--
- drivers/staging/lustre/lustre/lov/lov_obd.c     |  4 +-
- drivers/staging/lustre/lustre/mgc/mgc_request.c | 50 ++++++++++++-------------
- drivers/staging/lustre/lustre/obdclass/genops.c | 41 ++++++++++++--------
- 5 files changed, 54 insertions(+), 56 deletions(-)
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+index 47f2a43..57859bd 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+@@ -908,7 +908,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 	struct cgs_acpi_method_argument *argument;
+ 	uint32_t i, count;
+ 	acpi_status status;
+-	int result = 0;
++	int result;
+ 
+ 	handle = ACPI_HANDLE(&adev->pdev->dev);
+ 	if (!handle)
+@@ -1049,6 +1049,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 		params++;
+ 	}
+ 
++	result = 0;
+ free_obj:
+ 	kfree(obj);
+ free_input:
 -- 
-2.9.2
+2.9.1
 
