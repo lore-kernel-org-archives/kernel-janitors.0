@@ -1,50 +1,61 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Date: Thu, 14 Jul 2016 13:33:25 +0000
-Subject: Re: [patch] arm64: KVM: clean up a condition
-Message-Id: <578794A5.3000701@arm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 08:04:34 +0000
+Subject: [PATCH] drm/ast: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
+Message-Id: <f28c063f-ec56-e62b-9370-89ce833fa4e5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714101934.GD18175@mwanda>
-In-Reply-To: <20160714101934.GD18175@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Christoffer Dall <christoffer.dall@linaro.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 14/07/16 11:19, Dan Carpenter wrote:
-> My static checker complains that this condition looks like it should be
-> = instead of =.  This isn't a fast path, so we don't need to be fancy.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index a57d650..b0b225c 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1546,7 +1546,7 @@ static void unhandled_cp_access(struct kvm_vcpu *vcpu,
->  				struct sys_reg_params *params)
->  {
->  	u8 hsr_ec = kvm_vcpu_trap_get_class(vcpu);
-> -	int cp;
-> +	int cp = -1;
->  
->  	switch(hsr_ec) {
->  	case ESR_ELx_EC_CP15_32:
-> @@ -1558,7 +1558,7 @@ static void unhandled_cp_access(struct kvm_vcpu *vcpu,
->  		cp = 14;
->  		break;
->  	default:
-> -		WARN_ON((cp = -1));
-> +		WARN_ON(1);
->  	}
->  
->  	kvm_err("Unsupported guest CP%d access at: %08lx\n",
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 09:54:22 +0200
 
-Indeed, that looks a bit dodgy. I'll queue it for 4.8.
+The drm_gem_object_unreference_unlocked() function tests whether
+its argument is NULL and then returns immediately.
+Thus the test around the call is not needed.
 
-Thanks,
+This issue was detected by using the Coccinelle software.
 
-	M.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/ast/ast_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/ast/ast_main.c b/drivers/gpu/drm/ast/ast_main.c
+index 7bc3aa6..904beaa 100644
+--- a/drivers/gpu/drm/ast/ast_main.c
++++ b/drivers/gpu/drm/ast/ast_main.c
+@@ -295,9 +295,8 @@ static int ast_get_dram_info(struct drm_device *dev)
+ static void ast_user_framebuffer_destroy(struct drm_framebuffer *fb)
+ {
+ 	struct ast_framebuffer *ast_fb = to_ast_framebuffer(fb);
+-	if (ast_fb->obj)
+-		drm_gem_object_unreference_unlocked(ast_fb->obj);
+ 
++	drm_gem_object_unreference_unlocked(ast_fb->obj);
+ 	drm_framebuffer_cleanup(fb);
+ 	kfree(fb);
+ }
 -- 
-Jazz is not dead. It just smells funny...
+2.9.1
+
