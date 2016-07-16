@@ -1,37 +1,35 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 13 Jul 2016 04:59:32 +0000
-Subject: Error handling in drivers/pci/host/pci-dra7xx.c
-Message-Id: <edb7b73b-3880-23a5-99ff-2b5b30f45ace@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 16 Jul 2016 10:07:55 +0000
+Subject: [patch] staging: wilc1000: NULL dereference on error
+Message-Id: <20160716100755.GA3346@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <nm4h5b$ssj$1@ger.gmane.org>
-In-Reply-To: <nm4h5b$ssj$1@ger.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-omap@vger.kernel.org, linux-pci@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-(resent because of broken cc)
+We can't pass NULL pointers to destroy_workqueue().
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hi,
-
-in file 'drivers/pci/host/pci-dra7xx.c', error handling in 
-'dra7xx_pcie_init_irq_domain()' seams to be broken.
-
-The pattern used is:
-
-    if (!var) {
-       ...
-       dev_err(...);
-       return PTR_ERR(var);
-    }
-
-so we always return '0', which means success.
-
-Returning PTR_ERR(-EINVAL) or PTR_ERR(-ENODEV) could be, IMHO, better.
-
-Best regards,
-
-CJ
-
-
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index 0b1760c..78f524f 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -3363,7 +3363,7 @@ int wilc_init(struct net_device *dev, struct host_if_drv **hif_drv_handler)
+ 		if (!hif_workqueue) {
+ 			netdev_err(vif->ndev, "Failed to create workqueue\n");
+ 			result = -ENOMEM;
+-			goto _fail_mq_;
++			goto _fail_;
+ 		}
+ 
+ 		setup_timer(&periodic_rssi, GetPeriodicRSSI,
+@@ -3391,7 +3391,6 @@ int wilc_init(struct net_device *dev, struct host_if_drv **hif_drv_handler)
+ 
+ 	clients_count++;
+ 
+-_fail_mq_:
+ 	destroy_workqueue(hif_workqueue);
+ _fail_:
+ 	return result;
