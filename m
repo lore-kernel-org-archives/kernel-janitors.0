@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Jul 2016 18:02:20 +0000
-Subject: [PATCH 3/3] drm/msm: Delete an unnecessary check before drm_gem_object_unreference()
-Message-Id: <78fbe696-0f73-b396-a986-064f2ad9f22a@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 14:48:11 +0000
+Subject: [PATCH 2/8] drm/amdgpu/powerplay: Delete unnecessary checks before the function call "kfree"
+Message-Id: <a7112f50-5758-aec1-fa39-10d2246096ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,44 +19,59 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <351a1279-b0ca-5f5e-d175-28c9de8406f6@users.sourceforge.net>
-In-Reply-To: <351a1279-b0ca-5f5e-d175-28c9de8406f6@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
+ <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
+In-Reply-To: <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 13 Jul 2016 19:29:19 +0200
+Date: Sat, 16 Jul 2016 12:38:12 +0200
 
-The drm_gem_object_unreference() function tests whether its argument
-is NULL and then returns immediately.
-Thus the test around the call is not needed.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the calls is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/msm/msm_gem.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c              | 3 +--
+ drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c | 5 +----
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index 9a713fb..6cd4af4 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -830,9 +830,7 @@ struct drm_gem_object *msm_gem_new(struct drm_device *dev,
- 	return obj;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+index cf6f49f..6f11bc1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+@@ -1053,8 +1053,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 	}
  
- fail:
--	if (obj)
--		drm_gem_object_unreference(obj);
+ error:
+-	if (obj != NULL)
+-		kfree(obj);
++	kfree(obj);
+ 	kfree((void *)input.pointer);
+ 	return result;
+ }
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c b/drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c
+index 7a705ce..024e22e 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c
+@@ -76,10 +76,7 @@ int phm_dispatch_table(struct pp_hwmgr *hwmgr,
+ 	}
+ 
+ 	result = phm_run_table(hwmgr, rt_table, input, output, temp_storage);
 -
-+	drm_gem_object_unreference(obj);
- 	return ERR_PTR(ret);
+-	if (NULL != temp_storage)
+-		kfree(temp_storage);
+-
++	kfree(temp_storage);
+ 	return result;
  }
  
 -- 
-2.9.0
+2.9.1
 
