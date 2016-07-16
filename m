@@ -1,52 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 19:13:23 +0000
-Subject: [PATCH 11/12] staging: lustre: Move an assignment for the variable "eof" in mgc_process_recover_log(
-Message-Id: <83a0671d-5c02-0bd4-2a97-47dea50585c3@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 14:45:17 +0000
+Subject: [PATCH 1/8] drm/amdgpu: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
+Message-Id: <6d43d27d-a55b-ddeb-76d6-3e2493786b12@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
- <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
- <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
-In-Reply-To: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
+ <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
+In-Reply-To: <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 19:40:28 +0200
+Date: Sat, 16 Jul 2016 11:28:36 +0200
 
-Move the assignment for the local variable "eof" behind the source code
-for memory allocations by this function.
+The drm_gem_object_unreference_unlocked() function tests whether
+its argument is NULL and then returns immediately.
+Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/lustre/lustre/mgc/mgc_request.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-index ff60b9b..8f5db79 100644
---- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
-+++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-@@ -1322,7 +1322,7 @@ static int mgc_process_recover_log(struct obd_device *obd,
- 	struct ptlrpc_bulk_desc *desc;
- 	struct page **pages;
- 	int nrpages;
--	bool eof = true;
-+	bool eof;
- 	bool mne_swab;
- 	int i;
- 	int ealen;
-@@ -1350,6 +1350,7 @@ static int mgc_process_recover_log(struct obd_device *obd,
- 		}
- 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index a6eecf6..2a07b15 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -516,9 +516,7 @@ static void amdgpu_user_framebuffer_destroy(struct drm_framebuffer *fb)
+ {
+ 	struct amdgpu_framebuffer *amdgpu_fb = to_amdgpu_framebuffer(fb);
  
-+	eof = true;
- again:
- 	LASSERT(cld_is_recover(cld));
- 	LASSERT(mutex_is_locked(&cld->cld_lock));
+-	if (amdgpu_fb->obj) {
+-		drm_gem_object_unreference_unlocked(amdgpu_fb->obj);
+-	}
++	drm_gem_object_unreference_unlocked(amdgpu_fb->obj);
+ 	drm_framebuffer_cleanup(fb);
+ 	kfree(amdgpu_fb);
+ }
 -- 
-2.9.2
+2.9.1
 
