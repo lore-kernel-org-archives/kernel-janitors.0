@@ -1,74 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sun, 24 Jul 2016 21:06:15 +0000
-Subject: Applied "ASoC: Intel: Skylake: Delete an unnecessary check before the function call "release_firmwar
-Message-Id: <E1bRQbH-0003xj-Aa@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 20:20:20 +0000
+Subject: [PATCH 0/3] xen-scsiback: Fine-tuning for scsiback_device_action()
+Message-Id: <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2c4f9e3a-96d7-36e1-379e-282353ea09b2@users.sourceforge.net>
-In-Reply-To: <2c4f9e3a-96d7-36e1-379e-282353ea09b2@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The patch
-
-   ASoC: Intel: Skylake: Delete an unnecessary check before the function call "release_firmware"
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 1b00126cb3de017274e899ac559a744d4e3dbd61 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 18:58:14 +0200
-Subject: [PATCH] ASoC: Intel: Skylake: Delete an unnecessary check before the
- function call "release_firmware"
+Date: Sat, 16 Jul 2016 22:06:54 +0200
 
-The release_firmware() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Further update suggestions were taken into account
+after a patch was applied from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete an unnecessary check before the function call "kfree"
+  One function call less in scsiback_device_action() after error detection
+  Pass a failure indication as a constant
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/skylake/skl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/xen/xen-scsiback.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
-index 2337748ffead..cd59536a761d 100644
---- a/sound/soc/intel/skylake/skl.c
-+++ b/sound/soc/intel/skylake/skl.c
-@@ -781,8 +781,7 @@ static void skl_remove(struct pci_dev *pci)
- 	struct hdac_ext_bus *ebus = pci_get_drvdata(pci);
- 	struct skl *skl = ebus_to_skl(ebus);
- 
--	if (skl->tplg)
--		release_firmware(skl->tplg);
-+	release_firmware(skl->tplg);
- 
- 	if (pci_dev_run_wake(pci))
- 		pm_runtime_get_noresume(&pci->dev);
 -- 
-2.8.1
+2.9.1
 
