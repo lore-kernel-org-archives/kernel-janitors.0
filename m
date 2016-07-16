@@ -1,66 +1,58 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 19 Jul 2016 08:21:26 +0000
-Subject: Re: [PATCH v3] drm/ttm: Delete an unnecessary check before the function call "ttm_tt_destroy"
-Message-Id: <20160719082126.GM17101@phenom.ffwll.local>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 14:56:40 +0000
+Subject: [PATCH 5/8] drm/amdgpu: Delete an unnecessary variable initialisation in amdgpu_cgs_acpi_eval_object
+Message-Id: <ec4747eb-e611-e375-51f8-e1e075331d9a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <5649EC25.3040004@users.sourceforge.net>
- <ec9bf71e-8d0f-4bf3-b2ba-b0b1bd444b22@users.sourceforge.net>
- <20160718071208.GV17101@phenom.ffwll.local>
- <54338f58-830c-a8b4-4554-5d4459bcd321@users.sourceforge.net>
- <20160718144513.GA17101@phenom.ffwll.local>
- <CAMuHMdWDNrP_TRKddJyR4mURKqmA+5vFG++jSetm4j__t_YW6g@mail.gmail.com>
-In-Reply-To: <CAMuHMdWDNrP_TRKddJyR4mURKqmA+5vFG++jSetm4j__t_YW6g@mail.gmail.com>
+ <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
+ <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
+ <165123f9-e2ba-04c1-e91e-557c2d81ed21@users.sourceforge.net>
+In-Reply-To: <165123f9-e2ba-04c1-e91e-557c2d81ed21@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, SF Markus Elfring <elfring@users.sourceforge.net>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Jul 19, 2016 at 10:14:07AM +0200, Geert Uytterhoeven wrote:
-> On Mon, Jul 18, 2016 at 4:45 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > On Mon, Jul 18, 2016 at 04:10:36PM +0200, SF Markus Elfring wrote:
-> >> From: Markus Elfring <elfring@users.sourceforge.net>
-> >> Date: Mon, 18 Jul 2016 16:06:18 +0200
-> >>
-> >> The ttm_tt_destroy() function tests whether its argument is NULL
-> >> and then returns immediately. Thus the test around the call is not nee=
-ded.
-> >>
-> >> This issue was detected by using the Coccinelle software.
-> >>
-> >> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> >
-> > When resending pls describe what changed (and why). Also I'd still like
-> > that smatch included in the commit message.
->=20
-> A similar change was made in drm-next, causing a merge conflict
-> between the drm-next and drm-misc trees.
->=20
-> commit 4279cb1423d96e53b6b98ae9f2b41003b013a31f
-> Author: Christian K=F6nig <christian.koenig@amd.com>
-> Date:   Mon Jun 6 10:17:51 2016 +0200
->=20
->     drm/ttm: remove NULL checks when calling ttm_tt_destroy
->=20
->     The function is a no-op with a NULL pointer.
->=20
->     Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
->     Signed-off-by: Christian K=F6nig <christian.koenig@amd.com>
->     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 14:54:12 +0200
 
-Yeah, realized that too but then drm-misc is a non-rebasing tree now, so
-can't take this out.
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The variable "argument" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+index f5de510..47f2a43 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+@@ -905,7 +905,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
+ 	union acpi_object *params, *obj;
+ 	uint8_t name[5] = {'\0'};
+-	struct cgs_acpi_method_argument *argument = NULL;
++	struct cgs_acpi_method_argument *argument;
+ 	uint32_t i, count;
+ 	acpi_status status;
+ 	int result = 0;
+-- 
+2.9.1
+
