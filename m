@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 06:45:23 +0000
-Subject: [PATCH] GPU-DRM-OMAP: Delete unnecessary checks before two function calls
-Message-Id: <72ff4670-4f3d-c7ed-4f37-e49f2bbc7aba@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 14:50:24 +0000
+Subject: [PATCH 3/8] drm/amdgpu: One function call less in amdgpu_cgs_acpi_eval_object() after error detectio
+Message-Id: <f353fcc4-a4c8-36c0-8865-70096b6454a1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,61 +19,109 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54D28E5C.9040304@users.sourceforge.net>
-In-Reply-To: <54D28E5C.9040304@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
+ <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
+In-Reply-To: <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 08:28:31 +0200
+Date: Sat, 16 Jul 2016 13:43:44 +0200
 
-The following functions test whether their argument is NULL and then
-return immediately.
-* backlight_device_unregister
-* drm_gem_object_unreference_unlocked
+The kfree() function was called in one case by the
+amdgpu_cgs_acpi_eval_object() function during error handling
+even if the passed variable "obj" contained a null pointer.
 
-Thus the test around the calls is not needed.
+* Adjust jump targets according to the Linux coding style convention.
 
-This issue was detected by using the Coccinelle software.
+* Delete unnecessary initialisations for the variables "obj"
+  and "params" then.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 3 +--
- drivers/gpu/drm/omapdrm/omap_fb.c               | 4 ++--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-index 1b0cf2d..0eae8af 100644
---- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-+++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-@@ -1284,8 +1284,7 @@ static int dsicm_probe(struct platform_device *pdev)
- 	return 0;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+index 6f11bc1..705bfa2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+@@ -903,8 +903,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 	acpi_handle handle;
+ 	struct acpi_object_list input;
+ 	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
+-	union acpi_object *params = NULL;
+-	union acpi_object *obj = NULL;
++	union acpi_object *params, *obj;
+ 	uint8_t name[5] = {'\0'};
+ 	struct cgs_acpi_method_argument *argument = NULL;
+ 	uint32_t i, count;
+@@ -996,7 +995,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
  
- err_sysfs_create:
--	if (bldev != NULL)
--		backlight_device_unregister(bldev);
-+	backlight_device_unregister(bldev);
- err_bl:
- 	destroy_workqueue(ddata->workqueue);
- err_reg:
-diff --git a/drivers/gpu/drm/omapdrm/omap_fb.c b/drivers/gpu/drm/omapdrm/omap_fb.c
-index 983c8cf..31f5178 100644
---- a/drivers/gpu/drm/omapdrm/omap_fb.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fb.c
-@@ -115,8 +115,8 @@ static void omap_framebuffer_destroy(struct drm_framebuffer *fb)
- 
- 	for (i = 0; i < n; i++) {
- 		struct plane *plane = &omap_fb->planes[i];
--		if (plane->bo)
--			drm_gem_object_unreference_unlocked(plane->bo);
-+
-+		drm_gem_object_unreference_unlocked(plane->bo);
+ 	if (ACPI_FAILURE(status)) {
+ 		result = -EIO;
+-		goto error;
++		goto free_input;
  	}
  
- 	kfree(omap_fb);
+ 	/* return the output info */
+@@ -1006,7 +1005,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 		if ((obj->type != ACPI_TYPE_PACKAGE) ||
+ 			(obj->package.count != count)) {
+ 			result = -EIO;
+-			goto error;
++			goto free_obj;
+ 		}
+ 		params = obj->package.elements;
+ 	} else
+@@ -1014,13 +1013,13 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 
+ 	if (params = NULL) {
+ 		result = -EIO;
+-		goto error;
++		goto free_obj;
+ 	}
+ 
+ 	for (i = 0; i < count; i++) {
+ 		if (argument->type != params->type) {
+ 			result = -EIO;
+-			goto error;
++			goto free_obj;
+ 		}
+ 		switch (params->type) {
+ 		case ACPI_TYPE_INTEGER:
+@@ -1030,7 +1029,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 			if ((params->string.length != argument->data_length) ||
+ 				(params->string.pointer = NULL)) {
+ 				result = -EIO;
+-				goto error;
++				goto free_obj;
+ 			}
+ 			strncpy(argument->pointer,
+ 				params->string.pointer,
+@@ -1039,7 +1038,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 		case ACPI_TYPE_BUFFER:
+ 			if (params->buffer.pointer = NULL) {
+ 				result = -EIO;
+-				goto error;
++				goto free_obj;
+ 			}
+ 			memcpy(argument->pointer,
+ 				params->buffer.pointer,
+@@ -1052,8 +1051,9 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 		params++;
+ 	}
+ 
+-error:
++free_obj:
+ 	kfree(obj);
++free_input:
+ 	kfree((void *)input.pointer);
+ 	return result;
+ }
 -- 
-2.9.2
+2.9.1
 
