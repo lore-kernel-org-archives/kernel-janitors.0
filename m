@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 06:40:29 +0000
-Subject: [PATCH] drm/cirrus: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
-Message-Id: <bebf88d8-cc28-657a-e96c-58447d8cf376@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 14:54:33 +0000
+Subject: [PATCH 4/8] drm/amdgpu: Delete a variable in amdgpu_cgs_acpi_eval_object()
+Message-Id: <165123f9-e2ba-04c1-e91e-557c2d81ed21@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,43 +19,46 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
+ <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
+In-Reply-To: <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 08:28:13 +0200
+Date: Sat, 16 Jul 2016 14:00:28 +0200
 
-The drm_gem_object_unreference_unlocked() function tests whether
-its argument is NULL and then returns immediately.
-Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
+The local variable "func_no" was assigned a value at two places.
+But it was not read within this function. Thus delete it.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/cirrus/cirrus_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/cirrus/cirrus_main.c b/drivers/gpu/drm/cirrus/cirrus_main.c
-index 32d32c5..80446e2 100644
---- a/drivers/gpu/drm/cirrus/cirrus_main.c
-+++ b/drivers/gpu/drm/cirrus/cirrus_main.c
-@@ -17,8 +17,8 @@
- static void cirrus_user_framebuffer_destroy(struct drm_framebuffer *fb)
- {
- 	struct cirrus_framebuffer *cirrus_fb = to_cirrus_framebuffer(fb);
--	if (cirrus_fb->obj)
--		drm_gem_object_unreference_unlocked(cirrus_fb->obj);
-+
-+	drm_gem_object_unreference_unlocked(cirrus_fb->obj);
- 	drm_framebuffer_cleanup(fb);
- 	kfree(fb);
- }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+index 705bfa2..f5de510 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+@@ -909,7 +909,6 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 	uint32_t i, count;
+ 	acpi_status status;
+ 	int result = 0;
+-	uint32_t func_no = 0xFFFFFFFF;
+ 
+ 	handle = ACPI_HANDLE(&adev->pdev->dev);
+ 	if (!handle)
+@@ -926,7 +925,6 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
+ 		if (info->pinput_argument = NULL)
+ 			return -EINVAL;
+ 		argument = info->pinput_argument;
+-		func_no = argument->value;
+ 		for (i = 0; i < info->input_count; i++) {
+ 			if (((argument->type = ACPI_TYPE_STRING) ||
+ 			     (argument->type = ACPI_TYPE_BUFFER)) &&
 -- 
 2.9.1
 
