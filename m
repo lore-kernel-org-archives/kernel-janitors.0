@@ -1,9 +1,13 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Jul 2016 11:27:01 +0000
-Subject: [PATCH v2 0/3] xen-scsiback: Fine-tuning for scsiback_device_action()
-Message-Id: <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
+Date: Sat, 16 Jul 2016 05:30:33 +0000
+Subject: [PATCH] drm/tegra: Delete an unnecessary check before the function call "vunmap"
+Message-Id: <b3fbdcaf-1bda-7ce9-935b-2d716727ec39@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
  <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
  <530B5FB6.6010207@users.sourceforge.net>
  <alpine.DEB.2.10.1402241710370.2074@hadrien>
@@ -15,35 +19,42 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
- <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
- <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
- <8806e9cb-4200-8154-7914-6735805dfbe0@users.sourceforge.net>
- <83b0b1e2-900b-eefc-160b-7d837730571c@suse.com>
- <18256bfc-c6f9-8802-8d7d-55766f0b3624@users.sourceforge.net>
- <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
-In-Reply-To: <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
+ <5317A59D.4@users.sourceforge.net> <54D335FA.6020101@users.sourceforge.net>
+ <559D6E90.1040005@users.sourceforge.net>
+ <CAAVeFu+7cF-b0zneA7BTmNcanH9tnbzV32XOFiCbxnK4kz8buw@mail.gmail.com>
+In-Reply-To: <CAAVeFu+7cF-b0zneA7BTmNcanH9tnbzV32XOFiCbxnK4kz8buw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, David Airlie <airlied@linux.ie>, Alexandre Courbot <gnurou@gmail.com>
 Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Jul 2016 13:20:04 +0200
+Date: Sat, 16 Jul 2016 07:23:42 +0200
 
-Further update suggestions were taken into account
-after a patch was applied from static source code analysis.
+The vunmap() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-Markus Elfring (3):
-  Delete an unnecessary check before the function call "kfree"
-  Rename jump labels in scsiback_device_action()
-  Pass a failure indication as a constant
+This issue was detected by using the Coccinelle software.
 
- drivers/xen/xen-scsiback.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/tegra/fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index 1b12aa7..e6d71fa 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -68,7 +68,7 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
+ 		struct tegra_bo *bo = fb->planes[i];
+ 
+ 		if (bo) {
+-			if (bo->pages && bo->vaddr)
++			if (bo->pages)
+ 				vunmap(bo->vaddr);
+ 
+ 			drm_gem_object_unreference_unlocked(&bo->gem);
 -- 
-2.9.2
+2.9.1
 
