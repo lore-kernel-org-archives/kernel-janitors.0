@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 14:56:40 +0000
+Date: Sat, 16 Jul 2016 15:00:55 +0000
 Subject: [PATCH 5/8] drm/amdgpu: Delete an unnecessary variable initialisation in amdgpu_cgs_acpi_eval_object
-Message-Id: <ec4747eb-e611-e375-51f8-e1e075331d9a@users.sourceforge.net>
+Message-Id: <d7790891-4587-f924-bff6-108083cfd911@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -21,8 +21,7 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
  <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
- <165123f9-e2ba-04c1-e91e-557c2d81ed21@users.sourceforge.net>
-In-Reply-To: <165123f9-e2ba-04c1-e91e-557c2d81ed21@users.sourceforge.net>
+In-Reply-To: <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
