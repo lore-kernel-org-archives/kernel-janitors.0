@@ -1,83 +1,59 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 06 Jul 2016 06:17:53 +0000
-Subject: [PATCH 11/15 RESEND] staging: dgnc: remove useless variable 'intr_tx'
-Message-Id: <20160706061753.GA18690@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Jul 2016 21:00:15 +0000
+Subject: [PATCH] [media] cec: Delete an unnecessary check before the function call "rc_free_device"
+Message-Id: <b97432a8-7a2d-66ea-c2a0-110cc63673e3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The 'intr_tx' variable was used only for increasing.
-So the 'intr_tx' variable is not useful for this driver.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Jul 2016 22:52:49 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+The rc_free_device() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-RESEND: This patch was not merged for a long time, if there is any reason
-why this patch could NOT be merged into staging tree, let me know.
-There were no comment for this patch.
-I cannot understand why this patch have to wait long time to merge.
-And I also sent emails to mailing-lists for reminding this patch...
-please let me know, what is the problem to merge this patch into staging tree.
+ drivers/staging/media/cec/cec-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/staging/dgnc/dgnc_cls.c    | 1 -
- drivers/staging/dgnc/dgnc_driver.h | 1 -
- drivers/staging/dgnc/dgnc_neo.c    | 3 ---
- 3 files changed, 5 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
-index 449a6bb..088b546 100644
---- a/drivers/staging/dgnc/dgnc_cls.c
-+++ b/drivers/staging/dgnc/dgnc_cls.c
-@@ -595,7 +595,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
- 			/* Transfer data (if any) from Write Queue -> UART. */
- 			spin_lock_irqsave(&ch->ch_lock, flags);
- 			ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
--			brd->intr_tx++;
- 			ch->ch_intr_tx++;
- 			spin_unlock_irqrestore(&ch->ch_lock, flags);
- 			cls_copy_data_from_queue_to_uart(ch);
-diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
-index 2caeff7..a8d823b 100644
---- a/drivers/staging/dgnc/dgnc_driver.h
-+++ b/drivers/staging/dgnc/dgnc_driver.h
-@@ -183,7 +183,6 @@ struct dgnc_board {
- 	uint		nasync;		/* Number of ports on card */
- 
- 	uint		irq;		/* Interrupt request number */
--	ulong		intr_tx;	/* Count of interrupts */
- 	ulong		intr_rx;	/* Count of interrupts */
- 
- 	ulong		membase;	/* Start of base memory of the card */
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index a3e100b..5f3eacdf 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -410,7 +410,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
- 		}
- 
- 		if (isr & UART_IIR_THRI) {
--			brd->intr_tx++;
- 			ch->ch_intr_tx++;
- 			/* Transfer data (if any) from Write Queue -> UART. */
- 			spin_lock_irqsave(&ch->ch_lock, flags);
-@@ -550,7 +549,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
- 	}
- 
- 	if (linestatus & UART_LSR_THRE) {
--		brd->intr_tx++;
- 		ch->ch_intr_tx++;
- 		spin_lock_irqsave(&ch->ch_lock, flags);
- 		ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
-@@ -559,7 +557,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
- 		/* Transfer data (if any) from Write Queue -> UART. */
- 		neo_copy_data_from_queue_to_uart(ch);
- 	} else if (linestatus & UART_17158_TX_AND_FIFO_CLR) {
--		brd->intr_tx++;
- 		ch->ch_intr_tx++;
- 		spin_lock_irqsave(&ch->ch_lock, flags);
- 		ch->ch_flags |= (CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
+diff --git a/drivers/staging/media/cec/cec-core.c b/drivers/staging/media/cec/cec-core.c
+index 61a1e69..123e1bf 100644
+--- a/drivers/staging/media/cec/cec-core.c
++++ b/drivers/staging/media/cec/cec-core.c
+@@ -354,8 +354,7 @@ void cec_delete_adapter(struct cec_adapter *adap)
+ 	if (adap->kthread_config)
+ 		kthread_stop(adap->kthread_config);
+ #if IS_ENABLED(CONFIG_RC_CORE)
+-	if (adap->rc)
+-		rc_free_device(adap->rc);
++	rc_free_device(adap->rc);
+ #endif
+ 	kfree(adap);
+ }
 -- 
-1.9.1
+2.9.1
 
