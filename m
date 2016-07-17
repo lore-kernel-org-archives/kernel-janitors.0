@@ -1,46 +1,50 @@
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Date: Mon, 18 Jul 2016 22:12:31 +0000
-Subject: Re: [patch] crypto: sha256-mb - cleanup a || vs | typo
-Message-Id: <1468879951.9191.100.camel@linux.intel.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 17 Jul 2016 06:15:50 +0000
+Subject: [PATCH] net: ti: cpmac: Use the correct function to free some resources.
+Message-Id: <1468736150-30111-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160629144242.GE22818@mwanda>
-	 <8538242a-eab7-127e-e47e-26027fee4f6d@zytor.com>
-	 <1467319339.22178.256.camel@linux.intel.com>
-	 <20160701075559.GA11902@gmail.com>
-	 <20160701092806.GA13424@gondor.apana.org.au>
-	 <20160701101329.GA3833@gmail.com> <20160708162803.GA29111@linux.intel.com>
-	 <20160708164502.GA3064@gondor.apana.org.au>
-	 <CA+55aFyQYJerovMsSoSKS7PessZBr4vNp-3QUUwhqk4A4_jcbg@mail.gmail.com>
-	 <20160718085905.GA5701@amd>
-In-Reply-To: <20160718085905.GA5701@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Pavel Machek <pavel@ucw.cz>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, the arch/x86 maintainers <x86@kernel.org>, Megha Dey <megha.dey@intel.com>, "Wang, Rui Y" <rui.y.wang@intel.com>, Denys Vlasenko <dvlasenk@redhat.com>, Xiaodong Liu <xiaodong.liu@intel.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+To: florian@openwrt.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Mon, 2016-07-18 at 10:59 +0200, Pavel Machek wrote:
-> On Fri 2016-07-08 10:19:26, Linus Torvalds wrote:
-> > 
-> > [ rare comment rant. I think I'll do this once, and then ignore the discussion ]
-> > 
-> > On Fri, Jul 8, 2016 at 9:45 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> > > 
-> > > 
-> > > Nack.  As I said the commenting style in the crypto API is the
-> > > same as the network stack.  So unless we decide to change both
-> > > please stick to the current style.
-> > Can we please get rid of the brain-damaged stupid networking comment
-> > syntax style, PLEASE?
-> Please? :-). Having different comment styles between networking and
-> the rest is confusing.
-> 
-> And yes, this uglyness is documented for net/ and drivers/net/, but
-> not for crypto/, so at the very least Documentation/CodingStyle should
-> be updated.
-> 
-> 									Pavel
+In 'cpmac_open', 'dma_alloc_coherent' has been used to allocate some
+resources, so we need to free them using 'dma_free_coherent' instead
+of 'kfree'.
 
-The cleanup patch has already been merged.  Thanks.
+Also, we don't need to free these resources if the allocation has failed.
+So I have slighly modified the goto label in this case.
 
-Tim
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+---
+Un-compiled (I don't have the configuration for that) and un-tested
+---
+ drivers/net/ethernet/ti/cpmac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/cpmac.c b/drivers/net/ethernet/ti/cpmac.c
+index 7eef45e..56c8920 100644
+--- a/drivers/net/ethernet/ti/cpmac.c
++++ b/drivers/net/ethernet/ti/cpmac.c
+@@ -1032,8 +1032,10 @@ fail_desc:
+ 			kfree_skb(priv->rx_head[i].skb);
+ 		}
+ 	}
++	dma_free_coherent(&dev->dev, sizeof(struct cpmac_desc) * size,
++			  priv->desc_ring, priv->dma_ring);
++
+ fail_alloc:
+-	kfree(priv->desc_ring);
+ 	iounmap(priv->regs);
+ 
+ fail_remap:
+-- 
+2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
