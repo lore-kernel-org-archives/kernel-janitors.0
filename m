@@ -1,9 +1,11 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 21 Jul 2016 14:16:00 +0000
-Subject: Re: staging: ks7010: Delete three unnecessary variable initialisations
-Message-Id: <3d9736a8-1afd-3c9d-a03a-d4093b8ae1c0@users.sourceforge.net>
+Date: Sun, 17 Jul 2016 18:05:06 +0000
+Subject: [PATCH 0/9] staging: ks7010: Fine-tuning for a SDIO card driver
+Message-Id: <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
  <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
  <530A72AA.3000601@users.sourceforge.net>
  <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
@@ -18,26 +20,33 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <23b93bc6-f938-7f8c-8cf1-f70e453e06e6@users.sourceforge.net>
- <alpine.DEB.2.10.1607172049560.3177@hadrien>
- <47a5f5be-7c6b-0e39-5182-db9aec4bea30@users.sourceforge.net>
- <alpine.DEB.2.10.1607211550580.2927@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1607211550580.2927@hadrien>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>, devel@driverdev.osuosl.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->> * Do you occasionally care for a refactoring like "Reduce scope of variable"?
->>
->>   http://refactoring.com/catalog/reduceScopeOfVariable.html
-> 
-> Probably not.  Certainly not in this case.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 17 Jul 2016 19:54:32 +0200
 
-In which use cases would the suggested change pattern be more interesting
-for you?
+Further update suggestions were taken into account
+after a patch was applied from static source code analysis.
 
-Regards,
-Markus
+Markus Elfring (9):
+  Delete unnecessary checks before the function call "kfree"
+  Delete unnecessary assignments for buffer variables
+  Return directly after a failed kmalloc()
+  Rename jump labels
+  Delete unnecessary uses of the variable "retval"
+  Delete unnecessary braces
+  Replace three printk() calls by pr_err()
+  Delete a variable in write_to_device()
+  Delete three unnecessary variable initialisations
+
+ drivers/staging/ks7010/ks7010_sdio.c | 263 ++++++++++++++---------------------
+ 1 file changed, 107 insertions(+), 156 deletions(-)
+
+-- 
+2.9.1
+
