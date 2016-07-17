@@ -1,23 +1,42 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 07 Jul 2016 14:37:58 +0000
-Subject: Re: [patch] nvmet: fix an error code
-Message-Id: <577E6946.9010207@kernel.dk>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 17 Jul 2016 07:03:24 +0000
+Subject: [PATCH] drivers: atm: nicstar: Use the correct function to free some resources
+Message-Id: <1468739004-3471-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160707081526.GA16742@mwanda>
-In-Reply-To: <20160707081526.GA16742@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: 3chas3@gmail.com
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 07/07/2016 02:15 AM, Dan Carpenter wrote:
-> We accidentally return zero here when ERR_PTR(-ENOMEM) is intended.
->
-> Fixes: a07b4970f464 ('nvmet: add a generic NVMe target')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In 'get_scq', 'dma_alloc_coherent' has been used to allocate some
+resources, so we need to free them using 'dma_free_coherent' instead
+of 'kfree'.
 
-Thanks Dan, added.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/atm/nicstar.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index ddc4ceb..700ed15 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -874,7 +874,8 @@ static scq_info *get_scq(ns_dev *card, int size, u32 scd)
+ 	scq->skb = kmalloc(sizeof(struct sk_buff *) *
+ 			   (size / NS_SCQE_SIZE), GFP_KERNEL);
+ 	if (!scq->skb) {
+-		kfree(scq->org);
++		dma_free_coherent(&card->pcidev->dev,
++				  2 * size, scq->org, scq->dma);
+ 		kfree(scq);
+ 		return NULL;
+ 	}
 -- 
-Jens Axboe
+2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
