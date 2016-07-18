@@ -1,62 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Jul 2016 20:11:20 +0000
-Subject: Re: [PATCH] WiMAX-i2400m: Delete an unnecessary check before the function call "kfree_skb"
-Message-Id: <b54b9abe-8271-ddc2-5346-7b63d5030189@users.sourceforge.net>
+From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+Date: Mon, 18 Jul 2016 05:52:42 +0000
+Subject: Re: [patch] phy: phy-brcm-sata: fix a loop timeout
+Message-Id: <CAL2FKYmZEBu7kuN_zbDBDRJxajPNv4JRt6CgD7XfG2oDrGBa9w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5649AE81.6070809@users.sourceforge.net>
-In-Reply-To: <5649AE81.6070809@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 16 Nov 2015 11:17:55 +0100
-> 
-> The kfree_skb() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/wimax/i2400m/control.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
-> index 4c41790..4de22b7 100644
-> --- a/drivers/net/wimax/i2400m/control.c
-> +++ b/drivers/net/wimax/i2400m/control.c
-> @@ -644,7 +644,7 @@ void i2400m_msg_to_dev_cancel_wait(struct i2400m *i2400m, int code)
->  
->  	spin_lock_irqsave(&i2400m->rx_lock, flags);
->  	ack_skb = i2400m->ack_skb;
-> -	if (ack_skb && !IS_ERR(ack_skb))
-> +	if (!IS_ERR(ack_skb))
->  		kfree_skb(ack_skb);
->  	i2400m->ack_skb = ERR_PTR(code);
->  	spin_unlock_irqrestore(&i2400m->rx_lock, flags);
-> 
+On Tue, Jun 21, 2016 at 2:07 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> Since this loop is a post op then it means we end with "try = -1" but
+> afterward we test for if it's zero.  Fix this by changing to a pre-op so
+> we end on zero.
 
-How do you think about to integrate this update suggestion
-into another source code repository?
+Thanks Dan. That should be pre-op.
 
-Regards,
-Markus
+Thnaks
+Dhananjay
+>
+> Fixes: 024812889ad1 ('phy: Add SATA3 PHY support for Broadcom NSP SoC')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/phy/phy-brcm-sata.c b/drivers/phy/phy-brcm-sata.c
+> index 18d6626..c86456f 100644
+> --- a/drivers/phy/phy-brcm-sata.c
+> +++ b/drivers/phy/phy-brcm-sata.c
+> @@ -329,7 +329,7 @@ static int brcm_nsp_sata_init(struct brcm_sata_port *port)
+>
+>         /* Wait for pll_seq_done bit */
+>         try = 50;
+> -       while (try--) {
+> +       while (--try) {
+>                 val = brcm_sata_phy_rd(base, BLOCK0_REG_BANK,
+>                                         BLOCK0_XGXSSTATUS);
+>                 if (val & BLOCK0_XGXSSTATUS_PLL_LOCK)
