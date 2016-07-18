@@ -1,34 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 15 Jul 2016 11:09:13 +0000
-Subject: [patch] crypto: nx - off by one bug in nx_of_update_msc()
-Message-Id: <20160715110912.GE9258@mwanda>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 18 Jul 2016 10:23:33 +0000
+Subject: Re: [patch] crypto: nx - off by one bug in nx_of_update_msc()
+Message-Id: <20160718102333.GC13780@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160715110912.GE9258@mwanda>
+In-Reply-To: <20160715110912.GE9258@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Leonidas S. Barbosa" <leosilva@linux.vnet.ibm.com>, Kent Yoder <key@linux.vnet.ibm.com>
-Cc: Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Leonidas S. Barbosa" <leosilva@linux.vnet.ibm.com>, Kent Yoder <key@linux.vnet.ibm.com>, Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-The props->ap[] array is defined like this:
+On Fri, Jul 15, 2016 at 02:09:13PM +0300, Dan Carpenter wrote:
+> The props->ap[] array is defined like this:
+> 
+> 	struct alg_props ap[NX_MAX_FC][NX_MAX_MODE][3];
+> 
+> So we can see that if msc->fc and msc->mode are = to NX_MAX_FC or
+> NX_MAX_MODE then we're off by one.
+> 
+> Fixes: ae0222b7289d ('powerpc/crypto: nx driver code supporting nx encryption')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	struct alg_props ap[NX_MAX_FC][NX_MAX_MODE][3];
-
-So we can see that if msc->fc and msc->mode are = to NX_MAX_FC or
-NX_MAX_MODE then we're off by one.
-
-Fixes: ae0222b7289d ('powerpc/crypto: nx driver code supporting nx encryption')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/crypto/nx/nx.c b/drivers/crypto/nx/nx.c
-index 0794f1c..42f0f22 100644
---- a/drivers/crypto/nx/nx.c
-+++ b/drivers/crypto/nx/nx.c
-@@ -392,7 +392,7 @@ static void nx_of_update_msc(struct device   *dev,
- 		     ((bytes_so_far + sizeof(struct msc_triplet)) <= lenp) &&
- 		     i < msc->triplets;
- 		     i++) {
--			if (msc->fc > NX_MAX_FC || msc->mode > NX_MAX_MODE) {
-+			if (msc->fc >= NX_MAX_FC || msc->mode >= NX_MAX_MODE) {
- 				dev_err(dev, "unknown function code/mode "
- 					"combo: %d/%d (ignored)\n", msc->fc,
- 					msc->mode);
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
