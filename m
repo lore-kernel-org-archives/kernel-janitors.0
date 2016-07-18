@@ -1,55 +1,59 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 20 Jul 2016 05:46:51 +0000
-Subject: [PATCH] NFC: pn533: Avoid a double free in error handling code
-Message-Id: <1468993611-21449-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Jul 2016 19:25:02 +0000
+Subject: [PATCH] virtio-balloon: Delete an unnecessary check before the function call "iput"
+Message-Id: <b6855b5c-386b-bed9-f374-96481506056e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: lauro.venancio@openbossa.org, aloisio.almeida@openbossa.org, sameo@linux.intel.com, michael.thalmeier@hale.at
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-'phy' has been allocated with 'devm_kzalloc', so we should not free it
-using an explicit 'kfree'. It would result in a double free if the
-allocation of 'in_buf' fails.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Jul 2016 21:17:18 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The iput() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/nfc/pn533/usb.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/virtio/virtio_balloon.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/nfc/pn533/usb.c b/drivers/nfc/pn533/usb.c
-index 8ca0603..33ed78b 100644
---- a/drivers/nfc/pn533/usb.c
-+++ b/drivers/nfc/pn533/usb.c
-@@ -464,10 +464,8 @@ static int pn533_usb_probe(struct usb_interface *interface,
- 		return -ENOMEM;
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 888d5f8..81f7d6c 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -611,8 +611,7 @@ static void virtballoon_remove(struct virtio_device *vdev)
+ 	cancel_work_sync(&vb->update_balloon_stats_work);
  
- 	in_buf = kzalloc(in_buf_len, GFP_KERNEL);
--	if (!in_buf) {
--		rc = -ENOMEM;
--		goto out_free_phy;
--	}
-+	if (!in_buf)
-+		return -ENOMEM;
- 
- 	phy->udev = usb_get_dev(interface_to_usbdev(interface));
- 	phy->interface = interface;
-@@ -554,8 +552,7 @@ error:
- 	usb_free_urb(phy->out_urb);
- 	usb_put_dev(phy->udev);
- 	kfree(in_buf);
--out_free_phy:
--	kfree(phy);
-+
- 	return rc;
+ 	remove_common(vb);
+-	if (vb->vb_dev_info.inode)
+-		iput(vb->vb_dev_info.inode);
++	iput(vb->vb_dev_info.inode);
+ 	kfree(vb);
  }
  
 -- 
-2.7.4
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+2.9.2
 
