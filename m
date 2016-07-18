@@ -1,47 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 19:07:02 +0000
-Subject: [PATCH 06/12] staging: lustre: Return directly after a failed kcalloc() in mgc_process_recover_log()
-Message-Id: <8484b472-20b6-e8ca-b18e-a3d2976d4c28@users.sourceforge.net>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Date: Mon, 18 Jul 2016 23:33:05 +0000
+Subject: [PATCH 02/15] perf jit: Remove some no-op error handling
+Message-Id: <1468884798-14932-3-git-send-email-acme@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
- <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
- <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
-In-Reply-To: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+References: <1468884798-14932-1-git-send-email-acme@kernel.org>
+In-Reply-To: <1468884798-14932-1-git-send-email-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Stephane Eranian <eranian@google.com>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 16:32:31 +0200
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Return directly after a memory allocation failed at the beginning.
+The 'info.e_machine' struct member is an uint16_t so 'm' is never less
+than zero.  It looks like this was maybe left over code from earlier
+versions so I've just removed it.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/20160715210836.GB19522@mwanda
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/staging/lustre/lustre/mgc/mgc_request.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/perf/jvmti/jvmti_agent.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-index 9d0bd47..d716bb2 100644
---- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
-+++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
-@@ -1339,10 +1339,8 @@ static int mgc_process_recover_log(struct obd_device *obd,
- 		nrpages = CONFIG_READ_NRPAGES_INIT;
+diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+index 91bf333a366a..55daefff0d54 100644
+--- a/tools/perf/jvmti/jvmti_agent.c
++++ b/tools/perf/jvmti/jvmti_agent.c
+@@ -59,7 +59,6 @@ static int get_e_machine(struct jitheader *hdr)
+ 	ssize_t sret;
+ 	char id[16];
+ 	int fd, ret = -1;
+-	int m = -1;
+ 	struct {
+ 		uint16_t e_type;
+ 		uint16_t e_machine;
+@@ -81,11 +80,7 @@ static int get_e_machine(struct jitheader *hdr)
+ 	if (sret != sizeof(info))
+ 		goto error;
  
- 	pages = kcalloc(nrpages, sizeof(*pages), GFP_KERNEL);
--	if (!pages) {
--		rc = -ENOMEM;
--		goto out;
--	}
-+	if (!pages)
-+		return -ENOMEM;
- 
- 	for (i = 0; i < nrpages; i++) {
- 		pages[i] = alloc_page(GFP_KERNEL);
+-	m = info.e_machine;
+-	if (m < 0)
+-		m = 0; /* ELF EM_NONE */
+-
+-	hdr->elf_mach = m;
++	hdr->elf_mach = info.e_machine;
+ 	ret = 0;
+ error:
+ 	close(fd);
 -- 
-2.9.2
+2.7.4
 
