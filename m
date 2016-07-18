@@ -1,69 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 01 Jul 2016 17:29:24 +0000
-Subject: [PATCH v4] mfd: dm355evm_msp: Refactoring for add_child()
-Message-Id: <4dcb4cab-e2cc-87c0-9cfc-d140f185254b@users.sourceforge.net>
+Date: Mon, 18 Jul 2016 14:10:36 +0000
+Subject: [PATCH v3] drm/ttm: Delete an unnecessary check before the function call "ttm_tt_destroy"
+Message-Id: <54338f58-830c-a8b4-4554-5d4459bcd321@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5649EC25.3040004@users.sourceforge.net>
+ <ec9bf71e-8d0f-4bf3-b2ba-b0b1bd444b22@users.sourceforge.net>
+ <20160718071208.GV17101@phenom.ffwll.local>
+In-Reply-To: <20160718071208.GV17101@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>, kernel-janitors@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Jul 2016 16:06:18 +0200
 
-Adjust jump targets according to the Linux coding style convention.
-Another check for the variable "status" can be omitted then at the end.
+The ttm_tt_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-v4: Further feedback was integrated into this message.
-v3: Deletion of another blank line
-v2: Rebasing
+ drivers/gpu/drm/ttm/ttm_bo.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/mfd/dm355evm_msp.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
-index 270e19c..86eca61 100644
---- a/drivers/mfd/dm355evm_msp.c
-+++ b/drivers/mfd/dm355evm_msp.c
-@@ -209,7 +209,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
- 		status = platform_device_add_data(pdev, pdata, pdata_len);
- 		if (status < 0) {
- 			dev_dbg(&pdev->dev, "can't add platform_data\n");
--			goto err;
-+			goto put_device;
- 		}
- 	}
- 
-@@ -222,19 +222,20 @@ static struct device *add_child(struct i2c_client *client, const char *name,
- 		status = platform_device_add_resources(pdev, &r, 1);
- 		if (status < 0) {
- 			dev_dbg(&pdev->dev, "can't add irq\n");
--			goto err;
-+			goto put_device;
- 		}
- 	}
- 
- 	status = platform_device_add(pdev);
-+	if (status)
-+		goto put_device;
- 
--err:
--	if (status < 0) {
--		platform_device_put(pdev);
--		dev_err(&client->dev, "can't add %s dev\n", name);
--		return ERR_PTR(status);
--	}
- 	return &pdev->dev;
-+
-+put_device:
-+	platform_device_put(pdev);
-+	dev_err(&client->dev, "failed to add device %s\n", name);
-+	return ERR_PTR(status);
- }
- 
- static int add_children(struct i2c_client *client)
+diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
+index 39386f5..4e55863 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@ -146,9 +146,7 @@ static void ttm_bo_release_list(struct kref *list_kref)
+ 	BUG_ON(bo->mem.mm_node != NULL);
+ 	BUG_ON(!list_empty(&bo->lru));
+ 	BUG_ON(!list_empty(&bo->ddestroy));
+-
+-	if (bo->ttm)
+-		ttm_tt_destroy(bo->ttm);
++	ttm_tt_destroy(bo->ttm);
+ 	atomic_dec(&bo->glob->bo_count);
+ 	if (bo->resv = &bo->ttm_resv)
+ 		reservation_object_fini(&bo->ttm_resv);
 -- 
-2.9.0
+2.9.2
 
