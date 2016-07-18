@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 20:24:54 +0000
-Subject: [PATCH 3/3] xen-scsiback: Pass a failure indication as a constant
-Message-Id: <e447cf62-ffc7-4b82-cff2-947c8874756a@users.sourceforge.net>
+From: Juergen Gross <jgross@suse.com>
+Date: Mon, 18 Jul 2016 05:05:38 +0000
+Subject: Re: [PATCH 3/3] xen-scsiback: Pass a failure indication as a constant
+Message-Id: <c9b3ed98-5d54-86bb-0416-1df008e382c0@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -21,46 +21,24 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
  <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
-In-Reply-To: <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
+ <e447cf62-ffc7-4b82-cff2-947c8874756a@users.sourceforge.net>
+In-Reply-To: <e447cf62-ffc7-4b82-cff2-947c8874756a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 21:55:01 +0200
+On 16/07/16 22:24, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 16 Jul 2016 21:55:01 +0200
+> 
+> Pass the constant "FAILED" in a function call directly instead of
+> using an intialisation for a local variable.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Pass the constant "FAILED" in a function call directly instead of
-using an intialisation for a local variable.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/xen/xen-scsiback.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
-index 7612bc9..ec5546c 100644
---- a/drivers/xen/xen-scsiback.c
-+++ b/drivers/xen/xen-scsiback.c
-@@ -601,7 +601,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
- 	struct se_cmd *se_cmd = &pending_req->se_cmd;
- 	struct scsiback_tmr *tmr;
- 	u64 unpacked_lun = pending_req->v2p->lun;
--	int rc, err = FAILED;
-+	int rc, err;
- 
- 	tmr = kzalloc(sizeof(struct scsiback_tmr), GFP_KERNEL);
- 	if (!tmr) {
-@@ -629,7 +629,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
- free_tmr:
- 	kfree(tmr);
- do_resp:
--	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
-+	scsiback_do_resp_with_sense(NULL, FAILED, 0, pending_req);
- }
- 
- /*
--- 
-2.9.1
-
+Juergen
