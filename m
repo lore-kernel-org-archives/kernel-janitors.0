@@ -1,75 +1,74 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 06 Jul 2016 06:18:25 +0000
-Subject: [PATCH 12/15 RESEND] staging: dgnc: remove useless variable 'intr_rx'
-Message-Id: <20160706061825.GA18711@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 18 Jul 2016 19:41:40 +0000
+Subject: Re: [PATCH] IPC-mqueue: Delete unnecessary checks before two function calls
+Message-Id: <f13df620-d695-c657-ca85-393fd981a81c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <563B8B3E.8050004@users.sourceforge.net>
+In-Reply-To: <563B8B3E.8050004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The 'intr_rx' variable was used only for increasing.
-So the 'intr_rx' variable is not useful for this driver.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 5 Nov 2015 17:55:25 +0100
+> 
+> The functions iput() and unregister_sysctl_table() test whether their
+> argument is NULL and then return immediately.
+> Thus the tests around their calls are not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  ipc/mqueue.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+> index 161a180..ade9dd8 100644
+> --- a/ipc/mqueue.c
+> +++ b/ipc/mqueue.c
+> @@ -885,8 +885,7 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
+>  
+>  out_unlock:
+>  	mutex_unlock(&d_inode(mnt->mnt_root)->i_mutex);
+> -	if (inode)
+> -		iput(inode);
+> +	iput(inode);
+>  	mnt_drop_write(mnt);
+>  out_name:
+>  	putname(name);
+> @@ -1460,8 +1459,7 @@ static int __init init_mqueue_fs(void)
+>  out_filesystem:
+>  	unregister_filesystem(&mqueue_fs_type);
+>  out_sysctl:
+> -	if (mq_sysctl_table)
+> -		unregister_sysctl_table(mq_sysctl_table);
+> +	unregister_sysctl_table(mq_sysctl_table);
+>  	kmem_cache_destroy(mqueue_inode_cachep);
+>  	return error;
+>  }
+> 
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
-RESEND: This patch was not merged for a long time, if there is any reason
-why this patch could NOT be merged into staging tree, let me know.
-There were no comment for this patch.
-I cannot understand why this patch have to wait long time to merge.
-And I also sent emails to mailing-lists for reminding this patch...
-please let me know, what is the problem to merge this patch into staging tree.
+How do you think about to integrate this update suggestion
+into another source code repository?
 
- drivers/staging/dgnc/dgnc_cls.c    | 1 -
- drivers/staging/dgnc/dgnc_driver.h | 1 -
- drivers/staging/dgnc/dgnc_neo.c    | 2 --
- 3 files changed, 4 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
-index 088b546..31fcf04 100644
---- a/drivers/staging/dgnc/dgnc_cls.c
-+++ b/drivers/staging/dgnc/dgnc_cls.c
-@@ -584,7 +584,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
- 		/* Receive Interrupt pending */
- 		if (isr & (UART_IIR_RDI | UART_IIR_RDI_TIMEOUT)) {
- 			/* Read data from uart -> queue */
--			brd->intr_rx++;
- 			ch->ch_intr_rx++;
- 			cls_copy_data_from_uart_to_queue(ch);
- 			dgnc_check_queue_flow_control(ch);
-diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
-index a8d823b..914130d 100644
---- a/drivers/staging/dgnc/dgnc_driver.h
-+++ b/drivers/staging/dgnc/dgnc_driver.h
-@@ -183,7 +183,6 @@ struct dgnc_board {
- 	uint		nasync;		/* Number of ports on card */
- 
- 	uint		irq;		/* Interrupt request number */
--	ulong		intr_rx;	/* Count of interrupts */
- 
- 	ulong		membase;	/* Start of base memory of the card */
- 	ulong		membase_end;	/* End of base memory of the card */
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index 5f3eacdf..f99c0db 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -399,7 +399,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
- 
- 		if (isr & (UART_17158_IIR_RDI_TIMEOUT | UART_IIR_RDI)) {
- 			/* Read data from uart -> queue */
--			brd->intr_rx++;
- 			ch->ch_intr_rx++;
- 			neo_copy_data_from_uart_to_queue(ch);
- 
-@@ -515,7 +514,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
- 	ch->ch_cached_lsr |= linestatus;
- 
- 	if (ch->ch_cached_lsr & UART_LSR_DR) {
--		brd->intr_rx++;
- 		ch->ch_intr_rx++;
- 		/* Read data from uart -> queue */
- 		neo_copy_data_from_uart_to_queue(ch);
--- 
-1.9.1
-
+Regards,
+Markus
