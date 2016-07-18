@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 20:22:26 +0000
-Subject: [PATCH 1/3] xen-scsiback: Delete an unnecessary check before the function call "kfree"
-Message-Id: <fa839c03-b076-0264-c363-5581d0298632@users.sourceforge.net>
+From: Juergen Gross <jgross@suse.com>
+Date: Mon, 18 Jul 2016 05:01:48 +0000
+Subject: Re: [PATCH 1/3] xen-scsiback: Delete an unnecessary check before the function call "kfree"
+Message-Id: <0efb482b-8cad-9d0a-253b-5cd2f56baf1b@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -21,40 +21,26 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
  <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
-In-Reply-To: <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
+ <fa839c03-b076-0264-c363-5581d0298632@users.sourceforge.net>
+In-Reply-To: <fa839c03-b076-0264-c363-5581d0298632@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 21:21:05 +0200
+On 16/07/16 22:22, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 16 Jul 2016 21:21:05 +0200
+> 
+> The kfree() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/xen/xen-scsiback.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
-index d6950e0..4a48c06 100644
---- a/drivers/xen/xen-scsiback.c
-+++ b/drivers/xen/xen-scsiback.c
-@@ -627,8 +627,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
- 	transport_generic_free_cmd(&pending_req->se_cmd, 1);
- 	return;
- err:
--	if (tmr)
--		kfree(tmr);
-+	kfree(tmr);
- 	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
- }
- 
--- 
-2.9.1
-
+Juergen
