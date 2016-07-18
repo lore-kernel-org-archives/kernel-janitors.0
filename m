@@ -1,75 +1,33 @@
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Date: Wed, 13 Jul 2016 14:28:08 +0000
-Subject: Re: [patch] ALSA: mixart: don't print an unintialized variable on error
-Message-Id: <57864FF8.1080104@sakamocchi.jp>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 18 Jul 2016 18:26:17 +0000
+Subject: [bug report] macvtap: switch to use skb array
+Message-Id: <20160718150651.GA31660@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160713095953.GA29468@mwanda> <5786157F.40908@sakamocchi.jp>
-In-Reply-To: <5786157F.40908@sakamocchi.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: kernel-janitors@vger.kernel.org
 
-On Jul 13 2016 19:18, Takashi Sakamoto wrote:
-> Hi,
-> 
-> On Jul 13 2016 18:59, Dan Carpenter wrote:
->> My static checker complains that "resp" could be unitialized on error
->> when we print its value.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/sound/pci/mixart/mixart_mixer.c
->> b/sound/pci/mixart/mixart_mixer.c
->> index 58fd79eb..51e5349 100644
->> --- a/sound/pci/mixart/mixart_mixer.c
->> +++ b/sound/pci/mixart/mixart_mixer.c
->> @@ -965,7 +965,7 @@ static int mixart_update_monitoring(struct
->> snd_mixart* chip, int channel)
->>       int err;
->>       struct mixart_msg request;
->>       struct mixart_set_out_audio_level audio_level;
->> -    u32 resp;
->> +    u32 resp = 0;
->>
->>       if(chip->pipe_out_ana.status = PIPE_UNDEFINED)
->>           return -EINVAL; /* no pipe defined */
-> 
-> The 'resp' variable is firstly given to snd_mixart_send_msg().
-> 
-> static int mixart_update_monitoring(struct snd_mixart* chip,
->                                     int channel)
-> {
->     ...
->     err = snd_mixart_send_msg(chip->mgr, &request, sizeof(resp), &resp);
->     if((err<0) || resp) {
->         dev_dbg(chip->card->dev,
->                 "error MSG_CONNECTOR_SET_OUT_AUDIO_LEVEL card(%d)
-> resp(%x)\n",
->                 chip->chip_idx, resp);
->         return -EINVAL;
->     }
->     return 0;
-> }
-> 
-> When the function, snd_mixart_send_msg(), assigns nothing to the
-> variable in error cases, dev_dbg() prints uninitialized value.
+Hello Jason Wang,
 
-Hm. I realized that this interpretation is not enough. When value of the
-error is not negative, snd_mixart_send_msg() can assign something to the
-resp variable, then dev_dbg() is called. In short, when the function is
-successful, there's a case that the message is processed. This is a bit
-strange...
+The patch 362899b8725b: "macvtap: switch to use skb array" from Jul
+15, 2016, leads to the following static checker warning:
 
-I think a condition statement for the resp variable is needless here, as
-long as the variable is initialized ahead...
+	drivers/net/macvtap.c:539 macvtap_sock_destruct()
+	error: use kfree_skb() here instead of kfree(skb)
 
-> Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+drivers/net/macvtap.c
+   533  static void macvtap_sock_destruct(struct sock *sk)
+   534  {
+   535          struct macvtap_queue *q = container_of(sk, struct macvtap_queue, sk);
+   536          struct sk_buff *skb;
+   537  
+   538          while ((skb = skb_array_consume(&q->skb_array)) != NULL)
+   539                  kfree(skb);
 
-Anyway, it's better to initialize it.
+Should be kfree_skb().  On my way to airport or would send patch.
 
+   540  }
 
-Regards
-
-Takashi Sakamoto
+regards,
+dan carpenter
