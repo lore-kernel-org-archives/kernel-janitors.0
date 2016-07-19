@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jul 2016 13:35:42 +0000
-Subject: [PATCH] drm/rockchip: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
-Message-Id: <b66399ed-278b-b85d-4a21-b34164936ef6@users.sourceforge.net>
+From: Mark yao <mark.yao@rock-chips.com>
+Date: Tue, 19 Jul 2016 01:59:29 +0000
+Subject: Re: [PATCH] drm/rockchip: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
+Message-Id: <578D8981.2070102@rock-chips.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,48 +20,55 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <b66399ed-278b-b85d-4a21-b34164936ef6@users.sourceforge.net>
+In-Reply-To: <b66399ed-278b-b85d-4a21-b34164936ef6@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Heiko Stuebner <heiko@sntech.de>, Mark Yao <mark.yao@rock-chips.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, David Airlie <airlied@linux.ie>, Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jul 2016 15:23:22 +0200
+On 2016年07月15日 21:35, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 15 Jul 2016 15:23:22 +0200
+>
+> The drm_gem_object_unreference_unlocked() function tests whether
+> its argument is NULL and then returns immediately.
+> Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> index 20f12bc..6f64e79 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> @@ -43,14 +43,10 @@ struct drm_gem_object *rockchip_fb_get_gem_obj(struct drm_framebuffer *fb,
+>   static void rockchip_drm_fb_destroy(struct drm_framebuffer *fb)
+>   {
+>   	struct rockchip_drm_fb *rockchip_fb = to_rockchip_fb(fb);
+> -	struct drm_gem_object *obj;
+>   	int i;
+>   
+> -	for (i = 0; i < ROCKCHIP_MAX_FB_BUFFER; i++) {
+> -		obj = rockchip_fb->obj[i];
+> -		if (obj)
+> -			drm_gem_object_unreference_unlocked(obj);
+> -	}
+> +	for (i = 0; i < ROCKCHIP_MAX_FB_BUFFER; i++)
+> +		drm_gem_object_unreference_unlocked(rockchip_fb->obj[i]);
+>   
+Good, Thanks for the fixes, Applied to my drm-fixes.
 
-The drm_gem_object_unreference_unlocked() function tests whether
-its argument is NULL and then returns immediately.
-Thus the test around the call is not needed.
+>   	drm_framebuffer_cleanup(fb);
+>   	kfree(rockchip_fb);
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index 20f12bc..6f64e79 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -43,14 +43,10 @@ struct drm_gem_object *rockchip_fb_get_gem_obj(struct drm_framebuffer *fb,
- static void rockchip_drm_fb_destroy(struct drm_framebuffer *fb)
- {
- 	struct rockchip_drm_fb *rockchip_fb = to_rockchip_fb(fb);
--	struct drm_gem_object *obj;
- 	int i;
- 
--	for (i = 0; i < ROCKCHIP_MAX_FB_BUFFER; i++) {
--		obj = rockchip_fb->obj[i];
--		if (obj)
--			drm_gem_object_unreference_unlocked(obj);
--	}
-+	for (i = 0; i < ROCKCHIP_MAX_FB_BUFFER; i++)
-+		drm_gem_object_unreference_unlocked(rockchip_fb->obj[i]);
- 
- 	drm_framebuffer_cleanup(fb);
- 	kfree(rockchip_fb);
 -- 
-2.9.1
+Ｍark Yao
+
 
