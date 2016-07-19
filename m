@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 14:48:11 +0000
-Subject: [PATCH 2/8] drm/amdgpu/powerplay: Delete unnecessary checks before the function call "kfree"
-Message-Id: <a7112f50-5758-aec1-fa39-10d2246096ba@users.sourceforge.net>
+Date: Tue, 19 Jul 2016 20:11:20 +0000
+Subject: Re: [PATCH] WiMAX-i2400m: Delete an unnecessary check before the function call "kfree_skb"
+Message-Id: <b54b9abe-8271-ddc2-5346-7b63d5030189@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,59 +19,44 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
- <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
-In-Reply-To: <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <5649AE81.6070809@users.sourceforge.net>
+In-Reply-To: <5649AE81.6070809@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, linux-wimax@intel.com, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 12:38:12 +0200
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 16 Nov 2015 11:17:55 +0100
+> 
+> The kfree_skb() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/net/wimax/i2400m/control.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
+> index 4c41790..4de22b7 100644
+> --- a/drivers/net/wimax/i2400m/control.c
+> +++ b/drivers/net/wimax/i2400m/control.c
+> @@ -644,7 +644,7 @@ void i2400m_msg_to_dev_cancel_wait(struct i2400m *i2400m, int code)
+>  
+>  	spin_lock_irqsave(&i2400m->rx_lock, flags);
+>  	ack_skb = i2400m->ack_skb;
+> -	if (ack_skb && !IS_ERR(ack_skb))
+> +	if (!IS_ERR(ack_skb))
+>  		kfree_skb(ack_skb);
+>  	i2400m->ack_skb = ERR_PTR(code);
+>  	spin_unlock_irqrestore(&i2400m->rx_lock, flags);
+> 
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the calls is not needed.
+How do you think about to integrate this update suggestion
+into another source code repository?
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c              | 3 +--
- drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c | 5 +----
- 2 files changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-index cf6f49f..6f11bc1 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-@@ -1053,8 +1053,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
- 	}
- 
- error:
--	if (obj != NULL)
--		kfree(obj);
-+	kfree(obj);
- 	kfree((void *)input.pointer);
- 	return result;
- }
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c b/drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c
-index 7a705ce..024e22e 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/functiontables.c
-@@ -76,10 +76,7 @@ int phm_dispatch_table(struct pp_hwmgr *hwmgr,
- 	}
- 
- 	result = phm_run_table(hwmgr, rt_table, input, output, temp_storage);
--
--	if (NULL != temp_storage)
--		kfree(temp_storage);
--
-+	kfree(temp_storage);
- 	return result;
- }
- 
--- 
-2.9.1
-
+Regards,
+Markus
