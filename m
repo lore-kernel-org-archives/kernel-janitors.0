@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Jul 2016 18:54:18 +0000
-Subject: [PATCH] hwmon-ntc_thermistor: Delete an unnecessary check before the function call "iio_channel_rele
-Message-Id: <60ce7b63-99f8-67c2-319c-21b2d4199263@users.sourceforge.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Tue, 19 Jul 2016 03:35:39 +0000
+Subject: Re: [PATCH] hwmon-ntc_thermistor: Delete an unnecessary check before the function call "iio_channel_
+Message-Id: <578DA00B.2070207@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,40 +20,27 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <60ce7b63-99f8-67c2-319c-21b2d4199263@users.sourceforge.net>
+In-Reply-To: <60ce7b63-99f8-67c2-319c-21b2d4199263@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-hwmon@vger.kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Jul 2016 20:34:41 +0200
+On 07/18/2016 11:54 AM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 18 Jul 2016 20:34:41 +0200
+>
+> The iio_channel_release() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The iio_channel_release() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+A much better change would be to use devm_iio_channel_get() instead of
+iio_channel_get(), and to remove ntc_iio_channel_release() completely.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hwmon/ntc_thermistor.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/hwmon/ntc_thermistor.c b/drivers/hwmon/ntc_thermistor.c
-index 8ef7b71..100878a 100644
---- a/drivers/hwmon/ntc_thermistor.c
-+++ b/drivers/hwmon/ntc_thermistor.c
-@@ -361,8 +361,7 @@ ntc_thermistor_parse_dt(struct platform_device *pdev)
- }
- static void ntc_iio_channel_release(struct ntc_thermistor_platform_data *pdata)
- {
--	if (pdata->chan)
--		iio_channel_release(pdata->chan);
-+	iio_channel_release(pdata->chan);
- }
- #else
- static struct ntc_thermistor_platform_data *
--- 
-2.9.2
+Guenter
 
