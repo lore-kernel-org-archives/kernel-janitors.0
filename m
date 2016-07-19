@@ -1,7 +1,7 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Mon, 18 Jul 2016 05:01:48 +0000
-Subject: Re: [PATCH 1/3] xen-scsiback: Delete an unnecessary check before the function call "kfree"
-Message-Id: <0efb482b-8cad-9d0a-253b-5cd2f56baf1b@suse.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Jul 2016 16:20:30 +0000
+Subject: Re: [PATCH] sh-DWARF: Delete unnecessary checks before the function call "mempool_destroy"
+Message-Id: <8876165d-9a23-c837-cdb1-bcf60fa058a8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,28 +19,48 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
- <fa839c03-b076-0264-c363-5581d0298632@users.sourceforge.net>
-In-Reply-To: <fa839c03-b076-0264-c363-5581d0298632@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <564985B7.3080806@users.sourceforge.net>
+In-Reply-To: <564985B7.3080806@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, David Rientjes <rientjes@google.com>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 16/07/16 22:22, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 16 Jul 2016 21:21:05 +0200
+> Date: Mon, 16 Nov 2015 08:20:36 +0100
 > 
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
+> The mempool_destroy() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the calls is not needed.
 > 
 > This issue was detected by using the Coccinelle software.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  arch/sh/kernel/dwarf.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/sh/kernel/dwarf.c b/arch/sh/kernel/dwarf.c
+> index 9d209a0..e1d751a 100644
+> --- a/arch/sh/kernel/dwarf.c
+> +++ b/arch/sh/kernel/dwarf.c
+> @@ -1009,10 +1009,8 @@ static void __init dwarf_unwinder_cleanup(void)
+>  	rbtree_postorder_for_each_entry_safe(cie, next_cie, &cie_root, node)
+>  		kfree(cie);
+>  
+> -	if (dwarf_reg_pool)
+> -		mempool_destroy(dwarf_reg_pool);
+> -	if (dwarf_frame_pool)
+> -		mempool_destroy(dwarf_frame_pool);
+> +	mempool_destroy(dwarf_reg_pool);
+> +	mempool_destroy(dwarf_frame_pool);
+>  	kmem_cache_destroy(dwarf_reg_cachep);
+>  	kmem_cache_destroy(dwarf_frame_cachep);
+>  }
+> 
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+How do you think about to integrate this update suggestion
+into another source code repository?
 
-
-Juergen
+Regards,
+Markus
