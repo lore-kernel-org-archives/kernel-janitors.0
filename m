@@ -1,7 +1,7 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Mon, 18 Jul 2016 05:11:36 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Jul 2016 14:56:35 +0000
 Subject: Re: [PATCH 2/3] xen-scsiback: One function call less in scsiback_device_action() after error detecti
-Message-Id: <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
+Message-Id: <8806e9cb-4200-8154-7914-6735805dfbe0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -22,84 +22,49 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <5317A59D.4@users.sourceforge.net>
  <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
  <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
-In-Reply-To: <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
+ <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
+In-Reply-To: <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, David Vrabel <david.vrabel@citrix.com>, xen-devel@lists.xenproject.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-On 16/07/16 22:23, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 16 Jul 2016 21:42:42 +0200
+>> @@ -606,7 +606,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
+>>  	tmr = kzalloc(sizeof(struct scsiback_tmr), GFP_KERNEL);
+>>  	if (!tmr) {
+>>  		target_put_sess_cmd(se_cmd);
+>> -		goto err;
+>> +		goto do_resp;
+>>  	}
 > 
-> The kfree() function was called in one case by the
-> scsiback_device_action() function during error handling
-> even if the passed variable "tmr" contained a null pointer.
+> Hmm, I'm not convinced this is an improvement.
 > 
-> Adjust jump targets according to the Linux coding style convention.
+> I'd rather rename the new error label to "put_cmd" and get rid of the
+> braces in above if statement:
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/xen/xen-scsiback.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
-> index 4a48c06..7612bc9 100644
-> --- a/drivers/xen/xen-scsiback.c
-> +++ b/drivers/xen/xen-scsiback.c
-> @@ -606,7 +606,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
->  	tmr = kzalloc(sizeof(struct scsiback_tmr), GFP_KERNEL);
->  	if (!tmr) {
->  		target_put_sess_cmd(se_cmd);
+> -	if (!tmr) {
+> -		target_put_sess_cmd(se_cmd);
 > -		goto err;
-> +		goto do_resp;
->  	}
-
-Hmm, I'm not convinced this is an improvement.
-
-I'd rather rename the new error label to "put_cmd" and get rid of the
-braces in above if statement:
-
--	if (!tmr) {
--		target_put_sess_cmd(se_cmd);
--		goto err;
--	}
-+	if (!tmr)
-+		goto put_cmd;
-
-and then in the error path:
-
--err:
-+put_cmd:
-+	target_put_sess_cmd(se_cmd);
-+free_tmr:
-	kfree(tmr);
-
-
-Juergen
-
->  
->  	init_waitqueue_head(&tmr->tmr_wait);
-> @@ -616,7 +616,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
->  			       unpacked_lun, tmr, act, GFP_KERNEL,
->  			       tag, TARGET_SCF_ACK_KREF);
->  	if (rc)
-> -		goto err;
-> +		goto free_tmr;
->  
->  	wait_event(tmr->tmr_wait, atomic_read(&tmr->tmr_complete));
->  
-> @@ -626,8 +626,9 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
->  	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
->  	transport_generic_free_cmd(&pending_req->se_cmd, 1);
->  	return;
+> -	}
+> +	if (!tmr)
+> +		goto put_cmd;
+> 
+> and then in the error path:
+> 
 > -err:
-> +free_tmr:
->  	kfree(tmr);
-> +do_resp:
->  	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
->  }
->  
-> 
+> +put_cmd:
+> +	target_put_sess_cmd(se_cmd);
 
+I am unsure on the relevance of this function on such a source position.
+Would it make sense to move it further down at the end?
+
+
+> +free_tmr:
+> 	kfree(tmr);
+
+How do you think about to skip this function call after a memory
+allocation failure?
+
+Regards,
+Markus
