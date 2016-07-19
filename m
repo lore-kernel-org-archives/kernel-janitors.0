@@ -1,7 +1,7 @@
-From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date: Wed, 27 Jul 2016 08:57:07 +0000
-Subject: Re: [PATCH] cxl: Delete an unnecessary check before the function call "of_node_put"
-Message-Id: <601fb58c-7aee-91ce-2a3d-7a29787968fc@au1.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Jul 2016 19:35:34 +0000
+Subject: [PATCH] [media] tw686x: Delete an unnecessary check before the function call "video_unregister_devic
+Message-Id: <5fa61665-b5c6-4085-e054-b96bc8ef1f87@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,23 +20,40 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <33fb6b04-9986-35ee-f4e2-0ebeb79c5e23@users.sourceforge.net>
- <alpine.DEB.2.10.1607201535270.2838@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1607201535270.2838@hadrien>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Christophe Lombard <clombard@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ian Munsie <imunsie@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
+To: linux-media@vger.kernel.org, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 20/07/16 23:38, Julia Lawall wrote:
-> I don't think that the call should be there at all.  The loop only exits
-> when afu_np is NULL.  Furthermore, the loop should not be written as a for
-> loop, but rather with for_each_child_of_node.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Jul 2016 21:24:26 +0200
 
-Will send a patch to fix both issues shortly.
+The video_unregister_device() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/pci/tw686x/tw686x-video.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/media/pci/tw686x/tw686x-video.c b/drivers/media/pci/tw686x/tw686x-video.c
+index cdb16de..4475a9d9 100644
+--- a/drivers/media/pci/tw686x/tw686x-video.c
++++ b/drivers/media/pci/tw686x/tw686x-video.c
+@@ -1093,8 +1093,7 @@ void tw686x_video_free(struct tw686x_dev *dev)
+ 	for (ch = 0; ch < max_channels(dev); ch++) {
+ 		struct tw686x_video_channel *vc = &dev->video_channels[ch];
+ 
+-		if (vc->device)
+-			video_unregister_device(vc->device);
++		video_unregister_device(vc->device);
+ 
+ 		if (dev->dma_ops->free)
+ 			for (pb = 0; pb < 2; pb++)
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
+2.9.2
 
