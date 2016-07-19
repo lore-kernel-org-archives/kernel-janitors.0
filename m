@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jul 2016 20:44:32 +0000
-Subject: [PATCH] drm/virtgpu: Delete unnecessary checks before drm_gem_object_unreference_unlocked()
-Message-Id: <5e3dafff-72bb-e616-e84a-368f78fa66b1@users.sourceforge.net>
+Date: Tue, 19 Jul 2016 20:52:12 +0000
+Subject: [PATCH] of: Delete an unnecessary check before the function call "of_node_put"
+Message-Id: <8db62ad3-2e8a-327e-30a8-594f628cd8be@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,47 +24,37 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+To: devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh+dt@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jul 2016 22:38:42 +0200
+Date: Tue, 19 Jul 2016 22:42:22 +0200
 
-The drm_gem_object_unreference_unlocked() function tests whether
-its argument is NULL and then returns immediately.
-Thus the test around the calls is not needed.
+The of_node_put() function tests whether its argument is NULL
+and then returns immediately.
+Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/virtio/virtgpu_display.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/of/base.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
-index ac758cd..fdfc711 100644
---- a/drivers/gpu/drm/virtio/virtgpu_display.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_display.c
-@@ -53,8 +53,7 @@ static void virtio_gpu_user_framebuffer_destroy(struct drm_framebuffer *fb)
- 	struct virtio_gpu_framebuffer *virtio_gpu_fb
- 		= to_virtio_gpu_framebuffer(fb);
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index a4b6087..2601167 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1609,8 +1609,7 @@ static int __of_parse_phandle_with_args(const struct device_node *np,
+ 	 */
  
--	if (virtio_gpu_fb->obj)
--		drm_gem_object_unreference_unlocked(virtio_gpu_fb->obj);
-+	drm_gem_object_unreference_unlocked(virtio_gpu_fb->obj);
- 	drm_framebuffer_cleanup(fb);
- 	kfree(virtio_gpu_fb);
+  err:
+-	if (it.node)
+-		of_node_put(it.node);
++	of_node_put(it.node);
+ 	return rc;
  }
-@@ -326,8 +325,7 @@ virtio_gpu_user_framebuffer_create(struct drm_device *dev,
- 	ret = virtio_gpu_framebuffer_init(dev, virtio_gpu_fb, mode_cmd, obj);
- 	if (ret) {
- 		kfree(virtio_gpu_fb);
--		if (obj)
--			drm_gem_object_unreference_unlocked(obj);
-+		drm_gem_object_unreference_unlocked(obj);
- 		return NULL;
- 	}
  
 -- 
-2.9.1
+2.9.2
 
