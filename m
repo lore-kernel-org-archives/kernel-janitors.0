@@ -1,60 +1,96 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 21 Jul 2016 13:51:23 +0000
-Subject: Re: [PATCH 9/9] staging: ks7010: Delete three unnecessary variable initialisations
-Message-Id: <alpine.DEB.2.10.1607211550580.2927@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 11:34:20 +0000
+Subject: [PATCH v2 2/3] xen-scsiback: Rename jump labels in scsiback_device_action()
+Message-Id: <639f00cc-5041-7ec0-b7f2-6ddb81129d15@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <23b93bc6-f938-7f8c-8cf1-f70e453e06e6@users.sourceforge.net> <alpine.DEB.2.10.1607172049560.3177@hadrien> <47a5f5be-7c6b-0e39-5182-db9aec4bea30@users.sourceforge.net>
-In-Reply-To: <47a5f5be-7c6b-0e39-5182-db9aec4bea30@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
+ <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
+ <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
+ <8806e9cb-4200-8154-7914-6735805dfbe0@users.sourceforge.net>
+ <83b0b1e2-900b-eefc-160b-7d837730571c@suse.com>
+ <18256bfc-c6f9-8802-8d7d-55766f0b3624@users.sourceforge.net>
+ <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
+ <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
+In-Reply-To: <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 13:03:16 +0200
 
+* Adjust jump targets according to the Linux coding style convention.
 
-On Thu, 21 Jul 2016, SF Markus Elfring wrote:
+* A bit of refactoring for the control flow
 
-> >> @@ -323,14 +323,14 @@ static void tx_device_task(void *dev)
-> >>  {
-> >>  	struct ks_wlan_private *priv = (struct ks_wlan_private *)dev;
-> >>  	struct tx_device_buffer *sp;
-> >> -	int rc = 0;
-> >>
-> >>  	DPRINTK(4, "\n");
-> >>  	if (cnt_txqbody(priv) > 0
-> >>  	    && atomic_read(&priv->psstatus.status) != PS_SNOOZE) {
-> >>  		sp = &priv->tx_dev.tx_dev_buff[priv->tx_dev.qhead];
-> >>  		if (priv->dev_state >= DEVICE_STATE_BOOT) {
-> >> -			rc = write_to_device(priv, sp->sendp, sp->size);
-> >> +			int rc = write_to_device(priv, sp->sendp, sp->size);
-> >
-> > This does not look appealing to me, neither the declaration in the middle
-> > of the function, nor the intiialization to the result of a complex
-> > expression, nor the separation of the call and the error checking code by
-> > a blank line.  There is nothing wrong with having the rc variable be
-> > declared at the the top of the function, in its normal place.
->
-> * Do you occasionally care for a refactoring like "Reduce scope of variable"?
->
->   http://refactoring.com/catalog/reduceScopeOfVariable.html
+Suggested-by: J=FCrgen Gro=DF <jgross@suse.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+v2: Rebased on source files from "Linux next-20160719"
+    Changes from a bit of code review
 
-Probably not.  Certainly not in this case.
+ drivers/xen/xen-scsiback.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> * How do you think about to remove the extra assignment at the beginning
->   of this function implementation?
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index 4a48c06..eb274df 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -604,10 +604,8 @@ static void scsiback_device_action(struct vscsibk_pend=
+ *pending_req,
+ 	int rc, err =3D FAILED;
+=20
+ 	tmr =3D kzalloc(sizeof(struct scsiback_tmr), GFP_KERNEL);
+-	if (!tmr) {
+-		target_put_sess_cmd(se_cmd);
+-		goto err;
+-	}
++	if (!tmr)
++		goto put_cmd;
+=20
+ 	init_waitqueue_head(&tmr->tmr_wait);
+=20
+@@ -616,7 +614,7 @@ static void scsiback_device_action(struct vscsibk_pend =
+*pending_req,
+ 			       unpacked_lun, tmr, act, GFP_KERNEL,
+ 			       tag, TARGET_SCF_ACK_KREF);
+ 	if (rc)
+-		goto err;
++		goto free_tmr;
+=20
+ 	wait_event(tmr->tmr_wait, atomic_read(&tmr->tmr_complete));
+=20
+@@ -626,7 +624,9 @@ static void scsiback_device_action(struct vscsibk_pend =
+*pending_req,
+ 	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
+ 	transport_generic_free_cmd(&pending_req->se_cmd, 1);
+ 	return;
+-err:
++put_cmd:
++	target_put_sess_cmd(se_cmd);
++free_tmr:
+ 	kfree(tmr);
+ 	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
+ }
+--=20
+2.9.2
 
-If the value is not useful, then it can go.
-
-julia
-
-> Regards,
-> Markus
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
