@@ -1,11 +1,9 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Jul 2016 11:34:20 +0000
-Subject: [PATCH v2 2/3] xen-scsiback: Rename jump labels in scsiback_device_action()
-Message-Id: <639f00cc-5041-7ec0-b7f2-6ddb81129d15@users.sourceforge.net>
+From: Juergen Gross <jgross@suse.com>
+Date: Wed, 20 Jul 2016 11:45:19 +0000
+Subject: Re: [PATCH v2 2/3] xen-scsiback: Rename jump labels in scsiback_device_action()
+Message-Id: <c49f246c-f599-bb32-0587-43260ca6a764@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
  <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.10.1402251014170.2080@hadrien>
  <530CD2C4.4050903@users.sourceforge.net>
@@ -23,72 +21,29 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <18256bfc-c6f9-8802-8d7d-55766f0b3624@users.sourceforge.net>
  <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
  <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
-In-Reply-To: <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
+ <639f00cc-5041-7ec0-b7f2-6ddb81129d15@users.sourceforge.net>
+In-Reply-To: <639f00cc-5041-7ec0-b7f2-6ddb81129d15@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Jul 2016 13:03:16 +0200
+On 20/07/16 13:34, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 20 Jul 2016 13:03:16 +0200
+>=20
+> * Adjust jump targets according to the Linux coding style convention.
+>=20
+> * A bit of refactoring for the control flow
+>=20
+> Suggested-by: J=FCrgen Gro=DF <jgross@suse.com>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-* Adjust jump targets according to the Linux coding style convention.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-* A bit of refactoring for the control flow
 
-Suggested-by: J=FCrgen Gro=DF <jgross@suse.com>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
-v2: Rebased on source files from "Linux next-20160719"
-    Changes from a bit of code review
-
- drivers/xen/xen-scsiback.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
-index 4a48c06..eb274df 100644
---- a/drivers/xen/xen-scsiback.c
-+++ b/drivers/xen/xen-scsiback.c
-@@ -604,10 +604,8 @@ static void scsiback_device_action(struct vscsibk_pend=
- *pending_req,
- 	int rc, err =3D FAILED;
-=20
- 	tmr =3D kzalloc(sizeof(struct scsiback_tmr), GFP_KERNEL);
--	if (!tmr) {
--		target_put_sess_cmd(se_cmd);
--		goto err;
--	}
-+	if (!tmr)
-+		goto put_cmd;
-=20
- 	init_waitqueue_head(&tmr->tmr_wait);
-=20
-@@ -616,7 +614,7 @@ static void scsiback_device_action(struct vscsibk_pend =
-*pending_req,
- 			       unpacked_lun, tmr, act, GFP_KERNEL,
- 			       tag, TARGET_SCF_ACK_KREF);
- 	if (rc)
--		goto err;
-+		goto free_tmr;
-=20
- 	wait_event(tmr->tmr_wait, atomic_read(&tmr->tmr_complete));
-=20
-@@ -626,7 +624,9 @@ static void scsiback_device_action(struct vscsibk_pend =
-*pending_req,
- 	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
- 	transport_generic_free_cmd(&pending_req->se_cmd, 1);
- 	return;
--err:
-+put_cmd:
-+	target_put_sess_cmd(se_cmd);
-+free_tmr:
- 	kfree(tmr);
- 	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
- }
---=20
-2.9.2
-
+Juergen
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
