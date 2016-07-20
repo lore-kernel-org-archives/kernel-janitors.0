@@ -1,63 +1,70 @@
-From: Laurence Oberman <loberman@redhat.com>
-Date: Sun, 24 Jul 2016 12:51:11 +0000
-Subject: Re: [PATCH] scsi: Delete an unnecessary check before the function call "kfree"
-Message-Id: <2031535968.6447913.1469364671549.JavaMail.zimbra@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 11:36:38 +0000
+Subject: [PATCH v2 3/3] xen-scsiback: Pass a failure indication as a constant
+Message-Id: <b025aa24-63c9-4b2e-5035-9da278f968e5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <dd65c1cd-b8ee-5c44-d249-e3d9d0b08299@users.sourceforge.net>
-In-Reply-To: <dd65c1cd-b8ee-5c44-d249-e3d9d0b08299@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
+ <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
+ <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
+ <8806e9cb-4200-8154-7914-6735805dfbe0@users.sourceforge.net>
+ <83b0b1e2-900b-eefc-160b-7d837730571c@suse.com>
+ <18256bfc-c6f9-8802-8d7d-55766f0b3624@users.sourceforge.net>
+ <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
+ <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
+In-Reply-To: <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-scsi@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 13:12:33 +0200
 
+Pass the constant "FAILED" in a function call directly instead of
+using an intialisation for a local variable.
 
------ Original Message -----
-> From: "SF Markus Elfring" <elfring@users.sourceforge.net>
-> To: linux-scsi@vger.kernel.org, "Christoph Hellwig" <hch@lst.de>, "Hannes Reinecke" <hare@suse.de>, "James E. J.
-> Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: "LKML" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, "Julia Lawall" <julia.lawall@lip6.fr>
-> Sent: Sunday, July 24, 2016 8:30:35 AM
-> Subject: [PATCH] scsi: Delete an unnecessary check before the function call "kfree"
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 24 Jul 2016 14:20:21 +0200
-> 
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/scsi/scsi.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
-> index 1f36aca..1794c0c 100644
-> --- a/drivers/scsi/scsi.c
-> +++ b/drivers/scsi/scsi.c
-> @@ -864,8 +864,7 @@ retry_pg83:
->  		rcu_assign_pointer(sdev->vpd_pg83, vpd_buf);
->  		mutex_unlock(&sdev->inquiry_mutex);
->  		synchronize_rcu();
-> -		if (orig_vpd_buf)
-> -			kfree(orig_vpd_buf);
-> +		kfree(orig_vpd_buf);
->  	}
->  }
->  
-> --
-> 2.9.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+v2: Rebased on source files from "Linux next-20160719"
 
-Looks fine, small comment is that the function call prior to check in the fucntion sets up variables etc. 
-So is more expensive than a simple NULL check prior.
+ drivers/xen/xen-scsiback.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index eb274df..fa08ec6 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -601,7 +601,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
+ 	struct se_cmd *se_cmd = &pending_req->se_cmd;
+ 	struct scsiback_tmr *tmr;
+ 	u64 unpacked_lun = pending_req->v2p->lun;
+-	int rc, err = FAILED;
++	int rc, err;
+ 
+ 	tmr = kzalloc(sizeof(struct scsiback_tmr), GFP_KERNEL);
+ 	if (!tmr)
+@@ -628,7 +628,7 @@ put_cmd:
+ 	target_put_sess_cmd(se_cmd);
+ free_tmr:
+ 	kfree(tmr);
+-	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
++	scsiback_do_resp_with_sense(NULL, FAILED, 0, pending_req);
+ }
+ 
+ /*
+-- 
+2.9.2
+
