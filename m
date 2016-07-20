@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Jul 2016 20:52:12 +0000
-Subject: [PATCH] of: Delete an unnecessary check before the function call "of_node_put"
-Message-Id: <8db62ad3-2e8a-327e-30a8-594f628cd8be@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 17:50:45 +0000
+Subject: [PATCH] GPU-DRM-nouveau: Delete an unnecessary check before the function call "pci_dev_put"
+Message-Id: <4dcc6c6b-455f-d938-ab45-5597096007f0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,42 +19,42 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <5447BF71.7040200@users.sourceforge.net>
+ <559975EB.500@users.sourceforge.net>
+In-Reply-To: <559975EB.500@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh+dt@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Jul 2016 22:42:22 +0200
+Date: Wed, 20 Jul 2016 19:43:27 +0200
 
-The of_node_put() function tests whether its argument is NULL
-and then returns immediately.
-Thus the test around the call is not needed.
+The pci_dev_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/of/base.c | 3 +--
+ drivers/gpu/drm/nouveau/nouveau_drm.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index a4b6087..2601167 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1609,8 +1609,7 @@ static int __of_parse_phandle_with_args(const struct device_node *np,
- 	 */
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 66c1280..7b09841 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -525,8 +525,7 @@ nouveau_drm_unload(struct drm_device *dev)
+ 	nouveau_vga_fini(drm);
  
-  err:
--	if (it.node)
--		of_node_put(it.node);
-+	of_node_put(it.node);
- 	return rc;
+ 	nvif_device_fini(&drm->device);
+-	if (drm->hdmi_device)
+-		pci_dev_put(drm->hdmi_device);
++	pci_dev_put(drm->hdmi_device);
+ 	nouveau_cli_destroy(&drm->client);
+ 	return 0;
  }
- 
 -- 
 2.9.2
 
