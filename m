@@ -1,72 +1,64 @@
-From: Sean Paul <seanpaul@chromium.org>
-Date: Fri, 22 Jul 2016 17:44:38 +0000
-Subject: [PATCH] drm/etnaviv: Improve readability in __etnaviv_gem_new
-Message-Id: <1469209478-25713-1-git-send-email-seanpaul@chromium.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 12:34:45 +0000
+Subject: Re: [PATCH] SRAM: Delete an unnecessary check before the function call "of_node_put"
+Message-Id: <cc5d5494-9454-86ca-a351-1627ace4e241@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <57924CC2.5030309@bfs.de>
-In-Reply-To: <57924CC2.5030309@bfs.de>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <563C7652.6080609@users.sourceforge.net>
+In-Reply-To: <563C7652.6080609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net, wharms@bfs.de
-Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, linux@armlinux.org.uk, Sean Paul <seanpaul@chromium.org>
+To: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Move things around a little in __etnaviv_gem_new() to make it
-more readable.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 6 Nov 2015 10:36:49 +0100
+> 
+> The of_node_put() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/misc/sram.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
+> index 736dae7..34287f7 100644
+> --- a/drivers/misc/sram.c
+> +++ b/drivers/misc/sram.c
+> @@ -326,9 +326,7 @@ static int sram_reserve_regions(struct sram_dev *sram, struct resource *res)
+>  	}
+>  
+>   err_chunks:
+> -	if (child)
+> -		of_node_put(child);
+> -
+> +	of_node_put(child);
+>  	kfree(rblocks);
+>  
+>  	return ret;
+> 
 
-Reported-by: Markus Elfring <elfring@users.sourceforge.net>
-Reported-by: walter harms <wharms@bfs.de>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
----
- drivers/gpu/drm/etnaviv/etnaviv_gem.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+How do you think about to integrate this update suggestion
+into another source code repository?
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-index df9bcba..7d13628 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-@@ -640,6 +640,7 @@ static struct drm_gem_object *__etnaviv_gem_new(struct drm_device *dev,
- 		u32 size, u32 flags)
- {
- 	struct drm_gem_object *obj = NULL;
-+	struct address_space *mapping;
- 	int ret;
- 
- 	size = PAGE_ALIGN(size);
-@@ -650,23 +651,19 @@ static struct drm_gem_object *__etnaviv_gem_new(struct drm_device *dev,
- 		goto fail;
- 
- 	ret = drm_gem_object_init(dev, obj, size);
--	if (ret = 0) {
--		struct address_space *mapping;
--
--		/*
--		 * Our buffers are kept pinned, so allocating them
--		 * from the MOVABLE zone is a really bad idea, and
--		 * conflicts with CMA.  See coments above new_inode()
--		 * why this is required _and_ expected if you're
--		 * going to pin these pages.
--		 */
--		mapping = file_inode(obj->filp)->i_mapping;
--		mapping_set_gfp_mask(mapping, GFP_HIGHUSER);
--	}
--
- 	if (ret)
- 		goto fail;
- 
-+	/*
-+	 * Our buffers are kept pinned, so allocating them
-+	 * from the MOVABLE zone is a really bad idea, and
-+	 * conflicts with CMA.  See coments above new_inode()
-+	 * why this is required _and_ expected if you're
-+	 * going to pin these pages.
-+	 */
-+	mapping = file_inode(obj->filp)->i_mapping;
-+	mapping_set_gfp_mask(mapping, GFP_HIGHUSER);
-+
- 	return obj;
- 
- fail:
--- 
-2.8.0.rc3.226.g39d4020
-
+Regards,
+Markus
