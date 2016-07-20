@@ -1,60 +1,64 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 22 Jul 2016 16:41:38 +0000
-Subject: Re: [PATCH 2/4] GPU-DRM-Etnaviv: Delete unnecessary if statement in __etnaviv_gem_new()
-Message-Id: <57924CC2.5030309@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 11:30:50 +0000
+Subject: [PATCH v2 1/3] xen-scsiback: Delete an unnecessary check before the function call "kfree"
+Message-Id: <62e64277-a6bc-9d9d-d80e-f3e515e7bcb3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <00ca5af9-674a-73ce-b423-1ce41d426942@users.sourceforge.net> <d1d2c154-0097-9630-f9ed-9ee55de03a24@users.sourceforge.net>
-In-Reply-To: <d1d2c154-0097-9630-f9ed-9ee55de03a24@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
+ <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
+ <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
+ <8806e9cb-4200-8154-7914-6735805dfbe0@users.sourceforge.net>
+ <83b0b1e2-900b-eefc-160b-7d837730571c@suse.com>
+ <18256bfc-c6f9-8802-8d7d-55766f0b3624@users.sourceforge.net>
+ <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
+ <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
+In-Reply-To: <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: dri-devel@lists.freedesktop.org, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 19 Jul 2016 15:42:19 +0200
 
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Am 22.07.2016 17:48, schrieb SF Markus Elfring:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 22 Jul 2016 16:45:22 +0200
-> 
-> Move a return statement into a block for successful function execution.
-> Omit a duplicate check for the local variable "ret" then at the end.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> index 8eee742..851a8ba 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -661,13 +661,9 @@ static struct drm_gem_object *__etnaviv_gem_new(struct drm_device *dev,
->  		 */
->  		mapping = obj->filp->f_mapping;
->  		mapping_set_gfp_mask(mapping, GFP_HIGHUSER);
-> +		return obj;
->  	}
->  
-> -	if (ret)
-> -		goto fail;
-> -
-> -	return obj;
-> -
->  fail:
->  	drm_gem_object_unreference_unlocked(obj);
->  	return ERR_PTR(ret);
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+v2: Rebased on source files from "Linux next-20160719"
 
-From the program flow an readability it would be more nice the branch on error
+ drivers/xen/xen-scsiback.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- ret = drm_gem_object_init(dev, obj, size);
- if (ret)
-	goto fail;
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index d6950e0..4a48c06 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -627,8 +627,7 @@ static void scsiback_device_action(struct vscsibk_pend *pending_req,
+ 	transport_generic_free_cmd(&pending_req->se_cmd, 1);
+ 	return;
+ err:
+-	if (tmr)
+-		kfree(tmr);
++	kfree(tmr);
+ 	scsiback_do_resp_with_sense(NULL, err, 0, pending_req);
+ }
+ 
+-- 
+2.9.2
 
-
-just m 2 cents
-
-re,
- wh
