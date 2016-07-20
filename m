@@ -1,59 +1,55 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Mon, 18 Jul 2016 23:33:05 +0000
-Subject: [PATCH 02/15] perf jit: Remove some no-op error handling
-Message-Id: <1468884798-14932-3-git-send-email-acme@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 20 Jul 2016 05:46:51 +0000
+Subject: [PATCH] NFC: pn533: Avoid a double free in error handling code
+Message-Id: <1468993611-21449-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1468884798-14932-1-git-send-email-acme@kernel.org>
-In-Reply-To: <1468884798-14932-1-git-send-email-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Stephane Eranian <eranian@google.com>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: lauro.venancio@openbossa.org, aloisio.almeida@openbossa.org, sameo@linux.intel.com, michael.thalmeier@hale.at
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+'phy' has been allocated with 'devm_kzalloc', so we should not free it
+using an explicit 'kfree'. It would result in a double free if the
+allocation of 'in_buf' fails.
 
-The 'info.e_machine' struct member is an uint16_t so 'm' is never less
-than zero.  It looks like this was maybe left over code from earlier
-versions so I've just removed it.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/20160715210836.GB19522@mwanda
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- tools/perf/jvmti/jvmti_agent.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/nfc/pn533/usb.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
-index 91bf333a366a..55daefff0d54 100644
---- a/tools/perf/jvmti/jvmti_agent.c
-+++ b/tools/perf/jvmti/jvmti_agent.c
-@@ -59,7 +59,6 @@ static int get_e_machine(struct jitheader *hdr)
- 	ssize_t sret;
- 	char id[16];
- 	int fd, ret = -1;
--	int m = -1;
- 	struct {
- 		uint16_t e_type;
- 		uint16_t e_machine;
-@@ -81,11 +80,7 @@ static int get_e_machine(struct jitheader *hdr)
- 	if (sret != sizeof(info))
- 		goto error;
+diff --git a/drivers/nfc/pn533/usb.c b/drivers/nfc/pn533/usb.c
+index 8ca0603..33ed78b 100644
+--- a/drivers/nfc/pn533/usb.c
++++ b/drivers/nfc/pn533/usb.c
+@@ -464,10 +464,8 @@ static int pn533_usb_probe(struct usb_interface *interface,
+ 		return -ENOMEM;
  
--	m = info.e_machine;
--	if (m < 0)
--		m = 0; /* ELF EM_NONE */
--
--	hdr->elf_mach = m;
-+	hdr->elf_mach = info.e_machine;
- 	ret = 0;
- error:
- 	close(fd);
+ 	in_buf = kzalloc(in_buf_len, GFP_KERNEL);
+-	if (!in_buf) {
+-		rc = -ENOMEM;
+-		goto out_free_phy;
+-	}
++	if (!in_buf)
++		return -ENOMEM;
+ 
+ 	phy->udev = usb_get_dev(interface_to_usbdev(interface));
+ 	phy->interface = interface;
+@@ -554,8 +552,7 @@ error:
+ 	usb_free_urb(phy->out_urb);
+ 	usb_put_dev(phy->udev);
+ 	kfree(in_buf);
+-out_free_phy:
+-	kfree(phy);
++
+ 	return rc;
+ }
+ 
 -- 
 2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
