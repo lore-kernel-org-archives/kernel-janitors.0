@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 15:00:55 +0000
-Subject: [PATCH 5/8] drm/amdgpu: Delete an unnecessary variable initialisation in amdgpu_cgs_acpi_eval_object
-Message-Id: <d7790891-4587-f924-bff6-108083cfd911@users.sourceforge.net>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Wed, 20 Jul 2016 13:38:11 +0000
+Subject: Re: [PATCH] cxl: Delete an unnecessary check before the function call "of_node_put"
+Message-Id: <alpine.DEB.2.10.1607201535270.2838@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,39 +19,49 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <558FB427.80103@users.sourceforge.net>
- <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
-In-Reply-To: <d46343aa-7641-2e77-a4dc-634c527c182b@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+ <33fb6b04-9986-35ee-f4e2-0ebeb79c5e23@users.sourceforge.net>
+In-Reply-To: <33fb6b04-9986-35ee-f4e2-0ebeb79c5e23@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linuxppc-dev@lists.ozlabs.org, Christophe Lombard <clombard@linux.vnet.ibm.com>, Ian Munsie <imunsie@au1.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 16 Jul 2016 14:54:12 +0200
 
-The variable "argument" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 20 Jul 2016, SF Markus Elfring wrote:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-index f5de510..47f2a43 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-@@ -905,7 +905,7 @@ static int amdgpu_cgs_acpi_eval_object(struct cgs_device *cgs_device,
- 	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
- 	union acpi_object *params, *obj;
- 	uint8_t name[5] = {'\0'};
--	struct cgs_acpi_method_argument *argument = NULL;
-+	struct cgs_acpi_method_argument *argument;
- 	uint32_t i, count;
- 	acpi_status status;
- 	int result = 0;
--- 
-2.9.1
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 20 Jul 2016 15:10:32 +0200
+>
+> The of_node_put() function tests whether its argument is NULL
+> and then returns immediately.
+> Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/misc/cxl/of.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
+> index edc4583..333256a 100644
+> --- a/drivers/misc/cxl/of.c
+> +++ b/drivers/misc/cxl/of.c
+> @@ -490,8 +490,7 @@ int cxl_of_probe(struct platform_device *pdev)
+>  		adapter->slices = 0;
+>  	}
+>
+> -	if (afu_np)
+> -		of_node_put(afu_np);
+> +	of_node_put(afu_np);
+>  	return 0;
+>  }
 
+I don't think that the call should be there at all.  The loop only exits
+when afu_np is NULL.  Furthermore, the loop should not be written as a for
+loop, but rather with for_each_child_of_node.
+
+julia
