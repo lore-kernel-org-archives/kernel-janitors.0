@@ -1,40 +1,49 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 16 Jul 2016 06:57:39 +0000
-Subject: [PATCH] usb: gadget: composite: Fix function used to free memory
-Message-Id: <1468652259-15621-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 11:27:01 +0000
+Subject: [PATCH v2 0/3] xen-scsiback: Fine-tuning for scsiback_device_action()
+Message-Id: <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
+ <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
+ <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
+ <8806e9cb-4200-8154-7914-6735805dfbe0@users.sourceforge.net>
+ <83b0b1e2-900b-eefc-160b-7d837730571c@suse.com>
+ <18256bfc-c6f9-8802-8d7d-55766f0b3624@users.sourceforge.net>
+ <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
+In-Reply-To: <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-'cdev->os_desc_req' has been allocated with 'usb_ep_alloc_request' so
-'usb_ep_free_request' should be used to free it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Jul 2016 13:20:04 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/usb/gadget/composite.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Further update suggestions were taken into account
+after a patch was applied from static source code analysis.
 
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-index 8241856..9fe73cf 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -2132,7 +2132,7 @@ int composite_os_desc_req_prepare(struct usb_composite_dev *cdev,
- 	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
- 	if (!cdev->os_desc_req->buf) {
- 		ret = -ENOMEM;
--		kfree(cdev->os_desc_req);
-+		usb_ep_free_request(ep0, cdev->os_desc_req);
- 		goto end;
- 	}
- 	cdev->os_desc_req->context = cdev;
+Markus Elfring (3):
+  Delete an unnecessary check before the function call "kfree"
+  Rename jump labels in scsiback_device_action()
+  Pass a failure indication as a constant
+
+ drivers/xen/xen-scsiback.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
 -- 
-2.7.4
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+2.9.2
 
