@@ -1,18 +1,11 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Jul 2016 18:10:48 +0000
-Subject: [PATCH 1/9] staging: ks7010: Delete unnecessary checks before the function call "kfree"
-Message-Id: <6f857864-aa3b-3a78-c48e-fd677d5a3492@users.sourceforge.net>
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Wed, 20 Jul 2016 15:42:48 +0000
+Subject: Re: [PATCH 1/9] staging: ks7010: Delete unnecessary checks before the function call "kfree"
+Message-Id: <20160720154248.GA1688@katana>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="IJpNTDwzlM2Ie8A6"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
+References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
  <530CD2C4.4050903@users.sourceforge.net>
  <alpine.DEB.2.10.1402251840450.7035@hadrien>
  <530CF8FF.8080600@users.sourceforge.net>
@@ -21,71 +14,50 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
  <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
-In-Reply-To: <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>, devel@driverdev.osuosl.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+ <6f857864-aa3b-3a78-c48e-fd677d5a3492@users.sourceforge.net>
+In-Reply-To: <6f857864-aa3b-3a78-c48e-fd677d5a3492@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 17 Jul 2016 13:14:57 +0200
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the calls is not needed.
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This issue was detected by using the Coccinelle software.
+On Sun, Jul 17, 2016 at 08:10:48PM +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 17 Jul 2016 13:14:57 +0200
+>=20
+> The kfree() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the calls is not needed.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/staging/ks7010/ks7010_sdio.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index b7337fd..7da6c84 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -732,8 +732,7 @@ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
- 		goto error_out;
- 	}
-  error_out:
--	if (data_buf)
--		kfree(data_buf);
-+	kfree(data_buf);
- 	return rc;
- }
- 
-@@ -763,8 +762,7 @@ static int ks7010_sdio_data_compare(struct ks_wlan_private *priv, u32 address,
- 		goto error_out;
- 	}
-  error_out:
--	if (read_buf)
--		kfree(read_buf);
-+	kfree(read_buf);
- 	return rc;
- }
- 
-@@ -879,8 +877,7 @@ static int ks7010_upload_firmware(struct ks_wlan_private *priv,
- 	release_firmware(fw_entry);
-  error_out0:
- 	sdio_release_host(card->func);
--	if (rom_buf)
--		kfree(rom_buf);
-+	kfree(rom_buf);
- 	return rc;
- }
- 
-@@ -1199,9 +1196,7 @@ static void ks7010_sdio_remove(struct sdio_func *func)
- 		unregister_netdev(netdev);
- 
- 		trx_device_exit(priv);
--		if (priv->ks_wlan_hw.read_buf) {
--			kfree(priv->ks_wlan_hw.read_buf);
--		}
-+		kfree(priv->ks_wlan_hw.read_buf);
- 		free_netdev(priv->net_dev);
- 		card->priv = NULL;
- 	}
--- 
-2.9.1
 
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXj5v4AAoJEBQN5MwUoCm28fsP/ApOPqCQirGrrtNNHIvnuFnx
+2KvtZiI+WvcJdwoVt1+YiBUm/CGqOIgvidvKYEc1Sth7oUkIIKcDvbzSxN4LfmIX
+DLYePZAU2blP76m+kq43ZrCmO/spsqXZVPUiKfFvHz1ezQTMzpmGYV4MlDX5kFWI
+GzOhf5+3YRdzQEk3UR51vw9AVLRTsGmRAXEBKTlYc8Bqlr5S1TVRVnpoIzLCPAE9
+4ddqdIQqv9aHXm/b3Of0+dtkdyD09JgXiwXKPYkU3pEytfw6MowUZmIYfnpYBL0T
+w4iqMLXVDatqHXPTtF0zk/mzg95Nl+R7seylkJfnk9RoR391UV9csDxQX1vm6L6K
+ZBw/0TtjnlfLnNp3e4S8+MQHazfFqBVe0oZwBXrbxGy1FflOZWJuaw8EK9odAFN3
+X1hB74+pBMuHFOYkWhcFBbcKiYBPjkfNfOyjPTMgUZVfhjfyoHZ7paDk9k6V4KkX
+9tgaTLiwh2sIv+8oPM3M4TLt9h6QhYpvIDoj2haTaHOBnGG4rtsrw4Ocys5RJvoH
+uDKADj7WGRgkBXOKLju4N+y5n57W49kj9Drr7ValDorCrT1xeduoEqc/xb6l238G
+XeSyht5WkfHZRfzaEr1RPTYCfwc2fhWhmpyIiArn1WdVq50rhEdHs8xXXU2Zakm9
+Qu4aLc90+VRhRPtoSj95
+=IvdI
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
