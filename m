@@ -1,7 +1,7 @@
-From: Mark yao <mark.yao@rock-chips.com>
-Date: Tue, 19 Jul 2016 01:59:29 +0000
-Subject: Re: [PATCH] drm/rockchip: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
-Message-Id: <578D8981.2070102@rock-chips.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 12:54:50 +0000
+Subject: [PATCH] drm/bridge: ps8622: Delete an unnecessary check before backlight_device_unregister()
+Message-Id: <791089e4-201c-ad01-9c3b-f49835765177@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,56 +19,43 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <b66399ed-278b-b85d-4a21-b34164936ef6@users.sourceforge.net>
-In-Reply-To: <b66399ed-278b-b85d-4a21-b34164936ef6@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <558EF095.8020106@users.sourceforge.net>
+In-Reply-To: <558EF095.8020106@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, David Airlie <airlied@linux.ie>, Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dri-devel@lists.freedesktop.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Thierry Reding <treding@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 2016年07月15日 21:35, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 15 Jul 2016 15:23:22 +0200
->
-> The drm_gem_object_unreference_unlocked() function tests whether
-> its argument is NULL and then returns immediately.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> index 20f12bc..6f64e79 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> @@ -43,14 +43,10 @@ struct drm_gem_object *rockchip_fb_get_gem_obj(struct drm_framebuffer *fb,
->   static void rockchip_drm_fb_destroy(struct drm_framebuffer *fb)
->   {
->   	struct rockchip_drm_fb *rockchip_fb = to_rockchip_fb(fb);
-> -	struct drm_gem_object *obj;
->   	int i;
->   
-> -	for (i = 0; i < ROCKCHIP_MAX_FB_BUFFER; i++) {
-> -		obj = rockchip_fb->obj[i];
-> -		if (obj)
-> -			drm_gem_object_unreference_unlocked(obj);
-> -	}
-> +	for (i = 0; i < ROCKCHIP_MAX_FB_BUFFER; i++)
-> +		drm_gem_object_unreference_unlocked(rockchip_fb->obj[i]);
->   
-Good, Thanks for the fixes, Applied to my drm-fixes.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 14:45:51 +0200
 
->   	drm_framebuffer_cleanup(fb);
->   	kfree(rockchip_fb);
+The backlight_device_unregister() function tests whether its argument
+is NULL and then returns immediately.
+Thus the test around the call is not needed.
 
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/bridge/parade-ps8622.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/parade-ps8622.c b/drivers/gpu/drm/bridge/parade-ps8622.c
+index 5cd8dd7..583b8ce 100644
+--- a/drivers/gpu/drm/bridge/parade-ps8622.c
++++ b/drivers/gpu/drm/bridge/parade-ps8622.c
+@@ -636,9 +636,7 @@ static int ps8622_remove(struct i2c_client *client)
+ {
+ 	struct ps8622_bridge *ps8622 = i2c_get_clientdata(client);
+ 
+-	if (ps8622->bl)
+-		backlight_device_unregister(ps8622->bl);
+-
++	backlight_device_unregister(ps8622->bl);
+ 	drm_bridge_remove(&ps8622->bridge);
+ 
+ 	return 0;
 -- 
-Ｍark Yao
-
+2.9.2
 
