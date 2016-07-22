@@ -1,74 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Jul 2016 19:41:40 +0000
-Subject: Re: [PATCH] IPC-mqueue: Delete unnecessary checks before two function calls
-Message-Id: <f13df620-d695-c657-ca85-393fd981a81c@users.sourceforge.net>
+From: Ben Werbowyj <ben.werbowyj@gmail.com>
+Date: Fri, 22 Jul 2016 04:33:34 +0000
+Subject: [PATCH 2/3] drivers: w1: removed assignment from within if statement
+Message-Id: <1469162015-10497-3-git-send-email-ben.werbowyj@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563B8B3E.8050004@users.sourceforge.net>
-In-Reply-To: <563B8B3E.8050004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 5 Nov 2015 17:55:25 +0100
-> 
-> The functions iput() and unregister_sysctl_table() test whether their
-> argument is NULL and then return immediately.
-> Thus the tests around their calls are not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  ipc/mqueue.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-> index 161a180..ade9dd8 100644
-> --- a/ipc/mqueue.c
-> +++ b/ipc/mqueue.c
-> @@ -885,8 +885,7 @@ SYSCALL_DEFINE1(mq_unlink, const char __user *, u_name)
->  
->  out_unlock:
->  	mutex_unlock(&d_inode(mnt->mnt_root)->i_mutex);
-> -	if (inode)
-> -		iput(inode);
-> +	iput(inode);
->  	mnt_drop_write(mnt);
->  out_name:
->  	putname(name);
-> @@ -1460,8 +1459,7 @@ static int __init init_mqueue_fs(void)
->  out_filesystem:
->  	unregister_filesystem(&mqueue_fs_type);
->  out_sysctl:
-> -	if (mq_sysctl_table)
-> -		unregister_sysctl_table(mq_sysctl_table);
-> +	unregister_sysctl_table(mq_sysctl_table);
->  	kmem_cache_destroy(mqueue_inode_cachep);
->  	return error;
->  }
-> 
+Assignment of variable count removed from within an if statment.
+This was done at two locations in the file.
 
-How do you think about to integrate this update suggestion
-into another source code repository?
+Signed-off-by: Ben Werbowyj <ben.werbowyj@gmail.com>
+---
+ drivers/w1/slaves/w1_therm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index efe9d215..83a5036 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -335,7 +335,8 @@ static inline int w1_DS18B20_precision(struct device *device, int val)
+ 
+ 			/* read values to only alter precision bits */
+ 			w1_write_8(dev, W1_READ_SCRATCHPAD);
+-			if ((count = w1_read_block(dev, rom, 9)) != 9)
++			count = w1_read_block(dev, rom, 9);
++			if (count != 9)
+ 				dev_warn(device, "w1_read_block() returned %u instead of 9.\n",	count);
+ 
+ 			crc = w1_calc_crc8(rom, 8);
+@@ -493,7 +494,8 @@ static ssize_t w1_slave_show(struct device *device,
+ 			if (!w1_reset_select_slave(sl)) {
+ 
+ 				w1_write_8(dev, W1_READ_SCRATCHPAD);
+-				if ((count = w1_read_block(dev, rom, 9)) != 9) {
++				count = w1_read_block(dev, rom, 9);
++				if (count != 9) {
+ 					dev_warn(device, "w1_read_block() "
+ 						"returned %u instead of 9.\n",
+ 						count);
+-- 
+2.1.4
+
