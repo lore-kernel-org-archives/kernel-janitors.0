@@ -1,39 +1,61 @@
-From: Jiri Pirko <jiri@resnulli.us>
-Date: Thu, 07 Jul 2016 08:39:22 +0000
-Subject: Re: [patch -next] mlxsw: spectrum_router: fix a use after free
-Message-Id: <20160707083922.GE2009@nanopsycho.orion>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 09:32:08 +0000
+Subject: [PATCH] drm/mgag200: Delete an unnecessary check before drm_gem_object_unreference_unlocked()
+Message-Id: <05b266e4-2bae-b70b-5a96-ae609496d173@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160707082027.GB16742@mwanda>
-In-Reply-To: <20160707082027.GB16742@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Thu, Jul 07, 2016 at 10:20:28AM CEST, dan.carpenter@oracle.com wrote:
->mlxsw_sp_fib_entry_destroy() frees "fib_entry" but we dereference it on
->the next line.
->
->Fixes: 61c503f976b5 ('mlxsw: spectrum_router: Implement fib4 add/del switchdev obj ops')
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
->index e084ea5..adb481a 100644
->--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
->+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
->@@ -1652,8 +1652,8 @@ static void mlxsw_sp_router_fib4_add_info_destroy(void const *data)
-> 	struct mlxsw_sp_fib_entry *fib_entry = info->fib_entry;
-> 	struct mlxsw_sp *mlxsw_sp = info->mlxsw_sp;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 11:20:27 +0200
 
+The drm_gem_object_unreference_unlocked() function tests whether
+its argument is NULL and then returns immediately.
+Thus the test around the call is not needed.
 
-To be consistent with the rest of the flows, I would rather do:
+This issue was detected by using the Coccinelle software.
 
-	struct mlxsw_sp_vr *vr = fib_entry->vr;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/mgag200/mgag200_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	mlxsw_sp_fib_entry_destroy(fib_entry);
- 	mlxsw_sp_vr_put(mlxsw_sp, vr);
+diff --git a/drivers/gpu/drm/mgag200/mgag200_main.c b/drivers/gpu/drm/mgag200/mgag200_main.c
+index 615cbb0..13798b3 100644
+--- a/drivers/gpu/drm/mgag200/mgag200_main.c
++++ b/drivers/gpu/drm/mgag200/mgag200_main.c
+@@ -17,8 +17,8 @@
+ static void mga_user_framebuffer_destroy(struct drm_framebuffer *fb)
+ {
+ 	struct mga_framebuffer *mga_fb = to_mga_framebuffer(fb);
+-	if (mga_fb->obj)
+-		drm_gem_object_unreference_unlocked(mga_fb->obj);
++
++	drm_gem_object_unreference_unlocked(mga_fb->obj);
+ 	drm_framebuffer_cleanup(fb);
+ 	kfree(fb);
+ }
+-- 
+2.9.2
 
-
-
-I can send the fix or I can leave it up to you. Thanks.
