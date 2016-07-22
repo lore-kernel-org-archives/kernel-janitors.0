@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jul 2016 19:21:36 +0000
-Subject: [PATCH] drm/vc4: Delete unnecessary checks before two function calls
-Message-Id: <fb33d930-6a5c-c501-6676-26bd486f1cb5@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 19:51:26 +0000
+Subject: [PATCH] block: Delete unnecessary checks before the function call "mempool_destroy"
+Message-Id: <01dfd682-7b3e-c847-3e67-d859db3341cc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,60 +19,80 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563CC27A.7020804@users.sourceforge.net>
-In-Reply-To: <563CC27A.7020804@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 15 Jul 2016 21:15:37 +0200
+Date: Fri, 22 Jul 2016 21:45:26 +0200
 
-The following functions test whether their argument is NULL
-and then return immediately.
-* drm_fbdev_cma_hotplug_event
-* drm_fbdev_cma_restore_mode
-
-Thus the tests around their calls are not needed.
+The mempool_destroy() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the calls is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/vc4/vc4_drv.c | 3 +--
- drivers/gpu/drm/vc4/vc4_kms.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ block/bio-integrity.c | 7 ++-----
+ block/bio.c           | 8 ++------
+ block/blk-core.c      | 3 +--
+ 3 files changed, 5 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 54d0471..ce74d86 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -47,8 +47,7 @@ static void vc4_lastclose(struct drm_device *dev)
- {
- 	struct vc4_dev *vc4 = to_vc4_dev(dev);
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index f70cc3b..7506a3e 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -499,11 +499,8 @@ EXPORT_SYMBOL(bioset_integrity_create);
  
--	if (vc4->fbdev)
--		drm_fbdev_cma_restore_mode(vc4->fbdev);
-+	drm_fbdev_cma_restore_mode(vc4->fbdev);
+ void bioset_integrity_free(struct bio_set *bs)
+ {
+-	if (bs->bio_integrity_pool)
+-		mempool_destroy(bs->bio_integrity_pool);
+-
+-	if (bs->bvec_integrity_pool)
+-		mempool_destroy(bs->bvec_integrity_pool);
++	mempool_destroy(bs->bio_integrity_pool);
++	mempool_destroy(bs->bvec_integrity_pool);
+ }
+ EXPORT_SYMBOL(bioset_integrity_free);
+ 
+diff --git a/block/bio.c b/block/bio.c
+index 54ee384..21a2222 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1843,12 +1843,8 @@ void bioset_free(struct bio_set *bs)
+ 	if (bs->rescue_workqueue)
+ 		destroy_workqueue(bs->rescue_workqueue);
+ 
+-	if (bs->bio_pool)
+-		mempool_destroy(bs->bio_pool);
+-
+-	if (bs->bvec_pool)
+-		mempool_destroy(bs->bvec_pool);
+-
++	mempool_destroy(bs->bio_pool);
++	mempool_destroy(bs->bvec_pool);
+ 	bioset_integrity_free(bs);
+ 	bio_put_slab(bs);
+ 
+diff --git a/block/blk-core.c b/block/blk-core.c
+index a687e9c..db8c6b4 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -636,8 +636,7 @@ int blk_init_rl(struct request_list *rl, struct request_queue *q,
+ 
+ void blk_exit_rl(struct request_list *rl)
+ {
+-	if (rl->rq_pool)
+-		mempool_destroy(rl->rq_pool);
++	mempool_destroy(rl->rq_pool);
  }
  
- static const struct file_operations vc4_drm_fops = {
-diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-index 9a217fd..4ac894d 100644
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -26,8 +26,7 @@ static void vc4_output_poll_changed(struct drm_device *dev)
- {
- 	struct vc4_dev *vc4 = to_vc4_dev(dev);
- 
--	if (vc4->fbdev)
--		drm_fbdev_cma_hotplug_event(vc4->fbdev);
-+	drm_fbdev_cma_hotplug_event(vc4->fbdev);
- }
- 
- struct vc4_commit {
+ struct request_queue *blk_alloc_queue(gfp_t gfp_mask)
 -- 
-2.9.1
+2.9.2
 
