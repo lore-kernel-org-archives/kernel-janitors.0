@@ -1,85 +1,37 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Date: Mon, 25 Jul 2016 17:29:33 +0000
-Subject: Re: [PATCH] PCI: xilinx: Fix return value in case of error
-Message-Id: <20160725172933.GB12484@localhost>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 07:36:53 +0000
+Subject: Re: staging: ks7010: Return directly after a failed kmalloc()
+Message-Id: <05ce8907-e899-cfea-7e42-a20a0113aa19@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1468491046-1427-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1468491046-1427-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+ <3aa380a9-afe6-6dc8-7533-6747afeb1bdc@users.sourceforge.net>
+ <alpine.DEB.2.10.1607172057500.3177@hadrien> <20160720154756.GC1688@katana>
+ <2071ae3b-9878-c798-6ead-897d1dd0d116@users.sourceforge.net>
+ <20160721062543.GA1664@katana>
+In-Reply-To: <20160721062543.GA1664@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 14, 2016 at 12:10:46PM +0200, Christophe JAILLET wrote:
-> In function 'xilinx_pcie_init_irq_domain', the pattern used to check and
-> return error is:
->=20
->    if (!var) {
->       dev_err(...);
->       return PTR_ERR(var);
->    }
->=20
-> So the returned value in case of error is always 0, which means 'success'.
-> Change it to return -ENODEV instead.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> I guess that further clarification might be needed for affected
+>> implementation details.
+> 
+> That's OK, too.
+> 
+> Acked-by: Wolfram Sang <wsa@the-dreams.de>
 
-Applied with S=F6ren's ack to pci/host-xilinx for v4.8, thanks!
+Does this acknowledgement include also the acceptance for
+the suggested change around calls of the functions "sdio_claim_host"
+and "sdio_release_host" within the implementation of the
+function "ks7010_upload_firmware"?
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/drivers/staging/ks7010/ks7010_sdio.c?id123042d0dbf7635f052efc2ae69fd9af624f1d#n771
 
-> ---
->  drivers/pci/host/pcie-xilinx.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilin=
-x.c
-> index 4703aa3..a30e016 100644
-> --- a/drivers/pci/host/pcie-xilinx.c
-> +++ b/drivers/pci/host/pcie-xilinx.c
-> @@ -550,7 +550,7 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_=
-pcie_port *port)
->  	pcie_intc_node =3D of_get_next_child(node, NULL);
->  	if (!pcie_intc_node) {
->  		dev_err(dev, "No PCIe Intc node found\n");
-> -		return PTR_ERR(pcie_intc_node);
-> +		return -ENODEV;
->  	}
-> =20
->  	port->irq_domain =3D irq_domain_add_linear(pcie_intc_node, 4,
-> @@ -558,7 +558,7 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_=
-pcie_port *port)
->  						 port);
->  	if (!port->irq_domain) {
->  		dev_err(dev, "Failed to get a INTx IRQ domain\n");
-> -		return PTR_ERR(port->irq_domain);
-> +		return -ENODEV;
->  	}
-> =20
->  	/* Setup MSI */
-> @@ -569,7 +569,7 @@ static int xilinx_pcie_init_irq_domain(struct xilinx_=
-pcie_port *port)
->  							 &xilinx_pcie_msi_chip);
->  		if (!port->irq_domain) {
->  			dev_err(dev, "Failed to get a MSI IRQ domain\n");
-> -			return PTR_ERR(port->irq_domain);
-> +			return -ENODEV;
->  		}
-> =20
->  		xilinx_pcie_enable_msi(port);
-> --=20
-> 2.7.4
->=20
->=20
-> ---
-> L'absence de virus dans ce courrier =E9lectronique a =E9t=E9 v=E9rifi=E9e=
- par le logiciel antivirus Avast.
-> https://www.avast.com/antivirus
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Markus
