@@ -1,37 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 18 Jul 2016 17:00:54 +0000
-Subject: Re: drm/ttm: Delete an unnecessary check before the function call "ttm_tt_destroy"
-Message-Id: <9da63d92-4ba2-37f5-9bc1-24c48f7b9bba@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 15:42:21 +0000
+Subject: [PATCH 0/4] GPU-DRM-Etnaviv: Fine-tuning for a few functions
+Message-Id: <00ca5af9-674a-73ce-b423-1ce41d426942@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
  <530CF8FF.8080600@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5649EC25.3040004@users.sourceforge.net>
- <ec9bf71e-8d0f-4bf3-b2ba-b0b1bd444b22@users.sourceforge.net>
- <20160718071208.GV17101@phenom.ffwll.local>
- <54338f58-830c-a8b4-4554-5d4459bcd321@users.sourceforge.net>
- <20160718144513.GA17101@phenom.ffwll.local>
-In-Reply-To: <20160718144513.GA17101@phenom.ffwll.local>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: dri-devel@lists.freedesktop.org, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-> When resending pls describe what changed (and why).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 17:34:32 +0200
 
-v3: A bit of reformatting with current software
+Further update suggestions were taken into account
+after a patch was applied from static source code analysis.
 
-v2: Broken patch where I managed to delete a "t" too much in a source code
-    line somehow.
+Markus Elfring (4):
+  Delete unnecessary checks before two function calls
+  Delete unnecessary if statement in __etnaviv_gem_new()
+  Rename jump labels
+  Optimize error handling in etnaviv_gem_new_userptr()
 
-v1: See also a similar update suggestion
-    https://lkml.org/lkml/2015/11/16/416
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c | 36 +++++++++++++----------------------
+ 1 file changed, 13 insertions(+), 23 deletions(-)
 
+-- 
+2.9.2
 
-Would you like to pick such a software adjustment up?
-
-Regards,
-Markus
