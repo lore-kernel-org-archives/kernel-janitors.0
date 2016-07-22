@@ -1,44 +1,69 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 15 Jul 2016 19:23:48 +0000
-Subject: [bug report] x86/sfi: Enable enumeration of SD devices
-Message-Id: <20160715192348.GA6521@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 15:51:22 +0000
+Subject: [PATCH 4/4] GPU-DRM-Etnaviv: Optimize error handling in etnaviv_gem_new_userptr()
+Message-Id: <4af34ce6-62c6-7966-1ae3-0877d5ac909d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <00ca5af9-674a-73ce-b423-1ce41d426942@users.sourceforge.net>
+In-Reply-To: <00ca5af9-674a-73ce-b423-1ce41d426942@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Andy Shevchenko,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 17:17:48 +0200
 
-The patch 05f310e26fe9: "x86/sfi: Enable enumeration of SD devices"
-from Jul 12, 2016, leads to the following static checker warning:
+Refactor this function implementation so that the
+drm_gem_object_unreference_unlocked() function will only be called once
+in case of a failure according to the Linux coding style recommendation
+for centralized exiting of functions.
 
-	arch/x86/platform/intel-mid/sfi.c:427 sfi_handle_sd_dev()
-	warn: 'pdata' isn't an ERR_PTR
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-arch/x86/platform/intel-mid/sfi.c
-   416          memset(&sd_info, 0, sizeof(sd_info));
-   417          strncpy(sd_info.name, pentry->name, SFI_NAME_LEN);
-   418          sd_info.bus_num = pentry->host_num;
-   419          sd_info.max_clk = pentry->max_freq;
-   420          sd_info.addr = pentry->addr;
-   421          pr_debug("SD bus = %d, name = %16.16s, max_clk = %d, addr = 0x%x\n",
-   422                   sd_info.bus_num,
-   423                   sd_info.name,
-   424                   sd_info.max_clk,
-   425                   sd_info.addr);
-   426          pdata = intel_mid_sfi_get_pdata(dev, &sd_info);
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This is a macro calling a function pointer.  None of the functions
-return error pointers.  Some return NULL on error but some return NULL
-on success.
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+index 0a5c00c..007577c 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+@@ -909,15 +909,12 @@ int etnaviv_gem_new_userptr(struct drm_device *dev, struct drm_file *file,
+ 	get_task_struct(current);
+ 
+ 	ret = etnaviv_gem_obj_add(dev, &etnaviv_obj->base);
+-	if (ret) {
+-		drm_gem_object_unreference_unlocked(&etnaviv_obj->base);
+-		return ret;
+-	}
++	if (ret)
++		goto unreference;
+ 
+ 	ret = drm_gem_handle_create(file, &etnaviv_obj->base, handle);
+-
++unreference:
+ 	/* drop reference from allocate - handle holds it now */
+ 	drm_gem_object_unreference_unlocked(&etnaviv_obj->base);
+-
+ 	return ret;
+ }
+-- 
+2.9.2
 
-   427          if (IS_ERR(pdata))
-   428                  return;
-   429  
-   430          /* Nothing we can do with this for now */
-   431          sd_info.platform_data = pdata;
-   432  
-
-regards,
-dan carpenter
