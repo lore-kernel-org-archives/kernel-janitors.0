@@ -1,49 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Jul 2016 20:11:00 +0000
-Subject: Re: staging: lustre: Optimize error handling in class_register_type()
-Message-Id: <9f6275cc-6e7a-e26a-9aa0-3fec17648132@users.sourceforge.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 22 Jul 2016 13:32:42 +0000
+Subject: [PATCH 1/2] crypto: ixp4xx - Fix a "simple if" coding style warning
+Message-Id: <20160722133242.21916-3-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
- <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
- <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
- <d1f69f4d-539b-e97d-fc0e-cb0a8754bd3a@users.sourceforge.net>
- <3F437188-382B-46C8-9C30-7DBAB17F62E3@intel.com>
-In-Reply-To: <3F437188-382B-46C8-9C30-7DBAB17F62E3@intel.com>
+References: <20160722133242.21916-1-lambert.quentin@gmail.com>
+In-Reply-To: <20160722133242.21916-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
-> NAK.
-> when you do this, the next statement below breaks:
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/crypto/ixp4xx_crypto.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I wonder about this conclusion.
-
-
->> 	type = kzalloc(sizeof(*type), GFP_NOFS);
->> 	if (!type)
->> -		return rc;
->> +		return -ENOMEM;
->>
->> 	type->typ_dt_ops = kzalloc(sizeof(*type->typ_dt_ops), GFP_NOFS);
->> 	if (!type->typ_dt_ops) {
-> …
->                 goto failed;
-> 
->  failed:
-> …
-> return rc;
-> 
-> So we are now returning an unitialized rc, did you get a gcc warning about it when compiling?
-
-I do not get such an impression if my corresponding update suggestion
-"[PATCH 04/12] staging: lustre: Split a condition check in class_register_type()"
-will be considered for this use case once more.
-https://lkml.org/lkml/2016/7/26/462
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1197227.html
-
-Regards,
-Markus
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -447,9 +447,8 @@ static int init_ixp_crypto(struct device
+ 
+ 	if (!npe_running(npe_c)) {
+ 		ret = npe_load_firmware(npe_c, npe_name(npe_c), dev);
+-		if (ret) {
++		if (ret)
+ 			return ret;
+-		}
+ 		if (npe_recv_message(npe_c, msg, "STATUS_MSG"))
+ 			goto npe_error;
+ 	} else {
