@@ -1,43 +1,64 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 12 Jul 2016 20:57:20 +0000
-Subject: Question about a return value in drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-Message-Id: <462b3372-aa68-6787-f6fe-3c884b8b8278@wanadoo.fr>
+From: Ben Werbowyj <ben.werbowyj@gmail.com>
+Date: Fri, 22 Jul 2016 04:33:33 +0000
+Subject: [PATCH 1/3] drivers: w1: style corrections for parenthesis and braces
+Message-Id: <1469162015-10497-2-git-send-email-ben.werbowyj@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+Inserted whitespace between command and open parenthesis
+at two locations. Removed new line between open brace and
+command/declaration at two locations.
 
-in file 'drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c', in 
-function 'mlxsw_sp_router_fib4_del', the code:
+Signed-off-by: Ben Werbowyj <ben.werbowyj@gmail.com>
+---
+ drivers/w1/slaves/w1_therm.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-     ...
-     vr = mlxsw_sp_vr_find(mlxsw_sp, fib4->tb_id, MLXSW_SP_L3_PROTO_IPV4);
-     if (!vr) {
-         dev_warn(mlxsw_sp->bus_info->dev, "Failed to find virtual 
-router for FIB4 entry being removed.\n");
-         return -ENOENT;
-     }
-     fib_entry = mlxsw_sp_fib_entry_lookup(vr->fib, &fib4->dst,
-                           sizeof(fib4->dst), fib4->dst_len);
-     if (!fib_entry) {
-         dev_warn(mlxsw_sp->bus_info->dev, "Failed to find FIB4 entry 
-being removed.\n");
-         return PTR_ERR(vr);     <---------------------------------------
-     }
-     ...
-
-looks spurious.
-
-is the 'return PTR_ERR(vr)' correct?
-vr should be a valid pointer at this point. It is used a few lines above 
-in 'vr->fib'.
-
-Best regards,
-
-CJ
-
-
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index 581a300..efe9d215 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -81,7 +81,7 @@ static int w1_therm_add_slave(struct w1_slave *sl)
+ static void w1_therm_remove_slave(struct w1_slave *sl)
+ {
+ 	int refcnt = atomic_sub_return(1, THERM_REFCNT(sl->family_data));
+-	while(refcnt) {
++	while (refcnt) {
+ 		msleep(1000);
+ 		refcnt = atomic_read(THERM_REFCNT(sl->family_data));
+ 	}
+@@ -151,8 +151,7 @@ static struct w1_family w1_therm_family_DS1825 = {
+ 	.fops = &w1_therm_fops,
+ };
+ 
+-struct w1_therm_family_converter
+-{
++struct w1_therm_family_converter {
+ 	u8			broken;
+ 	u16			reserved;
+ 	struct w1_family	*f;
+@@ -293,7 +292,7 @@ static inline int w1_DS18B20_precision(struct device *device, int val)
+ 	uint8_t precision_bits;
+ 	uint8_t mask = 0x60;
+ 
+-	if(val > 12 || val < 9) {
++	if (val > 12 || val < 9) {
+ 		pr_warn("Unsupported precision\n");
+ 		return -1;
+ 	}
+@@ -439,8 +438,7 @@ static ssize_t w1_slave_show(struct device *device,
+ 	if (ret != 0)
+ 		goto post_unlock;
+ 
+-	if(!sl->family_data)
+-	{
++	if (!sl->family_data) {
+ 		ret = -ENODEV;
+ 		goto pre_unlock;
+ 	}
+-- 
+2.1.4
 
