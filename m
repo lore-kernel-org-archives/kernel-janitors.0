@@ -1,23 +1,63 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 19 Jul 2016 18:31:02 +0000
-Subject: Re: [PATCH] drivers: atm: nicstar: Use the correct function to free some resources
-Message-Id: <20160719.113102.423760723208563634.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 15:48:25 +0000
+Subject: [PATCH 2/4] GPU-DRM-Etnaviv: Delete unnecessary if statement in __etnaviv_gem_new()
+Message-Id: <d1d2c154-0097-9630-f9ed-9ee55de03a24@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1468739004-3471-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1468739004-3471-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <00ca5af9-674a-73ce-b423-1ce41d426942@users.sourceforge.net>
+In-Reply-To: <00ca5af9-674a-73ce-b423-1ce41d426942@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: 3chas3@gmail.com, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@linux.ie>, Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 17 Jul 2016 09:03:24 +0200
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 22 Jul 2016 16:45:22 +0200
 
-> In 'get_scq', 'dma_alloc_coherent' has been used to allocate some
-> resources, so we need to free them using 'dma_free_coherent' instead
-> of 'kfree'.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Move a return statement into a block for successful function execution.
+Omit a duplicate check for the local variable "ret" then at the end.
 
-Applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+index 8eee742..851a8ba 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+@@ -661,13 +661,9 @@ static struct drm_gem_object *__etnaviv_gem_new(struct drm_device *dev,
+ 		 */
+ 		mapping = obj->filp->f_mapping;
+ 		mapping_set_gfp_mask(mapping, GFP_HIGHUSER);
++		return obj;
+ 	}
+ 
+-	if (ret)
+-		goto fail;
+-
+-	return obj;
+-
+ fail:
+ 	drm_gem_object_unreference_unlocked(obj);
+ 	return ERR_PTR(ret);
+-- 
+2.9.2
+
