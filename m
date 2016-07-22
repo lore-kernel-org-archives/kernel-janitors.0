@@ -1,48 +1,62 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 06 Jul 2016 06:13:14 +0000
-Subject: [PATCH 04/15 RESEND] staging: dgnc: remove redundant variable null check
-Message-Id: <20160706061314.GA18536@SEL-JYOUN-D1>
+From: Ben Werbowyj <ben.werbowyj@gmail.com>
+Date: Fri, 22 Jul 2016 04:33:35 +0000
+Subject: [PATCH 3/3] drivers: w1: style corrections-pointers-blanklines-comparisons
+Message-Id: <1469162015-10497-4-git-send-email-ben.werbowyj@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The unit struct(un_t) was not used in dgnc_tty_hangup().
+Correct pointer notations to include whitespace between
+variable type and "*" character. Inserted blank line
+after variable declatations at two locations.
+Rearranged comparison within an if statment to have the
+constant on the right-hand side.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Ben Werbowyj <ben.werbowyj@gmail.com>
 ---
-RESEND: This patch was not merged for a long time, if there is any reason
-why this patch could NOT be merged into staging tree, let me know.
-There were no comment for this patch.
-I cannot understand why this patch have to wait long time to merge.
-And I also sent emails to mailing-lists for reminding this patch...
-please let me know, what is the problem to merge this patch into staging tree.
+ drivers/w1/slaves/w1_therm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- drivers/staging/dgnc/dgnc_tty.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 1387041..b33b07c 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -1289,15 +1289,9 @@ static int dgnc_block_til_ready(struct tty_struct *tty,
-  */
- static void dgnc_tty_hangup(struct tty_struct *tty)
- {
--	struct un_t	*un;
--
- 	if (!tty || tty->magic != TTY_MAGIC)
- 		return;
+diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
+index 83a5036..82611f1 100644
+--- a/drivers/w1/slaves/w1_therm.c
++++ b/drivers/w1/slaves/w1_therm.c
+@@ -66,7 +66,7 @@ struct w1_therm_family_data {
  
--	un = tty->driver_data;
--	if (!un || un->magic != DGNC_UNIT_MAGIC)
--		return;
--
- 	/* flush the transmit queues */
- 	dgnc_tty_flush_buffer(tty);
+ /* return the address of the refcnt in the family data */
+ #define THERM_REFCNT(family_data) \
+-	(&((struct w1_therm_family_data*)family_data)->refcnt)
++	(&((struct w1_therm_family_data *)family_data)->refcnt)
+ 
+ static int w1_therm_add_slave(struct w1_slave *sl)
+ {
+@@ -81,6 +81,7 @@ static int w1_therm_add_slave(struct w1_slave *sl)
+ static void w1_therm_remove_slave(struct w1_slave *sl)
+ {
+ 	int refcnt = atomic_sub_return(1, THERM_REFCNT(sl->family_data));
++
+ 	while (refcnt) {
+ 		msleep(1000);
+ 		refcnt = atomic_read(THERM_REFCNT(sl->family_data));
+@@ -366,6 +367,7 @@ post_unlock:
+ static inline int w1_DS18B20_convert_temp(u8 rom[9])
+ {
+ 	s16 t = le16_to_cpup((__le16 *)rom);
++
+ 	return t*1000/16;
  }
+ 
+@@ -415,7 +417,7 @@ static ssize_t w1_slave_store(struct device *device,
+ 	for (i = 0; i < ARRAY_SIZE(w1_therm_families); ++i) {
+ 		if (w1_therm_families[i].f->fid = sl->family->fid) {
+ 			/* zero value indicates to write current configuration to eeprom */
+-			if (0 = val)
++			if (val = 0)
+ 				ret = w1_therm_families[i].eeprom(device);
+ 			else
+ 				ret = w1_therm_families[i].precision(device, val);
 -- 
-1.9.1
+2.1.4
 
