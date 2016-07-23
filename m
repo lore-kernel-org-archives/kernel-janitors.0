@@ -1,23 +1,23 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Thu, 21 Jul 2016 00:49:41 +0000
-Subject: Re: [patch] fnic: pci_dma_mapping_error() doesn't return an error code
-Message-Id: <yq1a8hberx6.fsf@sermon.lab.mkp.net>
+From: Ben Werbowyj <ben.werbowyj@gmail.com>
+Date: Sat, 23 Jul 2016 04:11:27 +0000
+Subject: [PATCH 0/2] drivers: w1: coding style corrections
+Message-Id: <1469247089-8093-1-git-send-email-ben.werbowyj@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160707082359.GD16742@mwanda>
-In-Reply-To: <20160707082359.GD16742@mwanda> (Dan Carpenter's message of "Thu,
-	7 Jul 2016 11:23:59 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Hiral Patel <hiralpat@cisco.com>, Maurizio Lombardi <mlombard@redhat.com>, Suma Ramars <sramars@cisco.com>, Brian Uchino <buchino@cisco.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+Coding style corrections for the Dallas 1-Wire driver.
+Changes made were reported by the checkpatch.pl script.
 
-Dan> pci_dma_mapping_error() returns true on error and false on success.
-Dan> Fixes: fd6ddfa4c1dd ('fnic: check pci_map_single() return value')
+Ben Werbowyj (2):
+  drivers: w1: insert whitespace around operators
+  drivers: w1: insert blank line after declaration
 
-Applied to 4.8/scsi-queue.
+ drivers/w1/slaves/w1_ds2406.c | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.1.4
+
