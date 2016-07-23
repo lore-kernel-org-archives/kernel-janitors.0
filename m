@@ -1,74 +1,78 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Fri, 22 Jul 2016 21:52:56 +0000
-Subject: Re: [PATCH] PM-wakeup: Delete unnecessary checks before two function calls
-Message-Id: <5786434.e97HVzPjpI@vostro.rjw.lan>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 15:14:00 +0000
+Subject: [PATCH] PM-wakeup: Delete unnecessary checks before three function calls
+Message-Id: <88d6d524-c093-4fcd-35ba-ff19f7b21fe2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <558FCAC1.1090605@users.sourceforge.net> <427a7f9d-d1c2-10be-9a23-30350ced6149@users.sourceforge.net>
-In-Reply-To: <427a7f9d-d1c2-10be-9a23-30350ced6149@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <5786434.e97HVzPjpI@vostro.rjw.lan>
+ <b243d2ba-a359-998d-1dd8-43ff444074a8@users.sourceforge.net>
+ <1722549.jyvuK0dZRm@vostro.rjw.lan>
+In-Reply-To: <1722549.jyvuK0dZRm@vostro.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Friday, July 22, 2016 10:35:27 PM SF Markus Elfring wrote:
-> Am 28.06.2015 um 12:21 schrieb SF Markus Elfring:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sun, 28 Jun 2015 12:14:43 +0200
-> > 
-> > The functions dev_pm_disarm_wake_irq() and wakeup_source_unregister() test
-> > whether their argument is NULL and then return immediately.
-> > Thus the test around the calls is not needed.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/base/power/wakeup.c | 10 +++-------
-> >  1 file changed, 3 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> > index 40f7160..3741bc2 100644
-> > --- a/drivers/base/power/wakeup.c
-> > +++ b/drivers/base/power/wakeup.c
-> > @@ -341,8 +341,7 @@ void device_wakeup_arm_wake_irqs(void)
-> >  
-> >  	rcu_read_lock();
-> >  	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
-> > -		if (ws->wakeirq)
-> > -			dev_pm_arm_wake_irq(ws->wakeirq);
-> > +		dev_pm_arm_wake_irq(ws->wakeirq);
-> >  	}
-> >  	rcu_read_unlock();
-> >  }
-> > @@ -358,8 +357,7 @@ void device_wakeup_disarm_wake_irqs(void)
-> >  
-> >  	rcu_read_lock();
-> >  	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
-> > -		if (ws->wakeirq)
-> > -			dev_pm_disarm_wake_irq(ws->wakeirq);
-> > +		dev_pm_disarm_wake_irq(ws->wakeirq);
-> >  	}
-> >  	rcu_read_unlock();
-> >  }
-> > @@ -396,9 +394,7 @@ int device_wakeup_disable(struct device *dev)
-> >  		return -EINVAL;
-> >  
-> >  	ws = device_wakeup_detach(dev);
-> > -	if (ws)
-> > -		wakeup_source_unregister(ws);
-> > -
-> > +	wakeup_source_unregister(ws);
-> >  	return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(device_wakeup_disable);
-> > 
-> 
-> How do you think about to integrate this update suggestion
-> into another source code repository?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 17:04:00 +0200
 
-I'm not really sure what you mean.
+The following functions test whether their argument is NULL
+and then return immediately.
+* dev_pm_arm_wake_irq
+* dev_pm_disarm_wake_irq
+* wakeup_source_unregister
 
-Thanks,
-Rafael
+Thus the test around the calls is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/base/power/wakeup.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 5fb7718..c35d3f5 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -334,10 +334,8 @@ void device_wakeup_arm_wake_irqs(void)
+ 	struct wakeup_source *ws;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
+-		if (ws->wakeirq)
+-			dev_pm_arm_wake_irq(ws->wakeirq);
+-	}
++	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
++		dev_pm_arm_wake_irq(ws->wakeirq);
+ 	rcu_read_unlock();
+ }
+ 
+@@ -351,10 +349,8 @@ void device_wakeup_disarm_wake_irqs(void)
+ 	struct wakeup_source *ws;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
+-		if (ws->wakeirq)
+-			dev_pm_disarm_wake_irq(ws->wakeirq);
+-	}
++	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
++		dev_pm_disarm_wake_irq(ws->wakeirq);
+ 	rcu_read_unlock();
+ }
+ 
+@@ -390,9 +386,7 @@ int device_wakeup_disable(struct device *dev)
+ 		return -EINVAL;
+ 
+ 	ws = device_wakeup_detach(dev);
+-	if (ws)
+-		wakeup_source_unregister(ws);
+-
++	wakeup_source_unregister(ws);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(device_wakeup_disable);
+-- 
+2.9.2
 
