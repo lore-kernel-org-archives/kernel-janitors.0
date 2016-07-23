@@ -1,50 +1,60 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Mon, 18 Jul 2016 23:33:04 +0000
-Subject: [PATCH 01/15] perf jit: Add missing curly braces
-Message-Id: <1468884798-14932-2-git-send-email-acme@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 17:37:14 +0000
+Subject: [PATCH] omapfb: panel-dsi-cm: Delete an unnecessary check before backlight_device_unregister()
+Message-Id: <1c53beae-e516-f208-935e-2a49416ce075@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1468884798-14932-1-git-send-email-acme@kernel.org>
-In-Reply-To: <1468884798-14932-1-git-send-email-acme@kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Stephane Eranian <eranian@google.com>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, Dave Airlie <airlied@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Rob Clark <robdclark@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 19:29:28 +0200
 
-It doesn't change the runtime behavior, but my static checker complains
-that curly braces were intended.
+The backlight_device_unregister() function tests whether its argument
+is NULL and then returns immediately.
+Thus the test around the call is not needed.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/20160715210712.GA19522@mwanda
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- tools/perf/jvmti/jvmti_agent.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
-index 3573f315f955..91bf333a366a 100644
---- a/tools/perf/jvmti/jvmti_agent.c
-+++ b/tools/perf/jvmti/jvmti_agent.c
-@@ -491,10 +491,11 @@ jvmti_write_debug_info(void *agent, uint64_t code, const char *file,
- 		if (sret != 1)
- 			goto error;
- 	}
--	if (padding_count)
-+	if (padding_count) {
- 		sret = fwrite_unlocked(pad_bytes, padding_count, 1, fp);
- 		if (sret != 1)
- 			goto error;
-+	}
- 
- 	funlockfile(fp);
+diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
+index b58012b..9d308db 100644
+--- a/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
++++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
+@@ -1283,8 +1283,7 @@ static int dsicm_probe(struct platform_device *pdev)
  	return 0;
+ 
+ err_sysfs_create:
+-	if (bldev != NULL)
+-		backlight_device_unregister(bldev);
++	backlight_device_unregister(bldev);
+ err_bl:
+ 	destroy_workqueue(ddata->workqueue);
+ err_reg:
 -- 
-2.7.4
+2.9.2
 
