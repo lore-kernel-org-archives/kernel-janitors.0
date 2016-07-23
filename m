@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 07:42:21 +0000
-Subject: [PATCH] IB/hfi1: Delete an unnecessary check before the function call "sc_return_credits"
-Message-Id: <cd93853f-c315-eceb-347d-3bbb5ac9fb82@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 17:09:10 +0000
+Subject: [PATCH] memory: omap-gpmc: Delete an unnecessary check before the function call "gpiochip_free_own_d
+Message-Id: <e3f6205c-39a0-b9f7-5290-be4c6cbb2f0b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,38 +20,40 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dennis Dalessandro <dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ira Weiny <ira.weiny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mike Marciniszyn <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+To: linux-omap@vger.kernel.org, Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 08:30:52 +0200
+Date: Sat, 23 Jul 2016 18:54:02 +0200
 
-The sc_return_credits() function tests whether its argument is NULL
+The gpiochip_free_own_desc() function tests whether its argument is NULL
 and then returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/hfi1/file_ops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memory/omap-gpmc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/file_ops.c b/drivers/infiniband/hw/hfi1/file_ops.c
-index c702a00..32c19fa 100644
---- a/drivers/infiniband/hw/hfi1/file_ops.c
-+++ b/drivers/infiniband/hw/hfi1/file_ops.c
-@@ -228,7 +228,7 @@ static long hfi1_file_ioctl(struct file *fp, unsigned int cmd,
- 				    sizeof(struct hfi1_base_info));
- 		break;
- 	case HFI1_IOCTL_CREDIT_UPD:
--		if (uctxt && uctxt->sc)
-+		if (uctxt)
- 			sc_return_credits(uctxt->sc);
- 		break;
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index 869c83f..e138875 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -2143,9 +2143,7 @@ err_child_fail:
+ 	ret = -ENODEV;
+ 
+ err_cs:
+-	if (waitpin_desc)
+-		gpiochip_free_own_desc(waitpin_desc);
+-
++	gpiochip_free_own_desc(waitpin_desc);
+ err:
+ 	gpmc_cs_free(cs);
  
 -- 
 2.9.2
