@@ -1,76 +1,59 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 06 Jul 2016 06:19:58 +0000
-Subject: [PATCH 15/15 RESEND] staging: dgnc: remove useless variable 'ch_intr_rx'
-Message-Id: <20160706061958.GA18765@SEL-JYOUN-D1>
+From: Ben Werbowyj <ben.werbowyj@gmail.com>
+Date: Sat, 23 Jul 2016 22:45:22 +0000
+Subject: [PATCH 2/2] drivers: w1: fix order of operands in comparisons
+Message-Id: <1469313922-3453-3-git-send-email-ben.werbowyj@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The 'ch_intr_rx' variable was used only for increasing.
-So the 'ch_intr_rx' variable is not useful for this driver.
+Coding style corrections as identified by checkpatch.pl script.
+Re-ordered comparisons to have constants on the right hand side.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Ben Werbowyj <ben.werbowyj@gmail.com>
 ---
-RESEND: This patch was not merged for a long time, if there is any reason
-why this patch could NOT be merged into staging tree, let me know.
-There were no comment for this patch.
-I cannot understand why this patch have to wait long time to merge.
-And I also sent emails to mailing-lists for reminding this patch...
-please let me know, what is the problem to merge this patch into staging tree.
+ drivers/w1/masters/omap_hdq.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- drivers/staging/dgnc/dgnc_cls.c    | 1 -
- drivers/staging/dgnc/dgnc_driver.h | 2 --
- drivers/staging/dgnc/dgnc_neo.c    | 2 --
- 3 files changed, 5 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
-index 35b59ca..4e1e0dc6 100644
---- a/drivers/staging/dgnc/dgnc_cls.c
-+++ b/drivers/staging/dgnc/dgnc_cls.c
-@@ -584,7 +584,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
- 		/* Receive Interrupt pending */
- 		if (isr & (UART_IIR_RDI | UART_IIR_RDI_TIMEOUT)) {
- 			/* Read data from uart -> queue */
--			ch->ch_intr_rx++;
- 			cls_copy_data_from_uart_to_queue(ch);
- 			dgnc_check_queue_flow_control(ch);
- 		}
-diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
-index 8bdf556..3092abe 100644
---- a/drivers/staging/dgnc/dgnc_driver.h
-+++ b/drivers/staging/dgnc/dgnc_driver.h
-@@ -377,8 +377,6 @@ struct channel_t {
- 	ulong		ch_xon_sends;	/* Count of xons transmitted */
- 	ulong		ch_xoff_sends;	/* Count of xoffs transmitted */
+diff --git a/drivers/w1/masters/omap_hdq.c b/drivers/w1/masters/omap_hdq.c
+index 7d0987d..d95ca8d 100644
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -438,14 +438,14 @@ static int omap_hdq_get(struct hdq_data *hdq_data)
+ 		goto rtn;
+ 	}
  
--	ulong		ch_intr_rx;	/* Count of interrupts */
--
- 	/* /proc/<board>/<channel> entries */
- 	struct proc_dir_entry *proc_entry_pointer;
- 	struct dgnc_proc_entry *dgnc_channel_table;
-diff --git a/drivers/staging/dgnc/dgnc_neo.c b/drivers/staging/dgnc/dgnc_neo.c
-index 574a227..5ef5b3e 100644
---- a/drivers/staging/dgnc/dgnc_neo.c
-+++ b/drivers/staging/dgnc/dgnc_neo.c
-@@ -399,7 +399,6 @@ static inline void neo_parse_isr(struct dgnc_board *brd, uint port)
+-	if (OMAP_HDQ_MAX_USER = hdq_data->hdq_usecount) {
++	if (hdq_data->hdq_usecount = OMAP_HDQ_MAX_USER) {
+ 		dev_dbg(hdq_data->dev, "attempt to exceed the max use count");
+ 		ret = -EINVAL;
+ 		goto out;
+ 	} else {
+ 		hdq_data->hdq_usecount++;
+ 		try_module_get(THIS_MODULE);
+-		if (1 = hdq_data->hdq_usecount) {
++		if (hdq_data->hdq_usecount = 1) {
  
- 		if (isr & (UART_17158_IIR_RDI_TIMEOUT | UART_IIR_RDI)) {
- 			/* Read data from uart -> queue */
--			ch->ch_intr_rx++;
- 			neo_copy_data_from_uart_to_queue(ch);
+ 			pm_runtime_get_sync(hdq_data->dev);
  
- 			/* Call our tty layer to enforce queue flow control if needed. */
-@@ -512,7 +511,6 @@ static inline void neo_parse_lsr(struct dgnc_board *brd, uint port)
- 	ch->ch_cached_lsr |= linestatus;
+@@ -486,14 +486,14 @@ static int omap_hdq_put(struct hdq_data *hdq_data)
  
- 	if (ch->ch_cached_lsr & UART_LSR_DR) {
--		ch->ch_intr_rx++;
- 		/* Read data from uart -> queue */
- 		neo_copy_data_from_uart_to_queue(ch);
- 		spin_lock_irqsave(&ch->ch_lock, flags);
+ 	hdq_reg_out(hdq_data, OMAP_HDQ_SYSCONFIG,
+ 		    OMAP_HDQ_SYSCONFIG_AUTOIDLE);
+-	if (0 = hdq_data->hdq_usecount) {
++	if (hdq_data->hdq_usecount = 0) {
+ 		dev_dbg(hdq_data->dev,
+ 			"attempt to decrement use count when it is zero");
+ 		ret = -EINVAL;
+ 	} else {
+ 		hdq_data->hdq_usecount--;
+ 		module_put(THIS_MODULE);
+-		if (0 = hdq_data->hdq_usecount)
++		if (hdq_data->hdq_usecount = 0)
+ 			pm_runtime_put_sync(hdq_data->dev);
+ 	}
+ 	mutex_unlock(&hdq_data->hdq_mutex);
 -- 
-1.9.1
+2.1.4
 
