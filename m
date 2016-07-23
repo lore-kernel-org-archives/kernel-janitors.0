@@ -1,43 +1,83 @@
-From: Garlic Tseng <garlic.tseng@mediatek.com>
-Date: Thu, 07 Jul 2016 08:26:54 +0000
-Subject: Re: [patch] ASoC: mediatek: mt2701: fix some error handling in probe
-Message-Id: <1467880014.11610.1.camel@mtksdaap41>
+From: Ben Werbowyj <ben.werbowyj@gmail.com>
+Date: Sat, 23 Jul 2016 22:45:21 +0000
+Subject: [PATCH 1/2] driver: w1: fix quoted strings split across lines
+Message-Id: <1469313922-3453-2-git-send-email-ben.werbowyj@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160707081404.GB16645@mwanda>
-In-Reply-To: <20160707081404.GB16645@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 2016-07-07 at 11:14 +0300, Dan Carpenter wrote:
-> The check for if the "afe" allocation failed was too late and there
-> wasn't a check for "afe->platform_priv".
-> 
-> Fixes: 43a6a7e71063 ('ASoC: mediatek: add mt2701 platform driver implementation.')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-> index c865ba1..fc5a87d 100644
-> --- a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-> +++ b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-> @@ -1350,11 +1350,13 @@ static int mt2701_afe_pcm_dev_probe(struct platform_device *pdev)
->  
->  	ret = 0;
->  	afe = devm_kzalloc(&pdev->dev, sizeof(*afe), GFP_KERNEL);
-> +	if (!afe)
-> +		return -ENOMEM;
->  	afe->platform_priv = devm_kzalloc(&pdev->dev, sizeof(*afe_priv),
->  					  GFP_KERNEL);
-> -	afe_priv = afe->platform_priv;
-> -	if (!afe)
-> +	if (!afe->platform_priv)
->  		return -ENOMEM;
-> +	afe_priv = afe->platform_priv;
->  
->  	afe->dev = &pdev->dev;
->  	dev = afe->dev;
+Coding style corrections as indentified by checkpatch.pl scripts.
+Quoted strings split across line.
 
-Acked-by: Garlic Tseng <garlic.tseng@mediatek.com>
+Signed-off-by: Ben Werbowyj <ben.werbowyj@gmail.com>
+---
+ drivers/w1/masters/omap_hdq.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/w1/masters/omap_hdq.c b/drivers/w1/masters/omap_hdq.c
+index a2eec97..7d0987d 100644
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -203,8 +203,9 @@ static int hdq_write_byte(struct hdq_data *hdq_data, u8 val, u8 *status)
+ 	*status = hdq_data->hdq_irqstatus;
+ 	/* check irqstatus */
+ 	if (!(*status & OMAP_HDQ_INT_STATUS_TXCOMPLETE)) {
+-		dev_dbg(hdq_data->dev, "timeout waiting for"
+-			" TXCOMPLETE/RXCOMPLETE, %x", *status);
++		dev_dbg(hdq_data->dev,
++			"timeout waiting for TXCOMPLETE/RXCOMPLETE, %x",
++			*status);
+ 		ret = -ETIMEDOUT;
+ 		goto out;
+ 	}
+@@ -214,8 +215,9 @@ static int hdq_write_byte(struct hdq_data *hdq_data, u8 val, u8 *status)
+ 			OMAP_HDQ_CTRL_STATUS_GO,
+ 			OMAP_HDQ_FLAG_CLEAR, &tmp_status);
+ 	if (ret) {
+-		dev_dbg(hdq_data->dev, "timeout waiting GO bit"
+-			" return to zero, %x", tmp_status);
++		dev_dbg(hdq_data->dev,
++			"timeout waiting GO bit return to zero, %x",
++			tmp_status);
+ 	}
+ 
+ out:
+@@ -365,8 +367,9 @@ static int omap_hdq_break(struct hdq_data *hdq_data)
+ 			OMAP_HDQ_CTRL_STATUS_GO, OMAP_HDQ_FLAG_CLEAR,
+ 			&tmp_status);
+ 	if (ret)
+-		dev_dbg(hdq_data->dev, "timeout waiting INIT&GO bits"
+-			" return to zero, %x", tmp_status);
++		dev_dbg(hdq_data->dev,
++			"timeout waiting INIT&GO bits return to zero, %x",
++			tmp_status);
+ 
+ out:
+ 	mutex_unlock(&hdq_data->hdq_mutex);
+@@ -409,8 +412,8 @@ static int hdq_read_byte(struct hdq_data *hdq_data, u8 *val)
+ 		status = hdq_data->hdq_irqstatus;
+ 		/* check irqstatus */
+ 		if (!(status & OMAP_HDQ_INT_STATUS_RXCOMPLETE)) {
+-			dev_dbg(hdq_data->dev, "timeout waiting for"
+-				" RXCOMPLETE, %x", status);
++			dev_dbg(hdq_data->dev,
++				"timeout waiting for RXCOMPLETE, %x", status);
+ 			ret = -ETIMEDOUT;
+ 			goto out;
+ 		}
+@@ -484,8 +487,8 @@ static int omap_hdq_put(struct hdq_data *hdq_data)
+ 	hdq_reg_out(hdq_data, OMAP_HDQ_SYSCONFIG,
+ 		    OMAP_HDQ_SYSCONFIG_AUTOIDLE);
+ 	if (0 = hdq_data->hdq_usecount) {
+-		dev_dbg(hdq_data->dev, "attempt to decrement use count"
+-			" when it is zero");
++		dev_dbg(hdq_data->dev,
++			"attempt to decrement use count when it is zero");
+ 		ret = -EINVAL;
+ 	} else {
+ 		hdq_data->hdq_usecount--;
+-- 
+2.1.4
 
