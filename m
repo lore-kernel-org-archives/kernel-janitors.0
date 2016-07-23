@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Jul 2016 13:20:59 +0000
-Subject: [PATCH] cxl: Delete an unnecessary check before the function call "of_node_put"
-Message-Id: <33fb6b04-9986-35ee-f4e2-0ebeb79c5e23@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 13:02:23 +0000
+Subject: [PATCH] power: generic-adc-battery: Delete unnecessary checks before the function call "iio_channel_
+Message-Id: <be06426b-74cf-832a-4ef3-2e37cf3013e9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,37 +24,53 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Christophe Lombard <clombard@linux.vnet.ibm.com>, Ian Munsie <imunsie@au1.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Michael Ellerman <mpe@ellerman.id.au>
+To: linux-pm@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Sebastian Reichel <sre@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Jul 2016 15:10:32 +0200
+Date: Sat, 23 Jul 2016 14:50:47 +0200
 
-The of_node_put() function tests whether its argument is NULL
-and then returns immediately.
-Thus the test around the call is not needed.
+The iio_channel_release() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the calls is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/cxl/of.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/power/generic-adc-battery.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
-index edc4583..333256a 100644
---- a/drivers/misc/cxl/of.c
-+++ b/drivers/misc/cxl/of.c
-@@ -490,8 +490,7 @@ int cxl_of_probe(struct platform_device *pdev)
- 		adapter->slices = 0;
+diff --git a/drivers/power/generic-adc-battery.c b/drivers/power/generic-adc-battery.c
+index edb36bf..8f7f24c 100644
+--- a/drivers/power/generic-adc-battery.c
++++ b/drivers/power/generic-adc-battery.c
+@@ -350,10 +350,8 @@ err_gpio:
+ gpio_req_fail:
+ 	power_supply_unregister(adc_bat->psy);
+ err_reg_fail:
+-	for (chan = 0; chan < ARRAY_SIZE(gab_chan_name); chan++) {
+-		if (adc_bat->channel[chan])
+-			iio_channel_release(adc_bat->channel[chan]);
+-	}
++	for (chan = 0; chan < ARRAY_SIZE(gab_chan_name); chan++)
++		iio_channel_release(adc_bat->channel[chan]);
+ second_mem_fail:
+ 	kfree(psy_desc->properties);
+ first_mem_fail:
+@@ -373,11 +371,8 @@ static int gab_remove(struct platform_device *pdev)
+ 		gpio_free(pdata->gpio_charge_finished);
  	}
  
--	if (afu_np)
--		of_node_put(afu_np);
-+	of_node_put(afu_np);
+-	for (chan = 0; chan < ARRAY_SIZE(gab_chan_name); chan++) {
+-		if (adc_bat->channel[chan])
+-			iio_channel_release(adc_bat->channel[chan]);
+-	}
+-
++	for (chan = 0; chan < ARRAY_SIZE(gab_chan_name); chan++)
++		iio_channel_release(adc_bat->channel[chan]);
+ 	kfree(adc_bat->psy_desc.properties);
+ 	cancel_delayed_work(&adc_bat->bat_work);
  	return 0;
- }
- 
 -- 
 2.9.2
 
