@@ -1,37 +1,90 @@
-From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
-Date: Mon, 18 Jul 2016 05:52:42 +0000
-Subject: Re: [patch] phy: phy-brcm-sata: fix a loop timeout
-Message-Id: <CAL2FKYmZEBu7kuN_zbDBDRJxajPNv4JRt6CgD7XfG2oDrGBa9w@mail.gmail.com>
+From: Ben Werbowyj <ben.werbowyj@gmail.com>
+Date: Sat, 23 Jul 2016 04:11:28 +0000
+Subject: [PATCH 1/2] drivers: w1: insert whitespace around operators
+Message-Id: <1469247089-8093-2-git-send-email-ben.werbowyj@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 21, 2016 at 2:07 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Since this loop is a post op then it means we end with "try = -1" but
-> afterward we test for if it's zero.  Fix this by changing to a pre-op so
-> we end on zero.
+Coding style correction as identified by the checkpatch.pl script.
+White space inserted before and after operators at a number of
+locations
 
-Thanks Dan. That should be pre-op.
+Signed-off-by: Ben Werbowyj <ben.werbowyj@gmail.com>
+---
+ drivers/w1/slaves/w1_ds2406.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-Thnaks
-Dhananjay
->
-> Fixes: 024812889ad1 ('phy: Add SATA3 PHY support for Broadcom NSP SoC')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/phy/phy-brcm-sata.c b/drivers/phy/phy-brcm-sata.c
-> index 18d6626..c86456f 100644
-> --- a/drivers/phy/phy-brcm-sata.c
-> +++ b/drivers/phy/phy-brcm-sata.c
-> @@ -329,7 +329,7 @@ static int brcm_nsp_sata_init(struct brcm_sata_port *port)
->
->         /* Wait for pll_seq_done bit */
->         try = 50;
-> -       while (try--) {
-> +       while (--try) {
->                 val = brcm_sata_phy_rd(base, BLOCK0_REG_BANK,
->                                         BLOCK0_XGXSSTATUS);
->                 if (val & BLOCK0_XGXSSTATUS_PLL_LOCK)
+diff --git a/drivers/w1/slaves/w1_ds2406.c b/drivers/w1/slaves/w1_ds2406.c
+index d488961..d37a6e6 100644
+--- a/drivers/w1/slaves/w1_ds2406.c
++++ b/drivers/w1/slaves/w1_ds2406.c
+@@ -33,11 +33,11 @@ static ssize_t w1_f12_read_state(
+ 	struct bin_attribute *bin_attr,
+ 	char *buf, loff_t off, size_t count)
+ {
+-	u8 w1_buf[6]={W1_F12_FUNC_READ_STATUS, 7, 0, 0, 0, 0};
++	u8 w1_buf[6] = {W1_F12_FUNC_READ_STATUS, 7, 0, 0, 0, 0};
+ 	struct w1_slave *sl = kobj_to_w1_slave(kobj);
+-	u16 crc=0;
++	u16 crc = 0;
+ 	int i;
+-	ssize_t rtnval=1;
++	ssize_t rtnval = 1;
+ 
+ 	if (off != 0)
+ 		return 0;
+@@ -53,12 +53,12 @@ static ssize_t w1_f12_read_state(
+ 
+ 	w1_write_block(sl->master, w1_buf, 3);
+ 	w1_read_block(sl->master, w1_buf+3, 3);
+-	for (i=0; i<6; i++)
+-		crc=crc16_byte(crc, w1_buf[i]);
+-	if (crc=0xb001) /* good read? */
+-		*buf=((w1_buf[3]>>5)&3)|0x30;
++	for (i = 0; i < 6; i++)
++		crc = crc16_byte(crc, w1_buf[i]);
++	if (crc = 0xb001) /* good read? */
++		*buf = ((w1_buf[3]>>5)&3)|0x30;
+ 	else
+-		rtnval=-EIO;
++		rtnval = -EIO;
+ 
+ 	mutex_unlock(&sl->master->bus_mutex);
+ 
+@@ -71,10 +71,10 @@ static ssize_t w1_f12_write_output(
+ 	char *buf, loff_t off, size_t count)
+ {
+ 	struct w1_slave *sl = kobj_to_w1_slave(kobj);
+-	u8 w1_buf[6]={W1_F12_FUNC_WRITE_STATUS, 7, 0, 0, 0, 0};
+-	u16 crc=0;
++	u8 w1_buf[6] = {W1_F12_FUNC_WRITE_STATUS, 7, 0, 0, 0, 0};
++	u16 crc = 0;
+ 	int i;
+-	ssize_t rtnval=1;
++	ssize_t rtnval = 1;
+ 
+ 	if (count != 1 || off != 0)
+ 		return -EFAULT;
+@@ -89,12 +89,12 @@ static ssize_t w1_f12_write_output(
+ 	w1_buf[3] = (((*buf)&3)<<5)|0x1F;
+ 	w1_write_block(sl->master, w1_buf, 4);
+ 	w1_read_block(sl->master, w1_buf+4, 2);
+-	for (i=0; i<6; i++)
+-		crc=crc16_byte(crc, w1_buf[i]);
+-	if (crc=0xb001) /* good read? */
++	for (i = 0; i < 6; i++)
++		crc = crc16_byte(crc, w1_buf[i]);
++	if (crc = 0xb001) /* good read? */
+ 		w1_write_8(sl->master, 0xFF);
+ 	else
+-		rtnval=-EIO;
++		rtnval = -EIO;
+ 
+ 	mutex_unlock(&sl->master->bus_mutex);
+ 	return rtnval;
+-- 
+2.1.4
+
