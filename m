@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 17:37:14 +0000
-Subject: [PATCH] omapfb: panel-dsi-cm: Delete an unnecessary check before backlight_device_unregister()
-Message-Id: <1c53beae-e516-f208-935e-2a49416ce075@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 11:00:22 +0000
+Subject: [PATCH 3/3] IB/mthca: Delete unnecessary variable initialisations in mthca_reset()
+Message-Id: <3700e687-f8e5-edd9-2f93-54839673bb14@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,42 +19,46 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <546CE09B.9090101@users.sourceforge.net>
+ <55b7a06e-6bb4-f1bb-e4dd-7812648ecf34@users.sourceforge.net>
+In-Reply-To: <55b7a06e-6bb4-f1bb-e4dd-7812648ecf34@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, Dave Airlie <airlied@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Rob Clark <robdclark@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 19:29:28 +0200
+Date: Sat, 23 Jul 2016 11:54:06 +0200
 
-The backlight_device_unregister() function tests whether its argument
-is NULL and then returns immediately.
-Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
+Three local variables will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/infiniband/hw/mthca/mthca_reset.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
-index b58012b..9d308db 100644
---- a/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
-+++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
-@@ -1283,8 +1283,7 @@ static int dsicm_probe(struct platform_device *pdev)
- 	return 0;
+diff --git a/drivers/infiniband/hw/mthca/mthca_reset.c b/drivers/infiniband/hw/mthca/mthca_reset.c
+index 6727af2..0a458c6 100644
+--- a/drivers/infiniband/hw/mthca/mthca_reset.c
++++ b/drivers/infiniband/hw/mthca/mthca_reset.c
+@@ -42,12 +42,12 @@ int mthca_reset(struct mthca_dev *mdev)
+ {
+ 	int i;
+ 	int err = 0;
+-	u32 *hca_header    = NULL;
++	u32 *hca_header;
+ 	u32 *bridge_header = NULL;
+ 	struct pci_dev *bridge = NULL;
+ 	int bridge_pcix_cap = 0;
+-	int hca_pcie_cap = 0;
+-	int hca_pcix_cap = 0;
++	int hca_pcie_cap;
++	int hca_pcix_cap;
  
- err_sysfs_create:
--	if (bldev != NULL)
--		backlight_device_unregister(bldev);
-+	backlight_device_unregister(bldev);
- err_bl:
- 	destroy_workqueue(ddata->workqueue);
- err_reg:
+ 	u16 devctl;
+ 	u16 linkctl;
 -- 
 2.9.2
 
