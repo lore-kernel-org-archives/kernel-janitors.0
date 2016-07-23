@@ -1,31 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 15 Jul 2016 21:12:15 +0000
-Subject: [patch] [IA64] fix SN_DMA_ADDRTYPE() condition
-Message-Id: <20160715211215.GD19522@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 10:55:19 +0000
+Subject: [PATCH 0/3] IB/mthca: Fine-tuning for mthca_reset()
+Message-Id: <55b7a06e-6bb4-f1bb-e4dd-7812648ecf34@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <546CE09B.9090101@users.sourceforge.net>
+In-Reply-To: <546CE09B.9090101-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tony Luck <tony.luck@intel.com>, Mark Maule <maule@sgi.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-The parentheses are in the wrong place so it causes a static checker
-warning.  It means we don't mask away the high bits of dma_flags before
-doing the comparison.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 12:50:12 +0200
 
-Fixes: 83821d3f558d ('[PATCH] PCI: altix: msi support')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Further update suggestions were taken into account
+after a patch was applied from static source code analysis.
 
-diff --git a/arch/ia64/sn/pci/pcibr/pcibr_dma.c b/arch/ia64/sn/pci/pcibr/pcibr_dma.c
-index 1e863b2..71c9bf3 100644
---- a/arch/ia64/sn/pci/pcibr/pcibr_dma.c
-+++ b/arch/ia64/sn/pci/pcibr/pcibr_dma.c
-@@ -82,7 +82,7 @@ pcibr_dmamap_ate32(struct pcidev_info *info,
- 	if (IS_PCIX(pcibus_info))
- 		ate_flags &= ~(PCI32_ATE_PREF);
- 
--	if (SN_DMA_ADDRTYPE(dma_flags = SN_DMA_ADDR_PHYS))
-+	if (SN_DMA_ADDRTYPE(dma_flags) = SN_DMA_ADDR_PHYS)
- 		xio_addr = IS_PIC_SOFT(pcibus_info) ? PHYS_TO_DMA(paddr) :
- 	    					      PHYS_TO_TIODMA(paddr);
- 	else
+Markus Elfring (3):
+  Delete an unnecessary check before the function call "pci_dev_put"
+  Less function calls after error detection
+  Delete unnecessary variable initialisations
+
+ drivers/infiniband/hw/mthca/mthca_reset.c | 48 +++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 25 deletions(-)
+
+-- 
+2.9.2
+
