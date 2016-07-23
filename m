@@ -1,43 +1,60 @@
-From: Stephane Eranian <eranian@google.com>
-Date: Sat, 16 Jul 2016 16:30:51 +0000
-Subject: Re: [patch 1/2] perf jit: add missing curly braces
-Message-Id: <CABPqkBSpw7yPgAviUd5EXPiEPQ6g2PymHX6ABXmMf2TwHYz4ww@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 10:58:08 +0000
+Subject: [PATCH 1/3] IB/mthca: Delete an unnecessary check before the function call "pci_dev_put"
+Message-Id: <989c5ce4-4e66-04f1-6c4e-f371337852d7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160715210712.GA19522@mwanda>
-In-Reply-To: <20160715210712.GA19522@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <546CE09B.9090101@users.sourceforge.net>
+ <55b7a06e-6bb4-f1bb-e4dd-7812648ecf34@users.sourceforge.net>
+In-Reply-To: <55b7a06e-6bb4-f1bb-e4dd-7812648ecf34@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Adrian Hunter <adrian.hunter@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Jul 15, 2016 at 2:07 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> It doesn't change the runtime behavior, but my static checker complains
-> that curly braces were intended.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-This was clearly a bug. It did not fire when padding=0 because you
-never come out of the loop with sret != 0.
-If padding=0, then you execute the fwrite() and then the sret test is
-just after, so this was working but I agree
-this was not the intended code flow.
-Thanks for tracking this down.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 10:05:12 +0200
 
-> diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
-> index 3573f31..91bf333 100644
-> --- a/tools/perf/jvmti/jvmti_agent.c
-> +++ b/tools/perf/jvmti/jvmti_agent.c
-> @@ -491,10 +491,11 @@ jvmti_write_debug_info(void *agent, uint64_t code, const char *file,
->                 if (sret != 1)
->                         goto error;
->         }
-> -       if (padding_count)
-> +       if (padding_count) {
->                 sret = fwrite_unlocked(pad_bytes, padding_count, 1, fp);
->                 if (sret != 1)
->                         goto error;
-> +       }
->
->         funlockfile(fp);
->         return 0;
+The pci_dev_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/infiniband/hw/mthca/mthca_reset.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mthca/mthca_reset.c b/drivers/infiniband/hw/mthca/mthca_reset.c
+index 74c6a94..c521654 100644
+--- a/drivers/infiniband/hw/mthca/mthca_reset.c
++++ b/drivers/infiniband/hw/mthca/mthca_reset.c
+@@ -279,8 +279,7 @@ good:
+ 	}
+ 
+ out:
+-	if (bridge)
+-		pci_dev_put(bridge);
++	pci_dev_put(bridge);
+ 	kfree(bridge_header);
+ 	kfree(hca_header);
+ 
+-- 
+2.9.2
+
