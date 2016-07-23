@@ -1,31 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 15 Jul 2016 05:15:11 +0000
-Subject: Re: [PATCH] mlxsw: spectrum_router: Return -ENOENT in case of error
-Message-Id: <20160714.221511.31164307170492201.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Jul 2016 05:32:22 +0000
+Subject: Re: PM-wakeup: Delete unnecessary checks before two function calls
+Message-Id: <b243d2ba-a359-998d-1dd8-43ff444074a8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1468477125-3153-1-git-send-email-christophe.jaillet@wanadoo.fr>
-	<20160714062819.GB2228@nanopsycho.orion>
-In-Reply-To: <20160714062819.GB2228@nanopsycho.orion>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <558FCAC1.1090605@users.sourceforge.net>
+ <427a7f9d-d1c2-10be-9a23-30350ced6149@users.sourceforge.net>
+ <5786434.e97HVzPjpI@vostro.rjw.lan>
+In-Reply-To: <5786434.e97HVzPjpI@vostro.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jiri@resnulli.us
-Cc: christophe.jaillet@wanadoo.fr, jiri@mellanox.com, idosch@mellanox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Jiri Pirko <jiri@resnulli.us>
-Date: Thu, 14 Jul 2016 08:28:19 +0200
+>> How do you think about to integrate this update suggestion
+>> into another source code repository?
+> 
+> I'm not really sure what you mean.
 
-> Thu, Jul 14, 2016 at 08:18:45AM CEST, christophe.jaillet@wanadoo.fr wrote:
->>'vr' should be a valid pointer here, so returning 'PTR_ERR(vr)' is wrong.
->>Return an explicit error code (-ENOENT) instead.
->>
-> 
-> This is fo net-next.
-> 
-> Fixes: 61c503f976 ("mlxsw: spectrum_router: Implement fib4 add/del switchdev obj ops")
-> 
->>Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Acked-by: Jiri Pirko <jiri@mellanox.com>
+Do you find the suggested source code change acceptable?
 
-Applied, thanks.
+http://article.gmane.org/gmane.linux.power-management.general/61766
+https://lkml.org/lkml/2015/6/28/21
+
+
+Who would dare to commit it?
+
+Regards,
+Markus
