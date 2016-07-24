@@ -1,8 +1,10 @@
-From: "Capt. Kate Carr" <jpt43p@fdhcenter.com>
-Date: Sat, 16 Jul 2016 15:04:25 +0000
+From: "Capt. Kate Carr" <fpt44p@cptleecarr.org>
+Date: Sun, 24 Jul 2016 14:33:53 +0000
 Subject: Message From US ARMY Medical Team
-Message-Id: <MEXPR01MB04875AEBF17837C627A22F89CD340@MEXPR01MB0487.ausprd01.prod.outlook.com>
+Message-Id: <BN3PR11MB0306471C2D1CD91BF61164C1B50C0@BN3PR11MB0306.namprd11.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <MEXPR01MB04875AEBF17837C627A22F89CD340@MEXPR01MB0487.ausprd01.prod.outlook.com>
+In-Reply-To: <MEXPR01MB04875AEBF17837C627A22F89CD340@MEXPR01MB0487.ausprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
