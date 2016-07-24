@@ -1,57 +1,83 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 01 Jul 2016 16:23:19 +0000
-Subject: Re: mfd: dm355evm_msp: Refactoring for add_child()
-Message-Id: <1467390199.21157.5.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Jul 2016 20:23:22 +0000
+Subject: [PATCH 3/3] staging: wilc1000: Reduce scope for a few variables in mac_ioctl()
+Message-Id: <702302e0-0056-9fff-7bb4-f54d4a0b0afc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-	 <5682D228.7070902@users.sourceforge.net> <20160111082922.GB14104@x1>
-	 <05b7db2a-437a-60ac-d289-71d2150e7f5f@users.sourceforge.net>
-	 <de3598c4-f85a-6807-303a-55ee0ac707f2@users.sourceforge.net>
-	 <20160608111442.GB14888@dell>
-	 <e4eaf0b4-e539-b400-c8a2-70f210cee1fa@users.sourceforge.net>
-	 <75c1cc23-3a2d-db78-d0f2-b5934b18e828@users.sourceforge.net>
-	 <20160628150725.GL24982@dell>
-	 <c220895b-e56f-dc95-500d-0cf9d2f51777@users.sourceforge.net>
-	 <20160628163146.GG29166@dell>
-	 <69e96aa0-f3d9-d70d-c3ec-d39b5e9d9f14@users.sourceforge.net>
-	 <1467318883.24287.171.camel@perches.com>
-	 <447162e7-5183-e589-74bc-0023a1442ebd@users.sourceforge.net>
-In-Reply-To: <447162e7-5183-e589-74bc-0023a1442ebd@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <558EB32E.6090003@users.sourceforge.net>
+ <dbc8c4f3-a234-9b6a-b6a4-9c7ef45d5d31@users.sourceforge.net>
+In-Reply-To: <dbc8c4f3-a234-9b6a-b6a4-9c7ef45d5d31@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Lee Jones <lee.jones@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, Austin Shin <austin.shin@atmel.com>, Chris Park <chris.park@atmel.com>, Glen Lee <glen.lee@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johnny Kim <johnny.kim@atmel.com>, Leo Kim <leo.kim@atmel.com>, Tony Cho <tony.cho@atmel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, 2016-07-01 at 16:40 +0200, SF Markus Elfring wrote:
-> >=20
-> > Can you please fix your email client to _not_ send References:
-> > and In-reply-to: headers when sending new patches?
-> I prefer to associate some patches with previous relevant
-> discussion directly.
->=20
->=20
-> >=20
-> > Even better would be to use git send-email for these patches.
-> This command can also support a parameter like "--thread", can't it?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Jul 2016 21:45:37 +0200
 
-yes, good to see you can read documentation.
+Three local variables were used only within a single case branch.
 
-> Would you like point any more views out about communication styles?
+* Thus move the data type definition for "rssi" and "size" into the
+  corresponding code block.
 
-Actually, yes.
+* The variable "length" was not modified after its initialisation.
+  Thus pass a constant value in the affected function call instead.
 
-Just because you've submitted a similar patch, an
-independent patch like this one, doesn't need to
-refer to those patches you've previously submitted.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/wilc1000/linux_wlan.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-For instance, your "References:" for this email
-imply some association to a patch series you submitted
-"[PATCH v3 0/3] gianfar: Fine-tuning for gfar_ethflow_to_filer_table()"
-for no obvious reason. =A0What is this reason?
+diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
+index 7b1ebcc..173be16 100644
+--- a/drivers/staging/wilc1000/linux_wlan.c
++++ b/drivers/staging/wilc1000/linux_wlan.c
+@@ -1094,8 +1094,6 @@ int wilc_mac_close(struct net_device *ndev)
+ static int mac_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
+ {
+ 	u8 *buff = NULL;
+-	s8 rssi;
+-	u32 size = 0, length = 0;
+ 	struct wilc_vif *vif;
+ 	s32 ret = 0;
+ 	struct wilc *wilc;
+@@ -1110,8 +1108,7 @@ static int mac_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
+ 	case SIOCSIWPRIV:
+ 	{
+ 		struct iwreq *wrq = (struct iwreq *)req;
+-
+-		size = wrq->u.data.length;
++		u32 size = wrq->u.data.length;
+ 
+ 		if (size && wrq->u.data.pointer) {
+ 			buff = memdup_user(wrq->u.data.pointer,
+@@ -1119,7 +1116,9 @@ static int mac_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
+ 			if (IS_ERR(buff))
+ 				return PTR_ERR(buff);
+ 
+-			if (strncasecmp(buff, "RSSI", length) = 0) {
++			if (strncasecmp(buff, "RSSI", 0) = 0) {
++				s8 rssi;
++
+ 				ret = wilc_get_rssi(vif, &rssi);
+ 				netdev_info(ndev, "RSSI :%d\n", rssi);
+ 
+-- 
+2.9.2
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
