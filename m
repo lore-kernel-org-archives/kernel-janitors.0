@@ -1,88 +1,59 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 06 Jul 2016 06:13:55 +0000
-Subject: [PATCH 05/15 RESEND] staging: dgnc: removes redundant null check and change
-Message-Id: <20160706061355.GA18560@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Jul 2016 20:20:08 +0000
+Subject: [PATCH 1/3] staging: wilc1000: Delete an unnecessary check before the function call "release_firmwar
+Message-Id: <97d9e92f-ae7a-1161-c9a2-cb19fb2f2b55@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <558EB32E.6090003@users.sourceforge.net>
+ <dbc8c4f3-a234-9b6a-b6a4-9c7ef45d5d31@users.sourceforge.net>
+In-Reply-To: <dbc8c4f3-a234-9b6a-b6a4-9c7ef45d5d31@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, Austin Shin <austin.shin@atmel.com>, Chris Park <chris.park@atmel.com>, Glen Lee <glen.lee@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johnny Kim <johnny.kim@atmel.com>, Leo Kim <leo.kim@atmel.com>, Tony Cho <tony.cho@atmel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The dgnc_set_modem_info() used only channel_t variable.
-Any other variables were used only for checking NULL.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Jul 2016 21:00:20 +0200
 
-So fist parameter changed from "tty_struct" to "channel_t" and
-useless NULL checks and variables are removed.
+The release_firmware() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-RESEND: This patch was not merged for a long time, if there is any reason
-why this patch could NOT be merged into staging tree, let me know.
-There were no comment for this patch.
-I cannot understand why this patch have to wait long time to merge.
-And I also sent emails to mailing-lists for reminding this patch...
-please let me know, what is the problem to merge this patch into staging tree.
+ drivers/staging/wilc1000/linux_wlan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/staging/dgnc/dgnc_tty.c | 24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index b33b07c..e4c6c3f 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -100,7 +100,7 @@ static void dgnc_tty_unthrottle(struct tty_struct *tty);
- static void dgnc_tty_flush_chars(struct tty_struct *tty);
- static void dgnc_tty_flush_buffer(struct tty_struct *tty);
- static void dgnc_tty_hangup(struct tty_struct *tty);
--static int dgnc_set_modem_info(struct tty_struct *tty, unsigned int command,
-+static int dgnc_set_modem_info(struct channel_t *ch, unsigned int command,
- 			       unsigned int __user *value);
- static int dgnc_get_modem_info(struct channel_t *ch,
- 			       unsigned int __user *value);
-@@ -2008,32 +2008,14 @@ static int dgnc_get_modem_info(struct channel_t *ch,
-  *
-  * Set modem signals, called by ld.
-  */
--static int dgnc_set_modem_info(struct tty_struct *tty,
-+static int dgnc_set_modem_info(struct channel_t *ch,
- 			       unsigned int command,
- 			       unsigned int __user *value)
- {
--	struct dgnc_board *bd;
--	struct channel_t *ch;
--	struct un_t *un;
- 	int ret = -ENXIO;
- 	unsigned int arg = 0;
- 	unsigned long flags;
+diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
+index 3a66255..cdef645 100644
+--- a/drivers/staging/wilc1000/linux_wlan.c
++++ b/drivers/staging/wilc1000/linux_wlan.c
+@@ -1223,7 +1223,7 @@ void wilc_netdev_cleanup(struct wilc *wilc)
+ 			vif[i] = netdev_priv(wilc->vif[i]->ndev);
+ 	}
  
--	if (!tty || tty->magic != TTY_MAGIC)
--		return ret;
--
--	un = tty->driver_data;
--	if (!un || un->magic != DGNC_UNIT_MAGIC)
--		return ret;
--
--	ch = un->un_ch;
--	if (!ch || ch->magic != DGNC_CHANNEL_MAGIC)
--		return ret;
--
--	bd = ch->ch_bd;
--	if (!bd || bd->magic != DGNC_BOARD_MAGIC)
--		return ret;
--
- 	ret = get_user(arg, value);
- 	if (ret)
- 		return ret;
-@@ -2600,7 +2582,7 @@ static int dgnc_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
- 	case TIOCMBIC:
- 	case TIOCMSET:
- 		spin_unlock_irqrestore(&ch->ch_lock, flags);
--		return dgnc_set_modem_info(tty, cmd, uarg);
-+		return dgnc_set_modem_info(ch, cmd, uarg);
- 
- 		/*
- 		 * Here are any additional ioctl's that we want to implement
+-	if (wilc && wilc->firmware) {
++	if (wilc) {
+ 		release_firmware(wilc->firmware);
+ 		wilc->firmware = NULL;
+ 	}
 -- 
-1.9.1
+2.9.2
 
