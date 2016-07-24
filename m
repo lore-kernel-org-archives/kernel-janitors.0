@@ -1,29 +1,68 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 18 Jul 2016 10:23:33 +0000
-Subject: Re: [patch] crypto: nx - off by one bug in nx_of_update_msc()
-Message-Id: <20160718102333.GC13780@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Jul 2016 11:51:56 +0000
+Subject: Re: [PATCH] SCSI-aic94xx: Delete unnecessary checks before the function call "kmem_cache_destroy"
+Message-Id: <4962c98f-b21b-8a28-7c35-9df9cb28c857@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160715110912.GE9258@mwanda>
-In-Reply-To: <20160715110912.GE9258@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <564AD586.5040606@users.sourceforge.net>
+In-Reply-To: <564AD586.5040606@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Leonidas S. Barbosa" <leosilva@linux.vnet.ibm.com>, Kent Yoder <key@linux.vnet.ibm.com>, Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.de>, Jack Wang <jinpu.wang@profitbricks.com>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Jul 15, 2016 at 02:09:13PM +0300, Dan Carpenter wrote:
-> The props->ap[] array is defined like this:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 17 Nov 2015 08:14:52 +0100
 > 
-> 	struct alg_props ap[NX_MAX_FC][NX_MAX_MODE][3];
+> The kmem_cache_destroy() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the calls is not needed.
 > 
-> So we can see that if msc->fc and msc->mode are = to NX_MAX_FC or
-> NX_MAX_MODE then we're off by one.
+> This issue was detected by using the Coccinelle software.
 > 
-> Fixes: ae0222b7289d ('powerpc/crypto: nx driver code supporting nx encryption')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/scsi/aic94xx/aic94xx_init.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
+> index 662b232..ab93049 100644
+> --- a/drivers/scsi/aic94xx/aic94xx_init.c
+> +++ b/drivers/scsi/aic94xx/aic94xx_init.c
+> @@ -660,12 +660,9 @@ Err:
+>  
+>  static void asd_destroy_global_caches(void)
+>  {
+> -	if (asd_dma_token_cache)
+> -		kmem_cache_destroy(asd_dma_token_cache);
+> +	kmem_cache_destroy(asd_dma_token_cache);
+>  	asd_dma_token_cache = NULL;
+> -
+> -	if (asd_ascb_cache)
+> -		kmem_cache_destroy(asd_ascb_cache);
+> +	kmem_cache_destroy(asd_ascb_cache);
+>  	asd_ascb_cache = NULL;
+>  }
+>  
+> 
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+How do you think about to integrate this update suggestion
+into another source code repository?
+
+Regards,
+Markus
