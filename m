@@ -1,9 +1,16 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Wed, 20 Jul 2016 11:44:15 +0000
-Subject: Re: [PATCH v2 1/3] xen-scsiback: Delete an unnecessary check before the function call "kfree"
-Message-Id: <51b41b85-c9d1-818c-f5a6-f9b04e8a7caf@suse.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Jul 2016 12:30:35 +0000
+Subject: [PATCH] scsi: Delete an unnecessary check before the function call "kfree"
+Message-Id: <dd65c1cd-b8ee-5c44-d249-e3d9d0b08299@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
  <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.10.1402251014170.2080@hadrien>
  <530CD2C4.4050903@users.sourceforge.net>
@@ -13,36 +20,40 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <59e51c7d-f7bb-c55f-d2fe-06dccfef6a99@users.sourceforge.net>
- <87e55a72-71ad-d0a1-b936-12565bbc6508@users.sourceforge.net>
- <fb5824ad-fb09-e471-7dc4-3e32564cc334@suse.com>
- <8806e9cb-4200-8154-7914-6735805dfbe0@users.sourceforge.net>
- <83b0b1e2-900b-eefc-160b-7d837730571c@suse.com>
- <18256bfc-c6f9-8802-8d7d-55766f0b3624@users.sourceforge.net>
- <85b948e0-bf37-dff0-6792-77b5dacef9a0@suse.com>
- <6863b12b-9095-aaf3-6140-80968e0071e2@users.sourceforge.net>
- <62e64277-a6bc-9d9d-d80e-f3e515e7bcb3@users.sourceforge.net>
-In-Reply-To: <62e64277-a6bc-9d9d-d80e-f3e515e7bcb3@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: linux-scsi@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 20/07/16 13:30, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 19 Jul 2016 15:42:19 +0200
-> 
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 24 Jul 2016 14:20:21 +0200
 
-Even if already given, here it is again:
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/scsi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Juergen
+diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+index 1f36aca..1794c0c 100644
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -864,8 +864,7 @@ retry_pg83:
+ 		rcu_assign_pointer(sdev->vpd_pg83, vpd_buf);
+ 		mutex_unlock(&sdev->inquiry_mutex);
+ 		synchronize_rcu();
+-		if (orig_vpd_buf)
+-			kfree(orig_vpd_buf);
++		kfree(orig_vpd_buf);
+ 	}
+ }
+ 
+-- 
+2.9.2
+
