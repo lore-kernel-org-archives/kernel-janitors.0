@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 10:56:23 +0000
-Subject: [PATCH] GPU-DRM: Delete an unnecessary check before drm_property_unreference_blob()
-Message-Id: <515bcb7e-3e00-3438-cc47-227cfcd41990@users.sourceforge.net>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Date: Mon, 25 Jul 2016 08:43:32 +0000
+Subject: Re: [PATCH] GPU-DRM: Delete an unnecessary check before drm_property_unreference_blob()
+Message-Id: <69fe77a4-d9fd-83b4-7821-f0a3c13d737f@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,42 +20,47 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <515bcb7e-3e00-3438-cc47-227cfcd41990@users.sourceforge.net>
+In-Reply-To: <515bcb7e-3e00-3438-cc47-227cfcd41990@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, CK Hu <ck.hu@mediatek.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, CK Hu <ck.hu@mediatek.com>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 12:48:12 +0200
 
-The drm_property_unreference_blob() function tests whether its argument
-is NULL and then returns immediately.
-Thus the test around the call is not needed.
 
-This issue was detected by using the Coccinelle software.
+On 22/07/16 12:56, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 22 Jul 2016 12:48:12 +0200
+>
+> The drm_property_unreference_blob() function tests whether its argument
+> is NULL and then returns immediately.
+> Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-index 24aa3ba..07541d0 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-@@ -112,9 +112,7 @@ static void mtk_drm_crtc_reset(struct drm_crtc *crtc)
- 	struct mtk_crtc_state *state;
- 
- 	if (crtc->state) {
--		if (crtc->state->mode_blob)
--			drm_property_unreference_blob(crtc->state->mode_blob);
--
-+		drm_property_unreference_blob(crtc->state->mode_blob);
- 		state = to_mtk_crtc_state(crtc->state);
- 		memset(state, 0, sizeof(*state));
- 	} else {
--- 
-2.9.2
-
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> index 24aa3ba..07541d0 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> @@ -112,9 +112,7 @@ static void mtk_drm_crtc_reset(struct drm_crtc *crtc)
+>  	struct mtk_crtc_state *state;
+>
+>  	if (crtc->state) {
+> -		if (crtc->state->mode_blob)
+> -			drm_property_unreference_blob(crtc->state->mode_blob);
+> -
+> +		drm_property_unreference_blob(crtc->state->mode_blob);
+>  		state = to_mtk_crtc_state(crtc->state);
+>  		memset(state, 0, sizeof(*state));
+>  	} else {
+>
