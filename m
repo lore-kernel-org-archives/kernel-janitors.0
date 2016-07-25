@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 18:08:38 +0000
-Subject: [PATCH] coresight: tmc: Delete an unnecessary check before the function call "kfree"
-Message-Id: <5c1330e9-351f-0401-5018-5e6a7aa56a32@users.sourceforge.net>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 25 Jul 2016 16:36:24 +0000
+Subject: Re: [PATCH] coresight: tmc: Delete an unnecessary check before the function call "kfree"
+Message-Id: <CANLsYkxx6dUN8PFQ8tzXugqahcQTLViyssX=P101WqEeAyGL8A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,38 +20,44 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5c1330e9-351f-0401-5018-5e6a7aa56a32@users.sourceforge.net>
+In-Reply-To: <5c1330e9-351f-0401-5018-5e6a7aa56a32@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 20:04:09 +0200
+On 23 July 2016 at 12:08, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 23 Jul 2016 20:04:09 +0200
+>
+> The kfree() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/hwtracing/coresight/coresight-tmc-etf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> index e68289b..5fa49c4 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> @@ -168,7 +168,7 @@ out:
+>         spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>
+>         /* Free memory outside the spinlock if need be */
+> -       if (!used && buf)
+> +       if (!used)
+>                 kfree(buf);
+>
+>         if (!ret)
+> --
+> 2.9.2
+>
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/hwtracing/coresight/coresight-tmc-etf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-index e68289b..5fa49c4 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-@@ -168,7 +168,7 @@ out:
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 	/* Free memory outside the spinlock if need be */
--	if (!used && buf)
-+	if (!used)
- 		kfree(buf);
- 
- 	if (!ret)
--- 
-2.9.2
-
+Applied - thanks.
+Mathieu
