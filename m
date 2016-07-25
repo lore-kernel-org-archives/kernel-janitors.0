@@ -1,212 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 10:59:15 +0000
-Subject: [PATCH 2/3] IB/mthca: Less function calls in mthca_reset() after error detection
-Message-Id: <060a2178-afb2-28a3-9568-25c124972062@users.sourceforge.net>
+From: Leon Romanovsky <leon@kernel.org>
+Date: Mon, 25 Jul 2016 13:20:34 +0000
+Subject: Re: [PATCH 2/3] IB/mthca: Less function calls in mthca_reset() after error detection
+Message-Id: <20160725132034.GC20674@leon.nu>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="gIORF5nGxIt+AP0s"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
+References: <530CD2C4.4050903@users.sourceforge.net>
  <alpine.DEB.2.10.1402251840450.7035@hadrien>
  <530CF8FF.8080600@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546CE09B.9090101@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+ <546CE09B.9090101@users.sourceforge.net>
  <55b7a06e-6bb4-f1bb-e4dd-7812648ecf34@users.sourceforge.net>
-In-Reply-To: <55b7a06e-6bb4-f1bb-e4dd-7812648ecf34@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+ <060a2178-afb2-28a3-9568-25c124972062@users.sourceforge.net>
+In-Reply-To: <060a2178-afb2-28a3-9568-25c124972062-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 11:28:30 +0200
 
-The kfree() function was called in a few cases by the mthca_reset()
-function during error handling even if the passed variables "bridge_header"
-and "hca_header" contained a null pointer.
+--gIORF5nGxIt+AP0s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Adjust jump targets according to the Linux coding style convention.
+On Sat, Jul 23, 2016 at 12:59:15PM +0200, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 23 Jul 2016 11:28:30 +0200
+>=20
+> The kfree() function was called in a few cases by the mthca_reset()
+> function during error handling even if the passed variables "bridge_heade=
+r"
+> and "hca_header" contained a null pointer.
+>=20
+> Adjust jump targets according to the Linux coding style convention.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/infiniband/hw/mthca/mthca_reset.c | 41 +++++++++++++++----------------
- 1 file changed, 20 insertions(+), 21 deletions(-)
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 
-diff --git a/drivers/infiniband/hw/mthca/mthca_reset.c b/drivers/infiniband/hw/mthca/mthca_reset.c
-index c521654..6727af2 100644
---- a/drivers/infiniband/hw/mthca/mthca_reset.c
-+++ b/drivers/infiniband/hw/mthca/mthca_reset.c
-@@ -98,7 +98,7 @@ int mthca_reset(struct mthca_dev *mdev)
- 		err = -ENOMEM;
- 		mthca_err(mdev, "Couldn't allocate memory to save HCA "
- 			  "PCI header, aborting.\n");
--		goto out;
-+		goto put_dev;
- 	}
- 
- 	for (i = 0; i < 64; ++i) {
-@@ -108,7 +108,7 @@ int mthca_reset(struct mthca_dev *mdev)
- 			err = -ENODEV;
- 			mthca_err(mdev, "Couldn't save HCA "
- 				  "PCI header, aborting.\n");
--			goto out;
-+			goto free_hca;
- 		}
- 	}
- 
-@@ -121,7 +121,7 @@ int mthca_reset(struct mthca_dev *mdev)
- 			err = -ENOMEM;
- 			mthca_err(mdev, "Couldn't allocate memory to save HCA "
- 				  "bridge PCI header, aborting.\n");
--			goto out;
-+			goto free_hca;
- 		}
- 
- 		for (i = 0; i < 64; ++i) {
-@@ -131,7 +131,7 @@ int mthca_reset(struct mthca_dev *mdev)
- 				err = -ENODEV;
- 				mthca_err(mdev, "Couldn't save HCA bridge "
- 					  "PCI header, aborting.\n");
--				goto out;
-+				goto free_bh;
- 			}
- 		}
- 		bridge_pcix_cap = pci_find_capability(bridge, PCI_CAP_ID_PCIX);
-@@ -139,7 +139,7 @@ int mthca_reset(struct mthca_dev *mdev)
- 				err = -ENODEV;
- 				mthca_err(mdev, "Couldn't locate HCA bridge "
- 					  "PCI-X capability, aborting.\n");
--				goto out;
-+				goto free_bh;
- 		}
- 	}
- 
-@@ -152,7 +152,7 @@ int mthca_reset(struct mthca_dev *mdev)
- 			err = -ENOMEM;
- 			mthca_err(mdev, "Couldn't map HCA reset register, "
- 				  "aborting.\n");
--			goto out;
-+			goto free_bh;
- 		}
- 
- 		writel(MTHCA_RESET_VALUE, reset);
-@@ -172,7 +172,7 @@ int mthca_reset(struct mthca_dev *mdev)
- 				err = -ENODEV;
- 				mthca_err(mdev, "Couldn't access HCA after reset, "
- 					  "aborting.\n");
--				goto out;
-+				goto free_bh;
- 			}
- 
- 			if (v != 0xffffffff)
-@@ -184,7 +184,7 @@ int mthca_reset(struct mthca_dev *mdev)
- 		err = -ENODEV;
- 		mthca_err(mdev, "PCI device did not come back after reset, "
- 			  "aborting.\n");
--		goto out;
-+		goto free_bh;
- 	}
- 
- good:
-@@ -195,14 +195,14 @@ good:
- 			err = -ENODEV;
- 			mthca_err(mdev, "Couldn't restore HCA bridge Upstream "
- 				  "split transaction control, aborting.\n");
--			goto out;
-+			goto free_bh;
- 		}
- 		if (pci_write_config_dword(bridge, bridge_pcix_cap + 0xc,
- 				 bridge_header[(bridge_pcix_cap + 0xc) / 4])) {
- 			err = -ENODEV;
- 			mthca_err(mdev, "Couldn't restore HCA bridge Downstream "
- 				  "split transaction control, aborting.\n");
--			goto out;
-+			goto free_bh;
- 		}
- 		/*
- 		 * Bridge control register is at 0x3e, so we'll
-@@ -216,7 +216,7 @@ good:
- 				err = -ENODEV;
- 				mthca_err(mdev, "Couldn't restore HCA bridge reg %x, "
- 					  "aborting.\n", i);
--				goto out;
-+				goto free_bh;
- 			}
- 		}
- 
-@@ -225,7 +225,7 @@ good:
- 			err = -ENODEV;
- 			mthca_err(mdev, "Couldn't restore HCA bridge COMMAND, "
- 				  "aborting.\n");
--			goto out;
-+			goto free_bh;
- 		}
- 	}
- 
-@@ -235,7 +235,7 @@ good:
- 			err = -ENODEV;
- 			mthca_err(mdev, "Couldn't restore HCA PCI-X "
- 				  "command register, aborting.\n");
--			goto out;
-+			goto free_bh;
- 		}
- 	}
- 
-@@ -246,7 +246,7 @@ good:
- 			err = -ENODEV;
- 			mthca_err(mdev, "Couldn't restore HCA PCI Express "
- 				  "Device Control register, aborting.\n");
--			goto out;
-+			goto free_bh;
- 		}
- 		linkctl = hca_header[(hca_pcie_cap + PCI_EXP_LNKCTL) / 4];
- 		if (pcie_capability_write_word(mdev->pdev, PCI_EXP_LNKCTL,
-@@ -254,7 +254,7 @@ good:
- 			err = -ENODEV;
- 			mthca_err(mdev, "Couldn't restore HCA PCI Express "
- 				  "Link control register, aborting.\n");
--			goto out;
-+			goto free_bh;
- 		}
- 	}
- 
-@@ -266,7 +266,7 @@ good:
- 			err = -ENODEV;
- 			mthca_err(mdev, "Couldn't restore HCA reg %x, "
- 				  "aborting.\n", i);
--			goto out;
-+			goto free_bh;
- 		}
- 	}
- 
-@@ -275,13 +275,12 @@ good:
- 		err = -ENODEV;
- 		mthca_err(mdev, "Couldn't restore HCA COMMAND, "
- 			  "aborting.\n");
--		goto out;
- 	}
--
--out:
--	pci_dev_put(bridge);
-+free_bh:
- 	kfree(bridge_header);
-+free_hca:
- 	kfree(hca_header);
--
-+put_dev:
-+	pci_dev_put(bridge);
- 	return err;
- }
--- 
-2.9.2
+--gIORF5nGxIt+AP0s
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXlhIiAAoJEORje4g2clinBPgQAKFWkrZtyLZ3gPB4pifyu7jL
+UMLSGT9jDJRkl6hS+MHzxS18qxOIn79DWl3+JKBOIm2pGKk9tiVyhZ3PD9Mw+G1g
+bQFqL0nXbLaBOxEh8iKm+MFWvldHvpeoXDIBMbDMMrGFiaG20joHOZNyYALnYmzy
+GZi2no5PwouJn0OZwE6jREFrgQUmOfqKpAA8suV2LwR6CjQUNeU+Ss+zHVhCjlDT
+I46ZGMco8ZDr9vS6zlq/d1vvZqZKfG5eY3M8FMqsji5AKCDgx3v4Zh/BHbnYhwic
+l29T+XOgdDJtYr+S7VzK4LplyoL/sNNVR5x4V8GqIJgscSQnEL5ARDqnV0Qmr/kb
+n4FkaqUcnJW4PT70PlL/l+FEU7tsNTamRqEjTn9Dcp/N6zXGmjs+Sm+AN+ln7ycb
+wTvi6k+59dK4nhQpjK5EFetl3VitLeXQxrcD+hEvBBDapwgyH60T6iR1eAzenv5G
+2dqVjqE4JfBZx2aROBpT3qw/3f5U8ihC3VoJT/A4Zy4o5azwaqmarDK++wa5IEDx
+IxHb5S/9LUVmpcYNbXJNwmwkG+kGQXNe29EniX34WNU0DrKFnGDGwLJIsXSx4Sx/
+T4eWcAyu8TMTM57yeHgU5P3dOpbdEcaoV5wo2YakqSqiJ9D/sSvEmP3JYQrv0rpv
+mLuT+nuTeMfXhKmm0eQf
+=BOmy
+-----END PGP SIGNATURE-----
+
+--gIORF5nGxIt+AP0s--
