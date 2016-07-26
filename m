@@ -1,178 +1,83 @@
-From: Qiang Zhao <qiang.zhao@nxp.com>
-Date: Wed, 13 Jul 2016 02:22:04 +0000
-Subject: RE: [bug report] drivers/net: support hdlc function for QE-UCC
-Message-Id: <AM3PR04MB11855C0ACED15AE407840BC291310@AM3PR04MB1185.eurprd04.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Jul 2016 19:02:33 +0000
+Subject: [PATCH 03/12] staging: lustre: One function call less in class_register_type() after error detection
+Message-Id: <a92aee0c-7a2c-a509-c19e-44cc9d8335a1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160712234919.GA23061@mwanda>
-In-Reply-To: <20160712234919.GA23061@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <56784D83.7080108@users.sourceforge.net>
+ <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
+ <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+In-Reply-To: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
 
-Hello Dan Carpenter,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Jul 2016 13:40:47 +0200
 
-Thank you for your comments, I will send a patch to fix it.
+The kobject_put() function was called in a few cases by the
+class_register_type() function during error handling even if the passed
+data structure element did not contain a pointer for a valid data item.
 
-Best Regards
-Zhao Qiang
+Adjust jump targets according to the Linux coding style convention.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday, July 13, 2016 7:49 AM
-> To: Qiang Zhao <qiang.zhao@nxp.com>
-> Cc: kernel-janitors@vger.kernel.org
-> Subject: [bug report] drivers/net: support hdlc function for QE-UCC
-> 
-> Hello Zhao Qiang,
-> 
-> The patch c19b6d246a35: "drivers/net: support hdlc function for QE-UCC" from
-> Jun 6, 2016, leads to the following static checker
-> warning:
-> 
-> 	drivers/net/wan/fsl_ucc_hdlc.c:1131 ucc_hdlc_probe()
-> 	error: dereferencing freed memory 'uhdlc_priv'
-> 
-> The error handling has quite a few problems.  There is an easy way to write
-> error handling.  Let me demonstrate.
-> 
-> drivers/net/wan/fsl_ucc_hdlc.c
->   1062          ret = of_address_to_resource(np, 0, &res);
->   1063          if (ret)
->   1064                  return -EINVAL;
->   1065
->   1066          ut_info->uf_info.regs = res.start;
->   1067          ut_info->uf_info.irq = irq_of_parse_and_map(np, 0);
->   1068
->   1069          uhdlc_priv = kzalloc(sizeof(*uhdlc_priv), GFP_KERNEL);
->   1070          if (!uhdlc_priv) {
->   1071                  ret = -ENOMEM;
->   1072                  dev_err(&pdev->dev, "No mem to alloc hdlc private data\n");
-> 
-> No need for this printk().  kzalloc() already prints a warning.
-> 
->   1073                  goto err_alloc_priv;
-> 
-> This is a do-nothing goto.  Change it to "return -ENOMEM;".
-> 
-> 		uhdlc_priv = kzalloc(sizeof(*uhdlc_priv), GFP_KERNEL);
-> 		if (!uhdlc_priv)
-> 			return -ENOMEM;
-> 
-> 
->   1074          }
->   1075
->   1076          dev_set_drvdata(&pdev->dev, uhdlc_priv);
->   1077          uhdlc_priv->dev = &pdev->dev;
->   1078          uhdlc_priv->ut_info = ut_info;
->   1079
->   1080          if (of_get_property(np, "fsl,tdm-interface", NULL))
->   1081                  uhdlc_priv->tsa = 1;
->   1082
->   1083          if (of_get_property(np, "fsl,ucc-internal-loopback", NULL))
->   1084                  uhdlc_priv->loopback = 1;
->   1085
->   1086          if (uhdlc_priv->tsa = 1) {
->   1087                  utdm = kzalloc(sizeof(*utdm), GFP_KERNEL);
->   1088                  if (!utdm) {
->   1089                          ret = -ENOMEM;
->   1090                          dev_err(&pdev->dev, "No mem to alloc ucc tdm data\n");
-> 
-> No need again.
-> 
->   1091                          goto err_alloc_utdm;
-> 
-> The goto name should say what the goto does.  We need to free uhdlc_priv so
-> "goto free_uhdlc;" is a good name.
-> 
->   1092                  }
->   1093                  uhdlc_priv->utdm = utdm;
->   1094                  ret = ucc_of_parse_tdm(np, utdm, ut_info);
->   1095                  if (ret)
->   1096                          goto err_miss_tsa_property;
-> 
-> Here we need to free utdm so "goto free_utdm;".
-> 
->   1097          }
->   1098
->   1099          ret = uhdlc_init(uhdlc_priv);
->   1100          if (ret) {
->   1101                  dev_err(&pdev->dev, "Failed to init uhdlc\n");
->   1102                  goto err_hdlc_init;
-> 
-> We're still freeing utdm;   So goto free_utdm;
-> 
->   1103          }
->   1104
->   1105          dev = alloc_hdlcdev(uhdlc_priv);
->   1106          if (!dev) {
->   1107                  ret = -ENOMEM;
->   1108                  pr_err("ucc_hdlc: unable to allocate memory\n");
->   1109                  goto err_hdlc_init;
-> 
-> Hm...  Here we need to undo what uhdlc_init() did.  I'm not sure the function to
-> do that.  Currently we leak resources.
-> 
-> 			goto undo_uhdlc_init;
-> 
->   1110          }
->   1111
->   1112          uhdlc_priv->ndev = dev;
->   1113          hdlc = dev_to_hdlc(dev);
->   1114          dev->tx_queue_len = 16;
->   1115          dev->netdev_ops = &uhdlc_ops;
->   1116          hdlc->attach = ucc_hdlc_attach;
->   1117          hdlc->xmit = ucc_hdlc_tx;
->   1118          netif_napi_add(dev, &uhdlc_priv->napi, ucc_hdlc_poll, 32);
->   1119          if (register_hdlc_device(dev)) {
->   1120                  ret = -ENOBUFS;
-> 
-> Why are we not preserving the error code?
-> 
-> 		ret = register_hdlc_device(dev);
-> 		if (ret) {
-> 
->   1121                  pr_err("ucc_hdlc: unable to register hdlc device\n");
-> 
-> No need for this printk.
-> 
->   1122                  free_netdev(dev);
->   1123                  goto err_hdlc_init;
-> 
-> Instead of freeing and then a goto just do "goto free_dev;".
-> 
->   1124          }
->   1125
->   1126          return 0;
->   1127
->   1128  err_hdlc_init:
->   1129  err_miss_tsa_property:
->   1130          kfree(uhdlc_priv);
->   1131          if (uhdlc_priv->tsa)
->   1132                  kfree(utdm);
->   1133  err_alloc_utdm:
->   1134          kfree(uhdlc_priv);
->   1135  err_alloc_priv:
->   1136          return ret;
->   1137  }
-> 
-> You can see the problems.  We free uhdlc_priv then we dereference it, then
-> we free it a second time.  There is stuff that is missing.  The labels are bad.
-> Here is the new version:
-> 
-> free_dev:
-> 	free_netdev(dev);
-> undo_uhdlc_init:
-> 	/* FIXME: impliment this code */
-> free_utdm:
-> 	if (uhdlc_priv->tsa)
-> 		kfree(utdm);
-> free_uhdlc:
-> 	kfree(uhdlc);
-> 
-> 	return ret;
-> 
-> Just follow the steps and then error handling is easy to understand.
-> 
-> regards,
-> dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/lustre/lustre/obdclass/genops.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
+index 1b5aa9b..10dd145 100644
+--- a/drivers/staging/lustre/lustre/obdclass/genops.c
++++ b/drivers/staging/lustre/lustre/obdclass/genops.c
+@@ -164,7 +164,7 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
+ 	if (!type->typ_dt_ops ||
+ 	    !type->typ_md_ops ||
+ 	    !type->typ_name)
+-		goto failed;
++		goto free_name;
+ 
+ 	*(type->typ_dt_ops) = *dt_ops;
+ 	/* md_ops is optional */
+@@ -180,20 +180,20 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
+ 		rc = type->typ_debugfs_entry ? PTR_ERR(type->typ_debugfs_entry)
+ 					     : -ENOMEM;
+ 		type->typ_debugfs_entry = NULL;
+-		goto failed;
++		goto free_name;
+ 	}
+ 
+ 	type->typ_kobj = kobject_create_and_add(type->typ_name, lustre_kobj);
+ 	if (!type->typ_kobj) {
+ 		rc = -ENOMEM;
+-		goto failed;
++		goto free_name;
+ 	}
+ 
+ 	if (ldt) {
+ 		type->typ_lu = ldt;
+ 		rc = lu_device_type_init(ldt);
+ 		if (rc != 0)
+-			goto failed;
++			goto put_object;
+ 	}
+ 
+ 	spin_lock(&obd_types_lock);
+@@ -201,9 +201,9 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
+ 	spin_unlock(&obd_types_lock);
+ 
+ 	return 0;
+-
+- failed:
++put_object:
+ 	kobject_put(type->typ_kobj);
++free_name:
+ 	kfree(type->typ_name);
+ 	kfree(type->typ_md_ops);
+ 	kfree(type->typ_dt_ops);
+-- 
+2.9.2
+
