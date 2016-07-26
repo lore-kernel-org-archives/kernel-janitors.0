@@ -1,49 +1,44 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 16 Jul 2016 06:34:33 +0000
-Subject: [PATCH 1/2] usb: gadget: composite: Fix return value in case of error
-Message-Id: <1468650873-13929-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Jul 2016 19:09:34 +0000
+Subject: [PATCH 08/12] staging: lustre: Less checks after a failed ptlrpc_request_alloc() in mgc_process_reco
+Message-Id: <4cb1e6d1-0fc5-212d-78fc-b2d7b2bb8d1e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <56784D83.7080108@users.sourceforge.net>
+ <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
+ <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+In-Reply-To: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
 
-In 'composite_os_desc_req_prepare', if one of the memory allocations fail,
-0 will be returned, which means success.
-We should return -ENOMEM instead.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Jul 2016 17:54:24 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Release memory directly after a call of the function
+"ptlrpc_request_alloc" failed.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/gadget/composite.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/mgc/mgc_request.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-index eb64848..8241856 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -2124,14 +2124,14 @@ int composite_os_desc_req_prepare(struct usb_composite_dev *cdev,
- 
- 	cdev->os_desc_req = usb_ep_alloc_request(ep0, GFP_KERNEL);
- 	if (!cdev->os_desc_req) {
--		ret = PTR_ERR(cdev->os_desc_req);
-+		ret = -ENOMEM;
- 		goto end;
+diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+index b064bd3..f65bb45 100644
+--- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
++++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+@@ -1357,7 +1357,7 @@ again:
+ 				   &RQF_MGS_CONFIG_READ);
+ 	if (!req) {
+ 		rc = -ENOMEM;
+-		goto out;
++		goto free_pages;
  	}
  
- 	/* OS feature descriptor length <= 4kB */
- 	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
- 	if (!cdev->os_desc_req->buf) {
--		ret = PTR_ERR(cdev->os_desc_req->buf);
-+		ret = -ENOMEM;
- 		kfree(cdev->os_desc_req);
- 		goto end;
- 	}
+ 	rc = ptlrpc_request_pack(req, LUSTRE_MGS_VERSION, MGS_CONFIG_READ);
 -- 
-2.7.4
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+2.9.2
 
