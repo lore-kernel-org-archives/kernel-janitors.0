@@ -1,86 +1,58 @@
-From: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
-Date: Fri, 01 Jul 2016 13:12:58 +0000
-Subject: RE: [patch] bfa: clean up some bounds checking
-Message-Id: <SN1PR11MB042975C2DD9F663AD3D1551D90250@SN1PR11MB0429.namprd11.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Jul 2016 19:56:20 +0000
+Subject: Re: staging: lustre: One function call less in class_register_type() after error detection
+Message-Id: <0f9ecc7c-f98a-0296-563b-6fcfab459c31@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160616104434.GB24067@mwanda> <5762997D.3020302@bfs.de>
-In-Reply-To: <5762997D.3020302@bfs.de>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <56784D83.7080108@users.sourceforge.net>
+ <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
+ <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+ <a92aee0c-7a2c-a509-c19e-44cc9d8335a1@users.sourceforge.net>
+ <AD87A1DA-2C87-4A36-AA19-45961B51FBE7@intel.com>
+In-Reply-To: <AD87A1DA-2C87-4A36-AA19-45961B51FBE7@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "wharms@bfs.de" <wharms@bfs.de>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Anil Gurumurthy <Anil.Gurumurthy@qlogic.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
 
-    Both the approaches (i.e., using a loop or the strchr()) look fine to me.
+> But kobject_put() already checks for NULL, right?
 
-Thanks,
-Sudarsana
-
------Original Message-----
-From: walter harms [mailto:wharms@bfs.de] 
-Sent: 16 June 2016 17:50
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Anil Gurumurthy <Anil.Gurumurthy@qlogic.com>; Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>; James E.J. Bottomley <jejb@linux.vnet.ibm.com>; Martin K. Petersen <martin.petersen@oracle.com>; linux-scsi <linux-scsi@vger.kernel.org>; kernel-janitors@vger.kernel.org
-Subject: Re: [patch] bfa: clean up some bounds checking
+Yes. - Such an input parameter validation is performed by the
+function implementation.
 
 
+> you just submitted another batch about that in other area.
 
-Am 16.06.2016 12:44, schrieb Dan Carpenter:
-> This code is supposed to search ->adapter_hwpath[] and replace the 
-> second colon with a NUL character.  Unfortunately, the boundary checks 
-> that ensure we don't go beyond the end of the buffer have a couple 
-> problems.
+I sent update suggestions because of this function property for two
+Linux software modules in the year 2015.
+
+
+>> Adjust jump targets according to the Linux coding style convention.
 > 
-> Imagine that the string has no colons.  In that case, in the first 
-> loop, we read one space beyond the end of the buffer and then exit the loop.
-> In the next loop, we increment once, read two characters beyond the 
-> end of the buffer and then exit.  Then after the loop we put a NUL 
-> character two characters past the end of the buffer.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is from static analysis and not tested.  Caveat emptor.
-> 
-> diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c 
-> index d1ad020..dfb26f0 100644
-> --- a/drivers/scsi/bfa/bfad_bsg.c
-> +++ b/drivers/scsi/bfa/bfad_bsg.c
-> @@ -106,10 +106,17 @@ bfad_iocmd_ioc_get_info(struct bfad_s *bfad, 
-> void *cmd)
->  
->  	/* set adapter hw path */
->  	strcpy(iocmd->adapter_hwpath, bfad->pci_name);
-> -	for (i = 0; iocmd->adapter_hwpath[i] != ':' && i < BFA_STRING_32; i++)
-> -		;
-> -	for (; iocmd->adapter_hwpath[++i] != ':' && i < BFA_STRING_32; )
-> -		;
-> +	i = -1;
-> +	while (++i < BFA_STRING_32) {
-> +		if (iocmd->adapter_hwpath[i] = ':')
-> +			break;
-> +	}
-> +	while (++i < BFA_STRING_32) {
-> +		if (iocmd->adapter_hwpath[i] = ':')
-> +			break;
-> +	}
-> +	if (i >= BFA_STRING_32)
-> +		i = BFA_STRING_32 - 1;
->  	iocmd->adapter_hwpath[i] = '\0';
->  	iocmd->status = BFA_STATUS_OK;
->  	return 0;
+> Not that I am totally against this patch,
+
+Thanks for your feedback.
 
 
-I do not see the use case but i assume
-the idea is to have a string like aa:bb:something and kill everyhing after the second ':' ?
-/*
-	a few word may help here also inside the code */
+> but when we do not need the extra checks, a single jump target is ok too in my mind
+
+A single goto label will look convenient for a while. It will often work
+for several use cases.
 
 
-second: maybe we can us strchr here ?
-	s1=strchr(iocmd->adapter_hwpath,':');
-	if (s1 != NULL ) s1=strchr(s1,":");
+> (extra benefit - there's not going to be any chance of a mistake to where to jump to).
+
+I have got an other opinion when you would like to care for a bit
+more software efficiency.
 
 
+> And when we have a single jump target, there's no supersmart naming
+> like free_this_and_that_and_that_other_thing_too.
 
-re,
- wh
+How often do you care for efficient exception handling in the shown
+function implementations?
+
+Regards,
+Markus
