@@ -1,51 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 02 Jul 2016 19:05:32 +0000
-Subject: [PATCH 1/2] Input-at32psif: Return directly after a failed kzalloc() in psif_probe()
-Message-Id: <85f42edb-7ce5-cf23-80f5-48440a14cd94@users.sourceforge.net>
+Date: Tue, 26 Jul 2016 19:13:23 +0000
+Subject: [PATCH 11/12] staging: lustre: Move an assignment for the variable "eof" in mgc_process_recover_log(
+Message-Id: <83a0671d-5c02-0bd4-2a97-47dea50585c3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <4471604f-f401-bed9-39be-1aff2a92edf6@users.sourceforge.net>
-In-Reply-To: <4471604f-f401-bed9-39be-1aff2a92edf6@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <56784D83.7080108@users.sourceforge.net>
+ <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
+ <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+In-Reply-To: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 2 Jul 2016 18:34:43 +0200
+Date: Tue, 26 Jul 2016 19:40:28 +0200
 
-Return directly after a memory allocation failed at the beginning.
-
-This issue was detected by using the Coccinelle software.
+Move the assignment for the local variable "eof" behind the source code
+for memory allocations by this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/input/serio/at32psif.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/staging/lustre/lustre/mgc/mgc_request.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/input/serio/at32psif.c b/drivers/input/serio/at32psif.c
-index 2e4ff5b..fcb769a 100644
---- a/drivers/input/serio/at32psif.c
-+++ b/drivers/input/serio/at32psif.c
-@@ -212,8 +212,7 @@ static int __init psif_probe(struct platform_device *pdev)
- 	psif = kzalloc(sizeof(struct psif), GFP_KERNEL);
- 	if (!psif) {
- 		dev_dbg(&pdev->dev, "out of memory\n");
--		ret = -ENOMEM;
--		goto out;
-+		return -ENOMEM;
+diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+index ff60b9b..8f5db79 100644
+--- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
++++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+@@ -1322,7 +1322,7 @@ static int mgc_process_recover_log(struct obd_device *obd,
+ 	struct ptlrpc_bulk_desc *desc;
+ 	struct page **pages;
+ 	int nrpages;
+-	bool eof = true;
++	bool eof;
+ 	bool mne_swab;
+ 	int i;
+ 	int ealen;
+@@ -1350,6 +1350,7 @@ static int mgc_process_recover_log(struct obd_device *obd,
+ 		}
  	}
- 	psif->pdev = pdev;
  
-@@ -297,7 +296,6 @@ out_free_io:
- 	kfree(io);
- out_free_psif:
- 	kfree(psif);
--out:
- 	return ret;
- }
- 
++	eof = true;
+ again:
+ 	LASSERT(cld_is_recover(cld));
+ 	LASSERT(mutex_is_locked(&cld->cld_lock));
 -- 
-2.9.0
+2.9.2
 
