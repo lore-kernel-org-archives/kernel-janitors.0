@@ -1,35 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Jul 2016 10:12:34 +0000
-Subject: [patch] hostfs: freeing an ERR_PTR in hostfs_fill_sb_common()
-Message-Id: <20160713101234.GG29468@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 26 Jul 2016 20:11:00 +0000
+Subject: Re: staging: lustre: Optimize error handling in class_register_type()
+Message-Id: <9f6275cc-6e7a-e26a-9aa0-3fec17648132@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <56784D83.7080108@users.sourceforge.net>
+ <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
+ <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+ <d1f69f4d-539b-e97d-fc0e-cb0a8754bd3a@users.sourceforge.net>
+ <3F437188-382B-46C8-9C30-7DBAB17F62E3@intel.com>
+In-Reply-To: <3F437188-382B-46C8-9C30-7DBAB17F62E3@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Dike <jdike@addtoit.com>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
 
-We can't pass error pointers to kfree() or it causes an oops.
+> NAK.
+> when you do this, the next statement below breaks:
 
-Fixes: 52b209f7b848 ('get rid of hostfs_read_inode()')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I wonder about this conclusion.
 
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index 5c57654..90e46cd 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -959,10 +959,11 @@ static int hostfs_fill_sb_common(struct super_block *sb, void *d, int silent)
- 
- 	if (S_ISLNK(root_inode->i_mode)) {
- 		char *name = follow_link(host_root_path);
--		if (IS_ERR(name))
-+		if (IS_ERR(name)) {
- 			err = PTR_ERR(name);
--		else
--			err = read_name(root_inode, name);
-+			goto out_put;
-+		}
-+		err = read_name(root_inode, name);
- 		kfree(name);
- 		if (err)
- 			goto out_put;
+
+>> 	type = kzalloc(sizeof(*type), GFP_NOFS);
+>> 	if (!type)
+>> -		return rc;
+>> +		return -ENOMEM;
+>>
+>> 	type->typ_dt_ops = kzalloc(sizeof(*type->typ_dt_ops), GFP_NOFS);
+>> 	if (!type->typ_dt_ops) {
+> …
+>                 goto failed;
+> 
+>  failed:
+> …
+> return rc;
+> 
+> So we are now returning an unitialized rc, did you get a gcc warning about it when compiling?
+
+I do not get such an impression if my corresponding update suggestion
+"[PATCH 04/12] staging: lustre: Split a condition check in class_register_type()"
+will be considered for this use case once more.
+https://lkml.org/lkml/2016/7/26/462
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1197227.html
+
+Regards,
+Markus
