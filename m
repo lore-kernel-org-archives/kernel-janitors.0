@@ -1,98 +1,113 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 19:51:26 +0000
-Subject: [PATCH] block: Delete unnecessary checks before the function call "mempool_destroy"
-Message-Id: <01dfd682-7b3e-c847-3e67-d859db3341cc@users.sourceforge.net>
+Date: Tue, 26 Jul 2016 19:00:15 +0000
+Subject: [PATCH 02/12] staging: lustre: Delete unnecessary checks before the function call "kobject_put"
+Message-Id: <48f00283-1648-e3f5-a76c-1ced01a4f231@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <566D7733.1030102@users.sourceforge.net>
+ <56784D83.7080108@users.sourceforge.net>
+ <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
+ <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
+In-Reply-To: <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 22 Jul 2016 21:45:26 +0200
+Date: Tue, 26 Jul 2016 13:00:32 +0200
 
-The mempool_destroy() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the calls is not needed.
+The kobject_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the calls is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- block/bio-integrity.c | 7 ++-----
- block/bio.c           | 8 ++------
- block/blk-core.c      | 3 +--
- 3 files changed, 5 insertions(+), 13 deletions(-)
+ drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c | 4 +---
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c     | 5 ++---
+ drivers/staging/lustre/lustre/lov/lov_obd.c     | 4 +---
+ drivers/staging/lustre/lustre/obdclass/genops.c | 6 ++----
+ 4 files changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index f70cc3b..7506a3e 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -499,11 +499,8 @@ EXPORT_SYMBOL(bioset_integrity_create);
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
+index 2c1c2fc..52c5dd4 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
+@@ -1069,9 +1069,7 @@ static int ldlm_cleanup(void)
  
- void bioset_integrity_free(struct bio_set *bs)
- {
--	if (bs->bio_integrity_pool)
--		mempool_destroy(bs->bio_integrity_pool);
+ 	kset_unregister(ldlm_ns_kset);
+ 	kset_unregister(ldlm_svc_kset);
+-	if (ldlm_kobj)
+-		kobject_put(ldlm_kobj);
 -
--	if (bs->bvec_integrity_pool)
--		mempool_destroy(bs->bvec_integrity_pool);
-+	mempool_destroy(bs->bio_integrity_pool);
-+	mempool_destroy(bs->bvec_integrity_pool);
- }
- EXPORT_SYMBOL(bioset_integrity_free);
++	kobject_put(ldlm_kobj);
+ 	ldlm_debugfs_cleanup();
  
-diff --git a/block/bio.c b/block/bio.c
-index 54ee384..21a2222 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1843,12 +1843,8 @@ void bioset_free(struct bio_set *bs)
- 	if (bs->rescue_workqueue)
- 		destroy_workqueue(bs->rescue_workqueue);
+ 	kfree(ldlm_state);
+diff --git a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+index 0e1588a..8c2e5b3 100644
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -238,7 +238,7 @@ static int lmv_connect(const struct lu_env *env,
+ 	if (data && data->ocd_connect_flags & OBD_CONNECT_REAL)
+ 		rc = lmv_check_connect(obd);
  
--	if (bs->bio_pool)
--		mempool_destroy(bs->bio_pool);
+-	if (rc && lmv->lmv_tgts_kobj)
++	if (rc)
+ 		kobject_put(lmv->lmv_tgts_kobj);
+ 
+ 	return rc;
+@@ -648,8 +648,7 @@ static int lmv_disconnect(struct obd_export *exp)
+ 		lmv_disconnect_mdc(obd, lmv->tgts[i]);
+ 	}
+ 
+-	if (lmv->lmv_tgts_kobj)
+-		kobject_put(lmv->lmv_tgts_kobj);
++	kobject_put(lmv->lmv_tgts_kobj);
+ 
+ out_local:
+ 	/*
+diff --git a/drivers/staging/lustre/lustre/lov/lov_obd.c b/drivers/staging/lustre/lustre/lov/lov_obd.c
+index 9b92d55..df701f7 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_obd.c
++++ b/drivers/staging/lustre/lustre/lov/lov_obd.c
+@@ -106,9 +106,7 @@ static void lov_putref(struct obd_device *obd)
+ 			__lov_del_obd(obd, tgt);
+ 		}
+ 
+-		if (lov->lov_tgts_kobj)
+-			kobject_put(lov->lov_tgts_kobj);
 -
--	if (bs->bvec_pool)
--		mempool_destroy(bs->bvec_pool);
--
-+	mempool_destroy(bs->bio_pool);
-+	mempool_destroy(bs->bvec_pool);
- 	bioset_integrity_free(bs);
- 	bio_put_slab(bs);
++		kobject_put(lov->lov_tgts_kobj);
+ 	} else {
+ 		mutex_unlock(&lov->lov_lock);
+ 	}
+diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
+index 99c2da6..1b5aa9b 100644
+--- a/drivers/staging/lustre/lustre/obdclass/genops.c
++++ b/drivers/staging/lustre/lustre/obdclass/genops.c
+@@ -203,8 +203,7 @@ int class_register_type(struct obd_ops *dt_ops, struct md_ops *md_ops,
+ 	return 0;
  
-diff --git a/block/blk-core.c b/block/blk-core.c
-index a687e9c..db8c6b4 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -636,8 +636,7 @@ int blk_init_rl(struct request_list *rl, struct request_queue *q,
+  failed:
+-	if (type->typ_kobj)
+-		kobject_put(type->typ_kobj);
++	kobject_put(type->typ_kobj);
+ 	kfree(type->typ_name);
+ 	kfree(type->typ_md_ops);
+ 	kfree(type->typ_dt_ops);
+@@ -231,8 +230,7 @@ int class_unregister_type(const char *name)
+ 		return -EBUSY;
+ 	}
  
- void blk_exit_rl(struct request_list *rl)
- {
--	if (rl->rq_pool)
--		mempool_destroy(rl->rq_pool);
-+	mempool_destroy(rl->rq_pool);
- }
+-	if (type->typ_kobj)
+-		kobject_put(type->typ_kobj);
++	kobject_put(type->typ_kobj);
  
- struct request_queue *blk_alloc_queue(gfp_t gfp_mask)
+ 	if (!IS_ERR_OR_NULL(type->typ_debugfs_entry))
+ 		ldebugfs_remove(&type->typ_debugfs_entry);
 -- 
 2.9.2
 
