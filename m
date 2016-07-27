@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 20 Jul 2016 13:38:11 +0000
+From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date: Wed, 27 Jul 2016 08:57:07 +0000
 Subject: Re: [PATCH] cxl: Delete an unnecessary check before the function call "of_node_put"
-Message-Id: <alpine.DEB.2.10.1607201535270.2838@hadrien>
+Message-Id: <601fb58c-7aee-91ce-2a3d-7a29787968fc@au1.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -21,47 +21,22 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
  <33fb6b04-9986-35ee-f4e2-0ebeb79c5e23@users.sourceforge.net>
-In-Reply-To: <33fb6b04-9986-35ee-f4e2-0ebeb79c5e23@users.sourceforge.net>
+ <alpine.DEB.2.10.1607201535270.2838@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1607201535270.2838@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linuxppc-dev@lists.ozlabs.org, Christophe Lombard <clombard@linux.vnet.ibm.com>, Ian Munsie <imunsie@au1.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+To: Julia Lawall <julia.lawall@lip6.fr>, SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Christophe Lombard <clombard@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ian Munsie <imunsie@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
 
+On 20/07/16 23:38, Julia Lawall wrote:
+> I don't think that the call should be there at all.  The loop only exits
+> when afu_np is NULL.  Furthermore, the loop should not be written as a for
+> loop, but rather with for_each_child_of_node.
 
+Will send a patch to fix both issues shortly.
 
-On Wed, 20 Jul 2016, SF Markus Elfring wrote:
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 20 Jul 2016 15:10:32 +0200
->
-> The of_node_put() function tests whether its argument is NULL
-> and then returns immediately.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/misc/cxl/of.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
-> index edc4583..333256a 100644
-> --- a/drivers/misc/cxl/of.c
-> +++ b/drivers/misc/cxl/of.c
-> @@ -490,8 +490,7 @@ int cxl_of_probe(struct platform_device *pdev)
->  		adapter->slices = 0;
->  	}
->
-> -	if (afu_np)
-> -		of_node_put(afu_np);
-> +	of_node_put(afu_np);
->  	return 0;
->  }
-
-I don't think that the call should be there at all.  The loop only exits
-when afu_np is NULL.  Furthermore, the loop should not be written as a for
-loop, but rather with for_each_child_of_node.
-
-julia
