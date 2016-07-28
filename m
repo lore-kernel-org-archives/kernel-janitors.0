@@ -1,78 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 15:14:00 +0000
-Subject: [PATCH] PM-wakeup: Delete unnecessary checks before three function calls
-Message-Id: <88d6d524-c093-4fcd-35ba-ff19f7b21fe2@users.sourceforge.net>
+From: Pavel Machek <pavel@ucw.cz>
+Date: Thu, 28 Jul 2016 19:33:34 +0000
+Subject: Re: [PATCH] PM-wakeup: Delete unnecessary checks before three function calls
+Message-Id: <20160728193334.GB11657@amd>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <5786434.e97HVzPjpI@vostro.rjw.lan>
  <b243d2ba-a359-998d-1dd8-43ff444074a8@users.sourceforge.net>
  <1722549.jyvuK0dZRm@vostro.rjw.lan>
-In-Reply-To: <1722549.jyvuK0dZRm@vostro.rjw.lan>
+ <88d6d524-c093-4fcd-35ba-ff19f7b21fe2@users.sourceforge.net>
+In-Reply-To: <88d6d524-c093-4fcd-35ba-ff19f7b21fe2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Len Brown <len.brown@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Jul 2016 17:04:00 +0200
+On Sat 2016-07-23 17:14:00, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 23 Jul 2016 17:04:00 +0200
+> 
+> The following functions test whether their argument is NULL
+> and then return immediately.
+> * dev_pm_arm_wake_irq
+> * dev_pm_disarm_wake_irq
+> * wakeup_source_unregister
+> 
+> Thus the test around the calls is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The following functions test whether their argument is NULL
-and then return immediately.
-* dev_pm_arm_wake_irq
-* dev_pm_disarm_wake_irq
-* wakeup_source_unregister
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Thus the test around the calls is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/base/power/wakeup.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index 5fb7718..c35d3f5 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -334,10 +334,8 @@ void device_wakeup_arm_wake_irqs(void)
- 	struct wakeup_source *ws;
- 
- 	rcu_read_lock();
--	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
--		if (ws->wakeirq)
--			dev_pm_arm_wake_irq(ws->wakeirq);
--	}
-+	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
-+		dev_pm_arm_wake_irq(ws->wakeirq);
- 	rcu_read_unlock();
- }
- 
-@@ -351,10 +349,8 @@ void device_wakeup_disarm_wake_irqs(void)
- 	struct wakeup_source *ws;
- 
- 	rcu_read_lock();
--	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
--		if (ws->wakeirq)
--			dev_pm_disarm_wake_irq(ws->wakeirq);
--	}
-+	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
-+		dev_pm_disarm_wake_irq(ws->wakeirq);
- 	rcu_read_unlock();
- }
- 
-@@ -390,9 +386,7 @@ int device_wakeup_disable(struct device *dev)
- 		return -EINVAL;
- 
- 	ws = device_wakeup_detach(dev);
--	if (ws)
--		wakeup_source_unregister(ws);
--
-+	wakeup_source_unregister(ws);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(device_wakeup_disable);
 -- 
-2.9.2
-
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
