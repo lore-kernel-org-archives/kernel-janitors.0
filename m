@@ -1,39 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 28 Jul 2016 05:53:18 +0000
-Subject: Re: staging: lustre: One function call less in class_register_type() after error detection
-Message-Id: <db6cbbce-d3ff-2b92-199b-a8e5fd99dd40@users.sourceforge.net>
+From: Oleg Drokin <oleg.drokin@intel.com>
+Date: Fri, 29 Jul 2016 15:28:46 +0000
+Subject: Re: [lustre-devel] staging: lustre: One function call less in class_register_type() after error dete
+Message-Id: <C7CC7D8C-EDD1-4E8F-AA27-A0045C659826@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <566D7733.1030102@users.sourceforge.net>
- <56784D83.7080108@users.sourceforge.net>
- <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com>
- <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net>
- <a92aee0c-7a2c-a509-c19e-44cc9d8335a1@users.sourceforge.net>
- <AD87A1DA-2C87-4A36-AA19-45961B51FBE7@intel.com>
- <0f9ecc7c-f98a-0296-563b-6fcfab459c31@users.sourceforge.net>
- <2BFF8460-ECEA-470D-ACD6-A9D7E540FE33@intel.com>
-In-Reply-To: <2BFF8460-ECEA-470D-ACD6-A9D7E540FE33@intel.com>
+References: <566ABCD9.1060404@users.sourceforge.net> <566D7733.1030102@users.sourceforge.net> <56784D83.7080108@users.sourceforge.net> <56784F0C.6040007@users.sourceforge.net> <20151221234857.GA27079@kroah.com> <59d94e70-7476-728e-5f63-013557ec2db9@users.sourceforge.net> <a92aee0c-7a2c-a509-c19e-44cc9d8335a1@users.sourceforge.net> <AD87A1DA-2C87-4A36-AA19-45961B51FBE7@intel.com> <0f9ecc7c-f98a-0296-563b-6fcfab459c31@users.sourceforge.net> <2BFF8460-ECEA-470D-ACD6-A9D7E540FE33@intel.com> <db6cbbce-d3ff-2b92-199b-a8e5fd99dd40@users.sourceforge.net>
+In-Reply-To: <db6cbbce-d3ff-2b92-199b-a8e5fd99dd40@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>
-
-> This function is called several times during lustre module insert.
-> Namely it's called 5 times for 5 types:
-> osc, mdc, lov, lmv, mgc.
-
-Will any extra memory accesses matter for the successful execution
-in this use case?
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Bhumika Goyal <bhumirks@gmail.com>, lustre-devel@lists.lustre.org
 
 
-> It's not called any more than that, so it's not exactly a super hot-path function
-> to overoptimize it, and the failure is presumed to never happen too
-> (or the module would be non-functional).
+On Jul 28, 2016, at 1:53 AM, SF Markus Elfring wrote:
 
-Did the assignment for the local variable "rc" with a well-known error code
-influence the run-time characteristics in unwanted ways?
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/drivers/staging/lustre/lustre/obdclass/genops.c?idj5b99a46bedc2cfbba96dec6d255c4b90af9ff8#n140
+>> This function is called several times during lustre module insert.
+>> Namely it's called 5 times for 5 types:
+>> osc, mdc, lov, lmv, mgc.
+> 
+> Will any extra memory accesses matter for the successful execution
+> in this use case?
 
-Regards,
-Markus
+I doubt it.
+
+In typical deployments outside of testing environment, this function is
+called 5 times every system boot and never again.
+
+>> It's not called any more than that, so it's not exactly a super hot-path function
+>> to overoptimize it, and the failure is presumed to never happen too
+>> (or the module would be non-functional).
+> 
+> Did the assignment for the local variable "rc" with a well-known error code
+> influence the run-time characteristics in unwanted ways?
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/drivers/staging/lustre/lustre/obdclass/genops.c?idj5b99a46bedc2cfbba96dec6d255c4b90af9ff8#n140
+
+I am not sure what do you mean here.
+
+
