@@ -1,33 +1,38 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 29 Aug 2016 16:38:53 +0000
-Subject: Re: [PATCH 1/2] sparc: Use kmalloc_array() in three functions
-Message-Id: <e7217d5e-44e6-a6fa-33a1-e3c85f0c36bc@redhat.com>
+From: Matt Fleming <matt@codeblueprint.co.uk>
+Date: Mon, 01 Aug 2016 12:04:13 +0000
+Subject: Re: [PATCH] firmware-gsmi: Delete an unnecessary check before the function call "dma_pool_destroy"
+Message-Id: <20160801120413.GF3636@codeblueprint.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0ca0235c-ddb9-0534-3bde-b4aaa48da92e@users.sourceforge.net>
- <fbdf6d83-08ac-a6b2-1674-53bc86c69ae8@users.sourceforge.net>
- <4475e65d-415d-9cde-1fe1-c17e120849c4@redhat.com> <57C42335.5000106@bfs.de>
-In-Reply-To: <57C42335.5000106@bfs.de>
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <c2e7a68c-0ee5-01e1-9da0-42602a48cf3d@users.sourceforge.net>
+In-Reply-To: <c2e7a68c-0ee5-01e1-9da0-42602a48cf3d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, sparclinux@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michel Lespinasse <walken@google.com>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Matt Fleming <matt.fleming@intel.com>, Mike Waychison <mikew@google.com>
 
-
-
-On 29/08/2016 13:57, walter harms wrote:
-> > > -	buf = kmalloc(sizeof(char) * (count + 1), GFP_KERNEL);
-> > > +	buf = kmalloc_array(count + 1, sizeof(*buf), GFP_KERNEL);
-> > >  	if (!buf)
-> > >  		return -ENOMEM;
-> > >  
-> > 
-> > Here it's probably best to just remove sizeof(char) completely, as it's
-> > 1 by definition.
+On Sun, 24 Jul, at 10:27:49AM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 24 Jul 2016 10:16:56 +0200
 > 
-> I would not do so, if you ever change buf to something else it would break,
-> having a sizeof(*buf) here is harmless and a known pattern.
+> The dma_pool_destroy() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/firmware/google/gsmi.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Fair enough, it's not code I maintain.
-
-Paolo
+Looks fine to me. If Mike doesn't pick this up I'll take it through
+the EFI tree.
