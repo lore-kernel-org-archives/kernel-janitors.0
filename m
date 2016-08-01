@@ -1,69 +1,66 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 11:26:53 +0000
-Subject: [PATCH 02/11 v2] usb: host: fsl-mph-dr-of: use of_property_read_bool
-Message-Id: <alpine.DEB.2.10.1608051326210.2999@hadrien>
+From: Roger Quadros <rogerq@ti.com>
+Date: Mon, 01 Aug 2016 09:32:34 +0000
+Subject: Re: [PATCH] memory: omap-gpmc: Delete an unnecessary check before the function call "gpiochip_free_o
+Message-Id: <e3aca807-d81b-a7d0-aa8d-3077a54979aa@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr> <1470387411-15879-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <e3f6205c-39a0-b9f7-5290-be4c6cbb2f0b@users.sourceforge.net>
+In-Reply-To: <e3f6205c-39a0-b9f7-5290-be4c6cbb2f0b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Use of_property_read_bool to check for the existence of a property.
+Hi Markus,
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+On 23/07/16 20:09, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 23 Jul 2016 18:54:02 +0200
+> 
+> The gpiochip_free_own_desc() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/memory/omap-gpmc.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+> index 869c83f..e138875 100644
+> --- a/drivers/memory/omap-gpmc.c
+> +++ b/drivers/memory/omap-gpmc.c
+> @@ -2143,9 +2143,7 @@ err_child_fail:
+>  	ret = -ENODEV;
+>  
+>  err_cs:
+> -	if (waitpin_desc)
+> -		gpiochip_free_own_desc(waitpin_desc);
+> -
+> +	gpiochip_free_own_desc(waitpin_desc);
+>  err:
+>  	gpmc_cs_free(cs);
+>  
+> 
+This looks good to me. I will queue this for v4.8. Thanks.
 
-// <smpl>
-@@
-expression e1,e2,x;
-@@
--	if (of_get_property(e1,e2,NULL))
--		x = true;
--	else
--		x = false;
-+	x = of_property_read_bool(e1,e2);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-v2: special case for propagating true and false
-
- drivers/usb/host/fsl-mph-dr-of.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr-of.c
-index 1044b0f..f07ccb2 100644
---- a/drivers/usb/host/fsl-mph-dr-of.c
-+++ b/drivers/usb/host/fsl-mph-dr-of.c
-@@ -222,23 +222,17 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
- 	pdata->controller_ver = usb_get_ver_info(np);
-
- 	/* Activate Erratum by reading property in device tree */
--	if (of_get_property(np, "fsl,usb-erratum-a007792", NULL))
--		pdata->has_fsl_erratum_a007792 = 1;
--	else
--		pdata->has_fsl_erratum_a007792 = 0;
--	if (of_get_property(np, "fsl,usb-erratum-a005275", NULL))
--		pdata->has_fsl_erratum_a005275 = 1;
--	else
--		pdata->has_fsl_erratum_a005275 = 0;
-+	pdata->has_fsl_erratum_a007792 +		of_property_read_bool(np, "fsl,usb-erratum-a007792");
-+	pdata->has_fsl_erratum_a005275 +		of_property_read_bool(np, "fsl,usb-erratum-a005275");
-
- 	/*
- 	 * Determine whether phy_clk_valid needs to be checked
- 	 * by reading property in device tree
- 	 */
--	if (of_get_property(np, "phy-clk-valid", NULL))
--		pdata->check_phy_clk_valid = 1;
--	else
--		pdata->check_phy_clk_valid = 0;
-+	pdata->check_phy_clk_valid +		of_property_read_bool(np, "phy-clk-valid");
-
- 	if (pdata->have_sysif_regs) {
- 		if (pdata->controller_ver = FSL_USB_VER_NONE) {
-
+cheers,
+-roger
