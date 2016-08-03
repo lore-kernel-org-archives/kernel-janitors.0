@@ -1,26 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 09 Aug 2016 22:10:02 +0000
-Subject: Re: [PATCH v2] net: dsa: b53: constify b53_io_ops structures
-Message-Id: <20160809.151002.825441860378434543.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Aug 2016 18:43:39 +0000
+Subject: [patch] ath9k: indent an if statement
+Message-Id: <20160803184339.GB775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470762585-2670-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470762585-2670-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: f.fainelli@gmail.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Benjamin Berg <benjamin.berg@open-mesh.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue,  9 Aug 2016 19:09:45 +0200
+It looks like this code is correct, but it just needs to be indented a
+bit.
 
-> The b53_io_ops structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> v2: Refer to the right structure in the commit message
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to net-next, thanks.
+diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
+index a394622..eb00724 100644
+--- a/drivers/net/wireless/ath/ath9k/main.c
++++ b/drivers/net/wireless/ath/ath9k/main.c
+@@ -919,7 +919,7 @@ static void ath9k_vif_iter_set_beacon(struct ath9k_vif_iter_data *iter_data,
+ 	} else {
+ 		if (iter_data->primary_beacon_vif->type != NL80211_IFTYPE_AP &&
+ 		    vif->type = NL80211_IFTYPE_AP)
+-		iter_data->primary_beacon_vif = vif;
++			iter_data->primary_beacon_vif = vif;
+ 	}
+ 
+ 	iter_data->beacons = true;
