@@ -1,48 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Aug 2016 05:47:04 +0000
-Subject: [PATCH] [IA64] MCA: Use kmalloc_array() in init_record_index_pools()
-Message-Id: <71e94d34-27fc-1c98-50aa-be96abddabab@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Aug 2016 08:49:49 +0000
+Subject: [bug report] qed: Revisit chain implementation
+Message-Id: <20160803084949.GA2154@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Tony Luck <tony.luck@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Aug 2016 07:37:46 +0200
+Hello Yuval Mintz,
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kmalloc_array".
+The patch a91eb52abb50: "qed: Revisit chain implementation" from Jun
+3, 2016, leads to the following static checker warning:
 
-  This issue was detected by using the Coccinelle software.
+	include/linux/qed/qed_chain.h:404 qed_chain_consume()
+	warn: inconsistent indenting
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+include/linux/qed/qed_chain.h
+   386  static inline void *qed_chain_consume(struct qed_chain *p_chain)
+   387  {
+   388          void *p_ret = NULL, *p_cons_idx, *p_cons_page_idx;
+   389  
+   390          if (is_chain_u16(p_chain)) {
+   391                  if ((p_chain->u.chain16.cons_idx &
+   392                       p_chain->elem_per_page_mask) = p_chain->next_page_mask) {
+   393                          p_cons_idx = &p_chain->u.chain16.cons_idx;
+   394                          p_cons_page_idx = &p_chain->pbl.u.pbl16.cons_page_idx;
+   395                          qed_chain_advance_page(p_chain, &p_chain->p_cons_elem,
+   396                                                 p_cons_idx, p_cons_page_idx);
+   397                  }
+   398                  p_chain->u.chain16.cons_idx++;
+   399          } else {
+   400                  if ((p_chain->u.chain32.cons_idx &
+   401                       p_chain->elem_per_page_mask) = p_chain->next_page_mask) {
+   402                          p_cons_idx = &p_chain->u.chain32.cons_idx;
+   403                          p_cons_page_idx = &p_chain->pbl.u.pbl32.cons_page_idx;
+   404                  qed_chain_advance_page(p_chain, &p_chain->p_cons_elem,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+Add a tab?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/ia64/kernel/mca_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+   405                                                 p_cons_idx, p_cons_page_idx);
+   406                  }
+   407                  p_chain->u.chain32.cons_idx++;
+   408          }
+   409  
+   410          p_ret = p_chain->p_cons_elem;
+   411          p_chain->p_cons_elem = (void *)(((u8 *)p_chain->p_cons_elem) +
+   412                                          p_chain->elem_size);
+   413  
+   414          return p_ret;
+   415  }
 
-diff --git a/arch/ia64/kernel/mca_drv.c b/arch/ia64/kernel/mca_drv.c
-index 94f8bf7..e4ce128 100644
---- a/arch/ia64/kernel/mca_drv.c
-+++ b/arch/ia64/kernel/mca_drv.c
-@@ -349,9 +349,9 @@ init_record_index_pools(void)
- 
- 	/* - 3 - */
- 	slidx_pool.max_idx = (rec_max_size/sect_min_size) * 2 + 1;
--	slidx_pool.buffer -		kmalloc(slidx_pool.max_idx * sizeof(slidx_list_t), GFP_KERNEL);
--
-+	slidx_pool.buffer = kmalloc_array(slidx_pool.max_idx,
-+					  sizeof(*slidx_pool.buffer),
-+					  GFP_KERNEL);
- 	return slidx_pool.buffer ? 0 : -ENOMEM;
- }
- 
--- 
-2.9.3
-
+regards,
+dan carpenter
