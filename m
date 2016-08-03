@@ -1,46 +1,29 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 12 Aug 2016 14:15:18 +0000
-Subject: [PATCH v2 2/2] staging: rts5208/ms.c: add missing releases in mg_get_local_EKB and mg_get_ICV
-Message-Id: <20160812141518.12585-3-lambert.quentin@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Aug 2016 19:01:07 +0000
+Subject: [patch] i40e: remove a stray unlock
+Message-Id: <20160803190107.GC775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160812141518.12585-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160812141518.12585-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Catherine Sullivan <catherine.sullivan@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-mg_get_local_EKB and mg_get_ICV used to return with an error code before
-releasing all resources. This patch add a jump to the appropriate label
-ensuring that the resources are properly released before returning.
+We shifted the locking around a bit but forgot to delete this unlock so
+now it can unlock twice.
 
-This issue was found with Hector.
+Fixes: cd3be169a5ff ('i40e: Move the mutex lock in i40e_client_unregister')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
----
- drivers/staging/rts5208/ms.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -4328,7 +4328,8 @@ int mg_get_local_EKB(struct scsi_cmnd *s
- 		set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
- 		rtsx_clear_ms_error(chip);
- 		rtsx_trace(chip);
--		return STATUS_FAIL;
-+		retval = STATUS_FAIL;
-+		goto free_buffer;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_client.c b/drivers/net/ethernet/intel/i40e/i40e_client.c
+index e1370c5..1a9682f 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_client.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_client.c
+@@ -990,7 +990,6 @@ int i40e_unregister_client(struct i40e_client *client)
+ 	if (!i40e_client_is_registered(client)) {
+ 		pr_info("i40e: Client %s has not been registered\n",
+ 			client->name);
+-		mutex_unlock(&i40e_client_mutex);
+ 		ret = -ENODEV;
+ 		goto out;
  	}
- 
- 	bufflen = min_t(int, 1052, scsi_bufflen(srb));
-@@ -4581,7 +4582,8 @@ int mg_get_ICV(struct scsi_cmnd *srb, st
- 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
- 		rtsx_clear_ms_error(chip);
- 		rtsx_trace(chip);
--		return STATUS_FAIL;
-+		retval = STATUS_FAIL;
-+		goto free_buffer;
- 	}
- 
- 	bufflen = min_t(int, 1028, scsi_bufflen(srb));
