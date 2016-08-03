@@ -1,64 +1,41 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Wed, 31 Aug 2016 17:08:44 +0000
-Subject: Re: [PATCH 3/6] net: bcmgenet: constify ethtool_ops structures
-Message-Id: <c1bac795-eb18-c508-1ea1-ba199efcdf04@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Aug 2016 14:13:31 +0000
+Subject: [bug report] drivers/net: support hdlc function for QE-UCC
+Message-Id: <20160803141331.GA9097@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472628648-3603-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472628648-3603-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <20160712234919.GA23061@mwanda>
+In-Reply-To: <20160712234919.GA23061@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 08/31/2016 12:30 AM, Julia Lawall wrote:
-> Check for ethtool_ops structures that are only stored in the ethtool_ops
-> field of a net_device structure or passed as the second argument to
-> netdev_set_default_ethtool_ops.  These contexts are declared const, so
-> ethtool_ops structures that have these properties can be declared as const
-> also.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct ethtool_ops i@p = { ... };
-> 
-> @ok1@
-> identifier r.i;
-> struct net_device e;
-> position p;
-> @@
-> e.ethtool_ops = &i@p;
-> 
-> @ok2@
-> identifier r.i;
-> expression e;
-> position p;
-> @@
-> netdev_set_default_ethtool_ops(e, &i@p)
-> 
-> @bad@
-> position p != {r.p,ok1.p,ok2.p};
-> identifier r.i;
-> @@
-> i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct ethtool_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Zhao Qiang,
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+The patch c19b6d246a35: "drivers/net: support hdlc function for
+QE-UCC" from Jun 6, 2016, leads to the following static checker
+warning:
+
+	drivers/net/wan/fsl_ucc_hdlc.c:164 uhdlc_init()
+	warn: unsigned 'priv->ucc_pram_offset' is never less than zero.
+
+drivers/net/wan/fsl_ucc_hdlc.c
+   159  
+   160          /* Alloc parameter ram for ucc hdlc */
+   161          priv->ucc_pram_offset = qe_muram_alloc(sizeof(priv->ucc_pram),
+   162                                  ALIGNMENT_OF_UCC_HDLC_PRAM);
+   163  
+   164          if (priv->ucc_pram_offset < 0) {
+
+This is slightly complicated what's happening here.  qe_muram_alloc()
+returns negatives but casted to an unsigned long, then we assign it to
+priv->ucc_pram_offset which is a u32.
+
+   165                  dev_err(priv->dev, "Can not allocate MURAM for hdlc prameter.\n");
+   166                  ret = -ENOMEM;
+   167                  goto free_tx_bd;
+   168          }
+   169  
+
+regards,
+dan carpenter
