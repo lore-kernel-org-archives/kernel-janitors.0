@@ -1,73 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Aug 2016 21:15:22 +0000
-Subject: Re: staging: ks7010: Replace three printk() calls by pr_err()
-Message-Id: <2afc5de9-cd4d-7175-1807-a8acc2fc2006@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Aug 2016 19:05:00 +0000
+Subject: [patch] nfsd: remove some dead code in nfsd_create_locked()
+Message-Id: <20160803190500.GE775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
- <1471e8af-129d-8a7a-c7d9-1e1fbe0237ec@users.sourceforge.net>
- <1471031030.18251.18.camel@perches.com>
- <a6b96b51-a602-f22d-b853-0ee2f142fb67@users.sourceforge.net>
- <1471109478.3467.33.camel@perches.com>
- <3837d167-b920-d36f-3b75-f37d4b92031d@users.sourceforge.net>
- <1471118088.3467.55.camel@perches.com>
- <68dcf04d-ade3-b67a-144d-33bd5ebd0049@users.sourceforge.net>
- <20160813202109.GA28286@kroah.com>
-In-Reply-To: <20160813202109.GA28286@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, Wolfram Sang <wsa@the-dreams.de>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Jean Delvare <jdelvare@suse.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Jeff Layton <jlayton@poochiereds.net>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Really now, this is basic fixes and cleanups,
+We changed this around in f13058a93484 ('nfsd: reorganize nfsd_create')
+so "dchild" can't be an error pointer any more.  Also we don't need to
+test if dchild is NULL because dput has a check built-in.  Can it even
+be NULL?
 
-I agree to this view to some degree.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-> you have been asked many times in the past to move on beyond these,
-
-It is more useful when more severe bugs or bigger software improvements can=
- be found.
-Which source code clean-ups are picked better up by other contributors?
-
-
-> as you often times seem to end up wasting lots of people's times
-> as they attempt to help you.
-
-It can take a bit more time occasionally to achieve the desired consensus.
-
-
-> Personally, I'm long past wishing to help you out here, sorry.
-
-Other contributors will eventually continue the clarification of remaining
-open issues in the source file "ks7010_sdio.c".
-
-
-> I'll take "correct" patches, but that's it.  No discussion of them, no
-> arguing over theoreticals, and no telling you what I might, or might
-> not, want to see done in the future, sorry.
-
-I became aware about software development possibilities which can also
-matter here.
-Yesterday Julia Lawall informed me about a presentation on the topic
-"Refactor strings =E2=80=93 make everyone happy" by Wolfram Sang on 2016-07=
--14.
-
-Is such a software evolution also interesting and acceptable for you?
-
-
-> And really, your patch quality stinks, I strongly suggest getting a lot
-> more experience with C first before doing more kernel work please.
-
-Can you accept any specific update steps while other software changes
-will evolve after a bit of discussion as usual?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index c844fd6..cd628ce 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1141,7 +1141,7 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 		char *fname, int flen, struct iattr *iap,
+ 		int type, dev_t rdev, struct svc_fh *resfhp)
+ {
+-	struct dentry	*dentry, *dchild = NULL;
++	struct dentry	*dentry, *dchild;
+ 	struct inode	*dirp;
+ 	__be32		err;
+ 	__be32		err2;
+@@ -1208,8 +1208,7 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	if (!err)
+ 		err = fh_update(resfhp);
+ out:
+-	if (dchild && !IS_ERR(dchild))
+-		dput(dchild);
++	dput(dchild);
+ 	return err;
+ 
+ out_nfserr:
