@@ -1,41 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Aug 2016 18:42:32 +0000
-Subject: [patch] qla2xxx: small cleanup in qla2x00_wait_for_hba_ready()
-Message-Id: <20160803184232.GA775@mwanda>
+From: Himanshu Madhani <himanshu.madhani@qlogic.com>
+Date: Thu, 04 Aug 2016 22:20:39 +0000
+Subject: Re: [patch] qla2xxx: small cleanup in qla2x00_wait_for_hba_ready()
+Message-Id: <7AF62168-5A35-4B9A-9F3F-CEE3A9E8F7F7@qlogic.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160803184232.GA775@mwanda>
+In-Reply-To: <20160803184232.GA775@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: qla2xxx-upstream@qlogic.com, Sawan Chandak <sawan.chandak@qlogic.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Dept-Eng QLA2xxx Upstream <qla2xxx-upstream@qlogic.com>, Sawan Chandak <sawan.chandak@qlogic.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The "if (test_bit(UNLOADING..." line was indented one tab more than it
-should have been.  There was an extra parenthesis around the
-qla2x00_reset_active() function call.  I lined up the conditions a bit
-so that it shows how they group together.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 2674f4c..1dd8650 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -899,12 +899,12 @@ qla2x00_wait_for_hba_ready(scsi_qla_host_t *vha)
- 	struct qla_hw_data *ha = vha->hw;
- 	scsi_qla_host_t *base_vha = pci_get_drvdata(ha->pdev);
- 
--	while (((qla2x00_reset_active(vha)) || ha->dpc_active ||
--	    ha->flags.mbox_busy) ||
--		test_bit(FX00_RESET_RECOVERY, &vha->dpc_flags) ||
--		test_bit(FX00_TARGET_SCAN, &vha->dpc_flags)) {
--			if (test_bit(UNLOADING, &base_vha->dpc_flags))
--				break;
-+	while ((qla2x00_reset_active(vha) || ha->dpc_active ||
-+		ha->flags.mbox_busy) ||
-+	       test_bit(FX00_RESET_RECOVERY, &vha->dpc_flags) ||
-+	       test_bit(FX00_TARGET_SCAN, &vha->dpc_flags)) {
-+		if (test_bit(UNLOADING, &base_vha->dpc_flags))
-+			break;
- 		msleep(1000);
- 	}
- }
+DQpPbiA4LzMvMTYsIDExOjQyIEFNLCAiRGFuIENhcnBlbnRlciIgPGRhbi5jYXJwZW50ZXJAb3Jh
+Y2xlLmNvbT4gd3JvdGU6DQoNCj5UaGUgImlmICh0ZXN0X2JpdChVTkxPQURJTkcuLi4iIGxpbmUg
+d2FzIGluZGVudGVkIG9uZSB0YWIgbW9yZSB0aGFuIGl0DQo+c2hvdWxkIGhhdmUgYmVlbi4gIFRo
+ZXJlIHdhcyBhbiBleHRyYSBwYXJlbnRoZXNpcyBhcm91bmQgdGhlDQo+cWxhMngwMF9yZXNldF9h
+Y3RpdmUoKSBmdW5jdGlvbiBjYWxsLiAgSSBsaW5lZCB1cCB0aGUgY29uZGl0aW9ucyBhIGJpdA0K
+PnNvIHRoYXQgaXQgc2hvd3MgaG93IHRoZXkgZ3JvdXAgdG9nZXRoZXIuDQo+DQo+U2lnbmVkLW9m
+Zi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KPg0KPmRpZmYg
+LS1naXQgYS9kcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfb3MuYyBiL2RyaXZlcnMvc2NzaS9xbGEy
+eHh4L3FsYV9vcy5jDQo+aW5kZXggMjY3NGY0Yy4uMWRkODY1MCAxMDA2NDQNCj4tLS0gYS9kcml2
+ZXJzL3Njc2kvcWxhMnh4eC9xbGFfb3MuYw0KPisrKyBiL2RyaXZlcnMvc2NzaS9xbGEyeHh4L3Fs
+YV9vcy5jDQo+QEAgLTg5OSwxMiArODk5LDEyIEBAIHFsYTJ4MDBfd2FpdF9mb3JfaGJhX3JlYWR5
+KHNjc2lfcWxhX2hvc3RfdCAqdmhhKQ0KPiAJc3RydWN0IHFsYV9od19kYXRhICpoYSA9IHZoYS0+
+aHc7DQo+IAlzY3NpX3FsYV9ob3N0X3QgKmJhc2VfdmhhID0gcGNpX2dldF9kcnZkYXRhKGhhLT5w
+ZGV2KTsNCj4gDQo+LQl3aGlsZSAoKChxbGEyeDAwX3Jlc2V0X2FjdGl2ZSh2aGEpKSB8fCBoYS0+
+ZHBjX2FjdGl2ZSB8fA0KPi0JICAgIGhhLT5mbGFncy5tYm94X2J1c3kpIHx8DQo+LQkJdGVzdF9i
+aXQoRlgwMF9SRVNFVF9SRUNPVkVSWSwgJnZoYS0+ZHBjX2ZsYWdzKSB8fA0KPi0JCXRlc3RfYml0
+KEZYMDBfVEFSR0VUX1NDQU4sICZ2aGEtPmRwY19mbGFncykpIHsNCj4tCQkJaWYgKHRlc3RfYml0
+KFVOTE9BRElORywgJmJhc2VfdmhhLT5kcGNfZmxhZ3MpKQ0KPi0JCQkJYnJlYWs7DQo+Kwl3aGls
+ZSAoKHFsYTJ4MDBfcmVzZXRfYWN0aXZlKHZoYSkgfHwgaGEtPmRwY19hY3RpdmUgfHwNCj4rCQlo
+YS0+ZmxhZ3MubWJveF9idXN5KSB8fA0KPisJICAgICAgIHRlc3RfYml0KEZYMDBfUkVTRVRfUkVD
+T1ZFUlksICZ2aGEtPmRwY19mbGFncykgfHwNCj4rCSAgICAgICB0ZXN0X2JpdChGWDAwX1RBUkdF
+VF9TQ0FOLCAmdmhhLT5kcGNfZmxhZ3MpKSB7DQo+KwkJaWYgKHRlc3RfYml0KFVOTE9BRElORywg
+JmJhc2VfdmhhLT5kcGNfZmxhZ3MpKQ0KPisJCQlicmVhazsNCj4gCQltc2xlZXAoMTAwMCk7DQo+
+IAl9DQo+IH0NCg0KTG9va3MgR29vZC4NCg0KQWNrZWQtYnk6IEhpbWFuc2h1IE1hZGhhbmkgPGhp
+bWFuc2h1Lm1hZGhhbmlAcWxvZ2ljLmNvbT4NCj4NCg=
