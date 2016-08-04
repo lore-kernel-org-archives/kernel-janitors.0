@@ -1,21 +1,29 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Thu, 11 Aug 2016 11:11:50 +0000
-Subject: Re: [PATCH] xfrm: constify xfrm_replay structures
-Message-Id: <20160811111150.GC5710@gauss.secunet.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Aug 2016 05:27:56 +0000
+Subject: [patch] fcoe: use kfree_skb() to free an skb
+Message-Id: <20160804052756.GH775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470760028-8581-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470760028-8581-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Thumshirn <jth@kernel.org>, Hannes Reinecke <hare@suse.de>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 09, 2016 at 06:27:08PM +0200, Julia Lawall wrote:
-> The xfrm_replay structures are never modified, so declare them as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This should be doing kfree_skb() instead of kfree().
 
-Applied to the ipsec-next tree, thanks!
+Fixes: 9a6cf881df02 ('fcoe: implement FIP VLAN responder')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
+index a569c65..dcf3653 100644
+--- a/drivers/scsi/fcoe/fcoe_ctlr.c
++++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+@@ -2923,7 +2923,7 @@ static int fcoe_ctlr_vlan_recv(struct fcoe_ctlr *fip, struct sk_buff *skb)
+ 	mutex_unlock(&fip->ctlr_mutex);
+ 
+ drop:
+-	kfree(skb);
++	kfree_skb(skb);
+ 	return rc;
+ }
+ 
