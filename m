@@ -1,31 +1,27 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 22 Aug 2016 20:56:07 +0000
-Subject: Re: [PATCH] checkpatch: See if modified files are marked obsolete in MAINTAINERS
-Message-Id: <1471899367.3746.78.camel@perches.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Aug 2016 05:34:03 +0000
+Subject: [patch] tty: amiserial.c: remove a double irq restore
+Message-Id: <20160804053403.GL775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87shtwvm63.fsf@kamboji.qca.qualcomm.com>
-         <7ceaa510dc9d2df05ec4b456baed7bb1415550b3.1471889575.git.joe@perches.com>
-         <30522d64-8303-cf13-d967-a5759aeb2278@users.sourceforge.net>
-In-Reply-To: <30522d64-8303-cf13-d967-a5759aeb2278@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kalle Valo <kvalo@codeaurora.org>, Arend van Spriel <arend.vanspriel@broadcom.com>, Andy Whitcroft <apw@canonical.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2016-08-22 at 22:50 +0200, SF Markus Elfring wrote:
-> > @@ -2289,6 +2299,10 @@ sub process {
-> >  		}
-> >  
-> >  		if ($found_file) {
-> > +			if (is_maintained_obsolete($realfile)) {
-> > +				WARN("OBSOLETE",
-> > +				     "$realfile is marked as 'obsolete' in the MAINTAINERS hierarchy.  No unnecessary modifications please.\n");
-> > +			}
-> How do you think about to avoid a double negation in such a warning message?
-> 
-> Would a wording like "… Only really necessary modifications please.\n"
-> be more useful here?
+We already called "local_irq_restore(flags);" so this isn't needed.
 
-No, probably not.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/tty/amiserial.c b/drivers/tty/amiserial.c
+index 208f573..2f33cf1 100644
+--- a/drivers/tty/amiserial.c
++++ b/drivers/tty/amiserial.c
+@@ -880,7 +880,6 @@ static int rs_write(struct tty_struct * tty, const unsigned char *buf, int count
+ 		/* set a pending Tx Interrupt, transmitter should restart now */
+ 		custom.intreq = IF_SETCLR | IF_TBE;
+ 		mb();
+-		local_irq_restore(flags);
+ 	}
+ 	return ret;
+ }
