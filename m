@@ -1,47 +1,59 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Thu, 18 Aug 2016 07:55:53 +0000
-Subject: Re: [PATCH] ARM: cpuidle: Fix error return code
-Message-Id: <57B56A09.50402@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Aug 2016 14:02:06 +0000
+Subject: [bug report] fs/block_dev.c: add bdev_read_page() and bdev_write_page()
+Message-Id: <20160804140206.GA11852@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470920550-21625-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <57B471A9.8060103@linaro.org> <6453323.GiPU6Gidg3@vostro.rjw.lan>
-In-Reply-To: <6453323.GiPU6Gidg3@vostro.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On 08/18/2016 03:13 AM, Rafael J. Wysocki wrote:
-> On Wednesday, August 17, 2016 04:16:09 PM Daniel Lezcano wrote:
->> On 08/11/2016 03:02 PM, Christophe JAILLET wrote:
->>> We know that 'ret =3D 0' because it has been tested a few lines above.
->>> So, if 'kzalloc' fails, 0 will be returned instead of an error code.
->>> Return -ENOMEM instead.
->>>
->>> Fixes: a0d46a3dfdc3 ("ARM: cpuidle: Register per cpuidle device")
->>>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>
->> Applied, thanks !
->=20
-> Daniel, I've applied it too and earlier.
+Hello Matthew Wilcox,
 
-Ok, thanks for the head up.
+The patch 47a191fd38eb: "fs/block_dev.c: add bdev_read_page() and
+bdev_write_page()" from Jun 4, 2014, leads to the following static
+checker warning:
 
-  -- Daniel
+	include/linux/genhd.h:382 part_inc_in_flight()
+	warn: buffer overflow 'part->in_flight' 2 <= 72
+
+include/linux/genhd.h
+   380  static inline void part_inc_in_flight(struct hd_struct *part, int rw)
+   381  {
+   382          atomic_inc(&part->in_flight[rw]);
+                                            ^^
+This should either be READ or WRITE.
+
+   383          if (part->partno)
+   384                  atomic_inc(&part_to_disk(part)->part0.in_flight[rw]);
+   385  }
 
 
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for ARM=
- SoCs
+   444  int bdev_write_page(struct block_device *bdev, sector_t sector,
+   445                          struct page *page, struct writeback_control *wbc)
+   446  {
+   447          int result;
+   448          int rw = (wbc->sync_mode = WB_SYNC_ALL) ? WRITE_SYNC : WRITE;
+                                                           ^^^^^^^^^^
+But here we're setting it to WRITE_SYNC.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+   449          const struct block_device_operations *ops = bdev->bd_disk->fops;
+   450  
+   451          if (!ops->rw_page || bdev_get_integrity(bdev))
+   452                  return -EOPNOTSUPP;
+   453          result = blk_queue_enter(bdev->bd_queue, false);
+   454          if (result)
+   455                  return result;
+   456  
+   457          set_page_writeback(page);
+   458          result = ops->rw_page(bdev, sector + get_start_sect(bdev), page, rw);
+   459          if (result)
+   460                  end_page_writeback(page);
+   461          else
+   462                  unlock_page(page);
+   463          blk_queue_exit(bdev->bd_queue);
+   464          return result;
+   465  }
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards,
+dan carpenter
