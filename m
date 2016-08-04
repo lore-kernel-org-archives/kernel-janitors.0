@@ -1,45 +1,31 @@
-From: Jeff Layton <jlayton@poochiereds.net>
-Date: Mon, 29 Aug 2016 10:57:47 +0000
-Subject: Re: [PATCH] nfsd: constify reply_cache_stats_operations structure
-Message-Id: <1472468267.2597.0.camel@poochiereds.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Aug 2016 05:37:03 +0000
+Subject: [patch] ppc/cell: missing error code in spufs_mkgang()
+Message-Id: <20160804053703.GN775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472416615-24079-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472416615-24079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: kernel-janitors@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeremy Kerr <jk@ozlabs.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2016-08-28 at 22:36 +0200, Julia Lawall wrote:
-> reply_cache_stats_operations, of type struct file_operations, is
-> never
-> modified, so declare it as const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  fs/nfsd/nfsctl.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> index 65ad016..3bc9693 100644
-> --- a/fs/nfsd/nfsctl.c
-> +++ b/fs/nfsd/nfsctl.c
-> @@ -217,7 +217,7 @@ static const struct file_operations
-> pool_stats_operations = {
->  	.release	= nfsd_pool_stats_release,
->  };
->  
-> -static struct file_operations reply_cache_stats_operations = {
-> +static const struct file_operations reply_cache_stats_operations = {
->  	.open		= nfsd_reply_cache_stats_open,
->  	.read		= seq_read,
->  	.llseek		= seq_lseek,
-> 
+We should return -ENOMEM if alloc_spu_gang() fails.
 
-I'm pretty sure Bruce will pick this up for v4.9:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Jeff Layton <jlayton@poochiereds.net>
+diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
+index 5be15cf..2975754 100644
+--- a/arch/powerpc/platforms/cell/spufs/inode.c
++++ b/arch/powerpc/platforms/cell/spufs/inode.c
+@@ -496,8 +496,10 @@ spufs_mkgang(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	gang = alloc_spu_gang();
+ 	SPUFS_I(inode)->i_ctx = NULL;
+ 	SPUFS_I(inode)->i_gang = gang;
+-	if (!gang)
++	if (!gang) {
++		ret = -ENOMEM;
+ 		goto out_iput;
++	}
+ 
+ 	inode->i_op = &simple_dir_inode_operations;
+ 	inode->i_fop = &simple_dir_operations;
