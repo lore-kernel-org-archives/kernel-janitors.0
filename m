@@ -1,28 +1,27 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Date: Fri, 12 Aug 2016 08:53:44 +0000
-Subject: Re: [PATCH] phy: sun9i-usb: fix error handling
-Message-Id: <57AD8BC8.7090609@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Aug 2016 05:35:25 +0000
+Subject: [patch] powerpc/fsl_rio: fix a missing error code
+Message-Id: <20160804053525.GM775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1467784806-17091-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <CAGb2v64D-AcrG8Xot79_7PnUKFnHonU65Crfw7QONj_TFLwv5A@mail.gmail.com>
-In-Reply-To: <CAGb2v64D-AcrG8Xot79_7PnUKFnHonU65Crfw7QONj_TFLwv5A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Alexandre Bounine <alexandre.bounine@idt.com>, Andrew Morton <akpm@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
+We should set the error code here.  Otherwise static checkers complain.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Wednesday 06 July 2016 11:36 AM, Chen-Yu Tsai wrote:
-> On Wed, Jul 6, 2016 at 2:00 PM, Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->> This is likely that checking 'phy->hsic_clk' instead of 'phy->clk' is
->> expected here.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-
-merged, thanks
-
--Kishon
+diff --git a/arch/powerpc/sysdev/fsl_rio.c b/arch/powerpc/sysdev/fsl_rio.c
+index 984e816..68e7c0d 100644
+--- a/arch/powerpc/sysdev/fsl_rio.c
++++ b/arch/powerpc/sysdev/fsl_rio.c
+@@ -491,6 +491,7 @@ int fsl_rio_setup(struct platform_device *dev)
+ 	rmu_node = of_parse_phandle(dev->dev.of_node, "fsl,srio-rmu-handle", 0);
+ 	if (!rmu_node) {
+ 		dev_err(&dev->dev, "No valid fsl,srio-rmu-handle property\n");
++		rc = -ENOENT;
+ 		goto err_rmu;
+ 	}
+ 	rc = of_address_to_resource(rmu_node, 0, &rmu_regs);
