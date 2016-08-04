@@ -1,23 +1,86 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 12 Aug 2016 14:06:23 +0000
-Subject: Re: [PATCH 1/2] staging: rts5208/ms.c: change the label name to respect the coding style
-Message-Id: <20160812140623.GA29822@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Aug 2016 05:26:06 +0000
+Subject: [patch] rapidio: dereferencing an error pointer
+Message-Id: <20160804052606.GF775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160812125835.2324-1-lambert.quentin@gmail.com>
- <20160812125835.2324-2-lambert.quentin@gmail.com>
-In-Reply-To: <20160812125835.2324-2-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matt Porter <mporter@kernel.crashing.org>, Alexandre Bounine <alexandre.bounine@idt.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Aug 12, 2016 at 02:58:34PM +0200, Quentin Lambert wrote:
-> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
-> ---
->  drivers/staging/rts5208/ms.c |   12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+If riocm_ch_alloc() fails then we end up dereferencing the error
+pointer.
 
-I can't take patches without any changelog comments, sorry.
+The problem is that we're not unwinding in the reverse order from how
+we allocate things so it gets confusing.  I've changed this around so
+now "ch" is NULL when we are done with it after we call
+riocm_put_channel().  That way we can check if it's NULL and avoid
+calling riocm_put_channel() on it twice.
 
-greg k-h
+I renamed err_nodev to err_put_new_ch so that it better reflects what
+the goto does.
+
+Then because we had flipping things around, it means we don't neeed to
+initialize the pointers to NULL and we can remove an if statement and
+pull things in an indent level.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
+index cecc15a..3fa17ac 100644
+--- a/drivers/rapidio/rio_cm.c
++++ b/drivers/rapidio/rio_cm.c
+@@ -1080,8 +1080,8 @@ static int riocm_send_ack(struct rio_channel *ch)
+ static struct rio_channel *riocm_ch_accept(u16 ch_id, u16 *new_ch_id,
+ 					   long timeout)
+ {
+-	struct rio_channel *ch = NULL;
+-	struct rio_channel *new_ch = NULL;
++	struct rio_channel *ch;
++	struct rio_channel *new_ch;
+ 	struct conn_req *req;
+ 	struct cm_peer *peer;
+ 	int found = 0;
+@@ -1155,6 +1155,7 @@ static struct rio_channel *riocm_ch_accept(u16 ch_id, u16 *new_ch_id,
+ 
+ 	spin_unlock_bh(&ch->lock);
+ 	riocm_put_channel(ch);
++	ch = NULL;
+ 	kfree(req);
+ 
+ 	down_read(&rdev_sem);
+@@ -1172,7 +1173,7 @@ static struct rio_channel *riocm_ch_accept(u16 ch_id, u16 *new_ch_id,
+ 	if (!found) {
+ 		/* If peer device object not found, simply ignore the request */
+ 		err = -ENODEV;
+-		goto err_nodev;
++		goto err_put_new_ch;
+ 	}
+ 
+ 	new_ch->rdev = peer->rdev;
+@@ -1184,15 +1185,16 @@ static struct rio_channel *riocm_ch_accept(u16 ch_id, u16 *new_ch_id,
+ 
+ 	*new_ch_id = new_ch->id;
+ 	return new_ch;
++
++err_put_new_ch:
++	spin_lock_bh(&idr_lock);
++	idr_remove(&ch_idr, new_ch->id);
++	spin_unlock_bh(&idr_lock);
++	riocm_put_channel(new_ch);
++
+ err_put:
+-	riocm_put_channel(ch);
+-err_nodev:
+-	if (new_ch) {
+-		spin_lock_bh(&idr_lock);
+-		idr_remove(&ch_idr, new_ch->id);
+-		spin_unlock_bh(&idr_lock);
+-		riocm_put_channel(new_ch);
+-	}
++	if (ch)
++		riocm_put_channel(ch);
+ 	*new_ch_id = 0;
+ 	return ERR_PTR(err);
+ }
