@@ -1,82 +1,46 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 11 Aug 2016 12:39:35 +0000
-Subject: Re: [PATCH v5 2/2] mfd: dm355evm_msp: Change error messages in add_child()
-Message-Id: <alpine.DEB.2.10.1608111434590.7357@hadrien>
+From: Ben Werbowyj <ben.werbowyj@gmail.com>
+Date: Thu, 04 Aug 2016 01:05:28 +0000
+Subject: Re: [PATCH 0/2] drivers: w1: coding style corrections
+Message-Id: <CAPBZ1qPXe5GALjivvf0wpaV7swEF4qwLW4UiGMF4h0AGZj6a7Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <80dc4486-01d1-df66-c9c2-b71ee2251251@users.sourceforge.net> <5e0c3af5-5efd-2e7e-020a-5c7304131cc1@users.sourceforge.net>
-In-Reply-To: <5e0c3af5-5efd-2e7e-020a-5c7304131cc1@users.sourceforge.net>
+References: <1469247089-8093-1-git-send-email-ben.werbowyj@gmail.com>
+In-Reply-To: <1469247089-8093-1-git-send-email-ben.werbowyj@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Lee Jones <lee.jones@linaro.org>, kernel-janitors@vger.kernel.org, wsa@the-dreams.de, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
+Hi Evgeniy,
 
+On 25 July 2016 at 23:15, Evgeniy Polyakov <zbr@ioremap.net> wrote:
+> Hi Ben
+>
+> 25.07.2016, 00:27, "Ben Werbowyj" <ben.werbowyj@gmail.com>:
+>
+>>>  Please combine the whole w1 space-string cleanups into single patch,
+>>>  it will be much easier to review and ack.
+>>
+>> Thanks for the feedback/review. I will group together any more
+>> cleanups. I was working
+>> with smaller patches as the kernel patching guides I've read mention
+>> that this is a good
+>> way to get started.
+>
+> That's generally a good idea to work with smaller patches,
+> but if you perform a large portion of quite similar things like cleaning
+> up coding style, it is much easier to combine them into single patchset.
+>
+> You can send separate patch per file if you like, but it is really
+> much easier to review it this will be a single patchset with many separate
+> patches (and mails) than many different sets.
 
-On Thu, 11 Aug 2016, SF Markus Elfring wrote:
+I'm working on the cleanups as one patch per file to combine into a
+patchset as you suggested. I've previously submitted a patch for one
+of the files and I'm not entirely sure if I should create further
+patches with my earlier patch applied, or if I should use the current
+state of the file from the linux-next repository.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 11 Aug 2016 14:00:43 +0200
->
-> Delete an error message at the end while increasing the importance of
-> related information.
->
-> Link: https://lkml.kernel.org/g/<20160809153615.GU5243@dell>
-> Suggested-by: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->
-> v5: Rebased on the source files from Linux next-20160809.
->
->     Requested changes were applied.
->
->  drivers/mfd/dm355evm_msp.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
-> index 86eca61..463f9e2e 100644
-> --- a/drivers/mfd/dm355evm_msp.c
-> +++ b/drivers/mfd/dm355evm_msp.c
-> @@ -208,7 +208,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
->  	if (pdata) {
->  		status = platform_device_add_data(pdev, pdata, pdata_len);
->  		if (status < 0) {
-> -			dev_dbg(&pdev->dev, "can't add platform_data\n");
-> +			dev_err(&pdev->dev, "can't add platform_data\n");
+I don't want to create merge conflicts and headaches from what are
+essentially trivial cleanup patches.
 
-Isn't this message unnecessary?  platform_device_add_data only fails on
-failure of kmemdup, which I assume ends up in kmalloc eventually and
-prints a backtrace on failure.
-
-The same is true of platform_device_add_resources below.
-
-julia
-
->  			goto put_device;
->  		}
->  	}
-> @@ -221,7 +221,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
->
->  		status = platform_device_add_resources(pdev, &r, 1);
->  		if (status < 0) {
-> -			dev_dbg(&pdev->dev, "can't add irq\n");
-> +			dev_err(&pdev->dev, "can't add irq\n");
->  			goto put_device;
->  		}
->  	}
-> @@ -234,7 +234,6 @@ static struct device *add_child(struct i2c_client *client, const char *name,
->
->  put_device:
->  	platform_device_put(pdev);
-> -	dev_err(&client->dev, "failed to add device %s\n", name);
->  	return ERR_PTR(status);
->  }
->
-> --
-> 2.9.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Ben
