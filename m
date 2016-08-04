@@ -1,56 +1,39 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 11:24:12 +0000
-Subject: [PATCH 08/11 v2] net/fsl: use of_property_read_bool
-Message-Id: <alpine.DEB.2.10.1608051323170.2999@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Aug 2016 05:32:24 +0000
+Subject: [patch] CRIS v32: remove some double unlocks
+Message-Id: <20160804053224.GK775@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr> <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mikael Starvik <starvik@axis.com>
+Cc: Jesper Nilsson <jesper.nilsson@axis.com>, linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use of_property_read_bool to check for the existence of a property.
+We unlocked a few lines earlier so we can delete these unlocks.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-expression e1,e2,x;
-@@
--	if (of_get_property(e1,e2,NULL))
--		x = true;
--	else
--		x = false;
-+	x = of_property_read_bool(e1,e2);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-v2: special case for propagating true and false
-
- drivers/net/ethernet/freescale/xgmac_mdio.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c b/drivers/net/ethernet/freescale/xgmac_mdio.c
-index 7b8fe86..e03b30c 100644
---- a/drivers/net/ethernet/freescale/xgmac_mdio.c
-+++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
-@@ -271,11 +271,8 @@ static int xgmac_mdio_probe(struct platform_device *pdev)
- 		goto err_ioremap;
+diff --git a/arch/cris/arch-v32/mach-a3/dma.c b/arch/cris/arch-v32/mach-a3/dma.c
+index 47c64bf..11f417f 100644
+--- a/arch/cris/arch-v32/mach-a3/dma.c
++++ b/arch/cris/arch-v32/mach-a3/dma.c
+@@ -41,7 +41,6 @@ int crisv32_request_dma(unsigned int dmanr, const char *device_id,
+ 
+ 		if (options & DMA_PANIC_ON_ERROR)
+ 			panic("request_dma error!");
+-		spin_unlock_irqrestore(&dma_lock, flags);
+ 		return -EBUSY;
  	}
-
--	if (of_get_property(pdev->dev.of_node,
--			    "little-endian", NULL))
--		priv->is_little_endian = true;
--	else
--		priv->is_little_endian = false;
-+	priv->is_little_endian = of_property_read_bool(pdev->dev.of_node,
-+						       "little-endian");
-
- 	ret = of_mdiobus_register(bus, np);
- 	if (ret) {
-
+ 	clk_ctrl = REG_RD(clkgen, regi_clkgen, rw_clk_ctrl);
+diff --git a/arch/cris/arch-v32/mach-fs/dma.c b/arch/cris/arch-v32/mach-fs/dma.c
+index fc6416a..7c93679 100644
+--- a/arch/cris/arch-v32/mach-fs/dma.c
++++ b/arch/cris/arch-v32/mach-fs/dma.c
+@@ -43,7 +43,6 @@ int crisv32_request_dma(unsigned int dmanr, const char *device_id,
+ 		}
+ 		if (options & DMA_PANIC_ON_ERROR)
+ 			panic("request_dma error!");
+-		spin_unlock_irqrestore(&dma_lock, flags);
+ 		return -EBUSY;
+ 	}
+ 	clk_ctrl = REG_RD(config, regi_config, rw_clk_ctrl);
