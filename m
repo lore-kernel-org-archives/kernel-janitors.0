@@ -1,49 +1,54 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 09 Aug 2016 15:42:31 +0000
-Subject: [PATCH] fmc: constify fmc_operations structure
-Message-Id: <1470757351-4960-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 11:26:11 +0000
+Subject: [PATCH 03/11 v2] pinctrl: nomadik: use of_property_read_bool
+Message-Id: <alpine.DEB.2.10.1608051325350.2999@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1470387411-15879-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Rubini <rubini@gnudd.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The fmc_operations structure is never modified, so declare is as const.
+Use of_property_read_bool to check for the existence of a property.
 
-Done with the help of Coccinelle.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2,x;
+@@
+-	if (of_get_property(e1,e2,NULL))
+-		x = true;
+-	else
+-		x = false;
++	x = of_property_read_bool(e1,e2);
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/fmc/fmc-fakedev.c |    2 +-
- include/linux/fmc.h       |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+v2: special case for propagating true and false
 
-diff --git a/drivers/fmc/fmc-fakedev.c b/drivers/fmc/fmc-fakedev.c
-index 941d093..3781d0d 100644
---- a/drivers/fmc/fmc-fakedev.c
-+++ b/drivers/fmc/fmc-fakedev.c
-@@ -231,7 +231,7 @@ static int ff_validate(struct fmc_device *fmc, struct fmc_driver *drv)
- 
- 
- 
--static struct fmc_operations ff_fmc_operations = {
-+static const struct fmc_operations ff_fmc_operations = {
- 	.read32 =		ff_readl,
- 	.write32 =		ff_writel,
- 	.reprogram =		ff_reprogram,
-diff --git a/include/linux/fmc.h b/include/linux/fmc.h
-index a5f0aa5..fc3a684 100644
---- a/include/linux/fmc.h
-+++ b/include/linux/fmc.h
-@@ -160,7 +160,7 @@ struct fmc_device {
- 	unsigned long flags;
- 	struct module *owner;		/* char device must pin it */
- 	struct fmc_fru_id id;		/* for EEPROM-based match */
--	struct fmc_operations *op;	/* carrier-provided */
-+	const struct fmc_operations *op;/* carrier-provided */
- 	int irq;			/* according to host bus. 0 = none */
- 	int eeprom_len;			/* Usually 8kB, may be less */
- 	int eeprom_addr;		/* 0x50, 0x52 etc */
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 35f6218..6f2e1da 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -1110,10 +1110,8 @@ static int nmk_gpio_probe(struct platform_device *dev)
+ 		return PTR_ERR(nmk_chip);
+ 	}
+
+-	if (of_get_property(np, "st,supports-sleepmode", NULL))
+-		supports_sleepmode = true;
+-	else
+-		supports_sleepmode = false;
++	supports_sleepmode +		of_property_read_bool(np, "st,supports-sleepmode");
+
+ 	/* Correct platform device ID */
+ 	dev->id = nmk_chip->bank;
 
