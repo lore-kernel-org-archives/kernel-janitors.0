@@ -1,34 +1,135 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Aug 2016 15:07:07 +0000
-Subject: Re: arm: sys_oabi-compat: Use kmalloc_array() in two functions
-Message-Id: <6ed97ce3-4378-496f-848b-c66dcc05b21d@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 05 Aug 2016 12:09:13 +0000
+Subject: Applied "ASoC: use of_property_read_bool" to the asoc tree
+Message-Id: <E1bVdw9-0002h9-KD@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
- <20160825224632.GL1041@n2100.armlinux.org.uk>
- <dd343c72-2ec7-2114-bee5-1d16fc6c04ac@users.sourceforge.net>
- <20160826134459.GR1041@n2100.armlinux.org.uk>
-In-Reply-To: <20160826134459.GR1041@n2100.armlinux.org.uk>
+References: <1470387411-15879-12-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-12-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>
 
-> It should at least make basic English sense.  I'm afraid the above
-> doesn't convey any meaning what so ever, at least to me.  It doesn't
-> matter how many times I read it, I still end up wondering "wtf is
-> this trying to tell me?"
+The patch
 
-I have started to look a bit more on the usage of the following
-function pairs in some Linux source files.
+   ASoC: use of_property_read_bool
 
-kmalloc() ⇔ kmalloc_array()
-kzalloc() ⇔ kcalloc()
+has been applied to the asoc tree at
 
-Can such combinations be extended anyhow?
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Some update candidates can be found for this use case in several
-software areas.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Regards,
-Markus
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7ac2a2432bbba0c3a5cf9848c768ff3c6c8a976c Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 5 Aug 2016 10:56:51 +0200
+Subject: [PATCH] ASoC: use of_property_read_bool
+
+Use of_property_read_bool to check for the existence of a property.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/ab8500-codec.c | 10 +++++-----
+ sound/soc/sh/rcar/ssi.c         |  2 +-
+ sound/soc/soc-core.c            |  2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/sound/soc/codecs/ab8500-codec.c b/sound/soc/codecs/ab8500-codec.c
+index 8b1d0c1a7839..f2dd86ede075 100644
+--- a/sound/soc/codecs/ab8500-codec.c
++++ b/sound/soc/codecs/ab8500-codec.c
+@@ -2408,28 +2408,28 @@ static void ab8500_codec_of_probe(struct device *dev, struct device_node *np,
+ {
+ 	u32 value;
+ 
+-	if (of_get_property(np, "stericsson,amic1-type-single-ended", NULL))
++	if (of_property_read_bool(np, "stericsson,amic1-type-single-ended"))
+ 		codec->amics.mic1_type = AMIC_TYPE_SINGLE_ENDED;
+ 	else
+ 		codec->amics.mic1_type = AMIC_TYPE_DIFFERENTIAL;
+ 
+-	if (of_get_property(np, "stericsson,amic2-type-single-ended", NULL))
++	if (of_property_read_bool(np, "stericsson,amic2-type-single-ended"))
+ 		codec->amics.mic2_type = AMIC_TYPE_SINGLE_ENDED;
+ 	else
+ 		codec->amics.mic2_type = AMIC_TYPE_DIFFERENTIAL;
+ 
+ 	/* Has a non-standard Vamic been requested? */
+-	if (of_get_property(np, "stericsson,amic1a-bias-vamic2", NULL))
++	if (of_property_read_bool(np, "stericsson,amic1a-bias-vamic2"))
+ 		codec->amics.mic1a_micbias = AMIC_MICBIAS_VAMIC2;
+ 	else
+ 		codec->amics.mic1a_micbias = AMIC_MICBIAS_VAMIC1;
+ 
+-	if (of_get_property(np, "stericsson,amic1b-bias-vamic2", NULL))
++	if (of_property_read_bool(np, "stericsson,amic1b-bias-vamic2"))
+ 		codec->amics.mic1b_micbias = AMIC_MICBIAS_VAMIC2;
+ 	else
+ 		codec->amics.mic1b_micbias = AMIC_MICBIAS_VAMIC1;
+ 
+-	if (of_get_property(np, "stericsson,amic2-bias-vamic1", NULL))
++	if (of_property_read_bool(np, "stericsson,amic2-bias-vamic1"))
+ 		codec->amics.mic2_micbias = AMIC_MICBIAS_VAMIC1;
+ 	else
+ 		codec->amics.mic2_micbias = AMIC_MICBIAS_VAMIC2;
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 5f848f054745..6cb6db005fc4 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -928,7 +928,7 @@ int rsnd_ssi_probe(struct rsnd_priv *priv)
+ 		}
+ 
+ 		ops = &rsnd_ssi_non_ops;
+-		if (of_get_property(np, "pio-transfer", NULL))
++		if (of_property_read_bool(np, "pio-transfer"))
+ 			ops = &rsnd_ssi_pio_ops;
+ 		else
+ 			ops = &rsnd_ssi_dma_ops;
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 16369cad4803..ead49d032e4c 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -3733,7 +3733,7 @@ unsigned int snd_soc_of_parse_daifmt(struct device_node *np,
+ 	 * SND_SOC_DAIFMT_CLOCK_MASK area
+ 	 */
+ 	snprintf(prop, sizeof(prop), "%scontinuous-clock", prefix);
+-	if (of_get_property(np, prop, NULL))
++	if (of_property_read_bool(np, prop))
+ 		format |= SND_SOC_DAIFMT_CONT;
+ 	else
+ 		format |= SND_SOC_DAIFMT_GATED;
+-- 
+2.8.1
+
