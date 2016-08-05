@@ -1,42 +1,47 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Wed, 24 Aug 2016 15:00:04 +0000
-Subject: Re: Replacing specific kmalloc() calls by kmalloc_array()?
-Message-Id: <1214121824.5255512.1472050804153.JavaMail.zimbra@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 08:56:43 +0000
+Subject: [PATCH 03/11] pinctrl: nomadik: use of_property_read_bool
+Message-Id: <1470387411-15879-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net> <033d8595-d051-1fa8-95b1-5d2056eb5667@users.sourceforge.net> <57B562F3.1080004@bfs.de> <alpine.DEB.2.10.1608180502080.3107@hadrien> <9db1986a-9b93-72ca-f35e-85b5b5e9f351@redhat.com> <f2c99dcc-8dea-b8a4-5244-08bb7c0ee1e8@users.sourceforge.net>
-In-Reply-To: <f2c99dcc-8dea-b8a4-5244-08bb7c0ee1e8@users.sourceforge.net>
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, walter harms <wharms@bfs.de>, kvm@vger.kernel.org, linux-s390@vger.kernel.org, Christian =?utf-8?Q?Borntr=C3=A4ger?= <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+Use of_property_read_bool to check for the existence of a property.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
------ Original Message -----
-> From: "SF Markus Elfring" <elfring@users.sourceforge.net>
-> To: "Paolo Bonzini" <pbonzini@redhat.com>
-> Cc: "Julia Lawall" <julia.lawall@lip6.fr>, "walter harms" <wharms@bfs.de>, kvm@vger.kernel.org,
-> linux-s390@vger.kernel.org, "Christian Bornträger" <borntraeger@de.ibm.com>, "Cornelia Huck"
-> <cornelia.huck@de.ibm.com>, "David Hildenbrand" <dahi@linux.vnet.ibm.com>, "Heiko Carstens"
-> <heiko.carstens@de.ibm.com>, "Martin Schwidefsky" <schwidefsky@de.ibm.com>, "Radim Krčmář" <rkrcmar@redhat.com>,
-> "LKML" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-> Sent: Wednesday, August 24, 2016 2:10:13 PM
-> Subject: Re: Replacing specific kmalloc() calls by kmalloc_array()?
-> 
-> > Or kmalloc_array, since zeroing is not necessary.  Might be an idea for
-> > a new Coccinelle script, like
-> > 
-> > - kmalloc (N * sizeof T, GFP)
-> > + kmalloc_array(N, sizeof T, GFP)
-> 
-> I have picked your idea up. The corresponding script for the semantic
-> patch language became longer than your general suggestion
-> (if additional source code control flow aspects are integrated).
-> 
-> Would it make sense to check any more function combinations
-> in a similar way?
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
 
-I don't know :) but I'm interested in seeing the semantic patch!
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Paolo
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 35f6218..d8dc3fe 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -1110,7 +1110,7 @@ static int nmk_gpio_probe(struct platform_device *dev)
+ 		return PTR_ERR(nmk_chip);
+ 	}
+ 
+-	if (of_get_property(np, "st,supports-sleepmode", NULL))
++	if (of_property_read_bool(np, "st,supports-sleepmode"))
+ 		supports_sleepmode = true;
+ 	else
+ 		supports_sleepmode = false;
+
