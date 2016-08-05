@@ -1,35 +1,49 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Date: Wed, 31 Aug 2016 17:43:15 +0000
-Subject: Re: [PATCH] rtc: constify rtc_class_ops structures
-Message-Id: <20160831174315.4djfepwsrxmuhp56@tarshish>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 08:56:48 +0000
+Subject: [PATCH 08/11] net/fsl: use of_property_read_bool
+Message-Id: <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472630725-25465-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472630725-25465-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Julia,
+Use of_property_read_bool to check for the existence of a property.
 
-On Wed, Aug 31, 2016 at 10:05:25AM +0200, Julia Lawall wrote:
-> Check for rtc_class_ops structures that are only passed to
-> devm_rtc_device_register, rtc_device_register,
-> platform_device_register_data, all of which declare the corresponding
-> parameter as const.  Declare rtc_class_ops structures that have these
-> properties as const.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-[...]
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-For rtc-digicolor.c:
+---
+ drivers/net/ethernet/freescale/xgmac_mdio.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Acked-by: Baruch Siach <baruch@tkos.co.il>
+diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c b/drivers/net/ethernet/freescale/xgmac_mdio.c
+index 7b8fe86..a77ba98 100644
+--- a/drivers/net/ethernet/freescale/xgmac_mdio.c
++++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
+@@ -271,8 +271,7 @@ static int xgmac_mdio_probe(struct platform_device *pdev)
+ 		goto err_ioremap;
+ 	}
+ 
+-	if (of_get_property(pdev->dev.of_node,
+-			    "little-endian", NULL))
++	if (of_property_read_bool(pdev->dev.of_node, "little-endian"))
+ 		priv->is_little_endian = true;
+ 	else
+ 		priv->is_little_endian = false;
 
-Thanks,
-baruch
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
