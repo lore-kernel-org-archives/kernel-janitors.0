@@ -1,29 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 Aug 2016 18:02:53 +0000
-Subject: [PATCH 0/4] KVM-S390: Fine-tuning for kvm_s390_import_bp_data()
-Message-Id: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 08:56:44 +0000
+Subject: [PATCH 04/11] i2c: mpc: use of_property_read_bool
+Message-Id: <1470387411-15879-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 Aug 2016 19:49:29 +0200
+Use of_property_read_bool to check for the existence of a property.
 
-Some update suggestions were taken into account
-from static source code analysis.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Markus Elfring (4):
-  Improve determination of sizes
-  Use memdup_user()
-  Less function calls after error detection
-  Delete an unnecessary initialisation
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
 
- arch/s390/kvm/guestdbg.c | 35 +++++++++++++++--------------------
- 1 file changed, 15 insertions(+), 20 deletions(-)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-2.9.3
+---
+ drivers/i2c/busses/i2c-mpc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
+index 48ecffe..4b5707b 100644
+--- a/drivers/i2c/busses/i2c-mpc.c
++++ b/drivers/i2c/busses/i2c-mpc.c
+@@ -700,7 +700,7 @@ static int fsl_i2c_probe(struct platform_device *op)
+ 		}
+ 	}
+ 
+-	if (of_get_property(op->dev.of_node, "fsl,preserve-clocking", NULL)) {
++	if (of_property_read_bool(op->dev.of_node, "fsl,preserve-clocking")) {
+ 		clock = MPC_I2C_CLOCK_PRESERVE;
+ 	} else {
+ 		prop = of_get_property(op->dev.of_node, "clock-frequency",
 
