@@ -1,36 +1,42 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 28 Aug 2016 21:38:27 +0000
-Subject: [PATCH] staging: lustre: constify lprocfs_generic_fops structure
-Message-Id: <1472420307-21087-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 08:56:40 +0000
+Subject: [PATCH 00/11] use of_property_read_bool
+Message-Id: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 
-lprocfs_generic_fops, of type struct file_operations, is never modified, so
-declare it as const.
+Use of_property_read_bool to check for the existence of a property.
 
-Done with the help of Coccinelle.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
 
 ---
- drivers/staging/lustre/lustre/obdclass/lprocfs_status.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
-index 3d6da74..be6b6af 100644
---- a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
-+++ b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
-@@ -315,7 +315,7 @@ struct dentry *ldebugfs_add_simple(struct dentry *root,
- }
- EXPORT_SYMBOL_GPL(ldebugfs_add_simple);
- 
--static struct file_operations lprocfs_generic_fops = { };
-+static const struct file_operations lprocfs_generic_fops = { };
- 
- int ldebugfs_add_vars(struct dentry *parent,
- 		      struct lprocfs_vars *list,
-
+ arch/powerpc/sysdev/mpic.c                  |    2 +-
+ drivers/i2c/busses/i2c-mpc.c                |    2 +-
+ drivers/mmc/host/sdhci-of-esdhc.c           |    2 +-
+ drivers/net/ethernet/freescale/xgmac_mdio.c |    3 +--
+ drivers/phy/phy-qcom-ufs.c                  |    2 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c   |    2 +-
+ drivers/soc/fsl/qe/qe_tdm.c                 |    2 +-
+ drivers/soc/ti/knav_qmss_queue.c            |    2 +-
+ drivers/tty/serial/atmel_serial.c           |    8 ++++----
+ drivers/usb/host/fsl-mph-dr-of.c            |    6 +++---
+ sound/soc/codecs/ab8500-codec.c             |   10 +++++-----
+ sound/soc/sh/rcar/ssi.c                     |    2 +-
+ sound/soc/soc-core.c                        |    2 +-
+ 13 files changed, 22 insertions(+), 23 deletions(-)
