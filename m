@@ -1,35 +1,48 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Mon, 29 Aug 2016 19:59:48 +0000
-Subject: Re: [PATCH] ARM: pxa: Use kmalloc_array() in pxa_pm_init()
-Message-Id: <8760qje47f.fsf@belgarion.home>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 08:56:46 +0000
+Subject: [PATCH 06/11] mmc: sdhci-of-esdhc: use of_property_read_bool
+Message-Id: <1470387411-15879-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49864e7d-f786-9739-6d8c-4480ce228830@users.sourceforge.net>
-In-Reply-To: <49864e7d-f786-9739-6d8c-4480ce228830@users.sourceforge.net> (SF
- Markus Elfring's message of "Thu, 25 Aug 2016 18:07:05 +0200")
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SF Markus Elfring <elfring@users.sourceforge.net> writes:
+Use of_property_read_bool to check for the existence of a property.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 25 Aug 2016 18:01:37 +0200
->
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "kmalloc_array".
->
->   This issue was detected by using the Coccinelle software.
->
-> * Replace the specification of a data type by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Queued to pxa/for-next, thanks.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Cheers.
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
 
---
-Robert
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/sdhci-of-esdhc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index 239be2f..fb71c86 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -583,7 +583,7 @@ static int sdhci_esdhc_probe(struct platform_device *pdev)
+ 
+ 	np = pdev->dev.of_node;
+ 
+-	if (of_get_property(np, "little-endian", NULL))
++	if (of_property_read_bool(np, "little-endian"))
+ 		host = sdhci_pltfm_init(pdev, &sdhci_esdhc_le_pdata,
+ 					sizeof(struct sdhci_esdhc));
+ 	else
+
