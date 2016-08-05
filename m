@@ -1,29 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 18:27:07 +0000
-Subject: [PATCH 0/2] misc/mic/vop: Fine-tuning for vop_ioctl()
-Message-Id: <f0ce0834-43e4-0535-9ae0-b18d3d18b0e0@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 08:56:45 +0000
+Subject: [PATCH 05/11] tty/serial: at91: use of_property_read_bool
+Message-Id: <1470387411-15879-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ashutosh Dixit <ashutosh.dixit@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 20:20:02 +0200
+Use of_property_read_bool to check for the existence of a property.
 
-A few update suggestions were taken into account
-from static source code analysis.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Markus Elfring (2):
-  Use memdup_user()
-  Rename jump labels
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
 
- drivers/misc/mic/vop/vop_vringh.c | 43 ++++++++++++++++-----------------------
- 1 file changed, 17 insertions(+), 26 deletions(-)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-2.9.3
+---
+ drivers/tty/serial/atmel_serial.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index 2eaa18d..c57a51d 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -1634,8 +1634,8 @@ static void atmel_init_property(struct atmel_uart_port *atmel_port,
+ 
+ 	if (np) {
+ 		/* DMA/PDC usage specification */
+-		if (of_get_property(np, "atmel,use-dma-rx", NULL)) {
+-			if (of_get_property(np, "dmas", NULL)) {
++		if (of_property_read_bool(np, "atmel,use-dma-rx")) {
++			if (of_property_read_bool(np, "dmas")) {
+ 				atmel_port->use_dma_rx  = true;
+ 				atmel_port->use_pdc_rx  = false;
+ 			} else {
+@@ -1647,8 +1647,8 @@ static void atmel_init_property(struct atmel_uart_port *atmel_port,
+ 			atmel_port->use_pdc_rx  = false;
+ 		}
+ 
+-		if (of_get_property(np, "atmel,use-dma-tx", NULL)) {
+-			if (of_get_property(np, "dmas", NULL)) {
++		if (of_property_read_bool(np, "atmel,use-dma-tx")) {
++			if (of_property_read_bool(np, "dmas")) {
+ 				atmel_port->use_dma_tx  = true;
+ 				atmel_port->use_pdc_tx  = false;
+ 			} else {
 
