@@ -1,44 +1,59 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 10:14:19 +0000
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Fri, 05 Aug 2016 11:35:26 +0000
 Subject: Re: [PATCH 08/11] net/fsl: use of_property_read_bool
-Message-Id: <alpine.DEB.2.10.1608051214040.2999@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-559754459-1470392059=:2999"
+Message-Id: <ceb47a0e-5759-486c-68d9-3feb9faf9e7a@cogentembedded.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>   <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>   (sfid-20160805_111640_944584_00A38E89) <1470389433.2977.31.camel@sipsolutions.net>  <alpine.DEB.2.10.1608051207510.2999@hadrien>
- <1470391948.2977.33.camel@sipsolutions.net>
-In-Reply-To: <1470391948.2977.33.camel@sipsolutions.net>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <Julia.Lawall@lip6.fr>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello.
 
---8323329-559754459-1470392059=:2999
-Content-Type: TEXT/PLAIN; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+On 8/5/2016 11:56 AM, Julia Lawall wrote:
 
+> Use of_property_read_bool to check for the existence of a property.
+>
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @@
+> expression e1,e2;
+> statement S2,S1;
+> @@
+> -       if (of_get_property(e1,e2,NULL))
+> +       if (of_property_read_bool(e1,e2))
+>         S1 else S2
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
+>  drivers/net/ethernet/freescale/xgmac_mdio.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c b/drivers/net/ethernet/freescale/xgmac_mdio.c
+> index 7b8fe86..a77ba98 100644
+> --- a/drivers/net/ethernet/freescale/xgmac_mdio.c
+> +++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
+> @@ -271,8 +271,7 @@ static int xgmac_mdio_probe(struct platform_device *pdev)
+>  		goto err_ioremap;
+>  	}
+>
+> -	if (of_get_property(pdev->dev.of_node,
+> -			    "little-endian", NULL))
+> +	if (of_property_read_bool(pdev->dev.of_node, "little-endian"))
+>  		priv->is_little_endian = true;
+>  	else
+>  		priv->is_little_endian = false;
 
+    priv->is_little_endian = of_property_read_bool(pdev->dev.of_node,
+						  "little-endian"));
 
-On Fri, 5 Aug 2016, Johannes Berg wrote:
+MBR, Sergei
 
-> On Fri, 2016-08-05 at 12:08 +0200, Julia Lawall wrote:
-> > 
-> > Can I do the same for:
-> >
-> >         if (of_property_read_bool(np, "phy-clk-valid"))
-> >                 pdata->check_phy_clk_valid = 1;
-> >         else
-> >                 pdata->check_phy_clk_valid = 0;
-> >
-> > The type is not bool, but:
-> >
-> > include/linux/fsl_devices.h:    unsigned        check_phy_clk_valid:1;
-> >
-> The type doesn't even matter, does it? Any bool->int conversion should
-> result in 0/1.
-
-Just paranoid.  Thanks.
-
-julia
---8323329-559754459-1470392059=:2999--
