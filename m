@@ -1,68 +1,62 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 09:25:44 +0000
-Subject: [PATCH 2/2] uvc_v4l2: One function call less in uvc_ioctl_ctrl_map() after error detection
-Message-Id: <8f89ec37-1556-4c09-f0b7-df87b4169320@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 08:56:42 +0000
+Subject: [PATCH 02/11] usb: host: fsl-mph-dr-of: use of_property_read_bool
+Message-Id: <1470387411-15879-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <95aa5fcd-8610-debc-70b0-30b2ed3302d2@users.sourceforge.net>
-In-Reply-To: <95aa5fcd-8610-debc-70b0-30b2ed3302d2@users.sourceforge.net>
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 11:00:38 +0200
+Use of_property_read_bool to check for the existence of a property.
 
-The kfree() function was called in two cases by the uvc_ioctl_ctrl_map()
-function during error handling even if the passed data structure element
-contained a null pointer.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Adjust jump targets according to the Linux coding style convention.
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/usb/uvc/uvc_v4l2.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/usb/host/fsl-mph-dr-of.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index a7e12fd..52a2af8 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -66,14 +66,14 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
- 		if (xmap->menu_count = 0 ||
- 		    xmap->menu_count > UVC_MAX_CONTROL_MENU_ENTRIES) {
- 			ret = -EINVAL;
--			goto done;
-+			goto free_map;
- 		}
+diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr-of.c
+index 1044b0f..8bbca74 100644
+--- a/drivers/usb/host/fsl-mph-dr-of.c
++++ b/drivers/usb/host/fsl-mph-dr-of.c
+@@ -222,11 +222,11 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
+ 	pdata->controller_ver = usb_get_ver_info(np);
  
- 		size = xmap->menu_count * sizeof(*map->menu_info);
- 		map->menu_info = memdup_user(xmap->menu_info, size);
- 		if (IS_ERR(map->menu_info)) {
- 			ret = PTR_ERR(map->menu_info);
--			goto done;
-+			goto free_map;
- 		}
- 
- 		map->menu_count = xmap->menu_count;
-@@ -83,13 +83,12 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
- 		uvc_trace(UVC_TRACE_CONTROL, "Unsupported V4L2 control type "
- 			  "%u.\n", xmap->v4l2_type);
- 		ret = -ENOTTY;
--		goto done;
-+		goto free_map;
- 	}
- 
- 	ret = uvc_ctrl_add_mapping(chain, map);
--
--done:
- 	kfree(map->menu_info);
-+free_map:
- 	kfree(map);
- 
- 	return ret;
--- 
-2.9.3
+ 	/* Activate Erratum by reading property in device tree */
+-	if (of_get_property(np, "fsl,usb-erratum-a007792", NULL))
++	if (of_property_read_bool(np, "fsl,usb-erratum-a007792"))
+ 		pdata->has_fsl_erratum_a007792 = 1;
+ 	else
+ 		pdata->has_fsl_erratum_a007792 = 0;
+-	if (of_get_property(np, "fsl,usb-erratum-a005275", NULL))
++	if (of_property_read_bool(np, "fsl,usb-erratum-a005275"))
+ 		pdata->has_fsl_erratum_a005275 = 1;
+ 	else
+ 		pdata->has_fsl_erratum_a005275 = 0;
+@@ -235,7 +235,7 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
+ 	 * Determine whether phy_clk_valid needs to be checked
+ 	 * by reading property in device tree
+ 	 */
+-	if (of_get_property(np, "phy-clk-valid", NULL))
++	if (of_property_read_bool(np, "phy-clk-valid"))
+ 		pdata->check_phy_clk_valid = 1;
+ 	else
+ 		pdata->check_phy_clk_valid = 0;
 
