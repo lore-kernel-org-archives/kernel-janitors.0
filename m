@@ -1,132 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Aug 2016 09:56:44 +0000
-Subject: [PATCH 2/5] block-cciss: Less function calls in cciss_bigpassthru() after error detection
-Message-Id: <d6586ebd-7422-4188-2a5b-af314e06f411@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 08:56:47 +0000
+Subject: [PATCH 07/11] phy: qcom-ufs: use of_property_read_bool
+Message-Id: <1470387411-15879-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
-In-Reply-To: <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: esc.storagedev@microsemi.com, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 Aug 2016 22:39:31 +0200
+Use of_property_read_bool to check for the existence of a property.
 
-The kfree() function was called in a few cases by the
-cciss_bigpassthru() function during error handling
-even if a passed variable contained a null pointer.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Adjust jump targets according to the Linux coding style convention.
+// <smpl>
+@@
+expression e1,e2;
+statement S2,S1;
+@@
+-       if (of_get_property(e1,e2,NULL))
++       if (of_property_read_bool(e1,e2))
+        S1 else S2
+// </smpl>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/block/cciss.c | 40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ drivers/phy/phy-qcom-ufs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
-index e044342..43ac632 100644
---- a/drivers/block/cciss.c
-+++ b/drivers/block/cciss.c
-@@ -1593,26 +1593,26 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 	if ((ioc->buf_size < 1) &&
- 	    (ioc->Request.Type.Direction != XFER_NONE)) {
- 		status = -EINVAL;
--		goto cleanup1;
-+		goto free_ioc;
- 	}
- 	/* Check kmalloc limits  using all SGs */
- 	if (ioc->malloc_size > MAX_KMALLOC_SIZE) {
- 		status = -EINVAL;
--		goto cleanup1;
-+		goto free_ioc;
- 	}
- 	if (ioc->buf_size > ioc->malloc_size * MAXSGENTRIES) {
- 		status = -EINVAL;
--		goto cleanup1;
--	}
--	buff = kzalloc(MAXSGENTRIES * sizeof(char *), GFP_KERNEL);
--	if (!buff) {
--		status = -ENOMEM;
--		goto cleanup1;
-+		goto free_ioc;
- 	}
- 	buff_size = kmalloc(MAXSGENTRIES * sizeof(int), GFP_KERNEL);
- 	if (!buff_size) {
- 		status = -ENOMEM;
--		goto cleanup1;
-+		goto free_ioc;
-+	}
-+	buff = kzalloc(MAXSGENTRIES * sizeof(char *), GFP_KERNEL);
-+	if (!buff) {
-+		status = -ENOMEM;
-+		goto free_size;
- 	}
- 	left = ioc->buf_size;
- 	data_ptr = ioc->buf;
-@@ -1622,12 +1622,12 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 		buff[sg_used] = kmalloc(sz, GFP_KERNEL);
- 		if (buff[sg_used] = NULL) {
- 			status = -ENOMEM;
--			goto cleanup1;
-+			goto free_buffer;
+diff --git a/drivers/phy/phy-qcom-ufs.c b/drivers/phy/phy-qcom-ufs.c
+index 107cb57..8eaf60a 100644
+--- a/drivers/phy/phy-qcom-ufs.c
++++ b/drivers/phy/phy-qcom-ufs.c
+@@ -283,7 +283,7 @@ static int __ufs_qcom_phy_init_vreg(struct phy *phy,
+ 			err = 0;
  		}
- 		if (ioc->Request.Type.Direction = XFER_WRITE) {
- 			if (copy_from_user(buff[sg_used], data_ptr, sz)) {
- 				status = -EFAULT;
--				goto cleanup1;
-+				goto free_buffer;
- 			}
- 		} else {
- 			memset(buff[sg_used], 0, sz);
-@@ -1639,7 +1639,7 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 	c = cmd_special_alloc(h);
- 	if (!c) {
- 		status = -ENOMEM;
--		goto cleanup1;
-+		goto free_buffer;
- 	}
- 	c->cmd_type = CMD_IOCTL_PEND;
- 	c->Header.ReplyQueue = 0;
-@@ -1674,7 +1674,7 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 	if (copy_to_user(argp, ioc, sizeof(*ioc))) {
- 		cmd_special_free(h, c);
- 		status = -EFAULT;
--		goto cleanup1;
-+		goto free_buffer;
- 	}
- 	if (ioc->Request.Type.Direction = XFER_READ) {
- 		/* Copy the data out of the buffer we created */
-@@ -1683,20 +1683,20 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 			if (copy_to_user(ptr, buff[i], buff_size[i])) {
- 				cmd_special_free(h, c);
- 				status = -EFAULT;
--				goto cleanup1;
-+				goto free_buffer;
- 			}
- 			ptr += buff_size[i];
- 		}
- 	}
- 	cmd_special_free(h, c);
- 	status = 0;
--cleanup1:
--	if (buff) {
--		for (i = 0; i < sg_used; i++)
--			kfree(buff[i]);
--		kfree(buff);
--	}
-+free_buffer:
-+	for (i = 0; i < sg_used; i++)
-+		kfree(buff[i]);
-+	kfree(buff);
-+free_size:
- 	kfree(buff_size);
-+free_ioc:
- 	kfree(ioc);
- 	return status;
- }
--- 
-2.9.3
+ 		snprintf(prop_name, MAX_PROP_NAME, "%s-always-on", name);
+-		if (of_get_property(dev->of_node, prop_name, NULL))
++		if (of_property_read_bool(dev->of_node, prop_name))
+ 			vreg->is_always_on = true;
+ 		else
+ 			vreg->is_always_on = false;
 
