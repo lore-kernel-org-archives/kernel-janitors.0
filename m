@@ -1,96 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Aug 2016 17:16:17 +0000
-Subject: [PATCH 4/6] KVM: PPC: e500: Replace kzalloc() calls by kcalloc() in two functions
-Message-Id: <f142a12c-c70f-7046-e20c-fbb83ba6bdae@users.sourceforge.net>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 05 Aug 2016 11:24:12 +0000
+Subject: [PATCH 08/11 v2] net/fsl: use of_property_read_bool
+Message-Id: <alpine.DEB.2.10.1608051323170.2999@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
-In-Reply-To: <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
+References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr> <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Aug 2016 18:30:38 +0200
+Use of_property_read_bool to check for the existence of a property.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-  Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+// <smpl>
+@@
+expression e1,e2,x;
+@@
+-	if (of_get_property(e1,e2,NULL))
+-		x = true;
+-	else
+-		x = false;
++	x = of_property_read_bool(e1,e2);
+// </smpl>
 
-  This issue was detected also by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kvm/e500_mmu.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+v2: special case for propagating true and false
 
-diff --git a/arch/powerpc/kvm/e500_mmu.c b/arch/powerpc/kvm/e500_mmu.c
-index e9c19e9..2be2afc4 100644
---- a/arch/powerpc/kvm/e500_mmu.c
-+++ b/arch/powerpc/kvm/e500_mmu.c
-@@ -799,22 +799,21 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
- 		goto put_pages;
+ drivers/net/ethernet/freescale/xgmac_mdio.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c b/drivers/net/ethernet/freescale/xgmac_mdio.c
+index 7b8fe86..e03b30c 100644
+--- a/drivers/net/ethernet/freescale/xgmac_mdio.c
++++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
+@@ -271,11 +271,8 @@ static int xgmac_mdio_probe(struct platform_device *pdev)
+ 		goto err_ioremap;
  	}
- 
--	privs[0] = kzalloc(sizeof(struct tlbe_priv) * params.tlb_sizes[0],
--			   GFP_KERNEL);
-+	privs[0] = kcalloc(params.tlb_sizes[0], sizeof(*privs[0]), GFP_KERNEL);
- 	if (!privs[0]) {
- 		ret = -ENOMEM;
- 		goto put_pages;
- 	}
- 
--	privs[1] = kzalloc(sizeof(struct tlbe_priv) * params.tlb_sizes[1],
--			   GFP_KERNEL);
-+	privs[1] = kcalloc(params.tlb_sizes[1], sizeof(*privs[1]), GFP_KERNEL);
- 	if (!privs[1]) {
- 		ret = -ENOMEM;
- 		goto free_privs_first;
- 	}
- 
--	g2h_bitmap = kzalloc(sizeof(u64) * params.tlb_sizes[1],
--	                     GFP_KERNEL);
-+	g2h_bitmap = kcalloc(params.tlb_sizes[1],
-+			     sizeof(*g2h_bitmap),
-+			     GFP_KERNEL);
- 	if (!g2h_bitmap) {
- 		ret = -ENOMEM;
- 		goto free_privs_second;
-@@ -929,20 +928,20 @@ int kvmppc_e500_tlb_init(struct kvmppc_vcpu_e500 *vcpu_e500)
- 	vcpu_e500->gtlb_offset[0] = 0;
- 	vcpu_e500->gtlb_offset[1] = KVM_E500_TLB0_SIZE;
- 
--	vcpu_e500->gtlb_priv[0] = kzalloc(sizeof(struct tlbe_ref) *
--					  vcpu_e500->gtlb_params[0].entries,
-+	vcpu_e500->gtlb_priv[0] = kcalloc(vcpu_e500->gtlb_params[0].entries,
-+					  sizeof(struct tlbe_ref),
- 					  GFP_KERNEL);
- 	if (!vcpu_e500->gtlb_priv[0])
- 		goto err;
- 
--	vcpu_e500->gtlb_priv[1] = kzalloc(sizeof(struct tlbe_ref) *
--					  vcpu_e500->gtlb_params[1].entries,
-+	vcpu_e500->gtlb_priv[1] = kcalloc(vcpu_e500->gtlb_params[1].entries,
-+					  sizeof(struct tlbe_ref),
- 					  GFP_KERNEL);
- 	if (!vcpu_e500->gtlb_priv[1])
- 		goto err;
- 
--	vcpu_e500->g2h_tlb1_map = kzalloc(sizeof(u64) *
--					  vcpu_e500->gtlb_params[1].entries,
-+	vcpu_e500->g2h_tlb1_map = kcalloc(vcpu_e500->gtlb_params[1].entries,
-+					  sizeof(*vcpu_e500->g2h_tlb1_map),
- 					  GFP_KERNEL);
- 	if (!vcpu_e500->g2h_tlb1_map)
- 		goto err;
--- 
-2.9.3
+
+-	if (of_get_property(pdev->dev.of_node,
+-			    "little-endian", NULL))
+-		priv->is_little_endian = true;
+-	else
+-		priv->is_little_endian = false;
++	priv->is_little_endian = of_property_read_bool(pdev->dev.of_node,
++						       "little-endian");
+
+ 	ret = of_mdiobus_register(bus, np);
+ 	if (ret) {
 
