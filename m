@@ -1,47 +1,75 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 08:56:50 +0000
-Subject: [PATCH 10/11] soc: ti: knav_qmss_queue: use of_property_read_bool
-Message-Id: <1470387411-15879-11-git-send-email-Julia.Lawall@lip6.fr>
+From: Robin Murphy <robin.murphy@arm.com>
+Date: Fri, 05 Aug 2016 12:47:25 +0000
+Subject: Re: [PATCH 10/11] soc: ti: knav_qmss_queue: use of_property_read_bool
+Message-Id: <c010a500-87ce-19ad-0109-f57eba3c6981@arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1470387411-15879-11-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470387411-15879-11-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Use of_property_read_bool to check for the existence of a property.
+Hi Julia,
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+On 05/08/16 09:56, Julia Lawall wrote:
+> Use of_property_read_bool to check for the existence of a property.
 
-// <smpl>
-@@
-expression e1,e2;
-statement S2,S1;
-@@
--       if (of_get_property(e1,e2,NULL))
-+       if (of_property_read_bool(e1,e2))
-        S1 else S2
-// </smpl>
+This caught my eye since Rob told me off for doing the same recently[1].
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression e1,e2;
+> statement S2,S1;
+> @@
+> -       if (of_get_property(e1,e2,NULL))
+> +       if (of_property_read_bool(e1,e2))
+>         S1 else S2
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/soc/ti/knav_qmss_queue.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+> index b73e353..56b5d7c 100644
+> --- a/drivers/soc/ti/knav_qmss_queue.c
+> +++ b/drivers/soc/ti/knav_qmss_queue.c
+> @@ -1240,7 +1240,7 @@ static int knav_setup_queue_range(struct knav_device *kdev,
+>  	if (of_get_property(node, "qalloc-by-id", NULL))
 
----
- drivers/soc/ti/knav_qmss_queue.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+According to the binding, "qalloc-by-id" _is_ a boolean property, so
+this one really does deserve to be of_property_read_bool()...
 
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index b73e353..56b5d7c 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -1240,7 +1240,7 @@ static int knav_setup_queue_range(struct knav_device *kdev,
- 	if (of_get_property(node, "qalloc-by-id", NULL))
- 		range->flags |= RANGE_RESERVED;
- 
--	if (of_get_property(node, "accumulator", NULL)) {
-+	if (of_property_read_bool(node, "accumulator")) {
- 		ret = knav_init_acc_range(kdev, node, range);
- 		if (ret < 0) {
- 			devm_kfree(dev, range);
+>  		range->flags |= RANGE_RESERVED;
+>  
+> -	if (of_get_property(node, "accumulator", NULL)) {
+> +	if (of_property_read_bool(node, "accumulator")) {
+
+...whereas "accumulator" must have a value, so this isn't technically
+appropriate. In general, most of these "if the property exists, read the
+property and do stuff" checks are probably a sign of code that could be
+simplified by refactoring the "do stuff" step to just specifically
+handle the "read the property" step returning -EINVAL when it's not present.
+
+Robin.
+
+[1]:https://www.mail-archive.com/iommu@lists.linux-foundation.org/msg13375.html
+
+>  		ret = knav_init_acc_range(kdev, node, range);
+>  		if (ret < 0) {
+>  			devm_kfree(dev, range);
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
 
