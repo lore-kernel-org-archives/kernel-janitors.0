@@ -1,94 +1,57 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Fri, 05 Aug 2016 07:55:11 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 08 Aug 2016 11:36:44 +0000
 Subject: Re: [PATCH v4] mfd: dm355evm_msp: Refactoring for add_child()
-Message-Id: <20160805075511.GN5243@dell>
+Message-Id: <0a2ef320-a95a-2611-2554-a2a83838fb9b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4dcb4cab-e2cc-87c0-9cfc-d140f185254b@users.sourceforge.net>
-In-Reply-To: <4dcb4cab-e2cc-87c0-9cfc-d140f185254b@users.sourceforge.net>
+ <20160805075511.GN5243@dell>
+In-Reply-To: <20160805075511.GN5243@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, 01 Jul 2016, SF Markus Elfring wrote:
+>> v4: Further feedback was integrated into this message.
+> 
+> This is not a good change-log.  What actually changed?
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
+Which kind of information would you find more useful in this case?
 
-Please use `git send-email` to submit your patches.
 
-> Adjust jump targets according to the Linux coding style convention.
-> Another check for the variable "status" can be omitted then at the end.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> v4: Further feedback was integrated into this message.
+>> @@ -222,19 +222,20 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+>>  		status = platform_device_add_resources(pdev, &r, 1);
+>>  		if (status < 0) {
+>>  			dev_dbg(&pdev->dev, "can't add irq\n");
+>> -			goto err;
+>> +			goto put_device;
+>>  		}
+>>  	}
+>>  
+>>  	status = platform_device_add(pdev);
+>> +	if (status)
+>> +		goto put_device;
+>>  
+>> -err:
+>> -	if (status < 0) {
+>> -		platform_device_put(pdev);
+>> -		dev_err(&client->dev, "can't add %s dev\n", name);
+>> -		return ERR_PTR(status);
+>> -	}
+>>  	return &pdev->dev;
+>> +
+>> +put_device:
+>> +	platform_device_put(pdev);
+>> +	dev_err(&client->dev, "failed to add device %s\n", name);
+> 
+> ... and remove this line.
 
-This is not a good change-log.  What actually changed?
+Do you really want that this error message should be deleted?
 
-> v3: Deletion of another blank line
-> v2: Rebasing
->=20
->  drivers/mfd/dm355evm_msp.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
-> index 270e19c..86eca61 100644
-> --- a/drivers/mfd/dm355evm_msp.c
-> +++ b/drivers/mfd/dm355evm_msp.c
-> @@ -209,7 +209,7 @@ static struct device *add_child(struct i2c_client *cl=
-ient, const char *name,
->  		status =3D platform_device_add_data(pdev, pdata, pdata_len);
->  		if (status < 0) {
->  			dev_dbg(&pdev->dev, "can't add platform_data\n");
+How does this response fit to your request to introduce such a message
+for the function "add_numbered_child" (on 2016-06-08)?
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1162299.html
+https://lkml.org/lkml/2016/6/8/467
 
-Please take the opportunity to convert these to dev_err()s.
-
-> -			goto err;
-> +			goto put_device;
->  		}
->  	}
-> =20
-> @@ -222,19 +222,20 @@ static struct device *add_child(struct i2c_client *=
-client, const char *name,
->  		status =3D platform_device_add_resources(pdev, &r, 1);
->  		if (status < 0) {
->  			dev_dbg(&pdev->dev, "can't add irq\n");
-> -			goto err;
-> +			goto put_device;
->  		}
->  	}
-> =20
->  	status =3D platform_device_add(pdev);
-> +	if (status)
-> +		goto put_device;
-> =20
-> -err:
-> -	if (status < 0) {
-> -		platform_device_put(pdev);
-> -		dev_err(&client->dev, "can't add %s dev\n", name);
-> -		return ERR_PTR(status);
-> -	}
->  	return &pdev->dev;
-> +
-> +put_device:
-> +	platform_device_put(pdev);
-> +	dev_err(&client->dev, "failed to add device %s\n", name);
-
-... and remove this line.
-
-> +	return ERR_PTR(status);
->  }
-> =20
->  static int add_children(struct i2c_client *client)
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Markus
