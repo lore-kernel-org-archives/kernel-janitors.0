@@ -1,96 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Aug 2016 14:04:48 +0000
-Subject: [PATCH 6/7] USB-iowarrior: Delete unnecessary braces
-Message-Id: <d19fb3b4-e73f-a225-ce8e-a8b6ebba0b4d@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 08 Aug 2016 07:38:48 +0000
+Subject: [PATCH 1/2] mwifiex: fix the length parameter of a memset
+Message-Id: <1470641928-26616-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
-In-Reply-To: <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Josh Boyer <jwboyer@fedoraproject.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: akarwar@marvell.com, nishants@marvell.com, linux-wireless@vger.kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Aug 2016 15:25:30 +0200
+In 'mwifiex_get_ver_ext', we have:
+   struct mwifiex_ver_ext ver_ext;
 
-Do not use curly brackets at a few source code places
-where a single statement should be sufficient.
+   memset(&ver_ext, 0, sizeof(struct host_cmd_ds_version_ext));
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+This is likely that memset'ing sizeof(struct mwifiex_ver_ext) was expected.
+Remove the ambiguity by using the variable name directly instead of its
+type.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/misc/iowarrior.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-index ffbbb74..132c8cf 100644
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -227,10 +227,10 @@ static void iowarrior_write_callback(struct urb *urb)
- 	/* sync/async unlink faults aren't errors */
- 	if (status &&
- 	    !(status = -ENOENT ||
--	      status = -ECONNRESET || status = -ESHUTDOWN)) {
-+	      status = -ECONNRESET || status = -ESHUTDOWN))
- 		dev_dbg(&dev->interface->dev,
- 			"nonzero write bulk status received: %d\n", status);
--	}
-+
- 	/* free up our allocated buffer */
- 	usb_free_coherent(urb->dev, urb->transfer_buffer_length,
- 			  urb->transfer_buffer, urb->transfer_dma);
-@@ -304,25 +304,21 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
- 								      read_index
- 								      (dev)) ! 								  -1));
--				if (r) {
-+				if (r)
- 					//we were interrupted by a signal
- 					return -ERESTART;
--				}
--				if (!dev->present) {
-+				if (!dev->present)
- 					//The device was unplugged
- 					return -ENODEV;
--				}
--				if (read_idx = -1) {
-+				if (read_idx = -1)
- 					// Can this happen ???
- 					return 0;
--				}
- 			}
- 		}
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+index e06647a..78819e8 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -1180,7 +1180,7 @@ mwifiex_get_ver_ext(struct mwifiex_private *priv, u32 version_str_sel)
+ {
+ 	struct mwifiex_ver_ext ver_ext;
  
- 		offset = read_idx * (dev->report_size + 1);
--		if (copy_to_user(buffer, dev->read_queue + offset, count)) {
-+		if (copy_to_user(buffer, dev->read_queue + offset, count))
- 			return -EFAULT;
--		}
- 	} while (atomic_read(&dev->overflow_flag));
- 
- 	read_idx = ++read_idx = MAX_INTERRUPT_BUFFER ? 0 : read_idx;
-@@ -475,9 +471,8 @@ static long iowarrior_ioctl(struct file *file, unsigned int cmd,
- 	int io_res;		/* checks for bytes read/written and copy_to/from_user results */
- 
- 	dev = file->private_data;
--	if (dev = NULL) {
-+	if (!dev)
- 		return -ENODEV;
--	}
- 
- 	buffer = kzalloc(dev->report_size, GFP_KERNEL);
- 	if (!buffer)
-@@ -647,9 +642,8 @@ static int iowarrior_release(struct inode *inode, struct file *file)
- 	int retval;
- 
- 	dev = file->private_data;
--	if (dev = NULL) {
-+	if (!dev)
- 		return -ENODEV;
--	}
- 
- 	dev_dbg(&dev->interface->dev, "minor %d\n", dev->minor);
- 
+-	memset(&ver_ext, 0, sizeof(struct host_cmd_ds_version_ext));
++	memset(&ver_ext, 0, sizeof(ver_ext));
+ 	ver_ext.version_str_sel = version_str_sel;
+ 	if (mwifiex_send_cmd(priv, HostCmd_CMD_VERSION_EXT,
+ 			     HostCmd_ACT_GEN_GET, 0, &ver_ext, true))
 -- 
-2.9.3
+2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
