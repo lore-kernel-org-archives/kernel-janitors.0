@@ -1,26 +1,49 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 21 Aug 2016 18:03:43 +0000
-Subject: Re: [PATCH 0/2] IB/core: Fine-tuning for ib_is_udata_cleared()
-Message-Id: <1471802623.3746.1.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 09 Aug 2016 10:11:26 +0000
+Subject: [PATCH] selftests/timers: Add missing error code assignment before test
+Message-Id: <1470737486-5924-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-         <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
-In-Reply-To: <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: john.stultz@linaro.org, tglx@linutronix.de, shuahkh@osg.samsung.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, 2016-08-21 at 19:39 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 21 Aug 2016 19:34:12 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
+In order to work, the 'err' return value has to be updated otherwise the
+test can never be true.
 
-Don't introduce a defect in patch 1 and correct
-that introduced defect in patch 2.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ tools/testing/selftests/timers/posix_timers.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This should be a single patch.
+diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
+index 5a246a0..15cf56d 100644
+--- a/tools/testing/selftests/timers/posix_timers.c
++++ b/tools/testing/selftests/timers/posix_timers.c
+@@ -122,7 +122,7 @@ static int check_itimer(int which)
+ 	else if (which = ITIMER_REAL)
+ 		idle_loop();
+ 
+-	gettimeofday(&end, NULL);
++	err = gettimeofday(&end, NULL);
+ 	if (err < 0) {
+ 		perror("Can't call gettimeofday()\n");
+ 		return -1;
+@@ -175,7 +175,7 @@ static int check_timer_create(int which)
+ 
+ 	user_loop();
+ 
+-	gettimeofday(&end, NULL);
++	err = gettimeofday(&end, NULL);
+ 	if (err < 0) {
+ 		perror("Can't call gettimeofday()\n");
+ 		return -1;
+-- 
+2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
