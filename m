@@ -1,119 +1,86 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 31 Aug 2016 07:30:46 +0000
-Subject: [PATCH 4/6] net: hisilicon: constify ethtool_ops structures
-Message-Id: <1472628648-3603-5-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 09 Aug 2016 16:11:02 +0000
+Subject: [PATCH] NFC: pn533: constify pn533_phy_ops structures
+Message-Id: <1470759062-21276-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yisen Zhuang <yisen.zhuang@huawei.com>
-Cc: kernel-janitors@vger.kernel.org, Salil Mehta <salil.mehta@huawei.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
+Cc: kernel-janitors@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Check for ethtool_ops structures that are only stored in the ethtool_ops
-field of a net_device structure or passed as the second argument to
-netdev_set_default_ethtool_ops.  These contexts are declared const, so
-ethtool_ops structures that have these properties can be declared as const
-also.
+The pn533_phy_ops are never modified, so declare them as const.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct ethtool_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct net_device e;
-position p;
-@@
-e.ethtool_ops = &i@p;
-
-@ok2@
-identifier r.i;
-expression e;
-position p;
-@@
-netdev_set_default_ethtool_ops(e, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-@@
-i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct ethtool_ops i = { ... };
-// </smpl>
+Done with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/net/ethernet/hisilicon/hip04_eth.c       |    2 +-
- drivers/net/ethernet/hisilicon/hisi_femac.c      |    2 +-
- drivers/net/ethernet/hisilicon/hix5hd2_gmac.c    |    2 +-
- drivers/net/ethernet/hisilicon/hns/hns_ethtool.c |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/nfc/pn533/i2c.c   |    2 +-
+ drivers/nfc/pn533/pn533.c |    2 +-
+ drivers/nfc/pn533/pn533.h |    4 ++--
+ drivers/nfc/pn533/usb.c   |    2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index 0c4afe9..a90ab40 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -755,7 +755,7 @@ static void hip04_get_drvinfo(struct net_device *netdev,
- 	strlcpy(drvinfo->version, DRV_VERSION, sizeof(drvinfo->version));
+diff --git a/drivers/nfc/pn533/i2c.c b/drivers/nfc/pn533/i2c.c
+index 1dc8924..8a7c17e 100644
+--- a/drivers/nfc/pn533/i2c.c
++++ b/drivers/nfc/pn533/i2c.c
+@@ -176,7 +176,7 @@ static irqreturn_t pn533_i2c_irq_thread_fn(int irq, void *data)
+ 	return IRQ_HANDLED;
  }
  
--static struct ethtool_ops hip04_ethtool_ops = {
-+static const struct ethtool_ops hip04_ethtool_ops = {
- 	.get_coalesce		= hip04_get_coalesce,
- 	.set_coalesce		= hip04_set_coalesce,
- 	.get_drvinfo		= hip04_get_drvinfo,
-diff --git a/drivers/net/ethernet/hisilicon/hisi_femac.c b/drivers/net/ethernet/hisilicon/hisi_femac.c
-index b5d7ad0..ca68e22 100644
---- a/drivers/net/ethernet/hisilicon/hisi_femac.c
-+++ b/drivers/net/ethernet/hisilicon/hisi_femac.c
-@@ -699,7 +699,7 @@ static int hisi_femac_net_ioctl(struct net_device *dev,
- 	return phy_mii_ioctl(dev->phydev, ifreq, cmd);
- }
+-static struct pn533_phy_ops i2c_phy_ops = {
++static const struct pn533_phy_ops i2c_phy_ops = {
+ 	.send_frame = pn533_i2c_send_frame,
+ 	.send_ack = pn533_i2c_send_ack,
+ 	.abort_cmd = pn533_i2c_abort_cmd,
+diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
+index d9c5583..2f817b3 100644
+--- a/drivers/nfc/pn533/pn533.c
++++ b/drivers/nfc/pn533/pn533.c
+@@ -2560,7 +2560,7 @@ struct pn533 *pn533_register_device(u32 device_type,
+ 				u32 protocols,
+ 				enum pn533_protocol_type protocol_type,
+ 				void *phy,
+-				struct pn533_phy_ops *phy_ops,
++				const struct pn533_phy_ops *phy_ops,
+ 				struct pn533_frame_ops *fops,
+ 				struct device *dev,
+ 				struct device *parent)
+diff --git a/drivers/nfc/pn533/pn533.h b/drivers/nfc/pn533/pn533.h
+index 553c7d1..e26d634 100644
+--- a/drivers/nfc/pn533/pn533.h
++++ b/drivers/nfc/pn533/pn533.h
+@@ -179,7 +179,7 @@ struct pn533 {
  
--static struct ethtool_ops hisi_femac_ethtools_ops = {
-+static const struct ethtool_ops hisi_femac_ethtools_ops = {
- 	.get_link		= ethtool_op_get_link,
- 	.get_link_ksettings	= phy_ethtool_get_link_ksettings,
- 	.set_link_ksettings	= phy_ethtool_set_link_ksettings,
-diff --git a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
-index 275618b..e69a6be 100644
---- a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
-+++ b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
-@@ -750,7 +750,7 @@ static const struct net_device_ops hix5hd2_netdev_ops = {
- 	.ndo_set_mac_address	= hix5hd2_net_set_mac_address,
+ 	struct device *dev;
+ 	void *phy;
+-	struct pn533_phy_ops *phy_ops;
++	const struct pn533_phy_ops *phy_ops;
  };
  
--static struct ethtool_ops hix5hd2_ethtools_ops = {
-+static const struct ethtool_ops hix5hd2_ethtools_ops = {
- 	.get_link		= ethtool_op_get_link,
- 	.get_link_ksettings     = phy_ethtool_get_link_ksettings,
- 	.set_link_ksettings     = phy_ethtool_set_link_ksettings,
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-index ab33487..5eb3245 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-@@ -1264,7 +1264,7 @@ static int hns_get_rxnfc(struct net_device *netdev,
- 	return 0;
+ typedef int (*pn533_send_async_complete_t) (struct pn533 *dev, void *arg,
+@@ -226,7 +226,7 @@ struct pn533 *pn533_register_device(u32 device_type,
+ 				u32 protocols,
+ 				enum pn533_protocol_type protocol_type,
+ 				void *phy,
+-				struct pn533_phy_ops *phy_ops,
++				const struct pn533_phy_ops *phy_ops,
+ 				struct pn533_frame_ops *fops,
+ 				struct device *dev,
+ 				struct device *parent);
+diff --git a/drivers/nfc/pn533/usb.c b/drivers/nfc/pn533/usb.c
+index 33ed78b..bcf3f54 100644
+--- a/drivers/nfc/pn533/usb.c
++++ b/drivers/nfc/pn533/usb.c
+@@ -434,7 +434,7 @@ static void pn533_send_complete(struct urb *urb)
+ 	}
  }
  
--static struct ethtool_ops hns_ethtool_ops = {
-+static const struct ethtool_ops hns_ethtool_ops = {
- 	.get_drvinfo = hns_nic_get_drvinfo,
- 	.get_link  = hns_nic_get_link,
- 	.get_settings  = hns_nic_get_settings,
+-static struct pn533_phy_ops usb_phy_ops = {
++static const struct pn533_phy_ops usb_phy_ops = {
+ 	.send_frame = pn533_usb_send_frame,
+ 	.send_ack = pn533_usb_send_ack,
+ 	.abort_cmd = pn533_usb_abort_cmd,
 
