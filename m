@@ -1,54 +1,100 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 Aug 2016 08:40:56 +0000
-Subject: [PATCH v2 2/2] ALSA: compress: Use memdup_user() rather than duplicating its implementation
-Message-Id: <85977ca3-562e-0a49-0189-53e0ebcdde0c@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 09 Aug 2016 16:03:55 +0000
+Subject: [PATCH] [media] mtk-vcodec: constify venc_common_if structures
+Message-Id: <1470758635-13193-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <7233eb00-a941-4935-dce2-7cb907272d41@users.sourceforge.net>
- <03eac1fe-ff33-1759-9c2a-7914f1c6de45@users.sourceforge.net>
- <1471809094.3746.17.camel@perches.com>
- <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
-In-Reply-To: <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Joe Perches <joe@perches.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 Aug 2016 10:12:37 +0200
+The venc_common_if structures are never modified, so declare them as const.
 
-Reuse existing functionality from memdup_user() instead of keeping
-duplicate source code.
+Done with the help of Coccinelle.
 
-This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/core/compress_offload.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h    |    2 +-
+ drivers/media/platform/mtk-vcodec/venc/venc_h264_if.c |    6 +++---
+ drivers/media/platform/mtk-vcodec/venc/venc_vp8_if.c  |    6 +++---
+ drivers/media/platform/mtk-vcodec/venc_drv_if.c       |    4 ++--
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index a10d139..786989b 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -554,13 +554,9 @@ snd_compr_set_params(struct snd_compr_stream *stream, unsigned long arg)
- 	 * we should allow parameter change only when stream has been
- 	 * opened not in other cases
- 	 */
--	params = kmalloc(sizeof(*params), GFP_KERNEL);
--	if (!params)
--		return -ENOMEM;
--	if (copy_from_user(params, (void __user *)arg, sizeof(*params))) {
--		retval = -EFAULT;
--		goto out;
--	}
-+	params = memdup_user((void __user *)arg, sizeof(*params));
-+	if (IS_ERR(params))
-+		return PTR_ERR(params);
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h b/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
+index 94f0a42..b0cb3ed 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
+@@ -240,7 +240,7 @@ struct mtk_vcodec_ctx {
+ 	enum mtk_encode_param param_change;
+ 	struct mtk_enc_params enc_params;
  
- 	retval = snd_compress_check_input(params);
- 	if (retval)
--- 
-2.9.3
+-	struct venc_common_if *enc_if;
++	const struct venc_common_if *enc_if;
+ 	unsigned long drv_handle;
+ 
+ 	int int_cond;
+diff --git a/drivers/media/platform/mtk-vcodec/venc/venc_h264_if.c b/drivers/media/platform/mtk-vcodec/venc/venc_h264_if.c
+index 9a60052..532cd36 100644
+--- a/drivers/media/platform/mtk-vcodec/venc/venc_h264_if.c
++++ b/drivers/media/platform/mtk-vcodec/venc/venc_h264_if.c
+@@ -664,16 +664,16 @@ static int h264_enc_deinit(unsigned long handle)
+ 	return ret;
+ }
+ 
+-static struct venc_common_if venc_h264_if = {
++static const struct venc_common_if venc_h264_if = {
+ 	h264_enc_init,
+ 	h264_enc_encode,
+ 	h264_enc_set_param,
+ 	h264_enc_deinit,
+ };
+ 
+-struct venc_common_if *get_h264_enc_comm_if(void);
++const struct venc_common_if *get_h264_enc_comm_if(void);
+ 
+-struct venc_common_if *get_h264_enc_comm_if(void)
++const struct venc_common_if *get_h264_enc_comm_if(void)
+ {
+ 	return &venc_h264_if;
+ }
+diff --git a/drivers/media/platform/mtk-vcodec/venc/venc_vp8_if.c b/drivers/media/platform/mtk-vcodec/venc/venc_vp8_if.c
+index 60bbcd2..bdf6780 100644
+--- a/drivers/media/platform/mtk-vcodec/venc/venc_vp8_if.c
++++ b/drivers/media/platform/mtk-vcodec/venc/venc_vp8_if.c
+@@ -471,16 +471,16 @@ static int vp8_enc_deinit(unsigned long handle)
+ 	return ret;
+ }
+ 
+-static struct venc_common_if venc_vp8_if = {
++static const struct venc_common_if venc_vp8_if = {
+ 	vp8_enc_init,
+ 	vp8_enc_encode,
+ 	vp8_enc_set_param,
+ 	vp8_enc_deinit,
+ };
+ 
+-struct venc_common_if *get_vp8_enc_comm_if(void);
++const struct venc_common_if *get_vp8_enc_comm_if(void);
+ 
+-struct venc_common_if *get_vp8_enc_comm_if(void)
++const struct venc_common_if *get_vp8_enc_comm_if(void)
+ {
+ 	return &venc_vp8_if;
+ }
+diff --git a/drivers/media/platform/mtk-vcodec/venc_drv_if.c b/drivers/media/platform/mtk-vcodec/venc_drv_if.c
+index c4c83e7..d02d5f1 100644
+--- a/drivers/media/platform/mtk-vcodec/venc_drv_if.c
++++ b/drivers/media/platform/mtk-vcodec/venc_drv_if.c
+@@ -26,8 +26,8 @@
+ #include "mtk_vcodec_enc_pm.h"
+ #include "mtk_vpu.h"
+ 
+-struct venc_common_if *get_h264_enc_comm_if(void);
+-struct venc_common_if *get_vp8_enc_comm_if(void);
++const struct venc_common_if *get_h264_enc_comm_if(void);
++const struct venc_common_if *get_vp8_enc_comm_if(void);
+ 
+ int venc_if_init(struct mtk_vcodec_ctx *ctx, unsigned int fourcc)
+ {
 
