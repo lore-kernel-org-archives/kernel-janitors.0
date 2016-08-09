@@ -1,58 +1,109 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 15 Aug 2016 13:46:12 +0000
-Subject: Re: [PATCH] backlight-tosa: Delete owner assignment
-Message-Id: <20160815134612.GH25844@dell>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 09 Aug 2016 17:09:45 +0000
+Subject: [PATCH v2] net: dsa: b53: constify b53_io_ops structures
+Message-Id: <1470762585-2670-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <efe9964f-c907-305c-b75e-32a4139d1edd@users.sourceforge.net>
- <CAOMGZ=EWsO_pRg+s+hnPmwRePcrijFK3v+SRKTizfbqyY83iqQ@mail.gmail.com>
-In-Reply-To: <CAOMGZ=EWsO_pRg+s+hnPmwRePcrijFK3v+SRKTizfbqyY83iqQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jingoohan1@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, LKML <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 15 Aug 2016, Vegard Nossum wrote:
+The b53_io_ops structures are never modified, so declare them as const.
 
-> On 15 August 2016 at 13:12, SF Markus Elfring
-> <elfring@users.sourceforge.net> wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Mon, 15 Aug 2016 13:03:29 +0200
-> >
-> > The field "owner" is set by core. Thus delete an extra initialisation.
->=20
-> Hi,
->=20
-> Just a small nit on the patch title: "delete owner assignment" is
-> virtually useless as a title because it has no meaning without the
-> broader context and only describes the literal change. It's like
-> naming a patch "add a line" or "change the code"; it serves no
-> purpose.
->=20
-> How about "backlight-tosa: delete _unnecessary_ assignment"? This
-> immediately communicates the reason for/intent of the patch (there is
-> unnecessary code, thus we can simplify it).
+Done with the help of Coccinelle.
 
-  backlight-tosa: Do not manually assign THIS_MODULE to .owner
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-  This is unnecessary because ...
+---
+v2: Refer to the right structure in the commit message
 
-> (Sorry about singling out this patch and the apparent bikeshedding,
-> this comment obviously applies to a lot of patches by a lot of
-> authors!)
->=20
-> Thanks,
->=20
->=20
-> Vegard
+ drivers/net/dsa/b53/b53_common.c |    3 ++-
+ drivers/net/dsa/b53/b53_mdio.c   |    2 +-
+ drivers/net/dsa/b53/b53_mmap.c   |    2 +-
+ drivers/net/dsa/b53/b53_priv.h   |    3 ++-
+ drivers/net/dsa/b53/b53_spi.c    |    2 +-
+ drivers/net/dsa/b53/b53_srab.c   |    2 +-
+ 6 files changed, 8 insertions(+), 6 deletions(-)
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index bda37d3..38ee10d 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -1681,7 +1681,8 @@ static int b53_switch_init(struct b53_device *dev)
+ 	return 0;
+ }
+ 
+-struct b53_device *b53_switch_alloc(struct device *base, struct b53_io_ops *ops,
++struct b53_device *b53_switch_alloc(struct device *base,
++				    const struct b53_io_ops *ops,
+ 				    void *priv)
+ {
+ 	struct dsa_switch *ds;
+diff --git a/drivers/net/dsa/b53/b53_mdio.c b/drivers/net/dsa/b53/b53_mdio.c
+index aa87c3f..477a16b 100644
+--- a/drivers/net/dsa/b53/b53_mdio.c
++++ b/drivers/net/dsa/b53/b53_mdio.c
+@@ -267,7 +267,7 @@ static int b53_mdio_phy_write16(struct b53_device *dev, int addr, int reg,
+ 	return mdiobus_write_nested(bus, addr, reg, value);
+ }
+ 
+-static struct b53_io_ops b53_mdio_ops = {
++static const struct b53_io_ops b53_mdio_ops = {
+ 	.read8 = b53_mdio_read8,
+ 	.read16 = b53_mdio_read16,
+ 	.read32 = b53_mdio_read32,
+diff --git a/drivers/net/dsa/b53/b53_mmap.c b/drivers/net/dsa/b53/b53_mmap.c
+index 77ffc43..cc9e6bd 100644
+--- a/drivers/net/dsa/b53/b53_mmap.c
++++ b/drivers/net/dsa/b53/b53_mmap.c
+@@ -208,7 +208,7 @@ static int b53_mmap_write64(struct b53_device *dev, u8 page, u8 reg,
+ 	return 0;
+ }
+ 
+-static struct b53_io_ops b53_mmap_ops = {
++static const struct b53_io_ops b53_mmap_ops = {
+ 	.read8 = b53_mmap_read8,
+ 	.read16 = b53_mmap_read16,
+ 	.read32 = b53_mmap_read32,
+diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_priv.h
+index 835a744..d268493 100644
+--- a/drivers/net/dsa/b53/b53_priv.h
++++ b/drivers/net/dsa/b53/b53_priv.h
+@@ -182,7 +182,8 @@ static inline int is_cpu_port(struct b53_device *dev, int port)
+ 	return dev->cpu_port;
+ }
+ 
+-struct b53_device *b53_switch_alloc(struct device *base, struct b53_io_ops *ops,
++struct b53_device *b53_switch_alloc(struct device *base,
++				    const struct b53_io_ops *ops,
+ 				    void *priv);
+ 
+ int b53_switch_detect(struct b53_device *dev);
+diff --git a/drivers/net/dsa/b53/b53_spi.c b/drivers/net/dsa/b53/b53_spi.c
+index 2bda0b5..1c847a1 100644
+--- a/drivers/net/dsa/b53/b53_spi.c
++++ b/drivers/net/dsa/b53/b53_spi.c
+@@ -270,7 +270,7 @@ static int b53_spi_write64(struct b53_device *dev, u8 page, u8 reg, u64 value)
+ 	return spi_write(spi, txbuf, sizeof(txbuf));
+ }
+ 
+-static struct b53_io_ops b53_spi_ops = {
++static const struct b53_io_ops b53_spi_ops = {
+ 	.read8 = b53_spi_read8,
+ 	.read16 = b53_spi_read16,
+ 	.read32 = b53_spi_read32,
+diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
+index 3e2d4a5..8a62b6a 100644
+--- a/drivers/net/dsa/b53/b53_srab.c
++++ b/drivers/net/dsa/b53/b53_srab.c
+@@ -344,7 +344,7 @@ err:
+ 	return ret;
+ }
+ 
+-static struct b53_io_ops b53_srab_ops = {
++static const struct b53_io_ops b53_srab_ops = {
+ 	.read8 = b53_srab_read8,
+ 	.read16 = b53_srab_read16,
+ 	.read32 = b53_srab_read32,
+
