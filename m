@@ -1,40 +1,63 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Aug 2016 08:24:00 +0000
-Subject: [PATCH 2/2] sparc: Delete an unnecessary initialisation in led_proc_write()
-Message-Id: <e09211e6-4aae-68f8-b912-c1415b4539f0@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 09 Aug 2016 15:33:43 +0000
+Subject: [PATCH] misc: mic: constify mic_smpt_ops structure
+Message-Id: <1470756823-29282-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0ca0235c-ddb9-0534-3bde-b4aaa48da92e@users.sourceforge.net>
-In-Reply-To: <0ca0235c-ddb9-0534-3bde-b4aaa48da92e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sparclinux@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: Sudeep Dutt <sudeep.dutt@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Ashutosh Dixit <ashutosh.dixit@intel.com>, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Aug 2016 09:55:22 +0200
+The mic_smpt_ops structure is never modified, so declare is as const.
 
-The local variable "buf" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Done with the help of Coccinelle.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/sparc/kernel/led.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/mic/host/mic_device.h |    2 +-
+ drivers/misc/mic/host/mic_x100.c   |    2 +-
+ drivers/misc/mic/host/mic_x100.h   |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/sparc/kernel/led.c b/arch/sparc/kernel/led.c
-index 7444e4a..d6671af 100644
---- a/arch/sparc/kernel/led.c
-+++ b/arch/sparc/kernel/led.c
-@@ -64,7 +64,7 @@ static int led_proc_open(struct inode *inode, struct file *file)
- static ssize_t led_proc_write(struct file *file, const char __user *buffer,
- 			      size_t count, loff_t *ppos)
- {
--	char *buf = NULL;
-+	char *buf;
+diff --git a/drivers/misc/mic/host/mic_device.h b/drivers/misc/mic/host/mic_device.h
+index 52b12b2..2162a8f 100644
+--- a/drivers/misc/mic/host/mic_device.h
++++ b/drivers/misc/mic/host/mic_device.h
+@@ -82,7 +82,7 @@ struct mic_device {
+ 	struct pci_dev *pdev;
+ 	struct mutex mic_mutex;
+ 	struct mic_hw_intr_ops *intr_ops;
+-	struct mic_smpt_ops *smpt_ops;
++	const struct mic_smpt_ops *smpt_ops;
+ 	struct mic_smpt_info *smpt;
+ 	struct mic_intr_info *intr_info;
+ 	struct mic_irq_info irq_info;
+diff --git a/drivers/misc/mic/host/mic_x100.c b/drivers/misc/mic/host/mic_x100.c
+index 82a973c..ef40b00 100644
+--- a/drivers/misc/mic/host/mic_x100.c
++++ b/drivers/misc/mic/host/mic_x100.c
+@@ -546,7 +546,7 @@ static void mic_x100_smpt_hw_init(struct mic_device *mdev)
+ 	info->base = 0x8000000000ULL;
+ }
  
- 	if (count > LED_MAX_LENGTH)
- 		count = LED_MAX_LENGTH;
--- 
-2.9.3
+-struct mic_smpt_ops mic_x100_smpt_ops = {
++const struct mic_smpt_ops mic_x100_smpt_ops = {
+ 	.init = mic_x100_smpt_hw_init,
+ 	.set = mic_x100_smpt_set,
+ };
+diff --git a/drivers/misc/mic/host/mic_x100.h b/drivers/misc/mic/host/mic_x100.h
+index 8b7daa1..457b3a1 100644
+--- a/drivers/misc/mic/host/mic_x100.h
++++ b/drivers/misc/mic/host/mic_x100.h
+@@ -92,7 +92,7 @@ static const u16 mic_x100_intr_init[] = {
+ #define MIC_X100_BSP_INTERRUPT_VECTOR 229
+ 
+ extern struct mic_hw_ops mic_x100_ops;
+-extern struct mic_smpt_ops mic_x100_smpt_ops;
++extern const struct mic_smpt_ops mic_x100_smpt_ops;
+ extern struct mic_hw_intr_ops mic_x100_intr_ops;
+ 
+ #endif
 
