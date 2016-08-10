@@ -1,41 +1,42 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Aug 2016 20:30:30 +0000
-Subject: Re: [PATCH v2 00/10] staging: ks7010: Fine-tuning for a SDIO card driver
-Message-Id: <1661ba82-29e0-6733-d29a-61d8499c196f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 10 Aug 2016 05:18:16 +0000
+Subject: [PATCH] iio: light: us5182d: Add missing error code assignment before test
+Message-Id: <1470806296-8739-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
- <20160813192211.GA2271@katana>
-In-Reply-To: <20160813192211.GA2271@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> I added some Acked- and Reviewed-by tags last time.
+It is likely that checking the result of 'pm_runtime_set_active' is
+expected here.
 
-I noticed this of course.
+Fixes: f0e5f57d3ac2 ("iio: light: us8152d: Add power management support")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/iio/light/us5182d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/light/us5182d.c b/drivers/iio/light/us5182d.c
+index 20c40f780964..18cf2e29e4d5 100644
+--- a/drivers/iio/light/us5182d.c
++++ b/drivers/iio/light/us5182d.c
+@@ -894,7 +894,7 @@ static int us5182d_probe(struct i2c_client *client,
+ 		goto out_err;
+ 
+ 	if (data->default_continuous) {
+-		pm_runtime_set_active(&client->dev);
++		ret = pm_runtime_set_active(&client->dev);
+ 		if (ret < 0)
+ 			goto out_err;
+ 	}
+-- 
+2.7.4
 
 
-> Did the patches change
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
-Yes. - The amount of source code which I touched in this software module
-is different for the second series.
-
-
-> or why didn't you add them?
-
-I imagined that your acknowledgements to the previous approach might not
-fit to the current software development situation any more.
-
-Regards,
-Markus
