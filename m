@@ -1,36 +1,39 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Tue, 09 Aug 2016 12:17:53 +0000
-Subject: Re: [rtc-linux] Re: [PATCH] rtc: pcf2123: Add missing error code assignment before test
-Message-Id: <20160809121753.GZ8132@piout.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 10 Aug 2016 05:34:27 +0000
+Subject: [PATCH] IB/hfi1: Add missing error code assignment before test
+Message-Id: <1470807267-12714-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470743907-11498-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <alpine.DEB.2.10.1608091403050.2911@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1608091403050.2911@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, a.zummo@towertech.it, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-On 09/08/2016 at 14:03:35 +0200, Julia Lawall wrote :
-> 
-> 
-> On Tue, 9 Aug 2016, Christophe JAILLET wrote:
-> 
-> > It is likely that checking the result of 'pcf2123_write_reg' is expected
-> > here.
-> > Also fix a small style issue. The '{' at the beginning of the function
-> > is misplaced.
-> 
-> They shouldn't be in the same patch.  If you are wrong about the ret
-> issue, the { should still be moved.
-> 
+It is likely that checking the result of 'setup_ctxt' is expected here.
 
-That is true but as it is a really trivial patch, I didn't care that
-much.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/hfi1/file_ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/drivers/infiniband/hw/hfi1/file_ops.c b/drivers/infiniband/hw/hfi1/file_ops.c
+index 1ecbec192358..ed76be39b20b 100644
+--- a/drivers/infiniband/hw/hfi1/file_ops.c
++++ b/drivers/infiniband/hw/hfi1/file_ops.c
+@@ -222,7 +222,7 @@ static long hfi1_file_ioctl(struct file *fp, unsigned int cmd,
+ 		ret = assign_ctxt(fp, &uinfo);
+ 		if (ret < 0)
+ 			return ret;
+-		setup_ctxt(fp);
++		ret = setup_ctxt(fp);
+ 		if (ret)
+ 			return ret;
+ 		ret = user_init(fp);
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
