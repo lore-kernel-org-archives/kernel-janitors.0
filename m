@@ -1,36 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 11 Aug 2016 11:52:04 +0000
-Subject: Re: [PATCH 03/11] pinctrl: nomadik: use of_property_read_bool
-Message-Id: <CACRpkdZi-dpkgvH5zR_UKiTbk4pmsGeiXH5pVgjZBrW2FaK1ZQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Aug 2016 19:41:37 +0000
+Subject: Re: staging: ks7010: Replace three printk() calls by pr_err()
+Message-Id: <5911a2e6-6862-7b72-b69a-dcc32658b85b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
- <1470387411-15879-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+ <901acc3c-ff1b-6f0c-b744-2bfb36de18d8@users.sourceforge.net>
+ <1468787163.1900.1.camel@perches.com> <20160720155500.GG1688@katana>
+In-Reply-To: <20160720155500.GG1688@katana>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Aug 5, 2016 at 10:56 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+>> Please and and use pr_fmt
+> 
+> Can't we use dev_* on the SDIO device?
 
-> Use of_property_read_bool to check for the existence of a property.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression e1,e2;
-> statement S2,S1;
-> @@
-> -       if (of_get_property(e1,e2,NULL))
-> +       if (of_property_read_bool(e1,e2))
->         S1 else S2
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+How should a connection be constructed from the data structure "sdio_device_id"
+to the corresponding device information for such an use case?
 
-Patch applied.
-
-Yours,
-Linus Walleij
+Regards,
+Markus
