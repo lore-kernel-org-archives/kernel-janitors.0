@@ -1,7 +1,7 @@
-From: Roger Quadros <rogerq@ti.com>
-Date: Mon, 01 Aug 2016 09:32:34 +0000
-Subject: Re: [PATCH] memory: omap-gpmc: Delete an unnecessary check before the function call "gpiochip_free_o
-Message-Id: <e3aca807-d81b-a7d0-aa8d-3077a54979aa@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Aug 2016 05:30:22 +0000
+Subject: [PATCH v2 03/10] staging: ks7010: Return directly after a failed kmalloc()
+Message-Id: <3ed3fa85-9445-d795-2eee-f7b3a9f0804f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,47 +20,71 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
- <e3f6205c-39a0-b9f7-5290-be4c6cbb2f0b@users.sourceforge.net>
-In-Reply-To: <e3f6205c-39a0-b9f7-5290-be4c6cbb2f0b@users.sourceforge.net>
+ <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+ <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
+In-Reply-To: <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Aug 2016 17:34:12 +0200
 
-On 23/07/16 20:09, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 23 Jul 2016 18:54:02 +0200
-> 
-> The gpiochip_free_own_desc() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/memory/omap-gpmc.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-> index 869c83f..e138875 100644
-> --- a/drivers/memory/omap-gpmc.c
-> +++ b/drivers/memory/omap-gpmc.c
-> @@ -2143,9 +2143,7 @@ err_child_fail:
->  	ret = -ENODEV;
->  
->  err_cs:
-> -	if (waitpin_desc)
-> -		gpiochip_free_own_desc(waitpin_desc);
-> -
-> +	gpiochip_free_own_desc(waitpin_desc);
->  err:
->  	gpmc_cs_free(cs);
->  
-> 
-This looks good to me. I will queue this for v4.8. Thanks.
+Return directly after a memory allocation failed at the beginning.
 
-cheers,
--roger
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+v2: Rebased on the source files from Linux next-20160809.
+
+ drivers/staging/ks7010/ks7010_sdio.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index 3622fba..9b954cb 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -713,10 +713,8 @@ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
+ 	unsigned char *data_buf;
+ 
+ 	data_buf = kmalloc(sizeof(u32), GFP_KERNEL);
+-	if (!data_buf) {
+-		rc = 1;
+-		goto error_out;
+-	}
++	if (!data_buf)
++		return 1;
+ 
+ 	memcpy(data_buf, &index, sizeof(index));
+ 	retval = ks7010_sdio_write(priv, WRITE_INDEX, data_buf, sizeof(index));
+@@ -744,10 +742,9 @@ static int ks7010_sdio_data_compare(struct ks_wlan_private *priv, u32 address,
+ 	unsigned char *read_buf;
+ 
+ 	read_buf = kmalloc(ROM_BUFF_SIZE, GFP_KERNEL);
+-	if (!read_buf) {
+-		rc = 1;
+-		goto error_out;
+-	}
++	if (!read_buf)
++		return 1;
++
+ 	retval = ks7010_sdio_read(priv, address, read_buf, size);
+ 	if (retval) {
+ 		rc = 2;
+@@ -777,10 +774,8 @@ static int ks7010_upload_firmware(struct ks_wlan_private *priv,
+ 
+ 	/* buffer allocate */
+ 	rom_buf = kmalloc(ROM_BUFF_SIZE, GFP_KERNEL);
+-	if (!rom_buf) {
+-		rc = 3;
+-		goto error_out0;
+-	}
++	if (!rom_buf)
++		return 3;
+ 
+ 	sdio_claim_host(card->func);
+ 
+-- 
+2.9.2
+
