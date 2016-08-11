@@ -1,103 +1,75 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 20 Aug 2016 09:25:15 +0000
-Subject: Re: [PATCH 1/2] mmc-block: Use memdup_user() rather than duplicating its implementation
-Message-Id: <57B821FB.8050404@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Aug 2016 05:48:00 +0000
+Subject: [PATCH v2 08/10] staging: ks7010: Replace three printk() calls by pr_err()
+Message-Id: <1471e8af-129d-8a7a-c7d9-1e1fbe0237ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <68870228-c6a0-5de9-daee-2522a1303857@users.sourceforge.net> <10db7d07-0cee-041f-8755-de412a12bc81@users.sourceforge.net>
-In-Reply-To: <10db7d07-0cee-041f-8755-de412a12bc81@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+ <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
+In-Reply-To: <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Cc: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Grant Grundler <grundler@chromium.org>, Jens Axboe <axboe@fb.com>, Jon Hunter <jonathanh@nvidia.com>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Aug 2016 21:56:15 +0200
 
+Prefer usage of the macro "pr_err" over the interface "printk".
+Fix a typo in an error message.
 
-Am 19.08.2016 23:10, schrieb SF Markus Elfring:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 19 Aug 2016 22:46:38 +0200
-> 
-> * Reuse existing functionality from memdup_user() instead of keeping
->   duplicate source code.
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Delete the integer variable "err" then because the pointer
->   variable "idata" should be sufficient to handle return values alone
->   in this function.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mmc/card/block.c | 26 +++++++++-----------------
->  1 file changed, 9 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
-> index 48a5dd7..6ce9492 100644
-> --- a/drivers/mmc/card/block.c
-> +++ b/drivers/mmc/card/block.c
-> @@ -337,22 +337,21 @@ static struct mmc_blk_ioc_data *mmc_blk_ioctl_copy_from_user(
->  	struct mmc_ioc_cmd __user *user)
->  {
->  	struct mmc_blk_ioc_data *idata;
-> -	int err;
->  
->  	idata = kmalloc(sizeof(*idata), GFP_KERNEL);
->  	if (!idata) {
-> -		err = -ENOMEM;
-> +		idata = ERR_PTR(-ENOMEM);
->  		goto out;
->  	}
->  
->  	if (copy_from_user(&idata->ic, user, sizeof(idata->ic))) {
-> -		err = -EFAULT;
-> +		idata = ERR_PTR(-EFAULT);
->  		goto idata_err;
->  	}
->  
->  	idata->buf_bytes = (u64) idata->ic.blksz * idata->ic.blocks;
->  	if (idata->buf_bytes > MMC_IOC_MAX_BYTES) {
-> -		err = -EOVERFLOW;
-> +		idata = ERR_PTR(-EOVERFLOW);
->  		goto idata_err;
->  	}
->  
-> @@ -361,26 +360,19 @@ static struct mmc_blk_ioc_data *mmc_blk_ioctl_copy_from_user(
->  		return idata;
->  	}
->  
-> -	idata->buf = kmalloc(idata->buf_bytes, GFP_KERNEL);
-> -	if (!idata->buf) {
-> -		err = -ENOMEM;
-> +	idata->buf = memdup_user((void __user *)(unsigned long)
-> +				 idata->ic.data_ptr,
-> +				 idata->buf_bytes);
-> +	if (IS_ERR(idata->buf)) {
-> +		idata = (void *) idata->buf;
->  		goto idata_err;
->  	}
-> -
-> -	if (copy_from_user(idata->buf, (void __user *)(unsigned long)
-> -					idata->ic.data_ptr, idata->buf_bytes)) {
-> -		err = -EFAULT;
-> -		goto copy_err;
-> -	}
-> -
->  	return idata;
->  
-> -copy_err:
-> -	kfree(idata->buf);
->  idata_err:
->  	kfree(idata);
->  out:
-> -	return ERR_PTR(err);
-> +	return idata;
->  }
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+v2: Rebased on the source files from Linux next-20160809.
 
+ drivers/staging/ks7010/ks7010_sdio.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-This looks strange, returning a freed pointer is a bad idea. I suggest a
-idata=NULL after kfree().
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index 634ef42..bfca6a7 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -998,11 +998,11 @@ static int ks7010_sdio_probe(struct sdio_func *func,
+ 	/* private memory allocate */
+ 	netdev = alloc_etherdev(sizeof(*priv));
+ 	if (netdev = NULL) {
+-		printk(KERN_ERR "ks7010 : Unable to alloc new net device\n");
++		pr_err(pr_fmt("Unable to alloc new net device\n"));
+ 		goto release_irq;
+ 	}
+ 	if (dev_alloc_name(netdev, "wlan%d") < 0) {
+-		printk(KERN_ERR "ks7010 :  Couldn't get name!\n");
++		pr_err(pr_fmt("Couldn't get name!\n"));
+ 		goto free_dev;
+ 	}
+ 
+@@ -1042,8 +1042,7 @@ static int ks7010_sdio_probe(struct sdio_func *func,
+ 	/* Upload firmware */
+ 	ret = ks7010_upload_firmware(priv, card);	/* firmware load */
+ 	if (ret) {
+-		printk(KERN_ERR
+-		       "ks7010: firmware load failed !! retern code = %d\n",
++		pr_err(pr_fmt("firmware load failed! return code = %d\n"),
+ 		       ret);
+ 		goto free_buf;
+ 	}
+-- 
+2.9.2
 
-re,
- wh
-
->  
->  static int mmc_blk_ioctl_copy_to_user(struct mmc_ioc_cmd __user *ic_ptr,
