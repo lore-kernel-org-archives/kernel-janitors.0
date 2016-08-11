@@ -1,85 +1,96 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Aug 2016 07:24:03 +0000
-Subject: [PATCH 4/7] aacraid: Delete unnecessary braces
-Message-Id: <dfde8ac2-fe7e-df1b-d0b3-cc225961d0a8@users.sourceforge.net>
+Date: Thu, 11 Aug 2016 05:37:21 +0000
+Subject: [PATCH v2 05/10] staging: ks7010: Delete unnecessary uses of the variable "retval"
+Message-Id: <d7af5d69-81e3-5651-9e2d-8241b8210de4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <40d8607f-3934-c31f-3791-ef6a67d65d45@users.sourceforge.net>
-In-Reply-To: <40d8607f-3934-c31f-3791-ef6a67d65d45@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+ <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
+In-Reply-To: <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, aacraid@microsemi.com, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Aug 2016 07:07:08 +0200
+Date: Wed, 10 Aug 2016 18:56:31 +0200
 
-Do not use curly brackets at some source code places
-where a single statement should be sufficient.
+A few return values can also be directly used for condition checks.
+Thus remove a local variable for intermediate assignments.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/aacraid/commctrl.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+v2: Rebased on the source files from Linux next-20160809.
 
-diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index 49a664f..9f4ddb0 100644
---- a/drivers/scsi/aacraid/commctrl.c
-+++ b/drivers/scsi/aacraid/commctrl.c
-@@ -66,13 +66,11 @@ static int ioctl_send_fib(struct aac_dev * dev, void __user *arg)
- 	unsigned int size, osize;
- 	int retval;
+    Touched less source code places.
+
+ drivers/staging/ks7010/ks7010_sdio.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index 53df8f7..0f7ea76 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -489,7 +489,6 @@ static void ks7010_rw_function(struct work_struct *work)
+ 	struct hw_info_t *hw;
+ 	struct ks_wlan_private *priv;
+ 	unsigned char rw_data;
+-	int retval;
  
--	if (dev->in_reset) {
-+	if (dev->in_reset)
- 		return -EBUSY;
--	}
- 	fibptr = aac_fib_alloc(dev);
--	if(fibptr = NULL) {
-+	if (!fibptr)
- 		return -ENOMEM;
--	}
- 
- 	kfib = fibptr->hw_fib_va;
- 	/*
-@@ -138,9 +136,8 @@ static int ioctl_send_fib(struct aac_dev * dev, void __user *arg)
- 		retval = aac_fib_send(le16_to_cpu(kfib->header.Command), fibptr,
- 				le16_to_cpu(kfib->header.Size) , FsaNormal,
- 				1, 1, NULL, NULL);
--		if (retval) {
-+		if (retval)
- 			goto cleanup;
--		}
- 		if (aac_fib_complete(fibptr) != 0) {
- 			retval = -EINVAL;
- 			goto cleanup;
-@@ -228,12 +225,10 @@ static int open_getadapter_fib(struct aac_dev * dev, void __user *arg)
- 		}
- 		list_add_tail(&fibctx->next, &dev->fib_list);
- 		spin_unlock_irqrestore(&dev->fib_lock, flags);
--		if (copy_to_user(arg, &fibctx->unique,
--						sizeof(fibctx->unique))) {
-+		if (copy_to_user(arg, &fibctx->unique, sizeof(fibctx->unique)))
- 			status = -EFAULT;
--		} else {
-+		else
- 			status = 0;
--		}
+ 	hw = container_of(work, struct hw_info_t, rw_wq.work);
+ 	priv = container_of(hw, struct ks_wlan_private, ks_wlan_hw);
+@@ -538,9 +537,7 @@ static void ks7010_rw_function(struct work_struct *work)
  	}
- 	return status;
- }
-@@ -820,9 +815,8 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- free_user_srbcmd:
- 	kfree(user_srbcmd);
- free_sg_list:
--	for(i=0; i <= sg_indx; i++){
-+	for (i = 0; i <= sg_indx; i++)
- 		kfree(sg_list[i]);
--	}
- 	if (rcode != -ERESTARTSYS) {
- 		aac_fib_complete(srbfib);
- 		aac_fib_free(srbfib);
+ 
+ 	/* read (WriteStatus/ReadDataSize FN1:00_0014) */
+-	retval -	    ks7010_sdio_read(priv, WSTATUS_RSIZE, &rw_data, sizeof(rw_data));
+-	if (retval) {
++	if (ks7010_sdio_read(priv, WSTATUS_RSIZE, &rw_data, sizeof(rw_data))) {
+ 		DPRINTK(1, " error : WSTATUS_RSIZE=%02X psstatus=%d\n", rw_data,
+ 			atomic_read(&priv->psstatus.status));
+ 		goto release_host;
+@@ -708,7 +705,6 @@ static void trx_device_exit(struct ks_wlan_private *priv)
+ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
+ {
+ 	int rc = 0;
+-	int retval;
+ 	unsigned char *data_buf;
+ 
+ 	data_buf = kmalloc(sizeof(u32), GFP_KERNEL);
+@@ -716,14 +712,12 @@ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
+ 		return 1;
+ 
+ 	memcpy(data_buf, &index, sizeof(index));
+-	retval = ks7010_sdio_write(priv, WRITE_INDEX, data_buf, sizeof(index));
+-	if (retval) {
++	if (ks7010_sdio_write(priv, WRITE_INDEX, data_buf, sizeof(index))) {
+ 		rc = 2;
+ 		goto free_buf;
+ 	}
+ 
+-	retval = ks7010_sdio_write(priv, READ_INDEX, data_buf, sizeof(index));
+-	if (retval)
++	if (ks7010_sdio_write(priv, READ_INDEX, data_buf, sizeof(index)))
+ 		rc = 3;
+  free_buf:
+ 	kfree(data_buf);
 -- 
-2.9.3
+2.9.2
 
