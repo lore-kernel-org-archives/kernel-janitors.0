@@ -1,67 +1,54 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Fri, 19 Aug 2016 07:50:49 +0000
-Subject: Re: [PATCH] virtio-gpu: Use memdup_user() rather than duplicating its implementation
-Message-Id: <20160819075049.GV6232@phenom.ffwll.local>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Aug 2016 05:17:12 +0000
+Subject: [PATCH v2 00/10] staging: ks7010: Fine-tuning for a SDIO card driver
+Message-Id: <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <401e68fc-5515-7a7a-be2e-503dee676b34@users.sourceforge.net>
-In-Reply-To: <401e68fc-5515-7a7a-be2e-503dee676b34@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+In-Reply-To: <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Julia Lawall <julia.lawall@lip6.fr>, Gerd Hoffmann <kraxel@redhat.com>
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
 
-On Thu, Aug 18, 2016 at 10:42:06PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 18 Aug 2016 22:35:14 +0200
-> 
-> Reuse existing functionality from memdup_user() instead of keeping
-> duplicate source code.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-Applied to drm-misc.
--Daniel
+Further update suggestions were taken into account
+after a patch was applied from static source code analysis.
 
-> ---
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index c046903..512e7cd 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -152,15 +152,10 @@ static int virtio_gpu_execbuffer(struct drm_device *dev,
->  	if (ret)
->  		goto out_free;
->  
-> -	buf = kmalloc(exbuf->size, GFP_KERNEL);
-> -	if (!buf) {
-> -		ret = -ENOMEM;
-> -		goto out_unresv;
-> -	}
-> -	if (copy_from_user(buf, (void __user *)(uintptr_t)exbuf->command,
-> -			   exbuf->size)) {
-> -		kfree(buf);
-> -		ret = -EFAULT;
-> +	buf = memdup_user((void __user *)(uintptr_t)exbuf->command,
-> +			  exbuf->size);
-> +	if (IS_ERR(buf)) {
-> +		ret = PTR_ERR(buf);
->  		goto out_unresv;
->  	}
->  	virtio_gpu_cmd_submit(vgdev, buf, exbuf->size,
-> -- 
-> 2.9.3
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Markus Elfring (10):
+  Delete unnecessary checks before the function call "kfree"
+  Delete unnecessary assignments for buffer variables
+  Return directly after a failed kmalloc()
+  Rename jump labels
+  Delete unnecessary uses of the variable "retval"
+  Delete unnecessary braces
+  Add the macro "pr_fmt"
+  Replace three printk() calls by pr_err()
+  Delete a variable in write_to_device()
+  Delete three unnecessary variable initialisations
+
+ drivers/staging/ks7010/ks7010_sdio.c | 184 ++++++++++++++---------------------
+ 1 file changed, 73 insertions(+), 111 deletions(-)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.9.2
+
+
