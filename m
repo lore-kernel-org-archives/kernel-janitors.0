@@ -1,37 +1,46 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 23 Aug 2016 10:18:11 +0000
-Subject: Re: checkpatch: See if modified files are marked obsolete in MAINTAINERS
-Message-Id: <alpine.DEB.2.10.1608230617420.3523@hadrien>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 11 Aug 2016 14:38:54 +0000
+Subject: [PATCH] rt2x00usb: Fix error return code
+Message-Id: <1470926334-24532-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87shtwvm63.fsf@kamboji.qca.qualcomm.com> <7ceaa510dc9d2df05ec4b456baed7bb1415550b3.1471889575.git.joe@perches.com> <d5365370-37b5-b367-ba9e-45f4e27f975a@users.sourceforge.net>
-In-Reply-To: <d5365370-37b5-b367-ba9e-45f4e27f975a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, Kalle Valo <kvalo@codeaurora.org>, Arend van Spriel <arend.vanspriel@broadcom.com>, Andy Whitcroft <apw@canonical.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: sgruszka@redhat.com, helmut.schaa@googlemail.com, kvalo@codeaurora.org
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+We know that 'retval = 0' because it has been tested a few lines above.
+So, if 'devm_kmalloc' fails, 0 will be returned instead of an error code.
+Return -ENOMEM instead.
+
+Fixes: 8b4c0009313f ("rt2x00usb: Use usb anchor to manage URB")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/ralink/rt2x00/rt2x00usb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
+index 7cf26c6124d1..6005e14213ca 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
+@@ -831,8 +831,10 @@ int rt2x00usb_probe(struct usb_interface *usb_intf,
+ 	rt2x00dev->anchor = devm_kmalloc(&usb_dev->dev,
+ 					sizeof(struct usb_anchor),
+ 					GFP_KERNEL);
+-	if (!rt2x00dev->anchor)
++	if (!rt2x00dev->anchor) {
++		retval = -ENOMEM;
+ 		goto exit_free_reg;
++	}
+ 
+ 	init_usb_anchor(rt2x00dev->anchor);
+ 	return 0;
+-- 
+2.7.4
 
 
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
-On Tue, 23 Aug 2016, SF Markus Elfring wrote:
-
-> > Use get_maintainer to check the status of individual files.
-> > If "obsolete", suggest leaving the files alone.
->
-> Will another software system like the "kbuild test robot"
-> need any more fine-tuning for this change?
-
-It only works on files in which there have been commits, thus by
-definition not obsolete.
-
-julia
-
-
->
-> Regards,
-> Markus
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
