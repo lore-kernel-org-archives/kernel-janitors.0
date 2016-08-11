@@ -1,77 +1,78 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 31 Aug 2016 07:30:47 +0000
-Subject: [PATCH 5/6] dwc_eth_qos: constify ethtool_ops structures
-Message-Id: <1472628648-3603-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Aug 2016 05:27:23 +0000
+Subject: [PATCH v2 02/10] staging: ks7010: Delete unnecessary assignments for buffer variables
+Message-Id: <525d8344-adee-cefd-5bc3-cd8460f26313@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
+ <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
+In-Reply-To: <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars Persson <lars.persson@axis.com>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
 
-Check for ethtool_ops structures that are only stored in the ethtool_ops
-field of a net_device structure or passed as the second argument to
-netdev_set_default_ethtool_ops.  These contexts are declared const, so
-ethtool_ops structures that have these properties can be declared as const
-also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 10 Aug 2016 17:26:01 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A few variables were assigned a null pointer despite of the detail
+that they were immediately reassigned by the following statement.
+Thus remove such unnecessary assignments.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct ethtool_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct net_device e;
-position p;
-@@
-e.ethtool_ops = &i@p;
-
-@ok2@
-identifier r.i;
-expression e;
-position p;
-@@
-netdev_set_default_ethtool_ops(e, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-@@
-i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct ethtool_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/synopsys/dwc_eth_qos.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Rebased on the source files from Linux next-20160809.
 
-diff --git a/drivers/net/ethernet/synopsys/dwc_eth_qos.c b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
-index 5a3941b..c25d971 100644
---- a/drivers/net/ethernet/synopsys/dwc_eth_qos.c
-+++ b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
-@@ -2743,7 +2743,7 @@ static void dwceqos_set_msglevel(struct net_device *ndev, u32 msglevel)
- 	lp->msg_enable = msglevel;
- }
+ drivers/staging/ks7010/ks7010_sdio.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index 7da6c84..3622fba 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -711,7 +711,6 @@ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
+ 	int rc = 0;
+ 	int retval;
+ 	unsigned char *data_buf;
+-	data_buf = NULL;
  
--static struct ethtool_ops dwceqos_ethtool_ops = {
-+static const struct ethtool_ops dwceqos_ethtool_ops = {
- 	.get_drvinfo    = dwceqos_get_drvinfo,
- 	.get_link       = ethtool_op_get_link,
- 	.get_pauseparam = dwceqos_get_pauseparam,
+ 	data_buf = kmalloc(sizeof(u32), GFP_KERNEL);
+ 	if (!data_buf) {
+@@ -743,7 +742,7 @@ static int ks7010_sdio_data_compare(struct ks_wlan_private *priv, u32 address,
+ 	int rc = 0;
+ 	int retval;
+ 	unsigned char *read_buf;
+-	read_buf = NULL;
++
+ 	read_buf = kmalloc(ROM_BUFF_SIZE, GFP_KERNEL);
+ 	if (!read_buf) {
+ 		rc = 1;
+@@ -776,8 +775,6 @@ static int ks7010_upload_firmware(struct ks_wlan_private *priv,
+ 	int length;
+ 	const struct firmware *fw_entry = NULL;
+ 
+-	rom_buf = NULL;
+-
+ 	/* buffer allocate */
+ 	rom_buf = kmalloc(ROM_BUFF_SIZE, GFP_KERNEL);
+ 	if (!rom_buf) {
+-- 
+2.9.2
 
