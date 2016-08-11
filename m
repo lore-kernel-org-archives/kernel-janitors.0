@@ -1,58 +1,81 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Wed, 03 Aug 2016 20:50:42 +0000
-Subject: Re: [patch] nfsd: remove some dead code in nfsd_create_locked()
-Message-Id: <20160803205042.GC5901@fieldses.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Aug 2016 12:23:58 +0000
+Subject: [PATCH v5 1/2] mfd: dm355evm_msp: Refactoring for add_child()
+Message-Id: <0e48a854-11dc-e4b5-e77c-b7f4ab36eb48@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160803190500.GE775@mwanda>
-In-Reply-To: <20160803190500.GE775@mwanda>
+References: <80dc4486-01d1-df66-c9c2-b71ee2251251@users.sourceforge.net>
+In-Reply-To: <80dc4486-01d1-df66-c9c2-b71ee2251251@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jeff Layton <jlayton@poochiereds.net>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Aug 03, 2016 at 10:05:00PM +0300, Dan Carpenter wrote:
-> We changed this around in f13058a93484 ('nfsd: reorganize nfsd_create')
-> so "dchild" can't be an error pointer any more.  Also we don't need to
-> test if dchild is NULL because dput has a check built-in.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 11 Aug 2016 13:30:32 +0200
 
-Thanks!
+Adjust jump targets according to the Linux coding style convention.
+Another check for the variable "status" can be omitted then at the end.
 
-> Can it even be NULL?
+Link: https://lkml.kernel.org/g/<20160628163146.GG29166@dell>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
 
-It was returned from a caller's lookup_one_len, which can only return
-pointers or errors, I believe.  (And looks like callers also do
-fh_verify and would already oops if it was null.)
+v5: Rebased on the source files from Linux next-20160809.
 
-Anyway, added a brief comment to that effect, fixed up the referenced
-commitid (I rewrote some history there, apologies) and committed, will
-push out after a few tests....
+v4: Adjustment of an error message at the end
+    
+    See also a change request for the module "twl-core" on 2016-06-08:
+    https://lkml.kernel.org/g/<20160608111442.GB14888@dell>
 
---b.
+v3: Deletion of another blank line as requested by Lee Jones
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index c844fd6..cd628ce 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1141,7 +1141,7 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
->  		char *fname, int flen, struct iattr *iap,
->  		int type, dev_t rdev, struct svc_fh *resfhp)
->  {
-> -	struct dentry	*dentry, *dchild = NULL;
-> +	struct dentry	*dentry, *dchild;
->  	struct inode	*dirp;
->  	__be32		err;
->  	__be32		err2;
-> @@ -1208,8 +1208,7 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
->  	if (!err)
->  		err = fh_update(resfhp);
->  out:
-> -	if (dchild && !IS_ERR(dchild))
-> -		dput(dchild);
-> +	dput(dchild);
->  	return err;
->  
->  out_nfserr:
+v2: Rebasing
+
+ drivers/mfd/dm355evm_msp.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
+index 270e19c..86eca61 100644
+--- a/drivers/mfd/dm355evm_msp.c
++++ b/drivers/mfd/dm355evm_msp.c
+@@ -209,7 +209,7 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+ 		status = platform_device_add_data(pdev, pdata, pdata_len);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add platform_data\n");
+-			goto err;
++			goto put_device;
+ 		}
+ 	}
+ 
+@@ -222,19 +222,20 @@ static struct device *add_child(struct i2c_client *client, const char *name,
+ 		status = platform_device_add_resources(pdev, &r, 1);
+ 		if (status < 0) {
+ 			dev_dbg(&pdev->dev, "can't add irq\n");
+-			goto err;
++			goto put_device;
+ 		}
+ 	}
+ 
+ 	status = platform_device_add(pdev);
++	if (status)
++		goto put_device;
+ 
+-err:
+-	if (status < 0) {
+-		platform_device_put(pdev);
+-		dev_err(&client->dev, "can't add %s dev\n", name);
+-		return ERR_PTR(status);
+-	}
+ 	return &pdev->dev;
++
++put_device:
++	platform_device_put(pdev);
++	dev_err(&client->dev, "failed to add device %s\n", name);
++	return ERR_PTR(status);
+ }
+ 
+ static int add_children(struct i2c_client *client)
+-- 
+2.9.2
+
