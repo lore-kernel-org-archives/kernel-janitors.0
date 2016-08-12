@@ -1,63 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 09 Aug 2016 15:33:43 +0000
-Subject: [PATCH] misc: mic: constify mic_smpt_ops structure
-Message-Id: <1470756823-29282-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 12 Aug 2016 10:24:56 +0000
+Subject: Disabled mail account returned by get_maintainer.pl
+Message-Id: <nok85o$1k1$1@blaine.gmane.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Ashutosh Dixit <ashutosh.dixit@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-The mic_smpt_ops structure is never modified, so declare is as const.
+Hi,
 
-Done with the help of Coccinelle.
+I've got an "Undelivered Mail Returned to Sender".
+Reason: <sony.john@avagotech.com>: host avagotech.com[108.177.15.26] said: 550
+    5.2.1 The email account that you tried to reach is disabled. v10si1666506wmf.49 - gsmtp
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+This address has been given by get_maintainer.pl
+I don't know who to send this message to, neither if MAINTAINERS should be fixed. So I post it here.
+
+
+
+SERVER ENGINES 10Gbps iSCSI - BladeEngine 2 DRIVER
+[...]
+M:	John Soni Jose <sony.john@avagotech.com>
+
+CJ
+
 
 ---
- drivers/misc/mic/host/mic_device.h |    2 +-
- drivers/misc/mic/host/mic_x100.c   |    2 +-
- drivers/misc/mic/host/mic_x100.h   |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
-diff --git a/drivers/misc/mic/host/mic_device.h b/drivers/misc/mic/host/mic_device.h
-index 52b12b2..2162a8f 100644
---- a/drivers/misc/mic/host/mic_device.h
-+++ b/drivers/misc/mic/host/mic_device.h
-@@ -82,7 +82,7 @@ struct mic_device {
- 	struct pci_dev *pdev;
- 	struct mutex mic_mutex;
- 	struct mic_hw_intr_ops *intr_ops;
--	struct mic_smpt_ops *smpt_ops;
-+	const struct mic_smpt_ops *smpt_ops;
- 	struct mic_smpt_info *smpt;
- 	struct mic_intr_info *intr_info;
- 	struct mic_irq_info irq_info;
-diff --git a/drivers/misc/mic/host/mic_x100.c b/drivers/misc/mic/host/mic_x100.c
-index 82a973c..ef40b00 100644
---- a/drivers/misc/mic/host/mic_x100.c
-+++ b/drivers/misc/mic/host/mic_x100.c
-@@ -546,7 +546,7 @@ static void mic_x100_smpt_hw_init(struct mic_device *mdev)
- 	info->base = 0x8000000000ULL;
- }
- 
--struct mic_smpt_ops mic_x100_smpt_ops = {
-+const struct mic_smpt_ops mic_x100_smpt_ops = {
- 	.init = mic_x100_smpt_hw_init,
- 	.set = mic_x100_smpt_set,
- };
-diff --git a/drivers/misc/mic/host/mic_x100.h b/drivers/misc/mic/host/mic_x100.h
-index 8b7daa1..457b3a1 100644
---- a/drivers/misc/mic/host/mic_x100.h
-+++ b/drivers/misc/mic/host/mic_x100.h
-@@ -92,7 +92,7 @@ static const u16 mic_x100_intr_init[] = {
- #define MIC_X100_BSP_INTERRUPT_VECTOR 229
- 
- extern struct mic_hw_ops mic_x100_ops;
--extern struct mic_smpt_ops mic_x100_smpt_ops;
-+extern const struct mic_smpt_ops mic_x100_smpt_ops;
- extern struct mic_hw_intr_ops mic_x100_intr_ops;
- 
- #endif
 
