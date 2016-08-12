@@ -1,74 +1,23 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 12 Aug 2016 12:58:34 +0000
-Subject: [PATCH 1/2] staging: rts5208/ms.c: change the label name to respect the coding style
-Message-Id: <20160812125835.2324-2-lambert.quentin@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 12 Aug 2016 14:06:23 +0000
+Subject: Re: [PATCH 1/2] staging: rts5208/ms.c: change the label name to respect the coding style
+Message-Id: <20160812140623.GA29822@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160812125835.2324-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160812125835.2324-1-lambert.quentin@gmail.com>
+ <20160812125835.2324-2-lambert.quentin@gmail.com>
+In-Reply-To: <20160812125835.2324-2-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+To: Quentin Lambert <lambert.quentin@gmail.com>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
----
- drivers/staging/rts5208/ms.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On Fri, Aug 12, 2016 at 02:58:34PM +0200, Quentin Lambert wrote:
+> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+> ---
+>  drivers/staging/rts5208/ms.c |   12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -4313,7 +4313,7 @@ int mg_get_local_EKB(struct scsi_cmnd *s
- 	if (retval != STATUS_SUCCESS) {
- 		set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
- 		rtsx_trace(chip);
--		goto GetEKBFinish;
-+		goto free_buffer;
- 	}
- 
- 	retval = ms_transfer_data(chip, MS_TM_AUTO_READ, PRO_READ_LONG_DATA,
-@@ -4322,7 +4322,7 @@ int mg_get_local_EKB(struct scsi_cmnd *s
- 		set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
- 		rtsx_clear_ms_error(chip);
- 		rtsx_trace(chip);
--		goto GetEKBFinish;
-+		goto free_buffer;
- 	}
- 	if (check_ms_err(chip)) {
- 		set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
-@@ -4334,7 +4334,7 @@ int mg_get_local_EKB(struct scsi_cmnd *s
- 	bufflen = min_t(int, 1052, scsi_bufflen(srb));
- 	rtsx_stor_set_xfer_buf(buf, bufflen, srb);
- 
--GetEKBFinish:
-+free_buffer:
- 	kfree(buf);
- 	return retval;
- }
-@@ -4566,7 +4566,7 @@ int mg_get_ICV(struct scsi_cmnd *srb, st
- 	if (retval != STATUS_SUCCESS) {
- 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
- 		rtsx_trace(chip);
--		goto GetICVFinish;
-+		goto free_buffer;
- 	}
- 
- 	retval = ms_transfer_data(chip, MS_TM_AUTO_READ, PRO_READ_LONG_DATA,
-@@ -4575,7 +4575,7 @@ int mg_get_ICV(struct scsi_cmnd *srb, st
- 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
- 		rtsx_clear_ms_error(chip);
- 		rtsx_trace(chip);
--		goto GetICVFinish;
-+		goto free_buffer;
- 	}
- 	if (check_ms_err(chip)) {
- 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
-@@ -4587,7 +4587,7 @@ int mg_get_ICV(struct scsi_cmnd *srb, st
- 	bufflen = min_t(int, 1028, scsi_bufflen(srb));
- 	rtsx_stor_set_xfer_buf(buf, bufflen, srb);
- 
--GetICVFinish:
-+free_buffer:
- 	kfree(buf);
- 	return retval;
- }
+I can't take patches without any changelog comments, sorry.
+
+greg k-h
