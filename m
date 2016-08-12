@@ -1,49 +1,46 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 08 Aug 2016 07:39:00 +0000
-Subject: [PATCH 2/2] mwifiex: simplify length computation for some memset
-Message-Id: <1470641940-26681-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 12 Aug 2016 12:58:35 +0000
+Subject: [PATCH 2/2] staging: rts5208/ms.c: add missing releases in mg_get_local_EKB and mg_get_ICV
+Message-Id: <20160812125835.2324-3-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160812125835.2324-1-lambert.quentin@gmail.com>
+In-Reply-To: <20160812125835.2324-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: akarwar@marvell.com, nishants@marvell.com, linux-wireless@vger.kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
-This patch should be a no-op. It just simplifies code by using the name of
-a variable instead of its type when calling 'sizeof'.
+mg_get_local_EKB and mg_get_ICV used to return with an error code before
+releasing all resources. This patch add a jump to the appropriate label
+ensuring that the resources are properly released before returning.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This issue was found with Hector.
+
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 ---
- drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rts5208/ms.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-index 78819e8..644f3a2 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-@@ -574,7 +574,7 @@ int mwifiex_enable_hs(struct mwifiex_adapter *adapter)
+--- a/drivers/staging/rts5208/ms.c
++++ b/drivers/staging/rts5208/ms.c
+@@ -4328,7 +4328,8 @@ int mg_get_local_EKB(struct scsi_cmnd *s
+ 		set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
+ 		rtsx_clear_ms_error(chip);
+ 		rtsx_trace(chip);
+-		return STATUS_FAIL;
++		retval = STATUS_FAIL;
++		goto free_buffer;
+ 	}
  
- 	adapter->hs_activate_wait_q_woken = false;
+ 	bufflen = min_t(int, 1052, scsi_bufflen(srb));
+@@ -4581,7 +4582,8 @@ int mg_get_ICV(struct scsi_cmnd *srb, st
+ 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
+ 		rtsx_clear_ms_error(chip);
+ 		rtsx_trace(chip);
+-		return STATUS_FAIL;
++		retval = STATUS_FAIL;
++		goto free_buffer;
+ 	}
  
--	memset(&hscfg, 0, sizeof(struct mwifiex_ds_hs_cfg));
-+	memset(&hscfg, 0, sizeof(hscfg));
- 	hscfg.is_invoke_hostcmd = true;
- 
- 	adapter->hs_enabling = true;
-@@ -1138,7 +1138,7 @@ int mwifiex_set_encode(struct mwifiex_private *priv, struct key_params *kp,
- {
- 	struct mwifiex_ds_encrypt_key encrypt_key;
- 
--	memset(&encrypt_key, 0, sizeof(struct mwifiex_ds_encrypt_key));
-+	memset(&encrypt_key, 0, sizeof(encrypt_key));
- 	encrypt_key.key_len = key_len;
- 	encrypt_key.key_index = key_index;
- 
--- 
-2.7.4
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
-
+ 	bufflen = min_t(int, 1028, scsi_bufflen(srb));
