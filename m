@@ -1,49 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 28 Aug 2016 21:16:07 +0000
-Subject: [PATCH] staging: lustre: constify lmv_proc_target_fops structure
-Message-Id: <1472418967-4966-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 12 Aug 2016 14:15:18 +0000
+Subject: [PATCH v2 2/2] staging: rts5208/ms.c: add missing releases in mg_get_local_EKB and mg_get_ICV
+Message-Id: <20160812141518.12585-3-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20160812141518.12585-1-lambert.quentin@gmail.com>
+In-Reply-To: <20160812141518.12585-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
-lmv_proc_target_fops, of type struct file_operations, is never modified, so
-declare it as const.
+mg_get_local_EKB and mg_get_ICV used to return with an error code before
+releasing all resources. This patch add a jump to the appropriate label
+ensuring that the resources are properly released before returning.
 
-Done with the help of Coccinelle.
+This issue was found with Hector.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 ---
- drivers/staging/lustre/lustre/lmv/lmv_internal.h |    2 +-
- drivers/staging/lustre/lustre/lmv/lproc_lmv.c    |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rts5208/ms.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/lmv/lmv_internal.h b/drivers/staging/lustre/lustre/lmv/lmv_internal.h
-index 3ce17da..c4961d9 100644
---- a/drivers/staging/lustre/lustre/lmv/lmv_internal.h
-+++ b/drivers/staging/lustre/lustre/lmv/lmv_internal.h
-@@ -164,6 +164,6 @@ struct lmv_tgt_desc
- /* lproc_lmv.c */
- void lprocfs_lmv_init_vars(struct lprocfs_static_vars *lvars);
+--- a/drivers/staging/rts5208/ms.c
++++ b/drivers/staging/rts5208/ms.c
+@@ -4328,7 +4328,8 @@ int mg_get_local_EKB(struct scsi_cmnd *s
+ 		set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
+ 		rtsx_clear_ms_error(chip);
+ 		rtsx_trace(chip);
+-		return STATUS_FAIL;
++		retval = STATUS_FAIL;
++		goto free_buffer;
+ 	}
  
--extern struct file_operations lmv_proc_target_fops;
-+extern const struct file_operations lmv_proc_target_fops;
+ 	bufflen = min_t(int, 1052, scsi_bufflen(srb));
+@@ -4581,7 +4582,8 @@ int mg_get_ICV(struct scsi_cmnd *srb, st
+ 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
+ 		rtsx_clear_ms_error(chip);
+ 		rtsx_trace(chip);
+-		return STATUS_FAIL;
++		retval = STATUS_FAIL;
++		goto free_buffer;
+ 	}
  
- #endif
-diff --git a/drivers/staging/lustre/lustre/lmv/lproc_lmv.c b/drivers/staging/lustre/lustre/lmv/lproc_lmv.c
-index c29c361..d2316c0 100644
---- a/drivers/staging/lustre/lustre/lmv/lproc_lmv.c
-+++ b/drivers/staging/lustre/lustre/lmv/lproc_lmv.c
-@@ -202,7 +202,7 @@ static struct lprocfs_vars lprocfs_lmv_obd_vars[] = {
- 	{ NULL }
- };
- 
--struct file_operations lmv_proc_target_fops = {
-+const struct file_operations lmv_proc_target_fops = {
- 	.owner		= THIS_MODULE,
- 	.open		 = lmv_target_seq_open,
- 	.read		 = seq_read,
-
+ 	bufflen = min_t(int, 1028, scsi_bufflen(srb));
