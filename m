@@ -1,64 +1,28 @@
-From: Mark Einon <mark@einon.net>
-Date: Wed, 31 Aug 2016 11:48:39 +0000
-Subject: Re: [PATCH 2/6] net: ethernet: et131x: constify ethtool_ops structures
-Message-Id: <20160831114839.GA11449@einonmac.psycm.cf.ac.uk>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Date: Fri, 12 Aug 2016 08:53:44 +0000
+Subject: Re: [PATCH] phy: sun9i-usb: fix error handling
+Message-Id: <57AD8BC8.7090609@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472628648-3603-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472628648-3603-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1467784806-17091-1-git-send-email-christophe.jaillet@wanadoo.fr>
+ <CAGb2v64D-AcrG8Xot79_7PnUKFnHonU65Crfw7QONj_TFLwv5A@mail.gmail.com>
+In-Reply-To: <CAGb2v64D-AcrG8Xot79_7PnUKFnHonU65Crfw7QONj_TFLwv5A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Aug 31, 2016 at 09:30:44AM +0200, Julia Lawall wrote:
-> Check for ethtool_ops structures that are only stored in the ethtool_ops
-> field of a net_device structure or passed as the second argument to
-> netdev_set_default_ethtool_ops.  These contexts are declared const, so
-> ethtool_ops structures that have these properties can be declared as const
-> also.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct ethtool_ops i@p = { ... };
-> 
-> @ok1@
-> identifier r.i;
-> struct net_device e;
-> position p;
-> @@
-> e.ethtool_ops = &i@p;
-> 
-> @ok2@
-> identifier r.i;
-> expression e;
-> position p;
-> @@
-> netdev_set_default_ethtool_ops(e, &i@p)
-> 
-> @bad@
-> position p != {r.p,ok1.p,ok2.p};
-> identifier r.i;
-> @@
-> i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct ethtool_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Looks good, thanks.
 
-Acked-by: Mark Einon <mark.einon@gmail.com>
+On Wednesday 06 July 2016 11:36 AM, Chen-Yu Tsai wrote:
+> On Wed, Jul 6, 2016 at 2:00 PM, Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>> This is likely that checking 'phy->hsic_clk' instead of 'phy->clk' is
+>> expected here.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+
+merged, thanks
+
+-Kishon
