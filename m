@@ -1,13 +1,14 @@
 From: Harinath Nampally <harinath922@gmail.com>
-Date: Sun, 14 Aug 2016 20:42:00 +0000
+Date: Sun, 14 Aug 2016 20:45:06 +0000
 Subject: [PATCH] fix for sparse warning
-Message-Id: <1471207320-28187-1-git-send-email-harinath922@gmail.com>
+Message-Id: <1471207506-28257-1-git-send-email-harinath922@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1471207320-28187-1-git-send-email-harinath922@gmail.com>
+In-Reply-To: <1471207320-28187-1-git-send-email-harinath922@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tglx@linutronix.de, mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: tglx@linutronix.de, mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
  To fix the below warning added static qualifier 
  "warning: symbol 'verify_sha256_digest' was not
