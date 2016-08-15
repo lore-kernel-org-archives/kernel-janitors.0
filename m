@@ -1,56 +1,38 @@
-From: Cornelia Huck <cornelia.huck@de.ibm.com>
-Date: Thu, 25 Aug 2016 16:10:09 +0000
-Subject: Re: [PATCH v2 1/2] KVM: s390: Improve determination of sizes in kvm_s390_import_bp_data()
-Message-Id: <20160825181009.381411d9.cornelia.huck@de.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Aug 2016 13:25:42 +0000
+Subject: Re: backlight-tosa: Delete owner assignment
+Message-Id: <916b664f-7818-18ca-445b-27413259ebef@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
-        <bb710b21-d8c4-e172-63d4-b46c80645cb3@users.sourceforge.net>
-        <ddb2bbd9-757b-fc62-8642-ce827a7a666d@de.ibm.com>
-        <e72e9854-443b-7033-d674-8a2d237600ca@users.sourceforge.net>
-        <c3323f6b-4af2-0bfb-9399-e529952e378e@users.sourceforge.net>
-In-Reply-To: <c3323f6b-4af2-0bfb-9399-e529952e378e@users.sourceforge.net>
+References: <efe9964f-c907-305c-b75e-32a4139d1edd@users.sourceforge.net>
+ <CAOMGZ=EWsO_pRg+s+hnPmwRePcrijFK3v+SRKTizfbqyY83iqQ@mail.gmail.com>
+In-Reply-To: <CAOMGZ=EWsO_pRg+s+hnPmwRePcrijFK3v+SRKTizfbqyY83iqQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, Christian =?UTF-8?B?Qm9ybnRyw6RnZXI=?= <borntraeger@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Walter Harms <wharms@bfs.de>
+To: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 24 Aug 2016 20:36:26 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+>> The field "owner" is set by core. Thus delete an extra initialisation.
+> 
+> Just a small nit on the patch title: "delete owner assignment" is
+> virtually useless as a title because it has no meaning without the
+> broader context and only describes the literal change. It's like
+> naming a patch "add a line" or "change the code";
+> it serves no purpose.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 24 Aug 2016 19:45:23 +0200
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus reuse the corresponding function "kmalloc_array".
-> 
->   Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-> 
->   This issue was detected also by using the Coccinelle software.
+I have got an other impression.
 
-Do you have the scripts you use published somewhere?
+Do you want that I add any more background information to the
+commit message?
 
-> 
-> * Replace the specification of data structures by pointer dereferences
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> * Delete the local variable "size" which became unnecessary with
->   this refactoring.
 
-I think your description is a bit on the verbose side, but not enough
-to gripe more.
+> How about "backlight-tosa: delete _unnecessary_ assignment"?
 
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> v2: Rebased on source files from "Linux next-20160824".
->     Advices were integrated from source code review.
-> 
->  arch/s390/kvm/guestdbg.c | 25 +++++++++++++++----------
->  1 file changed, 15 insertions(+), 10 deletions(-)
+Will the underlined key word trigger any related software
+development concerns?
 
-Acked-by: Cornelia Huck <cornelia.huck@de.ibm.com>
+Would another look be needed on how the usage of the mentioned data
+structure element was reduced over time?
 
+Regards,
+Markus
