@@ -1,42 +1,49 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 10 Aug 2016 05:18:16 +0000
-Subject: [PATCH] iio: light: us5182d: Add missing error code assignment before test
-Message-Id: <1470806296-8739-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Mon, 15 Aug 2016 15:13:00 +0000
+Subject: Re: [PATCH] iio: light: us5182d: Add missing error code assignment before test
+Message-Id: <eb543108-e601-6c8b-4158-51b9298d4e5e@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1470806296-8739-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1470806296-8739-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-It is likely that checking the result of 'pm_runtime_set_active' is
-expected here.
+On 10/08/16 06:18, Christophe JAILLET wrote:
+> It is likely that checking the result of 'pm_runtime_set_active' is
+> expected here.
+> 
+> Fixes: f0e5f57d3ac2 ("iio: light: us8152d: Add power management support")
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Applied to the togreg branch of iio.git. Initially pushed out as testing
+for the autobuilders to play with it.
 
-Fixes: f0e5f57d3ac2 ("iio: light: us8152d: Add power management support")
+Whilst the fix is obviously correct, the missing assignment just results in
+a particular error not being handled rather than a 'bug' as such. Hence
+I'm sending this the slow route and it'll hit in the next merge window.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/iio/light/us5182d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/iio/light/us5182d.c b/drivers/iio/light/us5182d.c
-index 20c40f780964..18cf2e29e4d5 100644
---- a/drivers/iio/light/us5182d.c
-+++ b/drivers/iio/light/us5182d.c
-@@ -894,7 +894,7 @@ static int us5182d_probe(struct i2c_client *client,
- 		goto out_err;
- 
- 	if (data->default_continuous) {
--		pm_runtime_set_active(&client->dev);
-+		ret = pm_runtime_set_active(&client->dev);
- 		if (ret < 0)
- 			goto out_err;
- 	}
--- 
-2.7.4
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+Jonathan
+> ---
+>  drivers/iio/light/us5182d.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/light/us5182d.c b/drivers/iio/light/us5182d.c
+> index 20c40f780964..18cf2e29e4d5 100644
+> --- a/drivers/iio/light/us5182d.c
+> +++ b/drivers/iio/light/us5182d.c
+> @@ -894,7 +894,7 @@ static int us5182d_probe(struct i2c_client *client,
+>  		goto out_err;
+>  
+>  	if (data->default_continuous) {
+> -		pm_runtime_set_active(&client->dev);
+> +		ret = pm_runtime_set_active(&client->dev);
+>  		if (ret < 0)
+>  			goto out_err;
+>  	}
+> 
 
