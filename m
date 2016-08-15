@@ -1,71 +1,35 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Mon, 22 Aug 2016 18:24:07 +0000
-Subject: Re: [PATCH] IB/usnic: Fix error return code
-Message-Id: <b6ea2a2f-fd60-d235-cc24-0fec5e453de9@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="CeHbaqsDjRumFK1PbNhqbSB8c2j59d24c"
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Mon, 15 Aug 2016 17:05:46 +0000
+Subject: Re: [PATCH 01/15 RESEND] staging: dgnc: remove redundant NULL checks in
+Message-Id: <20160815170546.GB24214@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, benve@cisco.com, dgoodell@cisco.com, sean.hefty@intel.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20160706061113.GA18469@SEL-JYOUN-D1>
+In-Reply-To: <20160706061113.GA18469@SEL-JYOUN-D1>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Daeseok Youn <daeseok.youn@gmail.com>
+Cc: devel@driverdev.osuosl.org, lidza.louina@gmail.com, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---CeHbaqsDjRumFK1PbNhqbSB8c2j59d24c
-Content-Type: multipart/mixed; boundary="Icl45dbmOD7JN2oj0MqhreR2l1rfEvI6k"
-From: Doug Ledford <dledford@redhat.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, benve@cisco.com,
- dgoodell@cisco.com, sean.hefty@intel.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Message-ID: <b6ea2a2f-fd60-d235-cc24-0fec5e453de9@redhat.com>
-Subject: Re: [PATCH] IB/usnic: Fix error return code
-References: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
+On Wed, Jul 06, 2016 at 03:11:13PM +0900, Daeseok Youn wrote:
+> The dgnc_block_til_ready() is only used in dgnc_tty_open().
+> The unit data(struct un_t) was stored into tty->driver_data in dgnc_tty_open().
+> And also tty and un were tested about NULL so these variables doesn't
+> need to check for NULL in dgnc_block_til_ready().
+> 
+> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+> ---
+> RESEND: This patch was not merged for a long time, if there is any reason
+> why this patch could NOT be merged into staging tree, let me know.
+> There were no comment for this patch.
+> I cannot understand why this patch have to wait long time to merge.
+> And I also sent emails to mailing-lists for reminding this patch...
+> please let me know, what is the problem to merge this patch into staging tree.
 
---Icl45dbmOD7JN2oj0MqhreR2l1rfEvI6k
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Please note, staging patches are at the bottom of my priority queue.
+Combined with a vacation, conferences, and a merge window and there are
+a lot of pending staging patches in my to-review queue.
 
-On 8/10/2016 11:45 AM, Christophe JAILLET wrote:
-> If 'pci_register_driver' fails, we return 'err' which is known to be 0.=
+thanks for your patience.
 
-> Return the error instead.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Thanks, applied.
-
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG Key ID: 0E572FDD
-
-
---Icl45dbmOD7JN2oj0MqhreR2l1rfEvI6k--
-
---CeHbaqsDjRumFK1PbNhqbSB8c2j59d24c
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJXu0NHAAoJELgmozMOVy/dirUP/1erX1qjuagMf1ut5VwXTBX+
-5w6ssEcxL7oHda43AlXHqvdbNvF+vD3MQwUP2KS38EyyAZaDr0ULOR/xjEQyiLOo
-DKkmEDDWyIV0xnlDTJuW4G9kjLvNIXw0lw3l0WUimS8R1naAWr/qQNrdAwkRCE2L
-/BoWapfwYUYO/LIHgODBTn6IN8eAP+Bjp/JQuIhkJCy1OmiqJh7Jf+pFavTVsN4Z
-IoKbsBaqGEweJ02V24jt0/oaoy1I5DloyAxZKsDZMEX/q/lb6Y3DV9lstqeBbnx4
-aPHkw0EOyVliZk2Elqq9Ts2ksUIlkhPfN9PQCdPuqaMsSy3GJstQuGxRpCc8vB1D
-xawF2C/jNH2HpYTlMABwlKjyjHkM/VEELuvq49qzAg1LdkTWtxllJ+n+z4KkME9/
-STBm+SzGPuHFMDjhY2qGF6tb9lhIPKDmem+qtqNidwLdiYOuWGArPT0ZGh/mWnl3
-j55Lp+TuyVyERNaSBFRdT4GuC7NisePAkhR3UUh3Lc9GstyZOnCD0fKgs/5H/mzi
-eAj/suCI/kbc88pBYq/u4IH3ACT1RDHdwa0vIV8Bee0igHl9NRBHl9coAWQEuFLg
-ZZzYl1PUyYFZs5FxEyZXTVC97FBgkUToIn/tCQv5SyspUdp4TDVm5qOZ/tdBw0ex
-dSPNGNkaXOTLT4lOENBm
-=ge2/
------END PGP SIGNATURE-----
-
---CeHbaqsDjRumFK1PbNhqbSB8c2j59d24c--
+greg k-h
