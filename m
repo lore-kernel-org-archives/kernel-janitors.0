@@ -1,35 +1,44 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Mon, 15 Aug 2016 17:05:46 +0000
+From: DaeSeok Youn <daeseok.youn@gmail.com>
+Date: Wed, 17 Aug 2016 01:05:03 +0000
 Subject: Re: [PATCH 01/15 RESEND] staging: dgnc: remove redundant NULL checks in
-Message-Id: <20160815170546.GB24214@kroah.com>
+Message-Id: <CAHb8M2DBZa8k3ZeM0OxcRf-7zFijCN2v3yt3FXs6EhY7cpXidA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160706061113.GA18469@SEL-JYOUN-D1>
-In-Reply-To: <20160706061113.GA18469@SEL-JYOUN-D1>
+References: <20160706061113.GA18469@SEL-JYOUN-D1> <20160815170546.GB24214@kroah.com>
+In-Reply-To: <20160815170546.GB24214@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daeseok Youn <daeseok.youn@gmail.com>
-Cc: devel@driverdev.osuosl.org, lidza.louina@gmail.com, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Lidza Louina <lidza.louina@gmail.com>, Mark Hounschell <markh@compro.net>, "driverdev-devel@linuxdriverproject.org" <driverdev-devel@linuxdriverproject.org>, devel <devel@driverdev.osuosl.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On Wed, Jul 06, 2016 at 03:11:13PM +0900, Daeseok Youn wrote:
-> The dgnc_block_til_ready() is only used in dgnc_tty_open().
-> The unit data(struct un_t) was stored into tty->driver_data in dgnc_tty_open().
-> And also tty and un were tested about NULL so these variables doesn't
-> need to check for NULL in dgnc_block_til_ready().
-> 
-> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
-> ---
-> RESEND: This patch was not merged for a long time, if there is any reason
-> why this patch could NOT be merged into staging tree, let me know.
-> There were no comment for this patch.
-> I cannot understand why this patch have to wait long time to merge.
-> And I also sent emails to mailing-lists for reminding this patch...
-> please let me know, what is the problem to merge this patch into staging tree.
+2016-08-16 2:05 GMT+09:00 Greg KH <gregkh@linuxfoundation.org>:
+> On Wed, Jul 06, 2016 at 03:11:13PM +0900, Daeseok Youn wrote:
+>> The dgnc_block_til_ready() is only used in dgnc_tty_open().
+>> The unit data(struct un_t) was stored into tty->driver_data in dgnc_tty_open().
+>> And also tty and un were tested about NULL so these variables doesn't
+>> need to check for NULL in dgnc_block_til_ready().
+>>
+>> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+>> ---
+>> RESEND: This patch was not merged for a long time, if there is any reason
+>> why this patch could NOT be merged into staging tree, let me know.
+>> There were no comment for this patch.
+>> I cannot understand why this patch have to wait long time to merge.
+>> And I also sent emails to mailing-lists for reminding this patch...
+>> please let me know, what is the problem to merge this patch into staging tree.
+>
+> Please note, staging patches are at the bottom of my priority queue.
+> Combined with a vacation, conferences, and a merge window and there are
+> a lot of pending staging patches in my to-review queue.
 
-Please note, staging patches are at the bottom of my priority queue.
-Combined with a vacation, conferences, and a merge window and there are
-a lot of pending staging patches in my to-review queue.
+That's Ok. but I took a long time to wait for merging my patches in
+this case. :-(
 
-thanks for your patience.
+>
+> thanks for your patience.
+>
+> greg k-h
+Thanks.
 
-greg k-h
+Regards,
+Daeseok Youn.
