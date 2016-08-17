@@ -1,37 +1,77 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Tue, 23 Aug 2016 03:48:10 +0000
-Subject: Re: [alsa-devel] [PATCH 1/2] ALSA: compress: Use memdup_user() rather than duplicating its implement
-Message-Id: <20160823035547.GS2890@localhost>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 17 Aug 2016 18:10:37 +0000
+Subject: [PATCH 3/4] KVM-S390: Less function calls in kvm_s390_import_bp_data() after error detection
+Message-Id: <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <7233eb00-a941-4935-dce2-7cb907272d41@users.sourceforge.net>
- <375fcd8c-ebb5-5f63-f094-347559c5b9c1@users.sourceforge.net>
- <s5hlgzpf1pk.wl-tiwai@suse.de>
-In-Reply-To: <s5hlgzpf1pk.wl-tiwai@suse.de>
+References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
+In-Reply-To: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Aug 22, 2016 at 02:05:43PM +0200, Takashi Iwai wrote:
-> On Sun, 21 Aug 2016 21:43:22 +0200,
-> SF Markus Elfring wrote:
-> > 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sun, 21 Aug 2016 21:02:06 +0200
-> > 
-> > Reuse existing functionality from memdup_user() instead of keeping
-> > duplicate source code.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> Applied this one, but the second patch won't be, since other people
-> seem to disagree with the usefulness.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 17 Aug 2016 19:25:50 +0200
 
-I see a v2 as well discarding patch 2 here and some other changes
+The kfree() function was called in a few cases by the
+kvm_s390_import_bp_data() function during error handling
+even if a passed variable contained a null pointer.
 
+Adjust jump targets according to the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/s390/kvm/guestdbg.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/arch/s390/kvm/guestdbg.c b/arch/s390/kvm/guestdbg.c
+index 8f886ee..f2514af 100644
+--- a/arch/s390/kvm/guestdbg.c
++++ b/arch/s390/kvm/guestdbg.c
+@@ -239,7 +239,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+ 		wp_info = kmalloc(size, GFP_KERNEL);
+ 		if (!wp_info) {
+ 			ret = -ENOMEM;
+-			goto error;
++			goto free_bp_data;
+ 		}
+ 	}
+ 	size = nr_bp * sizeof(*bp_info);
+@@ -247,7 +247,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+ 		bp_info = kmalloc(size, GFP_KERNEL);
+ 		if (!bp_info) {
+ 			ret = -ENOMEM;
+-			goto error;
++			goto free_wp_info;
+ 		}
+ 	}
+ 
+@@ -257,7 +257,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+ 			ret = __import_wp_info(vcpu, &bp_data[i],
+ 					       &wp_info[nr_wp]);
+ 			if (ret)
+-				goto error;
++				goto free_bp_info;
+ 			nr_wp++;
+ 			break;
+ 		case KVM_HW_BP:
+@@ -273,10 +273,12 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+ 	vcpu->arch.guestdbg.nr_hw_wp = nr_wp;
+ 	vcpu->arch.guestdbg.hw_wp_info = wp_info;
+ 	return 0;
+-error:
+-	kfree(bp_data);
+-	kfree(wp_info);
++free_bp_info:
+ 	kfree(bp_info);
++free_wp_info:
++	kfree(wp_info);
++free_bp_data:
++	kfree(bp_data);
+ 	return ret;
+ }
+ 
 -- 
-~Vinod
+2.9.3
+
