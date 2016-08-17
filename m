@@ -1,75 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Aug 2016 11:12:18 +0000
-Subject: [PATCH 4/5] powerpc-MSI-HSTA: Rename jump labels in hsta_msi_probe()
-Message-Id: <f6c6b735-ade9-a4f8-505b-a5eacd055de1@users.sourceforge.net>
+Date: Wed, 17 Aug 2016 18:02:53 +0000
+Subject: [PATCH 0/4] KVM-S390: Fine-tuning for kvm_s390_import_bp_data()
+Message-Id: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
-In-Reply-To: <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Scott Wood <scottwood@freescale.com>, Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Aug 2016 11:22:19 +0200
+Date: Wed, 17 Aug 2016 19:49:29 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/powerpc/sysdev/ppc4xx_hsta_msi.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+Markus Elfring (4):
+  Improve determination of sizes
+  Use memdup_user()
+  Less function calls after error detection
+  Delete an unnecessary initialisation
 
-diff --git a/arch/powerpc/sysdev/ppc4xx_hsta_msi.c b/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
-index 691db9a..3097ddd 100644
---- a/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
-+++ b/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
-@@ -154,14 +154,14 @@ static int hsta_msi_probe(struct platform_device *pdev)
- 
- 	ret = msi_bitmap_alloc(&ppc4xx_hsta_msi.bmp, irq_count, dev->of_node);
- 	if (ret)
--		goto out;
-+		goto unmap_io;
- 
- 	ppc4xx_hsta_msi.irq_map = kmalloc_array(irq_count,
- 						sizeof(*ppc4xx_hsta_msi.irq_map),
- 						GFP_KERNEL);
- 	if (!ppc4xx_hsta_msi.irq_map) {
- 		ret = -ENOMEM;
--		goto out1;
-+		goto free_bitmap;
- 	}
- 
- 	/* Setup a mapping from irq offsets to hardware irq numbers */
-@@ -171,7 +171,7 @@ static int hsta_msi_probe(struct platform_device *pdev)
- 		if (ppc4xx_hsta_msi.irq_map[irq] = NO_IRQ) {
- 			dev_err(dev, "Unable to map IRQ\n");
- 			ret = -EINVAL;
--			goto out2;
-+			goto free_irq_map;
- 		}
- 	}
- 
-@@ -180,14 +180,11 @@ static int hsta_msi_probe(struct platform_device *pdev)
- 		phb->controller_ops.teardown_msi_irqs = hsta_teardown_msi_irqs;
- 	}
- 	return 0;
--
--out2:
-+ free_irq_map:
- 	kfree(ppc4xx_hsta_msi.irq_map);
--
--out1:
-+ free_bitmap:
- 	msi_bitmap_free(&ppc4xx_hsta_msi.bmp);
--
--out:
-+ unmap_io:
- 	iounmap(ppc4xx_hsta_msi.data);
- 	return ret;
- }
+ arch/s390/kvm/guestdbg.c | 35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
+
 -- 
 2.9.3
 
