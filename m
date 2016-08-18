@@ -1,50 +1,49 @@
-From: John Stultz <john.stultz@linaro.org>
-Date: Wed, 17 Aug 2016 20:08:52 +0000
-Subject: Re: [PATCH] hrtimer: spelling fixes
-Message-Id: <CALAqxLUTpBjb0+hGYFPecbSpnfnVuBF7u_3f=njLR=8JjXL9bw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 18 Aug 2016 10:02:10 +0000
+Subject: [PATCH 4/5] block-cciss: Move an assignment for the variable "sg_used" in cciss_bigpassthru()
+Message-Id: <5a957717-4d29-55e1-87a5-c8c9c701ea03@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160623185037.GA12650@cyborg>
-In-Reply-To: <20160623185037.GA12650@cyborg>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
+In-Reply-To: <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pratyush Patel <pratyushpatel.1995@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, lkml <linux-kernel@vger.kernel.org>, Jiri Kosina <trivial@kernel.org>, kernel-janitors@vger.kernel.org
+To: esc.storagedev@microsemi.com, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Jun 23, 2016 at 11:50 AM, Pratyush Patel
-<pratyushpatel.1995@gmail.com> wrote:
-> Signed-off-by: Pratyush Patel <pratyushpatel.1995@gmail.com>
-> ---
->  kernel/time/hrtimer.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> index e99df0f..c7f6f5b 100644
-> --- a/kernel/time/hrtimer.c
-> +++ b/kernel/time/hrtimer.c
-> @@ -703,7 +703,7 @@ static void clock_was_set_work(struct work_struct *work)
->  static DECLARE_WORK(hrtimer_work, clock_was_set_work);
->
->  /*
-> - * Called from timekeeping and resume code to reprogramm the hrtimer
-> + * Called from timekeeping and resume code to reprogram the hrtimer
->   * interrupt device on all cpus.
->   */
->  void clock_was_set_delayed(void)
-> @@ -1241,7 +1241,7 @@ static void __run_hrtimer(struct hrtimer_cpu_base *cpu_base,
->
->         /*
->          * Note: We clear the running state after enqueue_hrtimer and
-> -        * we do not reprogramm the event hardware. Happens either in
-> +        * we do not reprogram the event hardware. Happens either in
->          * hrtimer_start_range_ns() or in hrtimer_interrupt()
->          *
->          * Note: Because we dropped the cpu_base->lock above,
-> --
-> 2.7.4
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 17 Aug 2016 23:04:46 +0200
 
-Queued. Thanks for sending this.
+Move the assignment for the local variable "sg_used" behind the source code
+for some memory allocations by this function.
 
-thanks
--john
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/block/cciss.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
+index 10e1b0a..b08bfb7 100644
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -1575,7 +1575,7 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
+ 	unsigned char **buff;
+ 	int *buff_size;
+ 	u64bit temp64;
+-	BYTE sg_used = 0;
++	BYTE sg_used;
+ 	int status;
+ 	int i;
+ 	DECLARE_COMPLETION_ONSTACK(wait);
+@@ -1616,6 +1616,7 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
+ 	}
+ 	left = ioc->buf_size;
+ 	data_ptr = ioc->buf;
++	sg_used = 0;
+ 	while (left) {
+ 		sz = (left > ioc->malloc_size) ? ioc->malloc_size : left;
+ 		buff_size[sg_used] = sz;
+-- 
+2.9.3
+
