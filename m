@@ -1,81 +1,132 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Aug 2016 05:54:24 +0000
-Subject: [PATCH v2 10/10] staging: ks7010: Delete three unnecessary variable initialisations
-Message-Id: <a1d2e1ea-5093-b319-ec4a-b7e07bcc6594@users.sourceforge.net>
+Date: Thu, 18 Aug 2016 09:56:44 +0000
+Subject: [PATCH 2/5] block-cciss: Less function calls in cciss_bigpassthru() after error detection
+Message-Id: <d6586ebd-7422-4188-2a5b-af314e06f411@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
-In-Reply-To: <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
+In-Reply-To: <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
+To: esc.storagedev@microsemi.com, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Aug 2016 22:33:52 +0200
+Date: Wed, 17 Aug 2016 22:39:31 +0200
 
-Three variables will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+The kfree() function was called in a few cases by the
+cciss_bigpassthru() function during error handling
+even if a passed variable contained a null pointer.
+
+Adjust jump targets according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-v2: Rebased on the source files from Linux next-20160809.
+ drivers/block/cciss.c | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-    It was omitted to reduce the scope for the variable "rc"
-    in the function "tx_device_task".
-
- drivers/staging/ks7010/ks7010_sdio.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index 1729f57..bb6294c 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -331,7 +331,7 @@ static void tx_device_task(void *dev)
- {
- 	struct ks_wlan_private *priv = (struct ks_wlan_private *)dev;
- 	struct tx_device_buffer *sp;
--	int rc = 0;
-+	int rc;
- 
- 	DPRINTK(4, "\n");
- 	if (cnt_txqbody(priv) > 0
-@@ -366,7 +366,7 @@ int ks_wlan_hw_tx(struct ks_wlan_private *priv, void *p, unsigned long size,
- 		  void (*complete_handler) (void *arg1, void *arg2),
- 		  void *arg1, void *arg2)
- {
--	int result = 0;
-+	int result;
- 	struct hostif_hdr *hdr;
- 	hdr = (struct hostif_hdr *)p;
- 
-@@ -747,7 +747,7 @@ static int ks7010_sdio_data_compare(struct ks_wlan_private *priv, u32 address,
- static int ks7010_upload_firmware(struct ks_wlan_private *priv,
- 				  struct ks_sdio_card *card)
- {
--	unsigned int size, offset, n = 0;
-+	unsigned int size, offset, n;
- 	unsigned char *rom_buf;
- 	unsigned char rw_data = 0;
- 	int retval, rc = 0;
+diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
+index e044342..43ac632 100644
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -1593,26 +1593,26 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
+ 	if ((ioc->buf_size < 1) &&
+ 	    (ioc->Request.Type.Direction != XFER_NONE)) {
+ 		status = -EINVAL;
+-		goto cleanup1;
++		goto free_ioc;
+ 	}
+ 	/* Check kmalloc limits  using all SGs */
+ 	if (ioc->malloc_size > MAX_KMALLOC_SIZE) {
+ 		status = -EINVAL;
+-		goto cleanup1;
++		goto free_ioc;
+ 	}
+ 	if (ioc->buf_size > ioc->malloc_size * MAXSGENTRIES) {
+ 		status = -EINVAL;
+-		goto cleanup1;
+-	}
+-	buff = kzalloc(MAXSGENTRIES * sizeof(char *), GFP_KERNEL);
+-	if (!buff) {
+-		status = -ENOMEM;
+-		goto cleanup1;
++		goto free_ioc;
+ 	}
+ 	buff_size = kmalloc(MAXSGENTRIES * sizeof(int), GFP_KERNEL);
+ 	if (!buff_size) {
+ 		status = -ENOMEM;
+-		goto cleanup1;
++		goto free_ioc;
++	}
++	buff = kzalloc(MAXSGENTRIES * sizeof(char *), GFP_KERNEL);
++	if (!buff) {
++		status = -ENOMEM;
++		goto free_size;
+ 	}
+ 	left = ioc->buf_size;
+ 	data_ptr = ioc->buf;
+@@ -1622,12 +1622,12 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
+ 		buff[sg_used] = kmalloc(sz, GFP_KERNEL);
+ 		if (buff[sg_used] = NULL) {
+ 			status = -ENOMEM;
+-			goto cleanup1;
++			goto free_buffer;
+ 		}
+ 		if (ioc->Request.Type.Direction = XFER_WRITE) {
+ 			if (copy_from_user(buff[sg_used], data_ptr, sz)) {
+ 				status = -EFAULT;
+-				goto cleanup1;
++				goto free_buffer;
+ 			}
+ 		} else {
+ 			memset(buff[sg_used], 0, sz);
+@@ -1639,7 +1639,7 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
+ 	c = cmd_special_alloc(h);
+ 	if (!c) {
+ 		status = -ENOMEM;
+-		goto cleanup1;
++		goto free_buffer;
+ 	}
+ 	c->cmd_type = CMD_IOCTL_PEND;
+ 	c->Header.ReplyQueue = 0;
+@@ -1674,7 +1674,7 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
+ 	if (copy_to_user(argp, ioc, sizeof(*ioc))) {
+ 		cmd_special_free(h, c);
+ 		status = -EFAULT;
+-		goto cleanup1;
++		goto free_buffer;
+ 	}
+ 	if (ioc->Request.Type.Direction = XFER_READ) {
+ 		/* Copy the data out of the buffer we created */
+@@ -1683,20 +1683,20 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
+ 			if (copy_to_user(ptr, buff[i], buff_size[i])) {
+ 				cmd_special_free(h, c);
+ 				status = -EFAULT;
+-				goto cleanup1;
++				goto free_buffer;
+ 			}
+ 			ptr += buff_size[i];
+ 		}
+ 	}
+ 	cmd_special_free(h, c);
+ 	status = 0;
+-cleanup1:
+-	if (buff) {
+-		for (i = 0; i < sg_used; i++)
+-			kfree(buff[i]);
+-		kfree(buff);
+-	}
++free_buffer:
++	for (i = 0; i < sg_used; i++)
++		kfree(buff[i]);
++	kfree(buff);
++free_size:
+ 	kfree(buff_size);
++free_ioc:
+ 	kfree(ioc);
+ 	return status;
+ }
 -- 
-2.9.2
+2.9.3
 
