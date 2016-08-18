@@ -1,79 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 08:17:16 +0000
-Subject: [PATCH] [media] dvb_frontend: Use memdup_user() rather than duplicating its implementation
-Message-Id: <40f67371-815d-ad02-7bf7-db9998da0262@users.sourceforge.net>
+Date: Thu, 18 Aug 2016 10:00:09 +0000
+Subject: [PATCH 3/5] block-cciss: Delete unnecessary initialisations in cciss_bigpassthru()
+Message-Id: <d47750ca-25d1-af09-690a-5f215bb845b4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
+In-Reply-To: <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Abhilash Jindal <klock.android@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Max Kellermann <max@duempel.org>, Michael Ira Krufky <mkrufky@linuxtv.org>, Shuah Khan <shuah@kernel.org>
+To: esc.storagedev@microsemi.com, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 10:04:54 +0200
+Date: Wed, 17 Aug 2016 22:55:51 +0200
 
-* Reuse existing functionality from memdup_user() instead of keeping
-  duplicate source code.
-
-  This issue was detected by using the Coccinelle software.
-
-* Return directly if this copy operation failed.
-
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Three local variables will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/dvb-core/dvb_frontend.c | 28 ++++++----------------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+ drivers/block/cciss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index be99c8d..01511e5 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -1969,17 +1969,9 @@ static int dvb_frontend_ioctl_properties(struct file *file,
- 		if ((tvps->num = 0) || (tvps->num > DTV_IOCTL_MAX_MSGS))
- 			return -EINVAL;
- 
--		tvp = kmalloc(tvps->num * sizeof(struct dtv_property), GFP_KERNEL);
--		if (!tvp) {
--			err = -ENOMEM;
--			goto out;
--		}
--
--		if (copy_from_user(tvp, (void __user *)tvps->props,
--				   tvps->num * sizeof(struct dtv_property))) {
--			err = -EFAULT;
--			goto out;
--		}
-+		tvp = memdup_user(tvps->props, tvps->num * sizeof(*tvp));
-+		if (IS_ERR(tvp))
-+			return PTR_ERR(tvp);
- 
- 		for (i = 0; i < tvps->num; i++) {
- 			err = dtv_property_process_set(fe, tvp + i, file);
-@@ -2002,17 +1994,9 @@ static int dvb_frontend_ioctl_properties(struct file *file,
- 		if ((tvps->num = 0) || (tvps->num > DTV_IOCTL_MAX_MSGS))
- 			return -EINVAL;
- 
--		tvp = kmalloc(tvps->num * sizeof(struct dtv_property), GFP_KERNEL);
--		if (!tvp) {
--			err = -ENOMEM;
--			goto out;
--		}
--
--		if (copy_from_user(tvp, (void __user *)tvps->props,
--				   tvps->num * sizeof(struct dtv_property))) {
--			err = -EFAULT;
--			goto out;
--		}
-+		tvp = memdup_user(tvps->props, tvps->num * sizeof(*tvp));
-+		if (IS_ERR(tvp))
-+			return PTR_ERR(tvp);
- 
- 		/*
- 		 * Let's use our own copy of property cache, in order to
+diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
+index 43ac632..10e1b0a 100644
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -1572,11 +1572,11 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
+ {
+ 	BIG_IOCTL_Command_struct *ioc;
+ 	CommandList_struct *c;
+-	unsigned char **buff = NULL;
+-	int *buff_size = NULL;
++	unsigned char **buff;
++	int *buff_size;
+ 	u64bit temp64;
+ 	BYTE sg_used = 0;
+-	int status = 0;
++	int status;
+ 	int i;
+ 	DECLARE_COMPLETION_ONSTACK(wait);
+ 	__u32 left;
 -- 
 2.9.3
 
