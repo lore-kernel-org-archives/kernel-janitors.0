@@ -1,36 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 28 Aug 2016 20:17:38 +0000
-Subject: [PATCH] scsi: constify sr_pm_ops structure
-Message-Id: <1472415458-430-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Aug 2016 21:07:18 +0000
+Subject: [PATCH 0/2] mmc-block: Fine-tuning for mmc_blk_ioctl_copy_from_user()
+Message-Id: <68870228-c6a0-5de9-daee-2522a1303857@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>
-Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Grant Grundler <grundler@chromium.org>, Jens Axboe <axboe@fb.com>, Jon Hunter <jonathanh@nvidia.com>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-sr_pm_ops, of type struct dev_pm_ops, is never modified, so declare it as
-const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Aug 2016 23:00:23 +0200
 
-Done with the help of Coccinelle.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (2):
+  Use memdup_user()
+  Rename jump labels
 
----
- drivers/scsi/sr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/card/block.c | 34 +++++++++++++---------------------
+ 1 file changed, 13 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index ed17934..bed2bbd 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -83,7 +83,7 @@ static int sr_init_command(struct scsi_cmnd *SCpnt);
- static int sr_done(struct scsi_cmnd *);
- static int sr_runtime_suspend(struct device *dev);
- 
--static struct dev_pm_ops sr_pm_ops = {
-+static const struct dev_pm_ops sr_pm_ops = {
- 	.runtime_suspend	= sr_runtime_suspend,
- };
- 
+-- 
+2.9.3
 
