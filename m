@@ -1,53 +1,82 @@
 From: Leon Romanovsky <leon@kernel.org>
-Date: Fri, 19 Aug 2016 15:37:49 +0000
+Date: Fri, 19 Aug 2016 15:41:06 +0000
 Subject: Re: [PATCH] IB/qib: Use memdup_user() rather than duplicating its implementation
-Message-Id: <20160819153748.GB18515@leon.nu>
+Message-Id: <20160819154106.GC18515@leon.nu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="0eh6TmSyL6TZE2Uz"
+Content-Type: multipart/mixed; boundary="s9fJI615cBHmzTOP"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <620b3961-6e05-6638-4ca8-18766acc91f4@users.sourceforge.net>
-In-Reply-To: <620b3961-6e05-6638-4ca8-18766acc91f4@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Mike Marciniszyn <infinipath@intel.com>, Sean Hefty <sean.hefty@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+ <32E1700B9017364D9B60AED9960492BC2D0AF815@fmsmsx120.amr.corp.intel.com>
+In-Reply-To: <32E1700B9017364D9B60AED9960492BC2D0AF815-RjuIdWtd+YbTXloPLtfHfbfspsVTdybXVpNB7YpNyf8@public.gmane.org>
+To: "Marciniszyn, Mike" <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
 
---0eh6TmSyL6TZE2Uz
+--s9fJI615cBHmzTOP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 19, 2016 at 09:06:20AM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 19 Aug 2016 08:50:23 +0200
+On Fri, Aug 19, 2016 at 03:27:20PM +0000, Marciniszyn, Mike wrote:
+> > Subject: [PATCH] IB/qib: Use memdup_user() rather than duplicating its
+> > diff --git a/drivers/infiniband/hw/qib/qib_fs.c
 >=20
-> Reuse existing functionality from memdup_user() instead of keeping
-> duplicate source code.
+> I would be even more aggressive at reducing lines of code.
 >=20
-> This issue was detected by using the Coccinelle software.
+> For example do direct returns when ok to do:
+>         if (pos !=3D 0 || count !=3D sizeof(struct qib_flash))
+>                 return -EINVAL;
 >=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>         tmp =3D memdup_user(buf, count);
+>         if (IS_ERR(tmp))
+>                 return PTR_ERR(tmp);
+>=20
+> The bail_tmp: label is then not needed.
 
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+You still need to free tmp allocation if qib_eeprom_write failed and
+this is your bail_tmp.
 
---0eh6TmSyL6TZE2Uz
+341         tmp =3D kmalloc(count, GFP_KERNEL);
+342         if (!tmp) {
+343                 ret =3D -ENOMEM;
+344                 goto bail;
+345         }
+346
+347         if (copy_from_user(tmp, buf, count)) {
+348                 ret =3D -EFAULT;
+349                 goto bail_tmp;
+350         }
+351
+352         dd =3D private2dd(file);
+353         if (qib_eeprom_write(dd, pos, tmp, count)) {
+354                 ret =3D -ENXIO;
+355                 qib_dev_err(dd, "failed to write to flash\n");
+356                 goto bail_tmp;
+357         }
+
+>=20
+> Mike
+>=20
+
+--s9fJI615cBHmzTOP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXtyfMAAoJEORje4g2clin2nsQAL6lUM0JPSY+Of7ZAT24soqI
-PgtAqtgeiHQNNRnXqbpjKrcSMnUJ0GgH7l9ovmSlpvdAHqVOp/Wbw7D1fPGlyoFt
-/1e+SZ1KXj8L3RU8GeZisBUvk6Na5wWRMCmt5unHP4QPjSDx4/fxnGknTLxt8WH3
-zyvpIlbiHYSpZ/MTg1uv9PfsbpQVq+4qLDfccg0tRr97OlVrWJxiQM/z07oubk2Y
-xPgg669toTUED+llSBUNrcadNxqgqESG9+xHGhP/iiYP+hmbMT2s/4EaN6XGE+DI
-Y11NBwhJJvOolqdlT0rpysXyK46726yaZwXKRz4vi+wODXn7jrID/yWDvFskqPvn
-5lAYe8FQU45k5LMec5IoFA9ufRujpM69HdizFAaBlbGc+vkEFko7HkTNuS81iWtx
-BshhY9MJsQ1iFI4PeUde9pY5tbPPYMOBjnZmDV4jZnJzcjLyyq+RDKZTZDwQx20v
-GY+vIIrllbi8Zt7hiP4ViDdePDMw29rpIOQsw3Ez6jbqxlQIyvrPjtALqHNH5uiS
-NelKohAfovXQzFhL3iMacRFIZUoDpz7wAg+nBcv3GxoliA0l9BHTmz+nA7pWI/cT
-qSEdQdolwFfpai2/alJDZ3OMq6ljZWd4Ukawra3dDQO2b2/AkLU9POMkTPxMqBv7
-1Vvdu3/pzszeqYCIBsIX
-=3p/F
+iQIcBAEBAgAGBQJXtyiSAAoJEORje4g2clincbgP/iFbR/NRNIxGPptRYwx90xC5
+soZ+DM84KHB380vWv2WA1iSgYEE/l+Z0G+FGKmJreFfrLKvW82WIXVpNU1Jx4bNi
+Qa+DjR6vxUlae4C53ySTzqTEYeb3OHAWkIL2Ahr5CqPfqELS8ASkoSpJt/jGya4Z
+H3XRybyLjmTOifoNOD/BPxba3bWqehmvyMb7i3PLvPLT6Jgnk+YbR0khIj4CHIpS
+88zVrLZdFKyJetf5WHbhLUMNAI+VrZVBzEtgpPxPCqm2LFl4ns1wU+YrYFHDYqBQ
+jQmGF9u+Mh1Q3vTRFNw7M3z1jptMIVS3c3P7Ufj4VFZcvsFt4jrC6e47JzEwCw/d
+5iPQN2+8s7z6FCVvXaiVaOo2Qg4SSh2qM+CKj7dgAHicFfsLivMJEzfL0B8L5cyC
+Q7UoeQOBn+CxPZUbfm4g1YmEsrrWeYEMfNOc/z+56iuTUo3JsiXmF/pvn/Z01w/K
+A2c7SCrflBHdlmYaR0ad+dnH/BBI9+4dtzwegE0fvYNtj/EYlWpncQx9LgzuMxHL
+fN/RJutNyz2mY5Wid9xZwN/5XEp8VsRW09SfpElZIlX2bKdoOrqkgntQt2m9aYS+
+YxGZMLd2maquSsj4kKjyhwAfv+3+5sMSbRSkBbO5Ckl6rZvNcrNCLBybltIp7CB7
+ityeVW+uGfrjn+cIpt1Z
+=BUSs
 -----END PGP SIGNATURE-----
 
---0eh6TmSyL6TZE2Uz--
+--s9fJI615cBHmzTOP--
