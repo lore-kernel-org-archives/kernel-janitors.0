@@ -1,48 +1,70 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 08:56:47 +0000
-Subject: [PATCH 07/11] phy: qcom-ufs: use of_property_read_bool
-Message-Id: <1470387411-15879-8-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Aug 2016 16:45:08 +0000
+Subject: [PATCH 1/3] hostap: Use memdup_user() rather than duplicating its implementation
+Message-Id: <efa66c16-7998-9ceb-0be6-d62dd249a2dc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
+In-Reply-To: <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Use of_property_read_bool to check for the existence of a property.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Aug 2016 18:19:43 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Reuse existing functionality from memdup_user() instead of keeping
+duplicate source code.
 
-// <smpl>
-@@
-expression e1,e2;
-statement S2,S1;
-@@
--       if (of_get_property(e1,e2,NULL))
-+       if (of_property_read_bool(e1,e2))
-        S1 else S2
-// </smpl>
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/phy/phy-qcom-ufs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/wireless/intersil/hostap/hostap_ioctl.c    | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/phy/phy-qcom-ufs.c b/drivers/phy/phy-qcom-ufs.c
-index 107cb57..8eaf60a 100644
---- a/drivers/phy/phy-qcom-ufs.c
-+++ b/drivers/phy/phy-qcom-ufs.c
-@@ -283,7 +283,7 @@ static int __ufs_qcom_phy_init_vreg(struct phy *phy,
- 			err = 0;
- 		}
- 		snprintf(prop_name, MAX_PROP_NAME, "%s-always-on", name);
--		if (of_get_property(dev->of_node, prop_name, NULL))
-+		if (of_property_read_bool(dev->of_node, prop_name))
- 			vreg->is_always_on = true;
- 		else
- 			vreg->is_always_on = false;
+diff --git a/drivers/net/wireless/intersil/hostap/hostap_ioctl.c b/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
+index 3e5fa78..4e271f9 100644
+--- a/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
++++ b/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
+@@ -3041,14 +3041,9 @@ static int prism2_ioctl_priv_download(local_info_t *local, struct iw_point *p)
+ 	    p->length > 1024 || !p->pointer)
+ 		return -EINVAL;
+ 
+-	param = kmalloc(p->length, GFP_KERNEL);
+-	if (param = NULL)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(param, p->pointer, p->length)) {
+-		ret = -EFAULT;
+-		goto out;
+-	}
++	param = memdup_user(p->pointer, p->length);
++	if (IS_ERR(param))
++		return PTR_ERR(param);
+ 
+ 	if (p->length < sizeof(struct prism2_download_param) +
+ 	    param->num_areas * sizeof(struct prism2_download_area)) {
+@@ -3803,14 +3798,9 @@ static int prism2_ioctl_priv_hostapd(local_info_t *local, struct iw_point *p)
+ 	    p->length > PRISM2_HOSTAPD_MAX_BUF_SIZE || !p->pointer)
+ 		return -EINVAL;
+ 
+-	param = kmalloc(p->length, GFP_KERNEL);
+-	if (param = NULL)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(param, p->pointer, p->length)) {
+-		ret = -EFAULT;
+-		goto out;
+-	}
++	param = memdup_user(p->pointer, p->length);
++	if (IS_ERR(param))
++		return PTR_ERR(param);
+ 
+ 	switch (param->cmd) {
+ 	case PRISM2_SET_ENCRYPTION:
+-- 
+2.9.3
 
