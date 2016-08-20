@@ -1,53 +1,68 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Aug 2016 19:45:24 +0000
-Subject: [PATCH 1/2] GPU-DRM-Savage: Use memdup_user() rather than duplicating
-Message-Id: <021efa32-c259-e799-a80e-630972291815@users.sourceforge.net>
+Date: Sat, 20 Aug 2016 16:48:13 +0000
+Subject: [PATCH 3/3] hostap: Delete unnecessary initialisations for the variable "ret"
+Message-Id: <f1de4eb1-42e7-0124-89a2-c1e7fdf7053c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <77052ac1-1933-49af-3ad8-6e0eecc1aafe@users.sourceforge.net>
-In-Reply-To: <77052ac1-1933-49af-3ad8-6e0eecc1aafe@users.sourceforge.net>
+ <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
+In-Reply-To: <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Aug 2016 18:12:03 +0200
+Date: Sat, 20 Aug 2016 18:23:14 +0200
 
-Reuse existing functionality from memdup_user() instead of keeping
-duplicate source code.
-
-This issue was detected by using the Coccinelle software.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning of four functions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/savage/savage_state.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/net/wireless/intersil/hostap/hostap_ioctl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/savage/savage_state.c b/drivers/gpu/drm/savage/savage_state.c
-index c01ad0a..3dc0d8f 100644
---- a/drivers/gpu/drm/savage/savage_state.c
-+++ b/drivers/gpu/drm/savage/savage_state.c
-@@ -1001,15 +1001,9 @@ int savage_bci_cmdbuf(struct drm_device *dev, void *data, struct drm_file *file_
- 		cmdbuf->cmd_addr = kcmd_addr;
- 	}
- 	if (cmdbuf->vb_size) {
--		kvb_addr = kmalloc(cmdbuf->vb_size, GFP_KERNEL);
--		if (kvb_addr = NULL) {
--			ret = -ENOMEM;
--			goto done;
--		}
--
--		if (copy_from_user(kvb_addr, cmdbuf->vb_addr,
--				       cmdbuf->vb_size)) {
--			ret = -EFAULT;
-+		kvb_addr = memdup_user(cmdbuf->vb_addr, cmdbuf->vb_size);
-+		if (IS_ERR(kvb_addr)) {
-+			ret = PTR_ERR(kvb_addr);
- 			goto done;
- 		}
- 		cmdbuf->vb_addr = kvb_addr;
+diff --git a/drivers/net/wireless/intersil/hostap/hostap_ioctl.c b/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
+index 5942917..c37b0bb 100644
+--- a/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
++++ b/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
+@@ -2895,7 +2895,7 @@ static int prism2_ioctl_priv_monitor(struct net_device *dev, int *i)
+ {
+ 	struct hostap_interface *iface;
+ 	local_info_t *local;
+-	int ret = 0;
++	int ret;
+ 	u32 mode;
+ 
+ 	iface = netdev_priv(dev);
+@@ -3035,7 +3035,7 @@ static int ap_mac_cmd_ioctl(local_info_t *local, int *cmd)
+ static int prism2_ioctl_priv_download(local_info_t *local, struct iw_point *p)
+ {
+ 	struct prism2_download_param *param;
+-	int ret = 0;
++	int ret;
+ 
+ 	if (p->length < sizeof(struct prism2_download_param) ||
+ 	    p->length > 1024 || !p->pointer)
+@@ -3791,7 +3791,7 @@ static int prism2_ioctl_scan_req(local_info_t *local,
+ static int prism2_ioctl_priv_hostapd(local_info_t *local, struct iw_point *p)
+ {
+ 	struct prism2_hostapd_param *param;
+-	int ret = 0;
++	int ret;
+ 	int ap_ioctl = 0;
+ 
+ 	if (p->length < sizeof(struct prism2_hostapd_param) ||
+@@ -3954,7 +3954,7 @@ int hostap_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 	struct iwreq *wrq = (struct iwreq *) ifr;
+ 	struct hostap_interface *iface;
+ 	local_info_t *local;
+-	int ret = 0;
++	int ret;
+ 
+ 	iface = netdev_priv(dev);
+ 	local = iface->local;
 -- 
 2.9.3
 
