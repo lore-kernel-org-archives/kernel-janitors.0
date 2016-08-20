@@ -1,41 +1,52 @@
-From: Cornelia Huck <cornelia.huck@de.ibm.com>
-Date: Thu, 25 Aug 2016 16:11:00 +0000
-Subject: Re: [PATCH v2 2/2] KVM: s390: Use memdup_user() rather than duplicating code
-Message-Id: <20160825181100.1a560360.cornelia.huck@de.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Aug 2016 07:34:56 +0000
+Subject: [PATCH 1/2] tun: Use memdup_user() rather than duplicating its implementation
+Message-Id: <a2ee9925-1241-0328-6d35-9a9c9f567ea4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
-        <bb710b21-d8c4-e172-63d4-b46c80645cb3@users.sourceforge.net>
-        <ddb2bbd9-757b-fc62-8642-ce827a7a666d@de.ibm.com>
-        <e72e9854-443b-7033-d674-8a2d237600ca@users.sourceforge.net>
-        <c86f7520-885e-2829-ae9c-b81caa898e84@users.sourceforge.net>
-In-Reply-To: <c86f7520-885e-2829-ae9c-b81caa898e84@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <9cf06275-924d-6c22-d8a8-f733a03cca23@users.sourceforge.net>
+In-Reply-To: <9cf06275-924d-6c22-d8a8-f733a03cca23@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, Christian =?UTF-8?B?Qm9ybnRyw6RnZXI=?= <borntraeger@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Walter Harms <wharms@bfs.de>
+To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Paolo Abeni <pabeni@redhat.com>, Soheil Hassas Yeganeh <soheil@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 24 Aug 2016 20:40:03 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Aug 2016 08:54:15 +0200
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 24 Aug 2016 20:10:09 +0200
-> 
-> * Reuse existing functionality from memdup_user() instead of keeping
->   duplicate source code.
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Return directly if this copy operation failed.
-> 
-> Reviewed-by: David Hildenbrand <dahi@linux.vnet.ibm.com>
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> v2: Rebased on source files from "Linux next-20160824".
-> 
->  arch/s390/kvm/guestdbg.c | 18 ++++--------------
->  1 file changed, 4 insertions(+), 14 deletions(-)
+Reuse existing functionality from memdup_user() instead of keeping
+duplicate source code.
 
-Acked-by: Cornelia Huck <cornelia.huck@de.ibm.com>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/tun.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 9c8b5bc..a1aeccb 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -731,14 +731,9 @@ static int update_filter(struct tap_filter *filter, void __user *arg)
+ 	}
+ 
+ 	alen = ETH_ALEN * uf.count;
+-	addr = kmalloc(alen, GFP_KERNEL);
+-	if (!addr)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(addr, arg + sizeof(uf), alen)) {
+-		err = -EFAULT;
+-		goto done;
+-	}
++	addr = memdup_user(arg + sizeof(uf), alen);
++	if (IS_ERR(addr))
++		return PTR_ERR(addr);
+ 
+ 	/* The filter is updated without holding any locks. Which is
+ 	 * perfectly safe. We disable it first and in the worst
+-- 
+2.9.3
 
