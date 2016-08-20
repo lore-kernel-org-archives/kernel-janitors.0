@@ -1,69 +1,30 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Fri, 05 Aug 2016 11:40:53 +0000
-Subject: Re: [PATCH 08/11] net/fsl: use of_property_read_bool
-Message-Id: <b98f3cfd-a8fa-f078-07f8-b06b803d82b2@cogentembedded.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Aug 2016 16:43:16 +0000
+Subject: [PATCH 0/3] hostap: Fine-tuning for a few functions
+Message-Id: <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
- <1470387411-15879-9-git-send-email-Julia.Lawall@lip6.fr>
- <ceb47a0e-5759-486c-68d9-3feb9faf9e7a@cogentembedded.com>
- <alpine.DEB.2.10.1608051338000.2999@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1608051338000.2999@hadrien>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, Kalle Valo <kvalo@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 8/5/2016 2:38 PM, Julia Lawall wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Aug 2016 18:35:43 +0200
 
->>> Use of_property_read_bool to check for the existence of a property.
->>>
->>> The semantic patch that makes this change is as follows:
->>> (http://coccinelle.lip6.fr/)
->>>
->>> // <smpl>
->>> @@
->>> expression e1,e2;
->>> statement S2,S1;
->>> @@
->>> -       if (of_get_property(e1,e2,NULL))
->>> +       if (of_property_read_bool(e1,e2))
->>>         S1 else S2
->>> // </smpl>
->>>
->>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> ---
->>>  drivers/net/ethernet/freescale/xgmac_mdio.c |    3 +--
->>>  1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c
->>> b/drivers/net/ethernet/freescale/xgmac_mdio.c
->>> index 7b8fe86..a77ba98 100644
->>> --- a/drivers/net/ethernet/freescale/xgmac_mdio.c
->>> +++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
->>> @@ -271,8 +271,7 @@ static int xgmac_mdio_probe(struct platform_device
->>> *pdev)
->>>  		goto err_ioremap;
->>>  	}
->>>
->>> -	if (of_get_property(pdev->dev.of_node,
->>> -			    "little-endian", NULL))
->>> +	if (of_property_read_bool(pdev->dev.of_node, "little-endian"))
->>>  		priv->is_little_endian = true;
->>>  	else
->>>  		priv->is_little_endian = false;
->>
->>    priv->is_little_endian = of_property_read_bool(pdev->dev.of_node,
->> 						  "little-endian"));
->
-> Thanks,
->
-> I just sent a v2 with this change.
+A few update suggestions were taken into account
+from static source code analysis.
 
-    I've seen. Sorry, forgot to look at the followups before commenting...
+Markus Elfring (3):
+  Use memdup_user()
+  Delete an unnecessary jump label
+  Delete unnecessary variable initialisations
 
-> julia
+ .../net/wireless/intersil/hostap/hostap_ioctl.c    | 36 ++++++++--------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
-MBR, Sergei
+-- 
+2.9.3
 
