@@ -1,86 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 09 Aug 2016 16:11:02 +0000
-Subject: [PATCH] NFC: pn533: constify pn533_phy_ops structures
-Message-Id: <1470759062-21276-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 17:45:12 +0000
+Subject: [PATCH 2/2] IB/core: Delete an unnecessary initialisation in ib_is_udata_cleared()
+Message-Id: <c6edb204-061f-069f-743e-abac441fc472@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
+In-Reply-To: <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
-Cc: kernel-janitors@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-The pn533_phy_ops are never modified, so declare them as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 19:23:12 +0200
 
-Done with the help of Coccinelle.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/nfc/pn533/i2c.c   |    2 +-
- drivers/nfc/pn533/pn533.c |    2 +-
- drivers/nfc/pn533/pn533.h |    4 ++--
- drivers/nfc/pn533/usb.c   |    2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ include/rdma/ib_verbs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/pn533/i2c.c b/drivers/nfc/pn533/i2c.c
-index 1dc8924..8a7c17e 100644
---- a/drivers/nfc/pn533/i2c.c
-+++ b/drivers/nfc/pn533/i2c.c
-@@ -176,7 +176,7 @@ static irqreturn_t pn533_i2c_irq_thread_fn(int irq, void *data)
- 	return IRQ_HANDLED;
- }
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+index 033610b..0d8100f 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -2199,7 +2199,7 @@ static inline bool ib_is_udata_cleared(struct ib_udata *udata,
+ 				       size_t len)
+ {
+ 	const void __user *p = udata->inbuf + offset;
+-	bool ret = false;
++	bool ret;
+ 	u8 *buf;
  
--static struct pn533_phy_ops i2c_phy_ops = {
-+static const struct pn533_phy_ops i2c_phy_ops = {
- 	.send_frame = pn533_i2c_send_frame,
- 	.send_ack = pn533_i2c_send_ack,
- 	.abort_cmd = pn533_i2c_abort_cmd,
-diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
-index d9c5583..2f817b3 100644
---- a/drivers/nfc/pn533/pn533.c
-+++ b/drivers/nfc/pn533/pn533.c
-@@ -2560,7 +2560,7 @@ struct pn533 *pn533_register_device(u32 device_type,
- 				u32 protocols,
- 				enum pn533_protocol_type protocol_type,
- 				void *phy,
--				struct pn533_phy_ops *phy_ops,
-+				const struct pn533_phy_ops *phy_ops,
- 				struct pn533_frame_ops *fops,
- 				struct device *dev,
- 				struct device *parent)
-diff --git a/drivers/nfc/pn533/pn533.h b/drivers/nfc/pn533/pn533.h
-index 553c7d1..e26d634 100644
---- a/drivers/nfc/pn533/pn533.h
-+++ b/drivers/nfc/pn533/pn533.h
-@@ -179,7 +179,7 @@ struct pn533 {
- 
- 	struct device *dev;
- 	void *phy;
--	struct pn533_phy_ops *phy_ops;
-+	const struct pn533_phy_ops *phy_ops;
- };
- 
- typedef int (*pn533_send_async_complete_t) (struct pn533 *dev, void *arg,
-@@ -226,7 +226,7 @@ struct pn533 *pn533_register_device(u32 device_type,
- 				u32 protocols,
- 				enum pn533_protocol_type protocol_type,
- 				void *phy,
--				struct pn533_phy_ops *phy_ops,
-+				const struct pn533_phy_ops *phy_ops,
- 				struct pn533_frame_ops *fops,
- 				struct device *dev,
- 				struct device *parent);
-diff --git a/drivers/nfc/pn533/usb.c b/drivers/nfc/pn533/usb.c
-index 33ed78b..bcf3f54 100644
---- a/drivers/nfc/pn533/usb.c
-+++ b/drivers/nfc/pn533/usb.c
-@@ -434,7 +434,7 @@ static void pn533_send_complete(struct urb *urb)
- 	}
- }
- 
--static struct pn533_phy_ops usb_phy_ops = {
-+static const struct pn533_phy_ops usb_phy_ops = {
- 	.send_frame = pn533_usb_send_frame,
- 	.send_ack = pn533_usb_send_ack,
- 	.abort_cmd = pn533_usb_abort_cmd,
+ 	if (len > USHRT_MAX)
+-- 
+2.9.3
 
