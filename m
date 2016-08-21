@@ -1,79 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 31 Aug 2016 22:21:21 +0000
-Subject: [PATCH 3/5] dwc_eth_qos: constify ethtool_ops structures
-Message-Id: <1472682083-5219-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 14:02:47 +0000
+Subject: [PATCH 5/7] USB-iowarrior: Delete unnecessary initialisations in iowarrior_write()
+Message-Id: <7dcaa032-41f8-49f2-13a7-e61ab50299d9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
+In-Reply-To: <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars Persson <lars.persson@axis.com>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Josh Boyer <jwboyer@fedoraproject.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for ethtool_ops structures that are only stored in the ethtool_ops
-field of a net_device structure or passed as the second argument to
-netdev_set_default_ethtool_ops.  These contexts are declared const, so
-ethtool_ops structures that have these properties can be declared as const
-also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 15:17:22 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Two local variables will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct ethtool_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct net_device e;
-position p;
-@@
-e.ethtool_ops = &i@p;
-
-@ok2@
-identifier r.i;
-expression e;
-position p;
-@@
-netdev_set_default_ethtool_ops(e, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-@@
-i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct ethtool_ops i = { ... };
-// </smpl>
-
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/synopsys/dwc_eth_qos.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/iowarrior.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/synopsys/dwc_eth_qos.c b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
-index 5a3941b..c25d971 100644
---- a/drivers/net/ethernet/synopsys/dwc_eth_qos.c
-+++ b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
-@@ -2743,7 +2743,7 @@ static void dwceqos_set_msglevel(struct net_device *ndev, u32 msglevel)
- 	lp->msg_enable = msglevel;
- }
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index e3564d8..ffbbb74 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -338,8 +338,8 @@ static ssize_t iowarrior_write(struct file *file,
+ 			       size_t count, loff_t *ppos)
+ {
+ 	struct iowarrior *dev;
+-	int retval = 0;
+-	char *buf = NULL;	/* for IOW24 and IOW56 we need a buffer */
++	int retval;
++	char *buf;	/* for IOW24 and IOW56 we need a buffer */
+ 	struct urb *int_out_urb = NULL;
  
--static struct ethtool_ops dwceqos_ethtool_ops = {
-+static const struct ethtool_ops dwceqos_ethtool_ops = {
- 	.get_drvinfo    = dwceqos_get_drvinfo,
- 	.get_link       = ethtool_op_get_link,
- 	.get_pauseparam = dwceqos_get_pauseparam,
+ 	dev = file->private_data;
+-- 
+2.9.3
 
