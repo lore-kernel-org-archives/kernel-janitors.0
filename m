@@ -1,30 +1,31 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Tue, 23 Aug 2016 03:56:52 +0000
-Subject: Re: [PATCH v2 0/2] ALSA: compress: Fine-tuning for snd_compr_set_params()
-Message-Id: <20160823040430.GW2890@localhost>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 19:51:09 +0000
+Subject: Re: IB/core: Fine-tuning for ib_is_udata_cleared()
+Message-Id: <683187e0-2e6a-88c0-f87a-9c5f0489370a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <7233eb00-a941-4935-dce2-7cb907272d41@users.sourceforge.net>
- <03eac1fe-ff33-1759-9c2a-7914f1c6de45@users.sourceforge.net>
- <1471809094.3746.17.camel@perches.com>
- <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
-In-Reply-To: <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
+ <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
+ <1471802623.3746.1.camel@perches.com>
+In-Reply-To: <1471802623.3746.1.camel-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Joe Perches <joe@perches.com>, Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-On Mon, Aug 22, 2016 at 10:34:19AM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 Aug 2016 10:27:01 +0200
+>> A few update suggestions were taken into account
+>> from static source code analysis.
 > 
-> A few update suggestions were taken into account
-> from static source code analysis.
+> Don't introduce a defect in patch 1 and correct
+> that introduced defect in patch 2.
 
-Both:
+Which detail do you not like here?
 
-Acked-by: Vinod Koul <vinod.koul@intel.com>
 
--- 
-~Vinod
+> This should be a single patch.
+
+Do any more software software developers would like to get
+the proposed changes in a single update step?
+
+Regards,
+Markus
