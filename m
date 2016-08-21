@@ -1,82 +1,51 @@
-From: Jeehong Kim <jhez.kim@samsung.com>
-Date: Tue, 30 Aug 2016 13:12:40 +0000
-Subject: [PATCH V2] sched/fair: Fix that tasks are not constrained by cfs_b->quota on hotplug core, when hotp
-Message-Id: <1472562760-20842-1-git-send-email-jhez.kim@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 19:43:22 +0000
+Subject: [PATCH 1/2] ALSA: compress: Use memdup_user() rather than duplicating its implementation
+Message-Id: <375fcd8c-ebb5-5f63-f094-347559c5b9c1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472562591-20732-1-git-send-email-jhez.kim@samsung.com>
-In-Reply-To: <1472562591-20732-1-git-send-email-jhez.kim@samsung.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <7233eb00-a941-4935-dce2-7cb907272d41@users.sourceforge.net>
+In-Reply-To: <7233eb00-a941-4935-dce2-7cb907272d41@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mingo@redhat.com
-Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, ezjjilong@gmail.com, Jeehong Kim <jhez.kim@samsung.com>
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-In case that CONFIG_HOTPLUG_CPU and CONFIG_CFS_BANDWIDTH is turned on
-and tasks in bandwidth controlled task group run on hotplug core,
-the tasks are not controlled by cfs_b->quota when hotplug core is offline
-and then online. The remaining tasks in task group consume all of
-cfs_b->quota on other cores.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 21:02:06 +0200
 
-The cause of this problem is described as below:
+Reuse existing functionality from memdup_user() instead of keeping
+duplicate source code.
 
-1. When hotplug core is offline while tasks in task group run
-on hotplug core, unregister_fair_sched_group() deletes
-leaf_cfs_rq_list of tg->cfs_rq[cpu] from &rq_of(cfs_rq)->leaf_cfs_rq_list.
+This issue was detected by using the Coccinelle software.
 
-2. Then, when hotplug core is online, update_runtime_enabled()
-registers cfs_b->quota on cfs_rq->runtime_enabled of all leaf cfs_rq
-on runqueue. However, because this is before enqueue_entity() adds
-&cfs_rq->leaf_cfs_rq_list on &rq_of(cfs_rq)->leaf_cfs_rq_list,
-cfs->quota is not register on cfs_rq->runtime_enabled.
-
-To resolve this problem, this patch makes update_runtime_enabled()
-registers cfs_b->quota by using walk_tg_tree_from().
-
-Signed-off-by: Jeehong Kim <jhez.kim@samsung.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-V2: update_runtime_enabled() walks the whole tg tree,
-instead of register quota on every enqueue.
+ sound/core/compress_offload.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-kernel/sched/fair.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6488815..63b376d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4373,17 +4373,27 @@ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
- 	hrtimer_cancel(&cfs_b->slack_timer);
- }
-
--static void __maybe_unused update_runtime_enabled(struct rq *rq)
-+static int __maybe_unused __update_runtime_enabled(struct task_group *tg, void *data)
- {
--	struct cfs_rq *cfs_rq;
-+	struct rq *rq = data;
-+	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+	struct cfs_bandwidth *cfs_b = &cfs_rq->tg->cfs_bandwidth;
-
--	for_each_leaf_cfs_rq(rq, cfs_rq) {
--		struct cfs_bandwidth *cfs_b = &cfs_rq->tg->cfs_bandwidth;
-+	raw_spin_lock(&cfs_b->lock);
-+	cfs_rq->runtime_enabled = cfs_b->quota != RUNTIME_INF;
-+	raw_spin_unlock(&cfs_b->lock);
-
--		raw_spin_lock(&cfs_b->lock);
--		cfs_rq->runtime_enabled = cfs_b->quota != RUNTIME_INF;
--		raw_spin_unlock(&cfs_b->lock);
--	}
-+	return 0;
-+}
-+
-+static void __maybe_unused update_runtime_enabled(struct rq *rq)
-+{
-+	struct cfs_rq *cfs_rq = &rq->cfs;
-+
-+	/* register cfs_b->quota on the whole tg tree */
-+	rcu_read_lock();
-+	walk_tg_tree_from(cfs_rq->tg, __update_runtime_enabled, tg_nop, (void *)rq);
-+	rcu_read_unlock();
- }
---
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index 2c49848..583d407 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -553,13 +553,9 @@ snd_compr_set_params(struct snd_compr_stream *stream, unsigned long arg)
+ 		 * we should allow parameter change only when stream has been
+ 		 * opened not in other cases
+ 		 */
+-		params = kmalloc(sizeof(*params), GFP_KERNEL);
+-		if (!params)
+-			return -ENOMEM;
+-		if (copy_from_user(params, (void __user *)arg, sizeof(*params))) {
+-			retval = -EFAULT;
+-			goto out;
+-		}
++		params = memdup_user((void __user *)arg, sizeof(*params));
++		if (IS_ERR(params))
++			return PTR_ERR(params);
+ 
+ 		retval = snd_compress_check_input(params);
+ 		if (retval)
+-- 
+2.9.3
 
