@@ -1,14 +1,16 @@
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Aug 2016 09:58:01 +0000
+Date: Sun, 21 Aug 2016 09:59:23 +0000
 Subject: Re: [PATCH] staging/lustre/llite: Use memdup_user() rather than duplicating its implementation
-Message-Id: <494e9b94-d3d4-3057-2619-5c3aca85a204@wanadoo.fr>
+Message-Id: <66b32046-56ee-430e-e80e-1cdd5a8e68c4@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <73da135c-be81-e915-9b7a-6773e730b4e7@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <73da135c-be81-e915-9b7a-6773e730b4e7@users.sourceforge.net>
 In-Reply-To: <73da135c-be81-e915-9b7a-6773e730b4e7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: lustre-devel@clusterfs.com, kernel-janitors@vger.kernel.org
 
 Le 21/08/2016 =E0 11:45, SF Markus Elfring a =E9crit :
 > From: Markus Elfring <elfring@users.sourceforge.net>
