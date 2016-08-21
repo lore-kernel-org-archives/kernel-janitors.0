@@ -1,64 +1,49 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Wed, 31 Aug 2016 17:08:54 +0000
-Subject: Re: [PATCH 6/6] net: systemport: constify ethtool_ops structures
-Message-Id: <6ed26afb-c052-aa00-4ab1-6777d5644809@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 21 Aug 2016 08:28:25 +0000
+Subject: [PATCH] megaraid_sas: Fix the search of first memory bar
+Message-Id: <1471768105-14730-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472628648-3603-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472628648-3603-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kashyap.desai@avagotech.com, sumit.saxena@avagotech.com, uday.lingala@avagotech.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: megaraidlinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 08/31/2016 12:30 AM, Julia Lawall wrote:
-> Check for ethtool_ops structures that are only stored in the ethtool_ops
-> field of a net_device structure or passed as the second argument to
-> netdev_set_default_ethtool_ops.  These contexts are declared const, so
-> ethtool_ops structures that have these properties can be declared as const
-> also.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct ethtool_ops i@p = { ... };
-> 
-> @ok1@
-> identifier r.i;
-> struct net_device e;
-> position p;
-> @@
-> e.ethtool_ops = &i@p;
-> 
-> @ok2@
-> identifier r.i;
-> expression e;
-> position p;
-> @@
-> netdev_set_default_ethtool_ops(e, &i@p)
-> 
-> @bad@
-> position p != {r.p,ok1.p,ok2.p};
-> identifier r.i;
-> @@
-> i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct ethtool_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The 2nd parameter of 'find_first_bit' is the number of bits to search.
+In this case, we are passing 'sizeof(unsigned long)' which is likely to
+be 4.
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+It is likely that the number of bits in a long was expected here, so use
+BITS_PER_LONG instead.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Other options are possible:
+  - 'bar_list' being a 'unsigned long', use __ffs to reduce code verbosity
+  - PCI_NUM_RESOURCES, which is the maximum number of bits that can be set
+    by 'pci_select_bars()'
+---
+ drivers/scsi/megaraid/megaraid_sas_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index c1ed25adb17e..7d3de811d33c 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -5036,7 +5036,7 @@ static int megasas_init_fw(struct megasas_instance *instance)
+ 
+ 	/* Find first memory bar */
+ 	bar_list = pci_select_bars(instance->pdev, IORESOURCE_MEM);
+-	instance->bar = find_first_bit(&bar_list, sizeof(unsigned long));
++	instance->bar = find_first_bit(&bar_list, BITS_PER_LONG);
+ 	if (pci_request_selected_regions(instance->pdev, 1<<instance->bar,
+ 					 "megasas: LSI")) {
+ 		dev_printk(KERN_DEBUG, &instance->pdev->dev, "IO memory region busy!\n");
 -- 
-Florian
+2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
