@@ -1,36 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 28 Aug 2016 21:45:11 +0000
-Subject: [PATCH] staging: lustre: obdclass: constify obd_psdev_fops structure
-Message-Id: <1472420711-28987-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 13:56:56 +0000
+Subject: [PATCH 2/7] USB-iowarrior: Delete unnecessary initialisations for the variable "dev"
+Message-Id: <132bad2f-c594-4feb-f989-d41ee124d5ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
+In-Reply-To: <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Josh Boyer <jwboyer@fedoraproject.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-obd_psdev_fops, of type struct file_operations, is never modified, so
-declare it as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 13:26:09 +0200
 
-Done with the help of Coccinelle.
+The local variable "dev" was initialised despite of the detail
+that it was immediately reassigned by the following statement.
+Thus remove such unnecessary specifications.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/lustre/lustre/obdclass/linux/linux-module.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/iowarrior.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-index 27a72d8..2b691d8 100644
---- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-+++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-@@ -192,7 +192,7 @@ static long obd_class_ioctl(struct file *filp, unsigned int cmd,
- }
- 
- /* declare character device */
--static struct file_operations obd_psdev_fops = {
-+static const struct file_operations obd_psdev_fops = {
- 	.owner	  = THIS_MODULE,
- 	.unlocked_ioctl = obd_class_ioctl, /* unlocked_ioctl */
- 	.open	   = obd_class_open,      /* open */
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 8ae01b0..6048f97 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -468,7 +468,7 @@ exit:
+ static long iowarrior_ioctl(struct file *file, unsigned int cmd,
+ 							unsigned long arg)
+ {
+-	struct iowarrior *dev = NULL;
++	struct iowarrior *dev;
+ 	__u8 *buffer;
+ 	__u8 __user *user_buffer;
+ 	int retval;
+@@ -751,7 +751,7 @@ static int iowarrior_probe(struct usb_interface *interface,
+ 			   const struct usb_device_id *id)
+ {
+ 	struct usb_device *udev = interface_to_usbdev(interface);
+-	struct iowarrior *dev = NULL;
++	struct iowarrior *dev;
+ 	struct usb_host_interface *iface_desc;
+ 	struct usb_endpoint_descriptor *endpoint;
+ 	int i;
+-- 
+2.9.3
 
