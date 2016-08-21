@@ -1,78 +1,69 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 31 Aug 2016 22:21:19 +0000
-Subject: [PATCH 1/5] net: mediatek: constify ethtool_ops structures
-Message-Id: <1472682083-5219-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 07:27:19 +0000
+Subject: [PATCH 6/7] aacraid: Improve determination of a few sizes
+Message-Id: <5fa01979-9ca2-32d0-bece-c33902a5259b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <40d8607f-3934-c31f-3791-ef6a67d65d45@users.sourceforge.net>
+In-Reply-To: <40d8607f-3934-c31f-3791-ef6a67d65d45@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-scsi@vger.kernel.org, aacraid@microsemi.com, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for ethtool_ops structures that are only stored in the ethtool_ops
-field of a net_device structure or passed as the second argument to
-netdev_set_default_ethtool_ops.  These contexts are declared const, so
-ethtool_ops structures that have these properties can be declared as const
-also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 08:04:48 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Replace the specification of data structures by references for variables
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct ethtool_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct net_device e;
-position p;
-@@
-e.ethtool_ops = &i@p;
-
-@ok2@
-identifier r.i;
-expression e;
-position p;
-@@
-netdev_set_default_ethtool_ops(e, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-@@
-i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct ethtool_ops i = { ... };
-// </smpl>
-
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/mediatek/mtk_eth_soc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/aacraid/commctrl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 1801fd8..98f22cd 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -1692,7 +1692,7 @@ static void mtk_get_ethtool_stats(struct net_device *dev,
- 	} while (u64_stats_fetch_retry_irq(&hwstats->syncp, start));
- }
+diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+index cda03f0..d2029db 100644
+--- a/drivers/scsi/aacraid/commctrl.c
++++ b/drivers/scsi/aacraid/commctrl.c
+@@ -177,7 +177,7 @@ static int open_getadapter_fib(struct aac_dev * dev, void __user *arg)
+ 	struct aac_fib_context * fibctx;
+ 	int status;
  
--static struct ethtool_ops mtk_ethtool_ops = {
-+static const struct ethtool_ops mtk_ethtool_ops = {
- 	.get_settings		= mtk_get_settings,
- 	.set_settings		= mtk_set_settings,
- 	.get_drvinfo		= mtk_get_drvinfo,
+-	fibctx = kmalloc(sizeof(struct aac_fib_context), GFP_KERNEL);
++	fibctx = kmalloc(sizeof(*fibctx), GFP_KERNEL);
+ 	if (fibctx = NULL) {
+ 		status = -ENOMEM;
+ 	} else {
+@@ -186,7 +186,7 @@ static int open_getadapter_fib(struct aac_dev * dev, void __user *arg)
+ 		struct aac_fib_context * context;
+ 
+ 		fibctx->type = FSAFS_NTC_GET_ADAPTER_FIB_CONTEXT;
+-		fibctx->size = sizeof(struct aac_fib_context);
++		fibctx->size = sizeof(*fibctx);
+ 		/*
+ 		 *	Yes yes, I know this could be an index, but we have a
+ 		 * better guarantee of uniqueness for the locked loop below.
+@@ -251,7 +251,7 @@ static int next_getadapter_fib(struct aac_dev * dev, void __user *arg)
+ 	struct list_head * entry;
+ 	unsigned long flags;
+ 
+-	if (copy_from_user((void *)&f, arg, sizeof(struct fib_ioctl)))
++	if (copy_from_user(&f, arg, sizeof(f)))
+ 		return -EFAULT;
+ 	/*
+ 	 *	Verify that the HANDLE passed in was a valid AdapterFibContext
+@@ -509,7 +509,7 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
+ 	srbcmd = (struct aac_srb*) fib_data(srbfib);
+ 
+ 	memset(sg_list, 0, sizeof(sg_list)); /* cleanup may take issue */
+-	if (copy_from_user(&fibsize, &user_srb->count, sizeof(u32))) {
++	if (copy_from_user(&fibsize, &user_srb->count, sizeof(fibsize))) {
+ 		dprintk((KERN_DEBUG"aacraid: Could not copy data size from user\n"));
+ 		rcode = -EFAULT;
+ 		goto free_sg_list;
+-- 
+2.9.3
 
