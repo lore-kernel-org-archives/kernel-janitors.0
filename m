@@ -1,41 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Aug 2016 14:13:31 +0000
-Subject: [bug report] drivers/net: support hdlc function for QE-UCC
-Message-Id: <20160803141331.GA9097@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 08:48:48 +0000
+Subject: [PATCH] megaraid_sas: Use memdup_user() rather than duplicating its implementation
+Message-Id: <606e0b0c-370f-cff5-607b-0c8ae480e9c1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160712234919.GA23061@mwanda>
-In-Reply-To: <20160712234919.GA23061@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, megaraidlinux.pdl@avagotech.com, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, Kashyap Desai <kashyap.desai@avagotech.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Sumit Saxena <sumit.saxena@avagotech.com>, Uday Lingala <uday.lingala@avagotech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Zhao Qiang,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 10:39:04 +0200
 
-The patch c19b6d246a35: "drivers/net: support hdlc function for
-QE-UCC" from Jun 6, 2016, leads to the following static checker
-warning:
+Reuse existing functionality from memdup_user() instead of keeping
+duplicate source code.
 
-	drivers/net/wan/fsl_ucc_hdlc.c:164 uhdlc_init()
-	warn: unsigned 'priv->ucc_pram_offset' is never less than zero.
+This issue was detected by using the Coccinelle software.
 
-drivers/net/wan/fsl_ucc_hdlc.c
-   159  
-   160          /* Alloc parameter ram for ucc hdlc */
-   161          priv->ucc_pram_offset = qe_muram_alloc(sizeof(priv->ucc_pram),
-   162                                  ALIGNMENT_OF_UCC_HDLC_PRAM);
-   163  
-   164          if (priv->ucc_pram_offset < 0) {
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/megaraid/megaraid_sas_base.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-This is slightly complicated what's happening here.  qe_muram_alloc()
-returns negatives but casted to an unsigned long, then we assign it to
-priv->ucc_pram_offset which is a u32.
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index c1ed25a..9a2fe4e 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -6711,14 +6711,9 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
+ 	unsigned long flags;
+ 	u32 wait_time = MEGASAS_RESET_WAIT_TIME;
+ 
+-	ioc = kmalloc(sizeof(*ioc), GFP_KERNEL);
+-	if (!ioc)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(ioc, user_ioc, sizeof(*ioc))) {
+-		error = -EFAULT;
+-		goto out_kfree_ioc;
+-	}
++	ioc = memdup_user(user_ioc, sizeof(*ioc));
++	if (IS_ERR(ioc))
++		return PTR_ERR(ioc);
+ 
+ 	instance = megasas_lookup_instance(ioc->host_no);
+ 	if (!instance) {
+-- 
+2.9.3
 
-   165                  dev_err(priv->dev, "Can not allocate MURAM for hdlc prameter.\n");
-   166                  ret = -ENOMEM;
-   167                  goto free_tx_bd;
-   168          }
-   169  
-
-regards,
-dan carpenter
