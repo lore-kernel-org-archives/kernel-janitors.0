@@ -1,19 +1,19 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 18:28:58 +0000
-Subject: [PATCH 1/2] misc/mic/vop: Use memdup_user() rather than duplicating its implementation
-Message-Id: <ee628d2d-6c0b-1566-2757-33ee0983e6fd@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 17:42:11 +0000
+Subject: [PATCH 1/2] IB/core: Use memdup_user() rather than duplicating its implementation
+Message-Id: <7eb9ab74-b609-44d3-86f2-60137817aeed@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <f0ce0834-43e4-0535-9ae0-b18d3d18b0e0@users.sourceforge.net>
-In-Reply-To: <f0ce0834-43e4-0535-9ae0-b18d3d18b0e0@users.sourceforge.net>
+ <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
+In-Reply-To: <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ashutosh Dixit <ashutosh.dixit@intel.com>, Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Sean Hefty <sean.hefty@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 19:48:45 +0200
+Date: Sun, 21 Aug 2016 18:45:22 +0200
 
 Reuse existing functionality from memdup_user() instead of keeping
 duplicate source code.
@@ -22,51 +22,32 @@ This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/misc/mic/vop/vop_vringh.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ include/rdma/ib_verbs.h | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/misc/mic/vop/vop_vringh.c b/drivers/misc/mic/vop/vop_vringh.c
-index 88e4523..84c95fe 100644
---- a/drivers/misc/mic/vop/vop_vringh.c
-+++ b/drivers/misc/mic/vop/vop_vringh.c
-@@ -938,13 +938,9 @@ static long vop_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
- 		    dd.num_vq > MIC_MAX_VRINGS)
- 			return -EINVAL;
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+index 6f667dd..033610b 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -2205,16 +2205,11 @@ static inline bool ib_is_udata_cleared(struct ib_udata *udata,
+ 	if (len > USHRT_MAX)
+ 		return false;
  
--		dd_config = kzalloc(mic_desc_size(&dd), GFP_KERNEL);
--		if (!dd_config)
--			return -ENOMEM;
--		if (copy_from_user(dd_config, argp, mic_desc_size(&dd))) {
--			ret = -EFAULT;
--			goto free_ret;
--		}
-+		dd_config = memdup_user(argp, mic_desc_size(&dd));
-+		if (IS_ERR(dd_config))
-+			return PTR_ERR(dd_config);
- 		/* Ensure desc has not changed between the two reads */
- 		if (memcmp(&dd, dd_config, sizeof(dd))) {
- 			ret = -EINVAL;
-@@ -996,17 +992,12 @@ _unlock_ret:
- 		ret = vop_vdev_inited(vdev);
- 		if (ret)
- 			goto __unlock_ret;
--		buf = kzalloc(vdev->dd->config_len, GFP_KERNEL);
--		if (!buf) {
--			ret = -ENOMEM;
-+		buf = memdup_user(argp, vdev->dd->config_len);
-+		if (IS_ERR(buf)) {
-+			ret = PTR_ERR(buf);
- 			goto __unlock_ret;
- 		}
--		if (copy_from_user(buf, argp, vdev->dd->config_len)) {
--			ret = -EFAULT;
--			goto done;
--		}
- 		ret = vop_virtio_config_change(vdev, buf);
--done:
- 		kfree(buf);
- __unlock_ret:
- 		mutex_unlock(&vdev->vdev_mutex);
+-	buf = kmalloc(len, GFP_KERNEL);
+-	if (!buf)
++	buf = memdup_user(p, len);
++	if (IS_ERR(buf))
+ 		return false;
+ 
+-	if (copy_from_user(buf, p, len))
+-		goto free;
+-
+ 	ret = !memchr_inv(buf, 0, len);
+-
+-free:
+ 	kfree(buf);
+ 	return ret;
+ }
 -- 
 2.9.3
 
