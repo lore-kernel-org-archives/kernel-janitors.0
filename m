@@ -1,47 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Aug 2016 18:04:53 +0000
-Subject: [PATCH 3/5] ia64/mm/tlb: Fix indentation in ia64_global_tlb_purge()
-Message-Id: <9adf5338-d549-f0ff-df0a-2f02f8bc5477@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 07:29:24 +0000
+Subject: [PATCH 7/7] aacraid: Apply another recommendation from "checkpatch.pl"
+Message-Id: <03ee5f77-5866-1186-b160-bb5141848865@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <349bbfb4-bada-628e-2981-ca2a315299fc@users.sourceforge.net>
-In-Reply-To: <349bbfb4-bada-628e-2981-ca2a315299fc@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <40d8607f-3934-c31f-3791-ef6a67d65d45@users.sourceforge.net>
+In-Reply-To: <40d8607f-3934-c31f-3791-ef6a67d65d45@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Tony Luck <tony.luck@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-scsi@vger.kernel.org, aacraid@microsemi.com, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Aug 2016 19:36:39 +0200
+Date: Sun, 21 Aug 2016 08:23:25 +0200
 
-The script "checkpatch.pl" pointed the following information out.
-
-ERROR: code indent should use tabs where possible
-#40: FILE: arch/ia64/mm/tlb.c:271
-
-Thus fix the affected source code places.
+The script "checkpatch.pl" can point out that assignments should usually
+not be performed within condition checks.
+Thus move the assignment for the variable "srbfib" to a separate statement.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/ia64/mm/tlb.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/scsi/aacraid/commctrl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/ia64/mm/tlb.c b/arch/ia64/mm/tlb.c
-index 46ecc5d..6d2f83d 100644
---- a/arch/ia64/mm/tlb.c
-+++ b/arch/ia64/mm/tlb.c
-@@ -269,9 +269,8 @@ ia64_global_tlb_purge (struct mm_struct *mm, unsigned long start,
- 	if (need_ptcg_sem)
- 		up_spin(&ptcg_sem);
- 
--        if (mm != active_mm) {
--                activate_context(active_mm);
--        }
-+	if (mm != active_mm)
-+		activate_context(active_mm);
- }
- 
- void
+diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+index d2029db..7e6c76d 100644
+--- a/drivers/scsi/aacraid/commctrl.c
++++ b/drivers/scsi/aacraid/commctrl.c
+@@ -499,9 +499,9 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
+ 	/*
+ 	 *	Allocate and initialize a Fib then setup a SRB command
+ 	 */
+-	if (!(srbfib = aac_fib_alloc(dev))) {
++	srbfib = aac_fib_alloc(dev);
++	if (!srbfib)
+ 		return -ENOMEM;
+-	}
+ 	aac_fib_init(srbfib);
+ 	/* raw_srb FIB is not FastResponseCapable */
+ 	srbfib->hw_fib_va->header.XferState &= ~cpu_to_le32(FastResponseCapable);
 -- 
 2.9.3
 
