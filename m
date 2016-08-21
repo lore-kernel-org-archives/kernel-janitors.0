@@ -1,35 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 31 Aug 2016 13:45:04 +0000
-Subject: [PATCH] [media] s5p_cec: Fix memory allocation failure check
-Message-Id: <1472651104-17097-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 14:00:11 +0000
+Subject: [PATCH 4/7] USB-iowarrior: Delete unnecessary initialisations in iowarrior_open()
+Message-Id: <acffa0dc-e51e-b042-21b8-1961dc37832f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
+In-Reply-To: <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Josh Boyer <jwboyer@fedoraproject.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-It is likely that checking the result of the memory allocation just above
-is expected here.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 21 Aug 2016 15:15:03 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Two local variables will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/media/s5p-cec/s5p_cec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/iowarrior.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/s5p-cec/s5p_cec.c b/drivers/staging/media/s5p-cec/s5p_cec.c
-index 78333273c4e5..636bac182e8e 100644
---- a/drivers/staging/media/s5p-cec/s5p_cec.c
-+++ b/drivers/staging/media/s5p-cec/s5p_cec.c
-@@ -173,7 +173,7 @@ static int s5p_cec_probe(struct platform_device *pdev)
- 	int ret;
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 449bf64..e3564d8 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -587,10 +587,10 @@ error_out:
+  */
+ static int iowarrior_open(struct inode *inode, struct file *file)
+ {
+-	struct iowarrior *dev = NULL;
++	struct iowarrior *dev;
+ 	struct usb_interface *interface;
+ 	int subminor;
+-	int retval = 0;
++	int retval;
  
- 	cec = devm_kzalloc(&pdev->dev, sizeof(*cec), GFP_KERNEL);
--	if (!dev)
-+	if (!cec)
- 		return -ENOMEM;
- 
- 	cec->dev = dev;
+ 	mutex_lock(&iowarrior_mutex);
+ 	subminor = iminor(inode);
 -- 
-2.7.4
+2.9.3
 
