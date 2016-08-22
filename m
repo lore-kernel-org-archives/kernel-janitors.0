@@ -1,61 +1,112 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 08:56:45 +0000
-Subject: [PATCH 05/11] tty/serial: at91: use of_property_read_bool
-Message-Id: <1470387411-15879-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 Aug 2016 08:38:25 +0000
+Subject: [PATCH v2 1/2] ALSA: compress: Restructure source code around an if statement in snd_compr_set_param
+Message-Id: <89765506-60f0-8319-5806-29476a36f9f3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <7233eb00-a941-4935-dce2-7cb907272d41@users.sourceforge.net>
+ <03eac1fe-ff33-1759-9c2a-7914f1c6de45@users.sourceforge.net>
+ <1471809094.3746.17.camel@perches.com>
+ <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
+In-Reply-To: <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Joe Perches <joe@perches.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Use of_property_read_bool to check for the existence of a property.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 Aug 2016 10:01:52 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+* Reverse a condition check.
 
-// <smpl>
-@@
-expression e1,e2;
-statement S2,S1;
-@@
--       if (of_get_property(e1,e2,NULL))
-+       if (of_property_read_bool(e1,e2))
-        S1 else S2
-// </smpl>
+* Reduce the indentation one level then for some source code
+  from a previous if branch.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/atmel_serial.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/core/compress_offload.c | 62 +++++++++++++++++++++----------------------
+ 1 file changed, 30 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 2eaa18d..c57a51d 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -1634,8 +1634,8 @@ static void atmel_init_property(struct atmel_uart_port *atmel_port,
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index 2c49848..a10d139 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -548,43 +548,41 @@ snd_compr_set_params(struct snd_compr_stream *stream, unsigned long arg)
+ 	struct snd_compr_params *params;
+ 	int retval;
  
- 	if (np) {
- 		/* DMA/PDC usage specification */
--		if (of_get_property(np, "atmel,use-dma-rx", NULL)) {
--			if (of_get_property(np, "dmas", NULL)) {
-+		if (of_property_read_bool(np, "atmel,use-dma-rx")) {
-+			if (of_property_read_bool(np, "dmas")) {
- 				atmel_port->use_dma_rx  = true;
- 				atmel_port->use_pdc_rx  = false;
- 			} else {
-@@ -1647,8 +1647,8 @@ static void atmel_init_property(struct atmel_uart_port *atmel_port,
- 			atmel_port->use_pdc_rx  = false;
- 		}
+-	if (stream->runtime->state = SNDRV_PCM_STATE_OPEN) {
+-		/*
+-		 * we should allow parameter change only when stream has been
+-		 * opened not in other cases
+-		 */
+-		params = kmalloc(sizeof(*params), GFP_KERNEL);
+-		if (!params)
+-			return -ENOMEM;
+-		if (copy_from_user(params, (void __user *)arg, sizeof(*params))) {
+-			retval = -EFAULT;
+-			goto out;
+-		}
++	if (stream->runtime->state != SNDRV_PCM_STATE_OPEN)
++		return -EPERM;
++	/*
++	 * we should allow parameter change only when stream has been
++	 * opened not in other cases
++	 */
++	params = kmalloc(sizeof(*params), GFP_KERNEL);
++	if (!params)
++		return -ENOMEM;
++	if (copy_from_user(params, (void __user *)arg, sizeof(*params))) {
++		retval = -EFAULT;
++		goto out;
++	}
  
--		if (of_get_property(np, "atmel,use-dma-tx", NULL)) {
--			if (of_get_property(np, "dmas", NULL)) {
-+		if (of_property_read_bool(np, "atmel,use-dma-tx")) {
-+			if (of_property_read_bool(np, "dmas")) {
- 				atmel_port->use_dma_tx  = true;
- 				atmel_port->use_pdc_tx  = false;
- 			} else {
+-		retval = snd_compress_check_input(params);
+-		if (retval)
+-			goto out;
++	retval = snd_compress_check_input(params);
++	if (retval)
++		goto out;
+ 
+-		retval = snd_compr_allocate_buffer(stream, params);
+-		if (retval) {
+-			retval = -ENOMEM;
+-			goto out;
+-		}
++	retval = snd_compr_allocate_buffer(stream, params);
++	if (retval) {
++		retval = -ENOMEM;
++		goto out;
++	}
+ 
+-		retval = stream->ops->set_params(stream, params);
+-		if (retval)
+-			goto out;
++	retval = stream->ops->set_params(stream, params);
++	if (retval)
++		goto out;
+ 
+-		stream->metadata_set = false;
+-		stream->next_track = false;
++	stream->metadata_set = false;
++	stream->next_track = false;
+ 
+-		if (stream->direction = SND_COMPRESS_PLAYBACK)
+-			stream->runtime->state = SNDRV_PCM_STATE_SETUP;
+-		else
+-			stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
+-	} else {
+-		return -EPERM;
+-	}
++	if (stream->direction = SND_COMPRESS_PLAYBACK)
++		stream->runtime->state = SNDRV_PCM_STATE_SETUP;
++	else
++		stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
+ out:
+ 	kfree(params);
+ 	return retval;
+-- 
+2.9.3
 
