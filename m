@@ -1,89 +1,72 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 12:59:22 +0000
-Subject: Re: [PATCH 10/11] soc: ti: knav_qmss_queue: use of_property_read_bool
-Message-Id: <alpine.DEB.2.10.1608051456170.2999@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 Aug 2016 16:30:33 +0000
+Subject: [PATCH v2] IB/core: Use memdup_user() rather than duplicating its implementation
+Message-Id: <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr> <1470387411-15879-11-git-send-email-Julia.Lawall@lip6.fr> <c010a500-87ce-19ad-0109-f57eba3c6981@arm.com>
-In-Reply-To: <c010a500-87ce-19ad-0109-f57eba3c6981@arm.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
+ <1471802623.3746.1.camel@perches.com>
+ <683187e0-2e6a-88c0-f87a-9c5f0489370a@users.sourceforge.net>
+ <1471809188.3746.18.camel@perches.com>
+ <5e87f691-edb9-0a12-ff7a-59854c2ca2f8@users.sourceforge.net>
+ <1471859215.2764.24.camel@opteya.com>
+In-Reply-To: <1471859215.2764.24.camel-RlY5vtjFyJ3QT0dZR+AlfA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, linux-mmc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, alsa-devel@alsa-project.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yann Droneaud <ydroneaud-RlY5vtjFyJ3QT0dZR+AlfA@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 Aug 2016 18:23:24 +0200
 
+* Reuse existing functionality from memdup_user() instead of keeping
+  duplicate source code.
 
-On Fri, 5 Aug 2016, Robin Murphy wrote:
+  This issue was detected by using the Coccinelle software.
 
-> Hi Julia,
->
-> On 05/08/16 09:56, Julia Lawall wrote:
-> > Use of_property_read_bool to check for the existence of a property.
->
-> This caught my eye since Rob told me off for doing the same recently[1].
->
-> > The semantic patch that makes this change is as follows:
-> > (http://coccinelle.lip6.fr/)
-> >
-> > // <smpl>
-> > @@
-> > expression e1,e2;
-> > statement S2,S1;
-> > @@
-> > -       if (of_get_property(e1,e2,NULL))
-> > +       if (of_property_read_bool(e1,e2))
-> >         S1 else S2
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >  drivers/soc/ti/knav_qmss_queue.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-> > index b73e353..56b5d7c 100644
-> > --- a/drivers/soc/ti/knav_qmss_queue.c
-> > +++ b/drivers/soc/ti/knav_qmss_queue.c
-> > @@ -1240,7 +1240,7 @@ static int knav_setup_queue_range(struct knav_device *kdev,
-> >  	if (of_get_property(node, "qalloc-by-id", NULL))
->
-> According to the binding, "qalloc-by-id" _is_ a boolean property, so
-> this one really does deserve to be of_property_read_bool()...
->
-> >  		range->flags |= RANGE_RESERVED;
-> >
-> > -	if (of_get_property(node, "accumulator", NULL)) {
-> > +	if (of_property_read_bool(node, "accumulator")) {
->
-> ...whereas "accumulator" must have a value, so this isn't technically
-> appropriate. In general, most of these "if the property exists, read the
-> property and do stuff" checks are probably a sign of code that could be
-> simplified by refactoring the "do stuff" step to just specifically
-> handle the "read the property" step returning -EINVAL when it's not present.
+* The local variable "ret" will be set to an appropriate value a bit later.
+  Thus omit the explicit initialisation at the beginning.
 
-Thanks for the very helpful feedback.  I will rethink the patch set in
-light of this information.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
 
-julia
+v2: The desired changes were put into a single patch instead of
+    distributing them over two update steps.
 
-> Robin.
->
-> [1]:https://www.mail-archive.com/iommu@lists.linux-foundation.org/msg13375.html
->
-> >  		ret = knav_init_acc_range(kdev, node, range);
-> >  		if (ret < 0) {
-> >  			devm_kfree(dev, range);
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> >
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+ include/rdma/ib_verbs.h | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+index 6f667dd..0d8100f 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -2199,22 +2199,17 @@ static inline bool ib_is_udata_cleared(struct ib_udata *udata,
+ 				       size_t len)
+ {
+ 	const void __user *p = udata->inbuf + offset;
+-	bool ret = false;
++	bool ret;
+ 	u8 *buf;
+ 
+ 	if (len > USHRT_MAX)
+ 		return false;
+ 
+-	buf = kmalloc(len, GFP_KERNEL);
+-	if (!buf)
++	buf = memdup_user(p, len);
++	if (IS_ERR(buf))
+ 		return false;
+ 
+-	if (copy_from_user(buf, p, len))
+-		goto free;
+-
+ 	ret = !memchr_inv(buf, 0, len);
+-
+-free:
+ 	kfree(buf);
+ 	return ret;
+ }
+-- 
+2.9.3
+
