@@ -1,61 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Aug 2016 05:45:51 +0000
-Subject: [PATCH v2 07/10] staging: ks7010: Add the macro "pr_fmt"
-Message-Id: <51855161-a841-a6b6-2eed-cfc41f31aad2@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 22 Aug 2016 01:43:59 +0000
+Subject: [PATCH V2] staging: dgnc: check the type of print before calling
+Message-Id: <20160822014359.GA5630@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
-In-Reply-To: <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Aug 2016 20:45:11 +0200
+The dgnc_maxcps_room() function must be called only for print device.
+The if-statement for checking print device checks before calling
+dgnc_maxcps_room() and also this function doesn't need to have any
+data except channel_t.
 
-Add a definition for the macro "pr_fmt" so that its information can be used
-for consistent message output.
-
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
-v2: Addition from source code review
+V2: update subject line from "change a parameter from tty_struct
+to channel_t" to "check the type of print before
+calling dgnc_maxcps_room()"
 
- drivers/staging/ks7010/ks7010_sdio.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/dgnc/dgnc_tty.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index 2094a07..634ef42 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -10,6 +10,8 @@
-  *   published by the Free Software Foundation.
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index e4c6c3f..31b18e6 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -1492,18 +1492,8 @@ static int dgnc_tty_chars_in_buffer(struct tty_struct *tty)
+  * returns the new bytes_available.  This only affects printer
+  * output.
   */
+-static int dgnc_maxcps_room(struct tty_struct *tty, int bytes_available)
++static int dgnc_maxcps_room(struct channel_t *ch, int bytes_available)
+ {
+-	struct un_t *un = tty->driver_data;
+-	struct channel_t *ch = un->un_ch;
+-
+-	/*
+-	 * If its not the Transparent print device, return
+-	 * the full data amount.
+-	 */
+-	if (un->un_type != DGNC_PRINT)
+-		return bytes_available;
+-
+ 	if (ch->ch_digi.digi_maxcps > 0 && ch->ch_digi.digi_bufsize > 0) {
+ 		int cps_limit = 0;
+ 		unsigned long current_time = jiffies;
+@@ -1567,7 +1557,8 @@ static int dgnc_tty_write_room(struct tty_struct *tty)
+ 		ret += WQUEUESIZE;
  
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
- #include <linux/firmware.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/sdio_func.h>
+ 	/* Limit printer to maxcps */
+-	ret = dgnc_maxcps_room(tty, ret);
++	if (un->un_type != DGNC_PRINT)
++		ret = dgnc_maxcps_room(ch, ret);
+ 
+ 	/*
+ 	 * If we are printer device, leave space for
+@@ -1659,7 +1650,8 @@ static int dgnc_tty_write(struct tty_struct *tty,
+ 	 * Limit printer output to maxcps overall, with bursts allowed
+ 	 * up to bufsize characters.
+ 	 */
+-	bufcount = dgnc_maxcps_room(tty, bufcount);
++	if (un->un_type != DGNC_PRINT)
++		bufcount = dgnc_maxcps_room(ch, bufcount);
+ 
+ 	/*
+ 	 * Take minimum of what the user wants to send, and the
 -- 
-2.9.2
+1.9.1
 
