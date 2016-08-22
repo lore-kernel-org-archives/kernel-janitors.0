@@ -1,48 +1,56 @@
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Date: Mon, 15 Aug 2016 13:37:49 +0000
-Subject: Re: backlight-tosa: Delete owner assignment
-Message-Id: <CAOMGZ=F8BJA0w7oOpKCHRDTFM-=Hm6GQdW-GcdCasWP4i_B--g@mail.gmail.com>
+From: Joe Perches <joe@perches.com>
+Date: Mon, 22 Aug 2016 18:17:20 +0000
+Subject: [PATCH] checkpatch: See if modified files are marked obsolete in MAINTAINERS
+Message-Id: <7ceaa510dc9d2df05ec4b456baed7bb1415550b3.1471889575.git.joe@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <efe9964f-c907-305c-b75e-32a4139d1edd@users.sourceforge.net>
- <CAOMGZ=EWsO_pRg+s+hnPmwRePcrijFK3v+SRKTizfbqyY83iqQ@mail.gmail.com> <916b664f-7818-18ca-445b-27413259ebef@users.sourceforge.net>
-In-Reply-To: <916b664f-7818-18ca-445b-27413259ebef@users.sourceforge.net>
+References: <87shtwvm63.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <87shtwvm63.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, LKML <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Andrew Morton <akpm@linux-foundation.org>, Kalle Valo <kvalo@codeaurora.org>, Arend van Spriel <arend.vanspriel@broadcom.com>, Andy Whitcroft <apw@canonical.com>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-kernel@vger.kernel.org
 
-On 15 August 2016 at 15:25, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>> The field "owner" is set by core. Thus delete an extra initialisation.
->>
->> Just a small nit on the patch title: "delete owner assignment" is
->> virtually useless as a title because it has no meaning without the
->> broader context and only describes the literal change. It's like
->> naming a patch "add a line" or "change the code";
->> it serves no purpose.
->
-> I have got an other impression.
->
-> Do you want that I add any more background information to the
-> commit message?
+Use get_maintainer to check the status of individual files.
+If "obsolete", suggest leaving the files alone.
 
-No, the rest of the commit message is fine. I was only concerned about
-the patch title (the first line) since that's what appears frequently
-in patch lists (cgit, shortlogs, email/archives), etc.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ scripts/checkpatch.pl | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
->> How about "backlight-tosa: delete _unnecessary_ assignment"?
->
-> Will the underlined key word trigger any related software
-> development concerns?
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 4de3cc4..df5e9d9 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -704,6 +704,16 @@ sub seed_camelcase_file {
+ 	}
+ }
+ 
++sub is_maintained_obsolete {
++	my ($filename) = @_;
++
++	return 0 if (!(-e "$root/scripts/get_maintainer.pl"));
++
++	my $status = `perl $root/scripts/get_maintainer.pl --status --nom --nol --nogit --nogit-fallback $filename 2>&1`;
++
++	return $status =~ /obsolete/i;
++}
++
+ my $camelcase_seeded = 0;
+ sub seed_camelcase_includes {
+ 	return if ($camelcase_seeded);
+@@ -2289,6 +2299,10 @@ sub process {
+ 		}
+ 
+ 		if ($found_file) {
++			if (is_maintained_obsolete($realfile)) {
++				WARN("OBSOLETE",
++				     "$realfile is marked as 'obsolete' in the MAINTAINERS hierarchy.  No unnecessary modifications please.\n");
++			}
+ 			if ($realfile =~ m@^(?:drivers/net/|net/|drivers/staging/)@) {
+ 				$check = 1;
+ 			} else {
+-- 
+2.8.0.rc4.16.g56331f8
 
-No, the emphasis was just for the email, I wouldn't put that in the
-actual commit log.
-
-> Would another look be needed on how the usage of the mentioned data
-> structure element was reduced over time?
-
-No, it's fine, it's really just about the patch title :-) Thanks,
-
-
-Vegard
