@@ -1,55 +1,32 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 22 Aug 2016 13:39:27 +0000
-Subject: Re: [PATCH 06/11] mmc: sdhci-of-esdhc: use of_property_read_bool
-Message-Id: <CAPDyKFq8jbmrY78nZnKpbwkg6_Zqx6XfJw_3FbD=HKMCYvw_sA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 Aug 2016 08:34:19 +0000
+Subject: [PATCH v2 0/2] ALSA: compress: Fine-tuning for snd_compr_set_params()
+Message-Id: <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr> <1470387411-15879-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-7-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <7233eb00-a941-4935-dce2-7cb907272d41@users.sourceforge.net>
+ <03eac1fe-ff33-1759-9c2a-7914f1c6de45@users.sourceforge.net>
+ <1471809094.3746.17.camel@perches.com>
+In-Reply-To: <1471809094.3746.17.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, kernel-janitors@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Joe Perches <joe@perches.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 5 August 2016 at 10:56, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> Use of_property_read_bool to check for the existence of a property.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression e1,e2;
-> statement S2,S1;
-> @@
-> -       if (of_get_property(e1,e2,NULL))
-> +       if (of_property_read_bool(e1,e2))
->         S1 else S2
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 Aug 2016 10:27:01 +0200
 
-Thanks, applied for next!
+A few update suggestions were taken into account
+from static source code analysis.
 
-Kind regards
-Uffe
+Markus Elfring (2):
+  Restructure source code around an if statement
+  Use memdup_user()
 
->
-> ---
->  drivers/mmc/host/sdhci-of-esdhc.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-> index 239be2f..fb71c86 100644
-> --- a/drivers/mmc/host/sdhci-of-esdhc.c
-> +++ b/drivers/mmc/host/sdhci-of-esdhc.c
-> @@ -583,7 +583,7 @@ static int sdhci_esdhc_probe(struct platform_device *pdev)
->
->         np = pdev->dev.of_node;
->
-> -       if (of_get_property(np, "little-endian", NULL))
-> +       if (of_property_read_bool(np, "little-endian"))
->                 host = sdhci_pltfm_init(pdev, &sdhci_esdhc_le_pdata,
->                                         sizeof(struct sdhci_esdhc));
->         else
->
+ sound/core/compress_offload.c | 58 +++++++++++++++++++------------------------
+ 1 file changed, 26 insertions(+), 32 deletions(-)
+
+-- 
+2.9.3
+
