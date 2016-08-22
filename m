@@ -1,55 +1,45 @@
-From: Cornelia Huck <cornelia.huck@de.ibm.com>
-Date: Mon, 22 Aug 2016 13:00:48 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 22 Aug 2016 16:56:47 +0000
 Subject: Re: [PATCH 3/4] KVM-S390: Less function calls in kvm_s390_import_bp_data() after error detection
-Message-Id: <20160822150048.309a3e10.cornelia.huck@de.ibm.com>
+Message-Id: <cff92477-f426-a4c7-fffb-f8bbc378afe7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
-        <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
-In-Reply-To: <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
+ <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
+ <20160822150048.309a3e10.cornelia.huck@de.ibm.com>
+In-Reply-To: <20160822150048.309a3e10.cornelia.huck@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, Christian =?UTF-8?B?Qm9ybnRyw6RnZXI=?= <borntraeger@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Cornelia Huck <cornelia.huck@de.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 17 Aug 2016 20:10:37 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 17 Aug 2016 19:25:50 +0200
+>> @@ -273,10 +273,12 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+>>  	vcpu->arch.guestdbg.nr_hw_wp = nr_wp;
+>>  	vcpu->arch.guestdbg.hw_wp_info = wp_info;
+>>  	return 0;
+>> -error:
+>> -	kfree(bp_data);
+>> -	kfree(wp_info);
+>> +free_bp_info:
+>>  	kfree(bp_info);
+>> +free_wp_info:
+>> +	kfree(wp_info);
+>> +free_bp_data:
+>> +	kfree(bp_data);
+>>  	return ret;
+>>  }
+>>
 > 
-> The kfree() function was called in a few cases by the
-> kvm_s390_import_bp_data() function during error handling
-> even if a passed variable contained a null pointer.
-> 
-> Adjust jump targets according to the Linux coding style convention.
+> This replaces a perfectly fine fallthrough
 
-NACK.
+The usage of a single goto label like "error" seems to be convenient.
+But how do these habits fit to the current Linux coding style convention?
 
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/s390/kvm/guestdbg.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
 
-> @@ -273,10 +273,12 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
->  	vcpu->arch.guestdbg.nr_hw_wp = nr_wp;
->  	vcpu->arch.guestdbg.hw_wp_info = wp_info;
->  	return 0;
-> -error:
-> -	kfree(bp_data);
-> -	kfree(wp_info);
-> +free_bp_info:
->  	kfree(bp_info);
-> +free_wp_info:
-> +	kfree(wp_info);
-> +free_bp_data:
-> +	kfree(bp_data);
->  	return ret;
->  }
-> 
+> with some horrible labels.
 
-This replaces a perfectly fine fallthrough with some horrible labels.
-Please don't do that.
+Do they explain better which processing steps should be performed
+for an efficient exception handling in this function implementation?
 
+Regards,
+Markus
