@@ -1,35 +1,36 @@
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Date: Sat, 20 Aug 2016 19:26:42 +0000
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 22 Aug 2016 15:49:24 +0000
 Subject: Re: [PATCH 0/3] hostap: Fine-tuning for a few functions
-Message-Id: <3b3c91ad-3225-3483-bb58-fdee33bf2290@broadcom.com>
+Message-Id: <87shtwvm63.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
-In-Reply-To: <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
+        <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
+        <3b3c91ad-3225-3483-bb58-fdee33bf2290@broadcom.com>
+In-Reply-To: <3b3c91ad-3225-3483-bb58-fdee33bf2290@broadcom.com> (Arend van
+        Spriel's message of "Sat, 20 Aug 2016 21:26:42 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 20-08-16 18:43, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 20 Aug 2016 18:35:43 +0200
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
+Arend van Spriel <arend.vanspriel@broadcom.com> writes:
 
-Is it worth touching this old stuff especially when you are not making
-any functional changes.
+> On 20-08-16 18:43, SF Markus Elfring wrote:
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sat, 20 Aug 2016 18:35:43 +0200
+>> 
+>> A few update suggestions were taken into account
+>> from static source code analysis.
+>
+> Is it worth touching this old stuff especially when you are not making
+> any functional changes.
 
-Regards,
-Arend
+On the other hand if these patches break something this might be a good
+way to get feedback if someone is really using this driver ;)
 
-> Markus Elfring (3):
->   Use memdup_user()
->   Delete an unnecessary jump label
->   Delete unnecessary variable initialisations
-> 
->  .../net/wireless/intersil/hostap/hostap_ioctl.c    | 36 ++++++++--------------
->  1 file changed, 12 insertions(+), 24 deletions(-)
-> 
+But yeah, not really sure what to do with these obsolete drivers like
+hostap, ray_cs and wl3501.
+
+-- 
+Kalle Valo
