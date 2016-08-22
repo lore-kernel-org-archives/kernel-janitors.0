@@ -1,41 +1,71 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 10 Aug 2016 15:45:01 +0000
-Subject: [PATCH] IB/usnic: Fix error return code
-Message-Id: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Doug Ledford <dledford@redhat.com>
+Date: Mon, 22 Aug 2016 18:24:07 +0000
+Subject: Re: [PATCH] IB/usnic: Fix error return code
+Message-Id: <b6ea2a2f-fd60-d235-cc24-0fec5e453de9@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="CeHbaqsDjRumFK1PbNhqbSB8c2j59d24c"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: benve@cisco.com, dgoodell@cisco.com, dledford@redhat.com, sean.hefty@intel.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, benve@cisco.com, dgoodell@cisco.com, sean.hefty@intel.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If 'pci_register_driver' fails, we return 'err' which is known to be 0.
-Return the error instead.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--CeHbaqsDjRumFK1PbNhqbSB8c2j59d24c
+Content-Type: multipart/mixed; boundary="Icl45dbmOD7JN2oj0MqhreR2l1rfEvI6k"
+From: Doug Ledford <dledford@redhat.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, benve@cisco.com,
+ dgoodell@cisco.com, sean.hefty@intel.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Message-ID: <b6ea2a2f-fd60-d235-cc24-0fec5e453de9@redhat.com>
+Subject: Re: [PATCH] IB/usnic: Fix error return code
+References: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1470843901-16506-1-git-send-email-christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/infiniband/hw/usnic/usnic_ib_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--Icl45dbmOD7JN2oj0MqhreR2l1rfEvI6k
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_ib_main.c b/drivers/infiniband/hw/usnic/usnic_ib_main.c
-index c229b9f4a52d..0a89a955550b 100644
---- a/drivers/infiniband/hw/usnic/usnic_ib_main.c
-+++ b/drivers/infiniband/hw/usnic/usnic_ib_main.c
-@@ -664,7 +664,8 @@ static int __init usnic_ib_init(void)
- 		return err;
- 	}
- 
--	if (pci_register_driver(&usnic_ib_pci_driver)) {
-+	err = pci_register_driver(&usnic_ib_pci_driver);
-+	if (err) {
- 		usnic_err("Unable to register with PCI\n");
- 		goto out_umem_fini;
- 	}
--- 
-2.7.4
+On 8/10/2016 11:45 AM, Christophe JAILLET wrote:
+> If 'pci_register_driver' fails, we return 'err' which is known to be 0.=
+
+> Return the error instead.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Thanks, applied.
 
 
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG Key ID: 0E572FDD
 
+
+--Icl45dbmOD7JN2oj0MqhreR2l1rfEvI6k--
+
+--CeHbaqsDjRumFK1PbNhqbSB8c2j59d24c
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQIcBAEBCAAGBQJXu0NHAAoJELgmozMOVy/dirUP/1erX1qjuagMf1ut5VwXTBX+
+5w6ssEcxL7oHda43AlXHqvdbNvF+vD3MQwUP2KS38EyyAZaDr0ULOR/xjEQyiLOo
+DKkmEDDWyIV0xnlDTJuW4G9kjLvNIXw0lw3l0WUimS8R1naAWr/qQNrdAwkRCE2L
+/BoWapfwYUYO/LIHgODBTn6IN8eAP+Bjp/JQuIhkJCy1OmiqJh7Jf+pFavTVsN4Z
+IoKbsBaqGEweJ02V24jt0/oaoy1I5DloyAxZKsDZMEX/q/lb6Y3DV9lstqeBbnx4
+aPHkw0EOyVliZk2Elqq9Ts2ksUIlkhPfN9PQCdPuqaMsSy3GJstQuGxRpCc8vB1D
+xawF2C/jNH2HpYTlMABwlKjyjHkM/VEELuvq49qzAg1LdkTWtxllJ+n+z4KkME9/
+STBm+SzGPuHFMDjhY2qGF6tb9lhIPKDmem+qtqNidwLdiYOuWGArPT0ZGh/mWnl3
+j55Lp+TuyVyERNaSBFRdT4GuC7NisePAkhR3UUh3Lc9GstyZOnCD0fKgs/5H/mzi
+eAj/suCI/kbc88pBYq/u4IH3ACT1RDHdwa0vIV8Bee0igHl9NRBHl9coAWQEuFLg
+ZZzYl1PUyYFZs5FxEyZXTVC97FBgkUToIn/tCQv5SyspUdp4TDVm5qOZ/tdBw0ex
+dSPNGNkaXOTLT4lOENBm
+=ge2/
+-----END PGP SIGNATURE-----
+
+--CeHbaqsDjRumFK1PbNhqbSB8c2j59d24c--
