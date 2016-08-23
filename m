@@ -1,19 +1,20 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 20 Aug 2016 09:32:55 +0000
+From: David Miller <davem@davemloft.net>
+Date: Tue, 23 Aug 2016 00:05:51 +0000
 Subject: Re: [PATCH] mlx5/core: Use memdup_user() rather than duplicating its implementation
-Message-Id: <57B823C7.3040705@bfs.de>
+Message-Id: <20160822.170551.1169143382468496713.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <ceb39933-438d-920d-f294-ea0ce32fd171@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+        <ceb39933-438d-920d-f294-ea0ce32fd171@users.sourceforge.net>
 In-Reply-To: <ceb39933-438d-920d-f294-ea0ce32fd171-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+To: elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, julia.lawall-L2FTfq7BK8M@public.gmane.org
 
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 20 Aug 2016 08:01:22 +0200
 
-
-Am 20.08.2016 08:01, schrieb SF Markus Elfring:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Sat, 20 Aug 2016 07:50:09 +0200
 > 
@@ -25,58 +26,5 @@ Am 20.08.2016 08:01, schrieb SF Markus Elfring:
 > * Return directly if this copy operation failed.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 17 +++--------------
->  1 file changed, 3 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> index 6388bc0..bb89f04 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-> @@ -1132,7 +1132,6 @@ static ssize_t data_write(struct file *filp, const char __user *buf,
->  	struct mlx5_core_dev *dev = filp->private_data;
->  	struct mlx5_cmd_debug *dbg = &dev->cmd.dbg;
->  	void *ptr;
-> -	int err;
->  
->  	if (*pos != 0)
->  		return -EINVAL;
-> @@ -1140,25 +1139,15 @@ static ssize_t data_write(struct file *filp, const char __user *buf,
->  	kfree(dbg->in_msg);
->  	dbg->in_msg = NULL;
->  	dbg->inlen = 0;
-> -
-> -	ptr = kzalloc(count, GFP_KERNEL);
-> -	if (!ptr)
-> -		return -ENOMEM;
-> -
-> -	if (copy_from_user(ptr, buf, count)) {
-> -		err = -EFAULT;
-> -		goto out;
-> -	}
-> +	ptr = memdup_user(buf, count);
-> +	if (IS_ERR(ptr))
-> +		return PTR_ERR(ptr);
->  	dbg->in_msg = ptr;
->  	dbg->inlen = count;
->  
->  	*pos = count;
->  
 
-maybe i am missing something here but why do you need ptr ?
-
-The use of count looks even more confusing it is stored in
- dbg->inlen, *pos and is returned.
-is that realy needed ?
-
-re,
- wh
-
->  	return count;
-> -
-> -out:
-> -	kfree(ptr);
-> -	return err;
->  }
->  
->  static ssize_t data_read(struct file *filp, char __user *buf, size_t count,
+Applied.
