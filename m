@@ -1,60 +1,114 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 22 Aug 2016 08:42:28 +0000
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 23 Aug 2016 04:20:28 +0000
 Subject: Re: [PATCH] serial: vt8500_serial: Fix a parameter of find_first_zero_bit.
-Message-Id: <2512469.eM8MYFl15l@wuerfel>
+Message-Id: <57f44339-76c6-051f-b592-2648afaae336@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1471814425-18949-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1471814425-18949-1-git-send-email-christophe.jaillet@wanadoo.fr>
+ <2512469.eM8MYFl15l@wuerfel>
+In-Reply-To: <2512469.eM8MYFl15l@wuerfel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-On Sunday, August 21, 2016 11:20:25 PM CEST Christophe JAILLET wrote:
-> The 2nd parameter of 'find_first_zero_bit' is the number of bits to search.
-> In this case, we are passing 'sizeof(vt8500_ports_in_use)'.
-> 'vt8500_ports_in_use' is an 'unsigned long'. So the sizeof is likely to
-> return 4.
-> 
-> A few lines below, we check if it is below VT8500_MAX_PORTS, which is 6.
-> 
-> It is likely that the number of bits in a long was expected here, so use
-> BITS_PER_LONG instead.
-> 
-> 
-> It has been spotted by the following coccinelle script:
-> @@
-> expression ret, x;
-> 
-> @@
-> *  ret = \(find_first_bit \| find_first_zero_bit\) (x, sizeof(...));
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Other options are possible:
->   - 'vt8500_ports_in_use' being a 'unsigned long', use ffz to reduce
->     code verbosity
->   - VT8500_MAX_PORTS, in order to be consistent with the test below
+Le 22/08/2016 =E0 10:42, Arnd Bergmann a =E9crit :
+> [...]
+> Sorry, but I'm not following the logic here.
+>
+> [...]
+> You argue that the two have the same meaning, which I see, but
+> why is it better than the existing code?
+>
+> 	Arnd
 
-Sorry, but I'm not following the logic here.
+Hi,
 
-> ---
->  drivers/tty/serial/vt8500_serial.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/vt8500_serial.c b/drivers/tty/serial/vt8500_serial.c
-> index 23cfc5e16b45..935076c50cb1 100644
-> --- a/drivers/tty/serial/vt8500_serial.c
-> +++ b/drivers/tty/serial/vt8500_serial.c
-> @@ -664,7 +664,7 @@ static int vt8500_serial_probe(struct platform_device *pdev)
->  	if (port < 0) {
->  		/* calculate the port id */
->  		port = find_first_zero_bit(&vt8500_ports_in_use,
-> -					sizeof(vt8500_ports_in_use));
-> +					   BITS_PER_LONG);
->  	}
+sorry if my explanation was unclear.
 
-You argue that the two have the same meaning, which I see, but
-why is it better than the existing code?
+What I mean is that if "sizeof(unsigned long) =3D 4" (i.e. 32 bits systems =
 
-	Arnd
+?) then:
+
+	port =3D find_first_zero_bit(&vt8500_ports_in_use, sizeof(vt8500_ports_in_=
+use));
+turns into:
+  	port =3D find_first_zero_bit(&vt8500_ports_in_use, 4);
+
+find_first_zero_bit "Returns the bit number of the first set bit.  If no bi=
+ts are set, returns @size."
+So, in this case, it can return 1, 2, 3 or 4, if one of the 4 first bits is=
+ 0.
+And will also return 4, if none of the 4 first bits is 0.
+
+In no way, 5 or above can be returned.
+
+The code just after is:
+	if (port >=3D VT8500_MAX_PORTS)
+		return -ENODEV;
+It turns into:
+	if (port >=3D 6)
+		return -ENODEV;
+
+
+I see 2 problems there:
+	- First, according to this test, "port =3D 5" seems a legal value, but can=
+ never trigger.
+	- Second, if the first 3 bits are set, the find_first_zero_bit will return=
+ 4, whatever the value of the 4th bit.
+           This 4 can either mean "4th bit is clear" or "no clear bit found=
+, so return @size (i.e. 4)"
+
+ =20
+Using:
+	port =3D find_first_zero_bit(&vt8500_ports_in_use, BITS_PER_LONG);
+Would solve the 2 issues.
+    - 4 would really mean, 4th bit is set.
+    - 5 becomes a possible value.
+    - 6 to 31 would mean: we found a clear bit "in the garbage after the VT=
+8500_MAX_PORTS (i.e. 6) relevant bits".
+    - 32 would mean, all bits set.
+
+These answers look more in line with the "if (port >=3D VT8500_MAX_PORTS)" =
+test.
+
+
+
+Finally, what I meant by "Other options are possible:" is:
+   - 'vt8500_ports_in_use' being a 'unsigned long', use ffz to reduce code =
+verbosity
+	port =3D ffz(&vt8500_ports_in_use);
+     would also work, because it is equivalent to:
+	port =3D find_first_zero_bit(&vt8500_ports_in_use, BITS_PER_LONG);
+
+   - VT8500_MAX_PORTS, in order to be consistent with the test below
+	port =3D find_first_zero_bit(&vt8500_ports_in_use, VT8500_MAX_PORTS);
+     would also work and is maybe more logical in regard to the test "if (p=
+ort >=3D VT8500_MAX_PORTS)"
+
+
+
+Now if "sizeof(unsigned long) =3D 8" (i.e. 64 bits systems ?), the actual c=
+ode would work.
+But using "sizeof(long)" to mean "more than VT8500_MAX_PORTS" is odd.
+In other words, expressing a number of bits using something that gives a si=
+ze in bytes is, IMHO, spurious.
+
+ =20
+All this is pure speculation.
+
+Hoping that it is clearer now ( and that my analysis is right :) )
+
+Best regard,
+CJ
+
+
+---
+L'absence de virus dans ce courrier =E9lectronique a =E9t=E9 v=E9rifi=E9e p=
+ar le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
