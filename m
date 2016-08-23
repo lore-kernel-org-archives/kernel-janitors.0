@@ -1,23 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 04 Aug 2016 10:11:03 +0000
-Subject: Re: [patch] tty: amiserial.c: remove a double irq restore
-Message-Id: <20160804101102.GA4134@mwanda>
+From: Clifton Barnes <clifton.a.barnes@gmail.com>
+Date: Tue, 23 Aug 2016 02:45:05 +0000
+Subject: [PATCH] staging: iio: accel: sca3000: remove extra space
+Message-Id: <1471920305-9474-1-git-send-email-clifton.a.barnes@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160804053403.GL775@mwanda>
- <41427059-b5e4-1b30-e577-5a1cf3f81b29@suse.cz>
-In-Reply-To: <41427059-b5e4-1b30-e577-5a1cf3f81b29@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jslaby@suse.cz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jic23@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Clifton Barnes <clifton.a.barnes@gmail.com>
 
-Oh...  Wow.  I'm really sorry about that.  Thanks for catching the
-mistake.
+fix checkpatch.pl warning about 'Statements should start on a
+tabstop'
 
-It should as well have been caught by static analysis but it wasn't.
-I will work on this so it doesn't happen again.  And I will try to be
-more careful as well.
+Signed-off-by: Clifton Barnes <clifton.a.barnes@gmail.com>
+---
+ drivers/staging/iio/accel/sca3000_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/staging/iio/accel/sca3000_core.c b/drivers/staging/iio/accel/sca3000_core.c
+index b5625f5..61f3241 100644
+--- a/drivers/staging/iio/accel/sca3000_core.c
++++ b/drivers/staging/iio/accel/sca3000_core.c
+@@ -412,7 +412,7 @@ static const struct iio_event_spec sca3000_event = {
+ 		},						\
+ 		.event_spec = &sca3000_event,			\
+ 		.num_event_specs = 1,				\
+-	 }
++	}
+ 
+ static const struct iio_chan_spec sca3000_channels[] = {
+ 	SCA3000_CHAN(0, IIO_MOD_X),
+-- 
+2.7.4
+
