@@ -1,7 +1,9 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 Aug 2016 16:30:33 +0000
-Subject: [PATCH v2] IB/core: Use memdup_user() rather than duplicating its implementation
-Message-Id: <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
+From: Doug Ledford <dledford@redhat.com>
+Date: Tue, 23 Aug 2016 16:43:52 +0000
+Subject: Re: [PATCH v2] IB/core: Use memdup_user() rather than duplicating its implementation
+Message-Id: <ce171524-747e-5a14-105f-62c7955a7448@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="GEOBdXTaBM6BexNbE9b3CMC5GaAs0hBNi"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
@@ -10,63 +12,85 @@ References: <566ABCD9.1060404@users.sourceforge.net>
  <1471809188.3746.18.camel@perches.com>
  <5e87f691-edb9-0a12-ff7a-59854c2ca2f8@users.sourceforge.net>
  <1471859215.2764.24.camel@opteya.com>
-In-Reply-To: <1471859215.2764.24.camel-RlY5vtjFyJ3QT0dZR+AlfA@public.gmane.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Yann Droneaud <ydroneaud-RlY5vtjFyJ3QT0dZR+AlfA@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+ <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
+In-Reply-To: <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, Hal Rosenstock <hal.rosenstock@gmail.com>, Joe Perches <joe@perches.com>, Sean Hefty <sean.hefty@intel.com>, Yann Droneaud <ydroneaud@opteya.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 Aug 2016 18:23:24 +0200
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--GEOBdXTaBM6BexNbE9b3CMC5GaAs0hBNi
+Content-Type: multipart/mixed; boundary="s96fhQJPJso0wPfmjRubWuEEtwgQfGuNc"
+From: Doug Ledford <dledford@redhat.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+ linux-rdma@vger.kernel.org, Hal Rosenstock <hal.rosenstock@gmail.com>,
+ Joe Perches <joe@perches.com>, Sean Hefty <sean.hefty@intel.com>,
+ Yann Droneaud <ydroneaud@opteya.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Julia Lawall <julia.lawall@lip6.fr>
+Message-ID: <ce171524-747e-5a14-105f-62c7955a7448@redhat.com>
+Subject: Re: [PATCH v2] IB/core: Use memdup_user() rather than duplicating its
+ implementation
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
+ <1471802623.3746.1.camel@perches.com>
+ <683187e0-2e6a-88c0-f87a-9c5f0489370a@users.sourceforge.net>
+ <1471809188.3746.18.camel@perches.com>
+ <5e87f691-edb9-0a12-ff7a-59854c2ca2f8@users.sourceforge.net>
+ <1471859215.2764.24.camel@opteya.com>
+ <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
+In-Reply-To: <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
 
-* Reuse existing functionality from memdup_user() instead of keeping
-  duplicate source code.
+--s96fhQJPJso0wPfmjRubWuEEtwgQfGuNc
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-  This issue was detected by using the Coccinelle software.
+On 8/22/2016 12:30 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 22 Aug 2016 18:23:24 +0200
+>=20
+> * Reuse existing functionality from memdup_user() instead of keeping
+>   duplicate source code.
+>=20
+>   This issue was detected by using the Coccinelle software.
+>=20
+> * The local variable "ret" will be set to an appropriate value a bit la=
+ter.
+>   Thus omit the explicit initialisation at the beginning.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-* The local variable "ret" will be set to an appropriate value a bit later.
-  Thus omit the explicit initialisation at the beginning.
+Applied, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
 
-v2: The desired changes were put into a single patch instead of
-    distributing them over two update steps.
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG Key ID: 0E572FDD
 
- include/rdma/ib_verbs.h | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-index 6f667dd..0d8100f 100644
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -2199,22 +2199,17 @@ static inline bool ib_is_udata_cleared(struct ib_udata *udata,
- 				       size_t len)
- {
- 	const void __user *p = udata->inbuf + offset;
--	bool ret = false;
-+	bool ret;
- 	u8 *buf;
- 
- 	if (len > USHRT_MAX)
- 		return false;
- 
--	buf = kmalloc(len, GFP_KERNEL);
--	if (!buf)
-+	buf = memdup_user(p, len);
-+	if (IS_ERR(buf))
- 		return false;
- 
--	if (copy_from_user(buf, p, len))
--		goto free;
--
- 	ret = !memchr_inv(buf, 0, len);
--
--free:
- 	kfree(buf);
- 	return ret;
- }
--- 
-2.9.3
+--s96fhQJPJso0wPfmjRubWuEEtwgQfGuNc--
 
+--GEOBdXTaBM6BexNbE9b3CMC5GaAs0hBNi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQIcBAEBCAAGBQJXvH1IAAoJELgmozMOVy/dy3AP/2l/Jzt8M+QrvlMCigQ7jMPG
+NMnZYzgjsIksk9PHDd38opAj2oKa4wWLkzDk311weWqegLUUr79HAJFr3hhtB532
+Xa7iXq7/94AI6N8rX06tP7r3vLc0C9T6CpX498j6NuIgv+nY8si/j31NXkaEK6Ia
+UwlrR5699FIPHtNyG/ujddkZEuiWyiAh3kRH4ABkCC9ig1n+uYYJKoKpXfXJH15w
+uH8CL10SXbAsxSGY5N2usLBPhqbmStVJiJ6UN85ofDTdWQ1/2jMW5ILzsInm5PPU
+YCEmNZ2Q/Lid+V+hNHg0YDFwd0jBN81mzXuUkONJ3dnHMCxea9RCh88qwWxn8+Mi
+bIM8vrxgj2Ttlu6XkfYtmD8KsAvTA+5go8yy4cuJve2ucqr6YkNVRgPW2u1BwQRt
+72fwOSlsdtmKjRFeKEbymiOO72O4icsnh6GIL3rWiCuEbEGQiLj0swPZcDfBNB6Z
+fmT4LdlrkjV38TFAt7Cg3D1NKtt8XaIer1CmZe5uIEuoFNoNa0lPz+29tJoQS8Au
+hRv22mhgQh3An4jN3GSK3MZRcFOFeQFgoT28yyhGDSkXhRJjNFiMdnSjor7b5I0N
+QbF2KL/fuBiFhUCNnbfKK9jKLCsYGqdodU+MMqw4xu+qNlNYHFLprE/epOi2QiRB
+CCHwbZ0xekC1anoPaDBo
+=7eKk
+-----END PGP SIGNATURE-----
+
+--GEOBdXTaBM6BexNbE9b3CMC5GaAs0hBNi--
