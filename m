@@ -1,46 +1,55 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 24 Aug 2016 07:21:26 +0000
-Subject: Re: [PATCH v2] serial: vt8500_serial: Fix a parameter of find_first_zero_bit.
-Message-Id: <10942927.gm6yg0F9Sl@wuerfel>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Aug 2016 20:36:54 +0000
+Subject: [PATCH] powerpc/powernv/pci: Use kmalloc_array() in two functions
+Message-Id: <817567b2-cdf6-7f7b-6041-9a026ea10a0f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472015218-31826-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1472015218-31826-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linuxppc-dev@lists.ozlabs.org, Alexey Kardashevskiy <aik@ozlabs.ru>, Alistair Popple <alistair@popple.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Gavin Shan <gwshan@linux.vnet.ibm.com>, Ian Munsie <imunsie@au1.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Wei Yang <weiyang@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Wednesday, August 24, 2016 7:06:58 AM CEST Christophe JAILLET wrote:
-> The 2nd parameter of 'find_first_zero_bit' is the number of bits to search.
-> In this case, we are passing 'sizeof(vt8500_ports_in_use)'.
-> 'vt8500_ports_in_use' is an 'unsigned long'. So the sizeof is likely to
-> return 4 on a 32 bits kernel.
-> 
-> A few lines below, we check if it is below VT8500_MAX_PORTS, which is 6.
-> 
-> It is likely that the number of bits in a long was expected here.
-> 
-> In order to fix it:
->    - use DECLARE_BITMAP when declaring the vt8500_ports_in_use
->    - use VT8500_MAX_PORTS as a maximum value when checking/setting bits in
->      this bitmap
->    - modify code now that 'vt8500_ports_in_use' has become a pointer
->      because of the use of DECLARE_BITMAP
-> 
-> 
-> It has been spotted by the following coccinelle script:
-> @@
-> expression ret, x;
-> 
-> @@
-> *  ret = \(find_first_bit \| find_first_zero_bit\) (x, sizeof(...));
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: - use of VT8500_MAX_PORTS instead of BITS_PER_LONG to better self
->       document the code
->     - declare vt8500_ports_in_use with DECLARE_BITMAP in order to self
->       document even better and to be foolproof should VT8500_MAX_PORTS
->       be changed one day
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Aug 2016 22:26:37 +0200
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus reuse the corresponding function "kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/platforms/powernv/pci-ioda.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+index fd9444f..2366552 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -1305,7 +1305,9 @@ static int pnv_pci_vf_assign_m64(struct pci_dev *pdev, u16 num_vfs)
+ 	else
+ 		m64_bars = 1;
+ 
+-	pdn->m64_map = kmalloc(sizeof(*pdn->m64_map) * m64_bars, GFP_KERNEL);
++	pdn->m64_map = kmalloc_array(m64_bars,
++				     sizeof(*pdn->m64_map),
++				     GFP_KERNEL);
+ 	if (!pdn->m64_map)
+ 		return -ENOMEM;
+ 	/* Initialize the m64_map to IODA_INVALID_M64 */
+@@ -1572,8 +1574,9 @@ int pnv_pci_sriov_enable(struct pci_dev *pdev, u16 num_vfs)
+ 
+ 		/* Allocating pe_num_map */
+ 		if (pdn->m64_single_mode)
+-			pdn->pe_num_map = kmalloc(sizeof(*pdn->pe_num_map) * num_vfs,
+-					GFP_KERNEL);
++			pdn->pe_num_map = kmalloc_array(num_vfs,
++							sizeof(*pdn->pe_num_map),
++							GFP_KERNEL);
+ 		else
+ 			pdn->pe_num_map = kmalloc(sizeof(*pdn->pe_num_map), GFP_KERNEL);
+ 
+-- 
+2.9.3
+
