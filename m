@@ -1,23 +1,31 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 26 Aug 2016 03:24:19 +0000
-Subject: Re: [PATCH] aic94xx: Add missing error code assignment before test
-Message-Id: <yq1r39c9pr0.fsf@sermon.lab.mkp.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Aug 2016 12:10:13 +0000
+Subject: Re: Replacing specific kmalloc() calls by kmalloc_array()?
+Message-Id: <f2c99dcc-8dea-b8a4-5244-08bb7c0ee1e8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470742202-11100-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1470742202-11100-1-git-send-email-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Tue, 9 Aug 2016 13:30:02 +0200")
+References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
+ <033d8595-d051-1fa8-95b1-5d2056eb5667@users.sourceforge.net>
+ <57B562F3.1080004@bfs.de> <alpine.DEB.2.10.1608180502080.3107@hadrien>
+ <9db1986a-9b93-72ca-f35e-85b5b5e9f351@redhat.com>
+In-Reply-To: <9db1986a-9b93-72ca-f35e-85b5b5e9f351@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, walter harms <wharms@bfs.de>, kvm@vger.kernel.org, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->>>>> "Christophe" = Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+> Or kmalloc_array, since zeroing is not necessary.  Might be an idea for
+> a new Coccinelle script, like
+> 
+> - kmalloc (N * sizeof T, GFP)
+> + kmalloc_array(N, sizeof T, GFP)
 
-Christophe> It is likely that checking the result of
-Christophe> 'pci_write_config_dword' is expected here.
+I have picked your idea up. The corresponding script for the semantic
+patch language became longer than your general suggestion
+(if additional source code control flow aspects are integrated).
 
-Applied to 4.9/scsi-queue.
+Would it make sense to check any more function combinations
+in a similar way?
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Regards,
+Markus
