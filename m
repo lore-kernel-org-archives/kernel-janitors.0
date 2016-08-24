@@ -1,79 +1,83 @@
-From: Cornelia Huck <cornelia.huck@de.ibm.com>
-Date: Mon, 22 Aug 2016 21:28:36 +0000
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Wed, 24 Aug 2016 15:10:03 +0000
 Subject: Re: [PATCH 3/4] KVM-S390: Less function calls in kvm_s390_import_bp_data() after error detection
-Message-Id: <20160822232836.1e89676f.cornelia.huck@de.ibm.com>
+Message-Id: <f9f50675-b283-4c03-8764-c7c570647fe4@de.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
-        <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
-        <20160822150048.309a3e10.cornelia.huck@de.ibm.com>
-        <cff92477-f426-a4c7-fffb-f8bbc378afe7@users.sourceforge.net>
-        <20160822213736.62f1ae29.cornelia.huck@de.ibm.com>
-        <5da7978a-922b-8ccc-fce4-2bffffca888f@users.sourceforge.net>
-In-Reply-To: <5da7978a-922b-8ccc-fce4-2bffffca888f@users.sourceforge.net>
+ <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
+In-Reply-To: <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, Christian =?UTF-8?B?Qm9ybnRyw6RnZXI=?= <borntraeger@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, kvm@vger.kernel.org, linux-s390@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, 22 Aug 2016 23:17:26 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-
-> >>>> @@ -273,10 +273,12 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
-> >>>>  	vcpu->arch.guestdbg.nr_hw_wp = nr_wp;
-> >>>>  	vcpu->arch.guestdbg.hw_wp_info = wp_info;
-> >>>>  	return 0;
-> >>>> -error:
-> >>>> -	kfree(bp_data);
-> >>>> -	kfree(wp_info);
-> >>>> +free_bp_info:
-> >>>>  	kfree(bp_info);
-> >>>> +free_wp_info:
-> >>>> +	kfree(wp_info);
-> >>>> +free_bp_data:
-> >>>> +	kfree(bp_data);
-> >>>>  	return ret;
-> >>>>  }
-> >>>>
-> >>>
-> >>> This replaces a perfectly fine fallthrough
-> >>
-> >> The usage of a single goto label like "error" seems to be convenient.
-> >> But how do these habits fit to the current Linux coding style convention?
-> >>
-> >>
-> >>> with some horrible labels.
-> >>
-> >> Do they explain better which processing steps should be performed
-> >> for an efficient exception handling in this function implementation?
-> > 
-> > *sigh*
-> > 
-> > It's _exception handling_. It does not need to be "efficient",
+On 08/17/2016 02:10 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 17 Aug 2016 19:25:50 +0200
 > 
-> I imagine that run time situations could evolve where software efficiency
-> will also matter for this purpose.
-
-*major sigh*
-
-We can start to optimize error handling that should never run after we
-fixed every other performance problem that we have. Not earlier.
-
+> The kfree() function was called in a few cases by the
+> kvm_s390_import_bp_data() function during error handling
+> even if a passed variable contained a null pointer.
 > 
+> Adjust jump targets according to the Linux coding style convention.
 > 
-> > it needs to be easily parsable by humans.
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  arch/s390/kvm/guestdbg.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
 > 
-> I guess that we have got different preferences for this detail.
+> diff --git a/arch/s390/kvm/guestdbg.c b/arch/s390/kvm/guestdbg.c
+> index 8f886ee..f2514af 100644
+> --- a/arch/s390/kvm/guestdbg.c
+> +++ b/arch/s390/kvm/guestdbg.c
+> @@ -239,7 +239,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+>  		wp_info = kmalloc(size, GFP_KERNEL);
+>  		if (!wp_info) {
+>  			ret = -ENOMEM;
+> -			goto error;
+> +			goto free_bp_data;
+>  		}
+>  	}
+>  	size = nr_bp * sizeof(*bp_info);
+> @@ -247,7 +247,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+>  		bp_info = kmalloc(size, GFP_KERNEL);
+>  		if (!bp_info) {
+>  			ret = -ENOMEM;
+> -			goto error;
+> +			goto free_wp_info;
+>  		}
+>  	}
+> 
+> @@ -257,7 +257,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+>  			ret = __import_wp_info(vcpu, &bp_data[i],
+>  					       &wp_info[nr_wp]);
+>  			if (ret)
+> -				goto error;
+> +				goto free_bp_info;
+>  			nr_wp++;
+>  			break;
+>  		case KVM_HW_BP:
+> @@ -273,10 +273,12 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+>  	vcpu->arch.guestdbg.nr_hw_wp = nr_wp;
+>  	vcpu->arch.guestdbg.hw_wp_info = wp_info;
+>  	return 0;
+> -error:
+> -	kfree(bp_data);
+> -	kfree(wp_info);
+> +free_bp_info:
+>  	kfree(bp_info);
+> +free_wp_info:
+> +	kfree(wp_info);
+> +free_bp_data:
+> +	kfree(bp_data);
+>  	return ret;
+>  }
 
-And I'm maintainer for this code.
+I agree with Cornelia, while it seems correct from a technical point of view, it will
+make the code harder to maintain. For example if we ever add a new malloc and remove 
+another one over time we would need to reshuffle the labels and this did went wrong
+several times in the past.
 
-> 
-> 
-> > If in doubt, the compiler will be _much_ better at optimizing
-> > that kind of stuff anyway.
-> 
-> Which compiler (or optimizer) implementation is capable to restructure
-> the jump targets for you automatically in the way I propose here?
-
-No, please stop right here. NACK. EOD.
+Christian
 
