@@ -1,60 +1,31 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Thu, 04 Aug 2016 08:12:28 +0000
-Subject: Re: [patch] fcoe: use kfree_skb() to free an skb
-Message-Id: <20160804081228.ie7yuhi37bjlatrw@c203.arch.suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Aug 2016 18:30:12 +0000
+Subject: [PATCH v2 0/2] KVM: s390: Fine-tuning for kvm_s390_import_bp_data()
+Message-Id: <e72e9854-443b-7033-d674-8a2d237600ca@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160804052756.GH775@mwanda>
-In-Reply-To: <20160804052756.GH775@mwanda>
+References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
+ <bb710b21-d8c4-e172-63d4-b46c80645cb3@users.sourceforge.net>
+ <ddb2bbd9-757b-fc62-8642-ce827a7a666d@de.ibm.com>
+In-Reply-To: <ddb2bbd9-757b-fc62-8642-ce827a7a666d@de.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: "James E.J. Bottomley" <jejb-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Martin K. Petersen" <martin.petersen-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, fcoe-devel-s9riP+hp16TNLxjTenLetw@public.gmane.org, Johannes Thumshirn <jth-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kvm@vger.kernel.org, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Walter Harms <wharms@bfs.de>
 
-On Thu, Aug 04, 2016 at 08:27:56AM +0300, Dan Carpenter wrote:
-> This should be doing kfree_skb() instead of kfree().
->=20
-> Fixes: 9a6cf881df02 ('fcoe: implement FIP VLAN responder')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
-> index a569c65..dcf3653 100644
-> --- a/drivers/scsi/fcoe/fcoe_ctlr.c
-> +++ b/drivers/scsi/fcoe/fcoe_ctlr.c
-> @@ -2923,7 +2923,7 @@ static int fcoe_ctlr_vlan_recv(struct fcoe_ctlr *fi=
-p, struct sk_buff *skb)
->  	mutex_unlock(&fip->ctlr_mutex);
-> =20
->  drop:
-> -	kfree(skb);
-> +	kfree_skb(skb);
->  	return rc;
->  }
-> =20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 24 Aug 2016 20:20:02 +0200
 
-Hi Dan,
+A few update suggestions were taken into account
+from static source code analysis.
 
-This was already sent by Wei Yongjun and is
-https://patchwork.kernel.org/patch/9245273/. Should be queued in Martin's t=
-ree
-already.
+Markus Elfring (2):
+  Improve determination of sizes
+  Use memdup_user() rather than duplicating code
 
-Thanks,
-	Johannes
+ arch/s390/kvm/guestdbg.c | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
 
---=20
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=FCrnberg)
-Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+2.9.3
+
