@@ -1,61 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 21:12:05 +0000
-Subject: [PATCH 2/2] mmc-block: Rename jump labels in mmc_blk_ioctl_copy_from_user()
-Message-Id: <6b8e8d4b-3c82-af57-1bad-b143654a8d70@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 05:47:04 +0000
+Subject: [PATCH] [IA64] MCA: Use kmalloc_array() in init_record_index_pools()
+Message-Id: <71e94d34-27fc-1c98-50aa-be96abddabab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <68870228-c6a0-5de9-daee-2522a1303857@users.sourceforge.net>
-In-Reply-To: <68870228-c6a0-5de9-daee-2522a1303857@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Grant Grundler <grundler@chromium.org>, Jens Axboe <axboe@fb.com>, Jon Hunter <jonathanh@nvidia.com>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Tony Luck <tony.luck@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Aug 2016 22:52:50 +0200
+Date: Thu, 25 Aug 2016 07:37:46 +0200
 
-Adjust jump targets according to the Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mmc/card/block.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/ia64/kernel/mca_drv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
-index 6ce9492..0d83c56 100644
---- a/drivers/mmc/card/block.c
-+++ b/drivers/mmc/card/block.c
-@@ -346,13 +346,13 @@ static struct mmc_blk_ioc_data *mmc_blk_ioctl_copy_from_user(
+diff --git a/arch/ia64/kernel/mca_drv.c b/arch/ia64/kernel/mca_drv.c
+index 94f8bf7..e4ce128 100644
+--- a/arch/ia64/kernel/mca_drv.c
++++ b/arch/ia64/kernel/mca_drv.c
+@@ -349,9 +349,9 @@ init_record_index_pools(void)
  
- 	if (copy_from_user(&idata->ic, user, sizeof(idata->ic))) {
- 		idata = ERR_PTR(-EFAULT);
--		goto idata_err;
-+		goto free_idata;
- 	}
+ 	/* - 3 - */
+ 	slidx_pool.max_idx = (rec_max_size/sect_min_size) * 2 + 1;
+-	slidx_pool.buffer -		kmalloc(slidx_pool.max_idx * sizeof(slidx_list_t), GFP_KERNEL);
+-
++	slidx_pool.buffer = kmalloc_array(slidx_pool.max_idx,
++					  sizeof(*slidx_pool.buffer),
++					  GFP_KERNEL);
+ 	return slidx_pool.buffer ? 0 : -ENOMEM;
+ }
  
- 	idata->buf_bytes = (u64) idata->ic.blksz * idata->ic.blocks;
- 	if (idata->buf_bytes > MMC_IOC_MAX_BYTES) {
- 		idata = ERR_PTR(-EOVERFLOW);
--		goto idata_err;
-+		goto free_idata;
- 	}
- 
- 	if (!idata->buf_bytes) {
-@@ -365,11 +365,11 @@ static struct mmc_blk_ioc_data *mmc_blk_ioctl_copy_from_user(
- 				 idata->buf_bytes);
- 	if (IS_ERR(idata->buf)) {
- 		idata = (void *) idata->buf;
--		goto idata_err;
-+		goto free_idata;
- 	}
- 	return idata;
- 
--idata_err:
-+free_idata:
- 	kfree(idata);
- out:
- 	return idata;
 -- 
 2.9.3
 
