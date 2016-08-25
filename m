@@ -1,7 +1,7 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Date: Thu, 25 Aug 2016 17:46:10 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Date: Thu, 25 Aug 2016 22:46:32 +0000
 Subject: Re: [PATCH] arm: sys_oabi-compat: Use kmalloc_array() in two functions
-Message-Id: <alpine.LFD.2.20.1608251334360.17623@knanqh.ubzr>
+Message-Id: <20160825224632.GL1041@n2100.armlinux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
 In-Reply-To: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
@@ -10,29 +10,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Thu, 25 Aug 2016, SF Markus Elfring wrote:
-
+On Thu, Aug 25, 2016 at 05:50:36PM +0200, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Thu, 25 Aug 2016 17:45:23 +0200
 > 
 > Multiplications for the size determination of memory allocations
 > indicated that array data structures should be processed.
+
+I'm afraid the above comment doesn't mean much to me, can you rephrase?
+Maybe:
+
+"Multiplications for kmalloc size arguments are liable to overflow,
+potentially causing a potential security issue.  Using kmalloc_array()
+allows the overflow to be caught and the allocation failed.  Switch
+these callsites to kmalloc_array()."
+
 > Thus use the corresponding function "kmalloc_array".
 > 
 > This issue was detected by using the Coccinelle software.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-The use of kmalloc_array() introduces a duplicate of the size capping 
-check that already exists in the code.  However it seems that gcc is 
-smart enough to figure that out and doesn't emit it twice.
-
-Note that I'm not implying that the existing check should be removed if 
-this patch is applied though. Having it there makes the code clearer. 
-But if this patch makes a Coccinelle script happier then ...
-
-Acked-by: Nicolas Pitre <nico@linaro.org>
-
 > ---
 >  arch/arm/kernel/sys_oabi-compat.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -47,19 +44,17 @@ Acked-by: Nicolas Pitre <nico@linaro.org>
 >  		return -EFAULT;
 > -	kbuf = kmalloc(sizeof(*kbuf) * maxevents, GFP_KERNEL);
 > +	kbuf = kmalloc_array(maxevents, sizeof(*kbuf), GFP_KERNEL);
->  	if (!kbuf)
->  		return -ENOMEM;
->  	fs = get_fs();
-> @@ -323,7 +323,7 @@ asmlinkage long sys_oabi_semtimedop(int semid,
->  		return -EINVAL;
->  	if (!access_ok(VERIFY_READ, tsops, sizeof(*tsops) * nsops))
->  		return -EFAULT;
-> -	sops = kmalloc(sizeof(*sops) * nsops, GFP_KERNEL);
-> +	sops = kmalloc_array(nsops, sizeof(*sops), GFP_KERNEL);
->  	if (!sops)
->  		return -ENOMEM;
->  	err = 0;
-> -- 
-> 2.9.3
-> 
-> 
+
+kmalloc_array() here actually buys us no additional safety at either
+of the callsites in your patch - we need to have carefully checked
+the values to ensure they don't overflow prior to the kmalloc for
+other reasons.  That's probably something that should be noted in
+the commit message too, so reviewers have the confidence that you're
+not blindly changing everything...
+
+Thanks.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
