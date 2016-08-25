@@ -1,60 +1,45 @@
-From: bsegall@google.com
-Date: Fri, 26 Aug 2016 17:04:45 +0000
-Subject: Re: [PATCH] sched/fair: Fix that tasks are not constrained by cfs_b->quota on hotplug core, when hot
-Message-Id: <xm26h9a7folu.fsf@bsegall-linux.mtv.corp.google.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 09:17:06 +0000
+Subject: [PATCH] x86/mce: Use kmalloc_array() in mce_chrdev_read()
+Message-Id: <88a63817-f601-28ce-ed2f-ffeb28512528@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472204439-3542-1-git-send-email-jhez.kim@samsung.com>
-In-Reply-To: <1472204439-3542-1-git-send-email-jhez.kim@samsung.com> (Jeehong
-        Kim's message of "Fri, 26 Aug 2016 18:40:39 +0900")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeehong Kim <jhez.kim@samsung.com>
-Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, ezjjilong@gmail.com
+To: linux-edac@vger.kernel.org, x86@kernel.org, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-Jeehong Kim <jhez.kim@samsung.com> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 11:00:05 +0200
 
-> In case that CONFIG_HOTPLUG_CPU and CONFIG_CFS_BANDWIDTH is turned on and tasks in bandwidth controlled task group run on hotplug core, the tasks are not controlled by cfs_b->quota when hotplug core is offline and then online. The remaining tasks in task group consume all of cfs_b->quota on other cores.
->
-> The cause of this problem is described as below;
->
-> 1. When hotplug core is offline while tasks in task group run on hotplug core, unregister_fair_sched_group() deletes leaf_cfs_rq_list of tg->cfs_rq[cpu] from &rq_of(cfs_rq)->leaf_cfs_rq_list.
->
-> 2. Then, when hotplug core is online, update_runtime_enabled() registers cfs_b->quota on cfs_rq->runtime_enabled of all leaf cfs_rq on runqueue. However, because this is before	enqueue_entity() adds &cfs_rq->leaf_cfs_rq_list on &rq_of(cfs_rq)->leaf_cfs_rq_list, cfs->quota is not register on cfs_rq->runtime_enabled.
->
-> To resolve this problem, this patch registers cfs_b->quota on cfs_rq->runtime_enabled after list_add_leaf_cfs_rq() for every enqueue_entity().
->
-> Signed-off-by: Jeehong Kim <jhez.kim@samsung.com>
-> ---
->  kernel/sched/fair.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 6488815..1f4b104 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4246,9 +4246,16 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
->   */
->  static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
->  {
-> +	struct cfs_bandwidth *cfs_b = &cfs_rq->tg->cfs_bandwidth;
-> +
->  	if (!cfs_bandwidth_used())
->  		return;
->
-> +	/* register cfs_b->quota */
-> +	raw_spin_lock(&cfs_b->lock);
-> +	cfs_rq->runtime_enabled = cfs_b->quota != RUNTIME_INF;
-> +	raw_spin_unlock(&cfs_b->lock);
-> +
->  	/* an active group must be handled by the update_curr()->put() path */
->  	if (!cfs_rq->runtime_enabled || cfs_rq->curr)
->  		return;
-> --
-> 1.9.1
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kmalloc_array".
 
-It would be much better to avoid taking the cfs_b lock on every enqueue.
+  This issue was detected by using the Coccinelle software.
 
-update_runtime_enabled could instead walk the whole tg tree, which while
-it would also hit tgs that have never run on this rq, would be
-sufficient (and probably not much more expensive).
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/x86/kernel/cpu/mcheck/mce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 79d8ec8..0bc831d 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1901,7 +1901,7 @@ static ssize_t mce_chrdev_read(struct file *filp, char __user *ubuf,
+ 	unsigned prev, next;
+ 	int i, err;
+ 
+-	cpu_tsc = kmalloc(nr_cpu_ids * sizeof(long), GFP_KERNEL);
++	cpu_tsc = kmalloc_array(nr_cpu_ids, sizeof(*cpu_tsc), GFP_KERNEL);
+ 	if (!cpu_tsc)
+ 		return -ENOMEM;
+ 
+-- 
+2.9.3
+
