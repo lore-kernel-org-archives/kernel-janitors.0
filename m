@@ -1,67 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 27 Aug 2016 16:12:33 +0000
-Subject: Re: KVM-S390: Less function calls in kvm_s390_import_bp_data() after error detection
-Message-Id: <05fa56cb-843e-39bd-847d-1b31b5a726b5@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 12:44:07 +0000
+Subject: [PATCH] xtensa-simdisk: Use kmalloc_array() in simdisk_init()
+Message-Id: <dbf33595-b8df-4082-c78f-4821403edee0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
- <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
- <f9f50675-b283-4c03-8764-c7c570647fe4@de.ibm.com>
-In-Reply-To: <f9f50675-b283-4c03-8764-c7c570647fe4@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>
-Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Al Viro <viro@zeniv.linux.org.uk>, Chris Zankel <chris@zankel.net>, Jens Axboe <axboe@fb.com>, Keith Busch <keith.busch@intel.com>, Max Filippov <jcmvbkbc@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
->> @@ -273,10 +273,12 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
->>  	vcpu->arch.guestdbg.nr_hw_wp = nr_wp;
->>  	vcpu->arch.guestdbg.hw_wp_info = wp_info;
->>  	return 0;
->> -error:
->> -	kfree(bp_data);
->> -	kfree(wp_info);
->> +free_bp_info:
->>  	kfree(bp_info);
->> +free_wp_info:
->> +	kfree(wp_info);
->> +free_bp_data:
->> +	kfree(bp_data);
->>  	return ret;
->>  }
-> 
-> I agree with Cornelia,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 14:28:09 +0200
 
-This is generally fine.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
+  This issue was detected by using the Coccinelle software.
 
-> while it seems correct from a technical point of view,
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-Thanks for another bit of acknowledgement.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/xtensa/platforms/iss/simdisk.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/arch/xtensa/platforms/iss/simdisk.c b/arch/xtensa/platforms/iss/simdisk.c
+index f58a4e6..0a86292 100644
+--- a/arch/xtensa/platforms/iss/simdisk.c
++++ b/arch/xtensa/platforms/iss/simdisk.c
+@@ -316,8 +316,7 @@ static int __init simdisk_init(void)
+ 	if (simdisk_count > MAX_SIMDISK_COUNT)
+ 		simdisk_count = MAX_SIMDISK_COUNT;
+ 
+-	sddev = kmalloc(simdisk_count * sizeof(struct simdisk),
+-			GFP_KERNEL);
++	sddev = kmalloc_array(simdisk_count, sizeof(*sddev), GFP_KERNEL);
+ 	if (sddev = NULL)
+ 		goto out_unregister;
+ 
+-- 
+2.9.3
 
-> it will make the code harder to maintain.
-
-I agree that there some efforts and challenges involved.
-
-
-> For example if we ever add a new malloc and remove another one
-
-Do you see any changes coming from this direction?
-
-
-> over time we would need to reshuffle the labels
-
-This can occasionally happen, can't it?
-
-
-> and this did went wrong several times in the past.
-
-Would you like to add any corresponding software development experiences
-to discussions around a topic like "CodingStyle: add some more error
-handling guidelines"?
-
-https://www.spinics.net/lists/linux-doc/msg39307.html
-http://marc.info/?l=linux-doc&m7187538413914
-
-Regards,
-Markus
