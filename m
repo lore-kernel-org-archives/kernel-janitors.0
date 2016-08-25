@@ -1,42 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 08:56:40 +0000
-Subject: [PATCH 00/11] use of_property_read_bool
-Message-Id: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 08:24:00 +0000
+Subject: [PATCH 2/2] sparc: Delete an unnecessary initialisation in led_proc_write()
+Message-Id: <e09211e6-4aae-68f8-b912-c1415b4539f0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0ca0235c-ddb9-0534-3bde-b4aaa48da92e@users.sourceforge.net>
+In-Reply-To: <0ca0235c-ddb9-0534-3bde-b4aaa48da92e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+To: sparclinux@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-Use of_property_read_bool to check for the existence of a property.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 09:55:22 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The local variable "buf" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-// <smpl>
-@@
-expression e1,e2;
-statement S2,S1;
-@@
--       if (of_get_property(e1,e2,NULL))
-+       if (of_property_read_bool(e1,e2))
-        S1 else S2
-// </smpl>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ arch/sparc/kernel/led.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/powerpc/sysdev/mpic.c                  |    2 +-
- drivers/i2c/busses/i2c-mpc.c                |    2 +-
- drivers/mmc/host/sdhci-of-esdhc.c           |    2 +-
- drivers/net/ethernet/freescale/xgmac_mdio.c |    3 +--
- drivers/phy/phy-qcom-ufs.c                  |    2 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c   |    2 +-
- drivers/soc/fsl/qe/qe_tdm.c                 |    2 +-
- drivers/soc/ti/knav_qmss_queue.c            |    2 +-
- drivers/tty/serial/atmel_serial.c           |    8 ++++----
- drivers/usb/host/fsl-mph-dr-of.c            |    6 +++---
- sound/soc/codecs/ab8500-codec.c             |   10 +++++-----
- sound/soc/sh/rcar/ssi.c                     |    2 +-
- sound/soc/soc-core.c                        |    2 +-
- 13 files changed, 22 insertions(+), 23 deletions(-)
+diff --git a/arch/sparc/kernel/led.c b/arch/sparc/kernel/led.c
+index 7444e4a..d6671af 100644
+--- a/arch/sparc/kernel/led.c
++++ b/arch/sparc/kernel/led.c
+@@ -64,7 +64,7 @@ static int led_proc_open(struct inode *inode, struct file *file)
+ static ssize_t led_proc_write(struct file *file, const char __user *buffer,
+ 			      size_t count, loff_t *ppos)
+ {
+-	char *buf = NULL;
++	char *buf;
+ 
+ 	if (count > LED_MAX_LENGTH)
+ 		count = LED_MAX_LENGTH;
+-- 
+2.9.3
+
