@@ -1,46 +1,30 @@
-From: Jan Kasprzak <kas@fi.muni.cz>
-Date: Thu, 25 Aug 2016 09:13:52 +0000
-Subject: Re: wan-cosa: Use memdup_user() rather than duplicating its implementation
-Message-Id: <20160825091352.GZ10241@fi.muni.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 17:34:29 +0000
+Subject: Re: Software evolution around scripts for the semantic patch langugae
+Message-Id: <b35caa5e-35c7-d2d9-b1e0-bd8ca5379535@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5d335025-5f52-d4b6-0b60-89a2fd354694@users.sourceforge.net>
- <20160824152154.GT10241@fi.muni.cz>
- <375bce2b-6c19-902e-65ce-cccaedd2184e@users.sourceforge.net>
-In-Reply-To: <375bce2b-6c19-902e-65ce-cccaedd2184e@users.sourceforge.net>
+References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
+ <bb710b21-d8c4-e172-63d4-b46c80645cb3@users.sourceforge.net>
+ <ddb2bbd9-757b-fc62-8642-ce827a7a666d@de.ibm.com>
+ <e72e9854-443b-7033-d674-8a2d237600ca@users.sourceforge.net>
+ <c3323f6b-4af2-0bfb-9399-e529952e378e@users.sourceforge.net>
+ <20160825181009.381411d9.cornelia.huck@de.ibm.com>
+In-Reply-To: <20160825181009.381411d9.cornelia.huck@de.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Nicolas Palix <nicolas.palix@imag.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Cornelia Huck <cornelia.huck@de.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Walter Harms <wharms@bfs.de>
 
-SF Markus Elfring wrote:
-: > 	What about the GFP_DMA attribute, which your patch deletes?
-: > The buffer in question has to be ISA DMA-able.
-:=20
-: Thanks for your constructive feedback.
-:=20
-: Would you be interested in using a variant of the function "memdup_=E2=80=
-=A6"
-: with which the corresponding memory allocation option can be preserved?
+>>   This issue was detected also by using the Coccinelle software.
+> 
+> Do you have the scripts you use published somewhere?
 
-	I am not sure that extending an in-kernel API just for one
-legacy driver is what we want. As I said, I would prefer the driver
-unchanged, if possible.
+I would like to add another view for the corresponding software development.
 
-	Maybe it is the time for gradually phasing out ISA DMA support and
-all the legacy drivers which use it?
+The complete answer depends also on the kind of "scripts"
+you are looking for. Would you like to clarify any details
+a bit more here?
 
-	Sincerely,
-
--Yenya
-
---=20
-| Jan "Yenya" Kasprzak <kas at {fi.muni.cz - work | yenya.net - private}> |
-| http://www.fi.muni.cz/~kas/                         GPG: 4096R/A45477D5 |
-         Like most things in Windows, on the surface it looks great.
-                         -- Jeremy Allison, A Tale of Two Standards
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Markus
