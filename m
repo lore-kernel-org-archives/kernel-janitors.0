@@ -1,49 +1,65 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Aug 2016 15:50:36 +0000
-Subject: [PATCH] arm: sys_oabi-compat: Use kmalloc_array() in two functions
-Message-Id: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Date: Thu, 25 Aug 2016 17:46:10 +0000
+Subject: Re: [PATCH] arm: sys_oabi-compat: Use kmalloc_array() in two functions
+Message-Id: <alpine.LFD.2.20.1608251334360.17623@knanqh.ubzr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
+In-Reply-To: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 25 Aug 2016 17:45:23 +0200
+On Thu, 25 Aug 2016, SF Markus Elfring wrote:
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "kmalloc_array".
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 25 Aug 2016 17:45:23 +0200
+> 
+> Multiplications for the size determination of memory allocations
+> indicated that array data structures should be processed.
+> Thus use the corresponding function "kmalloc_array".
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+The use of kmalloc_array() introduces a duplicate of the size capping 
+check that already exists in the code.  However it seems that gcc is 
+smart enough to figure that out and doesn't emit it twice.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/kernel/sys_oabi-compat.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Note that I'm not implying that the existing check should be removed if 
+this patch is applied though. Having it there makes the code clearer. 
+But if this patch makes a Coccinelle script happier then ...
 
-diff --git a/arch/arm/kernel/sys_oabi-compat.c b/arch/arm/kernel/sys_oabi-compat.c
-index 5f221ac..e624db9 100644
---- a/arch/arm/kernel/sys_oabi-compat.c
-+++ b/arch/arm/kernel/sys_oabi-compat.c
-@@ -285,7 +285,7 @@ asmlinkage long sys_oabi_epoll_wait(int epfd,
- 		return -EINVAL;
- 	if (!access_ok(VERIFY_WRITE, events, sizeof(*events) * maxevents))
- 		return -EFAULT;
--	kbuf = kmalloc(sizeof(*kbuf) * maxevents, GFP_KERNEL);
-+	kbuf = kmalloc_array(maxevents, sizeof(*kbuf), GFP_KERNEL);
- 	if (!kbuf)
- 		return -ENOMEM;
- 	fs = get_fs();
-@@ -323,7 +323,7 @@ asmlinkage long sys_oabi_semtimedop(int semid,
- 		return -EINVAL;
- 	if (!access_ok(VERIFY_READ, tsops, sizeof(*tsops) * nsops))
- 		return -EFAULT;
--	sops = kmalloc(sizeof(*sops) * nsops, GFP_KERNEL);
-+	sops = kmalloc_array(nsops, sizeof(*sops), GFP_KERNEL);
- 	if (!sops)
- 		return -ENOMEM;
- 	err = 0;
--- 
-2.9.3
+Acked-by: Nicolas Pitre <nico@linaro.org>
 
+> ---
+>  arch/arm/kernel/sys_oabi-compat.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/sys_oabi-compat.c b/arch/arm/kernel/sys_oabi-compat.c
+> index 5f221ac..e624db9 100644
+> --- a/arch/arm/kernel/sys_oabi-compat.c
+> +++ b/arch/arm/kernel/sys_oabi-compat.c
+> @@ -285,7 +285,7 @@ asmlinkage long sys_oabi_epoll_wait(int epfd,
+>  		return -EINVAL;
+>  	if (!access_ok(VERIFY_WRITE, events, sizeof(*events) * maxevents))
+>  		return -EFAULT;
+> -	kbuf = kmalloc(sizeof(*kbuf) * maxevents, GFP_KERNEL);
+> +	kbuf = kmalloc_array(maxevents, sizeof(*kbuf), GFP_KERNEL);
+>  	if (!kbuf)
+>  		return -ENOMEM;
+>  	fs = get_fs();
+> @@ -323,7 +323,7 @@ asmlinkage long sys_oabi_semtimedop(int semid,
+>  		return -EINVAL;
+>  	if (!access_ok(VERIFY_READ, tsops, sizeof(*tsops) * nsops))
+>  		return -EFAULT;
+> -	sops = kmalloc(sizeof(*sops) * nsops, GFP_KERNEL);
+> +	sops = kmalloc_array(nsops, sizeof(*sops), GFP_KERNEL);
+>  	if (!sops)
+>  		return -ENOMEM;
+>  	err = 0;
+> -- 
+> 2.9.3
+> 
+> 
