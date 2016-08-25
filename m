@@ -1,96 +1,45 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Tue, 23 Aug 2016 16:43:52 +0000
-Subject: Re: [PATCH v2] IB/core: Use memdup_user() rather than duplicating its implementation
-Message-Id: <ce171524-747e-5a14-105f-62c7955a7448@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="GEOBdXTaBM6BexNbE9b3CMC5GaAs0hBNi"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 09:40:45 +0000
+Subject: [PATCH] x86/efi: Use kmalloc_array() in efi_call_phys_prolog()
+Message-Id: <f6dc4cd4-eb71-50e5-8f10-c38c8ec6f6c0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
- <1471802623.3746.1.camel@perches.com>
- <683187e0-2e6a-88c0-f87a-9c5f0489370a@users.sourceforge.net>
- <1471809188.3746.18.camel@perches.com>
- <5e87f691-edb9-0a12-ff7a-59854c2ca2f8@users.sourceforge.net>
- <1471859215.2764.24.camel@opteya.com>
- <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
-In-Reply-To: <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-rdma@vger.kernel.org, Hal Rosenstock <hal.rosenstock@gmail.com>, Joe Perches <joe@perches.com>, Sean Hefty <sean.hefty@intel.com>, Yann Droneaud <ydroneaud@opteya.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-efi@vger.kernel.org, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Matt Fleming <matt@codeblueprint.co.uk>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---GEOBdXTaBM6BexNbE9b3CMC5GaAs0hBNi
-Content-Type: multipart/mixed; boundary="s96fhQJPJso0wPfmjRubWuEEtwgQfGuNc"
-From: Doug Ledford <dledford@redhat.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
- linux-rdma@vger.kernel.org, Hal Rosenstock <hal.rosenstock@gmail.com>,
- Joe Perches <joe@perches.com>, Sean Hefty <sean.hefty@intel.com>,
- Yann Droneaud <ydroneaud@opteya.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Julia Lawall <julia.lawall@lip6.fr>
-Message-ID: <ce171524-747e-5a14-105f-62c7955a7448@redhat.com>
-Subject: Re: [PATCH v2] IB/core: Use memdup_user() rather than duplicating its
- implementation
-References: <566ABCD9.1060404@users.sourceforge.net>
- <f7bb3caf-81cd-fba9-afc8-5fac72b8a4b3@users.sourceforge.net>
- <1471802623.3746.1.camel@perches.com>
- <683187e0-2e6a-88c0-f87a-9c5f0489370a@users.sourceforge.net>
- <1471809188.3746.18.camel@perches.com>
- <5e87f691-edb9-0a12-ff7a-59854c2ca2f8@users.sourceforge.net>
- <1471859215.2764.24.camel@opteya.com>
- <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
-In-Reply-To: <3a5989cb-5a01-f502-c7fc-c489079ee73e@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 11:34:03 +0200
 
---s96fhQJPJso0wPfmjRubWuEEtwgQfGuNc
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kmalloc_array".
 
-On 8/22/2016 12:30 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 22 Aug 2016 18:23:24 +0200
->=20
-> * Reuse existing functionality from memdup_user() instead of keeping
->   duplicate source code.
->=20
->   This issue was detected by using the Coccinelle software.
->=20
-> * The local variable "ret" will be set to an appropriate value a bit la=
-ter.
->   Thus omit the explicit initialisation at the beginning.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+  This issue was detected by using the Coccinelle software.
 
-Applied, thanks.
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/x86/platform/efi/efi_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG Key ID: 0E572FDD
+diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+index 677e29e..311022a 100644
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -85,7 +85,7 @@ pgd_t * __init efi_call_phys_prolog(void)
+ 	early_code_mapping_set_exec(1);
+ 
+ 	n_pgds = DIV_ROUND_UP((max_pfn << PAGE_SHIFT), PGDIR_SIZE);
+-	save_pgd = kmalloc(n_pgds * sizeof(pgd_t), GFP_KERNEL);
++	save_pgd = kmalloc_array(n_pgds, sizeof(*save_pgd), GFP_KERNEL);
+ 
+ 	for (pgd = 0; pgd < n_pgds; pgd++) {
+ 		save_pgd[pgd] = *pgd_offset_k(pgd * PGDIR_SIZE);
+-- 
+2.9.3
 
-
---s96fhQJPJso0wPfmjRubWuEEtwgQfGuNc--
-
---GEOBdXTaBM6BexNbE9b3CMC5GaAs0hBNi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJXvH1IAAoJELgmozMOVy/dy3AP/2l/Jzt8M+QrvlMCigQ7jMPG
-NMnZYzgjsIksk9PHDd38opAj2oKa4wWLkzDk311weWqegLUUr79HAJFr3hhtB532
-Xa7iXq7/94AI6N8rX06tP7r3vLc0C9T6CpX498j6NuIgv+nY8si/j31NXkaEK6Ia
-UwlrR5699FIPHtNyG/ujddkZEuiWyiAh3kRH4ABkCC9ig1n+uYYJKoKpXfXJH15w
-uH8CL10SXbAsxSGY5N2usLBPhqbmStVJiJ6UN85ofDTdWQ1/2jMW5ILzsInm5PPU
-YCEmNZ2Q/Lid+V+hNHg0YDFwd0jBN81mzXuUkONJ3dnHMCxea9RCh88qwWxn8+Mi
-bIM8vrxgj2Ttlu6XkfYtmD8KsAvTA+5go8yy4cuJve2ucqr6YkNVRgPW2u1BwQRt
-72fwOSlsdtmKjRFeKEbymiOO72O4icsnh6GIL3rWiCuEbEGQiLj0swPZcDfBNB6Z
-fmT4LdlrkjV38TFAt7Cg3D1NKtt8XaIer1CmZe5uIEuoFNoNa0lPz+29tJoQS8Au
-hRv22mhgQh3An4jN3GSK3MZRcFOFeQFgoT28yyhGDSkXhRJjNFiMdnSjor7b5I0N
-QbF2KL/fuBiFhUCNnbfKK9jKLCsYGqdodU+MMqw4xu+qNlNYHFLprE/epOi2QiRB
-CCHwbZ0xekC1anoPaDBo
-=7eKk
------END PGP SIGNATURE-----
-
---GEOBdXTaBM6BexNbE9b3CMC5GaAs0hBNi--
