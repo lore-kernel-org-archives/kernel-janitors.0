@@ -1,63 +1,49 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Wed, 24 Aug 2016 15:19:28 +0000
-Subject: Re: [PATCH 2/4] KVM-S390: Use memdup_user() rather than duplicating its implementation
-Message-Id: <ddb2bbd9-757b-fc62-8642-ce827a7a666d@de.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 15:50:36 +0000
+Subject: [PATCH] arm: sys_oabi-compat: Use kmalloc_array() in two functions
+Message-Id: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
- <bb710b21-d8c4-e172-63d4-b46c80645cb3@users.sourceforge.net>
-In-Reply-To: <bb710b21-d8c4-e172-63d4-b46c80645cb3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kvm@vger.kernel.org, linux-s390@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-On 08/17/2016 02:08 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 17 Aug 2016 18:41:43 +0200
-> 
-> * Reuse existing functionality from memdup_user() instead of keeping
->   duplicate source code.
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Return directly if this copy operation failed.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 25 Aug 2016 17:45:23 +0200
 
-I was going to apply this patch, but it probably makes sense to respin the
-first patch first as suggested to avoid me fixing up the conflicts and then
-you fixing up the new conflict.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-So can you respin patch 1,2 as suggested and add the acks/rb for patch 2?
+This issue was detected by using the Coccinelle software.
 
-> ---
->  arch/s390/kvm/guestdbg.c | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/guestdbg.c b/arch/s390/kvm/guestdbg.c
-> index b68db4b..8f886ee 100644
-> --- a/arch/s390/kvm/guestdbg.c
-> +++ b/arch/s390/kvm/guestdbg.c
-> @@ -217,16 +217,9 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
->  		return -EINVAL;
-> 
->  	size = dbg->arch.nr_hw_bp * sizeof(*bp_data);
-> -	bp_data = kmalloc(size, GFP_KERNEL);
-> -	if (!bp_data) {
-> -		ret = -ENOMEM;
-> -		goto error;
-> -	}
-> -
-> -	if (copy_from_user(bp_data, dbg->arch.hw_bp, size)) {
-> -		ret = -EFAULT;
-> -		goto error;
-> -	}
-> +	bp_data = memdup_user(dbg->arch.hw_bp, size);
-> +	if (IS_ERR(bp_data))
-> +		return PTR_ERR(bp_data);
-> 
->  	for (i = 0; i < dbg->arch.nr_hw_bp; i++) {
->  		switch (bp_data[i].type) {
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/kernel/sys_oabi-compat.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/kernel/sys_oabi-compat.c b/arch/arm/kernel/sys_oabi-compat.c
+index 5f221ac..e624db9 100644
+--- a/arch/arm/kernel/sys_oabi-compat.c
++++ b/arch/arm/kernel/sys_oabi-compat.c
+@@ -285,7 +285,7 @@ asmlinkage long sys_oabi_epoll_wait(int epfd,
+ 		return -EINVAL;
+ 	if (!access_ok(VERIFY_WRITE, events, sizeof(*events) * maxevents))
+ 		return -EFAULT;
+-	kbuf = kmalloc(sizeof(*kbuf) * maxevents, GFP_KERNEL);
++	kbuf = kmalloc_array(maxevents, sizeof(*kbuf), GFP_KERNEL);
+ 	if (!kbuf)
+ 		return -ENOMEM;
+ 	fs = get_fs();
+@@ -323,7 +323,7 @@ asmlinkage long sys_oabi_semtimedop(int semid,
+ 		return -EINVAL;
+ 	if (!access_ok(VERIFY_READ, tsops, sizeof(*tsops) * nsops))
+ 		return -EFAULT;
+-	sops = kmalloc(sizeof(*sops) * nsops, GFP_KERNEL);
++	sops = kmalloc_array(nsops, sizeof(*sops), GFP_KERNEL);
+ 	if (!sops)
+ 		return -ENOMEM;
+ 	err = 0;
+-- 
+2.9.3
 
