@@ -1,60 +1,62 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Date: Thu, 25 Aug 2016 22:46:32 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Aug 2016 13:22:29 +0000
 Subject: Re: [PATCH] arm: sys_oabi-compat: Use kmalloc_array() in two functions
-Message-Id: <20160825224632.GL1041@n2100.armlinux.org.uk>
+Message-Id: <dd343c72-2ec7-2114-bee5-1d16fc6c04ac@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
-In-Reply-To: <5deba521-2dd4-cd2e-23d7-226a1a7728c3@users.sourceforge.net>
+ <20160825224632.GL1041@n2100.armlinux.org.uk>
+In-Reply-To: <20160825224632.GL1041@n2100.armlinux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Aug 25, 2016 at 05:50:36PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 25 Aug 2016 17:45:23 +0200
+>> Multiplications for the size determination of memory allocations
+>> indicated that array data structures should be processed.
 > 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
+> I'm afraid the above comment doesn't mean much to me, can you rephrase?
 
-I'm afraid the above comment doesn't mean much to me, can you rephrase?
-Maybe:
+Yes, of course.
 
-"Multiplications for kmalloc size arguments are liable to overflow,
-potentially causing a potential security issue.  Using kmalloc_array()
-allows the overflow to be caught and the allocation failed.  Switch
-these callsites to kmalloc_array()."
+How verbose should the explanation for this update suggestion become?
 
-> Thus use the corresponding function "kmalloc_array".
+
+> Maybe:
 > 
-> This issue was detected by using the Coccinelle software.
+> "Multiplications for kmalloc size arguments are liable to overflow,
+> potentially causing a potential security issue.  Using kmalloc_array()
+> allows the overflow to be caught and the allocation failed.  Switch
+> these callsites to kmalloc_array()."
+
+Thanks for your wording variant.
+
+
+>> @@ -285,7 +285,7 @@ asmlinkage long sys_oabi_epoll_wait(int epfd,
+>>  		return -EINVAL;
+>>  	if (!access_ok(VERIFY_WRITE, events, sizeof(*events) * maxevents))
+>>  		return -EFAULT;
+>> -	kbuf = kmalloc(sizeof(*kbuf) * maxevents, GFP_KERNEL);
+>> +	kbuf = kmalloc_array(maxevents, sizeof(*kbuf), GFP_KERNEL);
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/arm/kernel/sys_oabi-compat.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/kernel/sys_oabi-compat.c b/arch/arm/kernel/sys_oabi-compat.c
-> index 5f221ac..e624db9 100644
-> --- a/arch/arm/kernel/sys_oabi-compat.c
-> +++ b/arch/arm/kernel/sys_oabi-compat.c
-> @@ -285,7 +285,7 @@ asmlinkage long sys_oabi_epoll_wait(int epfd,
->  		return -EINVAL;
->  	if (!access_ok(VERIFY_WRITE, events, sizeof(*events) * maxevents))
->  		return -EFAULT;
-> -	kbuf = kmalloc(sizeof(*kbuf) * maxevents, GFP_KERNEL);
-> +	kbuf = kmalloc_array(maxevents, sizeof(*kbuf), GFP_KERNEL);
+> kmalloc_array() here actually buys us no additional safety at either
+> of the callsites in your patch
 
-kmalloc_array() here actually buys us no additional safety at either
-of the callsites in your patch - we need to have carefully checked
-the values to ensure they don't overflow prior to the kmalloc for
-other reasons.  That's probably something that should be noted in
-the commit message too, so reviewers have the confidence that you're
-not blindly changing everything...
+Can this inline function apply a few sanity checks in a consistent way?
+http://lxr.free-electrons.com/source/include/linux/slab.h#L564
 
-Thanks.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> - we need to have carefully checked the values to ensure
+> they don't overflow prior to the kmalloc for other reasons.
+
+Are there any more constraints to consider?
+
+
+> That's probably something that should be noted in the commit message too,
+> so reviewers have the confidence that you're not blindly changing everything...
+
+I imagine that a few contributors can get mixed feelings from a bunch
+of my recent patches. There is a significant patch number in the works
+for various Linux software modules.
+
+Regards,
+Markus
