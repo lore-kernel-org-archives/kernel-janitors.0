@@ -1,152 +1,51 @@
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
-Date: Tue, 30 Aug 2016 18:18:17 +0000
-Subject: Re: [bug report] x86/sfi: Enable enumeration of SD devices
-Message-Id: <a42b4af5-e2a5-d922-b5a5-ab177bb15140@intel.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 26 Aug 2016 04:49:25 +0000
+Subject: [PATCH 2/2] IB/hfi1: Clean up type used and casting
+Message-Id: <1472186965-9103-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160715192348.GA6521@mwanda>
-In-Reply-To: <20160715192348.GA6521@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: mike.marciniszyn@intel.com, dennis.dalessandro@intel.com, dledford@redhat.com, sean.hefty@intel.com, hal.rosenstock@gmail.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+In all other places in this file where 'find_first_bit' is called,
+port_num is defined as a 'u8' and no casting is done.
 
+Do the same here in order to be more consistent.
 
-On 08/30/2016 04:13 AM, Andy Shevchenko wrote:
-> On Tue, 2016-08-30 at 13:06 +0200, walter harms wrote:
->> Am 30.08.2016 11:46, schrieb Andy Shevchenko:
->>> On Mon, 2016-08-29 at 20:59 +0000, Kuppuswamy, Sathyanarayanan
->>> wrote:
->>>> Hi Andy/Dan,
->>>>
->>>> Thanks for catching this bug. As Andy mentioned, this code is
->>>> written
->>>> in this manner to let the get_platform_data() function pointer to
->>>> return the error value on initialization failure. But it has never
->>>> been used properly in any of the existing code. So my suggestion
->>>> is
->>>> either change the platform_lib code to return ERR_PTR on failure
->>>> or
->>>> change the intel_mid_sfi_get_pdata to check for NULL as well.
->>>> Since
->>>> all the use case of intel_mid_sfi_get_pdata are void functions, I
->>>> would prefer to go with second solution. Please let me know your
->>>> comments.
->>>>
->>>> diff --git a/arch/x86/platform/intel-mid/sfi.c
->>>> b/arch/x86/platform/intel-mid/sfi.c
->>>> index 051d264..a6bd275 100644
->>>> --- a/arch/x86/platform/intel-mid/sfi.c
->>>> +++ b/arch/x86/platform/intel-mid/sfi.c
->>>> @@ -336,7 +336,7 @@ static void __init sfi_handle_ipc_dev(struct
->>>> sfi_device_table_entry *pentry,
->>>>          pr_debug("IPC bus, name = %16.16s, irq = 0x%2x\n",
->>>>                  pentry->name, pentry->irq);
->>>>          pdata = intel_mid_sfi_get_pdata(dev, pentry);
->>>> -       if (IS_ERR(pdata))
->>>> +       if (IS_ERR_OR_NULL(pdata))
->>> But this looks wrong.
->>> pdata = NULL is valid case for many devices! In other words pdata
->>> is an
->>> optional argument to the device drivers.
->>>
->> Yep, the way is wrong.
->> NULL can say: get_platform_data does not exists
->> or get_platform_data() returned NULL (what ever that means).
->>
->> IMHO it feels better to drop the define and replace it
->> with a proper function call and error.
-> Yeah, this direction looks better, thanks.
-I missed the generic null scenario. Thanks for pointing it out Andy.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/hfi1/mad.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-IMO, Main problem here is, In some scenarios get_platform_data returns 
-NULL on error case and in some cases it return NULL for no platform data 
-case.
-
-For example, in following function, returning NULL on gpio_base = -1 
-and when nr >= PCAL9555A_NUM is incorrect. I think in both these 
-scenarios valid behavior is to stop the device creation process. 
-Creating an i2c device without validi irq number or gpio number is 
-incorrect.
-
-So after investigating it bit more, I think its more appropriate to fix 
-these error cases in device_libs dir. Let me know your comments.
-
-static void __init *pcal9555a_platform_data(void *info)
-{
-         struct i2c_board_info *i2c_info = info;
-         char *type = i2c_info->type;
-         struct pca953x_platform_data *pcal9555a;
-         char base_pin_name[SFI_NAME_LEN + 1];
-         char intr_pin_name[SFI_NAME_LEN + 1];
-         int gpio_base, intr;
-
-         snprintf(base_pin_name, sizeof(base_pin_name), "%s_base", type);
-         snprintf(intr_pin_name, sizeof(intr_pin_name), "%s_int", type);
-
-         gpio_base = get_gpio_by_name(base_pin_name);
-         intr = get_gpio_by_name(intr_pin_name);
-
-         /* Check if the SFI record valid */
-         if (gpio_base = -1)
-                 return NULL;
-
-         if (nr >= PCAL9555A_NUM) {
-                 pr_err("%s: Too many instances, only %d supported\n", 
-__func__,
-                        PCAL9555A_NUM);
-                 return NULL;
-         }
-
-         pcal9555a = &pcal9555a_pdata[nr++];
-         pcal9555a->gpio_base = gpio_base;
-
-         if (intr >= 0) {
-                 i2c_info->irq = intr + INTEL_MID_IRQ_OFFSET;
-                 pcal9555a->irq_base = gpio_base + INTEL_MID_IRQ_OFFSET;
-         } else {
-                 i2c_info->irq = -1;
-                 pcal9555a->irq_base = -1;
-         }
-
-         strcpy(type, "pcal9555a");
-         return pcal9555a;
-}
-
->
->> #define intel_mid_sfi_get_pdata(dev, priv)      \
->>           ((dev)->get_platform_data ? (dev)->get_platform_data(priv) :
->> NULL)
->>
->>
->> void *fkt(struct devs_id *dev, void *info)
->> {
->>       if ( ! dev->get_platform_data)
->> 	  return ERR_PTR(-ENOSYS);
->>
->> 	return dev->get_platform_data(info);
->> }
->>
->>>> I've checked all upstreamed platform modules
->>>> (arch/x86/platform/intel-
->>>> mid/device_libs/) and noticed that not a single one returns
->>>> ERR_PTR.
->>>>
->>>> Though I think the idea was to provide a way to fail
->>>> initialization in
->>>> some cases where hardware must be initialized properly. Maybe
->>>> David or
->>>> Sathya can shed a light on this.
->>>>
->>>> If we decide to change that it should be done for all so called
->>>> device
->>>> handlers in sfi.c.
->>>>
->>>> --
->>>> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>>> Intel Finland Oy
-
+diff --git a/drivers/infiniband/hw/hfi1/mad.c b/drivers/infiniband/hw/hfi1/mad.c
+index 2c6c138c41b2..b9e47d1c462b 100644
+--- a/drivers/infiniband/hw/hfi1/mad.c
++++ b/drivers/infiniband/hw/hfi1/mad.c
+@@ -2599,7 +2599,7 @@ static int pma_get_opa_datacounters(struct opa_pma_mad *pmp,
+ 	u8 lq, num_vls;
+ 	u8 res_lli, res_ler;
+ 	u64 port_mask;
+-	unsigned long port_num;
++	u8 port_num;
+ 	unsigned long vl;
+ 	u32 vl_select_mask;
+ 	int vfi;
+@@ -2634,7 +2634,7 @@ static int pma_get_opa_datacounters(struct opa_pma_mad *pmp,
+ 	port_mask = be64_to_cpu(req->port_select_mask[3]);
+ 	port_num = find_first_bit((unsigned long *)&port_mask, 64);
+ 
+-	if ((u8)port_num != port) {
++	if (port_num != port) {
+ 		pmp->mad_hdr.status |= IB_SMP_INVALID_FIELD;
+ 		return reply((struct ib_mad_hdr *)pmp);
+ 	}
 -- 
-Sathyanarayanan Kuppuswamy
-Android kernel developer
+2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
