@@ -1,68 +1,84 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Aug 2016 16:48:13 +0000
-Subject: [PATCH 3/3] hostap: Delete unnecessary initialisations for the variable "ret"
-Message-Id: <f1de4eb1-42e7-0124-89a2-c1e7fdf7053c@users.sourceforge.net>
+Date: Fri, 26 Aug 2016 12:50:05 +0000
+Subject: [PATCH 2/8] cris-cryptocop: Improve determination of sizes in five functions
+Message-Id: <c0ef1402-6e7a-f9f9-00ed-94ba80c61ca9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
-In-Reply-To: <f0cd7a82-e603-6a91-0afd-33bbd1658cab@users.sourceforge.net>
+ <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
+In-Reply-To: <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, Kalle Valo <kvalo@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-cris-kernel@axis.com, Adam Buchbinder <adam.buchbinder@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Jiri Kosina <jkosina@suse.cz>, Mikael Starvik <starvik@axis.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 20 Aug 2016 18:23:14 +0200
+Date: Thu, 25 Aug 2016 22:32:27 +0200
 
-The local variable "ret" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning of four functions.
+Replace the specification of data structures by references for variables
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/intersil/hostap/hostap_ioctl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/cris/arch-v32/drivers/cryptocop.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/intersil/hostap/hostap_ioctl.c b/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
-index 5942917..c37b0bb 100644
---- a/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
-+++ b/drivers/net/wireless/intersil/hostap/hostap_ioctl.c
-@@ -2895,7 +2895,7 @@ static int prism2_ioctl_priv_monitor(struct net_device *dev, int *i)
- {
- 	struct hostap_interface *iface;
- 	local_info_t *local;
--	int ret = 0;
-+	int ret;
- 	u32 mode;
+diff --git a/arch/cris/arch-v32/drivers/cryptocop.c b/arch/cris/arch-v32/drivers/cryptocop.c
+index 1632abc..8e04b92 100644
+--- a/arch/cris/arch-v32/drivers/cryptocop.c
++++ b/arch/cris/arch-v32/drivers/cryptocop.c
+@@ -323,7 +323,7 @@ static struct cryptocop_dma_desc *alloc_cdesc(int alloc_flag)
+ 		spin_unlock_irqrestore(&descr_pool_lock, flags);
+ 		cdesc->from_pool = 1;
+ 	} else {
+-		cdesc = kmalloc(sizeof(struct cryptocop_dma_desc), alloc_flag);
++		cdesc = kmalloc(sizeof(*cdesc), alloc_flag);
+ 		if (!cdesc) {
+ 			DEBUG_API(printk("alloc_cdesc: kmalloc\n"));
+ 			return NULL;
+@@ -1526,7 +1526,7 @@ int cryptocop_new_session(cryptocop_session_id *sid, struct cryptocop_transform_
+ 		return -EINVAL;
+ 	}
  
- 	iface = netdev_priv(dev);
-@@ -3035,7 +3035,7 @@ static int ap_mac_cmd_ioctl(local_info_t *local, int *cmd)
- static int prism2_ioctl_priv_download(local_info_t *local, struct iw_point *p)
- {
- 	struct prism2_download_param *param;
--	int ret = 0;
-+	int ret;
+-	sess = kmalloc(sizeof(struct cryptocop_session), alloc_flag);
++	sess = kmalloc(sizeof(*sess), alloc_flag);
+ 	if (!sess){
+ 		DEBUG_API(printk("cryptocop_new_session, kmalloc cryptocop_session\n"));
+ 		return -ENOMEM;
+@@ -2247,7 +2247,7 @@ static int cryptocop_job_setup(struct cryptocop_prio_job **pj, struct cryptocop_
+ 	int  alloc_flag = operation->in_interrupt ? GFP_ATOMIC : GFP_KERNEL;
+ 	void *iop_alloc_ptr = NULL;
  
- 	if (p->length < sizeof(struct prism2_download_param) ||
- 	    p->length > 1024 || !p->pointer)
-@@ -3791,7 +3791,7 @@ static int prism2_ioctl_scan_req(local_info_t *local,
- static int prism2_ioctl_priv_hostapd(local_info_t *local, struct iw_point *p)
- {
- 	struct prism2_hostapd_param *param;
--	int ret = 0;
-+	int ret;
- 	int ap_ioctl = 0;
+-	*pj = kmalloc(sizeof (struct cryptocop_prio_job), alloc_flag);
++	*pj = kmalloc(sizeof(**pj), alloc_flag);
+ 	if (!*pj) return -ENOMEM;
  
- 	if (p->length < sizeof(struct prism2_hostapd_param) ||
-@@ -3954,7 +3954,7 @@ int hostap_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 	struct iwreq *wrq = (struct iwreq *) ifr;
- 	struct hostap_interface *iface;
- 	local_info_t *local;
--	int ret = 0;
-+	int ret;
+ 	DEBUG(printk("cryptocop_job_setup: operation=0x%p\n", operation));
+@@ -2552,12 +2552,12 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
+ 		return -EFAULT;
+ 	}
  
- 	iface = netdev_priv(dev);
- 	local = iface->local;
+-	cop = kmalloc(sizeof(struct cryptocop_operation), GFP_KERNEL);
++	cop = kmalloc(sizeof(*cop), GFP_KERNEL);
+ 	if (!cop) {
+ 		DEBUG_API(printk("cryptocop_ioctl_process: kmalloc\n"));
+ 		return -ENOMEM;
+ 	}
+-	jc = kmalloc(sizeof(struct ioctl_job_cb_ctx), GFP_KERNEL);
++	jc = kmalloc(sizeof(*jc), GFP_KERNEL);
+ 	if (!jc) {
+ 		DEBUG_API(printk("cryptocop_ioctl_process: kmalloc\n"));
+ 		err = -ENOMEM;
+@@ -3082,7 +3082,7 @@ static int cryptocop_ioctl_create_session(struct inode *inode, struct file *filp
+ 		ti_csum.next = tis;
+ 		tis = &ti_csum;
+ 	} /* (sop.csum != cryptocop_csum_none) */
+-	dev = kmalloc(sizeof(struct cryptocop_private), GFP_KERNEL);
++	dev = kmalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev){
+ 		DEBUG_API(printk("create session, alloc dev\n"));
+ 		return -ENOMEM;
 -- 
 2.9.3
 
