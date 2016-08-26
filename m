@@ -1,74 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Aug 2016 12:58:08 +0000
-Subject: [PATCH 7/8] cris-cryptocop: Delete unnecessary variable initialisations in cryptocop_ioctl_process()
-Message-Id: <e071f0a1-536b-150d-3f2b-f0b806e59559@users.sourceforge.net>
+Date: Fri, 26 Aug 2016 18:04:53 +0000
+Subject: [PATCH 3/5] ia64/mm/tlb: Fix indentation in ia64_global_tlb_purge()
+Message-Id: <9adf5338-d549-f0ff-df0a-2f02f8bc5477@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
-In-Reply-To: <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
+References: <349bbfb4-bada-628e-2981-ca2a315299fc@users.sourceforge.net>
+In-Reply-To: <349bbfb4-bada-628e-2981-ca2a315299fc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-cris-kernel@axis.com, Adam Buchbinder <adam.buchbinder@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Jiri Kosina <jkosina@suse.cz>, Mikael Starvik <starvik@axis.com>, Thomas Gleixner <tglx@linutronix.de>
+To: linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Tony Luck <tony.luck@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Aug 2016 13:57:21 +0200
+Date: Fri, 26 Aug 2016 19:36:39 +0200
 
-Nine local variables will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation which became unnecessary with
-a previous update step.
+The script "checkpatch.pl" pointed the following information out.
+
+ERROR: code indent should use tabs where possible
+#40: FILE: arch/ia64/mm/tlb.c:271
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/cris/arch-v32/drivers/cryptocop.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ arch/ia64/mm/tlb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/cris/arch-v32/drivers/cryptocop.c b/arch/cris/arch-v32/drivers/cryptocop.c
-index a682b1f..1a966dc 100644
---- a/arch/cris/arch-v32/drivers/cryptocop.c
-+++ b/arch/cris/arch-v32/drivers/cryptocop.c
-@@ -2461,14 +2461,12 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
- 	struct cryptocop_private        *dev = filp->private_data;
- 	struct strcop_crypto_op         *crp_oper = (struct strcop_crypto_op *)arg;
- 	struct strcop_crypto_op         oper = {0};
--	int                             err = 0;
--	struct cryptocop_operation      *cop = NULL;
--
--	struct ioctl_job_cb_ctx         *jc = NULL;
--
--	struct page                     **inpages = NULL;
-+	int                             err;
-+	struct cryptocop_operation      *cop;
-+	struct ioctl_job_cb_ctx         *jc;
-+	struct page                     **inpages;
- 	struct page                     **outpages = NULL;
--	int                             noinpages = 0;
-+	int                             noinpages;
- 	int                             nooutpages;
+diff --git a/arch/ia64/mm/tlb.c b/arch/ia64/mm/tlb.c
+index 46ecc5d..6d2f83d 100644
+--- a/arch/ia64/mm/tlb.c
++++ b/arch/ia64/mm/tlb.c
+@@ -269,9 +269,8 @@ ia64_global_tlb_purge (struct mm_struct *mm, unsigned long start,
+ 	if (need_ptcg_sem)
+ 		up_spin(&ptcg_sem);
  
- 	struct cryptocop_desc           descs[5]; /* Max 5 descriptors are needed, there are three transforms that
-@@ -2482,16 +2480,14 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
+-        if (mm != active_mm) {
+-                activate_context(active_mm);
+-        }
++	if (mm != active_mm)
++		activate_context(active_mm);
+ }
  
- 	unsigned char                   *digest_result = NULL;
- 	int                             digest_length = 0;
--	int                             cblocklen = 0;
-+	int                             cblocklen;
- 	unsigned char                   csum_result[CSUM_BLOCK_LENGTH];
- 	struct cryptocop_session        *sess;
--
--	int    iovlen = 0;
-+	int    iovlen;
- 	int    iovix = 0;
- 	int    pageix = 0;
--	int    pageoffset = 0;
--
--	size_t prev_ix = 0;
-+	int    pageoffset;
-+	size_t prev_ix;
- 	size_t next_ix;
- 
- 	int    cipher_active, digest_active, csum_active;
+ void
 -- 
 2.9.3
 
