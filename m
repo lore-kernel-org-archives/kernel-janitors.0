@@ -1,51 +1,73 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 26 Aug 2016 04:49:25 +0000
-Subject: [PATCH 2/2] IB/hfi1: Clean up type used and casting
-Message-Id: <1472186965-9103-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Doug Ledford <dledford@redhat.com>
+Date: Fri, 26 Aug 2016 14:26:00 +0000
+Subject: Re: [PATCH 2/2] IB/hfi1: Clean up type used and casting
+Message-Id: <85f3dd00-e31c-7180-e695-b30872f60dc8@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="DBDLL8I9QPDxiNKNnA7KBtKKPPsdR7G5o"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: mike.marciniszyn@intel.com, dennis.dalessandro@intel.com, dledford@redhat.com, sean.hefty@intel.com, hal.rosenstock@gmail.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <1472186965-9103-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1472186965-9103-1-git-send-email-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-In all other places in this file where 'find_first_bit' is called,
-port_num is defined as a 'u8' and no casting is done.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--DBDLL8I9QPDxiNKNnA7KBtKKPPsdR7G5o
+Content-Type: multipart/mixed; boundary="jsLekS91JVcXnIfhqjhwjsSiBdI1V60tv"
+From: Doug Ledford <dledford@redhat.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ mike.marciniszyn@intel.com, dennis.dalessandro@intel.com,
+ sean.hefty@intel.com, hal.rosenstock@gmail.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Message-ID: <85f3dd00-e31c-7180-e695-b30872f60dc8@redhat.com>
+Subject: Re: [PATCH 2/2] IB/hfi1: Clean up type used and casting
+References: <1472186965-9103-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1472186965-9103-1-git-send-email-christophe.jaillet@wanadoo.fr>
 
-Do the same here in order to be more consistent.
+--jsLekS91JVcXnIfhqjhwjsSiBdI1V60tv
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/infiniband/hw/hfi1/mad.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 8/26/2016 12:49 AM, Christophe JAILLET wrote:
+> In all other places in this file where 'find_first_bit' is called,
+> port_num is defined as a 'u8' and no casting is done.
+>=20
+> Do the same here in order to be more consistent.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/drivers/infiniband/hw/hfi1/mad.c b/drivers/infiniband/hw/hfi1/mad.c
-index 2c6c138c41b2..b9e47d1c462b 100644
---- a/drivers/infiniband/hw/hfi1/mad.c
-+++ b/drivers/infiniband/hw/hfi1/mad.c
-@@ -2599,7 +2599,7 @@ static int pma_get_opa_datacounters(struct opa_pma_mad *pmp,
- 	u8 lq, num_vls;
- 	u8 res_lli, res_ler;
- 	u64 port_mask;
--	unsigned long port_num;
-+	u8 port_num;
- 	unsigned long vl;
- 	u32 vl_select_mask;
- 	int vfi;
-@@ -2634,7 +2634,7 @@ static int pma_get_opa_datacounters(struct opa_pma_mad *pmp,
- 	port_mask = be64_to_cpu(req->port_select_mask[3]);
- 	port_num = find_first_bit((unsigned long *)&port_mask, 64);
- 
--	if ((u8)port_num != port) {
-+	if (port_num != port) {
- 		pmp->mad_hdr.status |= IB_SMP_INVALID_FIELD;
- 		return reply((struct ib_mad_hdr *)pmp);
- 	}
--- 
-2.7.4
+Thanks, applied.
 
 
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG Key ID: 0E572FDD
 
+
+--jsLekS91JVcXnIfhqjhwjsSiBdI1V60tv--
+
+--DBDLL8I9QPDxiNKNnA7KBtKKPPsdR7G5o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQIcBAEBCAAGBQJXwFF4AAoJELgmozMOVy/dFWoP/RbwKAl9qslVI2hvEfXGx6Tp
+xWZ67sFPfaFDbSCrwPGRYGHVzF3j0p5y+OaiE+MF5GTAagkmyFG2+tO+dhuHRb3d
+cEZOmqS/iQ2S//lABIF8CCmk02mUBHNtBem0SArL/rMbeHjvqYyqgqO2TrPRyUBl
+Mfz46dwIjrd5BZyPs7yJ+TCAU+nVC9LFp8TlWjhllW8pWAq5371nIc1yvxiCbeuD
+6ffOwo+tqB7iVt9vydkVfqxD/Ii37ukZElVeCB7MQs6YkgKi6Es//QhWEDKvVq13
+hbV/NJWU71yOhRdHT0F7gbs8mlYLJiFiJ+jhGnTTpH/o7EBXGfaaq+pDQb8nLWg5
+0NTErLTJSAkupVRLrIpo+u8RI9xrXR64NYZSRI8m0pZvb5Vb2kj4VlN3KTZG5+a7
+LF6pHWe9oEzUG+Cwjr7A8VviGdxyNYnZ4D6CVn5YXvvLzrhHJgIsXw6m3iA7Wa5B
+a2DDQUMfzjHSE1PytgpPz+IhwxkZgrwyRlUDzLlEQlSxk1VTDoFIiIeYcqw+RWed
+UgYJhmFGmRW57whk2zg9P4nH0tICaSxb6JLkDfd/218ucQDEVxIK4xhnqDO7iqRM
+W81AhoS2dOh9QRC0CeS7Q4vqfHTin+JbtFXi8g6j3X7TGaB3N8uWapobLKraiLXY
+07rwMDMuL5bo7CpkLOyv
+=pYez
+-----END PGP SIGNATURE-----
+
+--DBDLL8I9QPDxiNKNnA7KBtKKPPsdR7G5o--
