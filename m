@@ -1,52 +1,50 @@
-From: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Date: Mon, 01 Aug 2016 13:34:09 +0000
-Subject: Re: [PATCH] cxl: replace loop with for_each_child_of_node(), remove unneeded of_node_put()
-Message-Id: <f4252894-4f35-e296-6a72-e29200d6dcd1@linux.vnet.ibm.com>
+From: Jeehong Kim <jhez.kim@samsung.com>
+Date: Fri, 26 Aug 2016 09:40:39 +0000
+Subject: [PATCH] sched/fair: Fix that tasks are not constrained by cfs_b->quota on hotplug core, when hotplug
+Message-Id: <1472204439-3542-1-git-send-email-jhez.kim@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <601fb58c-7aee-91ce-2a3d-7a29787968fc@au1.ibm.com>
- <1469764534-26948-1-git-send-email-andrew.donnellan@au1.ibm.com>
- <87fuqsllmf.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87fuqsllmf.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Michael Ellerman <mpe@ellerman.id.au>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Cc: clombard@linux.vnet.ibm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr, imunsie@au1.ibm.com, elfring@users.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mingo@redhat.com
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, ezjjilong@gmail.com, Jeehong Kim <jhez.kim@samsung.com>
 
-Le 29/07/2016 =E0 13:38, Michael Ellerman a =E9crit :
-> But who does keep a reference on the device_node? I can't see it anywhere=
-. Which
-> means in theory the device_node can be freed out from under you.
->
-> You have a reference for afu_np as part of for_each_child_of_node(), but =
-it's
-> dropped as soon as you go around the loop.
->
-> The typical pattern would be that cxl_guest_init_afu() takes an additional
-> reference once it's done all its setup and can't fail.
->
-> That way at the end of the loop when the loop construct has dropped all
-> references, the nodes you actually init'ed have their reference count
-> incremented by 1.
+In case that CONFIG_HOTPLUG_CPU and CONFIG_CFS_BANDWIDTH is turned on and tasks in bandwidth controlled task group run on hotplug core, the tasks are not controlled by cfs_b->quota when hotplug core is offline and then online. The remaining tasks in task group consume all of cfs_b->quota on other cores.
 
+The cause of this problem is described as below;
 
-We don't keep a reference on the AFU device_node. Once we've read the=20
-config of the AFU, the AFU device_node is never accessed again. So I=20
-guess it's possible (though unexpected) that it's freed from under us,=20
-but it should not affect the driver.
+1. When hotplug core is offline while tasks in task group run on hotplug core, unregister_fair_sched_group() deletes leaf_cfs_rq_list of tg->cfs_rq[cpu] from &rq_of(cfs_rq)->leaf_cfs_rq_list.
 
-The AFU is really dependent on the adapter itself, which is one level up=20
-in the device tree, and for which we create a device through=20
-of_platform_device_create(). The properties under the AFU device node=20
-are read directly from the PCI config space in the bare-metal case,=20
-where the cxl adapter is a PCI device.
+2. Then, when hotplug core is online, update_runtime_enabled() registers cfs_b->quota on cfs_rq->runtime_enabled of all leaf cfs_rq on runqueue. However, because this is before	enqueue_entity() adds &cfs_rq->leaf_cfs_rq_list on &rq_of(cfs_rq)->leaf_cfs_rq_list, cfs->quota is not register on cfs_rq->runtime_enabled.
 
-Do we really have a problem here?
+To resolve this problem, this patch registers cfs_b->quota on cfs_rq->runtime_enabled after list_add_leaf_cfs_rq() for every enqueue_entity().
 
-   Fred
+Signed-off-by: Jeehong Kim <jhez.kim@samsung.com>
+---
+ kernel/sched/fair.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 6488815..1f4b104 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4246,9 +4246,16 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+  */
+ static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
+ {
++	struct cfs_bandwidth *cfs_b = &cfs_rq->tg->cfs_bandwidth;
++
+ 	if (!cfs_bandwidth_used())
+ 		return;
+
++	/* register cfs_b->quota */
++	raw_spin_lock(&cfs_b->lock);
++	cfs_rq->runtime_enabled = cfs_b->quota != RUNTIME_INF;
++	raw_spin_unlock(&cfs_b->lock);
++
+ 	/* an active group must be handled by the update_curr()->put() path */
+ 	if (!cfs_rq->runtime_enabled || cfs_rq->curr)
+ 		return;
 --
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.1
+
