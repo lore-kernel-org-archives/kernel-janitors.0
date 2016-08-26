@@ -1,106 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Aug 2016 17:14:07 +0000
-Subject: [PATCH 2/6] KVM: PPC: e500: Less function calls in kvm_vcpu_ioctl_config_tlb() after error detection
-Message-Id: <bb5571c3-d3a4-e93f-ac9a-543dbd2f2387@users.sourceforge.net>
+From: Ley Foon Tan <lftan@altera.com>
+Date: Fri, 26 Aug 2016 03:13:48 +0000
+Subject: Re: [Nios2-dev] [PATCH] nios2: use of_property_read_bool
+Message-Id: <CAFiDJ5_gxybQrZL0s9TwhAxqFC8k3URxUpqQAXyRJ_Cp+MdiZg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
-In-Reply-To: <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
+References: <20160810122724.9398-1-tklauser@distanz.ch>
+In-Reply-To: <20160810122724.9398-1-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Tobias Klauser <tklauser@distanz.ch>
+Cc: "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Aug 2016 17:34:46 +0200
+On Wed, Aug 10, 2016 at 8:27 PM, Tobias Klauser <tklauser@distanz.ch> wrote:
+> Use of_property_read_bool instead of open-coding it as fpcu_has. Convert
+> the members of struct cpuinfo from u32 to bool accordingly as they are
+> only used as boolean anyhow.
+>
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Acked-by: Ley Foon Tan <lftan@altera.com>
 
-The kfree() function was called in two cases by the
-kvm_vcpu_ioctl_config_tlb() function during error handling
-even if the passed data structure element contained a null pointer.
+Thanks.
 
-* Split a condition check for memory allocation failures.
-
-* Adjust jump targets according to the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/powerpc/kvm/e500_mmu.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
-
-diff --git a/arch/powerpc/kvm/e500_mmu.c b/arch/powerpc/kvm/e500_mmu.c
-index 26f3737..b65a894 100644
---- a/arch/powerpc/kvm/e500_mmu.c
-+++ b/arch/powerpc/kvm/e500_mmu.c
-@@ -785,35 +785,39 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
- 
- 	ret = get_user_pages_fast(cfg->array, num_pages, 1, pages);
- 	if (ret < 0)
--		goto err_pages;
-+		goto free_pages;
- 
- 	if (ret != num_pages) {
- 		num_pages = ret;
- 		ret = -EFAULT;
--		goto err_put_page;
-+		goto put_pages;
- 	}
- 
- 	virt = vmap(pages, num_pages, VM_MAP, PAGE_KERNEL);
- 	if (!virt) {
- 		ret = -ENOMEM;
--		goto err_put_page;
-+		goto put_pages;
- 	}
- 
- 	privs[0] = kzalloc(sizeof(struct tlbe_priv) * params.tlb_sizes[0],
- 			   GFP_KERNEL);
-+	if (!privs[0]) {
-+		ret = -ENOMEM;
-+		goto put_pages;
-+	}
-+
- 	privs[1] = kzalloc(sizeof(struct tlbe_priv) * params.tlb_sizes[1],
- 			   GFP_KERNEL);
--
--	if (!privs[0] || !privs[1]) {
-+	if (!privs[1]) {
- 		ret = -ENOMEM;
--		goto err_privs;
-+		goto free_privs_first;
- 	}
- 
- 	g2h_bitmap = kzalloc(sizeof(u64) * params.tlb_sizes[1],
- 	                     GFP_KERNEL);
- 	if (!g2h_bitmap) {
- 		ret = -ENOMEM;
--		goto err_privs;
-+		goto free_privs_second;
- 	}
- 
- 	free_gtlb(vcpu_e500);
-@@ -845,16 +849,14 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
- 
- 	kvmppc_recalc_tlb1map_range(vcpu_e500);
- 	return 0;
--
--err_privs:
--	kfree(privs[0]);
-+ free_privs_second:
- 	kfree(privs[1]);
--
--err_put_page:
-+ free_privs_first:
-+	kfree(privs[0]);
-+ put_pages:
- 	for (i = 0; i < num_pages; i++)
- 		put_page(pages[i]);
--
--err_pages:
-+ free_pages:
- 	kfree(pages);
- 	return ret;
- }
--- 
-2.9.3
-
+> ---
+>  arch/nios2/include/asm/cpuinfo.h |  8 ++++----
+>  arch/nios2/kernel/cpuinfo.c      | 15 +++++----------
+>  2 files changed, 9 insertions(+), 14 deletions(-)
+>
