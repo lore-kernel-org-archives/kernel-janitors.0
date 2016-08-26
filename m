@@ -1,49 +1,71 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Mon, 15 Aug 2016 15:13:00 +0000
-Subject: Re: [PATCH] iio: light: us5182d: Add missing error code assignment before test
-Message-Id: <eb543108-e601-6c8b-4158-51b9298d4e5e@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 26 Aug 2016 05:16:17 +0000
+Subject: [PATCH] IB/mlx5: Fix a parameter of find_first_bit
+Message-Id: <1472188577-14550-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470806296-8739-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1470806296-8739-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: matanb@mellanox.com, leonro@mellanox.com, dledford@redhat.com, sean.hefty@intel.com, hal.rosenstock@gmail.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 10/08/16 06:18, Christophe JAILLET wrote:
-> It is likely that checking the result of 'pm_runtime_set_active' is
-> expected here.
-> 
-> Fixes: f0e5f57d3ac2 ("iio: light: us8152d: Add power management support")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied to the togreg branch of iio.git. Initially pushed out as testing
-for the autobuilders to play with it.
+The 2nd parameter of 'find_first_bit' is the number of bits to search.
+In this case, we are passing 'sizeof(tmp)' which is likely to be 4 or 8
+because 'tmp' is an 'unsigned long'.
 
-Whilst the fix is obviously correct, the missing assignment just results in
-a particular error not being handled rather than a 'bug' as such. Hence
-I'm sending this the slow route and it'll hit in the next merge window.
+It is likely that the number of bits of 'tmp' was expected here. So use
+BITS_PER_LONG instead.
 
-Thanks,
+It has been spotted by the following coccinelle script:
+@@
+expression ret, x;
 
-Jonathan
-> ---
->  drivers/iio/light/us5182d.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/us5182d.c b/drivers/iio/light/us5182d.c
-> index 20c40f780964..18cf2e29e4d5 100644
-> --- a/drivers/iio/light/us5182d.c
-> +++ b/drivers/iio/light/us5182d.c
-> @@ -894,7 +894,7 @@ static int us5182d_probe(struct i2c_client *client,
->  		goto out_err;
->  
->  	if (data->default_continuous) {
-> -		pm_runtime_set_active(&client->dev);
-> +		ret = pm_runtime_set_active(&client->dev);
->  		if (ret < 0)
->  			goto out_err;
->  	}
-> 
+@@
+*  ret = \(find_first_bit \| find_first_zero_bit\) (x, sizeof(...));
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+__ffs could be used to reduce code verbosity
+---
+ drivers/infiniband/hw/mlx5/mem.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx5/mem.c b/drivers/infiniband/hw/mlx5/mem.c
+index 40df2cca0609..996b54e366b0 100644
+--- a/drivers/infiniband/hw/mlx5/mem.c
++++ b/drivers/infiniband/hw/mlx5/mem.c
+@@ -71,7 +71,7 @@ void mlx5_ib_cont_pages(struct ib_umem *umem, u64 addr, int *count, int *shift,
+ 
+ 	addr = addr >> page_shift;
+ 	tmp = (unsigned long)addr;
+-	m = find_first_bit(&tmp, sizeof(tmp));
++	m = find_first_bit(&tmp, BITS_PER_LONG);
+ 	skip = 1 << m;
+ 	mask = skip - 1;
+ 	i = 0;
+@@ -81,7 +81,7 @@ void mlx5_ib_cont_pages(struct ib_umem *umem, u64 addr, int *count, int *shift,
+ 		for (k = 0; k < len; k++) {
+ 			if (!(i & mask)) {
+ 				tmp = (unsigned long)pfn;
+-				m = min_t(unsigned long, m, find_first_bit(&tmp, sizeof(tmp)));
++				m = min_t(unsigned long, m, find_first_bit(&tmp, BITS_PER_LONG));
+ 				skip = 1 << m;
+ 				mask = skip - 1;
+ 				base = pfn;
+@@ -89,7 +89,7 @@ void mlx5_ib_cont_pages(struct ib_umem *umem, u64 addr, int *count, int *shift,
+ 			} else {
+ 				if (base + p != pfn) {
+ 					tmp = (unsigned long)p;
+-					m = find_first_bit(&tmp, sizeof(tmp));
++					m = find_first_bit(&tmp, BITS_PER_LONG);
+ 					skip = 1 << m;
+ 					mask = skip - 1;
+ 					base = pfn;
+-- 
+2.7.4
+
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
