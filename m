@@ -1,55 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Aug 2016 09:55:04 +0000
-Subject: [PATCH 1/5] block-cciss: Use memdup_user() rather than duplicating its implementation
-Message-Id: <15b21d09-67ce-8d70-0d76-f0414e7c43f9@users.sourceforge.net>
+From: David Vrabel <david.vrabel@citrix.com>
+Date: Fri, 26 Aug 2016 09:48:15 +0000
+Subject: Re: [Xen-devel] [PATCH] xen/grant-table: Use kmalloc_array() in arch_gnttab_valloc()
+Message-Id: <57C0105F.1010201@citrix.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
-In-Reply-To: <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
+References: <8a04e3d1-2756-9e3a-e5ba-f5d0e6495df7@users.sourceforge.net>
+In-Reply-To: <8a04e3d1-2756-9e3a-e5ba-f5d0e6495df7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: esc.storagedev@microsemi.com, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, xen-devel@lists.xenproject.org, x86@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, David Vrabel <david.vrabel@citrix.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 Aug 2016 22:10:29 +0200
+On 25/08/16 12:30, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 25 Aug 2016 13:23:06 +0200
+> 
+> * A multiplication for the size determination of a memory allocation
+>   indicated that an array data structure should be processed.
+>   Thus reuse the corresponding function "kmalloc_array".
+> 
+>   This issue was detected by using the Coccinelle software.
+> 
+> * Replace the specification of a data type by a pointer dereference
+>   to make the corresponding size determination a bit safer according to
+>   the Linux coding style convention.
 
-* Reuse existing functionality from memdup_user() instead of keeping
-  duplicate source code.
+Applied to for-linus-4.9, thanks.
 
-  This issue was detected by using the Coccinelle software.
-
-* Return directly if this copy operation failed.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/block/cciss.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
-index db9d6bb..e044342 100644
---- a/drivers/block/cciss.c
-+++ b/drivers/block/cciss.c
-@@ -1587,15 +1587,9 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 		return -EINVAL;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
--	ioc = kmalloc(sizeof(*ioc), GFP_KERNEL);
--	if (!ioc) {
--		status = -ENOMEM;
--		goto cleanup1;
--	}
--	if (copy_from_user(ioc, argp, sizeof(*ioc))) {
--		status = -EFAULT;
--		goto cleanup1;
--	}
-+	ioc = memdup_user(argp, sizeof(*ioc));
-+	if (IS_ERR(ioc))
-+		return PTR_ERR(ioc);
- 	if ((ioc->buf_size < 1) &&
- 	    (ioc->Request.Type.Direction != XFER_NONE)) {
- 		status = -EINVAL;
--- 
-2.9.3
-
+David
