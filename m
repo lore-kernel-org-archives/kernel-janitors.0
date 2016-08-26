@@ -1,38 +1,50 @@
-From: Mike Waychison <mikew@google.com>
-Date: Mon, 01 Aug 2016 16:33:08 +0000
-Subject: Re: [PATCH] firmware-gsmi: Delete an unnecessary check before the function call "dma_pool_destroy"
-Message-Id: <CAGTjWtA6zgRv=2BQ7wsO8eJxUKwg6SOh5zq+rqQkhFLYHvebkA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Aug 2016 12:55:44 +0000
+Subject: [PATCH 5/8] cris-cryptocop: Move an assignment for the variable "nooutpages" in cryptocop_ioctl_proc
+Message-Id: <2a70980b-54e3-812c-b76e-6b64640c469c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <c2e7a68c-0ee5-01e1-9da0-42602a48cf3d@users.sourceforge.net>
- <20160801120413.GF3636@codeblueprint.co.uk>
-In-Reply-To: <20160801120413.GF3636@codeblueprint.co.uk>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
+In-Reply-To: <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michel Lespinasse <walken@google.com>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Matt Fleming <matt.fleming@intel.com>
+To: linux-cris-kernel@axis.com, Adam Buchbinder <adam.buchbinder@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Jiri Kosina <jkosina@suse.cz>, Mikael Starvik <starvik@axis.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Mon, Aug 1, 2016 at 5:04 AM, Matt Fleming <matt@codeblueprint.co.uk> wrote:
->
-> On Sun, 24 Jul, at 10:27:49AM, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sun, 24 Jul 2016 10:16:56 +0200
-> >
-> > The dma_pool_destroy() function tests whether its argument is NULL
-> > and then returns immediately. Thus the test around the call is not needed.
-> >
-> > This issue was detected by using the Coccinelle software.
-> >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/firmware/google/gsmi.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> Looks fine to me. If Mike doesn't pick this up I'll take it through
-> the EFI tree.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Aug 2016 13:38:30 +0200
 
-Yes please do.
+Move the assignment for the local variable "nooutpages" behind
+the source code for memory allocations by this function.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/cris/arch-v32/drivers/cryptocop.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/cris/arch-v32/drivers/cryptocop.c b/arch/cris/arch-v32/drivers/cryptocop.c
+index 26347a2..cd34723 100644
+--- a/arch/cris/arch-v32/drivers/cryptocop.c
++++ b/arch/cris/arch-v32/drivers/cryptocop.c
+@@ -2469,7 +2469,7 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
+ 	struct page                     **inpages = NULL;
+ 	struct page                     **outpages = NULL;
+ 	int                             noinpages = 0;
+-	int                             nooutpages = 0;
++	int                             nooutpages;
+ 
+ 	struct cryptocop_desc           descs[5]; /* Max 5 descriptors are needed, there are three transforms that
+ 						   * can get connected/disconnected on different places in the indata. */
+@@ -2695,6 +2695,8 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
+ 			err = -ENOMEM;
+ 			goto free_inpages;
+ 		}
++	} else {
++		nooutpages = 0;
+ 	}
+ 
+ 	/* Acquire the mm page semaphore. */
+-- 
+2.9.3
+
