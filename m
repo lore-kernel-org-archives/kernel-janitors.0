@@ -1,49 +1,24 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 21 Aug 2016 08:28:25 +0000
-Subject: [PATCH] megaraid_sas: Fix the search of first memory bar
-Message-Id: <1471768105-14730-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Fri, 26 Aug 2016 02:30:00 +0000
+Subject: Re: [PATCH] megaraid_sas: Fix the search of first memory bar
+Message-Id: <yq18tvkb6tz.fsf@sermon.lab.mkp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1471768105-14730-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1471768105-14730-1-git-send-email-christophe.jaillet@wanadoo.fr>
+        (Christophe JAILLET's message of "Sun, 21 Aug 2016 10:28:25 +0200")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kashyap.desai@avagotech.com, sumit.saxena@avagotech.com, uday.lingala@avagotech.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: megaraidlinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: kashyap.desai@avagotech.com, sumit.saxena@avagotech.com, uday.lingala@avagotech.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, megaraidlinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The 2nd parameter of 'find_first_bit' is the number of bits to search.
-In this case, we are passing 'sizeof(unsigned long)' which is likely to
-be 4.
+>>>>> "Christophe" = Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-It is likely that the number of bits in a long was expected here, so use
-BITS_PER_LONG instead.
+Christophe> The 2nd parameter of 'find_first_bit' is the number of bits
+Christophe> to search.  In this case, we are passing 'sizeof(unsigned
+Christophe> long)' which is likely to be 4.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Other options are possible:
-  - 'bar_list' being a 'unsigned long', use __ffs to reduce code verbosity
-  - PCI_NUM_RESOURCES, which is the maximum number of bits that can be set
-    by 'pci_select_bars()'
----
- drivers/scsi/megaraid/megaraid_sas_base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Kashyap? Sumit?
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index c1ed25adb17e..7d3de811d33c 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -5036,7 +5036,7 @@ static int megasas_init_fw(struct megasas_instance *instance)
- 
- 	/* Find first memory bar */
- 	bar_list = pci_select_bars(instance->pdev, IORESOURCE_MEM);
--	instance->bar = find_first_bit(&bar_list, sizeof(unsigned long));
-+	instance->bar = find_first_bit(&bar_list, BITS_PER_LONG);
- 	if (pci_request_selected_regions(instance->pdev, 1<<instance->bar,
- 					 "megasas: LSI")) {
- 		dev_printk(KERN_DEBUG, &instance->pdev->dev, "IO memory region busy!\n");
 -- 
-2.7.4
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
-
+Martin K. Petersen	Oracle Linux Engineering
