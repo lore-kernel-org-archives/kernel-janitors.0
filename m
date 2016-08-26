@@ -1,135 +1,72 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 05 Aug 2016 12:09:13 +0000
-Subject: Applied "ASoC: use of_property_read_bool" to the asoc tree
-Message-Id: <E1bVdw9-0002h9-KD@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Aug 2016 12:56:36 +0000
+Subject: [PATCH 6/8] cris-cryptocop: Delete two variables in cryptocop_ioctl_process()
+Message-Id: <f228c0d7-481e-3444-0e61-0c93e8a554e2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-12-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-12-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
+In-Reply-To: <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>
+To: linux-cris-kernel@axis.com, Adam Buchbinder <adam.buchbinder@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Jiri Kosina <jkosina@suse.cz>, Mikael Starvik <starvik@axis.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Aug 2016 13:40:29 +0200
 
-   ASoC: use of_property_read_bool
+A zero was assigned to the local variables "cipher_done" and "csum_done"
+at one place. But they were not read within this function.
+Thus remove them.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 7ac2a2432bbba0c3a5cf9848c768ff3c6c8a976c Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 5 Aug 2016 10:56:51 +0200
-Subject: [PATCH] ASoC: use of_property_read_bool
-
-Use of_property_read_bool to check for the existence of a property.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e1,e2;
-statement S2,S1;
-@@
--       if (of_get_property(e1,e2,NULL))
-+       if (of_property_read_bool(e1,e2))
-        S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/ab8500-codec.c | 10 +++++-----
- sound/soc/sh/rcar/ssi.c         |  2 +-
- sound/soc/soc-core.c            |  2 +-
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ arch/cris/arch-v32/drivers/cryptocop.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/codecs/ab8500-codec.c b/sound/soc/codecs/ab8500-codec.c
-index 8b1d0c1a7839..f2dd86ede075 100644
---- a/sound/soc/codecs/ab8500-codec.c
-+++ b/sound/soc/codecs/ab8500-codec.c
-@@ -2408,28 +2408,28 @@ static void ab8500_codec_of_probe(struct device *dev, struct device_node *np,
- {
- 	u32 value;
+diff --git a/arch/cris/arch-v32/drivers/cryptocop.c b/arch/cris/arch-v32/drivers/cryptocop.c
+index cd34723..a682b1f 100644
+--- a/arch/cris/arch-v32/drivers/cryptocop.c
++++ b/arch/cris/arch-v32/drivers/cryptocop.c
+@@ -2497,8 +2497,6 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
+ 	int    cipher_active, digest_active, csum_active;
+ 	int    end_digest, end_csum;
+ 	int    digest_done = 0;
+-	int    cipher_done = 0;
+-	int    csum_done = 0;
  
--	if (of_get_property(np, "stericsson,amic1-type-single-ended", NULL))
-+	if (of_property_read_bool(np, "stericsson,amic1-type-single-ended"))
- 		codec->amics.mic1_type = AMIC_TYPE_SINGLE_ENDED;
- 	else
- 		codec->amics.mic1_type = AMIC_TYPE_DIFFERENTIAL;
+ 	DEBUG(printk("cryptocop_ioctl_process\n"));
  
--	if (of_get_property(np, "stericsson,amic2-type-single-ended", NULL))
-+	if (of_property_read_bool(np, "stericsson,amic2-type-single-ended"))
- 		codec->amics.mic2_type = AMIC_TYPE_SINGLE_ENDED;
- 	else
- 		codec->amics.mic2_type = AMIC_TYPE_DIFFERENTIAL;
+@@ -2794,12 +2792,10 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
+ 			dcfgs[dcfg_ix].src = cryptocop_source_dma;
+ 			cipher_active = 1;
  
- 	/* Has a non-standard Vamic been requested? */
--	if (of_get_property(np, "stericsson,amic1a-bias-vamic2", NULL))
-+	if (of_property_read_bool(np, "stericsson,amic1a-bias-vamic2"))
- 		codec->amics.mic1a_micbias = AMIC_MICBIAS_VAMIC2;
- 	else
- 		codec->amics.mic1a_micbias = AMIC_MICBIAS_VAMIC1;
- 
--	if (of_get_property(np, "stericsson,amic1b-bias-vamic2", NULL))
-+	if (of_property_read_bool(np, "stericsson,amic1b-bias-vamic2"))
- 		codec->amics.mic1b_micbias = AMIC_MICBIAS_VAMIC2;
- 	else
- 		codec->amics.mic1b_micbias = AMIC_MICBIAS_VAMIC1;
- 
--	if (of_get_property(np, "stericsson,amic2-bias-vamic1", NULL))
-+	if (of_property_read_bool(np, "stericsson,amic2-bias-vamic1"))
- 		codec->amics.mic2_micbias = AMIC_MICBIAS_VAMIC1;
- 	else
- 		codec->amics.mic2_micbias = AMIC_MICBIAS_VAMIC2;
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 5f848f054745..6cb6db005fc4 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -928,7 +928,7 @@ int rsnd_ssi_probe(struct rsnd_priv *priv)
- 		}
- 
- 		ops = &rsnd_ssi_non_ops;
--		if (of_get_property(np, "pio-transfer", NULL))
-+		if (of_property_read_bool(np, "pio-transfer"))
- 			ops = &rsnd_ssi_pio_ops;
- 		else
- 			ops = &rsnd_ssi_dma_ops;
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 16369cad4803..ead49d032e4c 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -3733,7 +3733,7 @@ unsigned int snd_soc_of_parse_daifmt(struct device_node *np,
- 	 * SND_SOC_DAIFMT_CLOCK_MASK area
- 	 */
- 	snprintf(prop, sizeof(prop), "%scontinuous-clock", prefix);
--	if (of_get_property(np, prop, NULL))
-+	if (of_property_read_bool(np, prop))
- 		format |= SND_SOC_DAIFMT_CONT;
- 	else
- 		format |= SND_SOC_DAIFMT_GATED;
+-			if (next_ix = (oper.cipher_start + oper.cipher_len)){
+-				cipher_done = 1;
++			if (next_ix = (oper.cipher_start + oper.cipher_len))
+ 				dcfgs[dcfg_ix].last = 1;
+-			} else {
++			else
+ 				dcfgs[dcfg_ix].last = 0;
+-			}
+ 			dcfgs[dcfg_ix].next = descs[desc_ix].cfg;
+ 			descs[desc_ix].cfg = &dcfgs[dcfg_ix];
+ 			++dcfg_ix;
+@@ -2823,12 +2819,10 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
+ 			csum_active = 1;
+ 			dcfgs[dcfg_ix].tid = CRYPTOCOP_IOCTL_CSUM_TID;
+ 			dcfgs[dcfg_ix].src = cryptocop_source_dma;
+-			if (next_ix = (oper.csum_start + oper.csum_len)){
+-				csum_done = 1;
++			if (next_ix = (oper.csum_start + oper.csum_len))
+ 				dcfgs[dcfg_ix].last = 1;
+-			} else {
++			else
+ 				dcfgs[dcfg_ix].last = 0;
+-			}
+ 			dcfgs[dcfg_ix].next = descs[desc_ix].cfg;
+ 			descs[desc_ix].cfg = &dcfgs[dcfg_ix];
+ 			++dcfg_ix;
 -- 
-2.8.1
+2.9.3
 
