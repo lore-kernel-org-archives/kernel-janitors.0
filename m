@@ -1,112 +1,68 @@
 From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 26 Aug 2016 13:35:11 +0000
+Date: Fri, 26 Aug 2016 18:01:55 +0000
 Subject: Re: [PATCH 1/2] IB/hfi1: Fix a parameter of find_first_bit.
-Message-Id: <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
+Message-Id: <2c923344-04c8-cdbd-ac06-047027f7a23a@redhat.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="fnBJqBvUmwftHaOPL5WTj8SdMj05qLgwe"
+Content-Type: multipart/mixed; boundary="drk5EFA0mrFinOWFkvUl6vqeS04Jw7s2G"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1472186949-9025-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1472186949-9025-1-git-send-email-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
+In-Reply-To: <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mike.marciniszyn@intel.com, dennis.dalessandro@intel.com, sean.hefty@intel.com, hal.rosenstock@gmail.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---fnBJqBvUmwftHaOPL5WTj8SdMj05qLgwe
-Content-Type: multipart/mixed; boundary="rTnBtUMRQKIIh5h1tUfPTpXfxH5juCXUk"
+--drk5EFA0mrFinOWFkvUl6vqeS04Jw7s2G
+Content-Type: multipart/mixed; boundary="ebJruRaJ823Mfx6cs9OOcWhbWuKcHfJe7"
 From: Doug Ledford <dledford@redhat.com>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
  mike.marciniszyn@intel.com, dennis.dalessandro@intel.com,
  sean.hefty@intel.com, hal.rosenstock@gmail.com
 Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
  kernel-janitors@vger.kernel.org
-Message-ID: <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
+Message-ID: <2c923344-04c8-cdbd-ac06-047027f7a23a@redhat.com>
 Subject: Re: [PATCH 1/2] IB/hfi1: Fix a parameter of find_first_bit.
 References: <1472186949-9025-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1472186949-9025-1-git-send-email-christophe.jaillet@wanadoo.fr>
+ <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
+In-Reply-To: <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
 
---rTnBtUMRQKIIh5h1tUfPTpXfxH5juCXUk
+--ebJruRaJ823Mfx6cs9OOcWhbWuKcHfJe7
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On 8/26/2016 12:49 AM, Christophe JAILLET wrote:
-> The 2nd parameter of 'find_first_bit' is the number of bits to search.
-> In this case, we are passing 'sizeof(unsigned long)' which is likely to=
+On 8/26/2016 9:35 AM, Doug Ledford wrote:
+> On 8/26/2016 12:49 AM, Christophe JAILLET wrote:
+>> The 2nd parameter of 'find_first_bit' is the number of bits to search.=
 
-> be 4 or 8.
+>> In this case, we are passing 'sizeof(unsigned long)' which is likely t=
+o
+>> be 4 or 8.
+>=20
+> If the size can be 4 or 8, then using 64 universally is not correct.
+> Why not use sizeof() * 8 (or << 3)?
 
-If the size can be 4 or 8, then using 64 universally is not correct.
-Why not use sizeof() * 8 (or << 3)?
+Better yet, why not put this patch in the kernel first:
 
-> It is likely that the number of bits of 'port_mask' was expected here. =
-This
-> variable is a 'u64', so use 64 instead.
->=20
-> It has been spotted by the following coccinelle script:
-> @@
-> expression ret, x;
->=20
-> @@
-> *  ret =3D \(find_first_bit \| find_first_zero_bit\) (x, sizeof(...));
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure that using 64 directly is the best option.
-> Maybe '8 * sizeof(port_mask)' as used in the same file for
-> 'for_each_set_bit' would be better
-> ---
->  drivers/infiniband/hw/hfi1/mad.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/infiniband/hw/hfi1/mad.c b/drivers/infiniband/hw/h=
-fi1/mad.c
-> index 1263abe01999..2c6c138c41b2 100644
-> --- a/drivers/infiniband/hw/hfi1/mad.c
-> +++ b/drivers/infiniband/hw/hfi1/mad.c
-> @@ -2632,8 +2632,7 @@ static int pma_get_opa_datacounters(struct opa_pm=
-a_mad *pmp,
->  	 * port the request came in on.
->  	 */
->  	port_mask =3D be64_to_cpu(req->port_select_mask[3]);
-> -	port_num =3D find_first_bit((unsigned long *)&port_mask,
-> -				  sizeof(port_mask));
-> +	port_num =3D find_first_bit((unsigned long *)&port_mask, 64);
-> =20
->  	if ((u8)port_num !=3D port) {
->  		pmp->mad_hdr.status |=3D IB_SMP_INVALID_FIELD;
-> @@ -2836,8 +2835,7 @@ static int pma_get_opa_porterrors(struct opa_pma_=
-mad *pmp,
->  	 * port the request came in on.
->  	 */
->  	port_mask =3D be64_to_cpu(req->port_select_mask[3]);
-> -	port_num =3D find_first_bit((unsigned long *)&port_mask,
-> -				  sizeof(port_mask));
-> +	port_num =3D find_first_bit((unsigned long *)&port_mask, 64);
-> =20
->  	if (port_num !=3D port) {
->  		pmp->mad_hdr.status |=3D IB_SMP_INVALID_FIELD;
-> @@ -3009,8 +3007,7 @@ static int pma_get_opa_errorinfo(struct opa_pma_m=
-ad *pmp,
->  	 * the request came in on.
->  	 */
->  	port_mask =3D be64_to_cpu(req->port_select_mask[3]);
-> -	port_num =3D find_first_bit((unsigned long *)&port_mask,
-> -				  sizeof(port_mask));
-> +	port_num =3D find_first_bit((unsigned long *)&port_mask, 64);
-> =20
->  	if (port_num !=3D port) {
->  		pmp->mad_hdr.status |=3D IB_SMP_INVALID_FIELD;
-> @@ -3246,8 +3243,7 @@ static int pma_set_opa_errorinfo(struct opa_pma_m=
-ad *pmp,
->  	 * the request came in on.
->  	 */
->  	port_mask =3D be64_to_cpu(req->port_select_mask[3]);
-> -	port_num =3D find_first_bit((unsigned long *)&port_mask,
-> -				  sizeof(port_mask));
-> +	port_num =3D find_first_bit((unsigned long *)&port_mask, 64);
-> =20
->  	if (port_num !=3D port) {
->  		pmp->mad_hdr.status |=3D IB_SMP_INVALID_FIELD;
->=20
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index d96a6118d26a..a8838c87668e 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -52,6 +52,8 @@
+
+ #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
+__must_be_array(arr))
+
++#define bitsizeof(x)   (sizeof((x)) << 3)
++
+ #define u64_to_user_ptr(x) (           \
+ {                                      \
+        typecheck(u64, x);              \
+
+then start going around replacing all these hard coded numbers with the
+use of bitsizeof().  It can be applied not just to the find_first*bit()
+routines, but to a bunch of other routines too.  Just look at
+include/linux/bitmap.h and any that have nbits as an argument are
+candidates.
 
 
 --=20
@@ -114,9 +70,9 @@ Doug Ledford <dledford@redhat.com>
     GPG Key ID: 0E572FDD
 
 
---rTnBtUMRQKIIh5h1tUfPTpXfxH5juCXUk--
+--ebJruRaJ823Mfx6cs9OOcWhbWuKcHfJe7--
 
---fnBJqBvUmwftHaOPL5WTj8SdMj05qLgwe
+--drk5EFA0mrFinOWFkvUl6vqeS04Jw7s2G
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -125,19 +81,19 @@ Content-Disposition: attachment; filename="signature.asc"
 Version: GnuPG v2
 Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBCAAGBQJXwEWPAAoJELgmozMOVy/dXuUP/0Ov1Px+WSZw+dY9zs/W+ej7
-uNl2aMEI44+gsqeP9CbFuDZ82PXgcF/OWnoJMfHVyh5dHYDUNr8Jp7aJp5Pdz4qx
-xUWPYH66t6GnTERr99x8PYwoHO9yMJ9BnYEFUA8ABZAsjk41dKhWsjXZNUOOQ863
-Nyi3HeQ+lkCJLNVRV05pGNrvNiC+prCGt3toe35ZuA58PDbQqS+1Fs7JJGAUR7mE
-rd8BfmAN2Ef6DZHSteFrwkOjOw/Ee08atjOTI/wPaOkbSItwEByG7INRwB3Q+Z2h
-e4em55OMN6e60YmsfC7tY5e1SmxuU8zRDFw09LFEb92Z5C9dfdzroKRyT+dPNvDi
-KPq0i3/yrsqHFH3Y+03fxQTWHGugjFBQrQfUcWksV/yFvzx/L5xK1iTow7tDs27N
-EriXpnyw+Y15pJo5IzHl0bat6cWzm/v7GLn2APyihGQ9dUc65mSnUf9JS+vWBQ0T
-Zk+fAl34tTFaxnxvDuGBBOdqHw7zj/rg3YVp7yKbuppg1YGGLwaV5ZkZo59HONBg
-dNtObKRHY62w4ty6fIfZPZA2OnI/qdvxrOIRXKLnGu9hcEILxdMOAh2ysKpenVro
-c05IeP5nKkZ6yXZAYNQla3YUtYmro6mtRj0LkdUhRjFo5TaZ0HWtA7j5Nn/SRdkW
-OTLQR9mU3rpXL4DFPZsn
-=oxoL
+iQIcBAEBCAAGBQJXwIQTAAoJELgmozMOVy/dqTYQAJHv5tUhZtZOsSziCJwGpIpD
+eUDwg0bLGPRwOfTJML3JnizywSoDGwG2kHLp1nGHUbQcIeQ6lnn0bWfhkAvkcPpK
+HXAZpInBG5WcKAvHtZDWVr87bbN6t1X1O29aV8CJSJgf+Aw+juxQ0kkpVnV3YRKp
+SKtDM+bbD22R6WQJxmMIFAGdP+hjjr0ZspiYadrUvGmXSpvs8F250dBdtCn8fEuL
+P5w+YpwL3YJMBCLjsRt6JcyMOi6rL83lxnt/ByGY/dT8owDBMv95yaGGFGJg0B6q
+4ZhqGHhTJ7vrKf+gIOL2kMkgCdBzt2Xghtce5SeHebFSMe4mU/8jEgwXRUZtPgMa
+VqRlKYxDfUHkRVZYrZrdBM0WyEB9ZoqJhKmr+hxzUSKDh8jrlb4cMfWknO4nKP6X
+lMSjdwUEWLuW2CSKFVwBYu5kw9abol7p/BJwv6gAvlYBIftHAckrloTInGMIMxnu
+HWD38vvIU7jOQo4DgJ8LAgPGD8hbhtIdXWvXDVGzPof0JB3xxrHAZk7B2R+As7zg
+KxPv6xxEiKfIa0iWcknwH30CIqU0oFl45+m0Pykry4VwRpO1uyZfFpMvnDH/aHxv
+b0TkY1pexkkvMM7CV/4smpl9Cj8I0aqqHbWNYYER278FWM3t5obBCp47LiIUvUG8
+S7356P0EC+3AKcDuEUrn
+=gSrx
 -----END PGP SIGNATURE-----
 
---fnBJqBvUmwftHaOPL5WTj8SdMj05qLgwe--
+--drk5EFA0mrFinOWFkvUl6vqeS04Jw7s2G--
