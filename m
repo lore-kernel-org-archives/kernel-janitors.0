@@ -1,112 +1,35 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 Aug 2016 08:38:25 +0000
-Subject: [PATCH v2 1/2] ALSA: compress: Restructure source code around an if statement in snd_compr_set_param
-Message-Id: <89765506-60f0-8319-5806-29476a36f9f3@users.sourceforge.net>
+Date: Fri, 26 Aug 2016 12:43:48 +0000
+Subject: [PATCH 0/8] cris-cryptocop: Fine-tuning for some function implementations
+Message-Id: <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <7233eb00-a941-4935-dce2-7cb907272d41@users.sourceforge.net>
- <03eac1fe-ff33-1759-9c2a-7914f1c6de45@users.sourceforge.net>
- <1471809094.3746.17.camel@perches.com>
- <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
-In-Reply-To: <14b1efe1-3c1c-4c36-bfc2-19947c190412@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Joe Perches <joe@perches.com>, Takashi Iwai <tiwai@suse.com>, Vinod Koul <vinod.koul@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-cris-kernel@axis.com, Adam Buchbinder <adam.buchbinder@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Jiri Kosina <jkosina@suse.cz>, Mikael Starvik <starvik@axis.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 22 Aug 2016 10:01:52 +0200
+Date: Fri, 26 Aug 2016 14:34:34 +0200
 
-* Reverse a condition check.
+Several update suggestions were taken into account
+from static source code analysis.
 
-* Reduce the indentation one level then for some source code
-  from a previous if branch.
+Markus Elfring (8):
+  Use kmalloc_array() in two functions
+  Improve determination of sizes in five functions
+  Delete unnecessary braces
+  Less function calls after error detection
+  Move an assignment for the variable "nooutpages"
+  Delete two variables
+  Delete unnecessary variable initialisations
+  Apply another recommendation from "checkpatch.pl"
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/core/compress_offload.c | 62 +++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 32 deletions(-)
+ arch/cris/arch-v32/drivers/cryptocop.c | 299 +++++++++++++++------------------
+ 1 file changed, 140 insertions(+), 159 deletions(-)
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index 2c49848..a10d139 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -548,43 +548,41 @@ snd_compr_set_params(struct snd_compr_stream *stream, unsigned long arg)
- 	struct snd_compr_params *params;
- 	int retval;
- 
--	if (stream->runtime->state = SNDRV_PCM_STATE_OPEN) {
--		/*
--		 * we should allow parameter change only when stream has been
--		 * opened not in other cases
--		 */
--		params = kmalloc(sizeof(*params), GFP_KERNEL);
--		if (!params)
--			return -ENOMEM;
--		if (copy_from_user(params, (void __user *)arg, sizeof(*params))) {
--			retval = -EFAULT;
--			goto out;
--		}
-+	if (stream->runtime->state != SNDRV_PCM_STATE_OPEN)
-+		return -EPERM;
-+	/*
-+	 * we should allow parameter change only when stream has been
-+	 * opened not in other cases
-+	 */
-+	params = kmalloc(sizeof(*params), GFP_KERNEL);
-+	if (!params)
-+		return -ENOMEM;
-+	if (copy_from_user(params, (void __user *)arg, sizeof(*params))) {
-+		retval = -EFAULT;
-+		goto out;
-+	}
- 
--		retval = snd_compress_check_input(params);
--		if (retval)
--			goto out;
-+	retval = snd_compress_check_input(params);
-+	if (retval)
-+		goto out;
- 
--		retval = snd_compr_allocate_buffer(stream, params);
--		if (retval) {
--			retval = -ENOMEM;
--			goto out;
--		}
-+	retval = snd_compr_allocate_buffer(stream, params);
-+	if (retval) {
-+		retval = -ENOMEM;
-+		goto out;
-+	}
- 
--		retval = stream->ops->set_params(stream, params);
--		if (retval)
--			goto out;
-+	retval = stream->ops->set_params(stream, params);
-+	if (retval)
-+		goto out;
- 
--		stream->metadata_set = false;
--		stream->next_track = false;
-+	stream->metadata_set = false;
-+	stream->next_track = false;
- 
--		if (stream->direction = SND_COMPRESS_PLAYBACK)
--			stream->runtime->state = SNDRV_PCM_STATE_SETUP;
--		else
--			stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
--	} else {
--		return -EPERM;
--	}
-+	if (stream->direction = SND_COMPRESS_PLAYBACK)
-+		stream->runtime->state = SNDRV_PCM_STATE_SETUP;
-+	else
-+		stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
- out:
- 	kfree(params);
- 	return retval;
 -- 
 2.9.3
 
