@@ -1,39 +1,30 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 04 Aug 2016 15:25:00 +0000
-Subject: Re: [patch] Input: silead - remove some dead code
-Message-Id: <20160804152500.GC5504@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Aug 2016 06:20:19 +0000
+Subject: Re: IA64-IRQ: Use kmalloc_array() in sn_irq_lh_init()
+Message-Id: <0374f7bd-4623-fc4c-8913-894b1e0bb612@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160804052859.GI775@mwanda>
-In-Reply-To: <20160804052859.GI775@mwanda>
+References: <349bbfb4-bada-628e-2981-ca2a315299fc@users.sourceforge.net>
+ <2e046b40-1c8e-717f-68b1-534c3125724c@users.sourceforge.net>
+ <alpine.DEB.2.10.1608261557130.3645@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1608261557130.3645@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Robert Dolca <robert.dolca@intel.com>, Henrik Rydberg <rydberg@bitmath.org>, Hans de Goede <hdegoede@redhat.com>, Daniel Jansen <djaniboe@gmail.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
 
-On Thu, Aug 04, 2016 at 08:28:59AM +0300, Dan Carpenter wrote:
-> buf[0] is an unsigned char.  touch_nr is an int.  The test for negative
-> here doesn't make sense so I have removed it.
+>> -		sn_irq_lh[i] = kmalloc(sizeof(struct list_head), GFP_KERNEL);
+>> +		sn_irq_lh[i] = kmalloc(*sn_irq_lh[i], GFP_KERNEL);
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Did a sizeof get lost here?
 
-Applied, thank you.
+Unfortunately,  yes.
 
-> 
-> diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
-> index 5f55167..7379fe1 100644
-> --- a/drivers/input/touchscreen/silead.c
-> +++ b/drivers/input/touchscreen/silead.c
-> @@ -147,9 +147,6 @@ static void silead_ts_read_data(struct i2c_client *client)
->  	}
->  
->  	touch_nr = buf[0];
-> -	if (touch_nr < 0)
-> -		return;
-> -
->  	if (touch_nr > data->max_fingers) {
->  		dev_warn(dev, "More touches reported then supported %d > %d\n",
->  			 touch_nr, data->max_fingers);
+It is strange that I overlooked such a hiccup yesterday.
 
--- 
-Dmitry
+
+Should I start to automate the source code transformation which I imagined here
+better with further scripts for the semantic patch language?
+
+Regards,
+Markus
