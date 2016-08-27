@@ -1,55 +1,67 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Aug 2016 11:13:12 +0000
-Subject: [PATCH 5/5] powerpc-MSI-HSTA: Move three assignments in hsta_msi_probe()
-Message-Id: <4fd422ec-6133-65dd-0a0c-e8613fd4820d@users.sourceforge.net>
+Date: Sat, 27 Aug 2016 16:12:33 +0000
+Subject: Re: KVM-S390: Less function calls in kvm_s390_import_bp_data() after error detection
+Message-Id: <05fa56cb-843e-39bd-847d-1b31b5a726b5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
-In-Reply-To: <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
+References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
+ <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
+ <f9f50675-b283-4c03-8764-c7c570647fe4@de.ibm.com>
+In-Reply-To: <f9f50675-b283-4c03-8764-c7c570647fe4@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Scott Wood <scottwood@freescale.com>, Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Aug 2016 11:30:48 +0200
+>> @@ -273,10 +273,12 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+>>  	vcpu->arch.guestdbg.nr_hw_wp = nr_wp;
+>>  	vcpu->arch.guestdbg.hw_wp_info = wp_info;
+>>  	return 0;
+>> -error:
+>> -	kfree(bp_data);
+>> -	kfree(wp_info);
+>> +free_bp_info:
+>>  	kfree(bp_info);
+>> +free_wp_info:
+>> +	kfree(wp_info);
+>> +free_bp_data:
+>> +	kfree(bp_data);
+>>  	return ret;
+>>  }
+> 
+> I agree with Cornelia,
 
-Move the assignments for three data structure members to the end
-so that they will only be performed if the desired resource allocations
-succeeded by this function.
+This is generally fine.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/powerpc/sysdev/ppc4xx_hsta_msi.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/sysdev/ppc4xx_hsta_msi.c b/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
-index 3097ddd..57014ce 100644
---- a/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
-+++ b/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
-@@ -143,10 +143,7 @@ static int hsta_msi_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	ppc4xx_hsta_msi.dev = dev;
--	ppc4xx_hsta_msi.address = mem->start;
- 	ppc4xx_hsta_msi.data = ioremap(mem->start, resource_size(mem));
--	ppc4xx_hsta_msi.irq_count = irq_count;
- 	if (!ppc4xx_hsta_msi.data) {
- 		dev_err(dev, "Unable to map memory\n");
- 		return -ENOMEM;
-@@ -179,6 +176,10 @@ static int hsta_msi_probe(struct platform_device *pdev)
- 		phb->controller_ops.setup_msi_irqs = hsta_setup_msi_irqs;
- 		phb->controller_ops.teardown_msi_irqs = hsta_teardown_msi_irqs;
- 	}
-+
-+	ppc4xx_hsta_msi.dev = dev;
-+	ppc4xx_hsta_msi.address = mem->start;
-+	ppc4xx_hsta_msi.irq_count = irq_count;
- 	return 0;
-  free_irq_map:
- 	kfree(ppc4xx_hsta_msi.irq_map);
--- 
-2.9.3
+> while it seems correct from a technical point of view,
 
+Thanks for another bit of acknowledgement.
+
+
+> it will make the code harder to maintain.
+
+I agree that there some efforts and challenges involved.
+
+
+> For example if we ever add a new malloc and remove another one
+
+Do you see any changes coming from this direction?
+
+
+> over time we would need to reshuffle the labels
+
+This can occasionally happen, can't it?
+
+
+> and this did went wrong several times in the past.
+
+Would you like to add any corresponding software development experiences
+to discussions around a topic like "CodingStyle: add some more error
+handling guidelines"?
+
+https://www.spinics.net/lists/linux-doc/msg39307.html
+http://marc.info/?l=linux-doc&m7187538413914
+
+Regards,
+Markus
