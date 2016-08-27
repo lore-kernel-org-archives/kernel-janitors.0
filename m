@@ -1,55 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Aug 2016 08:49:49 +0000
-Subject: [bug report] qed: Revisit chain implementation
-Message-Id: <20160803084949.GA2154@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 27 Aug 2016 07:29:16 +0000
+Subject: Re: ia64/mm/tlb: Delete unnecessary braces
+Message-Id: <a9dbe5ab-6fd5-ccc9-076e-69c4aac03801@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201608270456.Xq7iCOiG%fengguang.wu@intel.com>
+In-Reply-To: <201608270456.Xq7iCOiG%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kbuild-all@01.org, linux-ia64@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: kbuild test robot <lkp@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-Hello Yuval Mintz,
+>    arch/ia64/mm/tlb.c: In function 'ia64_global_tlb_purge':
+>>> arch/ia64/mm/tlb.c:247:5: warning: suggest explicit braces to avoid ambiguous 'else' [-Wparentheses]
+>      if (mm != active_mm)
+>         ^
 
-The patch a91eb52abb50: "qed: Revisit chain implementation" from Jun
-3, 2016, leads to the following static checker warning:
+Does this message from the compiler mean that there are a few
+corresponding details to clarify for the Linux coding style documentation?
 
-	include/linux/qed/qed_chain.h:404 qed_chain_consume()
-	warn: inconsistent indenting
-
-include/linux/qed/qed_chain.h
-   386  static inline void *qed_chain_consume(struct qed_chain *p_chain)
-   387  {
-   388          void *p_ret = NULL, *p_cons_idx, *p_cons_page_idx;
-   389  
-   390          if (is_chain_u16(p_chain)) {
-   391                  if ((p_chain->u.chain16.cons_idx &
-   392                       p_chain->elem_per_page_mask) = p_chain->next_page_mask) {
-   393                          p_cons_idx = &p_chain->u.chain16.cons_idx;
-   394                          p_cons_page_idx = &p_chain->pbl.u.pbl16.cons_page_idx;
-   395                          qed_chain_advance_page(p_chain, &p_chain->p_cons_elem,
-   396                                                 p_cons_idx, p_cons_page_idx);
-   397                  }
-   398                  p_chain->u.chain16.cons_idx++;
-   399          } else {
-   400                  if ((p_chain->u.chain32.cons_idx &
-   401                       p_chain->elem_per_page_mask) = p_chain->next_page_mask) {
-   402                          p_cons_idx = &p_chain->u.chain32.cons_idx;
-   403                          p_cons_page_idx = &p_chain->pbl.u.pbl32.cons_page_idx;
-   404                  qed_chain_advance_page(p_chain, &p_chain->p_cons_elem,
-                        ^^^^^^^^^^^^^^^^^^^^^^
-Add a tab?
-
-   405                                                 p_cons_idx, p_cons_page_idx);
-   406                  }
-   407                  p_chain->u.chain32.cons_idx++;
-   408          }
-   409  
-   410          p_ret = p_chain->p_cons_elem;
-   411          p_chain->p_cons_elem = (void *)(((u8 *)p_chain->p_cons_elem) +
-   412                                          p_chain->elem_size);
-   413  
-   414          return p_ret;
-   415  }
-
-regards,
-dan carpenter
+Regards,
+Markus
