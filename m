@@ -1,35 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Aug 2016 12:43:48 +0000
-Subject: [PATCH 0/8] cris-cryptocop: Fine-tuning for some function implementations
-Message-Id: <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 28 Aug 2016 21:27:06 +0000
+Subject: [PATCH] staging/lustre: constify sops structure
+Message-Id: <1472419626-13054-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-cris-kernel@axis.com, Adam Buchbinder <adam.buchbinder@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Jiri Kosina <jkosina@suse.cz>, Mikael Starvik <starvik@axis.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Aug 2016 14:34:34 +0200
+sops, of type struct seq_operations, is never modified, so declare it as
+const.
 
-Several update suggestions were taken into account
-from static source code analysis.
+Done with the help of Coccinelle.
 
-Markus Elfring (8):
-  Use kmalloc_array() in two functions
-  Improve determination of sizes in five functions
-  Delete unnecessary braces
-  Less function calls after error detection
-  Move an assignment for the variable "nooutpages"
-  Delete two variables
-  Delete unnecessary variable initialisations
-  Apply another recommendation from "checkpatch.pl"
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- arch/cris/arch-v32/drivers/cryptocop.c | 299 +++++++++++++++------------------
- 1 file changed, 140 insertions(+), 159 deletions(-)
+---
+ drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-2.9.3
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c b/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
+index 327cf63..9bad57d 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
+@@ -937,7 +937,7 @@ static int ptlrpc_lprocfs_svc_req_history_show(struct seq_file *s, void *iter)
+ static int
+ ptlrpc_lprocfs_svc_req_history_open(struct inode *inode, struct file *file)
+ {
+-	static struct seq_operations sops = {
++	static const struct seq_operations sops = {
+ 		.start = ptlrpc_lprocfs_svc_req_history_start,
+ 		.stop  = ptlrpc_lprocfs_svc_req_history_stop,
+ 		.next  = ptlrpc_lprocfs_svc_req_history_next,
 
