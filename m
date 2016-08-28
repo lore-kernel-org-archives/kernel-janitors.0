@@ -1,57 +1,36 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Mon, 22 Aug 2016 01:43:53 +0000
-Subject: Re: [PATCH 1/2] tun: Use memdup_user() rather than duplicating its implementation
-Message-Id: <20160822044347-mutt-send-email-mst@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 28 Aug 2016 20:36:55 +0000
+Subject: [PATCH] nfsd: constify reply_cache_stats_operations structure
+Message-Id: <1472416615-24079-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9cf06275-924d-6c22-d8a8-f733a03cca23@users.sourceforge.net>
- <a2ee9925-1241-0328-6d35-9a9c9f567ea4@users.sourceforge.net>
-In-Reply-To: <a2ee9925-1241-0328-6d35-9a9c9f567ea4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jason Wang <jasowang@redhat.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Paolo Abeni <pabeni@redhat.com>, Soheil Hassas Yeganeh <soheil@google.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: kernel-janitors@vger.kernel.org, Jeff Layton <jlayton@poochiereds.net>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Aug 20, 2016 at 09:34:56AM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 20 Aug 2016 08:54:15 +0200
-> 
-> Reuse existing functionality from memdup_user() instead of keeping
-> duplicate source code.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+reply_cache_stats_operations, of type struct file_operations, is never
+modified, so declare it as const.
 
+Done with the help of Coccinelle.
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> ---
->  drivers/net/tun.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 9c8b5bc..a1aeccb 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -731,14 +731,9 @@ static int update_filter(struct tap_filter *filter, void __user *arg)
->  	}
->  
->  	alen = ETH_ALEN * uf.count;
-> -	addr = kmalloc(alen, GFP_KERNEL);
-> -	if (!addr)
-> -		return -ENOMEM;
-> -
-> -	if (copy_from_user(addr, arg + sizeof(uf), alen)) {
-> -		err = -EFAULT;
-> -		goto done;
-> -	}
-> +	addr = memdup_user(arg + sizeof(uf), alen);
-> +	if (IS_ERR(addr))
-> +		return PTR_ERR(addr);
->  
->  	/* The filter is updated without holding any locks. Which is
->  	 * perfectly safe. We disable it first and in the worst
-> -- 
-> 2.9.3
+---
+ fs/nfsd/nfsctl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 65ad016..3bc9693 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -217,7 +217,7 @@ static const struct file_operations pool_stats_operations = {
+ 	.release	= nfsd_pool_stats_release,
+ };
+ 
+-static struct file_operations reply_cache_stats_operations = {
++static const struct file_operations reply_cache_stats_operations = {
+ 	.open		= nfsd_reply_cache_stats_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+
