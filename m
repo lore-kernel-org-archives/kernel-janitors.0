@@ -1,40 +1,62 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 12 Aug 2016 20:30:29 +0000
-Subject: Re: [PATCH 2/2] be2iscsi: Fix some error messages
-Message-Id: <4cd24bc3-7953-479a-1dbe-2aac9299ce13@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Aug 2016 17:19:22 +0000
+Subject: [PATCH 6/6] KVM: PPC: e500: Rename jump labels in kvmppc_e500_tlb_init()
+Message-Id: <165cb42e-f9fe-83ad-7c4c-299a805dbe6e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470996165-31131-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <alpine.DEB.2.10.1608121229310.2983@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1608121229310.2983@hadrien>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
+In-Reply-To: <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: jayamohan.kallickal@avagotech.com, jejb@linux.vnet.ibm.com, ketan.mukadam@avagotech.com, sony.john@avagotech.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Le 12/08/2016 à 12:30, Julia Lawall a écrit :
-> On Fri, 12 Aug 2016, Christophe JAILLET wrote:
->
->> This fixes:
->>     - missing spaces in string split on several lines
->>     - extra spaces after ':'
->>     - missing '\n' at the end of some messages
->>     - too long lines
-> I think that the strings should be concatenated, even if they go past 80
-> chars.  I'm surprised checkpatch didn't complain.
->
-> julia
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Aug 2016 18:45:26 +0200
 
-checkpatch did complain.
-In this file, all logging messages were written with split lines when 
-too long, so I considered that it was better to keep it like that.
+Adjust jump labels according to the current Linux coding style convention.
 
-I will resubmit if the patch gets some interest and if a maintainer ask 
-for concatenated messages.
-
-CJ
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+ arch/powerpc/kvm/e500_mmu.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/arch/powerpc/kvm/e500_mmu.c b/arch/powerpc/kvm/e500_mmu.c
+index 0a2eeb1..da8f22b 100644
+--- a/arch/powerpc/kvm/e500_mmu.c
++++ b/arch/powerpc/kvm/e500_mmu.c
+@@ -933,26 +933,25 @@ int kvmppc_e500_tlb_init(struct kvmppc_vcpu_e500 *vcpu_e500)
+ 					  sizeof(struct tlbe_ref),
+ 					  GFP_KERNEL);
+ 	if (!vcpu_e500->gtlb_priv[0])
+-		goto err;
++		goto free_vcpu;
+ 
+ 	vcpu_e500->gtlb_priv[1] = kcalloc(vcpu_e500->gtlb_params[1].entries,
+ 					  sizeof(struct tlbe_ref),
+ 					  GFP_KERNEL);
+ 	if (!vcpu_e500->gtlb_priv[1])
+-		goto err;
++		goto free_vcpu;
+ 
+ 	vcpu_e500->g2h_tlb1_map = kcalloc(vcpu_e500->gtlb_params[1].entries,
+ 					  sizeof(*vcpu_e500->g2h_tlb1_map),
+ 					  GFP_KERNEL);
+ 	if (!vcpu_e500->g2h_tlb1_map)
+-		goto err;
++		goto free_vcpu;
+ 
+ 	vcpu_mmu_init(vcpu, vcpu_e500->gtlb_params);
+ 
+ 	kvmppc_recalc_tlb1map_range(vcpu_e500);
+ 	return 0;
+-
+-err:
++ free_vcpu:
+ 	free_gtlb(vcpu_e500);
+ 	return -1;
+ }
+-- 
+2.9.3
 
