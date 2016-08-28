@@ -1,69 +1,106 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Aug 2016 07:27:19 +0000
-Subject: [PATCH 6/7] aacraid: Improve determination of a few sizes
-Message-Id: <5fa01979-9ca2-32d0-bece-c33902a5259b@users.sourceforge.net>
+Date: Sun, 28 Aug 2016 17:14:07 +0000
+Subject: [PATCH 2/6] KVM: PPC: e500: Less function calls in kvm_vcpu_ioctl_config_tlb() after error detection
+Message-Id: <bb5571c3-d3a4-e93f-ac9a-543dbd2f2387@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <40d8607f-3934-c31f-3791-ef6a67d65d45@users.sourceforge.net>
-In-Reply-To: <40d8607f-3934-c31f-3791-ef6a67d65d45@users.sourceforge.net>
+ <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
+In-Reply-To: <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, aacraid@microsemi.com, "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Aug 2016 08:04:48 +0200
+Date: Sun, 28 Aug 2016 17:34:46 +0200
 
-Replace the specification of data structures by references for variables
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The kfree() function was called in two cases by the
+kvm_vcpu_ioctl_config_tlb() function during error handling
+even if the passed data structure element contained a null pointer.
+
+* Split a condition check for memory allocation failures.
+
+* Adjust jump targets according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/aacraid/commctrl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/kvm/e500_mmu.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index cda03f0..d2029db 100644
---- a/drivers/scsi/aacraid/commctrl.c
-+++ b/drivers/scsi/aacraid/commctrl.c
-@@ -177,7 +177,7 @@ static int open_getadapter_fib(struct aac_dev * dev, void __user *arg)
- 	struct aac_fib_context * fibctx;
- 	int status;
+diff --git a/arch/powerpc/kvm/e500_mmu.c b/arch/powerpc/kvm/e500_mmu.c
+index 26f3737..b65a894 100644
+--- a/arch/powerpc/kvm/e500_mmu.c
++++ b/arch/powerpc/kvm/e500_mmu.c
+@@ -785,35 +785,39 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
  
--	fibctx = kmalloc(sizeof(struct aac_fib_context), GFP_KERNEL);
-+	fibctx = kmalloc(sizeof(*fibctx), GFP_KERNEL);
- 	if (fibctx = NULL) {
- 		status = -ENOMEM;
- 	} else {
-@@ -186,7 +186,7 @@ static int open_getadapter_fib(struct aac_dev * dev, void __user *arg)
- 		struct aac_fib_context * context;
+ 	ret = get_user_pages_fast(cfg->array, num_pages, 1, pages);
+ 	if (ret < 0)
+-		goto err_pages;
++		goto free_pages;
  
- 		fibctx->type = FSAFS_NTC_GET_ADAPTER_FIB_CONTEXT;
--		fibctx->size = sizeof(struct aac_fib_context);
-+		fibctx->size = sizeof(*fibctx);
- 		/*
- 		 *	Yes yes, I know this could be an index, but we have a
- 		 * better guarantee of uniqueness for the locked loop below.
-@@ -251,7 +251,7 @@ static int next_getadapter_fib(struct aac_dev * dev, void __user *arg)
- 	struct list_head * entry;
- 	unsigned long flags;
+ 	if (ret != num_pages) {
+ 		num_pages = ret;
+ 		ret = -EFAULT;
+-		goto err_put_page;
++		goto put_pages;
+ 	}
  
--	if (copy_from_user((void *)&f, arg, sizeof(struct fib_ioctl)))
-+	if (copy_from_user(&f, arg, sizeof(f)))
- 		return -EFAULT;
- 	/*
- 	 *	Verify that the HANDLE passed in was a valid AdapterFibContext
-@@ -509,7 +509,7 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 	srbcmd = (struct aac_srb*) fib_data(srbfib);
+ 	virt = vmap(pages, num_pages, VM_MAP, PAGE_KERNEL);
+ 	if (!virt) {
+ 		ret = -ENOMEM;
+-		goto err_put_page;
++		goto put_pages;
+ 	}
  
- 	memset(sg_list, 0, sizeof(sg_list)); /* cleanup may take issue */
--	if (copy_from_user(&fibsize, &user_srb->count, sizeof(u32))) {
-+	if (copy_from_user(&fibsize, &user_srb->count, sizeof(fibsize))) {
- 		dprintk((KERN_DEBUG"aacraid: Could not copy data size from user\n"));
- 		rcode = -EFAULT;
- 		goto free_sg_list;
+ 	privs[0] = kzalloc(sizeof(struct tlbe_priv) * params.tlb_sizes[0],
+ 			   GFP_KERNEL);
++	if (!privs[0]) {
++		ret = -ENOMEM;
++		goto put_pages;
++	}
++
+ 	privs[1] = kzalloc(sizeof(struct tlbe_priv) * params.tlb_sizes[1],
+ 			   GFP_KERNEL);
+-
+-	if (!privs[0] || !privs[1]) {
++	if (!privs[1]) {
+ 		ret = -ENOMEM;
+-		goto err_privs;
++		goto free_privs_first;
+ 	}
+ 
+ 	g2h_bitmap = kzalloc(sizeof(u64) * params.tlb_sizes[1],
+ 	                     GFP_KERNEL);
+ 	if (!g2h_bitmap) {
+ 		ret = -ENOMEM;
+-		goto err_privs;
++		goto free_privs_second;
+ 	}
+ 
+ 	free_gtlb(vcpu_e500);
+@@ -845,16 +849,14 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
+ 
+ 	kvmppc_recalc_tlb1map_range(vcpu_e500);
+ 	return 0;
+-
+-err_privs:
+-	kfree(privs[0]);
++ free_privs_second:
+ 	kfree(privs[1]);
+-
+-err_put_page:
++ free_privs_first:
++	kfree(privs[0]);
++ put_pages:
+ 	for (i = 0; i < num_pages; i++)
+ 		put_page(pages[i]);
+-
+-err_pages:
++ free_pages:
+ 	kfree(pages);
+ 	return ret;
+ }
 -- 
 2.9.3
 
