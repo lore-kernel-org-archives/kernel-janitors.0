@@ -1,29 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Aug 2016 19:01:07 +0000
-Subject: [patch] i40e: remove a stray unlock
-Message-Id: <20160803190107.GC775@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 28 Aug 2016 21:38:27 +0000
+Subject: [PATCH] staging: lustre: constify lprocfs_generic_fops structure
+Message-Id: <1472420307-21087-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Catherine Sullivan <catherine.sullivan@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-We shifted the locking around a bit but forgot to delete this unlock so
-now it can unlock twice.
+lprocfs_generic_fops, of type struct file_operations, is never modified, so
+declare it as const.
 
-Fixes: cd3be169a5ff ('i40e: Move the mutex lock in i40e_client_unregister')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Done with the help of Coccinelle.
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_client.c b/drivers/net/ethernet/intel/i40e/i40e_client.c
-index e1370c5..1a9682f 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_client.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_client.c
-@@ -990,7 +990,6 @@ int i40e_unregister_client(struct i40e_client *client)
- 	if (!i40e_client_is_registered(client)) {
- 		pr_info("i40e: Client %s has not been registered\n",
- 			client->name);
--		mutex_unlock(&i40e_client_mutex);
- 		ret = -ENODEV;
- 		goto out;
- 	}
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/lustre/lustre/obdclass/lprocfs_status.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
+index 3d6da74..be6b6af 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
++++ b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
+@@ -315,7 +315,7 @@ struct dentry *ldebugfs_add_simple(struct dentry *root,
+ }
+ EXPORT_SYMBOL_GPL(ldebugfs_add_simple);
+ 
+-static struct file_operations lprocfs_generic_fops = { };
++static const struct file_operations lprocfs_generic_fops = { };
+ 
+ int ldebugfs_add_vars(struct dentry *parent,
+ 		      struct lprocfs_vars *list,
+
