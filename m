@@ -1,41 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Aug 2016 17:15:14 +0000
-Subject: [PATCH 3/6] KVM: PPC: e500: Delete an unnecessary initialisation in kvm_vcpu_ioctl_config_tlb()
-Message-Id: <a457526f-d337-f789-9bd0-243760214077@users.sourceforge.net>
+Date: Sun, 28 Aug 2016 09:50:20 +0000
+Subject: [PATCH] PA-RISC-inventory: Use kmalloc_array() in add_system_map_addresses()
+Message-Id: <c4e387d2-2be0-737f-b22e-f4e358f4f2ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
-In-Reply-To: <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-parisc@vger.kernel.org, Helge Deller <deller@gmx.de>, "James E. J. Bottomley" <jejb@parisc-linux.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Aug 2016 17:37:10 +0200
+Date: Sun, 28 Aug 2016 11:40:53 +0200
 
-The local variable "g2h_bitmap" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kvm/e500_mmu.c | 2 +-
+ arch/parisc/kernel/inventory.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kvm/e500_mmu.c b/arch/powerpc/kvm/e500_mmu.c
-index b65a894..e9c19e9 100644
---- a/arch/powerpc/kvm/e500_mmu.c
-+++ b/arch/powerpc/kvm/e500_mmu.c
-@@ -743,7 +743,7 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
- 	char *virt;
- 	struct page **pages;
- 	struct tlbe_priv *privs[2] = {};
--	u64 *g2h_bitmap = NULL;
-+	u64 *g2h_bitmap;
- 	size_t array_len;
- 	u32 sets;
- 	int num_pages, ret, i;
+diff --git a/arch/parisc/kernel/inventory.c b/arch/parisc/kernel/inventory.c
+index f0b6722..545f9d2 100644
+--- a/arch/parisc/kernel/inventory.c
++++ b/arch/parisc/kernel/inventory.c
+@@ -506,7 +506,7 @@ add_system_map_addresses(struct parisc_device *dev, int num_addrs,
+ 	long status;
+ 	struct pdc_system_map_addr_info addr_result;
+ 
+-	dev->addr = kmalloc(num_addrs * sizeof(unsigned long), GFP_KERNEL);
++	dev->addr = kmalloc_array(num_addrs, sizeof(*dev->addr), GFP_KERNEL);
+ 	if(!dev->addr) {
+ 		printk(KERN_ERR "%s %s(): memory allocation failure\n",
+ 		       __FILE__, __func__);
 -- 
 2.9.3
 
