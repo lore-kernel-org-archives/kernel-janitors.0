@@ -1,72 +1,33 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 22 Aug 2016 01:43:59 +0000
-Subject: [PATCH V2] staging: dgnc: check the type of print before calling
-Message-Id: <20160822014359.GA5630@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Aug 2016 17:09:57 +0000
+Subject: [PATCH 0/6] KVM: PPC: e500: Fine-tuning for two function implementations
+Message-Id: <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The dgnc_maxcps_room() function must be called only for print device.
-The if-statement for checking print device checks before calling
-dgnc_maxcps_room() and also this function doesn't need to have any
-data except channel_t.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Aug 2016 19:01:02 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
-V2: update subject line from "change a parameter from tty_struct
-to channel_t" to "check the type of print before
-calling dgnc_maxcps_room()"
+Several update suggestions were taken into account
+from static source code analysis.
 
- drivers/staging/dgnc/dgnc_tty.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+Markus Elfring (6):
+  Use kmalloc_array() in kvm_vcpu_ioctl_config_tlb()
+  Less function calls in kvm_vcpu_ioctl_config_tlb() after error detection
+  Delete an unnecessary initialisation in kvm_vcpu_ioctl_config_tlb()
+  Replace kzalloc() calls by kcalloc() in two functions
+  Use kmalloc_array() in kvmppc_e500_tlb_init()
+  Rename jump labels in kvmppc_e500_tlb_init()
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index e4c6c3f..31b18e6 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -1492,18 +1492,8 @@ static int dgnc_tty_chars_in_buffer(struct tty_struct *tty)
-  * returns the new bytes_available.  This only affects printer
-  * output.
-  */
--static int dgnc_maxcps_room(struct tty_struct *tty, int bytes_available)
-+static int dgnc_maxcps_room(struct channel_t *ch, int bytes_available)
- {
--	struct un_t *un = tty->driver_data;
--	struct channel_t *ch = un->un_ch;
--
--	/*
--	 * If its not the Transparent print device, return
--	 * the full data amount.
--	 */
--	if (un->un_type != DGNC_PRINT)
--		return bytes_available;
--
- 	if (ch->ch_digi.digi_maxcps > 0 && ch->ch_digi.digi_bufsize > 0) {
- 		int cps_limit = 0;
- 		unsigned long current_time = jiffies;
-@@ -1567,7 +1557,8 @@ static int dgnc_tty_write_room(struct tty_struct *tty)
- 		ret += WQUEUESIZE;
- 
- 	/* Limit printer to maxcps */
--	ret = dgnc_maxcps_room(tty, ret);
-+	if (un->un_type != DGNC_PRINT)
-+		ret = dgnc_maxcps_room(ch, ret);
- 
- 	/*
- 	 * If we are printer device, leave space for
-@@ -1659,7 +1650,8 @@ static int dgnc_tty_write(struct tty_struct *tty,
- 	 * Limit printer output to maxcps overall, with bursts allowed
- 	 * up to bufsize characters.
- 	 */
--	bufcount = dgnc_maxcps_room(tty, bufcount);
-+	if (un->un_type != DGNC_PRINT)
-+		bufcount = dgnc_maxcps_room(ch, bufcount);
- 
- 	/*
- 	 * Take minimum of what the user wants to send, and the
+ arch/powerpc/kvm/e500_mmu.c | 71 +++++++++++++++++++++++----------------------
+ 1 file changed, 36 insertions(+), 35 deletions(-)
+
 -- 
-1.9.1
+2.9.3
 
