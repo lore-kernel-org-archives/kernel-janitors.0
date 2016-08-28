@@ -1,49 +1,31 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Aug 2016 10:02:10 +0000
-Subject: [PATCH 4/5] block-cciss: Move an assignment for the variable "sg_used" in cciss_bigpassthru()
-Message-Id: <5a957717-4d29-55e1-87a5-c8c9c701ea03@users.sourceforge.net>
+Date: Sun, 28 Aug 2016 13:22:42 +0000
+Subject: Re: cris-cryptocop: Apply another recommendation from "checkpatch.pl"
+Message-Id: <b739ce57-5e5c-e9f6-0e4d-966308445867@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
-In-Reply-To: <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
+ <bfc23090-e05d-f491-2a28-1803ceb31a31@users.sourceforge.net>
+ <0e29d372-ef5f-afa7-50b1-70ddc089ef00@users.sourceforge.net>
+ <alpine.DEB.2.10.1608272105110.3363@hadrien>
+ <130cda68-feed-8b48-e928-7e915888c7c9@users.sourceforge.net>
+ <alpine.DEB.2.10.1608281225010.3321@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1608281225010.3321@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: esc.storagedev@microsemi.com, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: linux-cris-kernel@axis.com, Adam Buchbinder <adam.buchbinder@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Jiri Kosina <jkosina@suse.cz>, Mikael Starvik <starvik@axis.com>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, linux-doc@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 17 Aug 2016 23:04:46 +0200
+>>> There is plenty of room for at least &(*pj)->iop on the line before.
+>>
+>> This is true. - Do you prefer an other indentation approach here?
+> 
+> Very much.  Most of the kernel code puts as much information on a line as
+> possible, unless there is a reason to do otherwise.  Then more of the code
+> will fit on the screen at one time.
 
-Move the assignment for the local variable "sg_used" behind the source code
-for some memory allocations by this function.
+How do you think about to clarify such an implementation detail also
+in a document like "CodingStyle"?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/block/cciss.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
-index 10e1b0a..b08bfb7 100644
---- a/drivers/block/cciss.c
-+++ b/drivers/block/cciss.c
-@@ -1575,7 +1575,7 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 	unsigned char **buff;
- 	int *buff_size;
- 	u64bit temp64;
--	BYTE sg_used = 0;
-+	BYTE sg_used;
- 	int status;
- 	int i;
- 	DECLARE_COMPLETION_ONSTACK(wait);
-@@ -1616,6 +1616,7 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 	}
- 	left = ioc->buf_size;
- 	data_ptr = ioc->buf;
-+	sg_used = 0;
- 	while (left) {
- 		sz = (left > ioc->malloc_size) ? ioc->malloc_size : left;
- 		buff_size[sg_used] = sz;
--- 
-2.9.3
-
+Regards,
+Markus
