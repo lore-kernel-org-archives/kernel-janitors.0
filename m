@@ -1,62 +1,75 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 08:56:42 +0000
-Subject: [PATCH 02/11] usb: host: fsl-mph-dr-of: use of_property_read_bool
-Message-Id: <1470387411-15879-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 29 Aug 2016 11:12:18 +0000
+Subject: [PATCH 4/5] powerpc-MSI-HSTA: Rename jump labels in hsta_msi_probe()
+Message-Id: <f6c6b735-ade9-a4f8-505b-a5eacd055de1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
+In-Reply-To: <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Scott Wood <scottwood@freescale.com>, Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-Use of_property_read_bool to check for the existence of a property.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 29 Aug 2016 11:22:19 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Adjust jump labels according to the current Linux coding style convention.
 
-// <smpl>
-@@
-expression e1,e2;
-statement S2,S1;
-@@
--       if (of_get_property(e1,e2,NULL))
-+       if (of_property_read_bool(e1,e2))
-        S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/host/fsl-mph-dr-of.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/sysdev/ppc4xx_hsta_msi.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr-of.c
-index 1044b0f..8bbca74 100644
---- a/drivers/usb/host/fsl-mph-dr-of.c
-+++ b/drivers/usb/host/fsl-mph-dr-of.c
-@@ -222,11 +222,11 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
- 	pdata->controller_ver = usb_get_ver_info(np);
+diff --git a/arch/powerpc/sysdev/ppc4xx_hsta_msi.c b/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
+index 691db9a..3097ddd 100644
+--- a/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
++++ b/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
+@@ -154,14 +154,14 @@ static int hsta_msi_probe(struct platform_device *pdev)
  
- 	/* Activate Erratum by reading property in device tree */
--	if (of_get_property(np, "fsl,usb-erratum-a007792", NULL))
-+	if (of_property_read_bool(np, "fsl,usb-erratum-a007792"))
- 		pdata->has_fsl_erratum_a007792 = 1;
- 	else
- 		pdata->has_fsl_erratum_a007792 = 0;
--	if (of_get_property(np, "fsl,usb-erratum-a005275", NULL))
-+	if (of_property_read_bool(np, "fsl,usb-erratum-a005275"))
- 		pdata->has_fsl_erratum_a005275 = 1;
- 	else
- 		pdata->has_fsl_erratum_a005275 = 0;
-@@ -235,7 +235,7 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
- 	 * Determine whether phy_clk_valid needs to be checked
- 	 * by reading property in device tree
- 	 */
--	if (of_get_property(np, "phy-clk-valid", NULL))
-+	if (of_property_read_bool(np, "phy-clk-valid"))
- 		pdata->check_phy_clk_valid = 1;
- 	else
- 		pdata->check_phy_clk_valid = 0;
+ 	ret = msi_bitmap_alloc(&ppc4xx_hsta_msi.bmp, irq_count, dev->of_node);
+ 	if (ret)
+-		goto out;
++		goto unmap_io;
+ 
+ 	ppc4xx_hsta_msi.irq_map = kmalloc_array(irq_count,
+ 						sizeof(*ppc4xx_hsta_msi.irq_map),
+ 						GFP_KERNEL);
+ 	if (!ppc4xx_hsta_msi.irq_map) {
+ 		ret = -ENOMEM;
+-		goto out1;
++		goto free_bitmap;
+ 	}
+ 
+ 	/* Setup a mapping from irq offsets to hardware irq numbers */
+@@ -171,7 +171,7 @@ static int hsta_msi_probe(struct platform_device *pdev)
+ 		if (ppc4xx_hsta_msi.irq_map[irq] = NO_IRQ) {
+ 			dev_err(dev, "Unable to map IRQ\n");
+ 			ret = -EINVAL;
+-			goto out2;
++			goto free_irq_map;
+ 		}
+ 	}
+ 
+@@ -180,14 +180,11 @@ static int hsta_msi_probe(struct platform_device *pdev)
+ 		phb->controller_ops.teardown_msi_irqs = hsta_teardown_msi_irqs;
+ 	}
+ 	return 0;
+-
+-out2:
++ free_irq_map:
+ 	kfree(ppc4xx_hsta_msi.irq_map);
+-
+-out1:
++ free_bitmap:
+ 	msi_bitmap_free(&ppc4xx_hsta_msi.bmp);
+-
+-out:
++ unmap_io:
+ 	iounmap(ppc4xx_hsta_msi.data);
+ 	return ret;
+ }
+-- 
+2.9.3
 
