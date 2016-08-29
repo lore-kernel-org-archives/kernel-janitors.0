@@ -1,19 +1,19 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Aug 2016 17:12:57 +0000
-Subject: [PATCH 1/6] KVM: PPC: e500: Use kmalloc_array() in kvm_vcpu_ioctl_config_tlb()
-Message-Id: <317e0112-55cc-cc91-100f-bc5e301dbe76@users.sourceforge.net>
+Date: Mon, 29 Aug 2016 11:09:08 +0000
+Subject: [PATCH 2/5] powerpc-MSI: Use kmalloc_array() in ppc4xx_setup_msi_irqs()
+Message-Id: <01cf542d-c65e-ff66-6fb0-5ce75af184de@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
-In-Reply-To: <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
+ <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
+In-Reply-To: <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, Paul Mackerras <paulus@samba.org>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linuxppc-dev@lists.ozlabs.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Scott Wood <scottwood@freescale.com>, Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Aug 2016 16:30:07 +0200
+Date: Mon, 29 Aug 2016 11:11:24 +0200
 
 * A multiplication for the size determination of a memory allocation
   indicated that an array data structure should be processed.
@@ -27,20 +27,22 @@ Date: Sun, 28 Aug 2016 16:30:07 +0200
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kvm/e500_mmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/sysdev/ppc4xx_msi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kvm/e500_mmu.c b/arch/powerpc/kvm/e500_mmu.c
-index 29911a0..26f3737 100644
---- a/arch/powerpc/kvm/e500_mmu.c
-+++ b/arch/powerpc/kvm/e500_mmu.c
-@@ -779,7 +779,7 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
+diff --git a/arch/powerpc/sysdev/ppc4xx_msi.c b/arch/powerpc/sysdev/ppc4xx_msi.c
+index 8fb8061..0bd5e4b 100644
+--- a/arch/powerpc/sysdev/ppc4xx_msi.c
++++ b/arch/powerpc/sysdev/ppc4xx_msi.c
+@@ -89,7 +89,9 @@ static int ppc4xx_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
+ 	if (type = PCI_CAP_ID_MSIX)
+ 		pr_debug("ppc4xx msi: MSI-X untested, trying anyway.\n");
  
- 	num_pages = DIV_ROUND_UP(cfg->array + array_len - 1, PAGE_SIZE) -
- 		    cfg->array / PAGE_SIZE;
--	pages = kmalloc(sizeof(struct page *) * num_pages, GFP_KERNEL);
-+	pages = kmalloc_array(num_pages, sizeof(*pages), GFP_KERNEL);
- 	if (!pages)
+-	msi_data->msi_virqs = kmalloc((msi_irqs) * sizeof(int), GFP_KERNEL);
++	msi_data->msi_virqs = kmalloc_array(msi_irqs,
++					    sizeof(*msi_data->msi_virqs),
++					    GFP_KERNEL);
+ 	if (!msi_data->msi_virqs)
  		return -ENOMEM;
  
 -- 
