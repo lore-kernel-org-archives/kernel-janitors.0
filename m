@@ -1,55 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Aug 2016 13:06:25 +0000
-Subject: re: drivers/net: support hdlc function for QE-UCC
-Message-Id: <20160803130625.GA27767@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 29 Aug 2016 06:00:26 +0000
+Subject: [PATCH] powerpc: Use kmalloc_array() in grow()
+Message-Id: <68d9b20a-429c-e236-bd74-96d3f2a6a6b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org, Andrea Gelmini <andrea.gelmini@gelma.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-Hello Zhao Qiang,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 29 Aug 2016 07:50:33 +0200
 
-This is a semi-automatic email about new static checker warnings.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-The patch c19b6d246a35: "drivers/net: support hdlc function for 
-QE-UCC" from Jun 6, 2016, leads to the following Smatch complaint:
+  This issue was detected by using the Coccinelle software.
 
-drivers/net/wan/fsl_ucc_hdlc.c:707 uhdlc_memclean()
-	 warn: variable dereferenced before check 'priv->ucc_pram' (see line 686)
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-drivers/net/wan/fsl_ucc_hdlc.c
-   685	{
-   686		qe_muram_free(priv->ucc_pram->riptr);
-   687		qe_muram_free(priv->ucc_pram->tiptr);
-                              ^^^^^^^^^^^^^^
-Dereference.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/lib/rheap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   688	
-   689		if (priv->rx_bd_base) {
-   690			dma_free_coherent(priv->dev,
-   691					  RX_BD_RING_LEN * sizeof(struct qe_bd),
-   692					  priv->rx_bd_base, priv->dma_rx_bd);
-   693	
-   694			priv->rx_bd_base = NULL;
-   695			priv->dma_rx_bd = 0;
-   696		}
-   697	
-   698		if (priv->tx_bd_base) {
-   699			dma_free_coherent(priv->dev,
-   700					  TX_BD_RING_LEN * sizeof(struct qe_bd),
-   701					  priv->tx_bd_base, priv->dma_tx_bd);
-   702	
-   703			priv->tx_bd_base = NULL;
-   704			priv->dma_tx_bd = 0;
-   705		}
-   706	
-   707		if (priv->ucc_pram) {
-                    ^^^^^^^^^^^^^^
-Checked too late.
+diff --git a/arch/powerpc/lib/rheap.c b/arch/powerpc/lib/rheap.c
+index 94058c2..1630764 100644
+--- a/arch/powerpc/lib/rheap.c
++++ b/arch/powerpc/lib/rheap.c
+@@ -54,7 +54,7 @@ static int grow(rh_info_t * info, int max_blocks)
+ 
+ 	new_blocks = max_blocks - info->max_blocks;
+ 
+-	block = kmalloc(sizeof(rh_block_t) * max_blocks, GFP_ATOMIC);
++	block = kmalloc_array(max_blocks, sizeof(*block), GFP_ATOMIC);
+ 	if (block = NULL)
+ 		return -ENOMEM;
+ 
+-- 
+2.9.3
 
-   708			qe_muram_free(priv->ucc_pram_offset);
-   709			priv->ucc_pram = NULL;
-
-regards,
-dan carpenter
