@@ -1,51 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Aug 2016 13:56:56 +0000
-Subject: [PATCH 2/7] USB-iowarrior: Delete unnecessary initialisations for the variable "dev"
-Message-Id: <132bad2f-c594-4feb-f989-d41ee124d5ec@users.sourceforge.net>
+Date: Mon, 29 Aug 2016 11:10:05 +0000
+Subject: [PATCH 3/5] powerpc-MSI-HSTA: Use kmalloc_array() in hsta_msi_probe()
+Message-Id: <0c2c17e0-aed2-4b66-371d-fada59cd0861@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
-In-Reply-To: <5f6dd0dd-820e-c3d3-a88d-a16ad5e64aa8@users.sourceforge.net>
+ <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
+In-Reply-To: <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Josh Boyer <jwboyer@fedoraproject.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linuxppc-dev@lists.ozlabs.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Scott Wood <scottwood@freescale.com>, Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 21 Aug 2016 13:26:09 +0200
+Date: Mon, 29 Aug 2016 11:20:39 +0200
 
-The local variable "dev" was initialised despite of the detail
-that it was immediately reassigned by the following statement.
-Thus remove such unnecessary specifications.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/misc/iowarrior.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/sysdev/ppc4xx_hsta_msi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-index 8ae01b0..6048f97 100644
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -468,7 +468,7 @@ exit:
- static long iowarrior_ioctl(struct file *file, unsigned int cmd,
- 							unsigned long arg)
- {
--	struct iowarrior *dev = NULL;
-+	struct iowarrior *dev;
- 	__u8 *buffer;
- 	__u8 __user *user_buffer;
- 	int retval;
-@@ -751,7 +751,7 @@ static int iowarrior_probe(struct usb_interface *interface,
- 			   const struct usb_device_id *id)
- {
- 	struct usb_device *udev = interface_to_usbdev(interface);
--	struct iowarrior *dev = NULL;
-+	struct iowarrior *dev;
- 	struct usb_host_interface *iface_desc;
- 	struct usb_endpoint_descriptor *endpoint;
- 	int i;
+diff --git a/arch/powerpc/sysdev/ppc4xx_hsta_msi.c b/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
+index 52a93dc..691db9a 100644
+--- a/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
++++ b/arch/powerpc/sysdev/ppc4xx_hsta_msi.c
+@@ -156,7 +156,9 @@ static int hsta_msi_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto out;
+ 
+-	ppc4xx_hsta_msi.irq_map = kmalloc(sizeof(int) * irq_count, GFP_KERNEL);
++	ppc4xx_hsta_msi.irq_map = kmalloc_array(irq_count,
++						sizeof(*ppc4xx_hsta_msi.irq_map),
++						GFP_KERNEL);
+ 	if (!ppc4xx_hsta_msi.irq_map) {
+ 		ret = -ENOMEM;
+ 		goto out1;
 -- 
 2.9.3
 
