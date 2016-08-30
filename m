@@ -1,8 +1,10 @@
 From: Jeehong Kim <jhez.kim@samsung.com>
-Date: Tue, 30 Aug 2016 13:09:51 +0000
+Date: Tue, 30 Aug 2016 13:12:40 +0000
 Subject: [PATCH V2] sched/fair: Fix that tasks are not constrained by cfs_b->quota on hotplug core, when hotp
-Message-Id: <1472562591-20732-1-git-send-email-jhez.kim@samsung.com>
+Message-Id: <1472562760-20842-1-git-send-email-jhez.kim@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1472562591-20732-1-git-send-email-jhez.kim@samsung.com>
+In-Reply-To: <1472562591-20732-1-git-send-email-jhez.kim@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -32,7 +34,10 @@ registers cfs_b->quota by using walk_tg_tree_from().
 
 Signed-off-by: Jeehong Kim <jhez.kim@samsung.com>
 ---
- kernel/sched/fair.c | 32 +++++++++++++++++++++-----------
+V2: update_runtime_enabled() walks the whole tg tree,
+instead of register quota on every enqueue.
+
+kernel/sched/fair.c | 32 +++++++++++++++++++++-----------
  1 file changed, 21 insertions(+), 11 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
