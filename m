@@ -1,83 +1,37 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Wed, 24 Aug 2016 15:10:03 +0000
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Wed, 31 Aug 2016 12:29:41 +0000
 Subject: Re: [PATCH 3/4] KVM-S390: Less function calls in kvm_s390_import_bp_data() after error detection
-Message-Id: <f9f50675-b283-4c03-8764-c7c570647fe4@de.ibm.com>
+Message-Id: <57711295-6c3c-c2f3-41e3-a85a552de82b@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
  <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
-In-Reply-To: <47f88a11-b949-28ed-5589-925888a37574@users.sourceforge.net>
+ <20160822150048.309a3e10.cornelia.huck@de.ibm.com>
+ <cff92477-f426-a4c7-fffb-f8bbc378afe7@users.sourceforge.net>
+ <20160822213736.62f1ae29.cornelia.huck@de.ibm.com>
+ <5da7978a-922b-8ccc-fce4-2bffffca888f@users.sourceforge.net>
+In-Reply-To: <5da7978a-922b-8ccc-fce4-2bffffca888f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kvm@vger.kernel.org, linux-s390@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Cornelia Huck <cornelia.huck@de.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 08/17/2016 02:10 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 17 Aug 2016 19:25:50 +0200
-> 
-> The kfree() function was called in a few cases by the
-> kvm_s390_import_bp_data() function during error handling
-> even if a passed variable contained a null pointer.
-> 
-> Adjust jump targets according to the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/s390/kvm/guestdbg.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/guestdbg.c b/arch/s390/kvm/guestdbg.c
-> index 8f886ee..f2514af 100644
-> --- a/arch/s390/kvm/guestdbg.c
-> +++ b/arch/s390/kvm/guestdbg.c
-> @@ -239,7 +239,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
->  		wp_info = kmalloc(size, GFP_KERNEL);
->  		if (!wp_info) {
->  			ret = -ENOMEM;
-> -			goto error;
-> +			goto free_bp_data;
->  		}
->  	}
->  	size = nr_bp * sizeof(*bp_info);
-> @@ -247,7 +247,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
->  		bp_info = kmalloc(size, GFP_KERNEL);
->  		if (!bp_info) {
->  			ret = -ENOMEM;
-> -			goto error;
-> +			goto free_wp_info;
->  		}
->  	}
-> 
-> @@ -257,7 +257,7 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
->  			ret = __import_wp_info(vcpu, &bp_data[i],
->  					       &wp_info[nr_wp]);
->  			if (ret)
-> -				goto error;
-> +				goto free_bp_info;
->  			nr_wp++;
->  			break;
->  		case KVM_HW_BP:
-> @@ -273,10 +273,12 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
->  	vcpu->arch.guestdbg.nr_hw_wp = nr_wp;
->  	vcpu->arch.guestdbg.hw_wp_info = wp_info;
->  	return 0;
-> -error:
-> -	kfree(bp_data);
-> -	kfree(wp_info);
-> +free_bp_info:
->  	kfree(bp_info);
-> +free_wp_info:
-> +	kfree(wp_info);
-> +free_bp_data:
-> +	kfree(bp_data);
->  	return ret;
->  }
 
-I agree with Cornelia, while it seems correct from a technical point of view, it will
-make the code harder to maintain. For example if we ever add a new malloc and remove 
-another one over time we would need to reshuffle the labels and this did went wrong
-several times in the past.
 
-Christian
+On 22/08/2016 23:17, SF Markus Elfring wrote:
+>> If in doubt, the compiler will be _much_ better at optimizing
+>> that kind of stuff anyway.
+> 
+> Which compiler (or optimizer) implementation is capable to restructure
+> the jump targets for you automatically in the way I propose here?
 
+If kfree were implemented as
+
+	if (p)
+		really_kfree(p);
+
+then the compiler would be able to jump over the NULL test.  In
+principle one could also add a "does nothing if NULL" attribute to GCC
+and annotate kfree with it.
+
+Paolo
