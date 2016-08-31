@@ -1,130 +1,77 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 23 Aug 2016 20:24:22 +0000
-Subject: Re: [PATCH] serial: vt8500_serial: Fix a parameter of find_first_zero_bit.
-Message-Id: <79ef4c74-e268-c443-c51f-4fb4bfe5971e@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 07:30:45 +0000
+Subject: [PATCH 3/6] net: bcmgenet: constify ethtool_ops structures
+Message-Id: <1472628648-3603-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1471814425-18949-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <2512469.eM8MYFl15l@wuerfel>
- <57f44339-76c6-051f-b592-2648afaae336@wanadoo.fr>
- <11520879.bzQ3JxDSyK@wuerfel>
-In-Reply-To: <11520879.bzQ3JxDSyK@wuerfel>
+References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le 23/08/2016 =E0 11:23, Arnd Bergmann a =E9crit :
-> On Tuesday, August 23, 2016 6:20:28 AM CEST Christophe JAILLET wrote:
->> Le 22/08/2016 =E0 10:42, Arnd Bergmann a =E9crit :
->>> [...]
->>> Sorry, but I'm not following the logic here.
->>>
->>> [...]
->>> You argue that the two have the same meaning, which I see, but
->>> why is it better than the existing code?
->>>
->>> 	Arnd
->> Hi,
->>
->> sorry if my explanation was unclear.
->>
->> What I mean is that if "sizeof(unsigned long) =3D 4" (i.e. 32 bits syste=
-ms
->> ?) then:
->>
->> 	port =3D find_first_zero_bit(&vt8500_ports_in_use, sizeof(vt8500_ports_=
-in_use));
->> turns into:
->>    	port =3D find_first_zero_bit(&vt8500_ports_in_use, 4);
->>
->> find_first_zero_bit "Returns the bit number of the first set bit.  If no=
- bits are set, returns @size."
->> So, in this case, it can return 1, 2, 3 or 4, if one of the 4 first bits=
- is 0.
->> And will also return 4, if none of the 4 first bits is 0.
-> Ah, got it.
->
->> Finally, what I meant by "Other options are possible:" is:
->>     - 'vt8500_ports_in_use' being a 'unsigned long', use ffz to reduce c=
-ode verbosity
->> 	port =3D ffz(&vt8500_ports_in_use);
->>       would also work, because it is equivalent to:
->> 	port =3D find_first_zero_bit(&vt8500_ports_in_use, BITS_PER_LONG);
->>
->>     - VT8500_MAX_PORTS, in order to be consistent with the test below
->> 	port =3D find_first_zero_bit(&vt8500_ports_in_use, VT8500_MAX_PORTS);
->>       would also work and is maybe more logical in regard to the test "i=
-f (port >=3D VT8500_MAX_PORTS)"
->>
->>
->>
->> Now if "sizeof(unsigned long) =3D 8" (i.e. 64 bits systems ?), the actua=
-l code would work.
->> But using "sizeof(long)" to mean "more than VT8500_MAX_PORTS" is odd.
->> In other words, expressing a number of bits using something that gives a=
- size in bytes is, IMHO, spurious.
->>   =20
->> All this is pure speculation.
->>
->> Hoping that it is clearer now ( and that my analysis is right :) )
-> I misread the code in the same way the original author wrote it wrong,
-> I guess it was meant to say
->
-> 	port =3D find_first_zero_bit(&vt8500_ports_in_use, sizeof(vt8500_ports_i=
-n_use) * 8);
-I guess so.
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
-> to convert number of bytes into number of bits. Your patch is absolutely
-> correct, but being more specific about the kind of mistake that was made
-> is a good idea.
->
-> Regarding which of the four alternatives to use, I'd probably use
-> your third one, checking against VT8500_MAX_PORTS. To make this code
-> absolutely foolproof, we can add this hunk too then:
-Agreed for VT8500_MAX_PORTS. This documents the code.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Using DECLARE_BITMAP is also nice (even if I doubt that it will be=20
-useful one day in this particular case)
-It would turn the vt8500_ports_in_use variable into a pointer. So some=20
-more code modification would be required.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct ethtool_ops i@p = { ... };
 
-Thk for your feedback and comments.
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.ethtool_ops = &i@p;
 
-I'll send a v2.
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
 
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
 
-CJ
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
+// </smpl>
 
-
-> diff --git a/drivers/tty/serial/vt8500_serial.c b/drivers/tty/serial/vt85=
-00_serial.c
-> index 23cfc5e16b45..a68be66d2770 100644
-> --- a/drivers/tty/serial/vt8500_serial.c
-> +++ b/drivers/tty/serial/vt8500_serial.c
-> @@ -118,7 +118,7 @@ struct vt8500_port {
->    * have been allocated as we can't use pdev->id in
->    * devicetree
->    */
-> -static unsigned long vt8500_ports_in_use;
-> +static DECLARE_BITMAP(vt8500_ports_in_use, VT8500_MAX_PORTS);
->  =20
->   static inline void vt8500_write(struct uart_port *port, unsigned int va=
-l,
->   			     unsigned int off)
->
->
->
-> 	Arnd
-
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-L'absence de virus dans ce courrier =E9lectronique a =E9t=E9 v=E9rifi=E9e p=
-ar le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index 8d4f849..46f9043 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -973,7 +973,7 @@ static int bcmgenet_nway_reset(struct net_device *dev)
+ }
+ 
+ /* standard ethtool support functions. */
+-static struct ethtool_ops bcmgenet_ethtool_ops = {
++static const struct ethtool_ops bcmgenet_ethtool_ops = {
+ 	.get_strings		= bcmgenet_get_strings,
+ 	.get_sset_count		= bcmgenet_get_sset_count,
+ 	.get_ethtool_stats	= bcmgenet_get_ethtool_stats,
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
