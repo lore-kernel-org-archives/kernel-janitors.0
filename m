@@ -1,48 +1,78 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 08:56:44 +0000
-Subject: [PATCH 04/11] i2c: mpc: use of_property_read_bool
-Message-Id: <1470387411-15879-5-git-send-email-Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 22:21:19 +0000
+Subject: [PATCH 1/5] net: mediatek: constify ethtool_ops structures
+Message-Id: <1472682083-5219-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Use of_property_read_bool to check for the existence of a property.
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
 @@
-expression e1,e2;
-statement S2,S1;
+static struct ethtool_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
 @@
--       if (of_get_property(e1,e2,NULL))
-+       if (of_property_read_bool(e1,e2))
-        S1 else S2
+e.ethtool_ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
 // </smpl>
+
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/i2c/busses/i2c-mpc.c |    2 +-
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
-index 48ecffe..4b5707b 100644
---- a/drivers/i2c/busses/i2c-mpc.c
-+++ b/drivers/i2c/busses/i2c-mpc.c
-@@ -700,7 +700,7 @@ static int fsl_i2c_probe(struct platform_device *op)
- 		}
- 	}
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index 1801fd8..98f22cd 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -1692,7 +1692,7 @@ static void mtk_get_ethtool_stats(struct net_device *dev,
+ 	} while (u64_stats_fetch_retry_irq(&hwstats->syncp, start));
+ }
  
--	if (of_get_property(op->dev.of_node, "fsl,preserve-clocking", NULL)) {
-+	if (of_property_read_bool(op->dev.of_node, "fsl,preserve-clocking")) {
- 		clock = MPC_I2C_CLOCK_PRESERVE;
- 	} else {
- 		prop = of_get_property(op->dev.of_node, "clock-frequency",
+-static struct ethtool_ops mtk_ethtool_ops = {
++static const struct ethtool_ops mtk_ethtool_ops = {
+ 	.get_settings		= mtk_get_settings,
+ 	.set_settings		= mtk_set_settings,
+ 	.get_drvinfo		= mtk_get_drvinfo,
 
