@@ -1,38 +1,77 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 28 Aug 2016 18:33:05 +0000
-Subject: Re: [PATCH 1/5] IA64-IRQ: Use kmalloc_array() in sn_irq_lh_init()
-Message-Id: <1472409185.26978.100.camel@perches.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 07:30:44 +0000
+Subject: [PATCH 2/6] net: ethernet: et131x: constify ethtool_ops structures
+Message-Id: <1472628648-3603-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <349bbfb4-bada-628e-2981-ca2a315299fc@users.sourceforge.net>
-         <2e046b40-1c8e-717f-68b1-534c3125724c@users.sourceforge.net>
-         <alpine.DEB.2.10.1608261557130.3645@hadrien>
-         <1472245341.4914.79.camel@perches.com>
-         <894bf885-4cf0-fcaa-e040-35d9add64acc@users.sourceforge.net>
-         <1472344806.26978.30.camel@perches.com>
-         <alpine.DEB.2.10.1608281121520.3321@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1608281121520.3321@hadrien>
+References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Einon <mark.einon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2016-08-28 at 11:28 +0200, Julia Lawall wrote:
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
-> I do think that there is some value in doing similar things in a uniform
-> way, using meaningful names, even if in a particular case it doesn't help
-> performance or reduce code size.=A0 Even duplicating code could be OK if =
-it
-> is not in a critical path and it makes the code overall easier to
-> understand.=A0 But if the maintainer prefers the code not to be duplicate=
-d,
-> then of course it should not be duplicated.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-All true too, thanks Julia.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct ethtool_ops i@p = { ... };
 
-It's all maintainer choice.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.ethtool_ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/agere/et131x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/agere/et131x.c b/drivers/net/ethernet/agere/et131x.c
+index c83ebae..9066838 100644
+--- a/drivers/net/ethernet/agere/et131x.c
++++ b/drivers/net/ethernet/agere/et131x.c
+@@ -2961,7 +2961,7 @@ static void et131x_get_drvinfo(struct net_device *netdev,
+ 		sizeof(info->bus_info));
+ }
+ 
+-static struct ethtool_ops et131x_ethtool_ops = {
++static const struct ethtool_ops et131x_ethtool_ops = {
+ 	.get_drvinfo	= et131x_get_drvinfo,
+ 	.get_regs_len	= et131x_get_regs_len,
+ 	.get_regs	= et131x_get_regs,
+
