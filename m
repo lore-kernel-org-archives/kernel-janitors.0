@@ -1,28 +1,78 @@
-From: Ley Foon Tan <lftan@altera.com>
-Date: Fri, 26 Aug 2016 03:13:48 +0000
-Subject: Re: [Nios2-dev] [PATCH] nios2: use of_property_read_bool
-Message-Id: <CAFiDJ5_gxybQrZL0s9TwhAxqFC8k3URxUpqQAXyRJ_Cp+MdiZg@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 22:21:23 +0000
+Subject: [PATCH 5/5] net: axienet: constify ethtool_ops structures
+Message-Id: <1472682083-5219-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160810122724.9398-1-tklauser@distanz.ch>
-In-Reply-To: <20160810122724.9398-1-tklauser@distanz.ch>
+References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Aug 10, 2016 at 8:27 PM, Tobias Klauser <tklauser@distanz.ch> wrote:
-> Use of_property_read_bool instead of open-coding it as fpcu_has. Convert
-> the members of struct cpuinfo from u32 to bool accordingly as they are
-> only used as boolean anyhow.
->
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-Acked-by: Ley Foon Tan <lftan@altera.com>
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
-Thanks.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-> ---
->  arch/nios2/include/asm/cpuinfo.h |  8 ++++----
->  arch/nios2/kernel/cpuinfo.c      | 15 +++++----------
->  2 files changed, 9 insertions(+), 14 deletions(-)
->
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct ethtool_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.ethtool_ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
+// </smpl>
+
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 36ee7ab..69e2a83 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -1297,7 +1297,7 @@ static int axienet_ethtools_set_coalesce(struct net_device *ndev,
+ 	return 0;
+ }
+ 
+-static struct ethtool_ops axienet_ethtool_ops = {
++static const struct ethtool_ops axienet_ethtool_ops = {
+ 	.get_drvinfo    = axienet_ethtools_get_drvinfo,
+ 	.get_regs_len   = axienet_ethtools_get_regs_len,
+ 	.get_regs       = axienet_ethtools_get_regs,
+
