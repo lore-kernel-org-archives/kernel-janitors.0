@@ -1,50 +1,79 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Aug 2016 11:09:08 +0000
-Subject: [PATCH 2/5] powerpc-MSI: Use kmalloc_array() in ppc4xx_setup_msi_irqs()
-Message-Id: <01cf542d-c65e-ff66-6fb0-5ce75af184de@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 22:21:22 +0000
+Subject: [PATCH 4/5] r8152: constify ethtool_ops structures
+Message-Id: <1472682083-5219-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
-In-Reply-To: <fe8faf9e-01bb-4f3e-8258-ecb37ba15c9f@users.sourceforge.net>
+References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Scott Wood <scottwood@freescale.com>, Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 29 Aug 2016 11:11:24 +0200
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-  This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct ethtool_ops i@p = { ... };
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.ethtool_ops = &i@p;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
+// </smpl>
+
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/powerpc/sysdev/ppc4xx_msi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/usb/r8152.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/sysdev/ppc4xx_msi.c b/arch/powerpc/sysdev/ppc4xx_msi.c
-index 8fb8061..0bd5e4b 100644
---- a/arch/powerpc/sysdev/ppc4xx_msi.c
-+++ b/arch/powerpc/sysdev/ppc4xx_msi.c
-@@ -89,7 +89,9 @@ static int ppc4xx_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
- 	if (type = PCI_CAP_ID_MSIX)
- 		pr_debug("ppc4xx msi: MSI-X untested, trying anyway.\n");
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index f41a8ad..f72f807 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -4032,7 +4032,7 @@ static int rtl8152_set_coalesce(struct net_device *netdev,
+ 	return ret;
+ }
  
--	msi_data->msi_virqs = kmalloc((msi_irqs) * sizeof(int), GFP_KERNEL);
-+	msi_data->msi_virqs = kmalloc_array(msi_irqs,
-+					    sizeof(*msi_data->msi_virqs),
-+					    GFP_KERNEL);
- 	if (!msi_data->msi_virqs)
- 		return -ENOMEM;
- 
--- 
-2.9.3
+-static struct ethtool_ops ops = {
++static const struct ethtool_ops ops = {
+ 	.get_drvinfo = rtl8152_get_drvinfo,
+ 	.get_settings = rtl8152_get_settings,
+ 	.set_settings = rtl8152_set_settings,
 
