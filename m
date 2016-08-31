@@ -1,96 +1,86 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 11 Aug 2016 05:37:21 +0000
-Subject: [PATCH v2 05/10] staging: ks7010: Delete unnecessary uses of the variable "retval"
-Message-Id: <d7af5d69-81e3-5651-9e2d-8241b8210de4@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 07:30:43 +0000
+Subject: [PATCH 1/6] staging: slicoss: constify ethtool_ops structures
+Message-Id: <1472628648-3603-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <66bd684a-98f1-0ec4-aa95-1a966d7c4e90@users.sourceforge.net>
- <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
-In-Reply-To: <7fcc8cb1-012a-a66e-6563-6867862f3229@users.sourceforge.net>
+References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.de>
+To: Lior Dotan <liodot@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Christopher Harrer <charrer@alacritech.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 10 Aug 2016 18:56:31 +0200
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
-A few return values can also be directly used for condition checks.
-Thus remove a local variable for intermediate assignments.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct ethtool_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.ethtool_ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-v2: Rebased on the source files from Linux next-20160809.
+ drivers/staging/slicoss/slicoss.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-    Touched less source code places.
-
- drivers/staging/ks7010/ks7010_sdio.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index 53df8f7..0f7ea76 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -489,7 +489,6 @@ static void ks7010_rw_function(struct work_struct *work)
- 	struct hw_info_t *hw;
- 	struct ks_wlan_private *priv;
- 	unsigned char rw_data;
--	int retval;
+diff --git a/drivers/staging/slicoss/slicoss.c b/drivers/staging/slicoss/slicoss.c
+index 7834bda..21280a3 100644
+--- a/drivers/staging/slicoss/slicoss.c
++++ b/drivers/staging/slicoss/slicoss.c
+@@ -124,7 +124,7 @@ static const struct pci_device_id slic_pci_tbl[] = {
+ 	{ 0 }
+ };
  
- 	hw = container_of(work, struct hw_info_t, rw_wq.work);
- 	priv = container_of(hw, struct ks_wlan_private, ks_wlan_hw);
-@@ -538,9 +537,7 @@ static void ks7010_rw_function(struct work_struct *work)
- 	}
+-static struct ethtool_ops slic_ethtool_ops;
++static const struct ethtool_ops slic_ethtool_ops;
  
- 	/* read (WriteStatus/ReadDataSize FN1:00_0014) */
--	retval -	    ks7010_sdio_read(priv, WSTATUS_RSIZE, &rw_data, sizeof(rw_data));
--	if (retval) {
-+	if (ks7010_sdio_read(priv, WSTATUS_RSIZE, &rw_data, sizeof(rw_data))) {
- 		DPRINTK(1, " error : WSTATUS_RSIZE=%02X psstatus=%d\n", rw_data,
- 			atomic_read(&priv->psstatus.status));
- 		goto release_host;
-@@ -708,7 +705,6 @@ static void trx_device_exit(struct ks_wlan_private *priv)
- static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
- {
- 	int rc = 0;
--	int retval;
- 	unsigned char *data_buf;
+ MODULE_DEVICE_TABLE(pci, slic_pci_tbl);
  
- 	data_buf = kmalloc(sizeof(u32), GFP_KERNEL);
-@@ -716,14 +712,12 @@ static int ks7010_sdio_update_index(struct ks_wlan_private *priv, u32 index)
- 		return 1;
+@@ -3128,7 +3128,7 @@ static void __exit slic_module_cleanup(void)
+ 	pci_unregister_driver(&slic_driver);
+ }
  
- 	memcpy(data_buf, &index, sizeof(index));
--	retval = ks7010_sdio_write(priv, WRITE_INDEX, data_buf, sizeof(index));
--	if (retval) {
-+	if (ks7010_sdio_write(priv, WRITE_INDEX, data_buf, sizeof(index))) {
- 		rc = 2;
- 		goto free_buf;
- 	}
- 
--	retval = ks7010_sdio_write(priv, READ_INDEX, data_buf, sizeof(index));
--	if (retval)
-+	if (ks7010_sdio_write(priv, READ_INDEX, data_buf, sizeof(index)))
- 		rc = 3;
-  free_buf:
- 	kfree(data_buf);
--- 
-2.9.2
+-static struct ethtool_ops slic_ethtool_ops = {
++static const struct ethtool_ops slic_ethtool_ops = {
+ 	.get_coalesce = slic_get_coalesce,
+ 	.set_coalesce = slic_set_coalesce
+ };
 
