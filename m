@@ -1,46 +1,79 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 12 Aug 2016 12:58:35 +0000
-Subject: [PATCH 2/2] staging: rts5208/ms.c: add missing releases in mg_get_local_EKB and mg_get_ICV
-Message-Id: <20160812125835.2324-3-lambert.quentin@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 22:21:20 +0000
+Subject: [PATCH 2/5] staging: netlogic: constify ethtool_ops structures
+Message-Id: <1472682083-5219-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160812125835.2324-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160812125835.2324-1-lambert.quentin@gmail.com>
+References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-mg_get_local_EKB and mg_get_ICV used to return with an error code before
-releasing all resources. This patch add a jump to the appropriate label
-ensuring that the resources are properly released before returning.
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
-This issue was found with Hector.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct ethtool_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.ethtool_ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
+// </smpl>
+
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/rts5208/ms.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/staging/netlogic/xlr_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -4328,7 +4328,8 @@ int mg_get_local_EKB(struct scsi_cmnd *s
- 		set_sense_type(chip, lun, SENSE_TYPE_MG_KEY_FAIL_NOT_AUTHEN);
- 		rtsx_clear_ms_error(chip);
- 		rtsx_trace(chip);
--		return STATUS_FAIL;
-+		retval = STATUS_FAIL;
-+		goto free_buffer;
- 	}
+diff --git a/drivers/staging/netlogic/xlr_net.c b/drivers/staging/netlogic/xlr_net.c
+index 99445d0..595ac1b 100644
+--- a/drivers/staging/netlogic/xlr_net.c
++++ b/drivers/staging/netlogic/xlr_net.c
+@@ -192,7 +192,7 @@ static int xlr_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
+ 	return phy_ethtool_sset(phydev, ecmd);
+ }
  
- 	bufflen = min_t(int, 1052, scsi_bufflen(srb));
-@@ -4581,7 +4582,8 @@ int mg_get_ICV(struct scsi_cmnd *srb, st
- 		set_sense_type(chip, lun, SENSE_TYPE_MEDIA_UNRECOVER_READ_ERR);
- 		rtsx_clear_ms_error(chip);
- 		rtsx_trace(chip);
--		return STATUS_FAIL;
-+		retval = STATUS_FAIL;
-+		goto free_buffer;
- 	}
- 
- 	bufflen = min_t(int, 1028, scsi_bufflen(srb));
+-static struct ethtool_ops xlr_ethtool_ops = {
++static const struct ethtool_ops xlr_ethtool_ops = {
+ 	.get_settings = xlr_get_settings,
+ 	.set_settings = xlr_set_settings,
+ };
+
