@@ -1,54 +1,119 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 05 Aug 2016 11:26:11 +0000
-Subject: [PATCH 03/11 v2] pinctrl: nomadik: use of_property_read_bool
-Message-Id: <alpine.DEB.2.10.1608051325350.2999@hadrien>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 07:30:46 +0000
+Subject: [PATCH 4/6] net: hisilicon: constify ethtool_ops structures
+Message-Id: <1472628648-3603-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470387411-15879-1-git-send-email-Julia.Lawall@lip6.fr>
- <1470387411-15879-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1470387411-15879-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: kernel-janitors@vger.kernel.org, Salil Mehta <salil.mehta@huawei.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use of_property_read_bool to check for the existence of a property.
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
 @@
-expression e1,e2,x;
+static struct ethtool_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
 @@
--	if (of_get_property(e1,e2,NULL))
--		x = true;
--	else
--		x = false;
-+	x = of_property_read_bool(e1,e2);
+e.ethtool_ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-v2: special case for propagating true and false
+ drivers/net/ethernet/hisilicon/hip04_eth.c       |    2 +-
+ drivers/net/ethernet/hisilicon/hisi_femac.c      |    2 +-
+ drivers/net/ethernet/hisilicon/hix5hd2_gmac.c    |    2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
- drivers/pinctrl/nomadik/pinctrl-nomadik.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index 35f6218..6f2e1da 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -1110,10 +1110,8 @@ static int nmk_gpio_probe(struct platform_device *dev)
- 		return PTR_ERR(nmk_chip);
- 	}
-
--	if (of_get_property(np, "st,supports-sleepmode", NULL))
--		supports_sleepmode = true;
--	else
--		supports_sleepmode = false;
-+	supports_sleepmode +		of_property_read_bool(np, "st,supports-sleepmode");
-
- 	/* Correct platform device ID */
- 	dev->id = nmk_chip->bank;
+diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
+index 0c4afe9..a90ab40 100644
+--- a/drivers/net/ethernet/hisilicon/hip04_eth.c
++++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
+@@ -755,7 +755,7 @@ static void hip04_get_drvinfo(struct net_device *netdev,
+ 	strlcpy(drvinfo->version, DRV_VERSION, sizeof(drvinfo->version));
+ }
+ 
+-static struct ethtool_ops hip04_ethtool_ops = {
++static const struct ethtool_ops hip04_ethtool_ops = {
+ 	.get_coalesce		= hip04_get_coalesce,
+ 	.set_coalesce		= hip04_set_coalesce,
+ 	.get_drvinfo		= hip04_get_drvinfo,
+diff --git a/drivers/net/ethernet/hisilicon/hisi_femac.c b/drivers/net/ethernet/hisilicon/hisi_femac.c
+index b5d7ad0..ca68e22 100644
+--- a/drivers/net/ethernet/hisilicon/hisi_femac.c
++++ b/drivers/net/ethernet/hisilicon/hisi_femac.c
+@@ -699,7 +699,7 @@ static int hisi_femac_net_ioctl(struct net_device *dev,
+ 	return phy_mii_ioctl(dev->phydev, ifreq, cmd);
+ }
+ 
+-static struct ethtool_ops hisi_femac_ethtools_ops = {
++static const struct ethtool_ops hisi_femac_ethtools_ops = {
+ 	.get_link		= ethtool_op_get_link,
+ 	.get_link_ksettings	= phy_ethtool_get_link_ksettings,
+ 	.set_link_ksettings	= phy_ethtool_set_link_ksettings,
+diff --git a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+index 275618b..e69a6be 100644
+--- a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+@@ -750,7 +750,7 @@ static const struct net_device_ops hix5hd2_netdev_ops = {
+ 	.ndo_set_mac_address	= hix5hd2_net_set_mac_address,
+ };
+ 
+-static struct ethtool_ops hix5hd2_ethtools_ops = {
++static const struct ethtool_ops hix5hd2_ethtools_ops = {
+ 	.get_link		= ethtool_op_get_link,
+ 	.get_link_ksettings     = phy_ethtool_get_link_ksettings,
+ 	.set_link_ksettings     = phy_ethtool_set_link_ksettings,
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+index ab33487..5eb3245 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -1264,7 +1264,7 @@ static int hns_get_rxnfc(struct net_device *netdev,
+ 	return 0;
+ }
+ 
+-static struct ethtool_ops hns_ethtool_ops = {
++static const struct ethtool_ops hns_ethtool_ops = {
+ 	.get_drvinfo = hns_nic_get_drvinfo,
+ 	.get_link  = hns_nic_get_link,
+ 	.get_settings  = hns_nic_get_settings,
 
