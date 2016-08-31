@@ -1,66 +1,79 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Aug 2016 10:03:28 +0000
-Subject: [PATCH 5/5] block-cciss: Replace three kzalloc() calls by kcalloc()
-Message-Id: <8f32c3e7-bfb6-f88b-4894-338b94a0d1da@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 22:21:21 +0000
+Subject: [PATCH 3/5] dwc_eth_qos: constify ethtool_ops structures
+Message-Id: <1472682083-5219-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
-In-Reply-To: <686a1f95-a76c-2624-50e1-9d0e59948e64@users.sourceforge.net>
+References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: esc.storagedev@microsemi.com, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Lars Persson <lars.persson@axis.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Aug 2016 11:26:18 +0200
+Check for ethtool_ops structures that are only stored in the ethtool_ops
+field of a net_device structure or passed as the second argument to
+netdev_set_default_ethtool_ops.  These contexts are declared const, so
+ethtool_ops structures that have these properties can be declared as const
+also.
 
-* The script "checkpatch.pl" can point information out like the following.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-  WARNING: Prefer kcalloc over kzalloc with multiply
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct ethtool_ops i@p = { ... };
 
-  Thus fix the affected source code places.
+@ok1@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.ethtool_ops = &i@p;
 
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+@ok2@
+identifier r.i;
+expression e;
+position p;
+@@
+netdev_set_default_ethtool_ops(e, &i@p)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+@@
+i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct ethtool_ops i = { ... };
+// </smpl>
+
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/block/cciss.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/synopsys/dwc_eth_qos.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
-index b08bfb7..3502a3a 100644
---- a/drivers/block/cciss.c
-+++ b/drivers/block/cciss.c
-@@ -1604,12 +1604,12 @@ static int cciss_bigpassthru(ctlr_info_t *h, void __user *argp)
- 		status = -EINVAL;
- 		goto free_ioc;
- 	}
--	buff_size = kmalloc(MAXSGENTRIES * sizeof(int), GFP_KERNEL);
-+	buff_size = kcalloc(MAXSGENTRIES, sizeof(*buff_size), GFP_KERNEL);
- 	if (!buff_size) {
- 		status = -ENOMEM;
- 		goto free_ioc;
- 	}
--	buff = kzalloc(MAXSGENTRIES * sizeof(char *), GFP_KERNEL);
-+	buff = kcalloc(MAXSGENTRIES, sizeof(*buff), GFP_KERNEL);
- 	if (!buff) {
- 		status = -ENOMEM;
- 		goto free_size;
-@@ -4838,8 +4838,9 @@ static int cciss_allocate_scatterlists(ctlr_info_t *h)
- 	int i;
+diff --git a/drivers/net/ethernet/synopsys/dwc_eth_qos.c b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
+index 5a3941b..c25d971 100644
+--- a/drivers/net/ethernet/synopsys/dwc_eth_qos.c
++++ b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
+@@ -2743,7 +2743,7 @@ static void dwceqos_set_msglevel(struct net_device *ndev, u32 msglevel)
+ 	lp->msg_enable = msglevel;
+ }
  
- 	/* zero it, so that on free we need not know how many were alloc'ed */
--	h->scatter_list = kzalloc(h->max_commands *
--				sizeof(struct scatterlist *), GFP_KERNEL);
-+	h->scatter_list = kcalloc(h->max_commands,
-+				  sizeof(*h->scatter_list),
-+				  GFP_KERNEL);
- 	if (!h->scatter_list)
- 		return -ENOMEM;
- 
--- 
-2.9.3
+-static struct ethtool_ops dwceqos_ethtool_ops = {
++static const struct ethtool_ops dwceqos_ethtool_ops = {
+ 	.get_drvinfo    = dwceqos_get_drvinfo,
+ 	.get_link       = ethtool_op_get_link,
+ 	.get_pauseparam = dwceqos_get_pauseparam,
 
