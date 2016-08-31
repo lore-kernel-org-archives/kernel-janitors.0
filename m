@@ -1,43 +1,24 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Fri, 19 Aug 2016 07:41:10 +0000
-Subject: Re: [PATCH 0/2] GPU-DRM-Savage: Fine-tuning for savage_bci_cmdbuf()
-Message-Id: <20160819074110.GT6232@phenom.ffwll.local>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 31 Aug 2016 13:57:58 +0000
+Subject: Re: [patch] tty/serial/8250: unlock on error in serial8250_register_8250_port()
+Message-Id: <20160831135758.GA13298@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <77052ac1-1933-49af-3ad8-6e0eecc1aafe@users.sourceforge.net>
-In-Reply-To: <77052ac1-1933-49af-3ad8-6e0eecc1aafe@users.sourceforge.net>
+References: <20160628091522.GA7720@mwanda>
+In-Reply-To: <20160628091522.GA7720@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Yegor Yefremov <yegorslists@googlemail.com>, Jiri Slaby <jslaby@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Anton Wuerfel <anton.wuerfel@fau.de>, Phillip Raffeck <phillip.raffeck@fau.de>, Peter Hurley <peter@hurleysoftware.com>, Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 18, 2016 at 09:42:33PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 18 Aug 2016 21:38:37 +0200
+On Tue, Jun 28, 2016 at 12:15:22PM +0300, Dan Carpenter wrote:
+> We need to unlock before returning here.
 > 
-> A few update suggestions were taken into account
-> from static source code analysis.
+> Fixes: 4ef03d328769 ('tty/serial/8250: use mctrl_gpio helpers')
 
-savage is one of the dri1 legacy drivers, imo not really worth it to spend
-time on them. otoh no one will notice any breakage either ;-)
+I ended up reverting this patch, perhaps this is the problem that people
+were having with this patch?
 
-I guess I'll apply.
--Daniel
+thanks,
 
-> 
-> Markus Elfring (2):
->   Use memdup_user() rather than duplicating its implementation
->   Less function calls after error detection
-> 
->  drivers/gpu/drm/savage/savage_state.c | 42 +++++++++++++++--------------------
->  1 file changed, 18 insertions(+), 24 deletions(-)
-> 
-> -- 
-> 2.9.3
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+greg k-h
