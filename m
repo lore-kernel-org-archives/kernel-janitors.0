@@ -1,25 +1,25 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 09 Aug 2016 11:26:44 +0000
-Subject: Re: ppc/cell: missing error code in spufs_mkgang()
-Message-Id: <3s7sS44Lmzz9t1Q@ozlabs.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 31 Aug 2016 07:30:42 +0000
+Subject: [PATCH 0/6] constify ethtool_ops structures
+Message-Id: <1472628648-3603-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20160804053703.GN775@mwanda>
-References: <20160804053703.GN775@mwanda>
-In-Reply-To: <20160804053703.GN775@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jeremy Kerr <jk@ozlabs.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-On Thu, 2016-04-08 at 05:37:03 UTC, Dan Carpenter wrote:
-> We should return -ENOMEM if alloc_spu_gang() fails.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+Constify ethtool_ops structures.
 
-Applied to powerpc fixes, thanks.
+---
 
-https://git.kernel.org/powerpc/c/54a94fcf2f00c9deb9491d5ab2
-
-cheers
+ drivers/net/ethernet/agere/et131x.c              |    2 +-
+ drivers/net/ethernet/broadcom/bcmsysport.c       |    2 +-
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c   |    2 +-
+ drivers/net/ethernet/hisilicon/hip04_eth.c       |    2 +-
+ drivers/net/ethernet/hisilicon/hisi_femac.c      |    2 +-
+ drivers/net/ethernet/hisilicon/hix5hd2_gmac.c    |    2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c |    2 +-
+ drivers/net/ethernet/synopsys/dwc_eth_qos.c      |    2 +-
+ drivers/staging/slicoss/slicoss.c                |    4 ++--
+ 9 files changed, 10 insertions(+), 10 deletions(-)
