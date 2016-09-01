@@ -1,39 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:03:54 +0000
-Subject: [PATCH 4/4] ATM-ZeitNet: Fix indentation for one DPRINTK() call in start_rx()
-Message-Id: <f5d3315e-61be-2697-0847-784cd6f1ab05@users.sourceforge.net>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 01 Sep 2016 03:46:33 +0000
+Subject: Re: [PATCH 5/5] net: axienet: constify ethtool_ops structures
+Message-Id: <20160831.204633.1599084771774333347.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
-In-Reply-To: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
+References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1472682083-5219-6-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472682083-5219-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:38:04 +0200
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu,  1 Sep 2016 00:21:23 +0200
 
-Adjust the indentation for a call of the macro "DPRINTK" in this function.
+> Check for ethtool_ops structures that are only stored in the ethtool_ops
+> field of a net_device structure or passed as the second argument to
+> netdev_set_default_ethtool_ops.  These contexts are declared const, so
+> ethtool_ops structures that have these properties can be declared as const
+> also.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+ ...
+> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/atm/zatm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
-index 2cc9e2a..d3dc954 100644
---- a/drivers/atm/zatm.c
-+++ b/drivers/atm/zatm.c
-@@ -600,7 +600,7 @@ static int start_rx(struct atm_dev *dev)
- 	struct zatm_dev *zatm_dev;
- 	int i;
- 
--DPRINTK("start_rx\n");
-+	DPRINTK("start_rx\n");
- 	zatm_dev = ZATM_DEV(dev);
- 	zatm_dev->rx_map = kcalloc(zatm_dev->chans,
- 				   sizeof(*zatm_dev->rx_map),
--- 
-2.10.0
-
+Applied.
