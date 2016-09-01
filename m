@@ -1,75 +1,123 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 26 Sep 2016 00:46:12 +0000
-Subject: [PATCH 09/11 V2 RESEND] staging: dgnc: rename dgnc_tty_uninit() to dgnc_cleanup_tty()
-Message-Id: <20160926004612.GA3951@SEL-JYOUN-D1>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 22:13:13 +0000
+Subject: [PATCH 5/6] ALSA: oxygen: constify snd_pcm_ops structures
+Message-Id: <1472767994-26269-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-The dgnc_tty_uninit() doesn't match with dgnc_tty_init() at all.
-And also the dgnc_cleanup_tty() is only called for exiting the module.
+Check for snd_pcm_ops structures that are only stored in the ops field of a
+snd_soc_platform_driver structure or passed as the third argument to
+snd_pcm_set_ops.  The corresponding field or parameter is declared const,
+so snd_pcm_ops structures that have this property can be declared as const
+also.
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_pcm_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct snd_soc_platform_driver e;
+position p;
+@@
+e.ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e1, e2;
+position p;
+@@
+snd_pcm_set_ops(e1, e2, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_pcm_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_pcm_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-RESEND: send the whole series again. Because I missed some patches
-when the V2 patches sent.
+ sound/pci/oxygen/oxygen_pcm.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-V2: The subject line was cut off, I put it completely and update
-change log.
-
- drivers/staging/dgnc/dgnc_driver.c | 2 +-
- drivers/staging/dgnc/dgnc_tty.c    | 4 ++--
- drivers/staging/dgnc/dgnc_tty.h    | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index 81ce5c4..fd372d3 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -147,7 +147,7 @@ static void cleanup(bool sysfiles)
- 
- 	for (i = 0; i < dgnc_num_boards; ++i) {
- 		dgnc_remove_ports_sysfiles(dgnc_board[i]);
--		dgnc_tty_uninit(dgnc_board[i]);
-+		dgnc_cleanup_tty(dgnc_board[i]);
- 		dgnc_cleanup_board(dgnc_board[i]);
- 	}
- 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 893f473..5befd28 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -387,12 +387,12 @@ void dgnc_tty_post_uninit(void)
+diff --git a/sound/pci/oxygen/oxygen_pcm.c b/sound/pci/oxygen/oxygen_pcm.c
+index aa2ebd1..042a243 100644
+--- a/sound/pci/oxygen/oxygen_pcm.c
++++ b/sound/pci/oxygen/oxygen_pcm.c
+@@ -631,7 +631,7 @@ static snd_pcm_uframes_t oxygen_pointer(struct snd_pcm_substream *substream)
+ 	return bytes_to_frames(runtime, curr_addr - (u32)runtime->dma_addr);
  }
  
- /*
-- * dgnc_tty_uninit()
-+ * dgnc_cleanup_tty()
-  *
-  * Uninitialize the TTY portion of this driver.  Free all memory and
-  * resources.
-  */
--void dgnc_tty_uninit(struct dgnc_board *brd)
-+void dgnc_cleanup_tty(struct dgnc_board *brd)
- {
- 	int i = 0;
+-static struct snd_pcm_ops oxygen_rec_a_ops = {
++static const struct snd_pcm_ops oxygen_rec_a_ops = {
+ 	.open      = oxygen_rec_a_open,
+ 	.close     = oxygen_close,
+ 	.ioctl     = snd_pcm_lib_ioctl,
+@@ -642,7 +642,7 @@ static struct snd_pcm_ops oxygen_rec_a_ops = {
+ 	.pointer   = oxygen_pointer,
+ };
  
-diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
-index f065c8f..24c9a41 100644
---- a/drivers/staging/dgnc/dgnc_tty.h
-+++ b/drivers/staging/dgnc/dgnc_tty.h
-@@ -25,7 +25,7 @@ int	dgnc_tty_preinit(void);
- int     dgnc_tty_init(struct dgnc_board *);
+-static struct snd_pcm_ops oxygen_rec_b_ops = {
++static const struct snd_pcm_ops oxygen_rec_b_ops = {
+ 	.open      = oxygen_rec_b_open,
+ 	.close     = oxygen_close,
+ 	.ioctl     = snd_pcm_lib_ioctl,
+@@ -653,7 +653,7 @@ static struct snd_pcm_ops oxygen_rec_b_ops = {
+ 	.pointer   = oxygen_pointer,
+ };
  
- void	dgnc_tty_post_uninit(void);
--void	dgnc_tty_uninit(struct dgnc_board *);
-+void	dgnc_cleanup_tty(struct dgnc_board *);
+-static struct snd_pcm_ops oxygen_rec_c_ops = {
++static const struct snd_pcm_ops oxygen_rec_c_ops = {
+ 	.open      = oxygen_rec_c_open,
+ 	.close     = oxygen_close,
+ 	.ioctl     = snd_pcm_lib_ioctl,
+@@ -664,7 +664,7 @@ static struct snd_pcm_ops oxygen_rec_c_ops = {
+ 	.pointer   = oxygen_pointer,
+ };
  
- void	dgnc_input(struct channel_t *ch);
- void	dgnc_carrier(struct channel_t *ch);
--- 
-1.9.1
+-static struct snd_pcm_ops oxygen_spdif_ops = {
++static const struct snd_pcm_ops oxygen_spdif_ops = {
+ 	.open      = oxygen_spdif_open,
+ 	.close     = oxygen_close,
+ 	.ioctl     = snd_pcm_lib_ioctl,
+@@ -675,7 +675,7 @@ static struct snd_pcm_ops oxygen_spdif_ops = {
+ 	.pointer   = oxygen_pointer,
+ };
+ 
+-static struct snd_pcm_ops oxygen_multich_ops = {
++static const struct snd_pcm_ops oxygen_multich_ops = {
+ 	.open      = oxygen_multich_open,
+ 	.close     = oxygen_close,
+ 	.ioctl     = snd_pcm_lib_ioctl,
+@@ -686,7 +686,7 @@ static struct snd_pcm_ops oxygen_multich_ops = {
+ 	.pointer   = oxygen_pointer,
+ };
+ 
+-static struct snd_pcm_ops oxygen_ac97_ops = {
++static const struct snd_pcm_ops oxygen_ac97_ops = {
+ 	.open      = oxygen_ac97_open,
+ 	.close     = oxygen_close,
+ 	.ioctl     = snd_pcm_lib_ioctl,
 
