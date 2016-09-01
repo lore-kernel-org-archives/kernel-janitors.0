@@ -1,80 +1,105 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 09:18:34 +0000
-Subject: [PATCH 10/10] dm snapshot: Delete five unwanted spaces behind "list_for_each_entry"
-Message-Id: <c38479bc-8a5d-587a-a244-058c44ced386@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 18:42:18 +0000
+Subject: [PATCH 0/3] constify pinctrl_ops and pinmux_ops structures
+Message-Id: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
-In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 10:14:32 +0200
+Constify pinctrl_ops and pinmux_ops structures.  The complete semantic
+patch used to make this change is as follows:
 
-The script "checkpatch.pl" can point information out like the following.
+// <smpl>
+@initialize:ocaml@
+@@
 
-WARNING: space prohibited between function name and open parenthesis '('
+let check file   let second = List.nth (Str.split (Str.regexp "linux-next/") file) 1 in
+  let doto     "/var/julia/linux-next/" ^ (Filename.chop_extension second) ^ ".o" in
+  Sys.file_exists doto
 
-Thus fix the affected source code places.
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+static struct pinctrl_ops i@p = { ... };
+
+@script:ocaml@
+p << r.p;
+@@
+
+if not (check (List.hd p).file) then Coccilib.include_match false
+
+@ok@
+identifier r.i;
+struct pinctrl_desc e;
+position p;
+@@
+
+e.pctlops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct pinctrl_ops e;
+@@
+
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+
+static
++const
+ struct pinctrl_ops i = { ... };
+
+// --------------------------------------------------------------------
+
+@r1 disable optional_qualifier@
+identifier i;
+position p;
+@@
+
+static struct pinmux_ops i@p = { ... };
+
+@script:ocaml@
+p << r1.p;
+@@
+
+if not (check (List.hd p).file) then Coccilib.include_match false
+
+@ok1@
+identifier r1.i;
+struct pinctrl_desc e;
+position p;
+@@
+
+e.pmxops = &i@p;
+
+@bad1@
+position p != {r1.p,ok1.p};
+identifier r1.i;
+struct pinmux_ops e;
+@@
+
+e@i@p
+
+@depends on !bad1 disable optional_qualifier@
+identifier r1.i;
+@@
+
+static
++const
+ struct pinmux_ops i = { ... };
+// </smpl>
+
 ---
- drivers/md/dm-snap.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 7593986..1310652 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -366,7 +366,7 @@ static struct origin *__lookup_origin(struct block_device *origin)
- 	struct origin *o;
- 
- 	ol = &_origins[origin_hash(origin)];
--	list_for_each_entry (o, ol, hash_list)
-+	list_for_each_entry(o, ol, hash_list)
- 		if (bdev_equal(o->bdev, origin))
- 			return o;
- 
-@@ -385,7 +385,7 @@ static struct dm_origin *__lookup_dm_origin(struct block_device *origin)
- 	struct dm_origin *o;
- 
- 	ol = &_dm_origins[origin_hash(origin)];
--	list_for_each_entry (o, ol, hash_list)
-+	list_for_each_entry(o, ol, hash_list)
- 		if (bdev_equal(o->dev->bdev, origin))
- 			return o;
- 
-@@ -625,7 +625,7 @@ static void dm_exception_table_exit(struct dm_exception_table *et,
- 	for (i = 0; i < size; i++) {
- 		slot = et->table + i;
- 
--		list_for_each_entry_safe (ex, next, slot, hash_list)
-+		list_for_each_entry_safe(ex, next, slot, hash_list)
- 			kmem_cache_free(mem, ex);
- 	}
- 
-@@ -653,7 +653,7 @@ static struct dm_exception *dm_lookup_exception(struct dm_exception_table *et,
- 	struct dm_exception *e;
- 
- 	slot = &et->table[exception_hash(et, chunk)];
--	list_for_each_entry (e, slot, hash_list)
-+	list_for_each_entry(e, slot, hash_list)
- 		if (chunk >= e->old_chunk &&
- 		    chunk <= e->old_chunk + dm_consecutive_chunk_count(e))
- 			return e;
-@@ -2068,7 +2068,7 @@ static int __origin_write(struct list_head *snapshots, sector_t sector,
- 	chunk_t chunk;
- 
- 	/* Do all the snapshots on this origin */
--	list_for_each_entry (snap, snapshots, list) {
-+	list_for_each_entry(snap, snapshots, list) {
- 		/*
- 		 * Don't make new exceptions in a merging snapshot
- 		 * because it has effectively been deleted
--- 
-2.10.0
-
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c |    4 ++--
+ drivers/pinctrl/bcm/pinctrl-ns2-mux.c  |    4 ++--
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c  |    4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
