@@ -1,54 +1,43 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 19 Sep 2016 17:25:46 +0000
-Subject: Re: [PATCH 1/5] drm/amdgpu: Use kmalloc_array() in amdgpu_debugfs_gca_config_read()
-Message-Id: <CADnq5_OpYm_ZzrqhAgdgzLfBPo5+LfqFq1U278JTQHizTx1VPA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 01 Sep 2016 09:38:15 +0000
+Subject: [PATCH] s390/hypfs: Use kmalloc_array() in diag0c_store()
+Message-Id: <5fd5f9ef-923f-4655-54f0-874114dc9428@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <8d614254-1cba-0379-cf84-52ad9bd9f3a7@users.sourceforge.net>
- <976bba66-8e9b-d5ee-a266-d291986e63d7@users.sourceforge.net>
-In-Reply-To: <976bba66-8e9b-d5ee-a266-d291986e63d7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Tom St Denis <tom.stdenis@amd.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Julia Lawall <julia.lawall@lip6.fr>, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Monk Liu <Monk.Liu@amd.com>
+To: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Michael Holzheu <holzheu@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Sun, Sep 18, 2016 at 12:50 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 18 Sep 2016 17:00:52 +0200
->
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Sep 2016 11:30:58 +0200
 
-Applied.  thanks.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> index df7ab245..2709ebd 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -2438,7 +2438,7 @@ static ssize_t amdgpu_debugfs_gca_config_read(struct file *f, char __user *buf,
->         if (size & 0x3 || *pos & 0x3)
->                 return -EINVAL;
->
-> -       config = kmalloc(256 * sizeof(*config), GFP_KERNEL);
-> +       config = kmalloc_array(256, sizeof(*config), GFP_KERNEL);
->         if (!config)
->                 return -ENOMEM;
->
-> --
-> 2.10.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/s390/hypfs/hypfs_diag0c.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/s390/hypfs/hypfs_diag0c.c b/arch/s390/hypfs/hypfs_diag0c.c
+index 0f1927c..61418a8 100644
+--- a/arch/s390/hypfs/hypfs_diag0c.c
++++ b/arch/s390/hypfs/hypfs_diag0c.c
+@@ -48,7 +48,9 @@ static void *diag0c_store(unsigned int *count)
+ 
+ 	get_online_cpus();
+ 	cpu_count = num_online_cpus();
+-	cpu_vec = kmalloc(sizeof(*cpu_vec) * num_possible_cpus(), GFP_KERNEL);
++	cpu_vec = kmalloc_array(num_possible_cpus(),
++				sizeof(*cpu_vec),
++				GFP_KERNEL);
+ 	if (!cpu_vec)
+ 		goto fail_put_online_cpus;
+ 	/* Note: Diag 0c needs 8 byte alignment and real storage */
+-- 
+2.9.3
+
