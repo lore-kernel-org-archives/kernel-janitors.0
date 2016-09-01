@@ -1,50 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 06:26:44 +0000
-Subject: [PATCH 3/7] iio: Rename a jump label in iio_buffer_store_enable()
-Message-Id: <7b90323b-2eff-ce51-588a-a9f6c1e5c2ed@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 17:51:30 +0000
+Subject: [PATCH 1/9] serial: st-asc: constify uart_ops structures
+Message-Id: <1472752298-981-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
-In-Reply-To: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
+References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 07:11:32 +0200
+Check for uart_ops structures that are only stored in the ops field of a
+uart_port structure.  This field is declared const, so uart_ops structures
+that have this property can be declared as const also.
 
-Adjust a jump label according to the current Linux coding style convention.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct uart_ops i@p = { ... };
+
+@ok@
+identifier r.i;
+struct uart_port e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct uart_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct uart_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/iio/industrialio-buffer.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/tty/serial/st-asc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index a865af8..6509f0f 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -982,7 +982,7 @@ static ssize_t iio_buffer_store_enable(struct device *dev,
- 	inlist = iio_buffer_is_active(indio_dev->buffer);
- 	/* Already in desired state */
- 	if (inlist = requested_state)
--		goto done;
-+		goto unlock;
+diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
+index 2d78cb3..379e5bd 100644
+--- a/drivers/tty/serial/st-asc.c
++++ b/drivers/tty/serial/st-asc.c
+@@ -639,7 +639,7 @@ static void asc_put_poll_char(struct uart_port *port, unsigned char c)
  
- 	if (requested_state)
- 		ret = __iio_update_buffers(indio_dev,
-@@ -990,8 +990,7 @@ static ssize_t iio_buffer_store_enable(struct device *dev,
- 	else
- 		ret = __iio_update_buffers(indio_dev,
- 					 NULL, indio_dev->buffer);
--
--done:
-+unlock:
- 	mutex_unlock(&indio_dev->mlock);
- 	return (ret < 0) ? ret : len;
- }
--- 
-2.10.0
+ /*---------------------------------------------------------------------*/
+ 
+-static struct uart_ops asc_uart_ops = {
++static const struct uart_ops asc_uart_ops = {
+ 	.tx_empty	= asc_tx_empty,
+ 	.set_mctrl	= asc_set_mctrl,
+ 	.get_mctrl	= asc_get_mctrl,
 
