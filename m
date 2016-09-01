@@ -1,41 +1,24 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 09:16:17 +0000
-Subject: [PATCH 08/10] dm snapshot: Delete an unnecessary variable initialisation in remove_single_exception_
-Message-Id: <e0fe796f-5588-8341-8905-2374de777390@users.sourceforge.net>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 01 Sep 2016 19:55:38 +0000
+Subject: Re: [STLinux Kernel] [PATCH 1/9] serial: st-asc: constify uart_ops structures
+Message-Id: <20160901195538.GA19072@griffinp-ThinkPad-X1-Carbon-2nd>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
-In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1472752298-981-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472752298-981-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 09:06:37 +0200
+On Thu, 01 Sep 2016, Julia Lawall wrote:
 
-The local variable "b" will be set to an appropriate pointer a bit later.
-Thus omit the explicit initialisation at the beginning.
+> Check for uart_ops structures that are only stored in the ops field of a
+> uart_port structure.  This field is declared const, so uart_ops structures
+> that have this property can be declared as const also.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/dm-snap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Peter Griffin <peter.griffin@linaro.org>
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 1d90131..4966584 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -904,7 +904,7 @@ static void flush_bios(struct bio *bio);
- 
- static int remove_single_exception_chunk(struct dm_snapshot *s)
- {
--	struct bio *b = NULL;
-+	struct bio *b;
- 	int r;
- 	chunk_t old_chunk = s->first_merging_chunk + s->num_merging_chunks - 1;
- 
--- 
-2.10.0
+regards,
 
+Peter.
