@@ -1,60 +1,50 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Tue, 20 Sep 2016 10:05:55 +0000
-Subject: Re: [PATCH 2/6] GPU-DRM-GMA500: Rename a jump label in mid_get_vbt_data_r10()
-Message-Id: <87y42mlwcc.fsf@intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Thu, 01 Sep 2016 13:17:18 +0000
+Subject: Re: [bug report] x86/sfi: Enable enumeration of SD devices
+Message-Id: <1472735838.4887.459.camel@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <3c9785ef-4553-2e3d-2cb2-5cf6d1f31ccd@users.sourceforge.net> <29c651f1-8527-0f65-0b60-3503808c9d6d@users.sourceforge.net>
-In-Reply-To: <29c651f1-8527-0f65-0b60-3503808c9d6d@users.sourceforge.net>
+References: <20160715192348.GA6521@mwanda>
+In-Reply-To: <20160715192348.GA6521@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 20 Sep 2016, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 20 Sep 2016 09:09:10 +0200
->
-> Adjust a jump label according to the current Linux coding style convention.
+On Tue, 2016-08-30 at 11:18 -0700, Sathyanarayanan Kuppuswamy wrote:
 
-Generally, please don't send patches to fix checkpatch issues in
-existing code. Moreover, this particular "convention" is just something
-someone sneaked into CodingStyle, it's subjective, and it's probably
-going to be removed soon.
+> IMO, Main problem here is, In some scenarios get_platform_data
+> returns 
+> NULL on error case and in some cases it return NULL for no platform
+> data 
+> case.
 
-NAK.
+We have possibility of the following scenarios:
+1) fatal error (should return error code and fail booting)
+2) non-fatal error (prevents certain device to be enumerated, pdata NULL)
+3) no pdata for the device (not an error! pdata is optional to the
+certain driver)
+4) pdata != NULL (fully armed device driver)
 
-BR,
-Jani.
+According to above I doubt we will have many 1) cases. Otherwise pdata NULL is okay.
 
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/gma500/mid_bios.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/gma500/mid_bios.c b/drivers/gpu/drm/gma500/mid_bios.c
-> index a833568..cf4e605 100644
-> --- a/drivers/gpu/drm/gma500/mid_bios.c
-> +++ b/drivers/gpu/drm/gma500/mid_bios.c
-> @@ -242,7 +242,7 @@ static int mid_get_vbt_data_r10(struct drm_psb_private *dev_priv, u32 addr)
->  	gct_virtual = ioremap(addr + sizeof(vbt),
->  			sizeof(*gct) * vbt.panel_count);
->  	if (!gct_virtual)
-> -		goto out;
-> +		goto free_gct;
->  	memcpy_fromio(gct, gct_virtual, sizeof(*gct));
->  	iounmap(gct_virtual);
->  
-> @@ -270,7 +270,7 @@ static int mid_get_vbt_data_r10(struct drm_psb_private *dev_priv, u32 addr)
->  	dp_ti->vsync_pulse_width_lo = ti->vsync_pulse_width_lo;
->  
->  	ret = 0;
-> -out:
-> + free_gct:
->  	kfree(gct);
->  	return ret;
->  }
+> 
+> For example, in following function, returning NULL on gpio_base = -1 
+> and when nr >= PCAL9555A_NUM is incorrect. I think in both these 
+> scenarios valid behavior is to stop the device creation process. 
+
+Yes, but do _not_ stop processing and booting!
+
+> Creating an i2c device without validi irq number or gpio number is 
+> incorrect.
+> 
+> So after investigating it bit more, I think its more appropriate to
+> fix 
+> these error cases in device_libs dir. Let me know your comments.
+
+I doubt that is a proper fix. It might be part of the fix in sfi.c where
+you somehow distinguish fatal errors from non-fatal.
+
 
 -- 
-Jani Nikula, Intel Open Source Technology Center
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
