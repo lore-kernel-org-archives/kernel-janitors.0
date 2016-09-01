@@ -1,36 +1,78 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Sep 2016 10:06:03 +0000
-Subject: Re: [dm-devel] [PATCH 03/10] md/dm-crypt: Rename a jump label in crypt_message()
-Message-Id: <20160930100603.GB13620@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 18:42:20 +0000
+Subject: [PATCH 2/3] pinctrl: nsp: constify pinctrl_ops and pinmux_ops structures
+Message-Id: <1472755341-9995-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
- <db29ff0c-8da9-e7ba-054d-a35f8b4fd2d7@users.sourceforge.net>
- <20160929125553.kn45yx6jud35463p@thunk.org>
- <e40a8107-7400-bc10-a212-563dd168aac5@users.sourceforge.net>
-In-Reply-To: <e40a8107-7400-bc10-a212-563dd168aac5@users.sourceforge.net>
+References: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Theodore Ts'o <tytso@mit.edu>, dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Sep 29, 2016 at 05:43:57PM +0200, SF Markus Elfring wrote:
-> > In what bizzaro world is the "current Linux coding style convention"
-> 
-> Do you look at the evolution for a document like "CodingStyle"?
-> 
+Check for pinctrl_ops and pinmux_ops structures that are only stored in the
+pctlops field and the pmxops field, respectively, of a pinctrl_desc
+structure.  These fields are declared const, so pinctrl_ops and pinmux_ops
+structures that have this property can be declared as const also.
 
-Again, I wrote the paragraph in CodingStyle.  I just said that it's a
-good idea to think about label names instead of using GW-BASIC style
-numbered labels, I didn't say go around bothering everyone with waste
-of time cleanup patches.
+The semantic patch that makes this change in the pinctrl_ops is as
+follows.  The pinmux_ops case is similar.  (http://coccinelle.lip6.fr/)
 
-I specifically did not say that "out:" or "error:" labels are bad names.
-Those are common style in the kernel.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct pinctrl_ops i@p = { ... };
 
-Please stop sending these patches.
+@ok@
+identifier r.i;
+struct pinctrl_desc e;
+position p;
+@@
+e.pctlops = &i@p;
 
-regards,
-dan carpenter
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct pinctrl_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct pinctrl_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+index 4149db3..35c1765 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+@@ -348,7 +348,7 @@ static void nsp_pin_dbg_show(struct pinctrl_dev *pctrl_dev,
+ 	seq_printf(s, " %s", dev_name(pctrl_dev->dev));
+ }
+ 
+-static struct pinctrl_ops nsp_pinctrl_ops = {
++static const struct pinctrl_ops nsp_pinctrl_ops = {
+ 	.get_groups_count = nsp_get_groups_count,
+ 	.get_group_name = nsp_get_group_name,
+ 	.get_group_pins = nsp_get_group_pins,
+@@ -518,7 +518,7 @@ static void nsp_gpio_disable_free(struct pinctrl_dev *pctrl_dev,
+ 	spin_unlock_irqrestore(&pinctrl->lock, flags);
+ }
+ 
+-static struct pinmux_ops nsp_pinmux_ops = {
++static const struct pinmux_ops nsp_pinmux_ops = {
+ 	.get_functions_count = nsp_get_functions_count,
+ 	.get_function_name = nsp_get_function_name,
+ 	.get_function_groups = nsp_get_function_groups,
 
