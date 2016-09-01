@@ -1,28 +1,69 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 19 Sep 2016 05:34:34 +0000
-Subject: Re: [PATCH resend] sctp: Remove some redundant code
-Message-Id: <20160919.013434.1910609314182367829.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 17:51:34 +0000
+Subject: [PATCH 5/9] tty: serial: jsm_tty: constify uart_ops structures
+Message-Id: <1472752298-981-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1474059935-17343-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1474059935-17343-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: marcelo.leitner@gmail.com, vyasevich@gmail.com, nhorman@tuxdriver.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 16 Sep 2016 23:05:35 +0200
+Check for uart_ops structures that are only stored in the ops field of a
+uart_port structure.  This field is declared const, so uart_ops structures
+that have this property can be declared as const also.
 
-> In commit 311b21774f13 ("sctp: simplify sk_receive_queue locking"), a call
-> to 'skb_queue_splice_tail_init()' has been made explicit. Previously it was
-> hidden in 'sctp_skb_list_tail()'
-> 
-> Now, the code around it looks redundant. The '_init()' part of
-> 'skb_queue_splice_tail_init()' should already do the same.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-> Acked-by: Neil Horman <nhorman@tuxdriver.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied to net-next.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct uart_ops i@p = { ... };
+
+@ok@
+identifier r.i;
+struct uart_port e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct uart_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct uart_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/tty/serial/jsm/jsm_tty.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/jsm/jsm_tty.c b/drivers/tty/serial/jsm/jsm_tty.c
+index c5ddfe5..ec7d838 100644
+--- a/drivers/tty/serial/jsm/jsm_tty.c
++++ b/drivers/tty/serial/jsm/jsm_tty.c
+@@ -346,7 +346,7 @@ static void jsm_config_port(struct uart_port *port, int flags)
+ 	port->type = PORT_JSM;
+ }
+ 
+-static struct uart_ops jsm_ops = {
++static const struct uart_ops jsm_ops = {
+ 	.tx_empty	= jsm_tty_tx_empty,
+ 	.set_mctrl	= jsm_tty_set_mctrl,
+ 	.get_mctrl	= jsm_tty_get_mctrl,
+
