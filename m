@@ -1,67 +1,79 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 12 Sep 2016 12:08:38 +0000
-Subject: Re: [PATCH 20/26] stmmac: pci: constify local structures
-Message-Id: <alpine.DEB.2.10.1609121407370.3049@hadrien>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 18:42:21 +0000
+Subject: [PATCH 3/3] pinctrl: bcm281xx: constify pinctrl_ops and pinmux_ops structures
+Message-Id: <1472755341-9995-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr> <1473599168-30561-21-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-21-git-send-email-Julia.Lawall@lip6.fr>
+References: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Check for pinctrl_ops and pinmux_ops structures that are only stored in the
+pctlops field and the pmxops field, respectively, of a pinctrl_desc
+structure.  These fields are declared const, so pinctrl_ops and pinmux_ops
+structures that have this property can be declared as const also.
 
+The semantic patch that makes this change in the pinctrl_ops is as
+follows.  The pinmux_ops case is similar.  (http://coccinelle.lip6.fr/)
 
-On Sun, 11 Sep 2016, Julia Lawall wrote:
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct pinctrl_ops i@p = { ... };
 
-> For structure types defined in the same file or local header files, find
-> top-level static structure declarations that have the following
-> properties:
-> 1. Never reassigned.
-> 2. Address never taken
-> 3. Not passed to a top-level macro call
-> 4. No pointer or array-typed field passed to a function or stored in a
-> variable.
-> Declare structures having all of these properties as const.
+@ok@
+identifier r.i;
+struct pinctrl_desc e;
+position p;
+@@
+e.pctlops = &i@p;
 
-Please ignore this patch.  Coccinelle incorrectly interpreted
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct pinctrl_ops e;
+@@
+e@i@p
 
-{PCI_VDEVICE(INTEL, STMMAC_QUARK_ID), (kernel_ulong_t)&quark_pci_info}
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct pinctrl_ops i = { ... };
+// </smpl>
 
-as a bit and operation, since it did not recognize kernel_ulong_t as a
-type.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-julia
+---
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Done using Coccinelle.
-> Based on a suggestion by Joe Perches <joe@perches.com>.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
-> The semantic patch seems too long for a commit log, but is in the cover
-> letter.
->
->  drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> index 56c8a23..5c612c3 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> @@ -141,7 +141,7 @@ static struct stmmac_pci_dmi_data quark_pci_dmi_data[] = {
->  	{}
->  };
->
-> -static struct stmmac_pci_info quark_pci_info = {
-> +static const struct stmmac_pci_info quark_pci_info = {
->  	.setup = quark_default_data,
->  	.dmi = quark_pci_dmi_data,
->  };
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+index 582f6df..a5331fd 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+@@ -1018,7 +1018,7 @@ static void bcm281xx_pinctrl_pin_dbg_show(struct pinctrl_dev *pctldev,
+ 	seq_printf(s, " %s", dev_name(pctldev->dev));
+ }
+ 
+-static struct pinctrl_ops bcm281xx_pinctrl_ops = {
++static const struct pinctrl_ops bcm281xx_pinctrl_ops = {
+ 	.get_groups_count = bcm281xx_pinctrl_get_groups_count,
+ 	.get_group_name = bcm281xx_pinctrl_get_group_name,
+ 	.get_group_pins = bcm281xx_pinctrl_get_group_pins,
+@@ -1080,7 +1080,7 @@ static int bcm281xx_pinmux_set(struct pinctrl_dev *pctldev,
+ 	return rc;
+ }
+ 
+-static struct pinmux_ops bcm281xx_pinctrl_pinmux_ops = {
++static const struct pinmux_ops bcm281xx_pinctrl_pinmux_ops = {
+ 	.get_functions_count = bcm281xx_pinctrl_get_fcns_count,
+ 	.get_function_name = bcm281xx_pinctrl_get_fcn_name,
+ 	.get_function_groups = bcm281xx_pinctrl_get_fcn_groups,
+
