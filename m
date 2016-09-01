@@ -1,94 +1,69 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 21:00:08 +0000
-Subject: [PATCH] KVM: PPC: e500: Rename jump labels in kvmppc_e500_tlb_init()
-Message-Id: <b3d10e3b-79f9-b52c-c013-fe33f87cbd08@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 17:51:37 +0000
+Subject: [PATCH 8/9] serial-uartlite: constify uart_ops structures
+Message-Id: <1472752298-981-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
- <165cb42e-f9fe-83ad-7c4c-299a805dbe6e@users.sourceforge.net>
- <20160911232547.GA9873@fergus.ozlabs.ibm.com>
-In-Reply-To: <20160911232547.GA9873@fergus.ozlabs.ibm.com>
+References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Paul Mackerras <paulus@ozlabs.org>, kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Peter Korsgaard <jacmet@sunsite.dk>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 22:33:53 +0200
+Check for uart_ops structures that are only stored in the ops field of a
+uart_port structure.  This field is declared const, so uart_ops structures
+that have this property can be declared as const also.
 
-Adjust jump labels according to the current Linux coding style convention.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct uart_ops i@p = { ... };
+
+@ok@
+identifier r.i;
+struct uart_port e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct uart_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct uart_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
+ drivers/tty/serial/uartlite.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks that five update steps could be integrated into the branch "kvm-ppc-next"
-of another source code repository.
-
-
-> With this I get a compile error:
-> 
->   CC      arch/powerpc/kvm/e500_mmu.o
-> /home/paulus/kernel/kvm/arch/powerpc/kvm/e500_mmu.c: In function ‘kvmppc_e500_tlb_init’:
-> /home/paulus/kernel/kvm/arch/powerpc/kvm/e500_mmu.c:910:3: error: label ‘err’ used but not defined
->    goto err;
->    ^
-> /home/paulus/kernel/kvm/scripts/Makefile.build:289: recipe for target 'arch/powerpc/kvm/e500_mmu.o' failed
-> make[2]: *** [arch/powerpc/kvm/e500_mmu.o] Error 1
-
-I overlooked a single goto statement there somehow.
-
-I hope that you like my second approach for this function implementation better.
-
-
- arch/powerpc/kvm/e500_mmu.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/arch/powerpc/kvm/e500_mmu.c b/arch/powerpc/kvm/e500_mmu.c
-index 0a2eeb1..ddbf8f0 100644
---- a/arch/powerpc/kvm/e500_mmu.c
-+++ b/arch/powerpc/kvm/e500_mmu.c
-@@ -907,7 +907,7 @@ int kvmppc_e500_tlb_init(struct kvmppc_vcpu_e500 *vcpu_e500)
- 	struct kvm_vcpu *vcpu = &vcpu_e500->vcpu;
- 
- 	if (e500_mmu_host_init(vcpu_e500))
--		goto err;
-+		goto free_vcpu;
- 
- 	vcpu_e500->gtlb_params[0].entries = KVM_E500_TLB0_SIZE;
- 	vcpu_e500->gtlb_params[1].entries = KVM_E500_TLB1_SIZE;
-@@ -933,26 +933,25 @@ int kvmppc_e500_tlb_init(struct kvmppc_vcpu_e500 *vcpu_e500)
- 					  sizeof(struct tlbe_ref),
- 					  GFP_KERNEL);
- 	if (!vcpu_e500->gtlb_priv[0])
--		goto err;
-+		goto free_vcpu;
- 
- 	vcpu_e500->gtlb_priv[1] = kcalloc(vcpu_e500->gtlb_params[1].entries,
- 					  sizeof(struct tlbe_ref),
- 					  GFP_KERNEL);
- 	if (!vcpu_e500->gtlb_priv[1])
--		goto err;
-+		goto free_vcpu;
- 
- 	vcpu_e500->g2h_tlb1_map = kcalloc(vcpu_e500->gtlb_params[1].entries,
- 					  sizeof(*vcpu_e500->g2h_tlb1_map),
- 					  GFP_KERNEL);
- 	if (!vcpu_e500->g2h_tlb1_map)
--		goto err;
-+		goto free_vcpu;
- 
- 	vcpu_mmu_init(vcpu, vcpu_e500->gtlb_params);
- 
- 	kvmppc_recalc_tlb1map_range(vcpu_e500);
- 	return 0;
--
--err:
-+ free_vcpu:
- 	free_gtlb(vcpu_e500);
- 	return -1;
+diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
+index 05089b6..817bb0d 100644
+--- a/drivers/tty/serial/uartlite.c
++++ b/drivers/tty/serial/uartlite.c
+@@ -387,7 +387,7 @@ static void ulite_put_poll_char(struct uart_port *port, unsigned char ch)
  }
--- 
-2.10.0
-
+ #endif
+ 
+-static struct uart_ops ulite_ops = {
++static const struct uart_ops ulite_ops = {
+ 	.tx_empty	= ulite_tx_empty,
+ 	.set_mctrl	= ulite_set_mctrl,
+ 	.get_mctrl	= ulite_get_mctrl,
 
