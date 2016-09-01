@@ -1,26 +1,63 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 13 Sep 2016 16:06:36 +0000
-Subject: Re: [PATCH] drivers: net: phy: xgene: Fix 'remove' function
-Message-Id: <20160913.120636.145288761809547250.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 22:13:08 +0000
+Subject: [PATCH 0/6] constify snd_pcm_ops structures
+Message-Id: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473623014-7801-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1473623014-7801-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: christophe.jaillet@wanadoo.fr
-Cc: isubramanian@apm.com, kchudgar@apm.com, f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 11 Sep 2016 21:43:34 +0200
+Constify snd_pcm_ops structures.
 
-> If 'IS_ERR(pdata->clk)' is true, then 'clk_disable_unprepare(pdata->clk)'
-> will do nothing.
-> 
-> It is likely that 'if (!IS_ERR(pdata->clk))' was expected here.
-> In fact, the test can even be removed because 'clk_disable_unprepare'
-> already handles such cases.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
 
-Applied.
+ sound/firewire/dice/dice-pcm.c          |    4 ++--
+ sound/firewire/digi00x/digi00x-pcm.c    |    4 ++--
+ sound/firewire/oxfw/oxfw-pcm.c          |    4 ++--
+ sound/firewire/tascam/tascam-pcm.c      |    4 ++--
+ sound/pci/ad1889.c                      |    4 ++--
+ sound/pci/als300.c                      |    4 ++--
+ sound/pci/als4000.c                     |    4 ++--
+ sound/pci/asihpi/asihpi.c               |    4 ++--
+ sound/pci/atiixp.c                      |    6 +++---
+ sound/pci/atiixp_modem.c                |    4 ++--
+ sound/pci/aw2/aw2-alsa.c                |    4 ++--
+ sound/pci/azt3328.c                     |    6 +++---
+ sound/pci/bt87x.c                       |    2 +-
+ sound/pci/ca0106/ca0106_main.c          |   16 ++++++++--------
+ sound/pci/cmipci.c                      |   10 +++++-----
+ sound/pci/cs4281.c                      |    4 ++--
+ sound/pci/cs5535audio/cs5535audio_pcm.c |    4 ++--
+ sound/pci/ctxfi/ctpcm.c                 |    4 ++--
+ sound/pci/emu10k1/emu10k1x.c            |    4 ++--
+ sound/pci/emu10k1/emupcm.c              |   12 ++++++------
+ sound/pci/emu10k1/p16v.c                |    4 ++--
+ sound/pci/ens1370.c                     |    6 +++---
+ sound/pci/es1938.c                      |    4 ++--
+ sound/pci/es1968.c                      |    4 ++--
+ sound/pci/fm801.c                       |    4 ++--
+ sound/pci/hda/hda_controller.c          |    2 +-
+ sound/pci/ice1712/ice1712.c             |   10 +++++-----
+ sound/pci/ice1712/ice1724.c             |   10 +++++-----
+ sound/pci/korg1212/korg1212.c           |    4 ++--
+ sound/pci/lola/lola_pcm.c               |    2 +-
+ sound/pci/lx6464es/lx6464es.c           |    4 ++--
+ sound/pci/maestro3.c                    |    4 ++--
+ sound/pci/mixart/mixart.c               |    4 ++--
+ sound/pci/nm256/nm256.c                 |    4 ++--
+ sound/pci/oxygen/oxygen_pcm.c           |   12 ++++++------
+ sound/pci/pcxhr/pcxhr.c                 |    2 +-
+ sound/pci/riptide/riptide.c             |    4 ++--
+ sound/pci/rme32.c                       |   16 ++++++++--------
+ sound/pci/rme96.c                       |    8 ++++----
+ sound/pci/rme9652/hdsp.c                |    4 ++--
+ sound/pci/rme9652/hdspm.c               |    2 +-
+ sound/pci/rme9652/rme9652.c             |    4 ++--
+ sound/pci/sonicvibes.c                  |    4 ++--
+ sound/pci/trident/trident_main.c        |   12 ++++++------
+ sound/pci/via82xx.c                     |   10 +++++-----
+ sound/pci/via82xx_modem.c               |    4 ++--
+ sound/pci/ymfpci/ymfpci_main.c          |   10 +++++-----
+ 47 files changed, 133 insertions(+), 133 deletions(-)
