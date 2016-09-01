@@ -1,41 +1,65 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 28 Sep 2016 15:43:22 +0000
-Subject: [PATCH 06/10] md/dm-crypt: Delete an unnecessary variable initialisation in crypt_set_key()
-Message-Id: <1a9b8a2d-8ae6-52f6-99b7-7e6172b6b6d1@users.sourceforge.net>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Date: Thu, 01 Sep 2016 09:45:41 +0000
+Subject: Re: [PATCH] ASoC: constify snd_soc_codec_driver structures
+Message-Id: <20160901094541.GD21682@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
-In-Reply-To: <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
+References: <1472680347-19575-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472680347-19575-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 28 Sep 2016 15:24:13 +0200
+On Wed, Aug 31, 2016 at 11:52:27PM +0200, Julia Lawall wrote:
+> Check for snd_soc_codec_driver structures that are only passed to
+> snd_soc_register_codec or memcpy (2nd arg), for which the corresponding
+> parameters are declared const.  Declare as const snd_soc_codec_driver
+> structures that have these properties.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct snd_soc_codec_driver i@p = { ... };
+> 
+> @ok@
+> identifier r.i;
+> expression e1,e2,e3;
+> position p;
+> @@
+> (
+> snd_soc_register_codec(e1,&i@p,e2,e3)
+> |
+> memcpy(e1,&i@p,e2)
+> )
+> 
+> @bad@
+> position p != {r.p,ok.p};
+> identifier r.i;
+> @@
+> i@p
+> 
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct snd_soc_codec_driver i = { ... };
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
 
-The local variable "r" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+I haven't looked at every single case individually, but the ones
+I have looked at look fine.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/dm-crypt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index 7e0fd82..3bc54c1 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -1491,7 +1491,7 @@ static int crypt_setkey_allcpus(struct crypt_config *cc)
- 
- static int crypt_set_key(struct crypt_config *cc, char *key)
- {
--	int r = -EINVAL;
-+	int r;
- 	int key_string_len = strlen(key);
- 
- 	/* The key size may not be changed. */
--- 
-2.10.0
-
+Thanks,
+Charles
