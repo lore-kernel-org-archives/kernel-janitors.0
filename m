@@ -1,70 +1,87 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 20:44:55 +0000
-Subject: [PATCH 3/7] AGPGART: Rename jump labels in compat_agp_ioctl()
-Message-Id: <c837dfb6-1346-9368-e4a7-caed19a27eb3@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 22:13:09 +0000
+Subject: [PATCH 1/6] ALSA: cs5535audio: constify snd_pcm_ops structures
+Message-Id: <1472767994-26269-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
-In-Reply-To: <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
+References: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaya Kumar <jayakumar.alsa@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 21:12:02 +0200
+Check for snd_pcm_ops structures that are only stored in the ops field of a
+snd_soc_platform_driver structure or passed as the third argument to
+snd_pcm_set_ops.  The corresponding field or parameter is declared const,
+so snd_pcm_ops structures that have this property can be declared as const
+also.
 
-Adjust jump labels according to the current Linux coding style convention.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_pcm_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct snd_soc_platform_driver e;
+position p;
+@@
+e.ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e1, e2;
+position p;
+@@
+snd_pcm_set_ops(e1, e2, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_pcm_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_pcm_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/char/agp/compat_ioctl.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ sound/pci/cs5535audio/cs5535audio_pcm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/agp/compat_ioctl.c b/drivers/char/agp/compat_ioctl.c
-index 68d4dc7..4220956 100644
---- a/drivers/char/agp/compat_ioctl.c
-+++ b/drivers/char/agp/compat_ioctl.c
-@@ -209,24 +209,24 @@ long compat_agp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	if ((agp_fe.current_controller = NULL) &&
- 	    (cmd != AGPIOC_ACQUIRE32)) {
- 		ret_val = -EINVAL;
--		goto ioctl_out;
-+		goto unlock;
- 	}
- 	if ((agp_fe.backend_acquired != true) &&
- 	    (cmd != AGPIOC_ACQUIRE32)) {
- 		ret_val = -EBUSY;
--		goto ioctl_out;
-+		goto unlock;
- 	}
- 	if (cmd != AGPIOC_ACQUIRE32) {
- 		if (!(test_bit(AGP_FF_IS_CONTROLLER, &curr_priv->access_flags))) {
- 			ret_val = -EPERM;
--			goto ioctl_out;
-+			goto unlock;
- 		}
- 		/* Use the original pid of the controller,
- 		 * in case it's threaded */
+diff --git a/sound/pci/cs5535audio/cs5535audio_pcm.c b/sound/pci/cs5535audio/cs5535audio_pcm.c
+index 27fa57d..c208c1d 100644
+--- a/sound/pci/cs5535audio/cs5535audio_pcm.c
++++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
+@@ -380,7 +380,7 @@ static int snd_cs5535audio_capture_prepare(struct snd_pcm_substream *substream)
+ 				 substream->runtime->rate);
+ }
  
- 		if (agp_fe.current_controller->pid != curr_priv->my_pid) {
- 			ret_val = -EBUSY;
--			goto ioctl_out;
-+			goto unlock;
- 		}
- 	}
+-static struct snd_pcm_ops snd_cs5535audio_playback_ops = {
++static const struct snd_pcm_ops snd_cs5535audio_playback_ops = {
+ 	.open =		snd_cs5535audio_playback_open,
+ 	.close =	snd_cs5535audio_playback_close,
+ 	.ioctl =	snd_pcm_lib_ioctl,
+@@ -391,7 +391,7 @@ static struct snd_pcm_ops snd_cs5535audio_playback_ops = {
+ 	.pointer =	snd_cs5535audio_pcm_pointer,
+ };
  
-@@ -274,8 +274,7 @@ long compat_agp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case AGPIOC_CHIPSET_FLUSH32:
- 		break;
- 	}
--
--ioctl_out:
-+ unlock:
- 	DBG("ioctl returns %d\n", ret_val);
- 	mutex_unlock(&(agp_fe.agp_mutex));
- 	return ret_val;
--- 
-2.10.0
+-static struct snd_pcm_ops snd_cs5535audio_capture_ops = {
++static const struct snd_pcm_ops snd_cs5535audio_capture_ops = {
+ 	.open =		snd_cs5535audio_capture_open,
+ 	.close =	snd_cs5535audio_capture_close,
+ 	.ioctl =	snd_pcm_lib_ioctl,
 
