@@ -1,56 +1,69 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Fri, 02 Sep 2016 08:36:56 +0000
-Subject: Re: [PATCH 3/9] serial: altera: constify uart_ops structures
-Message-Id: <20160902083655.GE8952@distanz.ch>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 17:51:38 +0000
+Subject: [PATCH 9/9] serial/arc: constify uart_ops structures
+Message-Id: <1472752298-981-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472752298-981-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-kernel@vger.kernel.org
+To: Vineet Gupta <vgupta@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-snps-arc@lists.infradead.org
 
-On 2016-09-01 at 19:51:32 +0200, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> Check for uart_ops structures that are only stored in the ops field of a
-> uart_port structure.  This field is declared const, so uart_ops structures
-> that have this property can be declared as const also.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct uart_ops i@p = { ... };
-> 
-> @ok@
-> identifier r.i;
-> struct uart_port e;
-> position p;
-> @@
-> e.ops = &i@p;
-> 
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct uart_ops e;
-> @@
-> e@i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct uart_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Check for uart_ops structures that are only stored in the ops field of a
+uart_port structure.  This field is declared const, so uart_ops structures
+that have this property can be declared as const also.
 
-Acked-by: Tobias Klauser <tklauser@distanz.ch>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks a lot.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct uart_ops i@p = { ... };
+
+@ok@
+identifier r.i;
+struct uart_port e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct uart_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct uart_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/tty/serial/arc_uart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/arc_uart.c b/drivers/tty/serial/arc_uart.c
+index 3a1de5c..5ac06fc 100644
+--- a/drivers/tty/serial/arc_uart.c
++++ b/drivers/tty/serial/arc_uart.c
+@@ -464,7 +464,7 @@ static int arc_serial_poll_getchar(struct uart_port *port)
+ }
+ #endif
+ 
+-static struct uart_ops arc_serial_pops = {
++static const struct uart_ops arc_serial_pops = {
+ 	.tx_empty	= arc_serial_tx_empty,
+ 	.set_mctrl	= arc_serial_set_mctrl,
+ 	.get_mctrl	= arc_serial_get_mctrl,
+
