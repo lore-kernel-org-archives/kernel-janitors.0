@@ -1,48 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 20:40:41 +0000
-Subject: [PATCH] unicore32-pm: Use kmalloc_array() in puv3_pm_init()
-Message-Id: <b1251c72-da1b-892a-355d-4e757cdaef2a@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 17:51:36 +0000
+Subject: [PATCH 7/9] tty: xuartps: constify uart_ops structures
+Message-Id: <1472752298-981-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>
-Cc: linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Sep 2016 22:34:32 +0200
+Check for uart_ops structures that are only stored in the ops field of a
+uart_port structure.  This field is declared const, so uart_ops structures
+that have this property can be declared as const also.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-  This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct uart_ops i@p = { ... };
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+@ok@
+identifier r.i;
+struct uart_port e;
+position p;
+@@
+e.ops = &i@p;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct uart_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct uart_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/unicore32/kernel/pm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/serial/xilinx_uartps.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/unicore32/kernel/pm.c b/arch/unicore32/kernel/pm.c
-index 784bc2d..f5455a9 100644
---- a/arch/unicore32/kernel/pm.c
-+++ b/arch/unicore32/kernel/pm.c
-@@ -109,8 +109,9 @@ static int __init puv3_pm_init(void)
- 		return -EINVAL;
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index 9ca1a4d..11a2b36 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -993,7 +993,7 @@ static void cdns_uart_pm(struct uart_port *port, unsigned int state,
  	}
+ }
  
--	sleep_save = kmalloc(puv3_cpu_pm_fns->save_count
--				* sizeof(unsigned long), GFP_KERNEL);
-+	sleep_save = kmalloc_array(puv3_cpu_pm_fns->save_count,
-+				   sizeof(*sleep_save),
-+				   GFP_KERNEL);
- 	if (!sleep_save) {
- 		printk(KERN_ERR "failed to alloc memory for pm save\n");
- 		return -ENOMEM;
--- 
-2.9.3
+-static struct uart_ops cdns_uart_ops = {
++static const struct uart_ops cdns_uart_ops = {
+ 	.set_mctrl	= cdns_uart_set_mctrl,
+ 	.get_mctrl	= cdns_uart_get_mctrl,
+ 	.start_tx	= cdns_uart_start_tx,
 
