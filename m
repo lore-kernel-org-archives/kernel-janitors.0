@@ -1,93 +1,139 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 18 Sep 2016 10:58:56 +0000
-Subject: Re: [PATCH 2/3] iio: adc: men_z188_adc: constify iio_info structures
-Message-Id: <93ec1b22-34da-f643-9140-611f2c0f5458@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 17:35:26 +0000
+Subject: [PATCH 2/2] watchdog: constify watchdog_ops structures
+Message-Id: <1472751326-22897-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1474023326-24645-1-git-send-email-Julia.Lawall@lip6.fr>
- <1474023326-24645-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1474023326-24645-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1472751326-22897-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472751326-22897-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 16/09/16 11:55, Julia Lawall wrote:
-> Check for iio_info structures that are only stored in the info field of a
-> iio_dev structure.  This field is declared const, so iio_info structures
-> that have this property can be declared as const also.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct iio_info i@p = { ... };
-> 
-> @ok@
-> identifier r.i;
-> struct iio_dev e;
-> position p;
-> @@
-> e.info = &i@p;
-> 
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct iio_info e;
-> @@
-> e@i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct iio_info i = { ... };
-> // </smpl>
-> 
-> The result of size on this file before the change is:
->    text	      data     bss     dec         hex	  filename
->    1529	       312       0    1841         731
->    drivers/iio/adc/men_z188_adc.o
-> 
-> and after the change it is:
->    text	     data        bss	    dec	    hex	filename
->    1689       168          0       1857     741
->    drivers/iio/adc/men_z188_adc.o
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Applied to the togreg branch of iio.git. Initially pushed out
-as testing for the autobuilders to play with it.
+Check for watchdog_ops structures that are only stored in the ops field of
+a watchdog_device structure.  This field is declared const, so watchdog_ops
+structures that have this property can be declared as const also.
 
-Thanks,
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Jonathan
-> 
-> ---
->  drivers/iio/adc/men_z188_adc.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/men_z188_adc.c b/drivers/iio/adc/men_z188_adc.c
-> index d095efe..8f3606d 100644
-> --- a/drivers/iio/adc/men_z188_adc.c
-> +++ b/drivers/iio/adc/men_z188_adc.c
-> @@ -78,7 +78,7 @@ static int z188_iio_read_raw(struct iio_dev *iio_dev,
->  	return ret;
->  }
->  
-> -static struct iio_info z188_adc_info = {
-> +static const struct iio_info z188_adc_info = {
->  	.read_raw = &z188_iio_read_raw,
->  	.driver_module = THIS_MODULE,
->  };
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct watchdog_ops i@p = { ... };
+
+@ok@
+identifier r.i;
+struct watchdog_device e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct watchdog_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct watchdog_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/watchdog/bcm7038_wdt.c  |    2 +-
+ drivers/watchdog/cadence_wdt.c  |    2 +-
+ drivers/watchdog/kempld_wdt.c   |    2 +-
+ drivers/watchdog/rn5t618_wdt.c  |    2 +-
+ drivers/watchdog/softdog.c      |    2 +-
+ drivers/watchdog/w83627hf_wdt.c |    2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/watchdog/bcm7038_wdt.c b/drivers/watchdog/bcm7038_wdt.c
+index 4245b65..e238df4 100644
+--- a/drivers/watchdog/bcm7038_wdt.c
++++ b/drivers/watchdog/bcm7038_wdt.c
+@@ -107,7 +107,7 @@ static struct watchdog_info bcm7038_wdt_info = {
+ 				WDIOF_MAGICCLOSE
+ };
+ 
+-static struct watchdog_ops bcm7038_wdt_ops = {
++static const struct watchdog_ops bcm7038_wdt_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.start		= bcm7038_wdt_start,
+ 	.stop		= bcm7038_wdt_stop,
+diff --git a/drivers/watchdog/cadence_wdt.c b/drivers/watchdog/cadence_wdt.c
+index 4dda902..a4e05e43 100644
+--- a/drivers/watchdog/cadence_wdt.c
++++ b/drivers/watchdog/cadence_wdt.c
+@@ -269,7 +269,7 @@ static struct watchdog_info cdns_wdt_info = {
+ };
+ 
+ /* Watchdog Core Ops */
+-static struct watchdog_ops cdns_wdt_ops = {
++static const struct watchdog_ops cdns_wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = cdns_wdt_start,
+ 	.stop = cdns_wdt_stop,
+diff --git a/drivers/watchdog/kempld_wdt.c b/drivers/watchdog/kempld_wdt.c
+index 5bf931c..8e302d0 100644
+--- a/drivers/watchdog/kempld_wdt.c
++++ b/drivers/watchdog/kempld_wdt.c
+@@ -430,7 +430,7 @@ static struct watchdog_info kempld_wdt_info = {
+ 			WDIOF_PRETIMEOUT
+ };
+ 
+-static struct watchdog_ops kempld_wdt_ops = {
++static const struct watchdog_ops kempld_wdt_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.start		= kempld_wdt_start,
+ 	.stop		= kempld_wdt_stop,
+diff --git a/drivers/watchdog/rn5t618_wdt.c b/drivers/watchdog/rn5t618_wdt.c
+index d1c1227..0805ee2 100644
+--- a/drivers/watchdog/rn5t618_wdt.c
++++ b/drivers/watchdog/rn5t618_wdt.c
+@@ -136,7 +136,7 @@ static struct watchdog_info rn5t618_wdt_info = {
+ 	.identity	= DRIVER_NAME,
+ };
+ 
+-static struct watchdog_ops rn5t618_wdt_ops = {
++static const struct watchdog_ops rn5t618_wdt_ops = {
+ 	.owner          = THIS_MODULE,
+ 	.start          = rn5t618_wdt_start,
+ 	.stop           = rn5t618_wdt_stop,
+diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
+index b067edf..1ae469e 100644
+--- a/drivers/watchdog/softdog.c
++++ b/drivers/watchdog/softdog.c
+@@ -92,7 +92,7 @@ static struct watchdog_info softdog_info = {
+ 	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+ };
+ 
+-static struct watchdog_ops softdog_ops = {
++static const struct watchdog_ops softdog_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = softdog_ping,
+ 	.stop = softdog_stop,
+diff --git a/drivers/watchdog/w83627hf_wdt.c b/drivers/watchdog/w83627hf_wdt.c
+index 09e8003..ef2ecaf 100644
+--- a/drivers/watchdog/w83627hf_wdt.c
++++ b/drivers/watchdog/w83627hf_wdt.c
+@@ -302,7 +302,7 @@ static struct watchdog_info wdt_info = {
+ 	.identity = "W83627HF Watchdog",
+ };
+ 
+-static struct watchdog_ops wdt_ops = {
++static const struct watchdog_ops wdt_ops = {
+ 	.owner = THIS_MODULE,
+ 	.start = wdt_start,
+ 	.stop = wdt_stop,
 
