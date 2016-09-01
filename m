@@ -1,49 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 17:36:37 +0000
-Subject: [PATCH 04/14] GPU-DRM-TTM: Rename a jump label in ttm_page_pool_get_pages()
-Message-Id: <ba278f4b-e28d-6a92-c1c4-171b8f77f38b@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 17:51:33 +0000
+Subject: [PATCH 4/9] serial/bcm63xx_uart: constify uart_ops structures
+Message-Id: <1472752298-981-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
-In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 14:36:47 +0200
+Check for uart_ops structures that are only stored in the ops field of a
+uart_port structure.  This field is declared const, so uart_ops structures
+that have this property can be declared as const also.
 
-Adjust a jump label according to the current Linux coding style convention.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct uart_ops i@p = { ... };
+
+@ok@
+identifier r.i;
+struct uart_port e;
+position p;
+@@
+e.ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct uart_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct uart_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/gpu/drm/ttm/ttm_page_alloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/bcm63xx_uart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc.c b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-index f33f6f6..3dd603f 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-@@ -646,7 +646,7 @@ static unsigned ttm_page_pool_get_pages(struct ttm_page_pool *pool,
- 		list_splice_init(&pool->list, pages);
- 		count -= pool->npages;
- 		pool->npages = 0;
--		goto out;
-+		goto unlock;
- 	}
- 	/* find the last pages to include for requested number of pages. Split
- 	 * pool to begin and halve it to reduce search space. */
-@@ -667,7 +667,7 @@ static unsigned ttm_page_pool_get_pages(struct ttm_page_pool *pool,
- 	list_cut_position(pages, &pool->list, p);
- 	pool->npages -= count;
- 	count = 0;
--out:
-+ unlock:
- 	spin_unlock_irqrestore(&pool->lock, irq_flags);
- 	return count;
+diff --git a/drivers/tty/serial/bcm63xx_uart.c b/drivers/tty/serial/bcm63xx_uart.c
+index 5108fab..583c9a0 100644
+--- a/drivers/tty/serial/bcm63xx_uart.c
++++ b/drivers/tty/serial/bcm63xx_uart.c
+@@ -631,7 +631,7 @@ static int bcm_uart_verify_port(struct uart_port *port,
  }
--- 
-2.10.0
+ 
+ /* serial core callbacks */
+-static struct uart_ops bcm_uart_ops = {
++static const struct uart_ops bcm_uart_ops = {
+ 	.tx_empty	= bcm_uart_tx_empty,
+ 	.get_mctrl	= bcm_uart_get_mctrl,
+ 	.set_mctrl	= bcm_uart_set_mctrl,
 
