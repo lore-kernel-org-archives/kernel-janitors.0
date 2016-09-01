@@ -1,50 +1,87 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Date: Sun, 25 Sep 2016 09:36:21 +0000
-Subject: Re: [Nouveau] [PATCH] drm/nouveau/secboot/gm20b: Fix return value in case of error
-Message-Id: <CAAVeFuJZmrEsQUndwOh3OtG+__dwFtWM=DPpcNQ4PSJy5i0wGQ@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 22:13:12 +0000
+Subject: [PATCH 4/6] ALSA: ad1889: constify snd_pcm_ops structures
+Message-Id: <1472767994-26269-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1474664786-30107-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1474664786-30107-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>
+To: Thibaut Varene <T-Bone@parisc-linux.org>
+Cc: alsa-devel@alsa-project.org, linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
 
-On Sat, Sep 24, 2016 at 6:06 AM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> If 'ioremap()' returns 0, 'gm20b_tegra_read_wpr()' will return 0 as well,
-> which means success.
-> Return -ENOMEM instead
+Check for snd_pcm_ops structures that are only stored in the ops field of a
+snd_soc_platform_driver structure or passed as the third argument to
+snd_pcm_set_ops.  The corresponding field or parameter is declared const,
+so snd_pcm_ops structures that have this property can be declared as const
+also.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure that -ENOMEM is the best value.
-> I've taken it because it is often used in such a case.
-> ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-> index d5395ebfe8d3..d88db933b3fd 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-> @@ -142,7 +142,7 @@ gm20b_tegra_read_wpr(struct gm200_secboot *gsb)
->         mc = ioremap(TEGRA_MC_BASE, 0xd00);
->         if (!mc) {
->                 nvkm_error(&sb->subdev, "Cannot map Tegra MC registers\n");
-> -               return PTR_ERR(mc);
-> +               return -ENOMEM;
->         }
->         gsb->wpr_addr = ioread32_native(mc + MC_SECURITY_CARVEOUT2_BOM_0) |
->               ((u64)ioread32_native(mc + MC_SECURITY_CARVEOUT2_BOM_HI_0) << 32);
-> --
-> 2.7.4
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_pcm_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct snd_soc_platform_driver e;
+position p;
+@@
+e.ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e1, e2;
+position p;
+@@
+snd_pcm_set_ops(e1, e2, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_pcm_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_pcm_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/ad1889.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/ad1889.c b/sound/pci/ad1889.c
+index 1fc6d8b..8c36990 100644
+--- a/sound/pci/ad1889.c
++++ b/sound/pci/ad1889.c
+@@ -571,7 +571,7 @@ snd_ad1889_capture_pointer(struct snd_pcm_substream *ss)
+ 	return bytes_to_frames(ss->runtime, ptr);
+ }
+ 
+-static struct snd_pcm_ops snd_ad1889_playback_ops = {
++static const struct snd_pcm_ops snd_ad1889_playback_ops = {
+ 	.open = snd_ad1889_playback_open,
+ 	.close = snd_ad1889_playback_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
+@@ -582,7 +582,7 @@ static struct snd_pcm_ops snd_ad1889_playback_ops = {
+ 	.pointer = snd_ad1889_playback_pointer, 
+ };
+ 
+-static struct snd_pcm_ops snd_ad1889_capture_ops = {
++static const struct snd_pcm_ops snd_ad1889_capture_ops = {
+ 	.open = snd_ad1889_capture_open,
+ 	.close = snd_ad1889_capture_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
+
