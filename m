@@ -1,103 +1,83 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 15 Sep 2016 19:18:25 +0000
-Subject: Re: [PATCH 4/4] clk/Renesas-MSTP: Rename jump labels in cpg_mstp_attach_dev()
-Message-Id: <CAMuHMdVLx5fha0J4zc6J-ytK=J-12iRsaybbxo07wvPaQxTcpg@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 01 Sep 2016 17:51:32 +0000
+Subject: [PATCH 3/9] serial: altera: constify uart_ops structures
+Message-Id: <1472752298-981-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
- <e28d35f9-e519-5f3b-c27d-958605b5b851@users.sourceforge.net>
-In-Reply-To: <e28d35f9-e519-5f3b-c27d-958605b5b851@users.sourceforge.net>
+References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Tobias Klauser <tklauser@distanz.ch>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-kernel@vger.kernel.org
 
-Hi Markus,
+Check for uart_ops structures that are only stored in the ops field of a
+uart_port structure.  This field is declared const, so uart_ops structures
+that have this property can be declared as const also.
 
-On Wed, Sep 14, 2016 at 10:04 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Sep 2016 21:41:50 +0200
->
-> Adjust jump labels according to the current Linux coding style convention.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/clk/renesas/clk-mstp.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index 6c82e0e..2f90718 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -256,19 +256,18 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
->                                            &clkspec)) {
->                 if (of_device_is_compatible(clkspec.np,
->                                             "renesas,cpg-mstp-clocks"))
-> -                       goto found;
-> +                       goto get_clk;
->
->                 /* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock */
->                 if (!strcmp(clkspec.np->name, "zb_clk"))
-> -                       goto found;
-> +                       goto get_clk;
->
->                 of_node_put(clkspec.np);
->                 i++;
->         }
->
->         return 0;
-> -
-> -found:
-> + get_clk:
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-"Choose label names which say what the goto does or why the goto exists."
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct uart_ops i@p = { ... };
 
-I prefer the "why" over the "what".
+@ok@
+identifier r.i;
+struct uart_port e;
+position p;
+@@
+e.ops = &i@p;
 
-And the "indent labels with a single space" rule will be removed soon, as
-there's no longer a technical reason for it after
-https://lkml.org/lkml/2016/9/7/316
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct uart_ops e;
+@@
+e@i@p
 
->         clk = of_clk_get_from_provider(&clkspec);
->         of_node_put(clkspec.np);
->
-> @@ -278,20 +277,19 @@ found:
->         error = pm_clk_create(dev);
->         if (error) {
->                 dev_err(dev, "pm_clk_create failed %d\n", error);
-> -               goto fail_put;
-> +               goto put_clk;
->         }
->
->         error = pm_clk_add_clk(dev, clk);
->         if (error) {
->                 dev_err(dev, "pm_clk_add_clk %pC failed %d\n", clk, error);
-> -               goto fail_destroy;
-> +               goto destroy_clk;
->         }
->
->         return 0;
-> -
-> -fail_destroy:
-> + destroy_clk:
->         pm_clk_destroy(dev);
-> -fail_put:
-> + put_clk:
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct uart_ops i = { ... };
+// </smpl>
 
-Same here.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
->         clk_put(clk);
->         return error;
->  }
+---
+ drivers/tty/serial/altera_jtaguart.c |    2 +-
+ drivers/tty/serial/altera_uart.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/tty/serial/altera_jtaguart.c b/drivers/tty/serial/altera_jtaguart.c
+index 32df2a0..e409d7d 100644
+--- a/drivers/tty/serial/altera_jtaguart.c
++++ b/drivers/tty/serial/altera_jtaguart.c
+@@ -280,7 +280,7 @@ static int altera_jtaguart_verify_port(struct uart_port *port,
+ /*
+  *	Define the basic serial functions we support.
+  */
+-static struct uart_ops altera_jtaguart_ops = {
++static const struct uart_ops altera_jtaguart_ops = {
+ 	.tx_empty	= altera_jtaguart_tx_empty,
+ 	.get_mctrl	= altera_jtaguart_get_mctrl,
+ 	.set_mctrl	= altera_jtaguart_set_mctrl,
+diff --git a/drivers/tty/serial/altera_uart.c b/drivers/tty/serial/altera_uart.c
+index 61b607f..820a742 100644
+--- a/drivers/tty/serial/altera_uart.c
++++ b/drivers/tty/serial/altera_uart.c
+@@ -404,7 +404,7 @@ static void altera_uart_poll_put_char(struct uart_port *port, unsigned char c)
+ /*
+  *	Define the basic serial functions we support.
+  */
+-static struct uart_ops altera_uart_ops = {
++static const struct uart_ops altera_uart_ops = {
+ 	.tx_empty	= altera_uart_tx_empty,
+ 	.get_mctrl	= altera_uart_get_mctrl,
+ 	.set_mctrl	= altera_uart_set_mctrl,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
