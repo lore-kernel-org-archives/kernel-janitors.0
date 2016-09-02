@@ -1,50 +1,71 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 20:20:08 +0000
-Subject: [PATCH 4/7] ACPI-APEI-HEST: Rename jump labels in hest_ghes_dev_register()
-Message-Id: <ddfde37c-65ac-b2e5-9afd-108da4b813fa@users.sourceforge.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 02 Sep 2016 14:37:58 +0000
+Subject: [PATCH 1/2] crypto: qat - introduces a variable to handle error codes
+Message-Id: <20160902143759.31125-2-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
-In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+References: <20160902143759.31125-1-lambert.quentin@gmail.com>
+In-Reply-To: <20160902143759.31125-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 21:22:55 +0200
+Most error code used to jump to a label that lead to a "return -EFAULT"
+statement. This patch introduces a variable that stores the error code
+so that other error branches can use the same label to exit.
 
-Adjust jump labels according to the current Linux coding style convention.
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/apei/hest.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/crypto/qat/qat_common/qat_uclo.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index 26f5e78..03dd7d3 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -194,14 +194,14 @@ static int __init hest_ghes_dev_register(unsigned int ghes_count)
- 	ghes_arr.count = 0;
- 	rc = apei_hest_parse(hest_parse_ghes, &ghes_arr);
- 	if (rc)
--		goto err;
--out:
-+		goto unregister;
-+ free_array:
- 	kfree(ghes_arr.ghes_devs);
- 	return rc;
--err:
-+ unregister:
- 	for (i = 0; i < ghes_arr.count; i++)
- 		platform_device_unregister(ghes_arr.ghes_devs[i]);
--	goto out;
-+	goto free_array;
+--- a/drivers/crypto/qat/qat_common/qat_uclo.c
++++ b/drivers/crypto/qat/qat_common/qat_uclo.c
+@@ -966,6 +966,7 @@ static int qat_uclo_parse_uof_obj(struct
+ {
+ 	struct icp_qat_uclo_objhandle *obj_handle = handle->obj_handle;
+ 	unsigned int ae;
++	int ret;
+ 
+ 	obj_handle->uword_buf = kcalloc(UWORD_CPYBUF_SIZE, sizeof(uint64_t),
+ 					GFP_KERNEL);
+@@ -987,29 +988,35 @@ static int qat_uclo_parse_uof_obj(struct
+ 	    !qat_uclo_map_str_table(obj_handle->obj_hdr, ICP_QAT_UOF_STRT,
+ 				    &obj_handle->str_table)) {
+ 		pr_err("QAT: UOF doesn't have effective images\n");
++		ret = -EFAULT;
+ 		goto out_err;
+ 	}
+ 	obj_handle->uimage_num  		qat_uclo_map_uimage(obj_handle, obj_handle->ae_uimage,
+ 				    ICP_QAT_UCLO_MAX_AE * ICP_QAT_UCLO_MAX_CTX);
+-	if (!obj_handle->uimage_num)
++	if (!obj_handle->uimage_num) {
++		ret = -EFAULT;
+ 		goto out_err;
++	}
+ 	if (qat_uclo_map_ae(handle, handle->hal_handle->ae_max_num)) {
+ 		pr_err("QAT: Bad object\n");
++		ret = -EFAULT;
+ 		goto out_check_uof_aemask_err;
+ 	}
+ 	qat_uclo_init_uword_num(handle);
+ 	qat_uclo_map_initmem_table(&obj_handle->encap_uof_obj,
+ 				   &obj_handle->init_mem_tab);
+-	if (qat_uclo_set_ae_mode(handle))
++	if (qat_uclo_set_ae_mode(handle)) {
++		ret = -EFAULT;
+ 		goto out_check_uof_aemask_err;
++	}
+ 	return 0;
+ out_check_uof_aemask_err:
+ 	for (ae = 0; ae < obj_handle->uimage_num; ae++)
+ 		kfree(obj_handle->ae_uimage[ae].page);
+ out_err:
+ 	kfree(obj_handle->uword_buf);
+-	return -EFAULT;
++	return ret;
  }
  
- static int __init setup_hest_disable(char *str)
--- 
-2.10.0
-
+ static int qat_uclo_map_suof_file_hdr(struct icp_qat_fw_loader_handle *handle,
