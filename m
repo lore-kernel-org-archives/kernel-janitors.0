@@ -1,15 +1,19 @@
 From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 02 Sep 2016 14:37:59 +0000
+Date: Fri, 02 Sep 2016 14:43:59 +0000
 Subject: [PATCH 2/2] crypto: qat - fix resource release omissions
-Message-Id: <20160902143759.31125-3-lambert.quentin@gmail.com>
+Message-Id: <20160902144400.31216-3-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160902143759.31125-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160902143759.31125-1-lambert.quentin@gmail.com>
+References: <20160902144400.31216-1-lambert.quentin@gmail.com>
+In-Reply-To: <20160902144400.31216-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+
+In certain cases qat_uclo_parse_uof_obj used to return with an error code
+before releasing all resources. This patch add a jump to the appropriate label
+ensuring that the resources are properly released before returning.
 
 This issue was found with Hector.
 
