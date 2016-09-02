@@ -1,109 +1,90 @@
 From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 02 Sep 2016 14:39:11 +0000
+Date: Fri, 02 Sep 2016 17:11:53 +0000
 Subject: Re: [PATCH 1/2] IB/hfi1: Fix a parameter of find_first_bit.
-Message-Id: <3afab67c-919b-b9ad-c558-55046a277aab@redhat.com>
+Message-Id: <dd0f8f43-ffc3-ff61-567f-83a24060ac62@redhat.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="xhksEBRpRlx2u7mwxAo9B8KteQvHxFsl7"
+Content-Type: multipart/mixed; boundary="KLEWhGxjdjrKsD5KCLmxXSssAdNdvPeW3"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1472186949-9025-1-git-send-email-christophe.jaillet@wanadoo.fr>
  <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
- <2c923344-04c8-cdbd-ac06-047027f7a23a@redhat.com>
- <20160826192957.GG594@leon.nu>
- <e86e76dc-811b-7002-a35d-1e515c833d46@redhat.com>
- <20160828060640.GI594@leon.nu>
-In-Reply-To: <20160828060640.GI594-2ukJVAZIZ/Y@public.gmane.org>
-To: Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ <d3eea048-5c7e-a5e9-900b-fabf0f6e38c8@wanadoo.fr>
+In-Reply-To: <d3eea048-5c7e-a5e9-900b-fabf0f6e38c8-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kernel Janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---xhksEBRpRlx2u7mwxAo9B8KteQvHxFsl7
-Content-Type: multipart/mixed; boundary="A3EH1tCxuuEeilcCiMnDeCq4QRE0PXhqd";
+--KLEWhGxjdjrKsD5KCLmxXSssAdNdvPeW3
+Content-Type: multipart/mixed; boundary="dHKWclj7tECPWWun7TaqpQWrpGqo1Fd8G";
  protected-headers="v1"
 From: Doug Ledford <dledford@redhat.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
  mike.marciniszyn@intel.com, dennis.dalessandro@intel.com,
- sean.hefty@intel.com, hal.rosenstock@gmail.com, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Message-ID: <3afab67c-919b-b9ad-c558-55046a277aab@redhat.com>
+ sean.hefty@intel.com, hal.rosenstock@gmail.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kernel Janitors <kernel-janitors@vger.kernel.org>
+Message-ID: <dd0f8f43-ffc3-ff61-567f-83a24060ac62@redhat.com>
 Subject: Re: [PATCH 1/2] IB/hfi1: Fix a parameter of find_first_bit.
 References: <1472186949-9025-1-git-send-email-christophe.jaillet@wanadoo.fr>
  <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
- <2c923344-04c8-cdbd-ac06-047027f7a23a@redhat.com>
- <20160826192957.GG594@leon.nu>
- <e86e76dc-811b-7002-a35d-1e515c833d46@redhat.com>
- <20160828060640.GI594@leon.nu>
-In-Reply-To: <20160828060640.GI594@leon.nu>
+ <d3eea048-5c7e-a5e9-900b-fabf0f6e38c8@wanadoo.fr>
+In-Reply-To: <d3eea048-5c7e-a5e9-900b-fabf0f6e38c8@wanadoo.fr>
 
---A3EH1tCxuuEeilcCiMnDeCq4QRE0PXhqd
-Content-Type: text/plain; charset=windows-1252
+--dHKWclj7tECPWWun7TaqpQWrpGqo1Fd8G
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On 8/28/2016 2:06 AM, Leon Romanovsky wrote:
-> On Fri, Aug 26, 2016 at 03:34:48PM -0400, Doug Ledford wrote:
->> On 8/26/2016 3:29 PM, Leon Romanovsky wrote:
->>> On Fri, Aug 26, 2016 at 02:01:55PM -0400, Doug Ledford wrote:
->>>> On 8/26/2016 9:35 AM, Doug Ledford wrote:
->>>>> On 8/26/2016 12:49 AM, Christophe JAILLET wrote:
->>>>>> The 2nd parameter of 'find_first_bit' is the number of bits to sea=
-rch.
->>>>>> In this case, we are passing 'sizeof(unsigned long)' which is like=
-ly to
->>>>>> be 4 or 8.
->>>>>
->>>>> If the size can be 4 or 8, then using 64 universally is not correct=
+On 8/27/2016 1:25 AM, Christophe JAILLET wrote:
+> Le 26/08/2016 =C3=A0 15:35, Doug Ledford a =C3=A9crit :
+>> On 8/26/2016 12:49 AM, Christophe JAILLET wrote:
+>>> The 2nd parameter of 'find_first_bit' is the number of bits to search=
 =2E
->>>>> Why not use sizeof() * 8 (or << 3)?
->>>>
->>>> Better yet, why not put this patch in the kernel first:
->>>>
->>>> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
->>>> index d96a6118d26a..a8838c87668e 100644
->>>> --- a/include/linux/kernel.h
->>>> +++ b/include/linux/kernel.h
->>>> @@ -52,6 +52,8 @@
->>>>
->>>>  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
->>>> __must_be_array(arr))
->>>>
->>>> +#define bitsizeof(x)   (sizeof((x)) << 3)
->>>> +
->>>>  #define u64_to_user_ptr(x) (           \
->>>>  {                                      \
->>>>         typecheck(u64, x);              \
->>>>
->>>> then start going around replacing all these hard coded numbers with =
-the
->>>> use of bitsizeof().  It can be applied not just to the find_first*bi=
-t()
->>>> routines, but to a bunch of other routines too.  Just look at
->>>> include/linux/bitmap.h and any that have nbits as an argument are
->>>> candidates.
->>>
->>> There is BITS_PER_LONG define for that. There is actual use of it in =
-mlx5 for
->>> the similar code pieces.
->>
->> BITS_PER_LONG only works if your bitfield is a single long.  It doesn'=
-t
->> work for other bitfields.  What I posted above will work for anything.=
-
+>>> In this case, we are passing 'sizeof(unsigned long)' which is likely =
+to
+>>> be 4 or 8.
+>> If the size can be 4 or 8, then using 64 universally is not correct.
+>> Why not use sizeof() * 8 (or << 3)?
+> I agree with you...
 >=20
-> Yes, the question to ask if it is really needed.
+> BTW, the log message is wrong. 'port_mask' is a u64. (not an unsigned
+> long). So the sizeof should always be 8.
+> (cut and paste error from another patch, sorry)
 
-A quick review of the usage of find_first_bit in the kernel shows that
-the majority of uses that use large, complex bit arrays (things larger
-than a single long, where bitsizeof(complex_object) might be helpful),
-also tend to have limits to their bitmap sizes that do not directly
-equal the size of the bitmap.  For example, the bitmap for an md raid
-array is allocated as a chunk of memory, where the chunk of memory is
-larger than the bitmap size as a general rule, so
-bitsizeof(chunk_of_memory) would run off the end of the real bitmap.
-Likewise for a number of other complex bitmaps (block layer tag in use
-bitmap for instance).
+Log message modified, then patch modified to use sizeof() * 8, result
+applied.  Thanks.
 
-So, is it useful?  I think so.  But it's not needed for original patch
-in this thread.
+>>
+>>> It is likely that the number of bits of 'port_mask' was expected
+>>> here. This
+>>> variable is a 'u64', so use 64 instead.
+>>>
+>>> It has been spotted by the following coccinelle script:
+>>> @@
+>>> expression ret, x;
+>>>
+>>> @@
+>>> *  ret =3D \(find_first_bit \| find_first_zero_bit\) (x, sizeof(...))=
+;
+>>>
+>>> Signed-off-by: Christophe JAILLET
+>>> <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+>>> ---
+>>> Not sure that using 64 directly is the best option.
+>>> Maybe '8 * sizeof(port_mask)' as used in the same file for
+>>> 'for_each_set_bit' would be better
+>>> ---
+> ... as noted here
+>=20
+> Would you like a v2 patch or, will you update it by yourself?
+>=20
+> Best regards,
+> CJ
+>=20
+> ---
+> L'absence de virus dans ce courrier =C3=A9lectronique a =C3=A9t=C3=A9 v=
+=C3=A9rifi=C3=A9e par le
+> logiciel antivirus Avast.
+> https://www.avast.com/antivirus
+>=20
 
 
 --=20
@@ -111,9 +92,9 @@ Doug Ledford <dledford@redhat.com>
     GPG Key ID: 0E572FDD
 
 
---A3EH1tCxuuEeilcCiMnDeCq4QRE0PXhqd--
+--dHKWclj7tECPWWun7TaqpQWrpGqo1Fd8G--
 
---xhksEBRpRlx2u7mwxAo9B8KteQvHxFsl7
+--KLEWhGxjdjrKsD5KCLmxXSssAdNdvPeW3
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -122,19 +103,19 @@ Content-Disposition: attachment; filename="signature.asc"
 Version: GnuPG v2
 Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBCAAGBQJXyY8PAAoJELgmozMOVy/dXcIQAIphS9TY+7dKIYjDDJTPi63R
-rfpeIGadMOuc5VQb6FmmTD3mhECw62aRFQKuvu89I3lj2UOr2PpJ3rflsMA112cl
-9W4lfXGZscaNJUKBxAv8fhkwhxdA8a2mCMf9ySttVOZ9RHQA9drGSh+T4NuXrAta
-bWFZ/YtL9SK0w8r5nbGaDlN89UIPNDXToY3xHSf7hqnPYfmNopPt+LFGp/jLs0gS
-ldZHAIRgOQpHE8siNxDaBBHXGPzwPDOHuPy400bBYYVuwUsUnmB4vJTvGJeUierZ
-9gJL0lfDU2ShhvzHMuhC/5i6i9z8zO6FK4ShX/QYd0JRHcWrb2VTUJW7dsnhhs+i
-sVqbkTkhbiC7GAp4mDJiSlV3rcsbDbQb7cC7FBoBJuteuvYK9+6p4FBvVIqPiFap
-dqi5WrF8BbbsjRLadcKp3gSQRHAK+4GSfNyblJmSXwuXrn18t0BxFvgcK+sa+RNm
-q+1CTsFZFLVQl0H7WC+JLrXlZrZOsrdAVEk4fHqAKS/hzBL36XkmuSZLsGP2ER7l
-WJKRtdDVQU8wmIOHG9bL8rnc/KcOf4FXUZcKSoGYv/2+d6ailV7g4t0kxo3t9AWW
-3mkpYX/0/HUZkbUuMPD4UcXeSXhxeF8+49LahXDv7ThG9PV79ojT/IX62n3/VR4t
-ofkKiOPSzeXR2um36XYC
-=EZrd
+iQIcBAEBCAAGBQJXybLaAAoJELgmozMOVy/dPbQP/ArNz/8JhRQc5j738o3xpHk5
+Pvh6fxLNBOGrtC+1az2OPe1NLulA9NCKuamWFXcT7htvZxQrIJjGKKthBRe51UVm
+ubxio0zh0FnWENbkNDbEO50gimaOq5CveUalzLtr3AhmzwBUtDWXdHVWeI8YL3Xe
+Tk7vsi0fpokpbsdSKxj00m1SlC6uSUwG7UrsMNveELeJVKX9nEF/0RyoBKmNMSOG
+IML8WjprekpUXmhfJHi20UYp/xpAC3rwmd82Cgudk18NThbDao5FOQrsnWwWDWoK
+eHUjK5z5PauHknwslXv8uy2n8A/mKyHrzdBKaaI18g1bqN9BuBtNea8wI0Fm6HnG
+PDJkiiP9qiQsGFnoyqEmQWv6c8hg3B+0h7NvclbTtIjOm5XOqaJfQZnws0xLbutt
+QJSJsEr+5yhDM+NJooo0qZFqcm8RHUKV+C/xTvyJWWWQ+13bgNG+ky10jG2sByTU
+RRxDQnWhjmVM2LQr2uquunSX0v57NNw4rDhWZiL4uhDy5WnbtGu23HbPxEUZ8WIi
+oj8dXP91or469glRol/XeLE08jcHDcBk+sePjxXp9DUIjmVYNLnslDmR9uH0Tiw+
+4c/vCDmJezpr1htdapouBjhZcOsOGcbWBSvgHMeU78FBwl86zf5d+gnVwPevNZNa
+yjsoL1UVafGfr0fMY4aI
+=NO9v
 -----END PGP SIGNATURE-----
 
---xhksEBRpRlx2u7mwxAo9B8KteQvHxFsl7--
+--KLEWhGxjdjrKsD5KCLmxXSssAdNdvPeW3--
