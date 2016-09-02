@@ -1,60 +1,71 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 17:43:04 +0000
-Subject: [PATCH 11/14] GPU-DRM-TTM: Return an error code only as a constant in ttm_dma_pool_init()
-Message-Id: <7e8a9893-8f1f-189a-4f19-d105c9502747@users.sourceforge.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 02 Sep 2016 14:47:52 +0000
+Subject: [PATCH v2 1/2] crypto: qat - introduces a variable to handle error codes
+Message-Id: <20160902144753.31334-2-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
-In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+References: <20160902144753.31334-1-lambert.quentin@gmail.com>
+In-Reply-To: <20160902144753.31334-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 17:17:19 +0200
+Most error code used to jump to a label that lead to a "return -EFAULT"
+statement. This patch introduces a variable that stores the error code
+so that other error branches can use the same label to exit.
 
-* Return an error code without storing it in a local variable.
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 
-* Delete the local variable "ret" which became unnecessary with
-  this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/crypto/qat/qat_common/qat_uclo.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-index c21f45f..d5f41ed 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-@@ -579,7 +579,6 @@ static struct dma_pool *ttm_dma_pool_init(struct device *dev, gfp_t flags,
- 	struct device_pools *sec_pool = NULL;
- 	struct dma_pool *pool = NULL, **ptr;
- 	unsigned i;
--	int ret = -ENODEV;
- 	char *p;
+--- a/drivers/crypto/qat/qat_common/qat_uclo.c
++++ b/drivers/crypto/qat/qat_common/qat_uclo.c
+@@ -966,6 +966,7 @@ static int qat_uclo_parse_uof_obj(struct
+ {
+ 	struct icp_qat_uclo_objhandle *obj_handle = handle->obj_handle;
+ 	unsigned int ae;
++	int ret;
  
- 	if (!dev)
-@@ -589,8 +588,6 @@ static struct dma_pool *ttm_dma_pool_init(struct device *dev, gfp_t flags,
- 	if (!ptr)
- 		return NULL;
- 
--	ret = -ENOMEM;
--
- 	pool = kmalloc_node(sizeof(struct dma_pool), GFP_KERNEL,
- 			    dev_to_node(dev));
- 	if (!pool)
-@@ -644,7 +641,7 @@ err_mem:
- 	devres_free(ptr);
- 	kfree(sec_pool);
- 	kfree(pool);
--	return ERR_PTR(ret);
-+	return ERR_PTR(-ENOMEM);
+ 	obj_handle->uword_buf = kcalloc(UWORD_CPYBUF_SIZE, sizeof(uint64_t),
+ 					GFP_KERNEL);
+@@ -987,29 +988,35 @@ static int qat_uclo_parse_uof_obj(struct
+ 	    !qat_uclo_map_str_table(obj_handle->obj_hdr, ICP_QAT_UOF_STRT,
+ 				    &obj_handle->str_table)) {
+ 		pr_err("QAT: UOF doesn't have effective images\n");
++		ret = -EFAULT;
+ 		goto out_err;
+ 	}
+ 	obj_handle->uimage_num  		qat_uclo_map_uimage(obj_handle, obj_handle->ae_uimage,
+ 				    ICP_QAT_UCLO_MAX_AE * ICP_QAT_UCLO_MAX_CTX);
+-	if (!obj_handle->uimage_num)
++	if (!obj_handle->uimage_num) {
++		ret = -EFAULT;
+ 		goto out_err;
++	}
+ 	if (qat_uclo_map_ae(handle, handle->hal_handle->ae_max_num)) {
+ 		pr_err("QAT: Bad object\n");
++		ret = -EFAULT;
+ 		goto out_check_uof_aemask_err;
+ 	}
+ 	qat_uclo_init_uword_num(handle);
+ 	qat_uclo_map_initmem_table(&obj_handle->encap_uof_obj,
+ 				   &obj_handle->init_mem_tab);
+-	if (qat_uclo_set_ae_mode(handle))
++	if (qat_uclo_set_ae_mode(handle)) {
++		ret = -EFAULT;
+ 		goto out_check_uof_aemask_err;
++	}
+ 	return 0;
+ out_check_uof_aemask_err:
+ 	for (ae = 0; ae < obj_handle->uimage_num; ae++)
+ 		kfree(obj_handle->ae_uimage[ae].page);
+ out_err:
+ 	kfree(obj_handle->uword_buf);
+-	return -EFAULT;
++	return ret;
  }
  
- static struct dma_pool *ttm_dma_find_pool(struct device *dev,
--- 
-2.10.0
-
+ static int qat_uclo_map_suof_file_hdr(struct icp_qat_fw_loader_handle *handle,
