@@ -1,49 +1,22 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:17:30 +0000
-Subject: [PATCH 09/24] ste_dma40: Delete unnecessary variable initialisations in d40_hw_detect_init()
-Message-Id: <2dc8cf1c-6bf6-a320-0c61-c25835ca3146@users.sourceforge.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 02 Sep 2016 14:43:57 +0000
+Subject: [PATCH 0/2][RESEND] add omitted release in qat_common
+Message-Id: <20160902144400.31216-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+References: <20160902143759.31125-1-lambert.quentin@gmail.com>
+In-Reply-To: <20160902143759.31125-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 14:34:18 +0200
+The first patch introduces a variable to handle different error codes and be
+able to reuse the same clean up code. The second add an omitted release by
+jumping to the clean code having set the returned value to the proper error
+code.
 
-Five local variables will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation which became unnecessary with
-a previous update step.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/ste_dma40.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index c680dd3..ebb00a8 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -3142,11 +3142,11 @@ static int __init d40_phy_res_init(struct d40_base *base)
- static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
- {
- 	struct stedma40_platform_data *plat_data = dev_get_platdata(&pdev->dev);
--	struct clk *clk = NULL;
--	void __iomem *virtbase = NULL;
--	struct resource *res = NULL;
--	struct d40_base *base = NULL;
--	int num_log_chans = 0;
-+	struct clk *clk;
-+	void __iomem *virtbase;
-+	struct resource *res;
-+	struct d40_base *base;
-+	int num_log_chans;
- 	int num_phy_chans;
- 	int num_memcpy_chans;
- 	int clk_ret = -EINVAL;
--- 
-2.10.0
-
+ drivers/crypto/qat/qat_common/qat_uclo.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+---
