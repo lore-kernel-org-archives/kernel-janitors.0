@@ -1,46 +1,26 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Sep 2016 06:00:43 +0000
-Subject: Re: clk/Renesas-MSTP: Rename jump labels in cpg_mstp_attach_dev()
-Message-Id: <e1a76426-5529-7eaa-6862-62359c699493@users.sourceforge.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 02 Sep 2016 14:47:51 +0000
+Subject: [PATCH v2 0/2] add omitted release in qat_common
+Message-Id: <20160902144753.31334-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
- <e28d35f9-e519-5f3b-c27d-958605b5b851@users.sourceforge.net>
- <CAMuHMdVLx5fha0J4zc6J-ytK=J-12iRsaybbxo07wvPaQxTcpg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVLx5fha0J4zc6J-ytK=J-12iRsaybbxo07wvPaQxTcpg@mail.gmail.com>
+References: <20160902144400.31216-1-lambert.quentin@gmail.com>
+In-Reply-To: <20160902144400.31216-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+Cc: kernel-janitors@vger.kernel.org
 
-> "Choose label names which say what the goto does or why the goto exists."
-> 
-> I prefer the "why" over the "what".
+The first patch introduces a variable to handle different error codes and be
+able to reuse the same clean up code. The second add an omitted release by
+jumping to the clean code having set the returned value to the proper error
+code.
 
-Does your opinion indicate also that you would appreciate another adjustment
-around the quoted sentence from "Chapter 7: Centralized exiting of functions"
-of the document "CodingStyle"?
+-changes since v1
+I failed to send the first version properly and it was missing a proper commit
+message, just ignore it.
 
-Would you like to achieve that the potential for confusion will be reduced
-a bit more there?
-
-
-> And the "indent labels with a single space" rule will be removed soon,
-
-I am unsure on how this "story" will evolve further.
-
-Will the indentation rules become any more precise for Linux source code?
-
-
-> as there's no longer a technical reason for it after
-> https://lkml.org/lkml/2016/9/7/316
-
-The software update "Set git diff driver for C source code files" is also
-interesting for current versions.
-
-Will language-specific rules which are supported by recent Git software
-influence any capabilities for the command "diff --show-c-function"?
-
-Regards,
-Markus
+---
+ drivers/crypto/qat/qat_common/qat_uclo.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+---
