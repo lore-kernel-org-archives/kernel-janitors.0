@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 12:16:28 +0000
-Subject: [PATCH 04/17] s390/debug: Rename jump labels in debug_areas_alloc()
-Message-Id: <6ee03537-9ec5-70ca-bc18-44499909d251@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 12:18:09 +0000
+Subject: [PATCH 05/17] s390/debug: Fix jump targets in debug_info_alloc()
+Message-Id: <04f27ca2-274e-d09c-fc3e-d0a387f6bf05@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
@@ -13,58 +13,60 @@ To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Hei
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Sep 2016 18:10:21 +0200
+Date: Thu, 1 Sep 2016 18:26:58 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Adjust jump targets according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/s390/kernel/debug.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/s390/kernel/debug.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
-index 5bb9108..0af14a4 100644
+index 0af14a4..c5da41b 100644
 --- a/arch/s390/kernel/debug.c
 +++ b/arch/s390/kernel/debug.c
-@@ -198,33 +198,32 @@ debug_areas_alloc(int pages_per_area, int nr_areas)
+@@ -244,17 +244,17 @@ debug_info_alloc(const char *name, int pages_per_area, int nr_areas,
  
- 	areas = kmalloc_array(nr_areas, sizeof(*areas), GFP_KERNEL);
- 	if (!areas)
--		goto fail_malloc_areas;
+ 	rc = kmalloc(sizeof(debug_info_t), GFP_KERNEL);
+ 	if(!rc)
+-		goto fail_malloc_rc;
 +		goto exit;
- 	for (i = 0; i < nr_areas; i++) {
- 		areas[i] = kmalloc_array(pages_per_area,
- 					 sizeof(*areas[i]),
- 					 GFP_KERNEL);
- 		if (!areas[i])
--			goto fail_malloc_areas2;
-+			goto free_areas;
- 		for (j = 0; j < pages_per_area; j++) {
- 			areas[i][j] = kzalloc(PAGE_SIZE, GFP_KERNEL);
- 			if (!areas[i][j]) {
- 				for (j--; j >= 0; j--)
- 					kfree(areas[i][j]);
- 				kfree(areas[i]);
--				goto fail_malloc_areas2;
-+				goto free_areas;
- 			}
- 		}
+ 	rc->active_entries = kcalloc(nr_areas, sizeof(int), GFP_KERNEL);
+ 	if(!rc->active_entries)
+-		goto fail_malloc_active_entries;
++		goto free_rc;
+ 	rc->active_pages = kcalloc(nr_areas, sizeof(int), GFP_KERNEL);
+ 	if(!rc->active_pages)
+-		goto fail_malloc_active_pages;
++		goto free_entries;
+ 	if((mode = ALL_AREAS) && (pages_per_area != 0)){
+ 		rc->areas = debug_areas_alloc(pages_per_area, nr_areas);
+ 		if(!rc->areas)
+-			goto fail_malloc_areas;
++			goto free_pages;
+ 	} else {
+ 		rc->areas = NULL;
  	}
- 	return areas;
+@@ -275,14 +275,13 @@ debug_info_alloc(const char *name, int pages_per_area, int nr_areas,
+ 	atomic_set(&(rc->ref_count), 0);
+ 
+ 	return rc;
 -
--fail_malloc_areas2:
-+ free_areas:
- 	for (i--; i >= 0; i--) {
- 		for (j = 0; j < pages_per_area; j++)
- 			kfree(areas[i][j]);
- 		kfree(areas[i]);
- 	}
- 	kfree(areas);
 -fail_malloc_areas:
++ free_pages:
+ 	kfree(rc->active_pages);
+-fail_malloc_active_pages:
++ free_entries:
+ 	kfree(rc->active_entries);
+-fail_malloc_active_entries:
++ free_rc:
+ 	kfree(rc);
+-fail_malloc_rc:
 + exit:
  	return NULL;
- 
  }
+ 
 -- 
 2.9.3
 
