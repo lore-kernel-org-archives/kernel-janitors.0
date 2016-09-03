@@ -1,58 +1,76 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 17:34:55 +0000
-Subject: [PATCH 02/14] GPU-DRM-TTM: Rename a jump label in ttm_alloc_new_pages()
-Message-Id: <ba7e2b2b-5852-35cc-48e2-f92bbf790d79@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 12:21:40 +0000
+Subject: [PATCH 07/17] s390/debug: Rename jump labels in debug_open()
+Message-Id: <01ff43e5-7a28-0410-6c4a-8f7519cbdbca@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
-In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+ <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 14:16:05 +0200
+Date: Thu, 1 Sep 2016 18:44:17 +0200
 
 Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/ttm/ttm_page_alloc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/s390/kernel/debug.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc.c b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-index bfc51cb..13fdd19 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-@@ -527,7 +527,7 @@ static int ttm_alloc_new_pages(struct list_head *pages, gfp_t gfp_flags,
- 						caching_array, cpages);
- 			}
- 			r = -ENOMEM;
--			goto out;
-+			goto free_array;
+diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
+index 1f32578..1cce76a 100644
+--- a/arch/s390/kernel/debug.c
++++ b/arch/s390/kernel/debug.c
+@@ -614,15 +614,13 @@ debug_open(struct inode *inode, struct file *file)
+ 			continue;
+ 		else if (debug_info->debugfs_entries[i] =
+ 			 file->f_path.dentry) {
+-			goto found;	/* found view ! */
++			goto copy_info;
  		}
- 
- #ifdef CONFIG_HIGHMEM
-@@ -546,7 +546,7 @@ static int ttm_alloc_new_pages(struct list_head *pages, gfp_t gfp_flags,
- 					ttm_handle_caching_state_failure(pages,
- 						ttm_flags, cstate,
- 						caching_array, cpages);
--					goto out;
-+					goto free_array;
- 				}
- 				cpages = 0;
- 			}
-@@ -562,7 +562,7 @@ static int ttm_alloc_new_pages(struct list_head *pages, gfp_t gfp_flags,
- 					ttm_flags, cstate,
- 					caching_array, cpages);
  	}
--out:
-+ free_array:
- 	kfree(caching_array);
+ 	/* no entry found */
+ 	rc = -EINVAL;
+-	goto out;
+-
+-found:
+-
++	goto unlock;
++ copy_info:
+ 	/* Make snapshot of current debug areas to get it consistent.     */
+ 	/* To copy all the areas is only needed, if we have a view which  */
+ 	/* formats the debug areas. */
+@@ -636,14 +634,14 @@ found:
  
- 	return r;
+ 	if (!debug_info_snapshot) {
+ 		rc = -ENOMEM;
+-		goto out;
++		goto unlock;
+ 	}
+ 	p_info = kmalloc(sizeof(file_private_info_t),
+ 						GFP_KERNEL);
+ 	if (!p_info) {
+ 		debug_info_free(debug_info_snapshot);
+ 		rc = -ENOMEM;
+-		goto out;
++		goto unlock;
+ 	}
+ 	p_info->offset = 0;
+ 	p_info->debug_info_snap = debug_info_snapshot;
+@@ -656,7 +654,7 @@ found:
+ 	file->private_data = p_info;
+ 	debug_info_get(debug_info);
+ 	nonseekable_open(inode, file);
+-out:
++ unlock:
+ 	mutex_unlock(&debug_mutex);
+ 	return rc;
+ }
 -- 
-2.10.0
+2.9.3
 
