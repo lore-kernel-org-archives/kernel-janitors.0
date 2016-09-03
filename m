@@ -1,29 +1,33 @@
 From: Kalle Valo <kvalo@codeaurora.org>
-Date: Sat, 03 Sep 2016 10:07:05 +0000
-Subject: Re: rt2x00usb: Fix error return code
-Message-Id: <20160903100705.35E6B62023@smtp.codeaurora.org>
+Date: Sat, 03 Sep 2016 10:04:41 +0000
+Subject: Re: [1/2] mwifiex: fix the length parameter of a memset
+Message-Id: <20160903100441.E591B6201F@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1470926334-24532-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1470641928-26616-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Cc: sgruszka@redhat.com, helmut.schaa@googlemail.com, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: akarwar@marvell.com, nishants@marvell.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Christophe Jaillet <christophe.jaillet@wanadoo.fr> wrote:
-> We know that 'retval = 0' because it has been tested a few lines above.
-> So, if 'devm_kmalloc' fails, 0 will be returned instead of an error code.
-> Return -ENOMEM instead.
+> In 'mwifiex_get_ver_ext', we have:
+>    struct mwifiex_ver_ext ver_ext;
 > 
-> Fixes: 8b4c0009313f ("rt2x00usb: Use usb anchor to manage URB")
+>    memset(&ver_ext, 0, sizeof(struct host_cmd_ds_version_ext));
+> 
+> This is likely that memset'ing sizeof(struct mwifiex_ver_ext) was expected.
+> Remove the ambiguity by using the variable name directly instead of its
+> type.
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-Thanks, 1 patch applied to wireless-drivers-next.git:
+Thanks, 2 patches applied to wireless-drivers-next.git:
 
-410280bac622 rt2x00usb: Fix error return code
+ba852018d493 mwifiex: fix the length parameter of a memset
+6a1622000ac9 mwifiex: simplify length computation for some memset
 
 -- 
 Sent by pwcli
-https://patchwork.kernel.org/patch/9275379/
+https://patchwork.kernel.org/patch/9266889/
 
