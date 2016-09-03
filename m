@@ -1,118 +1,59 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 13 Sep 2016 08:05:59 +0000
-Subject: Re: [PATCH 06/47] block-rbd: Rename jump labels in rbd_add_parse_args()
-Message-Id: <CAOi1vP9aRfwLYunq+6DL5y6Fby8P17bhK651kvZfG=bXb+F_hA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 16:38:03 +0000
+Subject: [PATCH 2/4] sparc: bpf_jit: Move four assignments in bpf_jit_compile()
+Message-Id: <2179bf7c-9878-adf7-da97-2746d5aa3d34@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
- <96128866-0e4e-65bb-9342-44ce885616e5@users.sourceforge.net>
-In-Reply-To: <96128866-0e4e-65bb-9342-44ce885616e5@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net>
+In-Reply-To: <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: sparclinux@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Rabin Vincent <rabin@rab.in>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Mon, Sep 12, 2016 at 8:47 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 11 Sep 2016 15:20:48 +0200
->
-> Adjust jump labels according to the current Linux coding style convention.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/block/rbd.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index a6d9a06..dd4da1f 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -5709,27 +5709,27 @@ static int rbd_add_parse_args(const char *buf,
->                 return -ENOMEM;
->         if (!*options) {
->                 rbd_warn(NULL, "no options provided");
-> -               goto out_err;
-> +               goto free_options;
->         }
->
->         spec = rbd_spec_alloc();
->         if (!spec)
-> -               goto out_mem;
-> +               goto status_indication;
->
->         spec->pool_name = dup_token(&buf, NULL);
->         if (!spec->pool_name)
-> -               goto out_mem;
-> +               goto status_indication;
->         if (!*spec->pool_name) {
->                 rbd_warn(NULL, "no pool name provided");
-> -               goto out_err;
-> +               goto free_options;
->         }
->
->         spec->image_name = dup_token(&buf, NULL);
->         if (!spec->image_name)
-> -               goto out_mem;
-> +               goto status_indication;
->         if (!*spec->image_name) {
->                 rbd_warn(NULL, "no image name provided");
-> -               goto out_err;
-> +               goto free_options;
->         }
->
->         /*
-> @@ -5742,11 +5742,11 @@ static int rbd_add_parse_args(const char *buf,
->                 len = sizeof (RBD_SNAP_HEAD_NAME) - 1;
->         } else if (len > RBD_MAX_SNAP_NAME_LEN) {
->                 ret = -ENAMETOOLONG;
-> -               goto out_err;
-> +               goto free_options;
->         }
->         snap_name = kmemdup(buf, len + 1, GFP_KERNEL);
->         if (!snap_name)
-> -               goto out_mem;
-> +               goto status_indication;
->         *(snap_name + len) = '\0';
->         spec->snap_name = snap_name;
->
-> @@ -5754,7 +5754,7 @@ static int rbd_add_parse_args(const char *buf,
->
->         rbd_opts = kzalloc(sizeof (*rbd_opts), GFP_KERNEL);
->         if (!rbd_opts)
-> -               goto out_mem;
-> +               goto status_indication;
->
->         rbd_opts->read_only = RBD_READ_ONLY_DEFAULT;
->         rbd_opts->queue_depth = RBD_QUEUE_DEPTH_DEFAULT;
-> @@ -5764,7 +5764,7 @@ static int rbd_add_parse_args(const char *buf,
->                                         parse_rbd_opts_token, rbd_opts);
->         if (IS_ERR(copts)) {
->                 ret = PTR_ERR(copts);
-> -               goto out_err;
-> +               goto free_options;
->         }
->         kfree(options);
->
-> @@ -5773,9 +5773,9 @@ static int rbd_add_parse_args(const char *buf,
->         *rbd_spec = spec;
->
->         return 0;
-> -out_mem:
-> + status_indication:
->         ret = -ENOMEM;
-> -out_err:
-> + free_options:
->         kfree(rbd_opts);
->         rbd_spec_put(spec);
->         kfree(options);
-> --
-> 2.10.0
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Sep 2016 17:45:28 +0200
 
-For a ret = -ENOMEM; statement, your status_indication label actually
-conveys less information than out_mem did.  Don't waste everybody's
-time by sending these pointless rename patches, please.
+Move the assignments for four local variables a bit at the beginning
+so that they will only be performed if a corresponding memory allocation
+succeeded by this function.
 
-Thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/sparc/net/bpf_jit_comp.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-                Ilya
+diff --git a/arch/sparc/net/bpf_jit_comp.c b/arch/sparc/net/bpf_jit_comp.c
+index ced1393..a927470 100644
+--- a/arch/sparc/net/bpf_jit_comp.c
++++ b/arch/sparc/net/bpf_jit_comp.c
+@@ -362,10 +362,10 @@ do {	*prog++ = BR_OPC | WDISP22(OFF);		\
+ 
+ void bpf_jit_compile(struct bpf_prog *fp)
+ {
+-	unsigned int cleanup_addr, proglen, oldproglen = 0;
+-	u32 temp[8], *prog, *func, seen = 0, pass;
+-	const struct sock_filter *filter = fp->insns;
+-	int i, flen = fp->len, pc_ret0 = -1;
++	unsigned int cleanup_addr, proglen, oldproglen;
++	u32 temp[8], *prog, *func, seen, pass;
++	const struct sock_filter *filter;
++	int i, flen = fp->len, pc_ret0;
+ 	unsigned int *addrs;
+ 	void *image;
+ 
+@@ -385,6 +385,10 @@ void bpf_jit_compile(struct bpf_prog *fp)
+ 	}
+ 	cleanup_addr = proglen; /* epilogue address */
+ 	image = NULL;
++	filter = fp->insns;
++	oldproglen = 0;
++	pc_ret0 = -1;
++	seen = 0;
+ 	for (pass = 0; pass < 10; pass++) {
+ 		u8 seen_or_pass0 = (pass = 0) ? (SEEN_XREG | SEEN_DATAREF | SEEN_MEM) : seen;
+ 
+-- 
+2.9.3
+
