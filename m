@@ -1,45 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 12:14:36 +0000
-Subject: [PATCH 0/6] constify gpio_chip structures
-Message-Id: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 14:15:20 +0000
+Subject: [PATCH] s390/extmem: Use kmalloc_array() in dcss_set_subcodes()
+Message-Id: <6d1ffd4b-ac87-9dca-4ef0-47dd9336e524@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, alsa-devel@alsa-project.org
+To: linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-Constify gpio_chip structures
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Sep 2016 16:06:05 +0200
 
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ arch/s390/mm/extmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpio/gpio-arizona.c                   |    2 +-
- drivers/gpio/gpio-bcm-kona.c                  |    2 +-
- drivers/gpio/gpio-da9052.c                    |    2 +-
- drivers/gpio/gpio-da9055.c                    |    2 +-
- drivers/gpio/gpio-it87.c                      |    2 +-
- drivers/gpio/gpio-lp873x.c                    |    2 +-
- drivers/gpio/gpio-lpc18xx.c                   |    2 +-
- drivers/gpio/gpio-pisosr.c                    |    2 +-
- drivers/gpio/gpio-sch.c                       |    2 +-
- drivers/gpio/gpio-stmpe.c                     |    2 +-
- drivers/gpio/gpio-tc3589x.c                   |    2 +-
- drivers/gpio/gpio-tpic2810.c                  |    2 +-
- drivers/gpio/gpio-tps65086.c                  |    2 +-
- drivers/gpio/gpio-tps65218.c                  |    2 +-
- drivers/gpio/gpio-tps65912.c                  |    2 +-
- drivers/gpio/gpio-ts4900.c                    |    2 +-
- drivers/gpio/gpio-twl4030.c                   |    2 +-
- drivers/gpio/gpio-wm831x.c                    |    2 +-
- drivers/gpio/gpio-wm8350.c                    |    2 +-
- drivers/gpio/gpio-wm8994.c                    |    2 +-
- drivers/mfd/sm501.c                           |    2 +-
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    2 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c         |    2 +-
- sound/soc/codecs/rt5677.c                     |    2 +-
- sound/soc/codecs/wm5100.c                     |    2 +-
- sound/soc/codecs/wm8903.c                     |    2 +-
- sound/soc/codecs/wm8962.c                     |    2 +-
- sound/soc/codecs/wm8996.c                     |    2 +-
- sound/soc/soc-ac97.c                          |    2 +-
- 29 files changed, 29 insertions(+), 29 deletions(-)
+diff --git a/arch/s390/mm/extmem.c b/arch/s390/mm/extmem.c
+index 02042b6..4d18301 100644
+--- a/arch/s390/mm/extmem.c
++++ b/arch/s390/mm/extmem.c
+@@ -102,7 +102,7 @@ static int scode_set;
+ static int
+ dcss_set_subcodes(void)
+ {
+-	char *name = kmalloc(8 * sizeof(char), GFP_KERNEL | GFP_DMA);
++	char *name = kmalloc_array(8, sizeof(*name), GFP_KERNEL | GFP_DMA);
+ 	unsigned long rx, ry;
+ 	int rc;
+ 
+-- 
+2.9.3
+
