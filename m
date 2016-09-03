@@ -1,69 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:27:29 +0000
-Subject: [PATCH 38/47] block-rbd: Rename jump labels in rbd_client_create()
-Message-Id: <c5e4950a-2bb3-13c7-f744-eafe798682ca@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 12:32:06 +0000
+Subject: [PATCH 13/17] s390/debug: Improve a size determination in debug_open()
+Message-Id: <6f816bfa-ea0b-dd1a-24ba-5aeea7519276@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:57:19 +0200
+Date: Fri, 2 Sep 2016 09:02:22 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+* Replace the specification of a data type by a pointer dereference
+  as the parameter for the operator "sizeof" to make the corresponding size
+  determination a bit safer according to the Linux coding style convention.
+
+* Improve source code layout for one function call.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/s390/kernel/debug.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index abc2dcb..9902a7f 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -718,19 +718,19 @@ static struct rbd_client *rbd_client_create(struct ceph_options *ceph_opts)
- 	dout("%s:\n", __func__);
- 	rbdc = kmalloc(sizeof(struct rbd_client), GFP_KERNEL);
- 	if (!rbdc)
--		goto out_opt;
-+		goto check_input;
- 
- 	kref_init(&rbdc->kref);
- 	INIT_LIST_HEAD(&rbdc->node);
- 
- 	rbdc->client = ceph_create_client(ceph_opts, rbdc, 0, 0);
- 	if (IS_ERR(rbdc->client))
--		goto out_rbdc;
-+		goto free_rbdc;
- 	ceph_opts = NULL; /* Now rbdc->client is responsible for ceph_opts */
- 
- 	ret = ceph_open_session(rbdc->client);
- 	if (ret < 0)
--		goto out_client;
-+		goto destroy_client;
- 
- 	spin_lock(&rbd_client_list_lock);
- 	list_add_tail(&rbdc->node, &rbd_client_list);
-@@ -739,11 +739,11 @@ static struct rbd_client *rbd_client_create(struct ceph_options *ceph_opts)
- 	dout("%s: rbdc %p\n", __func__, rbdc);
- 
- 	return rbdc;
--out_client:
-+ destroy_client:
- 	ceph_destroy_client(rbdc->client);
--out_rbdc:
-+ free_rbdc:
- 	kfree(rbdc);
--out_opt:
-+ check_input:
- 	if (ceph_opts)
- 		ceph_destroy_options(ceph_opts);
- 	dout("%s: error %d\n", __func__, ret);
+diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
+index a9fcf72..32ceb5e 100644
+--- a/arch/s390/kernel/debug.c
++++ b/arch/s390/kernel/debug.c
+@@ -636,8 +636,7 @@ debug_open(struct inode *inode, struct file *file)
+ 		rc = -ENOMEM;
+ 		goto unlock;
+ 	}
+-	p_info = kmalloc(sizeof(file_private_info_t),
+-						GFP_KERNEL);
++	p_info = kmalloc(sizeof(*p_info), GFP_KERNEL);
+ 	if (!p_info) {
+ 		debug_info_free(debug_info_snapshot);
+ 		rc = -ENOMEM;
 -- 
-2.10.0
+2.9.3
 
