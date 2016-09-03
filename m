@@ -1,49 +1,46 @@
-From: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Date: Mon, 05 Sep 2016 11:34:36 +0000
-Subject: Re: [PATCH] s390/cpum_cf: Use kmalloc_array() in merge_attr()
-Message-Id: <20160905113436.GA4502@linux.vnet.ibm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 03 Sep 2016 07:05:48 +0000
+Subject: [PATCH] bnx2fc: Simplify code
+Message-Id: <1472886348-29813-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <97bb5de4-f9c1-1e2c-cf39-3ecfee114d52@users.sourceforge.net>
-In-Reply-To: <97bb5de4-f9c1-1e2c-cf39-3ecfee114d52@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Hendrik =?iso-8859-1?Q?Br=FCckner?= <brueckner@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: QLogic-Storage-Upstream@qlogic.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sat, Sep 03, 2016 at 03:27:42PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 3 Sep 2016 15:17:45 +0200
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus reuse the corresponding function "kmalloc_array".
-> 
-> * Replace the specification of a data type by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/s390/kernel/perf_cpum_cf_events.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/kernel/perf_cpum_cf_events.c b/arch/s390/kernel/perf_cpum_cf_events.c
-> index 4554a4b..0d6340b 100644
-> --- a/arch/s390/kernel/perf_cpum_cf_events.c
-> +++ b/arch/s390/kernel/perf_cpum_cf_events.c
-> @@ -274,7 +274,7 @@ static __init struct attribute **merge_attr(struct attribute **a,
->  		j++;
->  	j++;
-> 
-> -	new = kmalloc(sizeof(struct attribute *) * j, GFP_KERNEL);
-> +	new = kmalloc_array(j, sizeof(*new), GFP_KERNEL);
->  	if (!new)
->  		return NULL;
->  	j = 0;
-> -- 
+Calling 'list_splice' followed by 'INIT_LIST_HEAD' is equivalent to
+'list_splice_init'.
 
-Looks good to me. Thanks.
+This has been spotted with the following coccinelle script:
+/////
+@@
+expression y,z;
+@@
 
-Acked-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+-   list_splice(y,z);
+-   INIT_LIST_HEAD(y);
++   list_splice_init(y,z);
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+index a5052dd8d7e6..88be12a02764 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -2765,8 +2765,7 @@ static void __exit bnx2fc_mod_exit(void)
+ 	 * held.
+ 	 */
+ 	mutex_lock(&bnx2fc_dev_lock);
+-	list_splice(&adapter_list, &to_be_deleted);
+-	INIT_LIST_HEAD(&adapter_list);
++	list_splice_init(&adapter_list, &to_be_deleted);
+ 	adapter_count = 0;
+ 	mutex_unlock(&bnx2fc_dev_lock);
+ 
+-- 
+2.7.4
 
