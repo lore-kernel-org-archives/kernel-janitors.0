@@ -1,49 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:31:23 +0000
-Subject: [PATCH 19/24] ste_dma40: Rename a jump label in d40_free_dma()
-Message-Id: <7fb277bb-0967-792d-1d56-4375976afbf5@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 19:01:20 +0000
+Subject: [PATCH 1/2] tile-module: Use kmalloc_array() in module_alloc()
+Message-Id: <dfffa006-c2af-06f5-2acf-6ac32e52f95a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+ <764e5d1b-c7ab-c8aa-1482-334a00e11280@users.sourceforge.net>
+In-Reply-To: <764e5d1b-c7ab-c8aa-1482-334a00e11280@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Chris Metcalf <cmetcalf@mellanox.com>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 16:04:46 +0200
+Date: Sat, 3 Sep 2016 20:40:57 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/ste_dma40.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/tile/kernel/module.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index d99241c..917b24a 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -2045,7 +2045,7 @@ static int d40_free_dma(struct d40_chan *d40c)
- 	res = d40_channel_execute_command(d40c, D40_DMA_STOP);
- 	if (res) {
- 		chan_err(d40c, "stop failed\n");
--		goto out;
-+		goto mark_last_busy;
- 	}
+diff --git a/arch/tile/kernel/module.c b/arch/tile/kernel/module.c
+index 2305084..dce4120 100644
+--- a/arch/tile/kernel/module.c
++++ b/arch/tile/kernel/module.c
+@@ -43,7 +43,7 @@ void *module_alloc(unsigned long size)
+ 	int npages;
  
- 	d40_alloc_mask_free(phy, is_src, chan_is_logical(d40c) ? event : 0);
-@@ -2063,8 +2063,7 @@ static int d40_free_dma(struct d40_chan *d40c)
- 	d40c->busy = false;
- 	d40c->phy_chan = NULL;
- 	d40c->configured = false;
--out:
--
-+ mark_last_busy:
- 	pm_runtime_mark_last_busy(d40c->base->dev);
- 	pm_runtime_put_autosuspend(d40c->base->dev);
- 	return res;
+ 	npages = (size + PAGE_SIZE - 1) / PAGE_SIZE;
+-	pages = kmalloc(npages * sizeof(struct page *), GFP_KERNEL);
++	pages = kmalloc_array(npages, sizeof(*pages), GFP_KERNEL);
+ 	if (pages = NULL)
+ 		return NULL;
+ 	for (; i < npages; ++i) {
 -- 
-2.10.0
+2.9.3
 
