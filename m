@@ -1,27 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 13:20:52 +0000
-Subject: Re: GPU-DRM-nouveau: Delete unnecessary braces
-Message-Id: <10ea66e2-e04b-6043-6dfd-a8d13c57b94c@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 12:10:03 +0000
+Subject: [PATCH 01/17] s390/debug: Use kmalloc_array() in debug_areas_alloc()
+Message-Id: <405a67ff-0f3b-a172-b8f1-2867cdd5ce07@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
- <74cc2e34-cb5f-e3c9-e6cd-aa24ed3529e3@users.sourceforge.net>
- <20160921084708.GM13620@mwanda>
-In-Reply-To: <20160921084708.GM13620@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org
+To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-> The original style was correct, the new style is wrong.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 1 Sep 2016 14:41:01 +0200
 
-I find your feedback interesting for further clarifications.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-> Multi-line indents get curly braces for readability.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/s390/kernel/debug.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-How do you think about to transform such an information
-into an official specification for the the document "CodingStyle"?
+diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
+index aa12de7..8e2be30 100644
+--- a/arch/s390/kernel/debug.c
++++ b/arch/s390/kernel/debug.c
+@@ -196,14 +196,13 @@ debug_areas_alloc(int pages_per_area, int nr_areas)
+ 	debug_entry_t*** areas;
+ 	int i,j;
+ 
+-	areas = kmalloc(nr_areas *
+-					sizeof(debug_entry_t**),
+-					GFP_KERNEL);
++	areas = kmalloc_array(nr_areas, sizeof(*areas), GFP_KERNEL);
+ 	if (!areas)
+ 		goto fail_malloc_areas;
+ 	for (i = 0; i < nr_areas; i++) {
+-		areas[i] = kmalloc(pages_per_area *
+-				sizeof(debug_entry_t*),GFP_KERNEL);
++		areas[i] = kmalloc_array(pages_per_area,
++					 sizeof(*areas[i]),
++					 GFP_KERNEL);
+ 		if (!areas[i]) {
+ 			goto fail_malloc_areas2;
+ 		}
+-- 
+2.9.3
 
-Regards,
-Markus
