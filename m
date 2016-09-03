@@ -1,99 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:04:03 +0000
-Subject: [PATCH 05/11] virtio_console: Rename jump labels in add_port()
-Message-Id: <85ca0841-c36d-12d2-b978-dbac04e19c5d@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 12:34:09 +0000
+Subject: [PATCH 14/17] s390/debug: Improve a size determination in debug_sprintf_format_fn()
+Message-Id: <40fd0234-45c3-6856-43b3-c7528a794e8e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+ <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:53:00 +0200
+Date: Fri, 2 Sep 2016 14:32:08 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Replace a multiplication by a reference for a local array variable
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/virtio_console.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ arch/s390/kernel/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 768bbb7..40b8775 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -1399,7 +1399,7 @@ static int add_port(struct ports_device *portdev, u32 id)
- 	port = kmalloc(sizeof(*port), GFP_KERNEL);
- 	if (!port) {
- 		err = -ENOMEM;
--		goto fail;
-+		goto send_control_message;
- 	}
- 	kref_init(&port->kref);
+diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
+index 32ceb5e..6792a9c 100644
+--- a/arch/s390/kernel/debug.c
++++ b/arch/s390/kernel/debug.c
+@@ -1486,7 +1486,7 @@ debug_sprintf_format_fn(debug_info_t * id, struct debug_view *view,
+ 	/* number of arguments used for sprintf (without the format string) */
+ 	num_used_args   = min(DEBUG_SPRINTF_MAX_ARGS, (num_longs - 1));
  
-@@ -1434,7 +1434,7 @@ static int add_port(struct ports_device *portdev, u32 id)
- 	if (err < 0) {
- 		dev_err(&port->portdev->vdev->dev,
- 			"Error %d adding cdev for port %u\n", err, id);
--		goto free_cdev;
-+		goto delete_cdev;
- 	}
- 	port->dev = device_create(pdrvdata.class, &port->portdev->vdev->dev,
- 				  devt, port, "vport%up%u",
-@@ -1444,7 +1444,7 @@ static int add_port(struct ports_device *portdev, u32 id)
- 		dev_err(&port->portdev->vdev->dev,
- 			"Error %d creating device for port %u\n",
- 			err, id);
--		goto free_cdev;
-+		goto delete_cdev;
- 	}
+-	memset(index, 0, DEBUG_SPRINTF_MAX_ARGS * sizeof(int));
++	memset(index, 0, sizeof(index));
  
- 	spin_lock_init(&port->inbuf_lock);
-@@ -1456,7 +1456,7 @@ static int add_port(struct ports_device *portdev, u32 id)
- 	if (!nr_added_bufs) {
- 		dev_err(port->dev, "Error allocating inbufs\n");
- 		err = -ENOMEM;
--		goto free_device;
-+		goto destroy_device;
- 	}
- 
- 	if (is_rproc_serial(port->portdev->vdev))
-@@ -1473,7 +1473,7 @@ static int add_port(struct ports_device *portdev, u32 id)
- 		 */
- 		err = init_port_console(port);
- 		if (err)
--			goto free_inbufs;
-+			goto free_buffers;
- 	}
- 
- 	spin_lock_irq(&portdev->ports_lock);
-@@ -1500,17 +1500,16 @@ static int add_port(struct ports_device *portdev, u32 id)
- 							 &port_debugfs_ops);
- 	}
- 	return 0;
--
--free_inbufs:
-+ free_buffers:
- 	while ((buf = virtqueue_detach_unused_buf(port->in_vq)))
- 		free_buf(buf, true);
--free_device:
-+ destroy_device:
- 	device_destroy(pdrvdata.class, port->dev->devt);
--free_cdev:
-+ delete_cdev:
- 	cdev_del(port->cdev);
--free_port:
-+ free_port:
- 	kfree(port);
--fail:
-+ send_control_message:
- 	/* The host might want to notify management sw about port add failure */
- 	__send_control_msg(portdev, id, VIRTIO_CONSOLE_PORT_READY, 0);
- 	return err;
+ 	for (i = 0; i < num_used_args; i++)
+ 		index[i] = i;
 -- 
-2.10.0
+2.9.3
 
