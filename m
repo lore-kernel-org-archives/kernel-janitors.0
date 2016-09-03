@@ -1,53 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 18:45:27 +0000
-Subject: Re: Input-gameport: Add the macro "pr_fmt" for module "joydump"
-Message-Id: <c086dc37-d55e-4f1e-a704-4a9893dc730b@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 19:00:19 +0000
+Subject: [PATCH 0/2] tile-module: Fine-tuning for module_alloc()
+Message-Id: <764e5d1b-c7ab-c8aa-1482-334a00e11280@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
- <3345f7c1-b823-a819-aabf-5b4990068075@users.sourceforge.net>
- <20160924164108.GB40187@dtor-ws>
- <a9d9e2fc-4369-ba1a-e1a1-97b0873c28ce@users.sourceforge.net>
- <1474736592.23838.8.camel@perches.com>
- <40016728-7a21-df83-f6a3-d936c928ed30@users.sourceforge.net>
- <1474740063.23838.18.camel@perches.com>
-In-Reply-To: <1474740063.23838.18.camel@perches.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Chris Metcalf <cmetcalf@mellanox.com>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-> When a chorus of voices says to you that you are wasting
-> their time, perhaps you listen to their song.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Sep 2016 20:52:10 +0200
 
-I am listening to some degree. - I guess that I am making some decisions
-and conclusions in a way that you would prefer to be different.
+A few update suggestions were taken into account
+from static source code analysis.
 
-I know that my update suggestions won't be liked by all contributors.
+Markus Elfring (2):
+  Use kmalloc_array()
+  Rename jump labels
 
+ arch/tile/kernel/module.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-> It seems to me your patch proposals have a relatively high
-> unapplied patch percentage
+-- 
+2.9.3
 
-I agree here. - This impression can occur for a while.
-
-I find that this situation is hardly avoidable according to my evolving number
-of update suggestions.
-In which time frames do you look for the corresponding software development process?
-
-
-> and there is an increase in the number of upstream maintainers that ignore you.
-
-It's a pity. - I hope that the corresponding software development can still
-be continued in constructive ways.
-
-
-> Yes, the overall number of patches should be minimized when
-> the suggested patches are highly related.
-
-I have got a special opinion about patch squashing. But I can consider it
-also for this update step when a corresponding consensus could be
-achieved between contributors.
-
-Regards,
-Markus
