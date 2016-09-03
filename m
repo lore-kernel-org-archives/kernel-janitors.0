@@ -1,27 +1,44 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 07 Sep 2016 13:21:30 +0000
-Subject: Re: [PATCH] crypto: ccp - add missing release in ccp_dmaengine_register
-Message-Id: <20160907132130.GJ17176@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 16:36:35 +0000
+Subject: [PATCH 1/4] sparc: bpf_jit: Use kmalloc_array() in bpf_jit_compile()
+Message-Id: <259699cf-6fb1-f9e6-f535-fe880a7fa6dc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160902094853.21376-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160902094853.21376-1-lambert.quentin@gmail.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net>
+In-Reply-To: <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: sparclinux@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Rabin Vincent <rabin@rab.in>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Fri, Sep 02, 2016 at 11:48:53AM +0200, Quentin Lambert wrote:
-> ccp_dmaengine_register used to return with an error code before
-> releasing all resource. This patch adds a jump to the appropriate label
-> ensuring that the resources are properly released before returning.
-> 
-> This issue was found with Hector.
-> 
-> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Sep 2016 17:10:20 +0200
 
-Patch applied.  Thanks.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/sparc/net/bpf_jit_comp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sparc/net/bpf_jit_comp.c b/arch/sparc/net/bpf_jit_comp.c
+index a6d9204..ced1393 100644
+--- a/arch/sparc/net/bpf_jit_comp.c
++++ b/arch/sparc/net/bpf_jit_comp.c
+@@ -372,7 +372,7 @@ void bpf_jit_compile(struct bpf_prog *fp)
+ 	if (!bpf_jit_enable)
+ 		return;
+ 
+-	addrs = kmalloc(flen * sizeof(*addrs), GFP_KERNEL);
++	addrs = kmalloc_array(flen, sizeof(*addrs), GFP_KERNEL);
+ 	if (addrs = NULL)
+ 		return;
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.9.3
+
