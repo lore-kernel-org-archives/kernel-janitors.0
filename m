@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 12:34:09 +0000
-Subject: [PATCH 14/17] s390/debug: Improve a size determination in debug_sprintf_format_fn()
-Message-Id: <40fd0234-45c3-6856-43b3-c7528a794e8e@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 12:23:18 +0000
+Subject: [PATCH 08/17] s390/debug: Fix a jump target in debug_register_mode()
+Message-Id: <d4bbf62a-abc1-2132-3f61-9021c86e937c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
@@ -13,30 +13,44 @@ To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Hei
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 2 Sep 2016 14:32:08 +0200
+Date: Thu, 1 Sep 2016 19:26:16 +0200
 
-Replace a multiplication by a reference for a local array variable
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer.
+* Move an error message.
+
+* Adjust a jump target according to the current Linux coding
+  style convention.
+
+* Delete a repeated check which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/s390/kernel/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kernel/debug.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
-index 32ceb5e..6792a9c 100644
+index 1cce76a..c4a4641 100644
 --- a/arch/s390/kernel/debug.c
 +++ b/arch/s390/kernel/debug.c
-@@ -1486,7 +1486,7 @@ debug_sprintf_format_fn(debug_info_t * id, struct debug_view *view,
- 	/* number of arguments used for sprintf (without the format string) */
- 	num_used_args   = min(DEBUG_SPRINTF_MAX_ARGS, (num_longs - 1));
+@@ -700,14 +700,14 @@ debug_info_t *debug_register_mode(const char *name, int pages_per_area,
+         /* create new debug_info */
  
--	memset(index, 0, DEBUG_SPRINTF_MAX_ARGS * sizeof(int));
-+	memset(index, 0, sizeof(index));
- 
- 	for (i = 0; i < num_used_args; i++)
- 		index[i] = i;
+ 	rc = debug_info_create(name, pages_per_area, nr_areas, buf_size, mode);
+-	if (!rc)
+-		goto out;
++	if (!rc) {
++		pr_err("Registering debug feature %s failed\n", name);
++		goto unlock;
++	}
+ 	debug_register_view(rc, &debug_level_view);
+         debug_register_view(rc, &debug_flush_view);
+ 	debug_register_view(rc, &debug_pages_view);
+-out:
+-	if (!rc)
+-		pr_err("Registering debug feature %s failed\n", name);
++ unlock:
+ 	mutex_unlock(&debug_mutex);
+ 	return rc;
+ }
 -- 
 2.9.3
 
