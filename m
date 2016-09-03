@@ -1,45 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:54:06 +0000
-Subject: [PATCH 11/47] block-rbd: Delete three unnecessary initialisations in rbd_dev_image_name()
-Message-Id: <a509ccbf-7eba-2f21-0575-6051f2c28a96@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 03 Sep 2016 07:06:30 +0000
+Subject: [PATCH] drm: flip-work: Simplify code
+Message-Id: <1472886390-29868-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:02:16 +0200
+Calling 'list_splice_tail' followed by 'INIT_LIST_HEAD' is equivalent to
+'list_splice_tail_init'.
 
-Three local variables will be set to appropriate values a bit later.
-Thus omit the explicit initialisation at the beginning.
+This has been spotted with the following coccinelle script:
+/////
+@@
+expression y,z;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+-   list_splice_tail(y,z);
+-   INIT_LIST_HEAD(y);
++   list_splice_tail_init(y,z);
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/block/rbd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_flip_work.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 145bbcc..90797aa 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -5256,9 +5256,9 @@ static char *rbd_dev_image_name(struct rbd_device *rbd_dev)
- 	void *p;
- 	void *end;
- 	size_t size;
--	void *reply_buf = NULL;
--	size_t len = 0;
--	char *image_name = NULL;
-+	void *reply_buf;
-+	size_t len;
-+	char *image_name;
- 	int ret;
+diff --git a/drivers/gpu/drm/drm_flip_work.c b/drivers/gpu/drm/drm_flip_work.c
+index 12dea16f22a8..c8b54a6694f6 100644
+--- a/drivers/gpu/drm/drm_flip_work.c
++++ b/drivers/gpu/drm/drm_flip_work.c
+@@ -101,8 +101,7 @@ void drm_flip_work_commit(struct drm_flip_work *work,
+ 	unsigned long flags;
  
- 	rbd_assert(!rbd_dev->spec->image_name);
+ 	spin_lock_irqsave(&work->lock, flags);
+-	list_splice_tail(&work->queued, &work->commited);
+-	INIT_LIST_HEAD(&work->queued);
++	list_splice_tail_init(&work->queued, &work->commited);
+ 	spin_unlock_irqrestore(&work->lock, flags);
+ 	queue_work(wq, &work->worker);
+ }
+@@ -119,8 +118,7 @@ static void flip_worker(struct work_struct *w)
+ 
+ 		INIT_LIST_HEAD(&tasks);
+ 		spin_lock_irqsave(&work->lock, flags);
+-		list_splice_tail(&work->commited, &tasks);
+-		INIT_LIST_HEAD(&work->commited);
++		list_splice_tail_init(&work->commited, &tasks);
+ 		spin_unlock_irqrestore(&work->lock, flags);
+ 
+ 		if (list_empty(&tasks))
 -- 
-2.10.0
+2.7.4
 
