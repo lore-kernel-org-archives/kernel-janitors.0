@@ -1,87 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:08:24 +0000
-Subject: [PATCH 26/30] ACPI-processor: Fix jump targets in acpi_processor_reevaluate_tstate()
-Message-Id: <ead11eae-dfb3-61db-a425-1d4531861c44@users.sourceforge.net>
+Date: Sat, 03 Sep 2016 12:40:08 +0000
+Subject: [PATCH 17/17] s390/debug: Improve another size determination in debug_info_alloc()
+Message-Id: <9bdb0620-4983-a3a3-c71c-54c698bc7d68@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 21:40:40 +0200
+Date: Fri, 2 Sep 2016 14:41:02 +0200
 
-1. Adjust jump targets according to the current Linux coding
-   style convention.
-
-2. Delete a duplicate check then at the end.
-
-3. Do not use curly brackets at two source code places
-   where a single statement should be sufficient.
+Replace the specification of a data type by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ arch/s390/kernel/debug.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 0b4e058..994f21c 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -379,23 +379,19 @@ void acpi_processor_reevaluate_tstate(struct acpi_processor *pr,
- {
- 	int result = 0;
+diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
+index 408a8da..ffc6af6 100644
+--- a/arch/s390/kernel/debug.c
++++ b/arch/s390/kernel/debug.c
+@@ -241,8 +241,7 @@ debug_info_alloc(const char *name, int pages_per_area, int nr_areas,
+ 	debug_info_t* rc;
  
--	if (action = CPU_DEAD) {
-+	if (action = CPU_DEAD)
- 		/* When one CPU is offline, the T-state throttling
- 		 * will be invalidated.
- 		 */
--		pr->flags.throttling = 0;
--		return;
--	}
-+		goto disable_throttling;
- 	/* the following is to recheck whether the T-state is valid for
- 	 * the online CPU
- 	 */
--	if (!pr->throttling.state_count) {
-+	if (!pr->throttling.state_count)
- 		/* If the number of T-state is invalid, it is
- 		 * invalidated.
- 		 */
--		pr->flags.throttling = 0;
--		return;
--	}
-+		goto disable_throttling;
- 	pr->flags.throttling = 1;
- 
- 	/* Disable throttling (if enabled).  We'll let subsequent
-@@ -405,17 +401,16 @@ void acpi_processor_reevaluate_tstate(struct acpi_processor *pr,
- 
- 	result = acpi_processor_get_throttling(pr);
- 	if (result)
--		goto end;
-+		goto disable_throttling;
- 
- 	if (pr->throttling.state) {
- 		result = acpi_processor_set_throttling(pr, 0, false);
- 		if (result)
--			goto end;
-+			goto disable_throttling;
- 	}
+ 	/* alloc everything */
 -
--end:
--	if (result)
--		pr->flags.throttling = 0;
-+	return;
-+ disable_throttling:
-+	pr->flags.throttling = 0;
- }
- /*
-  * _PTC - Processor Throttling Control (and status) register location
+-	rc = kmalloc(sizeof(debug_info_t), GFP_KERNEL);
++	rc = kmalloc(sizeof(*rc), GFP_KERNEL);
+ 	if(!rc)
+ 		goto exit;
+ 	rc->active_entries = kcalloc(nr_areas, sizeof(int), GFP_KERNEL);
 -- 
-2.10.0
+2.9.3
 
