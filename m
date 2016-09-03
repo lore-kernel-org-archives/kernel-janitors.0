@@ -1,59 +1,46 @@
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 23 Sep 2016 13:04:42 +0000
-Subject: Re: GPU-DRM-TILCDC: Less function calls in tilcdc_convert_slave_node() after error detection
-Message-Id: <CAF6AEGs9EDX3=kDDvQSh_-4sTbP6-psvZX8WAudV-PpigKCBtg@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 03 Sep 2016 05:33:29 +0000
+Subject: [PATCH] RDS: Simplify code
+Message-Id: <1472880809-29216-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <2f3f7ad7-16a0-1dfb-d073-0d993cd767ee@users.sourceforge.net>
- <0be7fee0-64f7-fa02-0337-51376677343e@users.sourceforge.net>
- <e9b443c7-2947-46d5-462f-58c175b774bc@ti.com>
- <d9b20442-3f84-82bd-d600-e3045a21da99@users.sourceforge.net>
- <CAF6AEGsHS9P0XyVH=So9woCkp9u8mUgL1QrCFNzgWdy26_4rDw@mail.gmail.com>
- <3b791118-2977-f607-b816-dd5e833cfc75@users.sourceforge.net>
- <CAF6AEGsh34CNfP6kwGV7nHFfPGp=Vbvja=_6FDuc0XPChJ2Kaw@mail.gmail.com>
- <48278d51-67b6-2c95-71e4-e922072ad9e9@users.sourceforge.net>
-In-Reply-To: <48278d51-67b6-2c95-71e4-e922072ad9e9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Julia Lawall <julia.lawall@lip6.fr>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jyri Sarha <jsarha@ti.com>
+To: santosh.shilimkar-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-On Fri, Sep 23, 2016 at 8:17 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>> I see a need to improve not only correctness there but also a bit of
->>> software efficiency.
->>
->> If you can measure any performance difference and present some results
->> (esp. considering that this is something that just happens when the
->> driver is loaded), then we'll talk.
->
-> Are you really interested to increase your software development attention
-> for a quicker exception handling implementation in this function?
->
+Calling 'list_splice' followed by 'INIT_LIST_HEAD' is equivalent to
+'list_splice_init'.
 
-No one is interested in making error handling more complex for a
-non-existent benefit ;-)
+This has been spotted with the following coccinelle script:
+/////
+@@
+expression y,z;
+@@
 
->
->> Until then, please don't send this sort of patch.  Thank you.
->
-> Will benchmark statistics change such a change rejection ever?
+-   list_splice(y,z);
+-   INIT_LIST_HEAD(y);
++   list_splice_init(y,z);
 
-If you could demonstrate a real benefit to additional complexity for
-something that actually matters (ie. not something like this that runs
-once at bootup) I would care.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/rds/loop.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I don't recommend that you waste your time, since there is
-approximately nothing in modesetting path that happens with a high
-enough frequency to benefit from such a micro-optimization.
-Especially not initialization code that runs once at boot up.
+diff --git a/net/rds/loop.c b/net/rds/loop.c
+index f2bf78de5688..c3e6da4fdf97 100644
+--- a/net/rds/loop.c
++++ b/net/rds/loop.c
+@@ -167,8 +167,7 @@ void rds_loop_exit(void)
+ 
+ 	/* avoid calling conn_destroy with irqs off */
+ 	spin_lock_irq(&loop_conns_lock);
+-	list_splice(&loop_conns, &tmp_list);
+-	INIT_LIST_HEAD(&loop_conns);
++	list_splice_init(&loop_conns, &tmp_list);
+ 	spin_unlock_irq(&loop_conns_lock);
+ 
+ 	list_for_each_entry_safe(lc, _lc, &tmp_list, loop_node) {
+-- 
+2.7.4
 
-Fixing actual bugs is useful and valuable.  Premature "optimization"
-at the expense of extra complexity is very much not useful.
-
-BR,
--R
-
-> Regards,
-> Markus
