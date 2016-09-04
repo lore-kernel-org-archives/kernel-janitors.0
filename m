@@ -1,50 +1,44 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 24 Sep 2016 21:57:26 +0000
-Subject: [PATCH] clk: at91: Fix a return value in case of error
-Message-Id: <1474754246-27226-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Sep 2016 19:45:08 +0000
+Subject: [PATCH] x86/hpet: Use kmalloc_array() in hpet_enable()
+Message-Id: <ed804ee9-97cb-f401-06ec-3f0f8ac6889e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: boris.brezillon@free-electrons.com, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: x86@kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jan Beulich <JBeulich@suse.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-If 'clk_hw_register()' fails, it is likely that we expect to return an
-error instead of a valid pointer (which would mean success).
-'clk_hw_register()' returns a bool, so we don't have the detail of the
-error. Return -ENOMEM instead, as it seems to be the most common error
-returned by clk_register().
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Sep 2016 21:30:10 +0200
 
-Fix commit f5644f10dcfb ("clk: at91: Migrate to clk_hw based registration
-and OF APIs")
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-It is likely that a bigger change is needed. For example using clk_register
-instead of clk_hw_register would return the error instead of a bool.
-We could then propagate this error to the caller without the need to choose
-an arbitrary error value.
+ arch/x86/kernel/hpet.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-This proposal is un-compiled and un-tested.
-I get an error when I run 'make drivers/clk/at91/' which is likely due to
-my building environment. 
----
- drivers/clk/at91/clk-programmable.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 190122e64a3a..2cf200e22d48 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -203,7 +203,7 @@ at91_clk_register_programmable(struct regmap *regmap,
- 	ret = clk_hw_register(NULL, &prog->hw);
- 	if (ret) {
- 		kfree(prog);
--		hw = &prog->hw;
-+		hw = ERR_PTR(-ENOMEM);
- 	}
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index c6dfd80..3c2030d 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -876,8 +876,9 @@ int __init hpet_enable(void)
+ #endif
  
- 	return hw;
+ 	cfg = hpet_readl(HPET_CFG);
+-	hpet_boot_cfg = kmalloc((last + 2) * sizeof(*hpet_boot_cfg),
+-				GFP_KERNEL);
++	hpet_boot_cfg = kmalloc_array(last + 2,
++				      sizeof(*hpet_boot_cfg),
++				      GFP_KERNEL);
+ 	if (hpet_boot_cfg)
+ 		*hpet_boot_cfg = cfg;
+ 	else
 -- 
-2.7.4
+2.9.3
 
