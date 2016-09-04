@@ -1,98 +1,50 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Sun, 04 Sep 2016 12:20:49 +0000
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 04 Sep 2016 15:57:20 +0000
 Subject: Re: [PATCH] RDS: Simplify code
-Message-Id: <20160904122049.GQ21847@leon.nu>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="psiTe9LjpVyD9953"
+Message-Id: <befa1a39-cfc5-721f-e39a-369436237b1c@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1472880809-29216-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1472880809-29216-1-git-send-email-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+ <20160904122049.GQ21847@leon.nu>
+In-Reply-To: <20160904122049.GQ21847@leon.nu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Leon Romanovsky <leon@kernel.org>
 Cc: santosh.shilimkar@oracle.com, davem@davemloft.net, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
---psiTe9LjpVyD9953
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sat, Sep 03, 2016 at 07:33:29AM +0200, Christophe JAILLET wrote:
-> Calling 'list_splice' followed by 'INIT_LIST_HEAD' is equivalent to
-> 'list_splice_init'.
-
-It is not 100% accurate
-
-list_splice(y, z)
-INIT_LIST_HEAD(y)
-
-==>
-
-if (!list_empty(y))
-     __list_splice(y, z, z>next);
-INIT_LIST_HEAD(y)
-
-and not
-
-if (!list_empty(y)) {
-     __list_splice(y, z, z>next);
-     INIT_LIST_HEAD(y)
-}
-
-as list_splice_init will do.
-
-
+Le 04/09/2016 =E0 14:20, Leon Romanovsky a =E9crit :
+> On Sat, Sep 03, 2016 at 07:33:29AM +0200, Christophe JAILLET wrote:
+>> Calling 'list_splice' followed by 'INIT_LIST_HEAD' is equivalent to
+>> 'list_splice_init'.
+> It is not 100% accurate
 >
-> This has been spotted with the following coccinelle script:
-> /////
-> @@
-> expression y,z;
-> @@
+> list_splice(y, z)
+> INIT_LIST_HEAD(y)
 >
-> -   list_splice(y,z);
-> -   INIT_LIST_HEAD(y);
-> +   list_splice_init(y,z);
+> =3D>
 >
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  net/rds/loop.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> if (!list_empty(y))
+>       __list_splice(y, z, z>next);
+> INIT_LIST_HEAD(y)
 >
-> diff --git a/net/rds/loop.c b/net/rds/loop.c
-> index f2bf78de5688..c3e6da4fdf97 100644
-> --- a/net/rds/loop.c
-> +++ b/net/rds/loop.c
-> @@ -167,8 +167,7 @@ void rds_loop_exit(void)
+> and not
 >
->  	/* avoid calling conn_destroy with irqs off */
->  	spin_lock_irq(&loop_conns_lock);
-> -	list_splice(&loop_conns, &tmp_list);
-> -	INIT_LIST_HEAD(&loop_conns);
-> +	list_splice_init(&loop_conns, &tmp_list);
->  	spin_unlock_irq(&loop_conns_lock);
+> if (!list_empty(y)) {
+>       __list_splice(y, z, z>next);
+>       INIT_LIST_HEAD(y)
+> }
 >
->  	list_for_each_entry_safe(lc, _lc, &tmp_list, loop_node) {
-> --
-> 2.7.4
+> as list_splice_init will do.
 >
+You are right but if you dig further you will see that calling=20
+INIT_LIST_HEAD on an empty list is a no-op (AFAIK).
+And if this list was not already correctly initialized, then you would=20
+have some other troubles.
 
---psiTe9LjpVyD9953
-Content-Type: application/pgp-signature; name="signature.asc"
+CJ
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXzBGhAAoJEORje4g2clinrBcP/0pGSB+6M+EEupGEnHjxbeYW
-ygKiZBvFo6EH609fNsYdHUNlgueLN6m548guP7uZmbpiwzye/NNWZBZmtrrI5FI+
-H4qdJ/c/y0UI8VyNwUFYXYdGrxvBkH8gvFgLxnsTuRXh/5E5c5wEzfURne4YTtqO
-rM5BBd4MnhNcJFXnt0PwXHoDP9w4+V1xGMy3P95UDef74aCOjkbGScmzKrx7g3BP
-WZhV4fGMrvB9p5t1jmduE3quyAcv8FUm9ieVL4u7n/OwIIbftPFYgyDQ9MUA7izc
-pMX+MvuZZxetdhKnqZxTb4OvB2nDK8gHgwBDyF2p5kUW5GGVwDezgbjCJZjsAxzz
-bnQ/HVDehfYGCdYSp/t+xTRuAXx73phHaJvbANkSSiCl5B2UIeptkCs9mt96Rbc2
-7/adcYVyE2XGlkDcFVAvfHDrX4V5TIR9FOxpsMYJPR9HIyYcMQrQdodyxhDNE+/c
-6W8SFdTv657V/aBw0ldESmn/l9FHSrnKuN6NB//1wwW8RclaWP4LNTSknEjEYHvL
-61pW9JhN0XtWV92INHvs3VIap6ZwcMnv9+juhJVSz403f0hv6FhmiGYMAvR5dmpi
-zNOyWlV3PZ72OHZR5fq9OpjDf3LCtX8Aw4kFwkYC05aMoi5j7NQHlWlmxFJyQ0HP
-Qw7EeA9sayw+22izXlWT
-=XtxE
------END PGP SIGNATURE-----
-
---psiTe9LjpVyD9953--
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
