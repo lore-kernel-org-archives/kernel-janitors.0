@@ -1,27 +1,44 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Date: Wed, 28 Sep 2016 17:57:34 +0000
-Subject: Re: ISDN-Gigaset: Fine-tuning for three function implementations
-Message-Id: <1475085454.16606.56.camel@tiscali.nl>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 04 Sep 2016 09:38:13 +0000
+Subject: [PATCH] sctp: Remove some redundant code
+Message-Id: <1472981893-8608-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-         <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
-         <1475063766.16606.39.camel@tiscali.nl>
-         <15e9e3f5-ef06-fb3d-4d6a-3df9c0378a2b@users.sourceforge.net>
-In-Reply-To: <15e9e3f5-ef06-fb3d-4d6a-3df9c0378a2b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: marcelo.leitner@gmail.com, vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net
+Cc: linux-sctp@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 2016-09-28 at 18:50 +0200, SF Markus Elfring wrote:
-> Would you like to look once more into an improved patch series for this
-> software module a bit later?
+In commit 311b21774f13 ("sctp: simplify sk_receive_queue locking"), a call
+to 'skb_queue_splice_tail_init()' has been made explicit. Previously it was
+hidden in 'sctp_skb_list_tail()'
 
-I'm afraid I'm not looking forward to receiving an update of this
-series, sorry.
+Now, the code around it looks redundant. The '_init()' part of
+'skb_queue_splice_tail_init()' should alreday do the same.
 
-Thanks,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Un-tested
+---
+ net/sctp/ulpqueue.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/net/sctp/ulpqueue.c b/net/sctp/ulpqueue.c
+index 877e55066f89..84d0fdaf7de9 100644
+--- a/net/sctp/ulpqueue.c
++++ b/net/sctp/ulpqueue.c
+@@ -140,11 +140,8 @@ int sctp_clear_pd(struct sock *sk, struct sctp_association *asoc)
+ 		 * we can go ahead and clear out the lobby in one shot
+ 		 */
+ 		if (!skb_queue_empty(&sp->pd_lobby)) {
+-			struct list_head *list;
+ 			skb_queue_splice_tail_init(&sp->pd_lobby,
+ 						   &sk->sk_receive_queue);
+-			list = (struct list_head *)&sctp_sk(sk)->pd_lobby;
+-			INIT_LIST_HEAD(list);
+ 			return 1;
+ 		}
+ 	} else {
+-- 
+2.7.4
 
-Paul Bolle
