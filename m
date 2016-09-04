@@ -1,57 +1,38 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Fri, 30 Sep 2016 00:07:50 +0000
-Subject: Re: [PATCH 17/26] intel_telemetry_debugfs: constify local structures
-Message-Id: <20160930000750.GB24642@f23x64.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Sep 2016 05:00:22 +0000
+Subject: Re: sparc: bpf_jit: Move four assignments in bpf_jit_compile()
+Message-Id: <ec58924c-25d6-e525-fb8a-35bdbf6a8f12@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
- <1473599168-30561-18-git-send-email-Julia.Lawall@lip6.fr>
- <20160928235235.GD7630@f23x64.localdomain>
- <alpine.DEB.2.10.1609290716550.3288@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1609290716550.3288@hadrien>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net>
+ <2179bf7c-9878-adf7-da97-2746d5aa3d34@users.sourceforge.net>
+ <CAGRGNgWXdzvfL4wdM2uQr7DRbJgCuY0O-jRmSGhqfbPBZGS2Aw@mail.gmail.com>
+ <a6afaf8a-837e-6cc3-fdec-3a37f0e731d5@users.sourceforge.net>
+ <CAGRGNgUxt+qgiDHQ7qQ3a7QEJ3xZ4rRTW6RN8fTLNK6E6pgWTw@mail.gmail.com>
+In-Reply-To: <CAGRGNgUxt+qgiDHQ7qQ3a7QEJ3xZ4rRTW6RN8fTLNK6E6pgWTw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>, joe@perches.com, kernel-janitors@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: sparclinux <sparclinux@vger.kernel.org>, Adam Buchbinder <adam.buchbinder@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, Rabin Vincent <rabin@rab.in>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Thu, Sep 29, 2016 at 07:19:21AM +0200, Julia Lawall wrote:
-> 
-> 
-> On Wed, 28 Sep 2016, Darren Hart wrote:
-> 
-> > On Sun, Sep 11, 2016 at 03:05:59PM +0200, Julia Lawall wrote:
-> >
-> > Hi Julia,
-> >
-> > > For structure types defined in the same file or local header files, find
-> > > top-level static structure declarations that have the following
-> > > properties:
-> > > 1. Never reassigned.
-> > > 2. Address never taken
-> >
-> > Hrm. telem_apl_debugfs_conf is passed to the TELEM_DEBUGFS_CPU macro as the
-> > second argument "data":
-> >
-> > #define TELEM_DEBUGFS_CPU(model, data) \
-> > 	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (unsigned long)&data}
-> >
-> > And the address is taken, and later assigned to the debugfs_conf pointer.
-> >
-> > The usage still seems OK, but did I misunderstand the conditions?
-> 
-> OK, this is definitely a weakness of the script and my methodology for
-> checking the results.  There was already a case of a cast that I have
-> fixed up my script for, but this one is worse because it's under a macro.
-> I can look into whether the cast can be changed to add a const, but for
-> the time being, I think you should just drop this patch.
-> 
+> Does this change improve the resulting binary?
 
-Done! :-)
+I hope so. - I propose to give the refactorings "Reduce scope of variable"
+and "Extract a function" (and the corresponding consequences) another look.
 
-> Thanks for the careful review.
-> 
 
-Sure thing, thanks for all your work with cocci.
--- 
-Darren Hart
-Intel Open Source Technology Center
+> I.e. does it make it smaller or faster?
+
+It is generally possible that a specific code generation variant will also affect
+the run time properties you mentioned.
+
+
+> Otherwise this change is useless churn - you're making the code more
+> complicated, longer and harder to read for practically no benefit.
+
+I imagine that there other reasons you could eventually accept
+for this use case, aren't there?
+
+Regards,
+Markus
