@@ -1,51 +1,91 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Sat, 03 Sep 2016 16:51:20 +0000
-Subject: Re: [PATCH 1/4] sparc: bpf_jit: Use kmalloc_array() in bpf_jit_compile()
-Message-Id: <57CAFF88.2000506@iogearbox.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Sep 2016 13:50:25 +0000
+Subject: Re: Clarification for source code formatting around jump labels
+Message-Id: <50edcf58-112e-0b89-4265-7c39d2f147ca@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net> <259699cf-6fb1-f9e6-f535-fe880a7fa6dc@users.sourceforge.net>
-In-Reply-To: <259699cf-6fb1-f9e6-f535-fe880a7fa6dc@users.sourceforge.net>
+References: <57CAFFDC.4030606@iogearbox.net>
+ <20160903.230607.1667562673788737377.davem@davemloft.net>
+ <1365a588-c7c7-717c-1e3d-ceabd71e8479@users.sourceforge.net>
+ <20160903.235916.1892276070318494855.davem@davemloft.net>
+ <deecaab4-011b-b8d5-a3c7-6e34abef60e5@users.sourceforge.net>
+ <57CBEFEA.3080007@iogearbox.net>
+In-Reply-To: <57CBEFEA.3080007@iogearbox.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, sparclinux@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Alexei Starovoitov <ast@kernel.org>, "David S. Miller" <davem@davemloft.net>, Rabin Vincent <rabin@rab.in>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Rabin Vincent <rabin@rab.in>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>, linux-doc@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
 
-On 09/03/2016 06:36 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 3 Sep 2016 17:10:20 +0200
->
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
->
-> This issue was detected by using the Coccinelle software.
+>> I am just curious on how much further software development "fun" the rec=
+ent update
+>> by a topic like "CodingStyle: Clarify and complete chapter 7" will trigg=
+er.
+>=20
+> I don't want to drag this thread onwards for (way) too long, but clearly =
+"it is
+> advised to indent labels with a single space (not tab)" (from diff in abo=
+ve commit)
 
-When you talk about "issue", could you please explain yourself what
-concrete "issue" you were seeing ?!
+How do you think about the reason (which you omitted from your quotation) f=
+or this advice?
 
-This particular multiplication here is guaranteed to never overflow,
-so at best a minor cleanup if you will.
+=93=85,
+so that "diff -p" does not confuse labels with functions.
+=85=94
 
-(Do you actually have a sparc to test out your changes?)
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   arch/sparc/net/bpf_jit_comp.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/sparc/net/bpf_jit_comp.c b/arch/sparc/net/bpf_jit_comp.c
-> index a6d9204..ced1393 100644
-> --- a/arch/sparc/net/bpf_jit_comp.c
-> +++ b/arch/sparc/net/bpf_jit_comp.c
-> @@ -372,7 +372,7 @@ void bpf_jit_compile(struct bpf_prog *fp)
->   	if (!bpf_jit_enable)
->   		return;
->
-> -	addrs = kmalloc(flen * sizeof(*addrs), GFP_KERNEL);
-> +	addrs = kmalloc_array(flen, sizeof(*addrs), GFP_KERNEL);
->   	if (addrs = NULL)
->   		return;
->
->
+> doesn't really reflect the majority of kernel practice we have in-tree to=
+day and
+> actually rather adds more confusion than any clarification whatsoever:
+>=20
+>   $ git grep -n "^\ [a-z_]*:" -- '*.[ch]' | wc -l
+>   4919
+>   $ git grep -n "^[a-z_]*:" -- '*.[ch]' | wc -l
+>   54686
 
+So there is a mixture already.
+
+
+> A CodingStyle document should document what's regarded as a general conse=
+nsus of
+> kernel coding practices, and thus should represent the /majority/ of codi=
+ng style,
+> which (if I didn't screw up my git-grep line completely)
+
+1. Is the used character class specification complete in the shown regular =
+expression?
+
+2. I guess that you should use the regex operator "plus" (instead of the as=
+terisk).
+
+3. Would you like to try another source code analysis out which can be a bi=
+t safer
+   with the usage of the semantic patch language?
+
+
+> above 9% does not really reflect at all.
+
+How tolerant are you for using an extra space character before the identifi=
+er for
+a jump label?
+
+
+> So, new folks starting with kernel hacking reading this are rather misgui=
+ded,
+> and code-wise it just adds up to have more inconsistencies from new patch=
+es,
+> or worse, have noisy patches (like this one) flying around that try to
+> brute-force everything into this advice.
+
+In which ways would you prefer that the style specifications should be
+clarified further?
+
+Where should source code become more consistent?
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
