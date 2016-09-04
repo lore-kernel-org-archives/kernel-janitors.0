@@ -1,79 +1,82 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 16:40:46 +0000
-Subject: [PATCH 03/14] GPU-DRM-OMAP: Less function calls in tiler_map_show() after error detection
-Message-Id: <0818f5f2-2acc-cadd-2a60-44f424cd6149@users.sourceforge.net>
+Date: Sun, 04 Sep 2016 18:00:15 +0000
+Subject: [PATCH 4/4] perf/x86/cqm: Rename jump labels in intel_cqm_init()
+Message-Id: <12037a23-1511-f0ae-a07c-2ffd6650f5e1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
-In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+ <9d893198-dd12-14a8-74bd-02fc42de4bf4@users.sourceforge.net>
+In-Reply-To: <9d893198-dd12-14a8-74bd-02fc42de4bf4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: x86@kernel.org, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Richard Cochran <rcochran@linutronix.de>, Stephane Eranian <eranian@google.com>, Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>, Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 13:16:20 +0200
+Date: Sun, 4 Sep 2016 19:23:57 +0200
 
-The kfree() function was called in up to two cases
-by the tiler_map_show() function during error handling even if
-the passed variable contained a null pointer.
-
-* Adjust jump targets according to the Linux coding style convention.
-
-* Split a condition check for memory allocation failures so that
-  each pointer from these function calls will be checked immediately.
-
-  See also background information:
-  Topic "CWE-754: Improper check for unusual or exceptional conditions"
-  Link: https://cwe.mitre.org/data/definitions/754.html
-
-* Return directly after a call of the function "kmalloc_array" failed
-  at the beginning.
-
-* Move an assignment for the local variable "w_adj" behind the first
-  memory allocation.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/events/intel/cqm.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-index 3a4f91b..60beeb9 100644
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -916,11 +916,14 @@ int tiler_map_show(struct seq_file *s, void *arg)
- 	}
- 
- 	h_adj = omap_dmm->container_height / ydiv;
--	w_adj = omap_dmm->container_width / xdiv;
- 	map = kmalloc_array(h_adj, sizeof(*map), GFP_KERNEL);
-+	if (!map)
-+		return 0;
-+
-+	w_adj = omap_dmm->container_width / xdiv;
- 	global_map = kmalloc_array(h_adj, w_adj + 1, GFP_KERNEL);
--	if (!map || !global_map)
--		goto error;
-+	if (!global_map)
-+		goto free_map;
- 
- 	for (lut_idx = 0; lut_idx < omap_dmm->num_lut; lut_idx++) {
- 		memset(map, 0, h_adj * sizeof(*map));
-@@ -982,10 +985,9 @@ int tiler_map_show(struct seq_file *s, void *arg)
+diff --git a/arch/x86/events/intel/cqm.c b/arch/x86/events/intel/cqm.c
+index 304caf53..6cf508a 100644
+--- a/arch/x86/events/intel/cqm.c
++++ b/arch/x86/events/intel/cqm.c
+@@ -1701,7 +1701,7 @@ static int __init intel_cqm_init(void)
+ 		if (c->x86_cache_occ_scale != cqm_l3_scale) {
+ 			pr_err("Multiple LLC scale values, disabling\n");
+ 			ret = -EINVAL;
+-			goto out;
++			goto put_cpus;
  		}
  	}
  
--error:
--	kfree(map);
- 	kfree(global_map);
+@@ -1719,19 +1719,19 @@ static int __init intel_cqm_init(void)
+ 	str = kstrdup(scale, GFP_KERNEL);
+ 	if (!str) {
+ 		ret = -ENOMEM;
+-		goto out;
++		goto put_cpus;
+ 	}
+ 
+ 	event_attr_intel_cqm_llc_scale.event_str = str;
+ 
+ 	ret = intel_cqm_setup_rmid_cache();
+ 	if (ret)
+-		goto out;
++		goto put_cpus;
+ 
+ 	if (mbm_enabled)
+ 		ret = intel_mbm_init();
+ 	if (ret && !cqm_enabled)
+-		goto out;
++		goto put_cpus;
+ 
+ 	if (cqm_enabled && mbm_enabled)
+ 		intel_cqm_events_group.attrs = intel_cmt_mbm_events_attr;
+@@ -1743,7 +1743,7 @@ static int __init intel_cqm_init(void)
+ 	ret = perf_pmu_register(&intel_cqm_pmu, "intel_cqm", -1);
+ 	if (ret) {
+ 		pr_err("Intel CQM perf registration failed: %d\n", ret);
+-		goto out;
++		goto put_cpus;
+ 	}
+ 
+ 	if (cqm_enabled)
+@@ -1760,8 +1760,7 @@ static int __init intel_cqm_init(void)
+ 			  intel_cqm_cpu_starting, NULL);
+ 	cpuhp_setup_state(CPUHP_AP_PERF_X86_CQM_ONLINE, "AP_PERF_X86_CQM_ONLINE",
+ 			  NULL, intel_cqm_cpu_exit);
 -
-+ free_map:
-+	kfree(map);
- 	return 0;
- }
- #endif
+-out:
++ put_cpus:
+ 	put_online_cpus();
+ 
+ 	if (ret) {
 -- 
-2.10.0
+2.9.3
 
