@@ -1,105 +1,82 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 12 Sep 2016 12:31:14 +0000
-Subject: Re: [PATCH 05/26] ARCNET: constify local structures
-Message-Id: <alpine.DEB.2.10.1609121429040.3049@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Sep 2016 17:58:32 +0000
+Subject: [PATCH 3/4] perf/x86/cqm: One check and another variable less in intel_mbm_init()
+Message-Id: <239ce590-bda1-1276-9723-5e7fee90d514@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr> <1473599168-30561-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-6-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <9d893198-dd12-14a8-74bd-02fc42de4bf4@users.sourceforge.net>
+In-Reply-To: <9d893198-dd12-14a8-74bd-02fc42de4bf4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: x86@kernel.org, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Richard Cochran <rcochran@linutronix.de>, Stephane Eranian <eranian@google.com>, Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>, Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Sep 2016 19:06:33 +0200
 
+1. Adjust a jump target to eliminate an extra check at the end.
 
-On Sun, 11 Sep 2016, Julia Lawall wrote:
+2. Move a jump label according to the current Linux coding style convention.
 
-> For structure types defined in the same file or local header files, find
-> top-level static structure declarations that have the following
-> properties:
-> 1. Never reassigned.
-> 2. Address never taken
-> 3. Not passed to a top-level macro call
-> 4. No pointer or array-typed field passed to a function or stored in a
-> variable.
-> Declare structures having all of these properties as const.
+3. Return only constant values for the success or failure indication.
 
-Actually, this patch should be dropped.  Coccinelle did not recognize
-kernel_ulong_t as a type, so it interpreted things like
+4. Delete the local variable "ret" which became unnecessary with
+   this refactoring.
 
-(kernel_ulong_t)&card_info_10mbit
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/x86/events/intel/cqm.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-as a bit and operation.
+diff --git a/arch/x86/events/intel/cqm.c b/arch/x86/events/intel/cqm.c
+index 29f756e..304caf53 100644
+--- a/arch/x86/events/intel/cqm.c
++++ b/arch/x86/events/intel/cqm.c
+@@ -1637,7 +1637,7 @@ static const struct x86_cpu_id intel_mbm_total_match[] = {
+ 
+ static int intel_mbm_init(void)
+ {
+-	int ret = 0, maxid = cqm_max_rmid + 1;
++	int const maxid = cqm_max_rmid + 1;
+ 
+ 	mbm_socket_max = topology_max_packages();
+ 	mbm_local = kmalloc_array(maxid * mbm_socket_max,
+@@ -1649,25 +1649,20 @@ static int intel_mbm_init(void)
+ 	mbm_total = kmalloc_array(maxid * mbm_socket_max,
+ 				  sizeof(*mbm_total),
+ 				  GFP_KERNEL);
+-	if (!mbm_total) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!mbm_total)
++		goto free_mbm;
+ 
+ 	mbm_timers = kmalloc_array(mbm_socket_max,
+ 				   sizeof(*mbm_timers),
+ 				   GFP_KERNEL);
+-	if (!mbm_timers) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
+-	mbm_hrtimer_init();
++	if (!mbm_timers)
++		goto free_mbm;
+ 
+-out:
+-	if (ret)
+-		mbm_cleanup();
+-
+-	return ret;
++	mbm_hrtimer_init();
++	return 0;
++ free_mbm:
++	mbm_cleanup();
++	return -ENOMEM;
+ }
+ 
+ static int __init intel_cqm_init(void)
+-- 
+2.9.3
 
-julia
-
-
->
-> Done using Coccinelle.
-> Based on a suggestion by Joe Perches <joe@perches.com>.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
-> The semantic patch seems too long for a commit log, but is in the cover
-> letter.
->
->  drivers/net/arcnet/com20020-pci.c |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/net/arcnet/com20020-pci.c b/drivers/net/arcnet/com20020-pci.c
-> index 239de38..32b8406 100644
-> --- a/drivers/net/arcnet/com20020-pci.c
-> +++ b/drivers/net/arcnet/com20020-pci.c
-> @@ -264,7 +264,7 @@ static void com20020pci_remove(struct pci_dev *pdev)
->  	}
->  }
->
-> -static struct com20020_pci_card_info card_info_10mbit = {
-> +static const struct com20020_pci_card_info card_info_10mbit = {
->  	.name = "ARC-PCI",
->  	.devcount = 1,
->  	.chan_map_tbl = {
-> @@ -277,7 +277,7 @@ static struct com20020_pci_card_info card_info_10mbit = {
->  	.flags = ARC_CAN_10MBIT,
->  };
->
-> -static struct com20020_pci_card_info card_info_5mbit = {
-> +static const struct com20020_pci_card_info card_info_5mbit = {
->  	.name = "ARC-PCI",
->  	.devcount = 1,
->  	.chan_map_tbl = {
-> @@ -290,7 +290,7 @@ static struct com20020_pci_card_info card_info_5mbit = {
->  	.flags = ARC_IS_5MBIT,
->  };
->
-> -static struct com20020_pci_card_info card_info_sohard = {
-> +static const struct com20020_pci_card_info card_info_sohard = {
->  	.name = "PLX-PCI",
->  	.devcount = 1,
->  	/* SOHARD needs PCI base addr 4 */
-> @@ -304,7 +304,7 @@ static struct com20020_pci_card_info card_info_sohard = {
->  	.flags = ARC_CAN_10MBIT,
->  };
->
-> -static struct com20020_pci_card_info card_info_eae_arc1 = {
-> +static const struct com20020_pci_card_info card_info_eae_arc1 = {
->  	.name = "EAE PLX-PCI ARC1",
->  	.devcount = 1,
->  	.chan_map_tbl = {
-> @@ -329,7 +329,7 @@ static struct com20020_pci_card_info card_info_eae_arc1 = {
->  	.flags = ARC_CAN_10MBIT,
->  };
->
-> -static struct com20020_pci_card_info card_info_eae_ma1 = {
-> +static const struct com20020_pci_card_info card_info_eae_ma1 = {
->  	.name = "EAE PLX-PCI MA1",
->  	.devcount = 2,
->  	.chan_map_tbl = {
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
