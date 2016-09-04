@@ -1,36 +1,32 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 02 Sep 2016 14:43:59 +0000
-Subject: [PATCH 2/2] crypto: qat - fix resource release omissions
-Message-Id: <20160902144400.31216-3-lambert.quentin@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Sep 2016 06:50:20 +0000
+Subject: Re: sparc: bpf_jit: Rename jump labels in bpf_jit_compile()
+Message-Id: <1365a588-c7c7-717c-1e3d-ceabd71e8479@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160902144400.31216-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160902144400.31216-1-lambert.quentin@gmail.com>
+References: <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net>
+ <054ff9e1-2b84-904b-5f92-55746292916e@users.sourceforge.net>
+ <57CAFFDC.4030606@iogearbox.net>
+ <20160903.230607.1667562673788737377.davem@davemloft.net>
+In-Reply-To: <20160903.230607.1667562673788737377.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: David Miller <davem@davemloft.net>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, sparclinux@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Rabin Vincent <rabin@rab.in>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>, linux-doc@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
 
-In certain cases qat_uclo_parse_uof_obj used to return with an error code
-before releasing all resources. This patch add a jump to the appropriate label
-ensuring that the resources are properly released before returning.
+>> NAK, just noise.
+>=20
+> And frankly I hate that leading space.
 
-This issue was found with Hector.
+Would you like to comment the recent update of the document "CodingStyle" a=
+ny more?
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/Doc=
+umentation/CodingStyle?id=865a1caa4b6b886babdd9d67e7c3608be4567a51
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
----
- drivers/crypto/qat/qat_common/qat_uclo.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/drivers/crypto/qat/qat_common/qat_uclo.c
-+++ b/drivers/crypto/qat/qat_common/qat_uclo.c
-@@ -981,7 +981,8 @@ static int qat_uclo_parse_uof_obj(struct
- 			(PID_MINOR_REV & handle->hal_handle->revision_id);
- 	if (qat_uclo_check_uof_compat(obj_handle)) {
- 		pr_err("QAT: UOF incompatible\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out_err;
- 	}
- 	obj_handle->ustore_phy_size = ICP_QAT_UCLO_MAX_USTORE;
- 	if (!obj_handle->obj_hdr->file_buff ||
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
