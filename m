@@ -1,121 +1,119 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Fri, 02 Sep 2016 17:11:53 +0000
+From: Leon Romanovsky <leon@kernel.org>
+Date: Sun, 04 Sep 2016 09:04:52 +0000
 Subject: Re: [PATCH 1/2] IB/hfi1: Fix a parameter of find_first_bit.
-Message-Id: <dd0f8f43-ffc3-ff61-567f-83a24060ac62@redhat.com>
+Message-Id: <20160904090452.GP21847@leon.nu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="KLEWhGxjdjrKsD5KCLmxXSssAdNdvPeW3"
+Content-Type: multipart/mixed; boundary="h5TCuzcqTWZxfGfk"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1472186949-9025-1-git-send-email-christophe.jaillet@wanadoo.fr>
  <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
- <d3eea048-5c7e-a5e9-900b-fabf0f6e38c8@wanadoo.fr>
-In-Reply-To: <d3eea048-5c7e-a5e9-900b-fabf0f6e38c8-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dennis.dalessandro-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kernel Janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---KLEWhGxjdjrKsD5KCLmxXSssAdNdvPeW3
-Content-Type: multipart/mixed; boundary="dHKWclj7tECPWWun7TaqpQWrpGqo1Fd8G";
- protected-headers="v1"
-From: Doug Ledford <dledford@redhat.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- mike.marciniszyn@intel.com, dennis.dalessandro@intel.com,
- sean.hefty@intel.com, hal.rosenstock@gmail.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kernel Janitors <kernel-janitors@vger.kernel.org>
-Message-ID: <dd0f8f43-ffc3-ff61-567f-83a24060ac62@redhat.com>
-Subject: Re: [PATCH 1/2] IB/hfi1: Fix a parameter of find_first_bit.
-References: <1472186949-9025-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
- <d3eea048-5c7e-a5e9-900b-fabf0f6e38c8@wanadoo.fr>
-In-Reply-To: <d3eea048-5c7e-a5e9-900b-fabf0f6e38c8@wanadoo.fr>
-
---dHKWclj7tECPWWun7TaqpQWrpGqo1Fd8G
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-On 8/27/2016 1:25 AM, Christophe JAILLET wrote:
-> Le 26/08/2016 =C3=A0 15:35, Doug Ledford a =C3=A9crit :
->> On 8/26/2016 12:49 AM, Christophe JAILLET wrote:
->>> The 2nd parameter of 'find_first_bit' is the number of bits to search=
-=2E
->>> In this case, we are passing 'sizeof(unsigned long)' which is likely =
-to
->>> be 4 or 8.
->> If the size can be 4 or 8, then using 64 universally is not correct.
->> Why not use sizeof() * 8 (or << 3)?
-> I agree with you...
->=20
-> BTW, the log message is wrong. 'port_mask' is a u64. (not an unsigned
-> long). So the sizeof should always be 8.
-> (cut and paste error from another patch, sorry)
-
-Log message modified, then patch modified to use sizeof() * 8, result
-applied.  Thanks.
-
->>
->>> It is likely that the number of bits of 'port_mask' was expected
->>> here. This
->>> variable is a 'u64', so use 64 instead.
->>>
->>> It has been spotted by the following coccinelle script:
->>> @@
->>> expression ret, x;
->>>
->>> @@
->>> *  ret =3D \(find_first_bit \| find_first_zero_bit\) (x, sizeof(...))=
-;
->>>
->>> Signed-off-by: Christophe JAILLET
->>> <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
->>> ---
->>> Not sure that using 64 directly is the best option.
->>> Maybe '8 * sizeof(port_mask)' as used in the same file for
->>> 'for_each_set_bit' would be better
->>> ---
-> ... as noted here
->=20
-> Would you like a v2 patch or, will you update it by yourself?
->=20
-> Best regards,
-> CJ
->=20
-> ---
-> L'absence de virus dans ce courrier =C3=A9lectronique a =C3=A9t=C3=A9 v=
-=C3=A9rifi=C3=A9e par le
-> logiciel antivirus Avast.
-> https://www.avast.com/antivirus
->=20
+ <2c923344-04c8-cdbd-ac06-047027f7a23a@redhat.com>
+ <20160826192957.GG594@leon.nu>
+ <e86e76dc-811b-7002-a35d-1e515c833d46@redhat.com>
+ <20160828060640.GI594@leon.nu>
+ <3afab67c-919b-b9ad-c558-55046a277aab@redhat.com>
+In-Reply-To: <3afab67c-919b-b9ad-c558-55046a277aab@redhat.com>
+To: Doug Ledford <dledford@redhat.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mike.marciniszyn@intel.com, dennis.dalessandro@intel.com, sean.hefty@intel.com, hal.rosenstock@gmail.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG Key ID: 0E572FDD
+--h5TCuzcqTWZxfGfk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Sep 02, 2016 at 10:39:11AM -0400, Doug Ledford wrote:
+> On 8/28/2016 2:06 AM, Leon Romanovsky wrote:
+> > On Fri, Aug 26, 2016 at 03:34:48PM -0400, Doug Ledford wrote:
+> >> On 8/26/2016 3:29 PM, Leon Romanovsky wrote:
+> >>> On Fri, Aug 26, 2016 at 02:01:55PM -0400, Doug Ledford wrote:
+> >>>> On 8/26/2016 9:35 AM, Doug Ledford wrote:
+> >>>>> On 8/26/2016 12:49 AM, Christophe JAILLET wrote:
+> >>>>>> The 2nd parameter of 'find_first_bit' is the number of bits to search.
+> >>>>>> In this case, we are passing 'sizeof(unsigned long)' which is likely to
+> >>>>>> be 4 or 8.
+> >>>>>
+> >>>>> If the size can be 4 or 8, then using 64 universally is not correct.
+> >>>>> Why not use sizeof() * 8 (or << 3)?
+> >>>>
+> >>>> Better yet, why not put this patch in the kernel first:
+> >>>>
+> >>>> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+> >>>> index d96a6118d26a..a8838c87668e 100644
+> >>>> --- a/include/linux/kernel.h
+> >>>> +++ b/include/linux/kernel.h
+> >>>> @@ -52,6 +52,8 @@
+> >>>>
+> >>>>  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
+> >>>> __must_be_array(arr))
+> >>>>
+> >>>> +#define bitsizeof(x)   (sizeof((x)) << 3)
+> >>>> +
+> >>>>  #define u64_to_user_ptr(x) (           \
+> >>>>  {                                      \
+> >>>>         typecheck(u64, x);              \
+> >>>>
+> >>>> then start going around replacing all these hard coded numbers with the
+> >>>> use of bitsizeof().  It can be applied not just to the find_first*bit()
+> >>>> routines, but to a bunch of other routines too.  Just look at
+> >>>> include/linux/bitmap.h and any that have nbits as an argument are
+> >>>> candidates.
+> >>>
+> >>> There is BITS_PER_LONG define for that. There is actual use of it in mlx5 for
+> >>> the similar code pieces.
+> >>
+> >> BITS_PER_LONG only works if your bitfield is a single long.  It doesn't
+> >> work for other bitfields.  What I posted above will work for anything.
+> >
+> > Yes, the question to ask if it is really needed.
+>
+> A quick review of the usage of find_first_bit in the kernel shows that
+> the majority of uses that use large, complex bit arrays (things larger
+> than a single long, where bitsizeof(complex_object) might be helpful),
+> also tend to have limits to their bitmap sizes that do not directly
+> equal the size of the bitmap.  For example, the bitmap for an md raid
+> array is allocated as a chunk of memory, where the chunk of memory is
+> larger than the bitmap size as a general rule, so
+> bitsizeof(chunk_of_memory) would run off the end of the real bitmap.
+> Likewise for a number of other complex bitmaps (block layer tag in use
+> bitmap for instance).
+>
+> So, is it useful?  I think so.  But it's not needed for original patch
+> in this thread.
+
+Honestly, I wasn't convinced at all, but you are right,
+it is theoretical discussion.
+
+Thanks
+
+>
+>
+> --
+> Doug Ledford <dledford@redhat.com>
+>     GPG Key ID: 0E572FDD
+>
 
 
---dHKWclj7tECPWWun7TaqpQWrpGqo1Fd8G--
 
---KLEWhGxjdjrKsD5KCLmxXSssAdNdvPeW3
+
+--h5TCuzcqTWZxfGfk
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v1
 
-iQIcBAEBCAAGBQJXybLaAAoJELgmozMOVy/dPbQP/ArNz/8JhRQc5j738o3xpHk5
-Pvh6fxLNBOGrtC+1az2OPe1NLulA9NCKuamWFXcT7htvZxQrIJjGKKthBRe51UVm
-ubxio0zh0FnWENbkNDbEO50gimaOq5CveUalzLtr3AhmzwBUtDWXdHVWeI8YL3Xe
-Tk7vsi0fpokpbsdSKxj00m1SlC6uSUwG7UrsMNveELeJVKX9nEF/0RyoBKmNMSOG
-IML8WjprekpUXmhfJHi20UYp/xpAC3rwmd82Cgudk18NThbDao5FOQrsnWwWDWoK
-eHUjK5z5PauHknwslXv8uy2n8A/mKyHrzdBKaaI18g1bqN9BuBtNea8wI0Fm6HnG
-PDJkiiP9qiQsGFnoyqEmQWv6c8hg3B+0h7NvclbTtIjOm5XOqaJfQZnws0xLbutt
-QJSJsEr+5yhDM+NJooo0qZFqcm8RHUKV+C/xTvyJWWWQ+13bgNG+ky10jG2sByTU
-RRxDQnWhjmVM2LQr2uquunSX0v57NNw4rDhWZiL4uhDy5WnbtGu23HbPxEUZ8WIi
-oj8dXP91or469glRol/XeLE08jcHDcBk+sePjxXp9DUIjmVYNLnslDmR9uH0Tiw+
-4c/vCDmJezpr1htdapouBjhZcOsOGcbWBSvgHMeU78FBwl86zf5d+gnVwPevNZNa
-yjsoL1UVafGfr0fMY4aI
-=NO9v
+iQIcBAEBAgAGBQJXy+O0AAoJEORje4g2clinoYUP/3RKhFGjsJEZf79Z9Qaruvad
+vmYJBMzYHp8Rtw/Qi0vX3CBTGIHctqw28TS9mTFw6Bnwp3l2ExR1K6RkRyFHHa2k
+2wEoozxT8uLNvQF2LoXRcz2e4fg9k3HEJUaePwcdyRA6uwq7wwHAhAXEhcIlQaB+
+zhOJcF4jqDP6prhHf6qzqzgu2T6vThXRMABEFaqjVh3nrMNRnKSabYhnok1bw1b8
+mF9ch3K8THYGBqivnZvNrTw2xTkPTHZW3Y5ElN8dP3WFK2oIs3LXntnUxS5RAfIB
+ddIWo1NcI1J3GF6WeEbcIOZY+aPSFidowh8PnzOLzxYZflooJvFkGEZTX56bls+p
+wtvYtLUPlNPFLO6kjdixP3/gAG+jIyK52yygVPnzrLOx713opAfCdQcuSw1ov3ZK
+FfK9YzP3S6Xd2CBAQwTs0UBybIQk3XmnJbdkrmDilQdMi0lkOoranN+0eY8dXLzg
+a1SRlQGy0fi6xvbHTnknyGVBgBamM6EPbt54JDAf5gZ7KFA1hXabcu+eEIqfK1e8
+v88dfnX/RbnycPkKzwxPwwtOuw06CtvNJHyprfLAu6DUvdhM2rdLMfMGSXcMjTZM
+ARgkxWxtcAmFXdHEJ6Z6azbtpGmGTFuiqhbZOsdPVcKZ4n6qPTJwqOOp/wtBTs4/
+lI23Kgmtnhbtm4IQDamZ
+=pmvU
 -----END PGP SIGNATURE-----
 
---KLEWhGxjdjrKsD5KCLmxXSssAdNdvPeW3--
+--h5TCuzcqTWZxfGfk--
