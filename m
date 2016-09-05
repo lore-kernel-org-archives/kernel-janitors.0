@@ -1,55 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:07:07 +0000
-Subject: [PATCH 08/11] virtio_console: Rename jump labels in port_fops_write()
-Message-Id: <ff122e8a-0789-a5e8-4d9f-6fd342bfd82d@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 17:06:11 +0000
+Subject: [PATCH 19/21] ACPI-video: Rename a jump label in acpi_video_device_lcd_query_levels()
+Message-Id: <581ebef3-6079-c33e-94fc-67277c4c013d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 15:07:42 +0200
+Date: Mon, 5 Sep 2016 17:34:40 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/virtio_console.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/acpi/acpi_video.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index d8681d9..babc812 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -842,7 +842,7 @@ static ssize_t port_fops_write(struct file *filp, const char __user *ubuf,
- 	ret = copy_from_user(buf->buf, ubuf, count);
- 	if (ret) {
- 		ret = -EFAULT;
--		goto free_buf;
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 5566f68..231fab3 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -329,14 +329,13 @@ acpi_video_device_lcd_query_levels(acpi_handle handle,
+ 	if (!obj || (obj->type != ACPI_TYPE_PACKAGE)) {
+ 		printk(KERN_ERR PREFIX "Invalid _BCL data\n");
+ 		status = -EFAULT;
+-		goto err;
 +		goto free_buffer;
  	}
  
- 	/*
-@@ -857,11 +857,10 @@ static ssize_t port_fops_write(struct file *filp, const char __user *ubuf,
- 	ret = __send_to_port(port, sg, 1, count, buf, nonblock);
+ 	*levels = obj;
  
- 	if (nonblock && ret > 0)
--		goto out;
+ 	return 0;
 -
--free_buf:
-+		goto exit;
+-err:
 + free_buffer:
- 	free_buf(buf, true);
--out:
-+ exit:
- 	return ret;
- }
+ 	kfree(buffer.pointer);
  
+ 	return status;
 -- 
 2.10.0
 
