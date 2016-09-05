@@ -1,76 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 06:18:45 +0000
-Subject: [PATCH 07/10] firewire-net: Rename a jump label in fwnet_incoming_packet()
-Message-Id: <ca7f4706-4f00-0bd5-0509-5e3502f58a78@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 20:18:21 +0000
+Subject: [PATCH 3/7] ACPI-APEI-HEST: Move an assignment in hest_ghes_dev_register()
+Message-Id: <c4956d3c-1b02-468c-686e-acdf3eaf20be@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
-In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+ <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 22:32:14 +0200
+Date: Mon, 5 Sep 2016 21:15:22 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Move one assignment for a data structure member in one local variable
+so that its setting will only be performed after a corresponding memory
+allocation succeeded by this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/firewire/net.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/acpi/apei/hest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
-index a0ccab3..7e802e7 100644
---- a/drivers/firewire/net.c
-+++ b/drivers/firewire/net.c
-@@ -621,7 +621,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
- 	peer = fwnet_peer_find_by_node_id(dev, source_node_id, generation);
- 	if (!peer) {
- 		retval = -ENOENT;
--		goto fail;
-+		goto unlock;
- 	}
+diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
+index a852237..26f5e78 100644
+--- a/drivers/acpi/apei/hest.c
++++ b/drivers/acpi/apei/hest.c
+@@ -185,13 +185,13 @@ static int __init hest_ghes_dev_register(unsigned int ghes_count)
+ 	int rc, i;
+ 	struct ghes_arr ghes_arr;
  
- 	pd = fwnet_pd_find(peer, datagram_label);
-@@ -636,7 +636,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
- 				  dg_size, buf, fg_off, len);
- 		if (pd = NULL) {
- 			retval = -ENOMEM;
--			goto fail;
-+			goto unlock;
- 		}
- 		peer->pdg_size++;
- 	} else {
-@@ -652,7 +652,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
- 			if (pd = NULL) {
- 				peer->pdg_size--;
- 				retval = -ENOMEM;
--				goto fail;
-+				goto unlock;
- 			}
- 		} else {
- 			if (!fwnet_pd_update(peer, pd, buf, fg_off, len)) {
-@@ -664,7 +664,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
- 				fwnet_pd_delete(pd);
- 				peer->pdg_size--;
- 				retval = -ENOMEM;
--				goto fail;
-+				goto unlock;
- 			}
- 		}
- 	} /* new datagram or add to existing one */
-@@ -688,7 +688,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
- 	 * moment.
- 	 */
- 	retval = 0;
-- fail:
-+ unlock:
- 	spin_unlock_irqrestore(&dev->lock, flags);
+-	ghes_arr.count = 0;
+ 	ghes_arr.ghes_devs = kmalloc_array(ghes_count,
+ 					   sizeof(*ghes_arr.ghes_devs),
+ 					   GFP_KERNEL);
+ 	if (!ghes_arr.ghes_devs)
+ 		return -ENOMEM;
  
- 	return retval;
++	ghes_arr.count = 0;
+ 	rc = apei_hest_parse(hest_parse_ghes, &ghes_arr);
+ 	if (rc)
+ 		goto err;
 -- 
 2.10.0
 
