@@ -1,27 +1,34 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 12 Sep 2016 18:46:56 +0000
-Subject: Re: [PATCH 00/47] RADOS Block Device: Fine-tuning for several function implementations
-Message-Id: <1473706016.11006.27.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 20:12:24 +0000
+Subject: [PATCH 0/7] ACPI-APEI-HEST: Fine-tuning for three function implementations
+Message-Id: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-         <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Mon, 2016-09-12 at 20:40 +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 12 Sep 2016 20:35:20 +0200
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 22:05:05 +0200
 
-This email header and all children contains:
+Some update suggestions were taken into account
+from static source code analysis.
 
-References: <566ABCD9.1060404@users.sourceforge.net>
+Markus Elfring (7):
+  Fix a typo in a comment line
+  Use kmalloc_array() in hest_ghes_dev_register()
+  Move an assignment in hest_ghes_dev_register()
+  Rename jump labels in hest_ghes_dev_register()
+  Rename jump labels in acpi_hest_init()
+  Reduce the scope for a variable in acpi_hest_init()
+  Rename jump labels in hest_parse_ghes()
 
-Markus, just stop using references lines.
+ drivers/acpi/apei/hest.c | 35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
-Stop.
+-- 
+2.10.0
 
-It doesn't add any value for any patch you've submitted here.
