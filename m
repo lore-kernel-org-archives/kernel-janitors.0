@@ -1,89 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:42:36 +0000
-Subject: [PATCH 05/30] ACPI-processor: Rename jump labels in acpi_processor_preregister_performance()
-Message-Id: <2a98baa3-3685-ba87-67c3-f9855d19bb02@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:58:03 +0000
+Subject: [PATCH 11/21] ACPI-video: Rename jump labels in acpi_video_bus_add_notify_handler()
+Message-Id: <5042c0fb-2102-2feb-9844-8f5a0e027914@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 12:38:40 +0200
+Date: Mon, 5 Sep 2016 15:50:12 +0200
 
 Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/acpi/acpi_video.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index 1ebe580..2fc82e7 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -621,12 +621,12 @@ int acpi_processor_preregister_performance(
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 6c871dd..fe9b40e 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1857,7 +1857,7 @@ static int acpi_video_bus_add_notify_handler(struct acpi_video_bus *video)
  
- 		if (pr->performance) {
- 			retval = -EBUSY;
--			goto err_out;
-+			goto unlock;
- 		}
+ 	error = acpi_video_bus_start_devices(video);
+ 	if (error)
+-		goto err_free_input;
++		goto free_device;
  
- 		if (!performance || !per_cpu_ptr(performance, i)) {
- 			retval = -EINVAL;
--			goto err_out;
-+			goto unlock;
- 		}
- 	}
+ 	snprintf(video->phys, sizeof(video->phys),
+ 			"%s/video/input0", acpi_device_hid(video->device));
+@@ -1879,7 +1879,7 @@ static int acpi_video_bus_add_notify_handler(struct acpi_video_bus *video)
  
-@@ -644,7 +644,7 @@ int acpi_processor_preregister_performance(
- 		}
- 	}
- 	if (retval)
--		goto err_ret;
-+		goto clear_cpu;
+ 	error = input_register_device(input);
+ 	if (error)
+-		goto err_stop_dev;
++		goto stop_devices;
  
- 	/*
- 	 * Now that we have _PSD data from all CPUs, lets setup P-state 
-@@ -689,12 +689,12 @@ int acpi_processor_preregister_performance(
+ 	mutex_lock(&video->device_list_lock);
+ 	list_for_each_entry(dev, &video->video_device_list, entry)
+@@ -1887,10 +1887,9 @@ static int acpi_video_bus_add_notify_handler(struct acpi_video_bus *video)
+ 	mutex_unlock(&video->device_list_lock);
  
- 			if (match_pdomain->num_processors != count_target) {
- 				retval = -EINVAL;
--				goto err_ret;
-+				goto clear_cpu;
- 			}
- 
- 			if (pdomain->coord_type != match_pdomain->coord_type) {
- 				retval = -EINVAL;
--				goto err_ret;
-+				goto clear_cpu;
- 			}
- 
- 			cpumask_set_cpu(j, covered_cpus);
-@@ -719,8 +719,7 @@ int acpi_processor_preregister_performance(
- 				     pr->performance->shared_cpu_map);
- 		}
- 	}
+ 	return 0;
 -
--err_ret:
-+ clear_cpu:
- 	for_each_possible_cpu(i) {
- 		pr = per_cpu(processors, i);
- 		if (!pr || !pr->performance)
-@@ -734,8 +733,7 @@ err_ret:
- 		}
- 		pr->performance = NULL; /* Will be set for real in register */
- 	}
--
--err_out:
-+ unlock:
- 	mutex_unlock(&performance_mutex);
- 	free_cpumask_var(covered_cpus);
- 	return retval;
+-err_stop_dev:
++ stop_devices:
+ 	acpi_video_bus_stop_devices(video);
+-err_free_input:
++ free_device:
+ 	input_free_device(input);
+ 	video->input = NULL;
+ 	return error;
 -- 
 2.10.0
 
