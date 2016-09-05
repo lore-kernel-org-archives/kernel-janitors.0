@@ -1,49 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:10:32 +0000
-Subject: [PATCH 04/24] ste_dma40: Move an assignment in d40_lcla_allocate()
-Message-Id: <5fea9143-f4af-fae7-aa7e-8bbc9c13e72f@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:54:43 +0000
+Subject: [PATCH 08/21] ACPI-video: Improve a size determination in acpi_video_bus_add()
+Message-Id: <5e2d12ce-714a-b3f7-acd2-3042d7b2125e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 08:24:46 +0200
+Date: Mon, 5 Sep 2016 15:16:26 +0200
 
-Move one assignment for the local variable "ret" so that its setting
-will only be performed after corresponding data processing succeeded
-by this function.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/ste_dma40.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/acpi/acpi_video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index 76d63b6..220129e 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -3402,7 +3402,7 @@ static int __init d40_lcla_allocate(struct d40_base *base)
- 	struct d40_lcla_pool *pool = &base->lcla_pool;
- 	unsigned long *page_list;
- 	int i, j;
--	int ret = 0;
-+	int ret;
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 8003c90..c9fbc6e 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1958,7 +1958,7 @@ static int acpi_video_bus_add(struct acpi_device *device)
+ 			return -ENODEV;
+ 	}
  
- 	/*
- 	 * This is somewhat ugly. We need 8192 bytes that are 18 bit aligned,
-@@ -3474,6 +3474,7 @@ static int __init d40_lcla_allocate(struct d40_base *base)
+-	video = kzalloc(sizeof(struct acpi_video_bus), GFP_KERNEL);
++	video = kzalloc(sizeof(*video), GFP_KERNEL);
+ 	if (!video)
+ 		return -ENOMEM;
  
- 	writel(virt_to_phys(base->lcla_pool.base),
- 	       base->virtbase + D40_DREG_LCLA);
-+	ret = 0;
-  free_page_list:
- 	kfree(page_list);
- 	return ret;
 -- 
 2.10.0
 
