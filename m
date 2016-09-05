@@ -1,34 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 06:22:43 +0000
-Subject: [PATCH 0/7] iio: Fine-tuning for several function implementations
-Message-Id: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 17:01:05 +0000
+Subject: [PATCH 14/21] ACPI-video: Improve a size determination in acpi_video_device_enumerate()
+Message-Id: <1842e61c-93c6-ad85-6334-a30e967e3750@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 08:10:08 +0200
+Date: Mon, 5 Sep 2016 16:45:41 +0200
 
-Some update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (7):
-  Use kmalloc_array() in iio_scan_mask_set()
-  Rename a jump label in iio_buffer_store_watermark()
-  Rename a jump label in iio_buffer_store_enable()
-  Rename a jump label in iio_buffer_write_length()
-  Rename a jump label in iio_scan_el_ts_store()
-  Rename a jump label in iio_scan_el_store()
-  Adjust checks for null pointers in six functions
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/acpi/acpi_video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/iio/industrialio-buffer.c | 55 ++++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 29 deletions(-)
-
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index fe10d3f..df06390 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1268,7 +1268,7 @@ static int acpi_video_device_enumerate(struct acpi_video_bus *video)
+ 			  dod->package.count));
+ 
+ 	active_list = kcalloc(1 + dod->package.count,
+-			      sizeof(struct acpi_video_enumerated_device),
++			      sizeof(*active_list),
+ 			      GFP_KERNEL);
+ 	if (!active_list) {
+ 		status = -ENOMEM;
 -- 
 2.10.0
 
