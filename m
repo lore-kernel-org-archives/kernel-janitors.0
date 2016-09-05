@@ -1,51 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:07:30 +0000
-Subject: [PATCH 01/24] ste_dma40: Use kmalloc_array() in d40_lcla_allocate()
-Message-Id: <ee94dee5-d88e-e42d-abc3-4e5a7727b561@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:57:12 +0000
+Subject: [PATCH 10/21] ACPI-video: Return directly after a failed input_allocate_device()
+Message-Id: <33f0a736-8682-1f0d-22cb-0ea6216cfb30@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 16 Sep 2016 17:56:07 +0200
+Date: Mon, 5 Sep 2016 15:46:19 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+* Return directly after a call of the function "input_allocate_device"
+  failed at the beginning.
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+* Delete the jump label "out" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/ste_dma40.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/acpi/acpi_video.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index 73203ac..fbebeff 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -3409,9 +3409,9 @@ static int __init d40_lcla_allocate(struct d40_base *base)
- 	 * To full fill this hardware requirement without wasting 256 kb
- 	 * we allocate pages until we get an aligned one.
- 	 */
--	page_list = kmalloc(sizeof(unsigned long) * MAX_LCLA_ALLOC_ATTEMPTS,
--			    GFP_KERNEL);
--
-+	page_list = kmalloc_array(MAX_LCLA_ALLOC_ATTEMPTS,
-+				  sizeof(*page_list),
-+				  GFP_KERNEL);
- 	if (!page_list) {
- 		ret = -ENOMEM;
- 		goto failure;
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 74e5a40..6c871dd 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1852,10 +1852,8 @@ static int acpi_video_bus_add_notify_handler(struct acpi_video_bus *video)
+ 	int error;
+ 
+ 	video->input = input = input_allocate_device();
+-	if (!input) {
+-		error = -ENOMEM;
+-		goto out;
+-	}
++	if (!input)
++		return -ENOMEM;
+ 
+ 	error = acpi_video_bus_start_devices(video);
+ 	if (error)
+@@ -1895,7 +1893,6 @@ err_stop_dev:
+ err_free_input:
+ 	input_free_device(input);
+ 	video->input = NULL;
+-out:
+ 	return error;
+ }
+ 
 -- 
 2.10.0
 
