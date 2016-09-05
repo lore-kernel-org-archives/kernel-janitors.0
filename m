@@ -1,63 +1,29 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 17:37:37 +0000
-Subject: [PATCH 05/14] GPU-DRM-TTM: Use kmalloc_array() in two more functions
-Message-Id: <050b05d3-60ad-3768-8519-3ea37c34b188@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 08:05:36 +0000
+Subject: [PATCH 0/4] x86/smpboot: Fine-tuning for smp_init_package_map()
+Message-Id: <6dacb257-d15c-8ea1-9dd4-0440a5ecfd1d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
-In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: x86@kernel.org, Andi Kleen <ak@linux.intel.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Len Brown <len.brown@intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 14:48:39 +0200
+Date: Mon, 5 Sep 2016 09:50:05 +0200
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+A few update suggestions were taken into account
+from static source code analysis.
 
-  This issue was detected by using the Coccinelle software.
+Markus Elfring (4):
+  Use kmalloc_array()
+  Return directly after a failed kmalloc_array()
+  Replace one kzalloc() call by kcalloc()
+  Return directly after a failed kcalloc()
 
-* Replace the specification of data types by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+ arch/x86/kernel/smpboot.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-index bef9f6f..194818d 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-@@ -439,8 +439,9 @@ static unsigned ttm_dma_page_pool_free(struct dma_pool *pool, unsigned nr_free,
- 	if (use_static)
- 		pages_to_free = static_buf;
- 	else
--		pages_to_free = kmalloc(npages_to_free * sizeof(struct page *),
--					GFP_KERNEL);
-+		pages_to_free = kmalloc_array(npages_to_free,
-+					      sizeof(*pages_to_free),
-+					      GFP_KERNEL);
- 
- 	if (!pages_to_free) {
- 		pr_err("%s: Failed to allocate memory for pool free operation\n",
-@@ -726,8 +727,9 @@ static int ttm_dma_pool_alloc_new_pages(struct dma_pool *pool,
- 			(unsigned)(PAGE_SIZE/sizeof(struct page *)));
- 
- 	/* allocate array for page caching change */
--	caching_array = kmalloc(max_cpages*sizeof(struct page *), GFP_KERNEL);
--
-+	caching_array = kmalloc_array(max_cpages,
-+				      sizeof(*caching_array),
-+				      GFP_KERNEL);
- 	if (!caching_array) {
- 		pr_err("%s: Unable to allocate table for new pages\n",
- 		       pool->dev_name);
 -- 
-2.10.0
+2.9.3
 
