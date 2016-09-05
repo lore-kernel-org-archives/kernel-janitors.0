@@ -1,41 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:15:05 +0000
-Subject: [PATCH 29/47] block-rbd: Delete an unnecessary initialisation in rbd_img_obj_exists_submit()
-Message-Id: <79f27292-3a81-f64f-2a9d-8982859ffac5@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 17:02:04 +0000
+Subject: [PATCH 15/21] ACPI-video: Delete an unnecessary initialisation in acpi_video_device_enumerate()
+Message-Id: <870cb704-f36f-f704-f09c-4f2829133fd6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:45:29 +0200
+Date: Mon, 5 Sep 2016 16:54:55 +0200
 
-The local variable "pages" will be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+The local variable "dod" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 2 +-
+ drivers/acpi/acpi_video.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 66801ec..f3f2919 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -2897,7 +2897,7 @@ static int rbd_img_obj_exists_submit(struct rbd_obj_request *obj_request)
- 	struct rbd_obj_request *stat_request;
- 	struct rbd_device *rbd_dev;
- 	struct ceph_osd_client *osdc;
--	struct page **pages = NULL;
-+	struct page **pages;
- 	u32 page_count;
- 	size_t size;
- 	int ret;
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index df06390..fcf74e7 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1245,7 +1245,7 @@ static int acpi_video_device_enumerate(struct acpi_video_bus *video)
+ 	int i;
+ 	struct acpi_video_enumerated_device *active_list;
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+-	union acpi_object *dod = NULL;
++	union acpi_object *dod;
+ 	union acpi_object *obj;
+ 
+ 	if (!video->cap._DOD)
 -- 
 2.10.0
 
