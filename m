@@ -1,33 +1,48 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Fri, 16 Sep 2016 23:13:13 +0000
-Subject: Re: [PATCH 1/4] clk/Renesas-MSTP: Use kmalloc_array() in cpg_mstp_clocks_init()
-Message-Id: <20160916231313.GY7243@codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:42:19 +0000
+Subject: [PATCH 00/21] ACPI-video: Fine-tuning for several function implementations
+Message-Id: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
- <2f96a36e-fae9-5992-7259-67c92692bbc3@users.sourceforge.net>
-In-Reply-To: <2f96a36e-fae9-5992-7259-67c92692bbc3@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On 09/14, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Sep 2016 21:10:47 +0200
-> 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 18:22:11 +0200
 
-Applied to clk-next
+Several update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (21):
+  Use kmalloc_array() in acpi_video_get_levels()
+  Return directly after a failed device query
+  Delete an error message for a failed kzalloc() call
+  Rename jump labels in acpi_video_get_levels()
+  Delete an unnecessary initialisation in acpi_video_get_levels()
+  Move four assignments in acpi_video_get_levels()
+  Rename jump labels in acpi_video_bus_add()
+  Improve a size determination in acpi_video_bus_add()
+  Rename jump labels in acpi_video_register()
+  Return directly after a failed input_allocate_device()
+  Rename jump labels in acpi_video_bus_add_notify_handler()
+  Delete unnecessary if statement in acpi_video_switch_brightness()
+  Improve a jump target in acpi_video_switch_brightness()
+  Improve a size determination in acpi_video_device_enumerate()
+  Delete an unnecessary initialisation in acpi_video_device_enumerate()
+  Rename jump labels in acpi_video_device_enumerate()
+  Delete an unnecessary initialisation in acpi_video_init_brightness()
+  Rename jump labels in acpi_video_init_brightness()
+  Rename a jump label in acpi_video_device_lcd_query_levels()
+  Improve a size determination in acpi_video_dev_register_backlight()
+  Improve a size determination in acpi_video_bus_get_one_device()
+
+ drivers/acpi/acpi_video.c | 114 +++++++++++++++++++++-------------------------
+ 1 file changed, 52 insertions(+), 62 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.10.0
+
