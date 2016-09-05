@@ -1,89 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:03:15 +0000
-Subject: [PATCH 04/11] virtio_console: Rename jump labels in virtcons_probe()
-Message-Id: <b1201791-5078-ca9d-e5af-df6ebd05d67b@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:46:17 +0000
+Subject: [PATCH 02/21] ACPI-video: Return directly after a failed device query
+Message-Id: <b569e9c9-8720-a4e4-9456-b31b38f09562@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:24:05 +0200
+Date: Mon, 5 Sep 2016 13:25:01 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Return directly after a function call "acpi_video_device_lcd_query_levels"
+failed at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/virtio_console.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/acpi/acpi_video.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 004314e..768bbb7 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -2037,7 +2037,7 @@ static int virtcons_probe(struct virtio_device *vdev)
- 	portdev = kmalloc(sizeof(*portdev), GFP_KERNEL);
- 	if (!portdev) {
- 		err = -ENOMEM;
--		goto fail;
-+		goto exit;
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 3d39b53..8f0807a 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -768,8 +768,7 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 								&obj))) {
+ 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Could not query available "
+ 						"LCD brightness level\n"));
+-		result = -ENODEV;
+-		goto out;
++		return -ENODEV;
  	}
  
- 	/* Attach this portdev to this virtio_device, and vice-versa. */
-@@ -2051,7 +2051,7 @@ static int virtcons_probe(struct virtio_device *vdev)
- 			"Error %d registering chrdev for device %u\n",
- 			portdev->chr_major, vdev->index);
- 		err = portdev->chr_major;
--		goto free;
-+		goto free_port;
- 	}
- 
- 	multiport = false;
-@@ -2068,7 +2068,7 @@ static int virtcons_probe(struct virtio_device *vdev)
- 	err = init_vqs(portdev);
- 	if (err < 0) {
- 		dev_err(&vdev->dev, "Error %d initializing vqs\n", err);
--		goto free_chrdev;
-+		goto unregister;
- 	}
- 
- 	spin_lock_init(&portdev->ports_lock);
-@@ -2091,7 +2091,7 @@ static int virtcons_probe(struct virtio_device *vdev)
- 			dev_err(&vdev->dev,
- 				"Error allocating buffers for control queue\n");
- 			err = -ENOMEM;
--			goto free_vqs;
-+			goto send_control_message;
- 		}
- 	} else {
- 		/*
-@@ -2121,17 +2121,16 @@ static int virtcons_probe(struct virtio_device *vdev)
- 		wait_for_completion(&early_console_added);
- 
- 	return 0;
--
--free_vqs:
-+ send_control_message:
- 	/* The host might want to notify mgmt sw about device add failure */
- 	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
- 			   VIRTIO_CONSOLE_DEVICE_READY, 0);
- 	remove_vqs(portdev);
--free_chrdev:
-+ unregister:
- 	unregister_chrdev(portdev->chr_major, "virtio-portsdev");
--free:
-+ free_port:
- 	kfree(portdev);
--fail:
-+ exit:
- 	return err;
- }
- 
+ 	if (obj->package.count < 2) {
 -- 
 2.10.0
 
