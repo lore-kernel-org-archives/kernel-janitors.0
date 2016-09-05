@@ -1,71 +1,66 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 23 Sep 2016 01:32:39 +0000
-Subject: [PATCH 09/11 V2] staging: dgnc: rename dgnc_tty_uninit() to dgnc_cleanup_tty()
-Message-Id: <20160923013239.GA32161@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 17:05:14 +0000
+Subject: [PATCH 18/21] ACPI-video: Rename jump labels in acpi_video_init_brightness()
+Message-Id: <674c19a2-e7a9-436c-fd50-9d58f7832f14@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-The dgnc_tty_uninit() doesn't match with dgnc_tty_init() at all.
-And also the dgnc_cleanup_tty() is only called for exiting the module.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 17:28:45 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Adjust jump labels according to the current Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-V2: the subject line was cut off, I put it completely.
+ drivers/acpi/acpi_video.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
- drivers/staging/dgnc/dgnc_driver.c | 2 +-
- drivers/staging/dgnc/dgnc_tty.c    | 4 ++--
- drivers/staging/dgnc/dgnc_tty.h    | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index 81ce5c4..fd372d3 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -147,7 +147,7 @@ static void cleanup(bool sysfiles)
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 5f1ef6e..5566f68 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -888,11 +888,11 @@ acpi_video_init_brightness(struct acpi_video_device *device)
+ 	result = acpi_video_device_lcd_get_level_current(device,
+ 							 &level_old, true);
+ 	if (result)
+-		goto out_free_levels;
++		goto free_levels;
  
- 	for (i = 0; i < dgnc_num_boards; ++i) {
- 		dgnc_remove_ports_sysfiles(dgnc_board[i]);
--		dgnc_tty_uninit(dgnc_board[i]);
-+		dgnc_cleanup_tty(dgnc_board[i]);
- 		dgnc_cleanup_board(dgnc_board[i]);
- 	}
+ 	result = acpi_video_bqc_quirk(device, max_level, level_old);
+ 	if (result)
+-		goto out_free_levels;
++		goto free_levels;
+ 	/*
+ 	 * cap._BQC may get cleared due to _BQC is found to be broken
+ 	 * in acpi_video_bqc_quirk, so check again here.
+@@ -912,17 +912,15 @@ acpi_video_init_brightness(struct acpi_video_device *device)
+ 			break;
+ 	if (i = br->count || !level)
+ 		level = max_level;
+-
+-set_level:
++ set_level:
+ 	result = acpi_video_device_lcd_set_level(device, level);
+ 	if (result)
+-		goto out_free_levels;
++		goto free_levels;
  
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 893f473..5befd28 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -387,12 +387,12 @@ void dgnc_tty_post_uninit(void)
- }
- 
- /*
-- * dgnc_tty_uninit()
-+ * dgnc_cleanup_tty()
-  *
-  * Uninitialize the TTY portion of this driver.  Free all memory and
-  * resources.
-  */
--void dgnc_tty_uninit(struct dgnc_board *brd)
-+void dgnc_cleanup_tty(struct dgnc_board *brd)
- {
- 	int i = 0;
- 
-diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
-index f065c8f..24c9a41 100644
---- a/drivers/staging/dgnc/dgnc_tty.h
-+++ b/drivers/staging/dgnc/dgnc_tty.h
-@@ -25,7 +25,7 @@ int	dgnc_tty_preinit(void);
- int     dgnc_tty_init(struct dgnc_board *);
- 
- void	dgnc_tty_post_uninit(void);
--void	dgnc_tty_uninit(struct dgnc_board *);
-+void	dgnc_cleanup_tty(struct dgnc_board *);
- 
- void	dgnc_input(struct channel_t *ch);
- void	dgnc_carrier(struct channel_t *ch);
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+ 			  "found %d brightness levels\n", br->count - 2));
+ 	return 0;
+-
+-out_free_levels:
++ free_levels:
+ 	kfree(br->levels);
+ 	kfree(br);
+ 	device->brightness = NULL;
 -- 
-1.9.1
+2.10.0
 
