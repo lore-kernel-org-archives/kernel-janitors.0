@@ -1,53 +1,50 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 22 Sep 2016 05:23:17 +0000
-Subject: [PATCH 07/11] staging: dgnc: rename dgnc_finalize_board_init() to
-Message-Id: <20160922052317.GA27259@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:59:07 +0000
+Subject: [PATCH 12/21] ACPI-video: Delete unnecessary if statement in acpi_video_switch_brightness()
+Message-Id: <e2b752b3-512f-5e07-b325-a34b301a4685@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-The dgnc_finalize_board_init() function has only job for
-requesting the IRQ. It should be renamed to dgnc_request_irq()
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 16:10:40 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Move a function call into an else branch for successful function execution.
+Omit a duplicate check for the local variable "result" then at the end.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/dgnc/dgnc_driver.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/acpi/acpi_video.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index ffe55a2..70e68b5 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -37,7 +37,7 @@ MODULE_SUPPORTED_DEVICE("dgnc");
-  *
-  */
- static int		dgnc_start(void);
--static int		dgnc_finalize_board_init(struct dgnc_board *brd);
-+static int dgnc_request_irq(struct dgnc_board *brd);
- static struct dgnc_board *dgnc_found_board(struct pci_dev *pdev, int id);
- static void		dgnc_cleanup_board(struct dgnc_board *brd);
- static void		dgnc_poll_handler(ulong dummy);
-@@ -296,7 +296,7 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto failed;
- 	}
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index fe9b40e..0362a43 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1372,14 +1372,12 @@ acpi_video_switch_brightness(struct work_struct *work)
+ 	level_next = acpi_video_get_next_level(device, level_current, event);
  
--	rc = dgnc_finalize_board_init(brd);
-+	rc = dgnc_request_irq(brd);
- 	if (rc < 0) {
- 		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
- 		goto unregister_tty;
-@@ -558,7 +558,7 @@ failed:
- 	return ERR_PTR(rc);
+ 	result = acpi_video_device_lcd_set_level(device, level_next);
+-
+-	if (!result)
+-		backlight_force_update(device->backlight,
+-				       BACKLIGHT_UPDATE_HOTKEY);
+-
+ out:
+ 	if (result)
+ 		printk(KERN_ERR PREFIX "Failed to switch the brightness\n");
++	else
++		backlight_force_update(device->backlight,
++				       BACKLIGHT_UPDATE_HOTKEY);
  }
  
--static int dgnc_finalize_board_init(struct dgnc_board *brd)
-+static int dgnc_request_irq(struct dgnc_board *brd)
- {
- 	int rc = 0;
- 
+ int acpi_video_get_edid(struct acpi_device *device, int type, int device_id,
 -- 
-1.9.1
+2.10.0
 
