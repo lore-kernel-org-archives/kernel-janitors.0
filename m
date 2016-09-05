@@ -1,97 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:10:04 +0000
-Subject: [PATCH 11/11] virtio_console: Rename a jump label in five functions
-Message-Id: <3fe1a284-eda5-9951-c978-17fa4ea7d501@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 08:13:23 +0000
+Subject: [PATCH 4/4] x86/smpboot: Return directly after a failed kcalloc()
+Message-Id: <f11256ad-f312-53b6-8509-461392e1fd7d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+References: <6dacb257-d15c-8ea1-9dd4-0440a5ecfd1d@users.sourceforge.net>
+In-Reply-To: <6dacb257-d15c-8ea1-9dd4-0440a5ecfd1d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: x86@kernel.org, Andi Kleen <ak@linux.intel.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Len Brown <len.brown@intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 15:37:52 +0200
+Date: Mon, 5 Sep 2016 09:39:05 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
-Thus replace the identifier "out" by "unlock".
+Return directly after a memory allocation failed in this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/virtio_console.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/x86/kernel/smpboot.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 0c4d4e7..6c90c9c 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -257,11 +257,11 @@ static struct port *find_port_by_vtermno(u32 vtermno)
- 	list_for_each_entry(cons, &pdrvdata.consoles, list) {
- 		if (cons->vtermno = vtermno) {
- 			port = container_of(cons, struct port, cons);
--			goto out;
-+			goto unlock;
- 		}
- 	}
- 	port = NULL;
--out:
-+ unlock:
- 	spin_unlock_irqrestore(&pdrvdata_lock, flags);
- 	return port;
- }
-@@ -276,11 +276,11 @@ static struct port *find_port_by_devt_in_portdev(struct ports_device *portdev,
- 	list_for_each_entry(port, &portdev->ports, list) {
- 		if (port->cdev->dev = dev) {
- 			kref_get(&port->kref);
--			goto out;
-+			goto unlock;
- 		}
- 	}
- 	port = NULL;
--out:
-+ unlock:
- 	spin_unlock_irqrestore(&portdev->ports_lock, flags);
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index e3fdc44..a30f625 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -359,6 +359,10 @@ static void __init smp_init_package_map(void)
+ 	physical_package_map = kcalloc(BITS_TO_LONGS(max_physical_pkg_id),
+ 				       sizeof(*physical_package_map),
+ 				       GFP_KERNEL);
++	if (!physical_package_map) {
++		kfree(physical_to_logical_pkg);
++		return;
++	}
  
- 	return port;
-@@ -296,10 +296,10 @@ static struct port *find_port_by_devt(dev_t dev)
- 	list_for_each_entry(portdev, &pdrvdata.portdevs, list) {
- 		port = find_port_by_devt_in_portdev(portdev, dev);
- 		if (port)
--			goto out;
-+			goto unlock;
- 	}
- 	port = NULL;
--out:
-+ unlock:
- 	spin_unlock_irqrestore(&pdrvdata_lock, flags);
- 	return port;
- }
-@@ -312,9 +312,9 @@ static struct port *find_port_by_id(struct ports_device *portdev, u32 id)
- 	spin_lock_irqsave(&portdev->ports_lock, flags);
- 	list_for_each_entry(port, &portdev->ports, list)
- 		if (port->id = id)
--			goto out;
-+			goto unlock;
- 	port = NULL;
--out:
-+ unlock:
- 	spin_unlock_irqrestore(&portdev->ports_lock, flags);
- 
- 	return port;
-@@ -329,9 +329,9 @@ static struct port *find_port_by_vq(struct ports_device *portdev,
- 	spin_lock_irqsave(&portdev->ports_lock, flags);
- 	list_for_each_entry(port, &portdev->ports, list)
- 		if (port->in_vq = vq || port->out_vq = vq)
--			goto out;
-+			goto unlock;
- 	port = NULL;
--out:
-+ unlock:
- 	spin_unlock_irqrestore(&portdev->ports_lock, flags);
- 	return port;
- }
+ 	for_each_present_cpu(cpu) {
+ 		unsigned int apicid = apic->cpu_present_to_apicid(cpu);
 -- 
-2.10.0
+2.9.3
 
