@@ -1,24 +1,73 @@
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 01 Sep 2016 19:55:38 +0000
-Subject: Re: [STLinux Kernel] [PATCH 1/9] serial: st-asc: constify uart_ops structures
-Message-Id: <20160901195538.GA19072@griffinp-ThinkPad-X1-Carbon-2nd>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:50:25 +0000
+Subject: [PATCH 04/21] ACPI-video: Rename jump labels in acpi_video_get_levels()
+Message-Id: <38d7268d-4166-6df0-06fd-c66456a2d544@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472752298-981-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Thu, 01 Sep 2016, Julia Lawall wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 14:11:43 +0200
 
-> Check for uart_ops structures that are only stored in the ops field of a
-> uart_port structure.  This field is declared const, so uart_ops structures
-> that have this property can be declared as const also.
+Adjust jump labels according to the current Linux coding style convention.
 
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/acpi/acpi_video.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-regards,
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 420d125..82987db 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -773,13 +773,13 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 
+ 	if (obj->package.count < 2) {
+ 		result = -EINVAL;
+-		goto out;
++		goto free_object;
+ 	}
+ 
+ 	br = kzalloc(sizeof(*br), GFP_KERNEL);
+ 	if (!br) {
+ 		result = -ENOMEM;
+-		goto out;
++		goto free_object;
+ 	}
+ 
+ 	br->levels = kmalloc_array(obj->package.count + 2,
+@@ -787,7 +787,7 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 				   GFP_KERNEL);
+ 	if (!br->levels) {
+ 		result = -ENOMEM;
+-		goto out_free;
++		goto free_brightness;
+ 	}
+ 
+ 	for (i = 0; i < obj->package.count; i++) {
+@@ -843,13 +843,12 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 	*dev_br = br;
+ 	if (pmax_level)
+ 		*pmax_level = max_level;
+-
+-out:
++ free_object:
+ 	kfree(obj);
+ 	return result;
+-out_free:
++ free_brightness:
+ 	kfree(br);
+-	goto out;
++	goto free_object;
+ }
+ EXPORT_SYMBOL(acpi_video_get_levels);
+ 
+-- 
+2.10.0
 
-Peter.
