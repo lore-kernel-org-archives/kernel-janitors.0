@@ -1,24 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 18:17:56 +0000
-Subject: Re: GPU-DRM-TILCDC: Return directly after a failed kfree_table_init() in tilcdc_convert_slave_node()
-Message-Id: <8aa58859-9c96-fa33-ef17-0fb0c3813cd2@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 17:09:06 +0000
+Subject: [PATCH 21/21] ACPI-video: Improve a size determination in acpi_video_bus_get_one_device()
+Message-Id: <173576b1-4f41-91c8-4d3a-da7671cc8f4f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <2f3f7ad7-16a0-1dfb-d073-0d993cd767ee@users.sourceforge.net>
- <e74ecf81-1ddc-2583-3a4b-48735e2898c4@users.sourceforge.net>
- <c1e476e3-aaeb-a67c-292c-cfa07f7780e7@ti.com>
-In-Reply-To: <c1e476e3-aaeb-a67c-292c-cfa07f7780e7@ti.com>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jyri Sarha <jsarha@ti.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Julia Lawall <julia.lawall@lip6.fr>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-> I'll pick this up, but with your permission I change
-> the commit subject to follow the current convention.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 17:50:04 +0200
 
-I guess that I can accept the integration of this update suggestion
-also with an adjusted prefix in the commit title.   ;-)
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Regards,
-Markus
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/acpi/acpi_video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 9685725..4cd693e 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1084,7 +1084,7 @@ acpi_video_bus_get_one_device(struct acpi_device *device,
+ 	if (ACPI_FAILURE(status))
+ 		return 0;
+ 
+-	data = kzalloc(sizeof(struct acpi_video_device), GFP_KERNEL);
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-- 
+2.10.0
+
