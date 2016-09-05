@@ -1,102 +1,64 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 12 Sep 2016 19:05:46 +0000
-Subject: Applied "ASoC: ac97: constify gpio_chip structures" to the asoc tree
-Message-Id: <E1bjWY6-0002UO-Vs@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 20:21:04 +0000
+Subject: [PATCH 5/7] ACPI-APEI-HEST: Rename jump labels in acpi_hest_init()
+Message-Id: <6e09e601-0feb-0a12-0c7b-a7d370d1013f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473596082-32690-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473596082-32690-6-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 21:30:06 +0200
 
-   ASoC: ac97: constify gpio_chip structures
+Adjust jump labels according to the current Linux coding style convention.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 52abe54138d9b14b4a0a17742a53d2411bc5b167 Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 14:14:41 +0200
-Subject: [PATCH] ASoC: ac97: constify gpio_chip structures
-
-These structures are only used to copy into other structures, so declare
-them as const.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct gpio_chip i@p = { ... };
-
-@ok@
-identifier r.i;
-expression e;
-position p;
-@@
-e = i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct gpio_chip e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct gpio_chip i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/soc-ac97.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/apei/hest.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/soc-ac97.c b/sound/soc/soc-ac97.c
-index bc4a55bb3fd9..6c8b0b0c56ec 100644
---- a/sound/soc/soc-ac97.c
-+++ b/sound/soc/soc-ac97.c
-@@ -116,7 +116,7 @@ static int snd_soc_ac97_gpio_direction_out(struct gpio_chip *chip,
- 	return snd_soc_update_bits(codec, AC97_GPIO_CFG, 1 << offset, 0);
- }
+diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
+index 03dd7d3..ddff1b1 100644
+--- a/drivers/acpi/apei/hest.c
++++ b/drivers/acpi/apei/hest.c
+@@ -226,12 +226,12 @@ void __init acpi_hest_init(void)
+ 	status = acpi_get_table(ACPI_SIG_HEST, 0,
+ 				(struct acpi_table_header **)&hest_tab);
+ 	if (status = AE_NOT_FOUND)
+-		goto err;
++		goto disable_hest;
+ 	else if (ACPI_FAILURE(status)) {
+ 		const char *msg = acpi_format_exception(status);
+ 		pr_err(HEST_PFX "Failed to get table, %s\n", msg);
+ 		rc = -EINVAL;
+-		goto err;
++		goto disable_hest;
+ 	}
  
--static struct gpio_chip snd_soc_ac97_gpio_chip = {
-+static const struct gpio_chip snd_soc_ac97_gpio_chip = {
- 	.label			= "snd_soc_ac97",
- 	.owner			= THIS_MODULE,
- 	.request		= snd_soc_ac97_gpio_request,
+ 	if (!acpi_disable_cmcff)
+@@ -240,14 +240,14 @@ void __init acpi_hest_init(void)
+ 	if (!ghes_disable) {
+ 		rc = apei_hest_parse(hest_parse_ghes_count, &ghes_count);
+ 		if (rc)
+-			goto err;
++			goto disable_hest;
+ 		rc = hest_ghes_dev_register(ghes_count);
+ 		if (rc)
+-			goto err;
++			goto disable_hest;
+ 	}
+ 
+ 	pr_info(HEST_PFX "Table parsing has been initialized.\n");
+ 	return;
+-err:
++ disable_hest:
+ 	hest_disable = 1;
+ }
 -- 
-2.8.1
+2.10.0
 
