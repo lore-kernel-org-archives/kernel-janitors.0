@@ -1,69 +1,57 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 22 Sep 2016 05:24:01 +0000
-Subject: [PATCH 09/11] staging: dgnc: rename dgnc_tty_uninit() to
-Message-Id: <20160922052401.GA27289@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:56:18 +0000
+Subject: [PATCH 09/21] ACPI-video: Rename jump labels in acpi_video_register()
+Message-Id: <ecbd8b3c-cb43-8f10-abea-519f62683448@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-The dgnc_tty_uninit() doesn't match with dgnc_tty_init() at all.
-And also the dgnc_cleanup_tty() is only called for exiting the module.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 15:28:12 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Adjust jump labels according to the current Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/dgnc/dgnc_driver.c | 2 +-
- drivers/staging/dgnc/dgnc_tty.c    | 4 ++--
- drivers/staging/dgnc/dgnc_tty.h    | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/acpi/acpi_video.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index 81ce5c4..fd372d3 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -147,7 +147,7 @@ static void cleanup(bool sysfiles)
- 
- 	for (i = 0; i < dgnc_num_boards; ++i) {
- 		dgnc_remove_ports_sysfiles(dgnc_board[i]);
--		dgnc_tty_uninit(dgnc_board[i]);
-+		dgnc_cleanup_tty(dgnc_board[i]);
- 		dgnc_cleanup_board(dgnc_board[i]);
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index c9fbc6e..74e5a40 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -2080,22 +2080,21 @@ int acpi_video_register(void)
+ 		 * if the function of acpi_video_register is already called,
+ 		 * don't register the acpi_vide_bus again and return no error.
+ 		 */
+-		goto leave;
++		goto unlock;
  	}
  
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index 893f473..5befd28 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -387,12 +387,12 @@ void dgnc_tty_post_uninit(void)
+ 	dmi_check_system(video_dmi_table);
+ 
+ 	ret = acpi_bus_register_driver(&acpi_video_bus);
+ 	if (ret)
+-		goto leave;
++		goto unlock;
+ 
+ 	/*
+ 	 * When the acpi_video_bus is loaded successfully, increase
+ 	 * the counter reference.
+ 	 */
+ 	register_count = 1;
+-
+-leave:
++ unlock:
+ 	mutex_unlock(&register_count_mutex);
+ 	return ret;
  }
- 
- /*
-- * dgnc_tty_uninit()
-+ * dgnc_cleanup_tty()
-  *
-  * Uninitialize the TTY portion of this driver.  Free all memory and
-  * resources.
-  */
--void dgnc_tty_uninit(struct dgnc_board *brd)
-+void dgnc_cleanup_tty(struct dgnc_board *brd)
- {
- 	int i = 0;
- 
-diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
-index f065c8f..24c9a41 100644
---- a/drivers/staging/dgnc/dgnc_tty.h
-+++ b/drivers/staging/dgnc/dgnc_tty.h
-@@ -25,7 +25,7 @@ int	dgnc_tty_preinit(void);
- int     dgnc_tty_init(struct dgnc_board *);
- 
- void	dgnc_tty_post_uninit(void);
--void	dgnc_tty_uninit(struct dgnc_board *);
-+void	dgnc_cleanup_tty(struct dgnc_board *);
- 
- void	dgnc_input(struct channel_t *ch);
- void	dgnc_carrier(struct channel_t *ch);
 -- 
-1.9.1
+2.10.0
 
