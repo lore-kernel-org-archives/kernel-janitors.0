@@ -1,73 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 19:47:31 +0000
-Subject: [PATCH 4/4] i2c-dev: Adjust checks for null pointers in three functions
-Message-Id: <7ba4f7a9-9af4-4a83-776c-930fb33f9e9e@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:51:32 +0000
+Subject: [PATCH 05/21] ACPI-video: Delete an unnecessary initialisation in acpi_video_get_levels()
+Message-Id: <9cf61b6f-e42f-25d1-3360-7747ed994b5a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
-In-Reply-To: <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 21:30:20 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 5 Sep 2016 14:23:55 +0200
 
-The script "checkpatch.pl" can point information out like the following.
-
-Comparison to NULL could be written !=85
-
-Thus fix the affected source code places.
+The local variable "br" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/i2c-dev.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/acpi/acpi_video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index 7d3e3ca..8f7eddd 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -147,7 +147,7 @@ static ssize_t i2cdev_read(struct file *file, char __us=
-er *buf, size_t count,
- 		count =3D 8192;
-=20
- 	tmp =3D kmalloc(count, GFP_KERNEL);
--	if (tmp =3D NULL)
-+	if (!tmp)
- 		return -ENOMEM;
-=20
- 	pr_debug("i2c-dev: i2c-%d reading %zu bytes.\n",
-@@ -263,7 +263,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client=
- *client,
- 	data_ptrs =3D kmalloc_array(rdwr_arg.nmsgs,
- 				  sizeof(*data_ptrs),
- 				  GFP_KERNEL);
--	if (data_ptrs =3D NULL) {
-+	if (!data_ptrs) {
- 		kfree(rdwr_pa);
- 		return -ENOMEM;
- 	}
-@@ -374,7 +374,7 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_clien=
-t *client,
- 				      client->flags, data_arg.read_write,
- 				      data_arg.command, data_arg.size, NULL);
-=20
--	if (data_arg.data =3D NULL) {
-+	if (!data_arg.data) {
- 		dev_dbg(&client->adapter->dev,
- 			"data is NULL pointer in ioctl I2C_SMBUS.\n");
- 		return -EINVAL;
---=20
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 82987db..0799865 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -760,7 +760,7 @@ int acpi_video_get_levels(struct acpi_device *device,
+ 	union acpi_object *obj = NULL;
+ 	int i, max_level = 0, count = 0, level_ac_battery = 0;
+ 	union acpi_object *o;
+-	struct acpi_video_device_brightness *br = NULL;
++	struct acpi_video_device_brightness *br;
+ 	int result = 0;
+ 	u32 value;
+ 
+-- 
 2.10.0
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
