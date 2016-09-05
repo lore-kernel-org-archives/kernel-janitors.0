@@ -1,85 +1,61 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 26 Sep 2016 00:42:02 +0000
-Subject: [PATCH 04/11] staging: dgnc: kfree for board structure in dgnc_found_board()
-Message-Id: <20160926004202.GA3820@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 08:12:30 +0000
+Subject: [PATCH 3/4] x86/smpboot: Replace one kzalloc() call by kcalloc()
+Message-Id: <b547ba2e-5152-2720-551b-a22ad88ca4fc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160922052203.GA27209@SEL-JYOUN-D1>
-In-Reply-To: <20160922052203.GA27209@SEL-JYOUN-D1>
+References: <6dacb257-d15c-8ea1-9dd4-0440a5ecfd1d@users.sourceforge.net>
+In-Reply-To: <6dacb257-d15c-8ea1-9dd4-0440a5ecfd1d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: x86@kernel.org, Andi Kleen <ak@linux.intel.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Len Brown <len.brown@intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-The board structure should be freed when any function was failed
-in dgnc_found_board(). And the board strucure will be stored
-into dgnc_board array when the dgnc_found_board() function has no error.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 09:29:40 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+* The script "checkpatch.pl" can point information out like the following.
+
+  WARNING: Prefer kcalloc over kzalloc with multiply
+
+  Thus fix the affected source code place.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+* Delete the local variable "size" which became unnecessary with
+  this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-RESEND: send the whole series again. Because I missed some patches
-when the V2 patches sent.
+ arch/x86/kernel/smpboot.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-V2: The subject line was cut off, I put it completely and update
-change log.
-
- drivers/staging/dgnc/dgnc_driver.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index 58cebf4..0114e78 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -353,9 +353,7 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 	int rc = 0;
- 
- 	/* get the board structure and prep it */
--	dgnc_board[dgnc_num_boards] = kzalloc(sizeof(*brd), GFP_KERNEL);
--	brd = dgnc_board[dgnc_num_boards];
--
-+	brd = kzalloc(sizeof(*brd), GFP_KERNEL);
- 	if (!brd)
- 		return -ENOMEM;
- 
-@@ -411,7 +409,8 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 		if (!brd->membase) {
- 			dev_err(&brd->pdev->dev,
- 				"Card has no PCI IO resources, failing.\n");
--			return -ENODEV;
-+			rc = -ENODEV;
-+			goto failed;
- 		}
- 
- 		brd->membase_end = pci_resource_end(pdev, 4);
-@@ -502,7 +501,8 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 	default:
- 		dev_err(&brd->pdev->dev,
- 			"Didn't find any compatible Neo/Classic PCI boards.\n");
--		return -ENXIO;
-+		rc = -ENXIO;
-+		goto failed;
- 	}
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 2ce06ef..e3fdc44 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -311,7 +311,6 @@ EXPORT_SYMBOL(topology_phys_to_logical_pkg);
+ static void __init smp_init_package_map(void)
+ {
+ 	unsigned int ncpus, cpu;
+-	size_t size;
  
  	/*
-@@ -539,14 +539,15 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 	 * Today neither Intel nor AMD support heterogenous systems. That
+@@ -357,8 +356,9 @@ static void __init smp_init_package_map(void)
+ 	memset(physical_to_logical_pkg,
+ 	       0xff,
+ 	       sizeof(*physical_to_logical_pkg) * max_physical_pkg_id);
+-	size = BITS_TO_LONGS(max_physical_pkg_id) * sizeof(unsigned long);
+-	physical_package_map = kzalloc(size, GFP_KERNEL);
++	physical_package_map = kcalloc(BITS_TO_LONGS(max_physical_pkg_id),
++				       sizeof(*physical_package_map),
++				       GFP_KERNEL);
  
- 	wake_up_interruptible(&brd->state_wait);
- 
-+	dgnc_board[dgnc_num_boards] = brd;
-+
- 	return 0;
- 
- failed:
- 	dgnc_tty_uninit(brd);
--	brd->state = BOARD_FAILED;
--	brd->dpastatus = BD_NOFEP;
-+	kfree(brd);
- 
--	return -ENXIO;
-+	return rc;
- }
- 
- static int dgnc_finalize_board_init(struct dgnc_board *brd)
+ 	for_each_present_cpu(cpu) {
+ 		unsigned int apicid = apic->cpu_present_to_apicid(cpu);
 -- 
-1.9.1
+2.9.3
 
