@@ -1,68 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 17:51:30 +0000
-Subject: [PATCH 1/9] serial: st-asc: constify uart_ops structures
-Message-Id: <1472752298-981-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 16:48:10 +0000
+Subject: [PATCH 03/21] ACPI-video: Delete an error message for a failed kzalloc() call
+Message-Id: <4eb716a7-fcad-81d7-2168-49e5b1bfcbdf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>, Wolfram Sang <wsa@the-dreams.de>
 
-Check for uart_ops structures that are only stored in the ops field of a
-uart_port structure.  This field is declared const, so uart_ops structures
-that have this property can be declared as const also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Sep 2016 13:57:33 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Omit an extra message for a memory allocation failure in this function.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct uart_ops i@p = { ... };
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 
-@ok@
-identifier r.i;
-struct uart_port e;
-position p;
-@@
-e.ops = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct uart_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct uart_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/st-asc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpi_video.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
-index 2d78cb3..379e5bd 100644
---- a/drivers/tty/serial/st-asc.c
-+++ b/drivers/tty/serial/st-asc.c
-@@ -639,7 +639,7 @@ static void asc_put_poll_char(struct uart_port *port, unsigned char c)
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 8f0807a..420d125 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -778,7 +778,6 @@ int acpi_video_get_levels(struct acpi_device *device,
  
- /*---------------------------------------------------------------------*/
- 
--static struct uart_ops asc_uart_ops = {
-+static const struct uart_ops asc_uart_ops = {
- 	.tx_empty	= asc_tx_empty,
- 	.set_mctrl	= asc_set_mctrl,
- 	.get_mctrl	= asc_get_mctrl,
+ 	br = kzalloc(sizeof(*br), GFP_KERNEL);
+ 	if (!br) {
+-		printk(KERN_ERR "can't allocate memory\n");
+ 		result = -ENOMEM;
+ 		goto out;
+ 	}
+-- 
+2.10.0
 
