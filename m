@@ -1,31 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 07:23:05 +0000
-Subject: [PATCH 0/5] GPU-DRM-nouveau: Fine-tuning for five function implementations
-Message-Id: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 20:22:07 +0000
+Subject: [PATCH 6/7] ACPI-APEI-HEST: Reduce the scope for a variable in acpi_hest_init()
+Message-Id: <3dcbbc1b-7af3-4d5f-2851-88c115c5c459@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 09:09:09 +0200
+Date: Mon, 5 Sep 2016 21:50:34 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+Move the definition for the local variable "ghes_count" into an if branch
+so that the corresponding setting will only be performed if GHES could be
+enabled by this function.
 
-Markus Elfring (5):
-  Use kmalloc_array() in nvbios_iccsense_parse()
-  Use kmalloc_array() in gt215_link_train()
-  Delete unnecessary braces
-  Adjust a kzalloc() call in gt215_ram_new()
-  Add space after an "if"
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/acpi/apei/hest.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c |  4 +++-
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c   | 21 +++++++++------------
- 2 files changed, 12 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
+index ddff1b1..0e629c0 100644
+--- a/drivers/acpi/apei/hest.c
++++ b/drivers/acpi/apei/hest.c
+@@ -216,7 +216,6 @@ void __init acpi_hest_init(void)
+ {
+ 	acpi_status status;
+ 	int rc = -ENODEV;
+-	unsigned int ghes_count = 0;
+ 
+ 	if (hest_disable) {
+ 		pr_info(HEST_PFX "Table parsing disabled.\n");
+@@ -238,6 +237,8 @@ void __init acpi_hest_init(void)
+ 		apei_hest_parse(hest_parse_cmc, NULL);
+ 
+ 	if (!ghes_disable) {
++		unsigned int ghes_count = 0;
++
+ 		rc = apei_hest_parse(hest_parse_ghes_count, &ghes_count);
+ 		if (rc)
+ 			goto disable_hest;
 -- 
 2.10.0
 
