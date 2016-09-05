@@ -1,42 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 20:28:09 +0000
-Subject: [PATCH 06/13] DRBD-receiver: Improve a size determination in receive_sizes()
-Message-Id: <0d722998-966d-9133-48e5-69e32ae2d8b9@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 17:07:24 +0000
+Subject: [PATCH 20/21] ACPI-video: Improve a size determination in acpi_video_dev_register_backlight()
+Message-Id: <878fe5ae-be5c-79a9-c44b-e6c25ac5220b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
-In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 21:45:13 +0200
+Date: Mon, 5 Sep 2016 17:45:40 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Replace the specification of a data structure by a reference for
+a local variable as the parameter for the operator "sizeof" to make
+the corresponding size determination a bit safer according to
+the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/drbd/drbd_receiver.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/acpi/acpi_video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 7666212..64bc316 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -4085,7 +4085,8 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
- 		if (my_usize != p_usize) {
- 			struct disk_conf *old_disk_conf, *new_disk_conf;
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 231fab3..9685725 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1685,7 +1685,7 @@ static void acpi_video_dev_register_backlight(struct acpi_video_device *device)
+ 		pci_dev_put(pdev);
+ 	}
  
--			new_disk_conf = kzalloc(sizeof(struct disk_conf), GFP_KERNEL);
-+			new_disk_conf = kzalloc(sizeof(*new_disk_conf),
-+						GFP_KERNEL);
- 			if (!new_disk_conf) {
- 				drbd_err(device, "Allocation of new disk_conf failed\n");
- 				put_ldev(device);
+-	memset(&props, 0, sizeof(struct backlight_properties));
++	memset(&props, 0, sizeof(props));
+ 	props.type = BACKLIGHT_FIRMWARE;
+ 	props.max_brightness = device->brightness->count - 3;
+ 	device->backlight = backlight_device_register(name,
 -- 
 2.10.0
 
