@@ -1,24 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Sep 2016 10:09:30 +0000
-Subject: Re: [PATCH 2/4] GPU-DRM-QXL: Move three assignments in qxl_device_init()
-Message-Id: <20160922100257.GN13620@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 05 Sep 2016 10:40:38 +0000
+Subject: Re: s390/debug: Fine-tuning for several function implementations
+Message-Id: <2e09585e-1ffd-4301-13a5-2792da0078b2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
- <f7eb26ad-39be-2918-627b-5f4981d07808@users.sourceforge.net>
-In-Reply-To: <f7eb26ad-39be-2918-627b-5f4981d07808@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+ <20160905123103.2c587d60@mschwide>
+In-Reply-To: <20160905123103.2c587d60@mschwide>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: dri-devel@lists.freedesktop.org, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>, Tejun Heo <tj@kernel.org>, Thierry Reding <treding@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-Guys, please stop accepting patches from Markus!
+> While I agree that the old code in arch/s390/kernel/debug.c does not abide to
+> the current coding style standards, I doubt there is much value in these patches.
 
-Markus, you always introduce bugs.  I have asked you over and over to
-stop sending "cleanup patches" because you are not careful.  If you
-restricted yourself to fixing bugs only then you would maybe fix more
-bugs than you introduce but as it you are making the kernel worse.
+How do you value the recommended compliance with the current Linux coding style convention?
 
-regards
-dan carepnter
+Will my contribution be useful for further considerations?
 
+
+> To be honest I got annoyed after the third patch
+
+Thanks for your response.
+
+
+> and stopped reading after the forth.
+
+Does anybody in your company care for further improvements also in this software module?
+
+Are there still opportunities to continue development in more constructive ways here?
+
+Regards,
+Markus
