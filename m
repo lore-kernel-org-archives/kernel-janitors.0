@@ -1,26 +1,29 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Sat, 03 Sep 2016 16:58:12 +0000
-Subject: Re: [PATCH 3/4] sparc: bpf_jit: Avoid assignment for "flen" if BPF JIT is disabled
-Message-Id: <57CB0124.1040605@iogearbox.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 06 Sep 2016 03:38:06 +0000
+Subject: Re: ACPI-APEI-HEST: Fine-tuning for three function implementations
+Message-Id: <06ab72bc-6e00-1829-f1bf-67f0a31aff38@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net> <2bd51cac-bbb7-da76-9648-4ae24ba342b2@users.sourceforge.net>
-In-Reply-To: <2bd51cac-bbb7-da76-9648-4ae24ba342b2@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+ <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, sparclinux@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Alexei Starovoitov <ast@kernel.org>, "David S. Miller" <davem@davemloft.net>, Rabin Vincent <rabin@rab.in>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On 09/03/2016 06:40 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 3 Sep 2016 18:00:03 +0200
->
-> Move the assignment for the local variable "flen" a bit at the beginning
-> so that it will only be performed if BPF JIT is enabled for this function.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Like in the other patch series I've just commented,
 
-Why is that a particular issue (did you measure some improvement when
-you say "fine-tuning" as per subject) ?
+Thanks for your quick response.
 
-That's all not in critical path here by the way, same for patch 2.
+
+> please put all label renames into one patch.
+
+Could you accept these update suggestions generally?
+
+
+I would prefer to avoid squashing special changes together by default.
+
+Regards,
+Markus
