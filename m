@@ -1,69 +1,86 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 17:35:25 +0000
-Subject: [PATCH 1/2] watchdog: tegra: constify watchdog_ops structures
-Message-Id: <1472751326-22897-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Tue, 06 Sep 2016 09:13:11 +0000
+Subject: Re: [PATCH 1/2] watchdog: tegra: constify watchdog_ops structures
+Message-Id: <20160906091311.GD15644@ulmo.ba.sec>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="UoPmpPX/dBe4BELn"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1472751326-22897-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472751326-22897-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ <1472751326-22897-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1472751326-22897-2-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Wim Van Sebroeck <wim@iguana.be>, kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-watchdog@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Check for watchdog_ops structures that are only stored in the ops field of
-a watchdog_device structure.  This field is declared const, so watchdog_ops
-structures that have this property can be declared as const also.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+--UoPmpPX/dBe4BELn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct watchdog_ops i@p = { ... };
+On Thu, Sep 01, 2016 at 07:35:25PM +0200, Julia Lawall wrote:
+> Check for watchdog_ops structures that are only stored in the ops field of
+> a watchdog_device structure.  This field is declared const, so watchdog_o=
+ps
+> structures that have this property can be declared as const also.
+>=20
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct watchdog_ops i@p =3D { ... };
+>=20
+> @ok@
+> identifier r.i;
+> struct watchdog_device e;
+> position p;
+> @@
+> e.ops =3D &i@p;
+>=20
+> @bad@
+> position p !=3D {r.p,ok.p};
+> identifier r.i;
+> struct watchdog_ops e;
+> @@
+> e@i@p
+>=20
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct watchdog_ops i =3D { ... };
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+>  drivers/watchdog/tegra_wdt.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-@ok@
-identifier r.i;
-struct watchdog_device e;
-position p;
-@@
-e.ops = &i@p;
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct watchdog_ops e;
-@@
-e@i@p
+--UoPmpPX/dBe4BELn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct watchdog_ops i = { ... };
-// </smpl>
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+iQIcBAABCAAGBQJXzoinAAoJEN0jrNd/PrOhrMQQAIVqHIuEAicJcJ4m90FFH2Qa
+q9cx/e8JFfl0RCFEdvYsKO3TOfJuYDfnkvBUx8ieIJCELGTuy5i/w/oDpq+eXcm2
+T1zxYqAFZhMViDjDJE83vNh9AvXMa29LfpLBHW2gYvl103cHxz2UPivWGsVqLzP4
+ImMG1QfiC8fSRdPqcGEftjH+RJUuMEWYkCNJayMFNSzukOAFVhezV6Jqq8RyTgHA
+ZfRV2eGO15OMQRWzEAiQuyL21T+wbw1Pvz6dzkDkTG8aK96Ytex+TjdYoprewFYF
+7kjiOHGaqyUjDPTaZ8le6RBQwUeygdRF2k4vb4MUgIPjJhgnFofXwd3u+gkxDHqs
+G5E+DFh21b+iNGFTXUOle0SL/aPuL2f3kbYJlrNX7uPlGx2ZqwlzhvrP4dJzuakZ
+bQkdlz3grTl0ip+7ktyIkxJXEorNASUzoaaBz3x2ChSqzKl76gEoJ0axmLgp2rkh
+azpwPvHW3lhKyfQfQvHX5CnLC2Ky6focMNx2nJ5HQKzDMz8oSpfLCw25lAKVzbzD
+StzItthk8sHneQ/PCtZW7WAhbXjTiMv7Ji8CgUoyY2I/V9UHLstHRztxI4KW7AIR
+VH7YaoQqJCyS8sdIrucH738+hNXy/+rjAbRmbCxkD33y0aPgiYPGyGw+7htV58vk
+q83juYV9gXwHuxvtFr7c
+=n4Zm
+-----END PGP SIGNATURE-----
 
----
- drivers/watchdog/tegra_wdt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/tegra_wdt.c b/drivers/watchdog/tegra_wdt.c
-index 9ec5760..2d53c3f 100644
---- a/drivers/watchdog/tegra_wdt.c
-+++ b/drivers/watchdog/tegra_wdt.c
-@@ -178,7 +178,7 @@ static const struct watchdog_info tegra_wdt_info = {
- 	.identity	= "Tegra Watchdog",
- };
- 
--static struct watchdog_ops tegra_wdt_ops = {
-+static const struct watchdog_ops tegra_wdt_ops = {
- 	.owner = THIS_MODULE,
- 	.start = tegra_wdt_start,
- 	.stop = tegra_wdt_stop,
-
+--UoPmpPX/dBe4BELn--
