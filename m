@@ -1,56 +1,140 @@
-From: Jyri Sarha <jsarha@ti.com>
-Date: Thu, 22 Sep 2016 16:55:36 +0000
-Subject: Re: [PATCH 1/4] GPU-DRM-TILCDC: Use kmalloc_array() in kfree_table_init()
-Message-Id: <de3659b2-a19d-8ac4-82b1-11a52b6f3738@ti.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 08 Sep 2016 01:01:02 +0000
+Subject: [PATCH] ALSA: usb: constify snd_pcm_ops structures
+Message-Id: <1473296462-26377-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <2f3f7ad7-16a0-1dfb-d073-0d993cd767ee@users.sourceforge.net>
- <7c0f291e-e05b-1fbe-05a4-54c104829942@users.sourceforge.net>
-In-Reply-To: <7c0f291e-e05b-1fbe-05a4-54c104829942@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
 
-On 09/22/16 11:31, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 22 Sep 2016 09:05:14 +0200
-> 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c b/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-> index f9c79da..8faa28f 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-> @@ -32,8 +32,7 @@ static int __init kfree_table_init(struct kfree_table *kft)
->  {
->  	kft->total = 32;
->  	kft->num = 0;
-> -	kft->table = kmalloc(kft->total * sizeof(*kft->table),
-> -			     GFP_KERNEL);
-> +	kft->table = kmalloc_array(kft->total, sizeof(*kft->table), GFP_KERNEL);
+Check for snd_pcm_ops structures that are only stored in the ops field of a
+snd_soc_platform_driver structure or passed as the third argument to
+snd_pcm_set_ops.  The corresponding field or parameter is declared const,
+so snd_pcm_ops structures that have this property can be declared as const
+also.
 
-I was not sure if it is Ok to call kremalloc() for a pointer that was
-previously allocated with kmalloc_array(). And at least it felt pointless.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-But if you can confirm that it is ok, then sure I can take the patch.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_pcm_ops i@p = { ... };
 
-Thanks,
-Jyri
+@ok1@
+identifier r.i;
+struct snd_soc_platform_driver e;
+position p;
+@@
+e.ops = &i@p;
 
->  	if (!kft->table)
->  		return -ENOMEM;
->  
-> 
+@ok2@
+identifier r.i;
+expression e1, e2;
+position p;
+@@
+snd_pcm_set_ops(e1, e2, &i@p)
 
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_pcm_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_pcm_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/usb/6fire/pcm.c           |    2 +-
+ sound/usb/caiaq/audio.c         |    2 +-
+ sound/usb/hiface/pcm.c          |    2 +-
+ sound/usb/misc/ua101.c          |    4 ++--
+ sound/usb/usx2y/usx2yhwdeppcm.c |    2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/sound/usb/6fire/pcm.c b/sound/usb/6fire/pcm.c
+index 36f4115..224a6a5 100644
+--- a/sound/usb/6fire/pcm.c
++++ b/sound/usb/6fire/pcm.c
+@@ -555,7 +555,7 @@ static snd_pcm_uframes_t usb6fire_pcm_pointer(
+ 	return ret;
+ }
+ 
+-static struct snd_pcm_ops pcm_ops = {
++static const struct snd_pcm_ops pcm_ops = {
+ 	.open = usb6fire_pcm_open,
+ 	.close = usb6fire_pcm_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
+diff --git a/sound/usb/hiface/pcm.c b/sound/usb/hiface/pcm.c
+index 2c44139..23e66ed 100644
+--- a/sound/usb/hiface/pcm.c
++++ b/sound/usb/hiface/pcm.c
+@@ -511,7 +511,7 @@ static snd_pcm_uframes_t hiface_pcm_pointer(struct snd_pcm_substream *alsa_sub)
+ 	return bytes_to_frames(alsa_sub->runtime, dma_offset);
+ }
+ 
+-static struct snd_pcm_ops pcm_ops = {
++static const struct snd_pcm_ops pcm_ops = {
+ 	.open = hiface_pcm_open,
+ 	.close = hiface_pcm_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
+diff --git a/sound/usb/usx2y/usx2yhwdeppcm.c b/sound/usb/usx2y/usx2yhwdeppcm.c
+index 90766a9..1f28cb2a 100644
+--- a/sound/usb/usx2y/usx2yhwdeppcm.c
++++ b/sound/usb/usx2y/usx2yhwdeppcm.c
+@@ -587,7 +587,7 @@ static int snd_usX2Y_usbpcm_close(struct snd_pcm_substream *substream)
+ }
+ 
+ 
+-static struct snd_pcm_ops snd_usX2Y_usbpcm_ops = 
++static const struct snd_pcm_ops snd_usX2Y_usbpcm_ops  {
+ 	.open =		snd_usX2Y_usbpcm_open,
+ 	.close =	snd_usX2Y_usbpcm_close,
+diff --git a/sound/usb/misc/ua101.c b/sound/usb/misc/ua101.c
+index c19a5dd..71a0e9e 100644
+--- a/sound/usb/misc/ua101.c
++++ b/sound/usb/misc/ua101.c
+@@ -890,7 +890,7 @@ static snd_pcm_uframes_t playback_pcm_pointer(struct snd_pcm_substream *subs)
+ 	return ua101_pcm_pointer(ua, &ua->playback);
+ }
+ 
+-static struct snd_pcm_ops capture_pcm_ops = {
++static const struct snd_pcm_ops capture_pcm_ops = {
+ 	.open = capture_pcm_open,
+ 	.close = capture_pcm_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
+@@ -903,7 +903,7 @@ static struct snd_pcm_ops capture_pcm_ops = {
+ 	.mmap = snd_pcm_lib_mmap_vmalloc,
+ };
+ 
+-static struct snd_pcm_ops playback_pcm_ops = {
++static const struct snd_pcm_ops playback_pcm_ops = {
+ 	.open = playback_pcm_open,
+ 	.close = playback_pcm_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
+diff --git a/sound/usb/caiaq/audio.c b/sound/usb/caiaq/audio.c
+index 8f66ba7..af5ad84 100644
+--- a/sound/usb/caiaq/audio.c
++++ b/sound/usb/caiaq/audio.c
+@@ -338,7 +338,7 @@ unlock:
+ }
+ 
+ /* operators for both playback and capture */
+-static struct snd_pcm_ops snd_usb_caiaq_ops = {
++static const struct snd_pcm_ops snd_usb_caiaq_ops = {
+ 	.open =		snd_usb_caiaq_substream_open,
+ 	.close =	snd_usb_caiaq_substream_close,
+ 	.ioctl =	snd_pcm_lib_ioctl,
 
