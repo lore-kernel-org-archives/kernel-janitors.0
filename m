@@ -1,135 +1,207 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 27 Sep 2016 08:17:54 +0000
-Subject: Re: [PATCH] video: fbdev: constify fb_fix_screeninfo and fb_var_screeninfo structures
-Message-Id: <d602d8af-2c60-6337-3e68-bee09ed2f46c@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="JI5haVODTXRJMj6h1s1STULaeV5qRgtNO"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 08 Sep 2016 23:59:01 +0000
+Subject: [PATCH] [media] usb: constify vb2_ops structures
+Message-Id: <1473379141-17286-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473607040-21295-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473607040-21295-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Teddy Wang <teddy.wang@siliconmotion.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Michal Januszewski <spock@gentoo.org>, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Hans de Goede <hdegoede@redhat.com>, Jaya Kumar <jayalk@intworks.biz>, Paul Mackerras <paulus@samba.org>, Ferenc Bakonyi <fero@drama.obuda.kando.hu>, linux-nvidia@lists.surfsouth.com, Antonino Daplas <adaplas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: kernel-janitors@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 
---JI5haVODTXRJMj6h1s1STULaeV5qRgtNO
-Content-Type: multipart/mixed; boundary="MKiAMwPtL29BQ0TKTkAa7DWE2uxwj73wx";
- protected-headers="v1"
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Teddy Wang <teddy.wang@siliconmotion.com>,
- Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
- Kristoffer Ericson <kristoffer.ericson@gmail.com>,
- Michal Januszewski <spock@gentoo.org>, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Hans de Goede <hdegoede@redhat.com>, Jaya Kumar <jayalk@intworks.biz>,
- Paul Mackerras <paulus@samba.org>, Ferenc Bakonyi
- <fero@drama.obuda.kando.hu>, linux-nvidia@lists.surfsouth.com,
- Antonino Daplas <adaplas@gmail.com>
-Message-ID: <d602d8af-2c60-6337-3e68-bee09ed2f46c@ti.com>
-Subject: Re: [PATCH] video: fbdev: constify fb_fix_screeninfo and
- fb_var_screeninfo structures
-References: <1473607040-21295-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473607040-21295-1-git-send-email-Julia.Lawall@lip6.fr>
+Check for vb2_ops structures that are only stored in the ops field of a
+vb2_queue structure.  That field is declared const, so vb2_ops structures
+that have this property can be declared as const also.
 
---MKiAMwPtL29BQ0TKTkAa7DWE2uxwj73wx
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-On 11/09/16 18:17, Julia Lawall wrote:
-> These structures are only used to copy into other structures, so declar=
-e
-> them as const.
->=20
-> The semantic patch that makes this change in the fb_fix_screeninfo case=
- is
-> as follows (http://coccinelle.lip6.fr/).  The fb_var_screeninfo case is=
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct vb2_ops i@p = { ... };
 
-> analogous.
->=20
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct fb_fix_screeninfo i@p =3D { ... };
->=20
-> @ok@
-> identifier r.i;
-> expression e;
-> position p;
-> @@
-> e =3D i@p
->=20
-> @bad@
-> position p !=3D {r.p,ok.p};
-> identifier r.i;
-> struct fb_fix_screeninfo e;
-> @@
-> e@i@p
->=20
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct fb_fix_screeninfo i =3D { ... };
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/video/fbdev/arcfb.c                  |    4 ++--
->  drivers/video/fbdev/asiliantfb.c             |    4 ++--
->  drivers/video/fbdev/aty/aty128fb.c           |    6 +++---
->  drivers/video/fbdev/aty/atyfb_base.c         |    2 +-
->  drivers/video/fbdev/aty/radeon_monitor.c     |    2 +-
->  drivers/video/fbdev/hecubafb.c               |    4 ++--
->  drivers/video/fbdev/hgafb.c                  |    2 +-
->  drivers/video/fbdev/i740fb.c                 |    2 +-
->  drivers/video/fbdev/kyro/fbdev.c             |    2 +-
->  drivers/video/fbdev/pm2fb.c                  |    2 +-
->  drivers/video/fbdev/s1d13xxxfb.c             |    2 +-
->  drivers/video/fbdev/savage/savagefb_driver.c |    2 +-
->  drivers/video/fbdev/simplefb.c               |    4 ++--
->  drivers/video/fbdev/sm712fb.c                |    2 +-
->  drivers/video/fbdev/ssd1307fb.c              |    4 ++--
->  drivers/video/fbdev/tdfxfb.c                 |    4 ++--
->  drivers/video/fbdev/uvesafb.c                |    2 +-
->  drivers/video/fbdev/vfb.c                    |    2 +-
->  drivers/video/fbdev/vga16fb.c                |    2 +-
->  19 files changed, 27 insertions(+), 27 deletions(-)
+@ok@
+identifier r.i;
+struct vb2_queue e;
+position p;
+@@
+e.ops = &i@p;
 
-Thanks, queued for 4.9. There was a minor conflict in vfb.c, I resolved
-that.
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct vb2_ops e;
+@@
+e@i@p
 
- Tomi
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct vb2_ops i = { ... };
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---MKiAMwPtL29BQ0TKTkAa7DWE2uxwj73wx--
+---
+ drivers/media/usb/airspy/airspy.c       |    2 +-
+ drivers/media/usb/au0828/au0828-video.c |    2 +-
+ drivers/media/usb/em28xx/em28xx-video.c |    2 +-
+ drivers/media/usb/go7007/go7007-v4l2.c  |    2 +-
+ drivers/media/usb/hackrf/hackrf.c       |    2 +-
+ drivers/media/usb/msi2500/msi2500.c     |    2 +-
+ drivers/media/usb/pwc/pwc-if.c          |    2 +-
+ drivers/media/usb/s2255/s2255drv.c      |    2 +-
+ drivers/media/usb/stk1160/stk1160-v4l.c |    2 +-
+ drivers/media/usb/usbtv/usbtv-video.c   |    2 +-
+ drivers/media/usb/uvc/uvc_queue.c       |    2 +-
+ 11 files changed, 11 insertions(+), 11 deletions(-)
 
---JI5haVODTXRJMj6h1s1STULaeV5qRgtNO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
+index c2c8d12..75e0363 100644
+--- a/drivers/media/usb/hackrf/hackrf.c
++++ b/drivers/media/usb/hackrf/hackrf.c
+@@ -891,7 +891,7 @@ static void hackrf_stop_streaming(struct vb2_queue *vq)
+ 	mutex_unlock(&dev->v4l2_lock);
+ }
+ 
+-static struct vb2_ops hackrf_vb2_ops = {
++static const struct vb2_ops hackrf_vb2_ops = {
+ 	.queue_setup            = hackrf_queue_setup,
+ 	.buf_queue              = hackrf_buf_queue,
+ 	.start_streaming        = hackrf_start_streaming,
+diff --git a/drivers/media/usb/em28xx/em28xx-video.c b/drivers/media/usb/em28xx/em28xx-video.c
+index 7968695..1f7fa05 100644
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -1204,7 +1204,7 @@ buffer_queue(struct vb2_buffer *vb)
+ 	spin_unlock_irqrestore(&dev->slock, flags);
+ }
+ 
+-static struct vb2_ops em28xx_video_qops = {
++static const struct vb2_ops em28xx_video_qops = {
+ 	.queue_setup    = queue_setup,
+ 	.buf_prepare    = buffer_prepare,
+ 	.buf_queue      = buffer_queue,
+diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+index c4454c9..ff65764 100644
+--- a/drivers/media/usb/pwc/pwc-if.c
++++ b/drivers/media/usb/pwc/pwc-if.c
+@@ -707,7 +707,7 @@ static void stop_streaming(struct vb2_queue *vq)
+ 	mutex_unlock(&pdev->v4l2_lock);
+ }
+ 
+-static struct vb2_ops pwc_vb_queue_ops = {
++static const struct vb2_ops pwc_vb_queue_ops = {
+ 	.queue_setup		= queue_setup,
+ 	.buf_init		= buffer_init,
+ 	.buf_prepare		= buffer_prepare,
+diff --git a/drivers/media/usb/go7007/go7007-v4l2.c b/drivers/media/usb/go7007/go7007-v4l2.c
+index af84589..4eaba0c 100644
+--- a/drivers/media/usb/go7007/go7007-v4l2.c
++++ b/drivers/media/usb/go7007/go7007-v4l2.c
+@@ -477,7 +477,7 @@ static void go7007_stop_streaming(struct vb2_queue *q)
+ 		go7007_write_addr(go, 0x3c82, 0x000d);
+ }
+ 
+-static struct vb2_ops go7007_video_qops = {
++static const struct vb2_ops go7007_video_qops = {
+ 	.queue_setup    = go7007_queue_setup,
+ 	.buf_queue      = go7007_buf_queue,
+ 	.buf_prepare    = go7007_buf_prepare,
+diff --git a/drivers/media/usb/airspy/airspy.c b/drivers/media/usb/airspy/airspy.c
+index 3c556ee..8251942 100644
+--- a/drivers/media/usb/airspy/airspy.c
++++ b/drivers/media/usb/airspy/airspy.c
+@@ -605,7 +605,7 @@ static void airspy_stop_streaming(struct vb2_queue *vq)
+ 	mutex_unlock(&s->v4l2_lock);
+ }
+ 
+-static struct vb2_ops airspy_vb2_ops = {
++static const struct vb2_ops airspy_vb2_ops = {
+ 	.queue_setup            = airspy_queue_setup,
+ 	.buf_queue              = airspy_buf_queue,
+ 	.start_streaming        = airspy_start_streaming,
+diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
+index 13b8387..85dd9a8 100644
+--- a/drivers/media/usb/au0828/au0828-video.c
++++ b/drivers/media/usb/au0828/au0828-video.c
+@@ -928,7 +928,7 @@ void au0828_stop_vbi_streaming(struct vb2_queue *vq)
+ 	del_timer_sync(&dev->vbi_timeout);
+ }
+ 
+-static struct vb2_ops au0828_video_qops = {
++static const struct vb2_ops au0828_video_qops = {
+ 	.queue_setup     = queue_setup,
+ 	.buf_prepare     = buffer_prepare,
+ 	.buf_queue       = buffer_queue,
+diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
+index 9458eb0..c3a0e87 100644
+--- a/drivers/media/usb/s2255/s2255drv.c
++++ b/drivers/media/usb/s2255/s2255drv.c
+@@ -717,7 +717,7 @@ static void buffer_queue(struct vb2_buffer *vb)
+ static int start_streaming(struct vb2_queue *vq, unsigned int count);
+ static void stop_streaming(struct vb2_queue *vq);
+ 
+-static struct vb2_ops s2255_video_qops = {
++static const struct vb2_ops s2255_video_qops = {
+ 	.queue_setup = queue_setup,
+ 	.buf_prepare = buffer_prepare,
+ 	.buf_queue = buffer_queue,
+diff --git a/drivers/media/usb/usbtv/usbtv-video.c b/drivers/media/usb/usbtv/usbtv-video.c
+index 2a08975..6cbe4a2 100644
+--- a/drivers/media/usb/usbtv/usbtv-video.c
++++ b/drivers/media/usb/usbtv/usbtv-video.c
+@@ -689,7 +689,7 @@ static void usbtv_stop_streaming(struct vb2_queue *vq)
+ 		usbtv_stop(usbtv);
+ }
+ 
+-static struct vb2_ops usbtv_vb2_ops = {
++static const struct vb2_ops usbtv_vb2_ops = {
+ 	.queue_setup = usbtv_queue_setup,
+ 	.buf_queue = usbtv_buf_queue,
+ 	.start_streaming = usbtv_start_streaming,
+diff --git a/drivers/media/usb/stk1160/stk1160-v4l.c b/drivers/media/usb/stk1160/stk1160-v4l.c
+index 5fab3be..a005d26 100644
+--- a/drivers/media/usb/stk1160/stk1160-v4l.c
++++ b/drivers/media/usb/stk1160/stk1160-v4l.c
+@@ -742,7 +742,7 @@ static void stop_streaming(struct vb2_queue *vq)
+ 	stk1160_stop_streaming(dev);
+ }
+ 
+-static struct vb2_ops stk1160_video_qops = {
++static const struct vb2_ops stk1160_video_qops = {
+ 	.queue_setup		= queue_setup,
+ 	.buf_queue		= buffer_queue,
+ 	.start_streaming	= start_streaming,
+diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
+index 773fefb..77edd20 100644
+--- a/drivers/media/usb/uvc/uvc_queue.c
++++ b/drivers/media/usb/uvc/uvc_queue.c
+@@ -177,7 +177,7 @@ static void uvc_stop_streaming(struct vb2_queue *vq)
+ 	spin_unlock_irqrestore(&queue->irqlock, flags);
+ }
+ 
+-static struct vb2_ops uvc_queue_qops = {
++static const struct vb2_ops uvc_queue_qops = {
+ 	.queue_setup = uvc_queue_setup,
+ 	.buf_prepare = uvc_buffer_prepare,
+ 	.buf_queue = uvc_buffer_queue,
+diff --git a/drivers/media/usb/msi2500/msi2500.c b/drivers/media/usb/msi2500/msi2500.c
+index 367eb7e..bb3d31e 100644
+--- a/drivers/media/usb/msi2500/msi2500.c
++++ b/drivers/media/usb/msi2500/msi2500.c
+@@ -897,7 +897,7 @@ static void msi2500_stop_streaming(struct vb2_queue *vq)
+ 	mutex_unlock(&dev->v4l2_lock);
+ }
+ 
+-static struct vb2_ops msi2500_vb2_ops = {
++static const struct vb2_ops msi2500_vb2_ops = {
+ 	.queue_setup            = msi2500_queue_setup,
+ 	.buf_queue              = msi2500_buf_queue,
+ 	.start_streaming        = msi2500_start_streaming,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJX6isyAAoJEPo9qoy8lh71xGQP/0J5lZO8CWvf3olLMdh1zjTy
-CP5Q9REOlq6k2ADKE+/vhpHzmhKigxH+s2KorZLlbqCheqXEyuMjzL2e2SBsL9P/
-D58rd06+htOvOV80pAy61kEFucjJem5WCoY8mczuaf9J/G6sq5WQPMdra4WnjSdF
-PH4rD9oP2WEAHIR6szjhZq2ltopPWpZ8aHb1IRiySpNi18kgE094yqcD+nJgn3iF
-sycIKV8eA4796vzGR6xY4WqZPnlRZbnG8fN6FwBayJeII9C8k1sDk+159Z57CcdW
-/kmw5/Ap1qQxQE9lOInAy8KLBQk74xddl+fHLz+l9Wz2CMgUhtawesAW2+u3kXlQ
-M48fJiu+xwa9I3tIcJnUlRyaAKhtdD1fn76CGHk+e3wwBwWLYhb3N5qkJU/RRIAx
-OcCnKmvUh4oCB+KpowMFr+OafbdOpQarw39PdymO4Esja5oYG799X39VQibnB+p3
-BsxVZe0Twl4OnE5vmNkATLaTB4Kj3BTzAx6BL2CJnQL6oP/caL1y1bLlgA8xJaZv
-qpy3NeumRKuHSOoZqGOwx87otMw3m19WAawXk07anbKTYniBlBVGiUK6p6s7OSqo
-X9EbKJhvEjnvZsbWML8WpqJRzKIQd+E1S1w4tnDca4aCQ91EMe3lWsXJPmiAJTHZ
-KLQZyp5m4dF93cjNrdB5
-=x4wK
------END PGP SIGNATURE-----
-
---JI5haVODTXRJMj6h1s1STULaeV5qRgtNO--
