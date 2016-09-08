@@ -1,56 +1,48 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sat, 24 Sep 2016 16:42:51 +0000
-Subject: Re: [PATCH 1/4] Input-gameport: Use kmalloc_array() in joydump_connect()
-Message-Id: <20160924164251.GC40187@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 08 Sep 2016 12:40:06 +0000
+Subject: [PATCH] ATM-ENI: Use kmalloc_array() in eni_start()
+Message-Id: <d8468294-dff0-f34c-bf16-bb04435d465c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
- <7ff91d13-9111-c75a-1c1a-e119025866e7@users.sourceforge.net>
-In-Reply-To: <7ff91d13-9111-c75a-1c1a-e119025866e7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Sat, Sep 24, 2016 at 03:46:21PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 24 Sep 2016 13:50:20 +0200
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "kmalloc_array".
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Sep 2016 14:20:17 +0200
 
--ENOPARSE.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Replace the specification of a data structure by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/input/joystick/joydump.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/joystick/joydump.c b/drivers/input/joystick/joydump.c
-> index d1c6e48..e515058 100644
-> --- a/drivers/input/joystick/joydump.c
-> +++ b/drivers/input/joystick/joydump.c
-> @@ -79,8 +79,7 @@ static int joydump_connect(struct gameport *gameport, struct gameport_driver *dr
->  	}
->  
->  	timeout = gameport_time(gameport, 10000); /* 10 ms */
-> -
-> -	buf = kmalloc(BUF_SIZE * sizeof(struct joydump), GFP_KERNEL);
-> +	buf = kmalloc_array(BUF_SIZE, sizeof(*buf), GFP_KERNEL);
->  	if (!buf) {
->  		printk(KERN_INFO "joydump: no memory for testing\n");
->  		goto jd_end;
-> -- 
-> 2.10.0
-> 
+  This issue was detected by using the Coccinelle software.
 
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/atm/eni.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/atm/eni.c b/drivers/atm/eni.c
+index 6339efd..f2aaf9e 100644
+--- a/drivers/atm/eni.c
++++ b/drivers/atm/eni.c
+@@ -1845,8 +1845,9 @@ static int eni_start(struct atm_dev *dev)
+ 	/* initialize memory management */
+ 	buffer_mem = eni_dev->mem - (buf - eni_dev->ram);
+ 	eni_dev->free_list_size = buffer_mem/MID_MIN_BUF_SIZE/2;
+-	eni_dev->free_list = kmalloc(
+-	    sizeof(struct eni_free)*(eni_dev->free_list_size+1),GFP_KERNEL);
++	eni_dev->free_list = kmalloc_array(eni_dev->free_list_size + 1,
++					   sizeof(*eni_dev->free_list),
++					   GFP_KERNEL);
+ 	if (!eni_dev->free_list) {
+ 		printk(KERN_ERR DEV_LABEL "(itf %d): couldn't get free page\n",
+ 		    dev->number);
 -- 
-Dmitry
+2.10.0
+
