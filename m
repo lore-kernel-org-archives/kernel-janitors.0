@@ -1,67 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 13:46:44 +0000
-Subject: Re: GPU-DRM-TTM: Fine-tuning for several function implementations
-Message-Id: <57a602e8-ba38-6cbb-078d-ac562b024441@users.sourceforge.net>
+Date: Thu, 08 Sep 2016 13:50:05 +0000
+Subject: [PATCH] ATM-ForeRunnerHE: Use kmalloc_array() in he_init_group()
+Message-Id: <edd03d91-0aff-73ed-cb04-c5851ac90dca@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
- <f079ffc1-042c-0332-98e1-5acc6589e4b6@vodafone.de>
- <05418fb1-ad66-aba3-bd8c-f6b684a83279@users.sourceforge.net>
- <20160923125525.GR13620@mwanda>
-In-Reply-To: <20160923125525.GR13620@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: =?UTF-8?Q?Christian_K=c3=b6nig?= <deathsimple@vodafone.de>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
->> Do other identifiers fit better to a specification from the document "Co=
-dingStyle"
->> like the following?
->>
->> "=85
->> Choose label names which say what the goto does or why the goto exists.
->> =85"
->>
->>
->> Does this wording need any more adjustments?
->=20
-> No.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Sep 2016 15:43:37 +0200
 
-I have got an other impression.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-The terse description can trigger disagreements about the "what" and "why",
-can't it?
+  This issue was detected by using the Coccinelle software.
 
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-> I wrote that and "restart" seems like a pretty clear name to me.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/atm/he.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-This identifier might be good enough to some degree.
-I imagined that it would become better by the addition of a bit of informat=
-ion
-from the jump target.
+diff --git a/drivers/atm/he.c b/drivers/atm/he.c
+index 0f5cb37..31b513a 100644
+--- a/drivers/atm/he.c
++++ b/drivers/atm/he.c
+@@ -779,8 +779,9 @@ static int he_init_group(struct he_dev *he_dev, int group)
+ 		  G0_RBPS_BS + (group * 32));
+ 
+ 	/* bitmap table */
+-	he_dev->rbpl_table = kmalloc(BITS_TO_LONGS(RBPL_TABLE_SIZE)
+-				     * sizeof(unsigned long), GFP_KERNEL);
++	he_dev->rbpl_table = kmalloc_array(BITS_TO_LONGS(RBPL_TABLE_SIZE),
++					   sizeof(*he_dev->rbpl_table),
++					   GFP_KERNEL);
+ 	if (!he_dev->rbpl_table) {
+ 		hprintk("unable to allocate rbpl bitmap table\n");
+ 		return -ENOMEM;
+@@ -788,8 +789,9 @@ static int he_init_group(struct he_dev *he_dev, int group)
+ 	bitmap_zero(he_dev->rbpl_table, RBPL_TABLE_SIZE);
+ 
+ 	/* rbpl_virt 64-bit pointers */
+-	he_dev->rbpl_virt = kmalloc(RBPL_TABLE_SIZE
+-				    * sizeof(struct he_buff *), GFP_KERNEL);
++	he_dev->rbpl_virt = kmalloc_array(RBPL_TABLE_SIZE,
++					  sizeof(*he_dev->rbpl_virt),
++					  GFP_KERNEL);
+ 	if (!he_dev->rbpl_virt) {
+ 		hprintk("unable to allocate rbpl virt table\n");
+ 		goto out_free_rbpl_table;
+-- 
+2.10.0
 
-
-> I never wrote that you should harrass people with your nonsense patches.
-
-This is true in principle.
-
-But your adjustment for the document "CodingStyle" supported also a reconsi=
-deration
-of the corresponding identifier selection.
-
-Some developers disagreed with a proposed renaming while others reacted
-in a positive way.
-
-
-> In fact, I have asked you over and over again to stop.
-
-This happened under different software update contexts occasionally.
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
