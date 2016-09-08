@@ -1,72 +1,132 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 12:18:09 +0000
-Subject: [PATCH 05/17] s390/debug: Fix jump targets in debug_info_alloc()
-Message-Id: <04f27ca2-274e-d09c-fc3e-d0a387f6bf05@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 08 Sep 2016 00:59:06 +0000
+Subject: [PATCH] [media] usb: constify snd_pcm_ops structures
+Message-Id: <1473296346-26327-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
-In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Sep 2016 18:26:58 +0200
+Check for snd_pcm_ops structures that are only stored in the ops field of a
+snd_soc_platform_driver structure or passed as the third argument to
+snd_pcm_set_ops.  The corresponding field or parameter is declared const,
+so snd_pcm_ops structures that have this property can be declared as const
+also.
 
-Adjust jump targets according to the current Linux coding style convention.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_pcm_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct snd_soc_platform_driver e;
+position p;
+@@
+e.ops = &i@p;
+
+@ok2@
+identifier r.i;
+expression e1, e2;
+position p;
+@@
+snd_pcm_set_ops(e1, e2, &i@p)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_pcm_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_pcm_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/s390/kernel/debug.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/media/usb/cx231xx/cx231xx-audio.c |    2 +-
+ drivers/media/usb/em28xx/em28xx-audio.c   |    2 +-
+ drivers/media/usb/go7007/snd-go7007.c     |    2 +-
+ drivers/media/usb/tm6000/tm6000-alsa.c    |    2 +-
+ drivers/media/usb/usbtv/usbtv-audio.c     |    2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
-index 0af14a4..c5da41b 100644
---- a/arch/s390/kernel/debug.c
-+++ b/arch/s390/kernel/debug.c
-@@ -244,17 +244,17 @@ debug_info_alloc(const char *name, int pages_per_area, int nr_areas,
- 
- 	rc = kmalloc(sizeof(debug_info_t), GFP_KERNEL);
- 	if(!rc)
--		goto fail_malloc_rc;
-+		goto exit;
- 	rc->active_entries = kcalloc(nr_areas, sizeof(int), GFP_KERNEL);
- 	if(!rc->active_entries)
--		goto fail_malloc_active_entries;
-+		goto free_rc;
- 	rc->active_pages = kcalloc(nr_areas, sizeof(int), GFP_KERNEL);
- 	if(!rc->active_pages)
--		goto fail_malloc_active_pages;
-+		goto free_entries;
- 	if((mode = ALL_AREAS) && (pages_per_area != 0)){
- 		rc->areas = debug_areas_alloc(pages_per_area, nr_areas);
- 		if(!rc->areas)
--			goto fail_malloc_areas;
-+			goto free_pages;
- 	} else {
- 		rc->areas = NULL;
- 	}
-@@ -275,14 +275,13 @@ debug_info_alloc(const char *name, int pages_per_area, int nr_areas,
- 	atomic_set(&(rc->ref_count), 0);
- 
- 	return rc;
--
--fail_malloc_areas:
-+ free_pages:
- 	kfree(rc->active_pages);
--fail_malloc_active_pages:
-+ free_entries:
- 	kfree(rc->active_entries);
--fail_malloc_active_entries:
-+ free_rc:
- 	kfree(rc);
--fail_malloc_rc:
-+ exit:
- 	return NULL;
+diff --git a/drivers/media/usb/em28xx/em28xx-audio.c b/drivers/media/usb/em28xx/em28xx-audio.c
+index 78f3687..e11fe46 100644
+--- a/drivers/media/usb/em28xx/em28xx-audio.c
++++ b/drivers/media/usb/em28xx/em28xx-audio.c
+@@ -695,7 +695,7 @@ static int em28xx_cvol_new(struct snd_card *card, struct em28xx *dev,
+ /*
+  * register/unregister code and data
+  */
+-static struct snd_pcm_ops snd_em28xx_pcm_capture = {
++static const struct snd_pcm_ops snd_em28xx_pcm_capture = {
+ 	.open      = snd_em28xx_capture_open,
+ 	.close     = snd_em28xx_pcm_close,
+ 	.ioctl     = snd_pcm_lib_ioctl,
+diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
+index d22d7d5..070871f 100644
+--- a/drivers/media/usb/go7007/snd-go7007.c
++++ b/drivers/media/usb/go7007/snd-go7007.c
+@@ -198,7 +198,7 @@ static struct page *go7007_snd_pcm_page(struct snd_pcm_substream *substream,
+ 	return vmalloc_to_page(substream->runtime->dma_area + offset);
  }
  
--- 
-2.9.3
+-static struct snd_pcm_ops go7007_snd_capture_ops = {
++static const struct snd_pcm_ops go7007_snd_capture_ops = {
+ 	.open		= go7007_snd_capture_open,
+ 	.close		= go7007_snd_capture_close,
+ 	.ioctl		= snd_pcm_lib_ioctl,
+diff --git a/drivers/media/usb/cx231xx/cx231xx-audio.c b/drivers/media/usb/cx231xx/cx231xx-audio.c
+index 4cd5fa9..8263c4b 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-audio.c
++++ b/drivers/media/usb/cx231xx/cx231xx-audio.c
+@@ -635,7 +635,7 @@ static struct page *snd_pcm_get_vmalloc_page(struct snd_pcm_substream *subs,
+ 	return vmalloc_to_page(pageptr);
+ }
+ 
+-static struct snd_pcm_ops snd_cx231xx_pcm_capture = {
++static const struct snd_pcm_ops snd_cx231xx_pcm_capture = {
+ 	.open = snd_cx231xx_capture_open,
+ 	.close = snd_cx231xx_pcm_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
+diff --git a/drivers/media/usb/usbtv/usbtv-audio.c b/drivers/media/usb/usbtv/usbtv-audio.c
+index 1965ff1..9db31db 100644
+--- a/drivers/media/usb/usbtv/usbtv-audio.c
++++ b/drivers/media/usb/usbtv/usbtv-audio.c
+@@ -332,7 +332,7 @@ static snd_pcm_uframes_t snd_usbtv_pointer(struct snd_pcm_substream *substream)
+ 	return chip->snd_buffer_pos;
+ }
+ 
+-static struct snd_pcm_ops snd_usbtv_pcm_ops = {
++static const struct snd_pcm_ops snd_usbtv_pcm_ops = {
+ 	.open = snd_usbtv_pcm_open,
+ 	.close = snd_usbtv_pcm_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
+diff --git a/drivers/media/usb/tm6000/tm6000-alsa.c b/drivers/media/usb/tm6000/tm6000-alsa.c
+index e21c7aa..f16fbd1 100644
+--- a/drivers/media/usb/tm6000/tm6000-alsa.c
++++ b/drivers/media/usb/tm6000/tm6000-alsa.c
+@@ -388,7 +388,7 @@ static struct page *snd_pcm_get_vmalloc_page(struct snd_pcm_substream *subs,
+ /*
+  * operators
+  */
+-static struct snd_pcm_ops snd_tm6000_pcm_ops = {
++static const struct snd_pcm_ops snd_tm6000_pcm_ops = {
+ 	.open = snd_tm6000_pcm_open,
+ 	.close = snd_tm6000_close,
+ 	.ioctl = snd_pcm_lib_ioctl,
 
