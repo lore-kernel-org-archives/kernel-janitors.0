@@ -1,7 +1,7 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Date: Fri, 09 Sep 2016 09:48:34 +0000
+From: Benoit Parrot <bparrot@ti.com>
+Date: Fri, 09 Sep 2016 16:03:55 +0000
 Subject: Re: [PATCH] [media] platform: constify vb2_ops structures
-Message-Id: <fe79a710-f524-a161-2211-3b536c9da255@samsung.com>
+Message-Id: <20160909160355.GC27225@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1473379150-17315-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -10,45 +10,76 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Hi Julia,
-
-On 09/09/2016 01:59 AM, Julia Lawall wrote:
-> Check for vb2_ops structures that are only stored in the ops field of a
-> vb2_queue structure.  That field is declared const, so vb2_ops structures
-> that have this property can be declared as const also.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-[...]
-
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> index 785e693..d9c07b8 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> @@ -2538,7 +2538,7 @@ static void s5p_jpeg_stop_streaming(struct vb2_queue *q)
->  	pm_runtime_put(ctx->jpeg->dev);
->  }
->
-> -static struct vb2_ops s5p_jpeg_qops = {
-> +static const struct vb2_ops s5p_jpeg_qops = {
->  	.queue_setup		= s5p_jpeg_queue_setup,
->  	.buf_prepare		= s5p_jpeg_buf_prepare,
->  	.buf_queue		= s5p_jpeg_buf_queue,
-> diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-> index e967fcf..44323cb 100644
-> --- a/drivers/media/platform/ti-vpe/cal.c
-> +++ b/drivers/media/platform/ti-vpe/cal.c
-> @@ -1379,7 +1379,7 @@ static void cal_stop_streaming(struct vb2_queue *vq)
->  	cal_runtime_put(ctx->dev);
->  }
+Hi,
 
 Thanks for the patch.
 
-For s5p-jpeg driver:
+Julia Lawall <Julia.Lawall@lip6.fr> wrote on Fri [2016-Sep-09 01:59:10 +0200]:
+> Check for vb2_ops structures that are only stored in the ops field of a
+> vb2_queue structure.  That field is declared const, so vb2_ops structures
+> that have this property can be declared as const also.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct vb2_ops i@p = { ... };
+> 
+> @ok@
+> identifier r.i;
+> struct vb2_queue e;
+> position p;
+> @@
+> e.ops = &i@p;
+> 
+> @bad@
+> position p != {r.p,ok.p};
+> identifier r.i;
+> struct vb2_ops e;
+> @@
+> e@i@p
+> 
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct vb2_ops i = { ... };
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/media/platform/exynos-gsc/gsc-m2m.c              |    2 +-
+>  drivers/media/platform/exynos4-is/fimc-capture.c         |    2 +-
+>  drivers/media/platform/exynos4-is/fimc-m2m.c             |    2 +-
+>  drivers/media/platform/m2m-deinterlace.c                 |    2 +-
+>  drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c       |    2 +-
+>  drivers/media/platform/mx2_emmaprp.c                     |    2 +-
+>  drivers/media/platform/rcar-vin/rcar-dma.c               |    2 +-
+>  drivers/media/platform/rcar_jpu.c                        |    2 +-
+>  drivers/media/platform/s5p-g2d/g2d.c                     |    2 +-
+>  drivers/media/platform/s5p-jpeg/jpeg-core.c              |    2 +-
+>  drivers/media/platform/sh_vou.c                          |    2 +-
+>  drivers/media/platform/soc_camera/atmel-isi.c            |    2 +-
+>  drivers/media/platform/soc_camera/rcar_vin.c             |    2 +-
+>  drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c |    2 +-
+>  drivers/media/platform/sti/bdisp/bdisp-v4l2.c            |    2 +-
 
-Reviewed-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+For the following 2 drivers,
 
--- 
-Best regards,
-Jacek Anaszewski
+>  drivers/media/platform/ti-vpe/cal.c                      |    2 +-
+>  drivers/media/platform/ti-vpe/vpe.c                      |    2 +-
+
+Reviewed-by: Benoit Parrot <bparrot@ti.com>
+
+>  drivers/media/platform/vim2m.c                           |    2 +-
+>  drivers/media/platform/xilinx/xilinx-dma.c               |    2 +-
+>  19 files changed, 19 insertions(+), 19 deletions(-)
+
+Regards,
+Benoit Parrot
