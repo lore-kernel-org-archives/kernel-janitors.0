@@ -1,49 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 17:40:26 +0000
-Subject: [PATCH 08/14] GPU-DRM-TTM: Rename a jump label in ttm_dma_pool_shrink_scan()
-Message-Id: <2eb454e7-fecf-4912-da0f-fe2e9efc1e2b@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Fri, 09 Sep 2016 09:21:45 +0000
+Subject: Re: mwifiex: scan: Simplify code
+Message-Id: <20160909092145.2A21861EAC@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
-In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+In-Reply-To: <1472644259-15605-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Cc: akarwar@marvell.com, nishants@marvell.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 16:02:36 +0200
+Christophe Jaillet <christophe.jaillet@wanadoo.fr> wrote:
+> This patch:
+>    - improves code layout
+>    - removes a useless memset(0) for some memory allocated with kzalloc
+>    - removes a useless if. We know that 'if (chan_band_tlv)' will succeed
+>      because it has been tested a few lines above
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Adjust a jump label according to the current Linux coding style convention.
+Thanks, 1 patch applied to wireless-drivers-next.git:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+b71165761694 mwifiex: scan: Simplify code
 
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-index ce3d361..e3f5542 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-@@ -1025,7 +1025,7 @@ ttm_dma_pool_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
- 	if (!mutex_trylock(&_manager->lock))
- 		return SHRINK_STOP;
- 	if (!_manager->npools)
--		goto out;
-+		goto unlock;
- 	pool_offset = ++start_pool % _manager->npools;
- 	list_for_each_entry(p, &_manager->pools, pools) {
- 		unsigned nr_free;
-@@ -1046,7 +1046,7 @@ ttm_dma_pool_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
- 			 p->pool->dev_name, p->pool->name, current->pid,
- 			 nr_free, shrink_pages);
- 	}
--out:
-+ unlock:
- 	mutex_unlock(&_manager->lock);
- 	return freed;
- }
 -- 
-2.10.0
+Sent by pwcli
+https://patchwork.kernel.org/patch/9307009/
 
