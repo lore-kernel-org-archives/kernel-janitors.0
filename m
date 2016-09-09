@@ -1,33 +1,70 @@
-From: Cornelia Huck <cornelia.huck@de.ibm.com>
-Date: Wed, 14 Sep 2016 08:10:09 +0000
-Subject: Re: virtio_blk: Less function calls in init_vq() after error detection
-Message-Id: <20160914101009.6abef9f0.cornelia.huck@de.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Sep 2016 18:42:16 +0000
+Subject: [PATCH] ATM-iphase: Use kmalloc_array() in tx_init()
+Message-Id: <87a58007-c560-eb8d-b268-5a25452a8daf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-        <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
-        <f56845a8-03c6-d3f7-6091-99dba9835780@users.sourceforge.net>
-        <e918e655-cd86-c3c8-d911-9dfc03b03e19@de.ibm.com>
-        <7da823eb-939c-9ee6-32bf-db296e6a96f6@users.sourceforge.net>
-        <44fd46f6-441a-d497-9157-7e2a0f3f45da@de.ibm.com>
-In-Reply-To: <44fd46f6-441a-d497-9157-7e2a0f3f45da@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>, Minfei Huang <minfei.hmf@alibaba-inc.com>, Stefan Hajnoczi <stefanha@redhat.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Tue, 13 Sep 2016 20:24:58 +0200
-Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 9 Sep 2016 20:40:16 +0200
 
-> See, some of your patches are accepted, e.g. the memdup_user changes have usually
-> been applied by most maintainers including myself. If maintainers won't take other change,
-> please accept that. If you continue to waste peoples time by discussing "maybe" patches
-> you actually risk that people will stop taking any patches from you including the "yes"
-> ones.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-FWIW, he already gained a place on my ignore list for pestering me
-offline about his patches and not stopping even when told to do so. So
-while I won't object if you choose to apply selected patches, I won't
-comment on any and won't take any (hey, I even won't see them unless
-someone else replies...)
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/atm/iphase.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index 809dd1e..9d8807e 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -1975,7 +1975,9 @@ static int tx_init(struct atm_dev *dev)
+ 		buf_desc_ptr++;		  
+ 		tx_pkt_start += iadev->tx_buf_sz;  
+ 	}  
+-        iadev->tx_buf = kmalloc(iadev->num_tx_desc*sizeof(struct cpcs_trailer_desc), GFP_KERNEL);
++	iadev->tx_buf = kmalloc_array(iadev->num_tx_desc,
++				      sizeof(*iadev->tx_buf),
++				      GFP_KERNEL);
+         if (!iadev->tx_buf) {
+             printk(KERN_ERR DEV_LABEL " couldn't get mem\n");
+ 	    goto err_free_dle;
+@@ -1995,8 +1997,9 @@ static int tx_init(struct atm_dev *dev)
+ 						       sizeof(*cpcs),
+ 						       DMA_TO_DEVICE);
+         }
+-        iadev->desc_tbl = kmalloc(iadev->num_tx_desc *
+-                                   sizeof(struct desc_tbl_t), GFP_KERNEL);
++	iadev->desc_tbl = kmalloc_array(iadev->num_tx_desc,
++					sizeof(*iadev->desc_tbl),
++					GFP_KERNEL);
+ 	if (!iadev->desc_tbl) {
+ 		printk(KERN_ERR DEV_LABEL " couldn't get mem\n");
+ 		goto err_free_all_tx_bufs;
+@@ -2124,7 +2127,9 @@ static int tx_init(struct atm_dev *dev)
+ 	memset((caddr_t)(iadev->seg_ram+i),  0, iadev->num_vc*4);
+ 	vc = (struct main_vc *)iadev->MAIN_VC_TABLE_ADDR;  
+ 	evc = (struct ext_vc *)iadev->EXT_VC_TABLE_ADDR;  
+-        iadev->testTable = kmalloc(sizeof(long)*iadev->num_vc, GFP_KERNEL); 
++	iadev->testTable = kmalloc_array(iadev->num_vc,
++					 sizeof(*iadev->testTable),
++					 GFP_KERNEL);
+         if (!iadev->testTable) {
+            printk("Get freepage  failed\n");
+ 	   goto err_free_desc_tbl;
+-- 
+2.10.0
 
