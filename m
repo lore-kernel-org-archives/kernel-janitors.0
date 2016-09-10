@@ -1,38 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 13:56:03 +0000
-Subject: [PATCH 00/11] virtio-console: Fine-tuning for 14 function implementations
-Message-Id: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 10:05:28 +0000
+Subject: [PATCH 23/30] ACPI-processor: Improve a size determination in acpi_processor_get_tsd()
+Message-Id: <c24e83ad-a97b-1599-7891-5e8625ed1937@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 15:43:21 +0200
+Date: Tue, 6 Sep 2016 20:55:45 +0200
 
-Several update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (11):
-  Use kmalloc_array() in init_vqs()
-  Less function calls in init_vqs() after error detection
-  Rename a jump label in init()
-  Rename jump labels in virtcons_probe()
-  Rename jump labels in add_port()
-  Rename a jump label in port_fops_open()
-  Rename a jump label in port_fops_splice_write()
-  Rename jump labels in port_fops_write()
-  Rename a jump label in __send_to_port()
-  Rename jump labels in alloc_buf()
-  Rename a jump label in five functions
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/acpi/processor_throttling.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/char/virtio_console.c | 155 ++++++++++++++++++++++++------------------
- 1 file changed, 87 insertions(+), 68 deletions(-)
-
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index ea1e959..dcebb4b2 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -616,7 +616,7 @@ static int acpi_processor_get_tsd(struct acpi_processor *pr)
+ 
+ 	pdomain = &(pr->throttling.domain_info);
+ 
+-	state.length = sizeof(struct acpi_tsd_package);
++	state.length = sizeof(*pdomain);
+ 	state.pointer = pdomain;
+ 
+ 	status = acpi_extract_package(&(tsd->package.elements[0]),
 -- 
 2.10.0
 
