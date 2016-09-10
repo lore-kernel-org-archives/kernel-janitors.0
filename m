@@ -1,19 +1,18 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 19:44:32 +0000
-Subject: [PATCH 1/4] i2c-dev: Use kmalloc_array() in i2cdev_ioctl_rdwr()
-Message-Id: <be56c41b-0b29-de40-0bce-700de64b7d92@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 07:17:48 +0000
+Subject: [PATCH 1/5] ATM-nicstar: Use kmalloc_array() in get_scq()
+Message-Id: <698e4922-e671-f60f-4599-ad4d7613c808@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
-In-Reply-To: <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
+References: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
+In-Reply-To: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 20:30:07 +0200
+Date: Sat, 10 Sep 2016 08:02:06 +0200
 
 * A multiplication for the size determination of a memory allocation
   indicated that an array data structure should be processed.
@@ -27,24 +26,25 @@ Date: Fri, 23 Sep 2016 20:30:07 +0200
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/i2c-dev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/atm/nicstar.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index 66f323f..6d8226d 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -260,7 +260,9 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
- 	if (IS_ERR(rdwr_pa))
- 		return PTR_ERR(rdwr_pa);
- 
--	data_ptrs = kmalloc(rdwr_arg.nmsgs * sizeof(u8 __user *), GFP_KERNEL);
-+	data_ptrs = kmalloc_array(rdwr_arg.nmsgs,
-+				  sizeof(*data_ptrs),
-+				  GFP_KERNEL);
- 	if (data_ptrs = NULL) {
- 		kfree(rdwr_pa);
- 		return -ENOMEM;
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index 700ed15..50dec13 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -871,8 +871,9 @@ static scq_info *get_scq(ns_dev *card, int size, u32 scd)
+ 		kfree(scq);
+ 		return NULL;
+ 	}
+-	scq->skb = kmalloc(sizeof(struct sk_buff *) *
+-			   (size / NS_SCQE_SIZE), GFP_KERNEL);
++	scq->skb = kmalloc_array(size / NS_SCQE_SIZE,
++				 sizeof(*scq->skb),
++				 GFP_KERNEL);
+ 	if (!scq->skb) {
+ 		dma_free_coherent(&card->pcidev->dev,
+ 				  2 * size, scq->org, scq->dma);
 -- 
 2.10.0
 
