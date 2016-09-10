@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:45:05 +0000
-Subject: [PATCH 07/30] ACPI-processor: Rename jump labels in acpi_processor_get_psd()
-Message-Id: <412ab79a-5036-7514-5ef9-2bfacef6d389@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:35:38 +0000
+Subject: [PATCH 1/30] ACPI-processor: Use kmalloc_array() in acpi_processor_get_performance_states()
+Message-Id: <b9ad0591-b67f-bc28-26da-4da394776b84@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
@@ -12,69 +12,39 @@ To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki"
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 13:50:41 +0200
+Date: Tue, 6 Sep 2016 10:20:10 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/acpi/processor_perflib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index 417e181..c2813cc 100644
+index bb01dea..78f9025 100644
 --- a/drivers/acpi/processor_perflib.c
 +++ b/drivers/acpi/processor_perflib.c
-@@ -545,13 +545,13 @@ static int acpi_processor_get_psd(struct acpi_processor	*pr)
- 	if (!psd || (psd->type != ACPI_TYPE_PACKAGE)) {
- 		printk(KERN_ERR PREFIX "Invalid _PSD data\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
+@@ -346,9 +346,9 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
+ 			  pss->package.count));
  
- 	if (psd->package.count != 1) {
- 		printk(KERN_ERR PREFIX "Invalid _PSD data\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
- 
- 	pdomain = &(pr->performance->domain_info);
-@@ -564,19 +564,19 @@ static int acpi_processor_get_psd(struct acpi_processor	*pr)
- 	if (ACPI_FAILURE(status)) {
- 		printk(KERN_ERR PREFIX "Invalid _PSD data\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
- 
- 	if (pdomain->num_entries != ACPI_PSD_REV0_ENTRIES) {
- 		printk(KERN_ERR PREFIX "Unknown _PSD:num_entries\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
- 
- 	if (pdomain->revision != ACPI_PSD_REV0_REVISION) {
- 		printk(KERN_ERR PREFIX "Unknown _PSD:revision\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
- 
- 	if (pdomain->coord_type != DOMAIN_COORD_TYPE_SW_ALL &&
-@@ -584,9 +584,8 @@ static int acpi_processor_get_psd(struct acpi_processor	*pr)
- 	    pdomain->coord_type != DOMAIN_COORD_TYPE_HW_ALL) {
- 		printk(KERN_ERR PREFIX "Invalid _PSD:coord_type\n");
- 		result = -EFAULT;
--		goto end;
- 	}
--end:
-+ free_buffer:
- 	kfree(buffer.pointer);
- 	return result;
- }
+ 	pr->performance->state_count = pss->package.count;
+-	pr->performance->states -	    kmalloc(sizeof(struct acpi_processor_px) * pss->package.count,
+-		    GFP_KERNEL);
++	pr->performance->states = kmalloc_array(pss->package.count,
++						sizeof(*pr->performance->states),
++						GFP_KERNEL);
+ 	if (!pr->performance->states) {
+ 		result = -ENOMEM;
+ 		goto end;
 -- 
 2.10.0
 
