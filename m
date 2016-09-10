@@ -1,46 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 19:01:20 +0000
-Subject: [PATCH 1/2] tile-module: Use kmalloc_array() in module_alloc()
-Message-Id: <dfffa006-c2af-06f5-2acf-6ac32e52f95a@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 10 Sep 2016 05:49:36 +0000
+Subject: [PATCH] ARM: pxa: ssp: Fix resources release
+Message-Id: <1473486577-14863-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <764e5d1b-c7ab-c8aa-1482-334a00e11280@users.sourceforge.net>
-In-Reply-To: <764e5d1b-c7ab-c8aa-1482-334a00e11280@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Metcalf <cmetcalf@mellanox.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Sep 2016 20:40:57 +0200
+These resources have been allocated with devm_ functions.
+So they should not be released explicitly in the 'remove' function.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+Fixes: 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/tile/kernel/module.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/plat-pxa/ssp.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/arch/tile/kernel/module.c b/arch/tile/kernel/module.c
-index 2305084..dce4120 100644
---- a/arch/tile/kernel/module.c
-+++ b/arch/tile/kernel/module.c
-@@ -43,7 +43,7 @@ void *module_alloc(unsigned long size)
- 	int npages;
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index ba13f793fbce..97bd43c16cd8 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -230,25 +230,16 @@ static int pxa_ssp_probe(struct platform_device *pdev)
  
- 	npages = (size + PAGE_SIZE - 1) / PAGE_SIZE;
--	pages = kmalloc(npages * sizeof(struct page *), GFP_KERNEL);
-+	pages = kmalloc_array(npages, sizeof(*pages), GFP_KERNEL);
- 	if (pages = NULL)
- 		return NULL;
- 	for (; i < npages; ++i) {
+ static int pxa_ssp_remove(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct ssp_device *ssp;
+ 
+ 	ssp = platform_get_drvdata(pdev);
+ 	if (ssp = NULL)
+ 		return -ENODEV;
+ 
+-	iounmap(ssp->mmio_base);
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(res->start, resource_size(res));
+-
+-	clk_put(ssp->clk);
+-
+ 	mutex_lock(&ssp_lock);
+ 	list_del(&ssp->node);
+ 	mutex_unlock(&ssp_lock);
+ 
+-	kfree(ssp);
+ 	return 0;
+ }
+ 
 -- 
-2.9.3
+2.7.4
 
