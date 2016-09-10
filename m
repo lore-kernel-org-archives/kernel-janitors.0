@@ -1,57 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:08:13 +0000
-Subject: [PATCH 09/11] virtio_console: Rename a jump label in __send_to_port()
-Message-Id: <30bfb090-db1c-6515-2d13-0acd6e67d1c2@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 20:24:42 +0000
+Subject: [PATCH 03/13] DRBD-receiver: Move an assignment in receive_uuids()
+Message-Id: <ac87a521-0dd3-b30c-caf4-ec0722b05a4f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 15:15:06 +0200
+Date: Sat, 10 Sep 2016 19:37:42 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+Move one assignment for the local variable "updated_uuids" so that
+its setting will only be performed after corresponding memory
+allocations succeeded by this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/virtio_console.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index babc812..69c6718 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -634,14 +634,14 @@ static ssize_t __send_to_port(struct port *port, struct scatterlist *sg,
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index dab3f74..5526f6b 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -4179,7 +4179,7 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
+ 	struct drbd_device *device;
+ 	struct p_uuids *p = pi->data;
+ 	u64 *p_uuid;
+-	int i, updated_uuids = 0;
++	int i, updated_uuids;
  
- 	if (err) {
- 		in_count = 0;
--		goto done;
-+		goto unlock;
+ 	peer_device = conn_peer_device(connection, pi->vnr);
+ 	if (!peer_device)
+@@ -4206,6 +4206,7 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
+ 		return -EIO;
  	}
  
- 	if (out_vq->num_free = 0)
- 		port->outvq_full = true;
- 
- 	if (nonblock)
--		goto done;
-+		goto unlock;
- 
- 	/*
- 	 * Wait till the host acknowledges it pushed out the data we
-@@ -655,7 +655,7 @@ static ssize_t __send_to_port(struct port *port, struct scatterlist *sg,
- 	while (!virtqueue_get_buf(out_vq, &len)
- 		&& !virtqueue_is_broken(out_vq))
- 		cpu_relax();
--done:
-+ unlock:
- 	spin_unlock_irqrestore(&port->outvq_lock, flags);
- 
- 	port->stats.bytes_sent += in_count;
++	updated_uuids = 0;
+ 	if (get_ldev(device)) {
+ 		int skip_initial_sync  			device->state.conn = C_CONNECTED &&
 -- 
 2.10.0
 
