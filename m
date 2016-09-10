@@ -1,68 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 17:51:36 +0000
-Subject: [PATCH 7/9] tty: xuartps: constify uart_ops structures
-Message-Id: <1472752298-981-8-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 20:30:06 +0000
+Subject: [PATCH 07/13] DRBD-receiver: Delete an error message for a failed kzalloc() call in receive_sizes()
+Message-Id: <f466a944-217a-1aed-b7c0-0270603f6a33@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
-Check for uart_ops structures that are only stored in the ops field of a
-uart_port structure.  This field is declared const, so uart_ops structures
-that have this property can be declared as const also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 21:48:21 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Omit an extra message for a memory allocation failure in this function.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct uart_ops i@p = { ... };
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 
-@ok@
-identifier r.i;
-struct uart_port e;
-position p;
-@@
-e.ops = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct uart_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct uart_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/xilinx_uartps.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/drbd/drbd_receiver.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 9ca1a4d..11a2b36 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -993,7 +993,7 @@ static void cdns_uart_pm(struct uart_port *port, unsigned int state,
- 	}
- }
- 
--static struct uart_ops cdns_uart_ops = {
-+static const struct uart_ops cdns_uart_ops = {
- 	.set_mctrl	= cdns_uart_set_mctrl,
- 	.get_mctrl	= cdns_uart_get_mctrl,
- 	.start_tx	= cdns_uart_start_tx,
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 64bc316..6a9c16e 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -4088,7 +4088,6 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
+ 			new_disk_conf = kzalloc(sizeof(*new_disk_conf),
+ 						GFP_KERNEL);
+ 			if (!new_disk_conf) {
+-				drbd_err(device, "Allocation of new disk_conf failed\n");
+ 				put_ldev(device);
+ 				return -ENOMEM;
+ 			}
+-- 
+2.10.0
 
