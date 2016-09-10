@@ -1,72 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:35:12 +0000
-Subject: [PATCH 46/47] block-rbd: Rename jump labels in rbd_init()
-Message-Id: <5183e609-e94b-8041-e69e-4424e30ae45d@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:54:20 +0000
+Subject: [PATCH 12/30] ACPI-processor: Rename jump labels in acpi_processor_ppc_notifier()
+Message-Id: <8fb3294e-fe35-6494-b1ce-3fa7620e6f61@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 20:06:54 +0200
+Date: Tue, 6 Sep 2016 19:04:05 +0200
 
 Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/acpi/processor_perflib.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8802a06..8897815 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -6506,20 +6506,20 @@ static int __init rbd_init(void)
- 	rbd_wq = alloc_workqueue(RBD_DRV_NAME, WQ_MEM_RECLAIM, 0);
- 	if (!rbd_wq) {
- 		rc = -ENOMEM;
--		goto err_out_slab;
-+		goto exit_slab;
- 	}
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+index 07e5e59..86256bd 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -90,18 +90,17 @@ static int acpi_processor_ppc_notifier(struct notifier_block *nb,
  
- 	if (single_major) {
- 		rbd_major = register_blkdev(0, RBD_DRV_NAME);
- 		if (rbd_major < 0) {
- 			rc = rbd_major;
--			goto err_out_wq;
-+			goto destroy_workqueue;
- 		}
- 	}
+ 	pr = per_cpu(processors, policy->cpu);
+ 	if (!pr || !pr->performance)
+-		goto out;
++		goto unlock;
  
- 	rc = rbd_sysfs_init();
- 	if (rc)
--		goto err_out_blkdev;
-+		goto check_single;
+ 	ppc = (unsigned int)pr->performance_platform_limit;
  
- 	if (single_major)
- 		pr_info("loaded (major %d)\n", rbd_major);
-@@ -6527,13 +6527,12 @@ static int __init rbd_init(void)
- 		pr_info("loaded\n");
+ 	if (ppc >= pr->performance->state_count)
+-		goto out;
++		goto unlock;
+ 
+ 	cpufreq_verify_within_limits(policy, 0,
+ 				     pr->performance->states[ppc].
+ 				     core_frequency * 1000);
+-
+-      out:
++ unlock:
+ 	mutex_unlock(&performance_mutex);
  
  	return 0;
--
--err_out_blkdev:
-+ check_single:
- 	if (single_major)
- 		unregister_blkdev(rbd_major, RBD_DRV_NAME);
--err_out_wq:
-+ destroy_workqueue:
- 	destroy_workqueue(rbd_wq);
--err_out_slab:
-+ exit_slab:
- 	rbd_slab_exit();
- 	return rc;
- }
 -- 
 2.10.0
 
