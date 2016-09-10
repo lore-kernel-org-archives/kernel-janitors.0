@@ -1,49 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 07:24:52 +0000
-Subject: [PATCH 1/5] GPU-DRM-nouveau: Use kmalloc_array() in nvbios_iccsense_parse()
-Message-Id: <77983748-8b67-5ee1-e94b-5f3b8c221ad0@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:44:01 +0000
+Subject: [PATCH 06/30] ACPI-processor: Move a success indication in acpi_processor_preregister_performance()
+Message-Id: <72f31d34-3efd-346d-1738-a57dea9df710@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
-In-Reply-To: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 20 Sep 2016 22:22:14 +0200
+Date: Tue, 6 Sep 2016 13:03:56 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+The local variable "retval" was initialised with a zero at the beginning
+as an indication for a successful function execution despite of
+the possibility that following function calls could fail.
+Move the desired assignment down to the source code place where some system
+clean-up is performed.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c | 4 +++-
+ drivers/acpi/processor_perflib.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-index 0843280..91cf1ee 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-@@ -72,7 +72,9 @@ nvbios_iccsense_parse(struct nvkm_bios *bios, struct nvbios_iccsense *iccsense)
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+index 2fc82e7..417e181 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -595,7 +595,7 @@ int acpi_processor_preregister_performance(
+ 		struct acpi_processor_performance __percpu *performance)
+ {
+ 	int count_target;
+-	int retval = 0;
++	int retval;
+ 	unsigned int i, j;
+ 	cpumask_var_t covered_cpus;
+ 	struct acpi_processor *pr;
+@@ -719,6 +719,8 @@ int acpi_processor_preregister_performance(
+ 				     pr->performance->shared_cpu_map);
+ 		}
  	}
- 
- 	iccsense->nr_entry = cnt;
--	iccsense->rail = kmalloc(sizeof(struct pwr_rail_t) * cnt, GFP_KERNEL);
-+	iccsense->rail = kmalloc_array(cnt,
-+				       sizeof(*iccsense->rail),
-+				       GFP_KERNEL);
- 	if (!iccsense->rail)
- 		return -ENOMEM;
- 
++
++	retval = 0;
+  clear_cpu:
+ 	for_each_possible_cpu(i) {
+ 		pr = per_cpu(processors, i);
 -- 
 2.10.0
 
