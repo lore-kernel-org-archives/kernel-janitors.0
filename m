@@ -1,43 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 14:26:16 +0000
-Subject: [PATCH 2/7] cfag12864b: Delete an error message for a failed kmalloc_array() call
-Message-Id: <0a01ed52-b852-ccfd-b834-df06f8cd2915@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 20:32:17 +0000
+Subject: [PATCH 09/13] DRBD-receiver: Improve determination of sizes in receive_SyncParam()
+Message-Id: <334ae3df-8fff-025b-5311-af4522d9611f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
-In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 14:54:05 +0200
+Date: Sat, 10 Sep 2016 21:54:55 +0200
 
-Omit an extra message for a memory allocation failure in this function.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/auxdisplay/cfag12864b.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864b.c
-index 88260f4..fd07fad 100644
---- a/drivers/auxdisplay/cfag12864b.c
-+++ b/drivers/auxdisplay/cfag12864b.c
-@@ -351,9 +351,6 @@ static int __init cfag12864b_init(void)
- 					 sizeof(*cfag12864b_cache),
- 					 GFP_KERNEL);
- 	if (cfag12864b_cache = NULL) {
--		printk(KERN_ERR CFAG12864B_NAME ": ERROR: "
--			"can't alloc cache buffer (%i bytes)\n",
--			CFAG12864B_SIZE);
- 		ret = -ENOMEM;
- 		goto bufferalloced;
- 	}
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 2fe58d1..6fbd968 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -3859,7 +3859,7 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
+ 	mutex_lock(&connection->resource->conf_update);
+ 	old_net_conf = peer_device->connection->net_conf;
+ 	if (get_ldev(device)) {
+-		new_disk_conf = kzalloc(sizeof(struct disk_conf), GFP_KERNEL);
++		new_disk_conf = kzalloc(sizeof(*new_disk_conf), GFP_KERNEL);
+ 		if (!new_disk_conf) {
+ 			put_ldev(device);
+ 			mutex_unlock(&connection->resource->conf_update);
+@@ -3946,7 +3946,8 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
+ 		}
+ 
+ 		if (verify_tfm || csums_tfm) {
+-			new_net_conf = kzalloc(sizeof(struct net_conf), GFP_KERNEL);
++			new_net_conf = kzalloc(sizeof(*new_net_conf),
++					       GFP_KERNEL);
+ 			if (!new_net_conf) {
+ 				drbd_err(device, "Allocation of new net_conf failed\n");
+ 				goto disconnect;
 -- 
 2.10.0
 
