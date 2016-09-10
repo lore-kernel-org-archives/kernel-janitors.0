@@ -1,83 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:30:02 +0000
-Subject: [PATCH 41/47] block-rbd: Rename jump labels in rbd_dev_device_setup()
-Message-Id: <1b51a821-c06c-4ee5-aff3-d1ed23abdebb@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:00:09 +0000
+Subject: [PATCH 1/4] ATM-ZeitNet: Use kmalloc_array() in start_tx()
+Message-Id: <4c3bc3b9-3bca-6a79-8093-1ee8d0c3ec8b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+References: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
+In-Reply-To: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 20:01:03 +0200
+Date: Sat, 10 Sep 2016 09:55:53 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/atm/zatm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index a037a5d..80983f6 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -6002,7 +6002,7 @@ static int rbd_dev_device_setup(struct rbd_device *rbd_dev)
- 	if (!single_major) {
- 		ret = register_blkdev(0, rbd_dev->name);
- 		if (ret < 0)
--			goto err_out_unlock;
-+			goto unlock;
+diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
+index cecfb94..d378ff2 100644
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -998,8 +998,9 @@ static int start_tx(struct atm_dev *dev)
  
- 		rbd_dev->major = ret;
- 		rbd_dev->minor = 0;
-@@ -6015,11 +6015,11 @@ static int rbd_dev_device_setup(struct rbd_device *rbd_dev)
- 
- 	ret = rbd_init_disk(rbd_dev);
- 	if (ret)
--		goto err_out_blkdev;
-+		goto check_single;
- 
- 	ret = rbd_dev_mapping_set(rbd_dev);
- 	if (ret)
--		goto err_out_disk;
-+		goto free_disk;
- 
- 	set_capacity(rbd_dev->disk, rbd_dev->mapping.size / SECTOR_SIZE);
- 	set_disk_ro(rbd_dev->disk, rbd_dev->mapping.read_only);
-@@ -6027,7 +6027,7 @@ static int rbd_dev_device_setup(struct rbd_device *rbd_dev)
- 	dev_set_name(&rbd_dev->dev, "%d", rbd_dev->dev_id);
- 	ret = device_add(&rbd_dev->dev);
- 	if (ret)
--		goto err_out_mapping;
-+		goto clear_mapping;
- 
- 	/* Everything's ready.  Announce the disk to the world. */
- 
-@@ -6044,15 +6044,14 @@ static int rbd_dev_device_setup(struct rbd_device *rbd_dev)
- 		rbd_dev->header.features);
- 
- 	return ret;
--
--err_out_mapping:
-+ clear_mapping:
- 	rbd_dev_mapping_clear(rbd_dev);
--err_out_disk:
-+ free_disk:
- 	rbd_free_disk(rbd_dev);
--err_out_blkdev:
-+ check_single:
- 	if (!single_major)
- 		unregister_blkdev(rbd_dev->major, rbd_dev->name);
--err_out_unlock:
-+ unlock:
- 	up_write(&rbd_dev->header_rwsem);
- 	return ret;
- }
+ 	DPRINTK("start_tx\n");
+ 	zatm_dev = ZATM_DEV(dev);
+-	zatm_dev->tx_map = kmalloc(sizeof(struct atm_vcc *)*
+-	    zatm_dev->chans,GFP_KERNEL);
++	zatm_dev->tx_map = kmalloc_array(zatm_dev->chans,
++					 sizeof(*zatm_dev->tx_map),
++					 GFP_KERNEL);
+ 	if (!zatm_dev->tx_map) return -ENOMEM;
+ 	zatm_dev->tx_bw = ATM_OC3_PCR;
+ 	zatm_dev->free_shapers = (1 << NR_SHAPERS)-1;
 -- 
 2.10.0
 
