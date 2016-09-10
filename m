@@ -1,63 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 16:55:19 +0000
-Subject: [PATCH 13/14] GPU-DRM-OMAP: Rename a jump label in omap_gem_new_dmabuf()
-Message-Id: <48e87ab8-a85f-ca51-ebac-bb6f6012fbcc@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 20:31:08 +0000
+Subject: [PATCH 08/13] DRBD-receiver: Move an assignment in receive_sizes()
+Message-Id: <59238c49-0c8a-fa28-4a4b-2d3924968acb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
-In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 17:45:04 +0200
+Date: Sat, 10 Sep 2016 21:50:18 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Move one assignment for the local variable "ldsc" so that its setting
+will only be performed after corresponding data processing succeeded
+by this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/omapdrm/omap_gem.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
-index 3c49ad9..92510de 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem.c
-@@ -1442,7 +1442,7 @@ struct drm_gem_object *omap_gem_new_dmabuf(struct drm_device *dev, size_t size,
- 	obj = omap_gem_new(dev, gsize, OMAP_BO_MEM_DMABUF | OMAP_BO_WC);
- 	if (!obj) {
- 		obj = ERR_PTR(-ENOMEM);
--		goto done;
-+		goto unlock;
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 6a9c16e..2fe58d1 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -4036,7 +4036,7 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
+ 	struct o_qlim *o = (connection->agreed_features & DRBD_FF_WSAME) ? p->qlim : NULL;
+ 	enum determine_dev_size dd = DS_UNCHANGED;
+ 	sector_t p_size, p_usize, p_csize, my_usize;
+-	int ldsc = 0; /* local disk size changed */
++	int ldsc; /* local disk size changed */
+ 	enum dds_flags ddsf;
+ 
+ 	peer_device = conn_peer_device(connection, pi->vnr);
+@@ -4141,6 +4141,7 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
+ 		drbd_set_my_capacity(device, p_csize ?: p_usize ?: p_size);
  	}
  
- 	omap_obj = to_omap_bo(obj);
-@@ -1462,7 +1462,7 @@ struct drm_gem_object *omap_gem_new_dmabuf(struct drm_device *dev, size_t size,
- 		if (!pages) {
- 			omap_gem_free_object(obj);
- 			obj = ERR_PTR(-ENOMEM);
--			goto done;
-+			goto unlock;
- 		}
- 
- 		omap_obj->pages = pages;
-@@ -1476,11 +1476,10 @@ struct drm_gem_object *omap_gem_new_dmabuf(struct drm_device *dev, size_t size,
- 		if (WARN_ON(i != npages)) {
- 			omap_gem_free_object(obj);
- 			obj = ERR_PTR(-ENOMEM);
--			goto done;
-+			goto unlock;
- 		}
- 	}
--
--done:
-+ unlock:
- 	mutex_unlock(&dev->struct_mutex);
- 	return obj;
- }
++	ldsc = 0;
+ 	if (get_ldev(device)) {
+ 		if (device->ldev->known_size != drbd_get_capacity(device->ldev->backing_bdev)) {
+ 			device->ldev->known_size = drbd_get_capacity(device->ldev->backing_bdev);
 -- 
 2.10.0
 
