@@ -1,58 +1,56 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Mon, 05 Sep 2016 10:31:03 +0000
-Subject: Re: [PATCH 00/17] s390/debug: Fine-tuning for several function implementations
-Message-Id: <20160905123103.2c587d60@mschwide>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:30:08 +0000
+Subject: [PATCH 00/30] ACPI-processor: Fine-tuning for several function implementations
+Message-Id: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-        <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
-In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On Sat, 3 Sep 2016 14:04:18 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 9 Sep 2016 20:15:05 +0200
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 3 Sep 2016 13:54:32 +0200
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (17):
->   Use kmalloc_array() in debug_areas_alloc()
->   Delete unnecessary braces
->   Add some spaces for better code readability
->   Rename jump labels in debug_areas_alloc()
->   Fix jump targets in debug_info_alloc()
->   Rename jump labels in debug_info_copy()
->   Rename jump labels in debug_open()
->   Fix a jump target in debug_register_mode()
->   Return directly if a null pointer was passed to debug_unregister()
->   Delete an unnecessary initialisation in debug_prolog_level_fn()
->   Fix indentation in 13 functions
->   Use memdup_user() rather than duplicating its implementation
->   Improve a size determination in debug_open()
->   Improve a size determination in debug_sprintf_format_fn()
->   Improve a size determination in debug_raw_header_fn()
->   Improve determination of sizes in debug_info_alloc()
->   Improve another size determination in debug_info_alloc()
-> 
->  arch/s390/kernel/debug.c | 433 ++++++++++++++++++++++-------------------------
->  1 file changed, 204 insertions(+), 229 deletions(-)
- 
-While I agree that the old code in arch/s390/kernel/debug.c does not abide to
-the current coding style standards, I doubt there is much value in these patches.
-To be honest I got annoyed after the third patch and stopped reading after
-the forth. 
+Several update suggestions were taken into account
+from static source code analysis.
 
-NAK.
+Markus Elfring (30):
+  Use kmalloc_array() in acpi_processor_get_performance_states()
+  Improve two size determinations in acpi_processor_get_performance_states()
+  Rename jump labels in acpi_processor_get_performance_states()
+  Delete two unnecessary initialisations in acpi_processor_get_performance_states()
+  Rename jump labels in acpi_processor_preregister_performance()
+  Move a success indication in acpi_processor_preregister_performance()
+  Rename jump labels in acpi_processor_get_psd()
+  Delete two unnecessary initialisations in acpi_processor_get_psd()
+  Improve a size determination in acpi_processor_get_psd()
+  Rename jump labels in acpi_processor_get_performance_control()
+  Delete two unnecessary initialisations in acpi_processor_get_performance_control()
+  Rename jump labels in acpi_processor_ppc_notifier()
+  Delete an unnecessary initialisation in acpi_processor_ppc_notifier()
+  Delete an unnecessary initialisation in acpi_processor_get_performance_info()
+  Delete an unnecessary initialisation in acpi_processor_get_platform_limit()
+  Use kmalloc_array() in acpi_processor_get_throttling_states()
+  Improve another size determination in acpi_processor_get_throttling_states()
+  Rename jump labels in acpi_processor_get_throttling_states()
+  Delete two unnecessary initialisations in acpi_processor_get_throttling_states()
+  Fix jump targets in acpi_processor_get_throttling_info()
+  Rename jump labels in acpi_processor_get_tsd()
+  Delete two unnecessary initialisations in acpi_processor_get_tsd()
+  Improve a size determination in acpi_processor_get_tsd()
+  Rename jump labels in acpi_processor_get_throttling_control()
+  Delete two unnecessary initialisations in acpi_processor_get_throttling_control()
+  Fix jump targets in acpi_processor_reevaluate_tstate()
+  Delete an unnecessary initialisation in acpi_processor_reevaluate_tstate()
+  Rename a jump label in acpi_processor_get_platform_limit()
+  Delete an unnecessary initialisation in acpi_processor_get_platform_limit()
+  Improve jump targets in acpi_processor_update_tsd_coord()
+
+ drivers/acpi/processor_perflib.c    |  87 +++++++++++++--------------
+ drivers/acpi/processor_throttling.c | 116 ++++++++++++++++--------------------
+ 2 files changed, 93 insertions(+), 110 deletions(-)
 
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+2.10.0
 
