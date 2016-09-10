@@ -1,50 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 16:59:07 +0000
-Subject: [PATCH 12/21] ACPI-video: Delete unnecessary if statement in acpi_video_switch_brightness()
-Message-Id: <e2b752b3-512f-5e07-b325-a34b301a4685@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:48:03 +0000
+Subject: [PATCH 08/30] ACPI-processor: Delete two unnecessary initialisations in acpi_processor_get_psd()
+Message-Id: <62dcd023-b2ff-d02f-5371-f9648ad397ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
-In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 16:10:40 +0200
+Date: Tue, 6 Sep 2016 13:55:52 +0200
 
-Move a function call into an else branch for successful function execution.
-Omit a duplicate check for the local variable "result" then at the end.
+The local variables "psd" and "status" will be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_video.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/acpi/processor_perflib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index fe9b40e..0362a43 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1372,14 +1372,12 @@ acpi_video_switch_brightness(struct work_struct *work)
- 	level_next = acpi_video_get_next_level(device, level_current, event);
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+index c2813cc..3f94279 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -529,11 +529,11 @@ EXPORT_SYMBOL(acpi_processor_notify_smm);
+ static int acpi_processor_get_psd(struct acpi_processor	*pr)
+ {
+ 	int result = 0;
+-	acpi_status status = AE_OK;
++	acpi_status status;
+ 	struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
+ 	struct acpi_buffer format = {sizeof("NNNNN"), "NNNNN"};
+ 	struct acpi_buffer state = {0, NULL};
+-	union acpi_object  *psd = NULL;
++	union acpi_object  *psd;
+ 	struct acpi_psd_package *pdomain;
  
- 	result = acpi_video_device_lcd_set_level(device, level_next);
--
--	if (!result)
--		backlight_force_update(device->backlight,
--				       BACKLIGHT_UPDATE_HOTKEY);
--
- out:
- 	if (result)
- 		printk(KERN_ERR PREFIX "Failed to switch the brightness\n");
-+	else
-+		backlight_force_update(device->backlight,
-+				       BACKLIGHT_UPDATE_HOTKEY);
- }
- 
- int acpi_video_get_edid(struct acpi_device *device, int type, int device_id,
+ 	status = acpi_evaluate_object(pr->handle, "_PSD", NULL, &buffer);
 -- 
 2.10.0
 
