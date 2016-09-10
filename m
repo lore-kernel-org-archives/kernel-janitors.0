@@ -1,40 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 07:29:18 +0000
-Subject: [PATCH 5/5] GPU-DRM-nouveau: Add space after an "if"
-Message-Id: <d0a1b7f9-5fb1-fcb5-abc7-ffd03ef01086@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 10:07:26 +0000
+Subject: [PATCH 25/30] ACPI-processor: Delete two unnecessary initialisations in acpi_processor_get_throttlin
+Message-Id: <63843eeb-0b23-cf80-77d7-3317ac09af78@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
-In-Reply-To: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 08:58:41 +0200
+Date: Tue, 6 Sep 2016 21:17:12 +0200
 
-Use another space character behind the keyword "if" according to
-the Linux coding style convention.
+The local variables "ptc" and "status" will be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/processor_throttling.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
-index edbe8e4..f95800d 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
-@@ -256,7 +256,7 @@ gt215_link_train(struct gt215_ram *ram)
- 	return ret;
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index cdcd5d6f..0b4e058 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -423,9 +423,9 @@ end:
+ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
+ {
+ 	int result = 0;
+-	acpi_status status = 0;
++	acpi_status status;
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+-	union acpi_object *ptc = NULL;
++	union acpi_object *ptc;
+ 	union acpi_object obj = { 0 };
+ 	struct acpi_processor_throttling *throttling;
  
- out:
--	if(ret = -EBUSY)
-+	if (ret = -EBUSY)
- 		f = NULL;
- 
- 	train->state = NVA3_TRAIN_UNSUPPORTED;
 -- 
 2.10.0
 
