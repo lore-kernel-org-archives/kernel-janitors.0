@@ -1,44 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 16:53:12 +0000
-Subject: [PATCH 11/14] GPU-DRM-OMAP: Replace a kzalloc() call by kcalloc() in omap_gem_attach_pages()
-Message-Id: <cd114982-dfba-df3d-723c-7ff8c89be558@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 14:26:16 +0000
+Subject: [PATCH 2/7] cfag12864b: Delete an error message for a failed kmalloc_array() call
+Message-Id: <0a01ed52-b852-ccfd-b834-df06f8cd2915@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
-In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+ <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 17:40:20 +0200
+Date: Sat, 10 Sep 2016 14:54:05 +0200
 
-The script "checkpatch.pl" can point information out like the following.
+Omit an extra message for a memory allocation failure in this function.
 
-WARNING: Prefer kcalloc over kzalloc with multiply
-
-Thus fix the affected source code place.
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/omapdrm/omap_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/auxdisplay/cfag12864b.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
-index e4f1924..26f1212 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem.c
-@@ -283,7 +283,7 @@ static int omap_gem_attach_pages(struct drm_gem_object *obj)
- 			}
- 		}
- 	} else {
--		addrs = kzalloc(npages * sizeof(*addrs), GFP_KERNEL);
-+		addrs = kcalloc(npages, sizeof(*addrs), GFP_KERNEL);
- 		if (!addrs) {
- 			ret = -ENOMEM;
- 			goto free_pages;
+diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864b.c
+index 88260f4..fd07fad 100644
+--- a/drivers/auxdisplay/cfag12864b.c
++++ b/drivers/auxdisplay/cfag12864b.c
+@@ -351,9 +351,6 @@ static int __init cfag12864b_init(void)
+ 					 sizeof(*cfag12864b_cache),
+ 					 GFP_KERNEL);
+ 	if (cfag12864b_cache = NULL) {
+-		printk(KERN_ERR CFAG12864B_NAME ": ERROR: "
+-			"can't alloc cache buffer (%i bytes)\n",
+-			CFAG12864B_SIZE);
+ 		ret = -ENOMEM;
+ 		goto bufferalloced;
+ 	}
 -- 
 2.10.0
 
