@@ -1,45 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 20:50:01 +0000
-Subject: [PATCH 7/7] AGPGART-UniNorth: Delete an unnecessary check in uninorth_create_gatt_table()
-Message-Id: <6565fead-21c0-59d6-2a81-fd5084123d66@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 10:12:41 +0000
+Subject: [PATCH 30/30] ACPI-processor: Improve jump targets in acpi_processor_update_tsd_coord()
+Message-Id: <2e07f4be-9036-6834-4603-3713073fb672@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
-In-Reply-To: <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 22:15:56 +0200
+Date: Tue, 6 Sep 2016 22:18:30 +0200
 
-The check for the local variable "table" is unnecessary at the end
-of this function because the corresponding source code place should only
-be reached with a non-zero pointer for it after a failed call of the
-function "kmalloc_array".
-Thus remove it.
+* Adjust jump targets according to the current Linux coding
+  style convention.
+
+* Delete a duplicate check then.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/agp/uninorth-agp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/acpi/processor_throttling.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/char/agp/uninorth-agp.c b/drivers/char/agp/uninorth-agp.c
-index 8b1eb72..657cf17 100644
---- a/drivers/char/agp/uninorth-agp.c
-+++ b/drivers/char/agp/uninorth-agp.c
-@@ -438,8 +438,7 @@ static int uninorth_create_gatt_table(struct agp_bridge_data *bridge)
- 	return 0;
-  free_page_array:
- 	kfree(uninorth_priv.pages_arr);
--	if (table)
--		free_pages((unsigned long)table, page_order);
-+	free_pages((unsigned long)table, page_order);
- 	return -ENOMEM;
- }
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index 79ba9b78..b45f6c3 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -97,11 +97,9 @@ static int acpi_processor_update_tsd_coord(void)
+ 		 */
+ 		if (!pthrottling->tsd_valid_flag) {
+ 			retval = -EINVAL;
+-			break;
++			goto free_cpumask;
+ 		}
+ 	}
+-	if (retval)
+-		goto err_ret;
  
+ 	for_each_possible_cpu(i) {
+ 		pr = per_cpu(processors, i);
+@@ -147,12 +145,12 @@ static int acpi_processor_update_tsd_coord(void)
+ 			 */
+ 			if (match_pdomain->num_processors != count_target) {
+ 				retval = -EINVAL;
+-				goto err_ret;
++				goto free_cpumask;
+ 			}
+ 
+ 			if (pdomain->coord_type != match_pdomain->coord_type) {
+ 				retval = -EINVAL;
+-				goto err_ret;
++				goto free_cpumask;
+ 			}
+ 
+ 			cpumask_set_cpu(j, covered_cpus);
+@@ -180,8 +178,7 @@ static int acpi_processor_update_tsd_coord(void)
+ 				     pthrottling->shared_cpu_map);
+ 		}
+ 	}
+-
+-err_ret:
++ free_cpumask:
+ 	free_cpumask_var(covered_cpus);
+ 
+ 	for_each_possible_cpu(i) {
 -- 
 2.10.0
 
