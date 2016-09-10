@@ -1,45 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:01:32 +0000
-Subject: [PATCH 19/30] ACPI-processor: Delete two unnecessary initialisations in acpi_processor_get_throttlin
-Message-Id: <4634cdd9-feed-81ed-e5a1-4ed0dc612099@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 07:21:29 +0000
+Subject: [PATCH 5/5] ATM-nicstar: Refactor a dev_alloc_skb() call in dequeue_rx()
+Message-Id: <b6465bc0-f0ff-b3b6-8872-79b84f7300f8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
+In-Reply-To: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 20:00:43 +0200
+Date: Sat, 10 Sep 2016 08:56:03 +0200
 
-The local variables "tss" and "status" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+The script "checkpatch.pl" can point out that assignments should usually
+not be performed within condition checks.
+Thus move an assignment for a local variable to a separate statement
+in this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/atm/nicstar.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 665e8de..8847bca 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -507,11 +507,11 @@ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
- static int acpi_processor_get_throttling_states(struct acpi_processor *pr)
- {
- 	int result = 0;
--	acpi_status status = AE_OK;
-+	acpi_status status;
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
- 	struct acpi_buffer format = { sizeof("NNNNN"), "NNNNN" };
- 	struct acpi_buffer state = { 0, NULL };
--	union acpi_object *tss = NULL;
-+	union acpi_object *tss;
- 	int i;
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index 04f5781..c7296b5 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -2023,7 +2023,8 @@ static void dequeue_rx(ns_dev * card, ns_rsqe * rsqe)
  
- 	status = acpi_evaluate_object(pr->handle, "_TSS", NULL, &buffer);
+ 		cell = skb->data;
+ 		for (i = ns_rsqe_cellcount(rsqe); i; i--) {
+-			if ((sb = dev_alloc_skb(NS_SMSKBSIZE)) = NULL) {
++			sb = dev_alloc_skb(NS_SMSKBSIZE);
++			if (!sb) {
+ 				printk
+ 				    ("nicstar%d: Can't allocate buffers for aal0.\n",
+ 				     card->index);
 -- 
 2.10.0
 
