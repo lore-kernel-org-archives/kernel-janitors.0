@@ -1,90 +1,72 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Sep 2016 08:28:55 +0000
-Subject: [PATCH] Coccinelle: pm_runtime: ensure relevance of pm_runtime reports
-Message-Id: <1474532935-22506-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 10:02:22 +0000
+Subject: [PATCH 20/30] ACPI-processor: Fix jump targets in acpi_processor_get_throttling_info()
+Message-Id: <c7e47193-19f9-d165-a20f-f86688eb774e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-pm_runtime.cocci starts with one rule that searches for a variety of
-functions calls, followed by various rules that report errors.  Previously,
-the only connection between the first rule and the rest was to check that
-the first rule had matched somewhere.  Change the rules to propagate a
-position from the first rule to the others, to make sure that the sites
-reported on are the same as the sites that were identified as having the
-relevant functions.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Sep 2016 20:32:46 +0200
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+1. Adjust jump targets according to the current Linux coding
+   style convention.
 
+2. Delete a duplicate check then at the end.
+
+3. Omit the explicit initialisation for the local variable "result"
+   at the beginning which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- scripts/coccinelle/api/pm_runtime.cocci |   18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/acpi/processor_throttling.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/scripts/coccinelle/api/pm_runtime.cocci b/scripts/coccinelle/api/pm_runtime.cocci
-index 89b98a2..d67ccf5 100644
---- a/scripts/coccinelle/api/pm_runtime.cocci
-+++ b/scripts/coccinelle/api/pm_runtime.cocci
-@@ -17,9 +17,10 @@ virtual report
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index 8847bca..24bd97f 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -1184,7 +1184,7 @@ int acpi_processor_set_throttling(struct acpi_processor *pr,
  
- @runtime_bad_err_handle exists@
- expression ret;
-+position p;
- @@
- (
--ret = \(pm_runtime_idle\|
-+ret@p = \(pm_runtime_idle\|
- 	pm_runtime_suspend\|
- 	pm_runtime_autosuspend\|
- 	pm_runtime_resume\|
-@@ -47,12 +48,13 @@ IS_ERR_VALUE(ret)
- //  For context mode
- //----------------------------------------------------------
+ int acpi_processor_get_throttling_info(struct acpi_processor *pr)
+ {
+-	int result = 0;
++	int result;
+ 	struct acpi_processor_throttling *pthrottling;
  
--@depends on runtime_bad_err_handle && context@
-+@depends on context@
- identifier pm_runtime_api;
- expression ret;
-+position runtime_bad_err_handle.p;
- @@
- (
--ret = pm_runtime_api(...);
-+ret@p = pm_runtime_api(...);
- ...
- * IS_ERR_VALUE(ret)
- ...
-@@ -62,12 +64,13 @@ ret = pm_runtime_api(...);
- //  For patch mode
- //----------------------------------------------------------
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+@@ -1249,7 +1249,7 @@ int acpi_processor_get_throttling_info(struct acpi_processor *pr)
  
--@depends on runtime_bad_err_handle && patch@
-+@depends on patch@
- identifier pm_runtime_api;
- expression ret;
-+position runtime_bad_err_handle.p;
- @@
- (
--ret = pm_runtime_api(...);
-+ret@p = pm_runtime_api(...);
- ...
- - IS_ERR_VALUE(ret)
- + ret < 0
-@@ -78,13 +81,14 @@ ret = pm_runtime_api(...);
- //  For org and report mode
- //----------------------------------------------------------
+ 	result = acpi_processor_get_throttling(pr);
+ 	if (result)
+-		goto end;
++		goto disable_throttling;
  
--@r depends on runtime_bad_err_handle && (org || report) exists@
-+@r depends on (org || report) exists@
- position p1, p2;
- identifier pm_runtime_api;
- expression ret;
-+position runtime_bad_err_handle.p;
- @@
- (
--ret = pm_runtime_api@p1(...);
-+ret@p = pm_runtime_api@p1(...);
- ...
- IS_ERR_VALUE@p2(ret)
- ...
+ 	if (pr->throttling.state) {
+ 		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+@@ -1257,13 +1257,11 @@ int acpi_processor_get_throttling_info(struct acpi_processor *pr)
+ 				  pr->throttling.state));
+ 		result = acpi_processor_set_throttling(pr, 0, false);
+ 		if (result)
+-			goto end;
++			goto disable_throttling;
+ 	}
+-
+-      end:
+-	if (result)
+-		pr->flags.throttling = 0;
+-
++	return 0;
++ disable_throttling:
++	pr->flags.throttling = 0;
+ 	return result;
+ }
+ 
+-- 
+2.10.0
 
