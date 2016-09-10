@@ -1,95 +1,64 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Sep 2016 14:44:34 +0000
-Subject: [PATCH 5/6] crypto-caamhash: Delete an unnecessary initialisation in seven functions
-Message-Id: <a904a514-57f1-6c1a-4839-6150ddacf960@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:51:54 +0000
+Subject: [PATCH 10/30] ACPI-processor: Rename jump labels in acpi_processor_get_performance_control()
+Message-Id: <519ba472-04d6-e82a-4572-d911d56909bb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
-In-Reply-To: <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Labbe Corentin <clabbe.montjoie@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Sep 2016 15:24:02 +0200
+Date: Tue, 6 Sep 2016 18:50:48 +0200
 
-The local variable "ret" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/caam/caamhash.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/acpi/processor_perflib.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
-index b1dbc53..adb8b19 100644
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -440,7 +440,7 @@ static int hash_digest_key(struct caam_hash_ctx *ctx, const u8 *key_in,
- 	u32 *desc;
- 	struct split_key_result result;
- 	dma_addr_t src_dma, dst_dma;
--	int ret = 0;
-+	int ret;
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+index b7e2f51..3a48c3a 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -240,7 +240,7 @@ static int acpi_processor_get_performance_control(struct acpi_processor *pr)
+ 	    || (pct->package.count != 2)) {
+ 		printk(KERN_ERR PREFIX "Invalid _PCT data\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
+ 	}
  
- 	desc = kmalloc(CAAM_CMD_SZ * 8 + CAAM_PTR_SZ * 2, GFP_KERNEL | GFP_DMA);
- 	if (!desc) {
-@@ -517,7 +517,7 @@ static int ahash_setkey(struct crypto_ahash *ahash,
- 	struct device *jrdev = ctx->jrdev;
- 	int blocksize = crypto_tfm_alg_blocksize(&ahash->base);
- 	int digestsize = crypto_ahash_digestsize(ahash);
--	int ret = 0;
-+	int ret;
- 	u8 *hashed_key = NULL;
+ 	/*
+@@ -254,7 +254,7 @@ static int acpi_processor_get_performance_control(struct acpi_processor *pr)
+ 	    || (obj.buffer.pointer = NULL)) {
+ 		printk(KERN_ERR PREFIX "Invalid _PCT data (control_register)\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
+ 	}
+ 	memcpy(&pr->performance->control_register, obj.buffer.pointer,
+ 	       sizeof(struct acpi_pct_register));
+@@ -270,13 +270,12 @@ static int acpi_processor_get_performance_control(struct acpi_processor *pr)
+ 	    || (obj.buffer.pointer = NULL)) {
+ 		printk(KERN_ERR PREFIX "Invalid _PCT data (status_register)\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
+ 	}
  
- #ifdef DEBUG
-@@ -975,7 +975,7 @@ static int ahash_final_ctx(struct ahash_request *req)
- 	int sec4_sg_bytes, sec4_sg_src_index;
- 	int digestsize = crypto_ahash_digestsize(ahash);
- 	struct ahash_edesc *edesc;
--	int ret = 0;
-+	int ret;
+ 	memcpy(&pr->performance->status_register, obj.buffer.pointer,
+ 	       sizeof(struct acpi_pct_register));
+-
+-      end:
++ free_buffer:
+ 	kfree(buffer.pointer);
  
- 	sec4_sg_src_index = 1 + (buflen ? 1 : 0);
- 	sec4_sg_bytes = sec4_sg_src_index * sizeof(struct sec4_sg_entry);
-@@ -1055,7 +1055,7 @@ static int ahash_finup_ctx(struct ahash_request *req)
- 	int src_nents, mapped_nents;
- 	int digestsize = crypto_ahash_digestsize(ahash);
- 	struct ahash_edesc *edesc;
--	int ret = 0;
-+	int ret;
- 
- 	src_nents = sg_nents_for_len(req->src, req->nbytes);
- 	if (src_nents < 0) {
-@@ -1139,7 +1139,7 @@ static int ahash_digest(struct ahash_request *req)
- 	int digestsize = crypto_ahash_digestsize(ahash);
- 	int src_nents, mapped_nents;
- 	struct ahash_edesc *edesc;
--	int ret = 0;
-+	int ret;
- 
- 	src_nents = sg_nents_for_len(req->src, req->nbytes);
- 	if (src_nents < 0) {
-@@ -1218,7 +1218,7 @@ static int ahash_final_no_ctx(struct ahash_request *req)
- 	u32 *desc;
- 	int digestsize = crypto_ahash_digestsize(ahash);
- 	struct ahash_edesc *edesc;
--	int ret = 0;
-+	int ret;
- 
- 	/* allocate space for base edesc and hw desc commands, link tables */
- 	edesc = ahash_edesc_alloc(ctx, 0, ctx->sh_desc_digest,
-@@ -1408,7 +1408,7 @@ static int ahash_finup_no_ctx(struct ahash_request *req)
- 	int sec4_sg_bytes, sec4_sg_src_index, src_nents, mapped_nents;
- 	int digestsize = crypto_ahash_digestsize(ahash);
- 	struct ahash_edesc *edesc;
--	int ret = 0;
-+	int ret;
- 
- 	src_nents = sg_nents_for_len(req->src, req->nbytes);
- 	if (src_nents < 0) {
+ 	return result;
 -- 
 2.10.0
 
