@@ -1,42 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 12:14:12 +0000
-Subject: [PATCH 3/4] virtio_blk: Delete an unnecessary initialisation in init_vq()
-Message-Id: <52a07fc8-21a0-8f98-fa9d-5751fbf95afa@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 07:18:46 +0000
+Subject: [PATCH 2/5] ATM-nicstar: Improve another size determination in get_scq()
+Message-Id: <0bd4a38e-cd33-ecda-ed3a-73f743ed46e2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
-In-Reply-To: <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
+References: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
+In-Reply-To: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 13:43:50 +0200
+Date: Sat, 10 Sep 2016 08:18:10 +0200
 
-The local variable "err" will be set to an appropriate value
-by a following statement.
-Thus omit the explicit initialisation at the beginning.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/virtio_blk.c | 2 +-
+ drivers/atm/nicstar.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index d28dbcf..696f452 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -376,7 +376,7 @@ static void virtblk_config_changed(struct virtio_device *vdev)
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index 50dec13..96062e1 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -862,7 +862,7 @@ static scq_info *get_scq(ns_dev *card, int size, u32 scd)
+ 	if (size != VBR_SCQSIZE && size != CBR_SCQSIZE)
+ 		return NULL;
  
- static int init_vq(struct virtio_blk *vblk)
- {
--	int err = 0;
-+	int err;
- 	int i;
- 	vq_callback_t **callbacks;
- 	const char **names;
+-	scq = kmalloc(sizeof(scq_info), GFP_KERNEL);
++	scq = kmalloc(sizeof(*scq), GFP_KERNEL);
+ 	if (!scq)
+ 		return NULL;
+         scq->org = dma_alloc_coherent(&card->pcidev->dev,
 -- 
 2.10.0
 
