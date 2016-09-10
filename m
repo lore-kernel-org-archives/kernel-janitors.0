@@ -1,50 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 20:22:07 +0000
-Subject: [PATCH 6/7] ACPI-APEI-HEST: Reduce the scope for a variable in acpi_hest_init()
-Message-Id: <3dcbbc1b-7af3-4d5f-2851-88c115c5c459@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:57:03 +0000
+Subject: [PATCH 15/30] ACPI-processor: Delete an unnecessary initialisation in acpi_processor_get_platform_li
+Message-Id: <042b1648-3d48-96ef-7d32-d0ce620700aa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
-In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 21:50:34 +0200
+Date: Tue, 6 Sep 2016 19:12:06 +0200
 
-Move the definition for the local variable "ghes_count" into an if branch
-so that the corresponding setting will only be performed if GHES could be
-enabled by this function.
+The local variable "status" will be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/apei/hest.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/acpi/processor_perflib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index ddff1b1..0e629c0 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -216,7 +216,6 @@ void __init acpi_hest_init(void)
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+index de82338..bab5a564d 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -112,7 +112,7 @@ static struct notifier_block acpi_ppc_notifier_block = {
+ 
+ static int acpi_processor_get_platform_limit(struct acpi_processor *pr)
  {
- 	acpi_status status;
- 	int rc = -ENODEV;
--	unsigned int ghes_count = 0;
+-	acpi_status status = 0;
++	acpi_status status;
+ 	unsigned long long ppc = 0;
  
- 	if (hest_disable) {
- 		pr_info(HEST_PFX "Table parsing disabled.\n");
-@@ -238,6 +237,8 @@ void __init acpi_hest_init(void)
- 		apei_hest_parse(hest_parse_cmc, NULL);
  
- 	if (!ghes_disable) {
-+		unsigned int ghes_count = 0;
-+
- 		rc = apei_hest_parse(hest_parse_ghes_count, &ghes_count);
- 		if (rc)
- 			goto disable_hest;
 -- 
 2.10.0
 
