@@ -1,62 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 17:03:17 +0000
-Subject: [PATCH 15/16] md/bitmap: Add spaces around three comparison operators
-Message-Id: <746915d9-5895-8d39-f50f-6889b7889bab@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:03:54 +0000
+Subject: [PATCH 4/4] ATM-ZeitNet: Fix indentation for one DPRINTK() call in start_rx()
+Message-Id: <f5d3315e-61be-2697-0847-784cd6f1ab05@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
-In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+References: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
+In-Reply-To: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 18:08:04 +0200
+Date: Sat, 10 Sep 2016 10:38:04 +0200
 
-The script "checkpatch.pl" can point information out like the following.
-
-ERROR: spaces required around that '=' (ctx:VxV)
-
-Thus fix the affected source code places.
+Adjust the indentation for a call of the macro "DPRINTK" in this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/bitmap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/atm/zatm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-index 9d77f16..d029576 100644
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -303,7 +303,7 @@ static void write_page(struct bitmap *bitmap, struct page *page, int wait)
+diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
+index 2cc9e2a..d3dc954 100644
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -600,7 +600,7 @@ static int start_rx(struct atm_dev *dev)
+ 	struct zatm_dev *zatm_dev;
+ 	int i;
  
- 		if (wait)
- 			wait_event(bitmap->write_wait,
--				   atomic_read(&bitmap->pending_writes)=0);
-+				   atomic_read(&bitmap->pending_writes) = 0);
- 	}
- 	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
- 		bitmap_file_kick(bitmap);
-@@ -400,7 +400,7 @@ static int read_page(struct file *file, unsigned long index,
- 	page->index = index;
- 
- 	wait_event(bitmap->write_wait,
--		   atomic_read(&bitmap->pending_writes)=0);
-+		   atomic_read(&bitmap->pending_writes) = 0);
- 	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags)) {
- 		ret = -EIO;
- report_failure:
-@@ -1003,7 +1003,7 @@ void bitmap_unplug(struct bitmap *bitmap)
- 	}
- 	if (bitmap->storage.file)
- 		wait_event(bitmap->write_wait,
--			   atomic_read(&bitmap->pending_writes)=0);
-+			   atomic_read(&bitmap->pending_writes) = 0);
- 	else
- 		md_super_wait(bitmap->mddev);
- 
+-DPRINTK("start_rx\n");
++	DPRINTK("start_rx\n");
+ 	zatm_dev = ZATM_DEV(dev);
+ 	zatm_dev->rx_map = kcalloc(zatm_dev->chans,
+ 				   sizeof(*zatm_dev->rx_map),
 -- 
 2.10.0
 
