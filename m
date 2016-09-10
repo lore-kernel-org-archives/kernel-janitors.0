@@ -1,32 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 17:51:29 +0000
-Subject: [PATCH 0/9] constify uart_ops structures
-Message-Id: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 14:20:20 +0000
+Subject: [PATCH 0/7] cfag12864b: Fine-tuning for cfag12864b_init()
+Message-Id: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-Constify uart_ops structures.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 16:17:01 +0200
 
----
+Some update suggestions were taken into account
+from static source code analysis.
 
- drivers/tty/serial/altera_jtaguart.c |    2 +-
- drivers/tty/serial/altera_uart.c     |    2 +-
- drivers/tty/serial/arc_uart.c        |    2 +-
- drivers/tty/serial/atmel_serial.c    |    2 +-
- drivers/tty/serial/bcm63xx_uart.c    |    2 +-
- drivers/tty/serial/fsl_lpuart.c      |    4 ++--
- drivers/tty/serial/imx.c             |    2 +-
- drivers/tty/serial/jsm/jsm_tty.c     |    2 +-
- drivers/tty/serial/max3100.c         |    2 +-
- drivers/tty/serial/men_z135_uart.c   |    2 +-
- drivers/tty/serial/mxs-auart.c       |    2 +-
- drivers/tty/serial/pch_uart.c        |    2 +-
- drivers/tty/serial/sh-sci.c          |    2 +-
- drivers/tty/serial/st-asc.c          |    2 +-
- drivers/tty/serial/timbuart.c        |    2 +-
- drivers/tty/serial/uartlite.c        |    2 +-
- drivers/tty/serial/xilinx_uartps.c   |    2 +-
- 17 files changed, 18 insertions(+), 18 deletions(-)
+Markus Elfring (7):
+  Use kmalloc_array()
+  Delete an error message for a failed kmalloc_array() call
+  Return directly if the driver "ks0108" was not initialized
+  Return directly after a failed get_zeroed_page()
+  Rename jump labels
+  Return an error code only as a constant
+  Adjust two checks for null pointers
+
+ drivers/auxdisplay/cfag12864b.c | 37 +++++++++++++------------------------
+ 1 file changed, 13 insertions(+), 24 deletions(-)
+
+-- 
+2.10.0
+
