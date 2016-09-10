@@ -1,29 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 20 Sep 2016 10:30:26 +0000
-Subject: Re: GPU-DRM-GMA500: Use kmalloc_array() in mid_get_vbt_data_r10()
-Message-Id: <947cb23d-ee5a-b1cb-8699-f38a1478d58d@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:59:28 +0000
+Subject: [PATCH 17/30] ACPI-processor: Improve another size determination in acpi_processor_get_throttling_st
+Message-Id: <2b499c49-838a-06b6-b537-ec24bbf00f90@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3c9785ef-4553-2e3d-2cb2-5cf6d1f31ccd@users.sourceforge.net>
- <fa298938-9e98-9f8e-524e-f43ebb2137ca@users.sourceforge.net>
- <87vaxqlwb8.fsf@intel.com>
-In-Reply-To: <87vaxqlwb8.fsf@intel.com>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
->> A multiplication for the size determination of a memory allocation
->> indicated that an array data structure should be processed.
->> Thus use the corresponding function "kmalloc_array".
->>
->> This issue was detected by using the Coccinelle software.
-> 
-> Did you test this running on the hardware?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 6 Sep 2016 19:19:27 +0200
 
-No. - My "test computer" does not provide the corresponding hardware for the
-affected driver source files.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Regards,
-Markus
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/acpi/processor_throttling.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index 0a46b7f..c5ddf96 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -548,7 +548,7 @@ static int acpi_processor_get_throttling_states(struct acpi_processor *pr)
+ 		    (struct acpi_processor_tx_tss *)&(pr->throttling.
+ 						      states_tss[i]);
+ 
+-		state.length = sizeof(struct acpi_processor_tx_tss);
++		state.length = sizeof(*tx);
+ 		state.pointer = tx;
+ 
+ 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Extracting state %d\n", i));
+-- 
+2.10.0
+
