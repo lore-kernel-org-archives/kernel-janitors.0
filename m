@@ -1,40 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:57:03 +0000
-Subject: [PATCH 15/30] ACPI-processor: Delete an unnecessary initialisation in acpi_processor_get_platform_li
-Message-Id: <042b1648-3d48-96ef-7d32-d0ce620700aa@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 07:19:33 +0000
+Subject: [PATCH 3/5] ATM-nicstar: Improve another size determination in ns_init_card()
+Message-Id: <c8533128-fbcf-f7fe-9354-1949b47cca32@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
+In-Reply-To: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 19:12:06 +0200
+Date: Sat, 10 Sep 2016 08:30:09 +0200
 
-The local variable "status" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+Replace the specification of a data structure by a reference for a field
+in a local variable as the parameter for the operator "sizeof" to make
+the corresponding size determination a bit safer according to
+the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 2 +-
+ drivers/atm/nicstar.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index de82338..bab5a564d 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -112,7 +112,7 @@ static struct notifier_block acpi_ppc_notifier_block = {
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index 96062e1..ef977bf 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -611,7 +611,7 @@ static int ns_init_card(int i, struct pci_dev *pcidev)
+ 	for (j = 0; j < card->rct_size; j++)
+ 		ns_write_sram(card, j * 4, u32d, 4);
  
- static int acpi_processor_get_platform_limit(struct acpi_processor *pr)
- {
--	acpi_status status = 0;
-+	acpi_status status;
- 	unsigned long long ppc = 0;
+-	memset(card->vcmap, 0, NS_MAX_RCTSIZE * sizeof(vc_map));
++	memset(card->vcmap, 0, sizeof(card->vcmap));
  
- 
+ 	for (j = 0; j < NS_FRSCD_NUM; j++)
+ 		card->scd2vc[j] = NULL;
 -- 
 2.10.0
 
