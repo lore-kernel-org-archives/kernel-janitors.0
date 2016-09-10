@@ -1,43 +1,67 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:11:52 +0000
-Subject: [PATCH 05/24] ste_dma40: Improve a size determination in d40_of_probe()
-Message-Id: <7872b8b2-e004-ac91-81d4-407596dc12b7@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:40:11 +0000
+Subject: [PATCH 03/30] ACPI-processor: Rename jump labels in acpi_processor_get_performance_states()
+Message-Id: <4d1d5a0d-a627-5566-e720-b5e3f2893558@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 08:28:05 +0200
+Date: Tue, 6 Sep 2016 11:27:45 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/ste_dma40.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/acpi/processor_perflib.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index 220129e..57d87a8 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -3487,9 +3487,7 @@ static int __init d40_of_probe(struct platform_device *pdev,
- 	int num_phy = 0, num_memcpy = 0, num_disabled = 0;
- 	const __be32 *list;
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+index 004e24c..49889b1 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -339,7 +339,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
+ 	if (!pss || (pss->type != ACPI_TYPE_PACKAGE)) {
+ 		printk(KERN_ERR PREFIX "Invalid _PSS data\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
+ 	}
  
--	pdata = devm_kzalloc(&pdev->dev,
--			     sizeof(struct stedma40_platform_data),
--			     GFP_KERNEL);
-+	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
- 		return -ENOMEM;
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found %d performance states\n",
+@@ -351,7 +351,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
+ 						GFP_KERNEL);
+ 	if (!pr->performance->states) {
+ 		result = -ENOMEM;
+-		goto end;
++		goto free_buffer;
+ 	}
  
+ 	for (i = 0; i < pr->performance->state_count; i++) {
+@@ -369,7 +369,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
+ 			ACPI_EXCEPTION((AE_INFO, status, "Invalid _PSS data"));
+ 			result = -EFAULT;
+ 			kfree(pr->performance->states);
+-			goto end;
++			goto free_buffer;
+ 		}
+ 
+ 		amd_fixup_frequency(px, i);
+@@ -417,8 +417,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
+ 
+ 	if (last_invalid > 0)
+ 		pr->performance->state_count = last_invalid;
+-
+-      end:
++ free_buffer:
+ 	kfree(buffer.pointer);
+ 
+ 	return result;
 -- 
 2.10.0
 
