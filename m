@@ -1,50 +1,79 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:50:39 +0000
-Subject: [PATCH 09/47] block-rbd: Rename a jump label in rbd_spec_fill_names()
-Message-Id: <4629298d-71b2-7d32-7dce-1d727fb79d72@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 10:03:50 +0000
+Subject: [PATCH 21/30] ACPI-processor: Rename jump labels in acpi_processor_get_tsd()
+Message-Id: <33b12770-ce37-1d9b-2a3f-b263981d502b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 17:58:18 +0200
+Date: Tue, 6 Sep 2016 20:50:12 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/acpi/processor_throttling.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 45109ff..aac51a1 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -5421,7 +5421,7 @@ static int rbd_spec_fill_names(struct rbd_device *rbd_dev)
- 	snap_name = rbd_snap_name(rbd_dev, spec->snap_id);
- 	if (IS_ERR(snap_name)) {
- 		ret = PTR_ERR(snap_name);
--		goto out_err;
-+		goto free_name;
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index 24bd97f..2e3ef48 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -605,13 +605,13 @@ static int acpi_processor_get_tsd(struct acpi_processor *pr)
+ 	if (!tsd || (tsd->type != ACPI_TYPE_PACKAGE)) {
+ 		printk(KERN_ERR PREFIX "Invalid _TSD data\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
  	}
  
- 	spec->pool_name = pool_name;
-@@ -5429,8 +5429,7 @@ static int rbd_spec_fill_names(struct rbd_device *rbd_dev)
- 	spec->snap_name = snap_name;
+ 	if (tsd->package.count != 1) {
+ 		printk(KERN_ERR PREFIX "Invalid _TSD data\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
+ 	}
  
- 	return 0;
+ 	pdomain = &(pr->throttling.domain_info);
+@@ -624,19 +624,19 @@ static int acpi_processor_get_tsd(struct acpi_processor *pr)
+ 	if (ACPI_FAILURE(status)) {
+ 		printk(KERN_ERR PREFIX "Invalid _TSD data\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
+ 	}
+ 
+ 	if (pdomain->num_entries != ACPI_TSD_REV0_ENTRIES) {
+ 		printk(KERN_ERR PREFIX "Unknown _TSD:num_entries\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
+ 	}
+ 
+ 	if (pdomain->revision != ACPI_TSD_REV0_REVISION) {
+ 		printk(KERN_ERR PREFIX "Unknown _TSD:revision\n");
+ 		result = -EFAULT;
+-		goto end;
++		goto free_buffer;
+ 	}
+ 
+ 	pthrottling = &pr->throttling;
+@@ -654,8 +654,7 @@ static int acpi_processor_get_tsd(struct acpi_processor *pr)
+ 		pthrottling->tsd_valid_flag = 0;
+ 		pthrottling->shared_type = DOMAIN_COORD_TYPE_SW_ALL;
+ 	}
 -
--out_err:
-+ free_name:
- 	kfree(image_name);
- 	kfree(pool_name);
- 	return ret;
+-      end:
++ free_buffer:
+ 	kfree(buffer.pointer);
+ 	return result;
+ }
 -- 
 2.10.0
 
