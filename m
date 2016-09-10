@@ -1,123 +1,67 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 22:13:13 +0000
-Subject: [PATCH 5/6] ALSA: oxygen: constify snd_pcm_ops structures
-Message-Id: <1472767994-26269-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 14:30:28 +0000
+Subject: [PATCH 6/7] cfag12864b: Return an error code only as a constant in cfag12864b_init()
+Message-Id: <8a996728-1739-abe6-1475-76f360f26a29@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>
-Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for snd_pcm_ops structures that are only stored in the ops field of a
-snd_soc_platform_driver structure or passed as the third argument to
-snd_pcm_set_ops.  The corresponding field or parameter is declared const,
-so snd_pcm_ops structures that have this property can be declared as const
-also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 15:50:25 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+1. Return an error code without storing it in a local variable.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_pcm_ops i@p = { ... };
+2. Do not use curly brackets at one source code place
+   where a single statement should be sufficient.
 
-@ok1@
-identifier r.i;
-struct snd_soc_platform_driver e;
-position p;
-@@
-e.ops = &i@p;
+3. Delete the local variable "ret" which became unnecessary with
+   this refactoring.
 
-@ok2@
-identifier r.i;
-expression e1, e2;
-position p;
-@@
-snd_pcm_set_ops(e1, e2, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_pcm_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_pcm_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/oxygen/oxygen_pcm.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/auxdisplay/cfag12864b.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/sound/pci/oxygen/oxygen_pcm.c b/sound/pci/oxygen/oxygen_pcm.c
-index aa2ebd1..042a243 100644
---- a/sound/pci/oxygen/oxygen_pcm.c
-+++ b/sound/pci/oxygen/oxygen_pcm.c
-@@ -631,7 +631,7 @@ static snd_pcm_uframes_t oxygen_pointer(struct snd_pcm_substream *substream)
- 	return bytes_to_frames(runtime, curr_addr - (u32)runtime->dma_addr);
+diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864b.c
+index b471b28..b2533e2 100644
+--- a/drivers/auxdisplay/cfag12864b.c
++++ b/drivers/auxdisplay/cfag12864b.c
+@@ -329,8 +329,6 @@ EXPORT_SYMBOL_GPL(cfag12864b_isinited);
+ 
+ static int __init cfag12864b_init(void)
+ {
+-	int ret;
+-
+ 	/* ks0108_init() must be called first */
+ 	if (!ks0108_isinited()) {
+ 		printk(KERN_ERR CFAG12864B_NAME ": ERROR: "
+@@ -349,10 +347,8 @@ static int __init cfag12864b_init(void)
+ 	cfag12864b_cache = kmalloc_array(CFAG12864B_SIZE,
+ 					 sizeof(*cfag12864b_cache),
+ 					 GFP_KERNEL);
+-	if (cfag12864b_cache = NULL) {
+-		ret = -ENOMEM;
++	if (!cfag12864b_cache)
+ 		goto free_buffer;
+-	}
+ 
+ 	cfag12864b_workqueue = create_singlethread_workqueue(CFAG12864B_NAME);
+ 	if (cfag12864b_workqueue = NULL)
+@@ -367,7 +363,7 @@ static int __init cfag12864b_init(void)
+ 	kfree(cfag12864b_cache);
+  free_buffer:
+ 	free_page((unsigned long) cfag12864b_buffer);
+-	return ret;
++	return -ENOMEM;
  }
  
--static struct snd_pcm_ops oxygen_rec_a_ops = {
-+static const struct snd_pcm_ops oxygen_rec_a_ops = {
- 	.open      = oxygen_rec_a_open,
- 	.close     = oxygen_close,
- 	.ioctl     = snd_pcm_lib_ioctl,
-@@ -642,7 +642,7 @@ static struct snd_pcm_ops oxygen_rec_a_ops = {
- 	.pointer   = oxygen_pointer,
- };
- 
--static struct snd_pcm_ops oxygen_rec_b_ops = {
-+static const struct snd_pcm_ops oxygen_rec_b_ops = {
- 	.open      = oxygen_rec_b_open,
- 	.close     = oxygen_close,
- 	.ioctl     = snd_pcm_lib_ioctl,
-@@ -653,7 +653,7 @@ static struct snd_pcm_ops oxygen_rec_b_ops = {
- 	.pointer   = oxygen_pointer,
- };
- 
--static struct snd_pcm_ops oxygen_rec_c_ops = {
-+static const struct snd_pcm_ops oxygen_rec_c_ops = {
- 	.open      = oxygen_rec_c_open,
- 	.close     = oxygen_close,
- 	.ioctl     = snd_pcm_lib_ioctl,
-@@ -664,7 +664,7 @@ static struct snd_pcm_ops oxygen_rec_c_ops = {
- 	.pointer   = oxygen_pointer,
- };
- 
--static struct snd_pcm_ops oxygen_spdif_ops = {
-+static const struct snd_pcm_ops oxygen_spdif_ops = {
- 	.open      = oxygen_spdif_open,
- 	.close     = oxygen_close,
- 	.ioctl     = snd_pcm_lib_ioctl,
-@@ -675,7 +675,7 @@ static struct snd_pcm_ops oxygen_spdif_ops = {
- 	.pointer   = oxygen_pointer,
- };
- 
--static struct snd_pcm_ops oxygen_multich_ops = {
-+static const struct snd_pcm_ops oxygen_multich_ops = {
- 	.open      = oxygen_multich_open,
- 	.close     = oxygen_close,
- 	.ioctl     = snd_pcm_lib_ioctl,
-@@ -686,7 +686,7 @@ static struct snd_pcm_ops oxygen_multich_ops = {
- 	.pointer   = oxygen_pointer,
- };
- 
--static struct snd_pcm_ops oxygen_ac97_ops = {
-+static const struct snd_pcm_ops oxygen_ac97_ops = {
- 	.open      = oxygen_ac97_open,
- 	.close     = oxygen_close,
- 	.ioctl     = snd_pcm_lib_ioctl,
+ static void __exit cfag12864b_exit(void)
+-- 
+2.10.0
 
