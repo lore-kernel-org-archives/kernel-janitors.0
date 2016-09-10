@@ -1,67 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:20:29 +0000
-Subject: [PATCH 12/24] ste_dma40: Rename jump labels in d40_dmaengine_init()
-Message-Id: <50af4724-d6a8-7e19-d5b1-c23c088b844b@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:58:04 +0000
+Subject: [PATCH 16/30] ACPI-processor: Use kmalloc_array() in acpi_processor_get_throttling_states()
+Message-Id: <09d308b2-b16f-ee86-fb15-7fd11e902018@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:10:15 +0200
+Date: Tue, 6 Sep 2016 19:15:02 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/ste_dma40.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/acpi/processor_throttling.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index ed96039..c7b73f1 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -2889,7 +2889,7 @@ static int __init d40_dmaengine_init(struct d40_base *base,
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index c72e648..0a46b7f 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -533,9 +533,10 @@ static int acpi_processor_get_throttling_states(struct acpi_processor *pr)
+ 			  tss->package.count));
  
- 	if (err) {
- 		d40_err(base->dev, "Failed to register slave channels\n");
--		goto failure1;
-+		goto exit;
- 	}
- 
- 	d40_chan_init(base, &base->dma_memcpy, base->log_chans,
-@@ -2906,7 +2906,7 @@ static int __init d40_dmaengine_init(struct d40_base *base,
- 	if (err) {
- 		d40_err(base->dev,
- 			"Failed to register memcpy only channels\n");
--		goto failure2;
-+		goto unregister_slave;
- 	}
- 
- 	d40_chan_init(base, &base->dma_both, base->phy_chans,
-@@ -2924,14 +2924,14 @@ static int __init d40_dmaengine_init(struct d40_base *base,
- 	if (err) {
- 		d40_err(base->dev,
- 			"Failed to register logical and physical capable channels\n");
--		goto failure3;
-+		goto unregister_memcpy;
- 	}
- 	return 0;
--failure3:
-+ unregister_memcpy:
- 	dma_async_device_unregister(&base->dma_memcpy);
--failure2:
-+ unregister_slave:
- 	dma_async_device_unregister(&base->dma_slave);
--failure1:
-+ exit:
- 	return err;
- }
- 
+ 	pr->throttling.state_count = tss->package.count;
+-	pr->throttling.states_tss -	    kmalloc(sizeof(struct acpi_processor_tx_tss) * tss->package.count,
+-		    GFP_KERNEL);
++	pr->throttling.states_tss = kmalloc_array(tss->package.count,
++						  sizeof(*pr->
++							 throttling.states_tss),
++						  GFP_KERNEL);
+ 	if (!pr->throttling.states_tss) {
+ 		result = -ENOMEM;
+ 		goto end;
 -- 
 2.10.0
 
