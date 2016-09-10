@@ -1,44 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 04 Sep 2016 19:45:08 +0000
-Subject: [PATCH] x86/hpet: Use kmalloc_array() in hpet_enable()
-Message-Id: <ed804ee9-97cb-f401-06ec-3f0f8ac6889e@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 14:28:25 +0000
+Subject: [PATCH 4/7] cfag12864b: Return directly after a failed get_zeroed_page()
+Message-Id: <fa7102b8-8ef1-a53d-e9f4-a15e559f5ea2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: x86@kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jan Beulich <JBeulich@suse.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 4 Sep 2016 21:30:10 +0200
+Date: Sat, 10 Sep 2016 15:30:56 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+* Return directly after a call of the function "get_zeroed_page" failed
+  at the beginning.
 
-This issue was detected by using the Coccinelle software.
+* Delete the jump label "none" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/kernel/hpet.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/auxdisplay/cfag12864b.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index c6dfd80..3c2030d 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -876,8 +876,9 @@ int __init hpet_enable(void)
- #endif
+diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864b.c
+index 921e177..2fa149b 100644
+--- a/drivers/auxdisplay/cfag12864b.c
++++ b/drivers/auxdisplay/cfag12864b.c
+@@ -343,8 +343,7 @@ static int __init cfag12864b_init(void)
+ 	if (cfag12864b_buffer = NULL) {
+ 		printk(KERN_ERR CFAG12864B_NAME ": ERROR: "
+ 			"can't get a free page\n");
+-		ret = -ENOMEM;
+-		goto none;
++		return -ENOMEM;
+ 	}
  
- 	cfg = hpet_readl(HPET_CFG);
--	hpet_boot_cfg = kmalloc((last + 2) * sizeof(*hpet_boot_cfg),
--				GFP_KERNEL);
-+	hpet_boot_cfg = kmalloc_array(last + 2,
-+				      sizeof(*hpet_boot_cfg),
-+				      GFP_KERNEL);
- 	if (hpet_boot_cfg)
- 		*hpet_boot_cfg = cfg;
- 	else
+ 	cfag12864b_cache = kmalloc_array(CFAG12864B_SIZE,
+@@ -370,8 +369,6 @@ cachealloced:
+ 
+ bufferalloced:
+ 	free_page((unsigned long) cfag12864b_buffer);
+-
+-none:
+ 	return ret;
+ }
+ 
 -- 
-2.9.3
+2.10.0
 
