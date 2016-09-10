@@ -1,51 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 14:27:34 +0000
-Subject: [PATCH 3/7] cfag12864b: Return directly if the driver "ks0108" was not initialized
-Message-Id: <c76d5fa4-da07-19b3-3087-f47ec53eee29@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 10:01:32 +0000
+Subject: [PATCH 19/30] ACPI-processor: Delete two unnecessary initialisations in acpi_processor_get_throttlin
+Message-Id: <4634cdd9-feed-81ed-e5a1-4ed0dc612099@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
-In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 15:15:10 +0200
+Date: Tue, 6 Sep 2016 20:00:43 +0200
 
-* Return directly if the LCD controller driver was not initialized
-  at the beginning.
-
-* Omit an explicit variable initialisation which became unnecessary with
-  this refactoring.
+The local variables "tss" and "status" will be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/auxdisplay/cfag12864b.c | 4 ++--
+ drivers/acpi/processor_throttling.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864b.c
-index fd07fad..921e177 100644
---- a/drivers/auxdisplay/cfag12864b.c
-+++ b/drivers/auxdisplay/cfag12864b.c
-@@ -329,13 +329,13 @@ EXPORT_SYMBOL_GPL(cfag12864b_isinited);
- 
- static int __init cfag12864b_init(void)
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index 665e8de..8847bca 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -507,11 +507,11 @@ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
+ static int acpi_processor_get_throttling_states(struct acpi_processor *pr)
  {
--	int ret = -EINVAL;
-+	int ret;
+ 	int result = 0;
+-	acpi_status status = AE_OK;
++	acpi_status status;
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+ 	struct acpi_buffer format = { sizeof("NNNNN"), "NNNNN" };
+ 	struct acpi_buffer state = { 0, NULL };
+-	union acpi_object *tss = NULL;
++	union acpi_object *tss;
+ 	int i;
  
- 	/* ks0108_init() must be called first */
- 	if (!ks0108_isinited()) {
- 		printk(KERN_ERR CFAG12864B_NAME ": ERROR: "
- 			"ks0108 is not initialized\n");
--		goto none;
-+		return -EINVAL;
- 	}
- 	BUILD_BUG_ON(PAGE_SIZE < CFAG12864B_SIZE);
- 
+ 	status = acpi_evaluate_object(pr->handle, "_TSS", NULL, &buffer);
 -- 
 2.10.0
 
