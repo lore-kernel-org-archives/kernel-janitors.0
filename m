@@ -1,49 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:36:27 +0000
-Subject: [PATCH 24/24] ste_dma40: Rename a jump label in d40_log_lli_to_lcxa()
-Message-Id: <b28fbc00-5643-ba77-c94a-dbfe14618a9b@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 09:01:25 +0000
+Subject: [PATCH 2/4] ATM-ZeitNet: Improve a size determination in zatm_open()
+Message-Id: <31713ca7-078f-92fe-0595-60c6904004c5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+References: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
+In-Reply-To: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 16:39:06 +0200
+Date: Sat, 10 Sep 2016 10:07:38 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/ste_dma40.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/atm/zatm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index 01fe3a2..dcb26c6 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -874,7 +874,7 @@ static void d40_log_lli_to_lcxa(struct d40_chan *chan, struct d40_desc *desc)
- 	}
- 
- 	if (curr_lcla < 0)
--		goto out;
-+		goto set_current;
- 
- 	for (; lli_current < lli_len; lli_current++) {
- 		unsigned int lcla_offset = chan->phy_chan->num * 1024 +
-@@ -925,8 +925,7 @@ static void d40_log_lli_to_lcxa(struct d40_chan *chan, struct d40_desc *desc)
- 			break;
- 		}
- 	}
--
--out:
-+ set_current:
- 	desc->lli_current = lli_current;
- }
- 
+diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
+index d378ff2..218c6af 100644
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -1399,7 +1399,7 @@ static int zatm_open(struct atm_vcc *vcc)
+ 	DPRINTK(DEV_LABEL "(itf %d): open %d.%d\n",vcc->dev->number,vcc->vpi,
+ 	    vcc->vci);
+ 	if (!test_bit(ATM_VF_PARTIAL,&vcc->flags)) {
+-		zatm_vcc = kmalloc(sizeof(struct zatm_vcc),GFP_KERNEL);
++		zatm_vcc = kmalloc(sizeof(*zatm_vcc), GFP_KERNEL);
+ 		if (!zatm_vcc) {
+ 			clear_bit(ATM_VF_ADDR,&vcc->flags);
+ 			return -ENOMEM;
 -- 
 2.10.0
 
