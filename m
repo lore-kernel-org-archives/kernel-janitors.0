@@ -1,41 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 06:22:29 +0000
-Subject: [PATCH 3/4] GPU-DRM-QXL: Improve a size determination in qxl_driver_load()
-Message-Id: <424ac093-cbe5-17f8-6e03-5e25d7e04269@users.sourceforge.net>
+Date: Sat, 10 Sep 2016 14:32:29 +0000
+Subject: [PATCH 7/7] cfag12864b: Adjust two checks for null pointers in cfag12864b_init()
+Message-Id: <353dd8b8-9922-8e1b-7c88-9cb425010524@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
-In-Reply-To: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, Tejun Heo <tj@kernel.org>, Thierry Reding <treding@nvidia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 22:48:34 +0200
+Date: Sat, 10 Sep 2016 16:06:19 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" can point information out like the following.
+
+Comparison to NULL could be written !=E2=80=A6
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/qxl/qxl_kms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/auxdisplay/cfag12864b.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
-index 76780c2..f8f0261 100644
---- a/drivers/gpu/drm/qxl/qxl_kms.c
-+++ b/drivers/gpu/drm/qxl/qxl_kms.c
-@@ -306,7 +306,7 @@ int qxl_driver_load(struct drm_device *dev, unsigned long flags)
- 	struct qxl_device *qdev;
- 	int r;
- 
--	qdev = kzalloc(sizeof(struct qxl_device), GFP_KERNEL);
-+	qdev = kzalloc(sizeof(*qdev), GFP_KERNEL);
- 	if (qdev = NULL)
+diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864=
+b.c
+index b2533e2..3956b9f 100644
+--- a/drivers/auxdisplay/cfag12864b.c
++++ b/drivers/auxdisplay/cfag12864b.c
+@@ -338,7 +338,7 @@ static int __init cfag12864b_init(void)
+ 	BUILD_BUG_ON(PAGE_SIZE < CFAG12864B_SIZE);
+=20
+ 	cfag12864b_buffer =3D (unsigned char *) get_zeroed_page(GFP_KERNEL);
+-	if (cfag12864b_buffer =3D NULL) {
++	if (!cfag12864b_buffer) {
+ 		printk(KERN_ERR CFAG12864B_NAME ": ERROR: "
+ 			"can't get a free page\n");
  		return -ENOMEM;
- 
--- 
+@@ -351,7 +351,7 @@ static int __init cfag12864b_init(void)
+ 		goto free_buffer;
+=20
+ 	cfag12864b_workqueue =3D create_singlethread_workqueue(CFAG12864B_NAME);
+-	if (cfag12864b_workqueue =3D NULL)
++	if (!cfag12864b_workqueue)
+ 		goto free_cache;
+=20
+ 	cfag12864b_clear();
+--=20
 2.10.0
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
