@@ -1,69 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 06:21:14 +0000
-Subject: [PATCH 09/10] firewire-net: Rename jump labels in fwnet_pd_new()
-Message-Id: <01aa445f-96c0-48db-f0e4-22ba1a826fc6@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 12:14:36 +0000
+Subject: [PATCH 0/6] constify gpio_chip structures
+Message-Id: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
-In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, alsa-devel@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 22:48:46 +0200
+Constify gpio_chip structures
 
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/firewire/net.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
-index 6dd3174..eb7ce5e 100644
---- a/drivers/firewire/net.c
-+++ b/drivers/firewire/net.c
-@@ -362,18 +362,18 @@ static struct fwnet_partial_datagram *fwnet_pd_new(struct net_device *net,
- 
- 	new = kmalloc(sizeof(*new), GFP_ATOMIC);
- 	if (!new)
--		goto fail;
-+		goto exit;
- 
- 	INIT_LIST_HEAD(&new->fi_list);
- 	fi = fwnet_frag_new(new, frag_off, frag_len);
- 	if (fi = NULL)
--		goto fail_w_new;
-+		goto free_new;
- 
- 	new->datagram_label = datagram_label;
- 	new->datagram_size = dg_size;
- 	new->skb = dev_alloc_skb(dg_size + LL_RESERVED_SPACE(net));
- 	if (new->skb = NULL)
--		goto fail_w_fi;
-+		goto free_fragment_info;
- 
- 	skb_reserve(new->skb, LL_RESERVED_SPACE(net));
- 	new->pbuf = skb_put(new->skb, dg_size);
-@@ -381,12 +381,11 @@ static struct fwnet_partial_datagram *fwnet_pd_new(struct net_device *net,
- 	list_add_tail(&new->pd_link, &peer->pd_list);
- 
- 	return new;
--
--fail_w_fi:
-+ free_fragment_info:
- 	kfree(fi);
--fail_w_new:
-+ free_new:
- 	kfree(new);
--fail:
-+ exit:
- 	return NULL;
- }
- 
--- 
-2.10.0
-
+ drivers/gpio/gpio-arizona.c                   |    2 +-
+ drivers/gpio/gpio-bcm-kona.c                  |    2 +-
+ drivers/gpio/gpio-da9052.c                    |    2 +-
+ drivers/gpio/gpio-da9055.c                    |    2 +-
+ drivers/gpio/gpio-it87.c                      |    2 +-
+ drivers/gpio/gpio-lp873x.c                    |    2 +-
+ drivers/gpio/gpio-lpc18xx.c                   |    2 +-
+ drivers/gpio/gpio-pisosr.c                    |    2 +-
+ drivers/gpio/gpio-sch.c                       |    2 +-
+ drivers/gpio/gpio-stmpe.c                     |    2 +-
+ drivers/gpio/gpio-tc3589x.c                   |    2 +-
+ drivers/gpio/gpio-tpic2810.c                  |    2 +-
+ drivers/gpio/gpio-tps65086.c                  |    2 +-
+ drivers/gpio/gpio-tps65218.c                  |    2 +-
+ drivers/gpio/gpio-tps65912.c                  |    2 +-
+ drivers/gpio/gpio-ts4900.c                    |    2 +-
+ drivers/gpio/gpio-twl4030.c                   |    2 +-
+ drivers/gpio/gpio-wm831x.c                    |    2 +-
+ drivers/gpio/gpio-wm8350.c                    |    2 +-
+ drivers/gpio/gpio-wm8994.c                    |    2 +-
+ drivers/mfd/sm501.c                           |    2 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c         |    2 +-
+ sound/soc/codecs/rt5677.c                     |    2 +-
+ sound/soc/codecs/wm5100.c                     |    2 +-
+ sound/soc/codecs/wm8903.c                     |    2 +-
+ sound/soc/codecs/wm8962.c                     |    2 +-
+ sound/soc/codecs/wm8996.c                     |    2 +-
+ sound/soc/soc-ac97.c                          |    2 +-
+ 29 files changed, 29 insertions(+), 29 deletions(-)
