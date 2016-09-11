@@ -1,91 +1,177 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 09:11:16 +0000
-Subject: Re: GPU-DRM-OMAP: Fine-tuning for several function implementations
-Message-Id: <d8f52036-60d1-8c8f-3585-fa060be1bc9f@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 14:44:13 +0000
+Subject: [PATCH 2/3] [media] tuners: constify dvb_tuner_ops structures
+Message-Id: <1473605054-9002-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
- <20160922064501.GF22164@dvetter-linux.ger.corp.intel.com>
- <3793871.zJbXxf8jdx@avalon>
-In-Reply-To: <3793871.zJbXxf8jdx@avalon>
+References: <1473605054-9002-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473605054-9002-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Michael Krufky <mkrufky@linuxtv.org>
 
->> For the next pile of driver patches _please_ talk with driver maintainers
->> before starting to create&submit patches.
+These structures are only used to copy into other structures, so declare
+them as const.
 
-Did the software development discussion start a bit here?
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Would you like to support an other "talking style" on a conference
-like in Berlin next month?
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct dvb_tuner_ops i@p = { ... };
 
+@ok1@
+identifier r.i;
+expression e;
+position p;
+@@
+e = i@p
 
->> Like I said I won't take them,
+@ok2@
+identifier r.i;
+expression e1, e2;
+position p;
+@@
+memcpy(e1, &i@p, e2)
 
-It's a pity.
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct dvb_tuner_ops e;
+@@
+e@i@p
 
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct dvb_tuner_ops i = { ... };
+// </smpl>
 
->> and many of your changes are not clear-cut at all,
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I know that specific update suggestions could be interpreted as controversial.
+---
+ drivers/media/tuners/mt2063.c       |    2 +-
+ drivers/media/tuners/mt20xx.c       |    4 ++--
+ drivers/media/tuners/mxl5007t.c     |    2 +-
+ drivers/media/tuners/tda827x.c      |    4 ++--
+ drivers/media/tuners/tea5761.c      |    2 +-
+ drivers/media/tuners/tea5767.c      |    2 +-
+ drivers/media/tuners/tuner-simple.c |    2 +-
+ 7 files changed, 9 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/media/tuners/tea5767.c b/drivers/media/tuners/tea5767.c
+index 36e85d8..6d86aa6 100644
+--- a/drivers/media/tuners/tea5767.c
++++ b/drivers/media/tuners/tea5767.c
+@@ -423,7 +423,7 @@ static int tea5767_set_config (struct dvb_frontend *fe, void *priv_cfg)
+ 	return 0;
+ }
+ 
+-static struct dvb_tuner_ops tea5767_tuner_ops = {
++static const struct dvb_tuner_ops tea5767_tuner_ops = {
+ 	.info = {
+ 		.name           = "tea5767", // Philips TEA5767HN FM Radio
+ 	},
+diff --git a/drivers/media/tuners/mxl5007t.c b/drivers/media/tuners/mxl5007t.c
+index f4ae04c..42569c6 100644
+--- a/drivers/media/tuners/mxl5007t.c
++++ b/drivers/media/tuners/mxl5007t.c
+@@ -794,7 +794,7 @@ static int mxl5007t_release(struct dvb_frontend *fe)
+ 
+ /* ------------------------------------------------------------------------- */
+ 
+-static struct dvb_tuner_ops mxl5007t_tuner_ops = {
++static const struct dvb_tuner_ops mxl5007t_tuner_ops = {
+ 	.info = {
+ 		.name = "MaxLinear MxL5007T",
+ 	},
+diff --git a/drivers/media/tuners/mt2063.c b/drivers/media/tuners/mt2063.c
+index 7f0b9d5..dfec237 100644
+--- a/drivers/media/tuners/mt2063.c
++++ b/drivers/media/tuners/mt2063.c
+@@ -2201,7 +2201,7 @@ static int mt2063_get_bandwidth(struct dvb_frontend *fe, u32 *bw)
+ 	return 0;
+ }
+ 
+-static struct dvb_tuner_ops mt2063_ops = {
++static const struct dvb_tuner_ops mt2063_ops = {
+ 	.info = {
+ 		 .name = "MT2063 Silicon Tuner",
+ 		 .frequency_min = 45000000,
+diff --git a/drivers/media/tuners/mt20xx.c b/drivers/media/tuners/mt20xx.c
+index 9e03104..52da467 100644
+--- a/drivers/media/tuners/mt20xx.c
++++ b/drivers/media/tuners/mt20xx.c
+@@ -363,7 +363,7 @@ static int mt2032_set_params(struct dvb_frontend *fe,
+ 	return ret;
+ }
+ 
+-static struct dvb_tuner_ops mt2032_tuner_ops = {
++static const struct dvb_tuner_ops mt2032_tuner_ops = {
+ 	.set_analog_params = mt2032_set_params,
+ 	.release           = microtune_release,
+ 	.get_frequency     = microtune_get_frequency,
+@@ -563,7 +563,7 @@ static int mt2050_set_params(struct dvb_frontend *fe,
+ 	return ret;
+ }
+ 
+-static struct dvb_tuner_ops mt2050_tuner_ops = {
++static const struct dvb_tuner_ops mt2050_tuner_ops = {
+ 	.set_analog_params = mt2050_set_params,
+ 	.release           = microtune_release,
+ 	.get_frequency     = microtune_get_frequency,
+diff --git a/drivers/media/tuners/tda827x.c b/drivers/media/tuners/tda827x.c
+index edcb4a7..5050ce9 100644
+--- a/drivers/media/tuners/tda827x.c
++++ b/drivers/media/tuners/tda827x.c
+@@ -818,7 +818,7 @@ static int tda827x_initial_sleep(struct dvb_frontend *fe)
+ 	return fe->ops.tuner_ops.sleep(fe);
+ }
+ 
+-static struct dvb_tuner_ops tda827xo_tuner_ops = {
++static const struct dvb_tuner_ops tda827xo_tuner_ops = {
+ 	.info = {
+ 		.name = "Philips TDA827X",
+ 		.frequency_min  =  55000000,
+@@ -834,7 +834,7 @@ static struct dvb_tuner_ops tda827xo_tuner_ops = {
+ 	.get_bandwidth = tda827x_get_bandwidth,
+ };
+ 
+-static struct dvb_tuner_ops tda827xa_tuner_ops = {
++static const struct dvb_tuner_ops tda827xa_tuner_ops = {
+ 	.info = {
+ 		.name = "Philips TDA827XA",
+ 		.frequency_min  =  44000000,
+diff --git a/drivers/media/tuners/tuner-simple.c b/drivers/media/tuners/tuner-simple.c
+index 8e9ce14..9ba9582 100644
+--- a/drivers/media/tuners/tuner-simple.c
++++ b/drivers/media/tuners/tuner-simple.c
+@@ -1035,7 +1035,7 @@ static int simple_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
+ 	return 0;
+ }
+ 
+-static struct dvb_tuner_ops simple_tuner_ops = {
++static const struct dvb_tuner_ops simple_tuner_ops = {
+ 	.init              = simple_init,
+ 	.sleep             = simple_sleep,
+ 	.set_analog_params = simple_set_params,
+diff --git a/drivers/media/tuners/tea5761.c b/drivers/media/tuners/tea5761.c
+index bf78cb9..36b0b1e 100644
+--- a/drivers/media/tuners/tea5761.c
++++ b/drivers/media/tuners/tea5761.c
+@@ -301,7 +301,7 @@ static int tea5761_get_frequency(struct dvb_frontend *fe, u32 *frequency)
+ 	return 0;
+ }
+ 
+-static struct dvb_tuner_ops tea5761_tuner_ops = {
++static const struct dvb_tuner_ops tea5761_tuner_ops = {
+ 	.info = {
+ 		.name           = "tea5761", // Philips TEA5761HN FM Radio
+ 	},
 
->> so I expect many driver maintaines also won't take them.
-
-I am curious on useful responses.
-
-
->> Again, your contributions are welcome,
-
-Thanks for another bit of constructive feedback.
-
-
->> but blindly following suggestions from code checkers in drivers
-
-I propose to dare another look at corresponding information sources.
-
-
->> you cant test isn't really all that useful.
-
-I have got an other impression.
-
-How many improvements can still be achieved by usual (advanced) collaboration
-techniques for free software development?
-
-
->> At the scale you're doing it, I think it's mostly wasting everyone's time
-
-I hope not.
-
-
-> :( I'd like to avoid that.
-
-I am going to point more update opportunities out also for various Linux software.
-
-
-> I second that.
-
-Thanks for your opinion on this issue.
-
-
-> After a very quick review, I see that the series splits related changes
-> in multiple patches.
-
-I chose a specific patch granularity for this proposal.
-
-
-> I've already commented in reply to another series submitted by Markus
-> that patches should then be combined.
-
-Will such a combination depend on any more agreements between the involved contributors?
-
-
-> I will thus ignore this series completely for the time being.
-
-I hope that you can give similar ideas a second chance somehow.
-
-Regards,
-Markus
