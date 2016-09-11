@@ -1,39 +1,67 @@
-From: Guoqing Jiang <gqjiang@suse.com>
-Date: Thu, 29 Sep 2016 03:16:01 +0000
-Subject: Re: [PATCH 08/16] md/bitmap: Rename a jump label in location_store()
-Message-Id: <57EC8771.3000700@suse.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 12:14:39 +0000
+Subject: [PATCH 3/6] pinctrl: mediatek: constify gpio_chip structures
+Message-Id: <1473596082-32690-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
- <d4de2fd9-93a6-9731-13a4-9b02a6c7f971@users.sourceforge.net>
- <wrfjy42b94uu.fsf@redhat.com>
-In-Reply-To: <wrfjy42b94uu.fsf@redhat.com>
+References: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jes Sorensen <Jes.Sorensen@redhat.com>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
+These structures are only used to copy into other structures, so declare
+them as const.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-On 09/28/2016 03:55 PM, Jes Sorensen wrote:
-> SF Markus Elfring <elfring@users.sourceforge.net> writes:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Tue, 27 Sep 2016 15:46:22 +0200
->>
->> Adjust jump labels according to the current Linux coding style convention.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>   drivers/md/bitmap.c | 18 +++++++++---------
->>   1 file changed, 9 insertions(+), 9 deletions(-)
-> Sorry but this patch is just plain ridiculous. It does not improve the
-> code in any shape or form.
->
-> 'out' as a label is perfectly legitimate and just as good as 'unlock'.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct gpio_chip i@p = { ... };
 
-Agree, I also curious which document recorded the coding style convention.
+@ok@
+identifier r.i;
+expression e;
+position p;
+@@
+e = i@p;
 
-Thanks,
-Guoqing
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct gpio_chip e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct gpio_chip i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index ba2b03d..f9aef2a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1054,7 +1054,7 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
+ 	return 0;
+ }
+ 
+-static struct gpio_chip mtk_gpio_chip = {
++static const struct gpio_chip mtk_gpio_chip = {
+ 	.owner			= THIS_MODULE,
+ 	.request		= gpiochip_generic_request,
+ 	.free			= gpiochip_generic_free,
 
