@@ -1,35 +1,34 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 05 Sep 2016 21:43:12 +0000
-Subject: Re: [PATCH 0/7] ACPI-APEI-HEST: Fine-tuning for three function implementations
-Message-Id: <CAJZ5v0hcD8pi8y+jAtF70cJp8uYyUdOeDJKuR3z=JpB6Z_Qnfw@mail.gmail.com>
+From: Paul Mackerras <paulus@ozlabs.org>
+Date: Sun, 11 Sep 2016 23:25:47 +0000
+Subject: Re: [PATCH 6/6] KVM: PPC: e500: Rename jump labels in kvmppc_e500_tlb_init()
+Message-Id: <20160911232547.GA9873@fergus.ozlabs.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
-In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
+ <165cb42e-f9fe-83ad-7c4c-299a805dbe6e@users.sourceforge.net>
+In-Reply-To: <165cb42e-f9fe-83ad-7c4c-299a805dbe6e@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Sep 5, 2016 at 10:12 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+On Sun, Aug 28, 2016 at 07:19:22PM +0200, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 5 Sep 2016 22:05:05 +0200
->
-> Some update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (7):
->   Fix a typo in a comment line
->   Use kmalloc_array() in hest_ghes_dev_register()
->   Move an assignment in hest_ghes_dev_register()
->   Rename jump labels in hest_ghes_dev_register()
->   Rename jump labels in acpi_hest_init()
->   Reduce the scope for a variable in acpi_hest_init()
->   Rename jump labels in hest_parse_ghes()
+> Date: Sun, 28 Aug 2016 18:45:26 +0200
+> 
+> Adjust jump labels according to the current Linux coding style convention.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Like in the other patch series I've just commented, please put all
-label renames into one patch.
+With this I get a compile error:
 
-Thanks,
-Rafael
+  CC      arch/powerpc/kvm/e500_mmu.o
+/home/paulus/kernel/kvm/arch/powerpc/kvm/e500_mmu.c: In function ‘kvmppc_e500_tlb_init’:
+/home/paulus/kernel/kvm/arch/powerpc/kvm/e500_mmu.c:910:3: error: label ‘err’ used but not defined
+   goto err;
+   ^
+/home/paulus/kernel/kvm/scripts/Makefile.build:289: recipe for target 'arch/powerpc/kvm/e500_mmu.o' failed
+make[2]: *** [arch/powerpc/kvm/e500_mmu.o] Error 1
+
+Paul.
