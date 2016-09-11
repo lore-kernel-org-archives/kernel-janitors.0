@@ -1,20 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 11 Sep 2016 04:46:42 +0000
-Subject: Re: [PATCH 0/4] ATM-ZeitNet: Fine-tuning for three function implementations
-Message-Id: <20160910.214642.1925584765689102643.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 11 Sep 2016 19:43:34 +0000
+Subject: [PATCH] drivers: net: phy: xgene: Fix 'remove' function
+Message-Id: <1473623014-7801-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
-In-Reply-To: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, 3chas3@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr, pbonzini@redhat.com
+To: isubramanian@apm.com, kchudgar@apm.com, f.fainelli@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:57:37 +0200
+If 'IS_ERR(pdata->clk)' is true, then 'clk_disable_unprepare(pdata->clk)'
+will do nothing.
 
-> A few update suggestions were taken into account
-> from static source code analysis.
+It is likely that 'if (!IS_ERR(pdata->clk))' was expected here.
+In fact, the test can even be removed because 'clk_disable_unprepare'
+already handles such cases.
 
-Series applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/phy/mdio-xgene.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/phy/mdio-xgene.c b/drivers/net/phy/mdio-xgene.c
+index 775674808249..92af182951be 100644
+--- a/drivers/net/phy/mdio-xgene.c
++++ b/drivers/net/phy/mdio-xgene.c
+@@ -424,10 +424,8 @@ static int xgene_mdio_remove(struct platform_device *pdev)
+ 	mdiobus_unregister(mdio_bus);
+ 	mdiobus_free(mdio_bus);
+ 
+-	if (dev->of_node) {
+-		if (IS_ERR(pdata->clk))
+-			clk_disable_unprepare(pdata->clk);
+-	}
++	if (dev->of_node)
++		clk_disable_unprepare(pdata->clk);
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
+
