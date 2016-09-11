@@ -1,47 +1,56 @@
-From: "Mintz, Yuval" <Yuval.Mintz@cavium.com>
-Date: Fri, 30 Sep 2016 12:05:16 +0000
-Subject: RE: [bug report] qed*: Add support for VFs over legacy PFs
-Message-Id: <BL2PR07MB2306853ADE5558CCE4C7094C8DC10@BL2PR07MB2306.namprd07.prod.outlook.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:05:56 +0000
+Subject: [PATCH 14/26] spi: dw-pci: constify local structures
+Message-Id: <1473599168-30561-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160930114436.GA12102@mwanda>
-In-Reply-To: <20160930114436.GA12102@mwanda>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> The patch d8c2c7e3404e: "qed*: Add support for VFs over legacy PFs"
-> from Aug 22, 2016, leads to the following static checker warning:
-> 
-> 	drivers/net/ethernet/qlogic/qed/qed_vf.c:297 qed_vf_pf_acquire()
-> 	warn: should this be a bitwise op?
-> 
-> drivers/net/ethernet/qlogic/qed/qed_vf.c
->    289          /* Learn of the possibility of CMT */
->    290          if (IS_LEAD_HWFN(p_hwfn)) {
->    291                  if (resp->pfdev_info.capabilities & PFVF_ACQUIRE_CAP_100G) {
->    292                          DP_NOTICE(p_hwfn, "100g VF\n");
->    293                          p_hwfn->cdev->num_hwfns = 2;
->    294                  }
->    295          }
->    296
->    297          if (!p_iov->b_pre_fp_hsi &&
->    298              ETH_HSI_VER_MINOR &&
->    299              (resp->pfdev_info.minor_fp_hsi < ETH_HSI_VER_MINOR)) {
-> 
-> It looks like this code works correctly.  I think the ETH_HSI_VER_MINOR check is
-> to silence a static checker warning because otherwise we are occasionally
-> comparing an unsigned with less than zero?  (Although I think most static
-> checkers will still complain so maybe that's not true?).  Anyway, it's weird code.
-> 
-> It would probably be more clear to say "ETH_HSI_VER_MINOR > 0 &&".
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-Can't say I recall the exact rational here, but I think you're right.
-Given that initially when this was submitted the fastpath HSI version was 3.0
-[currently its 3.10], it makes sense that I've added this exactly due to the reason you're describing.
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
-And I agrees that doing "> 0" is clearer.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks,
-Yuval
+---
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
+
+ drivers/spi/spi-dw-pci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-dw-pci.c b/drivers/spi/spi-dw-pci.c
+index ef7db75..60198a3 100644
+--- a/drivers/spi/spi-dw-pci.c
++++ b/drivers/spi/spi-dw-pci.c
+@@ -29,13 +29,13 @@ struct spi_pci_desc {
+ 	u16	bus_num;
+ };
+ 
+-static struct spi_pci_desc spi_pci_mid_desc_1 = {
++static const struct spi_pci_desc spi_pci_mid_desc_1 = {
+ 	.setup = dw_spi_mid_init,
+ 	.num_cs = 5,
+ 	.bus_num = 0,
+ };
+ 
+-static struct spi_pci_desc spi_pci_mid_desc_2 = {
++static const struct spi_pci_desc spi_pci_mid_desc_2 = {
+ 	.setup = dw_spi_mid_init,
+ 	.num_cs = 2,
+ 	.bus_num = 1,
 
