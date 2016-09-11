@@ -1,43 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 14:15:20 +0000
-Subject: [PATCH] s390/extmem: Use kmalloc_array() in dcss_set_subcodes()
-Message-Id: <6d1ffd4b-ac87-9dca-4ef0-47dd9336e524@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 14:44:11 +0000
+Subject: [PATCH 0/3] constify dvb_tuner_ops structures
+Message-Id: <1473605054-9002-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Sep 2016 16:06:05 +0200
+Constify dvb_tuner_ops structures
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/s390/mm/extmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/mm/extmem.c b/arch/s390/mm/extmem.c
-index 02042b6..4d18301 100644
---- a/arch/s390/mm/extmem.c
-+++ b/arch/s390/mm/extmem.c
-@@ -102,7 +102,7 @@ static int scode_set;
- static int
- dcss_set_subcodes(void)
- {
--	char *name = kmalloc(8 * sizeof(char), GFP_KERNEL | GFP_DMA);
-+	char *name = kmalloc_array(8, sizeof(*name), GFP_KERNEL | GFP_DMA);
- 	unsigned long rx, ry;
- 	int rc;
- 
--- 
-2.9.3
-
+ drivers/media/dvb-frontends/ascot2e.c         |    2 +-
+ drivers/media/dvb-frontends/dvb-pll.c         |    2 +-
+ drivers/media/dvb-frontends/helene.c          |    4 ++--
+ drivers/media/dvb-frontends/horus3a.c         |    2 +-
+ drivers/media/dvb-frontends/ix2505v.c         |    2 +-
+ drivers/media/dvb-frontends/stb6000.c         |    2 +-
+ drivers/media/dvb-frontends/stb6100.c         |    2 +-
+ drivers/media/dvb-frontends/stv6110.c         |    2 +-
+ drivers/media/dvb-frontends/stv6110x.c        |    2 +-
+ drivers/media/dvb-frontends/tda18271c2dd.c    |    2 +-
+ drivers/media/dvb-frontends/tda665x.c         |    2 +-
+ drivers/media/dvb-frontends/tda8261.c         |    2 +-
+ drivers/media/dvb-frontends/tda826x.c         |    2 +-
+ drivers/media/dvb-frontends/ts2020.c          |    2 +-
+ drivers/media/dvb-frontends/tua6100.c         |    2 +-
+ drivers/media/dvb-frontends/zl10036.c         |    2 +-
+ drivers/media/dvb-frontends/zl10039.c         |    2 +-
+ drivers/media/tuners/mt2063.c                 |    2 +-
+ drivers/media/tuners/mt20xx.c                 |    4 ++--
+ drivers/media/tuners/mxl5007t.c               |    2 +-
+ drivers/media/tuners/tda827x.c                |    4 ++--
+ drivers/media/tuners/tea5761.c                |    2 +-
+ drivers/media/tuners/tea5767.c                |    2 +-
+ drivers/media/tuners/tuner-simple.c           |    2 +-
+ drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c |    2 +-
+ 25 files changed, 28 insertions(+), 28 deletions(-)
