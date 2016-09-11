@@ -1,36 +1,113 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Date: Wed, 28 Sep 2016 11:56:06 +0000
-Subject: Re: [PATCH 0/5] ISDN-Gigaset: Fine-tuning for three function implementations
-Message-Id: <1475063766.16606.39.camel@tiscali.nl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:05:43 +0000
+Subject: [PATCH 01/26] ALSA: pci: constify local structures
+Message-Id: <1473599168-30561-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-         <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
-In-Reply-To: <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: joe@perches.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
 
-On Mon, 2016-09-26 at 17:37 +0200, SF Markus Elfring wrote:
-> Some update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (5):
->   Use kmalloc_array() in two functions
->   Improve another size determination in gigaset_initcs()
->   Delete an error message for a failed memory allocation
->   Release memory in gigaset_initcs() after an allocation failure
->   Enclose two expressions for the sizeof operator by parentheses
-> 
->  drivers/isdn/gigaset/common.c | 31 ++++++++++++++++---------------
->  1 file changed, 16 insertions(+), 15 deletions(-)
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-Two of the five patches introduced bugs. The rest of the series isn't
-free of various nits either. Of course, I was in no mood to be lenient
-when I looked at those three patches.
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
-I won't take any of these patches, sorry.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
 
-Paul Bolle
+ sound/pci/ctxfi/ctatc.c      |    2 +-
+ sound/pci/hda/patch_ca0132.c |   10 +++++-----
+ sound/pci/riptide/riptide.c  |    2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
+index 977a598..908658a 100644
+--- a/sound/pci/ctxfi/ctatc.c
++++ b/sound/pci/ctxfi/ctatc.c
+@@ -1623,7 +1623,7 @@ static int atc_resume(struct ct_atc *atc)
+ }
+ #endif
+ 
+-static struct ct_atc atc_preset = {
++static const struct ct_atc atc_preset = {
+ 	.map_audio_buffer = ct_map_audio_buffer,
+ 	.unmap_audio_buffer = ct_unmap_audio_buffer,
+ 	.pcm_playback_prepare = atc_pcm_playback_prepare,
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 9ceb2bc..ad06866 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -4018,7 +4018,7 @@ static int ca0132_build_controls(struct hda_codec *codec)
+ /*
+  * PCM
+  */
+-static struct hda_pcm_stream ca0132_pcm_analog_playback = {
++static const struct hda_pcm_stream ca0132_pcm_analog_playback = {
+ 	.substreams = 1,
+ 	.channels_min = 2,
+ 	.channels_max = 6,
+@@ -4029,7 +4029,7 @@ static struct hda_pcm_stream ca0132_pcm_analog_playback = {
+ 	},
+ };
+ 
+-static struct hda_pcm_stream ca0132_pcm_analog_capture = {
++static const struct hda_pcm_stream ca0132_pcm_analog_capture = {
+ 	.substreams = 1,
+ 	.channels_min = 2,
+ 	.channels_max = 2,
+@@ -4040,7 +4040,7 @@ static struct hda_pcm_stream ca0132_pcm_analog_capture = {
+ 	},
+ };
+ 
+-static struct hda_pcm_stream ca0132_pcm_digital_playback = {
++static const struct hda_pcm_stream ca0132_pcm_digital_playback = {
+ 	.substreams = 1,
+ 	.channels_min = 2,
+ 	.channels_max = 2,
+@@ -4052,7 +4052,7 @@ static struct hda_pcm_stream ca0132_pcm_digital_playback = {
+ 	},
+ };
+ 
+-static struct hda_pcm_stream ca0132_pcm_digital_capture = {
++static const struct hda_pcm_stream ca0132_pcm_digital_capture = {
+ 	.substreams = 1,
+ 	.channels_min = 2,
+ 	.channels_max = 2,
+@@ -4614,7 +4614,7 @@ static void ca0132_free(struct hda_codec *codec)
+ 	kfree(codec->spec);
+ }
+ 
+-static struct hda_codec_ops ca0132_patch_ops = {
++static const struct hda_codec_ops ca0132_patch_ops = {
+ 	.build_controls = ca0132_build_controls,
+ 	.build_pcms = ca0132_build_pcms,
+ 	.init = ca0132_init,
+diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
+index ae41fcb..ada5f01 100644
+--- a/sound/pci/riptide/riptide.c
++++ b/sound/pci/riptide/riptide.c
+@@ -644,7 +644,7 @@ static struct lbuspath lbus_play_paths[] = {
+ 	 .mono = lbus_play_mono3,
+ 	 },
+ };
+-static struct lbuspath lbus_rec_path = {
++static const struct lbuspath lbus_rec_path = {
+ 	.noconv = lbus_rec_noconv1,
+ 	.stereo = lbus_rec_stereo1,
+ 	.mono = lbus_rec_mono1,
+
