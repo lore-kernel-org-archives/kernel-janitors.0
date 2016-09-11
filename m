@@ -1,30 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 04 Sep 2016 06:06:07 +0000
-Subject: Re: [PATCH 4/4] sparc: bpf_jit: Rename jump labels in bpf_jit_compile()
-Message-Id: <20160903.230607.1667562673788737377.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:05:49 +0000
+Subject: [PATCH 07/26] net/mlx4_core: constify local structures
+Message-Id: <1473599168-30561-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ab4a20b2-16be-c3b2-58a7-fe7db39ab559@users.sourceforge.net>
-        <054ff9e1-2b84-904b-5f92-55746292916e@users.sourceforge.net>
-        <57CAFFDC.4030606@iogearbox.net>
-In-Reply-To: <57CAFFDC.4030606@iogearbox.net>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: daniel@iogearbox.net
-Cc: elfring@users.sourceforge.net, sparclinux@vger.kernel.org, adam.buchbinder@gmail.com, ast@kernel.org, rabin@rab.in, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr, pbonzini@redhat.com
+To: Yishai Hadas <yishaih@mellanox.com>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
-Date: Sat, 03 Sep 2016 18:52:44 +0200
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-> On 09/03/2016 06:41 PM, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Sat, 3 Sep 2016 18:14:19 +0200
->>
->> Adjust jump labels according to the current Linux coding style
->> convention.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> NAK, just noise.
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
-And frankly I hate that leading space.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
+
+ drivers/net/ethernet/mellanox/mlx4/main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
+index 75dd2e3..9a3c359 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -120,7 +120,7 @@ static char mlx4_version[]  	DRV_NAME ": Mellanox ConnectX core driver v"
+ 	DRV_VERSION " (" DRV_RELDATE ")\n";
+ 
+-static struct mlx4_profile default_profile = {
++static const struct mlx4_profile default_profile = {
+ 	.num_qp		= 1 << 18,
+ 	.num_srq	= 1 << 16,
+ 	.rdmarc_per_qp	= 1 << 4,
+@@ -130,7 +130,7 @@ static struct mlx4_profile default_profile = {
+ 	.num_mtt	= 1 << 20, /* It is really num mtt segements */
+ };
+ 
+-static struct mlx4_profile low_mem_profile = {
++static const struct mlx4_profile low_mem_profile = {
+ 	.num_qp		= 1 << 17,
+ 	.num_srq	= 1 << 6,
+ 	.rdmarc_per_qp	= 1 << 4,
+
