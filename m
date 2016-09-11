@@ -1,79 +1,58 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Sat, 10 Sep 2016 09:55:37 +0000
-Subject: Re: [PATCH 00/30] ACPI-processor: Fine-tuning for several function implementations
-Message-Id: <1722139165.10015670.1473501337309.JavaMail.zimbra@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:05:50 +0000
+Subject: [PATCH 08/26] iwlegacy: constify local structures
+Message-Id: <1473599168-30561-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I have nothing to do with ACPI.  Please stop spamming me, or you'll end
-up on a kill file...
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-Paolo
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
------ Original Message -----
-> From: "SF Markus Elfring" <elfring@users.sourceforge.net>
-> To: linux-acpi@vger.kernel.org, "Len Brown" <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: "LKML" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, "Julia Lawall" <julia.lawall@lip6.fr>,
-> "Paolo Bonzini" <pbonzini@redhat.com>
-> Sent: Saturday, September 10, 2016 11:30:08 AM
-> Subject: [PATCH 00/30] ACPI-processor: Fine-tuning for several function implementations
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 9 Sep 2016 20:15:05 +0200
-> 
-> Several update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (30):
->   Use kmalloc_array() in acpi_processor_get_performance_states()
->   Improve two size determinations in acpi_processor_get_performance_states()
->   Rename jump labels in acpi_processor_get_performance_states()
->   Delete two unnecessary initialisations in
->   acpi_processor_get_performance_states()
->   Rename jump labels in acpi_processor_preregister_performance()
->   Move a success indication in acpi_processor_preregister_performance()
->   Rename jump labels in acpi_processor_get_psd()
->   Delete two unnecessary initialisations in acpi_processor_get_psd()
->   Improve a size determination in acpi_processor_get_psd()
->   Rename jump labels in acpi_processor_get_performance_control()
->   Delete two unnecessary initialisations in
->   acpi_processor_get_performance_control()
->   Rename jump labels in acpi_processor_ppc_notifier()
->   Delete an unnecessary initialisation in acpi_processor_ppc_notifier()
->   Delete an unnecessary initialisation in
->   acpi_processor_get_performance_info()
->   Delete an unnecessary initialisation in acpi_processor_get_platform_limit()
->   Use kmalloc_array() in acpi_processor_get_throttling_states()
->   Improve another size determination in
->   acpi_processor_get_throttling_states()
->   Rename jump labels in acpi_processor_get_throttling_states()
->   Delete two unnecessary initialisations in
->   acpi_processor_get_throttling_states()
->   Fix jump targets in acpi_processor_get_throttling_info()
->   Rename jump labels in acpi_processor_get_tsd()
->   Delete two unnecessary initialisations in acpi_processor_get_tsd()
->   Improve a size determination in acpi_processor_get_tsd()
->   Rename jump labels in acpi_processor_get_throttling_control()
->   Delete two unnecessary initialisations in
->   acpi_processor_get_throttling_control()
->   Fix jump targets in acpi_processor_reevaluate_tstate()
->   Delete an unnecessary initialisation in acpi_processor_reevaluate_tstate()
->   Rename a jump label in acpi_processor_get_platform_limit()
->   Delete an unnecessary initialisation in acpi_processor_get_platform_limit()
->   Improve jump targets in acpi_processor_update_tsd_coord()
-> 
->  drivers/acpi/processor_perflib.c    |  87 +++++++++++++--------------
->  drivers/acpi/processor_throttling.c | 116
->  ++++++++++++++++--------------------
->  2 files changed, 93 insertions(+), 110 deletions(-)
-> 
-> --
-> 2.10.0
-> 
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
+
+ drivers/net/wireless/intel/iwlegacy/3945.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlegacy/3945.c b/drivers/net/wireless/intel/iwlegacy/3945.c
+index 209dc99..4db327a 100644
+--- a/drivers/net/wireless/intel/iwlegacy/3945.c
++++ b/drivers/net/wireless/intel/iwlegacy/3945.c
+@@ -2671,7 +2671,7 @@ const struct il_ops il3945_ops = {
+ 	.send_led_cmd = il3945_send_led_cmd,
+ };
+ 
+-static struct il_cfg il3945_bg_cfg = {
++static const struct il_cfg il3945_bg_cfg = {
+ 	.name = "3945BG",
+ 	.fw_name_pre = IL3945_FW_PRE,
+ 	.ucode_api_max = IL3945_UCODE_API_MAX,
+@@ -2700,7 +2700,7 @@ static struct il_cfg il3945_bg_cfg = {
+ 	},
+ };
+ 
+-static struct il_cfg il3945_abg_cfg = {
++static const struct il_cfg il3945_abg_cfg = {
+ 	.name = "3945ABG",
+ 	.fw_name_pre = IL3945_FW_PRE,
+ 	.ucode_api_max = IL3945_UCODE_API_MAX,
+
