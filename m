@@ -1,48 +1,49 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 07:49:07 +0000
-Subject: [PATCH] ide: Use kmalloc_array() in hwif_init()
-Message-Id: <c28ba397-0b6c-fe47-24d8-002545b4844f@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:05:48 +0000
+Subject: [PATCH 06/26] ath: constify local structures
+Message-Id: <1473599168-30561-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ide@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 09:39:03 +0200
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
-  This issue was detected by using the Coccinelle software.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/ide/ide-probe.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
 
-diff --git a/drivers/ide/ide-probe.c b/drivers/ide/ide-probe.c
-index 0b63fac..645a67b 100644
---- a/drivers/ide/ide-probe.c
-+++ b/drivers/ide/ide-probe.c
-@@ -973,8 +973,9 @@ static int hwif_init(ide_hwif_t *hwif)
- 	if (!hwif->sg_max_nents)
- 		hwif->sg_max_nents = PRD_ENTRIES;
+ drivers/net/wireless/ath/dfs_pattern_detector.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/dfs_pattern_detector.c b/drivers/net/wireless/ath/dfs_pattern_detector.c
+index 2f8136d..4100ffd 100644
+--- a/drivers/net/wireless/ath/dfs_pattern_detector.c
++++ b/drivers/net/wireless/ath/dfs_pattern_detector.c
+@@ -338,7 +338,7 @@ static bool dpd_set_domain(struct dfs_pattern_detector *dpd,
+ 	return true;
+ }
  
--	hwif->sg_table = kmalloc(sizeof(struct scatterlist)*hwif->sg_max_nents,
--				 GFP_KERNEL);
-+	hwif->sg_table = kmalloc_array(hwif->sg_max_nents,
-+				       sizeof(*hwif->sg_table),
-+				       GFP_KERNEL);
- 	if (!hwif->sg_table) {
- 		printk(KERN_ERR "%s: unable to allocate SG table.\n", hwif->name);
- 		goto out;
--- 
-2.10.0
+-static struct dfs_pattern_detector default_dpd = {
++static const struct dfs_pattern_detector default_dpd = {
+ 	.exit		= dpd_exit,
+ 	.set_dfs_domain	= dpd_set_domain,
+ 	.add_pulse	= dpd_add_pulse,
 
