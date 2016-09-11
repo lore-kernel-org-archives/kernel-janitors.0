@@ -1,60 +1,76 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Sat, 24 Sep 2016 12:06:07 +0000
-Subject: Re: [PATCH 10/10] firewire-net: Adjust checks for null pointers in five functions
-Message-Id: <20160924140607.41b782fa@kant>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:06:01 +0000
+Subject: [PATCH 19/26] intel_pstate: constify local structures
+Message-Id: <1473599168-30561-20-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-        <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
-        <99ff298b-0caa-9f47-d7db-57b6fbd69360@users.sourceforge.net>
-In-Reply-To: <99ff298b-0caa-9f47-d7db-57b6fbd69360@users.sourceforge.net>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux1394-devel@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sep 18 SF Markus Elfring wrote:
-> The script "checkpatch.pl" can point information out like the following.
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-A side note:  checkpatch.pl is for authors to help prepare their
-submissions of new code (or their refactoring of existing code if for some
-reason a refactoring is undertaken).
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
-> Comparison to NULL could be written !=E2=80=A6
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yes it could, or it could remain as is.  Both styles are used in
-drivers/firewire/net.c, so it is indeed preferable to normalize it to one
-of them.  I keep your patch for the next occasion when related work is
-being done on drivers/firewire/net.c or drivers/firewire.
+---
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
 
-> Thus fix the affected source code places.
+ drivers/cpufreq/intel_pstate.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-It is not a "fix", it is a stylistic change.
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index bdbe936..4b5f8c3 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -1029,7 +1029,7 @@ static struct cpu_defaults core_params = {
+ 	},
+ };
+ 
+-static struct cpu_defaults silvermont_params = {
++static const struct cpu_defaults silvermont_params = {
+ 	.pid_policy = {
+ 		.sample_rate_ms = 10,
+ 		.deadband = 0,
+@@ -1050,7 +1050,7 @@ static struct cpu_defaults silvermont_params = {
+ 	},
+ };
+ 
+-static struct cpu_defaults airmont_params = {
++static const struct cpu_defaults airmont_params = {
+ 	.pid_policy = {
+ 		.sample_rate_ms = 10,
+ 		.deadband = 0,
+@@ -1071,7 +1071,7 @@ static struct cpu_defaults airmont_params = {
+ 	},
+ };
+ 
+-static struct cpu_defaults knl_params = {
++static const struct cpu_defaults knl_params = {
+ 	.pid_policy = {
+ 		.sample_rate_ms = 10,
+ 		.deadband = 0,
+@@ -1091,7 +1091,7 @@ static struct cpu_defaults knl_params = {
+ 	},
+ };
+ 
+-static struct cpu_defaults bxt_params = {
++static const struct cpu_defaults bxt_params = {
+ 	.pid_policy = {
+ 		.sample_rate_ms = 10,
+ 		.deadband = 0,
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/firewire/net.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
-> index eb7ce5e..e313be3 100644
-> --- a/drivers/firewire/net.c
-> +++ b/drivers/firewire/net.c
-> @@ -366,13 +366,13 @@ static struct fwnet_partial_datagram *fwnet_pd_new(=
-struct net_device *net,
-> =20
->  	INIT_LIST_HEAD(&new->fi_list);
->  	fi =3D fwnet_frag_new(new, frag_off, frag_len);
-> -	if (fi =3D NULL)
-> +	if (!fi)
->  		goto free_new;
-[...]
---=20
-Stefan Richter
--=3D=3D=3D----- =3D--=3D =3D---
-http://arcgraph.de/sr/
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
