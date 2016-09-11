@@ -1,52 +1,85 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Date: Tue, 06 Sep 2016 17:24:26 +0000
-Subject: Re: [PATCH] jfs: Simplify code
-Message-Id: <7e6c449d-1b6e-b574-9849-07266c52ab83@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:05:47 +0000
+Subject: [PATCH 05/26] ARCNET: constify local structures
+Message-Id: <1473599168-30561-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472880929-29449-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1472880929-29449-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, shaggy@kernel.org
-Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/03/2016 12:35 AM, Christophe JAILLET wrote:
-> Calling 'list_splice' followed by 'INIT_LIST_HEAD' is equivalent to
-> 'list_splice_init'.
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-Looks good. I'll push this upstream.
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
-> 
-> This has been spotted with the following coccinelle script:
-> /////
-> @@
-> expression y,z;
-> @@
-> 
-> -   list_splice(y,z);
-> -   INIT_LIST_HEAD(y);
-> +   list_splice_init(y,z);
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> ---
->  fs/jfs/jfs_txnmgr.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
-> index 2e58978d6f45..4d973524c887 100644
-> --- a/fs/jfs/jfs_txnmgr.c
-> +++ b/fs/jfs/jfs_txnmgr.c
-> @@ -2893,8 +2893,7 @@ restart:
->  	 * on anon_list2.  Let's check.
->  	 */
->  	if (!list_empty(&TxAnchor.anon_list2)) {
-> -		list_splice(&TxAnchor.anon_list2, &TxAnchor.anon_list);
-> -		INIT_LIST_HEAD(&TxAnchor.anon_list2);
-> +		list_splice_init(&TxAnchor.anon_list2, &TxAnchor.anon_list);
->  		goto restart;
->  	}
->  	TXN_UNLOCK();
-> 
+---
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
+
+ drivers/net/arcnet/com20020-pci.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/arcnet/com20020-pci.c b/drivers/net/arcnet/com20020-pci.c
+index 239de38..32b8406 100644
+--- a/drivers/net/arcnet/com20020-pci.c
++++ b/drivers/net/arcnet/com20020-pci.c
+@@ -264,7 +264,7 @@ static void com20020pci_remove(struct pci_dev *pdev)
+ 	}
+ }
+ 
+-static struct com20020_pci_card_info card_info_10mbit = {
++static const struct com20020_pci_card_info card_info_10mbit = {
+ 	.name = "ARC-PCI",
+ 	.devcount = 1,
+ 	.chan_map_tbl = {
+@@ -277,7 +277,7 @@ static struct com20020_pci_card_info card_info_10mbit = {
+ 	.flags = ARC_CAN_10MBIT,
+ };
+ 
+-static struct com20020_pci_card_info card_info_5mbit = {
++static const struct com20020_pci_card_info card_info_5mbit = {
+ 	.name = "ARC-PCI",
+ 	.devcount = 1,
+ 	.chan_map_tbl = {
+@@ -290,7 +290,7 @@ static struct com20020_pci_card_info card_info_5mbit = {
+ 	.flags = ARC_IS_5MBIT,
+ };
+ 
+-static struct com20020_pci_card_info card_info_sohard = {
++static const struct com20020_pci_card_info card_info_sohard = {
+ 	.name = "PLX-PCI",
+ 	.devcount = 1,
+ 	/* SOHARD needs PCI base addr 4 */
+@@ -304,7 +304,7 @@ static struct com20020_pci_card_info card_info_sohard = {
+ 	.flags = ARC_CAN_10MBIT,
+ };
+ 
+-static struct com20020_pci_card_info card_info_eae_arc1 = {
++static const struct com20020_pci_card_info card_info_eae_arc1 = {
+ 	.name = "EAE PLX-PCI ARC1",
+ 	.devcount = 1,
+ 	.chan_map_tbl = {
+@@ -329,7 +329,7 @@ static struct com20020_pci_card_info card_info_eae_arc1 = {
+ 	.flags = ARC_CAN_10MBIT,
+ };
+ 
+-static struct com20020_pci_card_info card_info_eae_ma1 = {
++static const struct com20020_pci_card_info card_info_eae_ma1 = {
+ 	.name = "EAE PLX-PCI MA1",
+ 	.devcount = 2,
+ 	.chan_map_tbl = {
+
