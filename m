@@ -1,46 +1,75 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:06:10 +0000
-Subject: [PATCH 20/47] block-rbd: Rename a jump label in rbd_register_watch()
-Message-Id: <76429d28-548c-63dd-fee7-ca5585b88856@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 14:44:14 +0000
+Subject: [PATCH 3/3] [media] mxl111sf-tuner: constify dvb_tuner_ops structures
+Message-Id: <1473605054-9002-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+References: <1473605054-9002-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473605054-9002-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Michael Krufky <mkrufky@linuxtv.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:33:00 +0200
+These structures are only used to copy into other structures, so declare
+them as const.
 
-Adjust a jump label according to the current Linux coding style convention.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct dvb_tuner_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+expression e;
+position p;
+@@
+e = i@p
+
+@ok2@
+identifier r.i;
+expression e1, e2;
+position p;
+@@
+memcpy(e1, &i@p, e2)
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct dvb_tuner_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct dvb_tuner_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/block/rbd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 97dbc1a..b0b5a3b 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3900,12 +3900,11 @@ static int rbd_register_watch(struct rbd_device *rbd_dev)
- 	rbd_assert(rbd_dev->watch_state = RBD_WATCH_STATE_UNREGISTERED);
- 	ret = __rbd_register_watch(rbd_dev);
- 	if (ret)
--		goto out;
-+		goto unlock;
+diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c b/drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c
+index 7d16252..f141dcc 100644
+--- a/drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c
++++ b/drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c
+@@ -466,7 +466,7 @@ static int mxl111sf_tuner_release(struct dvb_frontend *fe)
  
- 	rbd_dev->watch_state = RBD_WATCH_STATE_REGISTERED;
- 	rbd_dev->watch_cookie = rbd_dev->watch_handle->linger_id;
--
--out:
-+ unlock:
- 	mutex_unlock(&rbd_dev->watch_mutex);
- 	return ret;
- }
--- 
-2.10.0
+ /* ------------------------------------------------------------------------- */
+ 
+-static struct dvb_tuner_ops mxl111sf_tuner_tuner_ops = {
++static const struct dvb_tuner_ops mxl111sf_tuner_tuner_ops = {
+ 	.info = {
+ 		.name = "MaxLinear MxL111SF",
+ #if 0
 
