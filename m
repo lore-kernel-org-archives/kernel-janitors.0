@@ -1,29 +1,67 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 05:32:44 +0000
-Subject: Re: [PATCH v2 5/5] ISDN-Gigaset: Enclose two expressions for the sizeof operator by parentheses
-Message-Id: <65fec12e-0e8b-54e0-c0b4-3d12779396b8@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:05:54 +0000
+Subject: [PATCH 12/26] [SCSI] hptiop: constify local structures
+Message-Id: <1473599168-30561-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <063D6719AE5E284EB5DD2968C1650D6DB0109E63@AcuExch.aculab.com>
- <1474907003.2238.13.camel@perches.com>
- <f9dd122f-b0ed-0398-2a13-4d31693356fa@users.sourceforge.net>
- <20160926.201037.1525211304203135037.davem@davemloft.net>
-In-Reply-To: <20160926.201037.1525211304203135037.davem@davemloft.net>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: Joe Perches <joe@perches.com>, David Laight <David.Laight@ACULAB.COM>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: HighPoint Linux Team <linux@highpoint-tech.com>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> When you need to make changes to patches that are part of a series,
-> you must resubmit the entire series,
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-I imagine that will happen when the patch review time passed by a bit
-more as Paul Bolle requested it yesterday.
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> not just the things that are changes.
+---
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
 
-Thanks for your reminder.
+ drivers/scsi/hptiop.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/scsi/hptiop.c b/drivers/scsi/hptiop.c
+index a83f705..358732d 100644
+--- a/drivers/scsi/hptiop.c
++++ b/drivers/scsi/hptiop.c
+@@ -1590,7 +1590,7 @@ static void hptiop_remove(struct pci_dev *pcidev)
+ 	scsi_host_put(host);
+ }
+ 
+-static struct hptiop_adapter_ops hptiop_itl_ops = {
++static const struct hptiop_adapter_ops hptiop_itl_ops = {
+ 	.family            = INTEL_BASED_IOP,
+ 	.iop_wait_ready    = iop_wait_ready_itl,
+ 	.internal_memalloc = hptiop_internal_memalloc_itl,
+@@ -1609,7 +1609,7 @@ static struct hptiop_adapter_ops hptiop_itl_ops = {
+ 	.host_phy_flag     = cpu_to_le64(0),
+ };
+ 
+-static struct hptiop_adapter_ops hptiop_mv_ops = {
++static const struct hptiop_adapter_ops hptiop_mv_ops = {
+ 	.family            = MV_BASED_IOP,
+ 	.iop_wait_ready    = iop_wait_ready_mv,
+ 	.internal_memalloc = hptiop_internal_memalloc_mv,
+@@ -1628,7 +1628,7 @@ static struct hptiop_adapter_ops hptiop_mv_ops = {
+ 	.host_phy_flag     = cpu_to_le64(0),
+ };
+ 
+-static struct hptiop_adapter_ops hptiop_mvfrey_ops = {
++static const struct hptiop_adapter_ops hptiop_mvfrey_ops = {
+ 	.family            = MVFREY_BASED_IOP,
+ 	.iop_wait_ready    = iop_wait_ready_mvfrey,
+ 	.internal_memalloc = hptiop_internal_memalloc_mvfrey,
+
