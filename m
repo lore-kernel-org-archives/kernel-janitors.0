@@ -1,53 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 20:42:09 +0000
-Subject: [PATCH 1/7] AGPGART: Use kmalloc_array() in compat_agpioc_reserve_wrap()
-Message-Id: <7c2df723-e456-37d3-faf0-76514c672515@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 12:14:41 +0000
+Subject: [PATCH 5/6] ASoC: ac97: constify gpio_chip structures
+Message-Id: <1473596082-32690-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
-In-Reply-To: <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
+References: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 17:51:32 +0200
+These structures are only used to copy into other structures, so declare
+them as const.
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "kmalloc_array".
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct gpio_chip i@p = { ... };
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok@
+identifier r.i;
+expression e;
+position p;
+@@
+e = i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct gpio_chip e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct gpio_chip i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/char/agp/compat_ioctl.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ sound/soc/soc-ac97.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/agp/compat_ioctl.c b/drivers/char/agp/compat_ioctl.c
-index a48e05b..a2b69db 100644
---- a/drivers/char/agp/compat_ioctl.c
-+++ b/drivers/char/agp/compat_ioctl.c
-@@ -98,11 +98,15 @@ static int compat_agpioc_reserve_wrap(struct agp_file_private *priv, void __user
- 		if (ureserve.seg_count >= 16384)
- 			return -EINVAL;
+diff --git a/sound/soc/soc-ac97.c b/sound/soc/soc-ac97.c
+index bc4a55b..6c8b0b0 100644
+--- a/sound/soc/soc-ac97.c
++++ b/sound/soc/soc-ac97.c
+@@ -116,7 +116,7 @@ static int snd_soc_ac97_gpio_direction_out(struct gpio_chip *chip,
+ 	return snd_soc_update_bits(codec, AC97_GPIO_CFG, 1 << offset, 0);
+ }
  
--		usegment = kmalloc(sizeof(*usegment) * ureserve.seg_count, GFP_KERNEL);
-+		usegment = kmalloc_array(ureserve.seg_count,
-+					 sizeof(*usegment),
-+					 GFP_KERNEL);
- 		if (!usegment)
- 			return -ENOMEM;
- 
--		ksegment = kmalloc(sizeof(*ksegment) * kreserve.seg_count, GFP_KERNEL);
-+		ksegment = kmalloc_array(kreserve.seg_count,
-+					 sizeof(*ksegment),
-+					 GFP_KERNEL);
- 		if (!ksegment) {
- 			kfree(usegment);
- 			return -ENOMEM;
--- 
-2.10.0
+-static struct gpio_chip snd_soc_ac97_gpio_chip = {
++static const struct gpio_chip snd_soc_ac97_gpio_chip = {
+ 	.label			= "snd_soc_ac97",
+ 	.owner			= THIS_MODULE,
+ 	.request		= snd_soc_ac97_gpio_request,
 
