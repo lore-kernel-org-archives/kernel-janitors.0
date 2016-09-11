@@ -1,25 +1,68 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 12 Sep 2016 16:33:00 +0000
-Subject: Re: [PATCH 25/26] pch_gbe: constify local structures
-Message-Id: <20160912.093300.2115761736296247237.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 12:14:38 +0000
+Subject: [PATCH 2/6] mfd: sm501: constify gpio_chip structures
+Message-Id: <1473596082-32690-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-26-git-send-email-Julia.Lawall@lip6.fr>
-        <20160911.194819.1394072668837372328.davem@davemloft.net>
-        <alpine.DEB.2.10.1609121058580.3049@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1609121058580.3049@hadrien>
+References: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia.lawall@lip6.fr
-Cc: netdev@vger.kernel.org, joe@perches.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 12 Sep 2016 11:07:15 +0200 (CEST)
+These structures are only used to copy into other structures, so declare
+them as const.
 
-> So foo is protected, but its lifetime of interest is quite short.  But we
-> can't set the ops field of the type of xxx to be const either, because it
-> is obviously not - the code above modifies it.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-You can definitely make it a pointer to a const thing.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct gpio_chip i@p = { ... };
 
-Just like "netdev_ops" in struct net_device is const.
+@ok@
+identifier r.i;
+expression e;
+position p;
+@@
+e = i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct gpio_chip e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct gpio_chip i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mfd/sm501.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+index 65cd0d2..4053435 100644
+--- a/drivers/mfd/sm501.c
++++ b/drivers/mfd/sm501.c
+@@ -1001,7 +1001,7 @@ static int sm501_gpio_output(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
+-static struct gpio_chip gpio_chip_template = {
++static const struct gpio_chip gpio_chip_template = {
+ 	.ngpio			= 32,
+ 	.direction_input	= sm501_gpio_input,
+ 	.direction_output	= sm501_gpio_output,
+
