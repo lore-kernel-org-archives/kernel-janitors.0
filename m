@@ -1,56 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:26:56 +0000
-Subject: [PATCH 16/24] ste_dma40: Rename a jump label in d40_prep_desc()
-Message-Id: <4879ed44-9a6a-856d-a108-7d8f1934e2a0@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Sep 2016 13:05:51 +0000
+Subject: [PATCH 09/26] i40iw: constify local structures
+Message-Id: <1473599168-30561-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:51:37 +0200
+For structure types defined in the same file or local header files, find
+top-level static structure declarations that have the following
+properties:
+1. Never reassigned.
+2. Address never taken
+3. Not passed to a top-level macro call
+4. No pointer or array-typed field passed to a function or stored in a
+variable.
+Declare structures having all of these properties as const.
 
-Adjust jump labels according to the current Linux coding style convention.
+Done using Coccinelle.
+Based on a suggestion by Joe Perches <joe@perches.com>.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/dma/ste_dma40.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+The semantic patch seems too long for a commit log, but is in the cover
+letter.
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index 6725b66..7f38496 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -2208,13 +2208,13 @@ d40_prep_desc(struct d40_chan *chan, struct scatterlist *sg,
- 					cfg->dst_info.data_width);
- 	if (desc->lli_len < 0) {
- 		chan_err(chan, "Unaligned size\n");
--		goto err;
-+		goto free_desc;
- 	}
- 
- 	ret = d40_pool_lli_alloc(chan, desc, desc->lli_len);
- 	if (ret < 0) {
- 		chan_err(chan, "Could not allocate lli\n");
--		goto err;
-+		goto free_desc;
- 	}
- 
- 	desc->lli_current = 0;
-@@ -2224,8 +2224,7 @@ d40_prep_desc(struct d40_chan *chan, struct scatterlist *sg,
- 	dma_async_tx_descriptor_init(&desc->txd, &chan->chan);
- 
- 	return desc;
--
--err:
-+ free_desc:
- 	d40_desc_free(chan, desc);
- 	return NULL;
+ drivers/infiniband/hw/i40iw/i40iw_uk.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_uk.c b/drivers/infiniband/hw/i40iw/i40iw_uk.c
+index 4d28c3c..eb94c03 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_uk.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_uk.c
+@@ -918,7 +918,7 @@ enum i40iw_status_code i40iw_get_wqe_shift(u32 wqdepth, u32 sge, u32 inline_data
+ 	return 0;
  }
--- 
-2.10.0
+ 
+-static struct i40iw_qp_uk_ops iw_qp_uk_ops = {
++static const struct i40iw_qp_uk_ops iw_qp_uk_ops = {
+ 	i40iw_qp_post_wr,
+ 	i40iw_qp_ring_push_db,
+ 	i40iw_rdma_write,
+@@ -932,14 +932,14 @@ static struct i40iw_qp_uk_ops iw_qp_uk_ops = {
+ 	i40iw_nop
+ };
+ 
+-static struct i40iw_cq_ops iw_cq_ops = {
++static const struct i40iw_cq_ops iw_cq_ops = {
+ 	i40iw_cq_request_notification,
+ 	i40iw_cq_poll_completion,
+ 	i40iw_cq_post_entries,
+ 	i40iw_clean_cq
+ };
+ 
+-static struct i40iw_device_uk_ops iw_device_uk_ops = {
++static const struct i40iw_device_uk_ops iw_device_uk_ops = {
+ 	i40iw_cq_uk_init,
+ 	i40iw_qp_uk_init,
+ };
 
