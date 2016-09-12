@@ -1,56 +1,66 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 24 Sep 2016 16:47:36 +0000
-Subject: Re: [PATCH 4/4] Input-gameport: Replace some printk() calls by pr_info() in joydump_connect()
-Message-Id: <1474735656.23838.6.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:45:49 +0000
+Subject: [PATCH 04/47] block-rbd: Refactor two calls for memory allocations in rbd_dev_image_id()
+Message-Id: <dd52b320-58e3-48f7-f909-49bd3f388a5e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
-         <f486d64d-0759-9cd6-1e4e-df723acb6fea@users.sourceforge.net>
-         <1474733610.23838.2.camel@perches.com>
-         <8164eb48-e3fa-fa9d-6351-f14b595a6dc3@users.sourceforge.net>
-In-Reply-To: <8164eb48-e3fa-fa9d-6351-f14b595a6dc3@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, 2016-09-24 at 18:32 +0200, SF Markus Elfring wrote:
-> > > @@ -57,27 +57,29 @@ static int joydump_connect(struct gameport *gamep=
-ort, struct gameport_driver *dr
-> > > =A0	unsigned long flags;
-> > > =A0	unsigned char u;
-> >=20
-> > =A0
-> > > -	printk(KERN_INFO "joydump: ,------------------ START --------------=
---.\n");
-> > > -	printk(KERN_INFO "joydump: | Dumping: %30s |\n", gameport->phys);
-> > > -	printk(KERN_INFO "joydump: | Speed: %28d kHz |\n", gameport->speed);
-> > > +	pr_info(",------------------ START ----------------.\n"
-> > > +		"| Dumping: %30s |\n"
-> > > +		"| Speed: %28d kHz |\n",
-> > > +		gameport->phys,
-> > > +		gameport->speed);
->=20
->=20
-> > Not the same output.
->=20
->=20
-> Should the desired output be the same when the relevant data are passed b=
-y a single function call
-> (instead of three as before)?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Sep 2016 14:48:41 +0200
 
-Adding a singleton for a pr_fmt #define constant string and
-updating the printk subsystem to prepend that constant string
-to each use of a pr_<level> at runtime would be an improvement
-as it could reduce constant data used by the format strings.
+* Pass the sizes for memory allocations to the corresponding functions
+  directly without storing the calculated values in an
+  intermediate variable.
 
-That would be a _real_ improvement.
+* Delete the local variable "size" which became unnecessary with
+  this refactoring.
 
-Please try to implement something like that before submitting
-more of these incorrect patches.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/block/rbd.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index d61a066..c1da844 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5833,7 +5833,6 @@ again:
+ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
+ {
+ 	int ret;
+-	size_t size;
+ 	char *object_name;
+ 	void *response;
+ 	char *image_id;
+@@ -5854,17 +5853,16 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
+ 	 * First, see if the format 2 image id file exists, and if
+ 	 * so, get the image's persistent id from it.
+ 	 */
+-	size = sizeof (RBD_ID_PREFIX) + strlen(rbd_dev->spec->image_name);
+-	object_name = kmalloc(size, GFP_NOIO);
++	object_name = kmalloc(sizeof(RBD_ID_PREFIX)
++			      + strlen(rbd_dev->spec->image_name),
++			      GFP_NOIO);
+ 	if (!object_name)
+ 		return -ENOMEM;
+ 	sprintf(object_name, "%s%s", RBD_ID_PREFIX, rbd_dev->spec->image_name);
+ 	dout("rbd id object name is %s\n", object_name);
+ 
+ 	/* Response will be an encoded string, which includes a length */
+-
+-	size = sizeof (__le32) + RBD_IMAGE_ID_LEN_MAX;
+-	response = kzalloc(size, GFP_NOIO);
++	response = kzalloc(sizeof(__le32) + RBD_IMAGE_ID_LEN_MAX, GFP_NOIO);
+ 	if (!response) {
+ 		ret = -ENOMEM;
+ 		goto out;
+-- 
+2.10.0
+
