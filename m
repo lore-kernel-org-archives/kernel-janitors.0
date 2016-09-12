@@ -1,68 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:58:31 +0000
-Subject: [PATCH 11/16] md/bitmap: Rename a jump label in bitmap_init_from_disk()
-Message-Id: <c0627779-73fd-9da6-6c85-04db90481227@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:54:06 +0000
+Subject: [PATCH 11/47] block-rbd: Delete three unnecessary initialisations in rbd_dev_image_name()
+Message-Id: <a509ccbf-7eba-2f21-0575-6051f2c28a96@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
-In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:12:47 +0200
+Date: Mon, 12 Sep 2016 18:02:16 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Three local variables will be set to appropriate values a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/bitmap.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/block/rbd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-index 1f7f1e1..c186e5d 100644
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -1064,7 +1064,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
- 		       bmname(bitmap),
- 		       (unsigned long) i_size_read(file->f_mapping->host),
- 		       store->bytes);
--		goto err;
-+		goto report_failure;
- 	}
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 145bbcc..90797aa 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5256,9 +5256,9 @@ static char *rbd_dev_image_name(struct rbd_device *rbd_dev)
+ 	void *p;
+ 	void *end;
+ 	size_t size;
+-	void *reply_buf = NULL;
+-	size_t len = 0;
+-	char *image_name = NULL;
++	void *reply_buf;
++	size_t len;
++	char *image_name;
+ 	int ret;
  
- 	oldindex = ~0L;
-@@ -1098,7 +1098,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
- 					index + node_offset, count);
- 
- 			if (ret)
--				goto err;
-+				goto report_failure;
- 
- 			oldindex = index;
- 
-@@ -1116,7 +1116,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
- 				ret = -EIO;
- 				if (test_bit(BITMAP_WRITE_ERROR,
- 					     &bitmap->flags))
--					goto err;
-+					goto report_failure;
- 			}
- 		}
- 		paddr = kmap_atomic(page);
-@@ -1143,8 +1143,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
- 	       bit_cnt, chunks);
- 
- 	return 0;
--
-- err:
-+report_failure:
- 	printk(KERN_INFO "%s: bitmap initialisation failed: %d\n",
- 	       bmname(bitmap), ret);
- 	return ret;
+ 	rbd_assert(!rbd_dev->spec->image_name);
 -- 
 2.10.0
 
