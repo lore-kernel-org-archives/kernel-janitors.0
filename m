@@ -1,73 +1,94 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 16:50:25 +0000
-Subject: [PATCH 04/21] ACPI-video: Rename jump labels in acpi_video_get_levels()
-Message-Id: <38d7268d-4166-6df0-06fd-c66456a2d544@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 21:00:08 +0000
+Subject: [PATCH] KVM: PPC: e500: Rename jump labels in kvmppc_e500_tlb_init()
+Message-Id: <b3d10e3b-79f9-b52c-c013-fe33f87cbd08@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
-In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <c3fd4483-38d2-af0f-0e19-a7e57e120c5b@users.sourceforge.net>
+ <165cb42e-f9fe-83ad-7c4c-299a805dbe6e@users.sourceforge.net>
+ <20160911232547.GA9873@fergus.ozlabs.ibm.com>
+In-Reply-To: <20160911232547.GA9873@fergus.ozlabs.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Paul Mackerras <paulus@ozlabs.org>, kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 14:11:43 +0200
+Date: Mon, 12 Sep 2016 22:33:53 +0200
 
 Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_video.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 420d125..82987db 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -773,13 +773,13 @@ int acpi_video_get_levels(struct acpi_device *device,
+Thanks that five update steps could be integrated into the branch "kvm-ppc-next"
+of another source code repository.
+
+
+> With this I get a compile error:
+> 
+>   CC      arch/powerpc/kvm/e500_mmu.o
+> /home/paulus/kernel/kvm/arch/powerpc/kvm/e500_mmu.c: In function ‘kvmppc_e500_tlb_init’:
+> /home/paulus/kernel/kvm/arch/powerpc/kvm/e500_mmu.c:910:3: error: label ‘err’ used but not defined
+>    goto err;
+>    ^
+> /home/paulus/kernel/kvm/scripts/Makefile.build:289: recipe for target 'arch/powerpc/kvm/e500_mmu.o' failed
+> make[2]: *** [arch/powerpc/kvm/e500_mmu.o] Error 1
+
+I overlooked a single goto statement there somehow.
+
+I hope that you like my second approach for this function implementation better.
+
+
+ arch/powerpc/kvm/e500_mmu.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/arch/powerpc/kvm/e500_mmu.c b/arch/powerpc/kvm/e500_mmu.c
+index 0a2eeb1..ddbf8f0 100644
+--- a/arch/powerpc/kvm/e500_mmu.c
++++ b/arch/powerpc/kvm/e500_mmu.c
+@@ -907,7 +907,7 @@ int kvmppc_e500_tlb_init(struct kvmppc_vcpu_e500 *vcpu_e500)
+ 	struct kvm_vcpu *vcpu = &vcpu_e500->vcpu;
  
- 	if (obj->package.count < 2) {
- 		result = -EINVAL;
--		goto out;
-+		goto free_object;
- 	}
+ 	if (e500_mmu_host_init(vcpu_e500))
+-		goto err;
++		goto free_vcpu;
  
- 	br = kzalloc(sizeof(*br), GFP_KERNEL);
- 	if (!br) {
- 		result = -ENOMEM;
--		goto out;
-+		goto free_object;
- 	}
+ 	vcpu_e500->gtlb_params[0].entries = KVM_E500_TLB0_SIZE;
+ 	vcpu_e500->gtlb_params[1].entries = KVM_E500_TLB1_SIZE;
+@@ -933,26 +933,25 @@ int kvmppc_e500_tlb_init(struct kvmppc_vcpu_e500 *vcpu_e500)
+ 					  sizeof(struct tlbe_ref),
+ 					  GFP_KERNEL);
+ 	if (!vcpu_e500->gtlb_priv[0])
+-		goto err;
++		goto free_vcpu;
  
- 	br->levels = kmalloc_array(obj->package.count + 2,
-@@ -787,7 +787,7 @@ int acpi_video_get_levels(struct acpi_device *device,
- 				   GFP_KERNEL);
- 	if (!br->levels) {
- 		result = -ENOMEM;
--		goto out_free;
-+		goto free_brightness;
- 	}
+ 	vcpu_e500->gtlb_priv[1] = kcalloc(vcpu_e500->gtlb_params[1].entries,
+ 					  sizeof(struct tlbe_ref),
+ 					  GFP_KERNEL);
+ 	if (!vcpu_e500->gtlb_priv[1])
+-		goto err;
++		goto free_vcpu;
  
- 	for (i = 0; i < obj->package.count; i++) {
-@@ -843,13 +843,12 @@ int acpi_video_get_levels(struct acpi_device *device,
- 	*dev_br = br;
- 	if (pmax_level)
- 		*pmax_level = max_level;
+ 	vcpu_e500->g2h_tlb1_map = kcalloc(vcpu_e500->gtlb_params[1].entries,
+ 					  sizeof(*vcpu_e500->g2h_tlb1_map),
+ 					  GFP_KERNEL);
+ 	if (!vcpu_e500->g2h_tlb1_map)
+-		goto err;
++		goto free_vcpu;
+ 
+ 	vcpu_mmu_init(vcpu, vcpu_e500->gtlb_params);
+ 
+ 	kvmppc_recalc_tlb1map_range(vcpu_e500);
+ 	return 0;
 -
--out:
-+ free_object:
- 	kfree(obj);
- 	return result;
--out_free:
-+ free_brightness:
- 	kfree(br);
--	goto out;
-+	goto free_object;
+-err:
++ free_vcpu:
+ 	free_gtlb(vcpu_e500);
+ 	return -1;
  }
- EXPORT_SYMBOL(acpi_video_get_levels);
- 
 -- 
 2.10.0
+
 
