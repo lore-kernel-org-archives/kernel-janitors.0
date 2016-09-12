@@ -1,69 +1,95 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 17:51:37 +0000
-Subject: [PATCH 8/9] serial-uartlite: constify uart_ops structures
-Message-Id: <1472752298-981-9-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:31:03 +0000
+Subject: [PATCH 42/47] block-rbd: Rename jump labels in rbd_dev_image_probe()
+Message-Id: <c41e7df3-db58-2e37-c77b-072c55f99e1f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Korsgaard <jacmet@sunsite.dk>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for uart_ops structures that are only stored in the ops field of a
-uart_port structure.  This field is declared const, so uart_ops structures
-that have this property can be declared as const also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 20:02:16 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Adjust jump labels according to the current Linux coding style convention.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct uart_ops i@p = { ... };
-
-@ok@
-identifier r.i;
-struct uart_port e;
-position p;
-@@
-e.ops = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct uart_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct uart_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/uartlite.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/rbd.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
-index 05089b6..817bb0d 100644
---- a/drivers/tty/serial/uartlite.c
-+++ b/drivers/tty/serial/uartlite.c
-@@ -387,7 +387,7 @@ static void ulite_put_poll_char(struct uart_port *port, unsigned char ch)
- }
- #endif
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 80983f6..eec41ed 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -6108,7 +6108,7 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
  
--static struct uart_ops ulite_ops = {
-+static const struct uart_ops ulite_ops = {
- 	.tx_empty	= ulite_tx_empty,
- 	.set_mctrl	= ulite_set_mctrl,
- 	.get_mctrl	= ulite_get_mctrl,
+ 	ret = rbd_dev_header_name(rbd_dev);
+ 	if (ret)
+-		goto err_out_format;
++		goto status_indication;
+ 
+ 	if (!depth) {
+ 		ret = rbd_register_watch(rbd_dev);
+@@ -6117,13 +6117,13 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+ 				pr_info("image %s/%s does not exist\n",
+ 					rbd_dev->spec->pool_name,
+ 					rbd_dev->spec->image_name);
+-			goto err_out_format;
++			goto status_indication;
+ 		}
+ 	}
+ 
+ 	ret = rbd_dev_header_info(rbd_dev);
+ 	if (ret)
+-		goto err_out_watch;
++		goto check_input;
+ 
+ 	/*
+ 	 * If this image is the one being mapped, we have pool name and
+@@ -6141,13 +6141,13 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+ 				rbd_dev->spec->pool_name,
+ 				rbd_dev->spec->image_name,
+ 				rbd_dev->spec->snap_name);
+-		goto err_out_probe;
++		goto unprobe_device;
+ 	}
+ 
+ 	if (rbd_dev->header.features & RBD_FEATURE_LAYERING) {
+ 		ret = rbd_dev_v2_parent_info(rbd_dev);
+ 		if (ret)
+-			goto err_out_probe;
++			goto unprobe_device;
+ 
+ 		/*
+ 		 * Need to warn users if this image is the one being
+@@ -6160,18 +6160,17 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+ 
+ 	ret = rbd_dev_probe_parent(rbd_dev, depth);
+ 	if (ret)
+-		goto err_out_probe;
++		goto unprobe_device;
+ 
+ 	dout("discovered format %u image, header name is %s\n",
+ 		rbd_dev->image_format, rbd_dev->header_oid.name);
+ 	return 0;
+-
+-err_out_probe:
++ unprobe_device:
+ 	rbd_dev_unprobe(rbd_dev);
+-err_out_watch:
++ check_input:
+ 	if (!depth)
+ 		rbd_unregister_watch(rbd_dev);
+-err_out_format:
++ status_indication:
+ 	rbd_dev->image_format = 0;
+ 	kfree(rbd_dev->spec->image_id);
+ 	rbd_dev->spec->image_id = NULL;
+-- 
+2.10.0
 
