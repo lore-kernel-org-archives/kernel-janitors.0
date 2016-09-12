@@ -1,92 +1,54 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 23 Sep 2016 01:26:53 +0000
-Subject: [PATCH 03/11 V2] staging: dgnc: missing NULL check for ioremap in dgnc_do_remap()
-Message-Id: <20160923012653.GA31980@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:46:49 +0000
+Subject: [PATCH 05/47] block-rbd: One function call less in rbd_dev_image_id() after error detection
+Message-Id: <532868bf-3209-9059-fc1e-5194ab99b776@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The ioremap() function can be failed, so it need to have error
-handling in dgnc_do_remap(). And also the return type of
-dgnc_do_remap() should be changed from "void" to "int"
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Sep 2016 15:05:49 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+The kfree() function was called in one case by the rbd_dev_image_id()
+function during error handling even if the passed variable "response"
+contained a null pointer.
+
+Adjust a jump target according to the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-V2: the subject line was cut off, I put it completely.
+ drivers/block/rbd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/staging/dgnc/dgnc_driver.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index c87b3de..58cebf4 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -43,7 +43,7 @@ static void		dgnc_cleanup_board(struct dgnc_board *brd);
- static void		dgnc_poll_handler(ulong dummy);
- static int		dgnc_init_one(struct pci_dev *pdev,
- 				      const struct pci_device_id *ent);
--static void		dgnc_do_remap(struct dgnc_board *brd);
-+static int		dgnc_do_remap(struct dgnc_board *brd);
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index c1da844..a6d9a06 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5865,7 +5865,7 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
+ 	response = kzalloc(sizeof(__le32) + RBD_IMAGE_ID_LEN_MAX, GFP_NOIO);
+ 	if (!response) {
+ 		ret = -ENOMEM;
+-		goto out;
++		goto free_name;
+ 	}
  
- /*
-  * File operations permitted on Control/Management major.
-@@ -431,7 +431,10 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 		brd->bd_uart_offset = 0x8;
- 		brd->bd_dividend = 921600;
+ 	/* If it doesn't exist we'll assume it's a format 1 image */
+@@ -5893,8 +5893,8 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
+ 		rbd_dev->spec->image_id = image_id;
+ 		dout("image_id is %s\n", image_id);
+ 	}
+-out:
+ 	kfree(response);
++ free_name:
+ 	kfree(object_name);
  
--		dgnc_do_remap(brd);
-+		rc = dgnc_do_remap(brd);
-+
-+		if (rc < 0)
-+			goto failed;
- 
- 		/* Get and store the board VPD, if it exists */
- 		brd->bd_ops->vpd(brd);
-@@ -483,15 +486,17 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 		brd->bd_uart_offset = 0x200;
- 		brd->bd_dividend = 921600;
- 
--		dgnc_do_remap(brd);
-+		rc = dgnc_do_remap(brd);
- 
--		if (brd->re_map_membase) {
--			/* Read and store the dvid after remapping */
--			brd->dvid = readb(brd->re_map_membase + 0x8D);
-+		if (rc < 0)
-+			goto failed;
-+
-+		/* Read and store the dvid after remapping */
-+		brd->dvid = readb(brd->re_map_membase + 0x8D);
-+
-+		/* Get and store the board VPD, if it exists */
-+		brd->bd_ops->vpd(brd);
- 
--			/* Get and store the board VPD, if it exists */
--			brd->bd_ops->vpd(brd);
--		}
- 		break;
- 
- 	default:
-@@ -566,9 +571,15 @@ static int dgnc_finalize_board_init(struct dgnc_board *brd)
- /*
-  * Remap PCI memory.
-  */
--static void dgnc_do_remap(struct dgnc_board *brd)
-+static int dgnc_do_remap(struct dgnc_board *brd)
- {
-+	int rc = 0;
-+
- 	brd->re_map_membase = ioremap(brd->membase, 0x1000);
-+	if (!brd->re_map_membase)
-+		rc = -ENOMEM;
-+
-+	return rc;
- }
- 
- /*
+ 	return ret;
 -- 
-1.9.1
+2.10.0
 
