@@ -1,68 +1,74 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 13 Sep 2016 08:10:48 +0000
-Subject: Re: [PATCH 28/47] block-rbd: Refactor a jump target in rbd_img_obj_exists_submit()
-Message-Id: <CAOi1vP_ETMVvw5WhRM-Zbe8Aec+sXDJm2-W8+w3EZ-bccVzEnA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:40:19 +0000
+Subject: [PATCH 00/47] RADOS Block Device: Fine-tuning for several function implementations
+Message-Id: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
- <d35a0325-67df-8e08-5b28-827e5faecc6c@users.sourceforge.net>
-In-Reply-To: <d35a0325-67df-8e08-5b28-827e5faecc6c@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Sep 12, 2016 at 9:14 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 12 Sep 2016 19:44:30 +0200
->
-> Adjust a jump target so that a duplicate check can then be avoided
-> at the end.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/block/rbd.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 17bdc21..66801ec 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -2920,7 +2920,7 @@ static int rbd_img_obj_exists_submit(struct rbd_obj_request *obj_request)
->         stat_request = rbd_obj_request_create(obj_request->object_name, 0, 0,
->                                                         OBJ_REQUEST_PAGES);
->         if (!stat_request)
-> -               goto out;
-> +               goto put_request;
->
->         rbd_obj_request_get(obj_request);
->         stat_request->obj_request = obj_request;
-> @@ -2932,7 +2932,7 @@ static int rbd_img_obj_exists_submit(struct rbd_obj_request *obj_request)
->         stat_request->osd_req = rbd_osd_req_create(rbd_dev, OBJ_OP_READ, 1,
->                                                    stat_request);
->         if (!stat_request->osd_req)
-> -               goto out;
-> +               goto put_request;
->         stat_request->callback = rbd_img_obj_exists_callback;
->
->         osd_req_op_init(stat_request->osd_req, 0, CEPH_OSD_OP_STAT, 0);
-> @@ -2942,8 +2942,8 @@ static int rbd_img_obj_exists_submit(struct rbd_obj_request *obj_request)
->
->         osdc = &rbd_dev->rbd_client->client->osdc;
->         ret = rbd_obj_request_submit(osdc, stat_request);
-> -out:
->         if (ret)
-> + put_request:
->                 rbd_obj_request_put(obj_request);
->
->         return ret;
-> --
-> 2.10.0
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 20:35:20 +0200
 
-Don't do this.  goto into an if block is rarely a good idea, more so
-when you are attempting to micro-optimize a very cold error path.
+Several update suggestions were taken into account
+from static source code analysis.
 
-Thanks,
+Markus Elfring (47):
+  Use kmalloc_array() in rbd_header_from_disk()
+  Less function calls in rbd_header_from_disk() after error detection
+  Adjust the position of a jump label in rbd_header_from_disk()
+  Refactor two calls for memory allocations in rbd_dev_image_id()
+  One function call less in rbd_dev_image_id() after error detection
+  Rename jump labels in rbd_add_parse_args()
+  Rename a jump label in rbd_dev_v2_snap_name()
+  Rename jump labels in rbd_dev_v2_snap_context()
+  Rename a jump label in rbd_spec_fill_names()
+  One function call less in rbd_dev_image_name() after error detection
+  Delete three unnecessary initialisations in rbd_dev_image_name()
+  One function call less in rbd_dev_v2_parent_info() after error detection
+  Delete an unnecessary initialisation in rbd_dev_v2_parent_info()
+  Rename a jump label in rbd_dev_v2_object_prefix()
+  Rename jump labels in rbd_dev_create()
+  Rename jump labels in rbd_dev_v1_header_info()
+  Rename jump labels in rbd_init_disk()
+  Fix jump targets in rbd_queue_workfn()
+  Rename a jump label in rbd_reregister_watch()
+  Rename a jump label in rbd_register_watch()
+  Rename jump labels in rbd_try_lock()
+  Rename a jump label in find_watcher()
+  Rename jump labels in get_lock_owner_info()
+  Rename jump labels in rbd_request_lock()
+  Fix jump targets in rbd_img_parent_read()
+  Rename a jump label in rbd_img_parent_read_callback()
+  Rename a jump label in rbd_img_request_submit()
+  Refactor a jump target in rbd_img_obj_exists_submit()
+  Delete an unnecessary initialisation in rbd_img_obj_exists_submit()
+  Refactor a jump target in rbd_img_obj_exists_callback()
+  Fix three jump targets in rbd_img_obj_parent_read_full()
+  Rename a jump label in rbd_img_obj_parent_read_full_callback()
+  Adjust the position of a jump label in rbd_img_request_fill()
+  Rename a jump label in rbd_img_obj_callback()
+  Rename jump labels in rbd_osd_req_create_copyup()
+  Rename jump labels in rbd_osd_req_create()
+  Rename a jump label in bio_chain_clone_range()
+  Rename jump labels in rbd_client_create()
+  Rename a jump label in rbd_ioctl_set_ro()
+  One function call less in rbd_dev_probe_parent() after error detection
+  Rename jump labels in rbd_dev_device_setup()
+  Rename jump labels in rbd_dev_image_probe()
+  Rename jump labels in do_rbd_add()
+  Delete an unnecessary initialisation in do_rbd_add()
+  Rename a jump label in rbd_slab_init()
+  Rename jump labels in rbd_init()
+  Delete unwanted spaces behind usages of the sizeof operator
 
-                Ilya
+ drivers/block/rbd.c | 544 ++++++++++++++++++++++++++--------------------------
+ 1 file changed, 272 insertions(+), 272 deletions(-)
+
+-- 
+2.10.0
+
