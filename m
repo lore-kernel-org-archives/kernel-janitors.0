@@ -1,52 +1,79 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 28 Sep 2016 15:38:27 +0000
-Subject: [PATCH 02/10] md/dm-crypt: Reduce the scope for a variable in crypt_alloc_tfms()
-Message-Id: <2cc0fee8-2228-1f0c-9428-3b872a39e64b@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:18:54 +0000
+Subject: [PATCH 31/47] block-rbd: Fix three jump targets in rbd_img_obj_parent_read_full()
+Message-Id: <974443eb-d84c-a1e6-833b-675bf8d041ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
-In-Reply-To: <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 28 Sep 2016 14:05:25 +0200
+Date: Mon, 12 Sep 2016 19:48:46 +0200
 
-Move the definition for the variable "err" (including its declaration)
-into an if branch (so that the corresponding setting will only be performed
-if a call of the function "crypto_alloc_skcipher" failed as before
-this refactoring).
+* Adjust jump targets according to the current Linux coding
+  style convention.
+
+* Delete two duplicate checks then at the end.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/dm-crypt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index 68971a2..88a3b62 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -1452,7 +1452,6 @@ static void crypt_free_tfms(struct crypt_config *cc)
- static int crypt_alloc_tfms(struct crypt_config *cc, char *ciphermode)
- {
- 	unsigned i;
--	int err;
+I find that this function implementation needs another close look.
+It seems that four lines can not be executed according to the shown
+control flow at the moment.
+How do you think about to avoid "dead" source code there anyhow?
+
+ drivers/block/rbd.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 7d5f7b9..1b8a8c5 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -2789,18 +2789,18 @@ static int rbd_img_obj_parent_read_full(struct rbd_obj_request *obj_request)
+ 	if (IS_ERR(pages)) {
+ 		result = PTR_ERR(pages);
+ 		pages = NULL;
+-		goto out_err;
++		goto status_indication;
+ 	}
  
- 	cc->tfms = kcalloc(cc->tfms_count, sizeof(*cc->tfms), GFP_KERNEL);
- 	if (!cc->tfms)
-@@ -1461,7 +1460,8 @@ static int crypt_alloc_tfms(struct crypt_config *cc, char *ciphermode)
- 	for (i = 0; i < cc->tfms_count; i++) {
- 		cc->tfms[i] = crypto_alloc_skcipher(ciphermode, 0, 0);
- 		if (IS_ERR(cc->tfms[i])) {
--			err = PTR_ERR(cc->tfms[i]);
-+			int err = PTR_ERR(cc->tfms[i]);
-+
- 			crypt_free_tfms(cc);
- 			return err;
- 		}
+ 	result = -ENOMEM;
+ 	parent_request = rbd_parent_request_create(obj_request,
+ 						img_offset, length);
+ 	if (!parent_request)
+-		goto out_err;
++		goto release_page_vector;
+ 
+ 	result = rbd_img_request_fill(parent_request, OBJ_REQUEST_PAGES, pages);
+ 	if (result)
+-		goto out_err;
++		goto put_request;
+ 	parent_request->copyup_pages = pages;
+ 	parent_request->copyup_page_count = page_count;
+ 
+@@ -2813,11 +2813,11 @@ static int rbd_img_obj_parent_read_full(struct rbd_obj_request *obj_request)
+ 	parent_request->copyup_page_count = 0;
+ 	parent_request->obj_request = NULL;
+ 	rbd_obj_request_put(obj_request);
+-out_err:
+-	if (pages)
+-		ceph_release_page_vector(pages, page_count);
+-	if (parent_request)
+-		rbd_img_request_put(parent_request);
++ put_request:
++	rbd_img_request_put(parent_request);
++ release_page_vector:
++	ceph_release_page_vector(pages, page_count);
++ status_indication:
+ 	obj_request->result = result;
+ 	obj_request->xferred = 0;
+ 	obj_request_done_set(obj_request);
 -- 
 2.10.0
 
