@@ -1,41 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:50:13 +0000
-Subject: [PATCH 09/30] ACPI-processor: Improve a size determination in acpi_processor_get_psd()
-Message-Id: <e40acdeb-e2ba-0812-c1e0-f4f9175d819d@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:01:42 +0000
+Subject: [PATCH 16/47] block-rbd: Rename jump labels in rbd_dev_v1_header_info()
+Message-Id: <ff082acc-cdcc-2738-6242-d8ef35c42999@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 18:48:37 +0200
+Date: Mon, 12 Sep 2016 18:15:44 +0200
 
-Replace the specification of a data structure by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/rbd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index 3f94279..b7e2f51 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -556,7 +556,7 @@ static int acpi_processor_get_psd(struct acpi_processor	*pr)
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 262805a..0b6f0f9 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -4352,17 +4352,17 @@ static int rbd_dev_v1_header_info(struct rbd_device *rbd_dev)
+ 		ret = rbd_obj_read_sync(rbd_dev, rbd_dev->header_oid.name,
+ 				       0, size, ondisk);
+ 		if (ret < 0)
+-			goto out;
++			goto free_header;
+ 		if ((size_t)ret < size) {
+ 			ret = -ENXIO;
+ 			rbd_warn(rbd_dev, "short header read (want %zd got %d)",
+ 				size, ret);
+-			goto out;
++			goto free_header;
+ 		}
+ 		if (!rbd_dev_ondisk_valid(ondisk)) {
+ 			ret = -ENXIO;
+ 			rbd_warn(rbd_dev, "invalid header");
+-			goto out;
++			goto free_header;
+ 		}
  
- 	pdomain = &(pr->performance->domain_info);
+ 		names_size = le64_to_cpu(ondisk->snap_names_len);
+@@ -4371,7 +4371,7 @@ static int rbd_dev_v1_header_info(struct rbd_device *rbd_dev)
+ 	} while (snap_count != want_count);
  
--	state.length = sizeof(struct acpi_psd_package);
-+	state.length = sizeof(*pdomain);
- 	state.pointer = pdomain;
+ 	ret = rbd_header_from_disk(rbd_dev, ondisk);
+-out:
++ free_header:
+ 	kfree(ondisk);
  
- 	status = acpi_extract_package(&(psd->package.elements[0]),
+ 	return ret;
 -- 
 2.10.0
 
