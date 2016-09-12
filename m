@@ -1,57 +1,65 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 12 Sep 2016 09:07:15 +0000
+Date: Mon, 12 Sep 2016 12:25:04 +0000
 Subject: Re: [PATCH 25/26] pch_gbe: constify local structures
-Message-Id: <alpine.DEB.2.10.1609121058580.3049@hadrien>
+Message-Id: <alpine.DEB.2.10.1609121423120.3049@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>        <1473599168-30561-26-git-send-email-Julia.Lawall@lip6.fr> <20160911.194819.1394072668837372328.davem@davemloft.net>
-In-Reply-To: <20160911.194819.1394072668837372328.davem@davemloft.net>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr> <1473599168-30561-26-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-26-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: netdev@vger.kernel.org, joe@perches.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
 
-On Sun, 11 Sep 2016, David Miller wrote:
+On Sun, 11 Sep 2016, Julia Lawall wrote:
 
->
-> Julia, I went over the networking driver patches in this series and
-> I have to say that I'd rather see these changes be more durable
-> and self-checking.
->
-> By this I mean that I want you to also make the driver private pointer
-> that holds these structures be const too.
+> For structure types defined in the same file or local header files, find
+> top-level static structure declarations that have the following
+> properties:
+> 1. Never reassigned.
+> 2. Address never taken
+> 3. Not passed to a top-level macro call
+> 4. No pointer or array-typed field passed to a function or stored in a
+> variable.
+> Declare structures having all of these properties as const.
 
-Sorry, I'm not sure what you are asking for.  In these cases, we often end
-up with something like:
+Actually, this patch should be dropped.  Coccinelle did not recognize
+kernel_ulong_t as a type, so it interpreted
 
-static const struct foo = { ... };
+(kernel_ulong_t)&pch_gbe_minnow_privdata
 
-and then later
+as a bit and operation.
 
-xxx.ops = foo;
-
-So foo is protected, but its lifetime of interest is quite short.  But we
-can't set the ops field of the type of xxx to be const either, because it
-is obviously not - the code above modifies it.  Everything would be fine
-if ops were of pointer type but not structure type, but that is not the
-case in this patch series, because the semantic patch disallows &foo.
-There is the __ro_after_init annotation that might help in some cases, but
-I have often seen these assignments in probe functions that are not
-__init.  Kees Cook mentioned some code that could be inserted before and
-after an assignment to make a field temporarily writeable, but I haven't
-looked into that possibility yet.
-
-Have I misunderstood something?
-
-thanks,
 julia
 
-> Then if there are really any assignments to the objects being marked
-> const, it will show immediately.
+> Done using Coccinelle.
+> Based on a suggestion by Joe Perches <joe@perches.com>.
 >
-> Thank you.
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
+> The semantic patch seems too long for a commit log, but is in the cover
+> letter.
+>
+>  drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
+> index 3cd87a4..6f33258 100644
+> --- a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
+> +++ b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
+> @@ -2729,7 +2729,7 @@ static int pch_gbe_minnow_platform_init(struct pci_dev *pdev)
+>  	return ret;
+>  }
+>
+> -static struct pch_gbe_privdata pch_gbe_minnow_privdata = {
+> +static const struct pch_gbe_privdata pch_gbe_minnow_privdata = {
+>  	.phy_tx_clk_delay = true,
+>  	.phy_disable_hibernate = true,
+>  	.platform_init = pch_gbe_minnow_platform_init,
+>
 > --
 > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
 > the body of a message to majordomo@vger.kernel.org
