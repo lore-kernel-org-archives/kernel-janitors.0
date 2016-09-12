@@ -1,73 +1,72 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 06:16:35 +0000
-Subject: [PATCH 05/10] firewire-net: Rename a jump label in fwnet_tx()
-Message-Id: <5489efaa-fe38-5623-0faf-d0927ad32f50@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:35:12 +0000
+Subject: [PATCH 46/47] block-rbd: Rename jump labels in rbd_init()
+Message-Id: <5183e609-e94b-8041-e69e-4424e30ae45d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
-In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 22:22:58 +0200
+Date: Mon, 12 Sep 2016 20:06:54 +0200
 
 Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/firewire/net.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/block/rbd.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
-index 2ca2d57..24725be 100644
---- a/drivers/firewire/net.c
-+++ b/drivers/firewire/net.c
-@@ -1233,11 +1233,11 @@ static netdev_tx_t fwnet_tx(struct sk_buff *skb, struct net_device *net)
- 
- 	ptask = kmem_cache_alloc(fwnet_packet_task_cache, GFP_ATOMIC);
- 	if (ptask = NULL)
--		goto fail;
-+		goto unlock;
- 
- 	skb = skb_share_check(skb, GFP_ATOMIC);
- 	if (!skb)
--		goto fail;
-+		goto unlock;
- 
- 	/*
- 	 * Make a copy of the driver-specific header.
-@@ -1254,7 +1254,7 @@ static netdev_tx_t fwnet_tx(struct sk_buff *skb, struct net_device *net)
- #endif
- 		break;
- 	default:
--		goto fail;
-+		goto unlock;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 8802a06..8897815 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -6506,20 +6506,20 @@ static int __init rbd_init(void)
+ 	rbd_wq = alloc_workqueue(RBD_DRV_NAME, WQ_MEM_RECLAIM, 0);
+ 	if (!rbd_wq) {
+ 		rc = -ENOMEM;
+-		goto err_out_slab;
++		goto exit_slab;
  	}
  
- 	skb_pull(skb, sizeof(hdr_buf));
-@@ -1279,7 +1279,7 @@ static netdev_tx_t fwnet_tx(struct sk_buff *skb, struct net_device *net)
+ 	if (single_major) {
+ 		rbd_major = register_blkdev(0, RBD_DRV_NAME);
+ 		if (rbd_major < 0) {
+ 			rc = rbd_major;
+-			goto err_out_wq;
++			goto destroy_workqueue;
+ 		}
+ 	}
  
- 		peer = fwnet_peer_find_by_guid(dev, be64_to_cpu(guid));
- 		if (!peer)
--			goto fail;
-+			goto unlock;
+ 	rc = rbd_sysfs_init();
+ 	if (rc)
+-		goto err_out_blkdev;
++		goto check_single;
  
- 		generation         = peer->generation;
- 		dest_node          = peer->node_id;
-@@ -1324,8 +1324,7 @@ static netdev_tx_t fwnet_tx(struct sk_buff *skb, struct net_device *net)
- 	fwnet_send_packet(ptask);
+ 	if (single_major)
+ 		pr_info("loaded (major %d)\n", rbd_major);
+@@ -6527,13 +6527,12 @@ static int __init rbd_init(void)
+ 		pr_info("loaded\n");
  
- 	return NETDEV_TX_OK;
+ 	return 0;
 -
-- fail:
-+ unlock:
- 	spin_unlock_irqrestore(&dev->lock, flags);
- 
- 	if (ptask)
+-err_out_blkdev:
++ check_single:
+ 	if (single_major)
+ 		unregister_blkdev(rbd_major, RBD_DRV_NAME);
+-err_out_wq:
++ destroy_workqueue:
+ 	destroy_workqueue(rbd_wq);
+-err_out_slab:
++ exit_slab:
+ 	rbd_slab_exit();
+ 	return rc;
+ }
 -- 
 2.10.0
 
