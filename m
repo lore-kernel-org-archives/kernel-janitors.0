@@ -1,49 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:10:37 +0000
-Subject: [PATCH 28/30] ACPI-processor: Rename a jump label in acpi_processor_get_platform_limit()
-Message-Id: <5db577f7-d95a-4af5-15a5-5d63734824f4@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:27:29 +0000
+Subject: [PATCH 38/47] block-rbd: Rename jump labels in rbd_client_create()
+Message-Id: <c5e4950a-2bb3-13c7-f744-eafe798682ca@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 21:50:04 +0200
+Date: Mon, 12 Sep 2016 19:57:19 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/block/rbd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index d22bcfc..7e54a83 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -294,7 +294,7 @@ static int acpi_processor_get_platform_limit(struct acpi_processor *pr)
- 		return -EINVAL;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index abc2dcb..9902a7f 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -718,19 +718,19 @@ static struct rbd_client *rbd_client_create(struct ceph_options *ceph_opts)
+ 	dout("%s:\n", __func__);
+ 	rbdc = kmalloc(sizeof(struct rbd_client), GFP_KERNEL);
+ 	if (!rbdc)
+-		goto out_opt;
++		goto check_input;
  
- 	if (ignore_tpc)
--		goto end;
-+		goto limit_throttling;
+ 	kref_init(&rbdc->kref);
+ 	INIT_LIST_HEAD(&rbdc->node);
  
- 	status = acpi_evaluate_integer(pr->handle, "_TPC", NULL, &tpc);
- 	if (ACPI_FAILURE(status)) {
-@@ -303,8 +303,7 @@ static int acpi_processor_get_platform_limit(struct acpi_processor *pr)
- 		}
- 		return -ENODEV;
- 	}
--
--end:
-+ limit_throttling:
- 	pr->throttling_platform_limit = (int)tpc;
- 	return 0;
- }
+ 	rbdc->client = ceph_create_client(ceph_opts, rbdc, 0, 0);
+ 	if (IS_ERR(rbdc->client))
+-		goto out_rbdc;
++		goto free_rbdc;
+ 	ceph_opts = NULL; /* Now rbdc->client is responsible for ceph_opts */
+ 
+ 	ret = ceph_open_session(rbdc->client);
+ 	if (ret < 0)
+-		goto out_client;
++		goto destroy_client;
+ 
+ 	spin_lock(&rbd_client_list_lock);
+ 	list_add_tail(&rbdc->node, &rbd_client_list);
+@@ -739,11 +739,11 @@ static struct rbd_client *rbd_client_create(struct ceph_options *ceph_opts)
+ 	dout("%s: rbdc %p\n", __func__, rbdc);
+ 
+ 	return rbdc;
+-out_client:
++ destroy_client:
+ 	ceph_destroy_client(rbdc->client);
+-out_rbdc:
++ free_rbdc:
+ 	kfree(rbdc);
+-out_opt:
++ check_input:
+ 	if (ceph_opts)
+ 		ceph_destroy_options(ceph_opts);
+ 	dout("%s: error %d\n", __func__, ret);
 -- 
 2.10.0
 
