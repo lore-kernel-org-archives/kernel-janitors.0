@@ -1,53 +1,84 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 09:10:07 +0000
-Subject: [PATCH 02/10] dm snapshot: Delete two error messages for a failed memory allocation
-Message-Id: <0204c749-986d-b419-73ca-23458916a31e@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:29:15 +0000
+Subject: [PATCH 40/47] block-rbd: One function call less in rbd_dev_probe_parent() after error detection
+Message-Id: <41288740-f584-070d-125e-21a33d0255bf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
-In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 28 Sep 2016 22:33:09 +0200
+Date: Mon, 12 Sep 2016 20:00:08 +0200
 
-Omit extra messages for a memory allocation failure in this function.
+The rbd_dev_destroy() function was called in two cases by the
+rbd_dev_probe_parent() function during error handling even if
+the passed variable contained a null pointer.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+* Adjust jump targets according to the current Linux coding
+  style convention.
+
+* Delete an initialisation for the variable "parent" at the beginning
+  which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/dm-snap.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/block/rbd.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index f262f7e..7d81390 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -329,10 +329,8 @@ static int init_origin_hash(void)
- 	_origins = kmalloc_array(ORIGIN_HASH_SIZE,
- 				 sizeof(*_origins),
- 				 GFP_KERNEL);
--	if (!_origins) {
--		DMERR("unable to allocate memory for _origins");
-+	if (!_origins)
- 		return -ENOMEM;
--	}
- 	for (i = 0; i < ORIGIN_HASH_SIZE; i++)
- 		INIT_LIST_HEAD(_origins + i);
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index e01df3c..a037a5d 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5950,7 +5950,7 @@ out_err:
+  */
+ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
+ {
+-	struct rbd_device *parent = NULL;
++	struct rbd_device *parent;
+ 	int ret;
  
-@@ -340,7 +338,6 @@ static int init_origin_hash(void)
- 				    sizeof(*_dm_origins),
- 				    GFP_KERNEL);
- 	if (!_dm_origins) {
--		DMERR("unable to allocate memory for _dm_origins");
- 		kfree(_origins);
- 		return -ENOMEM;
+ 	if (!rbd_dev->parent_spec)
+@@ -5959,13 +5959,13 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
+ 	if (++depth > RBD_MAX_PARENT_CHAIN_LEN) {
+ 		pr_info("parent chain is too long (%d)\n", depth);
+ 		ret = -EINVAL;
+-		goto out_err;
++		goto unparent_device;
  	}
+ 
+ 	parent = __rbd_dev_create(rbd_dev->rbd_client, rbd_dev->parent_spec);
+ 	if (!parent) {
+ 		ret = -ENOMEM;
+-		goto out_err;
++		goto unparent_device;
+ 	}
+ 
+ 	/*
+@@ -5977,15 +5977,15 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
+ 
+ 	ret = rbd_dev_image_probe(parent, depth);
+ 	if (ret < 0)
+-		goto out_err;
++		goto destroy_device;
+ 
+ 	rbd_dev->parent = parent;
+ 	atomic_set(&rbd_dev->parent_ref, 1);
+ 	return 0;
+-
+-out_err:
+-	rbd_dev_unparent(rbd_dev);
++ destroy_device:
+ 	rbd_dev_destroy(parent);
++ unparent_device:
++	rbd_dev_unparent(rbd_dev);
+ 	return ret;
+ }
+ 
 -- 
 2.10.0
 
