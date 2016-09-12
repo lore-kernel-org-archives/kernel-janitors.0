@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:58:40 +0000
-Subject: [PATCH 13/47] block-rbd: Delete an unnecessary initialisation in rbd_dev_v2_parent_info()
-Message-Id: <23eb73a3-ef48-4098-a2da-99e72350a22a@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:34:14 +0000
+Subject: [PATCH 45/47] block-rbd: Rename a jump label in rbd_slab_init()
+Message-Id: <c0f88ee7-fb42-081f-6660-3f8a264df0cb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
@@ -13,29 +13,36 @@ To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idr
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:08:14 +0200
+Date: Mon, 12 Sep 2016 20:05:42 +0200
 
-The local variable "reply_buf" will be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/rbd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 946e3ca..aff8c4e 100644
+index b106c68..8802a06 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -5084,7 +5084,7 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev)
- {
- 	struct rbd_spec *parent_spec;
- 	size_t size;
--	void *reply_buf = NULL;
-+	void *reply_buf;
- 	__le64 snapid;
- 	void *p;
- 	void *end;
+@@ -6454,14 +6454,14 @@ static int rbd_slab_init(void)
+ 	rbd_assert(!rbd_obj_request_cache);
+ 	rbd_obj_request_cache = KMEM_CACHE(rbd_obj_request, 0);
+ 	if (!rbd_obj_request_cache)
+-		goto out_err;
++		goto destroy_cache;
+ 
+ 	rbd_assert(!rbd_segment_name_cache);
+ 	rbd_segment_name_cache = kmem_cache_create("rbd_segment_name",
+ 					CEPH_MAX_OID_NAME_LEN + 1, 1, 0, NULL);
+ 	if (rbd_segment_name_cache)
+ 		return 0;
+-out_err:
++ destroy_cache:
+ 	kmem_cache_destroy(rbd_obj_request_cache);
+ 	rbd_obj_request_cache = NULL;
+ 
 -- 
 2.10.0
 
