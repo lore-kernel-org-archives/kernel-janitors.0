@@ -1,50 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 06:19:57 +0000
-Subject: [PATCH 08/10] firewire-net: Rename a jump label in fwnet_finish_incoming_packet()
-Message-Id: <ebee0527-c16c-1fda-0724-1204b768e44f@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:59:34 +0000
+Subject: [PATCH 14/47] block-rbd: Rename a jump label in rbd_dev_v2_object_prefix()
+Message-Id: <7378c5de-9568-2736-fba6-7fc9a31bd1df@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
-In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 22:40:05 +0200
+Date: Mon, 12 Sep 2016 18:10:02 +0200
 
 Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/firewire/net.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/block/rbd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
-index 7e802e7..6dd3174 100644
---- a/drivers/firewire/net.c
-+++ b/drivers/firewire/net.c
-@@ -495,7 +495,7 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
- #endif
- 		break;
- 	default:
--		goto err;
-+		goto increment_counter;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index aff8c4e..6acddc53 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5017,7 +5017,7 @@ static int rbd_dev_v2_object_prefix(struct rbd_device *rbd_dev)
+ 				reply_buf, RBD_OBJ_PREFIX_LEN_MAX);
+ 	dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
+ 	if (ret < 0)
+-		goto out;
++		goto free_buffer;
+ 
+ 	p = reply_buf;
+ 	rbd_dev->header.object_prefix = ceph_extract_encoded_string(&p,
+@@ -5030,7 +5030,7 @@ static int rbd_dev_v2_object_prefix(struct rbd_device *rbd_dev)
+ 	} else {
+ 		dout("  object_prefix = %s\n", rbd_dev->header.object_prefix);
  	}
+-out:
++ free_buffer:
+ 	kfree(reply_buf);
  
- 	dev = netdev_priv(net);
-@@ -551,8 +551,7 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
- 	}
- 
- 	return 0;
--
-- err:
-+ increment_counter:
- 	net->stats.rx_errors++;
- 	net->stats.rx_dropped++;
- 
+ 	return ret;
 -- 
 2.10.0
 
