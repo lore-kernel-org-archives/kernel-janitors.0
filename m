@@ -1,52 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:02:19 +0000
-Subject: [PATCH 03/11] virtio_console: Rename a jump label in init()
-Message-Id: <47b70aab-df6b-0765-e666-ceaff93ffad8@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:23:06 +0000
+Subject: [PATCH 34/47] block-rbd: Rename a jump label in rbd_img_obj_callback()
+Message-Id: <210ec2f6-d0e6-ac8d-5d34-c0774589c76f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:10:24 +0200
+Date: Mon, 12 Sep 2016 19:51:29 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/virtio_console.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/block/rbd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index bf0ad57..004314e 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -2309,7 +2309,7 @@ static int __init init(void)
- 	err = register_virtio_driver(&virtio_console);
- 	if (err < 0) {
- 		pr_err("Error %d registering virtio driver\n", err);
--		goto free;
-+		goto remove;
- 	}
- 	err = register_virtio_driver(&virtio_rproc_serial);
- 	if (err < 0) {
-@@ -2318,9 +2318,9 @@ static int __init init(void)
- 		goto unregister;
- 	}
- 	return 0;
--unregister:
-+ unregister:
- 	unregister_virtio_driver(&virtio_console);
--free:
-+ remove:
- 	debugfs_remove_recursive(pdrvdata.debugfs_dir);
- 	class_destroy(pdrvdata.class);
- 	return err;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 34ccbf1..c349975 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -2394,7 +2394,7 @@ static void rbd_img_obj_callback(struct rbd_obj_request *obj_request)
+ 
+ 	spin_lock_irq(&img_request->completion_lock);
+ 	if (which != img_request->next_completion)
+-		goto out;
++		goto unlock;
+ 
+ 	for_each_obj_request_from(img_request, obj_request) {
+ 		rbd_assert(more);
+@@ -2408,7 +2408,7 @@ static void rbd_img_obj_callback(struct rbd_obj_request *obj_request)
+ 
+ 	rbd_assert(more ^ (which = img_request->obj_request_count));
+ 	img_request->next_completion = which;
+-out:
++ unlock:
+ 	spin_unlock_irq(&img_request->completion_lock);
+ 	rbd_img_request_put(img_request);
+ 
 -- 
 2.10.0
 
