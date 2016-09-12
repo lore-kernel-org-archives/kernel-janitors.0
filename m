@@ -1,64 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 20:21:04 +0000
-Subject: [PATCH 5/7] ACPI-APEI-HEST: Rename jump labels in acpi_hest_init()
-Message-Id: <6e09e601-0feb-0a12-0c7b-a7d370d1013f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 12 Sep 2016 19:09:48 +0000
+Subject: Question about commit f9a67b1182e5 ("md/bitmap: clear bitmap if bitmap_create failed").
+Message-Id: <752ab1d9-412a-149b-a241-e604040ebaff@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
-In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: shli@kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 21:30:06 +0200
+Hi,
 
-Adjust jump labels according to the current Linux coding style convention.
+I'm puzzled by commit f9a67b1182e5 ("md/bitmap: clear bitmap if 
+bitmap_create failed").
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/acpi/apei/hest.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Part of the commit is:
 
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index 03dd7d3..ddff1b1 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -226,12 +226,12 @@ void __init acpi_hest_init(void)
- 	status = acpi_get_table(ACPI_SIG_HEST, 0,
- 				(struct acpi_table_header **)&hest_tab);
- 	if (status = AE_NOT_FOUND)
--		goto err;
-+		goto disable_hest;
- 	else if (ACPI_FAILURE(status)) {
- 		const char *msg = acpi_format_exception(status);
- 		pr_err(HEST_PFX "Failed to get table, %s\n", msg);
- 		rc = -EINVAL;
--		goto err;
-+		goto disable_hest;
- 	}
- 
- 	if (!acpi_disable_cmcff)
-@@ -240,14 +240,14 @@ void __init acpi_hest_init(void)
- 	if (!ghes_disable) {
- 		rc = apei_hest_parse(hest_parse_ghes_count, &ghes_count);
- 		if (rc)
--			goto err;
-+			goto disable_hest;
- 		rc = hest_ghes_dev_register(ghes_count);
- 		if (rc)
--			goto err;
-+			goto disable_hest;
- 	}
- 
- 	pr_info(HEST_PFX "Table parsing has been initialized.\n");
- 	return;
--err:
-+ disable_hest:
- 	hest_disable = 1;
- }
--- 
-2.10.0
+@@ -1865,8 +1866,10 @@ int bitmap_copy_from_slot(struct mddev *mddev, 
+int slot,
+      struct bitmap_counts *counts;
+      struct bitmap *bitmap = bitmap_create(mddev, slot);
+
+-    if (IS_ERR(bitmap))
++    if (IS_ERR(bitmap)) {
++        bitmap_free(bitmap);
+          return PTR_ERR(bitmap);
++    }
+
+but if 'bitmap' is an error, I think that bad things will happen in 
+'bitmap_free()' when, at the beginning of the function, we will execute:
+
+     if (bitmap->sysfs_can_clear) <-----------------
+         sysfs_put(bitmap->sysfs_can_clear);
+
+
+However, the commit log message is really explicit and adding this call 
+to 'bitmap_free' has really been done one purpose. ("If bitmap_create 
+returns an error, we need to call either bitmap_destroy or bitmap_free 
+to do clean up, ...")
+
+
+It is also not consistent with the comment before function bitmap_create():
+
+     * if this returns an error, bitmap_destroy must be called to do 
+clean up
+     * once mddev->bitmap is set
+
+
+I may have missed something, but I don't see what.
+
+Is this commit correct?
+
+
+Best regards,
+CJ
+
 
