@@ -1,88 +1,49 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Mon, 05 Sep 2016 07:54:09 +0000
-Subject: Re: [PATCH 3/4] perf/x86/cqm: One check and another variable less in intel_mbm_init()
-Message-Id: <20160905075409.GT10153@twins.programming.kicks-ass.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 12 Sep 2016 06:02:13 +0000
+Subject: [PATCH] net: inet: diag: Fix an error handling
+Message-Id: <1473660133-9195-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9d893198-dd12-14a8-74bd-02fc42de4bf4@users.sourceforge.net>
- <239ce590-bda1-1276-9723-5e7fee90d514@users.sourceforge.net>
-In-Reply-To: <239ce590-bda1-1276-9723-5e7fee90d514@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: x86@kernel.org, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Richard Cochran <rcochran@linutronix.de>, Stephane Eranian <eranian@google.com>, Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>, Vikas Shivappa <vikas.shivappa@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Sun, Sep 04, 2016 at 07:58:32PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 4 Sep 2016 19:06:33 +0200
-> 
-> 1. Adjust a jump target to eliminate an extra check at the end.
-> 
-> 2. Move a jump label according to the current Linux coding style convention.
+If 'inet_diag_lock_handler()' returns an error, we should not call
+'inet_diag_unlock_handler()' on it.
+'handler' is not a valid mutexc in this case.
 
-WTF does that even mean?
+This has been spotted with the folowing coccinelle script:
+////////////////////////////
+@@
+expression x;
+identifier f;
+@@
 
-> 
-> 3. Return only constant values for the success or failure indication.
-> 
-> 4. Delete the local variable "ret" which became unnecessary with
->    this refactoring.
+*   if (IS_ERR(x))
+    {
+       ...
+*      f(<+... x ...+>);
+       ...
+    }
 
-Also, 4 things should be 4 patches if anything.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/ipv4/inet_diag.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  arch/x86/events/intel/cqm.c | 25 ++++++++++---------------
->  1 file changed, 10 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/cqm.c b/arch/x86/events/intel/cqm.c
-> index 29f756e..304caf53 100644
-> --- a/arch/x86/events/intel/cqm.c
-> +++ b/arch/x86/events/intel/cqm.c
-> @@ -1637,7 +1637,7 @@ static const struct x86_cpu_id intel_mbm_total_match[] = {
->  
->  static int intel_mbm_init(void)
->  {
-> -	int ret = 0, maxid = cqm_max_rmid + 1;
-> +	int const maxid = cqm_max_rmid + 1;
->  
->  	mbm_socket_max = topology_max_packages();
->  	mbm_local = kmalloc_array(maxid * mbm_socket_max,
-> @@ -1649,25 +1649,20 @@ static int intel_mbm_init(void)
->  	mbm_total = kmalloc_array(maxid * mbm_socket_max,
->  				  sizeof(*mbm_total),
->  				  GFP_KERNEL);
-> -	if (!mbm_total) {
-> -		ret = -ENOMEM;
-> -		goto out;
-> -	}
-> +	if (!mbm_total)
-> +		goto free_mbm;
->  
->  	mbm_timers = kmalloc_array(mbm_socket_max,
->  				   sizeof(*mbm_timers),
->  				   GFP_KERNEL);
-> -	if (!mbm_timers) {
-> -		ret = -ENOMEM;
-> -		goto out;
-> -	}
-> -	mbm_hrtimer_init();
-> +	if (!mbm_timers)
-> +		goto free_mbm;
->  
-> -out:
-> -	if (ret)
-> -		mbm_cleanup();
-> -
-> -	return ret;
-> +	mbm_hrtimer_init();
-> +	return 0;
-> + free_mbm:
+diff --git a/net/ipv4/inet_diag.c b/net/ipv4/inet_diag.c
+index abfbe492ebfe..795af25cf84c 100644
+--- a/net/ipv4/inet_diag.c
++++ b/net/ipv4/inet_diag.c
+@@ -1134,7 +1134,6 @@ int inet_diag_handler_get_info(struct sk_buff *skb, struct sock *sk)
+ 
+ 	handler = inet_diag_lock_handler(sk->sk_protocol);
+ 	if (IS_ERR(handler)) {
+-		inet_diag_unlock_handler(handler);
+ 		nlmsg_cancel(skb, nlh);
+ 		return PTR_ERR(handler);
+ 	}
+-- 
+2.7.4
 
-No!! no stupid indented labels.
-
-> +	mbm_cleanup();
-> +	return -ENOMEM;
->  }
