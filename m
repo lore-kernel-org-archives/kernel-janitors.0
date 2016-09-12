@@ -1,59 +1,63 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 19:46:27 +0000
-Subject: [PATCH 3/4] i2c-dev: Rename jump labels in i2cdev_attach_adapter()
-Message-Id: <735c3aa5-0402-0e2b-1c6c-a5bfc17c9afd@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:51:45 +0000
+Subject: [PATCH 10/47] block-rbd: One function call less in rbd_dev_image_name() after error detection
+Message-Id: <e3852062-0872-1cea-ec0d-a03d4c77ddd9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
-In-Reply-To: <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 21:21:39 +0200
+Date: Mon, 12 Sep 2016 18:00:18 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+The kfree() function was called in one case by the rbd_dev_image_name()
+function during error handling even if the passed variable "reply_buf"
+contained a null pointer.
+
+Adjust jump targets according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/i2c-dev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/block/rbd.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index a6e35ce..7d3e3ca 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -555,7 +555,7 @@ static int i2cdev_attach_adapter(struct device *dev, void *dummy)
- 	i2c_dev->cdev.owner = THIS_MODULE;
- 	res = cdev_add(&i2c_dev->cdev, MKDEV(I2C_MAJOR, adap->nr), 1);
- 	if (res)
--		goto error_cdev;
-+		goto put_i2c;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index aac51a1..145bbcc 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5276,14 +5276,14 @@ static char *rbd_dev_image_name(struct rbd_device *rbd_dev)
+ 	size = sizeof (__le32) + RBD_IMAGE_NAME_LEN_MAX;
+ 	reply_buf = kmalloc(size, GFP_KERNEL);
+ 	if (!reply_buf)
+-		goto out;
++		goto free_id;
  
- 	/* register this i2c device with the driver core */
- 	i2c_dev->dev = device_create(i2c_dev_class, &adap->dev,
-@@ -563,15 +563,15 @@ static int i2cdev_attach_adapter(struct device *dev, void *dummy)
- 				     "i2c-%d", adap->nr);
- 	if (IS_ERR(i2c_dev->dev)) {
- 		res = PTR_ERR(i2c_dev->dev);
--		goto error;
-+		goto delete_cdev;
- 	}
+ 	ret = rbd_obj_method_sync(rbd_dev, RBD_DIRECTORY,
+ 				"rbd", "dir_get_name",
+ 				image_id, image_id_size,
+ 				reply_buf, size);
+ 	if (ret < 0)
+-		goto out;
++		goto free_buffer;
+ 	p = reply_buf;
+ 	end = reply_buf + ret;
  
- 	pr_debug("i2c-dev: adapter [%s] registered as minor %d\n",
- 		 adap->name, adap->nr);
- 	return 0;
--error:
-+delete_cdev:
- 	cdev_del(&i2c_dev->cdev);
--error_cdev:
-+put_i2c:
- 	put_i2c_dev(i2c_dev);
- 	return res;
- }
+@@ -5292,8 +5292,9 @@ static char *rbd_dev_image_name(struct rbd_device *rbd_dev)
+ 		image_name = NULL;
+ 	else
+ 		dout("%s: name is %s len is %zd\n", __func__, image_name, len);
+-out:
++ free_buffer:
+ 	kfree(reply_buf);
++ free_id:
+ 	kfree(image_id);
+ 
+ 	return image_name;
 -- 
 2.10.0
 
