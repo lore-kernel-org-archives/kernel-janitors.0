@@ -1,62 +1,66 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 16:53:41 +0000
-Subject: [PATCH 07/21] ACPI-video: Rename jump labels in acpi_video_bus_add()
-Message-Id: <56f7a0f4-3e78-b92f-8d71-2c592740d70e@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:11:27 +0000
+Subject: [PATCH 25/47] block-rbd: Fix jump targets in rbd_img_parent_read()
+Message-Id: <813ced30-1914-b507-f5f8-ddc5d073c54a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
-In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 15:01:23 +0200
+Date: Mon, 12 Sep 2016 19:39:54 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+* Adjust jump targets according to the current Linux coding
+  style convention.
+
+* Delete a duplicate check then at the end.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_video.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/block/rbd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 0fca196..8003c90 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1983,14 +1983,14 @@ static int acpi_video_bus_add(struct acpi_device *device)
- 	acpi_video_bus_find_cap(video);
- 	error = acpi_video_bus_check(video);
- 	if (error)
--		goto err_free_video;
-+		goto free_video;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 09a0ed3..6777464 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3120,7 +3120,7 @@ static void rbd_img_parent_read(struct rbd_obj_request *obj_request)
+ 						obj_request->length);
+ 	result = -ENOMEM;
+ 	if (!img_request)
+-		goto out_err;
++		goto status_indication;
  
- 	mutex_init(&video->device_list_lock);
- 	INIT_LIST_HEAD(&video->video_device_list);
+ 	if (obj_request->type = OBJ_REQUEST_BIO)
+ 		result = rbd_img_request_fill(img_request, OBJ_REQUEST_BIO,
+@@ -3129,17 +3129,17 @@ static void rbd_img_parent_read(struct rbd_obj_request *obj_request)
+ 		result = rbd_img_request_fill(img_request, OBJ_REQUEST_PAGES,
+ 						obj_request->pages);
+ 	if (result)
+-		goto out_err;
++		goto put_request;
  
- 	error = acpi_video_bus_get_devices(video, device);
- 	if (error)
--		goto err_put_video;
-+		goto put_devices;
+ 	img_request->callback = rbd_img_parent_read_callback;
+ 	result = rbd_img_request_submit(img_request);
+ 	if (result)
+-		goto out_err;
++		goto put_request;
  
- 	printk(KERN_INFO PREFIX "%s [%s] (multi-head: %s  rom: %s  post: %s)\n",
- 	       ACPI_VIDEO_DEVICE_NAME, acpi_device_bid(device),
-@@ -2005,11 +2005,10 @@ static int acpi_video_bus_add(struct acpi_device *device)
- 	acpi_video_bus_add_notify_handler(video);
- 
- 	return 0;
--
--err_put_video:
-+ put_devices:
- 	acpi_video_bus_put_devices(video);
- 	kfree(video->attached_array);
--err_free_video:
-+ free_video:
- 	kfree(video);
- 	device->driver_data = NULL;
- 
+ 	return;
+-out_err:
+-	if (img_request)
+-		rbd_img_request_put(img_request);
++ put_request:
++	rbd_img_request_put(img_request);
++ status_indication:
+ 	obj_request->result = result;
+ 	obj_request->xferred = 0;
+ 	obj_request_done_set(obj_request);
 -- 
 2.10.0
 
