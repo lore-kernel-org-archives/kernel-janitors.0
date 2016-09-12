@@ -1,113 +1,123 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 13:05:43 +0000
-Subject: [PATCH 01/26] ALSA: pci: constify local structures
-Message-Id: <1473599168-30561-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 12 Sep 2016 06:19:44 +0000
+Subject: Re: [PATCH 01/26] ALSA: pci: constify local structures
+Message-Id: <s5hy42x8wsf.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+        <1473599168-30561-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473599168-30561-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: joe@perches.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, joe@perches.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-For structure types defined in the same file or local header files, find
-top-level static structure declarations that have the following
-properties:
-1. Never reassigned.
-2. Address never taken
-3. Not passed to a top-level macro call
-4. No pointer or array-typed field passed to a function or stored in a
-variable.
-Declare structures having all of these properties as const.
+On Sun, 11 Sep 2016 15:05:43 +0200,
+Julia Lawall wrote:
+> 
+> For structure types defined in the same file or local header files, find
+> top-level static structure declarations that have the following
+> properties:
+> 1. Never reassigned.
+> 2. Address never taken
+> 3. Not passed to a top-level macro call
+> 4. No pointer or array-typed field passed to a function or stored in a
+> variable.
+> Declare structures having all of these properties as const.
+> 
+> Done using Coccinelle.
+> Based on a suggestion by Joe Perches <joe@perches.com>.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Done using Coccinelle.
-Based on a suggestion by Joe Perches <joe@perches.com>.
+Thanks, applied now.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
-The semantic patch seems too long for a commit log, but is in the cover
-letter.
+Takashi
 
- sound/pci/ctxfi/ctatc.c      |    2 +-
- sound/pci/hda/patch_ca0132.c |   10 +++++-----
- sound/pci/riptide/riptide.c  |    2 +-
- 3 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
-index 977a598..908658a 100644
---- a/sound/pci/ctxfi/ctatc.c
-+++ b/sound/pci/ctxfi/ctatc.c
-@@ -1623,7 +1623,7 @@ static int atc_resume(struct ct_atc *atc)
- }
- #endif
- 
--static struct ct_atc atc_preset = {
-+static const struct ct_atc atc_preset = {
- 	.map_audio_buffer = ct_map_audio_buffer,
- 	.unmap_audio_buffer = ct_unmap_audio_buffer,
- 	.pcm_playback_prepare = atc_pcm_playback_prepare,
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 9ceb2bc..ad06866 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -4018,7 +4018,7 @@ static int ca0132_build_controls(struct hda_codec *codec)
- /*
-  * PCM
-  */
--static struct hda_pcm_stream ca0132_pcm_analog_playback = {
-+static const struct hda_pcm_stream ca0132_pcm_analog_playback = {
- 	.substreams = 1,
- 	.channels_min = 2,
- 	.channels_max = 6,
-@@ -4029,7 +4029,7 @@ static struct hda_pcm_stream ca0132_pcm_analog_playback = {
- 	},
- };
- 
--static struct hda_pcm_stream ca0132_pcm_analog_capture = {
-+static const struct hda_pcm_stream ca0132_pcm_analog_capture = {
- 	.substreams = 1,
- 	.channels_min = 2,
- 	.channels_max = 2,
-@@ -4040,7 +4040,7 @@ static struct hda_pcm_stream ca0132_pcm_analog_capture = {
- 	},
- };
- 
--static struct hda_pcm_stream ca0132_pcm_digital_playback = {
-+static const struct hda_pcm_stream ca0132_pcm_digital_playback = {
- 	.substreams = 1,
- 	.channels_min = 2,
- 	.channels_max = 2,
-@@ -4052,7 +4052,7 @@ static struct hda_pcm_stream ca0132_pcm_digital_playback = {
- 	},
- };
- 
--static struct hda_pcm_stream ca0132_pcm_digital_capture = {
-+static const struct hda_pcm_stream ca0132_pcm_digital_capture = {
- 	.substreams = 1,
- 	.channels_min = 2,
- 	.channels_max = 2,
-@@ -4614,7 +4614,7 @@ static void ca0132_free(struct hda_codec *codec)
- 	kfree(codec->spec);
- }
- 
--static struct hda_codec_ops ca0132_patch_ops = {
-+static const struct hda_codec_ops ca0132_patch_ops = {
- 	.build_controls = ca0132_build_controls,
- 	.build_pcms = ca0132_build_pcms,
- 	.init = ca0132_init,
-diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
-index ae41fcb..ada5f01 100644
---- a/sound/pci/riptide/riptide.c
-+++ b/sound/pci/riptide/riptide.c
-@@ -644,7 +644,7 @@ static struct lbuspath lbus_play_paths[] = {
- 	 .mono = lbus_play_mono3,
- 	 },
- };
--static struct lbuspath lbus_rec_path = {
-+static const struct lbuspath lbus_rec_path = {
- 	.noconv = lbus_rec_noconv1,
- 	.stereo = lbus_rec_stereo1,
- 	.mono = lbus_rec_mono1,
-
+> ---
+> The semantic patch seems too long for a commit log, but is in the cover
+> letter.
+> 
+>  sound/pci/ctxfi/ctatc.c      |    2 +-
+>  sound/pci/hda/patch_ca0132.c |   10 +++++-----
+>  sound/pci/riptide/riptide.c  |    2 +-
+>  3 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
+> index 977a598..908658a 100644
+> --- a/sound/pci/ctxfi/ctatc.c
+> +++ b/sound/pci/ctxfi/ctatc.c
+> @@ -1623,7 +1623,7 @@ static int atc_resume(struct ct_atc *atc)
+>  }
+>  #endif
+>  
+> -static struct ct_atc atc_preset = {
+> +static const struct ct_atc atc_preset = {
+>  	.map_audio_buffer = ct_map_audio_buffer,
+>  	.unmap_audio_buffer = ct_unmap_audio_buffer,
+>  	.pcm_playback_prepare = atc_pcm_playback_prepare,
+> diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+> index 9ceb2bc..ad06866 100644
+> --- a/sound/pci/hda/patch_ca0132.c
+> +++ b/sound/pci/hda/patch_ca0132.c
+> @@ -4018,7 +4018,7 @@ static int ca0132_build_controls(struct hda_codec *codec)
+>  /*
+>   * PCM
+>   */
+> -static struct hda_pcm_stream ca0132_pcm_analog_playback = {
+> +static const struct hda_pcm_stream ca0132_pcm_analog_playback = {
+>  	.substreams = 1,
+>  	.channels_min = 2,
+>  	.channels_max = 6,
+> @@ -4029,7 +4029,7 @@ static struct hda_pcm_stream ca0132_pcm_analog_playback = {
+>  	},
+>  };
+>  
+> -static struct hda_pcm_stream ca0132_pcm_analog_capture = {
+> +static const struct hda_pcm_stream ca0132_pcm_analog_capture = {
+>  	.substreams = 1,
+>  	.channels_min = 2,
+>  	.channels_max = 2,
+> @@ -4040,7 +4040,7 @@ static struct hda_pcm_stream ca0132_pcm_analog_capture = {
+>  	},
+>  };
+>  
+> -static struct hda_pcm_stream ca0132_pcm_digital_playback = {
+> +static const struct hda_pcm_stream ca0132_pcm_digital_playback = {
+>  	.substreams = 1,
+>  	.channels_min = 2,
+>  	.channels_max = 2,
+> @@ -4052,7 +4052,7 @@ static struct hda_pcm_stream ca0132_pcm_digital_playback = {
+>  	},
+>  };
+>  
+> -static struct hda_pcm_stream ca0132_pcm_digital_capture = {
+> +static const struct hda_pcm_stream ca0132_pcm_digital_capture = {
+>  	.substreams = 1,
+>  	.channels_min = 2,
+>  	.channels_max = 2,
+> @@ -4614,7 +4614,7 @@ static void ca0132_free(struct hda_codec *codec)
+>  	kfree(codec->spec);
+>  }
+>  
+> -static struct hda_codec_ops ca0132_patch_ops = {
+> +static const struct hda_codec_ops ca0132_patch_ops = {
+>  	.build_controls = ca0132_build_controls,
+>  	.build_pcms = ca0132_build_pcms,
+>  	.init = ca0132_init,
+> diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
+> index ae41fcb..ada5f01 100644
+> --- a/sound/pci/riptide/riptide.c
+> +++ b/sound/pci/riptide/riptide.c
+> @@ -644,7 +644,7 @@ static struct lbuspath lbus_play_paths[] = {
+>  	 .mono = lbus_play_mono3,
+>  	 },
+>  };
+> -static struct lbuspath lbus_rec_path = {
+> +static const struct lbuspath lbus_rec_path = {
+>  	.noconv = lbus_rec_noconv1,
+>  	.stereo = lbus_rec_stereo1,
+>  	.mono = lbus_rec_mono1,
+> 
+> 
