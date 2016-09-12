@@ -1,77 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:06:24 +0000
-Subject: [PATCH 24/30] ACPI-processor: Rename jump labels in acpi_processor_get_throttling_control()
-Message-Id: <c31f3058-d30c-d814-5827-5b0f5851472b@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:16:34 +0000
+Subject: [PATCH 30/47] block-rbd: Refactor a jump target in rbd_img_obj_exists_callback()
+Message-Id: <0c3708aa-f7b2-0b0f-234d-dd63f44e7072@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 21:12:17 +0200
+Date: Mon, 12 Sep 2016 19:46:43 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Adjust a jump target so that a duplicate check can then be avoided
+at the end.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/block/rbd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index dcebb4b2..cdcd5d6f 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -442,7 +442,7 @@ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
- 	    || (ptc->package.count != 2)) {
- 		printk(KERN_ERR PREFIX "Invalid _PTC data\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index f3f2919..7d5f7b9 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -2879,7 +2879,7 @@ static void rbd_img_obj_exists_callback(struct rbd_obj_request *obj_request)
+ 		obj_request_existence_set(orig_request, false);
+ 	} else if (result) {
+ 		orig_request->result = result;
+-		goto out;
++		goto complete_request;
  	}
  
  	/*
-@@ -457,7 +457,7 @@ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
- 		printk(KERN_ERR PREFIX
- 		       "Invalid _PTC data (control_register)\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
- 	memcpy(&pr->throttling.control_register, obj.buffer.pointer,
- 	       sizeof(struct acpi_ptc_register));
-@@ -473,7 +473,7 @@ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
- 	    || (obj.buffer.pointer = NULL)) {
- 		printk(KERN_ERR PREFIX "Invalid _PTC data (status_register)\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
+@@ -2887,8 +2887,8 @@ static void rbd_img_obj_exists_callback(struct rbd_obj_request *obj_request)
+ 	 * whether the target object exists.
+ 	 */
+ 	orig_request->result = rbd_img_obj_request_submit(orig_request);
+-out:
+ 	if (orig_request->result)
++ complete_request:
+ 		rbd_obj_request_complete(orig_request);
+ }
  
- 	memcpy(&pr->throttling.status_register, obj.buffer.pointer,
-@@ -485,17 +485,15 @@ static int acpi_processor_get_throttling_control(struct acpi_processor *pr)
- 		throttling->control_register.bit_offset) > 32) {
- 		printk(KERN_ERR PREFIX "Invalid _PTC control register\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
- 
- 	if ((throttling->status_register.bit_width +
- 		throttling->status_register.bit_offset) > 32) {
- 		printk(KERN_ERR PREFIX "Invalid _PTC status register\n");
- 		result = -EFAULT;
--		goto end;
- 	}
--
--      end:
-+ free_buffer:
- 	kfree(buffer.pointer);
- 
- 	return result;
 -- 
 2.10.0
 
