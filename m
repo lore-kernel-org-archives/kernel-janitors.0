@@ -1,62 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 14:32:29 +0000
-Subject: [PATCH 7/7] cfag12864b: Adjust two checks for null pointers in cfag12864b_init()
-Message-Id: <353dd8b8-9922-8e1b-7c88-9cb425010524@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:06:10 +0000
+Subject: [PATCH 20/47] block-rbd: Rename a jump label in rbd_register_watch()
+Message-Id: <76429d28-548c-63dd-fee7-ca5585b88856@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
-In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 16:06:19 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 12 Sep 2016 19:33:00 +0200
 
-The script "checkpatch.pl" can point information out like the following.
-
-Comparison to NULL could be written !=E2=80=A6
-
-Thus fix the affected source code places.
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/auxdisplay/cfag12864b.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/rbd.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864=
-b.c
-index b2533e2..3956b9f 100644
---- a/drivers/auxdisplay/cfag12864b.c
-+++ b/drivers/auxdisplay/cfag12864b.c
-@@ -338,7 +338,7 @@ static int __init cfag12864b_init(void)
- 	BUILD_BUG_ON(PAGE_SIZE < CFAG12864B_SIZE);
-=20
- 	cfag12864b_buffer =3D (unsigned char *) get_zeroed_page(GFP_KERNEL);
--	if (cfag12864b_buffer =3D NULL) {
-+	if (!cfag12864b_buffer) {
- 		printk(KERN_ERR CFAG12864B_NAME ": ERROR: "
- 			"can't get a free page\n");
- 		return -ENOMEM;
-@@ -351,7 +351,7 @@ static int __init cfag12864b_init(void)
- 		goto free_buffer;
-=20
- 	cfag12864b_workqueue =3D create_singlethread_workqueue(CFAG12864B_NAME);
--	if (cfag12864b_workqueue =3D NULL)
-+	if (!cfag12864b_workqueue)
- 		goto free_cache;
-=20
- 	cfag12864b_clear();
---=20
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 97dbc1a..b0b5a3b 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3900,12 +3900,11 @@ static int rbd_register_watch(struct rbd_device *rbd_dev)
+ 	rbd_assert(rbd_dev->watch_state = RBD_WATCH_STATE_UNREGISTERED);
+ 	ret = __rbd_register_watch(rbd_dev);
+ 	if (ret)
+-		goto out;
++		goto unlock;
+ 
+ 	rbd_dev->watch_state = RBD_WATCH_STATE_REGISTERED;
+ 	rbd_dev->watch_cookie = rbd_dev->watch_handle->linger_id;
+-
+-out:
++ unlock:
+ 	mutex_unlock(&rbd_dev->watch_mutex);
+ 	return ret;
+ }
+-- 
 2.10.0
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
