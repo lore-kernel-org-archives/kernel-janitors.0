@@ -1,31 +1,41 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Sun, 04 Sep 2016 03:24:47 +0000
-Subject: Re: [PATCH 2/2] mwifiex: simplify length computation for some memset
-Message-Id: <CAGRGNgUP5VmTLzQfT99BqmRO9eKW9Du5e3O7DpdX-rByFSEmEA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:58:40 +0000
+Subject: [PATCH 13/47] block-rbd: Delete an unnecessary initialisation in rbd_dev_v2_parent_info()
+Message-Id: <23eb73a3-ef48-4098-a2da-99e72350a22a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1470641940-26681-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1470641940-26681-1-git-send-email-christophe.jaillet@wanadoo.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless <linux-wireless@vger.kernel.org>, netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi All,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:08:14 +0200
 
-On Mon, Aug 8, 2016 at 5:39 PM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> This patch should be a no-op. It just simplifies code by using the name of
-> a variable instead of its type when calling 'sizeof'.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The local variable "reply_buf" will be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/block/rbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 946e3ca..aff8c4e 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5084,7 +5084,7 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev)
+ {
+ 	struct rbd_spec *parent_spec;
+ 	size_t size;
+-	void *reply_buf = NULL;
++	void *reply_buf;
+ 	__le64 snapid;
+ 	void *p;
+ 	void *end;
 -- 
-Julian Calaby
+2.10.0
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
