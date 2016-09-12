@@ -1,44 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Sep 2016 12:28:58 +0000
-Subject: Re: ISDN-CAPI: Adjust 17 function calls together with variable assignments
-Message-Id: <16c50966-66f2-8a08-0ebc-936b04311f14@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 18:48:43 +0000
+Subject: [PATCH 07/47] block-rbd: Rename a jump label in rbd_dev_v2_snap_name()
+Message-Id: <5017b292-584f-ecd1-ed76-9b89155f9acc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
- <10355972-1c9b-1103-edf3-efde78237cdd@users.sourceforge.net>
- <1474881174.1846.8.camel@tiscali.nl>
-In-Reply-To: <1474881174.1846.8.camel@tiscali.nl>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->> The script "checkpatch.pl" can point out that assignments should usually
->> not be performed within condition checks.
->> Thus move the assignment for a variable to a separate statement
->> in four functions.
-> 
-> Did you recycle this commit explanation?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 17:53:19 +0200
 
-Yes. - I am going to use similar commit messages for further changes
-in other software modules.
+Adjust jump labels according to the current Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/block/rbd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Because git diff tells me you actually touched about eight functions.
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index dd4da1f..4164551 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5532,18 +5532,18 @@ static const char *rbd_dev_v2_snap_name(struct rbd_device *rbd_dev,
+ 	dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
+ 	if (ret < 0) {
+ 		snap_name = ERR_PTR(ret);
+-		goto out;
++		goto free_buffer;
+ 	}
+ 
+ 	p = reply_buf;
+ 	end = reply_buf + ret;
+ 	snap_name = ceph_extract_encoded_string(&p, end, NULL, GFP_KERNEL);
+ 	if (IS_ERR(snap_name))
+-		goto out;
++		goto free_buffer;
+ 
+ 	dout("  snap_id 0x%016llx snap_name = %s\n",
+ 		(unsigned long long)snap_id, snap_name);
+-out:
++ free_buffer:
+ 	kfree(reply_buf);
+ 
+ 	return snap_name;
+-- 
+2.10.0
 
-You are right. - I'm sorry that I overlooked to update this number somehow.
-
-
->     scripts/checkpatch.pl -f drivers/isdn/capi/capidrv.c | grep "assignment in if condition" | wc -l 
-> 
-> It tells me there are actually 18 instances of this "ERROR".
-> Why did you ignore one of it in this patch?
-
-Did I accidentally leave another update candidate over?
-
-* How do you think about to pick such a software update opportunity up?
-
-* Do you expect a resend for the steps 3 - 5 of this small patch series?
-
-Regards,
-Markus
