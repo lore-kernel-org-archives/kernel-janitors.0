@@ -1,176 +1,55 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 17:51:35 +0000
-Subject: [PATCH 6/9] tty: serial: constify uart_ops structures
-Message-Id: <1472752298-981-7-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:26:04 +0000
+Subject: [PATCH 37/47] block-rbd: Rename a jump label in bio_chain_clone_range()
+Message-Id: <2dd5023d-2f43-1110-674c-e9c4ece7ee9b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for uart_ops structures that are only stored in the ops field of a
-uart_port structure.  This field is declared const, so uart_ops structures
-that have this property can be declared as const also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Sep 2016 19:56:37 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Adjust a jump label according to the current Linux coding style convention.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct uart_ops i@p = { ... };
-
-@ok@
-identifier r.i;
-struct uart_port e;
-position p;
-@@
-e.ops = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct uart_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct uart_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/serial/fsl_lpuart.c    |    4 ++--
- drivers/tty/serial/imx.c           |    2 +-
- drivers/tty/serial/max3100.c       |    2 +-
- drivers/tty/serial/men_z135_uart.c |    2 +-
- drivers/tty/serial/mxs-auart.c     |    2 +-
- drivers/tty/serial/pch_uart.c      |    2 +-
- drivers/tty/serial/sh-sci.c        |    2 +-
- drivers/tty/serial/timbuart.c      |    2 +-
- 8 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/block/rbd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 7f95f78..55e5e21 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1494,7 +1494,7 @@ static int lpuart_verify_port(struct uart_port *port, struct serial_struct *ser)
- 	return ret;
- }
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 8e9d30f7..abc2dcb 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -1421,12 +1421,12 @@ static struct bio *bio_chain_clone_range(struct bio **bio_src,
  
--static struct uart_ops lpuart_pops = {
-+static const struct uart_ops lpuart_pops = {
- 	.tx_empty	= lpuart_tx_empty,
- 	.set_mctrl	= lpuart_set_mctrl,
- 	.get_mctrl	= lpuart_get_mctrl,
-@@ -1513,7 +1513,7 @@ static struct uart_ops lpuart_pops = {
- 	.flush_buffer	= lpuart_flush_buffer,
- };
+ 		if (!bi) {
+ 			rbd_warn(NULL, "bio_chain exhausted with %u left", len);
+-			goto out_err;	/* EINVAL; ran out of bio's */
++			goto put_chain;	/* EINVAL; ran out of bio's */
+ 		}
+ 		bi_size = min_t(unsigned int, bi->bi_iter.bi_size - off, len);
+ 		bio = bio_clone_range(bi, off, bi_size, gfpmask);
+ 		if (!bio)
+-			goto out_err;	/* ENOMEM */
++			goto put_chain;	/* ENOMEM */
  
--static struct uart_ops lpuart32_pops = {
-+static const struct uart_ops lpuart32_pops = {
- 	.tx_empty	= lpuart32_tx_empty,
- 	.set_mctrl	= lpuart32_set_mctrl,
- 	.get_mctrl	= lpuart32_get_mctrl,
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 0df2b1c..9bbf2a4 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -1690,7 +1690,7 @@ static int imx_rs485_config(struct uart_port *port,
- 	return 0;
- }
+ 		*end = bio;
+ 		end = &bio->bi_next;
+@@ -1442,7 +1442,7 @@ static struct bio *bio_chain_clone_range(struct bio **bio_src,
+ 	*offset = off;
  
--static struct uart_ops imx_pops = {
-+static const struct uart_ops imx_pops = {
- 	.tx_empty	= imx_tx_empty,
- 	.set_mctrl	= imx_set_mctrl,
- 	.get_mctrl	= imx_get_mctrl,
-diff --git a/drivers/tty/serial/max3100.c b/drivers/tty/serial/max3100.c
-index 5c4c280..ace8264 100644
---- a/drivers/tty/serial/max3100.c
-+++ b/drivers/tty/serial/max3100.c
-@@ -712,7 +712,7 @@ static void max3100_break_ctl(struct uart_port *port, int break_state)
- 	dev_dbg(&s->spi->dev, "%s\n", __func__);
- }
+ 	return chain;
+-out_err:
++ put_chain:
+ 	bio_chain_put(chain);
  
--static struct uart_ops max3100_ops = {
-+static const struct uart_ops max3100_ops = {
- 	.tx_empty	= max3100_tx_empty,
- 	.set_mctrl	= max3100_set_mctrl,
- 	.get_mctrl	= max3100_get_mctrl,
-diff --git a/drivers/tty/serial/men_z135_uart.c b/drivers/tty/serial/men_z135_uart.c
-index a44290e..e72ea61 100644
---- a/drivers/tty/serial/men_z135_uart.c
-+++ b/drivers/tty/serial/men_z135_uart.c
-@@ -775,7 +775,7 @@ static int men_z135_verify_port(struct uart_port *port,
- 	return -EINVAL;
- }
- 
--static struct uart_ops men_z135_ops = {
-+static const struct uart_ops men_z135_ops = {
- 	.tx_empty = men_z135_tx_empty,
- 	.set_mctrl = men_z135_set_mctrl,
- 	.get_mctrl = men_z135_get_mctrl,
-diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
-index eb54e5c..2f04ec2 100644
---- a/drivers/tty/serial/mxs-auart.c
-+++ b/drivers/tty/serial/mxs-auart.c
-@@ -1317,7 +1317,7 @@ static void mxs_auart_break_ctl(struct uart_port *u, int ctl)
- 		mxs_clr(AUART_LINECTRL_BRK, s, REG_LINECTRL);
- }
- 
--static struct uart_ops mxs_auart_ops = {
-+static const struct uart_ops mxs_auart_ops = {
- 	.tx_empty       = mxs_auart_tx_empty,
- 	.start_tx       = mxs_auart_start_tx,
- 	.stop_tx	= mxs_auart_stop_tx,
-diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-index ea4ffc2..b5874d1 100644
---- a/drivers/tty/serial/pch_uart.c
-+++ b/drivers/tty/serial/pch_uart.c
-@@ -1603,7 +1603,7 @@ static void pch_uart_put_poll_char(struct uart_port *port,
- }
- #endif /* CONFIG_CONSOLE_POLL */
- 
--static struct uart_ops pch_uart_ops = {
-+static const struct uart_ops pch_uart_ops = {
- 	.tx_empty = pch_uart_tx_empty,
- 	.set_mctrl = pch_uart_set_mctrl,
- 	.get_mctrl = pch_uart_get_mctrl,
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index d86eee3..4b26252 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2533,7 +2533,7 @@ static int sci_verify_port(struct uart_port *port, struct serial_struct *ser)
- 	return 0;
- }
- 
--static struct uart_ops sci_uart_ops = {
-+static const struct uart_ops sci_uart_ops = {
- 	.tx_empty	= sci_tx_empty,
- 	.set_mctrl	= sci_set_mctrl,
- 	.get_mctrl	= sci_get_mctrl,
-diff --git a/drivers/tty/serial/timbuart.c b/drivers/tty/serial/timbuart.c
-index 512c162..5da7fe4 100644
---- a/drivers/tty/serial/timbuart.c
-+++ b/drivers/tty/serial/timbuart.c
-@@ -394,7 +394,7 @@ static int timbuart_verify_port(struct uart_port *port,
- 	return -EINVAL;
- }
- 
--static struct uart_ops timbuart_ops = {
-+static const struct uart_ops timbuart_ops = {
- 	.tx_empty = timbuart_tx_empty,
- 	.set_mctrl = timbuart_set_mctrl,
- 	.get_mctrl = timbuart_get_mctrl,
+ 	return NULL;
+-- 
+2.10.0
 
