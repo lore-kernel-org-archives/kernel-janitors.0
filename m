@@ -1,71 +1,50 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 02 Sep 2016 14:37:58 +0000
-Subject: [PATCH 1/2] crypto: qat - introduces a variable to handle error codes
-Message-Id: <20160902143759.31125-2-lambert.quentin@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 20:47:33 +0000
+Subject: [PATCH 5/7] AGPGART-UniNorth: Use kmalloc_array() in uninorth_create_gatt_table()
+Message-Id: <f112cc49-d8f4-a682-6817-87cdb5bed176@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160902143759.31125-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160902143759.31125-1-lambert.quentin@gmail.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
+In-Reply-To: <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+To: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-Most error code used to jump to a label that lead to a "return -EFAULT"
-statement. This patch introduces a variable that stores the error code
-so that other error branches can use the same label to exit.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 21:50:44 +0200
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/qat/qat_common/qat_uclo.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/char/agp/uninorth-agp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/qat/qat_common/qat_uclo.c
-+++ b/drivers/crypto/qat/qat_common/qat_uclo.c
-@@ -966,6 +966,7 @@ static int qat_uclo_parse_uof_obj(struct
- {
- 	struct icp_qat_uclo_objhandle *obj_handle = handle->obj_handle;
- 	unsigned int ae;
-+	int ret;
+diff --git a/drivers/char/agp/uninorth-agp.c b/drivers/char/agp/uninorth-agp.c
+index fdced54..8d144cd 100644
+--- a/drivers/char/agp/uninorth-agp.c
++++ b/drivers/char/agp/uninorth-agp.c
+@@ -402,7 +402,9 @@ static int uninorth_create_gatt_table(struct agp_bridge_data *bridge)
+ 	if (table = NULL)
+ 		return -ENOMEM;
  
- 	obj_handle->uword_buf = kcalloc(UWORD_CPYBUF_SIZE, sizeof(uint64_t),
- 					GFP_KERNEL);
-@@ -987,29 +988,35 @@ static int qat_uclo_parse_uof_obj(struct
- 	    !qat_uclo_map_str_table(obj_handle->obj_hdr, ICP_QAT_UOF_STRT,
- 				    &obj_handle->str_table)) {
- 		pr_err("QAT: UOF doesn't have effective images\n");
-+		ret = -EFAULT;
- 		goto out_err;
- 	}
- 	obj_handle->uimage_num  		qat_uclo_map_uimage(obj_handle, obj_handle->ae_uimage,
- 				    ICP_QAT_UCLO_MAX_AE * ICP_QAT_UCLO_MAX_CTX);
--	if (!obj_handle->uimage_num)
-+	if (!obj_handle->uimage_num) {
-+		ret = -EFAULT;
- 		goto out_err;
-+	}
- 	if (qat_uclo_map_ae(handle, handle->hal_handle->ae_max_num)) {
- 		pr_err("QAT: Bad object\n");
-+		ret = -EFAULT;
- 		goto out_check_uof_aemask_err;
- 	}
- 	qat_uclo_init_uword_num(handle);
- 	qat_uclo_map_initmem_table(&obj_handle->encap_uof_obj,
- 				   &obj_handle->init_mem_tab);
--	if (qat_uclo_set_ae_mode(handle))
-+	if (qat_uclo_set_ae_mode(handle)) {
-+		ret = -EFAULT;
- 		goto out_check_uof_aemask_err;
-+	}
- 	return 0;
- out_check_uof_aemask_err:
- 	for (ae = 0; ae < obj_handle->uimage_num; ae++)
- 		kfree(obj_handle->ae_uimage[ae].page);
- out_err:
- 	kfree(obj_handle->uword_buf);
--	return -EFAULT;
-+	return ret;
- }
+-	uninorth_priv.pages_arr = kmalloc((1 << page_order) * sizeof(struct page*), GFP_KERNEL);
++	uninorth_priv.pages_arr = kmalloc_array(1 << page_order,
++						sizeof(*uninorth_priv.pages_arr),
++						GFP_KERNEL);
+ 	if (uninorth_priv.pages_arr = NULL)
+ 		goto enomem;
  
- static int qat_uclo_map_suof_file_hdr(struct icp_qat_fw_loader_handle *handle,
+-- 
+2.10.0
+
