@@ -1,71 +1,53 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 02 Sep 2016 14:43:58 +0000
-Subject: [PATCH 1/2][RESEND] crypto: qat - introduces a variable to handle error codes
-Message-Id: <20160902144400.31216-2-lambert.quentin@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 12:12:01 +0000
+Subject: [PATCH 1/4] virtio_blk: Use kmalloc_array() in init_vq()
+Message-Id: <7a8dd874-3700-1445-2143-2a604cd043ab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160902144400.31216-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160902144400.31216-1-lambert.quentin@gmail.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
+In-Reply-To: <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
+To: virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Most error code used to jump to a label that lead to a "return -EFAULT"
-statement. This patch introduces a variable that stores the error code
-so that other error branches can use the same label to exit.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 11:32:22 +0200
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kmalloc_array".
 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/qat/qat_common/qat_uclo.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/block/virtio_blk.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/qat/qat_common/qat_uclo.c
-+++ b/drivers/crypto/qat/qat_common/qat_uclo.c
-@@ -966,6 +966,7 @@ static int qat_uclo_parse_uof_obj(struct
- {
- 	struct icp_qat_uclo_objhandle *obj_handle = handle->obj_handle;
- 	unsigned int ae;
-+	int ret;
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 93b1aaa..6553eb7 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -390,13 +390,13 @@ static int init_vq(struct virtio_blk *vblk)
+ 	if (err)
+ 		num_vqs = 1;
  
- 	obj_handle->uword_buf = kcalloc(UWORD_CPYBUF_SIZE, sizeof(uint64_t),
- 					GFP_KERNEL);
-@@ -987,29 +988,35 @@ static int qat_uclo_parse_uof_obj(struct
- 	    !qat_uclo_map_str_table(obj_handle->obj_hdr, ICP_QAT_UOF_STRT,
- 				    &obj_handle->str_table)) {
- 		pr_err("QAT: UOF doesn't have effective images\n");
-+		ret = -EFAULT;
- 		goto out_err;
- 	}
- 	obj_handle->uimage_num  		qat_uclo_map_uimage(obj_handle, obj_handle->ae_uimage,
- 				    ICP_QAT_UCLO_MAX_AE * ICP_QAT_UCLO_MAX_CTX);
--	if (!obj_handle->uimage_num)
-+	if (!obj_handle->uimage_num) {
-+		ret = -EFAULT;
- 		goto out_err;
-+	}
- 	if (qat_uclo_map_ae(handle, handle->hal_handle->ae_max_num)) {
- 		pr_err("QAT: Bad object\n");
-+		ret = -EFAULT;
- 		goto out_check_uof_aemask_err;
- 	}
- 	qat_uclo_init_uword_num(handle);
- 	qat_uclo_map_initmem_table(&obj_handle->encap_uof_obj,
- 				   &obj_handle->init_mem_tab);
--	if (qat_uclo_set_ae_mode(handle))
-+	if (qat_uclo_set_ae_mode(handle)) {
-+		ret = -EFAULT;
- 		goto out_check_uof_aemask_err;
-+	}
- 	return 0;
- out_check_uof_aemask_err:
- 	for (ae = 0; ae < obj_handle->uimage_num; ae++)
- 		kfree(obj_handle->ae_uimage[ae].page);
- out_err:
- 	kfree(obj_handle->uword_buf);
--	return -EFAULT;
-+	return ret;
- }
+-	vblk->vqs = kmalloc(sizeof(*vblk->vqs) * num_vqs, GFP_KERNEL);
++	vblk->vqs = kmalloc_array(num_vqs, sizeof(*vblk->vqs), GFP_KERNEL);
+ 	if (!vblk->vqs)
+ 		return -ENOMEM;
  
- static int qat_uclo_map_suof_file_hdr(struct icp_qat_fw_loader_handle *handle,
+-	names = kmalloc(sizeof(*names) * num_vqs, GFP_KERNEL);
+-	callbacks = kmalloc(sizeof(*callbacks) * num_vqs, GFP_KERNEL);
+-	vqs = kmalloc(sizeof(*vqs) * num_vqs, GFP_KERNEL);
++	names = kmalloc_array(num_vqs, sizeof(*names), GFP_KERNEL);
++	callbacks = kmalloc_array(num_vqs, sizeof(*callbacks), GFP_KERNEL);
++	vqs = kmalloc_array(num_vqs, sizeof(*vqs), GFP_KERNEL);
+ 	if (!names || !callbacks || !vqs) {
+ 		err = -ENOMEM;
+ 		goto out;
+-- 
+2.10.0
+
