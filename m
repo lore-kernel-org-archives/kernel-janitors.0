@@ -1,82 +1,110 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 17:30:27 +0000
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Tue, 13 Sep 2016 18:24:58 +0000
 Subject: Re: virtio_blk: Less function calls in init_vq() after error detection
-Message-Id: <7da823eb-939c-9ee6-32bf-db296e6a96f6@users.sourceforge.net>
+Message-Id: <44fd46f6-441a-d497-9157-7e2a0f3f45da@de.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
  <f56845a8-03c6-d3f7-6091-99dba9835780@users.sourceforge.net>
  <e918e655-cd86-c3c8-d911-9dfc03b03e19@de.ibm.com>
-In-Reply-To: <e918e655-cd86-c3c8-d911-9dfc03b03e19@de.ibm.com>
+ <7da823eb-939c-9ee6-32bf-db296e6a96f6@users.sourceforge.net>
+In-Reply-To: <7da823eb-939c-9ee6-32bf-db296e6a96f6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>, Minfei Huang <minfei.hmf@alibaba-inc.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Stefan Hajnoczi <stefanha@redhat.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>, Minfei Huang <minfei.hmf@alibaba-inc.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Stefan Hajnoczi <stefanha@redhat.com>
 Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>
 
-> In addition, please have a look at commit 347a529398e8e723338cca5d8a8ae2d=
-9e7e93448
->     virtio_blk: Fix a slient kernel panic
+On 09/13/2016 07:30 PM, SF Markus Elfring wrote:
+[...]
+> Unfortunately, I get an other impression here after a closer look.
+>=20
+> Can it be that the discussed commit from 2016-08-09 accepted (or tolerate=
+d)
+> two weaknesses at least?
+>=20
+> 1. Commit title:
+>    Is the word "slient" a typo?
+>    Would you like to read "silent" there instead?
+>=20
+> 2. Source code:
+>    Why would another memory allocation be attempted if it could be determ=
+ined quicker
+>    that a previous one failed and this function implementation can not su=
+cceed then?
+>=20
+>    How much will it matter in general that two function calls are perform=
+ed
+>    in this use case without checking their return values immediately?
+>    https://cwe.mitre.org/data/definitions/252.html
+>=20
+> 	if (!names || !callbacks || !vqs) { =85
+>=20
+>    https://cwe.mitre.org/data/definitions/754.html
+>=20
 
-I would like to add another view on the implementation details in this soft=
-ware update.
+The return values are checked, just a bit later.
+Markus, kernel patches are not about be formally correct vs. CodingStyle an=
+d/or checkpatch
+or against code guidelines from sombody else. You will find many people con=
+sider gotos
+an no-go, still it is accepted in the kernel for good reasons.
+You have to think about each change and its tradeoffs (e.g simplicity vs. p=
+erformance)=20
+for each code part again. Here we have slow path error handling, so given t=
+he low coverage
+of these code parts, simplicity is important.
+Yes, your code makes an unlikely error case bail out faster, but is the cos=
+t of your
+patch (review time, danger of adding bugs, danger of merge conflicts, makin=
+g git blame less
+useful) in sync with the expected win? This is certainly Michaels area of m=
+aintainership=20
+and if he wants your patch, it will be fine too. (Well, having a label betw=
+een the if and=20
+the function like
+>   	if (err)
+> + free_vblk_vqs:
+>  		kfree(vblk->vqs);
 
-
-> which did the opposite of your patch.
-
-This update contained a different approach for error detection and correspo=
-nding
-exception handling.
-
-
-> And in fact it fixed a bug.
-
-This is great in principle according to an information in the commit descri=
-ption.
-
-"=85
-To fix this bug, we should take care of allocation failure,
-and return correct value to let caller know what happen.
-=85"
-
-
-> Quite obviously multiple labels are harder to read and harder to get righ=
-t.
-> For error handling with just kfree one label is just the right thing to.
-
-Unfortunately, I get an other impression here after a closer look.
-
-Can it be that the discussed commit from 2016-08-09 accepted (or tolerated)
-two weaknesses at least?
-
-1. Commit title:
-   Is the word "slient" a typo?
-   Would you like to read "silent" there instead?
-
-2. Source code:
-   Why would another memory allocation be attempted if it could be determin=
-ed quicker
-   that a previous one failed and this function implementation can not succ=
-eed then?
-
-   How much will it matter in general that two function calls are performed
-   in this use case without checking their return values immediately?
-   https://cwe.mitre.org/data/definitions/252.html
-
-	if (!names || !callbacks || !vqs) { =85
-
-   https://cwe.mitre.org/data/definitions/754.html
-
-
-Was the software development attention a bit too low as it happens occasion=
-ally?
+is certainly ugly in itself)
 
 
-I hope that my suggestions can improve the affected situation a bit more
-also for this software module.
+> Was the software development attention a bit too low as it happens occasi=
+onally?
+>=20
+>=20
+> I hope that my suggestions can improve the affected situation a bit more
+> also for this software module.
 
-Regards,
-Markus
+Do you realize that your discussion style is not very helpful?
+I just grepped the last LKML mails and you already pissed of several mainta=
+iners
+in totally different areas. When that happens, why don't you stop for a mom=
+ent and
+think about "what is going wrong right now".=20
+
+Your attitude seems to be "I spend my spare time doing this, please thank m=
+e for that".
+The thing is, with each patch you actually request time from the maintainer.
+Now here begins the interesting part: Is the patch just a cosmetic change t=
+hat does
+not give you any benefit or is the patch improving the code. And remember: =
+there
+are always tradeoffs: performance, code size, code maintainability etc.
+
+See, some of your patches are accepted, e.g. the memdup_user changes have u=
+sually
+been applied by most maintainers including myself. If maintainers won't tak=
+e other change,
+please accept that. If you continue to waste peoples time by discussing "ma=
+ybe" patches
+you actually risk that people will stop taking any patches from you includi=
+ng the "yes"
+ones.
+
+Christian
+
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
