@@ -1,39 +1,53 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 23 Sep 2016 21:06:26 +0000
-Subject: [PATCH] drm/nouveau/secboot/gm20b: Fix return value in case of error
-Message-Id: <1474664786-30107-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 20:42:09 +0000
+Subject: [PATCH 1/7] AGPGART: Use kmalloc_array() in compat_agpioc_reserve_wrap()
+Message-Id: <7c2df723-e456-37d3-faf0-76514c672515@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
+In-Reply-To: <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bskeggs@redhat.com, airlied@linux.ie
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-If 'ioremap()' returns 0, 'gm20b_tegra_read_wpr()' will return 0 as well,
-which means success.
-Return -ENOMEM instead
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 17:51:32 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Not sure that -ENOMEM is the best value.
-I've taken it because it is often used in such a case.
----
- drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/agp/compat_ioctl.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-index d5395ebfe8d3..d88db933b3fd 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
-@@ -142,7 +142,7 @@ gm20b_tegra_read_wpr(struct gm200_secboot *gsb)
- 	mc = ioremap(TEGRA_MC_BASE, 0xd00);
- 	if (!mc) {
- 		nvkm_error(&sb->subdev, "Cannot map Tegra MC registers\n");
--		return PTR_ERR(mc);
-+		return -ENOMEM;
- 	}
- 	gsb->wpr_addr = ioread32_native(mc + MC_SECURITY_CARVEOUT2_BOM_0) |
- 	      ((u64)ioread32_native(mc + MC_SECURITY_CARVEOUT2_BOM_HI_0) << 32);
+diff --git a/drivers/char/agp/compat_ioctl.c b/drivers/char/agp/compat_ioctl.c
+index a48e05b..a2b69db 100644
+--- a/drivers/char/agp/compat_ioctl.c
++++ b/drivers/char/agp/compat_ioctl.c
+@@ -98,11 +98,15 @@ static int compat_agpioc_reserve_wrap(struct agp_file_private *priv, void __user
+ 		if (ureserve.seg_count >= 16384)
+ 			return -EINVAL;
+ 
+-		usegment = kmalloc(sizeof(*usegment) * ureserve.seg_count, GFP_KERNEL);
++		usegment = kmalloc_array(ureserve.seg_count,
++					 sizeof(*usegment),
++					 GFP_KERNEL);
+ 		if (!usegment)
+ 			return -ENOMEM;
+ 
+-		ksegment = kmalloc(sizeof(*ksegment) * kreserve.seg_count, GFP_KERNEL);
++		ksegment = kmalloc_array(kreserve.seg_count,
++					 sizeof(*ksegment),
++					 GFP_KERNEL);
+ 		if (!ksegment) {
+ 			kfree(usegment);
+ 			return -ENOMEM;
 -- 
-2.7.4
+2.10.0
 
