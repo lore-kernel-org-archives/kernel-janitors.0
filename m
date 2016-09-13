@@ -1,73 +1,112 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 13 Sep 2016 09:16:13 +0000
+From: Jean Delvare <jdelvare@suse.de>
+Date: Tue, 13 Sep 2016 14:36:26 +0000
 Subject: Re: [PATCH 03/47] block-rbd: Adjust the position of a jump label in rbd_header_from_disk()
-Message-Id: <CAOi1vP_XDRj9B-vAYVB=qN5Z-vbq75tYU1dFADRBz6P+J6V56Q@mail.gmail.com>
+Message-Id: <20160913163626.436629af@endymion>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
- <71b06567-1ea9-204d-d61b-2af4426d9cd1@users.sourceforge.net>
- <CAOi1vP9iQ6u7dm0dRMg4rs6tLaR5mv55yew0URTX00-y6C0S6g@mail.gmail.com> <121f05b0-ac94-4d81-289e-9dc3668eab95@users.sourceforge.net>
-In-Reply-To: <121f05b0-ac94-4d81-289e-9dc3668eab95@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+        <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+        <71b06567-1ea9-204d-d61b-2af4426d9cd1@users.sourceforge.net>
+        <CAOi1vP9iQ6u7dm0dRMg4rs6tLaR5mv55yew0URTX00-y6C0S6g@mail.gmail.com>
+        <121f05b0-ac94-4d81-289e-9dc3668eab95@users.sourceforge.net>
+        <CAOi1vP_XDRj9B-vAYVB=qN5Z-vbq75tYU1dFADRBz6P+J6V56Q@mail.gmail.com>
+In-Reply-To: <CAOi1vP_XDRj9B-vAYVB=qN5Z-vbq75tYU1dFADRBz6P+J6V56Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Jonathan Corbet <corbet@lwn.net>
-Cc: Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Jean Delvare <jdelvare@suse.de>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Andrew Morton <akpm@linux-foundation.org>
 
-On Tue, Sep 13, 2016 at 10:12 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>> @@ -1064,7 +1064,7 @@ static int rbd_header_from_disk(struct rbd_device=
- *rbd_dev,
->>>         header->snap_sizes =3D snap_sizes;
->>>
->>>         return 0;
->>> -out_2big:
->>> + out_2big:
->>>         ret =3D -EIO;
->>>         kfree(snap_sizes);
->>>   free_names:
-> =E2=80=A6
->> Can you point where this current convention is documented?
->
-> Yes.
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/D=
-ocumentation/CodingStyle?id=3D865a1caa4b6b886babdd9d67e7c3608be4567a51
+Hi Ilya,
 
-Huh.  That patch is not in Linus' tree.
+Thanks for adding me.
 
->
-> Do you find the software update "CodingStyle: Clarify and complete chapte=
-r 7" interesting?
->
->
->> Certainly not in CodingStyle, AFAICT...
->
-> I suggest to look at the current version once more.
->
->
->> I know some people prefer a single space in there because it makes
->> "diff -p" work better, but nowadays with "git diff" this argument is
->> pretty moot.
->
-> Would you like to discuss the corresponding software evolution a bit more?
+On Tue, 13 Sep 2016 11:16:13 +0200, Ilya Dryomov wrote:
+> On Tue, Sep 13, 2016 at 10:12 AM, SF Markus Elfring
+> <elfring@users.sourceforge.net> wrote:
+> >>> @@ -1064,7 +1064,7 @@ static int rbd_header_from_disk(struct rbd_devi=
+ce *rbd_dev,
+> >>>         header->snap_sizes =3D snap_sizes;
+> >>>
+> >>>         return 0;
+> >>> -out_2big:
+> >>> + out_2big:
+> >>>         ret =3D -EIO;
+> >>>         kfree(snap_sizes);
+> >>>   free_names:
+> > =E2=80=A6
+> >> Can you point where this current convention is documented?
+> >
+> > Yes.
+> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit=
+/Documentation/CodingStyle?id=865a1caa4b6b886babdd9d67e7c3608be4567a51
+>=20
+> Huh.  That patch is not in Linus' tree.
+>=20
+> >
+> > Do you find the software update "CodingStyle: Clarify and complete chap=
+ter 7" interesting?
+> >
+> >
+> >> Certainly not in CodingStyle, AFAICT...
+> >
+> > I suggest to look at the current version once more.
+> >
+> >
+> >> I know some people prefer a single space in there because it makes
+> >> "diff -p" work better, but nowadays with "git diff" this argument is
+> >> pretty moot.
+> >
+> > Would you like to discuss the corresponding software evolution a bit mo=
+re?
+>=20
+> Jon, could you please yank 865a1caa4b6b ("CodingStyle: Clarify and
+> complete chapter 7") from your linux-next branch or at least change "It
+> is advised to indent labels" to something less stronger?  It hasn't
+> even hit mainline yet and we are already getting spammed.
 
-Jon, could you please yank 865a1caa4b6b ("CodingStyle: Clarify and
-complete chapter 7") from your linux-next branch or at least change "It
-is advised to indent labels" to something less stronger?  It hasn't
-even hit mainline yet and we are already getting spammed.
+The problem isn't the documentation update nor whether you or me like a
+space before labels or not. The problem is Markus Elfring. The guy just
+spend his time flooding maintainers with unneeded changes they never
+asked for. Ignore him and you'll be much better. If he was not flooding
+you with this, he would find something else :-(
 
-Looks like 9 out of 10 labels are not indented
+When I wrote "It is advised to indent labels with one space", I never
+meant that all the existing code should be converted that way. I
+expressed a preference, and provided a rationale for this preference.
+After that, an advice is just that: an advice.
 
-$ git grep '^[a-z0-9]\+:' -- *.c | wc -l
-27945
-$ git grep '^ [a-z0-9]\+:' -- *.c | wc -l
-2925
+> Looks like 9 out of 10 labels are not indented
+>=20
+> $ git grep '^[a-z0-9]\+:' -- *.c | wc -l
+> 27945
+> $ git grep '^ [a-z0-9]\+:' -- *.c | wc -l
+> 2925
 
-so I'd say that's a bad advise as far as consistency goes, and the
-"diff -p" argument is pretty moot nowadays.
+Your regexps are wrong ;-) but the ratio is correct.
 
-Thanks,
+> so I'd say that's a bad advise as far as consistency goes, and the
+> "diff -p" argument is pretty moot nowadays.
 
-                Ilya
+It wasn't moot when I sent the documentation update patch. Or why would
+you think it was? "git diff", by default, behaves exactly the same as
+"diff -p" with regards to unindented labels (i.e. it doesn't handle
+them properly.)
+
+However, since then the issue was discussed somewhere else:
+https://lkml.org/lkml/2016/9/5/214
+
+As you can see, alternatives to indenting labels with one space were
+found. Therefore you will soon be correct saying "the diff -p argument
+is pretty moot." As soon as my patch hits mainline, actually. Which
+shouldn't take too long as Andrew Morton picked it 4 days ago.
+
+Once this happens, I'm fine with CodingStyle being updated again to
+reflect the current situation.
+
+Hope it clarifies,
+--=20
+Jean Delvare
+SUSE L3 Support
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
