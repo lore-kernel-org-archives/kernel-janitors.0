@@ -1,68 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 12:14:41 +0000
-Subject: [PATCH 5/6] ASoC: ac97: constify gpio_chip structures
-Message-Id: <1473596082-32690-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 12:10:05 +0000
+Subject: [PATCH 0/4] block-virtio: Fine-tuning for two function implementations
+Message-Id: <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-These structures are only used to copy into other structures, so declare
-them as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 14:05:05 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A few update suggestions were taken into account
+from static source code analysis.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct gpio_chip i@p = { ... };
+Markus Elfring (4):
+  Use kmalloc_array() in init_vq()
+  Less function calls in init_vq() after error detection
+  Delete an unnecessary initialisation in init_vq()
+  Rename a jump label in virtblk_get_id()
 
-@ok@
-identifier r.i;
-expression e;
-position p;
-@@
-e = i@p;
+ drivers/block/virtio_blk.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct gpio_chip e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct gpio_chip i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/soc/soc-ac97.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/soc-ac97.c b/sound/soc/soc-ac97.c
-index bc4a55b..6c8b0b0 100644
---- a/sound/soc/soc-ac97.c
-+++ b/sound/soc/soc-ac97.c
-@@ -116,7 +116,7 @@ static int snd_soc_ac97_gpio_direction_out(struct gpio_chip *chip,
- 	return snd_soc_update_bits(codec, AC97_GPIO_CFG, 1 << offset, 0);
- }
- 
--static struct gpio_chip snd_soc_ac97_gpio_chip = {
-+static const struct gpio_chip snd_soc_ac97_gpio_chip = {
- 	.label			= "snd_soc_ac97",
- 	.owner			= THIS_MODULE,
- 	.request		= snd_soc_ac97_gpio_request,
+-- 
+2.10.0
 
