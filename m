@@ -1,51 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:58:04 +0000
-Subject: [PATCH 16/30] ACPI-processor: Use kmalloc_array() in acpi_processor_get_throttling_states()
-Message-Id: <09d308b2-b16f-ee86-fb15-7fd11e902018@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 20:50:01 +0000
+Subject: [PATCH 7/7] AGPGART-UniNorth: Delete an unnecessary check in uninorth_create_gatt_table()
+Message-Id: <6565fead-21c0-59d6-2a81-fd5084123d66@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
+In-Reply-To: <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 19:15:02 +0200
+Date: Tue, 13 Sep 2016 22:15:56 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kmalloc_array".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+The check for the local variable "table" is unnecessary at the end
+of this function because the corresponding source code place should only
+be reached with a non-zero pointer for it after a failed call of the
+function "kmalloc_array".
+Thus remove it.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/char/agp/uninorth-agp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index c72e648..0a46b7f 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -533,9 +533,10 @@ static int acpi_processor_get_throttling_states(struct acpi_processor *pr)
- 			  tss->package.count));
+diff --git a/drivers/char/agp/uninorth-agp.c b/drivers/char/agp/uninorth-agp.c
+index 8b1eb72..657cf17 100644
+--- a/drivers/char/agp/uninorth-agp.c
++++ b/drivers/char/agp/uninorth-agp.c
+@@ -438,8 +438,7 @@ static int uninorth_create_gatt_table(struct agp_bridge_data *bridge)
+ 	return 0;
+  free_page_array:
+ 	kfree(uninorth_priv.pages_arr);
+-	if (table)
+-		free_pages((unsigned long)table, page_order);
++	free_pages((unsigned long)table, page_order);
+ 	return -ENOMEM;
+ }
  
- 	pr->throttling.state_count = tss->package.count;
--	pr->throttling.states_tss -	    kmalloc(sizeof(struct acpi_processor_tx_tss) * tss->package.count,
--		    GFP_KERNEL);
-+	pr->throttling.states_tss = kmalloc_array(tss->package.count,
-+						  sizeof(*pr->
-+							 throttling.states_tss),
-+						  GFP_KERNEL);
- 	if (!pr->throttling.states_tss) {
- 		result = -ENOMEM;
- 		goto end;
 -- 
 2.10.0
 
