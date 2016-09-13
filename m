@@ -1,86 +1,71 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Date: Fri, 02 Sep 2016 20:32:18 +0000
-Subject: Re: [PATCH] rtc: constify rtc_class_ops structures
-Message-Id: <20160902203218.swu3fcxb266jeq2s@piout.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 14:33:03 +0000
+Subject: Re: virtio_blk: Less function calls in init_vq() after error detection
+Message-Id: <55fbd4d0-3fb3-0334-6545-cb4da0d12edf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472630725-25465-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472630725-25465-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
+ <f56845a8-03c6-d3f7-6091-99dba9835780@users.sourceforge.net>
+ <e918e655-cd86-c3c8-d911-9dfc03b03e19@de.ibm.com>
+In-Reply-To: <e918e655-cd86-c3c8-d911-9dfc03b03e19@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, Minfei Huang <mnghuan@gmail.com>
 
-On 31/08/2016 at 10:05:25 +0200, Julia Lawall wrote :
-> Check for rtc_class_ops structures that are only passed to
-> devm_rtc_device_register, rtc_device_register,
-> platform_device_register_data, all of which declare the corresponding
-> parameter as const.  Declare rtc_class_ops structures that have these
-> properties as const.
+>>  drivers/block/virtio_blk.c | 22 +++++++++++++++++-----
+>>  1 file changed, 17 insertions(+), 5 deletions(-)
 > 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct rtc_class_ops i@p = { ... };
-> 
-> @ok@
-> identifier r.i;
-> expression e1,e2,e3,e4;
-> position p;
-> @@
-> (
-> devm_rtc_device_register(e1,e2,&i@p,e3)
-> |
-> rtc_device_register(e1,e2,&i@p,e3)
-> |
-> platform_device_register_data(e1,e2,e3,&i@p,e4)
-> )
-> 
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> @@
-> i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct rtc_class_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/rtc/rtc-at32ap700x.c |    2 +-
->  drivers/rtc/rtc-coh901331.c  |    2 +-
->  drivers/rtc/rtc-davinci.c    |    2 +-
->  drivers/rtc/rtc-digicolor.c  |    2 +-
->  drivers/rtc/rtc-ds1302.c     |    2 +-
->  drivers/rtc/rtc-gemini.c     |    2 +-
->  drivers/rtc/rtc-jz4740.c     |    2 +-
->  drivers/rtc/rtc-mcp795.c     |    2 +-
->  drivers/rtc/rtc-mt6397.c     |    2 +-
->  drivers/rtc/rtc-nuc900.c     |    2 +-
->  drivers/rtc/rtc-omap.c       |    2 +-
->  drivers/rtc/rtc-palmas.c     |    2 +-
->  drivers/rtc/rtc-pcf50633.c   |    2 +-
->  drivers/rtc/rtc-rx6110.c     |    2 +-
->  drivers/rtc/rtc-rx8025.c     |    2 +-
->  drivers/rtc/rtc-spear.c      |    2 +-
->  drivers/rtc/rtc-stmp3xxx.c   |    2 +-
->  drivers/rtc/rtc-tegra.c      |    2 +-
->  drivers/rtc/rtc-twl.c        |    2 +-
->  19 files changed, 19 insertions(+), 19 deletions(-)
-> 
-Applied, thanks.
+> Can't you see from this diffstat that the patch actually seems to makes
+> the code more complex?
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+I find that the repeated usage of a bit more error handling code is almost
+unavoidable if you would like to handle allocation failures more directly
+as I dared to propose again here.
+
+
+> In addition, please have a look at commit 347a529398e8e723338cca5d8a8ae2d9e7e93448
+>     virtio_blk: Fix a slient kernel panic
+> 
+> which did the opposite of your patch.
+
+This software update adjusted also the jump targets. This approach
+triggered another update suggestion (in addition to improvements around
+the function "kmalloc_array").
+
+Such a software development shows different views on the implementation
+for correct exception handling. I am not so "silent" on this development topic
+for years.
+
+
+> And in fact it fixed a bug.
+
+I get the impression from Minfei's contribution that the statement "err = -ENOMEM;"
+was added behind memory allocations.
+It was also chosen to restructure this function implementation so that
+the single label "out" was used there for a while.
+
+* Is this detail worth for another look?
+
+* How does this name selection fit to the current Linux coding style convention?
+
+
+> Quite obviously multiple labels are harder to read
+
+I do not agree agree completely to your opinion.
+
+
+> and harder to get right.
+
+These identifiers can generate their own kind of software development
+challenges as usual.
+
+
+> For error handling with just kfree one label is just the right thing to.
+
+This approach can look convenient at first glance.
+Does the correctness aspect need any further considerations?
+
+Regards,
+Markus
