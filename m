@@ -1,66 +1,44 @@
-From: Michael Holzheu <holzheu@linux.vnet.ibm.com>
-Date: Thu, 01 Sep 2016 16:53:25 +0000
-Subject: Re: [PATCH] s390/hypfs: Use kmalloc_array() in diag0c_store()
-Message-Id: <20160901185325.5155a5e9@TP-holzheu>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 12:15:20 +0000
+Subject: [PATCH 4/4] virtio_blk: Rename a jump label in virtblk_get_id()
+Message-Id: <a303f7a6-c675-5228-99bd-a03c9e9252e9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5fd5f9ef-923f-4655-54f0-874114dc9428@users.sourceforge.net>
-        <20160901103245.GA3624@osiris>
-        <a5ade28e-c2d3-2727-ee63-b2e285a7f316@redhat.com>
-In-Reply-To: <a5ade28e-c2d3-2727-ee63-b2e285a7f316@redhat.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
+In-Reply-To: <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, SF Markus Elfring <elfring@users.sourceforge.net>, linux-s390@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Am Thu, 1 Sep 2016 17:39:02 +0200
-schrieb Paolo Bonzini <pbonzini@redhat.com>:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 13 Sep 2016 13:50:56 +0200
 
-> 
-> 
-> On 01/09/2016 12:32, Heiko Carstens wrote:
-> > On Thu, Sep 01, 2016 at 11:38:15AM +0200, SF Markus Elfring wrote:
-> >> From: Markus Elfring <elfring@users.sourceforge.net>
-> >> Date: Thu, 1 Sep 2016 11:30:58 +0200
-> >>
-> >> A multiplication for the size determination of a memory allocation
-> >> indicated that an array data structure should be processed.
-> >> Thus use the corresponding function "kmalloc_array".
-> >>
-> >> This issue was detected by using the Coccinelle software.
-> >>
-> >> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> >> ---
-> >>  arch/s390/hypfs/hypfs_diag0c.c | 4 +++-
-> >>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/s390/hypfs/hypfs_diag0c.c
-> >> b/arch/s390/hypfs/hypfs_diag0c.c index 0f1927c..61418a8 100644
-> >> --- a/arch/s390/hypfs/hypfs_diag0c.c
-> >> +++ b/arch/s390/hypfs/hypfs_diag0c.c
-> >> @@ -48,7 +48,9 @@ static void *diag0c_store(unsigned int *count)
-> >>  
-> >>  	get_online_cpus();
-> >>  	cpu_count = num_online_cpus();
-> >> -	cpu_vec = kmalloc(sizeof(*cpu_vec) * num_possible_cpus(),
-> >> GFP_KERNEL);
-> >> +	cpu_vec = kmalloc_array(num_possible_cpus(),
-> >> +				sizeof(*cpu_vec),
-> >> +				GFP_KERNEL);
-> > 
-> > How does this improve the situation? For any real life scenario
-> > this can't overflow, but it does add an extra (pointless) runtime
-> > check, since num_possible_cpus() is not a compile time constant.
-> > 
-> > So, why is this an "issue"?
-> 
-> It's not an issue but I for one still prefer consistent use of
-> kmalloc_array and kcalloc.
+Adjust a jump label according to the current Linux coding style convention.
 
-Hello Paolo,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/block/virtio_blk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I will keep this in mind for future code, but would prefer not changing
-this now.
-
-Michael
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 696f452..fef2bd0 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -247,10 +247,10 @@ static int virtblk_get_id(struct gendisk *disk, char *id_str)
+ 
+ 	err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES, GFP_KERNEL);
+ 	if (err)
+-		goto out;
++		goto put_request;
+ 
+ 	err = blk_execute_rq(vblk->disk->queue, vblk->disk, req, false);
+-out:
++ put_request:
+ 	blk_put_request(req);
+ 	return err;
+ }
+-- 
+2.10.0
 
