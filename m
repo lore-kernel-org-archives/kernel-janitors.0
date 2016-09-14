@@ -1,66 +1,58 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 17:05:14 +0000
-Subject: [PATCH 18/21] ACPI-video: Rename jump labels in acpi_video_init_brightness()
-Message-Id: <674c19a2-e7a9-436c-fd50-9d58f7832f14@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 14:05:03 +0000
+Subject: [PATCH 06/11] virtio_console: Rename a jump label in port_fops_open()
+Message-Id: <c615cc2d-89e5-65a7-4bc8-8c6c6c7e68e3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
-In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 17:28:45 +0200
+Date: Wed, 14 Sep 2016 14:58:24 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_video.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/char/virtio_console.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 5f1ef6e..5566f68 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -888,11 +888,11 @@ acpi_video_init_brightness(struct acpi_video_device *device)
- 	result = acpi_video_device_lcd_get_level_current(device,
- 							 &level_old, true);
- 	if (result)
--		goto out_free_levels;
-+		goto free_levels;
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 40b8775..99dc659 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1058,7 +1058,7 @@ static int port_fops_open(struct inode *inode, struct file *filp)
+ 	 */
+ 	if (is_console_port(port)) {
+ 		ret = -ENXIO;
+-		goto out;
++		goto put_ref;
+ 	}
  
- 	result = acpi_video_bqc_quirk(device, max_level, level_old);
- 	if (result)
--		goto out_free_levels;
-+		goto free_levels;
- 	/*
- 	 * cap._BQC may get cleared due to _BQC is found to be broken
- 	 * in acpi_video_bqc_quirk, so check again here.
-@@ -912,17 +912,15 @@ acpi_video_init_brightness(struct acpi_video_device *device)
- 			break;
- 	if (i = br->count || !level)
- 		level = max_level;
--
--set_level:
-+ set_level:
- 	result = acpi_video_device_lcd_set_level(device, level);
- 	if (result)
--		goto out_free_levels;
-+		goto free_levels;
+ 	/* Allow only one process to open a particular port at a time */
+@@ -1066,7 +1066,7 @@ static int port_fops_open(struct inode *inode, struct file *filp)
+ 	if (port->guest_connected) {
+ 		spin_unlock_irq(&port->inbuf_lock);
+ 		ret = -EBUSY;
+-		goto out;
++		goto put_ref;
+ 	}
  
- 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
- 			  "found %d brightness levels\n", br->count - 2));
+ 	port->guest_connected = true;
+@@ -1087,7 +1087,7 @@ static int port_fops_open(struct inode *inode, struct file *filp)
+ 	send_control_msg(filp->private_data, VIRTIO_CONSOLE_PORT_OPEN, 1);
+ 
  	return 0;
--
--out_free_levels:
-+ free_levels:
- 	kfree(br->levels);
- 	kfree(br);
- 	device->brightness = NULL;
+-out:
++ put_ref:
+ 	kref_put(&port->kref, remove_port);
+ 	return ret;
+ }
 -- 
 2.10.0
 
