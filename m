@@ -1,110 +1,58 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 12 Sep 2016 19:27:31 +0000
-Subject: Re: [PATCH 10/26] tpm: constify local structures
-Message-Id: <20160912192731.GA3186@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 20:03:02 +0000
+Subject: [PATCH 3/4] clk/Renesas-MSTP: Less function calls in cpg_mstp_clocks_init() after error detection
+Message-Id: <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
- <1473599168-30561-11-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-11-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
+In-Reply-To: <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Peter Huewe <peterhuewe@gmx.de>, joe@perches.com, kernel-janitors@vger.kernel.org, Marcel Selhorst <tpmdd@selhorst.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, Sep 11, 2016 at 03:05:52PM +0200, Julia Lawall wrote:
-> For structure types defined in the same file or local header files, find
-> top-level static structure declarations that have the following
-> properties:
-> 1. Never reassigned.
-> 2. Address never taken
-> 3. Not passed to a top-level macro call
-> 4. No pointer or array-typed field passed to a function or stored in a
-> variable.
-> Declare structures having all of these properties as const.
-> 
-> Done using Coccinelle.
-> Based on a suggestion by Joe Perches <joe@perches.com>.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 21:30:27 +0200
 
-Applied to the tip of my tree:
+The kfree() function was called in up to two cases
+by the cpg_mstp_clocks_init() function during error handling even if
+the passed variable contained a null pointer.
 
-http://git.infradead.org/users/jjs/linux-tpmdd.git/log
+* Split a condition check for memory allocation failures so that
+  each pointer from these function calls will be checked immediately.
 
-Thanks for the good work!
+  See also background information:
+  Topic "CWE-754: Improper check for unusual or exceptional conditions"
+  Link: https://cwe.mitre.org/data/definitions/754.html
 
-/Jarkko
+* Return directly after a call of the function "kzalloc" failed
+  at the beginning.
 
-> 
-> ---
-> The semantic patch seems too long for a commit log, but is in the cover
-> letter.
-> 
->  drivers/char/tpm/tpm-interface.c |   10 +++++-----
->  drivers/char/tpm/tpm-sysfs.c     |    2 +-
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1abe2d7..e84888f 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -633,7 +633,7 @@ EXPORT_SYMBOL_GPL(tpm_get_timeouts);
->  #define TPM_ORD_CONTINUE_SELFTEST 83
->  #define CONTINUE_SELFTEST_RESULT_SIZE 10
->  
-> -static struct tpm_input_header continue_selftest_header = {
-> +static const struct tpm_input_header continue_selftest_header = {
->  	.tag = TPM_TAG_RQU_COMMAND,
->  	.length = cpu_to_be32(10),
->  	.ordinal = cpu_to_be32(TPM_ORD_CONTINUE_SELFTEST),
-> @@ -659,7 +659,7 @@ static int tpm_continue_selftest(struct tpm_chip *chip)
->  
->  #define TPM_ORDINAL_PCRREAD cpu_to_be32(21)
->  #define READ_PCR_RESULT_SIZE 30
-> -static struct tpm_input_header pcrread_header = {
-> +static const struct tpm_input_header pcrread_header = {
->  	.tag = TPM_TAG_RQU_COMMAND,
->  	.length = cpu_to_be32(14),
->  	.ordinal = TPM_ORDINAL_PCRREAD
-> @@ -745,7 +745,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->   */
->  #define TPM_ORD_PCR_EXTEND cpu_to_be32(20)
->  #define EXTEND_PCR_RESULT_SIZE 34
-> -static struct tpm_input_header pcrextend_header = {
-> +static const struct tpm_input_header pcrextend_header = {
->  	.tag = TPM_TAG_RQU_COMMAND,
->  	.length = cpu_to_be32(34),
->  	.ordinal = TPM_ORD_PCR_EXTEND
-> @@ -949,7 +949,7 @@ EXPORT_SYMBOL_GPL(wait_for_tpm_stat);
->  #define TPM_ORD_SAVESTATE cpu_to_be32(152)
->  #define SAVESTATE_RESULT_SIZE 10
->  
-> -static struct tpm_input_header savestate_header = {
-> +static const struct tpm_input_header savestate_header = {
->  	.tag = TPM_TAG_RQU_COMMAND,
->  	.length = cpu_to_be32(10),
->  	.ordinal = TPM_ORD_SAVESTATE
-> @@ -1032,7 +1032,7 @@ int tpm_pm_resume(struct device *dev)
->  EXPORT_SYMBOL_GPL(tpm_pm_resume);
->  
->  #define TPM_GETRANDOM_RESULT_SIZE	18
-> -static struct tpm_input_header tpm_getrandom_header = {
-> +static const struct tpm_input_header tpm_getrandom_header = {
->  	.tag = TPM_TAG_RQU_COMMAND,
->  	.length = cpu_to_be32(14),
->  	.ordinal = TPM_ORD_GET_RANDOM
-> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-> index b46cf70..26fccad 100644
-> --- a/drivers/char/tpm/tpm-sysfs.c
-> +++ b/drivers/char/tpm/tpm-sysfs.c
-> @@ -22,7 +22,7 @@
->  
->  #define READ_PUBEK_RESULT_SIZE 314
->  #define TPM_ORD_READPUBEK cpu_to_be32(124)
-> -static struct tpm_input_header tpm_readpubek_header = {
-> +static const struct tpm_input_header tpm_readpubek_header = {
->  	.tag = TPM_TAG_RQU_COMMAND,
->  	.length = cpu_to_be32(30),
->  	.ordinal = TPM_ORD_READPUBEK
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/renesas/clk-mstp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 1fdc44b..6c82e0e 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -167,10 +167,12 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ 	unsigned int i;
+ 
+ 	group = kzalloc(sizeof(*group), GFP_KERNEL);
++	if (!group)
++		return;
++
+ 	clks = kmalloc_array(MSTP_MAX_CLOCKS, sizeof(*clks), GFP_KERNEL);
+-	if (group = NULL || clks = NULL) {
++	if (!clks) {
+ 		kfree(group);
+-		kfree(clks);
+ 		return;
+ 	}
+ 
+-- 
+2.10.0
+
