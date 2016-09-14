@@ -1,37 +1,41 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 22 Sep 2016 10:44:10 +0000
-Subject: Re: crypto-caamhash: Fine-tuning for several function implementations
-Message-Id: <20160922104410.GE5884@gondor.apana.org.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 20:01:41 +0000
+Subject: [PATCH 2/4] clk/Renesas-MSTP: Delete an error message for a failed memory allocation
+Message-Id: <04cf79a5-df91-d8c2-83b2-ad9e9130ee7a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
-In-Reply-To: <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
+ <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
+In-Reply-To: <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Labbe Corentin <clabbe.montjoie@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
-On Thu, Sep 15, 2016 at 04:36:35PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 15 Sep 2016 16:27:23 +0200
-> 
-> Some update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (6):
->   Use kmalloc_array() in ahash_setkey()
->   Rename jump labels in ahash_setkey()
->   Rename a jump label in five functions
->   Return a value directly in caam_hash_cra_init()
->   Delete an unnecessary initialisation in seven functions
->   Move common error handling code in two functions
-> 
->  drivers/crypto/caam/caamhash.c | 111 +++++++++++++++++++----------------------
->  1 file changed, 52 insertions(+), 59 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 21:17:18 +0200
 
-All applied.  Thanks.
+Omit an extra message for a memory allocation failure in this function.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/renesas/clk-mstp.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 9375777..1fdc44b 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -171,7 +171,6 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ 	if (group = NULL || clks = NULL) {
+ 		kfree(group);
+ 		kfree(clks);
+-		pr_err("%s: failed to allocate group\n", __func__);
+ 		return;
+ 	}
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.10.0
+
