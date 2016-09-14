@@ -1,82 +1,89 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Sep 2016 11:14:07 +0000
-Subject: [PATCH 4/5] ISDN-CAPI: Adjust checks for null pointers in four functions
-Message-Id: <20395fb4-0899-eb2a-c0ce-cca8bf6fd6f0@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 14:03:15 +0000
+Subject: [PATCH 04/11] virtio_console: Rename jump labels in virtcons_probe()
+Message-Id: <b1201791-5078-ca9d-e5af-df6ebd05d67b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
-In-Reply-To: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Sep 2016 12:26:38 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 14 Sep 2016 14:24:05 +0200
 
-The script "checkpatch.pl" can point information out like the following.
-
-Comparison to NULL could be written !=E2=80=A6
-
-Thus fix the affected source code places.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/isdn/capi/capidrv.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/char/virtio_console.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/isdn/capi/capidrv.c b/drivers/isdn/capi/capidrv.c
-index bd614e3..83f756d 100644
---- a/drivers/isdn/capi/capidrv.c
-+++ b/drivers/isdn/capi/capidrv.c
-@@ -334,8 +334,7 @@ static capidrv_plci *new_plci(capidrv_contr *card, int =
-chan)
- 	capidrv_plci *plcip;
-=20
- 	plcip =3D kzalloc(sizeof(capidrv_plci), GFP_ATOMIC);
--
--	if (plcip =3D NULL)
-+	if (!plcip)
- 		return NULL;
-=20
- 	plcip->state =3D ST_PLCI_NONE;
-@@ -403,8 +402,7 @@ static inline capidrv_ncci *new_ncci(capidrv_contr *car=
-d,
- 	capidrv_ncci *nccip;
-=20
- 	nccip =3D kzalloc(sizeof(capidrv_ncci), GFP_ATOMIC);
--
--	if (nccip =3D NULL)
-+	if (!nccip)
- 		return NULL;
-=20
- 	nccip->ncci =3D ncci;
-@@ -757,7 +755,7 @@ static inline int new_bchan(capidrv_contr *card)
- {
- 	int i;
- 	for (i =3D 0; i < card->nbchan; i++) {
--		if (card->bchans[i].plcip =3D NULL) {
-+		if (!card->bchans[i].plcip) {
- 			card->bchans[i].disconnecting =3D 0;
- 			return i;
- 		}
-@@ -2192,7 +2190,7 @@ static void enable_dchannel_trace(capidrv_contr *card)
- 		       card->name, errcode);
- 		return;
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 004314e..768bbb7 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -2037,7 +2037,7 @@ static int virtcons_probe(struct virtio_device *vdev)
+ 	portdev = kmalloc(sizeof(*portdev), GFP_KERNEL);
+ 	if (!portdev) {
+ 		err = -ENOMEM;
+-		goto fail;
++		goto exit;
  	}
--	if (strstr(manufacturer, "AVM") =3D NULL) {
-+	if (!strstr(manufacturer, "AVM")) {
- 		printk(KERN_ERR "%s: not from AVM, no d-channel trace possible (%s)\n",
- 		       card->name, manufacturer);
- 		return;
---=20
+ 
+ 	/* Attach this portdev to this virtio_device, and vice-versa. */
+@@ -2051,7 +2051,7 @@ static int virtcons_probe(struct virtio_device *vdev)
+ 			"Error %d registering chrdev for device %u\n",
+ 			portdev->chr_major, vdev->index);
+ 		err = portdev->chr_major;
+-		goto free;
++		goto free_port;
+ 	}
+ 
+ 	multiport = false;
+@@ -2068,7 +2068,7 @@ static int virtcons_probe(struct virtio_device *vdev)
+ 	err = init_vqs(portdev);
+ 	if (err < 0) {
+ 		dev_err(&vdev->dev, "Error %d initializing vqs\n", err);
+-		goto free_chrdev;
++		goto unregister;
+ 	}
+ 
+ 	spin_lock_init(&portdev->ports_lock);
+@@ -2091,7 +2091,7 @@ static int virtcons_probe(struct virtio_device *vdev)
+ 			dev_err(&vdev->dev,
+ 				"Error allocating buffers for control queue\n");
+ 			err = -ENOMEM;
+-			goto free_vqs;
++			goto send_control_message;
+ 		}
+ 	} else {
+ 		/*
+@@ -2121,17 +2121,16 @@ static int virtcons_probe(struct virtio_device *vdev)
+ 		wait_for_completion(&early_console_added);
+ 
+ 	return 0;
+-
+-free_vqs:
++ send_control_message:
+ 	/* The host might want to notify mgmt sw about device add failure */
+ 	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
+ 			   VIRTIO_CONSOLE_DEVICE_READY, 0);
+ 	remove_vqs(portdev);
+-free_chrdev:
++ unregister:
+ 	unregister_chrdev(portdev->chr_major, "virtio-portsdev");
+-free:
++ free_port:
+ 	kfree(portdev);
+-fail:
++ exit:
+ 	return err;
+ }
+ 
+-- 
 2.10.0
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
