@@ -1,38 +1,97 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 24 Sep 2016 20:07:30 +0000
-Subject: [PATCH] drm/tegra: sor: No need to free devm_ allocated memory
-Message-Id: <1474747650-10306-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 14:10:04 +0000
+Subject: [PATCH 11/11] virtio_console: Rename a jump label in five functions
+Message-Id: <3fe1a284-eda5-9951-c978-17fa4ea7d501@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com, linux-tegra@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-'brick' has been allocated by 'devm_kzalloc', so there is no need here to
-free it explicitly.
-There is only one caller of 'tegra_clk_sor_brick_register()'. This function
-is a probe function which correctly checks and handles the return value of
-'tegra_clk_sor_brick_register()'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 15:37:52 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Adjust a jump label according to the current Linux coding style convention.
+Thus replace the identifier "out" by "unlock".
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/tegra/sor.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/char/virtio_console.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 74d0540b8d4c..a8f528925009 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -349,8 +349,6 @@ static struct clk *tegra_clk_sor_brick_register(struct tegra_sor *sor,
- 	brick->hw.init = &init;
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 0c4d4e7..6c90c9c 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -257,11 +257,11 @@ static struct port *find_port_by_vtermno(u32 vtermno)
+ 	list_for_each_entry(cons, &pdrvdata.consoles, list) {
+ 		if (cons->vtermno = vtermno) {
+ 			port = container_of(cons, struct port, cons);
+-			goto out;
++			goto unlock;
+ 		}
+ 	}
+ 	port = NULL;
+-out:
++ unlock:
+ 	spin_unlock_irqrestore(&pdrvdata_lock, flags);
+ 	return port;
+ }
+@@ -276,11 +276,11 @@ static struct port *find_port_by_devt_in_portdev(struct ports_device *portdev,
+ 	list_for_each_entry(port, &portdev->ports, list) {
+ 		if (port->cdev->dev = dev) {
+ 			kref_get(&port->kref);
+-			goto out;
++			goto unlock;
+ 		}
+ 	}
+ 	port = NULL;
+-out:
++ unlock:
+ 	spin_unlock_irqrestore(&portdev->ports_lock, flags);
  
- 	clk = devm_clk_register(sor->dev, &brick->hw);
--	if (IS_ERR(clk))
--		kfree(brick);
+ 	return port;
+@@ -296,10 +296,10 @@ static struct port *find_port_by_devt(dev_t dev)
+ 	list_for_each_entry(portdev, &pdrvdata.portdevs, list) {
+ 		port = find_port_by_devt_in_portdev(portdev, dev);
+ 		if (port)
+-			goto out;
++			goto unlock;
+ 	}
+ 	port = NULL;
+-out:
++ unlock:
+ 	spin_unlock_irqrestore(&pdrvdata_lock, flags);
+ 	return port;
+ }
+@@ -312,9 +312,9 @@ static struct port *find_port_by_id(struct ports_device *portdev, u32 id)
+ 	spin_lock_irqsave(&portdev->ports_lock, flags);
+ 	list_for_each_entry(port, &portdev->ports, list)
+ 		if (port->id = id)
+-			goto out;
++			goto unlock;
+ 	port = NULL;
+-out:
++ unlock:
+ 	spin_unlock_irqrestore(&portdev->ports_lock, flags);
  
- 	return clk;
+ 	return port;
+@@ -329,9 +329,9 @@ static struct port *find_port_by_vq(struct ports_device *portdev,
+ 	spin_lock_irqsave(&portdev->ports_lock, flags);
+ 	list_for_each_entry(port, &portdev->ports, list)
+ 		if (port->in_vq = vq || port->out_vq = vq)
+-			goto out;
++			goto unlock;
+ 	port = NULL;
+-out:
++ unlock:
+ 	spin_unlock_irqrestore(&portdev->ports_lock, flags);
+ 	return port;
  }
 -- 
-2.7.4
+2.10.0
 
