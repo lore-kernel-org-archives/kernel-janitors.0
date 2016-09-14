@@ -1,50 +1,38 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 20:17:01 +0000
-Subject: [PATCH 2/7] ACPI-APEI-HEST: Use kmalloc_array() in hest_ghes_dev_register()
-Message-Id: <99c1e4fd-5fa8-bc22-59b1-e6784806a314@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 13:56:03 +0000
+Subject: [PATCH 00/11] virtio-console: Fine-tuning for 14 function implementations
+Message-Id: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
-In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 20:55:33 +0200
+Date: Wed, 14 Sep 2016 15:43:21 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kmalloc_array".
+Several update suggestions were taken into account
+from static source code analysis.
 
-  This issue was detected by using the Coccinelle software.
+Markus Elfring (11):
+  Use kmalloc_array() in init_vqs()
+  Less function calls in init_vqs() after error detection
+  Rename a jump label in init()
+  Rename jump labels in virtcons_probe()
+  Rename jump labels in add_port()
+  Rename a jump label in port_fops_open()
+  Rename a jump label in port_fops_splice_write()
+  Rename jump labels in port_fops_write()
+  Rename a jump label in __send_to_port()
+  Rename jump labels in alloc_buf()
+  Rename a jump label in five functions
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+ drivers/char/virtio_console.c | 155 ++++++++++++++++++++++++------------------
+ 1 file changed, 87 insertions(+), 68 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/acpi/apei/hest.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index e170885..a852237 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -186,7 +186,9 @@ static int __init hest_ghes_dev_register(unsigned int ghes_count)
- 	struct ghes_arr ghes_arr;
- 
- 	ghes_arr.count = 0;
--	ghes_arr.ghes_devs = kmalloc(sizeof(void *) * ghes_count, GFP_KERNEL);
-+	ghes_arr.ghes_devs = kmalloc_array(ghes_count,
-+					   sizeof(*ghes_arr.ghes_devs),
-+					   GFP_KERNEL);
- 	if (!ghes_arr.ghes_devs)
- 		return -ENOMEM;
- 
 -- 
 2.10.0
 
