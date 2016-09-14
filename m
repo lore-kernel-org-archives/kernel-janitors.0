@@ -1,32 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 10 Sep 2016 02:27:50 +0000
-Subject: Re: [PATCH] ATM-ForeRunnerHE: Use kmalloc_array() in he_init_group()
-Message-Id: <20160909.192750.65059727736015475.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 16:40:32 +0000
+Subject: Re: perf/x86: Use kmalloc_array() in merge_attr()
+Message-Id: <a465479e-59eb-b047-dbe6-f3686b4ecd31@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <edd03d91-0aff-73ed-cb04-c5851ac90dca@users.sourceforge.net>
-In-Reply-To: <edd03d91-0aff-73ed-cb04-c5851ac90dca@users.sourceforge.net>
+References: <daf81ea8-21bc-d5d0-11af-8957216ae323@users.sourceforge.net>
+ <20160905075149.GQ10153@twins.programming.kicks-ass.net>
+In-Reply-To: <20160905075149.GQ10153@twins.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, 3chas3@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr, pbonzini@redhat.com
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Sep 2016 15:50:05 +0200
+>> * A multiplication for the size determination of a memory allocation
+>>   indicated that an array data structure should be processed.
+>>   Thus use the corresponding function "kmalloc_array".
+>>
+>>   This issue was detected by using the Coccinelle software.
+>>
+>> * Replace the specification of a data structure by a pointer dereference
+>>   to make the corresponding size determination a bit safer according to
+>>   the Linux coding style convention.
+> 
+> Why!?
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 8 Sep 2016 15:43:37 +0200
-> 
-> * Multiplications for the size determination of memory allocations
->   indicated that array data structures should be processed.
->   Thus use the corresponding function "kmalloc_array".
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Replace the specification of data types by pointer dereferences
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+How do you think about an information like the following from
+the well-known script "checkpatch.pl"?
 
-Applied.
+WARNING: Prefer kmalloc_array over kmalloc with multiply
+
+
+Would you like to suggest any more constraints for this kind of
+software refactoring?
+
+Regards,
+Markus
