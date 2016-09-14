@@ -1,67 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 17:35:47 +0000
-Subject: [PATCH 03/14] GPU-DRM-TTM: Rename jump labels in ttm_page_pool_free()
-Message-Id: <c965a015-d674-5867-4a38-ade343afc8be@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 14:06:05 +0000
+Subject: [PATCH 07/11] virtio_console: Rename a jump label in port_fops_splice_write()
+Message-Id: <cb8e64ec-5917-ce0d-cc95-845f8ce0fa34@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
-In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+ <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 14:30:12 +0200
+Date: Wed, 14 Sep 2016 15:01:51 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/ttm/ttm_page_alloc.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/char/virtio_console.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc.c b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-index 13fdd19..f33f6f6 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-@@ -322,8 +322,7 @@ static int ttm_page_pool_free(struct ttm_page_pool *pool, unsigned nr_free,
- 		pr_err("Failed to allocate memory for pool free operation\n");
- 		return 0;
- 	}
--
--restart:
-+ lock_restart:
- 	spin_lock_irqsave(&pool->lock, irq_flags);
- 
- 	list_for_each_entry_reverse(p, &pool->list, lru) {
-@@ -356,14 +355,13 @@ restart:
- 
- 			/* free all so restart the processing */
- 			if (nr_free)
--				goto restart;
-+				goto lock_restart;
- 
- 			/* Not allowed to fall through or break because
- 			 * following context is inside spinlock while we are
- 			 * outside here.
- 			 */
--			goto out;
--
-+			goto check_pages_to_free;
- 		}
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 99dc659..d8681d9 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -947,17 +947,17 @@ static ssize_t port_fops_splice_write(struct pipe_inode_info *pipe,
+ 	pipe_lock(pipe);
+ 	if (!pipe->nrbufs) {
+ 		ret = 0;
+-		goto error_out;
++		goto unlock;
  	}
  
-@@ -379,7 +377,7 @@ restart:
+ 	ret = wait_port_writable(port, filp->f_flags & O_NONBLOCK);
+ 	if (ret < 0)
+-		goto error_out;
++		goto unlock;
  
- 	if (freed_pages)
- 		ttm_pages_put(pages_to_free, freed_pages);
--out:
-+ check_pages_to_free:
- 	if (pages_to_free != static_buf)
- 		kfree(pages_to_free);
- 	return nr_free;
+ 	buf = alloc_buf(port->out_vq, 0, pipe->nrbufs);
+ 	if (!buf) {
+ 		ret = -ENOMEM;
+-		goto error_out;
++		goto unlock;
+ 	}
+ 
+ 	sgl.n = 0;
+@@ -973,8 +973,7 @@ static ssize_t port_fops_splice_write(struct pipe_inode_info *pipe,
+ 	if (unlikely(ret <= 0))
+ 		free_buf(buf, true);
+ 	return ret;
+-
+-error_out:
++ unlock:
+ 	pipe_unlock(pipe);
+ 	return ret;
+ }
 -- 
 2.10.0
 
