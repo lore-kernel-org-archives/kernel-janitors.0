@@ -1,59 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 06:30:08 +0000
-Subject: [PATCH 6/7] iio: Rename a jump label in iio_scan_el_store()
-Message-Id: <7d0faf7f-6163-bce6-07fc-840efbbab99a@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 14:02:19 +0000
+Subject: [PATCH 03/11] virtio_console: Rename a jump label in init()
+Message-Id: <47b70aab-df6b-0765-e666-ceaff93ffad8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
-In-Reply-To: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
+ <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 07:40:59 +0200
+Date: Wed, 14 Sep 2016 14:10:24 +0200
 
 Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/iio/industrialio-buffer.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/char/virtio_console.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 4b8f313..57e201a 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -363,22 +363,21 @@ static ssize_t iio_scan_el_store(struct device *dev,
- 	mutex_lock(&indio_dev->mlock);
- 	if (iio_buffer_is_active(indio_dev->buffer)) {
- 		ret = -EBUSY;
--		goto error_ret;
-+		goto unlock;
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index bf0ad57..004314e 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -2309,7 +2309,7 @@ static int __init init(void)
+ 	err = register_virtio_driver(&virtio_console);
+ 	if (err < 0) {
+ 		pr_err("Error %d registering virtio driver\n", err);
+-		goto free;
++		goto remove;
  	}
- 	ret = iio_scan_mask_query(indio_dev, buffer, this_attr->address);
- 	if (ret < 0)
--		goto error_ret;
-+		goto unlock;
- 	if (!state && ret) {
- 		ret = iio_scan_mask_clear(buffer, this_attr->address);
- 		if (ret)
--			goto error_ret;
-+			goto unlock;
- 	} else if (state && !ret) {
- 		ret = iio_scan_mask_set(indio_dev, buffer, this_attr->address);
- 		if (ret)
--			goto error_ret;
-+			goto unlock;
+ 	err = register_virtio_driver(&virtio_rproc_serial);
+ 	if (err < 0) {
+@@ -2318,9 +2318,9 @@ static int __init init(void)
+ 		goto unregister;
  	}
--
--error_ret:
-+unlock:
- 	mutex_unlock(&indio_dev->mlock);
- 
- 	return ret < 0 ? ret : len;
+ 	return 0;
+-unregister:
++ unregister:
+ 	unregister_virtio_driver(&virtio_console);
+-free:
++ remove:
+ 	debugfs_remove_recursive(pdrvdata.debugfs_dir);
+ 	class_destroy(pdrvdata.class);
+ 	return err;
 -- 
 2.10.0
 
