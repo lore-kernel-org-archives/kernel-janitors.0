@@ -1,55 +1,99 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:26:04 +0000
-Subject: [PATCH 37/47] block-rbd: Rename a jump label in bio_chain_clone_range()
-Message-Id: <2dd5023d-2f43-1110-674c-e9c4ece7ee9b@users.sourceforge.net>
+Date: Wed, 14 Sep 2016 14:04:03 +0000
+Subject: [PATCH 05/11] virtio_console: Rename jump labels in add_port()
+Message-Id: <85ca0841-c36d-12d2-b978-dbac04e19c5d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:56:37 +0200
+Date: Wed, 14 Sep 2016 14:53:00 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/char/virtio_console.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8e9d30f7..abc2dcb 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -1421,12 +1421,12 @@ static struct bio *bio_chain_clone_range(struct bio **bio_src,
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 768bbb7..40b8775 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1399,7 +1399,7 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 	port = kmalloc(sizeof(*port), GFP_KERNEL);
+ 	if (!port) {
+ 		err = -ENOMEM;
+-		goto fail;
++		goto send_control_message;
+ 	}
+ 	kref_init(&port->kref);
  
- 		if (!bi) {
- 			rbd_warn(NULL, "bio_chain exhausted with %u left", len);
--			goto out_err;	/* EINVAL; ran out of bio's */
-+			goto put_chain;	/* EINVAL; ran out of bio's */
- 		}
- 		bi_size = min_t(unsigned int, bi->bi_iter.bi_size - off, len);
- 		bio = bio_clone_range(bi, off, bi_size, gfpmask);
- 		if (!bio)
--			goto out_err;	/* ENOMEM */
-+			goto put_chain;	/* ENOMEM */
+@@ -1434,7 +1434,7 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 	if (err < 0) {
+ 		dev_err(&port->portdev->vdev->dev,
+ 			"Error %d adding cdev for port %u\n", err, id);
+-		goto free_cdev;
++		goto delete_cdev;
+ 	}
+ 	port->dev = device_create(pdrvdata.class, &port->portdev->vdev->dev,
+ 				  devt, port, "vport%up%u",
+@@ -1444,7 +1444,7 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 		dev_err(&port->portdev->vdev->dev,
+ 			"Error %d creating device for port %u\n",
+ 			err, id);
+-		goto free_cdev;
++		goto delete_cdev;
+ 	}
  
- 		*end = bio;
- 		end = &bio->bi_next;
-@@ -1442,7 +1442,7 @@ static struct bio *bio_chain_clone_range(struct bio **bio_src,
- 	*offset = off;
+ 	spin_lock_init(&port->inbuf_lock);
+@@ -1456,7 +1456,7 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 	if (!nr_added_bufs) {
+ 		dev_err(port->dev, "Error allocating inbufs\n");
+ 		err = -ENOMEM;
+-		goto free_device;
++		goto destroy_device;
+ 	}
  
- 	return chain;
--out_err:
-+ put_chain:
- 	bio_chain_put(chain);
+ 	if (is_rproc_serial(port->portdev->vdev))
+@@ -1473,7 +1473,7 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 		 */
+ 		err = init_port_console(port);
+ 		if (err)
+-			goto free_inbufs;
++			goto free_buffers;
+ 	}
  
- 	return NULL;
+ 	spin_lock_irq(&portdev->ports_lock);
+@@ -1500,17 +1500,16 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 							 &port_debugfs_ops);
+ 	}
+ 	return 0;
+-
+-free_inbufs:
++ free_buffers:
+ 	while ((buf = virtqueue_detach_unused_buf(port->in_vq)))
+ 		free_buf(buf, true);
+-free_device:
++ destroy_device:
+ 	device_destroy(pdrvdata.class, port->dev->devt);
+-free_cdev:
++ delete_cdev:
+ 	cdev_del(port->cdev);
+-free_port:
++ free_port:
+ 	kfree(port);
+-fail:
++ send_control_message:
+ 	/* The host might want to notify management sw about port add failure */
+ 	__send_control_msg(portdev, id, VIRTIO_CONSOLE_PORT_READY, 0);
+ 	return err;
 -- 
 2.10.0
 
