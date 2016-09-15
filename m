@@ -1,71 +1,51 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 21 Sep 2016 11:22:15 +0000
-Subject: Re: [PATCH 4/5] GPU-DRM: Replace a kzalloc() call by kcalloc() in drm_legacy_addbufs_sg()
-Message-Id: <20160921112215.GJ4714@dvetter-linux.ger.corp.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Sep 2016 14:40:04 +0000
+Subject: [PATCH 1/6] crypto-caamhash: Use kmalloc_array() in ahash_setkey()
+Message-Id: <4e1bc780-fa00-cfc9-c058-240bb899d701@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <2fd2da19-d57e-5017-0594-fd52e78493fa@users.sourceforge.net>
- <b340d1ca-f114-a523-e6d1-afe7fd6c3826@users.sourceforge.net>
-In-Reply-To: <b340d1ca-f114-a523-e6d1-afe7fd6c3826@users.sourceforge.net>
+ <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
+In-Reply-To: <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Labbe Corentin <clabbe.montjoie@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Sep 19, 2016 at 05:56:49PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 19 Sep 2016 17:30:31 +0200
-> 
-> The script "checkpatch.pl" can point information out like the following.
-> 
-> WARNING: Prefer kcalloc over kzalloc with multiply
-> 
-> Thus fix the affected source code place.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Sep 2016 11:20:09 +0200
 
-Merged patches 1-4. I agree with Jani that changing jump labels is a pure
-bikeshed, so didn't apply them.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-Also I'll repeat that imo checkpatch patches are great to get started, but
-it's much better to do more involved work. Both since that tends to be
-more interesting, and fixing all the checkpatch issues will rob the next
-newbies of some great starting opportunity. Which means from now on I'll
-only selectively apply your checkpatch patches.
+  This issue was detected by using the Coccinelle software.
 
-We have todo list with some ideas at:
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-https://www.x.org/wiki/DRMJanitors/
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/caam/caamhash.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks, Daniel
-> ---
->  drivers/gpu/drm/drm_bufs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-> index 36dd685..adb1dd7 100644
-> --- a/drivers/gpu/drm/drm_bufs.c
-> +++ b/drivers/gpu/drm/drm_bufs.c
-> @@ -1117,8 +1117,7 @@ static int drm_legacy_addbufs_sg(struct drm_device *dev,
->  		return -EINVAL;
->  	}
->  
-> -	entry->buflist = kzalloc(count * sizeof(*entry->buflist),
-> -				GFP_KERNEL);
-> +	entry->buflist = kcalloc(count, sizeof(*entry->buflist), GFP_KERNEL);
->  	if (!entry->buflist) {
->  		mutex_unlock(&dev->struct_mutex);
->  		atomic_dec(&dev->buf_alloc);
-> -- 
-> 2.10.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
+index 9d7fc9e..f19df8f 100644
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -525,8 +525,9 @@ static int ahash_setkey(struct crypto_ahash *ahash,
+ #endif
+ 
+ 	if (keylen > blocksize) {
+-		hashed_key = kmalloc(sizeof(u8) * digestsize, GFP_KERNEL |
+-				     GFP_DMA);
++		hashed_key = kmalloc_array(digestsize,
++					   sizeof(*hashed_key),
++					   GFP_KERNEL | GFP_DMA);
+ 		if (!hashed_key)
+ 			return -ENOMEM;
+ 		ret = hash_digest_key(ctx, key, &keylen, hashed_key,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.10.0
+
