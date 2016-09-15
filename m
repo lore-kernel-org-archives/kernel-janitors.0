@@ -1,75 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Sep 2016 20:40:22 +0000
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 20:48:06 +0000
 Subject: Re: [PATCH 3/4] clk/Renesas-MSTP: Less function calls in cpg_mstp_clocks_init() after error detectio
-Message-Id: <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
+Message-Id: <CAMuHMdWgK7HSqL+XWdrzDZkvmg5rb3MtykYNkS1amm5HgnOBAg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net> <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
  <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
- <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com>
-In-Reply-To: <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com>
+ <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com> <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
+In-Reply-To: <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-> It's perfectly legal to call kfree() on a NULL pointer.
-
-I know this function property well.
-
-
->> * Split a condition check for memory allocation failures so that
->>   each pointer from these function calls will be checked immediately.
+On Thu, Sep 15, 2016 at 10:40 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+>>> * Split a condition check for memory allocation failures so that
+>>>   each pointer from these function calls will be checked immediately.
+>>>
+>>>   See also background information:
+>>>   Topic "CWE-754: Improper check for unusual or exceptional conditions"
+>>>   Link: https://cwe.mitre.org/data/definitions/754.html
+>>>
+>>> * Return directly after a call of the function "kzalloc" failed
+>>>   at the beginning.
 >>
->>   See also background information:
->>   Topic "CWE-754: Improper check for unusual or exceptional conditions"
->>   Link: https://cwe.mitre.org/data/definitions/754.html
->>
->> * Return directly after a call of the function "kzalloc" failed
->>   at the beginning.
-> 
-> Both calls are already close together.
+>> Both calls are already close together.
+>
+> Can it be that an other software development concern is eventually
+> overlooked because of this "neighbourship" (or is categorised with
+> a lower priority)?
+>
+> I suggest to reconsider this design detail if it is really acceptable
+> for the safe implementation of such a software module.
+>
+> * How much will it matter in general that one function call was performed
+>   in this use case without checking its return values immediately?
+>
+> * Should it usually be determined quicker if a required resource like
+>   memory could be acquired before trying the next allocation?
 
-Can it be that an other software development concern is eventually
-overlooked because of this "neighbourship" (or is categorised with
-a lower priority)?
+Note that if memory allocation fails in this driver, the system won't
+boot at all. So even not checking for allocation failures at all could be
+acceptable.
 
-I suggest to reconsider this design detail if it is really acceptable
-for the safe implementation of such a software module.
+Gr{oetje,eeting}s,
 
-* How much will it matter in general that one function call was performed
-  in this use case without checking its return values immediately?
+                        Geert
 
-* Should it usually be determined quicker if a required resource like
-  memory could be acquired before trying the next allocation?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-> In addition, your patch increases the LoC, IMHO without improving the code.
-
-I find this consequence still debatable.
-
-
->> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
->> index 1fdc44b..6c82e0e 100644
->> --- a/drivers/clk/renesas/clk-mstp.c
->> +++ b/drivers/clk/renesas/clk-mstp.c
->> @@ -167,10 +167,12 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
->>         unsigned int i;
->>
->>         group = kzalloc(sizeof(*group), GFP_KERNEL);
->> +       if (!group)
->> +               return;
->> +
->>         clks = kmalloc_array(MSTP_MAX_CLOCKS, sizeof(*clks), GFP_KERNEL);
->> -       if (group = NULL || clks = NULL) {
->> +       if (!clks) {
->>                 kfree(group);
->> -               kfree(clks);
->>                 return;
->>         }
-
-Is this update suggestion worth for another look?
-
-Regards,
-Markus
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
