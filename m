@@ -1,63 +1,80 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:51:45 +0000
-Subject: [PATCH 10/47] block-rbd: One function call less in rbd_dev_image_name() after error detection
-Message-Id: <e3852062-0872-1cea-ec0d-a03d4c77ddd9@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 15 Sep 2016 20:23:25 +0000
+Subject: [PATCH 2/3] dwc_eth_qos: constify net_device_ops structures
+Message-Id: <1473971006-2074-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+References: <1473971006-2074-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473971006-2074-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Lars Persson <lars.persson@axis.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:00:18 +0200
+Check for net_device_ops structures that are only stored in the netdev_ops
+field of a net_device structure.  This field is declared const, so
+net_device_ops structures that have this property can be declared as const
+also.
 
-The kfree() function was called in one case by the rbd_dev_image_name()
-function during error handling even if the passed variable "reply_buf"
-contained a null pointer.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Adjust jump targets according to the Linux coding style convention.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct net_device_ops i@p = { ... };
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.netdev_ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct net_device_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct net_device_ops i = { ... };
+// </smpl>
+
+The result of size on this file before the change is:
+   text	      data     bss     dec         hex	  filename
+  21623       1316      40   22979        59c3
+   drivers/net/ethernet/synopsys/dwc_eth_qos.o
+
+and after the change it is:
+   text	     data        bss	    dec	    hex	filename
+  22199       724         40      22963    59b3
+   drivers/net/ethernet/synopsys/dwc_eth_qos.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/block/rbd.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/synopsys/dwc_eth_qos.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index aac51a1..145bbcc 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -5276,14 +5276,14 @@ static char *rbd_dev_image_name(struct rbd_device *rbd_dev)
- 	size = sizeof (__le32) + RBD_IMAGE_NAME_LEN_MAX;
- 	reply_buf = kmalloc(size, GFP_KERNEL);
- 	if (!reply_buf)
--		goto out;
-+		goto free_id;
+diff --git a/drivers/net/ethernet/synopsys/dwc_eth_qos.c b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
+index c25d971..b5c4554 100644
+--- a/drivers/net/ethernet/synopsys/dwc_eth_qos.c
++++ b/drivers/net/ethernet/synopsys/dwc_eth_qos.c
+@@ -2761,7 +2761,7 @@ static const struct ethtool_ops dwceqos_ethtool_ops = {
+ 	.set_link_ksettings = phy_ethtool_set_link_ksettings,
+ };
  
- 	ret = rbd_obj_method_sync(rbd_dev, RBD_DIRECTORY,
- 				"rbd", "dir_get_name",
- 				image_id, image_id_size,
- 				reply_buf, size);
- 	if (ret < 0)
--		goto out;
-+		goto free_buffer;
- 	p = reply_buf;
- 	end = reply_buf + ret;
- 
-@@ -5292,8 +5292,9 @@ static char *rbd_dev_image_name(struct rbd_device *rbd_dev)
- 		image_name = NULL;
- 	else
- 		dout("%s: name is %s len is %zd\n", __func__, image_name, len);
--out:
-+ free_buffer:
- 	kfree(reply_buf);
-+ free_id:
- 	kfree(image_id);
- 
- 	return image_name;
--- 
-2.10.0
+-static struct net_device_ops netdev_ops = {
++static const struct net_device_ops netdev_ops = {
+ 	.ndo_open		= dwceqos_open,
+ 	.ndo_stop		= dwceqos_stop,
+ 	.ndo_start_xmit		= dwceqos_start_xmit,
 
