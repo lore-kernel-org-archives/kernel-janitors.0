@@ -1,53 +1,82 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 12:12:01 +0000
-Subject: [PATCH 1/4] virtio_blk: Use kmalloc_array() in init_vq()
-Message-Id: <7a8dd874-3700-1445-2143-2a604cd043ab@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 15 Sep 2016 20:23:24 +0000
+Subject: [PATCH 1/3] hisilicon: constify net_device_ops structures
+Message-Id: <1473971006-2074-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
-In-Reply-To: <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
+References: <1473971006-2074-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1473971006-2074-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: kernel-janitors@vger.kernel.org, Salil Mehta <salil.mehta@huawei.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 11:32:22 +0200
+Check for net_device_ops structures that are only stored in the netdev_ops
+field of a net_device structure.  This field is declared const, so
+net_device_ops structures that have this property can be declared as const
+also.
 
-Multiplications for the size determination of memory allocations
-indicated that array data structures should be processed.
-Thus use the corresponding function "kmalloc_array".
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct net_device_ops i@p = { ... };
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok@
+identifier r.i;
+struct net_device e;
+position p;
+@@
+e.netdev_ops = &i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct net_device_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct net_device_ops i = { ... };
+// </smpl>
+
+The result of size on this file before the change is:
+
+   text	      data     bss     dec         hex	  filename
+   7995	       848       8    8851        2293
+   drivers/net/ethernet/hisilicon/hip04_eth.o
+
+and after the change it is:
+
+   text	     data        bss	    dec	    hex	filename
+   8571	      256          8       8835    2283
+   drivers/net/ethernet/hisilicon/hip04_eth.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/block/virtio_blk.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hip04_eth.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 93b1aaa..6553eb7 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -390,13 +390,13 @@ static int init_vq(struct virtio_blk *vblk)
- 	if (err)
- 		num_vqs = 1;
+diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
+index a90ab40..415ffa1 100644
+--- a/drivers/net/ethernet/hisilicon/hip04_eth.c
++++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
+@@ -761,7 +761,7 @@ static const struct ethtool_ops hip04_ethtool_ops = {
+ 	.get_drvinfo		= hip04_get_drvinfo,
+ };
  
--	vblk->vqs = kmalloc(sizeof(*vblk->vqs) * num_vqs, GFP_KERNEL);
-+	vblk->vqs = kmalloc_array(num_vqs, sizeof(*vblk->vqs), GFP_KERNEL);
- 	if (!vblk->vqs)
- 		return -ENOMEM;
- 
--	names = kmalloc(sizeof(*names) * num_vqs, GFP_KERNEL);
--	callbacks = kmalloc(sizeof(*callbacks) * num_vqs, GFP_KERNEL);
--	vqs = kmalloc(sizeof(*vqs) * num_vqs, GFP_KERNEL);
-+	names = kmalloc_array(num_vqs, sizeof(*names), GFP_KERNEL);
-+	callbacks = kmalloc_array(num_vqs, sizeof(*callbacks), GFP_KERNEL);
-+	vqs = kmalloc_array(num_vqs, sizeof(*vqs), GFP_KERNEL);
- 	if (!names || !callbacks || !vqs) {
- 		err = -ENOMEM;
- 		goto out;
--- 
-2.10.0
+-static struct net_device_ops hip04_netdev_ops = {
++static const struct net_device_ops hip04_netdev_ops = {
+ 	.ndo_open		= hip04_mac_open,
+ 	.ndo_stop		= hip04_mac_stop,
+ 	.ndo_get_stats		= hip04_get_stats,
 
