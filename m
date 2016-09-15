@@ -1,42 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 07:19:33 +0000
-Subject: [PATCH 3/5] ATM-nicstar: Improve another size determination in ns_init_card()
-Message-Id: <c8533128-fbcf-f7fe-9354-1949b47cca32@users.sourceforge.net>
+Date: Thu, 15 Sep 2016 14:41:18 +0000
+Subject: [PATCH 2/6] crypto-caamhash: Rename jump labels in ahash_setkey()
+Message-Id: <18b28eb8-f683-9181-8de9-f6288533ff66@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
-In-Reply-To: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
+In-Reply-To: <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Labbe Corentin <clabbe.montjoie@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 08:30:09 +0200
+Date: Thu, 15 Sep 2016 13:54:49 +0200
 
-Replace the specification of a data structure by a reference for a field
-in a local variable as the parameter for the operator "sizeof" to make
-the corresponding size determination a bit safer according to
-the Linux coding style convention.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/atm/nicstar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/caam/caamhash.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
-index 96062e1..ef977bf 100644
---- a/drivers/atm/nicstar.c
-+++ b/drivers/atm/nicstar.c
-@@ -611,7 +611,7 @@ static int ns_init_card(int i, struct pci_dev *pcidev)
- 	for (j = 0; j < card->rct_size; j++)
- 		ns_write_sram(card, j * 4, u32d, 4);
+diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
+index f19df8f..6017470 100644
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -533,7 +533,7 @@ static int ahash_setkey(struct crypto_ahash *ahash,
+ 		ret = hash_digest_key(ctx, key, &keylen, hashed_key,
+ 				      digestsize);
+ 		if (ret)
+-			goto badkey;
++			goto bad_free_key;
+ 		key = hashed_key;
+ 	}
  
--	memset(card->vcmap, 0, NS_MAX_RCTSIZE * sizeof(vc_map));
-+	memset(card->vcmap, 0, sizeof(card->vcmap));
+@@ -551,14 +551,14 @@ static int ahash_setkey(struct crypto_ahash *ahash,
  
- 	for (j = 0; j < NS_FRSCD_NUM; j++)
- 		card->scd2vc[j] = NULL;
+ 	ret = gen_split_hash_key(ctx, key, keylen);
+ 	if (ret)
+-		goto badkey;
++		goto bad_free_key;
+ 
+ 	ctx->key_dma = dma_map_single(jrdev, ctx->key, ctx->split_key_pad_len,
+ 				      DMA_TO_DEVICE);
+ 	if (dma_mapping_error(jrdev, ctx->key_dma)) {
+ 		dev_err(jrdev, "unable to map key i/o memory\n");
+ 		ret = -ENOMEM;
+-		goto map_err;
++		goto error_free_key;
+ 	}
+ #ifdef DEBUG
+ 	print_hex_dump(KERN_ERR, "ctx.key@"__stringify(__LINE__)": ",
+@@ -571,11 +571,10 @@ static int ahash_setkey(struct crypto_ahash *ahash,
+ 		dma_unmap_single(jrdev, ctx->key_dma, ctx->split_key_pad_len,
+ 				 DMA_TO_DEVICE);
+ 	}
+-
+-map_err:
++ error_free_key:
+ 	kfree(hashed_key);
+ 	return ret;
+-badkey:
++ bad_free_key:
+ 	kfree(hashed_key);
+ 	crypto_ahash_set_flags(ahash, CRYPTO_TFM_RES_BAD_KEY_LEN);
+ 	return -EINVAL;
 -- 
 2.10.0
 
