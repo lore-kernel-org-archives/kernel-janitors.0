@@ -1,73 +1,67 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Fri, 09 Sep 2016 11:30:44 +0000
-Subject: Re: [PATCH v3 3/3] intel-mid: Move boundry check to the start of init code
-Message-Id: <1473420644.11323.128.camel@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Sep 2016 08:56:51 +0000
+Subject: Re: [bug report] fs/block_dev.c: add bdev_read_page() and bdev_write_page()
+Message-Id: <20160915085650.GC26713@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473210255-227672-1-git-send-email-sathyanarayanan.kuppuswamy@linux.intel.com>
-         <d1643b61f9d5b6fe7d1b168341d9b1e89696c43b.1473386382.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <d1643b61f9d5b6fe7d1b168341d9b1e89696c43b.1473386382.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20160804140206.GA11852@mwanda>
+In-Reply-To: <20160804140206.GA11852@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, wharms@bfs.de
-Cc: dan.carpenter@oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, david.a.cohen@linux.intel.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 2016-09-08 at 19:07 -0700, Kuppuswamy Sathyanarayanan wrote:
-> Moved the instance boundary check to the start of the pcal9555a
-> platform init code. This will prevent unnecessary initialization
-> on instance boundary error.
+What happened with this?
 
-I don't see how it makes any better.
+regards,
+dan carpenter
 
-I would drop this patch.
-
+On Thu, Aug 04, 2016 at 05:02:06PM +0300, Dan Carpenter wrote:
+> Hello Matthew Wilcox,
 > 
-> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@
-> linux.intel.com>
-> ---
->  arch/x86/platform/intel-mid/device_libs/platform_pcal9555a.c | 12
-> ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> The patch 47a191fd38eb: "fs/block_dev.c: add bdev_read_page() and
+> bdev_write_page()" from Jun 4, 2014, leads to the following static
+> checker warning:
 > 
-> diff --git a/arch/x86/platform/intel-
-> mid/device_libs/platform_pcal9555a.c b/arch/x86/platform/intel-
-> mid/device_libs/platform_pcal9555a.c
-> index cde764e..4e5dd95 100644
-> --- a/arch/x86/platform/intel-mid/device_libs/platform_pcal9555a.c
-> +++ b/arch/x86/platform/intel-mid/device_libs/platform_pcal9555a.c
-> @@ -34,6 +34,12 @@ static void __init *pcal9555a_platform_data(void
-> *info)
->  	char intr_pin_name[SFI_NAME_LEN + 1];
->  	int gpio_base, intr;
->  
-> +	if (nr >= PCAL9555A_NUM) {
-> +		pr_err("%s: Too many instances, only %d supported\n",
-> __func__,
-> +		       PCAL9555A_NUM);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
->  	snprintf(base_pin_name, sizeof(base_pin_name), "%s_base",
-> type);
->  	snprintf(intr_pin_name, sizeof(intr_pin_name), "%s_int",
-> type);
->  
-> @@ -47,12 +53,6 @@ static void __init *pcal9555a_platform_data(void
-> *info)
->  		return NULL;
->  	}
->  
-> -	if (nr >= PCAL9555A_NUM) {
-> -		pr_err("%s: Too many instances, only %d supported\n",
-> __func__,
-> -		       PCAL9555A_NUM);
-> -		return ERR_PTR(-ENOMEM);
-> -	}
-> -
->  	pcal9555a = &pcal9555a_pdata[nr++];
->  	pcal9555a->gpio_base = gpio_base;
->  
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> 	include/linux/genhd.h:382 part_inc_in_flight()
+> 	warn: buffer overflow 'part->in_flight' 2 <= 72
+> 
+> include/linux/genhd.h
+>    380  static inline void part_inc_in_flight(struct hd_struct *part, int rw)
+>    381  {
+>    382          atomic_inc(&part->in_flight[rw]);
+>                                             ^^
+> This should either be READ or WRITE.
+> 
+>    383          if (part->partno)
+>    384                  atomic_inc(&part_to_disk(part)->part0.in_flight[rw]);
+>    385  }
+> 
+> 
+>    444  int bdev_write_page(struct block_device *bdev, sector_t sector,
+>    445                          struct page *page, struct writeback_control *wbc)
+>    446  {
+>    447          int result;
+>    448          int rw = (wbc->sync_mode = WB_SYNC_ALL) ? WRITE_SYNC : WRITE;
+>                                                            ^^^^^^^^^^
+> But here we're setting it to WRITE_SYNC.
+> 
+>    449          const struct block_device_operations *ops = bdev->bd_disk->fops;
+>    450  
+>    451          if (!ops->rw_page || bdev_get_integrity(bdev))
+>    452                  return -EOPNOTSUPP;
+>    453          result = blk_queue_enter(bdev->bd_queue, false);
+>    454          if (result)
+>    455                  return result;
+>    456  
+>    457          set_page_writeback(page);
+>    458          result = ops->rw_page(bdev, sector + get_start_sect(bdev), page, rw);
+>    459          if (result)
+>    460                  end_page_writeback(page);
+>    461          else
+>    462                  unlock_page(page);
+>    463          blk_queue_exit(bdev->bd_queue);
+>    464          return result;
+>    465  }
+> 
+> regards,
+> dan carpenter
