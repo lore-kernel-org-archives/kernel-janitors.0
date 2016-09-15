@@ -1,46 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:50:06 +0000
-Subject: [PATCH 04/16] md/bitmap: Improve another size determination in bitmap_storage_alloc()
-Message-Id: <6ca5ea5b-6348-2d17-4cb5-f1c3a512995c@users.sourceforge.net>
+Date: Thu, 15 Sep 2016 14:43:21 +0000
+Subject: [PATCH 4/6] crypto-caamhash: Return a value directly in caam_hash_cra_init()
+Message-Id: <6f8877c6-873b-ee9d-596e-2567eed44962@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
-In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+ <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
+In-Reply-To: <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Labbe Corentin <clabbe.montjoie@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 14:19:00 +0200
+Date: Thu, 15 Sep 2016 14:56:12 +0200
 
-Replace the specification of a data type by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+* Return a value at the end without storing it in an intermediate variable.
+
+* Delete the local variable "ret" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/bitmap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/crypto/caam/caamhash.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-index 9b3f723..c278865 100644
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -791,9 +791,9 @@ static int bitmap_storage_alloc(struct bitmap_storage *store,
+diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
+index 933252f..b1dbc53 100644
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -1846,7 +1846,6 @@ static int caam_hash_cra_init(struct crypto_tfm *tfm)
+ 					 HASH_MSG_LEN + SHA256_DIGEST_SIZE,
+ 					 HASH_MSG_LEN + 64,
+ 					 HASH_MSG_LEN + SHA512_DIGEST_SIZE };
+-	int ret = 0;
  
- 	/* We need 4 bits per page, rounded up to a multiple
- 	 * of sizeof(unsigned long) */
--	store->filemap_attr = kzalloc(
--		roundup(DIV_ROUND_UP(num_pages*4, 8), sizeof(unsigned long)),
--		GFP_KERNEL);
-+	store->filemap_attr = kzalloc(roundup(DIV_ROUND_UP(num_pages * 4, 8),
-+					      sizeof(*store->filemap_attr)),
-+				      GFP_KERNEL);
- 	if (!store->filemap_attr)
- 		return -ENOMEM;
+ 	/*
+ 	 * Get a Job ring from Job Ring driver to ensure in-order
+@@ -1866,10 +1865,7 @@ static int caam_hash_cra_init(struct crypto_tfm *tfm)
  
+ 	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
+ 				 sizeof(struct caam_hash_state));
+-
+-	ret = ahash_set_sh_desc(ahash);
+-
+-	return ret;
++	return ahash_set_sh_desc(ahash);
+ }
+ 
+ static void caam_hash_cra_exit(struct crypto_tfm *tfm)
 -- 
 2.10.0
 
