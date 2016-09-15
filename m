@@ -1,16 +1,19 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 15 Sep 2016 08:56:51 +0000
+Date: Thu, 15 Sep 2016 09:11:10 +0000
 Subject: Re: [bug report] fs/block_dev.c: add bdev_read_page() and bdev_write_page()
-Message-Id: <20160915085650.GC26713@mwanda>
+Message-Id: <20160915091110.GD26713@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160804140206.GA11852@mwanda>
 In-Reply-To: <20160804140206.GA11852@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: kernel-janitors@vger.kernel.org, linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Hugh Dickins <hughd@google.com>
 
-What happened with this?
+Let's try reporting this again to new email addresses...
+
+Btw, belated thanks for creating a linux-block mailing list Jens.  :)
 
 regards,
 dan carpenter
