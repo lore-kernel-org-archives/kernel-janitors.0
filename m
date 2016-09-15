@@ -1,147 +1,222 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 13:06:03 +0000
-Subject: [PATCH 21/26] rtlwifi: rtl818x: constify local structures
-Message-Id: <1473599168-30561-22-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Sep 2016 14:42:20 +0000
+Subject: [PATCH 3/6] crypto-caamhash: Rename a jump label in five functions
+Message-Id: <f996c803-dfb7-0344-3acb-6d631feffbb5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
+In-Reply-To: <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Chaoming Li <chaoming_li@realsil.com.cn>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Labbe Corentin <clabbe.montjoie@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-For structure types defined in the same file or local header files, find
-top-level static structure declarations that have the following
-properties:
-1. Never reassigned.
-2. Address never taken
-3. Not passed to a top-level macro call
-4. No pointer or array-typed field passed to a function or stored in a
-variable.
-Declare structures having all of these properties as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 15 Sep 2016 14:43:38 +0200
 
-Done using Coccinelle.
-Based on a suggestion by Joe Perches <joe@perches.com>.
+Adjust jump labels according to the current Linux coding style convention.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-The semantic patch seems too long for a commit log, but is in the cover
-letter.
+ drivers/crypto/caam/caamhash.c | 49 +++++++++++++++++++-----------------------
+ 1 file changed, 22 insertions(+), 27 deletions(-)
 
- drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c |    2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c |    2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
-index 47e32cb..e7b11b4 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
-@@ -280,7 +280,7 @@ static struct rtl_mod_params rtl88ee_mod_params = {
- 	.debug = DBG_EMERG,
- };
+diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
+index 6017470..933252f 100644
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -889,7 +889,7 @@ static int ahash_update_ctx(struct ahash_request *req)
+ 		ret = ctx_map_to_sec4_sg(desc, jrdev, state, ctx->ctx_len,
+ 					 edesc->sec4_sg, DMA_BIDIRECTIONAL);
+ 		if (ret)
+-			goto err;
++			goto unmap_ctx;
  
--static struct rtl_hal_cfg rtl88ee_hal_cfg = {
-+static const struct rtl_hal_cfg rtl88ee_hal_cfg = {
- 	.bar_id = 2,
- 	.write_readback = true,
- 	.name = "rtl88e_pci",
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
-index 4780bdc..87aa209 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
-@@ -258,7 +258,7 @@ static struct rtl_mod_params rtl92ce_mod_params = {
- 	.debug = DBG_EMERG,
- };
+ 		state->buf_dma = try_buf_map_to_sec4_sg(jrdev,
+ 							edesc->sec4_sg + 1,
+@@ -919,7 +919,7 @@ static int ahash_update_ctx(struct ahash_request *req)
+ 		if (dma_mapping_error(jrdev, edesc->sec4_sg_dma)) {
+ 			dev_err(jrdev, "unable to map S/G table\n");
+ 			ret = -ENOMEM;
+-			goto err;
++			goto unmap_ctx;
+ 		}
  
--static struct rtl_hal_cfg rtl92ce_hal_cfg = {
-+static const struct rtl_hal_cfg rtl92ce_hal_cfg = {
- 	.bar_id = 2,
- 	.write_readback = true,
- 	.name = "rtl92c_pci",
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-index c6e09a1..0538a4d 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-@@ -262,7 +262,7 @@ static struct rtl_mod_params rtl92de_mod_params = {
- 	.debug = DBG_EMERG,
- };
+ 		append_seq_in_ptr(desc, edesc->sec4_sg_dma, ctx->ctx_len +
+@@ -935,7 +935,7 @@ static int ahash_update_ctx(struct ahash_request *req)
  
--static struct rtl_hal_cfg rtl92de_hal_cfg = {
-+static const struct rtl_hal_cfg rtl92de_hal_cfg = {
- 	.bar_id = 2,
- 	.write_readback = true,
- 	.name = "rtl8192de",
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
-index c31c6bf..ac299cb 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
-@@ -262,7 +262,7 @@ static struct rtl_mod_params rtl92ee_mod_params = {
- 	.debug = DBG_EMERG,
- };
+ 		ret = caam_jr_enqueue(jrdev, desc, ahash_done_bi, req);
+ 		if (ret)
+-			goto err;
++			goto unmap_ctx;
  
--static struct rtl_hal_cfg rtl92ee_hal_cfg = {
-+static const struct rtl_hal_cfg rtl92ee_hal_cfg = {
- 	.bar_id = 2,
- 	.write_readback = true,
- 	.name = "rtl92ee_pci",
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
-index 31baca41..5e8e02d 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
-@@ -306,7 +306,7 @@ static struct rtl_mod_params rtl92se_mod_params = {
+ 		ret = -EINPROGRESS;
+ 	} else if (*next_buflen) {
+@@ -953,8 +953,7 @@ static int ahash_update_ctx(struct ahash_request *req)
+ #endif
  
- /* Because memory R/W bursting will cause system hang/crash
-  * for 92se, so we don't read back after every write action */
--static struct rtl_hal_cfg rtl92se_hal_cfg = {
-+static const struct rtl_hal_cfg rtl92se_hal_cfg = {
- 	.bar_id = 1,
- 	.write_readback = false,
- 	.name = "rtl92s_pci",
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
-index ff49a8c..89c828a 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
-@@ -276,7 +276,7 @@ static struct rtl_mod_params rtl8723e_mod_params = {
- 	.disable_watchdog = false,
- };
+ 	return ret;
+-
+- err:
++ unmap_ctx:
+ 	ahash_unmap_ctx(jrdev, edesc, req, ctx->ctx_len, DMA_BIDIRECTIONAL);
+ 	kfree(edesc);
+ 	return ret;
+@@ -996,7 +995,7 @@ static int ahash_final_ctx(struct ahash_request *req)
+ 	ret = ctx_map_to_sec4_sg(desc, jrdev, state, ctx->ctx_len,
+ 				 edesc->sec4_sg, DMA_TO_DEVICE);
+ 	if (ret)
+-		goto err;
++		goto unmap_ctx;
  
--static struct rtl_hal_cfg rtl8723e_hal_cfg = {
-+static const struct rtl_hal_cfg rtl8723e_hal_cfg = {
- 	.bar_id = 2,
- 	.write_readback = true,
- 	.name = "rtl8723e_pci",
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
-index 2101793..20b53f0 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
-@@ -276,7 +276,7 @@ static struct rtl_mod_params rtl8723be_mod_params = {
- 	.ant_sel = 0,
- };
+ 	state->buf_dma = try_buf_map_to_sec4_sg(jrdev, edesc->sec4_sg + 1,
+ 						buf, state->buf_dma, buflen,
+@@ -1009,7 +1008,7 @@ static int ahash_final_ctx(struct ahash_request *req)
+ 	if (dma_mapping_error(jrdev, edesc->sec4_sg_dma)) {
+ 		dev_err(jrdev, "unable to map S/G table\n");
+ 		ret = -ENOMEM;
+-		goto err;
++		goto unmap_ctx;
+ 	}
  
--static struct rtl_hal_cfg rtl8723be_hal_cfg = {
-+static const struct rtl_hal_cfg rtl8723be_hal_cfg = {
- 	.bar_id = 2,
- 	.write_readback = true,
- 	.name = "rtl8723be_pci",
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
-index 4159f9b..22f687b1 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
-@@ -316,7 +316,7 @@ static struct rtl_mod_params rtl8821ae_mod_params = {
- 	.disable_watchdog = 0,
- };
+ 	append_seq_in_ptr(desc, edesc->sec4_sg_dma, ctx->ctx_len + buflen,
+@@ -1020,7 +1019,7 @@ static int ahash_final_ctx(struct ahash_request *req)
+ 	if (dma_mapping_error(jrdev, edesc->dst_dma)) {
+ 		dev_err(jrdev, "unable to map dst\n");
+ 		ret = -ENOMEM;
+-		goto err;
++		goto unmap_ctx;
+ 	}
  
--static struct rtl_hal_cfg rtl8821ae_hal_cfg = {
-+static const struct rtl_hal_cfg rtl8821ae_hal_cfg = {
- 	.bar_id = 2,
- 	.write_readback = true,
- 	.name = "rtl8821ae_pci",
+ #ifdef DEBUG
+@@ -1030,11 +1029,10 @@ static int ahash_final_ctx(struct ahash_request *req)
+ 
+ 	ret = caam_jr_enqueue(jrdev, desc, ahash_done_ctx_src, req);
+ 	if (ret)
+-		goto err;
++		goto unmap_ctx;
+ 
+ 	return -EINPROGRESS;
+-
+-err:
++ unmap_ctx:
+ 	ahash_unmap_ctx(jrdev, edesc, req, digestsize, DMA_FROM_DEVICE);
+ 	kfree(edesc);
+ 	return ret;
+@@ -1094,7 +1092,7 @@ static int ahash_finup_ctx(struct ahash_request *req)
+ 	ret = ctx_map_to_sec4_sg(desc, jrdev, state, ctx->ctx_len,
+ 				 edesc->sec4_sg, DMA_TO_DEVICE);
+ 	if (ret)
+-		goto err;
++		goto unmap_ctx;
+ 
+ 	state->buf_dma = try_buf_map_to_sec4_sg(jrdev, edesc->sec4_sg + 1,
+ 						buf, state->buf_dma, buflen,
+@@ -1104,14 +1102,14 @@ static int ahash_finup_ctx(struct ahash_request *req)
+ 				  sec4_sg_src_index, ctx->ctx_len + buflen,
+ 				  req->nbytes);
+ 	if (ret)
+-		goto err;
++		goto unmap_ctx;
+ 
+ 	edesc->dst_dma = map_seq_out_ptr_result(desc, jrdev, req->result,
+ 						digestsize);
+ 	if (dma_mapping_error(jrdev, edesc->dst_dma)) {
+ 		dev_err(jrdev, "unable to map dst\n");
+ 		ret = -ENOMEM;
+-		goto err;
++		goto unmap_ctx;
+ 	}
+ 
+ #ifdef DEBUG
+@@ -1121,11 +1119,10 @@ static int ahash_finup_ctx(struct ahash_request *req)
+ 
+ 	ret = caam_jr_enqueue(jrdev, desc, ahash_done_ctx_src, req);
+ 	if (ret)
+-		goto err;
++		goto unmap_ctx;
+ 
+ 	return -EINPROGRESS;
+-
+-err:
++ unmap_ctx:
+ 	ahash_unmap_ctx(jrdev, edesc, req, digestsize, DMA_FROM_DEVICE);
+ 	kfree(edesc);
+ 	return ret;
+@@ -1350,14 +1347,14 @@ static int ahash_update_no_ctx(struct ahash_request *req)
+ 		if (dma_mapping_error(jrdev, edesc->sec4_sg_dma)) {
+ 			dev_err(jrdev, "unable to map S/G table\n");
+ 			ret = -ENOMEM;
+-			goto err;
++			goto unmap_ctx;
+ 		}
+ 
+ 		append_seq_in_ptr(desc, edesc->sec4_sg_dma, to_hash, LDST_SGF);
+ 
+ 		ret = map_seq_out_ptr_ctx(desc, jrdev, state, ctx->ctx_len);
+ 		if (ret)
+-			goto err;
++			goto unmap_ctx;
+ 
+ #ifdef DEBUG
+ 		print_hex_dump(KERN_ERR, "jobdesc@"__stringify(__LINE__)": ",
+@@ -1367,7 +1364,7 @@ static int ahash_update_no_ctx(struct ahash_request *req)
+ 
+ 		ret = caam_jr_enqueue(jrdev, desc, ahash_done_ctx_dst, req);
+ 		if (ret)
+-			goto err;
++			goto unmap_ctx;
+ 
+ 		ret = -EINPROGRESS;
+ 		state->update = ahash_update_ctx;
+@@ -1388,8 +1385,7 @@ static int ahash_update_no_ctx(struct ahash_request *req)
+ #endif
+ 
+ 	return ret;
+-
+-err:
++ unmap_ctx:
+ 	ahash_unmap_ctx(jrdev, edesc, req, ctx->ctx_len, DMA_TO_DEVICE);
+ 	kfree(edesc);
+ 	return ret;
+@@ -1548,7 +1544,7 @@ static int ahash_update_first(struct ahash_request *req)
+ 		ret = ahash_edesc_add_src(ctx, edesc, req, mapped_nents, 0, 0,
+ 					  to_hash);
+ 		if (ret)
+-			goto err;
++			goto unmap_ctx;
+ 
+ 		if (*next_buflen)
+ 			scatterwalk_map_and_copy(next_buf, req->src, to_hash,
+@@ -1558,7 +1554,7 @@ static int ahash_update_first(struct ahash_request *req)
+ 
+ 		ret = map_seq_out_ptr_ctx(desc, jrdev, state, ctx->ctx_len);
+ 		if (ret)
+-			goto err;
++			goto unmap_ctx;
+ 
+ #ifdef DEBUG
+ 		print_hex_dump(KERN_ERR, "jobdesc@"__stringify(__LINE__)": ",
+@@ -1568,7 +1564,7 @@ static int ahash_update_first(struct ahash_request *req)
+ 
+ 		ret = caam_jr_enqueue(jrdev, desc, ahash_done_ctx_dst, req);
+ 		if (ret)
+-			goto err;
++			goto unmap_ctx;
+ 
+ 		ret = -EINPROGRESS;
+ 		state->update = ahash_update_ctx;
+@@ -1588,8 +1584,7 @@ static int ahash_update_first(struct ahash_request *req)
+ #endif
+ 
+ 	return ret;
+-
+-err:
++ unmap_ctx:
+ 	ahash_unmap_ctx(jrdev, edesc, req, ctx->ctx_len, DMA_TO_DEVICE);
+ 	kfree(edesc);
+ 	return ret;
+-- 
+2.10.0
 
