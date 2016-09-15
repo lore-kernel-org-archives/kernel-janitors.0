@@ -1,43 +1,99 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 08:34:20 +0000
-Subject: [PATCH 4/4] GPU-DRM-TILCDC: Delete unnecessary variable initialisations in tilcdc_convert_slave_node
-Message-Id: <e44b638f-2d44-31ae-9c4f-65e711a57eba@users.sourceforge.net>
+Date: Thu, 15 Sep 2016 14:45:29 +0000
+Subject: [PATCH 6/6] crypto-caamhash: Move common error handling code in two functions
+Message-Id: <baa5db91-27e7-ecab-f2c9-29e549b6e5f0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <2f3f7ad7-16a0-1dfb-d073-0d993cd767ee@users.sourceforge.net>
-In-Reply-To: <2f3f7ad7-16a0-1dfb-d073-0d993cd767ee@users.sourceforge.net>
+ <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
+In-Reply-To: <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Labbe Corentin <clabbe.montjoie@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 10:15:36 +0200
+Date: Thu, 15 Sep 2016 16:00:55 +0200
 
-Four local variables will be set to an appropriate pointer a bit later.
-Thus omit the explicit initialisation which became unnecessary with
-a previous update step.
+Move statements for error handling which were identical
+in two if branches to the end of these functions.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/crypto/caam/caamhash.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c b/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-index 6ee5865..ae90728 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-@@ -196,8 +196,7 @@ static const char * const tilcdc_slave_props[] __initconst = {
+diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
+index adb8b19..660dc20 100644
+--- a/drivers/crypto/caam/caamhash.c
++++ b/drivers/crypto/caam/caamhash.c
+@@ -1231,9 +1231,7 @@ static int ahash_final_no_ctx(struct ahash_request *req)
+ 	state->buf_dma = dma_map_single(jrdev, buf, buflen, DMA_TO_DEVICE);
+ 	if (dma_mapping_error(jrdev, state->buf_dma)) {
+ 		dev_err(jrdev, "unable to map src\n");
+-		ahash_unmap(jrdev, edesc, req, digestsize);
+-		kfree(edesc);
+-		return -ENOMEM;
++		goto unmap;
+ 	}
  
- void __init tilcdc_convert_slave_node(void)
- {
--	struct device_node *slave = NULL, *lcdc = NULL;
--	struct device_node *i2c = NULL, *fragment = NULL;
-+	struct device_node *slave, *lcdc, *i2c, *fragment;
- 	struct device_node *overlay, *encoder;
- 	struct property *prop;
- 	/* For all memory needed for the overlay tree. This memory can
+ 	append_seq_in_ptr(desc, state->buf_dma, buflen, 0);
+@@ -1242,9 +1240,7 @@ static int ahash_final_no_ctx(struct ahash_request *req)
+ 						digestsize);
+ 	if (dma_mapping_error(jrdev, edesc->dst_dma)) {
+ 		dev_err(jrdev, "unable to map dst\n");
+-		ahash_unmap(jrdev, edesc, req, digestsize);
+-		kfree(edesc);
+-		return -ENOMEM;
++		goto unmap;
+ 	}
+ 	edesc->src_nents = 0;
+ 
+@@ -1262,6 +1258,11 @@ static int ahash_final_no_ctx(struct ahash_request *req)
+ 	}
+ 
+ 	return ret;
++ unmap:
++	ahash_unmap(jrdev, edesc, req, digestsize);
++	kfree(edesc);
++	return -ENOMEM;
++
+ }
+ 
+ /* submit ahash update if it the first job descriptor after update */
+@@ -1453,18 +1454,14 @@ static int ahash_finup_no_ctx(struct ahash_request *req)
+ 				  req->nbytes);
+ 	if (ret) {
+ 		dev_err(jrdev, "unable to map S/G table\n");
+-		ahash_unmap(jrdev, edesc, req, digestsize);
+-		kfree(edesc);
+-		return -ENOMEM;
++		goto unmap;
+ 	}
+ 
+ 	edesc->dst_dma = map_seq_out_ptr_result(desc, jrdev, req->result,
+ 						digestsize);
+ 	if (dma_mapping_error(jrdev, edesc->dst_dma)) {
+ 		dev_err(jrdev, "unable to map dst\n");
+-		ahash_unmap(jrdev, edesc, req, digestsize);
+-		kfree(edesc);
+-		return -ENOMEM;
++		goto unmap;
+ 	}
+ 
+ #ifdef DEBUG
+@@ -1481,6 +1478,11 @@ static int ahash_finup_no_ctx(struct ahash_request *req)
+ 	}
+ 
+ 	return ret;
++ unmap:
++	ahash_unmap(jrdev, edesc, req, digestsize);
++	kfree(edesc);
++	return -ENOMEM;
++
+ }
+ 
+ /* submit first update job descriptor after init */
 -- 
 2.10.0
 
