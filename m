@@ -1,49 +1,79 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Sep 2016 09:55:20 +0000
-Subject: [bug report] net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)
-Message-Id: <20160930095520.GA10045@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 16 Sep 2016 10:55:26 +0000
+Subject: [PATCH 3/3] iio: common: ssp_sensors: gyro: constify iio_info structures
+Message-Id: <1474023326-24645-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1474023326-24645-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1474023326-24645-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Netanel Belgazal,
+Check for iio_info structures that are only stored in the info field of a
+iio_dev structure.  This field is declared const, so iio_info structures
+that have this property can be declared as const also.
 
-The patch 1738cd3ed342: "net: ena: Add a driver for Amazon Elastic
-Network Adapters (ENA)" from Aug 10, 2016, leads to the following
-static checker warning:
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-	drivers/net/ethernet/amazon/ena/ena_ethtool.c:459 ena_flow_hash_to_flow_type()
-	warn: bitwise AND condition is false here
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct iio_info i@p = { ... };
 
-drivers/net/ethernet/amazon/ena/ena_ethtool.c
-   454  
-   455  static u32 ena_flow_hash_to_flow_type(u16 hash_fields)
-   456  {
-   457          u32 data = 0;
-   458  
-   459          if (hash_fields & ENA_ADMIN_RSS_L2_DA)
-                                  ^^^^^^^^^^^^^^^^^^^
-This is zero.
+@ok@
+identifier r.i;
+struct iio_dev e;
+position p;
+@@
+e.info = &i@p;
 
-   460                  data |= RXH_L2DA;
-   461  
-   462          if (hash_fields & ENA_ADMIN_RSS_L3_DA)
-   463                  data |= RXH_IP_DST;
-   464  
-   465          if (hash_fields & ENA_ADMIN_RSS_L3_SA)
-   466                  data |= RXH_IP_SRC;
-   467  
-   468          if (hash_fields & ENA_ADMIN_RSS_L4_DP)
-   469                  data |= RXH_L4_B_2_3;
-   470  
-   471          if (hash_fields & ENA_ADMIN_RSS_L4_SP)
-   472                  data |= RXH_L4_B_0_1;
-   473  
-   474          return data;
-   475  }
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct iio_info e;
+@@
+e@i@p
 
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct iio_info i = { ... };
+// </smpl>
 
-regards,
-dan carpenter
+The result of size on this file before the change is:
+   text	      data     bss     dec         hex	  filename
+   1245        344       0    1589         635
+   drivers/iio/gyro/ssp_gyro_sensor.o
+
+and after the change it is:
+   text	     data        bss	    dec	    hex	filename
+   1397       192          0       1589     635
+   drivers/iio/gyro/ssp_gyro_sensor.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/iio/gyro/ssp_gyro_sensor.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/gyro/ssp_gyro_sensor.c b/drivers/iio/gyro/ssp_gyro_sensor.c
+index 0a8afdd..1f25f40 100644
+--- a/drivers/iio/gyro/ssp_gyro_sensor.c
++++ b/drivers/iio/gyro/ssp_gyro_sensor.c
+@@ -74,7 +74,7 @@ static int ssp_gyro_write_raw(struct iio_dev *indio_dev,
+ 	return -EINVAL;
+ }
+ 
+-static struct iio_info ssp_gyro_iio_info = {
++static const struct iio_info ssp_gyro_iio_info = {
+ 	.read_raw = &ssp_gyro_read_raw,
+ 	.write_raw = &ssp_gyro_write_raw,
+ };
+
