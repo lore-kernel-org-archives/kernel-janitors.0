@@ -1,88 +1,47 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Mon, 05 Sep 2016 08:06:37 +0000
-Subject: Re: [PATCH] drm/imx: Fix of_node ref counting
-Message-Id: <1473062797.2456.26.camel@pengutronix.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 16 Sep 2016 21:05:35 +0000
+Subject: [PATCH resend] sctp: Remove some redundant code
+Message-Id: <1474059935-17343-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472971523-4143-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <1473062516.2456.25.camel@pengutronix.de>
-In-Reply-To: <1473062516.2456.25.camel@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: marcelo.leitner@gmail.com, vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net
+Cc: linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Am Montag, den 05.09.2016, 10:01 +0200 schrieb Philipp Zabel:
-> Hi Christophe,
-> 
-> Am Sonntag, den 04.09.2016, 08:45 +0200 schrieb Christophe JAILLET:
-> > This code is spurious.
-> > It takes a ref on a node, then call 'of_node_put' on it and then store
-> > this node somewhere.
-> 
-> The node pointer is not stored. Note that np is not dereferenced at all,
-> we just compare the pointer value against dev->of_node.
-> It doesn't matter whether we drop the reference before or after that.
-> 
-> > It is likely that taking the ref on the parent node and releasing the child
-> > node was expected instead.
-> 
-> Initially, np is assigned to the void *data parameter. The caller holds
-> the reference to that, and we are not allowed to decrement its refcount
-> (as of_get_next_parent does). Otherwise the iterator calling this match
-> function would drop references of all the device_nodes it compares
-> against.
-> 
-> > So, use 'of_get_next_parent' instead. It does all this in just one
-> > function call.
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > Un-tested
-> > ---
-> >  drivers/gpu/drm/imx/imx-drm-core.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-> > index 438bac8fbc2b..60fb388c80f8 100644
-> > --- a/drivers/gpu/drm/imx/imx-drm-core.c
-> > +++ b/drivers/gpu/drm/imx/imx-drm-core.c
-> > @@ -449,10 +449,8 @@ static int compare_of(struct device *dev, void *data)
-> >  	}
-> >  
-> >  	/* Special case for LDB, one device for two channels */
-> > -	if (of_node_cmp(np->name, "lvds-channel") = 0) {
-> > -		np = of_get_parent(np);
-> > -		of_node_put(np);
-> > -	}
-> 
-> This could have been written as:
-> 
-> 	bool match;
-> 
-> 	/* Special case for LDB, one device for two channels */
-> 	if (of_node_cmp(np->name, "lvds-channel") = 0) {
-> 		struct device_node *parent = of_get_parent(np);
-> 
-> 		match = dev->of_node = parent;
-> 		of_node_put(parent);
-> 	} else {
-> 		match = dev->of_node = np;
-> 	}
-> 
-> 	return match;
-> 
-> which does exactly the same. Maybe the reuse of np and the pointer
-> comparison after of_node_put warrants a comment.
+In commit 311b21774f13 ("sctp: simplify sk_receive_queue locking"), a call
+to 'skb_queue_splice_tail_init()' has been made explicit. Previously it was
+hidden in 'sctp_skb_list_tail()'
 
-Actually, maybe we should just do
+Now, the code around it looks redundant. The '_init()' part of
+'skb_queue_splice_tail_init()' should already do the same.
 
--       if (of_node_cmp(np->name, "lvds-channel") = 0) {
--               np = of_get_parent(np);
--               of_node_put(np);
--       }
-+       if (of_node_cmp(np->name, "lvds-channel") = 0)
-+               np = np->parent;
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+---
+Resent because netdev@ was not in copy
+Acked-by tags added
+---
+ net/sctp/ulpqueue.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-regards
-Philipp
+diff --git a/net/sctp/ulpqueue.c b/net/sctp/ulpqueue.c
+index 877e55066f89..84d0fdaf7de9 100644
+--- a/net/sctp/ulpqueue.c
++++ b/net/sctp/ulpqueue.c
+@@ -140,11 +140,8 @@ int sctp_clear_pd(struct sock *sk, struct sctp_association *asoc)
+ 		 * we can go ahead and clear out the lobby in one shot
+ 		 */
+ 		if (!skb_queue_empty(&sp->pd_lobby)) {
+-			struct list_head *list;
+ 			skb_queue_splice_tail_init(&sp->pd_lobby,
+ 						   &sk->sk_receive_queue);
+-			list = (struct list_head *)&sctp_sk(sk)->pd_lobby;
+-			INIT_LIST_HEAD(list);
+ 			return 1;
+ 		}
+ 	} else {
+-- 
+2.7.4
+
