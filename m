@@ -1,50 +1,36 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:35:38 +0000
-Subject: [PATCH 1/30] ACPI-processor: Use kmalloc_array() in acpi_processor_get_performance_states()
-Message-Id: <b9ad0591-b67f-bc28-26da-4da394776b84@users.sourceforge.net>
+Date: Fri, 16 Sep 2016 05:32:33 +0000
+Subject: Re: clk/Renesas-MSTP: Less function calls in cpg_mstp_clocks_init() after error detection
+Message-Id: <4a7d20c9-d080-80a4-6529-bc9fa1b7a186@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
+ <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
+ <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com>
+ <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
+ <CAMuHMdWgK7HSqL+XWdrzDZkvmg5rb3MtykYNkS1amm5HgnOBAg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWgK7HSqL+XWdrzDZkvmg5rb3MtykYNkS1amm5HgnOBAg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 10:20:10 +0200
+>> * Should it usually be determined quicker if a required resource like
+>>   memory could be acquired before trying the next allocation?
+> 
+> Note that if memory allocation fails in this driver, the system won't
+> boot at all.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kmalloc_array".
+Thanks for this information.
 
-  This issue was detected by using the Coccinelle software.
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+> So even not checking for allocation failures at all could be acceptable.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/acpi/processor_perflib.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I find this opinion interesting somehow.
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index bb01dea..78f9025 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -346,9 +346,9 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
- 			  pss->package.count));
- 
- 	pr->performance->state_count = pss->package.count;
--	pr->performance->states -	    kmalloc(sizeof(struct acpi_processor_px) * pss->package.count,
--		    GFP_KERNEL);
-+	pr->performance->states = kmalloc_array(pss->package.count,
-+						sizeof(*pr->performance->states),
-+						GFP_KERNEL);
- 	if (!pr->performance->states) {
- 		result = -ENOMEM;
- 		goto end;
--- 
-2.10.0
+I would generally prefer to check return values from various function calls
+immediately instead of keeping the discussed source code structure unchanged.
 
+Regards,
+Markus
