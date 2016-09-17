@@ -1,96 +1,64 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 26 Sep 2016 00:40:58 +0000
-Subject: [PATCH 03/11 V2 RESEND] staging: dgnc: missing NULL check for ioremap in dgnc_do_remap()
-Message-Id: <20160926004058.GA3774@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:23:15 +0000
+Subject: [PATCH 14/24] ste_dma40: One check less in d40_prep_sg() after error detection
+Message-Id: <26e8b766-a614-ba4f-7f16-f3a89ed714e4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The ioremap() function can be failed, so it need to have error
-handling in dgnc_do_remap(). And also the return type of
-dgnc_do_remap() should be changed from "void" to "int"
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:34:07 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+* Adjust jump targets according to the Linux coding style convention.
+
+* Delete a repeated check which became unnecessary with this refactoring.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-RESEND: send the whole series again. Because I missed some patches
-when the V2 patches sent.
+ drivers/dma/ste_dma40.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-V2: The subject line was cut off, I put it completely and update
-change log.
-
- drivers/staging/dgnc/dgnc_driver.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index c87b3de..58cebf4 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -43,7 +43,7 @@ static void		dgnc_cleanup_board(struct dgnc_board *brd);
- static void		dgnc_poll_handler(ulong dummy);
- static int		dgnc_init_one(struct pci_dev *pdev,
- 				      const struct pci_device_id *ent);
--static void		dgnc_do_remap(struct dgnc_board *brd);
-+static int		dgnc_do_remap(struct dgnc_board *brd);
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 0788add..a7e7cd0 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -2251,7 +2251,7 @@ d40_prep_sg(struct dma_chan *dchan, struct scatterlist *sg_src,
  
- /*
-  * File operations permitted on Control/Management major.
-@@ -431,7 +431,10 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 		brd->bd_uart_offset = 0x8;
- 		brd->bd_dividend = 921600;
+ 	desc = d40_prep_desc(chan, sg_src, sg_len, dma_flags);
+ 	if (desc = NULL)
+-		goto err;
++		goto unlock;
  
--		dgnc_do_remap(brd);
-+		rc = dgnc_do_remap(brd);
-+
-+		if (rc < 0)
-+			goto failed;
+ 	if (sg_next(&sg_src[sg_len - 1]) = sg_src)
+ 		desc->cyclic = true;
+@@ -2271,7 +2271,7 @@ d40_prep_sg(struct dma_chan *dchan, struct scatterlist *sg_src,
+ 	if (ret) {
+ 		chan_err(chan, "Failed to prepare %s sg job: %d\n",
+ 			 chan_is_logical(chan) ? "log" : "phy", ret);
+-		goto err;
++		goto free_desc;
+ 	}
  
- 		/* Get and store the board VPD, if it exists */
- 		brd->bd_ops->vpd(brd);
-@@ -483,15 +486,17 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 		brd->bd_uart_offset = 0x200;
- 		brd->bd_dividend = 921600;
+ 	/*
+@@ -2283,10 +2283,9 @@ d40_prep_sg(struct dma_chan *dchan, struct scatterlist *sg_src,
+ 	spin_unlock_irqrestore(&chan->lock, flags);
  
--		dgnc_do_remap(brd);
-+		rc = dgnc_do_remap(brd);
- 
--		if (brd->re_map_membase) {
--			/* Read and store the dvid after remapping */
--			brd->dvid = readb(brd->re_map_membase + 0x8D);
-+		if (rc < 0)
-+			goto failed;
-+
-+		/* Read and store the dvid after remapping */
-+		brd->dvid = readb(brd->re_map_membase + 0x8D);
-+
-+		/* Get and store the board VPD, if it exists */
-+		brd->bd_ops->vpd(brd);
- 
--			/* Get and store the board VPD, if it exists */
--			brd->bd_ops->vpd(brd);
--		}
- 		break;
- 
- 	default:
-@@ -566,9 +571,15 @@ static int dgnc_finalize_board_init(struct dgnc_board *brd)
- /*
-  * Remap PCI memory.
-  */
--static void dgnc_do_remap(struct dgnc_board *brd)
-+static int dgnc_do_remap(struct dgnc_board *brd)
- {
-+	int rc = 0;
-+
- 	brd->re_map_membase = ioremap(brd->membase, 0x1000);
-+	if (!brd->re_map_membase)
-+		rc = -ENOMEM;
-+
-+	return rc;
+ 	return &desc->txd;
+-
+-err:
+-	if (desc)
+-		d40_desc_free(chan, desc);
++ free_desc:
++	d40_desc_free(chan, desc);
++ unlock:
+ 	spin_unlock_irqrestore(&chan->lock, flags);
+ 	return NULL;
  }
- 
- /*
 -- 
-1.9.1
+2.10.0
 
