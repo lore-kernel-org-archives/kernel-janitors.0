@@ -1,45 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:48:03 +0000
-Subject: [PATCH 08/30] ACPI-processor: Delete two unnecessary initialisations in acpi_processor_get_psd()
-Message-Id: <62dcd023-b2ff-d02f-5371-f9648ad397ec@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:10:32 +0000
+Subject: [PATCH 04/24] ste_dma40: Move an assignment in d40_lcla_allocate()
+Message-Id: <5fea9143-f4af-fae7-aa7e-8bbc9c13e72f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 13:55:52 +0200
+Date: Sat, 17 Sep 2016 08:24:46 +0200
 
-The local variables "psd" and "status" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+Move one assignment for the local variable "ret" so that its setting
+will only be performed after corresponding data processing succeeded
+by this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/ste_dma40.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index c2813cc..3f94279 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -529,11 +529,11 @@ EXPORT_SYMBOL(acpi_processor_notify_smm);
- static int acpi_processor_get_psd(struct acpi_processor	*pr)
- {
- 	int result = 0;
--	acpi_status status = AE_OK;
-+	acpi_status status;
- 	struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
- 	struct acpi_buffer format = {sizeof("NNNNN"), "NNNNN"};
- 	struct acpi_buffer state = {0, NULL};
--	union acpi_object  *psd = NULL;
-+	union acpi_object  *psd;
- 	struct acpi_psd_package *pdomain;
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 76d63b6..220129e 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3402,7 +3402,7 @@ static int __init d40_lcla_allocate(struct d40_base *base)
+ 	struct d40_lcla_pool *pool = &base->lcla_pool;
+ 	unsigned long *page_list;
+ 	int i, j;
+-	int ret = 0;
++	int ret;
  
- 	status = acpi_evaluate_object(pr->handle, "_PSD", NULL, &buffer);
+ 	/*
+ 	 * This is somewhat ugly. We need 8192 bytes that are 18 bit aligned,
+@@ -3474,6 +3474,7 @@ static int __init d40_lcla_allocate(struct d40_base *base)
+ 
+ 	writel(virt_to_phys(base->lcla_pool.base),
+ 	       base->virtbase + D40_DREG_LCLA);
++	ret = 0;
+  free_page_list:
+ 	kfree(page_list);
+ 	return ret;
 -- 
 2.10.0
 
