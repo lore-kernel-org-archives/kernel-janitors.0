@@ -1,36 +1,56 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Mon, 26 Sep 2016 15:06:56 +0000
-Subject: Re: [2/3] hostap: Delete an unnecessary jump label in prism2_ioctl_priv_hostapd()
-Message-Id: <20160926150656.54D1A613F9@smtp.codeaurora.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:26:56 +0000
+Subject: [PATCH 16/24] ste_dma40: Rename a jump label in d40_prep_desc()
+Message-Id: <4879ed44-9a6a-856d-a108-7d8f1934e2a0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <65ed528f-7ec5-a0f2-6219-3e63a78ca0ee@users.sourceforge.net>
-In-Reply-To: <65ed528f-7ec5-a0f2-6219-3e63a78ca0ee@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 20 Aug 2016 18:21:29 +0200
-> 
-> Remove a jump label which is unneeded in this function at the end.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:51:37 +0200
 
-2 patches set to Rejected.
+Adjust jump labels according to the current Linux coding style convention.
 
-9291771 [2/3] hostap: Delete an unnecessary jump label in prism2_ioctl_priv_hostapd()
-9291775 [3/3] hostap: Delete unnecessary initialisations for the variable "ret"
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/ste_dma40.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Reason: The benefit is not clear.
-
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 6725b66..7f38496 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -2208,13 +2208,13 @@ d40_prep_desc(struct d40_chan *chan, struct scatterlist *sg,
+ 					cfg->dst_info.data_width);
+ 	if (desc->lli_len < 0) {
+ 		chan_err(chan, "Unaligned size\n");
+-		goto err;
++		goto free_desc;
+ 	}
+ 
+ 	ret = d40_pool_lli_alloc(chan, desc, desc->lli_len);
+ 	if (ret < 0) {
+ 		chan_err(chan, "Could not allocate lli\n");
+-		goto err;
++		goto free_desc;
+ 	}
+ 
+ 	desc->lli_current = 0;
+@@ -2224,8 +2224,7 @@ d40_prep_desc(struct d40_chan *chan, struct scatterlist *sg,
+ 	dma_async_tx_descriptor_init(&desc->txd, &chan->chan);
+ 
+ 	return desc;
+-
+-err:
++ free_desc:
+ 	d40_desc_free(chan, desc);
+ 	return NULL;
+ }
 -- 
-https://patchwork.kernel.org/patch/9291771/
-
-Documentation about submitting wireless patches and checking status
-from patchwork:
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.10.0
 
