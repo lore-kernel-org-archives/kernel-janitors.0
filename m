@@ -1,49 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 13:05:44 +0000
-Subject: [PATCH 02/26] lib: constify local structures
-Message-Id: <1473599168-30561-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:07:30 +0000
+Subject: [PATCH 01/24] ste_dma40: Use kmalloc_array() in d40_lcla_allocate()
+Message-Id: <ee94dee5-d88e-e42d-abc3-4e5a7727b561@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-For structure types defined in the same file or local header files, find
-top-level static structure declarations that have the following
-properties:
-1. Never reassigned.
-2. Address never taken
-3. Not passed to a top-level macro call
-4. No pointer or array-typed field passed to a function or stored in a
-variable.
-Declare structures having all of these properties as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 16 Sep 2016 17:56:07 +0200
 
-Done using Coccinelle.
-Based on a suggestion by Joe Perches <joe@perches.com>.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+  This issue was detected by using the Coccinelle software.
 
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-The semantic patch seems too long for a commit log, but is in the cover
-letter.
+ drivers/dma/ste_dma40.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- lib/crc64_ecma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/crc64_ecma.c b/lib/crc64_ecma.c
-index 41629ea..d013bf3 100644
---- a/lib/crc64_ecma.c
-+++ b/lib/crc64_ecma.c
-@@ -44,7 +44,7 @@ struct crc64_table {
- };
- 
- 
--static struct crc64_table CRC64_ECMA_182 = {
-+static const struct crc64_table CRC64_ECMA_182 = {
- 	CRC64_DEFAULT_INITVAL,
- 	{
- 		0x0000000000000000ULL,
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 73203ac..fbebeff 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3409,9 +3409,9 @@ static int __init d40_lcla_allocate(struct d40_base *base)
+ 	 * To full fill this hardware requirement without wasting 256 kb
+ 	 * we allocate pages until we get an aligned one.
+ 	 */
+-	page_list = kmalloc(sizeof(unsigned long) * MAX_LCLA_ALLOC_ATTEMPTS,
+-			    GFP_KERNEL);
+-
++	page_list = kmalloc_array(MAX_LCLA_ALLOC_ATTEMPTS,
++				  sizeof(*page_list),
++				  GFP_KERNEL);
+ 	if (!page_list) {
+ 		ret = -ENOMEM;
+ 		goto failure;
+-- 
+2.10.0
 
