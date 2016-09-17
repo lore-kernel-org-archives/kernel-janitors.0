@@ -1,59 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 20:33:28 +0000
-Subject: [PATCH 10/13] DRBD-receiver: Delete error messages for failed resource allocations in receive_SyncPa
-Message-Id: <d5fb9e20-538f-b6d7-68a2-4b1b30207110@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:15:15 +0000
+Subject: [PATCH 07/24] ste_dma40: Use kmalloc_array() in d40_hw_detect_init()
+Message-Id: <b49715cb-0150-9d30-a79f-198adad8944a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
-In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 22:00:10 +0200
+Date: Sat, 17 Sep 2016 11:44:55 +0200
 
-Omit three messages for memory allocation failures in this function.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+This issue was detected also by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/drbd/drbd_receiver.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/dma/ste_dma40.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 6fbd968..3e1315a 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3863,7 +3863,6 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
- 		if (!new_disk_conf) {
- 			put_ldev(device);
- 			mutex_unlock(&connection->resource->conf_update);
--			drbd_err(device, "Allocation of new disk_conf failed\n");
- 			return -ENOMEM;
- 		}
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index b5d15a1..f813056 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3299,9 +3299,9 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
+ 	if (!base->lookup_log_chans)
+ 		goto failure;
  
-@@ -3938,7 +3937,6 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
- 			if (fifo_size != device->rs_plan_s->size) {
- 				new_plan = fifo_alloc(fifo_size);
- 				if (!new_plan) {
--					drbd_err(device, "kmalloc of fifo_buffer failed");
- 					put_ldev(device);
- 					goto disconnect;
- 				}
-@@ -3948,10 +3946,8 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
- 		if (verify_tfm || csums_tfm) {
- 			new_net_conf = kzalloc(sizeof(*new_net_conf),
- 					       GFP_KERNEL);
--			if (!new_net_conf) {
--				drbd_err(device, "Allocation of new net_conf failed\n");
-+			if (!new_net_conf)
- 				goto disconnect;
--			}
- 
- 			*new_net_conf = *old_net_conf;
+-	base->reg_val_backup_chan = kmalloc(base->num_phy_chans *
+-					    sizeof(d40_backup_regs_chan),
+-					    GFP_KERNEL);
++	base->reg_val_backup_chan = kmalloc_array(base->num_phy_chans,
++						  sizeof(d40_backup_regs_chan),
++						  GFP_KERNEL);
+ 	if (!base->reg_val_backup_chan)
+ 		goto failure;
  
 -- 
 2.10.0
