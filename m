@@ -1,67 +1,76 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:09:03 +0000
-Subject: [PATCH 10/11] virtio_console: Rename jump labels in alloc_buf()
-Message-Id: <7529185b-100b-6724-f4a9-eb3b4d290ed7@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:12:56 +0000
+Subject: [PATCH 06/24] ste_dma40: Replace four kzalloc() calls by kcalloc() in d40_hw_detect_init()
+Message-Id: <4025bbbc-ea7f-3a02-3bd2-dd374720fe37@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 15:20:30 +0200
+Date: Sat, 17 Sep 2016 09:56:32 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+* The script "checkpatch.pl" can point information out like the following.
+
+  WARNING: Prefer kcalloc over kzalloc with multiply
+
+  Thus fix the affected source code places.
+
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/virtio_console.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/dma/ste_dma40.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 69c6718..0c4d4e7 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -431,7 +431,7 @@ static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
- 	buf = kmalloc(sizeof(*buf) + sizeof(struct scatterlist) * pages,
- 		      GFP_KERNEL);
- 	if (!buf)
--		goto fail;
-+		goto exit;
- 
- 	buf->sgpages = pages;
- 	if (pages > 0) {
-@@ -451,7 +451,7 @@ static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
- 		 * in dma-coherent.c
- 		 */
- 		if (!vq->vdev->dev.parent || !vq->vdev->dev.parent->parent)
--			goto free_buf;
-+			goto free_buffer;
- 		buf->dev = vq->vdev->dev.parent->parent;
- 
- 		/* Increase device refcnt to avoid freeing it */
-@@ -464,15 +464,14 @@ static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 57d87a8..b5d15a1 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3281,19 +3281,20 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
+ 		base->gen_dmac.init_reg_size = ARRAY_SIZE(dma_init_reg_v4a);
  	}
  
- 	if (!buf->buf)
--		goto free_buf;
-+		goto free_buffer;
- 	buf->len = 0;
- 	buf->offset = 0;
- 	buf->size = buf_size;
- 	return buf;
--
--free_buf:
-+ free_buffer:
- 	kfree(buf);
--fail:
-+ exit:
- 	return NULL;
- }
+-	base->phy_res = kzalloc(num_phy_chans * sizeof(struct d40_phy_res),
++	base->phy_res = kcalloc(num_phy_chans,
++				sizeof(*base->phy_res),
+ 				GFP_KERNEL);
+ 	if (!base->phy_res)
+ 		goto failure;
+ 
+-	base->lookup_phy_chans = kzalloc(num_phy_chans *
+-					 sizeof(struct d40_chan *),
++	base->lookup_phy_chans = kcalloc(num_phy_chans,
++					 sizeof(*base->lookup_phy_chans),
+ 					 GFP_KERNEL);
+ 	if (!base->lookup_phy_chans)
+ 		goto failure;
+ 
+-	base->lookup_log_chans = kzalloc(num_log_chans *
+-					 sizeof(struct d40_chan *),
++	base->lookup_log_chans = kcalloc(num_log_chans,
++					 sizeof(*base->lookup_log_chans),
+ 					 GFP_KERNEL);
+ 	if (!base->lookup_log_chans)
+ 		goto failure;
+@@ -3304,9 +3305,10 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
+ 	if (!base->reg_val_backup_chan)
+ 		goto failure;
+ 
+-	base->lcla_pool.alloc_map -		kzalloc(num_phy_chans * sizeof(struct d40_desc *)
+-			* D40_LCLA_LINK_PER_EVENT_GRP, GFP_KERNEL);
++	base->lcla_pool.alloc_map = kcalloc(num_phy_chans
++					    * D40_LCLA_LINK_PER_EVENT_GRP,
++					    sizeof(*base->lcla_pool.alloc_map),
++					    GFP_KERNEL);
+ 	if (!base->lcla_pool.alloc_map)
+ 		goto failure;
  
 -- 
 2.10.0
