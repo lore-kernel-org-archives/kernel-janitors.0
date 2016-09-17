@@ -1,41 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 07:18:46 +0000
-Subject: [PATCH 2/5] ATM-nicstar: Improve another size determination in get_scq()
-Message-Id: <0bd4a38e-cd33-ecda-ed3a-73f743ed46e2@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:35:31 +0000
+Subject: [PATCH 23/24] ste_dma40: Rename a jump label in __d40_execute_command_phy()
+Message-Id: <9c61e57a-13ea-0c0e-5dd3-046ffaaa9e98@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
-In-Reply-To: <fe480e1f-285a-bb98-3550-b4fa354f8174@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 08:18:10 +0200
+Date: Sat, 17 Sep 2016 16:28:54 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/atm/nicstar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/ste_dma40.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
-index 50dec13..96062e1 100644
---- a/drivers/atm/nicstar.c
-+++ b/drivers/atm/nicstar.c
-@@ -862,7 +862,7 @@ static scq_info *get_scq(ns_dev *card, int size, u32 scd)
- 	if (size != VBR_SCQSIZE && size != CBR_SCQSIZE)
- 		return NULL;
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 0082ae0..01fe3a2 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -1083,7 +1083,7 @@ static int __d40_execute_command_phy(struct d40_chan *d40c,
+ 			D40_CHAN_POS(d40c->phy_chan->num);
  
--	scq = kmalloc(sizeof(scq_info), GFP_KERNEL);
-+	scq = kmalloc(sizeof(*scq), GFP_KERNEL);
- 	if (!scq)
- 		return NULL;
-         scq->org = dma_alloc_coherent(&card->pcidev->dev,
+ 		if (status = D40_DMA_SUSPENDED || status = D40_DMA_STOP)
+-			goto done;
++			goto unlock;
+ 	}
+ 
+ 	wmask = 0xffffffff & ~(D40_CHAN_POS_MASK(d40c->phy_chan->num));
+@@ -1119,7 +1119,7 @@ static int __d40_execute_command_phy(struct d40_chan *d40c,
+ 		}
+ 
+ 	}
+-done:
++ unlock:
+ 	spin_unlock_irqrestore(&d40c->base->execmd_lock, flags);
+ 	return ret;
+ }
 -- 
 2.10.0
 
