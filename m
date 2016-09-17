@@ -1,41 +1,67 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 17:02:04 +0000
-Subject: [PATCH 15/21] ACPI-video: Delete an unnecessary initialisation in acpi_video_device_enumerate()
-Message-Id: <870cb704-f36f-f704-f09c-4f2829133fd6@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:20:29 +0000
+Subject: [PATCH 12/24] ste_dma40: Rename jump labels in d40_dmaengine_init()
+Message-Id: <50af4724-d6a8-7e19-d5b1-c23c088b844b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
-In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 16:54:55 +0200
+Date: Sat, 17 Sep 2016 15:10:15 +0200
 
-The local variable "dod" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/ste_dma40.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index df06390..fcf74e7 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1245,7 +1245,7 @@ static int acpi_video_device_enumerate(struct acpi_video_bus *video)
- 	int i;
- 	struct acpi_video_enumerated_device *active_list;
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
--	union acpi_object *dod = NULL;
-+	union acpi_object *dod;
- 	union acpi_object *obj;
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index ed96039..c7b73f1 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -2889,7 +2889,7 @@ static int __init d40_dmaengine_init(struct d40_base *base,
  
- 	if (!video->cap._DOD)
+ 	if (err) {
+ 		d40_err(base->dev, "Failed to register slave channels\n");
+-		goto failure1;
++		goto exit;
+ 	}
+ 
+ 	d40_chan_init(base, &base->dma_memcpy, base->log_chans,
+@@ -2906,7 +2906,7 @@ static int __init d40_dmaengine_init(struct d40_base *base,
+ 	if (err) {
+ 		d40_err(base->dev,
+ 			"Failed to register memcpy only channels\n");
+-		goto failure2;
++		goto unregister_slave;
+ 	}
+ 
+ 	d40_chan_init(base, &base->dma_both, base->phy_chans,
+@@ -2924,14 +2924,14 @@ static int __init d40_dmaengine_init(struct d40_base *base,
+ 	if (err) {
+ 		d40_err(base->dev,
+ 			"Failed to register logical and physical capable channels\n");
+-		goto failure3;
++		goto unregister_memcpy;
+ 	}
+ 	return 0;
+-failure3:
++ unregister_memcpy:
+ 	dma_async_device_unregister(&base->dma_memcpy);
+-failure2:
++ unregister_slave:
+ 	dma_async_device_unregister(&base->dma_slave);
+-failure1:
++ exit:
+ 	return err;
+ }
+ 
 -- 
 2.10.0
 
