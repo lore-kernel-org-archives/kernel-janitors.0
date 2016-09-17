@@ -1,53 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 12:58:14 +0000
-Subject: [PATCH 6/6] firmware-qemu_fw_cfg: Move a variable assignment in fw_cfg_sysfs_probe()
-Message-Id: <4546d20a-6e9c-5192-35c1-116bff2b3fc8@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:17:30 +0000
+Subject: [PATCH 09/24] ste_dma40: Delete unnecessary variable initialisations in d40_hw_detect_init()
+Message-Id: <2dc8cf1c-6bf6-a320-0c61-c25835ca3146@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
-In-Reply-To: <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: qemu-devel@nongnu.org, Gabriel Somlo <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 14:25:55 +0200
+Date: Sat, 17 Sep 2016 14:34:18 +0200
 
-One local variable was set to an error code before a concrete
-error situation was detected. Thus move the corresponding assignment into
-two if branches to indicate a software failure there.
+Five local variables will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation which became unnecessary with
+a previous update step.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/firmware/qemu_fw_cfg.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/dma/ste_dma40.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-index a09e59c..23293a1 100644
---- a/drivers/firmware/qemu_fw_cfg.c
-+++ b/drivers/firmware/qemu_fw_cfg.c
-@@ -535,13 +535,16 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
- 		return -EBUSY;
- 
- 	/* create by_key and by_name subdirs of /sys/firmware/qemu_fw_cfg/ */
--	err = -ENOMEM;
- 	fw_cfg_sel_ko = kobject_create_and_add("by_key", fw_cfg_top_ko);
--	if (!fw_cfg_sel_ko)
-+	if (!fw_cfg_sel_ko) {
-+		err = -ENOMEM;
- 		goto exit;
-+	}
- 	fw_cfg_fname_kset = kset_create_and_add("by_name", NULL, fw_cfg_top_ko);
--	if (!fw_cfg_fname_kset)
-+	if (!fw_cfg_fname_kset) {
-+		err = -ENOMEM;
- 		goto cleanup_object;
-+	}
- 
- 	/* initialize fw_cfg device i/o from platform data */
- 	err = fw_cfg_do_platform_probe(pdev);
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index c680dd3..ebb00a8 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3142,11 +3142,11 @@ static int __init d40_phy_res_init(struct d40_base *base)
+ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
+ {
+ 	struct stedma40_platform_data *plat_data = dev_get_platdata(&pdev->dev);
+-	struct clk *clk = NULL;
+-	void __iomem *virtbase = NULL;
+-	struct resource *res = NULL;
+-	struct d40_base *base = NULL;
+-	int num_log_chans = 0;
++	struct clk *clk;
++	void __iomem *virtbase;
++	struct resource *res;
++	struct d40_base *base;
++	int num_log_chans;
+ 	int num_phy_chans;
+ 	int num_memcpy_chans;
+ 	int clk_ret = -EINVAL;
 -- 
 2.10.0
 
