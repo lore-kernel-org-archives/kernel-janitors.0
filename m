@@ -1,59 +1,50 @@
-From: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
-Date: Thu, 01 Sep 2016 22:58:15 +0000
-Subject: Re: [PATCH 5/9] tty: serial: jsm_tty: constify uart_ops structures
-Message-Id: <87r3935it4.fsf@linux.vnet.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:05:16 +0000
+Subject: [PATCH 00/24] ste_dma40: Fine-tuning for several function implementations
+Message-Id: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1472752298-981-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-6-git-send-email-Julia.Lawall@lip6.fr> (Julia
-        Lawall's message of "Thu, 1 Sep 2016 19:51:34 +0200")
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Julia Lawall <Julia.Lawall@lip6.fr> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 16:56:56 +0200
 
-> Check for uart_ops structures that are only stored in the ops field of a
-> uart_port structure.  This field is declared const, so uart_ops structures
-> that have this property can be declared as const also.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct uart_ops i@p = { ... };
->
-> @ok@
-> identifier r.i;
-> struct uart_port e;
-> position p;
-> @@
-> e.ops = &i@p;
->
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct uart_ops e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct uart_ops i = { ... };
-> // </smpl>
->
+Several update suggestions were taken into account
+from static source code analysis.
 
-Acked-by: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
+Markus Elfring (24):
+  Use kmalloc_array() in d40_lcla_allocate()
+  Return directly after a failed kmalloc_array()
+  Rename a jump label in d40_lcla_allocate()
+  Move an assignment in d40_lcla_allocate()
+  Improve a size determination in d40_of_probe()
+  Replace four kzalloc() calls by kcalloc() in d40_hw_detect_init()
+  Use kmalloc_array() in d40_hw_detect_init()
+  Less checks in d40_hw_detect_init() after error detection
+  Delete unnecessary variable initialisations in d40_hw_detect_init()
+  Adjust the position of a jump label in d40_probe()
+  Rename a jump label in d40_probe()
+  Rename jump labels in d40_dmaengine_init()
+  Rename a jump label in d40_alloc_chan_resources()
+  One check less in d40_prep_sg() after error detection
+  Move two assignments in d40_prep_sg()
+  Rename a jump label in d40_prep_desc()
+  Move an assignment in d40_prep_desc()
+  Rename a jump label in d40_is_paused()
+  Rename a jump label in d40_free_dma()
+  Rename a jump label in d40_alloc_mask_free()
+  Rename jump labels in d40_alloc_mask_set()
+  Rename a jump label in dma_tasklet()
+  Rename a jump label in __d40_execute_command_phy()
+  Rename a jump label in d40_log_lli_to_lcxa()
+
+ drivers/dma/ste_dma40.c | 253 +++++++++++++++++++++++-------------------------
+ 1 file changed, 122 insertions(+), 131 deletions(-)
 
 -- 
-Gabriel Krisman Bertazi
+2.10.0
 
