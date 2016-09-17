@@ -1,100 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 09:17:16 +0000
-Subject: [PATCH 09/10] dm snapshot: Combine substrings for seven error messages
-Message-Id: <e8510754-7d0c-0081-e682-94cba351a3b4@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:34:26 +0000
+Subject: [PATCH 22/24] ste_dma40: Rename a jump label in dma_tasklet()
+Message-Id: <85371665-dd15-287b-d459-1f54fcfd525b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
-In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 09:46:32 +0200
+Date: Sat, 17 Sep 2016 16:23:43 +0200
 
-The script "checkpatch.pl" can point information out like the following.
-
-WARNING: quoted string split across lines
-
-Thus fix the affected source code places.
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/dm-snap.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ drivers/dma/ste_dma40.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 4966584..7593986 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -468,8 +468,7 @@ static int __validate_exception_handover(struct dm_snapshot *snap)
- 	if ((__find_snapshots_sharing_cow(snap, &snap_src, &snap_dest,
- 					  &snap_merge) = 2) ||
- 	    snap_dest) {
--		snap->ti->error = "Snapshot cow pairing for exception "
--				  "table handover failed";
-+		snap->ti->error = "Snapshot cow pairing for exception table handover failed";
- 		return -EINVAL;
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 4a2f39b..0082ae0 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -1606,7 +1606,7 @@ static void dma_tasklet(unsigned long data)
+ 		/* Check if we have reached here for cyclic job */
+ 		d40d = d40_first_active_get(d40c);
+ 		if (d40d = NULL || !d40d->cyclic)
+-			goto err;
++			goto check_pending_tx;
  	}
  
-@@ -496,8 +495,7 @@ static int __validate_exception_handover(struct dm_snapshot *snap)
+ 	if (!d40d->cyclic)
+@@ -1648,8 +1648,7 @@ static void dma_tasklet(unsigned long data)
+ 		dmaengine_desc_callback_invoke(&cb, NULL);
  
- 	if (!snap_src->store->type->prepare_merge ||
- 	    !snap_src->store->type->commit_merge) {
--		snap->ti->error = "Snapshot exception store does not "
--				  "support snapshot-merge.";
-+		snap->ti->error = "Snapshot exception store does not support snapshot-merge.";
- 		return -EINVAL;
- 	}
- 
-@@ -858,8 +856,7 @@ static int __remove_single_exception_chunk(struct dm_snapshot *s,
- 
- 	e = dm_lookup_exception(&s->complete, old_chunk);
- 	if (!e) {
--		DMERR("Corruption detected: exception for block %llu is "
--		      "on disk but not in memory",
-+		DMERR("Corruption detected: exception for block %llu is on disk but not in memory",
- 		      (unsigned long long)old_chunk);
- 		return -EINVAL;
- 	}
-@@ -886,8 +883,7 @@ static int __remove_single_exception_chunk(struct dm_snapshot *s,
- 		e->new_chunk++;
- 	} else if (old_chunk != e->old_chunk +
- 		   dm_consecutive_chunk_count(e)) {
--		DMERR("Attempt to merge block %llu from the "
--		      "middle of a chunk range [%llu - %llu]",
-+		DMERR("Attempt to merge block %llu from the middle of a chunk range [%llu - %llu]",
- 		      (unsigned long long)old_chunk,
- 		      (unsigned long long)e->old_chunk,
- 		      (unsigned long long)
-@@ -980,8 +976,7 @@ static void snapshot_merge_next_chunks(struct dm_snapshot *s)
- 						      &new_chunk);
- 	if (linear_chunks <= 0) {
- 		if (linear_chunks < 0) {
--			DMERR("Read error in exception store: "
--			      "shutting down merge");
-+			DMERR("Read error in exception store: shutting down merge");
- 			down_write(&s->lock);
- 			s->merge_failed = 1;
- 			up_write(&s->lock);
-@@ -1877,12 +1872,10 @@ static int snapshot_preresume(struct dm_target *ti)
- 	if (snap_src && snap_dest) {
- 		down_read(&snap_src->lock);
- 		if (s = snap_src) {
--			DMERR("Unable to resume snapshot source until "
--			      "handover completes.");
-+			DMERR("Unable to resume snapshot source until handover completes.");
- 			r = -EINVAL;
- 		} else if (!dm_suspended(snap_src->ti)) {
--			DMERR("Unable to perform snapshot handover until "
--			      "source is suspended.");
-+			DMERR("Unable to perform snapshot handover until source is suspended.");
- 			r = -EINVAL;
- 		}
- 		up_read(&snap_src->lock);
+ 	return;
+-
+-err:
++ check_pending_tx:
+ 	/* Rescue manouver if receiving double interrupts */
+ 	if (d40c->pending_tx > 0)
+ 		d40c->pending_tx--;
 -- 
 2.10.0
 
