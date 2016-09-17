@@ -1,22 +1,49 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 02 Sep 2016 14:43:57 +0000
-Subject: [PATCH 0/2][RESEND] add omitted release in qat_common
-Message-Id: <20160902144400.31216-1-lambert.quentin@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:36:27 +0000
+Subject: [PATCH 24/24] ste_dma40: Rename a jump label in d40_log_lli_to_lcxa()
+Message-Id: <b28fbc00-5643-ba77-c94a-dbfe14618a9b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160902143759.31125-1-lambert.quentin@gmail.com>
-In-Reply-To: <20160902143759.31125-1-lambert.quentin@gmail.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Salvatore Benedetto <salvatore.benedetto@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Quentin Lambert <lambert.quentin@gmail.com>
-Cc: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The first patch introduces a variable to handle different error codes and be
-able to reuse the same clean up code. The second add an omitted release by
-jumping to the clean code having set the returned value to the proper error
-code.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 16:39:06 +0200
 
+Adjust a jump label according to the current Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/crypto/qat/qat_common/qat_uclo.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
----
+ drivers/dma/ste_dma40.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 01fe3a2..dcb26c6 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -874,7 +874,7 @@ static void d40_log_lli_to_lcxa(struct d40_chan *chan, struct d40_desc *desc)
+ 	}
+ 
+ 	if (curr_lcla < 0)
+-		goto out;
++		goto set_current;
+ 
+ 	for (; lli_current < lli_len; lli_current++) {
+ 		unsigned int lcla_offset = chan->phy_chan->num * 1024 +
+@@ -925,8 +925,7 @@ static void d40_log_lli_to_lcxa(struct d40_chan *chan, struct d40_desc *desc)
+ 			break;
+ 		}
+ 	}
+-
+-out:
++ set_current:
+ 	desc->lli_current = lli_current;
+ }
+ 
+-- 
+2.10.0
+
