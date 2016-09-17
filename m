@@ -1,41 +1,57 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:59:28 +0000
-Subject: [PATCH 17/30] ACPI-processor: Improve another size determination in acpi_processor_get_throttling_st
-Message-Id: <2b499c49-838a-06b6-b537-ec24bbf00f90@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:22:17 +0000
+Subject: [PATCH 13/24] ste_dma40: Rename a jump label in d40_alloc_chan_resources()
+Message-Id: <76bb4f48-c690-ccbb-91aa-ee57a769799a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 19:19:27 +0200
+Date: Sat, 17 Sep 2016 15:15:15 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/ste_dma40.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 0a46b7f..c5ddf96 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -548,7 +548,7 @@ static int acpi_processor_get_throttling_states(struct acpi_processor *pr)
- 		    (struct acpi_processor_tx_tss *)&(pr->throttling.
- 						      states_tss[i]);
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index c7b73f1..0788add 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -2424,7 +2424,7 @@ static int d40_alloc_chan_resources(struct dma_chan *chan)
+ 		err = d40_config_memcpy(d40c);
+ 		if (err) {
+ 			chan_err(d40c, "Failed to configure memcpy channel\n");
+-			goto fail;
++			goto mark_last_busy;
+ 		}
+ 	}
  
--		state.length = sizeof(struct acpi_processor_tx_tss);
-+		state.length = sizeof(*tx);
- 		state.pointer = tx;
+@@ -2432,7 +2432,7 @@ static int d40_alloc_chan_resources(struct dma_chan *chan)
+ 	if (err) {
+ 		chan_err(d40c, "Failed to allocate channel\n");
+ 		d40c->configured = false;
+-		goto fail;
++		goto mark_last_busy;
+ 	}
  
- 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Extracting state %d\n", i));
+ 	pm_runtime_get_sync(d40c->base->dev);
+@@ -2466,7 +2466,7 @@ static int d40_alloc_chan_resources(struct dma_chan *chan)
+ 	 */
+ 	if (is_free_phy)
+ 		d40_config_write(d40c);
+-fail:
++ mark_last_busy:
+ 	pm_runtime_mark_last_busy(d40c->base->dev);
+ 	pm_runtime_put_autosuspend(d40c->base->dev);
+ 	spin_unlock_irqrestore(&d40c->lock, flags);
 -- 
 2.10.0
 
