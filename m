@@ -1,23 +1,44 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 02 Sep 2016 11:02:55 +0000
-Subject: Re: [PATCH] scsi: constify sr_pm_ops structure
-Message-Id: <yq14m5ytvhc.fsf@sermon.lab.mkp.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:08:49 +0000
+Subject: [PATCH 02/24] ste_dma40: Return directly after a failed kmalloc_array()
+Message-Id: <9318d779-42d8-ad52-784d-1715439c209d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472415458-430-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472415458-430-1-git-send-email-Julia.Lawall@lip6.fr> (Julia
-        Lawall's message of "Sun, 28 Aug 2016 22:17:38 +0200")
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jens Axboe <axboe@kernel.dk>, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
->>>>> "Julia" = Julia Lawall <Julia.Lawall@lip6.fr> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 08:21:30 +0200
 
-Julia> sr_pm_ops, of type struct dev_pm_ops, is never modified, so
-Julia> declare it as const.
+Return directly after a memory allocation failed in this function
+at the beginning.
 
-Applied to 4.9/scsi-queue.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/dma/ste_dma40.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index fbebeff..80a199a 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3412,10 +3412,8 @@ static int __init d40_lcla_allocate(struct d40_base *base)
+ 	page_list = kmalloc_array(MAX_LCLA_ALLOC_ATTEMPTS,
+ 				  sizeof(*page_list),
+ 				  GFP_KERNEL);
+-	if (!page_list) {
+-		ret = -ENOMEM;
+-		goto failure;
+-	}
++	if (!page_list)
++		return -ENOMEM;
+ 
+ 	/* Calculating how many pages that are required */
+ 	base->lcla_pool.pages = SZ_1K * base->num_phy_chans / PAGE_SIZE;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.10.0
+
