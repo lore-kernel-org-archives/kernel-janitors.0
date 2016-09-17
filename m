@@ -1,57 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 16:56:18 +0000
-Subject: [PATCH 09/21] ACPI-video: Rename jump labels in acpi_video_register()
-Message-Id: <ecbd8b3c-cb43-8f10-abea-519f62683448@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:25:52 +0000
+Subject: [PATCH 15/24] ste_dma40: Move two assignments in d40_prep_sg()
+Message-Id: <820bf972-3613-cf77-d243-9ba480c4c9e0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
-In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+ <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
+In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 15:28:12 +0200
+Date: Sat, 17 Sep 2016 15:40:05 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Move assignments for two local variables so that their setting
+will only be performed after corresponding data processing succeeded
+by this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_video.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/dma/ste_dma40.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index c9fbc6e..74e5a40 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -2080,22 +2080,21 @@ int acpi_video_register(void)
- 		 * if the function of acpi_video_register is already called,
- 		 * don't register the acpi_vide_bus again and return no error.
- 		 */
--		goto leave;
-+		goto unlock;
- 	}
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index a7e7cd0..6725b66 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -2236,8 +2236,8 @@ d40_prep_sg(struct dma_chan *dchan, struct scatterlist *sg_src,
+ 	    enum dma_transfer_direction direction, unsigned long dma_flags)
+ {
+ 	struct d40_chan *chan = container_of(dchan, struct d40_chan, chan);
+-	dma_addr_t src_dev_addr = 0;
+-	dma_addr_t dst_dev_addr = 0;
++	dma_addr_t src_dev_addr;
++	dma_addr_t dst_dev_addr;
+ 	struct d40_desc *desc;
+ 	unsigned long flags;
+ 	int ret;
+@@ -2256,6 +2256,8 @@ d40_prep_sg(struct dma_chan *dchan, struct scatterlist *sg_src,
+ 	if (sg_next(&sg_src[sg_len - 1]) = sg_src)
+ 		desc->cyclic = true;
  
- 	dmi_check_system(video_dmi_table);
- 
- 	ret = acpi_bus_register_driver(&acpi_video_bus);
- 	if (ret)
--		goto leave;
-+		goto unlock;
- 
- 	/*
- 	 * When the acpi_video_bus is loaded successfully, increase
- 	 * the counter reference.
- 	 */
- 	register_count = 1;
--
--leave:
-+ unlock:
- 	mutex_unlock(&register_count_mutex);
- 	return ret;
- }
++	src_dev_addr = 0;
++	dst_dev_addr = 0;
+ 	if (direction = DMA_DEV_TO_MEM)
+ 		src_dev_addr = chan->runtime_addr;
+ 	else if (direction = DMA_MEM_TO_DEV)
 -- 
 2.10.0
 
