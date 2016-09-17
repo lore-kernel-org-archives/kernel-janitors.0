@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:15:15 +0000
-Subject: [PATCH 07/24] ste_dma40: Use kmalloc_array() in d40_hw_detect_init()
-Message-Id: <b49715cb-0150-9d30-a79f-198adad8944a@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 15:33:20 +0000
+Subject: [PATCH 21/24] ste_dma40: Rename jump labels in d40_alloc_mask_set()
+Message-Id: <759a5edb-0f6e-db86-6c8f-e0118467023d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
@@ -12,36 +12,72 @@ Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 11:44:55 +0200
+Date: Sat, 17 Sep 2016 16:16:42 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
-
-This issue was detected also by using the Coccinelle software.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/dma/ste_dma40.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/dma/ste_dma40.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index b5d15a1..f813056 100644
+index fbe87a2..4a2f39b 100644
 --- a/drivers/dma/ste_dma40.c
 +++ b/drivers/dma/ste_dma40.c
-@@ -3299,9 +3299,9 @@ static struct d40_base * __init d40_hw_detect_init(struct platform_device *pdev)
- 	if (!base->lookup_log_chans)
- 		goto failure;
+@@ -1778,42 +1778,40 @@ static bool d40_alloc_mask_set(struct d40_phy_res *phy,
+ 		    phy->allocated_dst = D40_ALLOC_FREE) {
+ 			phy->allocated_dst = D40_ALLOC_PHY;
+ 			phy->allocated_src = D40_ALLOC_PHY;
+-			goto found;
++			goto found_unlock;
+ 		} else
+-			goto not_found;
++			goto not_found_unlock;
+ 	}
  
--	base->reg_val_backup_chan = kmalloc(base->num_phy_chans *
--					    sizeof(d40_backup_regs_chan),
--					    GFP_KERNEL);
-+	base->reg_val_backup_chan = kmalloc_array(base->num_phy_chans,
-+						  sizeof(d40_backup_regs_chan),
-+						  GFP_KERNEL);
- 	if (!base->reg_val_backup_chan)
- 		goto failure;
+ 	/* Logical channel */
+ 	if (is_src) {
+ 		if (phy->allocated_src = D40_ALLOC_PHY)
+-			goto not_found;
++			goto not_found_unlock;
  
+ 		if (phy->allocated_src = D40_ALLOC_FREE)
+ 			phy->allocated_src = D40_ALLOC_LOG_FREE;
+ 
+ 		if (!(phy->allocated_src & BIT(log_event_line))) {
+ 			phy->allocated_src |= BIT(log_event_line);
+-			goto found;
++			goto found_unlock;
+ 		} else
+-			goto not_found;
++			goto not_found_unlock;
+ 	} else {
+ 		if (phy->allocated_dst = D40_ALLOC_PHY)
+-			goto not_found;
++			goto not_found_unlock;
+ 
+ 		if (phy->allocated_dst = D40_ALLOC_FREE)
+ 			phy->allocated_dst = D40_ALLOC_LOG_FREE;
+ 
+ 		if (!(phy->allocated_dst & BIT(log_event_line))) {
+ 			phy->allocated_dst |= BIT(log_event_line);
+-			goto found;
+-		} else
+-			goto not_found;
++			goto found_unlock;
++		}
+ 	}
+-
+-not_found:
++ not_found_unlock:
+ 	spin_unlock_irqrestore(&phy->lock, flags);
+ 	return false;
+-found:
++ found_unlock:
+ 	spin_unlock_irqrestore(&phy->lock, flags);
+ 	return true;
+ }
 -- 
 2.10.0
 
