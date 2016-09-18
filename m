@@ -1,296 +1,172 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 12:28:24 +0000
-Subject: [PATCH 11/17] s390/debug: Fix indentation in 13 functions
-Message-Id: <b81d1973-1e2e-cbfc-6801-8694623d8078@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 16:54:22 +0000
+Subject: [PATCH 5/5] drm/amdgpu: Adjust checks for null pointers in nine functions
+Message-Id: <1dfb0d04-4752-8a85-8835-c4eb8fc1ba7c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
-In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+ <8d614254-1cba-0379-cf84-52ad9bd9f3a7@users.sourceforge.net>
+In-Reply-To: <8d614254-1cba-0379-cf84-52ad9bd9f3a7@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>, Tom St Denis <tom.stdenis@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Sep 2016 23:05:51 +0200
+Date: Sun, 18 Sep 2016 18:32:28 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-The script "checkpatch.pl" can point the following information out.
+* The script "checkpatch.pl" can point information out like the following.
 
-ERROR: code indent should use tabs where possible
+  Comparison to NULL could be written !=E2=80=A6
 
-Thus fix the affected source code places.
+  Thus fix the affected source code places.
+
+* Do also not use curly brackets at corresponding source code places
+  where a single statement should be sufficient.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/s390/kernel/debug.c | 118 +++++++++++++++++++++++------------------------
- 1 file changed, 59 insertions(+), 59 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 33 +++++++++++++++-----------=
+----
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
-diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
-index ef0db06..4a12faf 100644
---- a/arch/s390/kernel/debug.c
-+++ b/arch/s390/kernel/debug.c
-@@ -330,7 +330,7 @@ debug_info_create(const char *name, int pages_per_area, int nr_areas,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/a=
+md/amdgpu/amdgpu_device.c
+index fed4854..b5b7cfb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -251,7 +251,7 @@ static int amdgpu_vram_scratch_init(struct amdgpu_devic=
+e *adev)
  {
- 	debug_info_t* rc;
- 
--        rc = debug_info_alloc(name, pages_per_area, nr_areas, buf_size,
-+	rc = debug_info_alloc(name, pages_per_area, nr_areas, buf_size,
- 				DEBUG_DEFAULT_LEVEL, ALL_AREAS);
- 	if (!rc)
- 		goto out;
-@@ -338,21 +338,21 @@ debug_info_create(const char *name, int pages_per_area, int nr_areas,
- 	rc->mode = mode & ~S_IFMT;
- 
- 	/* create root directory */
--        rc->debugfs_root_entry = debugfs_create_dir(rc->name,
-+	rc->debugfs_root_entry = debugfs_create_dir(rc->name,
- 					debug_debugfs_root_entry);
- 
- 	/* append new element to linked list */
--        if (!debug_area_first) {
--                /* first element in list */
--                debug_area_first = rc;
--                rc->prev = NULL;
--        } else {
--                /* append element to end of list */
--                debug_area_last->next = rc;
--                rc->prev = debug_area_last;
--        }
--        debug_area_last = rc;
--        rc->next = NULL;
-+	if (!debug_area_first) {
-+		/* first element in list */
-+		debug_area_first = rc;
-+		rc->prev = NULL;
-+	} else {
-+		/* append element to end of list */
-+		debug_area_last->next = rc;
-+		rc->prev = debug_area_last;
-+	}
-+	debug_area_last = rc;
-+	rc->next = NULL;
- 
- 	debug_info_get(rc);
- out:
-@@ -394,8 +394,8 @@ debug_info_copy(debug_info_t* in, int mode)
- 		for (j = 0; j < in->pages_per_area; j++)
- 			memcpy(rc->areas[i][j], in->areas[i][j], PAGE_SIZE);
-  unlock:
--        spin_unlock_irqrestore(&in->lock, flags);
--        return rc;
-+	spin_unlock_irqrestore(&in->lock, flags);
-+	return rc;
- }
- 
- /*
-@@ -456,7 +456,7 @@ debug_format_entry(file_private_info_t *p_info)
- 
- 	if (p_info->act_entry = DEBUG_PROLOG_ENTRY) {
- 		/* print prolog */
--        	if (view->prolog_proc)
-+		if (view->prolog_proc)
- 			len += view->prolog_proc(id_snap,
- 						 view,
- 						 p_info->temp_buf);
-@@ -476,7 +476,7 @@ debug_format_entry(file_private_info_t *p_info)
- 		len += view->format_proc(id_snap, view, p_info->temp_buf + len,
- 						DEBUG_DATA(act_entry));
- out:
--        return len;
-+	return len;
- }
- 
- /*
-@@ -505,7 +505,7 @@ debug_next_entry(file_private_info_t *p_info)
- 		p_info->act_page += 1;
- 		if ((p_info->act_page % id->pages_per_area) = 0) {
- 			/* next area */
--        		p_info->act_area++;
-+			p_info->act_area++;
- 			p_info->act_page=0;
- 		}
- 		if (p_info->act_area >= id->nr_areas)
-@@ -697,15 +697,14 @@ debug_info_t *debug_register_mode(const char *name, int pages_per_area,
- 	BUG_ON(!initialized);
- 	mutex_lock(&debug_mutex);
- 
--        /* create new debug_info */
--
-+	/* create new debug_info */
- 	rc = debug_info_create(name, pages_per_area, nr_areas, buf_size, mode);
- 	if (!rc) {
- 		pr_err("Registering debug feature %s failed\n", name);
- 		goto unlock;
- 	}
- 	debug_register_view(rc, &debug_level_view);
--        debug_register_view(rc, &debug_flush_view);
-+	debug_register_view(rc, &debug_flush_view);
- 	debug_register_view(rc, &debug_pages_view);
-  unlock:
- 	mutex_unlock(&debug_mutex);
-@@ -794,14 +793,14 @@ debug_set_level(debug_info_t* id, int new_level)
- 		return;	
- 	spin_lock_irqsave(&id->lock, flags);
- 	if (new_level = DEBUG_OFF_LEVEL) {
--                id->level = DEBUG_OFF_LEVEL;
-+		id->level = DEBUG_OFF_LEVEL;
- 		pr_info("%s: switched off\n", id->name);
--        } else if ((new_level > DEBUG_MAX_LEVEL) || (new_level < 0)) {
-+	} else if ((new_level > DEBUG_MAX_LEVEL) || (new_level < 0)) {
- 		pr_info("%s: level %i is out of range (%i - %i)\n",
--                        id->name, new_level, 0, DEBUG_MAX_LEVEL);
--        } else {
--                id->level = new_level;
--        }
-+			id->name, new_level, 0, DEBUG_MAX_LEVEL);
-+	} else {
-+		id->level = new_level;
-+	}
- 	spin_unlock_irqrestore(&id->lock, flags);
- }
- EXPORT_SYMBOL(debug_set_level);
-@@ -1175,7 +1174,7 @@ debug_get_user_string(const char __user *user_buf, size_t user_len)
- 		buffer[user_len - 1] = 0;
- 	else
- 		buffer[user_len] = 0;
--        return buffer;
-+	return buffer;
- }
- 
- static inline int
-@@ -1219,7 +1218,7 @@ debug_input_pages_fn(debug_info_t * id, struct debug_view *view,
- 	int rc, new_pages;
- 
- 	if (user_len > 0x10000)
--                user_len = 0x10000;
-+		user_len = 0x10000;
- 	if (*offset != 0) {
- 		rc = -EPIPE;
- 		goto out;
-@@ -1276,7 +1275,7 @@ debug_input_level_fn(debug_info_t * id, struct debug_view *view,
- 	int rc, new_level;
- 
- 	if (user_len > 0x10000)
--                user_len = 0x10000;
-+		user_len = 0x10000;
- 	if (*offset != 0) {
- 		rc = -EPIPE;
- 		goto out;
-@@ -1314,26 +1313,26 @@ out:
-  
- static void debug_flush(debug_info_t* id, int area)
+ 	int r;
+=20
+-	if (adev->vram_scratch.robj =3D NULL) {
++	if (!adev->vram_scratch.robj) {
+ 		r =3D amdgpu_bo_create(adev, AMDGPU_GPU_PAGE_SIZE,
+ 				     PAGE_SIZE, true, AMDGPU_GEM_DOMAIN_VRAM,
+ 				     AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED,
+@@ -283,9 +283,9 @@ static void amdgpu_vram_scratch_fini(struct amdgpu_devi=
+ce *adev)
  {
--        unsigned long flags;
-+	unsigned long flags;
- 	int i, j;
- 
- 	if (!id || !id->areas)
--                return;
-+		return;
- 	spin_lock_irqsave(&id->lock, flags);
- 	if (area = DEBUG_FLUSH_ALL) {
--                id->active_area = 0;
--                memset(id->active_entries, 0, id->nr_areas * sizeof(int));
--                for (i = 0; i < id->nr_areas; i++) {
-+		id->active_area = 0;
-+		memset(id->active_entries, 0, id->nr_areas * sizeof(int));
-+		for (i = 0; i < id->nr_areas; i++) {
- 			id->active_pages[i] = 0;
- 			for (j = 0; j < id->pages_per_area; j++)
--                        	memset(id->areas[i][j], 0, PAGE_SIZE);
-+				memset(id->areas[i][j], 0, PAGE_SIZE);
- 		}
- 	} else if (area >= 0 && area < id->nr_areas) {
--                id->active_entries[area] = 0;
-+		id->active_entries[area] = 0;
- 		id->active_pages[area] = 0;
- 		for (i = 0; i < id->pages_per_area; i++)
- 			memset(id->areas[area][i], 0, PAGE_SIZE);
--        }
-+	}
- 	spin_unlock_irqrestore(&id->lock, flags);
- }
- 
-@@ -1346,35 +1345,36 @@ debug_input_flush_fn(debug_info_t * id, struct debug_view *view,
- 			struct file *file, const char __user *user_buf,
- 			size_t user_len, loff_t * offset)
- {
--        char input_buf[1];
--        int rc = user_len;
-+	char input_buf[1];
-+	int rc = user_len;
- 
- 	if (user_len > 0x10000)
--                user_len = 0x10000;
-+		user_len = 0x10000;
- 	if (*offset != 0) {
- 		rc = -EPIPE;
--                goto out;
-+		goto out;
- 	}
- 	if (copy_from_user(input_buf, user_buf, 1)) {
--                rc = -EFAULT;
--                goto out;
--        }
-+		rc = -EFAULT;
-+		goto out;
-+	}
- 	if (input_buf[0] = '-') {
--                debug_flush(id, DEBUG_FLUSH_ALL);
--                goto out;
--        }
--        if (isdigit(input_buf[0])) {
--                int area = ((int) input_buf[0] - (int) '0');
--                debug_flush(id, area);
--                goto out;
--        }
-+		debug_flush(id, DEBUG_FLUSH_ALL);
-+		goto out;
-+	}
-+	if (isdigit(input_buf[0])) {
-+		int area = ((int) input_buf[0] - (int) '0');
+ 	int r;
+=20
+-	if (adev->vram_scratch.robj =3D NULL) {
++	if (!adev->vram_scratch.robj)
+ 		return;
+-	}
 +
-+		debug_flush(id, area);
-+		goto out;
-+	}
- 
- 	pr_info("Flushing debug data failed because %c is not a valid "
- 		 "area\n", input_buf[0]);
- 
- out:
--        *offset += user_len;
--        return rc;              /* number of input characters */
-+	*offset += user_len;
-+	return rc;              /* number of input characters */
- }
- 
- /*
-@@ -1385,11 +1385,11 @@ static int
- debug_raw_header_fn(debug_info_t * id, struct debug_view *view,
- 			int area, debug_entry_t * entry, char *out_buf)
+ 	r =3D amdgpu_bo_reserve(adev->vram_scratch.robj, false);
+ 	if (likely(r =3D 0)) {
+ 		amdgpu_bo_kunmap(adev->vram_scratch.robj);
+@@ -359,9 +359,9 @@ static int amdgpu_doorbell_init(struct amdgpu_device *a=
+dev)
+ 		return -EINVAL;
+=20
+ 	adev->doorbell.ptr =3D ioremap(adev->doorbell.base, adev->doorbell.num_do=
+orbells * sizeof(u32));
+-	if (adev->doorbell.ptr =3D NULL) {
++	if (!adev->doorbell.ptr)
+ 		return -ENOMEM;
+-	}
++
+ 	DRM_INFO("doorbell mmio base: 0x%08X\n", (uint32_t)adev->doorbell.base);
+ 	DRM_INFO("doorbell mmio size: %u\n", (unsigned)adev->doorbell.size);
+=20
+@@ -456,7 +456,7 @@ static int amdgpu_wb_init(struct amdgpu_device *adev)
  {
--        int rc;
-+	int rc;
- 
- 	rc = sizeof(debug_entry_t);
- 	memcpy(out_buf, entry, sizeof(debug_entry_t));
--        return rc;
-+	return rc;
- }
- 
- /*
-@@ -1418,8 +1418,8 @@ debug_hex_ascii_format_fn(debug_info_t * id, struct debug_view *view,
- 	int i, rc = 0;
- 
- 	for (i = 0; i < id->buf_size; i++)
--                rc += sprintf(out_buf + rc, "%02x ",
--                              ((unsigned char *) in_buf)[i]);
-+		rc += sprintf(out_buf + rc, "%02x ",
-+			      ((unsigned char *) in_buf)[i]);
- 	rc += sprintf(out_buf + rc, "| ");
- 	for (i = 0; i < id->buf_size; i++) {
- 		unsigned char c = in_buf[i];
--- 
-2.9.3
+ 	int r;
+=20
+-	if (adev->wb.wb_obj =3D NULL) {
++	if (!adev->wb.wb_obj) {
+ 		r =3D amdgpu_bo_create(adev, AMDGPU_MAX_WB * 4, PAGE_SIZE, true,
+ 				     AMDGPU_GEM_DOMAIN_GTT, 0,  NULL, NULL,
+ 				     &adev->wb.wb_obj);
+@@ -657,7 +657,7 @@ int amdgpu_dummy_page_init(struct amdgpu_device *adev)
+ 	if (adev->dummy_page.page)
+ 		return 0;
+ 	adev->dummy_page.page =3D alloc_page(GFP_DMA32 | GFP_KERNEL | __GFP_ZERO);
+-	if (adev->dummy_page.page =3D NULL)
++	if (!adev->dummy_page.page)
+ 		return -ENOMEM;
+ 	adev->dummy_page.addr =3D pci_map_page(adev->pdev, adev->dummy_page.page,
+ 					0, PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
+@@ -679,7 +679,7 @@ int amdgpu_dummy_page_init(struct amdgpu_device *adev)
+  */
+ void amdgpu_dummy_page_fini(struct amdgpu_device *adev)
+ {
+-	if (adev->dummy_page.page =3D NULL)
++	if (!adev->dummy_page.page)
+ 		return;
+ 	pci_unmap_page(adev->pdev, adev->dummy_page.addr,
+ 			PAGE_SIZE, PCI_DMA_BIDIRECTIONAL);
+@@ -1226,10 +1226,10 @@ static int amdgpu_early_init(struct amdgpu_device *=
+adev)
+ 	adev->ip_block_status =3D kcalloc(adev->num_ip_blocks,
+ 					sizeof(*adev->ip_block_status),
+ 					GFP_KERNEL);
+-	if (adev->ip_block_status =3D NULL)
++	if (!adev->ip_block_status)
+ 		return -ENOMEM;
+=20
+-	if (adev->ip_blocks =3D NULL) {
++	if (!adev->ip_blocks) {
+ 		DRM_ERROR("No IP blocks found!\n");
+ 		return r;
+ 	}
+@@ -1525,9 +1525,9 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 	adev->rmmio_base =3D pci_resource_start(adev->pdev, 5);
+ 	adev->rmmio_size =3D pci_resource_len(adev->pdev, 5);
+ 	adev->rmmio =3D ioremap(adev->rmmio_base, adev->rmmio_size);
+-	if (adev->rmmio =3D NULL) {
++	if (!adev->rmmio)
+ 		return -ENOMEM;
+-	}
++
+ 	DRM_INFO("register mmio base: 0x%08X\n", (uint32_t)adev->rmmio_base);
+ 	DRM_INFO("register mmio size: %u\n", (unsigned)adev->rmmio_size);
+=20
+@@ -1542,7 +1542,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 			break;
+ 		}
+ 	}
+-	if (adev->rio_mem =3D NULL)
++	if (!adev->rio_mem)
+ 		DRM_ERROR("Unable to find PCI I/O BAR\n");
+=20
+ 	/* early init functions */
+@@ -1758,9 +1758,8 @@ int amdgpu_suspend_kms(struct drm_device *dev, bool s=
+uspend, bool fbcon)
+ 	struct drm_connector *connector;
+ 	int r;
+=20
+-	if (dev =3D NULL || dev->dev_private =3D NULL) {
++	if (!dev || !dev->dev_private)
+ 		return -ENODEV;
+-	}
+=20
+ 	adev =3D dev->dev_private;
+=20
+@@ -1791,9 +1790,9 @@ int amdgpu_suspend_kms(struct drm_device *dev, bool s=
+uspend, bool fbcon)
+ 			}
+ 		}
+=20
+-		if (rfb =3D NULL || rfb->obj =3D NULL) {
++		if (!rfb || !rfb->obj)
+ 			continue;
+-		}
++
+ 		robj =3D gem_to_amdgpu_bo(rfb->obj);
+ 		/* don't unpin kernel fb objects */
+ 		if (!amdgpu_fbdev_robj_is_fb(adev, robj)) {
+--=20
+2.10.0
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
