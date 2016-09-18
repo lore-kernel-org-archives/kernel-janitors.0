@@ -1,61 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:01:42 +0000
-Subject: [PATCH 16/47] block-rbd: Rename jump labels in rbd_dev_v1_header_info()
-Message-Id: <ff082acc-cdcc-2738-6242-d8ef35c42999@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 12:58:14 +0000
+Subject: [PATCH 6/6] firmware-qemu_fw_cfg: Move a variable assignment in fw_cfg_sysfs_probe()
+Message-Id: <4546d20a-6e9c-5192-35c1-116bff2b3fc8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
+In-Reply-To: <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+To: qemu-devel@nongnu.org, Gabriel Somlo <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:15:44 +0200
+Date: Sun, 18 Sep 2016 14:25:55 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+One local variable was set to an error code before a concrete
+error situation was detected. Thus move the corresponding assignment into
+two if branches to indicate a software failure there.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/firmware/qemu_fw_cfg.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 262805a..0b6f0f9 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -4352,17 +4352,17 @@ static int rbd_dev_v1_header_info(struct rbd_device *rbd_dev)
- 		ret = rbd_obj_read_sync(rbd_dev, rbd_dev->header_oid.name,
- 				       0, size, ondisk);
- 		if (ret < 0)
--			goto out;
-+			goto free_header;
- 		if ((size_t)ret < size) {
- 			ret = -ENXIO;
- 			rbd_warn(rbd_dev, "short header read (want %zd got %d)",
- 				size, ret);
--			goto out;
-+			goto free_header;
- 		}
- 		if (!rbd_dev_ondisk_valid(ondisk)) {
- 			ret = -ENXIO;
- 			rbd_warn(rbd_dev, "invalid header");
--			goto out;
-+			goto free_header;
- 		}
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index a09e59c..23293a1 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -535,13 +535,16 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
+ 		return -EBUSY;
  
- 		names_size = le64_to_cpu(ondisk->snap_names_len);
-@@ -4371,7 +4371,7 @@ static int rbd_dev_v1_header_info(struct rbd_device *rbd_dev)
- 	} while (snap_count != want_count);
+ 	/* create by_key and by_name subdirs of /sys/firmware/qemu_fw_cfg/ */
+-	err = -ENOMEM;
+ 	fw_cfg_sel_ko = kobject_create_and_add("by_key", fw_cfg_top_ko);
+-	if (!fw_cfg_sel_ko)
++	if (!fw_cfg_sel_ko) {
++		err = -ENOMEM;
+ 		goto exit;
++	}
+ 	fw_cfg_fname_kset = kset_create_and_add("by_name", NULL, fw_cfg_top_ko);
+-	if (!fw_cfg_fname_kset)
++	if (!fw_cfg_fname_kset) {
++		err = -ENOMEM;
+ 		goto cleanup_object;
++	}
  
- 	ret = rbd_header_from_disk(rbd_dev, ondisk);
--out:
-+ free_header:
- 	kfree(ondisk);
- 
- 	return ret;
+ 	/* initialize fw_cfg device i/o from platform data */
+ 	err = fw_cfg_do_platform_probe(pdev);
 -- 
 2.10.0
 
