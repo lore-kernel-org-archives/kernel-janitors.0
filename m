@@ -1,23 +1,42 @@
-From: Paul Mackerras <paulus@ozlabs.org>
-Date: Tue, 27 Sep 2016 05:46:52 +0000
-Subject: Re: [patch] KVM: PPC: fix a sanity check
-Message-Id: <20160927054652.gikspz75ilmluecz@oak.ozlabs.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 12:55:14 +0000
+Subject: [PATCH 4/6] firmware-qemu_fw_cfg: Improve a size determination in fw_cfg_build_symlink()
+Message-Id: <24c61c19-c696-919b-8c4c-7e42d8ed5940@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160714101545.GB18175@mwanda>
-In-Reply-To: <20160714101545.GB18175@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
+In-Reply-To: <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexander Graf <agraf@suse.com>, Bharat Bhushan <r65777@freescale.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: qemu-devel@nongnu.org, Gabriel Somlo <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Jul 14, 2016 at 01:15:46PM +0300, Dan Carpenter wrote:
-> We use logical negate where bitwise negate was intended.  It means that
-> we never return -EINVAL here.
-> 
-> Fixes: ce11e48b7fdd ('KVM: PPC: E500: Add userspace debug stub support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 14:02:02 +0200
 
-Thanks, applied to kvm-ppc-next.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Paul.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/firmware/qemu_fw_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index a834d01..a4b108a 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -399,7 +399,7 @@ static int fw_cfg_build_symlink(struct kset *dir,
+ 			dir = to_kset(ko);
+ 		} else {
+ 			/* create new subdirectory kset */
+-			subdir = kzalloc(sizeof(struct kset), GFP_KERNEL);
++			subdir = kzalloc(sizeof(*subdir), GFP_KERNEL);
+ 			if (!subdir) {
+ 				ret = -ENOMEM;
+ 				break;
+-- 
+2.10.0
+
