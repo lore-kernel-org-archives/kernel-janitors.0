@@ -1,60 +1,50 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 03 Sep 2016 07:04:49 +0000
-Subject: [PATCH] lpcf: Simplify code
-Message-Id: <1472886289-29756-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 06:19:57 +0000
+Subject: [PATCH 08/10] firewire-net: Rename a jump label in fwnet_finish_incoming_packet()
+Message-Id: <ebee0527-c16c-1fda-0724-1204b768e44f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: james.smart@avagotech.com, dick.kennedy@avagotech.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Calling 'list_splice' followed by 'INIT_LIST_HEAD' is equivalent to
-'list_splice_init'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 22:40:05 +0200
 
-This has been spotted with the following coccinelle script:
-/////
-@@
-expression y,z;
-@@
+Adjust a jump label according to the current Linux coding style convention.
 
--   list_splice(y,z);
--   INIT_LIST_HEAD(y);
-+   list_splice_init(y,z);
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/lpfc/lpfc_scsi.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/firewire/net.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
-index d197aa176dee..90c26d27fd1f 100644
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -978,9 +978,8 @@ lpfc_get_scsi_buf_s3(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp)
- 			 list);
- 	if (!lpfc_cmd) {
- 		spin_lock(&phba->scsi_buf_list_put_lock);
--		list_splice(&phba->lpfc_scsi_buf_list_put,
--			    &phba->lpfc_scsi_buf_list_get);
--		INIT_LIST_HEAD(&phba->lpfc_scsi_buf_list_put);
-+		list_splice_init(&phba->lpfc_scsi_buf_list_put,
-+				 &phba->lpfc_scsi_buf_list_get);
- 		list_remove_head(scsi_buf_list_get, lpfc_cmd,
- 				 struct lpfc_scsi_buf, list);
- 		spin_unlock(&phba->scsi_buf_list_put_lock);
-@@ -1018,9 +1017,8 @@ lpfc_get_scsi_buf_s4(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp)
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index 7e802e7..6dd3174 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -495,7 +495,7 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ #endif
+ 		break;
+ 	default:
+-		goto err;
++		goto increment_counter;
  	}
- 	if (!found) {
- 		spin_lock(&phba->scsi_buf_list_put_lock);
--		list_splice(&phba->lpfc_scsi_buf_list_put,
--			    &phba->lpfc_scsi_buf_list_get);
--		INIT_LIST_HEAD(&phba->lpfc_scsi_buf_list_put);
-+		list_splice_init(&phba->lpfc_scsi_buf_list_put,
-+				 &phba->lpfc_scsi_buf_list_get);
- 		spin_unlock(&phba->scsi_buf_list_put_lock);
- 		list_for_each_entry_safe(lpfc_cmd, lpfc_cmd_next,
- 					 &phba->lpfc_scsi_buf_list_get, list) {
+ 
+ 	dev = netdev_priv(net);
+@@ -551,8 +551,7 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ 	}
+ 
+ 	return 0;
+-
+- err:
++ increment_counter:
+ 	net->stats.rx_errors++;
+ 	net->stats.rx_dropped++;
+ 
 -- 
-2.7.4
+2.10.0
 
