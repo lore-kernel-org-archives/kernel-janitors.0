@@ -1,79 +1,50 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Fri, 23 Sep 2016 01:29:43 +0000
-Subject: [PATCH 04/11 V2] staging: dgnc: kfree for board structure in dgnc_found_board()
-Message-Id: <20160923012943.GA32022@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 06:17:46 +0000
+Subject: [PATCH 06/10] firewire-net: Rename a jump label in fwnet_send_packet()
+Message-Id: <e903ed45-9a39-04f7-fb80-6c7ca46d49bf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The board structure should be freed when any function was failed
-in dgnc_found_board(). And the board strucure will be stored
-into dgnc_board array when the dgnc_found_board() function has no error.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 22:27:52 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Adjust a jump label according to the current Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-V2: the subject line was cut off, I put it completely.
+ drivers/firewire/net.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- drivers/staging/dgnc/dgnc_driver.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index 58cebf4..0114e78 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -353,9 +353,7 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 	int rc = 0;
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index 24725be..a0ccab3 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -1003,8 +1003,7 @@ static int fwnet_send_packet(struct fwnet_packet_task *ptask)
+ 			dec_queued_datagrams(dev);
  
- 	/* get the board structure and prep it */
--	dgnc_board[dgnc_num_boards] = kzalloc(sizeof(*brd), GFP_KERNEL);
--	brd = dgnc_board[dgnc_num_boards];
+ 		spin_unlock_irqrestore(&dev->lock, flags);
 -
-+	brd = kzalloc(sizeof(*brd), GFP_KERNEL);
- 	if (!brd)
- 		return -ENOMEM;
- 
-@@ -411,7 +409,8 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 		if (!brd->membase) {
- 			dev_err(&brd->pdev->dev,
- 				"Card has no PCI IO resources, failing.\n");
--			return -ENODEV;
-+			rc = -ENODEV;
-+			goto failed;
- 		}
- 
- 		brd->membase_end = pci_resource_end(pdev, 4);
-@@ -502,7 +501,8 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
- 	default:
- 		dev_err(&brd->pdev->dev,
- 			"Didn't find any compatible Neo/Classic PCI boards.\n");
--		return -ENXIO;
-+		rc = -ENXIO;
-+		goto failed;
+-		goto out;
++		goto check_free;
  	}
  
- 	/*
-@@ -539,14 +539,15 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 	fw_send_request(dev->card, &ptask->transaction,
+@@ -1024,7 +1023,7 @@ static int fwnet_send_packet(struct fwnet_packet_task *ptask)
+ 	spin_unlock_irqrestore(&dev->lock, flags);
  
- 	wake_up_interruptible(&brd->state_wait);
+ 	netif_trans_update(dev->netdev);
+- out:
++ check_free:
+ 	if (free)
+ 		fwnet_free_ptask(ptask);
  
-+	dgnc_board[dgnc_num_boards] = brd;
-+
- 	return 0;
- 
- failed:
- 	dgnc_tty_uninit(brd);
--	brd->state = BOARD_FAILED;
--	brd->dpastatus = BD_NOFEP;
-+	kfree(brd);
- 
--	return -ENXIO;
-+	return rc;
- }
- 
- static int dgnc_finalize_board_init(struct dgnc_board *brd)
 -- 
-1.9.1
+2.10.0
 
