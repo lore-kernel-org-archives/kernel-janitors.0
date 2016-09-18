@@ -1,85 +1,42 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 22 Sep 2016 05:22:53 +0000
-Subject: [PATCH 06/11] staging: dgnc: introduce the dgnc_tty_unregister()
-Message-Id: <20160922052253.GA27243@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 12:52:47 +0000
+Subject: [PATCH 2/6] firmware-qemu_fw_cfg: Improve a size determination in fw_cfg_register_file()
+Message-Id: <6517cf5c-06ea-8b97-b2f2-b4e0253ed48f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
+In-Reply-To: <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: qemu-devel@nongnu.org, Gabriel Somlo <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The dgnc_tty_unregister() will be called when
-the dgnc_tty_register() is failed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 10:43:27 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/dgnc/dgnc_driver.c | 7 +++++--
- drivers/staging/dgnc/dgnc_tty.c    | 8 ++++++++
- drivers/staging/dgnc/dgnc_tty.h    | 1 +
- 3 files changed, 14 insertions(+), 2 deletions(-)
+ drivers/firmware/qemu_fw_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index a95d13c..ffe55a2 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -299,13 +299,13 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	rc = dgnc_finalize_board_init(brd);
- 	if (rc < 0) {
- 		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
--		goto failed;
-+		goto unregister_tty;
- 	}
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index e69653e..a229df6 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -458,7 +458,7 @@ static int fw_cfg_register_file(const struct fw_cfg_file *f)
+ 		return -ENOMEM;
  
- 	rc = dgnc_tty_init(brd);
- 	if (rc < 0) {
- 		pr_err(DRVSTR ": Can't init tty devices (%d)\n", rc);
--		goto failed;
-+		goto unregister_tty;
- 	}
+ 	/* set file entry information */
+-	memcpy(&entry->f, f, sizeof(struct fw_cfg_file));
++	memcpy(&entry->f, f, sizeof(*f));
  
- 	brd->state = BOARD_READY;
-@@ -317,6 +317,9 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	return 0;
- 
-+unregister_tty:
-+	dgnc_tty_unregister(brd);
-+
- failed:
- 	kfree(brd);
- 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index fd46ef0..893f473 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -273,6 +273,14 @@ free_serial_driver:
- 	return rc;
- }
- 
-+void dgnc_tty_unregister(struct dgnc_board *brd)
-+{
-+	tty_unregister_driver(brd->print_driver);
-+	tty_unregister_driver(brd->serial_driver);
-+	put_tty_driver(brd->print_driver);
-+	put_tty_driver(brd->serial_driver);
-+}
-+
- /*
-  * dgnc_tty_init()
-  *
-diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
-index 21d3369..f065c8f 100644
---- a/drivers/staging/dgnc/dgnc_tty.h
-+++ b/drivers/staging/dgnc/dgnc_tty.h
-@@ -19,6 +19,7 @@
- #include "dgnc_driver.h"
- 
- int	dgnc_tty_register(struct dgnc_board *brd);
-+void dgnc_tty_unregister(struct dgnc_board *brd);
- 
- int	dgnc_tty_preinit(void);
- int     dgnc_tty_init(struct dgnc_board *);
+ 	/* register entry under "/sys/firmware/qemu_fw_cfg/by_key/" */
+ 	err = kobject_init_and_add(&entry->kobj, &fw_cfg_sysfs_entry_ktype,
 -- 
-1.9.1
+2.10.0
 
