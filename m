@@ -1,67 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:40:11 +0000
-Subject: [PATCH 03/30] ACPI-processor: Rename jump labels in acpi_processor_get_performance_states()
-Message-Id: <4d1d5a0d-a627-5566-e720-b5e3f2893558@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 06:21:14 +0000
+Subject: [PATCH 09/10] firewire-net: Rename jump labels in fwnet_pd_new()
+Message-Id: <01aa445f-96c0-48db-f0e4-22ba1a826fc6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 11:27:45 +0200
+Date: Sat, 17 Sep 2016 22:48:46 +0200
 
 Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/firewire/net.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index 004e24c..49889b1 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -339,7 +339,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
- 	if (!pss || (pss->type != ACPI_TYPE_PACKAGE)) {
- 		printk(KERN_ERR PREFIX "Invalid _PSS data\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index 6dd3174..eb7ce5e 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -362,18 +362,18 @@ static struct fwnet_partial_datagram *fwnet_pd_new(struct net_device *net,
  
- 	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found %d performance states\n",
-@@ -351,7 +351,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
- 						GFP_KERNEL);
- 	if (!pr->performance->states) {
- 		result = -ENOMEM;
--		goto end;
-+		goto free_buffer;
- 	}
+ 	new = kmalloc(sizeof(*new), GFP_ATOMIC);
+ 	if (!new)
+-		goto fail;
++		goto exit;
  
- 	for (i = 0; i < pr->performance->state_count; i++) {
-@@ -369,7 +369,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
- 			ACPI_EXCEPTION((AE_INFO, status, "Invalid _PSS data"));
- 			result = -EFAULT;
- 			kfree(pr->performance->states);
--			goto end;
-+			goto free_buffer;
- 		}
+ 	INIT_LIST_HEAD(&new->fi_list);
+ 	fi = fwnet_frag_new(new, frag_off, frag_len);
+ 	if (fi = NULL)
+-		goto fail_w_new;
++		goto free_new;
  
- 		amd_fixup_frequency(px, i);
-@@ -417,8 +417,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
+ 	new->datagram_label = datagram_label;
+ 	new->datagram_size = dg_size;
+ 	new->skb = dev_alloc_skb(dg_size + LL_RESERVED_SPACE(net));
+ 	if (new->skb = NULL)
+-		goto fail_w_fi;
++		goto free_fragment_info;
  
- 	if (last_invalid > 0)
- 		pr->performance->state_count = last_invalid;
+ 	skb_reserve(new->skb, LL_RESERVED_SPACE(net));
+ 	new->pbuf = skb_put(new->skb, dg_size);
+@@ -381,12 +381,11 @@ static struct fwnet_partial_datagram *fwnet_pd_new(struct net_device *net,
+ 	list_add_tail(&new->pd_link, &peer->pd_list);
+ 
+ 	return new;
 -
--      end:
-+ free_buffer:
- 	kfree(buffer.pointer);
+-fail_w_fi:
++ free_fragment_info:
+ 	kfree(fi);
+-fail_w_new:
++ free_new:
+ 	kfree(new);
+-fail:
++ exit:
+ 	return NULL;
+ }
  
- 	return result;
 -- 
 2.10.0
 
