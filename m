@@ -1,48 +1,70 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 20:18:21 +0000
-Subject: [PATCH 3/7] ACPI-APEI-HEST: Move an assignment in hest_ghes_dev_register()
-Message-Id: <c4956d3c-1b02-468c-686e-acdf3eaf20be@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 06:15:20 +0000
+Subject: [PATCH 04/10] firewire-net: Rename jump labels in fwnet_probe()
+Message-Id: <6dc834a3-531c-ea35-1c24-427fdca071fa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
-In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+ <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 21:15:22 +0200
+Date: Sat, 17 Sep 2016 22:17:12 +0200
 
-Move one assignment for a data structure member in one local variable
-so that its setting will only be performed after a corresponding memory
-allocation succeeded by this function.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/apei/hest.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firewire/net.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index a852237..26f5e78 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -185,13 +185,13 @@ static int __init hest_ghes_dev_register(unsigned int ghes_count)
- 	int rc, i;
- 	struct ghes_arr ghes_arr;
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index cedfade..2ca2d57 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -1442,7 +1442,7 @@ static int fwnet_probe(struct fw_unit *unit,
+ 	dev = fwnet_dev_find(card);
+ 	if (dev) {
+ 		net = dev->netdev;
+-		goto have_dev;
++		goto add_peer;
+ 	}
  
--	ghes_arr.count = 0;
- 	ghes_arr.ghes_devs = kmalloc_array(ghes_count,
- 					   sizeof(*ghes_arr.ghes_devs),
- 					   GFP_KERNEL);
- 	if (!ghes_arr.ghes_devs)
- 		return -ENOMEM;
+ 	net = alloc_netdev(sizeof(*dev), "firewire%d", NET_NAME_UNKNOWN,
+@@ -1469,7 +1469,7 @@ static int fwnet_probe(struct fw_unit *unit,
  
-+	ghes_arr.count = 0;
- 	rc = apei_hest_parse(hest_parse_ghes, &ghes_arr);
- 	if (rc)
- 		goto err;
+ 	ret = fwnet_fifo_start(dev);
+ 	if (ret < 0)
+-		goto out;
++		goto stop_fifo;
+ 	dev->local_fifo = dev->handler.offset;
+ 
+ 	/*
+@@ -1492,17 +1492,17 @@ static int fwnet_probe(struct fw_unit *unit,
+ 
+ 	ret = register_netdev(net);
+ 	if (ret)
+-		goto out;
++		goto stop_fifo;
+ 
+ 	list_add_tail(&dev->dev_link, &fwnet_device_list);
+ 	dev_notice(&net->dev, "IP over IEEE 1394 on card %s\n",
+ 		   dev_name(card->device));
+- have_dev:
++ add_peer:
+ 	ret = fwnet_add_peer(dev, unit, device);
+ 	if (ret && allocated_netdev) {
+ 		unregister_netdev(net);
+ 		list_del(&dev->dev_link);
+- out:
++ stop_fifo:
+ 		fwnet_fifo_stop(dev);
+ 		free_netdev(net);
+ 	}
 -- 
 2.10.0
 
