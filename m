@@ -1,66 +1,76 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 13:05:51 +0000
-Subject: [PATCH 09/26] i40iw: constify local structures
-Message-Id: <1473599168-30561-10-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 06:18:45 +0000
+Subject: [PATCH 07/10] firewire-net: Rename a jump label in fwnet_incoming_packet()
+Message-Id: <ca7f4706-4f00-0bd5-0509-5e3502f58a78@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mustafa Ismail <mustafa.ismail-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Tatyana Nikolova <tatyana.e.nikolova-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-For structure types defined in the same file or local header files, find
-top-level static structure declarations that have the following
-properties:
-1. Never reassigned.
-2. Address never taken
-3. Not passed to a top-level macro call
-4. No pointer or array-typed field passed to a function or stored in a
-variable.
-Declare structures having all of these properties as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 17 Sep 2016 22:32:14 +0200
 
-Done using Coccinelle.
-Based on a suggestion by Joe Perches <joe@perches.com>.
+Adjust jump labels according to the current Linux coding style convention.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-The semantic patch seems too long for a commit log, but is in the cover
-letter.
+ drivers/firewire/net.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- drivers/infiniband/hw/i40iw/i40iw_uk.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_uk.c b/drivers/infiniband/hw/i40iw/i40iw_uk.c
-index 4d28c3c..eb94c03 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_uk.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_uk.c
-@@ -918,7 +918,7 @@ enum i40iw_status_code i40iw_get_wqe_shift(u32 wqdepth, u32 sge, u32 inline_data
- 	return 0;
- }
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index a0ccab3..7e802e7 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -621,7 +621,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
+ 	peer = fwnet_peer_find_by_node_id(dev, source_node_id, generation);
+ 	if (!peer) {
+ 		retval = -ENOENT;
+-		goto fail;
++		goto unlock;
+ 	}
  
--static struct i40iw_qp_uk_ops iw_qp_uk_ops = {
-+static const struct i40iw_qp_uk_ops iw_qp_uk_ops = {
- 	i40iw_qp_post_wr,
- 	i40iw_qp_ring_push_db,
- 	i40iw_rdma_write,
-@@ -932,14 +932,14 @@ static struct i40iw_qp_uk_ops iw_qp_uk_ops = {
- 	i40iw_nop
- };
+ 	pd = fwnet_pd_find(peer, datagram_label);
+@@ -636,7 +636,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
+ 				  dg_size, buf, fg_off, len);
+ 		if (pd = NULL) {
+ 			retval = -ENOMEM;
+-			goto fail;
++			goto unlock;
+ 		}
+ 		peer->pdg_size++;
+ 	} else {
+@@ -652,7 +652,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
+ 			if (pd = NULL) {
+ 				peer->pdg_size--;
+ 				retval = -ENOMEM;
+-				goto fail;
++				goto unlock;
+ 			}
+ 		} else {
+ 			if (!fwnet_pd_update(peer, pd, buf, fg_off, len)) {
+@@ -664,7 +664,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
+ 				fwnet_pd_delete(pd);
+ 				peer->pdg_size--;
+ 				retval = -ENOMEM;
+-				goto fail;
++				goto unlock;
+ 			}
+ 		}
+ 	} /* new datagram or add to existing one */
+@@ -688,7 +688,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
+ 	 * moment.
+ 	 */
+ 	retval = 0;
+- fail:
++ unlock:
+ 	spin_unlock_irqrestore(&dev->lock, flags);
  
--static struct i40iw_cq_ops iw_cq_ops = {
-+static const struct i40iw_cq_ops iw_cq_ops = {
- 	i40iw_cq_request_notification,
- 	i40iw_cq_poll_completion,
- 	i40iw_cq_post_entries,
- 	i40iw_clean_cq
- };
- 
--static struct i40iw_device_uk_ops iw_device_uk_ops = {
-+static const struct i40iw_device_uk_ops iw_device_uk_ops = {
- 	i40iw_cq_uk_init,
- 	i40iw_qp_uk_init,
- };
+ 	return retval;
+-- 
+2.10.0
 
