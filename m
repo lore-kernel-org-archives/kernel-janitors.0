@@ -1,45 +1,65 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 16:38:12 +0000
-Subject: [PATCH 01/14] GPU-DRM-OMAP: Use kmalloc_array() in tiler_map_show()
-Message-Id: <1e833599-303e-0ff0-30c8-7b7ee08f8b4f@users.sourceforge.net>
+Date: Sun, 18 Sep 2016 12:50:56 +0000
+Subject: [PATCH 1/6] firmware-qemu_fw_cfg: Use kmalloc_array() in fw_cfg_register_dir_entries()
+Message-Id: <b24d8af1-7f1e-7e22-b56b-9ec123bc1de5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
-In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+ <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
+In-Reply-To: <a736b350-a691-c73b-b8e9-67c0bffb716a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: qemu-devel@nongnu.org, Gabriel Somlo <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 12:23:46 +0200
+Date: Sun, 18 Sep 2016 09:39:31 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-This issue was detected by using the Coccinelle software.
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+* Delete the local variable "dir_size" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/firmware/qemu_fw_cfg.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-index 4ceed7a9..7b32dd3 100644
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -917,8 +917,7 @@ int tiler_map_show(struct seq_file *s, void *arg)
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index 0e20116..e69653e 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -491,17 +491,17 @@ static int fw_cfg_register_dir_entries(void)
+ 	int ret = 0;
+ 	u32 count, i;
+ 	struct fw_cfg_file *dir;
+-	size_t dir_size;
  
- 	h_adj = omap_dmm->container_height / ydiv;
- 	w_adj = omap_dmm->container_width / xdiv;
+ 	fw_cfg_read_blob(FW_CFG_FILE_DIR, &count, 0, sizeof(count));
+ 	count = be32_to_cpu(count);
+-	dir_size = count * sizeof(struct fw_cfg_file);
 -
--	map = kmalloc(h_adj * sizeof(*map), GFP_KERNEL);
-+	map = kmalloc_array(h_adj, sizeof(*map), GFP_KERNEL);
- 	global_map = kmalloc((w_adj + 1) * h_adj, GFP_KERNEL);
+-	dir = kmalloc(dir_size, GFP_KERNEL);
++	dir = kmalloc_array(count, sizeof(*dir), GFP_KERNEL);
+ 	if (!dir)
+ 		return -ENOMEM;
  
- 	if (!map || !global_map)
+-	fw_cfg_read_blob(FW_CFG_FILE_DIR, dir, sizeof(count), dir_size);
++	fw_cfg_read_blob(FW_CFG_FILE_DIR,
++			 dir,
++			 sizeof(count),
++			 sizeof(*dir) * count);
+ 
+ 	for (i = 0; i < count; i++) {
+ 		dir[i].size = be32_to_cpu(dir[i].size);
 -- 
 2.10.0
 
