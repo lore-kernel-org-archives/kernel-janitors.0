@@ -1,104 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:57:10 +0000
-Subject: [PATCH 12/47] block-rbd: One function call less in rbd_dev_v2_parent_info() after error detection
-Message-Id: <3b1883b8-790c-156b-6e8d-f2bcf8848903@users.sourceforge.net>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Mon, 19 Sep 2016 08:36:42 +0000
+Subject: Re: [PATCH] NFC: nfcmrvl: constify nfcmrvl_if_ops structures
+Message-Id: <20160919083642.GB13777@zurbaran.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+References: <1470762230-2520-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470762230-2520-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, kernel-janitors@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:05:00 +0200
+Hi Julia,
 
-The kfree() function was called in one case by the rbd_dev_v2_parent_info()
-function during error handling even if the passed variable "reply_buf"
-contained a null pointer.
+On Tue, Aug 09, 2016 at 07:03:50PM +0200, Julia Lawall wrote:
+> The nfcmrvl_if_ops structures are never modified, so declare them as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/nfc/nfcmrvl/i2c.c     |    2 +-
+>  drivers/nfc/nfcmrvl/main.c    |    2 +-
+>  drivers/nfc/nfcmrvl/nfcmrvl.h |    4 ++--
+>  drivers/nfc/nfcmrvl/spi.c     |    2 +-
+>  drivers/nfc/nfcmrvl/uart.c    |    2 +-
+>  drivers/nfc/nfcmrvl/usb.c     |    2 +-
+>  6 files changed, 7 insertions(+), 7 deletions(-)
+Applied as well, thanks.
 
-Adjust jump targets according to the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/block/rbd.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 90797aa..946e3ca 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -5105,7 +5105,7 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev)
- 	reply_buf = kmalloc(size, GFP_KERNEL);
- 	if (!reply_buf) {
- 		ret = -ENOMEM;
--		goto out_err;
-+		goto put_spec;
- 	}
- 
- 	snapid = cpu_to_le64(rbd_dev->spec->snap_id);
-@@ -5115,12 +5115,12 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev)
- 				reply_buf, size);
- 	dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
- 	if (ret < 0)
--		goto out_err;
-+		goto free_buffer;
- 
- 	p = reply_buf;
- 	end = reply_buf + ret;
- 	ret = -ERANGE;
--	ceph_decode_64_safe(&p, end, pool_id, out_err);
-+	ceph_decode_64_safe(&p, end, pool_id, free_buffer);
- 	if (pool_id = CEPH_NOPOOL) {
- 		/*
- 		 * Either the parent never existed, or we have
-@@ -5138,7 +5138,7 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev)
- 				rbd_dev->disk->disk_name);
- 		}
- 
--		goto out;	/* No parent?  No problem. */
-+		goto success_indication;	/* No parent?  No problem. */
- 	}
- 
- 	/* The ceph file layout needs to fit pool id in 32 bits */
-@@ -5147,16 +5147,16 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev)
- 	if (pool_id > (u64)U32_MAX) {
- 		rbd_warn(NULL, "parent pool id too large (%llu > %u)",
- 			(unsigned long long)pool_id, U32_MAX);
--		goto out_err;
-+		goto free_buffer;
- 	}
- 
- 	image_id = ceph_extract_encoded_string(&p, end, NULL, GFP_KERNEL);
- 	if (IS_ERR(image_id)) {
- 		ret = PTR_ERR(image_id);
--		goto out_err;
-+		goto free_buffer;
- 	}
--	ceph_decode_64_safe(&p, end, snap_id, out_err);
--	ceph_decode_64_safe(&p, end, overlap, out_err);
-+	ceph_decode_64_safe(&p, end, snap_id, free_buffer);
-+	ceph_decode_64_safe(&p, end, overlap, free_buffer);
- 
- 	/*
- 	 * The parent won't change (except when the clone is
-@@ -5189,11 +5189,11 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev)
- 		}
- 	}
- 	rbd_dev->parent_overlap = overlap;
--
--out:
-+ success_indication:
- 	ret = 0;
--out_err:
-+ free_buffer:
- 	kfree(reply_buf);
-+ put_spec:
- 	rbd_spec_put(parent_spec);
- 
- 	return ret;
--- 
-2.10.0
-
+Cheers,
+Samuel.
