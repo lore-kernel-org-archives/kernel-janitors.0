@@ -1,44 +1,44 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 25 Sep 2016 11:53:58 +0000
-Subject: [PATCH v2] clk: at91: Fix a return value in case of error
-Message-Id: <1474804438-27804-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 19 Sep 2016 15:55:41 +0000
+Subject: [PATCH 3/5] GPU-DRM: Replace a kzalloc() call by kcalloc() in drm_legacy_addbufs_agp()
+Message-Id: <606c22f3-5da5-2e84-783d-bfe5289b4a01@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <2fd2da19-d57e-5017-0594-fd52e78493fa@users.sourceforge.net>
+In-Reply-To: <2fd2da19-d57e-5017-0594-fd52e78493fa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: boris.brezillon@free-electrons.com, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-If 'clk_hw_register()' fails, it is likely that we expect to return an
-error instead of a valid pointer (which would mean success).
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 19 Sep 2016 17:24:20 +0200
 
-Fix commit f5644f10dcfb ("clk: at91: Migrate to clk_hw based registration
-and OF APIs")
+The script "checkpatch.pl" can point information out like the following.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+WARNING: Prefer kcalloc over kzalloc with multiply
+
+Thus fix the affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-v2: clk_hw_register does return an error or 0. So we can use it. 
-
-This proposal is un-compiled and un-tested.
-I get an error when I run 'make drivers/clk/at91/' which is likely due to
-my building environment. 
----
- drivers/clk/at91/clk-programmable.c | 2 +-
+ drivers/gpu/drm/drm_bufs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 190122e64a3a..2cf200e22d48 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -203,7 +203,7 @@ at91_clk_register_programmable(struct regmap *regmap,
- 	ret = clk_hw_register(NULL, &prog->hw);
- 	if (ret) {
- 		kfree(prog);
--		hw = &prog->hw;
-+		hw = ERR_PTR(ret);
+diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
+index 8a31dac..36dd685 100644
+--- a/drivers/gpu/drm/drm_bufs.c
++++ b/drivers/gpu/drm/drm_bufs.c
+@@ -755,7 +755,7 @@ int drm_legacy_addbufs_agp(struct drm_device *dev,
+ 		return -EINVAL;
  	}
  
- 	return hw;
+-	entry->buflist = kzalloc(count * sizeof(*entry->buflist), GFP_KERNEL);
++	entry->buflist = kcalloc(count, sizeof(*entry->buflist), GFP_KERNEL);
+ 	if (!entry->buflist) {
+ 		mutex_unlock(&dev->struct_mutex);
+ 		atomic_dec(&dev->buf_alloc);
 -- 
-2.7.4
+2.10.0
 
