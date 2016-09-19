@@ -1,113 +1,81 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 16:53:06 +0000
-Subject: [PATCH 4/5] drm/amdgpu: Rename a jump label in amdgpu_device_init()
-Message-Id: <ebf7ea58-174a-572f-3da8-3ee624d9b82f@users.sourceforge.net>
+From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
+Date: Mon, 19 Sep 2016 13:56:41 +0000
+Subject: RE: [PATCH 4/5] drm/amdgpu: Rename a jump label in amdgpu_device_init()
+Message-Id: <MWHPR12MB169448087FFFA2E8B5A61504F7F40@MWHPR12MB1694.namprd12.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <8d614254-1cba-0379-cf84-52ad9bd9f3a7@users.sourceforge.net>
-In-Reply-To: <8d614254-1cba-0379-cf84-52ad9bd9f3a7@users.sourceforge.net>
+ <ebf7ea58-174a-572f-3da8-3ee624d9b82f@users.sourceforge.net>
+In-Reply-To: <ebf7ea58-174a-572f-3da8-3ee624d9b82f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>, Tom St Denis <tom.stdenis@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: 'SF Markus Elfring' <elfring@users.sourceforge.net>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Koenig,
+ Christian" <Christian.Koenig@amd.com>, "Zhou, David(ChunMing)" <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, "Liu, Monk" <Monk.Liu@amd.com>, "StDenis, Tom" <Tom.StDenis@amd.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 17:50:09 +0200
-
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 2b8ba97..fed4854 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -1566,18 +1566,18 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 	/* Read BIOS */
- 	if (!amdgpu_get_bios(adev)) {
- 		r = -EINVAL;
--		goto failed;
-+		goto check_runtime;
- 	}
- 	/* Must be an ATOMBIOS */
- 	if (!adev->is_atom_bios) {
- 		dev_err(adev->dev, "Expecting atombios for GPU\n");
- 		r = -EINVAL;
--		goto failed;
-+		goto check_runtime;
- 	}
- 	r = amdgpu_atombios_init(adev);
- 	if (r) {
- 		dev_err(adev->dev, "amdgpu_atombios_init failed\n");
--		goto failed;
-+		goto check_runtime;
- 	}
- 
- 	/* See if the asic supports SR-IOV */
-@@ -1595,7 +1595,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 		if (!adev->bios) {
- 			dev_err(adev->dev, "Card not posted and no BIOS - ignoring\n");
- 			r = -EINVAL;
--			goto failed;
-+			goto check_runtime;
- 		}
- 		DRM_INFO("GPU not posted. posting now...\n");
- 		amdgpu_atom_asic_init(adev->mode_info.atom_context);
-@@ -1605,7 +1605,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 	r = amdgpu_atombios_get_clock_info(adev);
- 	if (r) {
- 		dev_err(adev->dev, "amdgpu_atombios_get_clock_info failed\n");
--		goto failed;
-+		goto check_runtime;
- 	}
- 	/* init i2c buses */
- 	amdgpu_atombios_i2c_init(adev);
-@@ -1614,7 +1614,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 	r = amdgpu_fence_driver_init(adev);
- 	if (r) {
- 		dev_err(adev->dev, "amdgpu_fence_driver_init failed\n");
--		goto failed;
-+		goto check_runtime;
- 	}
- 
- 	/* init the mode config */
-@@ -1624,7 +1624,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 	if (r) {
- 		dev_err(adev->dev, "amdgpu_init failed\n");
- 		amdgpu_fini(adev);
--		goto failed;
-+		goto check_runtime;
- 	}
- 
- 	adev->accel_working = true;
-@@ -1634,7 +1634,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 	r = amdgpu_ib_pool_init(adev);
- 	if (r) {
- 		dev_err(adev->dev, "IB initialization failed (%d).\n", r);
--		goto failed;
-+		goto check_runtime;
- 	}
- 
- 	r = amdgpu_ib_ring_tests(adev);
-@@ -1682,12 +1682,11 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 	r = amdgpu_late_init(adev);
- 	if (r) {
- 		dev_err(adev->dev, "amdgpu_late_init failed\n");
--		goto failed;
-+		goto check_runtime;
- 	}
- 
- 	return 0;
--
--failed:
-+ check_runtime:
- 	if (runtime)
- 		vga_switcheroo_fini_domain_pm_ops(adev->dev);
- 	return r;
--- 
-2.10.0
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTRiBNYXJrdXMgRWxmcmluZyBb
+bWFpbHRvOmVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0XQ0KPiBTZW50OiBTdW5kYXksIFNl
+cHRlbWJlciAxOCwgMjAxNiAxMjo1MyBQTQ0KPiBUbzogZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZzsgRGV1Y2hlciwgQWxleGFuZGVyOyBLb2VuaWcsIENocmlzdGlhbjsNCj4gWmhvdSwg
+RGF2aWQoQ2h1bk1pbmcpOyBEYXZpZCBBaXJsaWU7IExpdSwgTW9uazsgU3REZW5pcywgVG9tDQo+
+IENjOiBMS01MOyBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBKdWxpYSBMYXdhbGwN
+Cj4gU3ViamVjdDogW1BBVENIIDQvNV0gZHJtL2FtZGdwdTogUmVuYW1lIGEganVtcCBsYWJlbCBp
+bg0KPiBhbWRncHVfZGV2aWNlX2luaXQoKQ0KPiANCj4gRnJvbTogTWFya3VzIEVsZnJpbmcgPGVs
+ZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiBEYXRlOiBTdW4sIDE4IFNlcCAyMDE2IDE3
+OjUwOjA5ICswMjAwDQo+IA0KPiBBZGp1c3QganVtcCBsYWJlbHMgYWNjb3JkaW5nIHRvIHRoZSBj
+dXJyZW50IExpbnV4IGNvZGluZyBzdHlsZSBjb252ZW50aW9uLg0KPiANCj4gU2lnbmVkLW9mZi1i
+eTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0Pg0KPiAtLS0N
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9kZXZpY2UuYyB8IDIxICsrKysr
+KysrKystLS0tLS0tLS0tDQo+IC0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCsp
+LCAxMSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1k
+L2FtZGdwdS9hbWRncHVfZGV2aWNlLmMNCj4gYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9h
+bWRncHVfZGV2aWNlLmMNCj4gaW5kZXggMmI4YmE5Ny4uZmVkNDg1NCAxMDA2NDQNCj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2RldmljZS5jDQo+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9kZXZpY2UuYw0KPiBAQCAtMTU2NiwxOCArMTU2
+NiwxOCBAQCBpbnQgYW1kZ3B1X2RldmljZV9pbml0KHN0cnVjdCBhbWRncHVfZGV2aWNlDQo+ICph
+ZGV2LA0KPiAgCS8qIFJlYWQgQklPUyAqLw0KPiAgCWlmICghYW1kZ3B1X2dldF9iaW9zKGFkZXYp
+KSB7DQo+ICAJCXIgPSAtRUlOVkFMOw0KPiAtCQlnb3RvIGZhaWxlZDsNCj4gKwkJZ290byBjaGVj
+a19ydW50aW1lOw0KDQpOQUNLLiAgRmFpbGVkIGlzIGEgbW9yZSBhcHByb3ByaWF0ZSBsYWJlbCBo
+ZXJlLiAgVGhlIHJ1bnRpbWUgY2hlY2sgaXMganVzdCBwYXJ0IG9mIHRoZSBmYWlsdXJlIGNsZWFu
+dXAuDQoNCkFsZXgNCg0KPiAgCX0NCj4gIAkvKiBNdXN0IGJlIGFuIEFUT01CSU9TICovDQo+ICAJ
+aWYgKCFhZGV2LT5pc19hdG9tX2Jpb3MpIHsNCj4gIAkJZGV2X2VycihhZGV2LT5kZXYsICJFeHBl
+Y3RpbmcgYXRvbWJpb3MgZm9yIEdQVVxuIik7DQo+ICAJCXIgPSAtRUlOVkFMOw0KPiAtCQlnb3Rv
+IGZhaWxlZDsNCj4gKwkJZ290byBjaGVja19ydW50aW1lOw0KPiAgCX0NCj4gIAlyID0gYW1kZ3B1
+X2F0b21iaW9zX2luaXQoYWRldik7DQo+ICAJaWYgKHIpIHsNCj4gIAkJZGV2X2VycihhZGV2LT5k
+ZXYsICJhbWRncHVfYXRvbWJpb3NfaW5pdCBmYWlsZWRcbiIpOw0KPiAtCQlnb3RvIGZhaWxlZDsN
+Cj4gKwkJZ290byBjaGVja19ydW50aW1lOw0KPiAgCX0NCj4gDQo+ICAJLyogU2VlIGlmIHRoZSBh
+c2ljIHN1cHBvcnRzIFNSLUlPViAqLw0KPiBAQCAtMTU5NSw3ICsxNTk1LDcgQEAgaW50IGFtZGdw
+dV9kZXZpY2VfaW5pdChzdHJ1Y3QgYW1kZ3B1X2RldmljZQ0KPiAqYWRldiwNCj4gIAkJaWYgKCFh
+ZGV2LT5iaW9zKSB7DQo+ICAJCQlkZXZfZXJyKGFkZXYtPmRldiwgIkNhcmQgbm90IHBvc3RlZCBh
+bmQgbm8gQklPUyAtDQo+IGlnbm9yaW5nXG4iKTsNCj4gIAkJCXIgPSAtRUlOVkFMOw0KPiAtCQkJ
+Z290byBmYWlsZWQ7DQo+ICsJCQlnb3RvIGNoZWNrX3J1bnRpbWU7DQo+ICAJCX0NCj4gIAkJRFJN
+X0lORk8oIkdQVSBub3QgcG9zdGVkLiBwb3N0aW5nIG5vdy4uLlxuIik7DQo+ICAJCWFtZGdwdV9h
+dG9tX2FzaWNfaW5pdChhZGV2LT5tb2RlX2luZm8uYXRvbV9jb250ZXh0KTsNCj4gQEAgLTE2MDUs
+NyArMTYwNSw3IEBAIGludCBhbWRncHVfZGV2aWNlX2luaXQoc3RydWN0IGFtZGdwdV9kZXZpY2UN
+Cj4gKmFkZXYsDQo+ICAJciA9IGFtZGdwdV9hdG9tYmlvc19nZXRfY2xvY2tfaW5mbyhhZGV2KTsN
+Cj4gIAlpZiAocikgew0KPiAgCQlkZXZfZXJyKGFkZXYtPmRldiwgImFtZGdwdV9hdG9tYmlvc19n
+ZXRfY2xvY2tfaW5mbw0KPiBmYWlsZWRcbiIpOw0KPiAtCQlnb3RvIGZhaWxlZDsNCj4gKwkJZ290
+byBjaGVja19ydW50aW1lOw0KPiAgCX0NCj4gIAkvKiBpbml0IGkyYyBidXNlcyAqLw0KPiAgCWFt
+ZGdwdV9hdG9tYmlvc19pMmNfaW5pdChhZGV2KTsNCj4gQEAgLTE2MTQsNyArMTYxNCw3IEBAIGlu
+dCBhbWRncHVfZGV2aWNlX2luaXQoc3RydWN0IGFtZGdwdV9kZXZpY2UNCj4gKmFkZXYsDQo+ICAJ
+ciA9IGFtZGdwdV9mZW5jZV9kcml2ZXJfaW5pdChhZGV2KTsNCj4gIAlpZiAocikgew0KPiAgCQlk
+ZXZfZXJyKGFkZXYtPmRldiwgImFtZGdwdV9mZW5jZV9kcml2ZXJfaW5pdCBmYWlsZWRcbiIpOw0K
+PiAtCQlnb3RvIGZhaWxlZDsNCj4gKwkJZ290byBjaGVja19ydW50aW1lOw0KPiAgCX0NCj4gDQo+
+ICAJLyogaW5pdCB0aGUgbW9kZSBjb25maWcgKi8NCj4gQEAgLTE2MjQsNyArMTYyNCw3IEBAIGlu
+dCBhbWRncHVfZGV2aWNlX2luaXQoc3RydWN0IGFtZGdwdV9kZXZpY2UNCj4gKmFkZXYsDQo+ICAJ
+aWYgKHIpIHsNCj4gIAkJZGV2X2VycihhZGV2LT5kZXYsICJhbWRncHVfaW5pdCBmYWlsZWRcbiIp
+Ow0KPiAgCQlhbWRncHVfZmluaShhZGV2KTsNCj4gLQkJZ290byBmYWlsZWQ7DQo+ICsJCWdvdG8g
+Y2hlY2tfcnVudGltZTsNCj4gIAl9DQo+IA0KPiAgCWFkZXYtPmFjY2VsX3dvcmtpbmcgPSB0cnVl
+Ow0KPiBAQCAtMTYzNCw3ICsxNjM0LDcgQEAgaW50IGFtZGdwdV9kZXZpY2VfaW5pdChzdHJ1Y3Qg
+YW1kZ3B1X2RldmljZQ0KPiAqYWRldiwNCj4gIAlyID0gYW1kZ3B1X2liX3Bvb2xfaW5pdChhZGV2
+KTsNCj4gIAlpZiAocikgew0KPiAgCQlkZXZfZXJyKGFkZXYtPmRldiwgIklCIGluaXRpYWxpemF0
+aW9uIGZhaWxlZCAoJWQpLlxuIiwgcik7DQo+IC0JCWdvdG8gZmFpbGVkOw0KPiArCQlnb3RvIGNo
+ZWNrX3J1bnRpbWU7DQo+ICAJfQ0KPiANCj4gIAlyID0gYW1kZ3B1X2liX3JpbmdfdGVzdHMoYWRl
+dik7DQo+IEBAIC0xNjgyLDEyICsxNjgyLDExIEBAIGludCBhbWRncHVfZGV2aWNlX2luaXQoc3Ry
+dWN0IGFtZGdwdV9kZXZpY2UNCj4gKmFkZXYsDQo+ICAJciA9IGFtZGdwdV9sYXRlX2luaXQoYWRl
+dik7DQo+ICAJaWYgKHIpIHsNCj4gIAkJZGV2X2VycihhZGV2LT5kZXYsICJhbWRncHVfbGF0ZV9p
+bml0IGZhaWxlZFxuIik7DQo+IC0JCWdvdG8gZmFpbGVkOw0KPiArCQlnb3RvIGNoZWNrX3J1bnRp
+bWU7DQo+ICAJfQ0KPiANCj4gIAlyZXR1cm4gMDsNCj4gLQ0KPiAtZmFpbGVkOg0KPiArIGNoZWNr
+X3J1bnRpbWU6DQo+ICAJaWYgKHJ1bnRpbWUpDQo+ICAJCXZnYV9zd2l0Y2hlcm9vX2ZpbmlfZG9t
+YWluX3BtX29wcyhhZGV2LT5kZXYpOw0KPiAgCXJldHVybiByOw0KPiAtLQ0KPiAyLjEwLjANCg0K
