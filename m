@@ -1,51 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 14:23:57 +0000
-Subject: [PATCH 1/7] cfag12864b: Use kmalloc_array() in cfag12864b_init()
-Message-Id: <e80b7194-e189-9568-267d-e1e8e1cb9cde@users.sourceforge.net>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Mon, 19 Sep 2016 08:34:39 +0000
+Subject: Re: [PATCH] NFC: pn533: constify pn533_phy_ops structures
+Message-Id: <20160919083439.GA13777@zurbaran.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
-In-Reply-To: <3d24b514-4e99-86ea-d69e-49a0b1edd286@users.sourceforge.net>
+References: <1470759062-21276-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1470759062-21276-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, kernel-janitors@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 14:40:48 +0200
+Hi Julia,
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+On Tue, Aug 09, 2016 at 06:11:02PM +0200, Julia Lawall wrote:
+> The pn533_phy_ops are never modified, so declare them as const.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/nfc/pn533/i2c.c   |    2 +-
+>  drivers/nfc/pn533/pn533.c |    2 +-
+>  drivers/nfc/pn533/pn533.h |    4 ++--
+>  drivers/nfc/pn533/usb.c   |    2 +-
+>  4 files changed, 5 insertions(+), 5 deletions(-)
+Applied to nfc-next, thanks.
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/auxdisplay/cfag12864b.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/auxdisplay/cfag12864b.c b/drivers/auxdisplay/cfag12864b.c
-index 41ce4bd..88260f4 100644
---- a/drivers/auxdisplay/cfag12864b.c
-+++ b/drivers/auxdisplay/cfag12864b.c
-@@ -347,8 +347,9 @@ static int __init cfag12864b_init(void)
- 		goto none;
- 	}
- 
--	cfag12864b_cache = kmalloc(sizeof(unsigned char) *
--		CFAG12864B_SIZE, GFP_KERNEL);
-+	cfag12864b_cache = kmalloc_array(CFAG12864B_SIZE,
-+					 sizeof(*cfag12864b_cache),
-+					 GFP_KERNEL);
- 	if (cfag12864b_cache = NULL) {
- 		printk(KERN_ERR CFAG12864B_NAME ": ERROR: "
- 			"can't alloc cache buffer (%i bytes)\n",
--- 
-2.10.0
-
+Cheers,
+Samuel.
