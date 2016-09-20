@@ -1,41 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:01:25 +0000
-Subject: [PATCH 2/4] ATM-ZeitNet: Improve a size determination in zatm_open()
-Message-Id: <31713ca7-078f-92fe-0595-60c6904004c5@users.sourceforge.net>
+Date: Tue, 20 Sep 2016 08:58:59 +0000
+Subject: [PATCH 3/6] GPU-DRM-GMA500: Move a variable assignment in mid_get_vbt_data_r10()
+Message-Id: <0d7ea29b-a070-8cdf-d2fb-9e0c190f5d09@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
-In-Reply-To: <0b5381e1-d725-0706-1cc0-188df6c201f2@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3c9785ef-4553-2e3d-2cb2-5cf6d1f31ccd@users.sourceforge.net>
+In-Reply-To: <3c9785ef-4553-2e3d-2cb2-5cf6d1f31ccd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:07:38 +0200
+Date: Tue, 20 Sep 2016 10:32:12 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+One local variable was set to an error code before a concrete
+error situation was detected. Thus move the corresponding assignment into
+an if branch to indicate a software failure there.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/atm/zatm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/gma500/mid_bios.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
-index d378ff2..218c6af 100644
---- a/drivers/atm/zatm.c
-+++ b/drivers/atm/zatm.c
-@@ -1399,7 +1399,7 @@ static int zatm_open(struct atm_vcc *vcc)
- 	DPRINTK(DEV_LABEL "(itf %d): open %d.%d\n",vcc->dev->number,vcc->vpi,
- 	    vcc->vci);
- 	if (!test_bit(ATM_VF_PARTIAL,&vcc->flags)) {
--		zatm_vcc = kmalloc(sizeof(struct zatm_vcc),GFP_KERNEL);
-+		zatm_vcc = kmalloc(sizeof(*zatm_vcc), GFP_KERNEL);
- 		if (!zatm_vcc) {
- 			clear_bit(ATM_VF_ADDR,&vcc->flags);
- 			return -ENOMEM;
+diff --git a/drivers/gpu/drm/gma500/mid_bios.c b/drivers/gpu/drm/gma500/mid_bios.c
+index cf4e605..3caee42 100644
+--- a/drivers/gpu/drm/gma500/mid_bios.c
++++ b/drivers/gpu/drm/gma500/mid_bios.c
+@@ -230,7 +230,7 @@ static int mid_get_vbt_data_r10(struct drm_psb_private *dev_priv, u32 addr)
+ 	struct gct_r10 *gct;
+ 	struct oaktrail_timing_info *dp_ti = &dev_priv->gct_data.DTD;
+ 	struct gct_r10_timing_info *ti;
+-	int ret = -1;
++	int ret;
+ 
+ 	if (read_vbt_r10(addr, &vbt))
+ 		return -1;
+@@ -241,8 +241,10 @@ static int mid_get_vbt_data_r10(struct drm_psb_private *dev_priv, u32 addr)
+ 
+ 	gct_virtual = ioremap(addr + sizeof(vbt),
+ 			sizeof(*gct) * vbt.panel_count);
+-	if (!gct_virtual)
++	if (!gct_virtual) {
++		ret = -1;
+ 		goto free_gct;
++	}
+ 	memcpy_fromio(gct, gct_virtual, sizeof(*gct));
+ 	iounmap(gct_virtual);
+ 
 -- 
 2.10.0
 
