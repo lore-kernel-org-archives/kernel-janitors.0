@@ -1,43 +1,25 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Tue, 20 Sep 2016 00:11:59 +0000
+From: Joe Perches <joe@perches.com>
+Date: Tue, 20 Sep 2016 02:46:06 +0000
 Subject: Re: "CodingStyle: Clarify and complete chapter 7" in docs-next (was Re: [PATCH 03/47] block-rbd: Adj
-Message-Id: <20160920001159.GM2356@ZenIV.linux.org.uk>
+Message-Id: <1474339566.1954.25.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAOi1vP8Y6V3mWs1bv=-CCVRfGi59P+3F85n6rzMn0=K6FqQkcw@mail.gmail.com>
-In-Reply-To: <CAOi1vP8Y6V3mWs1bv=-CCVRfGi59P+3F85n6rzMn0=K6FqQkcw@mail.gmail.com>
+         <20160920001159.GM2356@ZenIV.linux.org.uk>
+In-Reply-To: <20160920001159.GM2356@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ilya Dryomov <idryomov@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Ilya Dryomov <idryomov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Jean Delvare <jdelvare@suse.de>, Jonathan Corbet <corbet@lwn.net>, Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org
 
-On Mon, Sep 19, 2016 at 01:53:37PM +0200, Ilya Dryomov wrote:
-> > I did consider the reason to be good enough to warrant a "change",
-> > actually. Or more exactly from "one space is allowed" to "one space is
-> > recommended." Which is quite different from changing all the code
-> > actively. I can understand how you don't like it, but again, this
-> > "inconsistency" has been accepted for almost a decade now, so I find it
-> > strange to see so much resistance when someone finally tries to sort it
-> > out.
-> 
-> Yeah, I guess that's where our disagreement lies - the "so that `diff
-> -p` does not confuse labels with functions" in the age of git, hg and
-> others, all of which can be customized to your heart's content is not
-> a good enough reason to go from "allowed" to "advised".
+On Tue, 2016-09-20 at 01:11 +0100, Al Viro wrote:
+> IMO what we need is to go through all rules in CodingStyle and if for
+> some rule there is no overwhelming majority in the core kernel, well,
+> the list has grown way too large and could use massive trimming.
 
-On the top of CodingStyle we have
-"This is a short document describing the preferred coding style for the
-linux kernel."
+I'm in complete agreement.
 
-Let's make it s/describing/& (as in "descriptive, not prescriptive")/.
-The lack of consensus (in the core kernel areas) is _not_ an invitation
-to pick a rule out of one's arse/nose/armpit/textbook/whatnot and stick
-it as The One True Style, and references to uniformity are worthless
-in such case.
+I also think that checkpatch's ERROR/WARNING/CHECK message naming is
+far too severe and injunctive and could use a renaming to something
+more silly, bug related and less commanding like FLEAS/GNATS/NITS.
 
-In particular, "whitespace before labels" kind of patches anywhere in
-VFS will be simply rejected.
-
-IMO what we need is to go through all rules in CodingStyle and if for
-some rule there is no overwhelming majority in the core kernel, well,
-the list has grown way too large and could use massive trimming.
