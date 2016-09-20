@@ -1,46 +1,26 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Thu, 08 Sep 2016 09:49:06 +0000
-Subject: Re: [PATCH 1/1] intel-mid: Fix sfi get_platform_data() return value issues
-Message-Id: <1473328146.11323.92.camel@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 20 Sep 2016 10:32:43 +0000
+Subject: Re: GPU-DRM-GMA500: One error message less for a GCT revision mismatch in mid_get_vbt_data()
+Message-Id: <e5062794-7d14-f4dc-2995-949f84b62810@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a42b4af5-e2a5-d922-b5a5-ab177bb15140@intel.com>
-         <1473210255-227672-1-git-send-email-sathyanarayanan.kuppuswamy@linux.intel.com>
-         <1473250509.11323.60.camel@linux.intel.com>
-         <71e4231f-33dc-9a95-c748-89bc5ec322d5@linux.intel.com>
-In-Reply-To: <71e4231f-33dc-9a95-c748-89bc5ec322d5@linux.intel.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3c9785ef-4553-2e3d-2cb2-5cf6d1f31ccd@users.sourceforge.net>
+ <287833f5-f1ad-b7f0-c614-d4c903b1c890@users.sourceforge.net>
+ <87shsulw9k.fsf@intel.com>
+In-Reply-To: <87shsulw9k.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: sathyanarayanan.kuppuswamy@linux.intel.com, wharms@bfs.de
-Cc: dan.carpenter@oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, david.a.cohen@linux.intel.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 2016-09-07 at 17:04 -0700, sathyanarayanan kuppuswamy wrote:
+>> A single error message should be sufficient to inform about
+>> the detection of an unknown GCT revision at the end.
+>> Thus return after the logging call in this case directly.
+> 
+> Did you test this?
 
-> --- a/arch/x86/platform/intel-mid/sfi.c
-> > > +++ b/arch/x86/platform/intel-mid/sfi.c
-> > > @@ -335,9 +335,12 @@ static void __init sfi_handle_ipc_dev(struct
-> > > sfi_device_table_entry *pentry,
-> > >   
-> > >   	pr_debug("IPC bus, name = %16.16s, irq = 0x%2x\n",
-> > >   		pentry->name, pentry->irq);
-> > > +
-> > >   	pdata = intel_mid_sfi_get_pdata(dev, pentry);
-> > > -	if (IS_ERR(pdata))
-> > > +	if (IS_ERR(pdata)) {
-> > > +		pr_err("ipc_device: %s: invalid platform data\n",
-> > > pentry->name);
-> > >   		return;
-> > > +	}
-> > This is actually needs more work. We have duplication in sfi.c and
-> > platform_ipc.c.
-> Yes. But platform_ipc.c implements custom ipc handler for audio ipc 
-> device. Even though there are duplications between custom handler and 
-> generic handler in sfi.c, I think its bit early to optimize this. I 
-> think we should revisit this once we have one more implementation of 
-> custom ipc handler.
+What is your software development opinion for this update suggestion?
 
-Definitely it's out of scope for now.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Regards,
+Markus
