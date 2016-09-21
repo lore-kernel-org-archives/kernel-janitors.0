@@ -1,75 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 14:44:14 +0000
-Subject: [PATCH 3/3] [media] mxl111sf-tuner: constify dvb_tuner_ops structures
-Message-Id: <1473605054-9002-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 16:53:12 +0000
+Subject: [PATCH 11/14] GPU-DRM-OMAP: Replace a kzalloc() call by kcalloc() in omap_gem_attach_pages()
+Message-Id: <cd114982-dfba-df3d-723c-7ff8c89be558@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473605054-9002-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473605054-9002-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Michael Krufky <mkrufky@linuxtv.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-These structures are only used to copy into other structures, so declare
-them as const.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 17:40:20 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The script "checkpatch.pl" can point information out like the following.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct dvb_tuner_ops i@p = { ... };
+WARNING: Prefer kcalloc over kzalloc with multiply
 
-@ok1@
-identifier r.i;
-expression e;
-position p;
-@@
-e = i@p
+Thus fix the affected source code place.
 
-@ok2@
-identifier r.i;
-expression e1, e2;
-position p;
-@@
-memcpy(e1, &i@p, e2)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct dvb_tuner_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct dvb_tuner_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c |    2 +-
+ drivers/gpu/drm/omapdrm/omap_gem.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c b/drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c
-index 7d16252..f141dcc 100644
---- a/drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c
-+++ b/drivers/media/usb/dvb-usb-v2/mxl111sf-tuner.c
-@@ -466,7 +466,7 @@ static int mxl111sf_tuner_release(struct dvb_frontend *fe)
- 
- /* ------------------------------------------------------------------------- */
- 
--static struct dvb_tuner_ops mxl111sf_tuner_tuner_ops = {
-+static const struct dvb_tuner_ops mxl111sf_tuner_tuner_ops = {
- 	.info = {
- 		.name = "MaxLinear MxL111SF",
- #if 0
+diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
+index e4f1924..26f1212 100644
+--- a/drivers/gpu/drm/omapdrm/omap_gem.c
++++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+@@ -283,7 +283,7 @@ static int omap_gem_attach_pages(struct drm_gem_object *obj)
+ 			}
+ 		}
+ 	} else {
+-		addrs = kzalloc(npages * sizeof(*addrs), GFP_KERNEL);
++		addrs = kcalloc(npages, sizeof(*addrs), GFP_KERNEL);
+ 		if (!addrs) {
+ 			ret = -ENOMEM;
+ 			goto free_pages;
+-- 
+2.10.0
 
