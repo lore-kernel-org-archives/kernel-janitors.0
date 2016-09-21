@@ -1,30 +1,84 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 24 Sep 2016 17:03:12 +0000
-Subject: Re: [PATCH 3/4] Input-gameport: Add the macro "pr_fmt" for module "joydump"
-Message-Id: <1474736592.23838.8.camel@perches.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 07:26:48 +0000
+Subject: [PATCH 3/5] GPU-DRM-nouveau: Delete unnecessary braces
+Message-Id: <74cc2e34-cb5f-e3c9-e6cd-aa24ed3529e3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
-         <3345f7c1-b823-a819-aabf-5b4990068075@users.sourceforge.net>
-         <20160924164108.GB40187@dtor-ws>
-         <a9d9e2fc-4369-ba1a-e1a1-97b0873c28ce@users.sourceforge.net>
-In-Reply-To: <a9d9e2fc-4369-ba1a-e1a1-97b0873c28ce@users.sourceforge.net>
+References: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
+In-Reply-To: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, 2016-09-24 at 18:55 +0200, SF Markus Elfring wrote:
-> > > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > Why did you split it off from the patch where you attempt to use it?
-> I chose a special patch granularity once again.
-> > What good does this change do on its own?
-> I find that it is a preparation. - If this addition could not be accepted,
-> the following update step would also be discussed under an other perspective,
-> wouldn't it?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 08:28:08 +0200
 
-It's purposeless, creates unnecessary patches to review
-and generally wastes other people's time.
+Do not use curly brackets at four source code places
+where a single statement should be sufficient.
 
-Please don't purposefully waste other people's time.
-It makes your patch proposals _less_ likely to be applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
+index dbaf577..cb50539 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
+@@ -127,12 +127,11 @@ gt215_link_train_calc(u32 *vals, struct gt215_ltrain *train)
+ 	}
+ 
+ 	/* Find the best value for 0x1111e0 */
+-	for (i = 0; i < 4; i++) {
++	for (i = 0; i < 4; i++)
+ 		if (bins[i] > qty) {
+ 			bin = i + 3;
+ 			qty = bins[i];
+ 		}
+-	}
+ 
+ 	train->r_100720 = 0;
+ 	for (i = 0; i < 8; i++) {
+@@ -729,9 +728,8 @@ gt215_ram_calc(struct nvkm_ram *base, u32 freq)
+ 		ram_mask(fuc, 0x1007e0, 0x22222222, r100760);
+ 	}
+ 
+-	if (device->chipset = 0xa3 && freq > 500000) {
++	if (device->chipset = 0xa3 && freq > 500000)
+ 		ram_mask(fuc, 0x100700, 0x00000006, 0x00000000);
+-	}
+ 
+ 	/* Final switch */
+ 	if (mclk.pll) {
+@@ -745,12 +743,11 @@ gt215_ram_calc(struct nvkm_ram *base, u32 freq)
+ 	ram_nsec(fuc, 2000);
+ 
+ 	/* Set RAM MR parameters and timings */
+-	for (i = 2; i >= 0; i--) {
++	for (i = 2; i >= 0; i--)
+ 		if (ram_rd32(fuc, mr[i]) != ram->base.mr[i]) {
+ 			ram_wr32(fuc, mr[i], ram->base.mr[i]);
+ 			ram_nsec(fuc, 1000);
+ 		}
+-	}
+ 
+ 	ram_wr32(fuc, 0x100220[3], timing[3]);
+ 	ram_wr32(fuc, 0x100220[1], timing[1]);
+@@ -838,11 +835,10 @@ gt215_ram_calc(struct nvkm_ram *base, u32 freq)
+ 	if (!next->bios.ramcfg_DLLoff)
+ 		nvkm_sddr2_dll_reset(fuc);
+ 
+-	if (ram->base.type = NVKM_RAM_TYPE_GDDR3) {
++	if (ram->base.type = NVKM_RAM_TYPE_GDDR3)
+ 		ram_nsec(fuc, 31000);
+-	} else {
++	else
+ 		ram_nsec(fuc, 14000);
+-	}
+ 
+ 	if (ram->base.type = NVKM_RAM_TYPE_DDR3) {
+ 		ram_wr32(fuc, 0x100264, 0x1);
+-- 
+2.10.0
+
