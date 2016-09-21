@@ -1,40 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:56:15 +0000
-Subject: [PATCH 14/30] ACPI-processor: Delete an unnecessary initialisation in acpi_processor_get_performance
-Message-Id: <bf13507b-b985-11a5-5b70-4441077968af@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 16:49:52 +0000
+Subject: [PATCH 08/14] GPU-DRM-OMAP: Rename a jump label in dmm_txn_commit()
+Message-Id: <7d47650b-b911-8225-c9ec-a08112073a31@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 19:09:32 +0200
+Date: Wed, 21 Sep 2016 17:32:42 +0200
 
-The local variable "result" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+Adjust a jump target so that redundant checks can be avoided at the end.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index 43f8eef..de82338 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -423,7 +423,7 @@ static int acpi_processor_get_performance_states(struct acpi_processor *pr)
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index 5f6f21b..c8ced158 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -269,7 +269,7 @@ static int dmm_txn_commit(struct dmm_txn *txn, bool wait)
+ 	if (!txn->last_pat) {
+ 		dev_err(engine->dmm->dev, "need at least one txn\n");
+ 		ret = -EINVAL;
+-		goto cleanup;
++		goto release_engine;
+ 	}
  
- int acpi_processor_get_performance_info(struct acpi_processor *pr)
- {
--	int result = 0;
-+	int result;
+ 	txn->last_pat->next_pa = 0;
+@@ -281,7 +281,7 @@ static int dmm_txn_commit(struct dmm_txn *txn, bool wait)
+ 	ret = wait_status(engine, DMM_PATSTATUS_READY);
+ 	if (ret) {
+ 		ret = -EFAULT;
+-		goto cleanup;
++		goto release_engine;
+ 	}
  
- 	if (!pr || !pr->performance || !pr->handle)
- 		return -EINVAL;
+ 	/* mark whether it is async to denote list management in IRQ handler */
+@@ -301,9 +301,9 @@ static int dmm_txn_commit(struct dmm_txn *txn, bool wait)
+ 		}
+ 	}
+ 
+-cleanup:
+ 	/* only place engine back on list if we are done with it */
+ 	if (ret || wait)
++ release_engine:
+ 		release_engine(engine);
+ 
+ 	return ret;
 -- 
 2.10.0
 
