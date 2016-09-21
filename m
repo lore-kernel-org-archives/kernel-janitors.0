@@ -1,41 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 08:13:23 +0000
-Subject: [PATCH 4/4] x86/smpboot: Return directly after a failed kcalloc()
-Message-Id: <f11256ad-f312-53b6-8509-461392e1fd7d@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 07:24:52 +0000
+Subject: [PATCH 1/5] GPU-DRM-nouveau: Use kmalloc_array() in nvbios_iccsense_parse()
+Message-Id: <77983748-8b67-5ee1-e94b-5f3b8c221ad0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6dacb257-d15c-8ea1-9dd4-0440a5ecfd1d@users.sourceforge.net>
-In-Reply-To: <6dacb257-d15c-8ea1-9dd4-0440a5ecfd1d@users.sourceforge.net>
+References: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
+In-Reply-To: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: x86@kernel.org, Andi Kleen <ak@linux.intel.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Len Brown <len.brown@intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 09:39:05 +0200
+Date: Tue, 20 Sep 2016 22:22:14 +0200
 
-Return directly after a memory allocation failed in this function.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/x86/kernel/smpboot.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index e3fdc44..a30f625 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -359,6 +359,10 @@ static void __init smp_init_package_map(void)
- 	physical_package_map = kcalloc(BITS_TO_LONGS(max_physical_pkg_id),
- 				       sizeof(*physical_package_map),
- 				       GFP_KERNEL);
-+	if (!physical_package_map) {
-+		kfree(physical_to_logical_pkg);
-+		return;
-+	}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
+index 0843280..91cf1ee 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
+@@ -72,7 +72,9 @@ nvbios_iccsense_parse(struct nvkm_bios *bios, struct nvbios_iccsense *iccsense)
+ 	}
  
- 	for_each_present_cpu(cpu) {
- 		unsigned int apicid = apic->cpu_present_to_apicid(cpu);
+ 	iccsense->nr_entry = cnt;
+-	iccsense->rail = kmalloc(sizeof(struct pwr_rail_t) * cnt, GFP_KERNEL);
++	iccsense->rail = kmalloc_array(cnt,
++				       sizeof(*iccsense->rail),
++				       GFP_KERNEL);
+ 	if (!iccsense->rail)
+ 		return -ENOMEM;
+ 
 -- 
-2.9.3
+2.10.0
 
