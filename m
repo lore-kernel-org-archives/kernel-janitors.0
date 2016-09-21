@@ -1,71 +1,41 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 05 Sep 2016 09:29:24 +0000
-Subject: Re: [PATCH 3/4] x86/smpboot: Replace one kzalloc() call by kcalloc()
-Message-Id: <66d77474-57df-ea4d-db73-10c56b6feaee@redhat.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Wed, 21 Sep 2016 16:41:46 +0000
+Subject: [PATCH 04/14] GPU-DRM-OMAP: Delete an unnecessary variable initialisation in tiler_map_show()
+Message-Id: <70bc679f-3f3a-f6f9-e5d8-99c331b03eca@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6dacb257-d15c-8ea1-9dd4-0440a5ecfd1d@users.sourceforge.net>
- <b547ba2e-5152-2720-551b-a22ad88ca4fc@users.sourceforge.net>
- <037dd2c0-a53a-285a-cfff-c4355b4673e3@redhat.com>
-In-Reply-To: <037dd2c0-a53a-285a-cfff-c4355b4673e3@redhat.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, x86@kernel.org, Andi Kleen <ak@linux.intel.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Len Brown <len.brown@intel.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 13:31:45 +0200
 
+The local variable "map" will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-On 05/09/2016 11:26, Paolo Bonzini wrote:
-> 
-> 
-> On 05/09/2016 10:12, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Mon, 5 Sep 2016 09:29:40 +0200
->>
->> * The script "checkpatch.pl" can point information out like the following.
->>
->>   WARNING: Prefer kcalloc over kzalloc with multiply
->>
->>   Thus fix the affected source code place.
->>
->> * Replace the specification of a data type by a pointer dereference
->>   to make the corresponding size determination a bit safer according to
->>   the Linux coding style convention.
->>
->> * Delete the local variable "size" which became unnecessary with
->>   this refactoring.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  arch/x86/kernel/smpboot.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
->> index 2ce06ef..e3fdc44 100644
->> --- a/arch/x86/kernel/smpboot.c
->> +++ b/arch/x86/kernel/smpboot.c
->> @@ -311,7 +311,6 @@ EXPORT_SYMBOL(topology_phys_to_logical_pkg);
->>  static void __init smp_init_package_map(void)
->>  {
->>  	unsigned int ncpus, cpu;
->> -	size_t size;
->>  
->>  	/*
->>  	 * Today neither Intel nor AMD support heterogenous systems. That
->> @@ -357,8 +356,9 @@ static void __init smp_init_package_map(void)
->>  	memset(physical_to_logical_pkg,
->>  	       0xff,
->>  	       sizeof(*physical_to_logical_pkg) * max_physical_pkg_id);
->> -	size = BITS_TO_LONGS(max_physical_pkg_id) * sizeof(unsigned long);
->> -	physical_package_map = kzalloc(size, GFP_KERNEL);
->> +	physical_package_map = kcalloc(BITS_TO_LONGS(max_physical_pkg_id),
->> +				       sizeof(*physical_package_map),
->> +				       GFP_KERNEL);
-> 
-> This is bitmap_alloc.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Doh, bitmap_alloc is only in tools/include/linux/bitmap.h, but perhaps
-it makes sense to add it to include/linux/bitmap.h or
-include/linux/slab.h too...
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index 60beeb9..c262ef5 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -896,7 +896,7 @@ static void map_2d_info(char **map, int xdiv, int ydiv, char *nice,
+ int tiler_map_show(struct seq_file *s, void *arg)
+ {
+ 	int xdiv = 2, ydiv = 1;
+-	char **map = NULL, *global_map;
++	char **map, *global_map;
+ 	struct tiler_block *block;
+ 	struct tcm_area a, p;
+ 	int i;
+-- 
+2.10.0
 
-Paolo
