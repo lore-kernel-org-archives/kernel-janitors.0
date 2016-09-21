@@ -1,54 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 18:46:49 +0000
-Subject: [PATCH 05/47] block-rbd: One function call less in rbd_dev_image_id() after error detection
-Message-Id: <532868bf-3209-9059-fc1e-5194ab99b776@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 16:52:05 +0000
+Subject: [PATCH 10/14] GPU-DRM-OMAP: Use kmalloc_array() in omap_gem_attach_pages()
+Message-Id: <2e7b2e16-c448-3470-32d1-582db3aa6634@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 11 Sep 2016 15:05:49 +0200
+Date: Wed, 21 Sep 2016 17:37:04 +0200
 
-The kfree() function was called in one case by the rbd_dev_image_id()
-function during error handling even if the passed variable "response"
-contained a null pointer.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-Adjust a jump target according to the Linux coding style convention.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_gem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index c1da844..a6d9a06 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -5865,7 +5865,7 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
- 	response = kzalloc(sizeof(__le32) + RBD_IMAGE_ID_LEN_MAX, GFP_NOIO);
- 	if (!response) {
- 		ret = -ENOMEM;
--		goto out;
-+		goto free_name;
- 	}
- 
- 	/* If it doesn't exist we'll assume it's a format 1 image */
-@@ -5893,8 +5893,8 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
- 		rbd_dev->spec->image_id = image_id;
- 		dout("image_id is %s\n", image_id);
- 	}
--out:
- 	kfree(response);
-+ free_name:
- 	kfree(object_name);
- 
- 	return ret;
+diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
+index 505dee0..e4f1924 100644
+--- a/drivers/gpu/drm/omapdrm/omap_gem.c
++++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+@@ -259,7 +259,7 @@ static int omap_gem_attach_pages(struct drm_gem_object *obj)
+ 	 * DSS, GPU, etc. are not cache coherent:
+ 	 */
+ 	if (omap_obj->flags & (OMAP_BO_WC|OMAP_BO_UNCACHED)) {
+-		addrs = kmalloc(npages * sizeof(*addrs), GFP_KERNEL);
++		addrs = kmalloc_array(npages, sizeof(*addrs), GFP_KERNEL);
+ 		if (!addrs) {
+ 			ret = -ENOMEM;
+ 			goto free_pages;
 -- 
 2.10.0
 
