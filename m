@@ -1,95 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:31:03 +0000
-Subject: [PATCH 42/47] block-rbd: Rename jump labels in rbd_dev_image_probe()
-Message-Id: <c41e7df3-db58-2e37-c77b-072c55f99e1f@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 16:38:12 +0000
+Subject: [PATCH 01/14] GPU-DRM-OMAP: Use kmalloc_array() in tiler_map_show()
+Message-Id: <1e833599-303e-0ff0-30c8-7b7ee08f8b4f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 20:02:16 +0200
+Date: Wed, 21 Sep 2016 12:23:46 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 80983f6..eec41ed 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -6108,7 +6108,7 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index 4ceed7a9..7b32dd3 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -917,8 +917,7 @@ int tiler_map_show(struct seq_file *s, void *arg)
  
- 	ret = rbd_dev_header_name(rbd_dev);
- 	if (ret)
--		goto err_out_format;
-+		goto status_indication;
- 
- 	if (!depth) {
- 		ret = rbd_register_watch(rbd_dev);
-@@ -6117,13 +6117,13 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
- 				pr_info("image %s/%s does not exist\n",
- 					rbd_dev->spec->pool_name,
- 					rbd_dev->spec->image_name);
--			goto err_out_format;
-+			goto status_indication;
- 		}
- 	}
- 
- 	ret = rbd_dev_header_info(rbd_dev);
- 	if (ret)
--		goto err_out_watch;
-+		goto check_input;
- 
- 	/*
- 	 * If this image is the one being mapped, we have pool name and
-@@ -6141,13 +6141,13 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
- 				rbd_dev->spec->pool_name,
- 				rbd_dev->spec->image_name,
- 				rbd_dev->spec->snap_name);
--		goto err_out_probe;
-+		goto unprobe_device;
- 	}
- 
- 	if (rbd_dev->header.features & RBD_FEATURE_LAYERING) {
- 		ret = rbd_dev_v2_parent_info(rbd_dev);
- 		if (ret)
--			goto err_out_probe;
-+			goto unprobe_device;
- 
- 		/*
- 		 * Need to warn users if this image is the one being
-@@ -6160,18 +6160,17 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
- 
- 	ret = rbd_dev_probe_parent(rbd_dev, depth);
- 	if (ret)
--		goto err_out_probe;
-+		goto unprobe_device;
- 
- 	dout("discovered format %u image, header name is %s\n",
- 		rbd_dev->image_format, rbd_dev->header_oid.name);
- 	return 0;
+ 	h_adj = omap_dmm->container_height / ydiv;
+ 	w_adj = omap_dmm->container_width / xdiv;
 -
--err_out_probe:
-+ unprobe_device:
- 	rbd_dev_unprobe(rbd_dev);
--err_out_watch:
-+ check_input:
- 	if (!depth)
- 		rbd_unregister_watch(rbd_dev);
--err_out_format:
-+ status_indication:
- 	rbd_dev->image_format = 0;
- 	kfree(rbd_dev->spec->image_id);
- 	rbd_dev->spec->image_id = NULL;
+-	map = kmalloc(h_adj * sizeof(*map), GFP_KERNEL);
++	map = kmalloc_array(h_adj, sizeof(*map), GFP_KERNEL);
+ 	global_map = kmalloc((w_adj + 1) * h_adj, GFP_KERNEL);
+ 
+ 	if (!map || !global_map)
 -- 
 2.10.0
 
