@@ -1,41 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 19:45:25 +0000
-Subject: [PATCH 2/4] i2c-dev: Improve another size determination in i2cdev_ioctl_rdwr()
-Message-Id: <9b43145c-7666-c4bb-37de-7d1a9ebea72a@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 07:28:00 +0000
+Subject: [PATCH 4/5] GPU-DRM-nouveau: Adjust a kzalloc() call in gt215_ram_new()
+Message-Id: <0d8628f4-7254-2600-9ee4-e72b4e0ee6f6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
-In-Reply-To: <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
+References: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
+In-Reply-To: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 20:45:40 +0200
+Date: Wed, 21 Sep 2016 08:44:38 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+The script "checkpatch.pl" can point out that assignments should usually
+not be performed within condition checks.
+Thus move the assignment for one local variable to a separate statement
+in this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/i2c-dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index 6d8226d..a6e35ce 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -256,7 +256,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
+index cb50539..edbe8e4 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
+@@ -940,7 +940,8 @@ gt215_ram_new(struct nvkm_fb *fb, struct nvkm_ram **pram)
+ 	struct gt215_ram *ram;
+ 	int ret, i;
  
- 	rdwr_pa = memdup_user(rdwr_arg.msgs,
--			      rdwr_arg.nmsgs * sizeof(struct i2c_msg));
-+			      rdwr_arg.nmsgs * sizeof(*rdwr_pa));
- 	if (IS_ERR(rdwr_pa))
- 		return PTR_ERR(rdwr_pa);
+-	if (!(ram = kzalloc(sizeof(*ram), GFP_KERNEL)))
++	ram = kzalloc(sizeof(*ram), GFP_KERNEL);
++	if (!ram)
+ 		return -ENOMEM;
+ 	*pram = &ram->base;
  
 -- 
 2.10.0
