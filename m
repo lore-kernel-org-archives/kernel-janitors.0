@@ -1,65 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 20:43:05 +0000
-Subject: [PATCH 2/7] AGPGART: Use memdup_user() rather than duplicating its implementation
-Message-Id: <e768d989-7195-25a2-4f1d-3406a3d5a6ca@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 16:54:19 +0000
+Subject: [PATCH 12/14] GPU-DRM-OMAP: Move a variable assignment in omap_gem_attach_pages()
+Message-Id: <50aaf72b-eb09-0a81-9856-800d797b7ccb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
-In-Reply-To: <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
+ <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 21:00:44 +0200
+Date: Wed, 21 Sep 2016 17:42:28 +0200
 
-* Reuse existing functionality from memdup_user() instead of keeping
-  duplicate source code.
-
-* Try this copy operation before allocating memory for the local
-  variable "ksegment".
+Move one assignment for the local variable "npages" so that its setting
+will only be performed after a call of the function "drm_gem_get_pages"
+succeeded by this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/agp/compat_ioctl.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_gem.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/agp/compat_ioctl.c b/drivers/char/agp/compat_ioctl.c
-index a2b69db..68d4dc7 100644
---- a/drivers/char/agp/compat_ioctl.c
-+++ b/drivers/char/agp/compat_ioctl.c
-@@ -98,11 +98,10 @@ static int compat_agpioc_reserve_wrap(struct agp_file_private *priv, void __user
- 		if (ureserve.seg_count >= 16384)
- 			return -EINVAL;
+diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
+index 26f1212..3c49ad9 100644
+--- a/drivers/gpu/drm/omapdrm/omap_gem.c
++++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+@@ -243,7 +243,7 @@ static int omap_gem_attach_pages(struct drm_gem_object *obj)
+ 	struct drm_device *dev = obj->dev;
+ 	struct omap_gem_object *omap_obj = to_omap_bo(obj);
+ 	struct page **pages;
+-	int npages = obj->size >> PAGE_SHIFT;
++	int npages;
+ 	int i, ret;
+ 	dma_addr_t *addrs;
  
--		usegment = kmalloc_array(ureserve.seg_count,
--					 sizeof(*usegment),
--					 GFP_KERNEL);
--		if (!usegment)
--			return -ENOMEM;
-+		usegment = memdup_user((void __user *) ureserve.seg_list,
-+				       sizeof(*usegment) * ureserve.seg_count);
-+		if (IS_ERR(usegment))
-+			return PTR_ERR(usegment);
+@@ -255,6 +255,8 @@ static int omap_gem_attach_pages(struct drm_gem_object *obj)
+ 		return PTR_ERR(pages);
+ 	}
  
- 		ksegment = kmalloc_array(kreserve.seg_count,
- 					 sizeof(*ksegment),
-@@ -112,13 +111,6 @@ static int compat_agpioc_reserve_wrap(struct agp_file_private *priv, void __user
- 			return -ENOMEM;
- 		}
- 
--		if (copy_from_user(usegment, (void __user *) ureserve.seg_list,
--				   sizeof(*usegment) * ureserve.seg_count)) {
--			kfree(usegment);
--			kfree(ksegment);
--			return -EFAULT;
--		}
--
- 		for (seg = 0; seg < ureserve.seg_count; seg++) {
- 			ksegment[seg].pg_start = usegment[seg].pg_start;
- 			ksegment[seg].pg_count = usegment[seg].pg_count;
++	npages = obj->size >> PAGE_SHIFT;
++
+ 	/* for non-cached buffers, ensure the new pages are clean because
+ 	 * DSS, GPU, etc. are not cache coherent:
+ 	 */
 -- 
 2.10.0
 
