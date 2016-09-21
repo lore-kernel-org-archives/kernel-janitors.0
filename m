@@ -1,45 +1,31 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:41:32 +0000
-Subject: [PATCH 04/30] ACPI-processor: Delete two unnecessary initialisations in acpi_processor_get_performan
-Message-Id: <59c06f54-fb35-e457-dea9-19fb8950642e@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 07:23:05 +0000
+Subject: [PATCH 0/5] GPU-DRM-nouveau: Fine-tuning for five function implementations
+Message-Id: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 11:48:52 +0200
+Date: Wed, 21 Sep 2016 09:09:09 +0200
 
-The local variables "pss" and "status" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/acpi/processor_perflib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Markus Elfring (5):
+  Use kmalloc_array() in nvbios_iccsense_parse()
+  Use kmalloc_array() in gt215_link_train()
+  Delete unnecessary braces
+  Adjust a kzalloc() call in gt215_ram_new()
+  Add space after an "if"
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index 49889b1..1ebe580 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -320,11 +320,11 @@ static void amd_fixup_frequency(struct acpi_processor_px *px, int i) {};
- static int acpi_processor_get_performance_states(struct acpi_processor *pr)
- {
- 	int result = 0;
--	acpi_status status = AE_OK;
-+	acpi_status status;
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
- 	struct acpi_buffer format = { sizeof("NNNNNN"), "NNNNNN" };
- 	struct acpi_buffer state = { 0, NULL };
--	union acpi_object *pss = NULL;
-+	union acpi_object *pss;
- 	int i;
- 	int last_invalid = -1;
- 
+ drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c |  4 +++-
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c   | 21 +++++++++------------
+ 2 files changed, 12 insertions(+), 13 deletions(-)
+
 -- 
 2.10.0
 
