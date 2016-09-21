@@ -1,60 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 06:14:18 +0000
-Subject: [PATCH 03/10] firewire-net: Rename jump labels in fwnet_init()
-Message-Id: <3082f160-c1c8-6a47-020a-109c797ea4ea@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 07:25:51 +0000
+Subject: [PATCH 2/5] GPU-DRM-nouveau: Use kmalloc_array() in gt215_link_train()
+Message-Id: <6fcf1d5f-73eb-9107-dc1f-be03a5fef271@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
-In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+References: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
+In-Reply-To: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 22:11:25 +0200
+Date: Tue, 20 Sep 2016 22:32:14 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/firewire/net.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
-index 89afed3..cedfade 100644
---- a/drivers/firewire/net.c
-+++ b/drivers/firewire/net.c
-@@ -1662,14 +1662,14 @@ static int __init fwnet_init(void)
- #if IS_ENABLED(CONFIG_IPV6)
- 	err = fw_core_add_descriptor(&rfc3146_unit_directory);
- 	if (err)
--		goto out;
-+		goto remove_descriptor_rfc2374;
- #endif
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
+index d15ea88..dbaf577 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/ramgt215.c
+@@ -170,7 +170,7 @@ gt215_link_train(struct gt215_ram *ram)
+ 		return -ENOSYS;
  
- 	fwnet_packet_task_cache = kmem_cache_create("packet_task",
- 			sizeof(struct fwnet_packet_task), 0, 0, NULL);
- 	if (!fwnet_packet_task_cache) {
- 		err = -ENOMEM;
--		goto out2;
-+		goto remove_descriptor_rfc3146;
- 	}
- 
- 	err = driver_register(&fwnet_driver.driver);
-@@ -1677,10 +1677,10 @@ static int __init fwnet_init(void)
- 		return 0;
- 
- 	kmem_cache_destroy(fwnet_packet_task_cache);
--out2:
-+ remove_descriptor_rfc3146:
- #if IS_ENABLED(CONFIG_IPV6)
- 	fw_core_remove_descriptor(&rfc3146_unit_directory);
--out:
-+ remove_descriptor_rfc2374:
- #endif
- 	fw_core_remove_descriptor(&rfc2374_unit_directory);
+ 	/* XXX: Multiple partitions? */
+-	result = kmalloc(64 * sizeof(u32), GFP_KERNEL);
++	result = kmalloc_array(64, sizeof(*result), GFP_KERNEL);
+ 	if (!result)
+ 		return -ENOMEM;
  
 -- 
 2.10.0
