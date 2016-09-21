@@ -1,7 +1,7 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Wed, 21 Sep 2016 16:41:46 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 16:45:05 +0000
 Subject: [PATCH 04/14] GPU-DRM-OMAP: Delete an unnecessary variable initialisation in tiler_map_show()
-Message-Id: <70bc679f-3f3a-f6f9-e5d8-99c331b03eca@web.de>
+Message-Id: <2c2d4ab1-7815-cf7c-ce93-7fc2c569c053@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
