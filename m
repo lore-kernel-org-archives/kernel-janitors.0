@@ -1,43 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:52:57 +0000
-Subject: [PATCH 11/30] ACPI-processor: Delete two unnecessary initialisations in acpi_processor_get_performan
-Message-Id: <29792aed-58b9-00a6-f7ca-fff86f35f7d6@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 16:47:43 +0000
+Subject: [PATCH 06/14] GPU-DRM-OMAP: Improve a size determination in omap_dmm_probe()
+Message-Id: <53794942-5588-5db7-fcff-5f6f27b2e1f4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 19:01:36 +0200
+Date: Wed, 21 Sep 2016 17:21:57 +0200
 
-The local variables "pct" and "status" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index 3a48c3a..07e5e59 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -223,9 +223,9 @@ void acpi_processor_ppc_exit(void)
- static int acpi_processor_get_performance_control(struct acpi_processor *pr)
- {
- 	int result = 0;
--	acpi_status status = 0;
-+	acpi_status status;
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
--	union acpi_object *pct = NULL;
-+	union acpi_object *pct;
- 	union acpi_object obj = { 0 };
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index f110965..c6a7197 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -735,7 +735,8 @@ static int omap_dmm_probe(struct platform_device *dev)
  
- 
+ 	/* alloc engines */
+ 	omap_dmm->engines = kcalloc(omap_dmm->num_engines,
+-				    sizeof(struct refill_engine), GFP_KERNEL);
++				    sizeof(*omap_dmm->engines),
++				    GFP_KERNEL);
+ 	if (!omap_dmm->engines) {
+ 		ret = -ENOMEM;
+ 		goto fail;
 -- 
 2.10.0
 
