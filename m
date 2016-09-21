@@ -1,44 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 16:52:05 +0000
-Subject: [PATCH 10/14] GPU-DRM-OMAP: Use kmalloc_array() in omap_gem_attach_pages()
-Message-Id: <2e7b2e16-c448-3470-32d1-582db3aa6634@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 21 Sep 2016 15:48:39 +0000
+Subject: [PATCH] Coccinelle: limit memdup_user transformation to GFP_KERNEL case
+Message-Id: <1474472919-12867-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
-In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: cocci@systeme.lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 17:37:04 +0200
+Memdup_user encapsulates a memory allocation with the flag GFP_KERNEL, so
+only allow this flag in the original code.
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/omapdrm/omap_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/coccinelle/api/memdup_user.cocci |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
-index 505dee0..e4f1924 100644
---- a/drivers/gpu/drm/omapdrm/omap_gem.c
-+++ b/drivers/gpu/drm/omapdrm/omap_gem.c
-@@ -259,7 +259,7 @@ static int omap_gem_attach_pages(struct drm_gem_object *obj)
- 	 * DSS, GPU, etc. are not cache coherent:
- 	 */
- 	if (omap_obj->flags & (OMAP_BO_WC|OMAP_BO_UNCACHED)) {
--		addrs = kmalloc(npages * sizeof(*addrs), GFP_KERNEL);
-+		addrs = kmalloc_array(npages, sizeof(*addrs), GFP_KERNEL);
- 		if (!addrs) {
- 			ret = -ENOMEM;
- 			goto free_pages;
--- 
-2.10.0
+diff --git a/scripts/coccinelle/api/memdup_user.cocci b/scripts/coccinelle/api/memdup_user.cocci
+index c606231..2a5aea8 100644
+--- a/scripts/coccinelle/api/memdup_user.cocci
++++ b/scripts/coccinelle/api/memdup_user.cocci
+@@ -15,11 +15,11 @@ virtual org
+ virtual report
+ 
+ @depends on patch@
+-expression from,to,size,flag;
++expression from,to,size;
+ identifier l1,l2;
+ @@
+ 
+--  to = \(kmalloc\|kzalloc\)(size,flag);
++-  to = \(kmalloc\|kzalloc\)(size,GFP_KERNEL);
+ +  to = memdup_user(from,size);
+    if (
+ -      to=NULL
+@@ -37,12 +37,12 @@ identifier l1,l2;
+ -  }
+ 
+ @r depends on !patch@
+-expression from,to,size,flag;
++expression from,to,size;
+ position p;
+ statement S1,S2;
+ @@
+ 
+-*  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++*  to = \(kmalloc@p\|kzalloc@p\)(size,GFP_KERNEL);
+    if (to=NULL || ...) S1
+    if (copy_from_user(to, from, size) != 0)
+    S2
 
