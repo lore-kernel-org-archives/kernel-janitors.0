@@ -1,71 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:12:41 +0000
-Subject: [PATCH 30/30] ACPI-processor: Improve jump targets in acpi_processor_update_tsd_coord()
-Message-Id: <2e07f4be-9036-6834-4603-3713073fb672@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 17:43:04 +0000
+Subject: [PATCH 11/14] GPU-DRM-TTM: Return an error code only as a constant in ttm_dma_pool_init()
+Message-Id: <7e8a9893-8f1f-189a-4f19-d105c9502747@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 22:18:30 +0200
+Date: Thu, 22 Sep 2016 17:17:19 +0200
 
-* Adjust jump targets according to the current Linux coding
-  style convention.
+* Return an error code without storing it in a local variable.
 
-* Delete a duplicate check then.
+* Delete the local variable "ret" which became unnecessary with
+  this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 79ba9b78..b45f6c3 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -97,11 +97,9 @@ static int acpi_processor_update_tsd_coord(void)
- 		 */
- 		if (!pthrottling->tsd_valid_flag) {
- 			retval = -EINVAL;
--			break;
-+			goto free_cpumask;
- 		}
- 	}
--	if (retval)
--		goto err_ret;
+diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+index c21f45f..d5f41ed 100644
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+@@ -579,7 +579,6 @@ static struct dma_pool *ttm_dma_pool_init(struct device *dev, gfp_t flags,
+ 	struct device_pools *sec_pool = NULL;
+ 	struct dma_pool *pool = NULL, **ptr;
+ 	unsigned i;
+-	int ret = -ENODEV;
+ 	char *p;
  
- 	for_each_possible_cpu(i) {
- 		pr = per_cpu(processors, i);
-@@ -147,12 +145,12 @@ static int acpi_processor_update_tsd_coord(void)
- 			 */
- 			if (match_pdomain->num_processors != count_target) {
- 				retval = -EINVAL;
--				goto err_ret;
-+				goto free_cpumask;
- 			}
+ 	if (!dev)
+@@ -589,8 +588,6 @@ static struct dma_pool *ttm_dma_pool_init(struct device *dev, gfp_t flags,
+ 	if (!ptr)
+ 		return NULL;
  
- 			if (pdomain->coord_type != match_pdomain->coord_type) {
- 				retval = -EINVAL;
--				goto err_ret;
-+				goto free_cpumask;
- 			}
- 
- 			cpumask_set_cpu(j, covered_cpus);
-@@ -180,8 +178,7 @@ static int acpi_processor_update_tsd_coord(void)
- 				     pthrottling->shared_cpu_map);
- 		}
- 	}
+-	ret = -ENOMEM;
 -
--err_ret:
-+ free_cpumask:
- 	free_cpumask_var(covered_cpus);
+ 	pool = kmalloc_node(sizeof(struct dma_pool), GFP_KERNEL,
+ 			    dev_to_node(dev));
+ 	if (!pool)
+@@ -644,7 +641,7 @@ err_mem:
+ 	devres_free(ptr);
+ 	kfree(sec_pool);
+ 	kfree(pool);
+-	return ERR_PTR(ret);
++	return ERR_PTR(-ENOMEM);
+ }
  
- 	for_each_possible_cpu(i) {
+ static struct dma_pool *ttm_dma_find_pool(struct device *dev,
 -- 
 2.10.0
 
