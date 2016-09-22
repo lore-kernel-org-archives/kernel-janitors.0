@@ -1,123 +1,53 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 12 Sep 2016 06:19:44 +0000
-Subject: Re: [PATCH 01/26] ALSA: pci: constify local structures
-Message-Id: <s5hy42x8wsf.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 06:21:14 +0000
+Subject: [PATCH 2/4] GPU-DRM-QXL: Move three assignments in qxl_device_init()
+Message-Id: <f7eb26ad-39be-2918-627b-5f4981d07808@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1473599168-30561-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
+In-Reply-To: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, joe@perches.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, Tejun Heo <tj@kernel.org>, Thierry Reding <treding@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, 11 Sep 2016 15:05:43 +0200,
-Julia Lawall wrote:
-> 
-> For structure types defined in the same file or local header files, find
-> top-level static structure declarations that have the following
-> properties:
-> 1. Never reassigned.
-> 2. Address never taken
-> 3. Not passed to a top-level macro call
-> 4. No pointer or array-typed field passed to a function or stored in a
-> variable.
-> Declare structures having all of these properties as const.
-> 
-> Done using Coccinelle.
-> Based on a suggestion by Joe Perches <joe@perches.com>.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Sep 2016 22:33:54 +0200
 
-Thanks, applied now.
+Move the assignments for three data structure members to the end
+so that they will only be performed if the desired resource allocations
+succeeded by this function.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/qxl/qxl_kms.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Takashi
+diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
+index 76852f1..76780c2 100644
+--- a/drivers/gpu/drm/qxl/qxl_kms.c
++++ b/drivers/gpu/drm/qxl/qxl_kms.c
+@@ -212,10 +212,6 @@ static int qxl_device_init(struct qxl_device *qdev,
+ 	/* TODO - slot initialization should happen on reset. where is our
+ 	 * reset handler? */
+ 	qdev->n_mem_slots = qdev->rom->slots_end;
+-	qdev->slot_gen_bits = qdev->rom->slot_gen_bits;
+-	qdev->slot_id_bits = qdev->rom->slot_id_bits;
+-	qdev->va_slot_mask -		(~(uint64_t)0) >> (qdev->slot_id_bits + qdev->slot_gen_bits);
+ 	qdev->mem_slots = kmalloc_array(qdev->n_mem_slots,
+ 					sizeof(*qdev->mem_slots),
+ 					GFP_KERNEL);
+@@ -260,7 +256,10 @@ static int qxl_device_init(struct qxl_device *qdev,
+ 
+ 
+ 	INIT_WORK(&qdev->gc_work, qxl_gc_work);
+-
++	qdev->slot_gen_bits = qdev->rom->slot_gen_bits;
++	qdev->slot_id_bits = qdev->rom->slot_id_bits;
++	qdev->va_slot_mask +		(~(uint64_t)0) >> (qdev->slot_id_bits + qdev->slot_gen_bits);
+ 	return 0;
+ }
+ 
+-- 
+2.10.0
 
-> ---
-> The semantic patch seems too long for a commit log, but is in the cover
-> letter.
-> 
->  sound/pci/ctxfi/ctatc.c      |    2 +-
->  sound/pci/hda/patch_ca0132.c |   10 +++++-----
->  sound/pci/riptide/riptide.c  |    2 +-
->  3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
-> index 977a598..908658a 100644
-> --- a/sound/pci/ctxfi/ctatc.c
-> +++ b/sound/pci/ctxfi/ctatc.c
-> @@ -1623,7 +1623,7 @@ static int atc_resume(struct ct_atc *atc)
->  }
->  #endif
->  
-> -static struct ct_atc atc_preset = {
-> +static const struct ct_atc atc_preset = {
->  	.map_audio_buffer = ct_map_audio_buffer,
->  	.unmap_audio_buffer = ct_unmap_audio_buffer,
->  	.pcm_playback_prepare = atc_pcm_playback_prepare,
-> diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-> index 9ceb2bc..ad06866 100644
-> --- a/sound/pci/hda/patch_ca0132.c
-> +++ b/sound/pci/hda/patch_ca0132.c
-> @@ -4018,7 +4018,7 @@ static int ca0132_build_controls(struct hda_codec *codec)
->  /*
->   * PCM
->   */
-> -static struct hda_pcm_stream ca0132_pcm_analog_playback = {
-> +static const struct hda_pcm_stream ca0132_pcm_analog_playback = {
->  	.substreams = 1,
->  	.channels_min = 2,
->  	.channels_max = 6,
-> @@ -4029,7 +4029,7 @@ static struct hda_pcm_stream ca0132_pcm_analog_playback = {
->  	},
->  };
->  
-> -static struct hda_pcm_stream ca0132_pcm_analog_capture = {
-> +static const struct hda_pcm_stream ca0132_pcm_analog_capture = {
->  	.substreams = 1,
->  	.channels_min = 2,
->  	.channels_max = 2,
-> @@ -4040,7 +4040,7 @@ static struct hda_pcm_stream ca0132_pcm_analog_capture = {
->  	},
->  };
->  
-> -static struct hda_pcm_stream ca0132_pcm_digital_playback = {
-> +static const struct hda_pcm_stream ca0132_pcm_digital_playback = {
->  	.substreams = 1,
->  	.channels_min = 2,
->  	.channels_max = 2,
-> @@ -4052,7 +4052,7 @@ static struct hda_pcm_stream ca0132_pcm_digital_playback = {
->  	},
->  };
->  
-> -static struct hda_pcm_stream ca0132_pcm_digital_capture = {
-> +static const struct hda_pcm_stream ca0132_pcm_digital_capture = {
->  	.substreams = 1,
->  	.channels_min = 2,
->  	.channels_max = 2,
-> @@ -4614,7 +4614,7 @@ static void ca0132_free(struct hda_codec *codec)
->  	kfree(codec->spec);
->  }
->  
-> -static struct hda_codec_ops ca0132_patch_ops = {
-> +static const struct hda_codec_ops ca0132_patch_ops = {
->  	.build_controls = ca0132_build_controls,
->  	.build_pcms = ca0132_build_pcms,
->  	.init = ca0132_init,
-> diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
-> index ae41fcb..ada5f01 100644
-> --- a/sound/pci/riptide/riptide.c
-> +++ b/sound/pci/riptide/riptide.c
-> @@ -644,7 +644,7 @@ static struct lbuspath lbus_play_paths[] = {
->  	 .mono = lbus_play_mono3,
->  	 },
->  };
-> -static struct lbuspath lbus_rec_path = {
-> +static const struct lbuspath lbus_rec_path = {
->  	.noconv = lbus_rec_noconv1,
->  	.stereo = lbus_rec_stereo1,
->  	.mono = lbus_rec_mono1,
-> 
-> 
