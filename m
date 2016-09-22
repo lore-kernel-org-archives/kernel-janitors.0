@@ -1,32 +1,52 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 22 Sep 2016 15:05:37 +0000
+From: Joe Perches <joe@perches.com>
+Date: Thu, 22 Sep 2016 17:49:47 +0000
 Subject: Re: "CodingStyle: Clarify and complete chapter 7" in docs-next
-Message-Id: <alpine.DEB.2.10.1609221702050.2981@hadrien>
+Message-Id: <1474566587.8253.14.camel@perches.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAOi1vP8Y6V3mWs1bv=-CCVRfGi59P+3F85n6rzMn0=K6FqQkcw@mail.gmail.com>        <20160920001159.GM2356@ZenIV.linux.org.uk>        <1474339566.1954.25.camel@perches.com>        <alpine.DEB.2.10.1609200751110.3346@hadrien>        <1474353123.1954.28.camel@perches.com>
-        <20160922112407.47da9393@endymion>        <1474540930.8253.9.camel@perches.com>        <20160922135758.0399725d@endymion>        <20160922131103.GW2356@ZenIV.linux.org.uk> <20160922165837.1363860b@endymion>
-In-Reply-To: <20160922165837.1363860b@endymion>
+References: <CAOi1vP8Y6V3mWs1bv=-CCVRfGi59P+3F85n6rzMn0=K6FqQkcw@mail.gmail.com>
+         <20160920001159.GM2356@ZenIV.linux.org.uk>
+         <1474339566.1954.25.camel@perches.com>
+         <alpine.DEB.2.10.1609200751110.3346@hadrien>
+         <1474353123.1954.28.camel@perches.com> <20160922112407.47da9393@endymion>
+         <1474540930.8253.9.camel@perches.com> <20160922135758.0399725d@endymion>
+In-Reply-To: <20160922135758.0399725d@endymion>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: Jean Delvare <jdelvare@suse.de>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Joe Perches <joe@perches.com>, Julia Lawall <julia.lawall@lip6.fr>, Ilya Dryomov <idryomov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Al Viro <viro@ZenIV.linux.org.uk>, Ilya Dryomov <idryomov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org
 
-> > The main intent of checkpatch these days appears to be providing an easy
-> > way of thoughtless inflation of commit counts, everything else be damned.
-> > Make-work, in other words.
->
-> Yes, I've noticed the trend too :-( But that's a problem with the
-> people using the tool, mostly, not with the tool itself.
+On Thu, 2016-09-22 at 13:57 +0200, Jean Delvare wrote:
+> Sure. But I'm afraid you keep changing topics and I have no idea where
+> you are going. We started with "should there be a space before jump
+> labels", then out of nowhere we were discussing the wording of the
+> output of checkpatch (how is that related?) and now you pull statistics
+> out of your hat, like these numbers imply anything.
 
-With respect to at least one person in this category, I don't think that
-their main original inspiration was checkpatch in the first place.  More
-random information collected from developer comments, that person's own
-notion of what good code is, etc.  So there may be limits to what one can
-do to checkpatch that will have an impact on this issue.
+No, not out of a hat.  Those are the results of a silly script that
+runs checkpatch on every .[ch] kernel file (but not tools/) with:
 
-Furthermore, probably people who use checkpatch in the right way, ie to
-check their patches, don't actually mention their use of checkpatch.  They
-just fix up their commits and move on.
+	--show-types --terse --emacs --strict --no-summary --quiet -f
 
-julia
+The magnitude of "ERRORS" is high and it's not necessary or useful
+to modify old or obsolete code just to reduce that magnitude.
+
+> checkpatch was called checkPATCH for a reason.
+
+That's why I promote the --force option to limit using checkpatch on
+files outside of staging.
+
+https://patchwork.kernel.org/patch/9332205/
+
+Andrew? =A0Are you going to apply that one day?
+
+> ERROR means that the new code isn't allowed to do that. Period.
+
+Disagree.  The compiler doesn't care.  The value of consistency in
+reducing defects is very hard to quantify.
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
