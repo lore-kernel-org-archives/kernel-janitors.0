@@ -1,70 +1,94 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 20 Sep 2016 06:46:46 +0000
-Subject: Re: "CodingStyle: Clarify and complete chapter 7" in docs-next (was Re: [PATCH 03/47] block-rbd: Adj
-Message-Id: <alpine.DEB.2.10.1609200844540.3346@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-925751737-1474354008=:3346"
+From: Jean Delvare <jdelvare@suse.de>
+Date: Thu, 22 Sep 2016 09:24:07 +0000
+Subject: Re: "CodingStyle: Clarify and complete chapter 7" in docs-next
+Message-Id: <20160922112407.47da9393@endymion>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAOi1vP8Y6V3mWs1bv=-CCVRfGi59P+3F85n6rzMn0=K6FqQkcw@mail.gmail.com>  <20160920001159.GM2356@ZenIV.linux.org.uk>  <1474339566.1954.25.camel@perches.com>  <alpine.DEB.2.10.1609200751110.3346@hadrien> <1474353123.1954.28.camel@perches.com>
+References: <CAOi1vP8Y6V3mWs1bv=-CCVRfGi59P+3F85n6rzMn0=K6FqQkcw@mail.gmail.com>
+ <20160920001159.GM2356@ZenIV.linux.org.uk>
+ <1474339566.1954.25.camel@perches.com>
+ <alpine.DEB.2.10.1609200751110.3346@hadrien>
+ <1474353123.1954.28.camel@perches.com>
 In-Reply-To: <1474353123.1954.28.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: Joe Perches <joe@perches.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Al Viro <viro@ZenIV.linux.org.uk>, Ilya Dryomov <idryomov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Linus Torvalds <torvalds@linux-foundation.org>, Jean Delvare <jdelvare@suse.de>, Jonathan Corbet <corbet@lwn.net>, Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Al Viro <viro@ZenIV.linux.org.uk>, Ilya Dryomov <idryomov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Joe,
 
---8323329-925751737-1474354008=:3346
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-
-
-On Mon, 19 Sep 2016, Joe Perches wrote:
-
+On Mon, 19 Sep 2016 23:32:03 -0700, Joe Perches wrote:
 > On Tue, 2016-09-20 at 07:53 +0200, Julia Lawall wrote:
-> > On Mon, 19 Sep 2016, Joe Perches wrote:
-> > > On Tue, 2016-09-20 at 01:11 +0100, Al Viro wrote:
-> > > > IMO what we need is to go through all rules in CodingStyle and if f=
-or
-> > > > some rule there is no overwhelming majority in the core kernel, wel=
-l,
-> > > > the list has grown way too large and could use massive trimming.
-> > >
-> > > I'm in complete agreement.
-> > >
-> > > I also think that checkpatch's ERROR/WARNING/CHECK message naming is
-> > > far too severe and injunctive and could use a renaming to something
-> > > more silly, bug related and less commanding like FLEAS/GNATS/NITS.
-> > I think it is better to be clear.=A0 CHECK was never really clear to me,
+> > I think it is better to be clear.  CHECK was never really clear to me,
 > > especially if you see it in isolation, on a file that doesn't also have
-> > ERROR or WARNING.=A0 NITS is a common word in this context, but not FLE=
-AS
+> > ERROR or WARNING.  NITS is a common word in this context, but not FLEAS
 > > and GNATS, as far as I know.
 > > There could also be a severity level: high medium and low
->
+> 
 > I agree clarity is good.
->
+> 
 > The seriousness with which some beginners take these message
 > types though is troublesome,
 
-It's not necessarily the case that changing the error type will change the
-behavior of the persons in question.
+You need to think in terms of actual use cases. Who uses checkpatch and
+why? I think there are 3 groups of users:
+* Beginners. They won't run the script by themselves, instead they will
+  submit a patch which infringes a lot of coding style rules, and the
+  maintainer will point them to checkpatch and ask for a resubmission
+  which makes checkpatch happy. Being beginners, they can only rely on
+  the script itself to only report things which need to be fixed, by
+  default.
+* Experienced developers. Who simply want to make sure they did not
+  overlook anything before they post their work for review. They have
+  the knowledge to decide if they want to ignore some of the warnings.
+* People with too much spare time, looking for anything they could
+  "contribute" to the kernel. They will use --subjective and piss off
+  every maintainer they can find.
+
+Sadly there's not much we can do about the third category, short of
+killing option --subjective altogether.
+
+The default settings should work out of the box for for the first
+category.
 
 > Maybe prefix various different types of style messages.
->
+> 
 > Something like:
->
+> 
 > ERROR	-> CODE_STYLE_DEFECT
 > WARNING -> CODE_STYLE_UNPREFERRED
 > CHECK	-> CODE_STYLE_NIT
->
+
+I don't think you clarify anything with these changes, as they do not
+carry the requirement from a submitter's perspective. If you really
+want to change the names, I would rather suggest:
+
+ERROR -> MUST_FIX
+WARNING -> SHOULD_FIX
+CHECK -> MAY_FIX
+
+Or explain the categories in plain English, see below.
+
 > I doubt additional external documentation would help much.
->
-> Some checkpatch bleats really are errors though.
 
-Maybe just downgrade more things?
+I agree. If anything needs to be explained, it should be included in
+the output of checkpatch directly. For example, if any ERROR was
+printed, include the following after the count summary:
 
-Perhaps SUGGESTION would be more clear than CHECK?
+"ERROR means the code is infringing a core coding style rule. This MUST
+be fixed before the patch is submitted upstream."
 
-julia
---8323329-925751737-1474354008=:3346--
+And if any WARNING was printed, include the following:
+
+"WARNING means the code is not following the best practice. This SHOULD
+be fixed before the patch is submitted upstream, unless the maintainer
+agreed otherwise."
+
+Not sure if we need something for CHECK, as these messages are not
+printed by default so I'd assume people who get them know what they
+asked for. But apparently these confused Julia so maybe a similar
+explanation would be needed for them too.
+
+-- 
+Jean Delvare
+SUSE L3 Support
