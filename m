@@ -1,83 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Sep 2016 15:58:20 +0000
-Subject: [PATCH 5/5] GPU-DRM: Rename a jump label in drm_legacy_mapbufs()
-Message-Id: <0dd208fb-f46a-e043-d45d-1c4cf52bb0bb@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 22 Sep 2016 05:23:17 +0000
+Subject: [PATCH 07/11] staging: dgnc: rename dgnc_finalize_board_init() to
+Message-Id: <20160922052317.GA27259@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <2fd2da19-d57e-5017-0594-fd52e78493fa@users.sourceforge.net>
-In-Reply-To: <2fd2da19-d57e-5017-0594-fd52e78493fa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Sep 2016 17:37:27 +0200
+The dgnc_finalize_board_init() function has only job for
+requesting the IRQ. It should be renamed to dgnc_request_irq()
 
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/gpu/drm/drm_bufs.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/dgnc/dgnc_driver.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index adb1dd7..0d5ee1e 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -1476,7 +1476,7 @@ int drm_legacy_mapbufs(struct drm_device *dev, void *data,
- 
- 			if (!map) {
- 				retcode = -EINVAL;
--				goto done;
-+				goto status_indication;
- 			}
- 			virtual = vm_mmap(file_priv->filp, 0, map->size,
- 					  PROT_READ | PROT_WRITE,
-@@ -1490,7 +1490,7 @@ int drm_legacy_mapbufs(struct drm_device *dev, void *data,
- 		if (virtual > -1024UL) {
- 			/* Real error */
- 			retcode = (signed long)virtual;
--			goto done;
-+			goto status_indication;
- 		}
- 		request->virtual = (void __user *)virtual;
- 
-@@ -1499,28 +1499,28 @@ int drm_legacy_mapbufs(struct drm_device *dev, void *data,
- 					 &dma->buflist[i]->idx,
- 					 sizeof(request->list[0].idx))) {
- 				retcode = -EFAULT;
--				goto done;
-+				goto status_indication;
- 			}
- 			if (copy_to_user(&request->list[i].total,
- 					 &dma->buflist[i]->total,
- 					 sizeof(request->list[0].total))) {
- 				retcode = -EFAULT;
--				goto done;
-+				goto status_indication;
- 			}
- 			if (copy_to_user(&request->list[i].used,
- 					 &zero, sizeof(zero))) {
- 				retcode = -EFAULT;
--				goto done;
-+				goto status_indication;
- 			}
- 			address = virtual + dma->buflist[i]->offset;	/* *** */
- 			if (copy_to_user(&request->list[i].address,
- 					 &address, sizeof(address))) {
- 				retcode = -EFAULT;
--				goto done;
-+				goto status_indication;
- 			}
- 		}
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index ffe55a2..70e68b5 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -37,7 +37,7 @@ MODULE_SUPPORTED_DEVICE("dgnc");
+  *
+  */
+ static int		dgnc_start(void);
+-static int		dgnc_finalize_board_init(struct dgnc_board *brd);
++static int dgnc_request_irq(struct dgnc_board *brd);
+ static struct dgnc_board *dgnc_found_board(struct pci_dev *pdev, int id);
+ static void		dgnc_cleanup_board(struct dgnc_board *brd);
+ static void		dgnc_poll_handler(ulong dummy);
+@@ -296,7 +296,7 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto failed;
  	}
--      done:
-+ status_indication:
- 	request->count = dma->buf_count;
- 	DRM_DEBUG("%d buffers, retcode = %d\n", request->count, retcode);
+ 
+-	rc = dgnc_finalize_board_init(brd);
++	rc = dgnc_request_irq(brd);
+ 	if (rc < 0) {
+ 		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
+ 		goto unregister_tty;
+@@ -558,7 +558,7 @@ failed:
+ 	return ERR_PTR(rc);
+ }
+ 
+-static int dgnc_finalize_board_init(struct dgnc_board *brd)
++static int dgnc_request_irq(struct dgnc_board *brd)
+ {
+ 	int rc = 0;
  
 -- 
-2.10.0
+1.9.1
 
