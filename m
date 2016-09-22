@@ -1,87 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 22:13:12 +0000
-Subject: [PATCH 4/6] ALSA: ad1889: constify snd_pcm_ops structures
-Message-Id: <1472767994-26269-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 06:18:13 +0000
+Subject: [PATCH 0/4] GPU-DRM-QXL: Fine-tuning for three function implementations
+Message-Id: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thibaut Varene <T-Bone@parisc-linux.org>
-Cc: alsa-devel@alsa-project.org, linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>
+To: dri-devel@lists.freedesktop.org, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, Tejun Heo <tj@kernel.org>, Thierry Reding <treding@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for snd_pcm_ops structures that are only stored in the ops field of a
-snd_soc_platform_driver structure or passed as the third argument to
-snd_pcm_set_ops.  The corresponding field or parameter is declared const,
-so snd_pcm_ops structures that have this property can be declared as const
-also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 08:08:08 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A few update suggestions were taken into account
+from static source code analysis.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_pcm_ops i@p = { ... };
+Markus Elfring (4):
+  Use kmalloc_array() in qxl_device_init()
+  Move three assignments in qxl_device_init()
+  Improve a size determination in qxl_driver_load()
+  Adjust checks for null pointers in three functions
 
-@ok1@
-identifier r.i;
-struct snd_soc_platform_driver e;
-position p;
-@@
-e.ops = &i@p;
+ drivers/gpu/drm/qxl/qxl_kms.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-@ok2@
-identifier r.i;
-expression e1, e2;
-position p;
-@@
-snd_pcm_set_ops(e1, e2, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_pcm_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_pcm_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/pci/ad1889.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/pci/ad1889.c b/sound/pci/ad1889.c
-index 1fc6d8b..8c36990 100644
---- a/sound/pci/ad1889.c
-+++ b/sound/pci/ad1889.c
-@@ -571,7 +571,7 @@ snd_ad1889_capture_pointer(struct snd_pcm_substream *ss)
- 	return bytes_to_frames(ss->runtime, ptr);
- }
- 
--static struct snd_pcm_ops snd_ad1889_playback_ops = {
-+static const struct snd_pcm_ops snd_ad1889_playback_ops = {
- 	.open = snd_ad1889_playback_open,
- 	.close = snd_ad1889_playback_close,
- 	.ioctl = snd_pcm_lib_ioctl,
-@@ -582,7 +582,7 @@ static struct snd_pcm_ops snd_ad1889_playback_ops = {
- 	.pointer = snd_ad1889_playback_pointer, 
- };
- 
--static struct snd_pcm_ops snd_ad1889_capture_ops = {
-+static const struct snd_pcm_ops snd_ad1889_capture_ops = {
- 	.open = snd_ad1889_capture_open,
- 	.close = snd_ad1889_capture_close,
- 	.ioctl = snd_pcm_lib_ioctl,
+-- 
+2.10.0
 
