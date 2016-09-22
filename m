@@ -1,70 +1,95 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 06:15:20 +0000
-Subject: [PATCH 04/10] firewire-net: Rename jump labels in fwnet_probe()
-Message-Id: <6dc834a3-531c-ea35-1c24-427fdca071fa@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 22 Sep 2016 05:24:45 +0000
+Subject: [PATCH 11/11] staging: dgnc: introduce find_board_by_major()
+Message-Id: <20160922052445.GA27323@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
-In-Reply-To: <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux1394-devel@lists.sourceforge.net, Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 22:17:12 +0200
+It was used to get a board structure with dgnc_BoardsByMajor array.
+But this driver already has the array for managing initialized board
+as dgap_board[]. It can be used for searching the board structure
+by major number.
 
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/firewire/net.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/dgnc/dgnc_tty.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
-index cedfade..2ca2d57 100644
---- a/drivers/firewire/net.c
-+++ b/drivers/firewire/net.c
-@@ -1442,7 +1442,7 @@ static int fwnet_probe(struct fw_unit *unit,
- 	dev = fwnet_dev_find(card);
- 	if (dev) {
- 		net = dev->netdev;
--		goto have_dev;
-+		goto add_peer;
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index ba724ab..a486a86 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -45,7 +45,6 @@
+ /*
+  * internal variables
+  */
+-static struct dgnc_board	*dgnc_BoardsByMajor[256];
+ static unsigned char		*dgnc_TmpWriteBuf;
+ 
+ /*
+@@ -251,8 +250,6 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 		goto free_print_driver;
  	}
  
- 	net = alloc_netdev(sizeof(*dev), "firewire%d", NET_NAME_UNKNOWN,
-@@ -1469,7 +1469,7 @@ static int fwnet_probe(struct fw_unit *unit,
+-	dgnc_BoardsByMajor[brd->serial_driver->major] = brd;
+-
+ 	return 0;
  
- 	ret = fwnet_fifo_start(dev);
- 	if (ret < 0)
--		goto out;
-+		goto stop_fifo;
- 	dev->local_fifo = dev->handler.offset;
+ free_print_driver:
+@@ -388,7 +385,6 @@ void dgnc_cleanup_tty(struct dgnc_board *brd)
+ {
+ 	int i = 0;
  
- 	/*
-@@ -1492,17 +1492,17 @@ static int fwnet_probe(struct fw_unit *unit,
- 
- 	ret = register_netdev(net);
- 	if (ret)
--		goto out;
-+		goto stop_fifo;
- 
- 	list_add_tail(&dev->dev_link, &fwnet_device_list);
- 	dev_notice(&net->dev, "IP over IEEE 1394 on card %s\n",
- 		   dev_name(card->device));
-- have_dev:
-+ add_peer:
- 	ret = fwnet_add_peer(dev, unit, device);
- 	if (ret && allocated_netdev) {
- 		unregister_netdev(net);
- 		list_del(&dev->dev_link);
-- out:
-+ stop_fifo:
- 		fwnet_fifo_stop(dev);
- 		free_netdev(net);
+-	dgnc_BoardsByMajor[brd->serial_driver->major] = NULL;
+ 	for (i = 0; i < brd->nasync; i++) {
+ 		if (brd->channels[i])
+ 			dgnc_remove_tty_sysfs(brd->channels[i]->
+@@ -397,7 +393,6 @@ void dgnc_cleanup_tty(struct dgnc_board *brd)
  	}
+ 	tty_unregister_driver(brd->serial_driver);
+ 
+-	dgnc_BoardsByMajor[brd->print_driver->major] = NULL;
+ 	for (i = 0; i < brd->nasync; i++) {
+ 		if (brd->channels[i])
+ 			dgnc_remove_tty_sysfs(brd->channels[i]->
+@@ -935,6 +930,24 @@ void dgnc_wakeup_writes(struct channel_t *ch)
+ 	spin_unlock_irqrestore(&ch->ch_lock, flags);
+ }
+ 
++struct dgnc_board *find_board_by_major(unsigned int major)
++{
++	int i;
++
++	for (i = 0; i < MAXBOARDS; i++) {
++		struct dgnc_board *brd = dgnc_board[i];
++
++		if (!brd)
++			return NULL;
++
++		if (major = brd->serial_driver->major ||
++		    major = brd->print_driver->major)
++			return brd;
++	}
++
++	return NULL;
++}
++
+ /************************************************************************
+  *
+  * TTY Entry points and helper functions
+@@ -964,7 +977,7 @@ static int dgnc_tty_open(struct tty_struct *tty, struct file *file)
+ 		return -ENXIO;
+ 
+ 	/* Get board pointer from our array of majors we have allocated */
+-	brd = dgnc_BoardsByMajor[major];
++	brd = find_board_by_major(major);
+ 	if (!brd)
+ 		return -ENXIO;
+ 
 -- 
-2.10.0
+1.9.1
 
