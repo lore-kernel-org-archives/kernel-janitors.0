@@ -1,43 +1,160 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:44:06 +0000
-Subject: [PATCH 00/16] md/bitmap: Fine-tuning for several function implementations
-Message-Id: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 22 Sep 2016 05:22:32 +0000
+Subject: [PATCH 05/11] staging: dgnc: move functions unrelated with
+Message-Id: <20160922052232.GA27226@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 18:29:08 +0200
+The functions related with tty device initialization are needed
+to be moved from dgnc_found_board() to dgnc_init_one().
 
-Several update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_driver.c | 81 ++++++++++++++++++++------------------
+ 1 file changed, 43 insertions(+), 38 deletions(-)
 
-Markus Elfring (16):
-  Use kmalloc_array() in bitmap_storage_alloc()
-  Move an assignment for the variable "offset" in bitmap_storage_alloc()
-  Delete an unnecessary variable initialisation in bitmap_storage_alloc()
-  Improve another size determination in bitmap_storage_alloc()
-  Return directly after a failed bitmap_storage_alloc() in bitmap_resize()
-  Return directly after a failed kzalloc() in bitmap_resize()
-  Replace a kzalloc() call by kcalloc() in bitmap_resize()
-  Rename a jump label in location_store()
-  Rename a jump label in bitmap_copy_from_slot()
-  Rename a jump label in bitmap_create()
-  Rename a jump label in bitmap_init_from_disk()
-  One check less in read_page() at the end
-  Adjust checks for null pointers in 11 functions
-  Delete unnecessary braces in bitmap_resize()
-  Add spaces around three comparison operators
-  Delete an unwanted space in read_sb_page()
-
- drivers/md/bitmap.c | 110 +++++++++++++++++++++++++---------------------------
- 1 file changed, 52 insertions(+), 58 deletions(-)
-
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index 0114e78..a95d13c 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -38,7 +38,7 @@ MODULE_SUPPORTED_DEVICE("dgnc");
+  */
+ static int		dgnc_start(void);
+ static int		dgnc_finalize_board_init(struct dgnc_board *brd);
+-static int		dgnc_found_board(struct pci_dev *pdev, int id);
++static struct dgnc_board *dgnc_found_board(struct pci_dev *pdev, int id);
+ static void		dgnc_cleanup_board(struct dgnc_board *brd);
+ static void		dgnc_poll_handler(ulong dummy);
+ static int		dgnc_init_one(struct pci_dev *pdev,
+@@ -274,6 +274,7 @@ failed_class:
+ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	int rc;
++	struct dgnc_board *brd;
+ 
+ 	/* wake up and enable device */
+ 	rc = pci_enable_device(pdev);
+@@ -281,9 +282,43 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (rc)
+ 		return -EIO;
+ 
+-	rc = dgnc_found_board(pdev, ent->driver_data);
+-	if (rc = 0)
+-		dgnc_num_boards++;
++	brd = dgnc_found_board(pdev, ent->driver_data);
++	if (IS_ERR(brd))
++		return PTR_ERR(brd);
++
++	/*
++	 * Do tty device initialization.
++	 */
++
++	rc = dgnc_tty_register(brd);
++	if (rc < 0) {
++		pr_err(DRVSTR ": Can't register tty devices (%d)\n", rc);
++		goto failed;
++	}
++
++	rc = dgnc_finalize_board_init(brd);
++	if (rc < 0) {
++		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
++		goto failed;
++	}
++
++	rc = dgnc_tty_init(brd);
++	if (rc < 0) {
++		pr_err(DRVSTR ": Can't init tty devices (%d)\n", rc);
++		goto failed;
++	}
++
++	brd->state = BOARD_READY;
++	brd->dpastatus = BD_RUNNING;
++
++	dgnc_create_ports_sysfiles(brd);
++
++	dgnc_board[dgnc_num_boards++] = brd;
++
++	return 0;
++
++failed:
++	kfree(brd);
+ 
+ 	return rc;
+ }
+@@ -345,7 +380,7 @@ static void dgnc_cleanup_board(struct dgnc_board *brd)
+  *
+  * A board has been found, init it.
+  */
+-static int dgnc_found_board(struct pci_dev *pdev, int id)
++static struct dgnc_board *dgnc_found_board(struct pci_dev *pdev, int id)
+ {
+ 	struct dgnc_board *brd;
+ 	unsigned int pci_irq;
+@@ -355,7 +390,7 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 	/* get the board structure and prep it */
+ 	brd = kzalloc(sizeof(*brd), GFP_KERNEL);
+ 	if (!brd)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	/* store the info for the board we've found */
+ 	brd->magic = DGNC_BOARD_MAGIC;
+@@ -505,33 +540,6 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		goto failed;
+ 	}
+ 
+-	/*
+-	 * Do tty device initialization.
+-	 */
+-
+-	rc = dgnc_tty_register(brd);
+-	if (rc < 0) {
+-		pr_err(DRVSTR ": Can't register tty devices (%d)\n", rc);
+-		goto failed;
+-	}
+-
+-	rc = dgnc_finalize_board_init(brd);
+-	if (rc < 0) {
+-		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
+-		goto failed;
+-	}
+-
+-	rc = dgnc_tty_init(brd);
+-	if (rc < 0) {
+-		pr_err(DRVSTR ": Can't init tty devices (%d)\n", rc);
+-		goto failed;
+-	}
+-
+-	brd->state = BOARD_READY;
+-	brd->dpastatus = BD_RUNNING;
+-
+-	dgnc_create_ports_sysfiles(brd);
+-
+ 	/* init our poll helper tasklet */
+ 	tasklet_init(&brd->helper_tasklet,
+ 		     brd->bd_ops->tasklet,
+@@ -539,15 +547,12 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 
+ 	wake_up_interruptible(&brd->state_wait);
+ 
+-	dgnc_board[dgnc_num_boards] = brd;
+-
+-	return 0;
++	return brd;
+ 
+ failed:
+-	dgnc_tty_uninit(brd);
+ 	kfree(brd);
+ 
+-	return rc;
++	return ERR_PTR(rc);
+ }
+ 
+ static int dgnc_finalize_board_init(struct dgnc_board *brd)
 -- 
-2.10.0
+1.9.1
 
