@@ -1,59 +1,90 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 19:02:13 +0000
-Subject: [PATCH 2/2] tile-module: Rename jump labels in module_alloc()
-Message-Id: <b0b8d124-df22-9d69-49ee-7647028310bc@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Sep 2016 08:28:55 +0000
+Subject: [PATCH] Coccinelle: pm_runtime: ensure relevance of pm_runtime reports
+Message-Id: <1474532935-22506-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <764e5d1b-c7ab-c8aa-1482-334a00e11280@users.sourceforge.net>
-In-Reply-To: <764e5d1b-c7ab-c8aa-1482-334a00e11280@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Metcalf <cmetcalf@mellanox.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: cocci@systeme.lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Sep 2016 20:45:20 +0200
+pm_runtime.cocci starts with one rule that searches for a variety of
+functions calls, followed by various rules that report errors.  Previously,
+the only connection between the first rule and the rest was to check that
+the first rule had matched somewhere.  Change the rules to propagate a
+position from the first rule to the others, to make sure that the sites
+reported on are the same as the sites that were identified as having the
+relevant functions.
 
-Adjust jump labels according to the current Linux coding style convention.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/tile/kernel/module.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ scripts/coccinelle/api/pm_runtime.cocci |   18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/arch/tile/kernel/module.c b/arch/tile/kernel/module.c
-index dce4120..09233fb 100644
---- a/arch/tile/kernel/module.c
-+++ b/arch/tile/kernel/module.c
-@@ -49,23 +49,22 @@ void *module_alloc(unsigned long size)
- 	for (; i < npages; ++i) {
- 		pages[i] = alloc_page(GFP_KERNEL | __GFP_HIGHMEM);
- 		if (!pages[i])
--			goto error;
-+			goto free_pages;
- 	}
+diff --git a/scripts/coccinelle/api/pm_runtime.cocci b/scripts/coccinelle/api/pm_runtime.cocci
+index 89b98a2..d67ccf5 100644
+--- a/scripts/coccinelle/api/pm_runtime.cocci
++++ b/scripts/coccinelle/api/pm_runtime.cocci
+@@ -17,9 +17,10 @@ virtual report
  
- 	area = __get_vm_area(size, VM_ALLOC, MEM_MODULE_START, MEM_MODULE_END);
- 	if (!area)
--		goto error;
-+		goto free_pages;
- 	area->nr_pages = npages;
- 	area->pages = pages;
+ @runtime_bad_err_handle exists@
+ expression ret;
++position p;
+ @@
+ (
+-ret = \(pm_runtime_idle\|
++ret@p = \(pm_runtime_idle\|
+ 	pm_runtime_suspend\|
+ 	pm_runtime_autosuspend\|
+ 	pm_runtime_resume\|
+@@ -47,12 +48,13 @@ IS_ERR_VALUE(ret)
+ //  For context mode
+ //----------------------------------------------------------
  
- 	if (map_vm_area(area, prot_rwx, pages)) {
- 		vunmap(area->addr);
--		goto error;
-+		goto free_pages;
- 	}
+-@depends on runtime_bad_err_handle && context@
++@depends on context@
+ identifier pm_runtime_api;
+ expression ret;
++position runtime_bad_err_handle.p;
+ @@
+ (
+-ret = pm_runtime_api(...);
++ret@p = pm_runtime_api(...);
+ ...
+ * IS_ERR_VALUE(ret)
+ ...
+@@ -62,12 +64,13 @@ ret = pm_runtime_api(...);
+ //  For patch mode
+ //----------------------------------------------------------
  
- 	return area->addr;
--
--error:
-+ free_pages:
- 	while (--i >= 0)
- 		__free_page(pages[i]);
- 	kfree(pages);
--- 
-2.9.3
+-@depends on runtime_bad_err_handle && patch@
++@depends on patch@
+ identifier pm_runtime_api;
+ expression ret;
++position runtime_bad_err_handle.p;
+ @@
+ (
+-ret = pm_runtime_api(...);
++ret@p = pm_runtime_api(...);
+ ...
+ - IS_ERR_VALUE(ret)
+ + ret < 0
+@@ -78,13 +81,14 @@ ret = pm_runtime_api(...);
+ //  For org and report mode
+ //----------------------------------------------------------
+ 
+-@r depends on runtime_bad_err_handle && (org || report) exists@
++@r depends on (org || report) exists@
+ position p1, p2;
+ identifier pm_runtime_api;
+ expression ret;
++position runtime_bad_err_handle.p;
+ @@
+ (
+-ret = pm_runtime_api@p1(...);
++ret@p = pm_runtime_api@p1(...);
+ ...
+ IS_ERR_VALUE@p2(ret)
+ ...
 
