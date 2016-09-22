@@ -1,20 +1,90 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Sep 2016 08:47:08 +0000
-Subject: Re: [PATCH 3/5] GPU-DRM-nouveau: Delete unnecessary braces
-Message-Id: <20160921084708.GM13620@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 22 Sep 2016 05:21:38 +0000
+Subject: [PATCH 03/11] staging: dgnc: missing NULL check for ioremap in
+Message-Id: <20160922052138.GA27193@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5bcff2ec-f3bd-ab9c-e13d-3a4f5cf7c73b@users.sourceforge.net>
- <74cc2e34-cb5f-e3c9-e6cd-aa24ed3529e3@users.sourceforge.net>
-In-Reply-To: <74cc2e34-cb5f-e3c9-e6cd-aa24ed3529e3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Martin Peres <martin.peres@free.fr>, Roy Spliet <rspliet@eclipso.eu>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The original style was correct, the new style is wrong. Multi-line
-indents get curly braces for readability.
+The ioremap() function can be failed, so it need to have error
+handling in dgnc_do_remap(). And also the return type of
+dgnc_do_remap() should be changed from "void" to "int"
 
-regards,
-dan carpenter
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_driver.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index c87b3de..58cebf4 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -43,7 +43,7 @@ static void		dgnc_cleanup_board(struct dgnc_board *brd);
+ static void		dgnc_poll_handler(ulong dummy);
+ static int		dgnc_init_one(struct pci_dev *pdev,
+ 				      const struct pci_device_id *ent);
+-static void		dgnc_do_remap(struct dgnc_board *brd);
++static int		dgnc_do_remap(struct dgnc_board *brd);
+ 
+ /*
+  * File operations permitted on Control/Management major.
+@@ -431,7 +431,10 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		brd->bd_uart_offset = 0x8;
+ 		brd->bd_dividend = 921600;
+ 
+-		dgnc_do_remap(brd);
++		rc = dgnc_do_remap(brd);
++
++		if (rc < 0)
++			goto failed;
+ 
+ 		/* Get and store the board VPD, if it exists */
+ 		brd->bd_ops->vpd(brd);
+@@ -483,15 +486,17 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		brd->bd_uart_offset = 0x200;
+ 		brd->bd_dividend = 921600;
+ 
+-		dgnc_do_remap(brd);
++		rc = dgnc_do_remap(brd);
+ 
+-		if (brd->re_map_membase) {
+-			/* Read and store the dvid after remapping */
+-			brd->dvid = readb(brd->re_map_membase + 0x8D);
++		if (rc < 0)
++			goto failed;
++
++		/* Read and store the dvid after remapping */
++		brd->dvid = readb(brd->re_map_membase + 0x8D);
++
++		/* Get and store the board VPD, if it exists */
++		brd->bd_ops->vpd(brd);
+ 
+-			/* Get and store the board VPD, if it exists */
+-			brd->bd_ops->vpd(brd);
+-		}
+ 		break;
+ 
+ 	default:
+@@ -566,9 +571,15 @@ static int dgnc_finalize_board_init(struct dgnc_board *brd)
+ /*
+  * Remap PCI memory.
+  */
+-static void dgnc_do_remap(struct dgnc_board *brd)
++static int dgnc_do_remap(struct dgnc_board *brd)
+ {
++	int rc = 0;
++
+ 	brd->re_map_membase = ioremap(brd->membase, 0x1000);
++	if (!brd->re_map_membase)
++		rc = -ENOMEM;
++
++	return rc;
+ }
+ 
+ /*
+-- 
+1.9.1
 
