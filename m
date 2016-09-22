@@ -1,40 +1,58 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:11:35 +0000
-Subject: [PATCH 29/30] ACPI-processor: Delete an unnecessary initialisation in acpi_processor_get_platform_li
-Message-Id: <a75fd3d4-6d99-4288-d63c-70396d83529a@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 17:38:42 +0000
+Subject: [PATCH 06/14] GPU-DRM-TTM: Rename a jump label in ttm_dma_pool_alloc_new_pages()
+Message-Id: <dce2cbff-8ad5-27a1-087b-f2a2ed013ffd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 22:00:07 +0200
+Date: Thu, 22 Sep 2016 14:54:12 +0200
 
-The local variable "status" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 7e54a83..79ba9b78 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -287,7 +287,7 @@ static int acpi_processor_throttling_notifier(unsigned long event, void *data)
-  */
- static int acpi_processor_get_platform_limit(struct acpi_processor *pr)
- {
--	acpi_status status = 0;
-+	acpi_status status;
- 	unsigned long long tpc = 0;
- 
- 	if (!pr)
+diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+index 194818d..9dc1632 100644
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+@@ -758,7 +758,7 @@ static int ttm_dma_pool_alloc_new_pages(struct dma_pool *pool,
+ 						cpages);
+ 			}
+ 			r = -ENOMEM;
+-			goto out;
++			goto free_array;
+ 		}
+ 		p = dma_p->p;
+ #ifdef CONFIG_HIGHMEM
+@@ -777,7 +777,7 @@ static int ttm_dma_pool_alloc_new_pages(struct dma_pool *pool,
+ 					ttm_dma_handle_caching_state_failure(
+ 						pool, d_pages, caching_array,
+ 						cpages);
+-					goto out;
++					goto free_array;
+ 				}
+ 				cpages = 0;
+ 			}
+@@ -791,7 +791,7 @@ static int ttm_dma_pool_alloc_new_pages(struct dma_pool *pool,
+ 			ttm_dma_handle_caching_state_failure(pool, d_pages,
+ 					caching_array, cpages);
+ 	}
+-out:
++ free_array:
+ 	kfree(caching_array);
+ 	return r;
+ }
 -- 
 2.10.0
 
