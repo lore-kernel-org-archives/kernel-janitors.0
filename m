@@ -1,78 +1,85 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 22:13:14 +0000
-Subject: [PATCH 6/6] ALSA: bt87x: constify snd_pcm_ops structures
-Message-Id: <1472767994-26269-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 22 Sep 2016 05:22:53 +0000
+Subject: [PATCH 06/11] staging: dgnc: introduce the dgnc_tty_unregister()
+Message-Id: <20160922052253.GA27243@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>
-Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Check for snd_pcm_ops structures that are only stored in the ops field of a
-snd_soc_platform_driver structure or passed as the third argument to
-snd_pcm_set_ops.  The corresponding field or parameter is declared const,
-so snd_pcm_ops structures that have this property can be declared as const
-also.
+The dgnc_tty_unregister() will be called when
+the dgnc_tty_register() is failed.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_pcm_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct snd_soc_platform_driver e;
-position p;
-@@
-e.ops = &i@p;
-
-@ok2@
-identifier r.i;
-expression e1, e2;
-position p;
-@@
-snd_pcm_set_ops(e1, e2, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_pcm_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_pcm_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- sound/pci/bt87x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/dgnc/dgnc_driver.c | 7 +++++--
+ drivers/staging/dgnc/dgnc_tty.c    | 8 ++++++++
+ drivers/staging/dgnc/dgnc_tty.h    | 1 +
+ 3 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/bt87x.c b/sound/pci/bt87x.c
-index 5925b71..f2c0709 100644
---- a/sound/pci/bt87x.c
-+++ b/sound/pci/bt87x.c
-@@ -550,7 +550,7 @@ static snd_pcm_uframes_t snd_bt87x_pointer(struct snd_pcm_substream *substream)
- 	return (snd_pcm_uframes_t)bytes_to_frames(runtime, chip->current_line * chip->line_bytes);
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index a95d13c..ffe55a2 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -299,13 +299,13 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	rc = dgnc_finalize_board_init(brd);
+ 	if (rc < 0) {
+ 		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
+-		goto failed;
++		goto unregister_tty;
+ 	}
+ 
+ 	rc = dgnc_tty_init(brd);
+ 	if (rc < 0) {
+ 		pr_err(DRVSTR ": Can't init tty devices (%d)\n", rc);
+-		goto failed;
++		goto unregister_tty;
+ 	}
+ 
+ 	brd->state = BOARD_READY;
+@@ -317,6 +317,9 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	return 0;
+ 
++unregister_tty:
++	dgnc_tty_unregister(brd);
++
+ failed:
+ 	kfree(brd);
+ 
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index fd46ef0..893f473 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -273,6 +273,14 @@ free_serial_driver:
+ 	return rc;
  }
  
--static struct snd_pcm_ops snd_bt87x_pcm_ops = {
-+static const struct snd_pcm_ops snd_bt87x_pcm_ops = {
- 	.open = snd_bt87x_pcm_open,
- 	.close = snd_bt87x_close,
- 	.ioctl = snd_pcm_lib_ioctl,
++void dgnc_tty_unregister(struct dgnc_board *brd)
++{
++	tty_unregister_driver(brd->print_driver);
++	tty_unregister_driver(brd->serial_driver);
++	put_tty_driver(brd->print_driver);
++	put_tty_driver(brd->serial_driver);
++}
++
+ /*
+  * dgnc_tty_init()
+  *
+diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
+index 21d3369..f065c8f 100644
+--- a/drivers/staging/dgnc/dgnc_tty.h
++++ b/drivers/staging/dgnc/dgnc_tty.h
+@@ -19,6 +19,7 @@
+ #include "dgnc_driver.h"
+ 
+ int	dgnc_tty_register(struct dgnc_board *brd);
++void dgnc_tty_unregister(struct dgnc_board *brd);
+ 
+ int	dgnc_tty_preinit(void);
+ int     dgnc_tty_init(struct dgnc_board *);
+-- 
+1.9.1
 
