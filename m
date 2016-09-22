@@ -1,7 +1,7 @@
 From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 22 Sep 2016 05:23:39 +0000
-Subject: [PATCH 08/11] staging: dgnc: introduce the dgnc_free_irq()
-Message-Id: <20160922052339.GA27274@SEL-JYOUN-D1>
+Date: Thu, 22 Sep 2016 05:24:01 +0000
+Subject: [PATCH 09/11] staging: dgnc: rename dgnc_tty_uninit() to
+Message-Id: <20160922052401.GA27289@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,57 +9,61 @@ Content-Transfer-Encoding: 7bit
 To: lidza.louina@gmail.com
 Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The dgnc_free_irq() will free the requested IRQ from
-the dgnc_request_irq().
+The dgnc_tty_uninit() doesn't match with dgnc_tty_init() at all.
+And also the dgnc_cleanup_tty() is only called for exiting the module.
 
 Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/staging/dgnc/dgnc_driver.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/staging/dgnc/dgnc_driver.c | 2 +-
+ drivers/staging/dgnc/dgnc_tty.c    | 4 ++--
+ drivers/staging/dgnc/dgnc_tty.h    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index 70e68b5..81ce5c4 100644
+index 81ce5c4..fd372d3 100644
 --- a/drivers/staging/dgnc/dgnc_driver.c
 +++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -38,6 +38,7 @@ MODULE_SUPPORTED_DEVICE("dgnc");
-  */
- static int		dgnc_start(void);
- static int dgnc_request_irq(struct dgnc_board *brd);
-+static void dgnc_free_irq(struct dgnc_board *brd);
- static struct dgnc_board *dgnc_found_board(struct pci_dev *pdev, int id);
- static void		dgnc_cleanup_board(struct dgnc_board *brd);
- static void		dgnc_poll_handler(ulong dummy);
-@@ -305,7 +306,7 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	rc = dgnc_tty_init(brd);
- 	if (rc < 0) {
- 		pr_err(DRVSTR ": Can't init tty devices (%d)\n", rc);
--		goto unregister_tty;
-+		goto free_irq;
+@@ -147,7 +147,7 @@ static void cleanup(bool sysfiles)
+ 
+ 	for (i = 0; i < dgnc_num_boards; ++i) {
+ 		dgnc_remove_ports_sysfiles(dgnc_board[i]);
+-		dgnc_tty_uninit(dgnc_board[i]);
++		dgnc_cleanup_tty(dgnc_board[i]);
+ 		dgnc_cleanup_board(dgnc_board[i]);
  	}
  
- 	brd->state = BOARD_READY;
-@@ -317,6 +318,8 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	return 0;
- 
-+free_irq:
-+	dgnc_free_irq(brd);
- unregister_tty:
- 	dgnc_tty_unregister(brd);
- 
-@@ -577,6 +580,12 @@ static int dgnc_request_irq(struct dgnc_board *brd)
- 	return rc;
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 893f473..5befd28 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -387,12 +387,12 @@ void dgnc_tty_post_uninit(void)
  }
  
-+static void dgnc_free_irq(struct dgnc_board *brd)
-+{
-+	if (brd->irq)
-+		free_irq(brd->irq, brd);
-+}
-+
  /*
-  * Remap PCI memory.
+- * dgnc_tty_uninit()
++ * dgnc_cleanup_tty()
+  *
+  * Uninitialize the TTY portion of this driver.  Free all memory and
+  * resources.
   */
+-void dgnc_tty_uninit(struct dgnc_board *brd)
++void dgnc_cleanup_tty(struct dgnc_board *brd)
+ {
+ 	int i = 0;
+ 
+diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
+index f065c8f..24c9a41 100644
+--- a/drivers/staging/dgnc/dgnc_tty.h
++++ b/drivers/staging/dgnc/dgnc_tty.h
+@@ -25,7 +25,7 @@ int	dgnc_tty_preinit(void);
+ int     dgnc_tty_init(struct dgnc_board *);
+ 
+ void	dgnc_tty_post_uninit(void);
+-void	dgnc_tty_uninit(struct dgnc_board *);
++void	dgnc_cleanup_tty(struct dgnc_board *);
+ 
+ void	dgnc_input(struct channel_t *ch);
+ void	dgnc_carrier(struct channel_t *ch);
 -- 
 1.9.1
 
