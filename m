@@ -1,31 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 19:42:49 +0000
-Subject: [PATCH 0/4] i2c-dev: Fine-tuning for four function implementations
-Message-Id: <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 06:22:29 +0000
+Subject: [PATCH 3/4] GPU-DRM-QXL: Improve a size determination in qxl_driver_load()
+Message-Id: <424ac093-cbe5-17f8-6e03-5e25d7e04269@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+References: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
+In-Reply-To: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: dri-devel@lists.freedesktop.org, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, Tejun Heo <tj@kernel.org>, Thierry Reding <treding@nvidia.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 21:38:21 +0200
+Date: Wed, 21 Sep 2016 22:48:34 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Markus Elfring (4):
-  Use kmalloc_array() in i2cdev_ioctl_rdwr()
-  Improve another size determination in i2cdev_ioctl_rdwr()
-  Rename jump labels in i2cdev_attach_adapter()
-  Adjust checks for null pointers in three functions
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpu/drm/qxl/qxl_kms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/i2c/i2c-dev.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
+index 76780c2..f8f0261 100644
+--- a/drivers/gpu/drm/qxl/qxl_kms.c
++++ b/drivers/gpu/drm/qxl/qxl_kms.c
+@@ -306,7 +306,7 @@ int qxl_driver_load(struct drm_device *dev, unsigned long flags)
+ 	struct qxl_device *qdev;
+ 	int r;
+ 
+-	qdev = kzalloc(sizeof(struct qxl_device), GFP_KERNEL);
++	qdev = kzalloc(sizeof(*qdev), GFP_KERNEL);
+ 	if (qdev = NULL)
+ 		return -ENOMEM;
+ 
 -- 
 2.10.0
 
