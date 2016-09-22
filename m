@@ -1,105 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 18:42:18 +0000
-Subject: [PATCH 0/3] constify pinctrl_ops and pinmux_ops structures
-Message-Id: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 17:40:26 +0000
+Subject: [PATCH 08/14] GPU-DRM-TTM: Rename a jump label in ttm_dma_pool_shrink_scan()
+Message-Id: <2eb454e7-fecf-4912-da0f-fe2e9efc1e2b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Constify pinctrl_ops and pinmux_ops structures.  The complete semantic
-patch used to make this change is as follows:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 16:02:36 +0200
 
-// <smpl>
-@initialize:ocaml@
-@@
+Adjust a jump label according to the current Linux coding style convention.
 
-let check file   let second = List.nth (Str.split (Str.regexp "linux-next/") file) 1 in
-  let doto     "/var/julia/linux-next/" ^ (Filename.chop_extension second) ^ ".o" in
-  Sys.file_exists doto
-
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-
-static struct pinctrl_ops i@p = { ... };
-
-@script:ocaml@
-p << r.p;
-@@
-
-if not (check (List.hd p).file) then Coccilib.include_match false
-
-@ok@
-identifier r.i;
-struct pinctrl_desc e;
-position p;
-@@
-
-e.pctlops = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct pinctrl_ops e;
-@@
-
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-
-static
-+const
- struct pinctrl_ops i = { ... };
-
-// --------------------------------------------------------------------
-
-@r1 disable optional_qualifier@
-identifier i;
-position p;
-@@
-
-static struct pinmux_ops i@p = { ... };
-
-@script:ocaml@
-p << r1.p;
-@@
-
-if not (check (List.hd p).file) then Coccilib.include_match false
-
-@ok1@
-identifier r1.i;
-struct pinctrl_desc e;
-position p;
-@@
-
-e.pmxops = &i@p;
-
-@bad1@
-position p != {r1.p,ok1.p};
-identifier r1.i;
-struct pinmux_ops e;
-@@
-
-e@i@p
-
-@depends on !bad1 disable optional_qualifier@
-identifier r1.i;
-@@
-
-static
-+const
- struct pinmux_ops i = { ... };
-// </smpl>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/pinctrl/bcm/pinctrl-bcm281xx.c |    4 ++--
- drivers/pinctrl/bcm/pinctrl-ns2-mux.c  |    4 ++--
- drivers/pinctrl/bcm/pinctrl-nsp-mux.c  |    4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+index ce3d361..e3f5542 100644
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+@@ -1025,7 +1025,7 @@ ttm_dma_pool_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ 	if (!mutex_trylock(&_manager->lock))
+ 		return SHRINK_STOP;
+ 	if (!_manager->npools)
+-		goto out;
++		goto unlock;
+ 	pool_offset = ++start_pool % _manager->npools;
+ 	list_for_each_entry(p, &_manager->pools, pools) {
+ 		unsigned nr_free;
+@@ -1046,7 +1046,7 @@ ttm_dma_pool_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ 			 p->pool->dev_name, p->pool->name, current->pid,
+ 			 nr_free, shrink_pages);
+ 	}
+-out:
++ unlock:
+ 	mutex_unlock(&_manager->lock);
+ 	return freed;
+ }
+-- 
+2.10.0
+
