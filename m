@@ -1,23 +1,37 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 09 Sep 2016 11:06:51 +0000
-Subject: Re: [PATCH] bnx2fc: Simplify code
-Message-Id: <yq1h99pgwms.fsf@sermon.lab.mkp.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 22 Sep 2016 05:20:51 +0000
+Subject: [PATCH 01/11] staging: dgnc: remove redundant initialization for
+Message-Id: <20160922052051.GA27160@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472886348-29813-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1472886348-29813-1-git-send-email-christophe.jaillet@wanadoo.fr>
-        (Christophe JAILLET's message of "Sat, 3 Sep 2016 09:05:48 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: QLogic-Storage-Upstream@qlogic.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
->>>>> "Christophe" = Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+The channel array in board_t was initialized in dgnc_found_board()
+with NULL. But the channel is going to initialize in dgnc_tty_init().
+So the channel array doesn't need to set NULL for initailization.
 
-Christophe> Calling 'list_splice' followed by 'INIT_LIST_HEAD' is
-Christophe> equivalent to 'list_splice_init'.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Applied to 4.9/scsi-queue.
-
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index 01e948c..b598034 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -400,9 +400,6 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 
+ 	brd->state		= BOARD_FOUND;
+ 
+-	for (i = 0; i < MAXPORTS; i++)
+-		brd->channels[i] = NULL;
+-
+ 	/* store which card & revision we have */
+ 	pci_read_config_word(pdev, PCI_SUBSYSTEM_VENDOR_ID, &brd->subvendor);
+ 	pci_read_config_word(pdev, PCI_SUBSYSTEM_ID, &brd->subdevice);
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+1.9.1
+
