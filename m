@@ -1,44 +1,54 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Sep 2016 15:55:41 +0000
-Subject: [PATCH 3/5] GPU-DRM: Replace a kzalloc() call by kcalloc() in drm_legacy_addbufs_agp()
-Message-Id: <606c22f3-5da5-2e84-783d-bfe5289b4a01@users.sourceforge.net>
+Date: Thu, 22 Sep 2016 06:20:11 +0000
+Subject: [PATCH 1/4] GPU-DRM-QXL: Use kmalloc_array() in qxl_device_init()
+Message-Id: <269141d5-6562-3d70-b823-283ecde6e09c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <2fd2da19-d57e-5017-0594-fd52e78493fa@users.sourceforge.net>
-In-Reply-To: <2fd2da19-d57e-5017-0594-fd52e78493fa@users.sourceforge.net>
+References: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
+In-Reply-To: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>
+To: dri-devel@lists.freedesktop.org, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, Tejun Heo <tj@kernel.org>, Thierry Reding <treding@nvidia.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 19 Sep 2016 17:24:20 +0200
+Date: Wed, 21 Sep 2016 22:26:08 +0200
 
-The script "checkpatch.pl" can point information out like the following.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-WARNING: Prefer kcalloc over kzalloc with multiply
+  This issue was detected by using the Coccinelle software.
 
-Thus fix the affected source code place.
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+* Add a bit of exception handling for a detected null pointer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/drm_bufs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/qxl/qxl_kms.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index 8a31dac..36dd685 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -755,7 +755,7 @@ int drm_legacy_addbufs_agp(struct drm_device *dev,
- 		return -EINVAL;
- 	}
+diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
+index e642242..76852f1 100644
+--- a/drivers/gpu/drm/qxl/qxl_kms.c
++++ b/drivers/gpu/drm/qxl/qxl_kms.c
+@@ -216,10 +216,11 @@ static int qxl_device_init(struct qxl_device *qdev,
+ 	qdev->slot_id_bits = qdev->rom->slot_id_bits;
+ 	qdev->va_slot_mask  		(~(uint64_t)0) >> (qdev->slot_id_bits + qdev->slot_gen_bits);
+-
+-	qdev->mem_slots -		kmalloc(qdev->n_mem_slots * sizeof(struct qxl_memslot),
+-			GFP_KERNEL);
++	qdev->mem_slots = kmalloc_array(qdev->n_mem_slots,
++					sizeof(*qdev->mem_slots),
++					GFP_KERNEL);
++	if (!qdev->mem_slots)
++		return -ENOMEM;
  
--	entry->buflist = kzalloc(count * sizeof(*entry->buflist), GFP_KERNEL);
-+	entry->buflist = kcalloc(count, sizeof(*entry->buflist), GFP_KERNEL);
- 	if (!entry->buflist) {
- 		mutex_unlock(&dev->struct_mutex);
- 		atomic_dec(&dev->buf_alloc);
+ 	idr_init(&qdev->release_idr);
+ 	spin_lock_init(&qdev->release_idr_lock);
 -- 
 2.10.0
 
