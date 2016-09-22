@@ -1,37 +1,77 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 20 Sep 2016 12:40:13 +0000
-Subject: Re: [PATCH 6/6] GPU-DRM-GMA500: Rename a jump label in mid_get_vbt_data()
-Message-Id: <20160920124013.GL13620@mwanda>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 22 Sep 2016 05:22:03 +0000
+Subject: [PATCH 04/11] staging: dgnc: kfree for board structure in
+Message-Id: <20160922052203.GA27209@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3c9785ef-4553-2e3d-2cb2-5cf6d1f31ccd@users.sourceforge.net>
- <64e06a00-42d1-e7a8-1fe7-1b5de026b060@users.sourceforge.net>
- <87ponylw8j.fsf@intel.com>
-In-Reply-To: <87ponylw8j.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Julia Lawall <julia.lawall@lip6.fr>, SF Markus Elfring <elfring@users.sourceforge.net>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 20, 2016 at 01:08:12PM +0300, Jani Nikula wrote:
-> On Tue, 20 Sep 2016, SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Tue, 20 Sep 2016 10:40:22 +0200
-> >
-> > * Adjust a jump target.
-> 
-> Please don't.
-> 
+The board structure should be freed when any function was failed
+in dgnc_found_board(). And the board strucure will be stored
+into dgnc_board array when the dgnc_found_board() function has no error.
 
-Also there is nothing in CodingStyle that prohibits out: labels.  I
-wrote that section and I wrote it in a deliberately way because no one
-wants to see a bunch of "cleanup" patches that change the label names
-for no reason.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ drivers/staging/dgnc/dgnc_driver.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-People have been complaining about this in the kernel-summit mailing
-list as if CodingStyle bans out labels and that it's my fault.  Neither
-of these complaints are accurate.
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index 58cebf4..0114e78 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -353,9 +353,7 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 	int rc = 0;
+ 
+ 	/* get the board structure and prep it */
+-	dgnc_board[dgnc_num_boards] = kzalloc(sizeof(*brd), GFP_KERNEL);
+-	brd = dgnc_board[dgnc_num_boards];
+-
++	brd = kzalloc(sizeof(*brd), GFP_KERNEL);
+ 	if (!brd)
+ 		return -ENOMEM;
+ 
+@@ -411,7 +409,8 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		if (!brd->membase) {
+ 			dev_err(&brd->pdev->dev,
+ 				"Card has no PCI IO resources, failing.\n");
+-			return -ENODEV;
++			rc = -ENODEV;
++			goto failed;
+ 		}
+ 
+ 		brd->membase_end = pci_resource_end(pdev, 4);
+@@ -502,7 +501,8 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 	default:
+ 		dev_err(&brd->pdev->dev,
+ 			"Didn't find any compatible Neo/Classic PCI boards.\n");
+-		return -ENXIO;
++		rc = -ENXIO;
++		goto failed;
+ 	}
+ 
+ 	/*
+@@ -539,14 +539,15 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 
+ 	wake_up_interruptible(&brd->state_wait);
+ 
++	dgnc_board[dgnc_num_boards] = brd;
++
+ 	return 0;
+ 
+ failed:
+ 	dgnc_tty_uninit(brd);
+-	brd->state = BOARD_FAILED;
+-	brd->dpastatus = BD_NOFEP;
++	kfree(brd);
+ 
+-	return -ENXIO;
++	return rc;
+ }
+ 
+ static int dgnc_finalize_board_init(struct dgnc_board *brd)
+-- 
+1.9.1
 
-regards,
-dan carpenter
