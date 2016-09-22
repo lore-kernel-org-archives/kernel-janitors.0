@@ -1,7 +1,7 @@
 From: Jean Delvare <jdelvare@suse.de>
-Date: Thu, 22 Sep 2016 11:57:58 +0000
+Date: Thu, 22 Sep 2016 12:46:48 +0000
 Subject: Re: "CodingStyle: Clarify and complete chapter 7" in docs-next
-Message-Id: <20160922135758.0399725d@endymion>
+Message-Id: <20160922144648.10efc7ac@endymion>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAOi1vP8Y6V3mWs1bv=-CCVRfGi59P+3F85n6rzMn0=K6FqQkcw@mail.gmail.com>
         <20160920001159.GM2356@ZenIV.linux.org.uk>
@@ -9,66 +9,44 @@ References: <CAOi1vP8Y6V3mWs1bv=-CCVRfGi59P+3F85n6rzMn0=K6FqQkcw@mail.gmail.com>
         <alpine.DEB.2.10.1609200751110.3346@hadrien>
         <1474353123.1954.28.camel@perches.com>
         <20160922112407.47da9393@endymion>
-        <1474540930.8253.9.camel@perches.com>
-In-Reply-To: <1474540930.8253.9.camel@perches.com>
+        <8760pop63l.fsf@intel.com>
+In-Reply-To: <8760pop63l.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Al Viro <viro@ZenIV.linux.org.uk>, Ilya Dryomov <idryomov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joe Perches <joe@perches.com>, Julia Lawall <julia.lawall@lip6.fr>, Al Viro <viro@ZenIV.linux.org.uk>, Ilya Dryomov <idryomov@gmail.com>, Andy Whitcroft <apw@canonical.com>, Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, Ceph Development <ceph-devel@vger.kernel.org>, Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org
 
-On Thu, 22 Sep 2016 03:42:10 -0700, Joe Perches wrote:
-> On Thu, 2016-09-22 at 11:24 +0200, Jean Delvare wrote:
-> > I would rather suggest:
-> > 
-> > ERROR -> MUST_FIX
-> > WARNING -> SHOULD_FIX
-> > CHECK -> MAY_FIX
-> 
-> MUST is much stronger language than I would prefer.
+Hi Jani,
 
-That's what error means, really. When your compiler fails with an
-error, you have no choice but to fix your code. Warnings on the other
-hand may be ignored sometimes.
+On Thu, 22 Sep 2016 13:43:42 +0300, Jani Nikula wrote:
+> On Thu, 22 Sep 2016, Jean Delvare <jdelvare@suse.de> wrote:
+> > You need to think in terms of actual use cases. Who uses checkpatch and
+> > why? I think there are 3 groups of users:
+> > * Beginners. They won't run the script by themselves, instead they will
+> >   submit a patch which infringes a lot of coding style rules, and the
+> >   maintainer will point them to checkpatch and ask for a resubmission
+> >   which makes checkpatch happy. Being beginners, they can only rely on
+> >   the script itself to only report things which need to be fixed, by
+> >   default.
+> > * Experienced developers. Who simply want to make sure they did not
+> >   overlook anything before they post their work for review. They have
+> >   the knowledge to decide if they want to ignore some of the warnings.
+> > * People with too much spare time, looking for anything they could
+> >   "contribute" to the kernel. They will use --subjective and piss off
+> >   every maintainer they can find.
+> >
+> > Sadly there's not much we can do about the third category, short of
+> > killing option --subjective altogether.
+> 
+> You could make checkpatch have different defaults for patches and files,
+> to encourage better style in new code, but to discourage finding
+> problems in existing code.
 
-> There are still about a quarter million ERRORs just for
-> spacing issues in the kernel tree.
-> 
-> Here are the top 10 ERROR checkpatch messages treewide as of
-> a few days ago,
-> 
-> $ grep ERROR checkpatch.short_sorted_20160917
->  268308  ERROR:SPACING
->   37340  ERROR:CODE_INDENT
->   27678  ERROR:TRAILING_WHITESPACE
->   21024  ERROR:COMPLEX_MACRO
->   14048  ERROR:POINTER_LOCATION
->   12207  ERROR:TRAILING_STATEMENTS
->   11079  ERROR:OPEN_BRACE
->    6802  ERROR:ASSIGN_IN_IF
->    3940  ERROR:RETURN_PARENTHESES
->    2322  ERROR:NON_OCTAL_PERMISSIONS
-> 
-> Maybe there could be some better classifications of the various
-> messages.
-> 
-> But there are about two million checkpatch messages overall in
-> the kernel tree.
-> 
-> That's a lot.
-
-Sure. But I'm afraid you keep changing topics and I have no idea where
-you are going. We started with "should there be a space before jump
-labels", then out of nowhere we were discussing the wording of the
-output of checkpatch (how is that related?) and now you pull statistics
-out of your hat, like these numbers imply anything.
-
-checkpatch was called checkPATCH for a reason. It's main intent was to
-prevent NEW (coding-style mostly) errors from creeping into the kernel.
-The fact that old code does now always follow these recommendations is
-unfortunate but that doesn't make checkpatch wrong or bad.
-
-ERROR means that the new code isn't allowed to do that. Period.
+Fixing old code isn't wrong per se. It's good actually. But only if
+done the right way by the right person. I don't think it makes any
+sense to use this task as an introduction to kernel development for
+newcomers. It doesn't teach them anything about the kernel, really.
 
 -- 
 Jean Delvare
