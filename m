@@ -1,19 +1,19 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 20:46:31 +0000
-Subject: [PATCH 4/7] AGPGART-SGI: Use kmalloc_array() in agp_sgi_init()
-Message-Id: <1fbcb4e9-7927-466a-92d4-d554d095dddb@users.sourceforge.net>
+Date: Fri, 23 Sep 2016 19:44:32 +0000
+Subject: [PATCH 1/4] i2c-dev: Use kmalloc_array() in i2cdev_ioctl_rdwr()
+Message-Id: <be56c41b-0b29-de40-0bce-700de64b7d92@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
-In-Reply-To: <5204ca92-2cdf-8115-567c-4ac29816fcec@users.sourceforge.net>
+ <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
+In-Reply-To: <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 13 Sep 2016 21:30:58 +0200
+Date: Fri, 23 Sep 2016 20:30:07 +0200
 
 * A multiplication for the size determination of a memory allocation
   indicated that an array data structure should be processed.
@@ -27,26 +27,24 @@ Date: Tue, 13 Sep 2016 21:30:58 +0200
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/agp/sgi-agp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/i2c/i2c-dev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/agp/sgi-agp.c b/drivers/char/agp/sgi-agp.c
-index 3051c73..798ad20 100644
---- a/drivers/char/agp/sgi-agp.c
-+++ b/drivers/char/agp/sgi-agp.c
-@@ -280,9 +280,9 @@ static int agp_sgi_init(void)
- 	else
- 		return 0;
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index 66f323f..6d8226d 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -260,7 +260,9 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+ 	if (IS_ERR(rdwr_pa))
+ 		return PTR_ERR(rdwr_pa);
  
--	sgi_tioca_agp_bridges = kmalloc(tioca_gart_found *
--					sizeof(struct agp_bridge_data *),
--					GFP_KERNEL);
-+	sgi_tioca_agp_bridges = kmalloc_array(tioca_gart_found,
-+					      sizeof(*sgi_tioca_agp_bridges),
-+					      GFP_KERNEL);
- 	if (!sgi_tioca_agp_bridges)
+-	data_ptrs = kmalloc(rdwr_arg.nmsgs * sizeof(u8 __user *), GFP_KERNEL);
++	data_ptrs = kmalloc_array(rdwr_arg.nmsgs,
++				  sizeof(*data_ptrs),
++				  GFP_KERNEL);
+ 	if (data_ptrs = NULL) {
+ 		kfree(rdwr_pa);
  		return -ENOMEM;
- 
 -- 
 2.10.0
 
