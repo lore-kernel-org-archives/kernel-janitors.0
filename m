@@ -1,57 +1,92 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 15 Sep 2016 10:11:50 +0000
-Subject: Re: [PATCH] Remove the unnecessary semicolons
-Message-Id: <66b617df-f7a3-e2d0-07da-8d9b03771570@redhat.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 23 Sep 2016 01:26:53 +0000
+Subject: [PATCH 03/11 V2] staging: dgnc: missing NULL check for ioremap in dgnc_do_remap()
+Message-Id: <20160923012653.GA31980@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1471572189-21257-1-git-send-email-zhoujie2011@cn.fujitsu.com>
-In-Reply-To: <1471572189-21257-1-git-send-email-zhoujie2011@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhou Jie <zhoujie2011@cn.fujitsu.com>, linux-scsi@vger.kernel.org
-Cc: mst@redhat.com, rusty@rustcorp.com.au, stefanha@linux.vnet.ibm.com, Chao Fan <fanc.fnst@cn.fujitsu.com>, kernel-janitors@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+The ioremap() function can be failed, so it need to have error
+handling in dgnc_do_remap(). And also the return type of
+dgnc_do_remap() should be changed from "void" to "int"
 
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+V2: the subject line was cut off, I put it completely.
 
-On 19/08/2016 04:03, Zhou Jie wrote:
-> At the end of funcions, semicolons are unnecessary. So drop them.
-> 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> ---
->  drivers/scsi/virtio_scsi.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
-> index 7dbbb29..9632a0c 100644
-> --- a/drivers/scsi/virtio_scsi.c
-> +++ b/drivers/scsi/virtio_scsi.c
-> @@ -241,7 +241,7 @@ static void virtscsi_req_done(struct virtqueue *vq)
->  	struct virtio_scsi_vq *req_vq = &vscsi->req_vqs[index];
->  
->  	virtscsi_vq_done(vscsi, req_vq, virtscsi_complete_cmd);
-> -};
-> +}
->  
->  static void virtscsi_poll_requests(struct virtio_scsi *vscsi)
->  {
-> @@ -267,7 +267,7 @@ static void virtscsi_ctrl_done(struct virtqueue *vq)
->  	struct virtio_scsi *vscsi = shost_priv(sh);
->  
->  	virtscsi_vq_done(vscsi, &vscsi->ctrl_vq, virtscsi_complete_free);
-> -};
-> +}
->  
->  static void virtscsi_handle_event(struct work_struct *work);
->  
-> @@ -413,7 +413,7 @@ static void virtscsi_event_done(struct virtqueue *vq)
->  	struct virtio_scsi *vscsi = shost_priv(sh);
->  
->  	virtscsi_vq_done(vscsi, &vscsi->event_vq, virtscsi_complete_event);
-> -};
-> +}
->  
->  /**
->   * virtscsi_add_cmd - add a virtio_scsi_cmd to a virtqueue
-> 
+ drivers/staging/dgnc/dgnc_driver.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index c87b3de..58cebf4 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -43,7 +43,7 @@ static void		dgnc_cleanup_board(struct dgnc_board *brd);
+ static void		dgnc_poll_handler(ulong dummy);
+ static int		dgnc_init_one(struct pci_dev *pdev,
+ 				      const struct pci_device_id *ent);
+-static void		dgnc_do_remap(struct dgnc_board *brd);
++static int		dgnc_do_remap(struct dgnc_board *brd);
+ 
+ /*
+  * File operations permitted on Control/Management major.
+@@ -431,7 +431,10 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		brd->bd_uart_offset = 0x8;
+ 		brd->bd_dividend = 921600;
+ 
+-		dgnc_do_remap(brd);
++		rc = dgnc_do_remap(brd);
++
++		if (rc < 0)
++			goto failed;
+ 
+ 		/* Get and store the board VPD, if it exists */
+ 		brd->bd_ops->vpd(brd);
+@@ -483,15 +486,17 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		brd->bd_uart_offset = 0x200;
+ 		brd->bd_dividend = 921600;
+ 
+-		dgnc_do_remap(brd);
++		rc = dgnc_do_remap(brd);
+ 
+-		if (brd->re_map_membase) {
+-			/* Read and store the dvid after remapping */
+-			brd->dvid = readb(brd->re_map_membase + 0x8D);
++		if (rc < 0)
++			goto failed;
++
++		/* Read and store the dvid after remapping */
++		brd->dvid = readb(brd->re_map_membase + 0x8D);
++
++		/* Get and store the board VPD, if it exists */
++		brd->bd_ops->vpd(brd);
+ 
+-			/* Get and store the board VPD, if it exists */
+-			brd->bd_ops->vpd(brd);
+-		}
+ 		break;
+ 
+ 	default:
+@@ -566,9 +571,15 @@ static int dgnc_finalize_board_init(struct dgnc_board *brd)
+ /*
+  * Remap PCI memory.
+  */
+-static void dgnc_do_remap(struct dgnc_board *brd)
++static int dgnc_do_remap(struct dgnc_board *brd)
+ {
++	int rc = 0;
++
+ 	brd->re_map_membase = ioremap(brd->membase, 0x1000);
++	if (!brd->re_map_membase)
++		rc = -ENOMEM;
++
++	return rc;
+ }
+ 
+ /*
+-- 
+1.9.1
+
