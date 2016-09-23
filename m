@@ -1,88 +1,39 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Mon, 26 Sep 2016 00:43:51 +0000
-Subject: [PATCH 06/11 RESEND] staging: dgnc: introduce the dgnc_tty_unregister()
-Message-Id: <20160926004351.GA3868@SEL-JYOUN-D1>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 23 Sep 2016 21:06:26 +0000
+Subject: [PATCH] drm/nouveau/secboot/gm20b: Fix return value in case of error
+Message-Id: <1474664786-30107-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bskeggs@redhat.com, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The dgnc_tty_unregister() will be called when
-the dgnc_tty_register() is failed.
+If 'ioremap()' returns 0, 'gm20b_tegra_read_wpr()' will return 0 as well,
+which means success.
+Return -ENOMEM instead
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-RESEND: send the whole series again. Because I missed some patches
-when the V2 patches sent.
+Not sure that -ENOMEM is the best value.
+I've taken it because it is often used in such a case.
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/staging/dgnc/dgnc_driver.c | 7 +++++--
- drivers/staging/dgnc/dgnc_tty.c    | 8 ++++++++
- drivers/staging/dgnc/dgnc_tty.h    | 1 +
- 3 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
-index a95d13c..ffe55a2 100644
---- a/drivers/staging/dgnc/dgnc_driver.c
-+++ b/drivers/staging/dgnc/dgnc_driver.c
-@@ -299,13 +299,13 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	rc = dgnc_finalize_board_init(brd);
- 	if (rc < 0) {
- 		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
--		goto failed;
-+		goto unregister_tty;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+index d5395ebfe8d3..d88db933b3fd 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+@@ -142,7 +142,7 @@ gm20b_tegra_read_wpr(struct gm200_secboot *gsb)
+ 	mc = ioremap(TEGRA_MC_BASE, 0xd00);
+ 	if (!mc) {
+ 		nvkm_error(&sb->subdev, "Cannot map Tegra MC registers\n");
+-		return PTR_ERR(mc);
++		return -ENOMEM;
  	}
- 
- 	rc = dgnc_tty_init(brd);
- 	if (rc < 0) {
- 		pr_err(DRVSTR ": Can't init tty devices (%d)\n", rc);
--		goto failed;
-+		goto unregister_tty;
- 	}
- 
- 	brd->state = BOARD_READY;
-@@ -317,6 +317,9 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	return 0;
- 
-+unregister_tty:
-+	dgnc_tty_unregister(brd);
-+
- failed:
- 	kfree(brd);
- 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index fd46ef0..893f473 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -273,6 +273,14 @@ free_serial_driver:
- 	return rc;
- }
- 
-+void dgnc_tty_unregister(struct dgnc_board *brd)
-+{
-+	tty_unregister_driver(brd->print_driver);
-+	tty_unregister_driver(brd->serial_driver);
-+	put_tty_driver(brd->print_driver);
-+	put_tty_driver(brd->serial_driver);
-+}
-+
- /*
-  * dgnc_tty_init()
-  *
-diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
-index 21d3369..f065c8f 100644
---- a/drivers/staging/dgnc/dgnc_tty.h
-+++ b/drivers/staging/dgnc/dgnc_tty.h
-@@ -19,6 +19,7 @@
- #include "dgnc_driver.h"
- 
- int	dgnc_tty_register(struct dgnc_board *brd);
-+void dgnc_tty_unregister(struct dgnc_board *brd);
- 
- int	dgnc_tty_preinit(void);
- int     dgnc_tty_init(struct dgnc_board *);
+ 	gsb->wpr_addr = ioread32_native(mc + MC_SECURITY_CARVEOUT2_BOM_0) |
+ 	      ((u64)ioread32_native(mc + MC_SECURITY_CARVEOUT2_BOM_HI_0) << 32);
 -- 
-1.9.1
+2.7.4
 
