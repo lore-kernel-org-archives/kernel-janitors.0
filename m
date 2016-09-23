@@ -1,49 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:12:18 +0000
-Subject: [PATCH 26/47] block-rbd: Rename a jump label in rbd_img_parent_read_callback()
-Message-Id: <73d111a3-5d8c-ea4e-fd2c-a22bc8c62c31@users.sourceforge.net>
+Date: Fri, 23 Sep 2016 19:45:25 +0000
+Subject: [PATCH 2/4] i2c-dev: Improve another size determination in i2cdev_ioctl_rdwr()
+Message-Id: <9b43145c-7666-c4bb-37de-7d1a9ebea72a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
+In-Reply-To: <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:40:45 +0200
+Date: Fri, 23 Sep 2016 20:45:40 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/i2c-dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 6777464..23812e4 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3077,7 +3077,7 @@ static void rbd_img_parent_read_callback(struct rbd_img_request *img_request)
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index 6d8226d..a6e35ce 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -256,7 +256,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+ 		return -EINVAL;
  
- 	obj_request->result = img_result;
- 	if (obj_request->result)
--		goto out;
-+		goto callback;
+ 	rdwr_pa = memdup_user(rdwr_arg.msgs,
+-			      rdwr_arg.nmsgs * sizeof(struct i2c_msg));
++			      rdwr_arg.nmsgs * sizeof(*rdwr_pa));
+ 	if (IS_ERR(rdwr_pa))
+ 		return PTR_ERR(rdwr_pa);
  
- 	/*
- 	 * We need to zero anything beyond the parent overlap
-@@ -3099,7 +3099,7 @@ static void rbd_img_parent_read_callback(struct rbd_img_request *img_request)
- 	} else {
- 		obj_request->xferred = img_xferred;
- 	}
--out:
-+ callback:
- 	rbd_img_obj_request_read_callback(obj_request);
- 	rbd_obj_request_complete(obj_request);
- }
 -- 
 2.10.0
 
