@@ -1,41 +1,71 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 09:11:23 +0000
-Subject: [PATCH 03/10] dm snapshot: Delete an unnecessary variable initialisation in snapshot_map()
-Message-Id: <5e356088-8825-790d-08bf-c928144fdf01@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 23 Sep 2016 01:32:39 +0000
+Subject: [PATCH 09/11 V2] staging: dgnc: rename dgnc_tty_uninit() to dgnc_cleanup_tty()
+Message-Id: <20160923013239.GA32161@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
-In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: markh@compro.net, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 29 Sep 2016 08:00:29 +0200
+The dgnc_tty_uninit() doesn't match with dgnc_tty_init() at all.
+And also the dgnc_cleanup_tty() is only called for exiting the module.
 
-The local variable "pe" will be set to an appropriate pointer a bit later.
-Thus omit the explicit initialisation at the beginning.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/md/dm-snap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V2: the subject line was cut off, I put it completely.
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 7d81390..82b7604 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -1675,7 +1675,7 @@ static int snapshot_map(struct dm_target *ti, struct bio *bio)
- 	struct dm_snapshot *s = ti->private;
- 	int r = DM_MAPIO_REMAPPED;
- 	chunk_t chunk;
--	struct dm_snap_pending_exception *pe = NULL;
-+	struct dm_snap_pending_exception *pe;
+ drivers/staging/dgnc/dgnc_driver.c | 2 +-
+ drivers/staging/dgnc/dgnc_tty.c    | 4 ++--
+ drivers/staging/dgnc/dgnc_tty.h    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index 81ce5c4..fd372d3 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -147,7 +147,7 @@ static void cleanup(bool sysfiles)
  
- 	init_tracked_chunk(bio);
+ 	for (i = 0; i < dgnc_num_boards; ++i) {
+ 		dgnc_remove_ports_sysfiles(dgnc_board[i]);
+-		dgnc_tty_uninit(dgnc_board[i]);
++		dgnc_cleanup_tty(dgnc_board[i]);
+ 		dgnc_cleanup_board(dgnc_board[i]);
+ 	}
  
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 893f473..5befd28 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -387,12 +387,12 @@ void dgnc_tty_post_uninit(void)
+ }
+ 
+ /*
+- * dgnc_tty_uninit()
++ * dgnc_cleanup_tty()
+  *
+  * Uninitialize the TTY portion of this driver.  Free all memory and
+  * resources.
+  */
+-void dgnc_tty_uninit(struct dgnc_board *brd)
++void dgnc_cleanup_tty(struct dgnc_board *brd)
+ {
+ 	int i = 0;
+ 
+diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
+index f065c8f..24c9a41 100644
+--- a/drivers/staging/dgnc/dgnc_tty.h
++++ b/drivers/staging/dgnc/dgnc_tty.h
+@@ -25,7 +25,7 @@ int	dgnc_tty_preinit(void);
+ int     dgnc_tty_init(struct dgnc_board *);
+ 
+ void	dgnc_tty_post_uninit(void);
+-void	dgnc_tty_uninit(struct dgnc_board *);
++void	dgnc_cleanup_tty(struct dgnc_board *);
+ 
+ void	dgnc_input(struct channel_t *ch);
+ void	dgnc_carrier(struct channel_t *ch);
 -- 
-2.10.0
+1.9.1
 
