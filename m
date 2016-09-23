@@ -1,42 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 16:46:17 +0000
-Subject: [PATCH 02/21] ACPI-video: Return directly after a failed device query
-Message-Id: <b569e9c9-8720-a4e4-9456-b31b38f09562@users.sourceforge.net>
+Date: Fri, 23 Sep 2016 16:34:44 +0000
+Subject: [PATCH 0/3] drm/vmwgfx: Fine-tuning for 13 function implementations
+Message-Id: <8de6f7c3-5614-b210-7b2f-66c1aed4279b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
-In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: dri-devel@lists.freedesktop.org, linux-graphics-maintainer@vmware.com, David Airlie <airlied@linux.ie>, Sinclair Yeh <syeh@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 13:25:01 +0200
+Date: Fri, 23 Sep 2016 18:24:32 +0200
 
-Return directly after a function call "acpi_video_device_lcd_query_levels"
-failed at the beginning.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/acpi/acpi_video.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Markus Elfring (3):
+  Use kmalloc_array() in vmw_surface_define_ioctl()
+  Use memdup_user() rather than duplicating its implementation
+  Adjust checks for null pointers in 13 functions
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 3d39b53..8f0807a 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -768,8 +768,7 @@ int acpi_video_get_levels(struct acpi_device *device,
- 								&obj))) {
- 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Could not query available "
- 						"LCD brightness level\n"));
--		result = -ENODEV;
--		goto out;
-+		return -ENODEV;
- 	}
- 
- 	if (obj->package.count < 2) {
+ drivers/gpu/drm/vmwgfx/vmwgfx_surface.c | 56 ++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 33 deletions(-)
+
 -- 
 2.10.0
 
