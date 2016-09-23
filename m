@@ -1,63 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:09:44 +0000
-Subject: [PATCH 03/24] ste_dma40: Rename a jump label in d40_lcla_allocate()
-Message-Id: <44b5c6a8-3e6d-573c-c556-a8036d25d3e4@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Fri, 23 Sep 2016 01:31:37 +0000
+Subject: [PATCH 07/11 V2] staging: dgnc: rename dgnc_finalize_board_init() to dgnc_request_irq()
+Message-Id: <20160923013137.GA32113@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 08:23:37 +0200
+The dgnc_finalize_board_init() function has only job for
+requesting the IRQ. It should be renamed to dgnc_request_irq()
 
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/dma/ste_dma40.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+V2: the subject line was cut off, I put it completely.
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index 80a199a..76d63b6 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -3429,7 +3429,7 @@ static int __init d40_lcla_allocate(struct d40_base *base)
- 
- 			for (j = 0; j < i; j++)
- 				free_pages(page_list[j], base->lcla_pool.pages);
--			goto failure;
-+			goto free_page_list;
- 		}
- 
- 		if ((virt_to_phys((void *)page_list[i]) &
-@@ -3456,7 +3456,7 @@ static int __init d40_lcla_allocate(struct d40_base *base)
- 							 GFP_KERNEL);
- 		if (!base->lcla_pool.base_unaligned) {
- 			ret = -ENOMEM;
--			goto failure;
-+			goto free_page_list;
- 		}
- 
- 		base->lcla_pool.base = PTR_ALIGN(base->lcla_pool.base_unaligned,
-@@ -3469,12 +3469,12 @@ static int __init d40_lcla_allocate(struct d40_base *base)
- 	if (dma_mapping_error(base->dev, pool->dma_addr)) {
- 		pool->dma_addr = 0;
- 		ret = -ENOMEM;
--		goto failure;
-+		goto free_page_list;
+ drivers/staging/dgnc/dgnc_driver.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index ffe55a2..70e68b5 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -37,7 +37,7 @@ MODULE_SUPPORTED_DEVICE("dgnc");
+  *
+  */
+ static int		dgnc_start(void);
+-static int		dgnc_finalize_board_init(struct dgnc_board *brd);
++static int dgnc_request_irq(struct dgnc_board *brd);
+ static struct dgnc_board *dgnc_found_board(struct pci_dev *pdev, int id);
+ static void		dgnc_cleanup_board(struct dgnc_board *brd);
+ static void		dgnc_poll_handler(ulong dummy);
+@@ -296,7 +296,7 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto failed;
  	}
  
- 	writel(virt_to_phys(base->lcla_pool.base),
- 	       base->virtbase + D40_DREG_LCLA);
--failure:
-+ free_page_list:
- 	kfree(page_list);
- 	return ret;
+-	rc = dgnc_finalize_board_init(brd);
++	rc = dgnc_request_irq(brd);
+ 	if (rc < 0) {
+ 		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
+ 		goto unregister_tty;
+@@ -558,7 +558,7 @@ failed:
+ 	return ERR_PTR(rc);
  }
+ 
+-static int dgnc_finalize_board_init(struct dgnc_board *brd)
++static int dgnc_request_irq(struct dgnc_board *brd)
+ {
+ 	int rc = 0;
+ 
 -- 
-2.10.0
+1.9.1
 
