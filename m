@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 23 Sep 2016 12:17:43 +0000
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 23 Sep 2016 13:04:42 +0000
 Subject: Re: GPU-DRM-TILCDC: Less function calls in tilcdc_convert_slave_node() after error detection
-Message-Id: <48278d51-67b6-2c95-71e4-e922072ad9e9@users.sourceforge.net>
+Message-Id: <CAF6AEGs9EDX3=kDDvQSh_-4sTbP6-psvZX8WAudV-PpigKCBtg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <2f3f7ad7-16a0-1dfb-d073-0d993cd767ee@users.sourceforge.net>
@@ -11,27 +11,49 @@ References: <566ABCD9.1060404@users.sourceforge.net>
  <CAF6AEGsHS9P0XyVH=So9woCkp9u8mUgL1QrCFNzgWdy26_4rDw@mail.gmail.com>
  <3b791118-2977-f607-b816-dd5e833cfc75@users.sourceforge.net>
  <CAF6AEGsh34CNfP6kwGV7nHFfPGp=Vbvja=_6FDuc0XPChJ2Kaw@mail.gmail.com>
-In-Reply-To: <CAF6AEGsh34CNfP6kwGV7nHFfPGp=Vbvja=_6FDuc0XPChJ2Kaw@mail.gmail.com>
+ <48278d51-67b6-2c95-71e4-e922072ad9e9@users.sourceforge.net>
+In-Reply-To: <48278d51-67b6-2c95-71e4-e922072ad9e9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Clark <robdclark@gmail.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Julia Lawall <julia.lawall@lip6.fr>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jyri Sarha <jsarha@ti.com>
 
->> I see a need to improve not only correctness there but also a bit of
->> software efficiency.
-> 
-> If you can measure any performance difference and present some results
-> (esp. considering that this is something that just happens when the
-> driver is loaded), then we'll talk.
+On Fri, Sep 23, 2016 at 8:17 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+>>> I see a need to improve not only correctness there but also a bit of
+>>> software efficiency.
+>>
+>> If you can measure any performance difference and present some results
+>> (esp. considering that this is something that just happens when the
+>> driver is loaded), then we'll talk.
+>
+> Are you really interested to increase your software development attention
+> for a quicker exception handling implementation in this function?
+>
 
-Are you really interested to increase your software development attention
-for a quicker exception handling implementation in this function?
+No one is interested in making error handling more complex for a
+non-existent benefit ;-)
 
+>
+>> Until then, please don't send this sort of patch.  Thank you.
+>
+> Will benchmark statistics change such a change rejection ever?
 
-> Until then, please don't send this sort of patch.  Thank you.
+If you could demonstrate a real benefit to additional complexity for
+something that actually matters (ie. not something like this that runs
+once at bootup) I would care.
 
-Will benchmark statistics change such a change rejection ever?
+I don't recommend that you waste your time, since there is
+approximately nothing in modesetting path that happens with a high
+enough frequency to benefit from such a micro-optimization.
+Especially not initialization code that runs once at boot up.
 
-Regards,
-Markus
+Fixing actual bugs is useful and valuable.  Premature "optimization"
+at the expense of extra complexity is very much not useful.
+
+BR,
+-R
+
+> Regards,
+> Markus
