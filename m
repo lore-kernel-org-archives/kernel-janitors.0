@@ -1,47 +1,73 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 03 Sep 2016 05:34:38 +0000
-Subject: [PATCH] fs/pnode.c: Simplify code
-Message-Id: <1472880878-29273-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 23 Sep 2016 19:47:31 +0000
+Subject: [PATCH 4/4] i2c-dev: Adjust checks for null pointers in three functions
+Message-Id: <7ba4f7a9-9af4-4a83-776c-930fb33f9e9e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
+In-Reply-To: <cedc3865-a884-a10e-6c93-0163fd36af92@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: viro@zeniv.linux.org.uk
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Calling 'list_splice' followed by 'INIT_LIST_HEAD' is equivalent to
-'list_splice_init'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 23 Sep 2016 21:30:20 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-This has been spotted with the following coccinelle script:
-/////
-@@
-expression y,z;
-@@
+The script "checkpatch.pl" can point information out like the following.
 
--   list_splice(y,z);
--   INIT_LIST_HEAD(y);
-+   list_splice_init(y,z);
+Comparison to NULL could be written !=85
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/pnode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/i2c-dev.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/pnode.c b/fs/pnode.c
-index 99899705b105..3d3513ee4380 100644
---- a/fs/pnode.c
-+++ b/fs/pnode.c
-@@ -97,8 +97,8 @@ static int do_make_slave(struct mount *mnt)
- 		list_for_each_entry(slave_mnt, &mnt->mnt_slave_list, mnt_slave)
- 			slave_mnt->mnt_master = master;
- 		list_move(&mnt->mnt_slave, &master->mnt_slave_list);
--		list_splice(&mnt->mnt_slave_list, master->mnt_slave_list.prev);
--		INIT_LIST_HEAD(&mnt->mnt_slave_list);
-+		list_splice_init(&mnt->mnt_slave_list,
-+				 master->mnt_slave_list.prev);
- 	} else {
- 		struct list_head *p = &mnt->mnt_slave_list;
- 		while (!list_empty(p)) {
--- 
-2.7.4
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index 7d3e3ca..8f7eddd 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -147,7 +147,7 @@ static ssize_t i2cdev_read(struct file *file, char __us=
+er *buf, size_t count,
+ 		count =3D 8192;
+=20
+ 	tmp =3D kmalloc(count, GFP_KERNEL);
+-	if (tmp =3D NULL)
++	if (!tmp)
+ 		return -ENOMEM;
+=20
+ 	pr_debug("i2c-dev: i2c-%d reading %zu bytes.\n",
+@@ -263,7 +263,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client=
+ *client,
+ 	data_ptrs =3D kmalloc_array(rdwr_arg.nmsgs,
+ 				  sizeof(*data_ptrs),
+ 				  GFP_KERNEL);
+-	if (data_ptrs =3D NULL) {
++	if (!data_ptrs) {
+ 		kfree(rdwr_pa);
+ 		return -ENOMEM;
+ 	}
+@@ -374,7 +374,7 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_clien=
+t *client,
+ 				      client->flags, data_arg.read_write,
+ 				      data_arg.command, data_arg.size, NULL);
+=20
+-	if (data_arg.data =3D NULL) {
++	if (!data_arg.data) {
+ 		dev_dbg(&client->adapter->dev,
+ 			"data is NULL pointer in ioctl I2C_SMBUS.\n");
+ 		return -EINVAL;
+--=20
+2.10.0
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
