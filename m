@@ -1,68 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 17:51:33 +0000
-Subject: [PATCH 4/9] serial/bcm63xx_uart: constify uart_ops structures
-Message-Id: <1472752298-981-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 24 Sep 2016 20:07:30 +0000
+Subject: [PATCH] drm/tegra: sor: No need to free devm_ allocated memory
+Message-Id: <1474747650-10306-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com, linux-tegra@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Check for uart_ops structures that are only stored in the ops field of a
-uart_port structure.  This field is declared const, so uart_ops structures
-that have this property can be declared as const also.
+'brick' has been allocated by 'devm_kzalloc', so there is no need here to
+free it explicitly.
+There is only one caller of 'tegra_clk_sor_brick_register()'. This function
+is a probe function which correctly checks and handles the return value of
+'tegra_clk_sor_brick_register()'.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct uart_ops i@p = { ... };
-
-@ok@
-identifier r.i;
-struct uart_port e;
-position p;
-@@
-e.ops = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct uart_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct uart_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/tty/serial/bcm63xx_uart.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/sor.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/tty/serial/bcm63xx_uart.c b/drivers/tty/serial/bcm63xx_uart.c
-index 5108fab..583c9a0 100644
---- a/drivers/tty/serial/bcm63xx_uart.c
-+++ b/drivers/tty/serial/bcm63xx_uart.c
-@@ -631,7 +631,7 @@ static int bcm_uart_verify_port(struct uart_port *port,
- }
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 74d0540b8d4c..a8f528925009 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -349,8 +349,6 @@ static struct clk *tegra_clk_sor_brick_register(struct tegra_sor *sor,
+ 	brick->hw.init = &init;
  
- /* serial core callbacks */
--static struct uart_ops bcm_uart_ops = {
-+static const struct uart_ops bcm_uart_ops = {
- 	.tx_empty	= bcm_uart_tx_empty,
- 	.get_mctrl	= bcm_uart_get_mctrl,
- 	.set_mctrl	= bcm_uart_set_mctrl,
+ 	clk = devm_clk_register(sor->dev, &brick->hw);
+-	if (IS_ERR(clk))
+-		kfree(brick);
+ 
+ 	return clk;
+ }
+-- 
+2.7.4
 
