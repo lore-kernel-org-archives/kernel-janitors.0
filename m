@@ -1,49 +1,31 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sat, 24 Sep 2016 16:41:08 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 16:55:41 +0000
 Subject: Re: [PATCH 3/4] Input-gameport: Add the macro "pr_fmt" for module "joydump"
-Message-Id: <20160924164108.GB40187@dtor-ws>
+Message-Id: <a9d9e2fc-4369-ba1a-e1a1-97b0873c28ce@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
  <3345f7c1-b823-a819-aabf-5b4990068075@users.sourceforge.net>
-In-Reply-To: <3345f7c1-b823-a819-aabf-5b4990068075@users.sourceforge.net>
+ <20160924164108.GB40187@dtor-ws>
+In-Reply-To: <20160924164108.GB40187@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, Sep 24, 2016 at 03:48:54PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 24 Sep 2016 14:30:44 +0200
+>> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>> +
 > 
-> Add a definition for the macro "pr_fmt" so that its information can be used
-> for consistent message output.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/input/joystick/joydump.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/input/joystick/joydump.c b/drivers/input/joystick/joydump.c
-> index f9f6cbe..a38f10e 100644
-> --- a/drivers/input/joystick/joydump.c
-> +++ b/drivers/input/joystick/joydump.c
-> @@ -27,6 +27,8 @@
->   * Vojtech Pavlik, Simunkova 1594, Prague 8, 182 00 Czech Republic
->   */
->  
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
+> Why did you split it off from the patch where you attempt to use it?
 
-Why did you split it off from the patch where you attempt to use it?
-What good does this change do on its own?
+I chose a special patch granularity once again.
 
->  #include <linux/module.h>
->  #include <linux/gameport.h>
->  #include <linux/kernel.h>
-> -- 
-> 2.10.0
-> 
 
--- 
-Dmitry
+> What good does this change do on its own?
+
+I find that it is a preparation. - If this addition could not be accepted,
+the following update step would also be discussed under an other perspective,
+wouldn't it?
+
+Regards,
+Markus
