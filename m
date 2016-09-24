@@ -1,62 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 14:06:05 +0000
-Subject: [PATCH 07/11] virtio_console: Rename a jump label in port_fops_splice_write()
-Message-Id: <cb8e64ec-5917-ce0d-cc95-845f8ce0fa34@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 07:49:07 +0000
+Subject: [PATCH] ide: Use kmalloc_array() in hwif_init()
+Message-Id: <c28ba397-0b6c-fe47-24d8-002545b4844f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
-In-Reply-To: <020438b9-a7f8-0050-04c1-43382ba60b75@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Amit Shah <amit.shah@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: linux-ide@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 14 Sep 2016 15:01:51 +0200
+Date: Sat, 24 Sep 2016 09:39:03 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/char/virtio_console.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/ide/ide-probe.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 99dc659..d8681d9 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -947,17 +947,17 @@ static ssize_t port_fops_splice_write(struct pipe_inode_info *pipe,
- 	pipe_lock(pipe);
- 	if (!pipe->nrbufs) {
- 		ret = 0;
--		goto error_out;
-+		goto unlock;
- 	}
+diff --git a/drivers/ide/ide-probe.c b/drivers/ide/ide-probe.c
+index 0b63fac..645a67b 100644
+--- a/drivers/ide/ide-probe.c
++++ b/drivers/ide/ide-probe.c
+@@ -973,8 +973,9 @@ static int hwif_init(ide_hwif_t *hwif)
+ 	if (!hwif->sg_max_nents)
+ 		hwif->sg_max_nents = PRD_ENTRIES;
  
- 	ret = wait_port_writable(port, filp->f_flags & O_NONBLOCK);
- 	if (ret < 0)
--		goto error_out;
-+		goto unlock;
- 
- 	buf = alloc_buf(port->out_vq, 0, pipe->nrbufs);
- 	if (!buf) {
- 		ret = -ENOMEM;
--		goto error_out;
-+		goto unlock;
- 	}
- 
- 	sgl.n = 0;
-@@ -973,8 +973,7 @@ static ssize_t port_fops_splice_write(struct pipe_inode_info *pipe,
- 	if (unlikely(ret <= 0))
- 		free_buf(buf, true);
- 	return ret;
--
--error_out:
-+ unlock:
- 	pipe_unlock(pipe);
- 	return ret;
- }
+-	hwif->sg_table = kmalloc(sizeof(struct scatterlist)*hwif->sg_max_nents,
+-				 GFP_KERNEL);
++	hwif->sg_table = kmalloc_array(hwif->sg_max_nents,
++				       sizeof(*hwif->sg_table),
++				       GFP_KERNEL);
+ 	if (!hwif->sg_table) {
+ 		printk(KERN_ERR "%s: unable to allocate SG table.\n", hwif->name);
+ 		goto out;
 -- 
 2.10.0
 
