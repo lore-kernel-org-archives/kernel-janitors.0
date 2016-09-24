@@ -1,44 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 20:23:33 +0000
-Subject: [PATCH 02/13] DRBD-receiver: Delete an error message for a failed kmalloc_array() call
-Message-Id: <50817602-79d5-af47-8d97-6d6b01939e43@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 06:26:44 +0000
+Subject: [PATCH 3/7] iio: Rename a jump label in iio_buffer_store_enable()
+Message-Id: <7b90323b-2eff-ce51-588a-a9f6c1e5c2ed@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
-In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
+In-Reply-To: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 19:26:07 +0200
+Date: Sat, 24 Sep 2016 07:11:32 +0200
 
-Omit an extra message for a memory allocation failure in this function.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Adjust a jump label according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/drbd/drbd_receiver.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/iio/industrialio-buffer.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 3be9fbf..dab3f74 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -4187,10 +4187,8 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
- 	device = peer_device->device;
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index a865af8..6509f0f 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -982,7 +982,7 @@ static ssize_t iio_buffer_store_enable(struct device *dev,
+ 	inlist = iio_buffer_is_active(indio_dev->buffer);
+ 	/* Already in desired state */
+ 	if (inlist = requested_state)
+-		goto done;
++		goto unlock;
  
- 	p_uuid = kmalloc_array(UI_EXTENDED_SIZE, sizeof(*p_uuid), GFP_NOIO);
--	if (!p_uuid) {
--		drbd_err(device, "kmalloc of p_uuid failed\n");
-+	if (!p_uuid)
- 		return false;
--	}
- 
- 	for (i = UI_CURRENT; i < UI_EXTENDED_SIZE; i++)
- 		p_uuid[i] = be64_to_cpu(p->uuid[i]);
+ 	if (requested_state)
+ 		ret = __iio_update_buffers(indio_dev,
+@@ -990,8 +990,7 @@ static ssize_t iio_buffer_store_enable(struct device *dev,
+ 	else
+ 		ret = __iio_update_buffers(indio_dev,
+ 					 NULL, indio_dev->buffer);
+-
+-done:
++unlock:
+ 	mutex_unlock(&indio_dev->mlock);
+ 	return (ret < 0) ? ret : len;
+ }
 -- 
 2.10.0
 
