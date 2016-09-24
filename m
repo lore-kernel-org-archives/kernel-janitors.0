@@ -1,30 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 01 Sep 2016 03:46:33 +0000
-Subject: Re: [PATCH 5/5] net: axienet: constify ethtool_ops structures
-Message-Id: <20160831.204633.1599084771774333347.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 06:28:04 +0000
+Subject: [PATCH 4/7] iio: Rename a jump label in iio_buffer_write_length()
+Message-Id: <72db95ec-56bc-9e06-02ec-3a5491c582af@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472682083-5219-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472682083-5219-6-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
+In-Reply-To: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu,  1 Sep 2016 00:21:23 +0200
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 07:17:44 +0200
 
-> Check for ethtool_ops structures that are only stored in the ethtool_ops
-> field of a net_device structure or passed as the second argument to
-> netdev_set_default_ethtool_ops.  These contexts are declared const, so
-> ethtool_ops structures that have these properties can be declared as const
-> also.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Adjust a jump label according to the current Linux coding style convention.
 
-Applied.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/industrialio-buffer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index 6509f0f..376101f 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -505,10 +505,10 @@ static ssize_t iio_buffer_write_length(struct device *dev,
+ 		ret = 0;
+ 	}
+ 	if (ret)
+-		goto out;
++		goto unlock;
+ 	if (buffer->length && buffer->length < buffer->watermark)
+ 		buffer->watermark = buffer->length;
+-out:
++unlock:
+ 	mutex_unlock(&indio_dev->mlock);
+ 
+ 	return ret ? ret : len;
+-- 
+2.10.0
+
