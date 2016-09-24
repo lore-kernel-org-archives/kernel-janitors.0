@@ -1,53 +1,49 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 27 Sep 2016 09:48:19 +0000
-Subject: Re: [PATCH] greybus: manifest: style fix missing space before '('
-Message-Id: <CAKohpom-C0XjiNPhKGetX9iY_ik5t8No+=ehvnyPP2vDJkR1qQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 06:24:09 +0000
+Subject: [PATCH 1/7] iio: Use kmalloc_array() in iio_scan_mask_set()
+Message-Id: <d0db8c45-5999-6000-212a-3e8957766afb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160927092028.13119-1-lambert.quentin@gmail.com>
- <CAOh2x=m31uDE8Nn5CyX9_2XKQ594fe0XKqz9j6pqW3Gj++u+fg@mail.gmail.com> <728f3214-c9f2-837b-6725-f95777c23bab@gmail.com>
-In-Reply-To: <728f3214-c9f2-837b-6725-f95777c23bab@gmail.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
+In-Reply-To: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 27 September 2016 at 15:03, Quentin Lambert
-<lambert.quentin@gmail.com> wrote:
->
->
-> On 27/09/2016 11:31, Viresh Kumar wrote:
->>
->> On Tue, Sep 27, 2016 at 2:50 PM, Quentin Lambert
->> <lambert.quentin@gmail.com> wrote:
->>>
->>> Checkpatch printed a style ERROR concerning a missing space befire '('.
->>> This patch fix this issue.
->>>
->>> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
->>> ---
->>>   drivers/staging/greybus/manifest.c |    2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> --- a/drivers/staging/greybus/manifest.c
->>> +++ b/drivers/staging/greybus/manifest.c
->>> @@ -11,7 +11,7 @@
->>>
->>>   static const char *get_descriptor_type_string(u8 type)
->>>   {
->>> -       switch(type) {
->>> +       switch (type) {
->>>          case GREYBUS_TYPE_INVALID:
->>>                  return "invalid";
->>>          case GREYBUS_TYPE_STRING:
->>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->
-> Wow I just noticed the typo: "befire" do you want me to resend ?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 23 Sep 2016 22:30:32 +0200
 
-Oops, sorry for missing that.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-Yes, please resend the patch as V2 and feel free to add my Ack to it.
+This issue was detected by using the Coccinelle software.
 
---
-viresh
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/industrialio-buffer.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index 49bf9c5..7a4d9499 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -307,10 +307,9 @@ static int iio_scan_mask_set(struct iio_dev *indio_dev,
+ 	const unsigned long *mask;
+ 	unsigned long *trialmask;
+ 
+-	trialmask = kmalloc(sizeof(*trialmask)*
+-			    BITS_TO_LONGS(indio_dev->masklength),
+-			    GFP_KERNEL);
+-
++	trialmask = kmalloc_array(BITS_TO_LONGS(indio_dev->masklength),
++				  sizeof(*trialmask),
++				  GFP_KERNEL);
+ 	if (trialmask = NULL)
+ 		return -ENOMEM;
+ 	if (!indio_dev->masklength) {
+-- 
+2.10.0
+
