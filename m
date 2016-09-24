@@ -1,59 +1,73 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 30 Sep 2016 12:54:32 +0000
-Subject: Re: md/dm-crypt: Rename a jump label in crypt_message() ?
-Message-Id: <0d69995c-64c8-8a60-f6c0-2788af008e92@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 11:10:11 +0000
+Subject: [PATCH 2/2] Input-evdev: Rename a jump label in two functions
+Message-Id: <e50828fe-76b9-f087-575a-52aa6e107ba6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
- <db29ff0c-8da9-e7ba-054d-a35f8b4fd2d7@users.sourceforge.net>
- <20160929125553.kn45yx6jud35463p@thunk.org>
- <e40a8107-7400-bc10-a212-563dd168aac5@users.sourceforge.net>
- <20160930100603.GB13620@mwanda>
- <d9c6668b-65b3-e410-81ed-1e43c227f015@users.sourceforge.net>
- <87mvip1us4.fsf@miraculix.mork.no>
- <9d9cde54-b701-aac6-0bb8-4ba65c5046c2@users.sourceforge.net>
- <87fuoh1tin.fsf@miraculix.mork.no>
-In-Reply-To: <87fuoh1tin.fsf@miraculix.mork.no>
+ <92cc52f5-c5e1-cafe-76f2-04e4ed997735@users.sourceforge.net>
+In-Reply-To: <92cc52f5-c5e1-cafe-76f2-04e4ed997735@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?Bj=c3=b8rn_Mork?= <bjorn@mork.no>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Theodore Ts'o <tytso@mit.edu>, dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Henrik Rydberg <rydberg@bitmath.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> If you continue discussing after that point,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 12:50:31 +0200
 
-I guess that such a condition is not needed.
+Adjust a jump label according to the current Linux coding style convention.
+Thus replace the identifier "out" by "unlock".
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/input/evdev.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-> then you make a clear statement that it isn't an accident.
+diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+index 83fcfd6..548874d 100644
+--- a/drivers/input/evdev.c
++++ b/drivers/input/evdev.c
+@@ -545,22 +545,21 @@ static ssize_t evdev_write(struct file *file, const char __user *buffer,
+ 
+ 	if (!evdev->exist || client->revoked) {
+ 		retval = -ENODEV;
+-		goto out;
++		goto unlock;
+ 	}
+ 
+ 	while (retval + input_event_size() <= count) {
+ 
+ 		if (input_event_from_user(buffer + retval, &event)) {
+ 			retval = -EFAULT;
+-			goto out;
++			goto unlock;
+ 		}
+ 		retval += input_event_size();
+ 
+ 		input_inject_event(&evdev->handle,
+ 				   event.type, event.code, event.value);
+ 	}
+-
+- out:
++unlock:
+ 	mutex_unlock(&evdev->mutex);
+ 	return retval;
+ }
+@@ -1292,12 +1291,11 @@ static long evdev_ioctl_handler(struct file *file, unsigned int cmd,
+ 
+ 	if (!evdev->exist || client->revoked) {
+ 		retval = -ENODEV;
+-		goto out;
++		goto unlock;
+ 	}
+ 
+ 	retval = evdev_do_ioctl(file, cmd, p, compat_mode);
+-
+- out:
++unlock:
+ 	mutex_unlock(&evdev->mutex);
+ 	return retval;
+ }
+-- 
+2.10.0
 
-I hope that most of my software development activities are not "an accident".
-Is the intent for any update suggestion (like the renaming of a jump label
-in this case) reasonable to some degree?
-
-
-> You are deliberately wasting their time.
-
-I imagine that I do not really try to "waste" others time. But I am trying
-also to change some "things".
-There are circumstances when these contributions are interpreted as "wasted efforts".
-Is the change acceptance usually higher for other update patterns?
-
-
-> Something along "I will not listen.
-
-I am listening while my responses might not fit to your current expectations.
-
-
-> I will not change.
-
-I have got also some personal change opportunities.
-
-
-> Nothing you tell me will ever make it worth your time to do so"?
-
-While you can be so clear about a rejection for this software module at the moment,
-other contributors showed occasionally more positive information.
-
-Regards,
-Markus
