@@ -1,23 +1,50 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 17:35:24 +0000
-Subject: [PATCH 0/2] constify watchdog_ops structures
-Message-Id: <1472751326-22897-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 24 Sep 2016 21:57:26 +0000
+Subject: [PATCH] clk: at91: Fix a return value in case of error
+Message-Id: <1474754246-27226-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: boris.brezillon@free-electrons.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Constify watchdog_ops structures.
+If 'clk_hw_register()' fails, it is likely that we expect to return an
+error instead of a valid pointer (which would mean success).
+'clk_hw_register()' returns a bool, so we don't have the detail of the
+error. Return -ENOMEM instead, as it seems to be the most common error
+returned by clk_register().
 
+Fix commit f5644f10dcfb ("clk: at91: Migrate to clk_hw based registration
+and OF APIs")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
+It is likely that a bigger change is needed. For example using clk_register
+instead of clk_hw_register would return the error instead of a bool.
+We could then propagate this error to the caller without the need to choose
+an arbitrary error value.
 
- drivers/watchdog/bcm7038_wdt.c  |    2 +-
- drivers/watchdog/cadence_wdt.c  |    2 +-
- drivers/watchdog/kempld_wdt.c   |    2 +-
- drivers/watchdog/rn5t618_wdt.c  |    2 +-
- drivers/watchdog/softdog.c      |    2 +-
- drivers/watchdog/tegra_wdt.c    |    2 +-
- drivers/watchdog/w83627hf_wdt.c |    2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
+This proposal is un-compiled and un-tested.
+I get an error when I run 'make drivers/clk/at91/' which is likely due to
+my building environment. 
+---
+ drivers/clk/at91/clk-programmable.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+index 190122e64a3a..2cf200e22d48 100644
+--- a/drivers/clk/at91/clk-programmable.c
++++ b/drivers/clk/at91/clk-programmable.c
+@@ -203,7 +203,7 @@ at91_clk_register_programmable(struct regmap *regmap,
+ 	ret = clk_hw_register(NULL, &prog->hw);
+ 	if (ret) {
+ 		kfree(prog);
+-		hw = &prog->hw;
++		hw = ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	return hw;
+-- 
+2.7.4
+
