@@ -1,45 +1,34 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:54:39 +0000
-Subject: [PATCH 07/16] md/bitmap: Replace a kzalloc() call by kcalloc() in bitmap_resize()
-Message-Id: <7345990e-3c59-de68-f07b-8b68458b6cf3@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 06:22:43 +0000
+Subject: [PATCH 0/7] iio: Fine-tuning for several function implementations
+Message-Id: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
-In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 15:26:51 +0200
+Date: Sat, 24 Sep 2016 08:10:08 +0200
 
-The script "checkpatch.pl" can point information out like the following.
+Some update suggestions were taken into account
+from static source code analysis.
 
-WARNING: Prefer kcalloc over kzalloc with multiply
+Markus Elfring (7):
+  Use kmalloc_array() in iio_scan_mask_set()
+  Rename a jump label in iio_buffer_store_watermark()
+  Rename a jump label in iio_buffer_store_enable()
+  Rename a jump label in iio_buffer_write_length()
+  Rename a jump label in iio_scan_el_ts_store()
+  Rename a jump label in iio_scan_el_store()
+  Adjust checks for null pointers in six functions
 
-Thus fix the affected source code place.
+ drivers/iio/industrialio-buffer.c | 55 ++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 29 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/bitmap.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-index 2d30c83..41d99fd 100644
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -2035,8 +2035,7 @@ int bitmap_resize(struct bitmap *bitmap, sector_t blocks,
- 		return ret;
- 
- 	pages = DIV_ROUND_UP(chunks, PAGE_COUNTER_RATIO);
--
--	new_bp = kzalloc(pages * sizeof(*new_bp), GFP_KERNEL);
-+	new_bp = kcalloc(pages, sizeof(*new_bp), GFP_KERNEL);
- 	if (!new_bp) {
- 		bitmap_file_unmap(&store);
- 		return -ENOMEM;
 -- 
 2.10.0
 
