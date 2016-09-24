@@ -1,42 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 16:54:43 +0000
-Subject: [PATCH 08/21] ACPI-video: Improve a size determination in acpi_video_bus_add()
-Message-Id: <5e2d12ce-714a-b3f7-acd2-3042d7b2125e@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 13:47:42 +0000
+Subject: [PATCH 2/4] Input-gameport: Delete an error message for a failed memory allocation
+Message-Id: <0b438906-0b64-7635-801d-8edfe5bcd8dd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
-In-Reply-To: <897ebf36-2fe5-e109-adf6-b81b6e863d9a@users.sourceforge.net>
+References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
+In-Reply-To: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 15:16:26 +0200
+Date: Sat, 24 Sep 2016 14:18:48 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Omit an extra message for a memory allocation failure in this function.
+
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/acpi_video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/joystick/joydump.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 8003c90..c9fbc6e 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1958,7 +1958,7 @@ static int acpi_video_bus_add(struct acpi_device *device)
- 			return -ENODEV;
- 	}
+diff --git a/drivers/input/joystick/joydump.c b/drivers/input/joystick/joydump.c
+index e515058..f9f6cbe 100644
+--- a/drivers/input/joystick/joydump.c
++++ b/drivers/input/joystick/joydump.c
+@@ -80,10 +80,9 @@ static int joydump_connect(struct gameport *gameport, struct gameport_driver *dr
  
--	video = kzalloc(sizeof(struct acpi_video_bus), GFP_KERNEL);
-+	video = kzalloc(sizeof(*video), GFP_KERNEL);
- 	if (!video)
- 		return -ENOMEM;
- 
+ 	timeout = gameport_time(gameport, 10000); /* 10 ms */
+ 	buf = kmalloc_array(BUF_SIZE, sizeof(*buf), GFP_KERNEL);
+-	if (!buf) {
+-		printk(KERN_INFO "joydump: no memory for testing\n");
++	if (!buf)
+ 		goto jd_end;
+-	}
++
+ 	dump = buf;
+ 	t = 0;
+ 	i = 1;
 -- 
 2.10.0
 
