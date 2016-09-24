@@ -1,40 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Sep 2016 07:25:36 +0000
-Subject: Re: [PATCH 5/5] ISDN-Gigaset: Enclose two expressions for the sizeof operator by parentheses
-Message-Id: <20160927072536.GV13620@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 06:25:40 +0000
+Subject: [PATCH 2/7] iio: Rename a jump label in iio_buffer_store_watermark()
+Message-Id: <50eb1352-fb0a-1cf5-70d8-48fe8f98b9eb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
- <e97b38b6-8c02-6733-8b57-9786bfb911a6@users.sourceforge.net>
- <248e685c-4875-7acc-afaf-8b2ce00bb5f5@cogentembedded.com>
- <20160927070837.GS13620@mwanda>
-In-Reply-To: <20160927070837.GS13620@mwanda>
+ <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
+In-Reply-To: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Sep 27, 2016 at 10:08:37AM +0300, Dan Carpenter wrote:
-> On Mon, Sep 26, 2016 at 08:38:14PM +0300, Sergei Shtylyov wrote:
-> > >@@ -53,7 +53,7 @@ void gigaset_dbg_buffer(enum debuglevel level, const unsigned char *msg,
-> > > {
-> > > 	unsigned char outbuf[80];
-> > > 	unsigned char c;
-> > >-	size_t space = sizeof outbuf - 1;
-> > >+	size_t space = sizeof(outbuf - 1);
-> > 
-> >    What?! Does that compile?
-> > 
-> > [...]
-> 
-> It prints a Smatch warning.  Smatch ignores these if they happen inside
-> a macro where you pass a pointer and it takes the sizeof() the argument.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 06:54:49 +0200
 
-Reading that again, I realize it's not clear.  Smatch ignores these any
-time they happen in a macro whether they're valid or not.  (Many times
-they are valid).
+Adjust jump labels according to the current Linux coding style convention.
 
-regards,
-dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iio/industrialio-buffer.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index 7a4d9499..a865af8 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -1028,16 +1028,16 @@ static ssize_t iio_buffer_store_watermark(struct device *dev,
+ 
+ 	if (val > buffer->length) {
+ 		ret = -EINVAL;
+-		goto out;
++		goto unlock;
+ 	}
+ 
+ 	if (iio_buffer_is_active(indio_dev->buffer)) {
+ 		ret = -EBUSY;
+-		goto out;
++		goto unlock;
+ 	}
+ 
+ 	buffer->watermark = val;
+-out:
++unlock:
+ 	mutex_unlock(&indio_dev->mlock);
+ 
+ 	return ret ? ret : len;
+-- 
+2.10.0
 
