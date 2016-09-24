@@ -1,58 +1,106 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 17:38:42 +0000
-Subject: [PATCH 06/14] GPU-DRM-TTM: Rename a jump label in ttm_dma_pool_alloc_new_pages()
-Message-Id: <dce2cbff-8ad5-27a1-087b-f2a2ed013ffd@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 15:29:00 +0000
+Subject: Re: [PATCH 01/10] firewire-net: Use kmalloc_array() in fwnet_broadcast_start()
+Message-Id: <3b7dacb0-6387-5214-e112-19d51b053e19@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
-In-Reply-To: <4d34446f-05ad-c3ce-5d33-8fb4f25af25c@users.sourceforge.net>
+ <cb0935d1-4a50-5a1c-a4f2-23937560abf5@users.sourceforge.net>
+ <d0a380d4-a0a5-137c-054f-ac14d441f2af@users.sourceforge.net>
+ <20160924134110.35e63471@kant>
+In-Reply-To: <20160924134110.35e63471@kant>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, Emil Velikov <emil.l.velikov@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: linux1394-devel@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 14:54:12 +0200
+>> @@ -1103,8 +1103,7 @@ static int fwnet_broadcast_start(struct fwnet_devi=
+ce *dev)
+>> =20
+>>  	max_receive =3D 1U << (dev->card->max_receive + 1);
+>>  	num_packets =3D (FWNET_ISO_PAGE_COUNT * PAGE_SIZE) / max_receive;
+>> -
+>> -	ptrptr =3D kmalloc(sizeof(void *) * num_packets, GFP_KERNEL);
+>> +	ptrptr =3D kmalloc_array(num_packets, sizeof(*ptrptr), GFP_KERNEL);
+>>  	if (!ptrptr) {
+>>  		retval =3D -ENOMEM;
+>>  		goto failed;
+>=20
+> Coccinelle enabled you to determine that kmalloc_array /could/ be used he=
+re.
 
-Adjust jump labels according to the current Linux coding style convention.
+A script for the semantic patch language pointed hundreds of source files o=
+ut
+with such software update opportunities.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-index 194818d..9dc1632 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-@@ -758,7 +758,7 @@ static int ttm_dma_pool_alloc_new_pages(struct dma_pool *pool,
- 						cpages);
- 			}
- 			r = -ENOMEM;
--			goto out;
-+			goto free_array;
- 		}
- 		p = dma_p->p;
- #ifdef CONFIG_HIGHMEM
-@@ -777,7 +777,7 @@ static int ttm_dma_pool_alloc_new_pages(struct dma_pool *pool,
- 					ttm_dma_handle_caching_state_failure(
- 						pool, d_pages, caching_array,
- 						cpages);
--					goto out;
-+					goto free_array;
- 				}
- 				cpages = 0;
- 			}
-@@ -791,7 +791,7 @@ static int ttm_dma_pool_alloc_new_pages(struct dma_pool *pool,
- 			ttm_dma_handle_caching_state_failure(pool, d_pages,
- 					caching_array, cpages);
- 	}
--out:
-+ free_array:
- 	kfree(caching_array);
- 	return r;
- }
--- 
-2.10.0
+> But whether it /should/ be used here is another question, and it is
+> not addressed in your changelog.
 
+I can expand the corresponding description when it will be desired.
+
+
+> (You state that there is an "issue" but do not explain.)
+
+Do you prefer an other wording for such an update candidate?
+
+
+> kmalloc_array is a kmalloc wrapper which adds an inline check for integer
+> overflow.  So, can sizeof(void *) * num_packets ever overflow size_t?
+>=20
+> If yes,
+
+Is there a probability that the calculated number of packets will become
+too big for the preferred system limits anyhow?
+
+
+> 	do we want a runtime check here (which kmalloc_array provides),
+
+Did you notice the information from the commit "mm: faster kmalloc_array(),=
+ kcalloc()"
+(from 2016-07-26) already?
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=
+=91c6a05f72a996bee5133e76374ab3ad7d3b9b72
+
+
+> 	or do we want a compile-time check?
+
+I guess that some software developers and subsystem maintainers are looking
+for a bit more clarification around involved design dependencies.
+
+
+> If no,
+> 	then the remaining benefit of the patch is that it is more obvious
+> 	to the reader that dev->broadcast_rcv_buffer_ptrs is an array,
+
+How do you value such a kind of source code annotation?
+
+
+> 	but possibly at the cost of superfluous code.
+
+How do you think about to care for a bit more consistent use of Linux progr=
+amming interfaces?
+
+
+> 	Is gcc's optimizer able to resolve kmalloc_array's check at compile time
+> 	as always false, such that the superfluous code is eliminated as dead co=
+de?
+
+Which versions of compiler implementations would you like to check further?
+
+
+> I believe I know answers to this but prefer to hear what you as the patch
+> author think about it.
+
+I presented another update suggestion also for this software module as a re=
+sult
+from a general source code search pattern.
+The corresponding change acceptance varies and is evolving as usual.
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
