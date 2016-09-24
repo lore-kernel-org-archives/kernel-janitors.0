@@ -1,40 +1,32 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 20:30:06 +0000
-Subject: [PATCH 07/13] DRBD-receiver: Delete an error message for a failed kzalloc() call in receive_sizes()
-Message-Id: <f466a944-217a-1aed-b7c0-0270603f6a33@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 17:04:18 +0000
+Subject: Re: Input-gameport: Use kmalloc_array() in joydump_connect()
+Message-Id: <fc3b7c3c-74b6-4821-4b5a-f6d7b51868a7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
-In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
+ <7ff91d13-9111-c75a-1c1a-e119025866e7@users.sourceforge.net>
+ <20160924164251.GC40187@dtor-ws>
+In-Reply-To: <20160924164251.GC40187@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 21:48:21 +0200
+>> * A multiplication for the size determination of a memory allocation
+>>   indicated that an array data structure should be processed.
+>>   Thus use the corresponding function "kmalloc_array".
+>>
+> 
+> -ENOPARSE.
 
-Omit an extra message for a memory allocation failure in this function.
+Do you find an other wording better?
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/block/drbd/drbd_receiver.c | 1 -
- 1 file changed, 1 deletion(-)
+The script "checkpatch.pl" can point information out like the following.
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 64bc316..6a9c16e 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -4088,7 +4088,6 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
- 			new_disk_conf = kzalloc(sizeof(*new_disk_conf),
- 						GFP_KERNEL);
- 			if (!new_disk_conf) {
--				drbd_err(device, "Allocation of new disk_conf failed\n");
- 				put_ldev(device);
- 				return -ENOMEM;
- 			}
--- 
-2.10.0
+WARNING: Prefer kmalloc_array over kmalloc with multiply
 
+
+Regards,
+Markus
