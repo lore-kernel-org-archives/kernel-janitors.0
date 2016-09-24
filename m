@@ -1,94 +1,44 @@
-From: Jean Delvare <jdelvare@suse.de>
-Date: Wed, 07 Sep 2016 12:30:18 +0000
-Subject: Re: sparc: bpf_jit: Rename jump labels in bpf_jit_compile()
-Message-Id: <20160907143018.7e2fffbc@endymion>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 24 Sep 2016 17:20:48 +0000
+Subject: Re: Input-gameport: Replace some printk() calls by pr_info() in joydump_connect()
+Message-Id: <69699b11-88fb-93ea-24a2-9ff697b5f439@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160903.230607.1667562673788737377.davem@davemloft.net>
-        <1365a588-c7c7-717c-1e3d-ceabd71e8479@users.sourceforge.net>
-        <20160903.235916.1892276070318494855.davem@davemloft.net>
-        <deecaab4-011b-b8d5-a3c7-6e34abef60e5@users.sourceforge.net>
-        <57CBEFEA.3080007@iogearbox.net>
-        <20160905130737.74f63abe@endymion>
-        <20160905113704.GA10153@twins.programming.kicks-ass.net>
-        <20160905135445.501814a1@endymion>
-        <20160905115838.GC10153@twins.programming.kicks-ass.net>
-        <20160906163413.470f37d4@endymion>
-        <20160906144756.GF2794@worktop>
-In-Reply-To: <20160906144756.GF2794@worktop>
+References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
+ <f486d64d-0759-9cd6-1e4e-df723acb6fea@users.sourceforge.net>
+ <1474733610.23838.2.camel@perches.com>
+ <8164eb48-e3fa-fa9d-6351-f14b595a6dc3@users.sourceforge.net>
+ <20160924163912.GA40187@dtor-ws>
+In-Reply-To: <20160924163912.GA40187@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Jonathan Corbet <corbet@lwn.net>, David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Rabin Vincent <rabin@rab.in>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>, linux-doc@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Joe Perches <joe@perches.com>, linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Peter,
+> The desired output should not be broken in conversion, which you did.
 
-On Tue, 6 Sep 2016 16:47:56 +0200, Peter Zijlstra wrote:
-> On Tue, Sep 06, 2016 at 04:34:13PM +0200, Jean Delvare wrote:
-> > > [diff "default"]
-> > >         xfuncname = "^[[:alpha:]$_].*[^:]$"
-> > 
-> > OK, I see. As mentioned somewhere else, it fails for labels which have
-> > comments. 
-> 
-> Heh, There's labels that have comments?
+I dared to change another source code place a bit too much perhaps.
 
-Yes, 43.
 
-> > My worry is that you recommending it to contributors on a individual
-> > and opportunity basis, doesn't scale. Basing coding style
-> > recommendations on a personal quirk doesn't strike me as the best idea
-> > ever in the long run.
-> 
-> Don't care too much, I simply will not take any patch that adds stupid
-> spaces :-)
-> 
-> > While looking at the syntax of your example, I have found something
-> > which looks more promising. git already has predefined xfuncname
-> > definitions for various languages, including C. These can be enabled
-> > based on file name patterns via gitattributes. The
-> > following .gitattribute file placed at the root of the kernel source
-> > tree achieves what you want:
-> > 
-> > *.c   diff=cpp
-> > *.h   diff=cpp
-> > 
-> > The major difference between git config and gitattributes is that the
-> > latter can be part of the project itself, just like gitignore. So we
-> > could just push that .gitattribute file upstream, and then labels
-> > without leading spaces would no longer be a problem, at least within
-> > git.
-> 
-> Works for me,
+> Do you know how syslog works and why the transformation is not correct.
 
-OK, I'll send a patch now.
+I imagine that there are chances to improve the software situation a bit more,
+aren't there?
 
-> and last time this came up Linus agreed with the
-> "whitespace before labels is stupid" thing. Although I cannot find a
-> link to that just now.
 
-Murphy's law applies, you can never find links again the day you
-desperately need them. If you ever get your hands on that one again,
-please let me know, I really would like to read that post.
+> I am also curious as to why you are patching joydump?
 
-> > It would still be a problem for me as an inveterate quilt user,
-> 
-> Add the below to your .quiltrc or environment:
-> 
-> QUILT_DIFF_OPTS="-F ^[[:alpha:]\$_].*[^:]\$"
+The discussed function implementation contains update candidates.
 
-I didn't know this option existed, thanks for the pointer.
+One of them was detected by the execution of a script for the semantic patch
+language (Coccinelle software).
+I identified further update possibilities after the opportunity for using
+the function "kmalloc_array" also in this software module.
 
-Now I'm sure I won't try to get the behavior of GNU diff option -p
-changed, as I think I know what the answer would be.
 
-> Same caveat about labels with comments, but then I'd not take a patch
-> doing that in the first place.
+> Are you working on extending it?
 
-I'll improve the regular expression if I ever have to (I don't think a
-function declaration can have a colon anywhere?), but I'm happy if it
-works in 99.9 % of the cases, thank sagain.
+I attempted just another software refactoring.
 
--- 
-Jean Delvare
-SUSE L3 Support
+Regards,
+Markus
