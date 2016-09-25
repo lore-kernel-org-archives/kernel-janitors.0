@@ -1,119 +1,134 @@
-From: Leon Romanovsky <leon@kernel.org>
-Date: Sun, 04 Sep 2016 09:04:52 +0000
-Subject: Re: [PATCH 1/2] IB/hfi1: Fix a parameter of find_first_bit.
-Message-Id: <20160904090452.GP21847@leon.nu>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="h5TCuzcqTWZxfGfk"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 25 Sep 2016 07:15:11 +0000
+Subject: [PATCH v2 3/3] Input-gameport: Replace some printk() calls by pr_info() in joydump_connect()
+Message-Id: <814f7993-de4b-05d8-845e-3f0230122061@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472186949-9025-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <cf61e699-9e2d-a594-64e6-43ea33b239d9@redhat.com>
- <2c923344-04c8-cdbd-ac06-047027f7a23a@redhat.com>
- <20160826192957.GG594@leon.nu>
- <e86e76dc-811b-7002-a35d-1e515c833d46@redhat.com>
- <20160828060640.GI594@leon.nu>
- <3afab67c-919b-b9ad-c558-55046a277aab@redhat.com>
-In-Reply-To: <3afab67c-919b-b9ad-c558-55046a277aab@redhat.com>
-To: Doug Ledford <dledford@redhat.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mike.marciniszyn@intel.com, dennis.dalessandro@intel.com, sean.hefty@intel.com, hal.rosenstock@gmail.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
+ <f486d64d-0759-9cd6-1e4e-df723acb6fea@users.sourceforge.net>
+ <1474733610.23838.2.camel@perches.com>
+In-Reply-To: <1474733610.23838.2.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Joe Perches <joe@perches.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 25 Sep 2016 08:40:34 +0200
+
+1. Add a definition for the macros "MY_LOG_PREFIX" and "pr_fmt" so that
+   their information can be used for consistent message output.
+
+2. Prefer usage of the macro "pr_info" over the interface "printk"
+   in this function.
+
+3. Reduce number of output function calls.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2: Yesterday a software development discussion pointed weaknesses out around
+    the previous update steps "3" and "4".
+    Now I propose this update variant in the hope that my second approach
+    for this software module will work as desired and can be accepted
+    a bit easier.
+
+    Will the script "checkpatch.pl" need another improvement so that
+    the following information can be avoided for my use case anyhow?
+
+    ERROR: Macros with complex values should be enclosed in parentheses
 
 
---h5TCuzcqTWZxfGfk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ drivers/input/joystick/joydump.c | 40 ++++++++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 18 deletions(-)
 
-On Fri, Sep 02, 2016 at 10:39:11AM -0400, Doug Ledford wrote:
-> On 8/28/2016 2:06 AM, Leon Romanovsky wrote:
-> > On Fri, Aug 26, 2016 at 03:34:48PM -0400, Doug Ledford wrote:
-> >> On 8/26/2016 3:29 PM, Leon Romanovsky wrote:
-> >>> On Fri, Aug 26, 2016 at 02:01:55PM -0400, Doug Ledford wrote:
-> >>>> On 8/26/2016 9:35 AM, Doug Ledford wrote:
-> >>>>> On 8/26/2016 12:49 AM, Christophe JAILLET wrote:
-> >>>>>> The 2nd parameter of 'find_first_bit' is the number of bits to search.
-> >>>>>> In this case, we are passing 'sizeof(unsigned long)' which is likely to
-> >>>>>> be 4 or 8.
-> >>>>>
-> >>>>> If the size can be 4 or 8, then using 64 universally is not correct.
-> >>>>> Why not use sizeof() * 8 (or << 3)?
-> >>>>
-> >>>> Better yet, why not put this patch in the kernel first:
-> >>>>
-> >>>> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> >>>> index d96a6118d26a..a8838c87668e 100644
-> >>>> --- a/include/linux/kernel.h
-> >>>> +++ b/include/linux/kernel.h
-> >>>> @@ -52,6 +52,8 @@
-> >>>>
-> >>>>  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
-> >>>> __must_be_array(arr))
-> >>>>
-> >>>> +#define bitsizeof(x)   (sizeof((x)) << 3)
-> >>>> +
-> >>>>  #define u64_to_user_ptr(x) (           \
-> >>>>  {                                      \
-> >>>>         typecheck(u64, x);              \
-> >>>>
-> >>>> then start going around replacing all these hard coded numbers with the
-> >>>> use of bitsizeof().  It can be applied not just to the find_first*bit()
-> >>>> routines, but to a bunch of other routines too.  Just look at
-> >>>> include/linux/bitmap.h and any that have nbits as an argument are
-> >>>> candidates.
-> >>>
-> >>> There is BITS_PER_LONG define for that. There is actual use of it in mlx5 for
-> >>> the similar code pieces.
-> >>
-> >> BITS_PER_LONG only works if your bitfield is a single long.  It doesn't
-> >> work for other bitfields.  What I posted above will work for anything.
-> >
-> > Yes, the question to ask if it is really needed.
->
-> A quick review of the usage of find_first_bit in the kernel shows that
-> the majority of uses that use large, complex bit arrays (things larger
-> than a single long, where bitsizeof(complex_object) might be helpful),
-> also tend to have limits to their bitmap sizes that do not directly
-> equal the size of the bitmap.  For example, the bitmap for an md raid
-> array is allocated as a chunk of memory, where the chunk of memory is
-> larger than the bitmap size as a general rule, so
-> bitsizeof(chunk_of_memory) would run off the end of the real bitmap.
-> Likewise for a number of other complex bitmaps (block layer tag in use
-> bitmap for instance).
->
-> So, is it useful?  I think so.  But it's not needed for original patch
-> in this thread.
+diff --git a/drivers/input/joystick/joydump.c b/drivers/input/joystick/joydump.c
+index f9f6cbe..e23c499 100644
+--- a/drivers/input/joystick/joydump.c
++++ b/drivers/input/joystick/joydump.c
+@@ -27,6 +27,8 @@
+  * Vojtech Pavlik, Simunkova 1594, Prague 8, 182 00 Czech Republic
+  */
+ 
++#define MY_LOG_PREFIX KBUILD_MODNAME ": "
++#define pr_fmt(fmt) MY_LOG_PREFIX fmt
+ #include <linux/module.h>
+ #include <linux/gameport.h>
+ #include <linux/kernel.h>
+@@ -55,27 +57,31 @@ static int joydump_connect(struct gameport *gameport, struct gameport_driver *dr
+ 	unsigned long flags;
+ 	unsigned char u;
+ 
+-	printk(KERN_INFO "joydump: ,------------------ START ----------------.\n");
+-	printk(KERN_INFO "joydump: | Dumping: %30s |\n", gameport->phys);
+-	printk(KERN_INFO "joydump: | Speed: %28d kHz |\n", gameport->speed);
++	pr_info(",------------------ START ----------------.\n"
++		MY_LOG_PREFIX "| Dumping: %30s |\n"
++		MY_LOG_PREFIX "| Speed: %28d kHz |\n",
++		gameport->phys,
++		gameport->speed);
+ 
+ 	if (gameport_open(gameport, drv, GAMEPORT_MODE_RAW)) {
+-
+-		printk(KERN_INFO "joydump: | Raw mode not available - trying cooked.    |\n");
+-
++		pr_info("| Raw mode not available - trying cooked.    |\n");
+ 		if (gameport_open(gameport, drv, GAMEPORT_MODE_COOKED)) {
+-
+-			printk(KERN_INFO "joydump: | Cooked not available either. Failing.   |\n");
+-			printk(KERN_INFO "joydump: `------------------- END -----------------'\n");
++			pr_info("| Cooked not available either. Failing.   |\n"
++				MY_LOG_PREFIX
++				"`------------------- END -----------------'\n");
+ 			return -ENODEV;
+ 		}
+ 
+ 		gameport_cooked_read(gameport, axes, &buttons);
+ 
+ 		for (i = 0; i < 4; i++)
+-			printk(KERN_INFO "joydump: | Axis %d: %4d.                           |\n", i, axes[i]);
+-		printk(KERN_INFO "joydump: | Buttons %02x.                             |\n", buttons);
+-		printk(KERN_INFO "joydump: `------------------- END -----------------'\n");
++			pr_info("| Axis %d: %4d.                           |\n",
++				i,
++				axes[i]);
++		pr_info("| Buttons %02x.                             |\n"
++			MY_LOG_PREFIX
++			"`------------------- END -----------------'\n",
++			buttons);
+ 	}
+ 
+ 	timeout = gameport_time(gameport, 10000); /* 10 ms */
+@@ -119,16 +125,15 @@ static int joydump_connect(struct gameport *gameport, struct gameport_driver *dr
+ 	t = i;
+ 	dump = buf;
+ 	prev = dump;
+-
+-	printk(KERN_INFO "joydump: >------------------ DATA -----------------<\n");
+-	printk(KERN_INFO "joydump: | index: %3d delta: %3d us data: ", 0, 0);
++	pr_info(">------------------ DATA -----------------<\n"
++		MY_LOG_PREFIX "| index: %3d delta: %3d us data: ", 0, 0);
+ 	for (j = 7; j >= 0; j--)
+ 		printk("%d", (dump->data >> j) & 1);
+ 	printk(" |\n");
+ 	dump++;
+ 
+ 	for (i = 1; i < t; i++, dump++, prev++) {
+-		printk(KERN_INFO "joydump: | index: %3d delta: %3d us data: ",
++		pr_info("| index: %3d delta: %3d us data: ",
+ 			i, dump->time - prev->time);
+ 		for (j = 7; j >= 0; j--)
+ 			printk("%d", (dump->data >> j) & 1);
+@@ -137,8 +142,7 @@ static int joydump_connect(struct gameport *gameport, struct gameport_driver *dr
+ 	kfree(buf);
+ 
+ jd_end:
+-	printk(KERN_INFO "joydump: `------------------- END -----------------'\n");
+-
++	pr_info("`------------------- END -----------------'\n");
+ 	return 0;
+ }
+ 
+-- 
+2.10.0
 
-Honestly, I wasn't convinced at all, but you are right,
-it is theoretical discussion.
-
-Thanks
-
->
->
-> --
-> Doug Ledford <dledford@redhat.com>
->     GPG Key ID: 0E572FDD
->
-
-
-
-
---h5TCuzcqTWZxfGfk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXy+O0AAoJEORje4g2clinoYUP/3RKhFGjsJEZf79Z9Qaruvad
-vmYJBMzYHp8Rtw/Qi0vX3CBTGIHctqw28TS9mTFw6Bnwp3l2ExR1K6RkRyFHHa2k
-2wEoozxT8uLNvQF2LoXRcz2e4fg9k3HEJUaePwcdyRA6uwq7wwHAhAXEhcIlQaB+
-zhOJcF4jqDP6prhHf6qzqzgu2T6vThXRMABEFaqjVh3nrMNRnKSabYhnok1bw1b8
-mF9ch3K8THYGBqivnZvNrTw2xTkPTHZW3Y5ElN8dP3WFK2oIs3LXntnUxS5RAfIB
-ddIWo1NcI1J3GF6WeEbcIOZY+aPSFidowh8PnzOLzxYZflooJvFkGEZTX56bls+p
-wtvYtLUPlNPFLO6kjdixP3/gAG+jIyK52yygVPnzrLOx713opAfCdQcuSw1ov3ZK
-FfK9YzP3S6Xd2CBAQwTs0UBybIQk3XmnJbdkrmDilQdMi0lkOoranN+0eY8dXLzg
-a1SRlQGy0fi6xvbHTnknyGVBgBamM6EPbt54JDAf5gZ7KFA1hXabcu+eEIqfK1e8
-v88dfnX/RbnycPkKzwxPwwtOuw06CtvNJHyprfLAu6DUvdhM2rdLMfMGSXcMjTZM
-ARgkxWxtcAmFXdHEJ6Z6azbtpGmGTFuiqhbZOsdPVcKZ4n6qPTJwqOOp/wtBTs4/
-lI23Kgmtnhbtm4IQDamZ
-=pmvU
------END PGP SIGNATURE-----
-
---h5TCuzcqTWZxfGfk--
