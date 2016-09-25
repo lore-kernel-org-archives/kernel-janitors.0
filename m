@@ -1,44 +1,30 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 06:28:04 +0000
-Subject: [PATCH 4/7] iio: Rename a jump label in iio_buffer_write_length()
-Message-Id: <72db95ec-56bc-9e06-02ec-3a5491c582af@users.sourceforge.net>
+Date: Sun, 25 Sep 2016 11:10:04 +0000
+Subject: [PATCH 0/5] ISDN-CAPI: Fine-tuning for several function implementations
+Message-Id: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
-In-Reply-To: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To: netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 07:17:44 +0200
+Date: Sun, 25 Sep 2016 13:03:13 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/iio/industrialio-buffer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Markus Elfring (5):
+  Use kmalloc_array() in capidrv_addcontr()
+  Delete error messages for a failed memory allocation in four functions
+  Adjust 17 function calls together with variable assignments
+  Adjust checks for null pointers in four functions
+  Delete unnecessary braces
 
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 6509f0f..376101f 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -505,10 +505,10 @@ static ssize_t iio_buffer_write_length(struct device *dev,
- 		ret = 0;
- 	}
- 	if (ret)
--		goto out;
-+		goto unlock;
- 	if (buffer->length && buffer->length < buffer->watermark)
- 		buffer->watermark = buffer->length;
--out:
-+unlock:
- 	mutex_unlock(&indio_dev->mlock);
- 
- 	return ret ? ret : len;
+ drivers/isdn/capi/capidrv.c | 111 +++++++++++++++++++++-----------------------
+ 1 file changed, 54 insertions(+), 57 deletions(-)
+
 -- 
 2.10.0
 
