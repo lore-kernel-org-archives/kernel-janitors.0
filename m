@@ -1,83 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 15:33:20 +0000
-Subject: [PATCH 21/24] ste_dma40: Rename jump labels in d40_alloc_mask_set()
-Message-Id: <759a5edb-0f6e-db86-6c8f-e0118467023d@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 25 Sep 2016 11:53:58 +0000
+Subject: [PATCH v2] clk: at91: Fix a return value in case of error
+Message-Id: <1474804438-27804-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
-In-Reply-To: <92810066-69b6-94e7-dcec-a28594b1328f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: boris.brezillon@free-electrons.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 17 Sep 2016 16:16:42 +0200
+If 'clk_hw_register()' fails, it is likely that we expect to return an
+error instead of a valid pointer (which would mean success).
 
-Adjust jump labels according to the current Linux coding style convention.
+Fix commit f5644f10dcfb ("clk: at91: Migrate to clk_hw based registration
+and OF APIs")
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/dma/ste_dma40.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+v2: clk_hw_register does return an error or 0. So we can use it. 
 
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index fbe87a2..4a2f39b 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -1778,42 +1778,40 @@ static bool d40_alloc_mask_set(struct d40_phy_res *phy,
- 		    phy->allocated_dst = D40_ALLOC_FREE) {
- 			phy->allocated_dst = D40_ALLOC_PHY;
- 			phy->allocated_src = D40_ALLOC_PHY;
--			goto found;
-+			goto found_unlock;
- 		} else
--			goto not_found;
-+			goto not_found_unlock;
+This proposal is un-compiled and un-tested.
+I get an error when I run 'make drivers/clk/at91/' which is likely due to
+my building environment. 
+---
+ drivers/clk/at91/clk-programmable.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+index 190122e64a3a..2cf200e22d48 100644
+--- a/drivers/clk/at91/clk-programmable.c
++++ b/drivers/clk/at91/clk-programmable.c
+@@ -203,7 +203,7 @@ at91_clk_register_programmable(struct regmap *regmap,
+ 	ret = clk_hw_register(NULL, &prog->hw);
+ 	if (ret) {
+ 		kfree(prog);
+-		hw = &prog->hw;
++		hw = ERR_PTR(ret);
  	}
  
- 	/* Logical channel */
- 	if (is_src) {
- 		if (phy->allocated_src = D40_ALLOC_PHY)
--			goto not_found;
-+			goto not_found_unlock;
- 
- 		if (phy->allocated_src = D40_ALLOC_FREE)
- 			phy->allocated_src = D40_ALLOC_LOG_FREE;
- 
- 		if (!(phy->allocated_src & BIT(log_event_line))) {
- 			phy->allocated_src |= BIT(log_event_line);
--			goto found;
-+			goto found_unlock;
- 		} else
--			goto not_found;
-+			goto not_found_unlock;
- 	} else {
- 		if (phy->allocated_dst = D40_ALLOC_PHY)
--			goto not_found;
-+			goto not_found_unlock;
- 
- 		if (phy->allocated_dst = D40_ALLOC_FREE)
- 			phy->allocated_dst = D40_ALLOC_LOG_FREE;
- 
- 		if (!(phy->allocated_dst & BIT(log_event_line))) {
- 			phy->allocated_dst |= BIT(log_event_line);
--			goto found;
--		} else
--			goto not_found;
-+			goto found_unlock;
-+		}
- 	}
--
--not_found:
-+ not_found_unlock:
- 	spin_unlock_irqrestore(&phy->lock, flags);
- 	return false;
--found:
-+ found_unlock:
- 	spin_unlock_irqrestore(&phy->lock, flags);
- 	return true;
- }
+ 	return hw;
 -- 
-2.10.0
+2.7.4
 
