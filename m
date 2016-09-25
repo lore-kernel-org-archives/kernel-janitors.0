@@ -1,27 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 01 Sep 2016 03:46:11 +0000
-Subject: Re: [PATCH 1/5] net: mediatek: constify ethtool_ops structures
-Message-Id: <20160831.204611.1055073690254982380.davem@davemloft.net>
+From: Alexandre Courbot <gnurou@gmail.com>
+Date: Sun, 25 Sep 2016 09:36:21 +0000
+Subject: Re: [Nouveau] [PATCH] drm/nouveau/secboot/gm20b: Fix return value in case of error
+Message-Id: <CAAVeFuJZmrEsQUndwOh3OtG+__dwFtWM=DPpcNQ4PSJy5i0wGQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472682083-5219-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472682083-5219-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472682083-5219-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1474664786-30107-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1474664786-30107-1-git-send-email-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu,  1 Sep 2016 00:21:19 +0200
+On Sat, Sep 24, 2016 at 6:06 AM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> If 'ioremap()' returns 0, 'gm20b_tegra_read_wpr()' will return 0 as well,
+> which means success.
+> Return -ENOMEM instead
 
-> Check for ethtool_ops structures that are only stored in the ethtool_ops
-> field of a net_device structure or passed as the second argument to
-> netdev_set_default_ethtool_ops.  These contexts are declared const, so
-> ethtool_ops structures that have these properties can be declared as const
-> also.
- ...
-> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Applied.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Not sure that -ENOMEM is the best value.
+> I've taken it because it is often used in such a case.
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+> index d5395ebfe8d3..d88db933b3fd 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
+> @@ -142,7 +142,7 @@ gm20b_tegra_read_wpr(struct gm200_secboot *gsb)
+>         mc = ioremap(TEGRA_MC_BASE, 0xd00);
+>         if (!mc) {
+>                 nvkm_error(&sb->subdev, "Cannot map Tegra MC registers\n");
+> -               return PTR_ERR(mc);
+> +               return -ENOMEM;
+>         }
+>         gsb->wpr_addr = ioread32_native(mc + MC_SECURITY_CARVEOUT2_BOM_0) |
+>               ((u64)ioread32_native(mc + MC_SECURITY_CARVEOUT2_BOM_HI_0) << 32);
+> --
+> 2.7.4
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
