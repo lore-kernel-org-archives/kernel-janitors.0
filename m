@@ -1,25 +1,130 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Date: Tue, 27 Sep 2016 09:48:37 +0000
-Subject: Re: ISDN-Gigaset: Release memory in gigaset_initcs() after an allocation failure
-Message-Id: <1474969717.9970.20.camel@tiscali.nl>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 25 Sep 2016 11:15:09 +0000
+Subject: [PATCH 5/5] ISDN-CAPI: Delete unnecessary braces
+Message-Id: <06e7637c-f682-bfa2-82b6-47d071bd58c4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-         <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
-         <6409b3b0-3b7a-1139-f040-7b1a61611187@users.sourceforge.net>
-         <1474924434.8546.29.camel@tiscali.nl>
-         <0d02085e-842c-4be9-f706-c43b38ce9095@users.sourceforge.net>
-         <1474966121.9970.5.camel@tiscali.nl>
-         <ad12e1a0-f5d5-176a-7d37-be2f3cb0af5d@users.sourceforge.net>
-In-Reply-To: <ad12e1a0-f5d5-176a-7d37-be2f3cb0af5d@users.sourceforge.net>
+References: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
+In-Reply-To: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: =?ISO-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-You're in Eliza mode again.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 25 Sep 2016 12:50:21 +0200
 
-(Hat tip to Björn Mork, https://lkml.org/lkml/2016/1/4/259).
+Do not use curly brackets at eight source code places
+where a single statement should be sufficient.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/isdn/capi/capidrv.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
-Paul Bolle
+diff --git a/drivers/isdn/capi/capidrv.c b/drivers/isdn/capi/capidrv.c
+index 83f756d..7f58644 100644
+--- a/drivers/isdn/capi/capidrv.c
++++ b/drivers/isdn/capi/capidrv.c
+@@ -470,9 +470,8 @@ static int capidrv_add_ack(struct capidrv_ncci *nccip,
+ 	struct ncci_datahandle_queue *n, **pp;
+ 
+ 	n = kmalloc(sizeof(struct ncci_datahandle_queue), GFP_ATOMIC);
+-	if (!n) {
++	if (!n)
+ 		return -1;
+-	}
+ 	n->next = NULL;
+ 	n->datahandle = datahandle;
+ 	n->len = len;
+@@ -511,9 +510,8 @@ static void send_message(capidrv_contr *card, _cmsg *cmsg)
+ 	}
+ 	len = CAPIMSG_LEN(cmsg->buf);
+ 	skb = alloc_skb(len, GFP_ATOMIC);
+-	if (!skb) {
++	if (!skb)
+ 		return;
+-	}
+ 	memcpy(skb_put(skb, len), cmsg->buf, len);
+ 	if (capi20_put_message(&global.ap, skb) != CAPI_NOERROR)
+ 		kfree_skb(skb);
+@@ -976,13 +974,12 @@ static void handle_controller(_cmsg *cmsg)
+ 		if (debugmode)
+ 			printk(KERN_DEBUG "capidrv-%d: listenconf Info=0x%4x (%s) cipmask=0x%x\n",
+ 			       card->contrnr, cmsg->Info, capi_info2str(cmsg->Info), card->cipmask);
+-		if (cmsg->Info) {
++		if (cmsg->Info)
+ 			listen_change_state(card, EV_LISTEN_CONF_ERROR);
+-		} else if (card->cipmask = 0) {
++		else if (card->cipmask = 0)
+ 			listen_change_state(card, EV_LISTEN_CONF_EMPTY);
+-		} else {
++		     else
+ 			listen_change_state(card, EV_LISTEN_CONF_OK);
+-		}
+ 		break;
+ 
+ 	case CAPI_MANUFACTURER_IND:	/* Controller */
+@@ -1263,11 +1260,10 @@ static void handle_plci(_cmsg *cmsg)
+ 			goto notfound;
+ 
+ 		plcip->plci = cmsg->adr.adrPLCI;
+-		if (cmsg->Info) {
++		if (cmsg->Info)
+ 			plci_change_state(card, plcip, EV_PLCI_CONNECT_CONF_ERROR);
+-		} else {
++		else
+ 			plci_change_state(card, plcip, EV_PLCI_CONNECT_CONF_OK);
+-		}
+ 		break;
+ 
+ 	case CAPI_CONNECT_ACTIVE_IND:	/* plci */
+@@ -1476,10 +1472,9 @@ static void handle_ncci(_cmsg *cmsg)
+ 		goto ignored;
+ 
+ 	case CAPI_DATA_B3_CONF:	/* ncci */
+-		if (cmsg->Info) {
++		if (cmsg->Info)
+ 			printk(KERN_WARNING "CAPI_DATA_B3_CONF: Info %x - %s\n",
+ 			       cmsg->Info, capi_info2str(cmsg->Info));
+-		}
+ 		nccip = find_ncci(card, cmsg->adr.adrNCCI);
+ 		if (!nccip)
+ 			goto notfound;
+@@ -2319,9 +2314,8 @@ static int capidrv_addcontr(u16 contr, struct capi_profile *profp)
+ 	}
+ 	card->myid = card->interface.channels;
+ 	memset(card->bchans, 0, sizeof(capidrv_bchan) * card->nbchan);
+-	for (i = 0; i < card->nbchan; i++) {
++	for (i = 0; i < card->nbchan; i++)
+ 		card->bchans[i].contr = card;
+-	}
+ 
+ 	spin_lock_irqsave(&global_lock, flags);
+ 	card->next = global.contr_list;
+@@ -2354,10 +2348,9 @@ static int capidrv_delcontr(u16 contr)
+ 	isdn_ctrl cmd;
+ 
+ 	spin_lock_irqsave(&global_lock, flags);
+-	for (card = global.contr_list; card; card = card->next) {
++	for (card = global.contr_list; card; card = card->next)
+ 		if (card->contrnr = contr)
+ 			break;
+-	}
+ 	if (!card) {
+ 		spin_unlock_irqrestore(&global_lock, flags);
+ 		printk(KERN_ERR "capidrv: delcontr: no contr %u\n", contr);
+@@ -2504,9 +2497,8 @@ static int __init capidrv_init(void)
+ 
+ 	global.ap.recv_message = capidrv_recv_message;
+ 	errcode = capi20_register(&global.ap);
+-	if (errcode) {
++	if (errcode)
+ 		return -EIO;
+-	}
+ 
+ 	register_capictr_notifier(&capictr_nb);
+ 
+-- 
+2.10.0
+
