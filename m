@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Sep 2016 15:17:25 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Sun, 25 Sep 2016 16:49:21 +0000
 Subject: Re: iio: Rename a jump label in iio_buffer_store_watermark()
-Message-Id: <ff3e7353-894b-4fb2-b72c-74dcb1a8f14e@users.sourceforge.net>
+Message-Id: <229adb93-d83b-62b3-b469-755b2b63f6cf@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
@@ -11,47 +11,59 @@ References: <566ABCD9.1060404@users.sourceforge.net>
  <c030d093-56d9-1437-fce5-315c960e61d2@kernel.org>
  <69f22bcd-9945-2214-9f80-4b42f95a3d80@users.sourceforge.net>
  <6da5896d-a605-300e-568c-b6b3c6e49eef@kernel.org>
-In-Reply-To: <6da5896d-a605-300e-568c-b6b3c6e49eef@kernel.org>
+ <ff3e7353-894b-4fb2-b72c-74dcb1a8f14e@users.sourceforge.net>
+In-Reply-To: <ff3e7353-894b-4fb2-b72c-74dcb1a8f14e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> It's not an inappropriate identifier as it stands. The point is
-> that it could be better.
+On 25/09/16 16:17, SF Markus Elfring wrote:
+>> It's not an inappropriate identifier as it stands. The point is
+>> that it could be better.
+> 
+> Thanks for your interest in clarifying further improvement possibilities.
+> 
+> 
+>>>> Which tool is spitting it out?
+>>>
+>>> Are you looking for any special tool?
+>> I was wondering how you identified these particular
+>> issues as I wanted to know the logic behind the test.
+> 
+> Do you get any related ideas from information in a message like
+> "Source code review around jump label usage" (from 2015-12-11)?
+> 
+> https://lkml.org/lkml/2015/12/11/378
+> https://lkml.kernel.org/r/<566ABCD9.1060404@users.sourceforge.net>
+> 
+> 
+>>> Which test do you mean?
+>> Whatever you used to find these jump labels
+> 
+> There is a general possibility that dedicated scripts for the semantic
+> patch language can also adjust jump labels as I suggested it for five
+> functions in this software.
+> 
+> 
+>> (the patch series description suggested it was a static checker).
+> 
+> The corresponding five patches are just a result of a source code review
+> by the means of a current text editor wit extra support for programming.
+To my mind there is a divide between the cost of making changes like this
+as a result of initial review and that of doing it on existing code.
 
-Thanks for your interest in clarifying further improvement possibilities.
+I don't think this one is worth while for existing code.
+> 
+> How do you think about to improve the capabilities of tools for advanced
+> static source code analysis any further?
+> 
+> Regards,
+> Markus
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-
->>> Which tool is spitting it out?
->>
->> Are you looking for any special tool?
-> I was wondering how you identified these particular
-> issues as I wanted to know the logic behind the test.
-
-Do you get any related ideas from information in a message like
-"Source code review around jump label usage" (from 2015-12-11)?
-
-https://lkml.org/lkml/2015/12/11/378
-https://lkml.kernel.org/r/<566ABCD9.1060404@users.sourceforge.net>
-
-
->> Which test do you mean?
-> Whatever you used to find these jump labels
-
-There is a general possibility that dedicated scripts for the semantic
-patch language can also adjust jump labels as I suggested it for five
-functions in this software.
-
-
-> (the patch series description suggested it was a static checker).
-
-The corresponding five patches are just a result of a source code review
-by the means of a current text editor wit extra support for programming.
-
-How do you think about to improve the capabilities of tools for advanced
-static source code analysis any further?
-
-Regards,
-Markus
