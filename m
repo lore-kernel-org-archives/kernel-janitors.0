@@ -1,41 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:49:14 +0000
-Subject: [PATCH 03/16] md/bitmap: Delete an unnecessary variable initialisation in bitmap_storage_alloc()
-Message-Id: <dbf966a0-1c5a-1565-7657-3ad94f849ac1@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 12:28:58 +0000
+Subject: Re: ISDN-CAPI: Adjust 17 function calls together with variable assignments
+Message-Id: <16c50966-66f2-8a08-0ebc-936b04311f14@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
-In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+References: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
+ <10355972-1c9b-1103-edf3-efde78237cdd@users.sourceforge.net>
+ <1474881174.1846.8.camel@tiscali.nl>
+In-Reply-To: <1474881174.1846.8.camel@tiscali.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 13:20:23 +0200
+>> The script "checkpatch.pl" can point out that assignments should usually
+>> not be performed within condition checks.
+>> Thus move the assignment for a variable to a separate statement
+>> in four functions.
+> 
+> Did you recycle this commit explanation?
 
-The local variable "offset" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Yes. - I am going to use similar commit messages for further changes
+in other software modules.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/bitmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-index 78512c6..9b3f723 100644
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -750,7 +750,7 @@ static int bitmap_storage_alloc(struct bitmap_storage *store,
- 				unsigned long chunks, int with_super,
- 				int slot_number)
- {
--	int pnum, offset = 0;
-+	int pnum, offset;
- 	unsigned long num_pages;
- 	unsigned long bytes;
- 
--- 
-2.10.0
+> Because git diff tells me you actually touched about eight functions.
 
+You are right. - I'm sorry that I overlooked to update this number somehow.
+
+
+>     scripts/checkpatch.pl -f drivers/isdn/capi/capidrv.c | grep "assignment in if condition" | wc -l 
+> 
+> It tells me there are actually 18 instances of this "ERROR".
+> Why did you ignore one of it in this patch?
+
+Did I accidentally leave another update candidate over?
+
+* How do you think about to pick such a software update opportunity up?
+
+* Do you expect a resend for the steps 3 - 5 of this small patch series?
+
+Regards,
+Markus
