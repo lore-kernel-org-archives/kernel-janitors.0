@@ -1,55 +1,75 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 12:20:02 +0000
-Subject: [PATCH 06/17] s390/debug: Rename jump labels in debug_info_copy()
-Message-Id: <8ea2ec9f-20b7-ecf6-0110-c6086622e8f0@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:46:12 +0000
+Subject: [PATCH 09/11 V2 RESEND] staging: dgnc: rename dgnc_tty_uninit() to dgnc_cleanup_tty()
+Message-Id: <20160926004612.GA3951@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
-In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Sep 2016 18:32:19 +0200
+The dgnc_tty_uninit() doesn't match with dgnc_tty_init() at all.
+And also the dgnc_cleanup_tty() is only called for exiting the module.
 
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- arch/s390/kernel/debug.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
-diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
-index c5da41b..1f32578 100644
---- a/arch/s390/kernel/debug.c
-+++ b/arch/s390/kernel/debug.c
-@@ -377,7 +377,7 @@ debug_info_copy(debug_info_t* in, int mode)
- 			in->nr_areas, in->buf_size, in->level, mode);
- 		spin_lock_irqsave(&in->lock, flags);
- 		if (!rc)
--			goto out;
-+			goto unlock;
- 		/* has something changed in the meantime ? */
- 		if ((rc->pages_per_area = in->pages_per_area) &&
- 		   (rc->nr_areas = in->nr_areas)) {
-@@ -388,12 +388,12 @@ debug_info_copy(debug_info_t* in, int mode)
- 	} while (1);
+V2: The subject line was cut off, I put it completely and update
+change log.
+
+ drivers/staging/dgnc/dgnc_driver.c | 2 +-
+ drivers/staging/dgnc/dgnc_tty.c    | 4 ++--
+ drivers/staging/dgnc/dgnc_tty.h    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index 81ce5c4..fd372d3 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -147,7 +147,7 @@ static void cleanup(bool sysfiles)
  
- 	if (mode = NO_AREAS)
--                goto out;
-+		goto unlock;
+ 	for (i = 0; i < dgnc_num_boards; ++i) {
+ 		dgnc_remove_ports_sysfiles(dgnc_board[i]);
+-		dgnc_tty_uninit(dgnc_board[i]);
++		dgnc_cleanup_tty(dgnc_board[i]);
+ 		dgnc_cleanup_board(dgnc_board[i]);
+ 	}
  
- 	for (i = 0; i < in->nr_areas; i++)
- 		for (j = 0; j < in->pages_per_area; j++)
- 			memcpy(rc->areas[i][j], in->areas[i][j], PAGE_SIZE);
--out:
-+ unlock:
-         spin_unlock_irqrestore(&in->lock, flags);
-         return rc;
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 893f473..5befd28 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -387,12 +387,12 @@ void dgnc_tty_post_uninit(void)
  }
+ 
+ /*
+- * dgnc_tty_uninit()
++ * dgnc_cleanup_tty()
+  *
+  * Uninitialize the TTY portion of this driver.  Free all memory and
+  * resources.
+  */
+-void dgnc_tty_uninit(struct dgnc_board *brd)
++void dgnc_cleanup_tty(struct dgnc_board *brd)
+ {
+ 	int i = 0;
+ 
+diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
+index f065c8f..24c9a41 100644
+--- a/drivers/staging/dgnc/dgnc_tty.h
++++ b/drivers/staging/dgnc/dgnc_tty.h
+@@ -25,7 +25,7 @@ int	dgnc_tty_preinit(void);
+ int     dgnc_tty_init(struct dgnc_board *);
+ 
+ void	dgnc_tty_post_uninit(void);
+-void	dgnc_tty_uninit(struct dgnc_board *);
++void	dgnc_cleanup_tty(struct dgnc_board *);
+ 
+ void	dgnc_input(struct channel_t *ch);
+ void	dgnc_carrier(struct channel_t *ch);
 -- 
-2.9.3
+1.9.1
 
