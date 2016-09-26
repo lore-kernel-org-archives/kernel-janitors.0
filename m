@@ -1,65 +1,68 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Date: Thu, 01 Sep 2016 09:45:41 +0000
-Subject: Re: [PATCH] ASoC: constify snd_soc_codec_driver structures
-Message-Id: <20160901094541.GD21682@localhost.localdomain>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:45:14 +0000
+Subject: [PATCH 08/11 RESEND] staging: dgnc: introduce the dgnc_free_irq()
+Message-Id: <20160926004514.GA3924@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472680347-19575-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472680347-19575-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 31, 2016 at 11:52:27PM +0200, Julia Lawall wrote:
-> Check for snd_soc_codec_driver structures that are only passed to
-> snd_soc_register_codec or memcpy (2nd arg), for which the corresponding
-> parameters are declared const.  Declare as const snd_soc_codec_driver
-> structures that have these properties.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct snd_soc_codec_driver i@p = { ... };
-> 
-> @ok@
-> identifier r.i;
-> expression e1,e2,e3;
-> position p;
-> @@
-> (
-> snd_soc_register_codec(e1,&i@p,e2,e3)
-> |
-> memcpy(e1,&i@p,e2)
-> )
-> 
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> @@
-> i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct snd_soc_codec_driver i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+The dgnc_free_irq() will free the requested IRQ from
+the dgnc_request_irq().
 
-I haven't looked at every single case individually, but the ones
-I have looked at look fine.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+ drivers/staging/dgnc/dgnc_driver.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Thanks,
-Charles
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index 70e68b5..81ce5c4 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -38,6 +38,7 @@ MODULE_SUPPORTED_DEVICE("dgnc");
+  */
+ static int		dgnc_start(void);
+ static int dgnc_request_irq(struct dgnc_board *brd);
++static void dgnc_free_irq(struct dgnc_board *brd);
+ static struct dgnc_board *dgnc_found_board(struct pci_dev *pdev, int id);
+ static void		dgnc_cleanup_board(struct dgnc_board *brd);
+ static void		dgnc_poll_handler(ulong dummy);
+@@ -305,7 +306,7 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	rc = dgnc_tty_init(brd);
+ 	if (rc < 0) {
+ 		pr_err(DRVSTR ": Can't init tty devices (%d)\n", rc);
+-		goto unregister_tty;
++		goto free_irq;
+ 	}
+ 
+ 	brd->state = BOARD_READY;
+@@ -317,6 +318,8 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	return 0;
+ 
++free_irq:
++	dgnc_free_irq(brd);
+ unregister_tty:
+ 	dgnc_tty_unregister(brd);
+ 
+@@ -577,6 +580,12 @@ static int dgnc_request_irq(struct dgnc_board *brd)
+ 	return rc;
+ }
+ 
++static void dgnc_free_irq(struct dgnc_board *brd)
++{
++	if (brd->irq)
++		free_irq(brd->irq, brd);
++}
++
+ /*
+  * Remap PCI memory.
+  */
+-- 
+1.9.1
+
