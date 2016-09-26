@@ -1,44 +1,36 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:13:07 +0000
-Subject: [PATCH 27/47] block-rbd: Rename a jump label in rbd_img_request_submit()
-Message-Id: <e136c10c-64fb-2e7f-64ea-8ae44db37d35@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 26 Sep 2016 15:06:56 +0000
+Subject: Re: [2/3] hostap: Delete an unnecessary jump label in prism2_ioctl_priv_hostapd()
+Message-Id: <20160926150656.54D1A613F9@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+References: <65ed528f-7ec5-a0f2-6219-3e63a78ca0ee@users.sourceforge.net>
+In-Reply-To: <65ed528f-7ec5-a0f2-6219-3e63a78ca0ee@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:43:35 +0200
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 20 Aug 2016 18:21:29 +0200
+> 
+> Remove a jump label which is unneeded in this function at the end.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Adjust a jump label according to the current Linux coding style convention.
+2 patches set to Rejected.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/block/rbd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+9291771 [2/3] hostap: Delete an unnecessary jump label in prism2_ioctl_priv_hostapd()
+9291775 [3/3] hostap: Delete unnecessary initialisations for the variable "ret"
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 23812e4..17bdc21 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3033,10 +3033,9 @@ static int rbd_img_request_submit(struct rbd_img_request *img_request)
- 	for_each_obj_request_safe(img_request, obj_request, next_obj_request) {
- 		ret = rbd_img_obj_request_submit(obj_request);
- 		if (ret)
--			goto out_put_ireq;
-+			goto put_request;
- 	}
--
--out_put_ireq:
-+ put_request:
- 	rbd_img_request_put(img_request);
- 	return ret;
- }
+Reason: The benefit is not clear.
+
 -- 
-2.10.0
+https://patchwork.kernel.org/patch/9291771/
+
+Documentation about submitting wireless patches and checking status
+from patchwork:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
