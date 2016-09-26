@@ -1,50 +1,98 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 20:23:13 +0000
-Subject: [PATCH 7/7] ACPI-APEI-HEST: Rename jump labels in hest_parse_ghes()
-Message-Id: <779d937a-068a-a84d-781f-afb1c2ff8a15@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:47:20 +0000
+Subject: [PATCH 11/11 RESEND] staging: dgnc: introduce find_board_by_major()
+Message-Id: <20160926004720.GA3992@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
-In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 21:56:02 +0200
+It was used to get a board structure with dgnc_BoardsByMajor array.
+But this driver already has the array for managing initialized board
+as dgap_board[]. It can be used for searching the board structure
+by major number.
 
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/acpi/apei/hest.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index 0e629c0..d5b75fe 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -167,15 +167,15 @@ static int __init hest_parse_ghes(struct acpi_hest_header *hest_hdr, void *data)
+ drivers/staging/dgnc/dgnc_tty.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index ba724ab..a486a86 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -45,7 +45,6 @@
+ /*
+  * internal variables
+  */
+-static struct dgnc_board	*dgnc_BoardsByMajor[256];
+ static unsigned char		*dgnc_TmpWriteBuf;
  
- 	rc = platform_device_add_data(ghes_dev, &hest_hdr, sizeof(void *));
- 	if (rc)
--		goto err;
-+		goto put_device;
+ /*
+@@ -251,8 +250,6 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 		goto free_print_driver;
+ 	}
  
- 	rc = platform_device_add(ghes_dev);
- 	if (rc)
--		goto err;
-+		goto put_device;
- 	ghes_arr->ghes_devs[ghes_arr->count++] = ghes_dev;
- 
+-	dgnc_BoardsByMajor[brd->serial_driver->major] = brd;
+-
  	return 0;
--err:
-+ put_device:
- 	platform_device_put(ghes_dev);
- 	return rc;
+ 
+ free_print_driver:
+@@ -388,7 +385,6 @@ void dgnc_cleanup_tty(struct dgnc_board *brd)
+ {
+ 	int i = 0;
+ 
+-	dgnc_BoardsByMajor[brd->serial_driver->major] = NULL;
+ 	for (i = 0; i < brd->nasync; i++) {
+ 		if (brd->channels[i])
+ 			dgnc_remove_tty_sysfs(brd->channels[i]->
+@@ -397,7 +393,6 @@ void dgnc_cleanup_tty(struct dgnc_board *brd)
+ 	}
+ 	tty_unregister_driver(brd->serial_driver);
+ 
+-	dgnc_BoardsByMajor[brd->print_driver->major] = NULL;
+ 	for (i = 0; i < brd->nasync; i++) {
+ 		if (brd->channels[i])
+ 			dgnc_remove_tty_sysfs(brd->channels[i]->
+@@ -935,6 +930,24 @@ void dgnc_wakeup_writes(struct channel_t *ch)
+ 	spin_unlock_irqrestore(&ch->ch_lock, flags);
  }
+ 
++struct dgnc_board *find_board_by_major(unsigned int major)
++{
++	int i;
++
++	for (i = 0; i < MAXBOARDS; i++) {
++		struct dgnc_board *brd = dgnc_board[i];
++
++		if (!brd)
++			return NULL;
++
++		if (major = brd->serial_driver->major ||
++		    major = brd->print_driver->major)
++			return brd;
++	}
++
++	return NULL;
++}
++
+ /************************************************************************
+  *
+  * TTY Entry points and helper functions
+@@ -964,7 +977,7 @@ static int dgnc_tty_open(struct tty_struct *tty, struct file *file)
+ 		return -ENXIO;
+ 
+ 	/* Get board pointer from our array of majors we have allocated */
+-	brd = dgnc_BoardsByMajor[major];
++	brd = find_board_by_major(major);
+ 	if (!brd)
+ 		return -ENXIO;
+ 
 -- 
-2.10.0
+1.9.1
 
