@@ -1,49 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Sep 2016 13:05:48 +0000
-Subject: [PATCH 06/26] ath: constify local structures
-Message-Id: <1473599168-30561-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:37:51 +0000
+Subject: [PATCH 01/11 V2 RESEND] staging: dgnc: remove redundant initialization for channel array
+Message-Id: <20160926003751.GA3596@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-For structure types defined in the same file or local header files, find
-top-level static structure declarations that have the following
-properties:
-1. Never reassigned.
-2. Address never taken
-3. Not passed to a top-level macro call
-4. No pointer or array-typed field passed to a function or stored in a
-variable.
-Declare structures having all of these properties as const.
+The channel array in board_t was initialized in dgnc_found_board()
+with NULL. But the channel is going to initialize in dgnc_tty_init().
+So the channel array doesn't need to set NULL for initailization.
 
-Done using Coccinelle.
-Based on a suggestion by Joe Perches <joe@perches.com>.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
-The semantic patch seems too long for a commit log, but is in the cover
-letter.
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
- drivers/net/wireless/ath/dfs_pattern_detector.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V2: The subject line was cut off, I put it completely and update
+change log.
 
-diff --git a/drivers/net/wireless/ath/dfs_pattern_detector.c b/drivers/net/wireless/ath/dfs_pattern_detector.c
-index 2f8136d..4100ffd 100644
---- a/drivers/net/wireless/ath/dfs_pattern_detector.c
-+++ b/drivers/net/wireless/ath/dfs_pattern_detector.c
-@@ -338,7 +338,7 @@ static bool dpd_set_domain(struct dfs_pattern_detector *dpd,
- 	return true;
- }
+ drivers/staging/dgnc/dgnc_driver.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index 01e948c..b598034 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -400,9 +400,6 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
  
--static struct dfs_pattern_detector default_dpd = {
-+static const struct dfs_pattern_detector default_dpd = {
- 	.exit		= dpd_exit,
- 	.set_dfs_domain	= dpd_set_domain,
- 	.add_pulse	= dpd_add_pulse,
+ 	brd->state		= BOARD_FOUND;
+ 
+-	for (i = 0; i < MAXPORTS; i++)
+-		brd->channels[i] = NULL;
+-
+ 	/* store which card & revision we have */
+ 	pci_read_config_word(pdev, PCI_SUBSYSTEM_VENDOR_ID, &brd->subvendor);
+ 	pci_read_config_word(pdev, PCI_SUBSYSTEM_ID, &brd->subdevice);
+-- 
+1.9.1
 
