@@ -1,67 +1,63 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Fri, 09 Sep 2016 08:43:12 +0000
-Subject: Re: [PATCH] [media] usb: constify vb2_ops structures
-Message-Id: <1549816.Lv63yEq5Dv@avalon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 15:44:39 +0000
+Subject: [PATCH 5/5] ISDN-Gigaset: Enclose two expressions for the sizeof operator by parentheses
+Message-Id: <e97b38b6-8c02-6733-8b57-9786bfb911a6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473379141-17286-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473379141-17286-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+In-Reply-To: <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi Julia,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 17:03:56 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-Thank you for the patch.
+The script "checkpatch.pl" can point information out like the following.
 
-On Friday 09 Sep 2016 01:59:01 Julia Lawall wrote:
-> Check for vb2_ops structures that are only stored in the ops field of a
-> vb2_queue structure.  That field is declared const, so vb2_ops structures
-> that have this property can be declared as const also.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct vb2_ops i@p = { ... };
-> 
-> @ok@
-> identifier r.i;
-> struct vb2_queue e;
-> position p;
-> @@
-> e.ops = &i@p;
-> 
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct vb2_ops e;
-> @@
-> e@i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct vb2_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+WARNING: sizeof =85 should be sizeof(=85)
 
-For
+Thus fix the affected source code places.
 
->  drivers/media/usb/uvc/uvc_queue.c       |    2 +-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/isdn/gigaset/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
+index 2e9382f..d901ed7 100644
+--- a/drivers/isdn/gigaset/common.c
++++ b/drivers/isdn/gigaset/common.c
+@@ -53,7 +53,7 @@ void gigaset_dbg_buffer(enum debuglevel level, const unsi=
+gned char *msg,
+ {
+ 	unsigned char outbuf[80];
+ 	unsigned char c;
+-	size_t space =3D sizeof outbuf - 1;
++	size_t space =3D sizeof(outbuf - 1);
+ 	unsigned char *out =3D outbuf;
+ 	size_t numin =3D len;
+=20
+@@ -1079,7 +1079,7 @@ struct gigaset_driver *gigaset_initdriver(unsigned mi=
+nor, unsigned minors,
+ 	unsigned long flags;
+ 	unsigned i;
+=20
+-	drv =3D kmalloc(sizeof *drv, GFP_KERNEL);
++	drv =3D kmalloc(sizeof(*drv), GFP_KERNEL);
+ 	if (!drv)
+ 		return NULL;
+=20
+--=20
+2.10.0
 
--- 
-Regards,
-
-Laurent Pinchart
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
