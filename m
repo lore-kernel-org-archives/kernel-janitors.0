@@ -1,54 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Sep 2016 06:20:11 +0000
-Subject: [PATCH 1/4] GPU-DRM-QXL: Use kmalloc_array() in qxl_device_init()
-Message-Id: <269141d5-6562-3d70-b823-283ecde6e09c@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:44:42 +0000
+Subject: [PATCH 07/11 V2 RESEND] staging: dgnc: rename dgnc_finalize_board_init() to dgnc_request_irq()
+Message-Id: <20160926004442.GA3903@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
-In-Reply-To: <ce810580-cc2b-32cc-a852-a355374c2100@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Bhaktipriya Shridhar <bhaktipriya96@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>, Tejun Heo <tj@kernel.org>, Thierry Reding <treding@nvidia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 22:26:08 +0200
+The dgnc_finalize_board_init() function has only job for
+requesting the IRQ. It should be renamed to dgnc_request_irq()
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-* Add a bit of exception handling for a detected null pointer.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/gpu/drm/qxl/qxl_kms.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
-diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
-index e642242..76852f1 100644
---- a/drivers/gpu/drm/qxl/qxl_kms.c
-+++ b/drivers/gpu/drm/qxl/qxl_kms.c
-@@ -216,10 +216,11 @@ static int qxl_device_init(struct qxl_device *qdev,
- 	qdev->slot_id_bits = qdev->rom->slot_id_bits;
- 	qdev->va_slot_mask  		(~(uint64_t)0) >> (qdev->slot_id_bits + qdev->slot_gen_bits);
--
--	qdev->mem_slots -		kmalloc(qdev->n_mem_slots * sizeof(struct qxl_memslot),
--			GFP_KERNEL);
-+	qdev->mem_slots = kmalloc_array(qdev->n_mem_slots,
-+					sizeof(*qdev->mem_slots),
-+					GFP_KERNEL);
-+	if (!qdev->mem_slots)
-+		return -ENOMEM;
+V2: The subject line was cut off, I put it completely and update
+change log.
+
+ drivers/staging/dgnc/dgnc_driver.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index ffe55a2..70e68b5 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -37,7 +37,7 @@ MODULE_SUPPORTED_DEVICE("dgnc");
+  *
+  */
+ static int		dgnc_start(void);
+-static int		dgnc_finalize_board_init(struct dgnc_board *brd);
++static int dgnc_request_irq(struct dgnc_board *brd);
+ static struct dgnc_board *dgnc_found_board(struct pci_dev *pdev, int id);
+ static void		dgnc_cleanup_board(struct dgnc_board *brd);
+ static void		dgnc_poll_handler(ulong dummy);
+@@ -296,7 +296,7 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto failed;
+ 	}
  
- 	idr_init(&qdev->release_idr);
- 	spin_lock_init(&qdev->release_idr_lock);
+-	rc = dgnc_finalize_board_init(brd);
++	rc = dgnc_request_irq(brd);
+ 	if (rc < 0) {
+ 		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
+ 		goto unregister_tty;
+@@ -558,7 +558,7 @@ failed:
+ 	return ERR_PTR(rc);
+ }
+ 
+-static int dgnc_finalize_board_init(struct dgnc_board *brd)
++static int dgnc_request_irq(struct dgnc_board *brd)
+ {
+ 	int rc = 0;
+ 
 -- 
-2.10.0
+1.9.1
 
