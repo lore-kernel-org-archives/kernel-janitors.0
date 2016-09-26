@@ -1,56 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 15 Sep 2016 20:48:06 +0000
-Subject: Re: [PATCH 3/4] clk/Renesas-MSTP: Less function calls in cpg_mstp_clocks_init() after error detectio
-Message-Id: <CAMuHMdWgK7HSqL+XWdrzDZkvmg5rb3MtykYNkS1amm5HgnOBAg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 18:00:11 +0000
+Subject: Re: ISDN-Gigaset: Enclose two expressions for the sizeof operator by parentheses
+Message-Id: <eddce408-a4ee-7968-cd07-160497fa32ed@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <1575ddf1-bd1a-fe98-046a-a586eb30fe47@users.sourceforge.net>
- <b945de99-815a-b380-e13c-17b01e0febad@users.sourceforge.net>
- <CAMuHMdX=We-N--Fc0KWD_p8AmnBMYDW9b560VGKi+SZ5k85e9A@mail.gmail.com> <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
-In-Reply-To: <50646b53-663f-f77f-a79e-2422b5687688@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+ <e97b38b6-8c02-6733-8b57-9786bfb911a6@users.sourceforge.net>
+ <248e685c-4875-7acc-afaf-8b2ce00bb5f5@cogentembedded.com>
+In-Reply-To: <248e685c-4875-7acc-afaf-8b2ce00bb5f5@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>, Stephen Boyd <sboyd@codeaurora.org>, Ulf Hansson <ulf.hansson@linaro.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Sep 15, 2016 at 10:40 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->>> * Split a condition check for memory allocation failures so that
->>>   each pointer from these function calls will be checked immediately.
->>>
->>>   See also background information:
->>>   Topic "CWE-754: Improper check for unusual or exceptional conditions"
->>>   Link: https://cwe.mitre.org/data/definitions/754.html
->>>
->>> * Return directly after a call of the function "kzalloc" failed
->>>   at the beginning.
->>
->> Both calls are already close together.
->
-> Can it be that an other software development concern is eventually
-> overlooked because of this "neighbourship" (or is categorised with
-> a lower priority)?
->
-> I suggest to reconsider this design detail if it is really acceptable
-> for the safe implementation of such a software module.
->
-> * How much will it matter in general that one function call was performed
->   in this use case without checking its return values immediately?
->
-> * Should it usually be determined quicker if a required resource like
->   memory could be acquired before trying the next allocation?
+>> @@ -53,7 +53,7 @@ void gigaset_dbg_buffer(enum debuglevel level, const unsigned char *msg,
+>>  {
+>>      unsigned char outbuf[80];
+>>      unsigned char c;
+>> -    size_t space = sizeof outbuf - 1;
+>> +    size_t space = sizeof(outbuf - 1);
+> 
+>    What?! Does that compile?
 
-Note that if memory allocation fails in this driver, the system won't
-boot at all. So even not checking for allocation failures at all could be
-acceptable.
+Yes, of course. - The calculated value will be lower than intended.
 
-Gr{oetje,eeting}s,
+Unfortunately, I stumbled on one of my own programming mistakes once again.
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I sent a corrected update suggestion for further considerations a few minutes ago.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Markus
