@@ -1,37 +1,41 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Date: Mon, 26 Sep 2016 09:12:54 +0000
-Subject: Re: [PATCH 3/5] ISDN-CAPI: Adjust 17 function calls together with variable assignments
-Message-Id: <1474881174.1846.8.camel@tiscali.nl>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 15:42:11 +0000
+Subject: [PATCH 3/5] ISDN-Gigaset: Delete an error message for a failed memory allocation
+Message-Id: <64f7ba12-1b0e-9fac-9b2e-d22e7fb3fcc7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
-         <10355972-1c9b-1103-edf3-efde78237cdd@users.sourceforge.net>
-In-Reply-To: <10355972-1c9b-1103-edf3-efde78237cdd@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+In-Reply-To: <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
-On Sun, 2016-09-25 at 13:13 +0200, SF Markus Elfring wrote:
-> The script "checkpatch.pl" can point out that assignments should usually
-> not be performed within condition checks.
-> Thus move the assignment for a variable to a separate statement
-> in four functions.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 15:35:47 +0200
 
-Did you recycle this commit explanation? Because git diff tells me you
-actually touched about eight functions.  
+Omit an extra message for a memory allocation failure in this function.
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/isdn/capi/capidrv.c | 59 +++++++++++++++++++++++++++------------------
->  1 file changed, 36 insertions(+), 23 deletions(-)
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 
-So I ran checkpatch on this file, just like you did. Specifically, I
-did:
-    scripts/checkpatch.pl -f drivers/isdn/capi/capidrv.c | grep "assignment in if condition" | wc -l 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/isdn/gigaset/common.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-It tells me there are actually 18 instances of this "ERROR". Why did
-you ignore one of it in this patch?
+diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
+index f505b42..c05a2a4 100644
+--- a/drivers/isdn/gigaset/common.c
++++ b/drivers/isdn/gigaset/common.c
+@@ -712,7 +712,6 @@ struct cardstate *gigaset_initcs(struct gigaset_driver *drv, int channels,
+ 	cs->bcs = kmalloc_array(channels, sizeof(*cs->bcs), GFP_KERNEL);
+ 	cs->inbuf = kmalloc(sizeof(*cs->inbuf), GFP_KERNEL);
+ 	if (!cs->bcs || !cs->inbuf) {
+-		pr_err("out of memory\n");
+ 		goto error;
+ 	}
+ 	++cs->cs_init;
+-- 
+2.10.0
 
-
-Paul Bolle
