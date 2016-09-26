@@ -1,67 +1,53 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 26 Sep 2016 16:50:38 +0000
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Mon, 26 Sep 2016 17:38:14 +0000
 Subject: Re: [PATCH 5/5] ISDN-Gigaset: Enclose two expressions for the sizeof operator by parentheses
-Message-Id: <alpine.DEB.2.10.1609261849580.3199@hadrien>
+Message-Id: <248e685c-4875-7acc-afaf-8b2ce00bb5f5@cogentembedded.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net> <e97b38b6-8c02-6733-8b57-9786bfb911a6@users.sourceforge.net> <063D6719AE5E284EB5DD2968C1650D6DB0109E63@AcuExch.aculab.com> <1474907003.2238.13.camel@perches.com>
- <d325c0ab-9f1b-e00d-6b4c-30f39d939ab4@users.sourceforge.net>
-In-Reply-To: <d325c0ab-9f1b-e00d-6b4c-30f39d939ab4@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+ <e97b38b6-8c02-6733-8b57-9786bfb911a6@users.sourceforge.net>
+In-Reply-To: <e97b38b6-8c02-6733-8b57-9786bfb911a6@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Joe Perches <joe@perches.com>, David Laight <David.Laight@ACULAB.COM>, "gigaset307x-common@lists.sourceforge.net" <gigaset307x-common@lists.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+Hello.
 
+On 09/26/2016 06:44 PM, SF Markus Elfring wrote:
 
-On Mon, 26 Sep 2016, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 26 Sep 2016 17:03:56 +0200
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+>
+> The script "checkpatch.pl" can point information out like the following.
+>
+> WARNING: sizeof … should be sizeof(…)
+>
+> Thus fix the affected source code places.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/isdn/gigaset/common.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
+> index 2e9382f..d901ed7 100644
+> --- a/drivers/isdn/gigaset/common.c
+> +++ b/drivers/isdn/gigaset/common.c
+> @@ -53,7 +53,7 @@ void gigaset_dbg_buffer(enum debuglevel level, const unsigned char *msg,
+>  {
+>  	unsigned char outbuf[80];
+>  	unsigned char c;
+> -	size_t space = sizeof outbuf - 1;
+> +	size_t space = sizeof(outbuf - 1);
 
-> >>> @@ -53,7 +53,7 @@ void gigaset_dbg_buffer(enum debuglevel level, const unsigned char *msg,
-> >>>  {
-> >>>  	unsigned char outbuf[80];
-> >>>  	unsigned char c;
-> >>> -	size_t space = sizeof outbuf - 1;
-> >>> +	size_t space = sizeof(outbuf - 1);
-> >
-> >> wrong ...
-> >> think that is 7 instead of 79.
-> >
-> >
-> > Well, it's sizeof(pointer) so either 4 or 8, but still,
-> > what Markus proposes here is _wrong_.
->
-> You are right at this place.
->
->
-> > Markus, do you know the script probably has a lower
-> > style conversion defect introduction rate than you do
-> > when doing these mechanical things.
->
-> Would it be nice if the script "checkpatch.pl" could avoid to point
-> such a false positive out anyhow?
+    What?! Does that compile?
 
-checkpatch reports:
+[...]
 
-WARNING: sizeof outbuf should be sizeof(outbuf)
-#56: FILE: drivers/isdn/gigaset/common.c:56:
-+	size_t space = sizeof outbuf - 1;
+MBR, Sergei
 
-There is nothing wrong with the report,
-
-julia
-
->
->
-> > Please use it to verify what you are doing before
-> > submitting more defective patches.
->
-> Do you expect a resend for this update step so that an other statement
-> in the function "gigaset_initdriver" would eventually be adjusted?
->
-> Regards,
-> Markus
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
