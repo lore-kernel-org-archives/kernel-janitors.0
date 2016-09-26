@@ -1,54 +1,96 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Sep 2016 14:43:21 +0000
-Subject: [PATCH 4/6] crypto-caamhash: Return a value directly in caam_hash_cra_init()
-Message-Id: <6f8877c6-873b-ee9d-596e-2567eed44962@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:40:58 +0000
+Subject: [PATCH 03/11 V2 RESEND] staging: dgnc: missing NULL check for ioremap in dgnc_do_remap()
+Message-Id: <20160926004058.GA3774@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
-In-Reply-To: <970e9e1b-c1dc-eb28-b380-92c15e9b1961@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-crypto@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Labbe Corentin <clabbe.montjoie@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 15 Sep 2016 14:56:12 +0200
+The ioremap() function can be failed, so it need to have error
+handling in dgnc_do_remap(). And also the return type of
+dgnc_do_remap() should be changed from "void" to "int"
 
-* Return a value at the end without storing it in an intermediate variable.
-
-* Delete the local variable "ret" which became unnecessary with
-  this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/crypto/caam/caamhash.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
-diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
-index 933252f..b1dbc53 100644
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -1846,7 +1846,6 @@ static int caam_hash_cra_init(struct crypto_tfm *tfm)
- 					 HASH_MSG_LEN + SHA256_DIGEST_SIZE,
- 					 HASH_MSG_LEN + 64,
- 					 HASH_MSG_LEN + SHA512_DIGEST_SIZE };
--	int ret = 0;
+V2: The subject line was cut off, I put it completely and update
+change log.
+
+ drivers/staging/dgnc/dgnc_driver.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index c87b3de..58cebf4 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -43,7 +43,7 @@ static void		dgnc_cleanup_board(struct dgnc_board *brd);
+ static void		dgnc_poll_handler(ulong dummy);
+ static int		dgnc_init_one(struct pci_dev *pdev,
+ 				      const struct pci_device_id *ent);
+-static void		dgnc_do_remap(struct dgnc_board *brd);
++static int		dgnc_do_remap(struct dgnc_board *brd);
  
- 	/*
- 	 * Get a Job ring from Job Ring driver to ensure in-order
-@@ -1866,10 +1865,7 @@ static int caam_hash_cra_init(struct crypto_tfm *tfm)
+ /*
+  * File operations permitted on Control/Management major.
+@@ -431,7 +431,10 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		brd->bd_uart_offset = 0x8;
+ 		brd->bd_dividend = 921600;
  
- 	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
- 				 sizeof(struct caam_hash_state));
--
--	ret = ahash_set_sh_desc(ahash);
--
--	return ret;
-+	return ahash_set_sh_desc(ahash);
+-		dgnc_do_remap(brd);
++		rc = dgnc_do_remap(brd);
++
++		if (rc < 0)
++			goto failed;
+ 
+ 		/* Get and store the board VPD, if it exists */
+ 		brd->bd_ops->vpd(brd);
+@@ -483,15 +486,17 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		brd->bd_uart_offset = 0x200;
+ 		brd->bd_dividend = 921600;
+ 
+-		dgnc_do_remap(brd);
++		rc = dgnc_do_remap(brd);
+ 
+-		if (brd->re_map_membase) {
+-			/* Read and store the dvid after remapping */
+-			brd->dvid = readb(brd->re_map_membase + 0x8D);
++		if (rc < 0)
++			goto failed;
++
++		/* Read and store the dvid after remapping */
++		brd->dvid = readb(brd->re_map_membase + 0x8D);
++
++		/* Get and store the board VPD, if it exists */
++		brd->bd_ops->vpd(brd);
+ 
+-			/* Get and store the board VPD, if it exists */
+-			brd->bd_ops->vpd(brd);
+-		}
+ 		break;
+ 
+ 	default:
+@@ -566,9 +571,15 @@ static int dgnc_finalize_board_init(struct dgnc_board *brd)
+ /*
+  * Remap PCI memory.
+  */
+-static void dgnc_do_remap(struct dgnc_board *brd)
++static int dgnc_do_remap(struct dgnc_board *brd)
+ {
++	int rc = 0;
++
+ 	brd->re_map_membase = ioremap(brd->membase, 0x1000);
++	if (!brd->re_map_membase)
++		rc = -ENOMEM;
++
++	return rc;
  }
  
- static void caam_hash_cra_exit(struct crypto_tfm *tfm)
+ /*
 -- 
-2.10.0
+1.9.1
 
