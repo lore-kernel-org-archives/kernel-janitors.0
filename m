@@ -1,32 +1,88 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 16:48:07 +0000
-Subject: [PATCH 0/5] drm/amdgpu: Fine-tuning for several function implementations
-Message-Id: <8d614254-1cba-0379-cf84-52ad9bd9f3a7@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:43:51 +0000
+Subject: [PATCH 06/11 RESEND] staging: dgnc: introduce the dgnc_tty_unregister()
+Message-Id: <20160926004351.GA3868@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>, Chunming Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>, Tom St Denis <tom.stdenis@amd.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Sep 2016 18:38:48 +0200
+The dgnc_tty_unregister() will be called when
+the dgnc_tty_register() is failed.
 
-Some update suggestions were taken into account
-from static source code analysis.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
-Markus Elfring (5):
-  Use kmalloc_array() in amdgpu_debugfs_gca_config_read()
-  Improve determination of sizes in two functions
-  Rename a jump label in amdgpu_debugfs_regs_read()
-  Rename a jump label in amdgpu_device_init()
-  Adjust checks for null pointers in nine functions
+ drivers/staging/dgnc/dgnc_driver.c | 7 +++++--
+ drivers/staging/dgnc/dgnc_tty.c    | 8 ++++++++
+ drivers/staging/dgnc/dgnc_tty.h    | 1 +
+ 3 files changed, 14 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 68 +++++++++++++++---------------
- 1 file changed, 33 insertions(+), 35 deletions(-)
-
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index a95d13c..ffe55a2 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -299,13 +299,13 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	rc = dgnc_finalize_board_init(brd);
+ 	if (rc < 0) {
+ 		pr_err(DRVSTR ": Can't finalize board init (%d)\n", rc);
+-		goto failed;
++		goto unregister_tty;
+ 	}
+ 
+ 	rc = dgnc_tty_init(brd);
+ 	if (rc < 0) {
+ 		pr_err(DRVSTR ": Can't init tty devices (%d)\n", rc);
+-		goto failed;
++		goto unregister_tty;
+ 	}
+ 
+ 	brd->state = BOARD_READY;
+@@ -317,6 +317,9 @@ static int dgnc_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	return 0;
+ 
++unregister_tty:
++	dgnc_tty_unregister(brd);
++
+ failed:
+ 	kfree(brd);
+ 
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index fd46ef0..893f473 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -273,6 +273,14 @@ free_serial_driver:
+ 	return rc;
+ }
+ 
++void dgnc_tty_unregister(struct dgnc_board *brd)
++{
++	tty_unregister_driver(brd->print_driver);
++	tty_unregister_driver(brd->serial_driver);
++	put_tty_driver(brd->print_driver);
++	put_tty_driver(brd->serial_driver);
++}
++
+ /*
+  * dgnc_tty_init()
+  *
+diff --git a/drivers/staging/dgnc/dgnc_tty.h b/drivers/staging/dgnc/dgnc_tty.h
+index 21d3369..f065c8f 100644
+--- a/drivers/staging/dgnc/dgnc_tty.h
++++ b/drivers/staging/dgnc/dgnc_tty.h
+@@ -19,6 +19,7 @@
+ #include "dgnc_driver.h"
+ 
+ int	dgnc_tty_register(struct dgnc_board *brd);
++void dgnc_tty_unregister(struct dgnc_board *brd);
+ 
+ int	dgnc_tty_preinit(void);
+ int     dgnc_tty_init(struct dgnc_board *);
 -- 
-2.10.0
+1.9.1
 
