@@ -1,71 +1,96 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 12 Sep 2016 21:11:46 +0000
-Subject: Re: [PATCH 00/26] constify local structures
-Message-Id: <alpine.DEB.2.10.1609122311040.3549@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 15:43:22 +0000
+Subject: [PATCH 4/5] ISDN-Gigaset: Release memory in gigaset_initcs() after an allocation failure
+Message-Id: <6409b3b0-3b7a-1139-f040-7b1a61611187@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr> <20160911172105.GB5493@intel.com> <alpine.DEB.2.10.1609121051050.3049@hadrien> <20160912131625.GD957@intel.com> <877fah5j35.fsf@linux.intel.com> <20160912201450.GA8889@intel.com>
-In-Reply-To: <20160912201450.GA8889@intel.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+In-Reply-To: <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, Julia Lawall <julia.lawall@lip6.fr>, linux-renesas-soc@vger.kernel.org, joe@perches.com, kernel-janitors@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-media@vger.kernel.org, linux-can@vger.kernel.org, Tatyana Nikolova <tatyana.e.nikolova@intel.com>, Shiraz Saleem <shiraz.saleem@intel.com>, Mustafa Ismail <mustafa.ismail@intel.com>, Chien Tin Tung <chien.tin.tung@intel.com>, linux-rdma@vger.kernel.org, netdev@vger.kernel.org, devel@driverdev.osuosl.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-wireless@vger.kernel.org, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+To: gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 16:30:50 +0200
 
+Memory was not released (as it would be expected) when one call
+of further resource reservations failed.
 
-On Mon, 12 Sep 2016, Jarkko Sakkinen wrote:
+* Split a condition check for memory allocation failures so that
+  each pointer from these function calls will be checked immediately.
 
-> On Mon, Sep 12, 2016 at 04:43:58PM +0300, Felipe Balbi wrote:
-> >
-> > Hi,
-> >
-> > Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
-> > > On Mon, Sep 12, 2016 at 10:54:07AM +0200, Julia Lawall wrote:
-> > >>
-> > >>
-> > >> On Sun, 11 Sep 2016, Jarkko Sakkinen wrote:
-> > >>
-> > >> > On Sun, Sep 11, 2016 at 03:05:42PM +0200, Julia Lawall wrote:
-> > >> > > Constify local structures.
-> > >> > >
-> > >> > > The semantic patch that makes this change is as follows:
-> > >> > > (http://coccinelle.lip6.fr/)
-> > >> >
-> > >> > Just my two cents but:
-> > >> >
-> > >> > 1. You *can* use a static analysis too to find bugs or other issues.
-> > >> > 2. However, you should manually do the commits and proper commit
-> > >> >    messages to subsystems based on your findings. And I generally think
-> > >> >    that if one contributes code one should also at least smoke test changes
-> > >> >    somehow.
-> > >> >
-> > >> > I don't know if I'm alone with my opinion. I just think that one should
-> > >> > also do the analysis part and not blindly create and submit patches.
-> > >>
-> > >> All of the patches are compile tested.  And the individual patches are
-> > >
-> > > Compile-testing is not testing. If you are not able to test a commit,
-> > > you should explain why.
-> >
-> > Dude, Julia has been doing semantic patching for years already and
-> > nobody has raised any concerns so far. There's already an expectation
-> > that Coccinelle *works* and Julia's sematic patches are sound.
-> >
-> > Besides, adding 'const' is something that causes virtually no functional
-> > changes to the point that build-testing is really all you need. Any
-> > problems caused by adding 'const' to a definition will be seen by build
-> > errors or warnings.
-> >
-> > Really, just stop with the pointless discussion and go read a bit about
-> > Coccinelle and what semantic patches are giving you. The work done by
-> > Julia and her peers are INRIA have measurable benefits.
-> >
-> > You're really making a thunderstorm in a glass of water.
->
-> Hmm... I've been using coccinelle in cyclic basis for some time now.
-> My comment was oversized but I didn't mean it to be impolite or attack
-> of any kind for that matter.
+  See also background information:
+  Topic "CWE-754: Improper check for unusual or exceptional conditions"
+  Link: https://cwe.mitre.org/data/definitions/754.html
 
-No problem :)  Thanks for the feedback.
+* Adjust jump targets according to the Linux coding style convention.
 
-julia
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/isdn/gigaset/common.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
+index c05a2a4..2e9382f 100644
+--- a/drivers/isdn/gigaset/common.c
++++ b/drivers/isdn/gigaset/common.c
+@@ -710,10 +710,13 @@ struct cardstate *gigaset_initcs(struct gigaset_driver *drv, int channels,
+ 	cs->mode = M_UNKNOWN;
+ 	cs->mstate = MS_UNINITIALIZED;
+ 	cs->bcs = kmalloc_array(channels, sizeof(*cs->bcs), GFP_KERNEL);
++	if (!cs->bcs)
++		goto report_failure;
++
+ 	cs->inbuf = kmalloc(sizeof(*cs->inbuf), GFP_KERNEL);
+-	if (!cs->bcs || !cs->inbuf) {
+-		goto error;
+-	}
++	if (!cs->inbuf)
++		goto free_bcs;
++
+ 	++cs->cs_init;
+ 
+ 	gig_dbg(DEBUG_INIT, "setting up at_state");
+@@ -737,14 +740,14 @@ struct cardstate *gigaset_initcs(struct gigaset_driver *drv, int channels,
+ 	gig_dbg(DEBUG_INIT, "setting up iif");
+ 	if (gigaset_isdn_regdev(cs, modulename) < 0) {
+ 		pr_err("error registering ISDN device\n");
+-		goto error;
++		goto free_bcs;
+ 	}
+ 
+ 	make_valid(cs, VALID_ID);
+ 	++cs->cs_init;
+ 	gig_dbg(DEBUG_INIT, "setting up hw");
+ 	if (cs->ops->initcshw(cs) < 0)
+-		goto error;
++		goto free_bcs;
+ 
+ 	++cs->cs_init;
+ 
+@@ -759,7 +762,7 @@ struct cardstate *gigaset_initcs(struct gigaset_driver *drv, int channels,
+ 		gig_dbg(DEBUG_INIT, "setting up bcs[%d]", i);
+ 		if (gigaset_initbcs(cs->bcs + i, cs, i) < 0) {
+ 			pr_err("could not allocate channel %d data\n", i);
+-			goto error;
++			goto free_bcs;
+ 		}
+ 	}
+ 
+@@ -772,8 +775,9 @@ struct cardstate *gigaset_initcs(struct gigaset_driver *drv, int channels,
+ 
+ 	gig_dbg(DEBUG_INIT, "cs initialized");
+ 	return cs;
+-
+-error:
++free_bcs:
++	kfree(cs->bcs);
++report_failure:
+ 	gig_dbg(DEBUG_INIT, "failed");
+ 	gigaset_freecs(cs);
+ 	return NULL;
+-- 
+2.10.0
+
