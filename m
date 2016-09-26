@@ -1,74 +1,27 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Sep 2016 12:52:39 +0000
+From: Paul Bolle <pebolle@tiscali.nl>
+Date: Mon, 26 Sep 2016 19:55:42 +0000
 Subject: Re: [PATCH 5/5] ISDN-CAPI: Delete unnecessary braces
-Message-Id: <e2f45ffb-9440-19c6-b7ce-0894dcd14879@users.sourceforge.net>
+Message-Id: <1474919742.4539.11.camel@tiscali.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <be07f84d-fc84-e47d-207e-aedd8c960151@users.sourceforge.net>
- <06e7637c-f682-bfa2-82b6-47d071bd58c4@users.sourceforge.net>
- <52dd5000-2bda-a1b6-aa97-1868e1193d35@cogentembedded.com>
- <727b14d4-7a3b-9de8-25d9-c3bf212f7c44@users.sourceforge.net>
- <1474881642.1846.14.camel@tiscali.nl>
-In-Reply-To: <1474881642.1846.14.camel@tiscali.nl>
+         <06e7637c-f682-bfa2-82b6-47d071bd58c4@users.sourceforge.net>
+         <52dd5000-2bda-a1b6-aa97-1868e1193d35@cogentembedded.com>
+         <727b14d4-7a3b-9de8-25d9-c3bf212f7c44@users.sourceforge.net>
+         <1474881642.1846.14.camel@tiscali.nl>
+         <e2f45ffb-9440-19c6-b7ce-0894dcd14879@users.sourceforge.net>
+In-Reply-To: <e2f45ffb-9440-19c6-b7ce-0894dcd14879@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Paul Bolle <pebolle@tiscali.nl>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->>>> @@ -976,13 +974,12 @@ static void handle_controller(_cmsg *cmsg)
->>>>          if (debugmode)
->>>>              printk(KERN_DEBUG "capidrv-%d: listenconf Info=3D0x%4x
->>>> (%s) cipmask=3D0x%x\n",
->>>>                     card->contrnr, cmsg->Info,
->>>> capi_info2str(cmsg->Info), card->cipmask);
->>>> -        if (cmsg->Info) {
->>>> +        if (cmsg->Info)
->>>>              listen_change_state(card, EV_LISTEN_CONF_ERROR);
->>>> -        } else if (card->cipmask =3D 0) {
->>>> +        else if (card->cipmask =3D 0)
->>>>              listen_change_state(card, EV_LISTEN_CONF_EMPTY);
->>>> -        } else {
->>>> +             else
->>>
->>>    Indented too much.
->>
->> How do you think about an alignment of this "else"
->> with the corresponding if statement three lines above?
->=20
-> Well, I think it looks silly.
+On Mon, 2016-09-26 at 14:52 +0200, SF Markus Elfring wrote:
+> Would it eventually make sense to move this "if" (behind an "else")
+> to a separate line and increase the indentation for the corresponding
+> code one level then?
 
-Thanks for your feedback.
+No.
 
 
-> checkpatch apparently agrees:
->     WARNING: Statements should start on a tabstop
->     #51: FILE: drivers/isdn/capi/capidrv.c:981:
->     +		     else
->    =20
->     total: 0 errors, 1 warnings, 91 lines checked
-=E2=80=A6
-> You use checkpatch a lot, don't you?
-
-It seems so when I am preparing hundreds of update steps.
-
-
-> Didn't you use it to, you know, check your patch?
-
-This Perl script showed me also the quoted information.
-
-I dared to present a deviation from this general advice
-because I got the mood to gather constructive comments on
-source code formatting also around an if statement like
-in my update suggestion.
-
-Would it eventually make sense to move this "if" (behind an "else")
-to a separate line and increase the indentation for the corresponding
-code one level then?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Paul Bolle
