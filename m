@@ -1,76 +1,135 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 12:21:40 +0000
-Subject: [PATCH 07/17] s390/debug: Rename jump labels in debug_open()
-Message-Id: <01ff43e5-7a28-0410-6c4a-8f7519cbdbca@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:46:48 +0000
+Subject: [PATCH 10/11 RESEND] staging: dgnc: remove useless variables
+Message-Id: <20160926004648.GA3973@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
-In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Sep 2016 18:44:17 +0200
+The dgnc_major_serial_registered and dgnc_major_serial_registered
+do not need to use to check whether the tty driver is registered or not.
+These variables are used only in dgnc_cleanup_tty() function,
+This function will be called normally with initialized board structure.
+It means the dgnc_cleanup_tty() cannot be called with unregistered tty.
 
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- arch/s390/kernel/debug.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
-diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
-index 1f32578..1cce76a 100644
---- a/arch/s390/kernel/debug.c
-+++ b/arch/s390/kernel/debug.c
-@@ -614,15 +614,13 @@ debug_open(struct inode *inode, struct file *file)
- 			continue;
- 		else if (debug_info->debugfs_entries[i] =
- 			 file->f_path.dentry) {
--			goto found;	/* found view ! */
-+			goto copy_info;
- 		}
- 	}
- 	/* no entry found */
- 	rc = -EINVAL;
--	goto out;
--
--found:
--
-+	goto unlock;
-+ copy_info:
- 	/* Make snapshot of current debug areas to get it consistent.     */
- 	/* To copy all the areas is only needed, if we have a view which  */
- 	/* formats the debug areas. */
-@@ -636,14 +634,14 @@ found:
+ drivers/staging/dgnc/dgnc_driver.h |  3 --
+ drivers/staging/dgnc/dgnc_tty.c    | 64 +++++++++++++++-----------------------
+ 2 files changed, 25 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index 747a100..8792026 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -203,9 +203,6 @@ struct dgnc_board {
+ 	struct tty_driver *print_driver;
+ 	char		print_name[200];
  
- 	if (!debug_info_snapshot) {
- 		rc = -ENOMEM;
--		goto out;
-+		goto unlock;
+-	bool		dgnc_major_serial_registered;
+-	bool		dgnc_major_transparent_print_registered;
+-
+ 	u16		dpatype;	/* The board "type",
+ 					 * as defined by DPA
+ 					 */
+diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
+index 5befd28..ba724ab 100644
+--- a/drivers/staging/dgnc/dgnc_tty.c
++++ b/drivers/staging/dgnc/dgnc_tty.c
+@@ -204,15 +204,11 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 	 */
+ 	tty_set_operations(brd->serial_driver, &dgnc_tty_ops);
+ 
+-	if (!brd->dgnc_major_serial_registered) {
+-		/* Register tty devices */
+-		rc = tty_register_driver(brd->serial_driver);
+-		if (rc < 0) {
+-			dev_dbg(&brd->pdev->dev,
+-				"Can't register tty device (%d)\n", rc);
+-			goto free_serial_driver;
+-		}
+-		brd->dgnc_major_serial_registered = true;
++	rc = tty_register_driver(brd->serial_driver);
++	if (rc < 0) {
++		dev_dbg(&brd->pdev->dev,
++			"Can't register tty device (%d)\n", rc);
++		goto free_serial_driver;
  	}
- 	p_info = kmalloc(sizeof(file_private_info_t),
- 						GFP_KERNEL);
- 	if (!p_info) {
- 		debug_info_free(debug_info_snapshot);
- 		rc = -ENOMEM;
--		goto out;
-+		goto unlock;
+ 
+ 	/*
+@@ -247,16 +243,12 @@ int dgnc_tty_register(struct dgnc_board *brd)
+ 	 */
+ 	tty_set_operations(brd->print_driver, &dgnc_tty_ops);
+ 
+-	if (!brd->dgnc_major_transparent_print_registered) {
+-		/* Register Transparent Print devices */
+-		rc = tty_register_driver(brd->print_driver);
+-		if (rc < 0) {
+-			dev_dbg(&brd->pdev->dev,
+-				"Can't register Transparent Print device(%d)\n",
+-				rc);
+-			goto free_print_driver;
+-		}
+-		brd->dgnc_major_transparent_print_registered = true;
++	rc = tty_register_driver(brd->print_driver);
++	if (rc < 0) {
++		dev_dbg(&brd->pdev->dev,
++			"Can't register Transparent Print device(%d)\n",
++			rc);
++		goto free_print_driver;
  	}
- 	p_info->offset = 0;
- 	p_info->debug_info_snap = debug_info_snapshot;
-@@ -656,7 +654,7 @@ found:
- 	file->private_data = p_info;
- 	debug_info_get(debug_info);
- 	nonseekable_open(inode, file);
--out:
-+ unlock:
- 	mutex_unlock(&debug_mutex);
- 	return rc;
- }
+ 
+ 	dgnc_BoardsByMajor[brd->serial_driver->major] = brd;
+@@ -396,29 +388,23 @@ void dgnc_cleanup_tty(struct dgnc_board *brd)
+ {
+ 	int i = 0;
+ 
+-	if (brd->dgnc_major_serial_registered) {
+-		dgnc_BoardsByMajor[brd->serial_driver->major] = NULL;
+-		for (i = 0; i < brd->nasync; i++) {
+-			if (brd->channels[i])
+-				dgnc_remove_tty_sysfs(brd->channels[i]->
+-						      ch_tun.un_sysfs);
+-			tty_unregister_device(brd->serial_driver, i);
+-		}
+-		tty_unregister_driver(brd->serial_driver);
+-		brd->dgnc_major_serial_registered = false;
++	dgnc_BoardsByMajor[brd->serial_driver->major] = NULL;
++	for (i = 0; i < brd->nasync; i++) {
++		if (brd->channels[i])
++			dgnc_remove_tty_sysfs(brd->channels[i]->
++					      ch_tun.un_sysfs);
++		tty_unregister_device(brd->serial_driver, i);
+ 	}
++	tty_unregister_driver(brd->serial_driver);
+ 
+-	if (brd->dgnc_major_transparent_print_registered) {
+-		dgnc_BoardsByMajor[brd->print_driver->major] = NULL;
+-		for (i = 0; i < brd->nasync; i++) {
+-			if (brd->channels[i])
+-				dgnc_remove_tty_sysfs(brd->channels[i]->
+-						      ch_pun.un_sysfs);
+-			tty_unregister_device(brd->print_driver, i);
+-		}
+-		tty_unregister_driver(brd->print_driver);
+-		brd->dgnc_major_transparent_print_registered = false;
++	dgnc_BoardsByMajor[brd->print_driver->major] = NULL;
++	for (i = 0; i < brd->nasync; i++) {
++		if (brd->channels[i])
++			dgnc_remove_tty_sysfs(brd->channels[i]->
++					      ch_pun.un_sysfs);
++		tty_unregister_device(brd->print_driver, i);
+ 	}
++	tty_unregister_driver(brd->print_driver);
+ 
+ 	put_tty_driver(brd->serial_driver);
+ 	put_tty_driver(brd->print_driver);
 -- 
-2.9.3
+1.9.1
 
