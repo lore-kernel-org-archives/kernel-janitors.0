@@ -1,66 +1,104 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:07:16 +0000
-Subject: [PATCH 21/47] block-rbd: Rename jump labels in rbd_try_lock()
-Message-Id: <bc40bbb3-9488-fdb0-3d77-906c92635e0f@users.sourceforge.net>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Mon, 26 Sep 2016 00:38:48 +0000
+Subject: [PATCH 02/11 RESEND] staging: dgnc: remove useless message buffer
+Message-Id: <20160926003848.GA3747@SEL-JYOUN-D1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:35:08 +0200
+There is a temporary message buffer for the boot message
+in dgnc_found_board() but the buffer was not used anywhere in
+dgnc driver.
 
-Adjust jump labels according to the current Linux coding style convention.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
 ---
- drivers/block/rbd.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+RESEND: send the whole series again. Because I missed some patches
+when the V2 patches sent.
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index b0b5a3b..7802351 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3478,7 +3478,7 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
- 		if (ret) {
- 			if (ret > 0)
- 				ret = 0; /* have to request lock */
--			goto out;
-+			goto free_lockers;
- 		}
- 
- 		rbd_warn(rbd_dev, "%s%llu seems dead, breaking lock",
-@@ -3489,7 +3489,7 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
- 		if (ret) {
- 			rbd_warn(rbd_dev, "blacklist of %s%llu failed: %d",
- 				 ENTITY_NAME(lockers[0].id.name), ret);
--			goto out;
-+			goto free_lockers;
- 		}
- 
- 		ret = ceph_cls_break_lock(&client->osdc, &rbd_dev->header_oid,
-@@ -3497,13 +3497,11 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
- 					  lockers[0].id.cookie,
- 					  &lockers[0].id.name);
- 		if (ret && ret != -ENOENT)
--			goto out;
--
--again:
-+			goto free_lockers;
-+ again:
- 		ceph_free_lockers(lockers, num_lockers);
+ drivers/staging/dgnc/dgnc_driver.c | 28 ----------------------------
+ drivers/staging/dgnc/dgnc_driver.h |  6 ------
+ 2 files changed, 34 deletions(-)
+
+diff --git a/drivers/staging/dgnc/dgnc_driver.c b/drivers/staging/dgnc/dgnc_driver.c
+index b598034..c87b3de 100644
+--- a/drivers/staging/dgnc/dgnc_driver.c
++++ b/drivers/staging/dgnc/dgnc_driver.c
+@@ -324,17 +324,6 @@ static void dgnc_cleanup_board(struct dgnc_board *brd)
+ 		brd->re_map_membase = NULL;
  	}
+ 
+-	if (brd->msgbuf_head) {
+-		unsigned long flags;
 -
--out:
-+ free_lockers:
- 	ceph_free_lockers(lockers, num_lockers);
- 	return ret;
- }
+-		spin_lock_irqsave(&dgnc_global_lock, flags);
+-		brd->msgbuf = NULL;
+-		dev_dbg(&brd->pdev->dev, "%s\n", brd->msgbuf_head);
+-		kfree(brd->msgbuf_head);
+-		brd->msgbuf_head = NULL;
+-		spin_unlock_irqrestore(&dgnc_global_lock, flags);
+-	}
+-
+ 	/* Free all allocated channels structs */
+ 	for (i = 0; i < MAXPORTS ; i++) {
+ 		if (brd->channels[i]) {
+@@ -362,7 +351,6 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 	unsigned int pci_irq;
+ 	int i = 0;
+ 	int rc = 0;
+-	unsigned long flags;
+ 
+ 	/* get the board structure and prep it */
+ 	dgnc_board[dgnc_num_boards] = kzalloc(sizeof(*brd), GFP_KERNEL);
+@@ -371,15 +359,6 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 	if (!brd)
+ 		return -ENOMEM;
+ 
+-	/* make a temporary message buffer for the boot messages */
+-	brd->msgbuf_head = kcalloc(8192, sizeof(u8), GFP_KERNEL);
+-	brd->msgbuf = brd->msgbuf_head;
+-
+-	if (!brd->msgbuf) {
+-		kfree(brd);
+-		return -ENOMEM;
+-	}
+-
+ 	/* store the info for the board we've found */
+ 	brd->magic = DGNC_BOARD_MAGIC;
+ 	brd->boardnum = dgnc_num_boards;
+@@ -553,13 +532,6 @@ static int dgnc_found_board(struct pci_dev *pdev, int id)
+ 		     brd->bd_ops->tasklet,
+ 		     (unsigned long)brd);
+ 
+-	spin_lock_irqsave(&dgnc_global_lock, flags);
+-	brd->msgbuf = NULL;
+-	dev_dbg(&brd->pdev->dev, "%s\n", brd->msgbuf_head);
+-	kfree(brd->msgbuf_head);
+-	brd->msgbuf_head = NULL;
+-	spin_unlock_irqrestore(&dgnc_global_lock, flags);
+-
+ 	wake_up_interruptible(&brd->state_wait);
+ 
+ 	return 0;
+diff --git a/drivers/staging/dgnc/dgnc_driver.h b/drivers/staging/dgnc/dgnc_driver.h
+index 88d2696..747a100 100644
+--- a/drivers/staging/dgnc/dgnc_driver.h
++++ b/drivers/staging/dgnc/dgnc_driver.h
+@@ -213,12 +213,6 @@ struct dgnc_board {
+ 					 * as defined by DPA
+ 					 */
+ 
+-	/*
+-	 *	Mgmt data.
+-	 */
+-	char		*msgbuf_head;
+-	char		*msgbuf;
+-
+ 	uint		bd_dividend;	/* Board/UARTs specific dividend */
+ 
+ 	struct board_ops *bd_ops;
 -- 
-2.10.0
+1.9.1
 
