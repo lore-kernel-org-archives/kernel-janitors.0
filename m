@@ -1,24 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 07 Sep 2016 20:40:17 +0000
-Subject: Re: [PATCH 1/3] pinctrl: ns2: constify pinctrl_ops and pinmux_ops structures
-Message-Id: <CACRpkda4cY9KbhOmS-vC6YiDHHvU+27_MwkZEbfbHRnNFjigKA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 26 Sep 2016 20:24:46 +0000
+Subject: [PATCH] spmi: pmic-arb: Return an error code if sanity check fails
+Message-Id: <1474921486-7560-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472755341-9995-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472755341-9995-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: sboyd@codeaurora.org, gregkh@linuxfoundation.org, bjorn.andersson@sonymobile.com, marc.zyngier@arm.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Sep 1, 2016 at 8:42 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+If the test 'if (channel > 5)' is true, then we will return 'err' which
+is known to be 0 at this point.
+Return -EINVAL instead.
 
-> Check for pinctrl_ops and pinmux_ops structures that are only stored in the
-> pctlops field and the pmxops field, respectively, of a pinctrl_desc
-> structure.  These fields are declared const, so pinctrl_ops and pinmux_ops
-> structures that have this property can be declared as const also.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Un-tested
+---
+ drivers/spmi/spmi-pmic-arb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patch applied.
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index aca282d45421..5ec3a595dc7d 100644
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -954,6 +954,7 @@ static int spmi_pmic_arb_probe(struct platform_device *pdev)
+ 	if (channel > 5) {
+ 		dev_err(&pdev->dev, "invalid channel (%u) specified.\n",
+ 			channel);
++		err = -EINVAL;
+ 		goto err_put_ctrl;
+ 	}
+ 
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
