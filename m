@@ -1,56 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 12:10:03 +0000
-Subject: [PATCH 01/17] s390/debug: Use kmalloc_array() in debug_areas_alloc()
-Message-Id: <405a67ff-0f3b-a172-b8f1-2867cdd5ce07@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 26 Sep 2016 14:19:44 +0000
+Subject: Re: [1/3] hostap: Use memdup_user() rather than duplicating its implementation
+Message-Id: <20160926141944.A5DA06151E@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
-In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+References: <efa66c16-7998-9ceb-0be6-d62dd249a2dc@users.sourceforge.net>
+In-Reply-To: <efa66c16-7998-9ceb-0be6-d62dd249a2dc@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Jouni Malinen <j@w1.fi>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Sep 2016 14:41:01 +0200
+SF Markus Elfring <elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 20 Aug 2016 18:19:43 +0200
+> 
+> Reuse existing functionality from memdup_user() instead of keeping
+> duplicate source code.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kmalloc_array".
+Patch set to Rejected.
 
-* Replace the specification of data types by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+[1/3] hostap: Use memdup_user() rather than duplicating i... 2016-08-20 SF Markus El Rejected
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/s390/kernel/debug.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Reason: A similar patch is already applied.
 
-diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
-index aa12de7..8e2be30 100644
---- a/arch/s390/kernel/debug.c
-+++ b/arch/s390/kernel/debug.c
-@@ -196,14 +196,13 @@ debug_areas_alloc(int pages_per_area, int nr_areas)
- 	debug_entry_t*** areas;
- 	int i,j;
- 
--	areas = kmalloc(nr_areas *
--					sizeof(debug_entry_t**),
--					GFP_KERNEL);
-+	areas = kmalloc_array(nr_areas, sizeof(*areas), GFP_KERNEL);
- 	if (!areas)
- 		goto fail_malloc_areas;
- 	for (i = 0; i < nr_areas; i++) {
--		areas[i] = kmalloc(pages_per_area *
--				sizeof(debug_entry_t*),GFP_KERNEL);
-+		areas[i] = kmalloc_array(pages_per_area,
-+					 sizeof(*areas[i]),
-+					 GFP_KERNEL);
- 		if (!areas[i]) {
- 			goto fail_malloc_areas2;
- 		}
+Applying: hostap: Use memdup_user() rather than duplicating its implementation
+Using index info to reconstruct a base tree...
+Falling back to patching base and 3-way merge...
+Auto-merging drivers/net/wireless/intersil/hostap/hostap_ioctl.c
+CONFLICT (content): Merge conflict in drivers/net/wireless/intersil/hostap/hostap_ioctl.c
+Failed to merge in the changes.
+Patch failed at 0001 hostap: Use memdup_user() rather than duplicating its implementation
+
 -- 
-2.9.3
+https://patchwork.kernel.org/patch/9306999/
+
+Documentation about submitting wireless patches and checking status
+from patchwork:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
