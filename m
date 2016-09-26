@@ -1,134 +1,63 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sun, 25 Sep 2016 14:24:36 +0000
-Subject: Re: [PATCH 7/7] iio: Adjust checks for null pointers in six functions
-Message-Id: <5064024e-3510-cec9-d925-b617f7204579@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 17:44:56 +0000
+Subject: [PATCH v2 5/5] ISDN-Gigaset: Enclose two expressions for the sizeof operator by parentheses
+Message-Id: <f9dd122f-b0ed-0398-2a13-4d31693356fa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
- <8e0c9fdd-fc9a-0093-278f-00f3beb2a8f6@users.sourceforge.net>
-In-Reply-To: <8e0c9fdd-fc9a-0093-278f-00f3beb2a8f6@users.sourceforge.net>
+ <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+ <e97b38b6-8c02-6733-8b57-9786bfb911a6@users.sourceforge.net>
+ <063D6719AE5E284EB5DD2968C1650D6DB0109E63@AcuExch.aculab.com>
+ <1474907003.2238.13.camel@perches.com>
+In-Reply-To: <1474907003.2238.13.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Joe Perches <joe@perches.com>, David Laight <David.Laight@ACULAB.COM>, "gigaset307x-common@lists.sourceforge.net" <gigaset307x-common@lists.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>
+Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On 24/09/16 07:31, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 24 Sep 2016 08:00:07 +0200
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->=20
-> The script "checkpatch.pl" can point information out like the following.
->=20
-> Comparison to NULL could be written !=E2=80=A6
->=20
-> Thus fix the affected source code places.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-This is a more worthwhile change in my mind to the jump label changes.
-Would you mind resending with it not based on top of those?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Sep 2016 19:34:27 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Thanks,
+The script "checkpatch.pl" can point information out like the following.
 
-Jonathan
-> ---
->  drivers/iio/industrialio-buffer.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio=
--buffer.c
-> index 57e201a..6893639 100644
-> --- a/drivers/iio/industrialio-buffer.c
-> +++ b/drivers/iio/industrialio-buffer.c
-> @@ -310,7 +310,7 @@ static int iio_scan_mask_set(struct iio_dev *indio_de=
-v,
->  	trialmask =3D kmalloc_array(BITS_TO_LONGS(indio_dev->masklength),
->  				  sizeof(*trialmask),
->  				  GFP_KERNEL);
-> -	if (trialmask =3D NULL)
-> +	if (!trialmask)
->  		return -ENOMEM;
->  	if (!indio_dev->masklength) {
->  		WARN(1, "Trying to set scanmask prior to registering buffer\n");
-> @@ -711,7 +711,7 @@ static int iio_verify_update(struct iio_dev *indio_de=
-v,
->  	/* What scan mask do we actually have? */
->  	compound_mask =3D kcalloc(BITS_TO_LONGS(indio_dev->masklength),
->  				sizeof(long), GFP_KERNEL);
-> -	if (compound_mask =3D NULL)
-> +	if (!compound_mask)
->  		return -ENOMEM;
-> =20
->  	scan_timestamp =3D false;
-> @@ -736,7 +736,7 @@ static int iio_verify_update(struct iio_dev *indio_de=
-v,
->  				    compound_mask,
->  				    strict_scanmask);
->  		kfree(compound_mask);
-> -		if (scan_mask =3D NULL)
-> +		if (!scan_mask)
->  			return -EINVAL;
->  	} else {
->  	    scan_mask =3D compound_mask;
-> @@ -940,7 +940,7 @@ int iio_update_buffers(struct iio_dev *indio_dev,
->  		goto out_unlock;
->  	}
-> =20
-> -	if (indio_dev->info =3D NULL) {
-> +	if (!indio_dev->info) {
->  		ret =3D -ENODEV;
->  		goto out_unlock;
->  	}
-> @@ -1130,11 +1130,11 @@ int iio_buffer_alloc_sysfs_and_mask(struct iio_de=
-v *indio_dev)
->  				indio_dev->scan_index_timestamp >  					channels[i].scan_index;
->  		}
-> -		if (indio_dev->masklength && buffer->scan_mask =3D NULL) {
-> +		if (indio_dev->masklength && !buffer->scan_mask) {
->  			buffer->scan_mask =3D kcalloc(BITS_TO_LONGS(indio_dev->masklength),
->  						    sizeof(*buffer->scan_mask),
->  						    GFP_KERNEL);
-> -			if (buffer->scan_mask =3D NULL) {
-> +			if (!buffer->scan_mask) {
->  				ret =3D -ENOMEM;
->  				goto error_cleanup_dynamic;
->  			}
-> @@ -1146,7 +1146,7 @@ int iio_buffer_alloc_sysfs_and_mask(struct iio_dev =
-*indio_dev)
->  	buffer->scan_el_group.attrs =3D kcalloc(attrcount + 1,
->  					      sizeof(buffer->scan_el_group.attrs[0]),
->  					      GFP_KERNEL);
-> -	if (buffer->scan_el_group.attrs =3D NULL) {
-> +	if (!buffer->scan_el_group.attrs) {
->  		ret =3D -ENOMEM;
->  		goto error_free_scan_mask;
->  	}
-> @@ -1291,7 +1291,7 @@ static int iio_buffer_add_demux(struct iio_buffer *=
-buffer,
->  		(*p)->length +=3D length;
->  	} else {
->  		*p =3D kmalloc(sizeof(**p), GFP_KERNEL);
-> -		if (*p =3D NULL)
-> +		if (!*p)
->  			return -ENOMEM;
->  		(*p)->from =3D in_loc;
->  		(*p)->to =3D out_loc;
-> @@ -1356,7 +1356,7 @@ static int iio_buffer_update_demux(struct iio_dev *=
-indio_dev,
->  		in_loc +=3D length;
->  	}
->  	buffer->demux_bounce =3D kzalloc(out_loc, GFP_KERNEL);
-> -	if (buffer->demux_bounce =3D NULL) {
-> +	if (!buffer->demux_bounce) {
->  		ret =3D -ENOMEM;
->  		goto error_clear_mux_table;
->  	}
->=20
+WARNING: sizeof … should be sizeof(…)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2: Position the desired closing parenthesis behind the variable name for
+    a character buffer.
+
+ drivers/isdn/gigaset/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
+index 2e9382f..dba44e1 100644
+--- a/drivers/isdn/gigaset/common.c
++++ b/drivers/isdn/gigaset/common.c
+@@ -53,7 +53,7 @@ void gigaset_dbg_buffer(enum debuglevel level, const unsigned char *msg,
+ {
+ 	unsigned char outbuf[80];
+ 	unsigned char c;
+-	size_t space = sizeof outbuf - 1;
++	size_t space = sizeof(outbuf) - 1;
+ 	unsigned char *out = outbuf;
+ 	size_t numin = len;
+ 
+@@ -1079,7 +1079,7 @@ struct gigaset_driver *gigaset_initdriver(unsigned minor, unsigned minors,
+ 	unsigned long flags;
+ 	unsigned i;
+ 
+-	drv = kmalloc(sizeof *drv, GFP_KERNEL);
++	drv = kmalloc(sizeof(*drv), GFP_KERNEL);
+ 	if (!drv)
+ 		return NULL;
+ 
+-- 
+2.10.0
+
