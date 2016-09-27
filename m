@@ -1,35 +1,69 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 08 Sep 2016 03:08:06 +0000
-Subject: Re: [PATCH] [media] pci: constify snd_pcm_ops structures
-Message-Id: <alpine.DEB.2.10.1609081106070.6858@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 16:59:35 +0000
+Subject: [PATCH 12/16] md/bitmap: One check less in read_page() at the end
+Message-Id: <18d73bcc-795b-8680-c82c-9a06047a8ef3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473295479-24615-1-git-send-email-Julia.Lawall@lip6.fr> <20160908022755.mr45eulz4r7vfoo5@zver>
-In-Reply-To: <20160908022755.mr45eulz4r7vfoo5@zver>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, kernel-janitors@vger.kernel.org, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Hans Verkuil <hans.verkuil@cisco.com>, Ismael Luceno <ismael@iodev.co.uk>, Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Andy Walls <awalls@md.metrocast.net>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 16:30:25 +0200
 
+* Adjust a jump target.
 
-On Thu, 8 Sep 2016, Andrey Utkin wrote:
+* Delete a repeated check which became unnecessary with this refactoring.
 
-> Thanks for looking into this.
-> I have tested that it compiles and passes checks (C=2) cleanly after
-> this patch.
->
-> Acked-by: Andrey Utkin <andrey.utkin@corp.bluecherry.net>
->
-> While we're at it, what about constification of
-> *-core.c:static struct pci_driver *_pci_driver = {
-> *-video.c:static struct vb2_ops *_video_qops = {
-> *-video.c:static struct video_device *_video_template = {
->
-> in drivers/media/pci/? Also there are even more similar entries not
-> constified yet in drivers/media/, however I may be underestimating
-> complexity of making semantic rules for catching that all.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/bitmap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-I will check on these.  Thanks for the suggestion.
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index c186e5d..e7a7fc8 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -367,7 +367,7 @@ static int read_page(struct file *file, unsigned long index,
+ 	bh = alloc_page_buffers(page, 1<<inode->i_blkbits, 0);
+ 	if (!bh) {
+ 		ret = -ENOMEM;
+-		goto out;
++		goto report_failure;
+ 	}
+ 	attach_page_buffers(page, bh);
+ 	block = index << (PAGE_SHIFT - inode->i_blkbits);
+@@ -379,7 +379,7 @@ static int read_page(struct file *file, unsigned long index,
+ 			if (bh->b_blocknr = 0) {
+ 				/* Cannot use this file! */
+ 				ret = -EINVAL;
+-				goto out;
++				goto report_failure;
+ 			}
+ 			bh->b_bdev = inode->i_sb->s_bdev;
+ 			if (count < (1<<inode->i_blkbits))
+@@ -401,14 +401,14 @@ static int read_page(struct file *file, unsigned long index,
+ 
+ 	wait_event(bitmap->write_wait,
+ 		   atomic_read(&bitmap->pending_writes)=0);
+-	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
++	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags)) {
+ 		ret = -EIO;
+-out:
+-	if (ret)
++report_failure:
+ 		printk(KERN_ALERT "md: bitmap read error: (%dB @ %llu): %d\n",
+ 			(int)PAGE_SIZE,
+ 			(unsigned long long)index << PAGE_SHIFT,
+ 			ret);
++	}
+ 	return ret;
+ }
+ 
+-- 
+2.10.0
 
-julia
