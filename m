@@ -1,42 +1,100 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 07 Sep 2016 17:01:27 +0000
-Subject: Re: x86-ksysfs: Use kmalloc_array() in create_setup_data_nodes()
-Message-Id: <CAGXu5j+Wv7YXJRm-9kYCSLQbkWoXTXJKU++qsVUrjOUDGg4rpg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 16:55:36 +0000
+Subject: [PATCH 08/16] md/bitmap: Rename a jump label in location_store()
+Message-Id: <d4de2fd9-93a6-9731-13a4-9b02a6c7f971@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3b21b2d7-9856-009c-9bd1-3a76a83bc7fc@users.sourceforge.net>
- <CAGXu5jLSsU+daPP=uX+3T02RkTFguG1rtemOF-7Py_Fi=qYP6A@mail.gmail.com>
- <e24dae2d-b55a-d90a-9934-080e6165802b@users.sourceforge.net>
- <f1caa945-b808-f6b5-6047-35c43330431f@redhat.com> <f9edcf05-482e-dfbb-b661-c070ee1debf4@users.sourceforge.net>
- <3eea073a-b271-54b7-1eec-e841e0f4bdf9@redhat.com> <07f2cb49-662f-590f-acf6-686f8432015d@users.sourceforge.net>
- <CAGXu5jJ=YsdYegd3L2RzPKA9OGxE2vzo7U8BQjgK+qAaxEu0pQ@mail.gmail.com> <1473266220.29864.17.camel@perches.com>
-In-Reply-To: <1473266220.29864.17.camel@perches.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>, Dave Young <dyoung@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Matt Fleming <matt.fleming@intel.com>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, Sep 7, 2016 at 9:37 AM, Joe Perches <joe@perches.com> wrote:
-> On Wed, 2016-09-07 at 09:23 -0700, Kees Cook wrote:
->> Fixing these kmalloc calls would be a nice thing to clean up
->> everywhere.
->
-> Dubious as gcc cannot currently optimize known small fixed size
-> allocations with alloc_array and will always perform the
-> multiplication.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 15:46:22 +0200
 
-Oh, that's sad. Is it not able to tell what the types are to basic
-overflow validation? Could we help gcc in some way?
+Adjust jump labels according to the current Linux coding style convention.
 
-> Also the style of sizeof(*ptr) is not always as clear, obvious
-> nor as easy to grep as sizeof(type).
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/bitmap.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-I've always been on the fence about this (I like being able to see
-destination:thing, sizeof(*thing) for easy scanning), but having the
-type right there can be easier for text searches.
-
--Kees
-
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 41d99fd..22fa09a 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -2187,11 +2187,11 @@ location_store(struct mddev *mddev, const char *buf, size_t len)
+ 	if (mddev->pers) {
+ 		if (!mddev->pers->quiesce) {
+ 			rv = -EBUSY;
+-			goto out;
++			goto unlock;
+ 		}
+ 		if (mddev->recovery || mddev->sync_thread) {
+ 			rv = -EBUSY;
+-			goto out;
++			goto unlock;
+ 		}
+ 	}
+ 
+@@ -2200,7 +2200,7 @@ location_store(struct mddev *mddev, const char *buf, size_t len)
+ 		/* bitmap already configured.  Only option is to clear it */
+ 		if (strncmp(buf, "none", 4) != 0) {
+ 			rv = -EBUSY;
+-			goto out;
++			goto unlock;
+ 		}
+ 		if (mddev->pers) {
+ 			mddev->pers->quiesce(mddev, 1);
+@@ -2221,23 +2221,23 @@ location_store(struct mddev *mddev, const char *buf, size_t len)
+ 		else if (strncmp(buf, "file:", 5) = 0) {
+ 			/* Not supported yet */
+ 			rv = -EINVAL;
+-			goto out;
++			goto unlock;
+ 		} else {
+ 			if (buf[0] = '+')
+ 				rv = kstrtoll(buf+1, 10, &offset);
+ 			else
+ 				rv = kstrtoll(buf, 10, &offset);
+ 			if (rv)
+-				goto out;
++				goto unlock;
+ 			if (offset = 0) {
+ 				rv = -EINVAL;
+-				goto out;
++				goto unlock;
+ 			}
+ 			if (mddev->bitmap_info.external = 0 &&
+ 			    mddev->major_version = 0 &&
+ 			    offset != mddev->bitmap_info.default_offset) {
+ 				rv = -EINVAL;
+-				goto out;
++				goto unlock;
+ 			}
+ 			mddev->bitmap_info.offset = offset;
+ 			if (mddev->pers) {
+@@ -2255,7 +2255,7 @@ location_store(struct mddev *mddev, const char *buf, size_t len)
+ 				mddev->pers->quiesce(mddev, 0);
+ 				if (rv) {
+ 					bitmap_destroy(mddev);
+-					goto out;
++					goto unlock;
+ 				}
+ 			}
+ 		}
+@@ -2268,7 +2268,7 @@ location_store(struct mddev *mddev, const char *buf, size_t len)
+ 		md_wakeup_thread(mddev->thread);
+ 	}
+ 	rv = 0;
+-out:
++unlock:
+ 	mddev_unlock(mddev);
+ 	if (rv)
+ 		return rv;
 -- 
-Kees Cook
-Nexus Security
+2.10.0
+
