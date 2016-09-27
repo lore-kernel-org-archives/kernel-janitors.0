@@ -1,38 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 05 Sep 2016 20:15:17 +0000
-Subject: [PATCH 1/7] ACPI-APEI-HEST: Fix a typo in a comment line
-Message-Id: <1abcdda6-0d79-b221-64b0-4c8a4c995576@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 16:50:06 +0000
+Subject: [PATCH 04/16] md/bitmap: Improve another size determination in bitmap_storage_alloc()
+Message-Id: <6ca5ea5b-6348-2d17-4cb5-f1c3a512995c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
-In-Reply-To: <9834b713-2c7b-ad6d-76a5-b1db40f561fc@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 5 Sep 2016 20:37:38 +0200
+Date: Tue, 27 Sep 2016 14:19:00 +0200
 
-Add a missing character to the fourth word at the beginning of this file.
+Replace the specification of a data type by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/apei/hest.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bitmap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index 20b3fcf..e170885 100644
---- a/drivers/acpi/apei/hest.c
-+++ b/drivers/acpi/apei/hest.c
-@@ -1,5 +1,5 @@
- /*
-- * APEI Hardware Error Souce Table support
-+ * APEI Hardware Error Source Table support
-  *
-  * HEST describes error sources in detail; communicates operational
-  * parameters (i.e. severity levels, masking bits, and threshold
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 9b3f723..c278865 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -791,9 +791,9 @@ static int bitmap_storage_alloc(struct bitmap_storage *store,
+ 
+ 	/* We need 4 bits per page, rounded up to a multiple
+ 	 * of sizeof(unsigned long) */
+-	store->filemap_attr = kzalloc(
+-		roundup(DIV_ROUND_UP(num_pages*4, 8), sizeof(unsigned long)),
+-		GFP_KERNEL);
++	store->filemap_attr = kzalloc(roundup(DIV_ROUND_UP(num_pages * 4, 8),
++					      sizeof(*store->filemap_attr)),
++				      GFP_KERNEL);
+ 	if (!store->filemap_attr)
+ 		return -ENOMEM;
+ 
 -- 
 2.10.0
 
