@@ -1,56 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Sep 2016 12:23:18 +0000
-Subject: [PATCH 08/17] s390/debug: Fix a jump target in debug_register_mode()
-Message-Id: <d4bbf62a-abc1-2132-3f61-9021c86e937c@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 17:02:14 +0000
+Subject: [PATCH 14/16] md/bitmap: Delete unnecessary braces in bitmap_resize()
+Message-Id: <c6726cd1-76e6-bd83-0ac2-00cd39473a8c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
-In-Reply-To: <e4359dc9-9e20-e33b-9743-9ebade853268@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Joe Perches <joe@perches.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 1 Sep 2016 19:26:16 +0200
+Date: Tue, 27 Sep 2016 17:53:07 +0200
 
-* Move an error message.
-
-* Adjust a jump target according to the current Linux coding
-  style convention.
-
-* Delete a repeated check which became unnecessary with this refactoring.
+Do not use curly brackets at one source code place
+where a single statement should be sufficient.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/s390/kernel/debug.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/md/bitmap.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
-index 1cce76a..c4a4641 100644
---- a/arch/s390/kernel/debug.c
-+++ b/arch/s390/kernel/debug.c
-@@ -700,14 +700,14 @@ debug_info_t *debug_register_mode(const char *name, int pages_per_area,
-         /* create new debug_info */
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index f8900cc..9d77f16 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -2075,9 +2075,8 @@ int bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 				unsigned long k;
  
- 	rc = debug_info_create(name, pages_per_area, nr_areas, buf_size, mode);
--	if (!rc)
--		goto out;
-+	if (!rc) {
-+		pr_err("Registering debug feature %s failed\n", name);
-+		goto unlock;
-+	}
- 	debug_register_view(rc, &debug_level_view);
-         debug_register_view(rc, &debug_flush_view);
- 	debug_register_view(rc, &debug_pages_view);
--out:
--	if (!rc)
--		pr_err("Registering debug feature %s failed\n", name);
-+ unlock:
- 	mutex_unlock(&debug_mutex);
- 	return rc;
- }
+ 				/* deallocate the page memory */
+-				for (k = 0; k < page; k++) {
++				for (k = 0; k < page; k++)
+ 					kfree(new_bp[k].map);
+-				}
+ 
+ 				/* restore some fields from old_counts */
+ 				bitmap->counts.bp = old_counts.bp;
 -- 
-2.9.3
+2.10.0
 
