@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 12:52:48 +0000
+From: Tilman Schmidt <tilman@imap.cc>
+Date: Tue, 27 Sep 2016 14:35:45 +0000
 Subject: Re: [Gigaset307x-common] ISDN-Gigaset: Release memory in gigaset_initcs() after an allocation failur
-Message-Id: <02ad1fea-33f6-a38a-fd91-16bc0c351bdd@users.sourceforge.net>
+Message-Id: <1474986945.1654610.738520185.4722B74E@webmail.messagingengine.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
@@ -13,27 +13,28 @@ References: <566ABCD9.1060404@users.sourceforge.net>
  <1474971962.1601897.738261385.73EB49E0@webmail.messagingengine.com>
  <5974a2c5-2739-cd69-6e37-04a645bc08d7@users.sourceforge.net>
  <baa46a3d-1f73-2f7e-6402-98763b159739@linux-pingi.de>
-In-Reply-To: <baa46a3d-1f73-2f7e-6402-98763b159739@linux-pingi.de>
+ <02ad1fea-33f6-a38a-fd91-16bc0c351bdd@users.sourceforge.net>
+In-Reply-To: <02ad1fea-33f6-a38a-fd91-16bc0c351bdd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <isdn@linux-pingi.de>
-Cc: Tilman Schmidt <tilman@imap.cc>, Paul Bolle <pebolle@tiscali.nl>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
->> * Is it still correct nowadays that the function "gigaset_initcs" did not
->>   call the function "kfree" after a later function call failed?
+On Tue, Sep 27, 2016, at 14:52, SF Markus Elfring wrote:
+> >> * Is it still correct nowadays that the function "gigaset_initcs" did not
+> >>   call the function "kfree" after a later function call failed?
+> > 
+> > Yes, if it is handled in another place, Paul already did show you the place.
 > 
-> Yes, if it is handled in another place, Paul already did show you the place.
+> To which source code place do you refer here?
 
-To which source code place do you refer here?
+Obviously the one Paul pointed out to you in detail in his mail dated
+Mon, 26 Sep 2016 23:13:54 +0200.
 
+HTH,
+Tilman
 
->> * Do you expect that allocated memory will be automatically reclaimed
->>   after it would return a null pointer?
->>
-> Of course not
-
-Thanks for this acknowledgement.
-
-Regards,
-Markus
+-- 
+Tilman Schmidt
+tilman@imap.cc
