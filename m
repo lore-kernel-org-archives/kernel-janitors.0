@@ -1,44 +1,23 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 06:29:19 +0000
-Subject: [PATCH 5/7] iio: Rename a jump label in iio_scan_el_ts_store()
-Message-Id: <2f1065fe-571a-a519-7b40-4ddf1552b2a6@users.sourceforge.net>
+From: Paul Mackerras <paulus@ozlabs.org>
+Date: Tue, 27 Sep 2016 05:46:52 +0000
+Subject: Re: [patch] KVM: PPC: fix a sanity check
+Message-Id: <20160927054652.gikspz75ilmluecz@oak.ozlabs.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
-In-Reply-To: <c11fbb47-1fd3-4e9e-042e-0f271cfef814@users.sourceforge.net>
+References: <20160714101545.GB18175@mwanda>
+In-Reply-To: <20160714101545.GB18175@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexander Graf <agraf@suse.com>, Bharat Bhushan <r65777@freescale.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 07:27:26 +0200
+On Thu, Jul 14, 2016 at 01:15:46PM +0300, Dan Carpenter wrote:
+> We use logical negate where bitwise negate was intended.  It means that
+> we never return -EINVAL here.
+> 
+> Fixes: ce11e48b7fdd ('KVM: PPC: E500: Add userspace debug stub support')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Adjust a jump label according to the current Linux coding style convention.
+Thanks, applied to kvm-ppc-next.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/iio/industrialio-buffer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 376101f..4b8f313 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -409,10 +409,10 @@ static ssize_t iio_scan_el_ts_store(struct device *dev,
- 	mutex_lock(&indio_dev->mlock);
- 	if (iio_buffer_is_active(indio_dev->buffer)) {
- 		ret = -EBUSY;
--		goto error_ret;
-+		goto unlock;
- 	}
- 	indio_dev->buffer->scan_timestamp = state;
--error_ret:
-+unlock:
- 	mutex_unlock(&indio_dev->mlock);
- 
- 	return ret ? ret : len;
--- 
-2.10.0
-
+Paul.
