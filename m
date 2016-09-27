@@ -1,95 +1,62 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 22 Sep 2016 05:24:45 +0000
-Subject: [PATCH 11/11] staging: dgnc: introduce find_board_by_major()
-Message-Id: <20160922052445.GA27323@SEL-JYOUN-D1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 17:03:17 +0000
+Subject: [PATCH 15/16] md/bitmap: Add spaces around three comparison operators
+Message-Id: <746915d9-5895-8d39-f50f-6889b7889bab@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lidza.louina@gmail.com
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-It was used to get a board structure with dgnc_BoardsByMajor array.
-But this driver already has the array for managing initialized board
-as dgap_board[]. It can be used for searching the board structure
-by major number.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 18:08:04 +0200
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+The script "checkpatch.pl" can point information out like the following.
+
+ERROR: spaces required around that '=' (ctx:VxV)
+
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/dgnc/dgnc_tty.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/md/bitmap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_tty.c b/drivers/staging/dgnc/dgnc_tty.c
-index ba724ab..a486a86 100644
---- a/drivers/staging/dgnc/dgnc_tty.c
-+++ b/drivers/staging/dgnc/dgnc_tty.c
-@@ -45,7 +45,6 @@
- /*
-  * internal variables
-  */
--static struct dgnc_board	*dgnc_BoardsByMajor[256];
- static unsigned char		*dgnc_TmpWriteBuf;
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 9d77f16..d029576 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -303,7 +303,7 @@ static void write_page(struct bitmap *bitmap, struct page *page, int wait)
  
- /*
-@@ -251,8 +250,6 @@ int dgnc_tty_register(struct dgnc_board *brd)
- 		goto free_print_driver;
+ 		if (wait)
+ 			wait_event(bitmap->write_wait,
+-				   atomic_read(&bitmap->pending_writes)=0);
++				   atomic_read(&bitmap->pending_writes) = 0);
  	}
+ 	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
+ 		bitmap_file_kick(bitmap);
+@@ -400,7 +400,7 @@ static int read_page(struct file *file, unsigned long index,
+ 	page->index = index;
  
--	dgnc_BoardsByMajor[brd->serial_driver->major] = brd;
--
- 	return 0;
- 
- free_print_driver:
-@@ -388,7 +385,6 @@ void dgnc_cleanup_tty(struct dgnc_board *brd)
- {
- 	int i = 0;
- 
--	dgnc_BoardsByMajor[brd->serial_driver->major] = NULL;
- 	for (i = 0; i < brd->nasync; i++) {
- 		if (brd->channels[i])
- 			dgnc_remove_tty_sysfs(brd->channels[i]->
-@@ -397,7 +393,6 @@ void dgnc_cleanup_tty(struct dgnc_board *brd)
+ 	wait_event(bitmap->write_wait,
+-		   atomic_read(&bitmap->pending_writes)=0);
++		   atomic_read(&bitmap->pending_writes) = 0);
+ 	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags)) {
+ 		ret = -EIO;
+ report_failure:
+@@ -1003,7 +1003,7 @@ void bitmap_unplug(struct bitmap *bitmap)
  	}
- 	tty_unregister_driver(brd->serial_driver);
- 
--	dgnc_BoardsByMajor[brd->print_driver->major] = NULL;
- 	for (i = 0; i < brd->nasync; i++) {
- 		if (brd->channels[i])
- 			dgnc_remove_tty_sysfs(brd->channels[i]->
-@@ -935,6 +930,24 @@ void dgnc_wakeup_writes(struct channel_t *ch)
- 	spin_unlock_irqrestore(&ch->ch_lock, flags);
- }
- 
-+struct dgnc_board *find_board_by_major(unsigned int major)
-+{
-+	int i;
-+
-+	for (i = 0; i < MAXBOARDS; i++) {
-+		struct dgnc_board *brd = dgnc_board[i];
-+
-+		if (!brd)
-+			return NULL;
-+
-+		if (major = brd->serial_driver->major ||
-+		    major = brd->print_driver->major)
-+			return brd;
-+	}
-+
-+	return NULL;
-+}
-+
- /************************************************************************
-  *
-  * TTY Entry points and helper functions
-@@ -964,7 +977,7 @@ static int dgnc_tty_open(struct tty_struct *tty, struct file *file)
- 		return -ENXIO;
- 
- 	/* Get board pointer from our array of majors we have allocated */
--	brd = dgnc_BoardsByMajor[major];
-+	brd = find_board_by_major(major);
- 	if (!brd)
- 		return -ENXIO;
+ 	if (bitmap->storage.file)
+ 		wait_event(bitmap->write_wait,
+-			   atomic_read(&bitmap->pending_writes)=0);
++			   atomic_read(&bitmap->pending_writes) = 0);
+ 	else
+ 		md_super_wait(bitmap->mddev);
  
 -- 
-1.9.1
+2.10.0
 
