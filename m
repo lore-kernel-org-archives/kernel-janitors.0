@@ -1,40 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 10:09:39 +0000
-Subject: [PATCH 27/30] ACPI-processor: Delete an unnecessary initialisation in acpi_processor_reevaluate_tsta
-Message-Id: <a6081414-e656-534c-6cf0-2e0cd8115810@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 16:54:39 +0000
+Subject: [PATCH 07/16] md/bitmap: Replace a kzalloc() call by kcalloc() in bitmap_resize()
+Message-Id: <7345990e-3c59-de68-f07b-8b68458b6cf3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 21:42:34 +0200
+Date: Tue, 27 Sep 2016 15:26:51 +0200
 
-The local variable "result" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+The script "checkpatch.pl" can point information out like the following.
+
+WARNING: Prefer kcalloc over kzalloc with multiply
+
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_throttling.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bitmap.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 994f21c..d22bcfc 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -377,7 +377,7 @@ int acpi_processor_tstate_has_changed(struct acpi_processor *pr)
- void acpi_processor_reevaluate_tstate(struct acpi_processor *pr,
- 					unsigned long action)
- {
--	int result = 0;
-+	int result;
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 2d30c83..41d99fd 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -2035,8 +2035,7 @@ int bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 		return ret;
  
- 	if (action = CPU_DEAD)
- 		/* When one CPU is offline, the T-state throttling
+ 	pages = DIV_ROUND_UP(chunks, PAGE_COUNTER_RATIO);
+-
+-	new_bp = kzalloc(pages * sizeof(*new_bp), GFP_KERNEL);
++	new_bp = kcalloc(pages, sizeof(*new_bp), GFP_KERNEL);
+ 	if (!new_bp) {
+ 		bitmap_file_unmap(&store);
+ 		return -ENOMEM;
 -- 
 2.10.0
 
