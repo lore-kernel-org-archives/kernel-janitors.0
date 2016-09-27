@@ -1,59 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:05:21 +0000
-Subject: [PATCH 19/47] block-rbd: Rename a jump label in rbd_reregister_watch()
-Message-Id: <83afc929-81ff-db63-4f08-a9c72eb8dde6@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 17:04:13 +0000
+Subject: [PATCH 16/16] md/bitmap: Delete an unwanted space in read_sb_page()
+Message-Id: <1a74d5fc-af55-e497-1d9f-fa4c79a01864@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:31:04 +0200
+Date: Tue, 27 Sep 2016 18:18:16 +0200
 
-Adjust a jump label according to the current Linux coding style convention.
+The script "checkpatch.pl" can point information out like the following.
+
+ERROR: space prohibited after that '!' (ctx:BxW)
+
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/md/bitmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 2b5f76e..97dbc1a 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3950,7 +3950,7 @@ static void rbd_reregister_watch(struct work_struct *work)
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index d029576..c6a6d59 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -154,7 +154,7 @@ static int read_sb_page(struct mddev *mddev, loff_t offset,
+ 	sector_t target;
  
- 	mutex_lock(&rbd_dev->watch_mutex);
- 	if (rbd_dev->watch_state != RBD_WATCH_STATE_ERROR)
--		goto fail_unlock;
-+		goto unlock;
+ 	rdev_for_each(rdev, mddev) {
+-		if (! test_bit(In_sync, &rdev->flags)
++		if (!test_bit(In_sync, &rdev->flags)
+ 		    || test_bit(Faulty, &rdev->flags))
+ 			continue;
  
- 	ret = __rbd_register_watch(rbd_dev);
- 	if (ret) {
-@@ -3959,7 +3959,7 @@ static void rbd_reregister_watch(struct work_struct *work)
- 			queue_delayed_work(rbd_dev->task_wq,
- 					   &rbd_dev->watch_dwork,
- 					   RBD_RETRY_DELAY);
--		goto fail_unlock;
-+		goto unlock;
- 	}
- 
- 	rbd_dev->watch_state = RBD_WATCH_STATE_REGISTERED;
-@@ -3980,8 +3980,7 @@ static void rbd_reregister_watch(struct work_struct *work)
- 	up_write(&rbd_dev->lock_rwsem);
- 	wake_requests(rbd_dev, true);
- 	return;
--
--fail_unlock:
-+ unlock:
- 	mutex_unlock(&rbd_dev->watch_mutex);
- 	up_write(&rbd_dev->lock_rwsem);
- }
 -- 
 2.10.0
 
