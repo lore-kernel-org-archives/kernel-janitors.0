@@ -1,33 +1,19 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Sep 2016 18:43:44 +0000
+From: David Miller <davem@davemloft.net>
+Date: Tue, 27 Sep 2016 00:10:37 +0000
 Subject: Re: [PATCH v2 5/5] ISDN-Gigaset: Enclose two expressions for the sizeof operator by parentheses
-Message-Id: <89e7e2a2-aaa8-9a06-0a52-ee4abadc9c35@users.sourceforge.net>
+Message-Id: <20160926.201037.1525211304203135037.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
- <e97b38b6-8c02-6733-8b57-9786bfb911a6@users.sourceforge.net>
- <063D6719AE5E284EB5DD2968C1650D6DB0109E63@AcuExch.aculab.com>
- <1474907003.2238.13.camel@perches.com>
- <f9dd122f-b0ed-0398-2a13-4d31693356fa@users.sourceforge.net>
- <1474914717.4539.8.camel@tiscali.nl>
-In-Reply-To: <1474914717.4539.8.camel@tiscali.nl>
+References: <063D6719AE5E284EB5DD2968C1650D6DB0109E63@AcuExch.aculab.com>
+        <1474907003.2238.13.camel@perches.com>
+        <f9dd122f-b0ed-0398-2a13-4d31693356fa@users.sourceforge.net>
+In-Reply-To: <f9dd122f-b0ed-0398-2a13-4d31693356fa@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Joe Perches <joe@perches.com>, David Laight <David.Laight@ACULAB.COM>, gigaset307x-common@lists.sourceforge.net, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Karsten Keil <isdn@linux-pingi.de>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
-
-> Don't resubmit one single patch of a series (within hours!)
-> as you did here.
-
-I hope that I could reduce the confusion a bit which I introduced
-with a change in the last step of my questionable update suggestion.
+To: elfring@users.sourceforge.net
+Cc: joe@perches.com, David.Laight@ACULAB.COM, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, isdn@linux-pingi.de, pebolle@tiscali.nl, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
 
 
-> I hope to have a look at your series within a few days.
-> Show some patience.
-
-Yes, of course.
-
-Regards,
-Markus
+When you need to make changes to patches that are part of a series,
+you must resubmit the entire series, not just the things that
+are changes.
