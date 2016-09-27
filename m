@@ -1,46 +1,52 @@
-From: Marcelo <marcelo.leitner@gmail.com>
-Date: Thu, 15 Sep 2016 20:19:39 +0000
-Subject: Re: [PATCH] sctp: Remove some redundant code
-Message-Id: <20160915201939.GB3200@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 16:45:51 +0000
+Subject: [PATCH 01/16] md/bitmap: Use kmalloc_array() in bitmap_storage_alloc()
+Message-Id: <c8f8d7c1-c62b-d889-9800-2da8358c1f50@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472981893-8608-1-git-send-email-christophe.jaillet@wanadoo.fr>
- <20160915173428.GA3200@localhost.localdomain>
- <28e1309f-a084-2090-ce2a-a43c013ddc8e@wanadoo.fr>
-In-Reply-To: <28e1309f-a084-2090-ce2a-a43c013ddc8e@wanadoo.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net, linux-sctp@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Sep 15, 2016 at 09:32:18PM +0200, Christophe JAILLET wrote:
-> Le 15/09/2016 =E0 19:34, Marcelo a =E9crit :
-> > On Sun, Sep 04, 2016 at 11:38:13AM +0200, Christophe JAILLET wrote:
-> > > In commit 311b21774f13 ("sctp: simplify sk_receive_queue locking"), a=
- call
-> > > to 'skb_queue_splice_tail_init()' has been made explicit. Previously =
-it was
-> > > hidden in 'sctp_skb_list_tail()'
-> > >=20
-> > > Now, the code around it looks redundant. The '_init()' part of
-> > > 'skb_queue_splice_tail_init()' should alreday do the same.
-> > >=20
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > I just noticed you didn't include netdev@ in the destinations.
-> >=20
-> > Is your patch going to be tracked somewhere else? It's not showing up in
-> > http://patchwork.ozlabs.org/project/netdev/list/?submitterf309&state=3D=
-*&q=3D&archive=3D&delegate> >=20
-> My fault, get_maintainer lists netdev@ but I missed it.
->=20
-> Should I resubmit or is it ok?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 13:01:07 +0200
 
-I guess you need to resubmit then, as it's not showing up in patchwork.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-  Marcelo
+  This issue was detected by using the Coccinelle software.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/bitmap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 13041ee..8cfb02c 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -760,9 +760,9 @@ static int bitmap_storage_alloc(struct bitmap_storage *store,
+ 
+ 	num_pages = DIV_ROUND_UP(bytes, PAGE_SIZE);
+ 	offset = slot_number * num_pages;
+-
+-	store->filemap = kmalloc(sizeof(struct page *)
+-				 * num_pages, GFP_KERNEL);
++	store->filemap = kmalloc_array(num_pages,
++				       sizeof(*store->filemap),
++				       GFP_KERNEL);
+ 	if (!store->filemap)
+ 		return -ENOMEM;
+ 
+-- 
+2.10.0
+
