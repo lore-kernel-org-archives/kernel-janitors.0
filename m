@@ -1,41 +1,58 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 20:34:26 +0000
-Subject: [PATCH 11/13] DRBD-receiver: Improve a size determination in receive_protocol()
-Message-Id: <74df31e3-5fb9-a3fb-468e-49e5b60c957e@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 16:57:29 +0000
+Subject: [PATCH 10/16] md/bitmap: Rename a jump label in bitmap_create()
+Message-Id: <b2984a33-8918-edf9-92b3-9969e45f634f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
-In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 22:02:11 +0200
+Date: Tue, 27 Sep 2016 16:06:35 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/drbd/drbd_receiver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bitmap.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 3e1315a..bbccdb8 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3697,7 +3697,7 @@ static int receive_protocol(struct drbd_connection *connection, struct packet_in
- 		}
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 5125186..1f7f1e1 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -1818,22 +1818,22 @@ struct bitmap *bitmap_create(struct mddev *mddev, int slot)
+ 			err = -EINVAL;
  	}
+ 	if (err)
+-		goto error;
++		goto free_bitmap;
  
--	new_net_conf = kmalloc(sizeof(struct net_conf), GFP_KERNEL);
-+	new_net_conf = kmalloc(sizeof(*new_net_conf), GFP_KERNEL);
- 	if (!new_net_conf) {
- 		drbd_err(connection, "Allocation of new net_conf failed\n");
- 		goto disconnect;
+ 	bitmap->daemon_lastrun = jiffies;
+ 	err = bitmap_resize(bitmap, blocks, mddev->bitmap_info.chunksize, 1);
+ 	if (err)
+-		goto error;
++		goto free_bitmap;
+ 
+ 	printk(KERN_INFO "created bitmap (%lu pages) for device %s\n",
+ 	       bitmap->counts.pages, bmname(bitmap));
+ 
+ 	err = test_bit(BITMAP_WRITE_ERROR, &bitmap->flags) ? -EIO : 0;
+ 	if (err)
+-		goto error;
++		goto free_bitmap;
+ 
+ 	return bitmap;
+- error:
++free_bitmap:
+ 	bitmap_free(bitmap);
+ 	return ERR_PTR(err);
+ }
 -- 
 2.10.0
 
