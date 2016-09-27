@@ -1,64 +1,68 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 09:51:54 +0000
-Subject: [PATCH 10/30] ACPI-processor: Rename jump labels in acpi_processor_get_performance_control()
-Message-Id: <519ba472-04d6-e82a-4572-d911d56909bb@users.sourceforge.net>
+Date: Tue, 27 Sep 2016 16:58:31 +0000
+Subject: [PATCH 11/16] md/bitmap: Rename a jump label in bitmap_init_from_disk()
+Message-Id: <c0627779-73fd-9da6-6c85-04db90481227@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
-In-Reply-To: <f9e5eb7c-54df-931c-e419-f9253e2abf20@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 6 Sep 2016 18:50:48 +0200
+Date: Tue, 27 Sep 2016 16:12:47 +0200
 
 Adjust jump labels according to the current Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/acpi/processor_perflib.c | 9 ++++-----
+ drivers/md/bitmap.c | 9 ++++-----
  1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index b7e2f51..3a48c3a 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -240,7 +240,7 @@ static int acpi_processor_get_performance_control(struct acpi_processor *pr)
- 	    || (pct->package.count != 2)) {
- 		printk(KERN_ERR PREFIX "Invalid _PCT data\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 1f7f1e1..c186e5d 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -1064,7 +1064,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 		       bmname(bitmap),
+ 		       (unsigned long) i_size_read(file->f_mapping->host),
+ 		       store->bytes);
+-		goto err;
++		goto report_failure;
  	}
  
- 	/*
-@@ -254,7 +254,7 @@ static int acpi_processor_get_performance_control(struct acpi_processor *pr)
- 	    || (obj.buffer.pointer = NULL)) {
- 		printk(KERN_ERR PREFIX "Invalid _PCT data (control_register)\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
- 	memcpy(&pr->performance->control_register, obj.buffer.pointer,
- 	       sizeof(struct acpi_pct_register));
-@@ -270,13 +270,12 @@ static int acpi_processor_get_performance_control(struct acpi_processor *pr)
- 	    || (obj.buffer.pointer = NULL)) {
- 		printk(KERN_ERR PREFIX "Invalid _PCT data (status_register)\n");
- 		result = -EFAULT;
--		goto end;
-+		goto free_buffer;
- 	}
+ 	oldindex = ~0L;
+@@ -1098,7 +1098,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 					index + node_offset, count);
  
- 	memcpy(&pr->performance->status_register, obj.buffer.pointer,
- 	       sizeof(struct acpi_pct_register));
+ 			if (ret)
+-				goto err;
++				goto report_failure;
+ 
+ 			oldindex = index;
+ 
+@@ -1116,7 +1116,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 				ret = -EIO;
+ 				if (test_bit(BITMAP_WRITE_ERROR,
+ 					     &bitmap->flags))
+-					goto err;
++					goto report_failure;
+ 			}
+ 		}
+ 		paddr = kmap_atomic(page);
+@@ -1143,8 +1143,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 	       bit_cnt, chunks);
+ 
+ 	return 0;
 -
--      end:
-+ free_buffer:
- 	kfree(buffer.pointer);
- 
- 	return result;
+- err:
++report_failure:
+ 	printk(KERN_INFO "%s: bitmap initialisation failed: %d\n",
+ 	       bmname(bitmap), ret);
+ 	return ret;
 -- 
 2.10.0
 
