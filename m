@@ -1,7 +1,7 @@
-From: Tilman Schmidt <tilman@imap.cc>
-Date: Tue, 27 Sep 2016 12:08:03 +0000
+From: isdn@linux-pingi.de
+Date: Tue, 27 Sep 2016 12:16:42 +0000
 Subject: Re: [Gigaset307x-common] ISDN-Gigaset: Release memory in gigaset_initcs() after an allocation failur
-Message-Id: <1474978083.1622422.738355481.4ACE5312@webmail.messagingengine.com>
+Message-Id: <baa46a3d-1f73-2f7e-6402-98763b159739@linux-pingi.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
@@ -16,28 +16,27 @@ In-Reply-To: <5974a2c5-2739-cd69-6e37-04a645bc08d7@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Paul Bolle <pebolle@tiscali.nl>, Karsten Keil <isdn@linux-pingi.de>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, Tilman Schmidt <tilman@imap.cc>
+Cc: Paul Bolle <pebolle@tiscali.nl>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Sep 27, 2016, at 13:32, SF Markus Elfring wrote:
-> >> I got the impression that the exception handling  was incomplete in the
-> >> implementation of the function "gigaset_initcs".
-> > 
-> > That impression is wrong. Careful reading of the code will confirm that.
+Am 27.09.2016 um 13:32 schrieb SF Markus Elfring:
+>>> I got the impression that the exception handling  was incomplete in the
+>>> implementation of the function "gigaset_initcs".
+>>
+>> That impression is wrong. Careful reading of the code will confirm that.
 > 
 > * Is it still correct nowadays that the function "gigaset_initcs" did not
 >   call the function "kfree" after a later function call failed?
+> 
 
-Wrong premise. That statement was never correct.
+Yes, if it is handled in another place, Paul already did show you the place.
+
 
 > * Do you expect that allocated memory will be automatically reclaimed
 >   after it would return a null pointer?
+> 
+Of course not
 
-No. Should I? Do you?
+Best regards
+Karsten
 
-Regards,
-Tilman
-
--- 
-Tilman Schmidt
-tilman@imap.cc
