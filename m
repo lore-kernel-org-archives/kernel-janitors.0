@@ -1,43 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Sep 2016 19:50:54 +0000
-Subject: Re: Input-gameport: Replace some printk() calls by pr_info() in joydump_connect()
-Message-Id: <fd0413a5-d181-8ee1-37bb-f47cc8a7ac45@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 15:40:14 +0000
+Subject: [PATCH 03/10] md/dm-crypt: Rename a jump label in crypt_message()
+Message-Id: <db29ff0c-8da9-e7ba-054d-a35f8b4fd2d7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d8da8333-d83a-ca61-b887-7fd7528c63a4@users.sourceforge.net>
- <f486d64d-0759-9cd6-1e4e-df723acb6fea@users.sourceforge.net>
- <1474733610.23838.2.camel@perches.com>
- <8164eb48-e3fa-fa9d-6351-f14b595a6dc3@users.sourceforge.net>
- <1474735656.23838.6.camel@perches.com>
-In-Reply-To: <1474735656.23838.6.camel@perches.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
+In-Reply-To: <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->> Should the desired output be the same when the relevant data are passed by a single function call
->> (instead of three as before)?
-> 
-> Adding a singleton for a pr_fmt #define constant string and
-> updating the printk subsystem to prepend that constant string
-> to each use of a pr_<level> at runtime would be an improvement
-> as it could reduce constant data used by the format strings.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 14:54:39 +0200
 
-Thanks for for this constructive feedback.
+Adjust a jump label according to the current Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/dm-crypt.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> That would be a _real_ improvement.
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 88a3b62..08e3de2 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2016,7 +2016,7 @@ static int crypt_message(struct dm_target *ti, unsigned argc, char **argv)
+ 	int ret = -EINVAL;
+ 
+ 	if (argc < 2)
+-		goto error;
++		goto show_warning;
+ 
+ 	if (!strcasecmp(argv[0], "key")) {
+ 		if (!test_bit(DM_CRYPT_SUSPENDED, &cc->flags)) {
+@@ -2040,8 +2040,7 @@ static int crypt_message(struct dm_target *ti, unsigned argc, char **argv)
+ 			return crypt_wipe_key(cc);
+ 		}
+ 	}
+-
+-error:
++show_warning:
+ 	DMWARN("unrecognised message received.");
+ 	return -EINVAL;
+ }
+-- 
+2.10.0
 
-This sounds interesting for me too.
-
-
-> Please try to implement something like that before submitting
-> more of these incorrect patches.
-
-Nice wish!
-
-Did any other software developer try to implement such enhanced
-logging functionality already?
-
-Regards,
-Markus
