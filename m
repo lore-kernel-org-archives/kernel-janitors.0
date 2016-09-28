@@ -1,51 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 20:32:17 +0000
-Subject: [PATCH 09/13] DRBD-receiver: Improve determination of sizes in receive_SyncParam()
-Message-Id: <334ae3df-8fff-025b-5311-af4522d9611f@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 15:47:05 +0000
+Subject: [PATCH 10/10] md/dm-crypt: Delete unnecessary variable initialisations in crypt_iv_essiv_ctr()
+Message-Id: <3ce9ee21-2c4e-2b3b-1193-93dbec6fc8d1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
-In-Reply-To: <3566e764-27b8-82e5-1f8e-c613e5a3a5b1@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
+In-Reply-To: <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Sep 2016 21:54:55 +0200
+Date: Wed, 28 Sep 2016 16:44:32 +0200
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Three local variables will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation which became unnecessary with
+a previous update step.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/drbd/drbd_receiver.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/md/dm-crypt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 2fe58d1..6fbd968 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3859,7 +3859,7 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
- 	mutex_lock(&connection->resource->conf_update);
- 	old_net_conf = peer_device->connection->net_conf;
- 	if (get_ldev(device)) {
--		new_disk_conf = kzalloc(sizeof(struct disk_conf), GFP_KERNEL);
-+		new_disk_conf = kzalloc(sizeof(*new_disk_conf), GFP_KERNEL);
- 		if (!new_disk_conf) {
- 			put_ldev(device);
- 			mutex_unlock(&connection->resource->conf_update);
-@@ -3946,7 +3946,8 @@ static int receive_SyncParam(struct drbd_connection *connection, struct packet_i
- 		}
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 53a9155..d27716e 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -361,9 +361,9 @@ static void crypt_iv_essiv_dtr(struct crypt_config *cc)
+ static int crypt_iv_essiv_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 			      const char *opts)
+ {
+-	struct crypto_cipher *essiv_tfm = NULL;
+-	struct crypto_ahash *hash_tfm = NULL;
+-	u8 *salt = NULL;
++	struct crypto_cipher *essiv_tfm;
++	struct crypto_ahash *hash_tfm;
++	u8 *salt;
+ 	int err;
  
- 		if (verify_tfm || csums_tfm) {
--			new_net_conf = kzalloc(sizeof(struct net_conf), GFP_KERNEL);
-+			new_net_conf = kzalloc(sizeof(*new_net_conf),
-+					       GFP_KERNEL);
- 			if (!new_net_conf) {
- 				drbd_err(device, "Allocation of new net_conf failed\n");
- 				goto disconnect;
+ 	if (!opts) {
 -- 
 2.10.0
 
