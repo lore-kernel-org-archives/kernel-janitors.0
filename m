@@ -1,59 +1,81 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Sep 2016 15:38:49 +0000
-Subject: [PATCH 1/5] ISDN-Gigaset: Use kmalloc_array() in two functions
-Message-Id: <4fb300f1-ff02-7983-464f-fcbca5919dac@users.sourceforge.net>
+From: Paul Bolle <pebolle@tiscali.nl>
+Date: Wed, 28 Sep 2016 11:37:15 +0000
+Subject: Re: [PATCH 1/5] ISDN-Gigaset: Use kmalloc_array() in two functions
+Message-Id: <1475062635.16606.27.camel@tiscali.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
-In-Reply-To: <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+         <6d4bbb77-914f-19b8-a1a9-2731d1158612@users.sourceforge.net>
+         <4fb300f1-ff02-7983-464f-fcbca5919dac@users.sourceforge.net>
+In-Reply-To: <4fb300f1-ff02-7983-464f-fcbca5919dac@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Paul Bolle <pebolle@tiscali.nl>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Sep 2016 22:22:04 +0200
+On Mon, 2016-09-26 at 17:38 +0200, SF Markus Elfring wrote:
+> * Multiplications for the size determination of memory allocations
+>   indicated that array data structures should be processed.
+>   Thus use the corresponding function "kmalloc_array".
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kmalloc_array".
+Was the current code incorrect? What makes kmalloc_array() better? None
+of this is obvious to me.
 
-  This issue was detected by using the Coccinelle software.
+I'm not going to change code just because some checker suggests to do
+so.
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+>   This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/isdn/gigaset/common.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+So? And which coccinelle script was actually used? I couldn't spot a
+coccinelle script doing that in the current tree.
 
-diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
-index 7c78144..cecbb6a 100644
---- a/drivers/isdn/gigaset/common.c
-+++ b/drivers/isdn/gigaset/common.c
-@@ -709,8 +709,7 @@ struct cardstate *gigaset_initcs(struct gigaset_driver *drv, int channels,
- 
- 	cs->mode = M_UNKNOWN;
- 	cs->mstate = MS_UNINITIALIZED;
--
--	cs->bcs = kmalloc(channels * sizeof(struct bc_state), GFP_KERNEL);
-+	cs->bcs = kmalloc_array(channels, sizeof(*cs->bcs), GFP_KERNEL);
- 	cs->inbuf = kmalloc(sizeof(struct inbuf_t), GFP_KERNEL);
- 	if (!cs->bcs || !cs->inbuf) {
- 		pr_err("out of memory\n");
-@@ -1089,8 +1088,7 @@ struct gigaset_driver *gigaset_initdriver(unsigned minor, unsigned minors,
- 	drv->ops = ops;
- 	drv->owner = owner;
- 	INIT_LIST_HEAD(&drv->list);
--
--	drv->cs = kmalloc(minors * sizeof *drv->cs, GFP_KERNEL);
-+	drv->cs = kmalloc_array(minors, sizeof(*drv->cs), GFP_KERNEL);
- 	if (!drv->cs)
- 		goto error;
- 
--- 
-2.10.0
+> * Replace the specification of a data structure by a pointer dereference
+>   to make the corresponding size determination a bit safer according to
+>   the Linux coding style convention.
 
+I'm not happy with you mixing this with the above, less trivial,
+change.
+
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+> --- a/drivers/isdn/gigaset/common.c
+> +++ b/drivers/isdn/gigaset/common.c
+> @@ -709,8 +709,7 @@ struct cardstate *gigaset_initcs(struct gigaset_driver *drv, int channels,
+>  
+>  	cs->mode = M_UNKNOWN;
+>  	cs->mstate = MS_UNINITIALIZED;
+> -
+
+Unrelated whitespace change.
+
+> -	cs->bcs = kmalloc(channels * sizeof(struct bc_state), GFP_KERNEL);
+> +	cs->bcs = kmalloc_array(channels, sizeof(*cs->bcs), GFP_KERNEL);
+
+For the record: "channels" is basically hardcoded in the three gigaset
+hardware drivers.
+
+>  	cs->inbuf = kmalloc(sizeof(struct inbuf_t), GFP_KERNEL);
+>  	if (!cs->bcs || !cs->inbuf) {
+>  		pr_err("out of memory\n");
+> @@ -1089,8 +1088,7 @@ struct gigaset_driver
+> *gigaset_initdriver(unsigned minor, unsigned minors,
+>  	drv->ops = ops;
+>  	drv->owner = owner;
+>  	INIT_LIST_HEAD(&drv->list);
+> -
+
+Again unrelated whitespace change.
+
+> -	drv->cs = kmalloc(minors * sizeof *drv->cs, GFP_KERNEL);
+> +	drv->cs = kmalloc_array(minors, sizeof(*drv->cs), GFP_KERNEL);
+
+For "minors" the same holds as for "channels", above.
+
+And you snuck in a parentheses change. That should have probably been
+merged with 5/5.
+
+>  	if (!drv->cs)
+>  		goto error;
+
+
+Paul Bolle
