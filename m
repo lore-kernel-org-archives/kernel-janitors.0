@@ -1,69 +1,20 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:59:35 +0000
-Subject: [PATCH 12/16] md/bitmap: One check less in read_page() at the end
-Message-Id: <18d73bcc-795b-8680-c82c-9a06047a8ef3@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Sep 2016 07:33:29 +0000
+Subject: Re: [PATCH 12/16] md/bitmap: One check less in read_page() at the end
+Message-Id: <20160928073329.GZ13620@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
-In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+ <18d73bcc-795b-8680-c82c-9a06047a8ef3@users.sourceforge.net>
+In-Reply-To: <18d73bcc-795b-8680-c82c-9a06047a8ef3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:30:25 +0200
+This makes the code ugly.
 
-* Adjust a jump target.
-
-* Delete a repeated check which became unnecessary with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/bitmap.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-index c186e5d..e7a7fc8 100644
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -367,7 +367,7 @@ static int read_page(struct file *file, unsigned long index,
- 	bh = alloc_page_buffers(page, 1<<inode->i_blkbits, 0);
- 	if (!bh) {
- 		ret = -ENOMEM;
--		goto out;
-+		goto report_failure;
- 	}
- 	attach_page_buffers(page, bh);
- 	block = index << (PAGE_SHIFT - inode->i_blkbits);
-@@ -379,7 +379,7 @@ static int read_page(struct file *file, unsigned long index,
- 			if (bh->b_blocknr = 0) {
- 				/* Cannot use this file! */
- 				ret = -EINVAL;
--				goto out;
-+				goto report_failure;
- 			}
- 			bh->b_bdev = inode->i_sb->s_bdev;
- 			if (count < (1<<inode->i_blkbits))
-@@ -401,14 +401,14 @@ static int read_page(struct file *file, unsigned long index,
- 
- 	wait_event(bitmap->write_wait,
- 		   atomic_read(&bitmap->pending_writes)=0);
--	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
-+	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags)) {
- 		ret = -EIO;
--out:
--	if (ret)
-+report_failure:
- 		printk(KERN_ALERT "md: bitmap read error: (%dB @ %llu): %d\n",
- 			(int)PAGE_SIZE,
- 			(unsigned long long)index << PAGE_SHIFT,
- 			ret);
-+	}
- 	return ret;
- }
- 
--- 
-2.10.0
+regards,
+dan carpenter
 
