@@ -1,132 +1,61 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 08 Sep 2016 00:59:06 +0000
-Subject: [PATCH] [media] usb: constify snd_pcm_ops structures
-Message-Id: <1473296346-26327-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 15:46:03 +0000
+Subject: [PATCH 09/10] md/dm-crypt: Two checks and one function call less in crypt_iv_essiv_ctr() after error
+Message-Id: <5d9795a8-a7ee-915c-ac83-f61100e9e639@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
+In-Reply-To: <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for snd_pcm_ops structures that are only stored in the ops field of a
-snd_soc_platform_driver structure or passed as the third argument to
-snd_pcm_set_ops.  The corresponding field or parameter is declared const,
-so snd_pcm_ops structures that have this property can be declared as const
-also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 16:38:37 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The kfree() function was called in one case by the crypt_iv_essiv_ctr()
+function during error handling even if the passed variable "salt"
+contained a null pointer.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_pcm_ops i@p = { ... };
+* Adjust a jump target according to the Linux coding style convention.
 
-@ok1@
-identifier r.i;
-struct snd_soc_platform_driver e;
-position p;
-@@
-e.ops = &i@p;
+* Delete this function call and a condition check which became unnecessary
+  with this refactoring.
 
-@ok2@
-identifier r.i;
-expression e1, e2;
-position p;
-@@
-snd_pcm_set_ops(e1, e2, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_pcm_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_pcm_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/cx231xx/cx231xx-audio.c |    2 +-
- drivers/media/usb/em28xx/em28xx-audio.c   |    2 +-
- drivers/media/usb/go7007/snd-go7007.c     |    2 +-
- drivers/media/usb/tm6000/tm6000-alsa.c    |    2 +-
- drivers/media/usb/usbtv/usbtv-audio.c     |    2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/md/dm-crypt.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/usb/em28xx/em28xx-audio.c b/drivers/media/usb/em28xx/em28xx-audio.c
-index 78f3687..e11fe46 100644
---- a/drivers/media/usb/em28xx/em28xx-audio.c
-+++ b/drivers/media/usb/em28xx/em28xx-audio.c
-@@ -695,7 +695,7 @@ static int em28xx_cvol_new(struct snd_card *card, struct em28xx *dev,
- /*
-  * register/unregister code and data
-  */
--static struct snd_pcm_ops snd_em28xx_pcm_capture = {
-+static const struct snd_pcm_ops snd_em28xx_pcm_capture = {
- 	.open      = snd_em28xx_capture_open,
- 	.close     = snd_em28xx_pcm_close,
- 	.ioctl     = snd_pcm_lib_ioctl,
-diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
-index d22d7d5..070871f 100644
---- a/drivers/media/usb/go7007/snd-go7007.c
-+++ b/drivers/media/usb/go7007/snd-go7007.c
-@@ -198,7 +198,7 @@ static struct page *go7007_snd_pcm_page(struct snd_pcm_substream *substream,
- 	return vmalloc_to_page(substream->runtime->dma_area + offset);
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 47f6265..53a9155 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -382,7 +382,7 @@ static int crypt_iv_essiv_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 	if (!salt) {
+ 		ti->error = "Error kmallocing salt storage in ESSIV";
+ 		err = -ENOMEM;
+-		goto bad;
++		goto free_hash;
+ 	}
+ 
+ 	cc->iv_gen_private.essiv.salt = salt;
+@@ -397,11 +397,8 @@ static int crypt_iv_essiv_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 	cc->iv_private = essiv_tfm;
+ 
+ 	return 0;
+-
+-bad:
+-	if (hash_tfm && !IS_ERR(hash_tfm))
+-		crypto_free_ahash(hash_tfm);
+-	kfree(salt);
++free_hash:
++	crypto_free_ahash(hash_tfm);
+ 	return err;
  }
  
--static struct snd_pcm_ops go7007_snd_capture_ops = {
-+static const struct snd_pcm_ops go7007_snd_capture_ops = {
- 	.open		= go7007_snd_capture_open,
- 	.close		= go7007_snd_capture_close,
- 	.ioctl		= snd_pcm_lib_ioctl,
-diff --git a/drivers/media/usb/cx231xx/cx231xx-audio.c b/drivers/media/usb/cx231xx/cx231xx-audio.c
-index 4cd5fa9..8263c4b 100644
---- a/drivers/media/usb/cx231xx/cx231xx-audio.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-audio.c
-@@ -635,7 +635,7 @@ static struct page *snd_pcm_get_vmalloc_page(struct snd_pcm_substream *subs,
- 	return vmalloc_to_page(pageptr);
- }
- 
--static struct snd_pcm_ops snd_cx231xx_pcm_capture = {
-+static const struct snd_pcm_ops snd_cx231xx_pcm_capture = {
- 	.open = snd_cx231xx_capture_open,
- 	.close = snd_cx231xx_pcm_close,
- 	.ioctl = snd_pcm_lib_ioctl,
-diff --git a/drivers/media/usb/usbtv/usbtv-audio.c b/drivers/media/usb/usbtv/usbtv-audio.c
-index 1965ff1..9db31db 100644
---- a/drivers/media/usb/usbtv/usbtv-audio.c
-+++ b/drivers/media/usb/usbtv/usbtv-audio.c
-@@ -332,7 +332,7 @@ static snd_pcm_uframes_t snd_usbtv_pointer(struct snd_pcm_substream *substream)
- 	return chip->snd_buffer_pos;
- }
- 
--static struct snd_pcm_ops snd_usbtv_pcm_ops = {
-+static const struct snd_pcm_ops snd_usbtv_pcm_ops = {
- 	.open = snd_usbtv_pcm_open,
- 	.close = snd_usbtv_pcm_close,
- 	.ioctl = snd_pcm_lib_ioctl,
-diff --git a/drivers/media/usb/tm6000/tm6000-alsa.c b/drivers/media/usb/tm6000/tm6000-alsa.c
-index e21c7aa..f16fbd1 100644
---- a/drivers/media/usb/tm6000/tm6000-alsa.c
-+++ b/drivers/media/usb/tm6000/tm6000-alsa.c
-@@ -388,7 +388,7 @@ static struct page *snd_pcm_get_vmalloc_page(struct snd_pcm_substream *subs,
- /*
-  * operators
-  */
--static struct snd_pcm_ops snd_tm6000_pcm_ops = {
-+static const struct snd_pcm_ops snd_tm6000_pcm_ops = {
- 	.open = snd_tm6000_pcm_open,
- 	.close = snd_tm6000_close,
- 	.ioctl = snd_pcm_lib_ioctl,
+-- 
+2.10.0
 
