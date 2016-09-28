@@ -1,58 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:24:03 +0000
-Subject: [PATCH 35/47] block-rbd: Rename jump labels in rbd_osd_req_create_copyup()
-Message-Id: <ae34f0e7-4fd8-f776-8957-0a8444504916@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 15:45:10 +0000
+Subject: [PATCH 08/10] md/dm-crypt: Return directly after a failed crypto_alloc_ahash() in crypt_iv_essiv_ctr
+Message-Id: <717a9850-4dcf-d6b3-838e-a84f91ac8e7d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
+In-Reply-To: <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:53:26 +0200
+Date: Wed, 28 Sep 2016 15:55:47 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Return directly after a call of the function "crypto_alloc_ahash"
+failed here.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/md/dm-crypt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index c349975..f779ff3 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -2046,7 +2046,7 @@ rbd_osd_req_create_copyup(struct rbd_obj_request *obj_request)
- 	osd_req = ceph_osdc_alloc_request(osdc, snapc, num_osd_ops,
- 						false, GFP_NOIO);
- 	if (!osd_req)
--		goto fail;
-+		goto put_request;
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index c457b5e..47f6265 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -375,8 +375,7 @@ static int crypt_iv_essiv_ctr(struct crypt_config *cc, struct dm_target *ti,
+ 	hash_tfm = crypto_alloc_ahash(opts, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(hash_tfm)) {
+ 		ti->error = "Error initializing ESSIV hash";
+-		err = PTR_ERR(hash_tfm);
+-		goto bad;
++		return PTR_ERR(hash_tfm);
+ 	}
  
- 	osd_req->r_flags = CEPH_OSD_FLAG_WRITE | CEPH_OSD_FLAG_ONDISK;
- 	osd_req->r_callback = rbd_osd_req_callback;
-@@ -2055,14 +2055,13 @@ rbd_osd_req_create_copyup(struct rbd_obj_request *obj_request)
- 	osd_req->r_base_oloc.pool = rbd_dev->layout.pool_id;
- 	if (ceph_oid_aprintf(&osd_req->r_base_oid, GFP_NOIO, "%s",
- 			     obj_request->object_name))
--		goto fail;
-+		goto put_request;
- 
- 	if (ceph_osdc_alloc_messages(osd_req, GFP_NOIO))
--		goto fail;
-+		goto put_request;
- 
- 	return osd_req;
--
--fail:
-+ put_request:
- 	ceph_osdc_put_request(osd_req);
- 	return NULL;
- }
+ 	salt = kzalloc(crypto_ahash_digestsize(hash_tfm), GFP_KERNEL);
 -- 
 2.10.0
 
