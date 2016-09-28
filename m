@@ -1,45 +1,37 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Date: Thu, 29 Sep 2016 21:42:45 +0000
-Subject: Re: [PATCH 01/10] dm snapshot: Use kmalloc_array() in init_origin_hash()
-Message-Id: <1475185365.31297.50.camel@tiscali.nl>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 15:34:01 +0000
+Subject: [PATCH 00/10] md/dm-crypt: Fine-tuning for five function implementations
+Message-Id: <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-         <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
-         <3861d349-48fd-162b-a749-83e007f70b41@users.sourceforge.net>
-         <1475142864.31297.5.camel@tiscali.nl> <1475143376.1946.2.camel@perches.com>
-         <1475147577.31297.11.camel@tiscali.nl>
-         <1475149503.31297.14.camel@tiscali.nl>
-         <1475161270.2027.5.camel@perches.com>
-         <1475178181.31297.21.camel@tiscali.nl>
-         <1475180693.1954.1.camel@perches.com>
-         <1475181593.31297.25.camel@tiscali.nl>
-         <1475182586.1954.3.camel@perches.com>
-         <1475183693.31297.36.camel@tiscali.nl>
-         <1475184082.1954.5.camel@perches.com>
-In-Reply-To: <1475184082.1954.5.camel@perches.com>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, 2016-09-29 at 14:21 -0700, Joe Perches wrote:
-> > > It doesn't matter match either way to me.
-> > Why does this stop you fixing an apparently wrong checkpatch rule,
-> > crude as parts of it are (ie, uppercase identifier must be a
-> > constant)?
-> 
-> It doesn't.  It just doesn't matter much (match) to me.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 17:25:17 +0200
 
-Joe, please.
+Some update suggestions were taken into account
+from static source code analysis.
 
-I've recently ping-ponged with the kernel's "resident wrong bot of the
-day" over this very rule (kmalloc_array() is safer than kmalloc(), so
-change your driver now!). Could we just give wrong bots a bit less
-ammunition whenever that's feasible?
+Markus Elfring (10):
+  Use kcalloc() in crypt_alloc_tfms()
+  Reduce the scope for a variable in crypt_alloc_tfms()
+  Rename a jump label in crypt_message()
+  Delete an unnecessary variable initialisation in crypt_message()
+  Rename a jump label in crypt_set_key()
+  Delete an unnecessary variable initialisation in crypt_set_key()
+  Rename a jump label in crypt_iv_tcw_whitening()
+  Return directly after a failed crypto_alloc_ahash() in crypt_iv_essiv_ctr()
+  Two checks and one function call less in crypt_iv_essiv_ctr() after error detection
+  Delete unnecessary variable initialisations in crypt_iv_essiv_ctr()
 
-Even if you don't care about my ping-pong experiences: this checkpatch
-test is broken, please just fix it!
+ drivers/md/dm-crypt.c | 51 ++++++++++++++++++++++-----------------------------
+ 1 file changed, 22 insertions(+), 29 deletions(-)
 
+-- 
+2.10.0
 
-Paul Bolle
