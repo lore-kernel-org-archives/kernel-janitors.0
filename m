@@ -1,143 +1,63 @@
-From: Clemens Ladisch <clemens@ladisch.de>
-Date: Thu, 08 Sep 2016 06:54:20 +0000
-Subject: Re: [alsa-devel] [PATCH] ALSA: usb: constify snd_pcm_ops structures
-Message-Id: <237732c1-fc0b-e379-fff1-6d0a4aa35e7f@ladisch.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 29 Sep 2016 09:07:47 +0000
+Subject: [PATCH 01/10] dm snapshot: Use kmalloc_array() in init_origin_hash()
+Message-Id: <3861d349-48fd-162b-a749-83e007f70b41@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1473296462-26377-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473296462-26377-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Julia Lawall wrote:
-> Check for snd_pcm_ops structures that are only stored in the ops field of a
-> snd_soc_platform_driver structure or passed as the third argument to
-> snd_pcm_set_ops.  The corresponding field or parameter is declared const,
-> so snd_pcm_ops structures that have this property can be declared as const
-> also.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct snd_pcm_ops i@p = { ... };
->
-> @ok1@
-> identifier r.i;
-> struct snd_soc_platform_driver e;
-> position p;
-> @@
-> e.ops = &i@p;
->
-> @ok2@
-> identifier r.i;
-> expression e1, e2;
-> position p;
-> @@
-> snd_pcm_set_ops(e1, e2, &i@p)
->
-> @bad@
-> position p != {r.p,ok1.p,ok2.p};
-> identifier r.i;
-> struct snd_pcm_ops e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct snd_pcm_ops i = { ... };
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 28 Sep 2016 22:20:08 +0200
 
-Acked-by: Clemens Ladisch <clemens@ladisch.de>
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-> ---
->  sound/usb/6fire/pcm.c           |    2 +-
->  sound/usb/caiaq/audio.c         |    2 +-
->  sound/usb/hiface/pcm.c          |    2 +-
->  sound/usb/misc/ua101.c          |    4 ++--
->  sound/usb/usx2y/usx2yhwdeppcm.c |    2 +-
->  5 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/sound/usb/6fire/pcm.c b/sound/usb/6fire/pcm.c
-> index 36f4115..224a6a5 100644
-> --- a/sound/usb/6fire/pcm.c
-> +++ b/sound/usb/6fire/pcm.c
-> @@ -555,7 +555,7 @@ static snd_pcm_uframes_t usb6fire_pcm_pointer(
->  	return ret;
->  }
->
-> -static struct snd_pcm_ops pcm_ops = {
-> +static const struct snd_pcm_ops pcm_ops = {
->  	.open = usb6fire_pcm_open,
->  	.close = usb6fire_pcm_close,
->  	.ioctl = snd_pcm_lib_ioctl,
-> diff --git a/sound/usb/hiface/pcm.c b/sound/usb/hiface/pcm.c
-> index 2c44139..23e66ed 100644
-> --- a/sound/usb/hiface/pcm.c
-> +++ b/sound/usb/hiface/pcm.c
-> @@ -511,7 +511,7 @@ static snd_pcm_uframes_t hiface_pcm_pointer(struct snd_pcm_substream *alsa_sub)
->  	return bytes_to_frames(alsa_sub->runtime, dma_offset);
->  }
->
-> -static struct snd_pcm_ops pcm_ops = {
-> +static const struct snd_pcm_ops pcm_ops = {
->  	.open = hiface_pcm_open,
->  	.close = hiface_pcm_close,
->  	.ioctl = snd_pcm_lib_ioctl,
-> diff --git a/sound/usb/usx2y/usx2yhwdeppcm.c b/sound/usb/usx2y/usx2yhwdeppcm.c
-> index 90766a9..1f28cb2a 100644
-> --- a/sound/usb/usx2y/usx2yhwdeppcm.c
-> +++ b/sound/usb/usx2y/usx2yhwdeppcm.c
-> @@ -587,7 +587,7 @@ static int snd_usX2Y_usbpcm_close(struct snd_pcm_substream *substream)
->  }
->
->
-> -static struct snd_pcm_ops snd_usX2Y_usbpcm_ops > +static const struct snd_pcm_ops snd_usX2Y_usbpcm_ops >  {
->  	.open =		snd_usX2Y_usbpcm_open,
->  	.close =	snd_usX2Y_usbpcm_close,
-> diff --git a/sound/usb/misc/ua101.c b/sound/usb/misc/ua101.c
-> index c19a5dd..71a0e9e 100644
-> --- a/sound/usb/misc/ua101.c
-> +++ b/sound/usb/misc/ua101.c
-> @@ -890,7 +890,7 @@ static snd_pcm_uframes_t playback_pcm_pointer(struct snd_pcm_substream *subs)
->  	return ua101_pcm_pointer(ua, &ua->playback);
->  }
->
-> -static struct snd_pcm_ops capture_pcm_ops = {
-> +static const struct snd_pcm_ops capture_pcm_ops = {
->  	.open = capture_pcm_open,
->  	.close = capture_pcm_close,
->  	.ioctl = snd_pcm_lib_ioctl,
-> @@ -903,7 +903,7 @@ static struct snd_pcm_ops capture_pcm_ops = {
->  	.mmap = snd_pcm_lib_mmap_vmalloc,
->  };
->
-> -static struct snd_pcm_ops playback_pcm_ops = {
-> +static const struct snd_pcm_ops playback_pcm_ops = {
->  	.open = playback_pcm_open,
->  	.close = playback_pcm_close,
->  	.ioctl = snd_pcm_lib_ioctl,
-> diff --git a/sound/usb/caiaq/audio.c b/sound/usb/caiaq/audio.c
-> index 8f66ba7..af5ad84 100644
-> --- a/sound/usb/caiaq/audio.c
-> +++ b/sound/usb/caiaq/audio.c
-> @@ -338,7 +338,7 @@ unlock:
->  }
->
->  /* operators for both playback and capture */
-> -static struct snd_pcm_ops snd_usb_caiaq_ops = {
-> +static const struct snd_pcm_ops snd_usb_caiaq_ops = {
->  	.open =		snd_usb_caiaq_substream_open,
->  	.close =	snd_usb_caiaq_substream_close,
->  	.ioctl =	snd_pcm_lib_ioctl,
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/dm-snap.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index c65feea..f262f7e 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -326,8 +326,9 @@ static int init_origin_hash(void)
+ {
+ 	int i;
+ 
+-	_origins = kmalloc(ORIGIN_HASH_SIZE * sizeof(struct list_head),
+-			   GFP_KERNEL);
++	_origins = kmalloc_array(ORIGIN_HASH_SIZE,
++				 sizeof(*_origins),
++				 GFP_KERNEL);
+ 	if (!_origins) {
+ 		DMERR("unable to allocate memory for _origins");
+ 		return -ENOMEM;
+@@ -335,8 +336,9 @@ static int init_origin_hash(void)
+ 	for (i = 0; i < ORIGIN_HASH_SIZE; i++)
+ 		INIT_LIST_HEAD(_origins + i);
+ 
+-	_dm_origins = kmalloc(ORIGIN_HASH_SIZE * sizeof(struct list_head),
+-			      GFP_KERNEL);
++	_dm_origins = kmalloc_array(ORIGIN_HASH_SIZE,
++				    sizeof(*_dm_origins),
++				    GFP_KERNEL);
+ 	if (!_dm_origins) {
+ 		DMERR("unable to allocate memory for _dm_origins");
+ 		kfree(_origins);
+-- 
+2.10.0
+
