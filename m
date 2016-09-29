@@ -1,135 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 16:48:40 +0000
-Subject: [PATCH 07/14] GPU-DRM-OMAP: Rename a jump label in omap_dmm_probe()
-Message-Id: <a86a5030-cddf-34c5-97c0-2e8f49fdf2c3@users.sourceforge.net>
+Date: Thu, 29 Sep 2016 09:13:14 +0000
+Subject: [PATCH 05/10] dm snapshot: Delete unnecessary variable initialisations in pending_complete()
+Message-Id: <9cb9e644-7d2e-0630-f26b-2143fc82eea6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
-In-Reply-To: <0ea38611-3d93-0ade-a1fb-f8cc2e0b8d61@users.sourceforge.net>
+ <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 21 Sep 2016 17:30:25 +0200
+Date: Thu, 29 Sep 2016 08:25:47 +0200
 
-Adjust jump labels according to the current Linux coding style convention.
+Three local variables will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ drivers/md/dm-snap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-index c6a7197..5f6f21b 100644
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -624,7 +624,7 @@ static int omap_dmm_probe(struct platform_device *dev)
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index a6b797f..7bbd3c4 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -1450,9 +1450,9 @@ static void pending_complete(void *context, int success)
+ 	struct dm_snap_pending_exception *pe = context;
+ 	struct dm_exception *e;
+ 	struct dm_snapshot *s = pe->snap;
+-	struct bio *origin_bios = NULL;
+-	struct bio *snapshot_bios = NULL;
+-	struct bio *full_bio = NULL;
++	struct bio *origin_bios;
++	struct bio *snapshot_bios;
++	struct bio *full_bio;
+ 	int error = 0;
  
- 	omap_dmm = kzalloc(sizeof(*omap_dmm), GFP_KERNEL);
- 	if (!omap_dmm)
--		goto fail;
-+		goto check_dmm_removal;
- 
- 	/* initialize lists */
- 	INIT_LIST_HEAD(&omap_dmm->alloc_head);
-@@ -648,20 +648,20 @@ static int omap_dmm_probe(struct platform_device *dev)
- 	mem = platform_get_resource(dev, IORESOURCE_MEM, 0);
- 	if (!mem) {
- 		dev_err(&dev->dev, "failed to get base address resource\n");
--		goto fail;
-+		goto check_dmm_removal;
- 	}
- 
- 	omap_dmm->base = ioremap(mem->start, SZ_2K);
- 
- 	if (!omap_dmm->base) {
- 		dev_err(&dev->dev, "failed to get dmm base address\n");
--		goto fail;
-+		goto check_dmm_removal;
- 	}
- 
- 	omap_dmm->irq = platform_get_irq(dev, 0);
- 	if (omap_dmm->irq < 0) {
- 		dev_err(&dev->dev, "failed to get IRQ resource\n");
--		goto fail;
-+		goto check_dmm_removal;
- 	}
- 
- 	omap_dmm->dev = &dev->dev;
-@@ -699,7 +699,7 @@ static int omap_dmm_probe(struct platform_device *dev)
- 		dev_err(&dev->dev, "couldn't register IRQ %d, error %d\n",
- 			omap_dmm->irq, ret);
- 		omap_dmm->irq = -1;
--		goto fail;
-+		goto check_dmm_removal;
- 	}
- 
- 	/* Enable all interrupts for each refill engine except
-@@ -714,13 +714,13 @@ static int omap_dmm_probe(struct platform_device *dev)
- 	if (!omap_dmm->dummy_page) {
- 		dev_err(&dev->dev, "could not allocate dummy page\n");
- 		ret = -ENOMEM;
--		goto fail;
-+		goto check_dmm_removal;
- 	}
- 
- 	/* set dma mask for device */
- 	ret = dma_set_coherent_mask(&dev->dev, DMA_BIT_MASK(32));
- 	if (ret)
--		goto fail;
-+		goto check_dmm_removal;
- 
- 	omap_dmm->dummy_pa = page_to_phys(omap_dmm->dummy_page);
- 
-@@ -730,7 +730,7 @@ static int omap_dmm_probe(struct platform_device *dev)
- 					   &omap_dmm->refill_pa, GFP_KERNEL);
- 	if (!omap_dmm->refill_va) {
- 		dev_err(&dev->dev, "could not allocate refill memory\n");
--		goto fail;
-+		goto check_dmm_removal;
- 	}
- 
- 	/* alloc engines */
-@@ -739,7 +739,7 @@ static int omap_dmm_probe(struct platform_device *dev)
- 				    GFP_KERNEL);
- 	if (!omap_dmm->engines) {
- 		ret = -ENOMEM;
--		goto fail;
-+		goto check_dmm_removal;
- 	}
- 
- 	for (i = 0; i < omap_dmm->num_engines; i++) {
-@@ -758,7 +758,7 @@ static int omap_dmm_probe(struct platform_device *dev)
- 				GFP_KERNEL);
- 	if (!omap_dmm->tcm) {
- 		ret = -ENOMEM;
--		goto fail;
-+		goto check_dmm_removal;
- 	}
- 
- 	/* init containers */
-@@ -772,7 +772,7 @@ static int omap_dmm_probe(struct platform_device *dev)
- 		if (!omap_dmm->tcm[i]) {
- 			dev_err(&dev->dev, "failed to allocate container\n");
- 			ret = -ENOMEM;
--			goto fail;
-+			goto check_dmm_removal;
- 		}
- 
- 		omap_dmm->tcm[i]->lut_id = i;
-@@ -812,8 +812,7 @@ static int omap_dmm_probe(struct platform_device *dev)
- 	dev_info(omap_dmm->dev, "initialized all PAT entries\n");
- 
- 	return 0;
--
--fail:
-+ check_dmm_removal:
- 	if (omap_dmm_remove(dev))
- 		dev_err(&dev->dev, "cleanup failed\n");
- 	return ret;
+ 	if (!success) {
 -- 
 2.10.0
 
