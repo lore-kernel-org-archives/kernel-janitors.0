@@ -1,78 +1,29 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Date: Thu, 01 Sep 2016 18:49:45 +0000
-Subject: Re: [PATCH 9/9] serial/arc: constify uart_ops structures
-Message-Id: <a666292c-e4a8-d6b4-6e2a-a44d8b6b9528@synopsys.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 29 Sep 2016 11:45:41 +0000
+Subject: Re: dm snapshot: Use kmalloc_array() in init_origin_hash()
+Message-Id: <80feaa7d-7845-976a-a038-15da80283df8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472752298-981-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472752298-981-10-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472752298-981-10-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+ <3861d349-48fd-162b-a749-83e007f70b41@users.sourceforge.net>
+ <1475142864.31297.5.camel@tiscali.nl>
+In-Reply-To: <1475142864.31297.5.camel@tiscali.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-snps-arc@lists.infradead.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Paolo Bonzini <pbonzini@redhat.com>
 
-On 09/01/2016 10:51 AM, Julia Lawall wrote:
-> Check for uart_ops structures that are only stored in the ops field of a
-> uart_port structure.  This field is declared const, so uart_ops structures
-> that have this property can be declared as const also.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct uart_ops i@p = { ... };
-> 
-> @ok@
-> identifier r.i;
-> struct uart_port e;
-> position p;
-> @@
-> e.ops = &i@p;
-> 
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct uart_ops e;
-> @@
-> e@i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct uart_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> We have no hope of fixing Markus' homegrown coccinelle script.
 
-Acked-by: Vineet Gupta <vgupta@synopsys.com>
+I have got an other impression. I see further possibilities
+to clarify involved communication and software development challenges
+for a few source code search patterns.
 
-Thx for making it better Julia !
--Vineet
+How do you think about to discuss the corresponding collateral evolution
+a bit more?
 
-> 
-> ---
->  drivers/tty/serial/arc_uart.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/arc_uart.c b/drivers/tty/serial/arc_uart.c
-> index 3a1de5c..5ac06fc 100644
-> --- a/drivers/tty/serial/arc_uart.c
-> +++ b/drivers/tty/serial/arc_uart.c
-> @@ -464,7 +464,7 @@ static int arc_serial_poll_getchar(struct uart_port *port)
->  }
->  #endif
->  
-> -static struct uart_ops arc_serial_pops = {
-> +static const struct uart_ops arc_serial_pops = {
->  	.tx_empty	= arc_serial_tx_empty,
->  	.set_mctrl	= arc_serial_set_mctrl,
->  	.get_mctrl	= arc_serial_get_mctrl,
-> 
+Are there any more constraints to consider?
 
+Regards,
+Markus
