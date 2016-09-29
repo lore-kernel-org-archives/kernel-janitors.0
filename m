@@ -1,40 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 16:51:15 +0000
-Subject: [PATCH 05/16] md/bitmap: Return directly after a failed bitmap_storage_alloc() in bitmap_resize()
-Message-Id: <6971c808-fc6d-0d78-c672-7c63c043485b@users.sourceforge.net>
+Date: Thu, 29 Sep 2016 09:11:23 +0000
+Subject: [PATCH 03/10] dm snapshot: Delete an unnecessary variable initialisation in snapshot_map()
+Message-Id: <5e356088-8825-790d-08bf-c928144fdf01@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
-In-Reply-To: <30938c84-20a7-0f13-bdda-a2d2109a6dac@users.sourceforge.net>
+ <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 27 Sep 2016 14:47:29 +0200
+Date: Thu, 29 Sep 2016 08:00:29 +0200
 
-Return directly after a memory allocation failed in this function
-at the beginning.
+The local variable "pe" will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/bitmap.c | 2 +-
+ drivers/md/dm-snap.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-index c278865..5092bc0 100644
---- a/drivers/md/bitmap.c
-+++ b/drivers/md/bitmap.c
-@@ -2032,7 +2032,7 @@ int bitmap_resize(struct bitmap *bitmap, sector_t blocks,
- 					   mddev_is_clustered(bitmap->mddev)
- 					   ? bitmap->cluster_slot : 0);
- 	if (ret)
--		goto err;
-+		return ret;
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index 7d81390..82b7604 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -1675,7 +1675,7 @@ static int snapshot_map(struct dm_target *ti, struct bio *bio)
+ 	struct dm_snapshot *s = ti->private;
+ 	int r = DM_MAPIO_REMAPPED;
+ 	chunk_t chunk;
+-	struct dm_snap_pending_exception *pe = NULL;
++	struct dm_snap_pending_exception *pe;
  
- 	pages = DIV_ROUND_UP(chunks, PAGE_COUNTER_RATIO);
+ 	init_tracked_chunk(bio);
  
 -- 
 2.10.0
