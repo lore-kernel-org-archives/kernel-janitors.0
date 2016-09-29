@@ -1,84 +1,80 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 19:29:15 +0000
-Subject: [PATCH 40/47] block-rbd: One function call less in rbd_dev_probe_parent() after error detection
-Message-Id: <41288740-f584-070d-125e-21a33d0255bf@users.sourceforge.net>
+Date: Thu, 29 Sep 2016 09:18:34 +0000
+Subject: [PATCH 10/10] dm snapshot: Delete five unwanted spaces behind "list_for_each_entry"
+Message-Id: <c38479bc-8a5d-587a-a244-058c44ced386@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
-In-Reply-To: <57806eb1-10ed-582e-72d0-2975e1ee967a@users.sourceforge.net>
+ <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ceph-devel@vger.kernel.org, Alex Elder <elder@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Sep 2016 20:00:08 +0200
+Date: Thu, 29 Sep 2016 10:14:32 +0200
 
-The rbd_dev_destroy() function was called in two cases by the
-rbd_dev_probe_parent() function during error handling even if
-the passed variable contained a null pointer.
+The script "checkpatch.pl" can point information out like the following.
 
-* Adjust jump targets according to the current Linux coding
-  style convention.
+WARNING: space prohibited between function name and open parenthesis '('
 
-* Delete an initialisation for the variable "parent" at the beginning
-  which became unnecessary with this refactoring.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/rbd.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/md/dm-snap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index e01df3c..a037a5d 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -5950,7 +5950,7 @@ out_err:
-  */
- static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
- {
--	struct rbd_device *parent = NULL;
-+	struct rbd_device *parent;
- 	int ret;
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index 7593986..1310652 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -366,7 +366,7 @@ static struct origin *__lookup_origin(struct block_device *origin)
+ 	struct origin *o;
  
- 	if (!rbd_dev->parent_spec)
-@@ -5959,13 +5959,13 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
- 	if (++depth > RBD_MAX_PARENT_CHAIN_LEN) {
- 		pr_info("parent chain is too long (%d)\n", depth);
- 		ret = -EINVAL;
--		goto out_err;
-+		goto unparent_device;
+ 	ol = &_origins[origin_hash(origin)];
+-	list_for_each_entry (o, ol, hash_list)
++	list_for_each_entry(o, ol, hash_list)
+ 		if (bdev_equal(o->bdev, origin))
+ 			return o;
+ 
+@@ -385,7 +385,7 @@ static struct dm_origin *__lookup_dm_origin(struct block_device *origin)
+ 	struct dm_origin *o;
+ 
+ 	ol = &_dm_origins[origin_hash(origin)];
+-	list_for_each_entry (o, ol, hash_list)
++	list_for_each_entry(o, ol, hash_list)
+ 		if (bdev_equal(o->dev->bdev, origin))
+ 			return o;
+ 
+@@ -625,7 +625,7 @@ static void dm_exception_table_exit(struct dm_exception_table *et,
+ 	for (i = 0; i < size; i++) {
+ 		slot = et->table + i;
+ 
+-		list_for_each_entry_safe (ex, next, slot, hash_list)
++		list_for_each_entry_safe(ex, next, slot, hash_list)
+ 			kmem_cache_free(mem, ex);
  	}
  
- 	parent = __rbd_dev_create(rbd_dev->rbd_client, rbd_dev->parent_spec);
- 	if (!parent) {
- 		ret = -ENOMEM;
--		goto out_err;
-+		goto unparent_device;
- 	}
+@@ -653,7 +653,7 @@ static struct dm_exception *dm_lookup_exception(struct dm_exception_table *et,
+ 	struct dm_exception *e;
  
- 	/*
-@@ -5977,15 +5977,15 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
+ 	slot = &et->table[exception_hash(et, chunk)];
+-	list_for_each_entry (e, slot, hash_list)
++	list_for_each_entry(e, slot, hash_list)
+ 		if (chunk >= e->old_chunk &&
+ 		    chunk <= e->old_chunk + dm_consecutive_chunk_count(e))
+ 			return e;
+@@ -2068,7 +2068,7 @@ static int __origin_write(struct list_head *snapshots, sector_t sector,
+ 	chunk_t chunk;
  
- 	ret = rbd_dev_image_probe(parent, depth);
- 	if (ret < 0)
--		goto out_err;
-+		goto destroy_device;
- 
- 	rbd_dev->parent = parent;
- 	atomic_set(&rbd_dev->parent_ref, 1);
- 	return 0;
--
--out_err:
--	rbd_dev_unparent(rbd_dev);
-+ destroy_device:
- 	rbd_dev_destroy(parent);
-+ unparent_device:
-+	rbd_dev_unparent(rbd_dev);
- 	return ret;
- }
- 
+ 	/* Do all the snapshots on this origin */
+-	list_for_each_entry (snap, snapshots, list) {
++	list_for_each_entry(snap, snapshots, list) {
+ 		/*
+ 		 * Don't make new exceptions in a merging snapshot
+ 		 * because it has effectively been deleted
 -- 
 2.10.0
 
