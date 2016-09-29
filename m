@@ -1,87 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 01 Sep 2016 22:13:09 +0000
-Subject: [PATCH 1/6] ALSA: cs5535audio: constify snd_pcm_ops structures
-Message-Id: <1472767994-26269-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 29 Sep 2016 09:14:19 +0000
+Subject: [PATCH 06/10] dm snapshot: Delete an unnecessary variable initialisation in snapshot_ctr()
+Message-Id: <882f19c7-7013-a0e7-6385-d6d19aa4e51b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472767994-26269-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
+In-Reply-To: <080668d9-1e1e-e208-f9ea-ff718e8070e5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaya Kumar <jayakumar.alsa@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for snd_pcm_ops structures that are only stored in the ops field of a
-snd_soc_platform_driver structure or passed as the third argument to
-snd_pcm_set_ops.  The corresponding field or parameter is declared const,
-so snd_pcm_ops structures that have this property can be declared as const
-also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 29 Sep 2016 08:38:29 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The local variable "r" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_pcm_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct snd_soc_platform_driver e;
-position p;
-@@
-e.ops = &i@p;
-
-@ok2@
-identifier r.i;
-expression e1, e2;
-position p;
-@@
-snd_pcm_set_ops(e1, e2, &i@p)
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_pcm_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_pcm_ops i = { ... };
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/cs5535audio/cs5535audio_pcm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/dm-snap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/cs5535audio/cs5535audio_pcm.c b/sound/pci/cs5535audio/cs5535audio_pcm.c
-index 27fa57d..c208c1d 100644
---- a/sound/pci/cs5535audio/cs5535audio_pcm.c
-+++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
-@@ -380,7 +380,7 @@ static int snd_cs5535audio_capture_prepare(struct snd_pcm_substream *substream)
- 				 substream->runtime->rate);
- }
- 
--static struct snd_pcm_ops snd_cs5535audio_playback_ops = {
-+static const struct snd_pcm_ops snd_cs5535audio_playback_ops = {
- 	.open =		snd_cs5535audio_playback_open,
- 	.close =	snd_cs5535audio_playback_close,
- 	.ioctl =	snd_pcm_lib_ioctl,
-@@ -391,7 +391,7 @@ static struct snd_pcm_ops snd_cs5535audio_playback_ops = {
- 	.pointer =	snd_cs5535audio_pcm_pointer,
- };
- 
--static struct snd_pcm_ops snd_cs5535audio_capture_ops = {
-+static const struct snd_pcm_ops snd_cs5535audio_capture_ops = {
- 	.open =		snd_cs5535audio_capture_open,
- 	.close =	snd_cs5535audio_capture_close,
- 	.ioctl =	snd_pcm_lib_ioctl,
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index 7bbd3c4..06b1b69 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -1102,7 +1102,7 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ {
+ 	struct dm_snapshot *s;
+ 	int i;
+-	int r = -EINVAL;
++	int r;
+ 	char *origin_path, *cow_path;
+ 	dev_t origin_dev, cow_dev;
+ 	unsigned args_used, num_flush_bios = 1;
+-- 
+2.10.0
 
