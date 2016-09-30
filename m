@@ -1,31 +1,36 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 14 Sep 2016 20:47:57 +0000
-Subject: Re: [PATCH] clk-kona-setup: Use kmalloc_array() in parent_process()
-Message-Id: <20160914204757.GX7243@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Sep 2016 10:41:01 +0000
+Subject: [bug report] i40e: Fix kernel panic on enable/disable LLDP
+Message-Id: <20160930104101.GA10918@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1fb2e894-93d3-3dbe-ca05-7e29e4c60e2a@users.sourceforge.net>
-In-Reply-To: <1fb2e894-93d3-3dbe-ca05-7e29e4c60e2a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org, Alex Elder <elder@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Matt Porter <mporter@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Vaishali Thakkar <vaishali.thakkar@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-On 09/14, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 14 Sep 2016 20:26:05 +0200
-> 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Hello Dave Ertman,
 
-Applied to clk-next
+The patch a036244c0686: "i40e: Fix kernel panic on enable/disable
+LLDP" from Aug 29, 2016, leads to the following static checker
+warning:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	drivers/net/ethernet/intel/i40e/i40e_main.c:10958 i40e_probe()
+	warn: odd binop '0x20000000 & 0x100000'
+
+drivers/net/ethernet/intel/i40e/i40e_main.c
+ 10952          pci_set_drvdata(pdev, pf);
+ 10953          pci_save_state(pdev);
+ 10954  #ifdef CONFIG_I40E_DCB
+ 10955          err = i40e_init_pf_dcb(pf);
+ 10956          if (err) {
+ 10957                  dev_info(&pdev->dev, "DCB init failed %d, disabled\n", err);
+ 10958                  pf->flags &= ~(I40E_FLAG_DCB_CAPABLE & I40E_FLAG_DCB_ENABLED);
+
+Should this be an | instead of an &?  The current code is a no-op.
+
+ 10959                  /* Continue without DCB enabled */
+ 10960          }
+ 10961  #endif /* CONFIG_I40E_DCB */
+
+regards,
+dan carpenter
