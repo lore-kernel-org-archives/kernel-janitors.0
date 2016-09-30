@@ -1,47 +1,54 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sat, 24 Sep 2016 17:54:15 +0000
-Subject: Re: [PATCH 1/2] Input-evdev: Use kmalloc_array() in evdev_handle_get_val()
-Message-Id: <CAKdAkRSXeeGdiSERdifAMwV45SsE2r56z6NcoSjVzqcZWRphAg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Sep 2016 11:44:37 +0000
+Subject: [bug report] qed*: Add support for VFs over legacy PFs
+Message-Id: <20160930114436.GA12102@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <92cc52f5-c5e1-cafe-76f2-04e4ed997735@users.sourceforge.net>
- <2a1f52e8-a502-1d4b-d9c9-e806cc6f246e@users.sourceforge.net>
-In-Reply-To: <2a1f52e8-a502-1d4b-d9c9-e806cc6f246e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-On Sat, Sep 24, 2016 at 4:08 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 24 Sep 2016 12:42:45 +0200
->
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "kmalloc_array".
->
->   This issue was detected by using the Coccinelle software.
->
-> * Replace the specification of a data type by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
->
-> * Delete the local variable "len" which became unnecessary with
->   this refactoring.
+Hello Yuval Mintz,
 
-So we have to multiply twice now, once in kmalloc_array, the second
-time in memcpy(). No, thank you.
+The patch d8c2c7e3404e: "qed*: Add support for VFs over legacy PFs"
+from Aug 22, 2016, leads to the following static checker warning:
 
-Also, please note that we do not really treat the allocated "mem" as
-an array, but rather area of memory that holds all bits that we need
-to transfer, and so I consider using kmalloc_array() actually wrong
-here.
+	drivers/net/ethernet/qlogic/qed/qed_vf.c:297 qed_vf_pf_acquire()
+	warn: should this be a bitwise op?
 
-Please do not blindly follow checkpatch and coccinelle suggestions.
-They are just that: suggestions and not hared rules.
+drivers/net/ethernet/qlogic/qed/qed_vf.c
+   289          /* Learn of the possibility of CMT */
+   290          if (IS_LEAD_HWFN(p_hwfn)) {
+   291                  if (resp->pfdev_info.capabilities & PFVF_ACQUIRE_CAP_100G) {
+   292                          DP_NOTICE(p_hwfn, "100g VF\n");
+   293                          p_hwfn->cdev->num_hwfns = 2;
+   294                  }
+   295          }
+   296  
+   297          if (!p_iov->b_pre_fp_hsi &&
+   298              ETH_HSI_VER_MINOR &&
+   299              (resp->pfdev_info.minor_fp_hsi < ETH_HSI_VER_MINOR)) {
 
-Thanks.
+It looks like this code works correctly.  I think the ETH_HSI_VER_MINOR
+check is to silence a static checker warning because otherwise we are
+occasionally comparing an unsigned with less than zero?  (Although I
+think most static checkers will still complain so maybe that's not
+true?).  Anyway, it's weird code.
 
--- 
-Dmitry
+It would probably be more clear to say "ETH_HSI_VER_MINOR > 0 &&".
+When we're talking about comparisons to zero then it's idiomatic to use
+"foo != 0" if we're talking about the number zero or strcmp() functions.
+If it's used as a bool then we would say "!foo"...
+
+   300                  DP_INFO(p_hwfn,
+   301                          "PF is using older fastpath HSI; %02x.%02x is configured\n",
+   302                          ETH_HSI_VER_MAJOR, resp->pfdev_info.minor_fp_hsi);
+   303          }
+   304  
+   305  exit:
+   306          qed_vf_pf_req_end(p_hwfn, rc);
+   307  
+   308          return rc;
+
+regards,
+dan carpenter
