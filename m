@@ -1,42 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:02:27 +0000
-Subject: [PATCH 24/34] [media] DaVinci-VPFE-Capture: Delete an unnecessary return statement in vpfe_unregiste
-Message-Id: <72ba62d0-3b17-bdf4-e1f3-3e3d4c5ddfbd@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 07:50:42 +0000
+Subject: [PATCH 7/9] md/dm-table: Adjust one function call together with a variable assignment
+Message-Id: <6bf7cb7c-13fd-f243-b34a-9efd0247a119@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+References: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
+In-Reply-To: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:10:54 +0200
+Date: Sat, 1 Oct 2016 08:53:37 +0200
 
 The script "checkpatch.pl" pointed information out like the following.
 
-WARNING: void function return statements are not generally useful
+ERROR: do not use assignment in if condition
 
-Thus remove such a statement here.
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/davinci/vpfe_capture.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/md/dm-table.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
-index e264c90..a79e1d5 100644
---- a/drivers/media/platform/davinci/vpfe_capture.c
-+++ b/drivers/media/platform/davinci/vpfe_capture.c
-@@ -281,7 +281,6 @@ void vpfe_unregister_ccdc_device(struct ccdc_hw_device *dev)
- 	mutex_lock(&ccdc_lock);
- 	ccdc_dev = NULL;
- 	mutex_unlock(&ccdc_lock);
--	return;
- }
- EXPORT_SYMBOL(vpfe_unregister_ccdc_device);
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 9b7d8b7..40dde87 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -407,7 +407,8 @@ int dm_get_device(struct dm_target *ti, const char *path, fmode_t mode,
+ 		if (!dd)
+ 			return -ENOMEM;
  
+-		if ((r = dm_get_table_device(t->md, dev, mode, &dd->dm_dev))) {
++		r = dm_get_table_device(t->md, dev, mode, &dd->dm_dev);
++		if (r) {
+ 			kfree(dd);
+ 			return r;
+ 		}
 -- 
-2.10.1
+2.10.0
 
