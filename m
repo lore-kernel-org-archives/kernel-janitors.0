@@ -1,33 +1,36 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 13 Oct 2016 16:29:37 +0000
-Subject: Re: [PATCH 01/18] [media] RedRat3: Use kcalloc() in two functions
-Message-Id: <1476376177.2164.10.camel@perches.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Oct 2016 19:46:31 +0000
+Subject: [PATCH 14/15] irqchip/metag-ext: improve function-level documentation
+Message-Id: <1475351192-27079-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-         <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
-         <21c57b39-25ac-2df1-030d-11c243a11ebc@users.sourceforge.net>
-In-Reply-To: <21c57b39-25ac-2df1-030d-11c243a11ebc@users.sourceforge.net>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: James Hogan <james.hogan@imgtec.com>
+Cc: kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-metag@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2016-10-13 at 18:18 +0200, SF Markus Elfring wrote:
-> diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-[]
-> @@ -549,7 +549,7 @@ static void redrat3_get_firmware_rev(struct redrat3_dev *rr3)
->  	int rc = 0;
->  	char *buffer;
->  
-> -	buffer = kzalloc(sizeof(char) * (RR3_FW_VERSION_LEN + 1), GFP_KERNEL);
-> +	buffer = kcalloc(RR3_FW_VERSION_LEN + 1, sizeof(*buffer), GFP_KERNEL);
->  	if (!buffer) {
->  		dev_err(rr3->dev, "Memory allocation failure\n");
->  		return;,
+Drop the variable irq which ceased to be a parameter in bd0b9ac4.
 
-Markus, please stop being _so_ mechanical and use your
-brain a little too.  By definition, sizeof(char) = 1.
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
-This _really_ should be kzalloc(RR3_FW_VERSION_LEN + 1,...)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/irqchip/irq-metag-ext.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-metag-ext.c b/drivers/irqchip/irq-metag-ext.c
+index 8c38b3d..0cdd923 100644
+--- a/drivers/irqchip/irq-metag-ext.c
++++ b/drivers/irqchip/irq-metag-ext.c
+@@ -436,7 +436,6 @@ static int meta_intc_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ 
+ /**
+  * meta_intc_irq_demux() - external irq de-multiplexer
+- * @irq:	the virtual interrupt number
+  * @desc:	the interrupt description structure for this irq
+  *
+  * The cpu receives an interrupt on TR2 when a SoC interrupt has occurred. It is
 
