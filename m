@@ -1,30 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Oct 2016 12:26:24 +0000
-Subject: [PATCH 0/4] MIPS-kernel: Fine-tuning for two function implementations
-Message-Id: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Oct 2016 19:46:28 +0000
+Subject: [PATCH 11/15] kobject: improve function-level documentation
+Message-Id: <1475351192-27079-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mips@linux-mips.org, Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Oct 2016 14:05:14 +0200
+In the first case, rename the second variable to correspond to the name
+found in the function parameter list.
 
-A few update suggestions were taken into account
-from static source code analysis.
+In the remaining cases, reorder the variables to correspond to their order
+in the parameter list.
 
-Markus Elfring (4):
-  r2-to-r6-emul: Use seq_puts() in mipsr2_stats_show()
-  proc: Use seq_putc() in show_cpuinfo()
-  proc: Replace 28 seq_printf() calls by seq_puts() in show_cpuinfo()
-  proc: Combine four seq_printf() calls into one call in show_cpuinfo()
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
- arch/mips/kernel/mips-r2-to-r6-emul.c |  7 +--
- arch/mips/kernel/proc.c               | 95 ++++++++++++++++++++---------------
- 2 files changed, 59 insertions(+), 43 deletions(-)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-2.10.1
+---
+ lib/kobject_uevent.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index f6c2c1e..9a2b811 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -56,7 +56,7 @@ struct uevent_sock {
+  * kobject_action_type - translate action string to numeric type
+  *
+  * @buf: buffer containing the action string, newline is ignored
+- * @len: length of buffer
++ * @count: length of buffer
+  * @type: pointer to the location to store the action type
+  *
+  * Returns 0 if the action string was recognized.
+@@ -154,8 +154,8 @@ static void cleanup_uevent_env(struct subprocess_info *info)
+ /**
+  * kobject_uevent_env - send an uevent with environmental data
+  *
+- * @action: action that is happening
+  * @kobj: struct kobject that the action is happening to
++ * @action: action that is happening
+  * @envp_ext: pointer to environmental data
+  *
+  * Returns 0 if kobject_uevent_env() is completed with success or the
+@@ -363,8 +363,8 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
+ /**
+  * kobject_uevent - notify userspace by sending an uevent
+  *
+- * @action: action that is happening
+  * @kobj: struct kobject that the action is happening to
++ * @action: action that is happening
+  *
+  * Returns 0 if kobject_uevent() is completed with success or the
+  * corresponding error when it fails.
 
