@@ -1,40 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Oct 2016 08:33:41 +0000
-Subject: [PATCH 03/10] scripts/basic/fixdep: Use the symbol "MAP_FAILED" in print_deps()
-Message-Id: <682bce8d-61cb-0e50-1a7e-93328e3d8c08@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 14:50:03 +0000
+Subject: [PATCH 05/15] md-cluster: Improve another size determination in recv_daemon()
+Message-Id: <2eb2819e-9477-12ec-b4a2-91207cf16fd7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
-In-Reply-To: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 27 Oct 2016 18:18:54 +0200
+Date: Sat, 1 Oct 2016 12:28:19 +0200
 
-Check the return value from a call of the function "mmap" by using
-the preprocessor symbol "MAP_FAILED".
+Replace the specification of a data structure by a variable name
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- scripts/basic/fixdep.c | 2 +-
+ drivers/md/md-cluster.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
-index c9ce3e3..0dcec29 100644
---- a/scripts/basic/fixdep.c
-+++ b/scripts/basic/fixdep.c
-@@ -417,7 +417,7 @@ static void print_deps(void)
- 		goto close_fd;
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index c81eed4..adf9555 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -617,7 +617,7 @@ static void recv_daemon(struct md_thread *thread)
  	}
- 	map = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
--	if ((long) map = -1) {
-+	if (map = MAP_FAILED) {
- 		perror("fixdep: mmap");
- 		goto close_fd;
- 	}
+ 
+ 	/* read lvb and wake up thread to process this message_lockres */
+-	memcpy(&msg, message_lockres->lksb.sb_lvbptr, sizeof(struct cluster_msg));
++	memcpy(&msg, message_lockres->lksb.sb_lvbptr, sizeof(msg));
+ 	ret = process_recvd_msg(thread->mddev, &msg);
+ 	if (ret)
+ 		goto out;
 -- 
-2.10.1
+2.10.0
 
