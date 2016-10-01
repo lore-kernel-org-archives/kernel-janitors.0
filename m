@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 14:57:28 +0000
-Subject: [PATCH 12/15] md-cluster: Rename a jump label in area_resyncing()
-Message-Id: <49a4ee61-0bbe-fa70-dba5-de1e1c08bbe0@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 14:47:16 +0000
+Subject: [PATCH 02/15] md-cluster: Improve another size determination in resync_info_update()
+Message-Id: <ad9c71fc-9b13-547c-386e-4a28ddbcf7cb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
@@ -13,35 +13,30 @@ To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <sh
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 14:38:12 +0200
+Date: Sat, 1 Oct 2016 11:37:24 +0200
 
-Adjust a jump label according to the Linux coding style convention
+Replace the specification of a data structure by a variable name
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/md-cluster.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/md-cluster.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index 7f82c6b..e1ebcc4 100644
+index 0000e3a..c28f596 100644
 --- a/drivers/md/md-cluster.c
 +++ b/drivers/md/md-cluster.c
-@@ -1085,13 +1085,13 @@ static int area_resyncing(struct mddev *mddev, int direction,
+@@ -1057,7 +1057,7 @@ static int resync_info_update(struct mddev *mddev, sector_t lo, sector_t hi)
  
- 	spin_lock_irq(&cinfo->suspend_lock);
- 	if (list_empty(&cinfo->suspend_list))
--		goto out;
-+		goto unlock;
- 	list_for_each_entry(s, &cinfo->suspend_list, list)
- 		if (hi > s->lo && lo < s->hi) {
- 			ret = 1;
- 			break;
- 		}
--out:
-+unlock:
- 	spin_unlock_irq(&cinfo->suspend_lock);
- 	return ret;
- }
+ 	/* do not send zero again, if we have sent before */
+ 	if (hi = 0) {
+-		memcpy(&ri, cinfo->bitmap_lockres->lksb.sb_lvbptr, sizeof(struct resync_info));
++		memcpy(&ri, cinfo->bitmap_lockres->lksb.sb_lvbptr, sizeof(ri));
+ 		if (le64_to_cpu(ri.hi) = 0)
+ 			return 0;
+ 	}
 -- 
 2.10.0
 
