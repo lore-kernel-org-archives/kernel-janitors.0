@@ -1,46 +1,91 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Mon, 17 Oct 2016 17:09:00 +0000
-Subject: Re: [patch] drm/vc4: Fix a couple error codes in vc4_cl_lookup_bos()
-Message-Id: <87oa2ikimr.fsf@eliezer.anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Oct 2016 19:46:25 +0000
+Subject: [PATCH 08/15] power: improve function-level documentation
+Message-Id: <1475351192-27079-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013085431.GI16198@mwanda>
-In-Reply-To: <20161013085431.GI16198@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sebastian Reichel <sre@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+In drivers/power/supply/ab8500_fg.c, fix two typos and adjust the function
+name in two cases to correspond to the names of the defined functions.
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+In drivers/power/supply/power_supply_core.c, change two variable names to
+the names of the corresponding parameters.
 
-> If the allocation fails the current code returns success.  If
-> copy_from_user() fails it returns the number of bytes remaining instead
-> of -EFAULT.
->
-> Fixes: d5b1a78a772f ("drm/vc4: Add support for drawing 3D frames.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
-Reviewed and applied to drm-vc4-next.  Thanks!
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+ drivers/power/supply/ab8500_fg.c         |    8 ++++----
+ drivers/power/supply/power_supply_core.c |    4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab8500_fg.c
+index 2199f67..c569f82 100644
+--- a/drivers/power/supply/ab8500_fg.c
++++ b/drivers/power/supply/ab8500_fg.c
+@@ -1900,7 +1900,7 @@ static void ab8500_fg_low_bat_work(struct work_struct *work)
+  * ab8500_fg_battok_calc - calculate the bit pattern corresponding
+  * to the target voltage.
+  * @di:       pointer to the ab8500_fg structure
+- * @target    target voltage
++ * @target:   target voltage
+  *
+  * Returns bit pattern closest to the target voltage
+  * valid return values are 0-14. (0-BATT_OK_MAX_NR_INCREMENTS)
+@@ -2391,7 +2391,7 @@ static void ab8500_fg_external_power_changed(struct power_supply *psy)
+ }
+ 
+ /**
+- * abab8500_fg_reinit_work() - work to reset the FG algorithm
++ * ab8500_fg_reinit_work() - work to reset the FG algorithm
+  * @work:	pointer to the work_struct structure
+  *
+  * Used to reset the current battery capacity to be able to
+@@ -2528,7 +2528,7 @@ static ssize_t charge_now_store(struct ab8500_fg *di, const char *buf,
+ };
+ 
+ /**
+- * ab8500_chargalg_sysfs_exit() - de-init of sysfs entry
++ * ab8500_fg_sysfs_exit() - de-init of sysfs entry
+  * @di:                pointer to the struct ab8500_chargalg
+  *
+  * This function removes the entry in sysfs.
+@@ -2539,7 +2539,7 @@ static void ab8500_fg_sysfs_exit(struct ab8500_fg *di)
+ }
+ 
+ /**
+- * ab8500_chargalg_sysfs_init() - init of sysfs entry
++ * ab8500_fg_sysfs_init() - init of sysfs entry
+  * @di:                pointer to the struct ab8500_chargalg
+  *
+  * This function adds an entry in sysfs.
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index a74d8ca..1e0960b 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -413,7 +413,7 @@ static int power_supply_match_device_node(struct device *dev, const void *data)
+ /**
+  * power_supply_get_by_phandle() - Search for a power supply and returns its ref
+  * @np: Pointer to device node holding phandle property
+- * @phandle_name: Name of property holding a power supply name
++ * @property: Name of property holding a power supply name
+  *
+  * If power supply was found, it increases reference count for the
+  * internal power supply's device. The user should power_supply_put()
+@@ -458,7 +458,7 @@ static void devm_power_supply_put(struct device *dev, void *res)
+  * devm_power_supply_get_by_phandle() - Resource managed version of
+  *  power_supply_get_by_phandle()
+  * @dev: Pointer to device holding phandle property
+- * @phandle_name: Name of property holding a power supply phandle
++ * @property: Name of property holding a power supply phandle
+  *
+  * Return: On success returns a reference to a power supply with
+  * matching name equals to value under @property, NULL or ERR_PTR otherwise.
 
-iQIcBAEBCgAGBQJYBQWsAAoJELXWKTbR/J7oykUQALn2psB7nSVwK4WJk8I6j2jS
-jqKJexVwwNQUFgocmK9NkIkyER/yDIuqKcVoIu6rKJJTeYs3s2ASQ5E8LVaNuld9
-sEJtpjIf/cxxyE1n7csG6j/GgW75VibOrPoyuCVXr7pljMHLo/l9jmKI0rrNIObj
-WQ9kqkQA7GUirMFezNSErpm7DADkV1LPwzhKOPSsU3JVLqpLNd9nQ+CAFj1YM5a7
-GWICvg5YfwN5/4rIDPldjggKWsIMioYVtPCU6koWc0N9k/BxJiB9cCdmKGD5W6bo
-rRl7pnCLZZZ+U9PtMmI4uLzlFIGzJMG4nxvj1R07mp0yXBXeKsABhSmg4CMoaBqg
-KhFGpexR1KmClh4lTv37wtQJHVN2uvt/kWW+18DpALSHjOCM0f4iQVqtw2btV79D
-uanz3W7LaMdBb8L2YCCR3cal6HL/fg3zOA3XNXMZSpymWMtP0IsSZuBsJi8q480s
-+Aoix37uH2RSjl+KBAhF/PeesJ4oPbRUUcd1kuSlgdNNqnrDomlCcIhN6nSzsmLk
-z5I96DLWEeY7Jq2IaeqLBJceF8Az+6AKx5+Nu6p6HBCm+WPTbCMxzjTshF0WzTda
-r7gmwN0jOylQsu0N8N07m9SQtdWZjvgOnaDZUyroXqAYi3PzkA+1SzwHkqkZgrAC
-2DwTH/ygZyyUhMtWLB3S
-=AK+j
------END PGP SIGNATURE-----
---=-=-=--
