@@ -1,35 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2016 06:15:29 +0000
-Subject: [bug report] net: thunderx: Add RGMII interface type support
-Message-Id: <20161012061529.GN12841@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 14:48:05 +0000
+Subject: [PATCH 03/15] md-cluster: Improve another size determination in join()
+Message-Id: <0b36134e-fbf9-5e35-e028-cdc13af185ff@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Sunil Goutham,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Oct 2016 11:42:47 +0200
 
-This is a semi-automatic email about new static checker warnings.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-The patch 6465859aba1e: "net: thunderx: Add RGMII interface type 
-support" from Aug 12, 2016, leads to the following Smatch complaint:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/md-cluster.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drivers/net/ethernet/cavium/thunder/thunder_xcv.c:119 xcv_setup_link()
-	 error: we previously assumed 'xcv' could be null (see line 118)
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index c28f596..7af27dd 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -823,7 +823,7 @@ static int join(struct mddev *mddev, int nodes)
+ 	int ret, ops_rv;
+ 	char str[64];
+ 
+-	cinfo = kzalloc(sizeof(struct md_cluster_info), GFP_KERNEL);
++	cinfo = kzalloc(sizeof(*cinfo), GFP_KERNEL);
+ 	if (!cinfo)
+ 		return -ENOMEM;
+ 
+-- 
+2.10.0
 
-drivers/net/ethernet/cavium/thunder/thunder_xcv.c
-   117	
-   118		if (!xcv) {
-                     ^^^
-check.
-
-   119			dev_err(&xcv->pdev->dev,
-                                 ^^^^^^^^^^^^^^
-dereference.
-
-   120				"XCV init not done, probe may have failed\n");
-   121			return;
-
-regards,
-dan carpenter
