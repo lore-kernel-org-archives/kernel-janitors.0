@@ -1,59 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 16:33:03 +0000
-Subject: [PATCH 11/18] [media] RedRat3: Delete the variable "dev" in redrat3_init_rc_dev()
-Message-Id: <8eee44d9-d8c3-c495-b3b0-0b5adfda71d5@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 14:53:10 +0000
+Subject: [PATCH 08/15] md-cluster: Improve determination of sizes in read_resync_info()
+Message-Id: <8319afa1-438c-03c7-3526-be25bc3171dd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
-In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+ <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 14:40:11 +0200
+Date: Sat, 1 Oct 2016 12:52:58 +0200
 
-Use the data structure member "dev" directly without assigning it
-to an intermediate variable.
-Thus delete the extra variable definition at the beginning.
+Replace the specification of data structures by either a pointer
+dereference or a variable name as the parameter for the operator "sizeof"
+to make the corresponding size determination a bit safer according to
+the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/rc/redrat3.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/md/md-cluster.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-index c43f43b..b23a8bb 100644
---- a/drivers/media/rc/redrat3.c
-+++ b/drivers/media/rc/redrat3.c
-@@ -854,7 +854,6 @@ static void redrat3_led_complete(struct urb *urb)
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index e965e78..0918108 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -275,10 +275,10 @@ static struct suspend_info *read_resync_info(struct mddev *mddev, struct dlm_loc
+ 	sector_t hi = 0;
  
- static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
- {
--	struct device *dev = rr3->dev;
- 	struct rc_dev *rc;
- 	int ret;
- 	u16 prod = le16_to_cpu(rr3->udev->descriptor.idProduct);
-@@ -873,7 +872,7 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
- 	rc->input_name = rr3->name;
- 	rc->input_phys = rr3->phys;
- 	usb_to_input_id(rr3->udev, &rc->input_id);
--	rc->dev.parent = dev;
-+	rc->dev.parent = rr3->dev;
- 	rc->priv = rr3;
- 	rc->driver_type = RC_DRIVER_IR_RAW;
- 	rc->allowed_protocols = RC_BIT_ALL;
-@@ -889,7 +888,7 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
- 
- 	ret = rc_register_device(rc);
- 	if (ret < 0) {
--		dev_err(dev, "remote dev registration failed\n");
-+		dev_err(rr3->dev, "remote dev registration failed\n");
- 		goto out;
- 	}
- 
+ 	dlm_lock_sync(lockres, DLM_LOCK_CR);
+-	memcpy(&ri, lockres->lksb.sb_lvbptr, sizeof(struct resync_info));
++	memcpy(&ri, lockres->lksb.sb_lvbptr, sizeof(ri));
+ 	hi = le64_to_cpu(ri.hi);
+ 	if (hi > 0) {
+-		s = kzalloc(sizeof(struct suspend_info), GFP_KERNEL);
++		s = kzalloc(sizeof(*s), GFP_KERNEL);
+ 		if (!s)
+ 			goto out;
+ 		s->hi = hi;
 -- 
-2.10.1
+2.10.0
 
