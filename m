@@ -1,39 +1,44 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:04:43 +0000
-Subject: [PATCH 26/34] [media] DaVinci-VPIF-Capture: Delete an error message for a failed memory allocation
-Message-Id: <6ecc9791-df4d-ee71-8535-535b2def961c@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Oct 2016 19:46:22 +0000
+Subject: [PATCH 05/15] dma-buf/sw_sync: improve function-level documentation
+Message-Id: <1475351192-27079-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:18:45 +0200
+Adjust the documentation to use the names that appear in the function
+parameter list.
 
-Omit an extra message for a memory allocation failure in this function.
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/platform/davinci/vpif_capture.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/dma-buf/sw_sync.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
-index fb9e850..24d1f61 100644
---- a/drivers/media/platform/davinci/vpif_capture.c
-+++ b/drivers/media/platform/davinci/vpif_capture.c
-@@ -1466,7 +1466,6 @@ static __init int vpif_probe(struct platform_device *pdev)
- 	subdev_count = vpif_obj.config->subdev_count;
- 	vpif_obj.sd = kcalloc(subdev_count, sizeof(*vpif_obj.sd), GFP_KERNEL);
- 	if (vpif_obj.sd = NULL) {
--		vpif_err("unable to allocate memory for subdevice pointers\n");
- 		err = -ENOMEM;
- 		goto vpif_unregister;
- 	}
--- 
-2.10.1
+diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
+index 62e8e6d..5d2b1b6 100644
+--- a/drivers/dma-buf/sw_sync.c
++++ b/drivers/dma-buf/sw_sync.c
+@@ -155,11 +155,11 @@ static void sync_timeline_signal(struct sync_timeline *obj, unsigned int inc)
+ 
+ /**
+  * sync_pt_create() - creates a sync pt
+- * @parent:	fence's parent sync_timeline
++ * @obj:	fence's parent sync_timeline
+  * @size:	size to allocate for this pt
+- * @inc:	value of the fence
++ * @value:	value of the fence
+  *
+- * Creates a new sync_pt as a child of @parent.  @size bytes will be
++ * Creates a new sync_pt as a child of @obj.  @size bytes will be
+  * allocated allowing for implementation specific data to be kept after
+  * the generic sync_timeline struct. Returns the sync_pt object or
+  * NULL in case of error.
 
