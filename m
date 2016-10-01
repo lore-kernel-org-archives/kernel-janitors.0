@@ -1,30 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Oct 2016 07:29:08 +0000
-Subject: [patch] perf/x86/intel: remove an inconsistent NULL check
-Message-Id: <20161014072908.GA15303@mwanda>
+From: Michal Marek <mmarek@suse.com>
+Date: Sat, 01 Oct 2016 21:03:56 +0000
+Subject: Re: [PATCH] Coccinelle: limit memdup_user transformation to GFP_KERNEL case
+Message-Id: <57F024BC.30606@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1474472919-12867-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1474472919-12867-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-Smatch complains that we don't check "event->ctx" consistently.  It's
-never NULL so we can just remove the check.
+Dne 21.9.2016 v 17:48 Julia Lawall napsal(a):
+> Memdup_user encapsulates a memory allocation with the flag GFP_KERNEL, so
+> only allow this flag in the original code.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied to kbuild.git#misc.
 
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index fc6cf21..81b321a 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -458,8 +458,8 @@ void intel_pmu_lbr_del(struct perf_event *event)
- 	if (!x86_pmu.lbr_nr)
- 		return;
- 
--	if (branch_user_callstack(cpuc->br_sel) && event->ctx &&
--					event->ctx->task_ctx_data) {
-+	if (branch_user_callstack(cpuc->br_sel) &&
-+	    event->ctx->task_ctx_data) {
- 		task_ctx = event->ctx->task_ctx_data;
- 		task_ctx->lbr_callstack_users--;
- 	}
+Thanks,
+Michal
+
