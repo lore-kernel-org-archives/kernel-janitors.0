@@ -1,52 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:00:16 +0000
-Subject: [PATCH 07/54] md/raid0: Move two misplaced braces
-Message-Id: <ee219dfd-1176-b67b-ff87-4f25a6f2cd30@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 14:49:02 +0000
+Subject: [PATCH 04/15] md-cluster: Improve another size determination in __sendmsg()
+Message-Id: <f18ffeb2-ea34-12d7-7e6e-af17cb371ed2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+ <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 14:25:01 +0200
+Date: Sat, 1 Oct 2016 12:21:48 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
-
-ERROR: that open brace { should be on the previous line
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/raid0.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/md/md-cluster.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 06cb172..9b76eae 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -222,8 +222,7 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
- 	curr_zone_end = zone->zone_end;
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index 7af27dd..c81eed4 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -706,7 +706,7 @@ static int __sendmsg(struct md_cluster_info *cinfo, struct cluster_msg *cmsg)
+ 	}
  
- 	/* now do the other zones */
--	for (i = 1; i < conf->nr_strip_zones; i++)
--	{
-+	for (i = 1; i < conf->nr_strip_zones; i++) {
- 		int j;
- 
- 		zone = conf->strip_zone + i;
-@@ -665,8 +664,7 @@ static void raid0_quiesce(struct mddev *mddev, int state)
- {
- }
- 
--static struct md_personality raid0_personality-{
-+static struct md_personality raid0_personality = {
- 	.name		= "raid0",
- 	.level		= 0,
- 	.owner		= THIS_MODULE,
+ 	memcpy(cinfo->message_lockres->lksb.sb_lvbptr, (void *)cmsg,
+-			sizeof(struct cluster_msg));
++	       sizeof(*cmsg));
+ 	/*down-convert EX to CW on Message*/
+ 	error = dlm_lock_sync(cinfo->message_lockres, DLM_LOCK_CW);
+ 	if (error) {
 -- 
-2.10.1
+2.10.0
 
