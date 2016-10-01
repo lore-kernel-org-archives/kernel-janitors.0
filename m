@@ -1,27 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 20:22:07 +0000
-Subject: [PATCH 0/2] M32R-setup: Fine-tuning for show_cpuinfo()
-Message-Id: <fef662e1-b5b4-127e-9427-a98ffb512a82@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Oct 2016 19:46:27 +0000
+Subject: [PATCH 10/15] clk: keystone: improve function-level documentation
+Message-Id: <1475351192-27079-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Toshi Kani <toshi.kani@hpe.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Santosh Shilimkar <ssantosh@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 22:15:22 +0200
+Adjust the documentation to use the actual function names.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
-Markus Elfring (2):
-  Use seq_putc()
-  Replace 16 seq_printf() calls by seq_puts()
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- arch/m32r/kernel/setup.c | 54 ++++++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 25 deletions(-)
+---
+ drivers/clk/keystone/pll.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
-2.10.1
+diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+index a26ba21..185f19c 100644
+--- a/drivers/clk/keystone/pll.c
++++ b/drivers/clk/keystone/pll.c
+@@ -154,7 +154,7 @@ static struct clk *clk_register_pll(struct device *dev,
+ }
+ 
+ /**
+- * _of_clk_init - PLL initialisation via DT
++ * _of_pll_clk_init - PLL initialisation via DT
+  * @node: device tree node for this clock
+  * @pllctrl: If true, lower 6 bits of multiplier is in pllm register of
+  *		pll controller, else it is in the control register0(bit 11-6)
+@@ -235,7 +235,7 @@ static void __init of_keystone_pll_clk_init(struct device_node *node)
+ 					of_keystone_pll_clk_init);
+ 
+ /**
+- * of_keystone_pll_main_clk_init - Main PLL initialisation DT wrapper
++ * of_keystone_main_pll_clk_init - Main PLL initialisation DT wrapper
+  * @node: device tree node for this clock
+  */
+ static void __init of_keystone_main_pll_clk_init(struct device_node *node)
 
