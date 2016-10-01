@@ -1,41 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Oct 2016 20:53:27 +0000
-Subject: [PATCH 2/3] ARM-OMAP2+: mux: Use seq_putc() in omap_mux_dbg_signal_show()
-Message-Id: <88deac82-1339-330c-3561-abd30dbaf6b1@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 04:06:26 +0000
+Subject: [PATCH] md/dm-stats: Use kmalloc_array() in parse_histogram()
+Message-Id: <5edaeddf-218f-1a98-d600-84941214db89@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
-In-Reply-To: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Oct 2016 22:24:29 +0200
+Date: Sat, 1 Oct 2016 05:55:05 +0200
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-This issue was detected by using the Coccinelle software.
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/mach-omap2/mux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-stats.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/mux.c b/arch/arm/mach-omap2/mux.c
-index 4bdfa3d..e1fa39e 100644
---- a/arch/arm/mach-omap2/mux.c
-+++ b/arch/arm/mach-omap2/mux.c
-@@ -661,7 +661,7 @@ static int omap_mux_dbg_signal_show(struct seq_file *s, void *unused)
- 			m->balls[1] ? m->balls[1] : none);
- 	seq_puts(s, "mode: ");
- 	omap_mux_decode(s, val);
--	seq_printf(s, "\n");
-+	seq_putc(s, '\n');
- 	seq_printf(s, "signals: %s | %s | %s | %s | %s | %s | %s | %s\n",
- 			m->muxnames[0] ? m->muxnames[0] : none,
- 			m->muxnames[1] ? m->muxnames[1] : none,
+diff --git a/drivers/md/dm-stats.c b/drivers/md/dm-stats.c
+index 38b05f2..7b79425 100644
+--- a/drivers/md/dm-stats.c
++++ b/drivers/md/dm-stats.c
+@@ -917,7 +917,9 @@ static int parse_histogram(const char *h, unsigned *n_histogram_entries,
+ 		if (*q = ',')
+ 			(*n_histogram_entries)++;
+ 
+-	*histogram_boundaries = kmalloc(*n_histogram_entries * sizeof(unsigned long long), GFP_KERNEL);
++	*histogram_boundaries = kmalloc_array(*n_histogram_entries,
++					      sizeof(**histogram_boundaries),
++					      GFP_KERNEL);
+ 	if (!*histogram_boundaries)
+ 		return -ENOMEM;
+ 
 -- 
-2.10.1
+2.10.0
 
