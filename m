@@ -1,48 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Oct 2016 07:17:37 +0000
-Subject: re: driver core: add test of driver remove calls during probe
-Message-Id: <20161011071737.GA6433@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 14:51:04 +0000
+Subject: [PATCH 06/15] md-cluster: Rename a jump label in recv_daemon()
+Message-Id: <fefc108f-ff73-9999-8c96-1a014804117a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Rob Herring,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Oct 2016 12:36:30 +0200
 
-This is a semi-automatic email about new static checker warnings.
+Adjust a jump label according to the Linux coding style convention.
 
-The patch bea5b158ff0d: "driver core: add test of driver remove calls 
-during probe" from Aug 11, 2016, leads to the following Smatch 
-complaint:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/md-cluster.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-drivers/base/dd.c:386 really_probe()
-	 warn: variable dereferenced before check 'dev->bus' (see line 373)
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index adf9555..94835b5 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -620,7 +620,7 @@ static void recv_daemon(struct md_thread *thread)
+ 	memcpy(&msg, message_lockres->lksb.sb_lvbptr, sizeof(msg));
+ 	ret = process_recvd_msg(thread->mddev, &msg);
+ 	if (ret)
+-		goto out;
++		goto unlock;
+ 
+ 	/*release CR on ack_lockres*/
+ 	ret = dlm_unlock_sync(ack_lockres);
+@@ -634,7 +634,7 @@ static void recv_daemon(struct md_thread *thread)
+ 	ret = dlm_lock_sync(ack_lockres, DLM_LOCK_CR);
+ 	if (unlikely(ret != 0))
+ 		pr_info("lock CR on ack failed return %d\n", ret);
+-out:
++unlock:
+ 	/*release CR on message_lockres*/
+ 	ret = dlm_unlock_sync(message_lockres);
+ 	if (unlikely(ret != 0))
+-- 
+2.10.0
 
-drivers/base/dd.c
-   372	
-   373		if (dev->bus->probe) {
-                    ^^^^^^^^^^^^^^^
-Old code just dereferenced ->bus without checking.
-
-   374			ret = dev->bus->probe(dev);
-   375			if (ret)
-   376				goto probe_failed;
-   377		} else if (drv->probe) {
-   378			ret = drv->probe(dev);
-   379			if (ret)
-   380				goto probe_failed;
-   381		}
-   382	
-   383		if (test_remove) {
-   384			test_remove = false;
-   385	
-   386			if (dev->bus && dev->bus->remove)
-                            ^^^^^^^^
-So this test can probably be removed.
-
-   387				dev->bus->remove(dev);
-   388			else if (drv->remove)
-
-regards,
-dan carpenter
