@@ -1,29 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2016 06:23:26 +0000
-Subject: [patch 1/2] nbd: remove stray IRQ enable
-Message-Id: <20161012062326.GV12841@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 07:45:37 +0000
+Subject: [PATCH 3/9] md/dm-table: Delete an unnecessary variable initialisation in dm_table_register_integrit
+Message-Id: <984c0dd4-b392-cf4b-c42a-93bc859cc00b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
+In-Reply-To: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-We recently changed from spin_lock_irq() to just spin_lock().  This
-return path was overlooked and needs to be updated as well.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Oct 2016 07:25:43 +0200
 
-Fixes: 0eadf37afc25 ('nbd: allow block mq to deal with timeouts')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The local variable "template_disk" is reassigned by a statement
+at the beginning. Thus omit the explicit initialisation.
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 8c2599d..ad62964 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -164,7 +164,7 @@ static void sock_shutdown(struct nbd_device *nbd)
- 	spin_lock(&nbd->sock_lock);
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/dm-table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 73d38d0..67cc635 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1165,7 +1165,7 @@ static struct gendisk * dm_table_get_integrity_disk(struct dm_table *t)
+ static int dm_table_register_integrity(struct dm_table *t)
+ {
+ 	struct mapped_device *md = t->md;
+-	struct gendisk *template_disk = NULL;
++	struct gendisk *template_disk;
  
- 	if (!nbd->sock) {
--		spin_unlock_irq(&nbd->sock_lock);
-+		spin_unlock(&nbd->sock_lock);
- 		return;
- 	}
- 
+ 	template_disk = dm_table_get_integrity_disk(t);
+ 	if (!template_disk)
+-- 
+2.10.0
+
