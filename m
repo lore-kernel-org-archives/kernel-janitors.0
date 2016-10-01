@@ -1,41 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 14:55:10 +0000
-Subject: [PATCH 10/15] md-cluster: Delete an unnecessary variable initialisation in lockres_init()
-Message-Id: <2d9e50ba-6bf3-167d-4752-46d6b4ea47dd@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Oct 2016 19:46:21 +0000
+Subject: [PATCH 04/15] lru_cache: improve function-level documentation
+Message-Id: <1475351192-27079-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
-In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Philipp Reisner <philipp.reisner@linbit.com>
+Cc: kernel-janitors@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>, drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 13:07:52 +0200
+Use the actual function name and reorder the listed variables to correspond
+to their order in the function parameter list.
 
-The local variable "res" will be set to an appropriate pointer a bit later.
-Thus omit the explicit initialisation at the beginning.
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/md/md-cluster.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/lru_cache.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index bec8035..b91b552 100644
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -186,7 +186,7 @@ static int dlm_lock_sync_interruptible(struct dlm_lock_resource *res, int mode,
- static struct dlm_lock_resource *lockres_init(struct mddev *mddev,
- 		char *name, void (*bastfn)(void *arg, int mode), int with_lvb)
- {
--	struct dlm_lock_resource *res = NULL;
-+	struct dlm_lock_resource *res;
- 	int ret, namelen;
- 	struct md_cluster_info *cinfo = mddev->cluster_info;
+diff --git a/lib/lru_cache.c b/lib/lru_cache.c
+index 28ba40b..07d3507 100644
+--- a/lib/lru_cache.c
++++ b/lib/lru_cache.c
+@@ -639,9 +639,9 @@ void lc_set(struct lru_cache *lc, unsigned int enr, int index)
+ }
  
--- 
-2.10.0
+ /**
+- * lc_dump - Dump a complete LRU cache to seq in textual form.
+- * @lc: the lru cache to operate on
++ * lc_seq_dump_details - Dump a complete LRU cache to seq in textual form.
+  * @seq: the &struct seq_file pointer to seq_printf into
++ * @lc: the lru cache to operate on
+  * @utext: user supplied additional "heading" or other info
+  * @detail: function pointer the user may provide to dump further details
+  * of the object the lc_element is embedded in. May be NULL.
 
