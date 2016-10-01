@@ -1,81 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Oct 2016 14:55:48 +0000
-Subject: [PATCH 4/7] ASoC: qcom: storm: constify snd_soc_ops structures
-Message-Id: <1476543351-17858-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 07:41:03 +0000
+Subject: [PATCH 0/9] md/dm-table: Fine-tuning for several function implementations
+Message-Id: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrick Lai <plai@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for snd_soc_ops structures that are only stored in the ops field of a
-snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
-structures that have this property can be declared as const also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Oct 2016 09:35:43 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Some update suggestions were taken into account
+from static source code analysis.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_soc_ops i@p = { ... };
+Markus Elfring (9):
+  Use kmalloc_array() in realloc_argv()
+  Reduce the scope for a variable in dm_table_verify_integrity()
+  Delete an unnecessary variable initialisation in dm_table_register_integrity()
+  Delete an unnecessary variable initialisation in dm_split_args()
+  Move an assignment for the variable "end" in dm_split_args()
+  Combine substrings for ten messages
+  Adjust one function call together with a variable assignment
+  Delete an unwanted space in high()
+  Delete an unwanted space in dm_table_get_integrity_disk()
 
-@ok1@
-identifier r.i;
-struct snd_soc_dai_link e;
-position p;
-@@
-e.ops = &i@p;
+ drivers/md/dm-table.c | 51 ++++++++++++++++++++-------------------------------
+ 1 file changed, 20 insertions(+), 31 deletions(-)
 
-@ok2@
-identifier r.i, e;
-position p;
-@@
-struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_soc_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_soc_ops i = { ... };
-// </smpl>
-
-The effect on the layout of the .o file is shown by the following output of
-the size command, first before then after the transformation:
-
-   text    data     bss     dec     hex filename
-   1420     512       0    1932     78c sound/soc/qcom/storm.o
-   1484     456       0    1940     794 sound/soc/qcom/storm.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/soc/qcom/storm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/sound/soc/qcom/storm.c b/sound/soc/qcom/storm.c
---- a/sound/soc/qcom/storm.c
-+++ b/sound/soc/qcom/storm.c
-@@ -58,7 +58,7 @@ static int storm_ops_hw_params(struct sn
- 	return 0;
- }
- 
--static struct snd_soc_ops storm_soc_ops = {
-+static const struct snd_soc_ops storm_soc_ops = {
- 	.hw_params	= storm_ops_hw_params,
- };
- 
+-- 
+2.10.0
 
