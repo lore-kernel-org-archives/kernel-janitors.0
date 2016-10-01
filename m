@@ -1,26 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Oct 2016 12:01:37 +0000
-Subject: Re: [media] RedRat3: Move two assignments in redrat3_transmit_ir()?
-Message-Id: <c6f74b6e-5270-f8da-41e9-5257b7253442@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 14:46:01 +0000
+Subject: [PATCH 01/15] md-cluster: Use kcalloc() in lock_all_bitmaps()
+Message-Id: <8344fb76-896d-e593-dccc-f77df0900ad1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
- <c5297c05-df30-8296-a767-99791c64b5c6@users.sourceforge.net>
- <20161014081524.GF5687@mwanda>
-In-Reply-To: <20161014081524.GF5687@mwanda>
+ <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> The original code was correct.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Oct 2016 11:18:40 +0200
 
-Your view can be appropriate for this function implementation to some degree.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-I got the impression that it contains the specification of assignments
-which will happen a bit too early here.
-Is this a weakness for which software developers can care about?
+  This issue was detected by using the Coccinelle software.
 
-Regards,
-Markus
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/md-cluster.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index 2b13117..0000e3a 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -1188,9 +1188,10 @@ static int lock_all_bitmaps(struct mddev *mddev)
+ 	char str[64];
+ 	struct md_cluster_info *cinfo = mddev->cluster_info;
+ 
+-	cinfo->other_bitmap_lockres = kzalloc((mddev->bitmap_info.nodes - 1) *
+-					     sizeof(struct dlm_lock_resource *),
+-					     GFP_KERNEL);
++	cinfo->other_bitmap_lockres = kcalloc(mddev->bitmap_info.nodes - 1,
++					      sizeof(*cinfo
++						     ->other_bitmap_lockres),
++					      GFP_KERNEL);
+ 	if (!cinfo->other_bitmap_lockres) {
+ 		pr_err("md: can't alloc mem for other bitmap locks\n");
+ 		return 0;
+-- 
+2.10.0
+
