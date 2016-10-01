@@ -1,48 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2016 06:24:02 +0000
-Subject: [patch 2/2] nbd: checking for NULL vs IS_ERR
-Message-Id: <20161012062402.GW12841@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 07:43:18 +0000
+Subject: [PATCH 1/9] md/dm-table: Use kmalloc_array() in realloc_argv()
+Message-Id: <ea1578e5-c7e8-131d-a1d9-3c726afaabfa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
+In-Reply-To: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-blk_mq_alloc_request() returns error pointers on error, never NULLs.
-Same thing with blk_mq_init_queue(), and also we should set the error
-code there.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Oct 2016 06:47:16 +0200
 
-Fixes: fd8383fd88a2 ('nbd: convert to blkmq')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index ba405b5..8c2599d 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -599,8 +599,8 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
- 			return -EINVAL;
- 
- 		sreq = blk_mq_alloc_request(bdev_get_queue(bdev), WRITE, 0);
--		if (!sreq)
--			return -ENOMEM;
-+		if (IS_ERR(sreq))
-+			return PTR_ERR(sreq);
- 
- 		mutex_unlock(&nbd->tx_lock);
- 		fsync_bdev(bdev);
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index ad62964..bb5f23b 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -955,9 +955,10 @@ static int __init nbd_init(void)
- 		 * These structs are big so we dynamically allocate them.
- 		 */
- 		disk->queue = blk_mq_init_queue(&nbd_dev[i].tag_set);
--		if (!disk->queue) {
-+		if (IS_ERR(disk->queue)) {
- 			blk_mq_free_tag_set(&nbd_dev[i].tag_set);
- 			put_disk(disk);
-+			err = PTR_ERR(disk->queue);
- 			goto out;
- 		}
- 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/dm-table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 3e407a9..f6b817c 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -523,7 +523,7 @@ static char **realloc_argv(unsigned *array_size, char **old_argv)
+ 		new_size = 8;
+ 		gfp = GFP_NOIO;
+ 	}
+-	argv = kmalloc(new_size * sizeof(*argv), gfp);
++	argv = kmalloc_array(new_size, sizeof(*argv), gfp);
+ 	if (argv) {
+ 		memcpy(argv, old_argv, *array_size * sizeof(*argv));
+ 		*array_size = new_size;
+-- 
+2.10.0
+
