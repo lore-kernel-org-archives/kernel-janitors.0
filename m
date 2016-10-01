@@ -1,45 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 16:15:51 +0000
-Subject: [PATCH 00/18] [media] RedRat3: Fine-tuning for several function implementations
-Message-Id: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Oct 2016 19:46:32 +0000
+Subject: [PATCH 15/15] drm/omap: improve function-level documentation
+Message-Id: <1475351192-27079-16-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 18:06:18 +0200
+Use the names of the corresponding functions.
 
-Several update suggestions were taken into account
-from static source code analysis.
+Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
-Markus Elfring (18):
-  Use kcalloc() in two functions
-  Move two assignments in redrat3_transmit_ir()
-  Return directly after a failed kcalloc() in redrat3_transmit_ir()
-  One function call less in redrat3_transmit_ir() after error detection
-  Delete six messages for a failed memory allocation
-  Delete an unnecessary variable initialisation in redrat3_get_firmware_rev()
-  Improve another size determination in redrat3_reset()
-  Improve another size determination in redrat3_send_cmd()
-  Move a variable assignment in redrat3_dev_probe()
-  Delete an unnecessary variable initialisation in redrat3_init_rc_dev()
-  Delete the variable "dev" in redrat3_init_rc_dev()
-  Move a variable assignment in redrat3_init_rc_dev()
-  Return directly after a failed rc_allocate_device() in redrat3_init_rc_dev()
-  Rename a jump label in redrat3_init_rc_dev()
-  Delete two variables in redrat3_set_timeout()
-  Move a variable assignment in redrat3_set_timeout()
-  Adjust two checks for null pointers in redrat3_dev_probe()
-  Combine substrings for six messages
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
- drivers/media/rc/redrat3.c | 146 +++++++++++++++++++++------------------------
- 1 file changed, 67 insertions(+), 79 deletions(-)
+---
+ drivers/gpu/drm/omapdrm/omap_drv.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
-2.10.1
+diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+index e1cfba5..8d93355 100644
+--- a/drivers/gpu/drm/omapdrm/omap_drv.c
++++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+@@ -635,7 +635,7 @@ static int ioctl_gem_info(struct drm_device *dev, void *data,
+  */
+ 
+ /**
+- * load - setup chip and create an initial config
++ * dev_load - setup chip and create an initial config
+  * @dev: DRM device
+  * @flags: startup flags
+  *
+@@ -733,7 +733,7 @@ static int dev_open(struct drm_device *dev, struct drm_file *file)
+ }
+ 
+ /**
+- * lastclose - clean up after all DRM clients have exited
++ * dev_lastclose - clean up after all DRM clients have exited
+  * @dev: DRM device
+  *
+  * Take care of cleaning up after all DRM clients have exited.  In the
 
