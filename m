@@ -1,46 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 02 Oct 2016 12:03:12 +0000
-Subject: [PATCH 7/13] md/multipath: Delete two unwanted spaces behind asterisks
-Message-Id: <427b06a9-32a2-66d2-73d8-b480754010a7@users.sourceforge.net>
+Date: Sat, 01 Oct 2016 07:44:40 +0000
+Subject: [PATCH 2/9] md/dm-table: Reduce the scope for a variable in dm_table_verify_integrity()
+Message-Id: <18a48c67-962d-2e61-7d24-dc145ec90935@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
-In-Reply-To: <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
+References: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
+In-Reply-To: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Jens Axboe <axboe@fb.com>, NeilBrown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
+To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 2 Oct 2016 09:39:39 +0200
+Date: Sat, 1 Oct 2016 07:10:43 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
-
-ERROR: "foo * bar" should be "foo *bar"
+Move the definition for the variable "template_disk" into an if branch
+so that an extra initialisation can be avoided at the beginning
+by this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/multipath.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/dm-table.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/multipath.c b/drivers/md/multipath.c
-index 7e10603..cb5141f 100644
---- a/drivers/md/multipath.c
-+++ b/drivers/md/multipath.c
-@@ -106,10 +106,10 @@ static void multipath_end_request(struct bio *bio)
- 	rdev_dec_pending(rdev, conf->mddev);
- }
- 
--static void multipath_make_request(struct mddev *mddev, struct bio * bio)
-+static void multipath_make_request(struct mddev *mddev, struct bio *bio)
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index f6b817c..73d38d0 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1391,14 +1391,13 @@ int dm_calculate_queue_limits(struct dm_table *table,
+  */
+ static void dm_table_verify_integrity(struct dm_table *t)
  {
- 	struct mpconf *conf = mddev->private;
--	struct multipath_bh * mp_bh;
-+	struct multipath_bh *mp_bh;
- 	struct multipath_info *multipath;
- 
- 	if (unlikely(bio->bi_opf & REQ_PREFLUSH)) {
+-	struct gendisk *template_disk = NULL;
+-
+ 	if (t->integrity_supported) {
+ 		/*
+ 		 * Verify that the original integrity profile
+ 		 * matches all the devices in this table.
+ 		 */
+-		template_disk = dm_table_get_integrity_disk(t);
++		struct gendisk *template_disk = dm_table_get_integrity_disk(t);
++
+ 		if (template_disk &&
+ 		    blk_integrity_compare(dm_disk(t->md), template_disk) >= 0)
+ 			return;
 -- 
 2.10.0
 
