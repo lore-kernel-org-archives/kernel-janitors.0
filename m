@@ -1,44 +1,47 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 01 Oct 2016 19:46:22 +0000
-Subject: [PATCH 05/15] dma-buf/sw_sync: improve function-level documentation
-Message-Id: <1475351192-27079-6-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 01 Oct 2016 19:46:26 +0000
+Subject: [PATCH 09/15] gma500: improve function-level documentation
+Message-Id: <1475351192-27079-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Adjust the documentation to use the names that appear in the function
-parameter list.
+Delete a reference to a variable that has never been used by the function
+in the first case, and rename a variable to that of the corresponding
+parameter name in the second case.
 
 Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/dma-buf/sw_sync.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/gma500/intel_i2c.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
-index 62e8e6d..5d2b1b6 100644
---- a/drivers/dma-buf/sw_sync.c
-+++ b/drivers/dma-buf/sw_sync.c
-@@ -155,11 +155,11 @@ static void sync_timeline_signal(struct sync_timeline *obj, unsigned int inc)
+diff --git a/drivers/gpu/drm/gma500/intel_i2c.c b/drivers/gpu/drm/gma500/intel_i2c.c
+index 98a28c2..12c40f1 100644
+--- a/drivers/gpu/drm/gma500/intel_i2c.c
++++ b/drivers/gpu/drm/gma500/intel_i2c.c
+@@ -95,7 +95,6 @@ static void set_data(void *data, int state_high)
+ /**
+  * psb_intel_i2c_create - instantiate an Intel i2c bus using the specified GPIO reg
+  * @dev: DRM device
+- * @output: driver specific output device
+  * @reg: GPIO reg to use
+  * @name: name for this bus
+  *
+@@ -155,7 +154,7 @@ struct psb_intel_i2c_chan *psb_intel_i2c_create(struct drm_device *dev,
  
  /**
-  * sync_pt_create() - creates a sync pt
-- * @parent:	fence's parent sync_timeline
-+ * @obj:	fence's parent sync_timeline
-  * @size:	size to allocate for this pt
-- * @inc:	value of the fence
-+ * @value:	value of the fence
+  * psb_intel_i2c_destroy - unregister and free i2c bus resources
+- * @output: channel to free
++ * @chan: channel to free
   *
-- * Creates a new sync_pt as a child of @parent.  @size bytes will be
-+ * Creates a new sync_pt as a child of @obj.  @size bytes will be
-  * allocated allowing for implementation specific data to be kept after
-  * the generic sync_timeline struct. Returns the sync_pt object or
-  * NULL in case of error.
+  * Unregister the adapter from the i2c layer, then free the structure.
+  */
 
