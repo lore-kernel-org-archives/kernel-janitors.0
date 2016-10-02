@@ -1,28 +1,49 @@
-From: Michal Marek <mmarek@suse.com>
-Date: Sat, 01 Oct 2016 21:04:07 +0000
-Subject: Re: [PATCH] Coccinelle: pm_runtime: ensure relevance of pm_runtime reports
-Message-Id: <57F024C7.7050503@suse.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 02 Oct 2016 11:56:33 +0000
+Subject: [PATCH 1/13] md/multipath: Use kcalloc() in multipath_run()
+Message-Id: <0383a635-6b6d-0e70-c3d5-99c05f2c72f7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1474532935-22506-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1474532935-22506-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
+In-Reply-To: <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-raid@vger.kernel.org, Jens Axboe <axboe@fb.com>, NeilBrown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Dne 22.9.2016 v 10:28 Julia Lawall napsal(a):
-> pm_runtime.cocci starts with one rule that searches for a variety of
-> functions calls, followed by various rules that report errors.  Previously,
-> the only connection between the first rule and the rest was to check that
-> the first rule had matched somewhere.  Change the rules to propagate a
-> position from the first rule to the others, to make sure that the sites
-> reported on are the same as the sites that were identified as having the
-> relevant functions.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Oct 2016 20:40:42 +0200
 
-Applied to kbuild.git#misc.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus reuse the corresponding function "kcalloc".
 
-Thanks,
-Michal
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/multipath.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/multipath.c b/drivers/md/multipath.c
+index 673efbd..bd53451 100644
+--- a/drivers/md/multipath.c
++++ b/drivers/md/multipath.c
+@@ -408,7 +408,8 @@ static int multipath_run (struct mddev *mddev)
+ 		goto out;
+ 	}
+ 
+-	conf->multipaths = kzalloc(sizeof(struct multipath_info)*mddev->raid_disks,
++	conf->multipaths = kcalloc(mddev->raid_disks,
++				   sizeof(*conf->multipaths),
+ 				   GFP_KERNEL);
+ 	if (!conf->multipaths) {
+ 		printk(KERN_ERR
+-- 
+2.10.0
 
