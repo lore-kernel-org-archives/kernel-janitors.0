@@ -1,55 +1,81 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 01 Oct 2016 19:46:29 +0000
-Subject: [PATCH 12/15] clk: tegra: dfll: improve function-level documentation
-Message-Id: <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 02 Oct 2016 11:59:14 +0000
+Subject: [PATCH 3/13] md/multipath: Delete four error messages for a failed memory allocation
+Message-Id: <6726e88c-2ad0-fd5e-6ef4-4f5e796a68b9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
+In-Reply-To: <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: kernel-janitors@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-raid@vger.kernel.org, Jens Axboe <axboe@fb.com>, NeilBrown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
-Adjust variables to correspond to the names used in the parameter list of
-the function.  Move the struct device * variable up to the place where it
-appears in the parameter list.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Oct 2016 21:15:45 +0200
 
-Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
+Omit extra messages for a memory allocation failure in this function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/tegra/cvb.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/md/multipath.c | 23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index 624115e..da9e8e7 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -92,19 +92,19 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
+diff --git a/drivers/md/multipath.c b/drivers/md/multipath.c
+index 7fdabb1..be7c0b9 100644
+--- a/drivers/md/multipath.c
++++ b/drivers/md/multipath.c
+@@ -401,22 +401,14 @@ static int multipath_run (struct mddev *mddev)
  
- /**
-  * tegra_cvb_add_opp_table - build OPP table from Tegra CVB tables
-- * @cvb_tables: array of CVB tables
-- * @sz: size of the previously mentioned array
-+ * @dev: the struct device * for which the OPP table is built
-+ * @tables: array of CVB tables
-+ * @count: size of the previously mentioned array
-  * @process_id: process id of the HW module
-  * @speedo_id: speedo id of the HW module
-  * @speedo_value: speedo value of the HW module
-- * @max_rate: highest safe clock rate
-- * @opp_dev: the struct device * for which the OPP table is built
-+ * @max_freq: highest safe clock rate
-  *
-  * On Tegra, a CVB table encodes the relationship between operating voltage
-  * and safe maximal frequency for a given module (e.g. GPU or CPU). This
-  * function calculates the optimal voltage-frequency operating points
-  * for the given arguments and exports them via the OPP library for the
-- * given @opp_dev. Returns a pointer to the struct cvb_table that matched
-+ * given @dev. Returns a pointer to the struct cvb_table that matched
-  * or an ERR_PTR on failure.
-  */
- const struct cvb_table *
+ 	conf = kzalloc(sizeof(*conf), GFP_KERNEL);
+ 	mddev->private = conf;
+-	if (!conf) {
+-		printk(KERN_ERR
+-			"multipath: couldn't allocate memory for %s\n",
+-			mdname(mddev));
++	if (!conf)
+ 		goto out;
+-	}
+ 
+ 	conf->multipaths = kcalloc(mddev->raid_disks,
+ 				   sizeof(*conf->multipaths),
+ 				   GFP_KERNEL);
+-	if (!conf->multipaths) {
+-		printk(KERN_ERR
+-			"multipath: couldn't allocate memory for %s\n",
+-			mdname(mddev));
++	if (!conf->multipaths)
+ 		goto out_free_conf;
+-	}
+ 
+ 	working_disks = 0;
+ 	rdev_for_each(rdev, mddev) {
+@@ -448,21 +440,14 @@ static int multipath_run (struct mddev *mddev)
+ 
+ 	conf->pool = mempool_create_kmalloc_pool(NR_RESERVED_BUFS,
+ 						 sizeof(struct multipath_bh));
+-	if (conf->pool = NULL) {
+-		printk(KERN_ERR
+-			"multipath: couldn't allocate memory for %s\n",
+-			mdname(mddev));
++	if (!conf->pool)
+ 		goto out_free_conf;
+-	}
+ 
+ 	{
+ 		mddev->thread = md_register_thread(multipathd, mddev,
+ 						   "multipath");
+-		if (!mddev->thread) {
+-			printk(KERN_ERR "multipath: couldn't allocate thread"
+-				" for %s\n", mdname(mddev));
++		if (!mddev->thread)
+ 			goto out_free_conf;
+-		}
+ 	}
+ 
+ 	printk(KERN_INFO
+-- 
+2.10.0
 
