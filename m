@@ -1,42 +1,57 @@
-From: Slawomir Stepien <sst@poczta.fm>
-Date: Thu, 27 Oct 2016 19:11:43 +0000
-Subject: Re: [PATCH] Input: gpio-keys - use module_platform_driver macro
-Message-Id: <20161027191143.GA1630@x220.localdomain>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 02 Oct 2016 07:04:16 +0000
+Subject: [PATCH] ptp: Fix resource leak in case of error
+Message-Id: <1475391856-15046-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161027141554.GA31977@x220.localdomain>
- <20161027164830.GB36933@dtor-ws>
-In-Reply-To: <20161027164830.GB36933@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: ldewangan@nvidia.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: richardcochran@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Oct 27, 2016 09:48, Dmitry Torokhov wrote:
-> Hi Slawomir,
+A call to 'ida_simple_remove()' is missing in the error handling path.
 
-Hi Dmitry,
+This as been spotted with the following coccinelle script which tries to
+detect missing 'ida_simple_remove()' call in error handling paths.
 
-> > -late_initcall(gpio_keys_init);
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> Because of this we can't switch to module_platform_driver(). The
-> late_initcall was requirement of one of platforms because of the probe
-> ordering issues. It may be resolved now with deferred probing, but you'd
-> need to confirm with all the users.
+///////////////
+@@
+expression x;
+identifier l;
+@@
 
-I was unaware of that. Let me look in to that more deeply. At the moment I do
-not have the knowledge what will be to correct solution for that.
+*   x = ida_simple_get(...);
+    ...
+    if (...) {
+    ...
+    }
+    ...
+    if (...) {
+       ...
+       goto l;
+    }
+    ...
+*   l: ... when != ida_simple_remove(...);
 
-> > -module_exit(gpio_keys_exit);
-> > +module_platform_driver(gpio_keys_device_driver);
-> >  
-> >  MODULE_LICENSE("GPL");
-> >  MODULE_AUTHOR("Phil Blundell <pb@handhelds.org>");
-> 
-> Thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile-tested only
+---
+ drivers/ptp/ptp_clock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thank you.
-
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index 2e481b9e8ea5..86280b7e41f3 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -263,6 +263,7 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ no_device:
+ 	mutex_destroy(&ptp->tsevq_mux);
+ 	mutex_destroy(&ptp->pincfg_mux);
++	ida_simple_remove(&ptp_clocks_map, index);
+ no_slot:
+ 	kfree(ptp);
+ no_memory:
 -- 
-Slawomir Stepien
+2.7.4
+
