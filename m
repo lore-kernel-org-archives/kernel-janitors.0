@@ -1,41 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 16:32:08 +0000
-Subject: [PATCH 10/18] [media] RedRat3: Delete an unnecessary variable initialisation in redrat3_init_rc_dev(
-Message-Id: <65fea9da-e1f5-ab90-65e4-9e5d78ee64d5@users.sourceforge.net>
+Date: Sun, 02 Oct 2016 11:57:45 +0000
+Subject: [PATCH 2/13] md/multipath: Improve another size determination in multipath_run()
+Message-Id: <f81efadb-18cd-4975-075c-31f3e3f28d01@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
-In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+ <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
+In-Reply-To: <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+To: linux-raid@vger.kernel.org, Jens Axboe <axboe@fb.com>, NeilBrown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 14:17:43 +0200
+Date: Sat, 1 Oct 2016 20:52:57 +0200
 
-The local variable "ret" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/rc/redrat3.c | 2 +-
+ drivers/md/multipath.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-index f85117b..c43f43b 100644
---- a/drivers/media/rc/redrat3.c
-+++ b/drivers/media/rc/redrat3.c
-@@ -856,7 +856,7 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
- {
- 	struct device *dev = rr3->dev;
- 	struct rc_dev *rc;
--	int ret = -ENODEV;
-+	int ret;
- 	u16 prod = le16_to_cpu(rr3->udev->descriptor.idProduct);
+diff --git a/drivers/md/multipath.c b/drivers/md/multipath.c
+index bd53451..7fdabb1 100644
+--- a/drivers/md/multipath.c
++++ b/drivers/md/multipath.c
+@@ -399,7 +399,7 @@ static int multipath_run (struct mddev *mddev)
+ 	 * should be freed in multipath_free()]
+ 	 */
  
- 	rc = rc_allocate_device();
+-	conf = kzalloc(sizeof(struct mpconf), GFP_KERNEL);
++	conf = kzalloc(sizeof(*conf), GFP_KERNEL);
+ 	mddev->private = conf;
+ 	if (!conf) {
+ 		printk(KERN_ERR
 -- 
-2.10.1
+2.10.0
 
