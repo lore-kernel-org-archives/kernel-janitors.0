@@ -1,43 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 21:11:20 +0000
-Subject: [PATCH 1/2] M68K-Amiga: Use seq_puts() in amiga_get_hardware_list()
-Message-Id: <6d2b718d-392a-8a41-87cd-6cc1ef1dfb1c@users.sourceforge.net>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Mon, 03 Oct 2016 09:11:22 +0000
+Subject: Re: [PATCH 1/4] virtio_blk: Use kmalloc_array() in init_vq()
+Message-Id: <CAJSP0QUcGXsNgcEyi-PPpPL2fJz5NvLuJ9M_WBfN6wx_szHARA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cc9b366d-4d5e-3ed6-4665-cbc577c69f74@users.sourceforge.net>
-In-Reply-To: <cc9b366d-4d5e-3ed6-4665-cbc577c69f74@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net> <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
+ <7a8dd874-3700-1445-2143-2a604cd043ab@users.sourceforge.net>
+In-Reply-To: <7a8dd874-3700-1445-2143-2a604cd043ab@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-m68k@lists.linux-m68k.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Arnd Bergmann <arnd@arndb.de>, Finn Thain <fthain@telegraphics.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Linux Virtualization <virtualization@lists.linux-foundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 22:55:03 +0200
+On Tue, Sep 13, 2016 at 1:12 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 13 Sep 2016 11:32:22 +0200
+>
+> Multiplications for the size determination of memory allocations
+> indicated that array data structures should be processed.
+> Thus use the corresponding function "kmalloc_array".
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/block/virtio_blk.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/m68k/amiga/config.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
-index ddb8192..65f63a4 100644
---- a/arch/m68k/amiga/config.c
-+++ b/arch/m68k/amiga/config.c
-@@ -786,8 +786,7 @@ static void amiga_get_hardware_list(struct seq_file *m)
- 	if (AMIGAHW_PRESENT(name))			\
- 		seq_printf (m, "\t%s\n", str)
- 
--	seq_printf (m, "Detected hardware:\n");
--
-+	seq_puts(m, "Detected hardware:\n");
- 	AMIGAHW_ANNOUNCE(AMI_VIDEO, "Amiga Video");
- 	AMIGAHW_ANNOUNCE(AMI_BLITTER, "Blitter");
- 	AMIGAHW_ANNOUNCE(AMBER_FF, "Amber Flicker Fixer");
--- 
-2.10.1
-
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
