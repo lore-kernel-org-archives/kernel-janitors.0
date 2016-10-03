@@ -1,60 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 14:47:25 +0000
-Subject: [PATCH 10/34] [media] DaVinci-VPBE: Check return value of a setup_if_config() call in vpbe_set_outpu
-Message-Id: <47590f2e-1cfa-582d-769e-502802171b66@users.sourceforge.net>
+Date: Mon, 03 Oct 2016 12:12:39 +0000
+Subject: Re: virtio_blk: Rename a jump label in virtblk_get_id()
+Message-Id: <051e7718-b5bb-e716-b2c0-515ee4488c4a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
+ <a303f7a6-c675-5228-99bd-a03c9e9252e9@users.sourceforge.net>
+ <CAJSP0QV2WUJPqeiSKcWiXWk+AoJ2MGo2zG4=JQ2tfpTprAyV=g@mail.gmail.com>
+In-Reply-To: <CAJSP0QV2WUJPqeiSKcWiXWk+AoJ2MGo2zG4=JQ2tfpTprAyV=g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Stefan Hajnoczi <stefanha@gmail.com>
+Cc: Linux Virtualization <virtualization@lists.linux-foundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 09:56:56 +0200
+>> Adjust a jump label according to the current Linux coding style convention.
+> 
+> I think you mean "goto label".  "Jump label" has a different meaning,
+> see <linux/jump_label.h>.
 
-* A function was called over the pointer "setup_if_config" in the data
-  structure "venc_platform_data". But the return value was not used so far.
-  Thus assign it to the local variable "ret" which will be checked with
-  the next statement.
+Does a "goto" statement jump to the code position finally
+which is specified by the label?
 
-  Fixes: 9a7f95ad1c946efdd7a7a72df27db738260a0fd8 ("[media] davinci vpbe: add dm365 VPBE display driver changes")
 
-* Pass a value to this function call without storing it in an intermediate
-  variable before.
+>> @@ -247,10 +247,10 @@ static int virtblk_get_id(struct gendisk *disk, char *id_str)
+>>
+>>         err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES, GFP_KERNEL);
+>>         if (err)
+>> -               goto out;
+>> +               goto put_request;
+>>
+>>         err = blk_execute_rq(vblk->disk->queue, vblk->disk, req, false);
+>> -out:
+>> + put_request:
+> 
+> I checked Documentation/CodingStyle and see no reason to rename the label.
 
-* Delete the local variable "if_params" which became unnecessary with
-  this refactoring.
+Can the suggested longer identifier explain better the "what" and "why"
+for this software situation?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/platform/davinci/vpbe.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 19611a2..6e7b0df 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -227,7 +227,6 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
- 			vpbe_current_encoder_info(vpbe_dev);
- 	struct vpbe_config *cfg = vpbe_dev->cfg;
- 	struct venc_platform_data *venc_device = vpbe_dev->venc_device;
--	u32 if_params;
- 	int enc_out_index;
- 	int sd_index;
- 	int ret = 0;
-@@ -257,8 +256,8 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
- 			goto out;
- 		}
- 
--		if_params = cfg->outputs[index].if_params;
--		venc_device->setup_if_config(if_params);
-+		ret = venc_device->setup_if_config(cfg
-+						   ->outputs[index].if_params);
- 		if (ret)
- 			goto out;
- 	}
--- 
-2.10.1
+> It's also not clear why you added a space.  The CodingStyle example
+> does not use a space before the label.
 
+Do you find information from a commit like "docs: Remove space-before-label guidance
+from CodingStyle" (from 2016-09-21) interesting?   ;-)
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/Documentation/CodingStyle?idyc70c304b0b443429b2a0019518532c5162817a
+
+Regards,
+Markus
