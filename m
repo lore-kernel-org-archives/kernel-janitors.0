@@ -1,48 +1,83 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 23 Oct 2016 05:42:05 +0000
-Subject: Re: [PATCH 6/6] IA64-sn2_smp: Combine two seq_printf() calls into one call in sn2_ptc_seq_show()
-Message-Id: <alpine.DEB.2.20.1610230741400.1972@hadrien>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 03 Oct 2016 12:11:18 +0000
+Subject: Re: [PATCH v2 2/2] KVM: s390: Use memdup_user() rather than duplicating code
+Message-Id: <CAMuHMdVX6RKZYQyOrX35D+EKoRH6ZFAkyiC=BKnyKtE1Ph4t8g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net> <c3e12189-6122-e806-6cb2-b2518e64e983@users.sourceforge.net> <1477166856.3817.4.camel@perches.com> <72f6fc41-9bf8-2eef-848f-8eefba7dade6@users.sourceforge.net>
-In-Reply-To: <72f6fc41-9bf8-2eef-848f-8eefba7dade6@users.sourceforge.net>
+References: <82b84c9c-38a4-4d17-910f-312668dbae01@users.sourceforge.net>
+ <bb710b21-d8c4-e172-63d4-b46c80645cb3@users.sourceforge.net>
+ <ddb2bbd9-757b-fc62-8642-ce827a7a666d@de.ibm.com> <e72e9854-443b-7033-d674-8a2d237600ca@users.sourceforge.net>
+ <c86f7520-885e-2829-ae9c-b81caa898e84@users.sourceforge.net>
+In-Reply-To: <c86f7520-885e-2829-ae9c-b81caa898e84@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Joe Perches <joe@perches.com>, linux-ia64@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Borislav Petkov <bp@suse.de>, Fenghua Yu <fenghua.yu@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, Ingo Molnar <mingo@kernel.org>, =?ISO-8859-15?Q?J=F6rg_R=F6del?= <jroedel@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>, Robert Richter <rrichter@cavium.com>, Robin Murphy <robin.murphy@arm.com>, Tony Luck <tony.luck@intel.com>, Toshi Kani <toshi.kani@hpe.com>, Vineet Gupta <vgupta@synopsys.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: kvm@vger.kernel.org, linux-s390 <linux-s390@vger.kernel.org>, =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, David Hildenbrand <dahi@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, Walter Harms <wharms@bfs.de>
 
+Hi Markus,
 
-
-On Sat, 22 Oct 2016, SF Markus Elfring wrote:
-
-> >> @@ -494,12 +494,11 @@ static int sn2_ptc_seq_show(struct seq_file *file, void *data)
-> >>  	int cpu;
-> >>
-> >>  	cpu = *(loff_t *) data;
-> >> -
-> >> -	if (!cpu) {
-> >> +	if (!cpu)
-> >>  		seq_printf(file,
-> >> -			   "# cpu ptc_l newrid ptc_flushes nodes_flushed deadlocks lock_nsec shub_nsec shub_nsec_max not_my_mm deadlock2 ipi_fluches ipi_nsec\n");
-> >> -		seq_printf(file, "# ptctest %d, flushopt %d\n", sn2_ptctest, sn2_flush_opt);
-> >> -	}
-> >> +			   "# cpu ptc_l newrid ptc_flushes nodes_flushed deadlocks lock_nsec shub_nsec shub_nsec_max not_my_mm deadlock2 ipi_fluches ipi_nsec\n"
-> >> +			   "# ptctest %d, flushopt %d\n",
-> >> +			   sn2_ptctest, sn2_flush_opt);
-> >>
-> >>  	if (cpu < nr_cpu_ids && cpu_online(cpu)) {
-> >>  		stat = &per_cpu(ptcstats, cpu);
-> >
-> > Please think more.
-> >
-> > printf has to inspect character by character looking for
-> > a vsprintf % character and 0 termination.
-> >
-> > seq_puts does a strlen then memcpy.
+On Wed, Aug 24, 2016 at 8:40 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 24 Aug 2016 20:10:09 +0200
 >
-> Would you prefer to use this function also at this source code place?
+> * Reuse existing functionality from memdup_user() instead of keeping
+>   duplicate source code.
+>
+>   This issue was detected by using the Coccinelle software.
+>
+> * Return directly if this copy operation failed.
+>
+> Reviewed-by: David Hildenbrand <dahi@linux.vnet.ibm.com>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>
+> v2: Rebased on source files from "Linux next-20160824".
+>
+>  arch/s390/kvm/guestdbg.c | 18 ++++--------------
+>  1 file changed, 4 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/s390/kvm/guestdbg.c b/arch/s390/kvm/guestdbg.c
+> index 70b71ac..d7c6a7f 100644
+> --- a/arch/s390/kvm/guestdbg.c
+> +++ b/arch/s390/kvm/guestdbg.c
+> @@ -216,20 +216,10 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+>         else if (dbg->arch.nr_hw_bp > MAX_BP_COUNT)
+>                 return -EINVAL;
+>
+> -       bp_data = kmalloc_array(dbg->arch.nr_hw_bp,
+> -                               sizeof(*bp_data),
+> -                               GFP_KERNEL);
 
-I think that he is expecting that you will figure out the answer by
-yourself.
+Probably not an issue here, but if "sizeof(*bp_data) * dbg->arch.nr_hw_bp"
+overflows, kmalloc_array() would have returned NULL here...
 
-julia
+> -       if (!bp_data) {
+> -               ret = -ENOMEM;
+> -               goto error;
+> -       }
+> -
+> -       if (copy_from_user(bp_data,
+> -                          dbg->arch.hw_bp,
+> -                          sizeof(*bp_data) * dbg->arch.nr_hw_bp)) {
+> -               ret = -EFAULT;
+> -               goto error;
+> -       }
+> +       bp_data = memdup_user(dbg->arch.hw_bp,
+> +                             sizeof(*bp_data) * dbg->arch.nr_hw_bp);
+
+... while this would continue silently, and corrupt memory.
+
+> +       if (IS_ERR(bp_data))
+> +               return PTR_ERR(bp_data);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
