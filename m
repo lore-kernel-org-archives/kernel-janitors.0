@@ -1,195 +1,233 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Wed, 05 Oct 2016 14:04:43 +0000
-Subject: kernel-doc-rst-lint (was: Re: [PATCH 00/15] improve function-level documentation)
-Message-Id: <87h98quc1w.fsf@intel.com>
+From: Markus Heiser <markus.heiser@darmarit.de>
+Date: Wed, 05 Oct 2016 17:27:12 +0000
+Subject: Re: kernel-doc-rst-lint (was: Re: [PATCH 00/15] improve function-level documentation)
+Message-Id: <0311F11C-D5CB-4A90-86BD-4DDAD1103685@darmarit.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr> <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com>
-In-Reply-To: <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+ <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com>
+ <87h98quc1w.fsf@intel.com>
+In-Reply-To: <87h98quc1w.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: Daniel Vetter <daniel@ffwll.ch>, Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, linux-mtd@lists.infradead.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, drbd-dev@lists.linbit.com, linux-metag@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-doc@vger.kernel.org
-
-On Wed, 05 Oct 2016, Daniel Vetter <daniel@ffwll.ch> wrote:
-> Jani Nikula has a patch with a scrip to make the one kernel-doc parser
-> into a lint/checker pass over the entire kernel. I think that'd would
-> be more robust instead of trying to approximate the real kerneldoc
-> parser. Otoh that parser is a horror show of a perl/regex driven state
-> machine ;-)
->
-> Jani, can you pls digg out these patches? Can't find them right now ...
-
-Expanding the massive Cc: with linux-doc list...
-
-Here goes. It's a quick hack from months ago, but still seems to
-somewhat work. At least for the kernel-doc parts. The reStructuredText
-lint part isn't all that great, and doesn't have mapping to line numbers
-like the Sphinx kernel-doc extension does. Anyway I'm happy how this
-integrates with kernel build CHECK and C=3D1/C=3D2.
-
-I guess Julia's goal is to automate the *fixing* of some of the error
-classes from kernel-doc. Not sure how well this could be made to
-integrate with any of that.
-
-BR,
-Jani.
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-metag@vger.kernel.org, linaro-mm-sig@lists.linaro.org, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, "linux-media@vger.kernel.org Mailing List" <linux-media@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, drbd-dev@lists.linbit.com
 
 
-From 1244efa0f63a7b13795e8c37f81733a3c8bfc56a Mon Sep 17 00:00:00 2001
-From: Jani Nikula <jani.nikula@intel.com>
-Date: Tue, 31 May 2016 18:11:33 +0300
-Subject: [PATCH] kernel-doc-rst-lint: add tool to check kernel-doc and rst
- correctness
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Esp=
-oo
-Cc: Jani Nikula <jani.nikula@intel.com>
+Am 05.10.2016 um 16:04 schrieb Jani Nikula <jani.nikula@linux.intel.com>:
 
-Simple kernel-doc and reStructuredText lint tool that can be used
-independently and as a kernel build CHECK tool to validate kernel-doc
-comments.
+> On Wed, 05 Oct 2016, Daniel Vetter <daniel@ffwll.ch> wrote:
+>> Jani Nikula has a patch with a scrip to make the one kernel-doc parser
+>> into a lint/checker pass over the entire kernel. I think that'd would
+>> be more robust instead of trying to approximate the real kerneldoc
+>> parser. Otoh that parser is a horror show of a perl/regex driven state
+>> machine ;-)
+>>=20
+>> Jani, can you pls digg out these patches? Can't find them right now ...
+>=20
+> Expanding the massive Cc: with linux-doc list...
+>=20
+> Here goes. It's a quick hack from months ago, but still seems to
+> somewhat work. At least for the kernel-doc parts. The reStructuredText
+> lint part isn't all that great, and doesn't have mapping to line numbers
+> like the Sphinx kernel-doc extension does. Anyway I'm happy how this
+> integrates with kernel build CHECK and C=3D1/C=3D2.
+>=20
+> I guess Julia's goal is to automate the *fixing* of some of the error
+> classes from kernel-doc. Not sure how well this could be made to
+> integrate with any of that.
+>=20
+> BR,
+> Jani.
 
-Independent usage:
-$ kernel-doc-rst-lint FILE
+Another lint alternative:=20
 
-Kernel CHECK usage:
-$ make CHECK=3Dscripts/kernel-doc-rst-lint C=3D1		# (or C=3D2)
+ use the lint from the linuxdoc project=20
 
-Depends on docutils and the rst-lint package
-https://pypi.python.org/pypi/restructuredtext_lint
+install the linuxdoc package:
 
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
----
- scripts/kernel-doc-rst-lint | 106 ++++++++++++++++++++++++++++++++++++++++=
-++++
- 1 file changed, 106 insertions(+)
- create mode 100755 scripts/kernel-doc-rst-lint
+*  https://return42.github.io/linuxdoc/install.html
 
-diff --git a/scripts/kernel-doc-rst-lint b/scripts/kernel-doc-rst-lint
-new file mode 100755
-index 000000000000..7e0157679f83
---- /dev/null
-+++ b/scripts/kernel-doc-rst-lint
-@@ -0,0 +1,106 @@
-+#!/usr/bin/env python
-+# coding=3Dutf-8
-+#
-+# Copyright =C2=A9 2016 Intel Corporation
-+#
-+# Permission is hereby granted, free of charge, to any person obtaining a
-+# copy of this software and associated documentation files (the "Software"=
-),
-+# to deal in the Software without restriction, including without limitation
-+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+# and/or sell copies of the Software, and to permit persons to whom the
-+# Software is furnished to do so, subject to the following conditions:
-+#
-+# The above copyright notice and this permission notice (including the next
-+# paragraph) shall be included in all copies or substantial portions of the
-+# Software.
-+#
-+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS =
-OR
-+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTH=
-ER
-+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL=
-INGS
-+# IN THE SOFTWARE.
-+#
-+# Authors:
-+#    Jani Nikula <jani.nikula@intel.com>
-+#
-+# Simple kernel-doc and reStructuredText lint tool that can be used
-+# independently and as a kernel build CHECK tool to validate kernel-doc
-+# comments.
-+#
-+# Independent usage:
-+# $ kernel-doc-rst-lint FILE
-+#
-+# Kernel CHECK usage:
-+# $ make CHECK=3Dscripts/kernel-doc-rst-lint C=3D1		# (or C=3D2)
-+#
-+# Depends on docutils and the rst-lint package
-+# https://pypi.python.org/pypi/restructuredtext_lint
-+#
-+
-+import os
-+import subprocess
-+import sys
-+
-+from docutils.parsers.rst import directives
-+from docutils.parsers.rst import Directive
-+from docutils.parsers.rst import roles
-+from docutils import nodes, statemachine
-+import restructuredtext_lint
-+
-+class DummyDirective(Directive):
-+    required_argument =3D 1
-+    optional_arguments =3D 0
-+    option_spec =3D { }
-+    has_content =3D True
-+
-+    def run(self):
-+        return []
-+
-+# Fake the Sphinx C Domain directives and roles
-+directives.register_directive('c:function', DummyDirective)
-+directives.register_directive('c:type', DummyDirective)
-+roles.register_generic_role('c:func', nodes.emphasis)
-+roles.register_generic_role('c:type', nodes.emphasis)
-+
-+# We accept but ignore parameters to be compatible with how the kernel bui=
-ld
-+# invokes CHECK.
-+if len(sys.argv) < 2:
-+    sys.stderr.write('usage: kernel-doc-rst-lint [IGNORED OPTIONS] FILE\n'=
-);
-+    sys.exit(1)
-+
-+infile =3D sys.argv[len(sys.argv) - 1]
-+cmd =3D ['scripts/kernel-doc', '-rst', infile]
-+
-+try:
-+    p =3D subprocess.Popen(cmd, stdout=3Dsubprocess.PIPE, stderr=3Dsubproc=
-ess.PIPE, universal_newlines=3DTrue)
-+    out, err =3D p.communicate()
-+
-+    # python2 needs conversion to unicode.
-+    # python3 with universal_newlines=3DTrue returns strings.
-+    if sys.version_info.major < 3:
-+        out, err =3D unicode(out, 'utf-8'), unicode(err, 'utf-8')
-+
-+    # kernel-doc errors
-+    sys.stderr.write(err)
-+    if p.returncode !=3D 0:
-+        sys.exit(p.returncode)
-+
-+    # restructured text errors
-+    lines =3D statemachine.string2lines(out, 8, convert_whitespace=3DTrue)
-+    lint_errors =3D restructuredtext_lint.lint(out, infile)
-+    for error in lint_errors:
-+        # Ignore INFO
-+        if error.level <=3D 1:
-+            continue
-+
-+        print(error.source + ': ' + error.type + ': ' + error.full_message)
-+        if error.line is not None:
-+            print('Context:')
-+            print('\t' + lines[error.line - 1])
-+            print('\t' + lines[error.line])
-+
-+except Exception as e:
-+    sys.stderr.write(str(e) + '\n')
-+    sys.exit(1)
---=20
-2.1.4
+e.g.::
+
+ pip install --user git+http://github.com/return42/linuxdoc.git
+
+and run kernel-lintdoc with the file/folder to lint as argument / e.g.::
+
+ kernel-lintdoc include/media/
+
+-- Markus --
 
 
---=20
-Jani Nikula, Intel Open Source Technology Center
+>=20
+>=20
+> From 1244efa0f63a7b13795e8c37f81733a3c8bfc56a Mon Sep 17 00:00:00 2001
+> From: Jani Nikula <jani.nikula@intel.com>
+> Date: Tue, 31 May 2016 18:11:33 +0300
+> Subject: [PATCH] kernel-doc-rst-lint: add tool to check kernel-doc and rst
+> correctness
+> Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 E=
+spoo
+> Cc: Jani Nikula <jani.nikula@intel.com>
+>=20
+> Simple kernel-doc and reStructuredText lint tool that can be used
+> independently and as a kernel build CHECK tool to validate kernel-doc
+> comments.
+>=20
+> Independent usage:
+> $ kernel-doc-rst-lint FILE
+>=20
+> Kernel CHECK usage:
+> $ make CHECK=3Dscripts/kernel-doc-rst-lint C=3D1		# (or C=3D2)
+>=20
+> Depends on docutils and the rst-lint package
+> https://pypi.python.org/pypi/restructuredtext_lint
+>=20
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> ---
+> scripts/kernel-doc-rst-lint | 106 +++++++++++++++++++++++++++++++++++++++=
++++++
+> 1 file changed, 106 insertions(+)
+> create mode 100755 scripts/kernel-doc-rst-lint
+>=20
+> diff --git a/scripts/kernel-doc-rst-lint b/scripts/kernel-doc-rst-lint
+> new file mode 100755
+> index 000000000000..7e0157679f83
+> --- /dev/null
+> +++ b/scripts/kernel-doc-rst-lint
+> @@ -0,0 +1,106 @@
+> +#!/usr/bin/env python
+> +# coding=3Dutf-8
+> +#
+> +# Copyright =A9 2016 Intel Corporation
+> +#
+> +# Permission is hereby granted, free of charge, to any person obtaining a
+> +# copy of this software and associated documentation files (the "Softwar=
+e"),
+> +# to deal in the Software without restriction, including without limitat=
+ion
+> +# the rights to use, copy, modify, merge, publish, distribute, sublicens=
+e,
+> +# and/or sell copies of the Software, and to permit persons to whom the
+> +# Software is furnished to do so, subject to the following conditions:
+> +#
+> +# The above copyright notice and this permission notice (including the n=
+ext
+> +# paragraph) shall be included in all copies or substantial portions of =
+the
+> +# Software.
+> +#
+> +# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRES=
+S OR
+> +# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILIT=
+Y,
+> +# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHA=
+LL
+> +# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR O=
+THER
+> +# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> +# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DE=
+ALINGS
+> +# IN THE SOFTWARE.
+> +#
+> +# Authors:
+> +#    Jani Nikula <jani.nikula@intel.com>
+> +#
+> +# Simple kernel-doc and reStructuredText lint tool that can be used
+> +# independently and as a kernel build CHECK tool to validate kernel-doc
+> +# comments.
+> +#
+> +# Independent usage:
+> +# $ kernel-doc-rst-lint FILE
+> +#
+> +# Kernel CHECK usage:
+> +# $ make CHECK=3Dscripts/kernel-doc-rst-lint C=3D1		# (or C=3D2)
+> +#
+> +# Depends on docutils and the rst-lint package
+> +# https://pypi.python.org/pypi/restructuredtext_lint
+> +#
+> +
+> +import os
+> +import subprocess
+> +import sys
+> +
+> +from docutils.parsers.rst import directives
+> +from docutils.parsers.rst import Directive
+> +from docutils.parsers.rst import roles
+> +from docutils import nodes, statemachine
+> +import restructuredtext_lint
+> +
+> +class DummyDirective(Directive):
+> +    required_argument =3D 1
+> +    optional_arguments =3D 0
+> +    option_spec =3D { }
+> +    has_content =3D True
+> +
+> +    def run(self):
+> +        return []
+> +
+> +# Fake the Sphinx C Domain directives and roles
+> +directives.register_directive('c:function', DummyDirective)
+> +directives.register_directive('c:type', DummyDirective)
+> +roles.register_generic_role('c:func', nodes.emphasis)
+> +roles.register_generic_role('c:type', nodes.emphasis)
+> +
+> +# We accept but ignore parameters to be compatible with how the kernel b=
+uild
+> +# invokes CHECK.
+> +if len(sys.argv) < 2:
+> +    sys.stderr.write('usage: kernel-doc-rst-lint [IGNORED OPTIONS] FILE\=
+n');
+> +    sys.exit(1)
+> +
+> +infile =3D sys.argv[len(sys.argv) - 1]
+> +cmd =3D ['scripts/kernel-doc', '-rst', infile]
+> +
+> +try:
+> +    p =3D subprocess.Popen(cmd, stdout=3Dsubprocess.PIPE, stderr=3Dsubpr=
+ocess.PIPE, universal_newlines=3DTrue)
+> +    out, err =3D p.communicate()
+> +
+> +    # python2 needs conversion to unicode.
+> +    # python3 with universal_newlines=3DTrue returns strings.
+> +    if sys.version_info.major < 3:
+> +        out, err =3D unicode(out, 'utf-8'), unicode(err, 'utf-8')
+> +
+> +    # kernel-doc errors
+> +    sys.stderr.write(err)
+> +    if p.returncode !=3D 0:
+> +        sys.exit(p.returncode)
+> +
+> +    # restructured text errors
+> +    lines =3D statemachine.string2lines(out, 8, convert_whitespace=3DTru=
+e)
+> +    lint_errors =3D restructuredtext_lint.lint(out, infile)
+> +    for error in lint_errors:
+> +        # Ignore INFO
+> +        if error.level <=3D 1:
+> +            continue
+> +
+> +        print(error.source + ': ' + error.type + ': ' + error.full_messa=
+ge)
+> +        if error.line is not None:
+> +            print('Context:')
+> +            print('\t' + lines[error.line - 1])
+> +            print('\t' + lines[error.line])
+> +
+> +except Exception as e:
+> +    sys.stderr.write(str(e) + '\n')
+> +    sys.exit(1)
+> --=20
+> 2.1.4
+>=20
+>=20
+> --=20
+> Jani Nikula, Intel Open Source Technology Center
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
