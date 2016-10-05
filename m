@@ -1,59 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 14:30:28 +0000
-Subject: [PATCH 02/34] [media] DaVinci-VPBE: Delete two error messages for a failed memory allocation
-Message-Id: <664f2619-1c7c-22de-775e-3af16e4203f8@users.sourceforge.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Date: Wed, 05 Oct 2016 02:36:28 +0000
+Subject: Re: cxl: replace loop with for_each_child_of_node(), remove unneeded of_node_put()
+Message-Id: <3spfzw6LSRz9t0t@ozlabs.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <1469764534-26948-1-git-send-email-andrew.donnellan@au1.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: Andrew Donnellan <andrew.donnellan@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: clombard@linux.vnet.ibm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, fbarrat@linux.vnet.ibm.com, julia.lawall@lip6.fr, imunsie@au1.ibm.com, elfring@users.sourceforge.net
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 11 Oct 2016 09:56:13 +0200
+On Fri, 2016-29-07 at 03:55:34 UTC, Andrew Donnellan wrote:
+> Rewrite the cxl_guest_init_afu() loop in cxl_of_probe() to use
+> for_each_child_of_node() rather than a hand-coded for loop.
+> 
+> Remove the useless of_node_put(afu_np) call after the loop, where it's
+> guaranteed that afu_np = NULL.
+> 
+> Reported-by: SF Markus Elfring <elfring@users.sourceforge.net>
+> Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+> Signed-off-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+> Reviewed-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
 
-The script "checkpatch.pl" pointed information out like the following.
+Applied to powerpc next, thanks.
 
-WARNING: Possible unnecessary 'out of memory' message
+https://git.kernel.org/powerpc/c/735840b44bcc998e2574faf63d1aaa
 
-Thus remove such a logging statement in two functions.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/platform/davinci/vpbe.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 8c062ff..b479747 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -680,8 +680,6 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 					   sizeof(*vpbe_dev->encoders),
- 					   GFP_KERNEL);
- 	if (NULL = vpbe_dev->encoders) {
--		v4l2_err(&vpbe_dev->v4l2_dev,
--			"unable to allocate memory for encoders sub devices");
- 		ret = -ENOMEM;
- 		goto fail_dev_unregister;
- 	}
-@@ -841,11 +839,9 @@ static int vpbe_probe(struct platform_device *pdev)
- 	}
- 
- 	vpbe_dev = kzalloc(sizeof(*vpbe_dev), GFP_KERNEL);
--	if (vpbe_dev = NULL) {
--		v4l2_err(pdev->dev.driver, "Unable to allocate memory"
--			 " for vpbe_device\n");
-+	if (!vpbe_dev)
- 		return -ENOMEM;
--	}
-+
- 	vpbe_dev->cfg = cfg;
- 	vpbe_dev->ops = vpbe_dev_ops;
- 	vpbe_dev->pdev = &pdev->dev;
--- 
-2.10.1
-
+cheers
