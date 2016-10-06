@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:03:14 +0000
-Subject: [PATCH 09/54] md/raid0: Add some spaces for better code readability
-Message-Id: <925990b4-3683-ca3a-1c2f-1aaedfa29e66@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:07:45 +0000
+Subject: [PATCH 12/54] md/raid1: Use kcalloc() in setup_conf()
+Message-Id: <1d9f7914-b224-9329-d132-ae4c07d3b512@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
@@ -13,61 +13,38 @@ To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <g
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 14:48:34 +0200
+Date: Tue, 4 Oct 2016 15:30:28 +0200
 
-Use space characters at some source code places according to
-the Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/raid0.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/md/raid1.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 1abe1ee..39d407c 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -55,7 +55,7 @@ static void dump_zones(struct mddev *mddev)
- 	int raid_disks = conf->strip_zone[0].nb_dev;
- 	pr_info("configuration for %s - %d zone%s\n",
- 	       mdname(mddev),
--	       conf->nr_strip_zones, conf->nr_strip_zones=1?"":"s");
-+	       conf->nr_strip_zones, conf->nr_strip_zones = 1 ? "" : "s");
- 	for (j = 0; j < conf->nr_strip_zones; j++) {
- 		pr_info("zone%d=[", j);
- 		for (k = 0; k < conf->strip_zone[j].nb_dev; k++)
-@@ -106,9 +106,9 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
- 		rdev_for_each(rdev2, mddev) {
- 			pr_debug("%s:   comparing %s(%llu) with %s(%llu)\n",
- 				 mdname(mddev),
--				 bdevname(rdev1->bdev,b),
-+				 bdevname(rdev1->bdev, b),
- 				 (unsigned long long)rdev1->sectors,
--				 bdevname(rdev2->bdev,b2),
-+				 bdevname(rdev2->bdev, b2),
- 				 (unsigned long long)rdev2->sectors);
- 			if (rdev2 = rdev1) {
- 				pr_debug("%s:   END\n",
-@@ -232,7 +232,7 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
- 		smallest = NULL;
- 		c = 0;
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index e75ae87..5969711 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -2781,9 +2781,9 @@ static struct r1conf *setup_conf(struct mddev *mddev)
+ 	if (!conf)
+ 		goto abort;
  
--		for (j=0; j<cnt; j++) {
-+		for (j = 0; j < cnt; j++) {
- 			rdev = conf->devlist[j];
- 			if (rdev->sectors <= zone->dev_start) {
- 				pr_debug("%s: checking %s ... nope\n",
-@@ -418,8 +418,8 @@ static int raid0_run(struct mddev *mddev)
- 		 */
- 		int stripe = mddev->raid_disks *
- 			(mddev->chunk_sectors << 9) / PAGE_SIZE;
--		if (mddev->queue->backing_dev_info.ra_pages < 2* stripe)
--			mddev->queue->backing_dev_info.ra_pages = 2* stripe;
-+		if (mddev->queue->backing_dev_info.ra_pages < 2 * stripe)
-+			mddev->queue->backing_dev_info.ra_pages = 2 * stripe;
- 	}
+-	conf->mirrors = kzalloc(sizeof(struct raid1_info)
+-				* mddev->raid_disks * 2,
+-				 GFP_KERNEL);
++	conf->mirrors = kcalloc(mddev->raid_disks * 2,
++				sizeof(*conf->mirrors),
++				GFP_KERNEL);
+ 	if (!conf->mirrors)
+ 		goto abort;
  
- 	dump_zones(mddev);
 -- 
 2.10.1
 
