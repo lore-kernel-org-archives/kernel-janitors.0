@@ -1,41 +1,70 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 07:53:34 +0000
-Subject: [PATCH 9/9] md/dm-table: Delete an unwanted space in dm_table_get_integrity_disk()
-Message-Id: <03f6a9f1-6bd4-fed0-7232-8d537b69753b@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:36:04 +0000
+Subject: [PATCH 36/54] md/raid5: Delete four unwanted spaces behind function names
+Message-Id: <2c1b7aaa-9872-0547-b22a-fc05d4d9210d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
-In-Reply-To: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 09:24:56 +0200
+Date: Wed, 5 Oct 2016 14:37:17 +0200
 
 The script "checkpatch.pl" pointed information out like the following.
 
-ERROR: "foo * bar" should be "foo *bar"
+WARNING: space prohibited between function name and open parenthesis '('
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/dm-table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid5.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index a948ffb..3ad1b1a 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1117,7 +1117,7 @@ static bool integrity_profile_exists(struct gendisk *disk)
-  * Get a disk whose integrity profile reflects the table's profile.
-  * Returns NULL if integrity support was inconsistent or unavailable.
-  */
--static struct gendisk * dm_table_get_integrity_disk(struct dm_table *t)
-+static struct gendisk *dm_table_get_integrity_disk(struct dm_table *t)
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index f7a3369..ebcd692 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -236,7 +236,7 @@ static void return_io(struct bio_list *return_bi)
+ 	}
+ }
+ 
+-static void print_raid5_conf (struct r5conf *conf);
++static void print_raid5_conf(struct r5conf *conf);
+ 
+ static int stripe_operations_active(struct stripe_head *sh)
  {
- 	struct list_head *devices = dm_table_get_devices(t);
- 	struct dm_dev_internal *dd = NULL;
+@@ -7032,17 +7032,22 @@ static void raid5_status(struct seq_file *seq, struct mddev *mddev)
+ 
+ 	seq_printf(seq, " level %d, %dk chunk, algorithm %d", mddev->level,
+ 		conf->chunk_sectors / 2, mddev->layout);
+-	seq_printf (seq, " [%d/%d] [", conf->raid_disks, conf->raid_disks - mddev->degraded);
++	seq_printf(seq,
++		   " [%d/%d] [",
++		   conf->raid_disks,
++		   conf->raid_disks - mddev->degraded);
+ 	rcu_read_lock();
+ 	for (i = 0; i < conf->raid_disks; i++) {
+ 		struct md_rdev *rdev = rcu_dereference(conf->disks[i].rdev);
+-		seq_printf (seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
++		seq_printf(seq,
++			   "%s",
++			   rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
+ 	}
+ 	rcu_read_unlock();
+ 	seq_printf (seq, "]");
+ }
+ 
+-static void print_raid5_conf (struct r5conf *conf)
++static void print_raid5_conf(struct r5conf *conf)
+ {
+ 	int i;
+ 	struct disk_info *tmp;
 -- 
-2.10.0
+2.10.1
 
