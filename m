@@ -1,46 +1,108 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 24 Oct 2016 20:43:25 +0000
-Subject: [PATCH 2/3] clk: keystone: Fix some error messages
-Message-Id: <23b6ab7eef2d29d21b1e023c5bee72fa7f5ed424.1477339880.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:11:14 +0000
+Subject: [PATCH 15/54] md/raid1: Less function calls in setup_conf() after error detection
+Message-Id: <b48403b0-7eb2-cfeb-33bd-1996e838559a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Report 'bit-shift' in the error message as it is the property we are
-looking for.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Oct 2016 18:01:02 +0200
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Resource release functions were called in up to four cases
+by the setup_conf() function during error handling even if
+the passed data structure members contained a null pointer.
+
+Adjust jump targets according to the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/keystone/pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/raid1.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index 70d6fb2d23bc..35c0e2b011d1 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -271,7 +271,7 @@ static void __init of_pll_div_clk_init(struct device_node *node)
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 4d2fcbc..7dc45ba 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -2786,19 +2786,19 @@ static struct r1conf *setup_conf(struct mddev *mddev)
+ 				GFP_KERNEL);
+ 	if (!conf->mirrors) {
+ 		err = -ENOMEM;
+-		goto abort;
++		goto free_conf;
  	}
  
- 	if (of_property_read_u32(node, "bit-shift", &shift)) {
--		pr_err("%s: missing 'shift' property\n", __func__);
-+		pr_err("%s: missing 'bit-shift' property\n", __func__);
- 		return;
+ 	conf->tmppage = alloc_page(GFP_KERNEL);
+ 	if (!conf->tmppage) {
+ 		err = -ENOMEM;
+-		goto abort;
++		goto free_mirrors;
  	}
  
-@@ -315,7 +315,7 @@ static void __init of_pll_mux_clk_init(struct device_node *node)
+ 	conf->poolinfo = kzalloc(sizeof(*conf->poolinfo), GFP_KERNEL);
+ 	if (!conf->poolinfo) {
+ 		err = -ENOMEM;
+-		goto abort;
++		goto put_page;
  	}
  
- 	if (of_property_read_u32(node, "bit-shift", &shift)) {
--		pr_err("%s: missing 'shift' property\n", __func__);
-+		pr_err("%s: missing 'bit-shift' property\n", __func__);
- 		return;
+ 	conf->poolinfo->raid_disks = mddev->raid_disks * 2;
+@@ -2807,7 +2807,7 @@ static struct r1conf *setup_conf(struct mddev *mddev)
+ 					  conf->poolinfo);
+ 	if (!conf->r1bio_pool) {
+ 		err = -ENOMEM;
+-		goto abort;
++		goto free_poolinfo;
  	}
  
+ 	conf->poolinfo->mddev = mddev;
+@@ -2825,7 +2825,7 @@ static struct r1conf *setup_conf(struct mddev *mddev)
+ 
+ 		if (disk->rdev) {
+ 			err = -EINVAL;
+-			goto abort;
++			goto destroy_pool;
+ 		}
+ 
+ 		disk->rdev = rdev;
+@@ -2866,7 +2866,7 @@ static struct r1conf *setup_conf(struct mddev *mddev)
+ 				if (!test_bit(In_sync, &disk->rdev->flags)) {
+ 					/* Original is not in_sync - bad */
+ 					err = -EIO;
+-					goto abort;
++					goto destroy_pool;
+ 				}
+ 			}
+ 		}
+@@ -2886,16 +2886,19 @@ static struct r1conf *setup_conf(struct mddev *mddev)
+ 		       "md/raid1:%s: couldn't allocate thread\n",
+ 		       mdname(mddev));
+ 		err = -ENOMEM;
+-		goto abort;
++		goto destroy_pool;
+ 	}
+ 
+ 	return conf;
+-
+- abort:
++destroy_pool:
+ 	mempool_destroy(conf->r1bio_pool);
++free_poolinfo:
+ 	kfree(conf->poolinfo);
++put_page:
+ 	safe_put_page(conf->tmppage);
++free_mirrors:
+ 	kfree(conf->mirrors);
++free_conf:
+ 	kfree(conf);
+ 	return ERR_PTR(err);
+ }
 -- 
-2.9.3
+2.10.1
 
