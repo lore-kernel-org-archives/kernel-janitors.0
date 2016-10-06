@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:26:04 +0000
-Subject: [PATCH 27/54] md/raid5: Return directly after a failed kzalloc() in setup_conf()
-Message-Id: <1490c223-763b-b64c-b685-e3bdaa32923c@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:05:07 +0000
+Subject: [PATCH 10/54] md/raid1: Use kcalloc() in alloc_behind_pages()
+Message-Id: <22c0aa38-d45a-0691-a2a0-9c57f5837844@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
@@ -13,48 +13,37 @@ To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <g
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 22:44:59 +0200
+Date: Tue, 4 Oct 2016 15:01:04 +0200
 
-* Return directly after a call of the function "kzalloc" failed
-  at the beginning.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-* Delete a repeated check for the local variable "conf"
-  which became unnecessary with this refactoring.
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/raid5.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/md/raid1.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 562138f..17f50a6 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -6482,8 +6482,8 @@ static struct r5conf *setup_conf(struct mddev *mddev)
- 	}
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 1961d82..d2759f8 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -955,8 +955,7 @@ static void alloc_behind_pages(struct bio *bio, struct r1bio *r1_bio)
+ {
+ 	int i;
+ 	struct bio_vec *bvec;
+-	struct bio_vec *bvecs = kzalloc(bio->bi_vcnt * sizeof(struct bio_vec),
+-					GFP_NOIO);
++	struct bio_vec *bvecs = kcalloc(bio->bi_vcnt, sizeof(*bvecs), GFP_NOIO);
+ 	if (unlikely(!bvecs))
+ 		return;
  
- 	conf = kzalloc(sizeof(*conf), GFP_KERNEL);
--	if (conf = NULL)
--		goto abort;
-+	if (!conf)
-+		return ERR_PTR(-ENOMEM);
- 	/* Don't enable multi-threading by default*/
- 	if (!alloc_thread_groups(conf, 0, &group_cnt, &worker_cnt_per_group,
- 				 &new_group)) {
-@@ -6646,11 +6646,8 @@ static struct r5conf *setup_conf(struct mddev *mddev)
- 	return conf;
- 
-  abort:
--	if (conf) {
--		free_conf(conf);
--		return ERR_PTR(-EIO);
--	} else
--		return ERR_PTR(-ENOMEM);
-+	free_conf(conf);
-+	return ERR_PTR(-EIO);
- }
- 
- static int only_parity(int raid_disk, int algo, int raid_disks, int max_degraded)
 -- 
 2.10.1
 
