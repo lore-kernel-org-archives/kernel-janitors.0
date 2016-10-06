@@ -1,51 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Oct 2016 20:54:49 +0000
-Subject: [PATCH 3/3] ARM-OMAP2+: pm-debug: Use seq_putc() in two functions
-Message-Id: <3b54e75d-eeee-5cce-5733-89b2750ab8c7@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:12:58 +0000
+Subject: [PATCH 16/54] md/raid1: Delete an error message for a failed memory allocation
+Message-Id: <d8ac64c7-88ae-ae2d-c625-4603abaa4126@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
-In-Reply-To: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Oct 2016 22:30:44 +0200
+Date: Tue, 4 Oct 2016 18:15:20 +0200
 
-A single character (line break) should be put into a sequence at the end.
-Thus use the corresponding function "seq_putc".
+Omit an extra message for a memory allocation failure in this function.
 
-This issue was detected by using the Coccinelle software.
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm/mach-omap2/pm-debug.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/md/raid1.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/pm-debug.c b/arch/arm/mach-omap2/pm-debug.c
-index 0b33986..003a6cb 100644
---- a/arch/arm/mach-omap2/pm-debug.c
-+++ b/arch/arm/mach-omap2/pm-debug.c
-@@ -114,8 +114,7 @@ static int pwrdm_dbg_show_counter(struct powerdomain *pwrdm, void *user)
- 		seq_printf(s, ",RET-MEMBANK%d-OFF:%d", i + 1,
- 				pwrdm->ret_mem_off_counter[i]);
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 7dc45ba..15b9652 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -2882,9 +2882,6 @@ static struct r1conf *setup_conf(struct mddev *mddev)
  
--	seq_printf(s, "\n");
--
-+	seq_putc(s, '\n');
- 	return 0;
- }
- 
-@@ -138,7 +137,7 @@ static int pwrdm_dbg_show_timer(struct powerdomain *pwrdm, void *user)
- 		seq_printf(s, ",%s:%lld", pwrdm_state_names[i],
- 			pwrdm->state_timer[i]);
- 
--	seq_printf(s, "\n");
-+	seq_putc(s, '\n');
- 	return 0;
- }
- 
+ 	conf->thread = md_register_thread(raid1d, mddev, "raid1");
+ 	if (!conf->thread) {
+-		printk(KERN_ERR
+-		       "md/raid1:%s: couldn't allocate thread\n",
+-		       mdname(mddev));
+ 		err = -ENOMEM;
+ 		goto destroy_pool;
+ 	}
 -- 
 2.10.1
 
