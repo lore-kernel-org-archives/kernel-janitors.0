@@ -1,21 +1,42 @@
-From: David Howells <dhowells@redhat.com>
-Date: Wed, 12 Oct 2016 14:59:02 +0000
-Subject: Re: [bug report] rxrpc: Add some additional call tracing
-Message-Id: <7164.1476284342@warthog.procyon.org.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:22:44 +0000
+Subject: [PATCH 24/54] md/raid1: Improve another size determination in setup_conf()
+Message-Id: <9831fce9-d689-89e4-dec8-50cadcd13fdd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161012061011.GH12841@mwanda>
-In-Reply-To: <20161012061011.GH12841@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Oct 2016 21:46:18 +0200
 
-> It's just zero or NULL always.  But if you want you can also ignore the
-> static checker warning since it's obviously harmless.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
-Ah, yes.  The trace line used to be before the error check, but now there's a
-separate trace line for that.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/raid1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-David
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index ec6aafb..5e1a427 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -2776,7 +2776,7 @@ static struct r1conf *setup_conf(struct mddev *mddev)
+ 	struct md_rdev *rdev;
+ 	int err;
+ 
+-	conf = kzalloc(sizeof(struct r1conf), GFP_KERNEL);
++	conf = kzalloc(sizeof(*conf), GFP_KERNEL);
+ 	if (!conf)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.10.1
+
