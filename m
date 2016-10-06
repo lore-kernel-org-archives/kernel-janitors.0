@@ -1,42 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:22:44 +0000
-Subject: [PATCH 24/54] md/raid1: Improve another size determination in setup_conf()
-Message-Id: <9831fce9-d689-89e4-dec8-50cadcd13fdd@users.sourceforge.net>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Thu, 06 Oct 2016 09:29:20 +0000
+Subject: Re: [PATCH 24/54] md/raid1: Improve another size determination in setup_conf()
+Message-Id: <CAFLxGvx0Fr-WNvKYACdvNiZwYzHW4ocna9HPH8J_WPSXWc+ngg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net> <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+ <9831fce9-d689-89e4-dec8-50cadcd13fdd@users.sourceforge.net>
+In-Reply-To: <9831fce9-d689-89e4-dec8-50cadcd13fdd@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 21:46:18 +0200
+On Thu, Oct 6, 2016 at 11:22 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 4 Oct 2016 21:46:18 +0200
+>
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer.
+Isn't this pure matter of taste?
+Some developers prefer sizeof(*ptr) because it is easier to type, other
+developers prefer sizeof(struct foo) because you can determine the type
+at first sight and makes review more easy.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/raid1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index ec6aafb..5e1a427 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2776,7 +2776,7 @@ static struct r1conf *setup_conf(struct mddev *mddev)
- 	struct md_rdev *rdev;
- 	int err;
- 
--	conf = kzalloc(sizeof(struct r1conf), GFP_KERNEL);
-+	conf = kzalloc(sizeof(*conf), GFP_KERNEL);
- 	if (!conf)
- 		return ERR_PTR(-ENOMEM);
- 
 -- 
-2.10.1
-
+Thanks,
+//richard
