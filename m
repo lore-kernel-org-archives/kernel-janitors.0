@@ -1,36 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Oct 2016 12:55:08 +0000
-Subject: [patch v2] staging: android: ion: Fix error handling in ion_query_heaps()
-Message-Id: <20161013125508.GA12868@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:44:30 +0000
+Subject: [PATCH 44/54] md/raid10: Return directly after a failed kzalloc() in setup_conf()
+Message-Id: <6885c0ba-458f-23aa-883d-d1571c398bc5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-If the copy_to_user() fails we should unlock and return directly without
-updating "cnt".  Also the return value should be -EFAULT instead of the
-number of bytes remaining.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Oct 2016 17:46:02 +0200
 
-Fixes: 02b23803c6af ("staging: android: ion: Add ioctl to query available heaps")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+* Return directly after a call of the function "kzalloc" failed
+  at the beginning.
+
+* Delete a repeated check for the local variable "conf"
+  which became unnecessary with this refactoring.
+
+* Reorder calls for the functions "kfree" and "safe_put_page"
+  at the end.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-v2: a more complete fix
+ drivers/md/raid10.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 396ded5..209a8f7 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -1187,8 +1187,10 @@ int ion_query_heaps(struct ion_client *client, struct ion_heap_query *query)
- 		hdata.type = heap->type;
- 		hdata.heap_id = heap->id;
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 8326e68..abe75c2 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -3501,7 +3501,7 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 	err = -ENOMEM;
+ 	conf = kzalloc(sizeof(*conf), GFP_KERNEL);
+ 	if (!conf)
+-		goto out;
++		return ERR_PTR(-ENOMEM);
  
--		ret = copy_to_user(&buffer[cnt],
--				   &hdata, sizeof(hdata));
-+		if (copy_to_user(&buffer[cnt], &hdata, sizeof(hdata))) {
-+			ret = -EFAULT;
-+			goto out;
-+		}
+ 	/* FIXME calc properly */
+ 	conf->mirrors = kcalloc(mddev->raid_disks + max(0, -mddev->delta_disks),
+@@ -3554,12 +3554,10 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 	return conf;
  
- 		cnt++;
- 		if (cnt >= max_cnt)
+  out:
+-	if (conf) {
+-		mempool_destroy(conf->r10bio_pool);
+-		kfree(conf->mirrors);
+-		safe_put_page(conf->tmppage);
+-		kfree(conf);
+-	}
++	mempool_destroy(conf->r10bio_pool);
++	safe_put_page(conf->tmppage);
++	kfree(conf->mirrors);
++	kfree(conf);
+ 	return ERR_PTR(err);
+ }
+ 
+-- 
+2.10.1
+
