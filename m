@@ -1,29 +1,60 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Wed, 05 Oct 2016 02:36:28 +0000
-Subject: Re: cxl: replace loop with for_each_child_of_node(), remove unneeded of_node_put()
-Message-Id: <3spfzw6LSRz9t0t@ozlabs.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:19:41 +0000
+Subject: [PATCH 21/54] md/raid1: Delete three unwanted spaces behind asterisks
+Message-Id: <2677c627-21c4-6ce3-5dba-787146bc00ea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1469764534-26948-1-git-send-email-andrew.donnellan@au1.ibm.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Donnellan <andrew.donnellan@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Cc: clombard@linux.vnet.ibm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, fbarrat@linux.vnet.ibm.com, julia.lawall@lip6.fr, imunsie@au1.ibm.com, elfring@users.sourceforge.net
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, 2016-29-07 at 03:55:34 UTC, Andrew Donnellan wrote:
-> Rewrite the cxl_guest_init_afu() loop in cxl_of_probe() to use
-> for_each_child_of_node() rather than a hand-coded for loop.
-> 
-> Remove the useless of_node_put(afu_np) call after the loop, where it's
-> guaranteed that afu_np = NULL.
-> 
-> Reported-by: SF Markus Elfring <elfring@users.sourceforge.net>
-> Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-> Signed-off-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> Reviewed-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Oct 2016 21:01:34 +0200
 
-Applied to powerpc next, thanks.
+The script "checkpatch.pl" pointed information out like the following.
 
-https://git.kernel.org/powerpc/c/735840b44bcc998e2574faf63d1aaa
+ERROR: "foo * bar" should be "foo *bar"
 
-cheers
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/raid1.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 3a03d19..fc9d600 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -72,7 +72,7 @@ static void allow_barrier(struct r1conf *conf, sector_t start_next_window,
+ 			  sector_t bi_sector);
+ static void lower_barrier(struct r1conf *conf);
+ 
+-static void * r1bio_pool_alloc(gfp_t gfp_flags, void *data)
++static void *r1bio_pool_alloc(gfp_t gfp_flags, void *data)
+ {
+ 	struct pool_info *pi = data;
+ 	int size = offsetof(struct r1bio, bios[pi->raid_disks]);
+@@ -96,7 +96,7 @@ static void r1bio_pool_free(void *r1_bio, void *data)
+ #define CLUSTER_RESYNC_WINDOW_SECTORS (CLUSTER_RESYNC_WINDOW >> 9)
+ #define NEXT_NORMALIO_DISTANCE (3 * RESYNC_WINDOW_SECTORS)
+ 
+-static void * r1buf_pool_alloc(gfp_t gfp_flags, void *data)
++static void *r1buf_pool_alloc(gfp_t gfp_flags, void *data)
+ {
+ 	struct pool_info *pi = data;
+ 	struct r1bio *r1_bio;
+@@ -1027,7 +1027,7 @@ static void raid1_unplug(struct blk_plug_cb *cb, bool from_schedule)
+ 	kfree(plug);
+ }
+ 
+-static void raid1_make_request(struct mddev *mddev, struct bio * bio)
++static void raid1_make_request(struct mddev *mddev, struct bio *bio)
+ {
+ 	struct r1conf *conf = mddev->private;
+ 	struct raid1_info *mirror;
+-- 
+2.10.1
+
