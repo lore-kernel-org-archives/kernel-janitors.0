@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 08:59:06 +0000
-Subject: [PATCH 06/54] md/raid0: Delete four unwanted spaces behind function names
-Message-Id: <5cd9b9c4-7c16-1173-2bff-d24ec5fd2863@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:01:57 +0000
+Subject: [PATCH 08/54] md/raid0: Delete an unnecessary return statement in raid0_status()
+Message-Id: <ec7f893d-a9bb-6cdd-a5af-11a48fed7c36@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
@@ -13,41 +13,31 @@ To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <g
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 14:21:21 +0200
+Date: Tue, 4 Oct 2016 14:34:33 +0200
 
 The script "checkpatch.pl" pointed information out like the following.
 
-WARNING: space prohibited between function name and open parenthesis '('
+WARNING: void function return statements are not generally useful
 
-Thus fix the affected source code places.
+Thus remove such a statement here.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/raid0.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/md/raid0.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 0315f1e..06cb172 100644
+index 9b76eae..1abe1ee 100644
 --- a/drivers/md/raid0.c
 +++ b/drivers/md/raid0.c
-@@ -680,14 +680,14 @@ static struct md_personality raid0_personality 	.congested	= raid0_congested,
- };
- 
--static int __init raid0_init (void)
-+static int __init raid0_init(void)
+@@ -503,7 +503,6 @@ static void raid0_make_request(struct mddev *mddev, struct bio *bio)
+ static void raid0_status(struct seq_file *seq, struct mddev *mddev)
  {
--	return register_md_personality (&raid0_personality);
-+	return register_md_personality(&raid0_personality);
+ 	seq_printf(seq, " %dk chunks", mddev->chunk_sectors / 2);
+-	return;
  }
  
--static void raid0_exit (void)
-+static void raid0_exit(void)
- {
--	unregister_md_personality (&raid0_personality);
-+	unregister_md_personality(&raid0_personality);
- }
- 
- module_init(raid0_init);
+ static void *raid0_takeover_raid45(struct mddev *mddev)
 -- 
 2.10.1
 
