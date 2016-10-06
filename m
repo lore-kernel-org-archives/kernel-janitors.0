@@ -1,51 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Oct 2016 08:34:20 +0000
-Subject: [bug report] qed: Add Light L2 support
-Message-Id: <20161011083420.GA18141@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 08:51:25 +0000
+Subject: [PATCH 01/54] md/raid0: Use kcalloc() in create_strip_zones()
+Message-Id: <2eaf3755-ff33-39e0-517c-c968d148f862@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hello Yuval Mintz,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Oct 2016 10:10:52 +0200
 
-The patch 0a7fb11c23c0: "qed: Add Light L2 support" from Oct 1, 2016,
-leads to the following Smatch warning:
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
 
-	drivers/net/ethernet/qlogic/qed/qed_ll2.c:1590 qed_ll2_start()
-	error: dereferencing freed memory 'buffer'
+  This issue was detected by using the Coccinelle software.
 
-drivers/net/ethernet/qlogic/qed/qed_ll2.c
-  1587  
-  1588          /* Post all Rx buffers to FW */
-  1589          spin_lock_bh(&cdev->ll2->lock);
-  1590          list_for_each_entry(buffer, &cdev->ll2->list, list) {
-                                    ^^^^^^
-Note.
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-  1591                  rc = qed_ll2_post_rx_buffer(QED_LEADING_HWFN(cdev),
-  1592                                              cdev->ll2->handle,
-  1593                                              buffer->phys_addr, 0, buffer, 1);
-  1594                  if (rc) {
-  1595                          DP_INFO(cdev,
-  1596                                  "Failed to post an Rx buffer; Deleting it\n");
-  1597                          dma_unmap_single(&cdev->pdev->dev, buffer->phys_addr,
-  1598                                           cdev->ll2->rx_size, DMA_FROM_DEVICE);
-  1599                          kfree(buffer->data);
-  1600                          list_del(&buffer->list);
-  1601                          kfree(buffer);
-                                      ^^^^^^
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/raid0.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-There was probably supposed to be a break statement after this kfree().
-Otherwise use list_for_each_entry_safe().
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index 258986a..50e8a63 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -150,12 +150,13 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
+ 	}
+ 
+ 	err = -ENOMEM;
+-	conf->strip_zone = kzalloc(sizeof(struct strip_zone)*
+-				conf->nr_strip_zones, GFP_KERNEL);
++	conf->strip_zone = kcalloc(conf->nr_strip_zones,
++				   sizeof(*conf->strip_zone),
++				   GFP_KERNEL);
+ 	if (!conf->strip_zone)
+ 		goto abort;
+-	conf->devlist = kzalloc(sizeof(struct md_rdev*)*
+-				conf->nr_strip_zones*mddev->raid_disks,
++	conf->devlist = kcalloc(conf->nr_strip_zones * mddev->raid_disks,
++				sizeof(*conf->devlist),
+ 				GFP_KERNEL);
+ 	if (!conf->devlist)
+ 		goto abort;
+-- 
+2.10.1
 
-  1602                  } else {
-  1603                          cdev->ll2->rx_cnt++;
-  1604                  }
-  1605          }
-  1606          spin_unlock_bh(&cdev->ll2->lock);
-  1607  
-
-regards,
-dan carpenter
