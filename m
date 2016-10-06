@@ -1,138 +1,103 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 14:58:32 +0000
-Subject: [PATCH 13/15] md-cluster: Less function calls in join() after error detection
-Message-Id: <c0a9d85c-39d4-901e-a93f-d419d9f7159b@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 08:53:29 +0000
+Subject: [PATCH 02/54] md/raid0: Less function calls in create_strip_zones() after error detection
+Message-Id: <95367971-fdc2-7bb8-e34e-bf54e480420d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
-In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 15:40:32 +0200
+Date: Tue, 4 Oct 2016 10:43:33 +0200
 
-A few resource release functions were called in some cases
-by the join() function during error handling
-even if the passed data structure member contained a null pointer.
+The kfree() function was called in up to two cases
+by the create_strip_zones() function during error handling even if
+the passed data structure member (or variable) contained a null pointer.
 
-* Adjust jump targets according to the Linux coding style convention.
-
-* Delete a repeated check which became unnecessary with this refactoring.
+Adjust jump targets according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/md-cluster.c | 47 ++++++++++++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 21 deletions(-)
+ drivers/md/raid0.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index e1ebcc4..36bb962 100644
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -837,39 +837,39 @@ static int join(struct mddev *mddev, int nodes)
- 				DLM_LSFL_FS, LVB_SIZE,
- 				&md_ls_ops, mddev, &ops_rv, &cinfo->lockspace);
- 	if (ret)
--		goto err;
-+		goto free_cluster_info;
- 	wait_for_completion(&cinfo->completion);
- 	if (nodes < cinfo->slot_number) {
- 		pr_err("md-cluster: Slot allotted(%d) is greater than available slots(%d).",
- 			cinfo->slot_number, nodes);
- 		ret = -ERANGE;
--		goto err;
-+		goto release_lockspace;
- 	}
- 	/* Initiate the communication resources */
- 	ret = -ENOMEM;
- 	cinfo->recv_thread = md_register_thread(recv_daemon, mddev, "cluster_recv");
- 	if (!cinfo->recv_thread)
--		goto err;
-+		goto release_lockspace;
- 	cinfo->message_lockres = lockres_init(mddev, "message", NULL, 1);
- 	if (!cinfo->message_lockres)
--		goto err;
-+		goto unregister_recv;
- 	cinfo->token_lockres = lockres_init(mddev, "token", NULL, 0);
- 	if (!cinfo->token_lockres)
--		goto err;
-+		goto free_message;
- 	cinfo->no_new_dev_lockres = lockres_init(mddev, "no-new-dev", NULL, 0);
- 	if (!cinfo->no_new_dev_lockres)
--		goto err;
-+		goto free_token;
- 
- 	ret = dlm_lock_sync(cinfo->token_lockres, DLM_LOCK_EX);
- 	if (ret) {
- 		ret = -EAGAIN;
- 		pr_err("md-cluster: can't join cluster to avoid lock issue\n");
--		goto err;
-+		goto free_no_new_dev;
- 	}
- 	cinfo->ack_lockres = lockres_init(mddev, "ack", ack_bast, 0);
- 	if (!cinfo->ack_lockres) {
- 		ret = -ENOMEM;
--		goto err;
-+		goto free_no_new_dev;
- 	}
- 	/* get sync CR lock on ACK. */
- 	if (dlm_lock_sync(cinfo->ack_lockres, DLM_LOCK_CR))
-@@ -886,34 +886,39 @@ static int join(struct mddev *mddev, int nodes)
- 	cinfo->bitmap_lockres = lockres_init(mddev, str, NULL, 1);
- 	if (!cinfo->bitmap_lockres) {
- 		ret = -ENOMEM;
--		goto err;
-+		goto free_ack;
- 	}
- 	if (dlm_lock_sync(cinfo->bitmap_lockres, DLM_LOCK_PW)) {
- 		pr_err("Failed to get bitmap lock\n");
- 		ret = -EINVAL;
--		goto err;
-+		goto free_bitmap;
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index 50e8a63..3c76451 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -146,7 +146,7 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
+ 		       mdname(mddev),
+ 		       mddev->chunk_sectors << 9, blksize);
+ 		err = -EINVAL;
+-		goto abort;
++		goto free_conf;
  	}
  
- 	cinfo->resync_lockres = lockres_init(mddev, "resync", NULL, 0);
- 	if (!cinfo->resync_lockres) {
- 		ret = -ENOMEM;
--		goto err;
-+		goto free_bitmap;
+ 	err = -ENOMEM;
+@@ -154,12 +154,12 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
+ 				   sizeof(*conf->strip_zone),
+ 				   GFP_KERNEL);
+ 	if (!conf->strip_zone)
+-		goto abort;
++		goto free_conf;
+ 	conf->devlist = kcalloc(conf->nr_strip_zones * mddev->raid_disks,
+ 				sizeof(*conf->devlist),
+ 				GFP_KERNEL);
+ 	if (!conf->devlist)
+-		goto abort;
++		goto free_zone;
+ 
+ 	/* The first zone must contain all devices, so here we check that
+ 	 * there is a proper alignment of slots to devices and find them all
+@@ -190,17 +190,17 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
+ 			printk(KERN_ERR
+ 			       "md/raid0:%s: remove inactive devices before converting to RAID0\n",
+ 			       mdname(mddev));
+-			goto abort;
++			goto free_device_list;
+ 		}
+ 		if (j >= mddev->raid_disks) {
+ 			printk(KERN_ERR "md/raid0:%s: bad disk number %d - "
+ 			       "aborting!\n", mdname(mddev), j);
+-			goto abort;
++			goto free_device_list;
+ 		}
+ 		if (dev[j]) {
+ 			printk(KERN_ERR "md/raid0:%s: multiple devices for %d - "
+ 			       "aborting!\n", mdname(mddev), j);
+-			goto abort;
++			goto free_device_list;
+ 		}
+ 		dev[j] = rdev1;
+ 
+@@ -211,7 +211,7 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
+ 	if (cnt != mddev->raid_disks) {
+ 		printk(KERN_ERR "md/raid0:%s: too few disks (%d of %d) - "
+ 		       "aborting!\n", mdname(mddev), cnt, mddev->raid_disks);
+-		goto abort;
++		goto free_device_list;
  	}
+ 	zone->nb_dev = cnt;
+ 	zone->zone_end = smallest->sectors * cnt;
+@@ -271,9 +271,11 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
+ 	*private_conf = conf;
  
  	return 0;
--err:
--	md_unregister_thread(&cinfo->recovery_thread);
--	md_unregister_thread(&cinfo->recv_thread);
--	lockres_free(cinfo->message_lockres);
--	lockres_free(cinfo->token_lockres);
-+free_bitmap:
-+	lockres_free(cinfo->bitmap_lockres);
-+free_ack:
- 	lockres_free(cinfo->ack_lockres);
-+free_no_new_dev:
- 	lockres_free(cinfo->no_new_dev_lockres);
--	lockres_free(cinfo->resync_lockres);
--	lockres_free(cinfo->bitmap_lockres);
--	if (cinfo->lockspace)
--		dlm_release_lockspace(cinfo->lockspace, 2);
--	mddev->cluster_info = NULL;
-+free_token:
-+	lockres_free(cinfo->token_lockres);
-+free_message:
-+	lockres_free(cinfo->message_lockres);
-+unregister_recv:
-+	md_unregister_thread(&cinfo->recv_thread);
-+release_lockspace:
-+	dlm_release_lockspace(cinfo->lockspace, 2);
-+free_cluster_info:
- 	kfree(cinfo);
-+	md_unregister_thread(&cinfo->recovery_thread);
-+	mddev->cluster_info = NULL;
- 	return ret;
- }
- 
+-abort:
+-	kfree(conf->strip_zone);
++free_device_list:
+ 	kfree(conf->devlist);
++free_zone:
++	kfree(conf->strip_zone);
++free_conf:
+ 	kfree(conf);
+ 	*private_conf = ERR_PTR(err);
+ 	return err;
 -- 
-2.10.0
+2.10.1
 
