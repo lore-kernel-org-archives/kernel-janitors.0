@@ -1,40 +1,82 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:15:36 +0000
-Subject: [PATCH 34/34] [media] DaVinci-VPIF-Display: Delete an unnecessary variable initialisation in process
-Message-Id: <7e33239a-d1f1-3706-532c-b46e705b184f@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:45:24 +0000
+Subject: [PATCH 45/54] md/raid10: Move assignments for the variable "err" in setup_conf()
+Message-Id: <aaf54edd-9051-e72d-90b3-3c2755e0736c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:45:03 +0200
+Date: Wed, 5 Oct 2016 18:26:45 +0200
 
-The local variable "addr" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+One local variable was set to an error code before a concrete
+error situation was detected. Thus move the corresponding assignments
+into if branches to indicate a memory allocation failure there.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/davinci/vpif_display.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid10.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
-index cd44990..a48a5111 100644
---- a/drivers/media/platform/davinci/vpif_display.c
-+++ b/drivers/media/platform/davinci/vpif_display.c
-@@ -301,7 +301,7 @@ static struct vb2_ops video_qops = {
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index abe75c2..7e512d4 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -3498,7 +3498,6 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 		return ERR_PTR(-EINVAL);
+ 	}
  
- static void process_progressive_mode(struct common_obj *common)
- {
--	unsigned long addr = 0;
-+	unsigned long addr;
+-	err = -ENOMEM;
+ 	conf = kzalloc(sizeof(*conf), GFP_KERNEL);
+ 	if (!conf)
+ 		return ERR_PTR(-ENOMEM);
+@@ -3507,19 +3506,25 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 	conf->mirrors = kcalloc(mddev->raid_disks + max(0, -mddev->delta_disks),
+ 				sizeof(*conf->mirrors),
+ 				GFP_KERNEL);
+-	if (!conf->mirrors)
++	if (!conf->mirrors) {
++		err = -ENOMEM;
+ 		goto out;
++	}
  
- 	spin_lock(&common->irqlock);
- 	/* Get the next buffer from buffer queue */
+ 	conf->tmppage = alloc_page(GFP_KERNEL);
+-	if (!conf->tmppage)
++	if (!conf->tmppage) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	conf->geo = geo;
+ 	conf->copies = copies;
+ 	conf->r10bio_pool = mempool_create(NR_RAID10_BIOS, r10bio_pool_alloc,
+ 					   r10bio_pool_free, conf);
+-	if (!conf->r10bio_pool)
++	if (!conf->r10bio_pool) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	calc_sectors(conf, mddev->dev_sectors);
+ 	if (mddev->reshape_position = MaxSector) {
+@@ -3547,8 +3552,10 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 	atomic_set(&conf->nr_pending, 0);
+ 
+ 	conf->thread = md_register_thread(raid10d, mddev, "raid10");
+-	if (!conf->thread)
++	if (!conf->thread) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	conf->mddev = mddev;
+ 	return conf;
 -- 
 2.10.1
 
