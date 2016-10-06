@@ -1,43 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Oct 2016 19:56:37 +0000
-Subject: [PATCH 1/2] [media] blackfin-capture: Use kcalloc() in bcap_init_sensor_formats()
-Message-Id: <581af7b9-030d-9d65-02c5-53bf11d40716@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:31:11 +0000
+Subject: [PATCH 31/54] md/raid5: Adjust two function calls together with a variable assignment
+Message-Id: <529972b2-5251-4cb5-e5cb-70de6628fe71@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ae9a008f-35e2-e4e0-be18-635050c8277e@users.sourceforge.net>
-In-Reply-To: <ae9a008f-35e2-e4e0-be18-635050c8277e@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Scott Jiang <scott.jiang.linux@gmail.com>
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Oct 2016 21:12:13 +0200
+Date: Wed, 5 Oct 2016 10:00:07 +0200
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus reuse the corresponding function "kcalloc".
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+ERROR: do not use assignment in if condition
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/blackfin/bfin_capture.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid5.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/blackfin/bfin_capture.c b/drivers/media/platform/blackfin/bfin_capture.c
-index 8eb0339..c5e1043 100644
---- a/drivers/media/platform/blackfin/bfin_capture.c
-+++ b/drivers/media/platform/blackfin/bfin_capture.c
-@@ -169,7 +169,7 @@ static int bcap_init_sensor_formats(struct bcap_device *bcap_dev)
- 	if (!num_formats)
- 		return -ENXIO;
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index ef180c0..a37f1f9 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -501,11 +501,10 @@ static int grow_buffers(struct stripe_head *sh, gfp_t gfp)
+ 	int num = sh->raid_conf->pool_size;
  
--	sf = kzalloc(num_formats * sizeof(*sf), GFP_KERNEL);
-+	sf = kcalloc(num_formats, sizeof(*sf), GFP_KERNEL);
- 	if (!sf)
- 		return -ENOMEM;
+ 	for (i = 0; i < num; i++) {
+-		struct page *page;
++		struct page *page = alloc_page(gfp);
  
+-		if (!(page = alloc_page(gfp))) {
++		if (!page)
+ 			return 1;
+-		}
+ 		sh->dev[i].page = page;
+ 		sh->dev[i].orig_page = page;
+ 	}
+@@ -6525,8 +6524,8 @@ static struct r5conf *setup_conf(struct mddev *mddev)
+ 		goto free_conf;
+ 
+ 	conf->mddev = mddev;
+-
+-	if ((conf->stripe_hashtbl = kzalloc(PAGE_SIZE, GFP_KERNEL)) = NULL)
++	conf->stripe_hashtbl = kzalloc(PAGE_SIZE, GFP_KERNEL);
++	if (!conf->stripe_hashtbl)
+ 		goto free_conf;
+ 
+ 	/* We init hash_locks[0] separately to that it can be used
 -- 
 2.10.1
 
