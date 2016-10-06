@@ -1,57 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 16:23:33 +0000
-Subject: [PATCH 03/18] [media] RedRat3: Return directly after a failed kcalloc() in redrat3_transmit_ir()
-Message-Id: <43840a4c-9f13-4e02-4f57-306c1fca2ee8@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:42:39 +0000
+Subject: [PATCH 42/54] md/raid10: Delete an error message for a failed memory allocation
+Message-Id: <06ccc5b5-61e7-aeae-23b4-84dafac8ed05@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
-In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 10:34:29 +0200
+Date: Wed, 5 Oct 2016 16:57:19 +0200
 
-* Return directly after a call of the function "kcalloc" failed
-  at the beginning.
+Omit an extra message for a memory allocation failure
+(and another corresponding condition check) in this function.
 
-* Reorder two calls for the function "kfree" at the end.
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/rc/redrat3.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/md/raid10.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-index f5a6850..7ae2ced 100644
---- a/drivers/media/rc/redrat3.c
-+++ b/drivers/media/rc/redrat3.c
-@@ -741,10 +741,8 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
- 	sample_lens = kcalloc(RR3_DRIVER_MAXLENS,
- 			      sizeof(*sample_lens),
- 			      GFP_KERNEL);
--	if (!sample_lens) {
--		ret = -ENOMEM;
--		goto out;
--	}
-+	if (!sample_lens)
-+		return -ENOMEM;
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 04e8f78..1f712f7 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -3554,9 +3554,6 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 	return conf;
  
- 	irdata = kzalloc(sizeof(*irdata), GFP_KERNEL);
- 	if (!irdata) {
-@@ -815,8 +813,8 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
- 		ret = count;
- 
- out:
--	kfree(sample_lens);
- 	kfree(irdata);
-+	kfree(sample_lens);
- 
- 	rr3->transmitting = false;
- 	/* rr3 re-enables rc detector because it was enabled before */
+  out:
+-	if (err = -ENOMEM)
+-		printk(KERN_ERR "md/raid10:%s: couldn't allocate memory.\n",
+-		       mdname(mddev));
+ 	if (conf) {
+ 		mempool_destroy(conf->r10bio_pool);
+ 		kfree(conf->mirrors);
 -- 
 2.10.1
 
