@@ -1,77 +1,62 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 20 Oct 2016 17:13:28 +0000
-Subject: Applied "ASoC: rt5663: fix a debug statement" to the asoc tree
-Message-Id: <E1bxGuG-0001TP-S1@finisterre>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:20:37 +0000
+Subject: [PATCH 22/54] md/raid1: Delete three unwanted spaces before increment operators
+Message-Id: <bd57e346-3dea-02e9-7c6e-c6d44dff423b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013084712.GB16198@mwanda>
-In-Reply-To: <20161013084712.GB16198@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Bard Liao <bardliao@realtek.com>, Mark Brown <broonie@kernel.org>Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>alsa-devel@alsa-project.org
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Oct 2016 21:10:37 +0200
 
-   ASoC: rt5663: fix a debug statement
+The script "checkpatch.pl" pointed information out like the following.
 
-has been applied to the asoc tree at
+ERROR: space prohibited before that '++' (ctx:WxO)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Thus fix the affected source code places.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From c975e39ccadf6dc047356c60773a043a2293b8cd Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Oct 2016 11:47:13 +0300
-Subject: [PATCH] ASoC: rt5663: fix a debug statement
-
-We increment "i" before printing the debug statement.  That makes it
-the wrong sleep_time[] information and Smatch complains that the last
-increment could be beyond the end of the array.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Bard Liao <bardliao@realtek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/codecs/rt5663.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/raid1.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
-index 01a18d88f1eb..00ff2788879e 100644
---- a/sound/soc/codecs/rt5663.c
-+++ b/sound/soc/codecs/rt5663.c
-@@ -1547,11 +1547,11 @@ static int rt5663_jack_detect(struct snd_soc_codec *codec, int jack_insert)
- 			msleep(sleep_time[i]);
- 			val = snd_soc_read(codec, RT5663_EM_JACK_TYPE_2) &
- 				0x0003;
-+			dev_dbg(codec->dev, "%s: MX-00e7 val=%x sleep %d\n",
-+				__func__, val, sleep_time[i]);
- 			i++;
- 			if (val = 0x1 || val = 0x2 || val = 0x3)
- 				break;
--			dev_dbg(codec->dev, "%s: MX-00e7 val=%x sleep %d\n",
--				__func__, val, sleep_time[i]);
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index fc9d600..95f6098 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -220,7 +220,7 @@ static void reschedule_retry(struct r1bio *r1_bio)
+ 
+ 	spin_lock_irqsave(&conf->device_lock, flags);
+ 	list_add(&r1_bio->retry_list, &conf->retry_list);
+-	conf->nr_queued ++;
++	conf->nr_queued++;
+ 	spin_unlock_irqrestore(&conf->device_lock, flags);
+ 
+ 	wake_up(&conf->wait_barrier);
+@@ -1878,7 +1878,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
  		}
- 		dev_dbg(codec->dev, "%s val = %d\n", __func__, val);
- 		switch (val) {
+ 		sectors -= s;
+ 		sect += s;
+-		idx ++;
++		idx++;
+ 	}
+ 	set_bit(R1BIO_Uptodate, &r1_bio->state);
+ 	bio->bi_error = 0;
+@@ -2570,7 +2570,7 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
+ 		} else if (!test_bit(In_sync, &rdev->flags)) {
+ 			bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
+ 			bio->bi_end_io = end_sync_write;
+-			write_targets ++;
++			write_targets++;
+ 		} else {
+ 			/* may need to read from here */
+ 			sector_t first_bad = MaxSector;
 -- 
-2.9.3
+2.10.1
 
