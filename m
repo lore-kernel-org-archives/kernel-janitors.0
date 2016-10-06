@@ -1,54 +1,91 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Oct 2016 20:49:45 +0000
-Subject: [PATCH 4/5] blackfin-setup: Replace three seq_printf() calls by seq_puts() in show_cpuinfo()
-Message-Id: <68ec4f90-f98d-6b55-40a3-939a664c64dc@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:46:15 +0000
+Subject: [PATCH 46/54] md/raid10: Less function calls in setup_conf() after error detection
+Message-Id: <fbf4bcd3-1505-d959-eaa2-f6688a0aec2c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4cd6678e-ebf0-d2f4-0b79-ac33060a6752@users.sourceforge.net>
-In-Reply-To: <4cd6678e-ebf0-d2f4-0b79-ac33060a6752@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Steven Miao <realmz6@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Oct 2016 21:46:16 +0200
+Date: Wed, 5 Oct 2016 18:32:30 +0200
 
-Strings which did not contain data format specifications should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+Resource release functions were called in up to three cases
+by the setup_conf() function during error handling even if
+the passed data structure members contained a null pointer.
 
-This issue was detected by using the Coccinelle software.
+Adjust jump targets according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/blackfin/kernel/setup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/md/raid10.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/arch/blackfin/kernel/setup.c b/arch/blackfin/kernel/setup.c
-index a159008..fdd9168 100644
---- a/arch/blackfin/kernel/setup.c
-+++ b/arch/blackfin/kernel/setup.c
-@@ -1313,9 +1313,9 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 
- 	if (bfin_revid() != bfin_compiled_revid()) {
- 		if (bfin_compiled_revid() = -1)
--			seq_printf(m, "(Compiled for Rev none)");
-+			seq_puts(m, "(Compiled for Rev none)");
- 		else if (bfin_compiled_revid() = 0xffff)
--			seq_printf(m, "(Compiled for Rev any)");
-+			seq_puts(m, "(Compiled for Rev any)");
- 		else
- 			seq_printf(m, "(Compiled for Rev %d)", bfin_compiled_revid());
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 7e512d4..9b8d11f 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -3508,13 +3508,13 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 				GFP_KERNEL);
+ 	if (!conf->mirrors) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto free_conf;
  	}
-@@ -1385,7 +1385,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 		seq_printf(m, "icache setup\t: %d Sub-banks/%d Ways, %d Lines/Way\n",
- 			   BFIN_ISUBBANKS, BFIN_IWAYS, BFIN_ILINES);
- 	else
--		seq_printf(m, "icache setup\t: off\n");
-+		seq_puts(m, "icache setup\t: off\n");
  
- 	seq_printf(m,
- 		   "dcache setup\t: %d Super-banks/%d Sub-banks/%d Ways, %d Lines/Way\n",
+ 	conf->tmppage = alloc_page(GFP_KERNEL);
+ 	if (!conf->tmppage) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto kfree_mirrors;
+ 	}
+ 
+ 	conf->geo = geo;
+@@ -3523,7 +3523,7 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 					   r10bio_pool_free, conf);
+ 	if (!conf->r10bio_pool) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto put_page;
+ 	}
+ 
+ 	calc_sectors(conf, mddev->dev_sectors);
+@@ -3533,7 +3533,7 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 	} else {
+ 		if (setup_geo(&conf->prev, mddev, geo_old) != conf->copies) {
+ 			err = -EINVAL;
+-			goto out;
++			goto destroy_pool;
+ 		}
+ 		conf->reshape_progress = mddev->reshape_position;
+ 		if (conf->prev.far_offset)
+@@ -3554,16 +3554,18 @@ static struct r10conf *setup_conf(struct mddev *mddev)
+ 	conf->thread = md_register_thread(raid10d, mddev, "raid10");
+ 	if (!conf->thread) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto destroy_pool;
+ 	}
+ 
+ 	conf->mddev = mddev;
+ 	return conf;
+-
+- out:
++destroy_pool:
+ 	mempool_destroy(conf->r10bio_pool);
++put_page:
+ 	safe_put_page(conf->tmppage);
++kfree_mirrors:
+ 	kfree(conf->mirrors);
++free_conf:
+ 	kfree(conf);
+ 	return ERR_PTR(err);
+ }
 -- 
 2.10.1
 
