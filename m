@@ -1,37 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 24 Oct 2016 20:43:23 +0000
-Subject: [PATCH 0/3] clk: keystone: Fix some error handling paths
-Message-Id: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:47:01 +0000
+Subject: [PATCH 47/54] md/raid10: Improve another size determination in raid10_start_reshape()
+Message-Id: <f0fcea7b-2ebb-24c7-981d-91867d4dd350@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The first of these 3 patches is a v2 of a patch posted earlier.
-The main change in this v2 is the propagation of the error returned by
-'clk_register_pll()'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Oct 2016 18:48:17 +0200
 
-The 2nd one is completely un-related and fixes some typo in error messages
-spoted while looking at the file.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
-Finaly, the 3rd one refactors the '_of_pll_clk_init' function in order to
-factorize some cleanups in case of error and to add some missing 'iounmap()'
-calls if 'clk_register_pll()' fails.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/raid10.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-These patches are un-compiled. I get some errors for some reasons in my build
-environment. I've not checked further the root cause of these build errors
-but I guess that my plateform is not what is expected to build this code.
-
-Christophe JAILLET (3):
-  clk: keystone: Fix an error checking
-  clk: keystone: Fix some error messages
-  clk: keystone: Fix missing iounmap calls in an error handling path
-
- drivers/clk/keystone/pll.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 9b8d11f..62cd159 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4065,7 +4065,7 @@ static int raid10_start_reshape(struct mddev *mddev)
+ 	spin_lock_irq(&conf->device_lock);
+ 	if (conf->mirrors_new) {
+ 		memcpy(conf->mirrors_new, conf->mirrors,
+-		       sizeof(struct raid10_info)*conf->prev.raid_disks);
++		       sizeof(*conf->mirrors_new) * conf->prev.raid_disks);
+ 		smp_mb();
+ 		kfree(conf->mirrors_old);
+ 		conf->mirrors_old = conf->mirrors;
 -- 
-2.9.3
+2.10.1
 
