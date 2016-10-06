@@ -1,114 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Oct 2016 17:32:02 +0000
-Subject: [PATCH 2/2] i2c: constify i2c_adapter_quirks structures
-Message-Id: <1476552722-12352-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 06 Oct 2016 09:48:02 +0000
+Subject: [PATCH 48/54] md/raid10: Move a brace for a designated initialiser
+Message-Id: <bd395cd3-e651-0968-1ece-307b8082720e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1476552722-12352-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1476552722-12352-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for i2c_adapter_quirks structures that are only stored in the
-quirks field of an i2c_adapter structure.  This field is declared
-const, so i2c_adapter_quirks structures that have this property can be
-declared as const also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Oct 2016 20:03:32 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The script "checkpatch.pl" pointed information out like the following.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct i2c_adapter_quirks i@p = { ... };
+ERROR: that open brace { should be on the previous line
 
-@ok@
-identifier r.i;
-struct i2c_adapter e;
-position p;
-@@
-e.quirks = &i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct i2c_adapter_quirks e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct i2c_adapter_quirks i = { ... };
-// </smpl>
-
-The effect on the layout of the .o files is shown by the following
-output of the size command, first before then after the
-transformation:
-
-   text    data     bss     dec     hex filename
-   3651     472       8    4131    1023 drivers/i2c/busses/i2c-axxia.o
-   3683     440       8    4131    1023 drivers/i2c/busses/i2c-axxia.o
-
-   text    data     bss     dec     hex filename
-   1069     216       0    1285     505 drivers/i2c/busses/i2c-dln2.o
-   1101     192       0    1293     50d drivers/i2c/busses/i2c-dln2.o
-
-   text    data     bss     dec     hex filename
-   3211     484       1    3696     e70 drivers/i2c/busses/i2c-viperboard.o
-   3243     460       1    3704     e78 drivers/i2c/busses/i2c-viperboard.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/i2c/busses/i2c-axxia.c      |    2 +-
- drivers/i2c/busses/i2c-dln2.c       |    2 +-
- drivers/i2c/busses/i2c-viperboard.c |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/md/raid10.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
-index 4351a93..13f0748 100644
---- a/drivers/i2c/busses/i2c-axxia.c
-+++ b/drivers/i2c/busses/i2c-axxia.c
-@@ -489,7 +489,7 @@ static u32 axxia_i2c_func(struct i2c_adapter *adap)
- 	.functionality = axxia_i2c_func,
- };
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 62cd159..5119846 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4676,8 +4676,7 @@ static void raid10_finish_reshape(struct mddev *mddev)
+ 	mddev->reshape_backwards = 0;
+ }
  
--static struct i2c_adapter_quirks axxia_i2c_quirks = {
-+static const struct i2c_adapter_quirks axxia_i2c_quirks = {
- 	.max_read_len = 255,
- 	.max_write_len = 255,
- };
-diff --git a/drivers/i2c/busses/i2c-dln2.c b/drivers/i2c/busses/i2c-dln2.c
-index 8acda2a..69075a3 100644
---- a/drivers/i2c/busses/i2c-dln2.c
-+++ b/drivers/i2c/busses/i2c-dln2.c
-@@ -182,7 +182,7 @@ static u32 dln2_i2c_func(struct i2c_adapter *a)
- 	.functionality = dln2_i2c_func,
- };
- 
--static struct i2c_adapter_quirks dln2_i2c_quirks = {
-+static const struct i2c_adapter_quirks dln2_i2c_quirks = {
- 	.max_read_len = DLN2_I2C_MAX_XFER_SIZE,
- 	.max_write_len = DLN2_I2C_MAX_XFER_SIZE,
- };
-diff --git a/drivers/i2c/busses/i2c-viperboard.c b/drivers/i2c/busses/i2c-viperboard.c
-index 543456a..e4be86b 100644
---- a/drivers/i2c/busses/i2c-viperboard.c
-+++ b/drivers/i2c/busses/i2c-viperboard.c
-@@ -354,7 +354,7 @@ static u32 vprbrd_i2c_func(struct i2c_adapter *i2c)
- 	.functionality	= vprbrd_i2c_func,
- };
- 
--static struct i2c_adapter_quirks vprbrd_quirks = {
-+static const struct i2c_adapter_quirks vprbrd_quirks = {
- 	.max_read_len = 2048,
- 	.max_write_len = 2048,
- };
+-static struct md_personality raid10_personality -{
++static struct md_personality raid10_personality = {
+ 	.name		= "raid10",
+ 	.level		= 10,
+ 	.owner		= THIS_MODULE,
+-- 
+2.10.1
 
