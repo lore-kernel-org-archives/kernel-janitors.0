@@ -1,59 +1,70 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Oct 2016 20:52:06 +0000
-Subject: [PATCH 1/3] ARM-OMAP2+: mux: Replace three seq_printf() calls by seq_puts()
-Message-Id: <42ffbac1-4edc-1afe-4b3b-8552a7fa8c47@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 07 Oct 2016 20:12:39 +0000
+Subject: [PATCH] usb: dwc3: Fix size used in dma_free_coherent()
+Message-Id: <1475871159-14362-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
-In-Reply-To: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: balbi@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Oct 2016 22:22:09 +0200
+In commit 2abd9d5fa60f9 ("usb: dwc3: ep0: Add chained TRB support"), the
+size of the memory allocated with 'dma_alloc_coherent()' has been modified
+but the corresponding calls to 'dma_free_coherent()' have not been updated
+accordingly.
 
-Strings which did not contain data format specification should be put into
-a sequence. Thus use the corresponding function "seq_puts".
+This has been spotted with coccinelle, using the following script:
+////////////////////
+@r@
+expression x0, x1, y0, y1, z0, z1, t0, t1, ret;
+@@
 
-This issue was detected by using the Coccinelle software.
+*   ret = dma_alloc_coherent(x0, y0, z0, t0);
+    ...
+*   dma_free_coherent(x1, y1, ret, t1);
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+@script:python@
+y0 << r.y0;
+y1 << r.y1;
+
+@@
+if y1.find(y0) = -1:
+ print "WARNING: sizes look different:  '%s'   vs   '%s'" % (y0, y1)
+////////////////////
+
+Fixes: 2abd9d5fa60f9 ("usb: dwc3: ep0: Add chained TRB support")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arm/mach-omap2/mux.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Untested
+---
+ drivers/usb/dwc3/gadget.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/mux.c b/arch/arm/mach-omap2/mux.c
-index 176eef6..4bdfa3d 100644
---- a/arch/arm/mach-omap2/mux.c
-+++ b/arch/arm/mach-omap2/mux.c
-@@ -561,7 +561,7 @@ static inline void omap_mux_decode(struct seq_file *s, u16 val)
- 	do {
- 		seq_printf(s, "%s", flags[i]);
- 		if (i > 0)
--			seq_printf(s, " | ");
-+			seq_puts(s, " | ");
- 	} while (i-- > 0);
- }
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 07cc8929f271..01d388ea9115 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2980,7 +2980,7 @@ int dwc3_gadget_init(struct dwc3 *dwc)
+ 	kfree(dwc->setup_buf);
  
-@@ -602,7 +602,7 @@ static int omap_mux_dbg_board_show(struct seq_file *s, void *unused)
- 		 */
- 		seq_printf(s, "OMAP%d_MUX(%s, ", omap_gen, m0_def);
- 		omap_mux_decode(s, val);
--		seq_printf(s, "),\n");
-+		seq_puts(s, "),\n");
- 	}
+ err2:
+-	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb),
++	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb) * 2,
+ 			dwc->ep0_trb, dwc->ep0_trb_addr);
  
- 	return 0;
-@@ -659,7 +659,7 @@ static int omap_mux_dbg_signal_show(struct seq_file *s, void *unused)
- 			partition->phys + m->reg_offset, m->reg_offset, val,
- 			m->balls[0] ? m->balls[0] : none,
- 			m->balls[1] ? m->balls[1] : none);
--	seq_printf(s, "mode: ");
-+	seq_puts(s, "mode: ");
- 	omap_mux_decode(s, val);
- 	seq_printf(s, "\n");
- 	seq_printf(s, "signals: %s | %s | %s | %s | %s | %s | %s | %s\n",
+ err1:
+@@ -3005,7 +3005,7 @@ void dwc3_gadget_exit(struct dwc3 *dwc)
+ 	kfree(dwc->setup_buf);
+ 	kfree(dwc->zlp_buf);
+ 
+-	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb),
++	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb) * 2,
+ 			dwc->ep0_trb, dwc->ep0_trb_addr);
+ 
+ 	dma_free_coherent(dwc->dev, sizeof(*dwc->ctrl_req),
 -- 
-2.10.1
+2.7.4
 
