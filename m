@@ -1,35 +1,27 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 07 Oct 2016 05:50:25 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 07 Oct 2016 06:00:04 +0000
 Subject: Re: scripts/coccicheck: Update for a comment?
-Message-Id: <alpine.DEB.2.10.1610070749420.3074@hadrien>
+Message-Id: <76a6d8fa-03b9-5589-2885-fa62933dd391@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ea62a1ea-c566-65a0-e2fd-2ee96839cf48@users.sourceforge.net>
-In-Reply-To: <ea62a1ea-c566-65a0-e2fd-2ee96839cf48@users.sourceforge.net>
+ <alpine.DEB.2.10.1610070749420.3074@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1610070749420.3074@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: cocci@systeme.lip6.fr
 
+>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/sc=
+ripts/coccicheck?id=C802e87fbe2d4dd58982d01b3c39bc5a781223aa#n4
+>=20
+> How about submitting a patch to fix the problem?
 
+I would appreciate to become a bit more sure about the current storage loca=
+tion
+which should be referenced in this file.
 
-On Fri, 7 Oct 2016, SF Markus Elfring wrote:
-
-> Hello,
->
-> Information from a commit like "docs: sphinxify coccinelle.txt and add it
-> to dev-tools" caught also my software development attention.
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/Do=
-cumentation/coccinelle.txt?idK9033a33494ec9154d63e706e9e47f7eb3fd59e
->
-> Did an other information from a comment become outdated in the script "co=
-ccicheck"
-> because of such changes for the documentation format?
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/scr=
-ipts/coccicheck?id=C802e87fbe2d4dd58982d01b3c39bc5a781223aa#n4
-
-How about submitting a patch to fix the problem?
-
-julia
+Regards,
+Markus
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
