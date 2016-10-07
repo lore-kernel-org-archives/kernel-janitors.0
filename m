@@ -1,42 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Oct 2016 05:05:45 +0000
-Subject: [PATCH 1/6] FRV-setup: Use seq_puts() in show_cpuinfo()
-Message-Id: <79b01048-028e-9375-373b-d5daed242586@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 07 Oct 2016 20:36:20 +0000
+Subject: [PATCH] crypto: crypto4xx - Fix size used in dma_free_coherent()
+Message-Id: <1475872580-14643-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
-In-Reply-To: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: trivial@kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Oct 2016 21:36:43 +0200
+The size used in 'dma_free_coherent()' looks un-initialized here.
+ctx->sa_len is set a few lines below and is apparently not set by the
+caller.
+So use 'size' as in the corresponding 'dma_alloc_coherent()' a few lines
+above.
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+This has been spotted with coccinelle, using the following script:
+////////////////////
+@r@
+expression x0, x1, y0, y1, z0, z1, t0, t1, ret;
+@@
 
-This issue was detected by using the Coccinelle software.
+*   ret = dma_alloc_coherent(x0, y0, z0, t0);
+    ...
+*   dma_free_coherent(x1, y1, ret, t1);
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+@script:python@
+y0 << r.y0;
+y1 << r.y1;
+
+@@
+if y1.find(y0) = -1:
+ print "WARNING: sizes look different:  '%s'   vs   '%s'" % (y0, y1)
+////////////////////
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/frv/kernel/setup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/amcc/crypto4xx_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/frv/kernel/setup.c b/arch/frv/kernel/setup.c
-index 9f4a9a6..de9311f 100644
---- a/arch/frv/kernel/setup.c
-+++ b/arch/frv/kernel/setup.c
-@@ -1053,7 +1053,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 	seq_printf(m, "\n");
- 
- #ifdef CONFIG_PM
--	seq_printf(m, "PM-Controls:");
-+	seq_puts(m, "PM-Controls:");
- 	sep = "\t";
- 
- 	if (clock_bits_settable & CLOCK_BIT_CMODE) {
+diff --git a/drivers/crypto/amcc/crypto4xx_core.c b/drivers/crypto/amcc/crypto4xx_core.c
+index dae1e39139e9..d10b4ae5e0da 100644
+--- a/drivers/crypto/amcc/crypto4xx_core.c
++++ b/drivers/crypto/amcc/crypto4xx_core.c
+@@ -135,8 +135,7 @@ int crypto4xx_alloc_sa(struct crypto4xx_ctx *ctx, u32 size)
+ 	ctx->sa_out = dma_alloc_coherent(ctx->dev->core_dev->device, size * 4,
+ 					 &ctx->sa_out_dma_addr, GFP_ATOMIC);
+ 	if (ctx->sa_out = NULL) {
+-		dma_free_coherent(ctx->dev->core_dev->device,
+-				  ctx->sa_len * 4,
++		dma_free_coherent(ctx->dev->core_dev->device, size * 4,
+ 				  ctx->sa_in, ctx->sa_in_dma_addr);
+ 		return -ENOMEM;
+ 	}
 -- 
-2.10.1
+2.7.4
 
