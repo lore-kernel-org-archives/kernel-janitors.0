@@ -1,24 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Oct 2016 09:06:21 +0000
-Subject: Re: [PATCH 3/3] [media] au0828-video: Move two assignments in au0828_init_isoc()
-Message-Id: <20161025090621.GG4469@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 07 Oct 2016 08:37:17 +0000
+Subject: Re: md-cluster: Delete unnecessary braces in unlock_all_bitmaps()
+Message-Id: <9e1de37a-d98d-c885-b4ff-5a8b2aa1f7a8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c6a37822-c0f9-1f1e-6ebe-a1c88c6d9d0a@users.sourceforge.net>
- <1ab6b168-3c69-97c2-d02e-cd64b7fa222f@users.sourceforge.net>
-In-Reply-To: <1ab6b168-3c69-97c2-d02e-cd64b7fa222f@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+ <ba60b210-40c6-b021-780c-33ecea7bee9e@users.sourceforge.net>
+ <20161007074646.GA6039@mwanda>
+In-Reply-To: <20161007074646.GA6039@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rafael =?iso-8859-1?Q?Louren=E7o?= de Lima Chehab <chehabrafael@gmail.com>, Shuah Khan <shuah@kernel.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-This patch introduces bugs.  It's my policy to not explain the Markus's
-bugs because otherwise he will just resend the patchset and I have asked
-him many times to stop.
+>> Do not use curly brackets at one source code place
+>> where a single statement should be sufficient.
+> 
+> The original style was correct and this is wrong.  I have explained this before.
 
-I will happily review bug fix patches but I really think he should stop
-sending these cleanup patches.
+Did I change a bit too much in the proposed step according to the following
+update suggestion?
 
-regards,
-dan carpenter
+elfring@Sonne:~/Projekte/Linux/next-patched> git checkout d6385db94196b253ae5eb3678fa95cdf1f839fcc && scripts/checkpatch.pl --types BRACES -f drivers/md/md-cluster.c
+…
+WARNING: braces {} are not necessary for single statement blocks
+#1228: FILE: drivers/md/md-cluster.c:1228:
++			if (cinfo->other_bitmap_lockres[i]) {
++				lockres_free(cinfo->other_bitmap_lockres[i]);
++			}
+…
 
+
+How do you think about to adjust this source code place a bit?
+
+Regards,
+Markus
