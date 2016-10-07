@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 07 Oct 2016 07:19:28 +0000
+Date: Fri, 07 Oct 2016 13:20:34 +0000
 Subject: Re: scripts/coccicheck: Update for a comment?
-Message-Id: <1e8a03cb-2ae0-c8e3-7910-97ad05903709@users.sourceforge.net>
+Message-Id: <6ebf9527-7484-dec3-bd59-f5a129c86923@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ea62a1ea-c566-65a0-e2fd-2ee96839cf48@users.sourceforge.net>
  <alpine.DEB.2.10.1610070749420.3074@hadrien>
@@ -9,37 +9,18 @@ References: <ea62a1ea-c566-65a0-e2fd-2ee96839cf48@users.sourceforge.net>
  <alpine.DEB.2.10.1610070803550.3074@hadrien>
  <8d36952c-1dbb-bb26-ee57-3e1540c042c0@users.sourceforge.net>
  <alpine.DEB.2.10.1610070824490.3074@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1610070824490.3074@hadrien>
+ <1e8a03cb-2ae0-c8e3-7910-97ad05903709@users.sourceforge.net>
+In-Reply-To: <1e8a03cb-2ae0-c8e3-7910-97ad05903709@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-> Either you send the patch, or I will send the patch, when I have time,
-> with no credit to you.
+> Do I overlook any commit for the discussed source file anyhow?
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/log/dev-tools/coccinelle.rst
 
-I am curious when "the time" will be appropriate.
-
-
-> I'm not an expert on all of the future plans for the documentation,
-
-I assumed that you know a bit more about the corresponding software evolution
-than me.
-
-
-> The only think I know is where the file is now, and that the file
-> is perfectly readable in its rst format, and thus it seems
-> quite all right to reference it.
-
-I can agree to such an information in principle.
-
-
-> If the situation change in the future, we can have another patch
-> in the future.
-
-I would appreciate another clarification:
-Do I overlook any commit for the discussed source file anyhow?
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/log/dev-tools/coccinelle.rst
+It seems that I missed this file also because an other path will be appropriate.
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/Documentation/dev-tools/coccinelle.rst
 
 Regards,
 Markus
