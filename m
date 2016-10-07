@@ -1,48 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:05:07 +0000
-Subject: [PATCH 10/54] md/raid1: Use kcalloc() in alloc_behind_pages()
-Message-Id: <22c0aa38-d45a-0691-a2a0-9c57f5837844@users.sourceforge.net>
+Date: Fri, 07 Oct 2016 19:45:05 +0000
+Subject: [PATCH 1/2] [media] dvb-tc90522: Use kmalloc_array() in tc90522_master_xfer()
+Message-Id: <78258072-609a-c887-11d9-7206c3e4d2a8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+ <906cc86f-bac0-fd47-8a6f-d3310b10fd08@users.sourceforge.net>
+In-Reply-To: <906cc86f-bac0-fd47-8a6f-d3310b10fd08@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+To: linux-media@vger.kernel.org, Akihiro Tsukada <tskd08@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michael Ira Krufky <mkrufky@linuxtv.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 15:01:04 +0200
+Date: Fri, 7 Oct 2016 21:07:43 +0200
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/raid1.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/dvb-frontends/tc90522.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 1961d82..d2759f8 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -955,8 +955,7 @@ static void alloc_behind_pages(struct bio *bio, struct r1bio *r1_bio)
- {
- 	int i;
- 	struct bio_vec *bvec;
--	struct bio_vec *bvecs = kzalloc(bio->bi_vcnt * sizeof(struct bio_vec),
--					GFP_NOIO);
-+	struct bio_vec *bvecs = kcalloc(bio->bi_vcnt, sizeof(*bvecs), GFP_NOIO);
- 	if (unlikely(!bvecs))
- 		return;
+diff --git a/drivers/media/dvb-frontends/tc90522.c b/drivers/media/dvb-frontends/tc90522.c
+index 31cd325..c2d45f0 100644
+--- a/drivers/media/dvb-frontends/tc90522.c
++++ b/drivers/media/dvb-frontends/tc90522.c
+@@ -656,7 +656,7 @@ tc90522_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 	for (i = 0; i < num; i++)
+ 		if (msgs[i].flags & I2C_M_RD)
+ 			rd_num++;
+-	new_msgs = kmalloc(sizeof(*new_msgs) * (num + rd_num), GFP_KERNEL);
++	new_msgs = kmalloc_array(num + rd_num, sizeof(*new_msgs), GFP_KERNEL);
+ 	if (!new_msgs)
+ 		return -ENOMEM;
  
 -- 
 2.10.1
