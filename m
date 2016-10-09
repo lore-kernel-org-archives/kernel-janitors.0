@@ -1,48 +1,50 @@
-From: Stefan Hajnoczi <stefanha@gmail.com>
-Date: Mon, 03 Oct 2016 09:07:01 +0000
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Date: Sun, 09 Oct 2016 23:30:24 +0000
 Subject: Re: [PATCH 4/4] virtio_blk: Rename a jump label in virtblk_get_id()
-Message-Id: <CAJSP0QV2WUJPqeiSKcWiXWk+AoJ2MGo2zG4=JQ2tfpTprAyV=g@mail.gmail.com>
+Message-Id: <20161010022831-mutt-send-email-mst@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
  <a303f7a6-c675-5228-99bd-a03c9e9252e9@users.sourceforge.net>
 In-Reply-To: <a303f7a6-c675-5228-99bd-a03c9e9252e9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Linux Virtualization <virtualization@lists.linux-foundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: virtualization@lists.linux-foundation.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Sep 13, 2016 at 1:15 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+On Tue, Sep 13, 2016 at 02:15:20PM +0200, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Tue, 13 Sep 2016 13:50:56 +0200
->
+> 
 > Adjust a jump label according to the current Linux coding style convention.
-
-I think you mean "goto label".  "Jump label" has a different meaning,
-see <linux/jump_label.h>.
-
+> 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Please don't send me such patches, I'm not really
+interested in renaming labels unless it clearly adds
+to a significant improvement in readability.
+
 > ---
 >  drivers/block/virtio_blk.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
->
+> 
 > diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
 > index 696f452..fef2bd0 100644
 > --- a/drivers/block/virtio_blk.c
 > +++ b/drivers/block/virtio_blk.c
 > @@ -247,10 +247,10 @@ static int virtblk_get_id(struct gendisk *disk, char *id_str)
->
->         err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES, GFP_KERNEL);
->         if (err)
-> -               goto out;
-> +               goto put_request;
->
->         err = blk_execute_rq(vblk->disk->queue, vblk->disk, req, false);
+>  
+>  	err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES, GFP_KERNEL);
+>  	if (err)
+> -		goto out;
+> +		goto put_request;
+>  
+>  	err = blk_execute_rq(vblk->disk->queue, vblk->disk, req, false);
 > -out:
 > + put_request:
-
-I checked Documentation/CodingStyle and see no reason to rename the label.
-
-It's also not clear why you added a space.  The CodingStyle example
-does not use a space before the label.
+>  	blk_put_request(req);
+>  	return err;
+>  }
+> -- 
+> 2.10.0
