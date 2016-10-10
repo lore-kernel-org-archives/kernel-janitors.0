@@ -1,48 +1,51 @@
-From: Jes Sorensen <Jes.Sorensen@redhat.com>
-Date: Mon, 10 Oct 2016 13:09:19 +0000
+From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+Date: Mon, 10 Oct 2016 13:57:57 +0000
 Subject: Re: [PATCH 24/54] md/raid1: Improve another size determination in setup_conf()
-Message-Id: <wrfjvax0bbb4.fsf@redhat.com>
+Message-Id: <87y41wqpay.fsf@miraculix.mork.no>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
         <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
         <9831fce9-d689-89e4-dec8-50cadcd13fdd@users.sourceforge.net>
         <CAFLxGvx0Fr-WNvKYACdvNiZwYzHW4ocna9HPH8J_WPSXWc+ngg@mail.gmail.com>
-        <20161007075345.GB6039@mwanda>
-In-Reply-To: <20161007075345.GB6039@mwanda> (Dan Carpenter's message of "Fri,
-        7 Oct 2016 10:53:45 +0300")
+        <20161010110050.GA5687@mwanda>
+In-Reply-To: <20161010110050.GA5687@mwanda> (Dan Carpenter's message of "Mon,
+        10 Oct 2016 14:12:34 +0300")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Richard Weinberger <richard.weinberger@gmail.com>, SF Markus Elfring <elfring@users.sourceforge.net>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
 Dan Carpenter <dan.carpenter@oracle.com> writes:
-> On Thu, Oct 06, 2016 at 11:29:20AM +0200, Richard Weinberger wrote:
->> On Thu, Oct 6, 2016 at 11:22 AM, SF Markus Elfring
->> <elfring@users.sourceforge.net> wrote:
->> > From: Markus Elfring <elfring@users.sourceforge.net>
->> > Date: Tue, 4 Oct 2016 21:46:18 +0200
->> >
->> > Replace the specification of a data structure by a pointer dereference
->> > as the parameter for the operator "sizeof" to make the corresponding size
->> > determination a bit safer.
->> 
->> Isn't this pure matter of taste?
->> Some developers prefer sizeof(*ptr) because it is easier to type, other
->> developers prefer sizeof(struct foo) because you can determine the type
->> at first sight and makes review more easy.
->
-> sizeof(*ptr) is more future proof and normally more obvious and easier
-> to review.  That said, I've tried to tell Markus to only send bugfix
-> patches because these are a waste of time and regularly introduce bugs.
 
-This is totally a matter of taste. I for one find it way easier to
-review something which says 'sizeof(struct ....)' because it stands out
-more. I am curious what you mean by it being more future proof - if the
-code says 'struct foo' in the sizeof argument, what is the problem?
+> I am ignoring Markus patches and have told him that he should focus on
+> bug fixes.  These patches don't add any value and regularly introduce
+> bugs.
 
-The one area where there is a higher risk is if the type is changed, but
-that is outweighed by the fact the spelled out version is easier to
-review.
+I think there should be a big fat warning in CodingStyle:
 
-Jes
+ THIS DOCUMENT DOES NOT APPLY TO ANY EXISTING KERNEL CODE.
+
+
+Preserving existing style is more important than any minor style issue
+anyway.  Style changes for the only purpose of style change should be
+considered harmful and destructive behaviour. You'd think that is bloody
+obvious, but evidently it isn't.  Not only are the untested, buggy,
+churning patches still being submitted - some of them are even applied!
+
+Adding such a statement will not prevent style changes, even changes
+to bring code more in line with CodingStyle, as long as the patches are
+part of some work of substance.  E.g. cleaning up before fixing bugs. If
+you submit new code, then you can of course fix the style of any touched
+context.
+
+Oh well, I can dream..
+
+
+Bj=C3=B8rn
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
