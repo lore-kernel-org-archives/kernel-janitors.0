@@ -1,117 +1,63 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 24 Oct 2016 18:01:35 +0000
-Subject: Applied "ASoC: atmel_wm8904: constify snd_soc_ops structures" to the asoc tree
-Message-Id: <E1byjZ1-0000tx-Ib@debutante>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Oct 2016 11:08:40 +0000
+Subject: [bug report] orangefs: clean up debugfs globals
+Message-Id: <20161011110840.GA7666@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1476543351-17858-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1476543351-17858-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Mark Brown <broonie@kernel.org>Nicolas Ferre <nicolas.ferre@atmel.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-The patch
+Hello Martin Brandenburg,
 
-   ASoC: atmel_wm8904: constify snd_soc_ops structures
+The patch 44f4641073f1: "orangefs: clean up debugfs globals" from Aug
+15, 2016, leads to the following static checker warning:
 
-has been applied to the asoc tree at
+	fs/orangefs/orangefs-debugfs.c:1003 orangefs_debugfs_new_client_string()
+	warn: passing freed memory 'debug_help_string'
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+fs/orangefs/orangefs-debugfs.c
+   984          pr_info("%s: client debug array string has been received.\n",
+   985                  __func__);
+   986  
+   987          if (!help_string_initialized) {
+   988  
+   989                  /* Free the "we don't know yet" default string... */
+   990                  kfree(debug_help_string);
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+This can be a double free.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+   991  
+   992                  /* build a proper debug help string */
+   993                  if (orangefs_prepare_debugfs_help_string(0)) {
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Let's imagine this fails without modifying debug_help_string and we call
+the function again.  It probably doesn't affect real life, but this is
+quite ugly.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+   994                          gossip_err("%s: no debug help string \n",
+   995                                     __func__);
+   996                          return -EIO;
+   997                  }
+   998  
+   999                  /* Replace the boilerplate boot-time debug-help file. */
+  1000                  debugfs_remove(help_file_dentry);
+  1001  
+  1002                  help_file_dentry   1003                          debugfs_create_file(
+  1004                                  ORANGEFS_KMOD_DEBUG_HELP_FILE,
+  1005                                  0444,
+  1006                                  debug_dir,
+  1007                                  debug_help_string,
+  1008                                  &debug_help_fops);
+  1009  
+  1010                  if (!help_file_dentry) {
+  1011                          gossip_err("%s: debugfs_create_file failed for"
+  1012                                     " :%s:!\n",
+  1013                                     __func__,
+  1014                                     ORANGEFS_KMOD_DEBUG_HELP_FILE);
+  1015                          return -EIO;
+  1016                  }
+  1017          }
 
-Thanks,
-Mark
-
-From 28549313da65cc8711401ee5466c526bd67de5f1 Mon Sep 17 00:00:00 2001
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Oct 2016 16:55:46 +0200
-Subject: [PATCH] ASoC: atmel_wm8904: constify snd_soc_ops structures
-
-Check for snd_soc_ops structures that are only stored in the ops field of a
-snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
-structures that have this property can be declared as const also.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_soc_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct snd_soc_dai_link e;
-position p;
-@@
-e.ops = &i@p;
-
-@ok2@
-identifier r.i, e;
-position p;
-@@
-struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_soc_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_soc_ops i = { ... };
-// </smpl>
-
-The effect on the layout of the .o file is shown by the following output of
-the size command, first before then after the transformation:
-
-   text    data     bss     dec     hex filename
-   2611    1536       0    4147    1033 sound/soc/atmel/atmel_wm8904.o
-   2675    1480       0    4155    103b sound/soc/atmel/atmel_wm8904.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/atmel/atmel_wm8904.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/atmel/atmel_wm8904.c b/sound/soc/atmel/atmel_wm8904.c
-index fdd28ed3e0b9..fbc10f61eb55 100644
---- a/sound/soc/atmel/atmel_wm8904.c
-+++ b/sound/soc/atmel/atmel_wm8904.c
-@@ -53,7 +53,7 @@ static int atmel_asoc_wm8904_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static struct snd_soc_ops atmel_asoc_wm8904_ops = {
-+static const struct snd_soc_ops atmel_asoc_wm8904_ops = {
- 	.hw_params = atmel_asoc_wm8904_hw_params,
- };
- 
--- 
-2.8.1
-
+regards,
+dan carpenter
