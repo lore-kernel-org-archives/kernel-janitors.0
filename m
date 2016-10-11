@@ -1,40 +1,51 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:08:32 +0000
-Subject: [PATCH 29/34] [media] DaVinci-VPIF-Capture: Delete an unnecessary variable initialisation in vpif_ch
-Message-Id: <9103b007-6abe-06e0-397b-28cf70c0885f@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Oct 2016 08:34:20 +0000
+Subject: [bug report] qed: Add Light L2 support
+Message-Id: <20161011083420.GA18141@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:25:08 +0200
+Hello Yuval Mintz,
 
-The local variable "channel_id" will be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+The patch 0a7fb11c23c0: "qed: Add Light L2 support" from Oct 1, 2016,
+leads to the following Smatch warning:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/platform/davinci/vpif_capture.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	drivers/net/ethernet/qlogic/qed/qed_ll2.c:1590 qed_ll2_start()
+	error: dereferencing freed memory 'buffer'
 
-diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
-index 4197ca4..d3e2235 100644
---- a/drivers/media/platform/davinci/vpif_capture.c
-+++ b/drivers/media/platform/davinci/vpif_capture.c
-@@ -375,7 +375,7 @@ static irqreturn_t vpif_channel_isr(int irq, void *dev_id)
- 	struct vpif_device *dev = &vpif_obj;
- 	struct common_obj *common;
- 	struct channel_obj *ch;
--	int channel_id = 0;
-+	int channel_id;
- 	int fid = -1, i;
- 
- 	channel_id = *(int *)(dev_id);
--- 
-2.10.1
+drivers/net/ethernet/qlogic/qed/qed_ll2.c
+  1587  
+  1588          /* Post all Rx buffers to FW */
+  1589          spin_lock_bh(&cdev->ll2->lock);
+  1590          list_for_each_entry(buffer, &cdev->ll2->list, list) {
+                                    ^^^^^^
+Note.
 
+  1591                  rc = qed_ll2_post_rx_buffer(QED_LEADING_HWFN(cdev),
+  1592                                              cdev->ll2->handle,
+  1593                                              buffer->phys_addr, 0, buffer, 1);
+  1594                  if (rc) {
+  1595                          DP_INFO(cdev,
+  1596                                  "Failed to post an Rx buffer; Deleting it\n");
+  1597                          dma_unmap_single(&cdev->pdev->dev, buffer->phys_addr,
+  1598                                           cdev->ll2->rx_size, DMA_FROM_DEVICE);
+  1599                          kfree(buffer->data);
+  1600                          list_del(&buffer->list);
+  1601                          kfree(buffer);
+                                      ^^^^^^
+
+There was probably supposed to be a break statement after this kfree().
+Otherwise use list_for_each_entry_safe().
+
+  1602                  } else {
+  1603                          cdev->ll2->rx_cnt++;
+  1604                  }
+  1605          }
+  1606          spin_unlock_bh(&cdev->ll2->lock);
+  1607  
+
+regards,
+dan carpenter
