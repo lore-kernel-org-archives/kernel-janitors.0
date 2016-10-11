@@ -1,63 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 11:12:53 +0000
-Subject: Re: [patch] drm/savage: dereferencing an error pointer
-Message-Id: <1ae72fbd-5dcb-a65d-f348-c162231b9ba0@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Oct 2016 07:33:05 +0000
+Subject: re: qed: Add RoCE ll2 & GSI support
+Message-Id: <20161011073305.GA19247@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161012062227.GU12841@mwanda>
-In-Reply-To: <20161012062227.GU12841@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-> A recent cleanup changed the kmalloc() + copy_from_user() to
-> memdup_user() but the error handling wasn't updated so we might call
-> kfree(-EFAULT) and crash.
->=20
-> Fixes: a6e3918bcdb1 ('GPU-DRM-Savage: Use memdup_user() rather than dupli=
-cating')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/gpu/drm/savage/savage_state.c b/drivers/gpu/drm/sava=
-ge/savage_state.c
-> index 3dc0d8f..2db89be 100644
-> --- a/drivers/gpu/drm/savage/savage_state.c
-> +++ b/drivers/gpu/drm/savage/savage_state.c
-> @@ -1004,6 +1004,7 @@ int savage_bci_cmdbuf(struct drm_device *dev, void =
-*data, struct drm_file *file_
->  		kvb_addr =3D memdup_user(cmdbuf->vb_addr, cmdbuf->vb_size);
->  		if (IS_ERR(kvb_addr)) {
->  			ret =3D PTR_ERR(kvb_addr);
-> +			kvb_addr =3D NULL;
->  			goto done;
->  		}
->  		cmdbuf->vb_addr =3D kvb_addr;
->=20
+Hello Ram Amrani,
 
-Thanks for this update suggestion.
+This is a semi-automatic email about new static checker warnings.
 
-Can it be that I offered an other approach for a corresponding software cor=
-rection
-by the update step =93[PATCH 2/2] GPU-DRM-Savage: Less function calls in
-savage_bci_cmdbuf() after error detection=94 (on 2016-08-18)?
+The patch abd49676c707: "qed: Add RoCE ll2 & GSI support" from Oct 1, 
+2016, leads to the following Smatch complaint:
 
-https://patchwork.kernel.org/patch/9289183/
-https://lkml.kernel.org/r/<c97563c0-d463-8b15-5956-26d93641a54f@users.sourc=
-eforge.net>
+drivers/net/ethernet/qlogic/qed/qed_roce.c:2812 qed_roce_ll2_stop()
+	 warn: variable dereferenced before check 'cdev' (see line 2808)
 
-Will this one become worth for further development consideratons once more?
+drivers/net/ethernet/qlogic/qed/qed_roce.c
+  2807	{
+  2808		struct qed_hwfn *hwfn = QED_LEADING_HWFN(cdev);
+  2809		struct qed_roce_ll2_info *roce_ll2 = hwfn->ll2;
+                                                     ^^^^^^^^^
+Deref.
 
-Can the shown resetting of an error pointer to a safe null pointer be omitt=
-ed
-in such use cases when the jump targets will be accordingly configured as i=
-t is
-desired for efficient exception handling implementations?
+  2810		int rc;
+  2811	
+  2812		if (!cdev) {
+                    ^^^^^
+Checked too late.
 
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+  2813			DP_ERR(cdev, "qed roce ll2 stop: invalid cdev\n");
+  2814			return -EINVAL;
+
+regards,
+dan carpenter
