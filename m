@@ -1,32 +1,47 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Mon, 31 Oct 2016 06:06:58 +0000
-Subject: Re: [PATCH 08/15] powerpc/iommu: use permission-specific DEVICE_ATTR variants
-Message-Id: <87twbt127x.fsf@concordia.ellerman.id.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Oct 2016 06:47:22 +0000
+Subject: [bug report] wlcore/wl18xx: Add functionality to accept TX rate per link
+Message-Id: <20161011064722.GA7477@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
- <1477769829-22230-9-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1477769829-22230-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Julia Lawall <Julia.Lawall@lip6.fr> writes:
+Hello Maxim Altshul,
 
-> diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
-> index 5f202a5..32f18b5 100644
-> --- a/arch/powerpc/kernel/iommu.c
-> +++ b/arch/powerpc/kernel/iommu.c
-> @@ -127,8 +127,7 @@ static ssize_t fail_iommu_store(struct device *dev,
->  	return count;
->  }
->  
-> -static DEVICE_ATTR(fail_iommu, S_IRUGO|S_IWUSR, fail_iommu_show,
-> -		   fail_iommu_store);
-> +static DEVICE_ATTR_RW(fail_iommu);
+The patch 88f07e70d1be: "wlcore/wl18xx: Add functionality to accept
+TX rate per link" from Jul 11, 2016, leads to the following static
+checker warning:
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+	drivers/net/wireless/ti/wl18xx/tx.c:35 wl18xx_get_last_tx_rate()
+	error: buffer overflow 'wl->links' 16 <= 255
 
+drivers/net/wireless/ti/wl18xx/tx.c
+    31  static
+    32  void wl18xx_get_last_tx_rate(struct wl1271 *wl, struct ieee80211_vif *vif,
+    33                               u8 band, struct ieee80211_tx_rate *rate, u8 hlid)
+    34  {
+    35          u8 fw_rate = wl->links[hlid].fw_rate_idx;
+                                       ^^^^
+The complaint here is that we take "hlid" from skb->data without
+verifying that it's correct.  But this is the tx path and not the rx
+path so it might be a false positive if we verify that it's correct
+earlier.  I don't know the code well enough to say.
 
-cheers
+    36  
+    37          if (fw_rate > CONF_HW_RATE_INDEX_MAX) {
+    38                  wl1271_error("last Tx rate invalid: %d", fw_rate);
+    39                  rate->idx = 0;
+    40                  rate->flags = 0;
+    41                  return;
+    42          }
+    43  
+    44          if (fw_rate <= CONF_HW_RATE_INDEX_54MBPS) {
+    45                  rate->idx = fw_rate;
+    46                  if (band = NL80211_BAND_5GHZ)
+    47                          rate->idx -= CONF_HW_RATE_INDEX_6MBPS;
+    48                  rate->flags = 0;
+
+regards,
+dan carpenter
