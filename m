@@ -1,66 +1,133 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Oct 2016 19:36:59 +0000
-Subject: [PATCH 05/15] MIPS: TXx9: 7segled: use permission-specific DEVICE_ATTR variants
-Message-Id: <1477769829-22230-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:58:39 +0000
+Subject: [PATCH 20/34] [media] DaVinci-VPFE-Capture: Adjust 13 checks for null pointers
+Message-Id: <111cbf0f-7fe6-63e7-6577-0724f3789226@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Use DEVICE_ATTR_WO for write only attributes.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 10:46:28 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Convert comparisons with the preprocessor symbol "NULL" to condition checks
+without it.
 
-// <smpl>
-@wo@
-declarer name DEVICE_ATTR;
-identifier x,x_store;
-@@
-
-DEVICE_ATTR(x, \(0200\|S_IWUSR\), NULL, x_store);
-
-@script:ocaml@
-x << wo.x;
-x_store << wo.x_store;
-@@
-
-if not (x^"_store" = x_store) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_WO;
-identifier wo.x,wo.x_store;
-@@
-
-- DEVICE_ATTR(x, \(0200\|S_IWUSR\), NULL, x_store);
-+ DEVICE_ATTR_WO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/mips/txx9/generic/7segled.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/davinci/vpfe_capture.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/arch/mips/txx9/generic/7segled.c b/arch/mips/txx9/generic/7segled.c
-index 566c58b..2203c25 100644
---- a/arch/mips/txx9/generic/7segled.c
-+++ b/arch/mips/txx9/generic/7segled.c
-@@ -55,8 +55,8 @@ static ssize_t raw_store(struct device *dev,
- 	return size;
+diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
+index e370400..9da353b 100644
+--- a/drivers/media/platform/davinci/vpfe_capture.c
++++ b/drivers/media/platform/davinci/vpfe_capture.c
+@@ -229,7 +229,7 @@ int vpfe_register_ccdc_device(struct ccdc_hw_device *dev)
+ 	BUG_ON(!dev->hw_ops.getfid);
+ 
+ 	mutex_lock(&ccdc_lock);
+-	if (NULL = ccdc_cfg) {
++	if (!ccdc_cfg) {
+ 		/*
+ 		 * TODO. Will this ever happen? if so, we need to fix it.
+ 		 * Proabably we need to add the request to a linked list and
+@@ -265,7 +265,7 @@ EXPORT_SYMBOL(vpfe_register_ccdc_device);
+  */
+ void vpfe_unregister_ccdc_device(struct ccdc_hw_device *dev)
+ {
+-	if (NULL = dev) {
++	if (!dev) {
+ 		printk(KERN_ERR "invalid ccdc device ptr\n");
+ 		return;
+ 	}
+@@ -469,7 +469,7 @@ static int vpfe_initialize_device(struct vpfe_device *vpfe_dev)
+ 
+ 	/* now open the ccdc device to initialize it */
+ 	mutex_lock(&ccdc_lock);
+-	if (NULL = ccdc_dev) {
++	if (!ccdc_dev) {
+ 		v4l2_err(&vpfe_dev->v4l2_dev, "ccdc device not registered\n");
+ 		ret = -ENODEV;
+ 		goto unlock;
+@@ -582,7 +582,7 @@ static irqreturn_t vpfe_isr(int irq, void *dev_id)
+ 		goto clear_intr;
+ 
+ 	/* only for 6446 this will be applicable */
+-	if (NULL != ccdc_dev->hw_ops.reset)
++	if (ccdc_dev->hw_ops.reset)
+ 		ccdc_dev->hw_ops.reset();
+ 
+ 	if (field = V4L2_FIELD_NONE) {
+@@ -822,7 +822,7 @@ static const struct vpfe_pixel_format *
+ 	int temp, found;
+ 
+ 	vpfe_pix_fmt = vpfe_lookup_pix_format(pixfmt->pixelformat);
+-	if (NULL = vpfe_pix_fmt) {
++	if (!vpfe_pix_fmt) {
+ 		/*
+ 		 * use current pixel format in the vpfe device. We
+ 		 * will find this pix format in the table
+@@ -965,7 +965,7 @@ static int vpfe_enum_fmt_vid_cap(struct file *file, void  *priv,
+ 
+ 	/* Fill in the information about format */
+ 	pix_fmt = vpfe_lookup_pix_format(pix);
+-	if (NULL != pix_fmt) {
++	if (pix_fmt) {
+ 		temp_index = fmt->index;
+ 		*fmt = pix_fmt->fmtdesc;
+ 		fmt->index = temp_index;
+@@ -991,8 +991,7 @@ static int vpfe_s_fmt_vid_cap(struct file *file, void *priv,
+ 
+ 	/* Check for valid frame format */
+ 	pix_fmts = vpfe_check_format(vpfe_dev, &fmt->fmt.pix);
+-
+-	if (NULL = pix_fmts)
++	if (!pix_fmts)
+ 		return -EINVAL;
+ 
+ 	/* store the pixel format in the device  object */
+@@ -1018,7 +1017,7 @@ static int vpfe_try_fmt_vid_cap(struct file *file, void *priv,
+ 	v4l2_dbg(1, debug, &vpfe_dev->v4l2_dev, "vpfe_try_fmt_vid_cap\n");
+ 
+ 	pix_fmts = vpfe_check_format(vpfe_dev, &f->fmt.pix);
+-	if (NULL = pix_fmts)
++	if (!pix_fmts)
+ 		return -EINVAL;
+ 	return 0;
  }
+@@ -1833,7 +1832,7 @@ static int vpfe_probe(struct platform_device *pdev)
  
--static DEVICE_ATTR(ascii, 0200, NULL, ascii_store);
--static DEVICE_ATTR(raw, 0200, NULL, raw_store);
-+static DEVICE_ATTR_WO(ascii);
-+static DEVICE_ATTR_WO(raw);
+ 	vpfe_dev->pdev = &pdev->dev;
  
- static ssize_t map_seg7_show(struct device *dev,
- 			     struct device_attribute *attr,
+-	if (NULL = pdev->dev.platform_data) {
++	if (!pdev->dev.platform_data) {
+ 		v4l2_err(pdev->dev.driver, "Unable to get vpfe config\n");
+ 		ret = -ENODEV;
+ 		goto probe_free_dev_mem;
+@@ -1841,9 +1840,7 @@ static int vpfe_probe(struct platform_device *pdev)
+ 
+ 	vpfe_cfg = pdev->dev.platform_data;
+ 	vpfe_dev->cfg = vpfe_cfg;
+-	if (NULL = vpfe_cfg->ccdc ||
+-	    NULL = vpfe_cfg->card_name ||
+-	    NULL = vpfe_cfg->sub_devs) {
++	if (!vpfe_cfg->ccdc || !vpfe_cfg->card_name || !vpfe_cfg->sub_devs) {
+ 		v4l2_err(pdev->dev.driver, "null ptr in vpfe_cfg\n");
+ 		ret = -ENOENT;
+ 		goto probe_free_dev_mem;
+@@ -1938,7 +1935,7 @@ static int vpfe_probe(struct platform_device *pdev)
+ 	vpfe_dev->sd = kmalloc_array(num_subdevs,
+ 				     sizeof(*vpfe_dev->sd),
+ 				     GFP_KERNEL);
+-	if (NULL = vpfe_dev->sd) {
++	if (!vpfe_dev->sd) {
+ 		ret = -ENOMEM;
+ 		goto probe_out_video_unregister;
+ 	}
+-- 
+2.10.1
 
