@@ -1,125 +1,179 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Oct 2016 14:55:47 +0000
-Subject: [PATCH 3/7] ASoC: rockchip: constify snd_soc_ops structures
-Message-Id: <1476543351-17858-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 17:15:49 +0000
+Subject: [PATCH resent 03/34] [media] DaVinci-VPBE: Adjust 16 checks for null pointers
+Message-Id: <ea25141d-b337-94c8-970b-1289b8dfdefb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+ <fdf72877-08a9-1a86-aec8-627a378258da@users.sourceforge.net>
+In-Reply-To: <fdf72877-08a9-1a86-aec8-627a378258da@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Heiko Stuebner <heiko@sntech.de>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Check for snd_soc_ops structures that are only stored in the ops field of a
-snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
-structures that have this property can be declared as const also.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 11 Oct 2016 13:37:10 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The script "checkpatch.pl" pointed information out like the following.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_soc_ops i@p = { ... };
+Comparison to NULL could be written ...
 
-@ok1@
-identifier r.i;
-struct snd_soc_dai_link e;
-position p;
-@@
-e.ops = &i@p;
+Thus fix the affected source code places.
 
-@ok2@
-identifier r.i, e;
-position p;
-@@
-struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_soc_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_soc_ops i = { ... };
-// </smpl>
-
-The effect on the layout of the .o files is shown by the following output
-of the size command, first before then after the transformation:
-
-   text    data     bss     dec     hex filename
-   5027    2488     416    7931    1efb sound/soc/rockchip/rk3399_gru_sound.o
-   5219    2312     416    7947    1f0b sound/soc/rockchip/rk3399_gru_sound.o
-
-   text    data     bss     dec     hex filename
-   3499    1648     384    5531    159b sound/soc/rockchip/rockchip_max98090.o
-   3563    1584     384    5531    159b sound/soc/rockchip/rockchip_max98090.o
-
-   text    data     bss     dec     hex filename
-   3455    1536     384    5375    14ff sound/soc/rockchip/rockchip_rt5645.o
-   3519    1480     384    5383    1507 sound/soc/rockchip/rockchip_rt5645.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/rockchip/rk3399_gru_sound.c  |    6 +++---
- sound/soc/rockchip/rockchip_max98090.c |    2 +-
- sound/soc/rockchip/rockchip_rt5645.c   |    2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff -u -p a/sound/soc/rockchip/rk3399_gru_sound.c b/sound/soc/rockchip/rk3399_gru_sound.c
---- a/sound/soc/rockchip/rk3399_gru_sound.c
-+++ b/sound/soc/rockchip/rk3399_gru_sound.c
-@@ -228,15 +228,15 @@ static int rockchip_sound_da7219_init(st
+Another send try because of the following notification:
+
+Mailer Daemon wrote on 2016-10-12 at 16:39:
+> This message was created automatically by mail delivery software.
+> 
+> A message that you sent could not be delivered to one or more of
+> its recipients. This is a permanent error. The following address(es)
+> failed:
+> 
+> linux-kernel@vger.kernel.org:
+> SMTP error from remote server for TEXT command, host: vger.kernel.org (209.132.180.67) reason: 550 5.7.1 Content-Policy reject msg: Wrong MIME labeling on 8-bit characte
+> r texts. BF:<H 0>; S1755378AbcJLOjE
+> 
+> linux-media@vger.kernel.org:
+> SMTP error from remote server for TEXT command, host: vger.kernel.org (209.132.180.67) reason: 550 5.7.1 Content-Policy reject msg: Wrong MIME labeling on 8-bit characte
+> r texts. BF:<H 0>; S1755378AbcJLOjE
+> 
+> kernel-janitors@vger.kernel.org:
+> SMTP error from remote server for TEXT command, host: vger.kernel.org (209.132.180.67) reason: 550 5.7.1 Content-Policy reject msg: Wrong MIME labeling on 8-bit characte
+> r texts. BF:<H 0>; S1755378AbcJLOjE
+
+
+ drivers/media/platform/davinci/vpbe.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index b479747..496b27f 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -107,7 +107,7 @@ static int vpbe_find_encoder_sd_index(struct vpbe_config *cfg,
+ static int vpbe_g_cropcap(struct vpbe_device *vpbe_dev,
+ 			  struct v4l2_cropcap *cropcap)
+ {
+-	if (NULL = cropcap)
++	if (!cropcap)
+ 		return -EINVAL;
+ 	cropcap->bounds.left = 0;
+ 	cropcap->bounds.top = 0;
+@@ -149,7 +149,7 @@ static int vpbe_get_mode_info(struct vpbe_device *vpbe_dev, char *mode,
+ 	int curr_output = output_index;
+ 	int i;
+ 
+-	if (NULL = mode)
++	if (!mode)
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < cfg->outputs[curr_output].num_modes; i++) {
+@@ -166,7 +166,7 @@ static int vpbe_get_mode_info(struct vpbe_device *vpbe_dev, char *mode,
+ static int vpbe_get_current_mode_info(struct vpbe_device *vpbe_dev,
+ 				      struct vpbe_enc_mode_info *mode_info)
+ {
+-	if (NULL = mode_info)
++	if (!mode_info)
+ 		return -EINVAL;
+ 
+ 	*mode_info = vpbe_dev->current_timings;
+@@ -356,7 +356,7 @@ static int vpbe_s_dv_timings(struct vpbe_device *vpbe_dev,
+ 
+ 	ret = v4l2_subdev_call(vpbe_dev->encoders[sd_index], video,
+ 					s_dv_timings, dv_timings);
+-	if (!ret && (vpbe_dev->amp != NULL)) {
++	if (!ret && vpbe_dev->amp) {
+ 		/* Call amplifier subdevice */
+ 		ret = v4l2_subdev_call(vpbe_dev->amp, video,
+ 				s_dv_timings, dv_timings);
+@@ -512,7 +512,7 @@ static int vpbe_set_mode(struct vpbe_device *vpbe_dev,
+ 	int ret = 0;
+ 	int i;
+ 
+-	if ((NULL = mode_info) || (NULL = mode_info->name))
++	if (!mode_info || !mode_info->name)
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < cfg->outputs[out_index].num_modes; i++) {
+@@ -536,7 +536,7 @@ static int vpbe_set_mode(struct vpbe_device *vpbe_dev,
+ 	}
+ 
+ 	/* Only custom timing should reach here */
+-	if (preset_mode = NULL)
++	if (!preset_mode)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&vpbe_dev->lock);
+@@ -570,9 +570,9 @@ static int platform_device_get(struct device *dev, void *data)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct vpbe_device *vpbe_dev = data;
+ 
+-	if (strstr(pdev->name, "vpbe-osd") != NULL)
++	if (strstr(pdev->name, "vpbe-osd"))
+ 		vpbe_dev->osd_device = platform_get_drvdata(pdev);
+-	if (strstr(pdev->name, "vpbe-venc") != NULL)
++	if (strstr(pdev->name, "vpbe-venc"))
+ 		vpbe_dev->venc_device = dev_get_platdata(&pdev->dev);
+ 
  	return 0;
- }
+@@ -606,7 +606,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	 * from the platform device by iteration of platform drivers and
+ 	 * matching with device name
+ 	 */
+-	if (NULL = vpbe_dev || NULL = dev) {
++	if (!vpbe_dev || !dev) {
+ 		printk(KERN_ERR "Null device pointers.\n");
+ 		return -ENODEV;
+ 	}
+@@ -652,7 +652,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	vpbe_dev->venc = venc_sub_dev_init(&vpbe_dev->v4l2_dev,
+ 					   vpbe_dev->cfg->venc.module_name);
+ 	/* register venc sub device */
+-	if (vpbe_dev->venc = NULL) {
++	if (!vpbe_dev->venc) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev,
+ 			"vpbe unable to init venc sub device\n");
+ 		ret = -ENODEV;
+@@ -660,8 +660,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	}
+ 	/* initialize osd device */
+ 	osd_device = vpbe_dev->osd_device;
+-
+-	if (NULL != osd_device->ops.initialize) {
++	if (osd_device->ops.initialize) {
+ 		err = osd_device->ops.initialize(osd_device);
+ 		if (err) {
+ 			v4l2_err(&vpbe_dev->v4l2_dev,
+@@ -679,7 +678,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	vpbe_dev->encoders = kmalloc_array(num_encoders,
+ 					   sizeof(*vpbe_dev->encoders),
+ 					   GFP_KERNEL);
+-	if (NULL = vpbe_dev->encoders) {
++	if (!vpbe_dev->encoders) {
+ 		ret = -ENOMEM;
+ 		goto fail_dev_unregister;
+ 	}
+@@ -715,7 +714,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	}
+ 	/* Add amplifier subdevice for dm365 */
+ 	if ((strcmp(vpbe_dev->cfg->module_name, "dm365-vpbe-display") = 0) &&
+-			vpbe_dev->cfg->amp != NULL) {
++	   vpbe_dev->cfg->amp) {
+ 		amp_info = vpbe_dev->cfg->amp;
+ 		if (amp_info->is_i2c) {
+ 			vpbe_dev->amp = v4l2_i2c_new_subdev_board(
+@@ -824,7 +823,7 @@ static int vpbe_probe(struct platform_device *pdev)
+ 	struct vpbe_config *cfg;
+ 	int ret = -EINVAL;
  
--static struct snd_soc_ops rockchip_sound_max98357a_ops = {
-+static const struct snd_soc_ops rockchip_sound_max98357a_ops = {
- 	.hw_params = rockchip_sound_max98357a_hw_params,
- };
- 
--static struct snd_soc_ops rockchip_sound_rt5514_ops = {
-+static const struct snd_soc_ops rockchip_sound_rt5514_ops = {
- 	.hw_params = rockchip_sound_rt5514_hw_params,
- };
- 
--static struct snd_soc_ops rockchip_sound_da7219_ops = {
-+static const struct snd_soc_ops rockchip_sound_da7219_ops = {
- 	.hw_params = rockchip_sound_da7219_hw_params,
- };
- 
-diff -u -p a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
---- a/sound/soc/rockchip/rockchip_max98090.c
-+++ b/sound/soc/rockchip/rockchip_max98090.c
-@@ -119,7 +119,7 @@ static int rk_aif1_hw_params(struct snd_
- 	return ret;
- }
- 
--static struct snd_soc_ops rk_aif1_ops = {
-+static const struct snd_soc_ops rk_aif1_ops = {
- 	.hw_params = rk_aif1_hw_params,
- };
- 
-diff -u -p a/sound/soc/rockchip/rockchip_rt5645.c b/sound/soc/rockchip/rockchip_rt5645.c
---- a/sound/soc/rockchip/rockchip_rt5645.c
-+++ b/sound/soc/rockchip/rockchip_rt5645.c
-@@ -135,7 +135,7 @@ static int rk_init(struct snd_soc_pcm_ru
- 				     &headset_jack);
- }
- 
--static struct snd_soc_ops rk_aif1_ops = {
-+static const struct snd_soc_ops rk_aif1_ops = {
- 	.hw_params = rk_aif1_hw_params,
- };
- 
+-	if (pdev->dev.platform_data = NULL) {
++	if (!pdev->dev.platform_data) {
+ 		v4l2_err(pdev->dev.driver, "No platform data\n");
+ 		return -ENODEV;
+ 	}
+-- 
+2.10.1
 
