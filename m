@@ -1,59 +1,41 @@
-From: "=?utf-8?B?RGF2aWQgSMOkcmRlbWFu?=" <david@hardeman.nu>
-Date: Wed, 19 Oct 2016 13:03:45 +0000
-Subject: Re: [PATCH 1/5] [media] winbond-cir: Use kmalloc_array() in wbcir_tx()
-Message-Id: <ff9593f2d918e13b39ed272e3c74cef8@hardeman.nu>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:55:37 +0000
+Subject: [PATCH 17/34] [media] DaVinci-VPFE-Capture: Improve another size determination in vpfe_enum_input()
+Message-Id: <88b3de4c-5f3f-9f70-736b-039dca6b8a2e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <74b439c6-fa6f-1f78-424a-ebeb6c8bbb4f@users.sourceforge.net>
- <566ABCD9.1060404@users.sourceforge.net>
- <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
-In-Reply-To: <74b439c6-fa6f-1f78-424a-ebeb6c8bbb4f@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-October 14, 2016 1:41 PM, "SF Markus Elfring" <elfring@users.sourceforge.ne=
-t> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 14 Oct 2016 07:19:00 +0200
->=20
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 10:33:42 +0200
 
-Sure...why not...
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
-Signed-off-by: David H=C3=A4rdeman <david@hardeman.nu>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/davinci/vpfe_capture.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
+index 8314c39..87ee35d 100644
+--- a/drivers/media/platform/davinci/vpfe_capture.c
++++ b/drivers/media/platform/davinci/vpfe_capture.c
+@@ -1091,7 +1091,7 @@ static int vpfe_enum_input(struct file *file, void *priv,
+ 		return -EINVAL;
+ 	}
+ 	sdinfo = &vpfe_dev->cfg->sub_devs[subdev];
+-	memcpy(inp, &sdinfo->inputs[index], sizeof(struct v4l2_input));
++	memcpy(inp, &sdinfo->inputs[index], sizeof(*inp));
+ 	return 0;
+ }
+ 
+-- 
+2.10.1
 
-> ---
-> drivers/media/rc/winbond-cir.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/rc/winbond-cir.c b/drivers/media/rc/winbond-ci=
-r.c
-> index 95ae60e..59050f5 100644
-> --- a/drivers/media/rc/winbond-cir.c
-> +++ b/drivers/media/rc/winbond-cir.c
-> @@ -660,7 +660,7 @@ wbcir_tx(struct rc_dev *dev, unsigned *b, unsigned co=
-unt)
-> unsigned i;
-> unsigned long flags;
->=20
-> - buf =3D kmalloc(count * sizeof(*b), GFP_KERNEL);
-> + buf =3D kmalloc_array(count, sizeof(*b), GFP_KERNEL);
-> if (!buf)
-> return -ENOMEM;
->=20
-> --=20
-> 2.10.1
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
