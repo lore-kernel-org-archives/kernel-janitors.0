@@ -1,142 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 17:16:15 +0000
-Subject: [PATCH resent 27/34] [media] DaVinci-VPIF-Capture: Adjust ten checks for null pointers
-Message-Id: <a4f74e62-dfd2-5804-da5e-9a6dcd355d6d@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:40:22 +0000
+Subject: [PATCH 06/34] [media] DaVinci-VPBE: Return an error code only by a single variable in vpbe_initializ
+Message-Id: <31e1f827-3539-3bcf-e6c1-2b9df5fd3619@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
- <73a8bc6c-3dc5-c152-7b59-fd1a5e84f61c@users.sourceforge.net>
-In-Reply-To: <73a8bc6c-3dc5-c152-7b59-fd1a5e84f61c@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Muralidharan Karicheri <m-karicheri2@ti.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 15:20:34 +0200
+Date: Tue, 11 Oct 2016 14:15:57 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+An error code was assigned to the local variable "err" in an if branch.
+But this variable was not used further then.
 
-Comparison to NULL could be written ...
+Use the local variable "ret" instead like at other places in this function.
 
-Thus fix the affected source code places.
-
+Fixes: 66715cdc3224a4e241c1a92856b9a4af3b70e06d ("[media] davinci vpbe:
+VPBE display driver")
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/media/platform/davinci/vpbe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Another send try because of the following notification:
-
-Mailer Daemon wrote on 2016-10-12 at 17:06:
-> This message was created automatically by mail delivery software.
-> 
-> A message that you sent could not be delivered to one or more of
-> its recipients. This is a permanent error. The following address(es)
-> failed:
-> 
-> linux-media@vger.kernel.org:
-> SMTP error from remote server for TEXT command, host: vger.kernel.org (209.132.180.67) reason: 550 5.7.1 Content-Policy reject msg: Wrong MIME labeling on 8-bit characte
-> r texts. BF:<H 0>; S933375AbcJLPGr
-> 
-> kernel-janitors@vger.kernel.org:
-> SMTP error from remote server for TEXT command, host: vger.kernel.org (209.132.180.67) reason: 550 5.7.1 Content-Policy reject msg: Wrong MIME labeling on 8-bit characte
-> r texts. BF:<H 0>; S933375AbcJLPGr
-> 
-> linux-kernel@vger.kernel.org:
-> SMTP error from remote server for TEXT command, host: vger.kernel.org (209.132.180.67) reason: 550 5.7.1 Content-Policy reject msg: Wrong MIME labeling on 8-bit characte
-> r texts. BF:<H 0>; S933375AbcJLPGr
-
-
- drivers/media/platform/davinci/vpif_capture.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
-index 24d1f61..d9fc591 100644
---- a/drivers/media/platform/davinci/vpif_capture.c
-+++ b/drivers/media/platform/davinci/vpif_capture.c
-@@ -291,10 +291,10 @@ static void vpif_stop_streaming(struct vb2_queue *vq)
- 		vb2_buffer_done(&common->cur_frm->vb.vb2_buf,
- 				VB2_BUF_STATE_ERROR);
- 	} else {
--		if (common->cur_frm != NULL)
-+		if (common->cur_frm)
- 			vb2_buffer_done(&common->cur_frm->vb.vb2_buf,
- 					VB2_BUF_STATE_ERROR);
--		if (common->next_frm != NULL)
-+		if (common->next_frm)
- 			vb2_buffer_done(&common->next_frm->vb.vb2_buf,
- 					VB2_BUF_STATE_ERROR);
- 	}
-@@ -648,7 +648,7 @@ static int vpif_input_to_subdev(
- 	vpif_dbg(2, debug, "vpif_input_to_subdev\n");
- 
- 	subdev_name = chan_cfg->inputs[input_index].subdev_name;
--	if (subdev_name = NULL)
-+	if (!subdev_name)
- 		return -1;
- 
- 	/* loop through the sub device list to get the sub device info */
-@@ -764,7 +764,7 @@ static int vpif_g_std(struct file *file, void *priv, v4l2_std_id *std)
- 
- 	vpif_dbg(2, debug, "vpif_g_std\n");
- 
--	if (config->chan_config[ch->channel_id].inputs = NULL)
-+	if (!config->chan_config[ch->channel_id].inputs)
- 		return -ENODATA;
- 
- 	chan_cfg = &config->chan_config[ch->channel_id];
-@@ -794,7 +794,7 @@ static int vpif_s_std(struct file *file, void *priv, v4l2_std_id std_id)
- 
- 	vpif_dbg(2, debug, "vpif_s_std\n");
- 
--	if (config->chan_config[ch->channel_id].inputs = NULL)
-+	if (!config->chan_config[ch->channel_id].inputs)
- 		return -ENODATA;
- 
- 	chan_cfg = &config->chan_config[ch->channel_id];
-@@ -1050,7 +1050,7 @@ vpif_enum_dv_timings(struct file *file, void *priv,
- 	struct v4l2_input input;
- 	int ret;
- 
--	if (config->chan_config[ch->channel_id].inputs = NULL)
-+	if (!config->chan_config[ch->channel_id].inputs)
- 		return -ENODATA;
- 
- 	chan_cfg = &config->chan_config[ch->channel_id];
-@@ -1084,7 +1084,7 @@ vpif_query_dv_timings(struct file *file, void *priv,
- 	struct v4l2_input input;
- 	int ret;
- 
--	if (config->chan_config[ch->channel_id].inputs = NULL)
-+	if (!config->chan_config[ch->channel_id].inputs)
- 		return -ENODATA;
- 
- 	chan_cfg = &config->chan_config[ch->channel_id];
-@@ -1120,7 +1120,7 @@ static int vpif_s_dv_timings(struct file *file, void *priv,
- 	struct v4l2_input input;
- 	int ret;
- 
--	if (config->chan_config[ch->channel_id].inputs = NULL)
-+	if (!config->chan_config[ch->channel_id].inputs)
- 		return -ENODATA;
- 
- 	chan_cfg = &config->chan_config[ch->channel_id];
-@@ -1218,7 +1218,7 @@ static int vpif_g_dv_timings(struct file *file, void *priv,
- 	struct vpif_capture_chan_config *chan_cfg;
- 	struct v4l2_input input;
- 
--	if (config->chan_config[ch->channel_id].inputs = NULL)
-+	if (!config->chan_config[ch->channel_id].inputs)
- 		return -ENODATA;
- 
- 	chan_cfg = &config->chan_config[ch->channel_id];
-@@ -1465,7 +1465,7 @@ static __init int vpif_probe(struct platform_device *pdev)
- 
- 	subdev_count = vpif_obj.config->subdev_count;
- 	vpif_obj.sd = kcalloc(subdev_count, sizeof(*vpif_obj.sd), GFP_KERNEL);
--	if (vpif_obj.sd = NULL) {
-+	if (!vpif_obj.sd) {
- 		err = -ENOMEM;
- 		goto vpif_unregister;
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 4c4cd81..afa8ff7 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -665,7 +665,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 		if (err) {
+ 			v4l2_err(&vpbe_dev->v4l2_dev,
+ 				 "unable to initialize the OSD device");
+-			err = -ENOMEM;
++			ret = -ENOMEM;
+ 			goto fail_dev_unregister;
+ 		}
  	}
 -- 
 2.10.1
