@@ -1,30 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 16 Oct 2016 20:32:06 +0000
-Subject: [PATCH 0/4] AVR32-AT32AP: Fine-tuning for three function implementations
-Message-Id: <c76c4e36-3e5d-3106-69b7-907133c8b7d0@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 15:07:35 +0000
+Subject: [PATCH 28/34] [media] DaVinci-VPIF-Capture: Delete an unnecessary variable initialisation in vpif_qu
+Message-Id: <2eb81f4c-1796-a10d-cade-f9906df2e816@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 16 Oct 2016 22:30:22 +0200
+Date: Wed, 12 Oct 2016 15:22:45 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
-Markus Elfring (4):
-  clock: Use seq_putc() in two functions
-  clock: Combine nine seq_printf() calls into one call in clk_show()
-  pio: Use seq_putc() in pio_bank_show()
-  pio: Replace two seq_printf() calls by seq_puts() in pio_bank_show()
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/davinci/vpif_capture.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/avr32/mach-at32ap/clock.c | 33 +++++++++++++++++++++------------
- arch/avr32/mach-at32ap/pio.c   |  6 +++---
- 2 files changed, 24 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
+index d9fc591..4197ca4 100644
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -731,7 +731,7 @@ static int vpif_querystd(struct file *file, void *priv, v4l2_std_id *std_id)
+ {
+ 	struct video_device *vdev = video_devdata(file);
+ 	struct channel_obj *ch = video_get_drvdata(vdev);
+-	int ret = 0;
++	int ret;
+ 
+ 	vpif_dbg(2, debug, "vpif_querystd\n");
+ 
 -- 
 2.10.1
 
