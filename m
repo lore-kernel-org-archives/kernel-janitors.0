@@ -1,42 +1,51 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 14:49:02 +0000
-Subject: [PATCH 04/15] md-cluster: Improve another size determination in __sendmsg()
-Message-Id: <f18ffeb2-ea34-12d7-7e6e-af17cb371ed2@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:29:01 +0000
+Subject: [PATCH 01/34] [media] DaVinci-VPBE: Use kmalloc_array() in vpbe_initialize()
+Message-Id: <ca927405-77a0-b6c2-d626-fa27e584664a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
-In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 12:21:48 +0200
+Date: Tue, 11 Oct 2016 09:40:41 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/md-cluster.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/davinci/vpbe.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index 7af27dd..c81eed4 100644
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -706,7 +706,7 @@ static int __sendmsg(struct md_cluster_info *cinfo, struct cluster_msg *cmsg)
- 	}
- 
- 	memcpy(cinfo->message_lockres->lksb.sb_lvbptr, (void *)cmsg,
--			sizeof(struct cluster_msg));
-+	       sizeof(*cmsg));
- 	/*down-convert EX to CW on Message*/
- 	error = dlm_lock_sync(cinfo->message_lockres, DLM_LOCK_CW);
- 	if (error) {
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 9a6c2cc..8c062ff 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -676,9 +676,9 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	 * store venc sd index.
+ 	 */
+ 	num_encoders = vpbe_dev->cfg->num_ext_encoders + 1;
+-	vpbe_dev->encoders = kmalloc(
+-				sizeof(struct v4l2_subdev *)*num_encoders,
+-				GFP_KERNEL);
++	vpbe_dev->encoders = kmalloc_array(num_encoders,
++					   sizeof(*vpbe_dev->encoders),
++					   GFP_KERNEL);
+ 	if (NULL = vpbe_dev->encoders) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev,
+ 			"unable to allocate memory for encoders sub devices");
 -- 
-2.10.0
+2.10.1
 
