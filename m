@@ -1,42 +1,56 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:47:01 +0000
-Subject: [PATCH 47/54] md/raid10: Improve another size determination in raid10_start_reshape()
-Message-Id: <f0fcea7b-2ebb-24c7-981d-91867d4dd350@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 12:04:45 +0000
+Subject: Re: GPU-DRM-Savage: Less function calls in savage_bci_cmdbuf() after error detection
+Message-Id: <bcbcc9ec-36c7-c0e9-f4e0-634c1475728c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+ <77052ac1-1933-49af-3ad8-6e0eecc1aafe@users.sourceforge.net>
+ <c97563c0-d463-8b15-5956-26d93641a54f@users.sourceforge.net>
+ <20160819075021.GU6232@phenom.ffwll.local>
+In-Reply-To: <20160819075021.GU6232@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Oct 2016 18:48:17 +0200
+>> Date: Thu, 18 Aug 2016 21:28:58 +0200
+>>
+>> The kfree() function was called in a few cases by the
+>> savage_bci_cmdbuf() function during error handling
+>> even if a passed variable contained a null pointer.
+>>
+>> Adjust jump targets according to the Linux coding style convention.
+>>
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>=20
+> Not sure this is worth it, I'll pass. Patch 1 merged.
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer.
+Unfortunately, it seems that this selection of only one update step
+from this small patch series has got unwanted consequences.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/raid10.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Will the update suggestion =93[patch] drm/savage: dereferencing an error po=
+inter=94
+by Dan Carpenter (from today) trigger further software development discussi=
+ons?
 
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 9b8d11f..62cd159 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -4065,7 +4065,7 @@ static int raid10_start_reshape(struct mddev *mddev)
- 	spin_lock_irq(&conf->device_lock);
- 	if (conf->mirrors_new) {
- 		memcpy(conf->mirrors_new, conf->mirrors,
--		       sizeof(struct raid10_info)*conf->prev.raid_disks);
-+		       sizeof(*conf->mirrors_new) * conf->prev.raid_disks);
- 		smp_mb();
- 		kfree(conf->mirrors_old);
- 		conf->mirrors_old = conf->mirrors;
--- 
-2.10.1
+https://patchwork.kernel.org/patch/9372127/
+https://lkml.kernel.org/r/<20161012062227.GU12841@mwanda>
 
+
+Will an update step like =93[PATCH 2/2] GPU-DRM-Savage: Less function calls=
+ in
+savage_bci_cmdbuf() after error detection=94 (from 2016-08-18) become worth
+for related consideratons once more?
+
+https://patchwork.kernel.org/patch/9289183/
+https://lkml.kernel.org/r/<c97563c0-d463-8b15-5956-26d93641a54f@users.sourc=
+eforge.net>
+
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
