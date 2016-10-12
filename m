@@ -1,26 +1,58 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 07 Oct 2016 13:20:34 +0000
-Subject: Re: scripts/coccicheck: Update for a comment?
-Message-Id: <6ebf9527-7484-dec3-bd59-f5a129c86923@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Oct 2016 08:33:21 +0000
+Subject: [patch] Btrfs: remove some no-op casts
+Message-Id: <20161012063924.GB13780@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea62a1ea-c566-65a0-e2fd-2ee96839cf48@users.sourceforge.net>
- <alpine.DEB.2.10.1610070749420.3074@hadrien>
- <76a6d8fa-03b9-5589-2885-fa62933dd391@users.sourceforge.net>
- <alpine.DEB.2.10.1610070803550.3074@hadrien>
- <8d36952c-1dbb-bb26-ee57-3e1540c042c0@users.sourceforge.net>
- <alpine.DEB.2.10.1610070824490.3074@hadrien>
- <1e8a03cb-2ae0-c8e3-7910-97ad05903709@users.sourceforge.net>
-In-Reply-To: <1e8a03cb-2ae0-c8e3-7910-97ad05903709@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Chris Mason <clm@fb.com>, Omar Sandoval <osandov@fb.com>
+Cc: Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Do I overlook any commit for the discussed source file anyhow?
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/log/dev-tools/coccinelle.rst
+We cast 0 to a u8 but then because of type promotion, it's immediately
+cast to int back to int before we do a bitwise negate.  The cast doesn't
+matter in this case, the code works as intended.  It causes a static
+checker warning though so let's remove it.
 
-It seems that I missed this file also because an other path will be appropriate.
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/Documentation/dev-tools/coccinelle.rst
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 66a7551..8ed05d9 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -5569,7 +5569,7 @@ void le_bitmap_set(u8 *map, unsigned int start, int len)
+ 		*p |= mask_to_set;
+ 		len -= bits_to_set;
+ 		bits_to_set = BITS_PER_BYTE;
+-		mask_to_set = ~(u8)0;
++		mask_to_set = ~0;
+ 		p++;
+ 	}
+ 	if (len) {
+@@ -5589,7 +5589,7 @@ void le_bitmap_clear(u8 *map, unsigned int start, int len)
+ 		*p &= ~mask_to_clear;
+ 		len -= bits_to_clear;
+ 		bits_to_clear = BITS_PER_BYTE;
+-		mask_to_clear = ~(u8)0;
++		mask_to_clear = ~0;
+ 		p++;
+ 	}
+ 	if (len) {
+@@ -5679,7 +5679,7 @@ void extent_buffer_bitmap_set(struct extent_buffer *eb, unsigned long start,
+ 		kaddr[offset] |= mask_to_set;
+ 		len -= bits_to_set;
+ 		bits_to_set = BITS_PER_BYTE;
+-		mask_to_set = ~(u8)0;
++		mask_to_set = ~0;
+ 		if (++offset >= PAGE_SIZE && len > 0) {
+ 			offset = 0;
+ 			page = eb->pages[++i];
+@@ -5721,7 +5721,7 @@ void extent_buffer_bitmap_clear(struct extent_buffer *eb, unsigned long start,
+ 		kaddr[offset] &= ~mask_to_clear;
+ 		len -= bits_to_clear;
+ 		bits_to_clear = BITS_PER_BYTE;
+-		mask_to_clear = ~(u8)0;
++		mask_to_clear = ~0;
+ 		if (++offset >= PAGE_SIZE && len > 0) {
+ 			offset = 0;
+ 			page = eb->pages[++i];
