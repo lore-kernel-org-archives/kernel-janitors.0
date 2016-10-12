@@ -1,43 +1,39 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Oct 2016 19:56:47 +0000
-Subject: [PATCH 4/6] IA64-setup: Use seq_putc() in show_cpuinfo()
-Message-Id: <802ea8fd-b020-20f5-bcd2-9d58609e5c6b@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 15:12:18 +0000
+Subject: [PATCH 31/34] [media] DaVinci-VPIF-Display: Delete an error message for a failed memory allocation
+Message-Id: <73ab1e30-a0cc-cbf6-eed0-cb992fca8789@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
-In-Reply-To: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ia64@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Borislav Petkov <bp@suse.de>, Fenghua Yu <fenghua.yu@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, Ingo Molnar <mingo@kernel.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <jroedel@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>, Robert Richter <rrichter@cavium.com>, Robin Murphy <robin.murphy@arm.com>, Tony Luck <tony.luck@intel.com>, Toshi Kani <toshi.kani@hpe.com>, Vineet Gupta <vgupta@synopsys.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Oct 2016 20:42:20 +0200
+Date: Wed, 12 Oct 2016 15:38:41 +0200
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Omit an extra message for a memory allocation failure in this function.
 
-This issue was detected by using the Coccinelle software.
-
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/ia64/kernel/setup.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/davinci/vpif_display.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/ia64/kernel/setup.c b/arch/ia64/kernel/setup.c
-index 7ec7acc..28741f7 100644
---- a/arch/ia64/kernel/setup.c
-+++ b/arch/ia64/kernel/setup.c
-@@ -705,8 +705,7 @@ show_cpuinfo (struct seq_file *m, void *v)
- 			   "thread id  : %u\n",
- 			   c->core_id, c->thread_id);
- #endif
--	seq_printf(m,"\n");
--
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
+diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
+index 80121e8..3347fa14 100644
+--- a/drivers/media/platform/davinci/vpif_display.c
++++ b/drivers/media/platform/davinci/vpif_display.c
+@@ -1281,7 +1281,6 @@ static __init int vpif_probe(struct platform_device *pdev)
+ 	subdevdata = vpif_obj.config->subdevinfo;
+ 	vpif_obj.sd = kcalloc(subdev_count, sizeof(*vpif_obj.sd), GFP_KERNEL);
+ 	if (vpif_obj.sd = NULL) {
+-		vpif_err("unable to allocate memory for subdevice pointers\n");
+ 		err = -ENOMEM;
+ 		goto vpif_unregister;
+ 	}
 -- 
 2.10.1
 
