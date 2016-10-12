@@ -1,57 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 08:51:25 +0000
-Subject: [PATCH 01/54] md/raid0: Use kcalloc() in create_strip_zones()
-Message-Id: <2eaf3755-ff33-39e0-517c-c968d148f862@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 15:14:45 +0000
+Subject: [PATCH 33/34] [media] DaVinci-VPIF-Display: Delete an unnecessary variable initialisation in vpif_ch
+Message-Id: <4d6bde65-54e8-7887-c9de-61dbf64d1ab9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 10:10:52 +0200
+Date: Wed, 12 Oct 2016 15:43:12 +0200
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kcalloc".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of data types by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+The local variable "channel_id" will be reassigned with the following
+statement at the beginning. Thus omit the explicit initialisation.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/raid0.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/media/platform/davinci/vpif_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 258986a..50e8a63 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -150,12 +150,13 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
- 	}
+diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
+index fff1ece..cd44990 100644
+--- a/drivers/media/platform/davinci/vpif_display.c
++++ b/drivers/media/platform/davinci/vpif_display.c
+@@ -363,7 +363,7 @@ static irqreturn_t vpif_channel_isr(int irq, void *dev_id)
+ 	struct channel_obj *ch;
+ 	struct common_obj *common;
+ 	int fid = -1, i;
+-	int channel_id = 0;
++	int channel_id;
  
- 	err = -ENOMEM;
--	conf->strip_zone = kzalloc(sizeof(struct strip_zone)*
--				conf->nr_strip_zones, GFP_KERNEL);
-+	conf->strip_zone = kcalloc(conf->nr_strip_zones,
-+				   sizeof(*conf->strip_zone),
-+				   GFP_KERNEL);
- 	if (!conf->strip_zone)
- 		goto abort;
--	conf->devlist = kzalloc(sizeof(struct md_rdev*)*
--				conf->nr_strip_zones*mddev->raid_disks,
-+	conf->devlist = kcalloc(conf->nr_strip_zones * mddev->raid_disks,
-+				sizeof(*conf->devlist),
- 				GFP_KERNEL);
- 	if (!conf->devlist)
- 		goto abort;
+ 	channel_id = *(int *)(dev_id);
+ 	if (!vpif_intr_status(channel_id + 2))
 -- 
 2.10.1
 
