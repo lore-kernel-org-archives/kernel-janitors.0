@@ -1,50 +1,42 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2016 06:01:59 +0000
-Subject: [patch 2/2] k3dma: tighten range checking a bit
-Message-Id: <20161012060158.GB12841@mwanda>
+Date: Wed, 12 Oct 2016 06:18:47 +0000
+Subject: [bug report] mwifiex: add PCIe function level reset support
+Message-Id: <20161012061847.GQ12841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-My static checker complains that it's possible for "num" to be negative.
-I haven't investigated this completely, but it's more natural to make
-the type unsigned and that makes the static checker happy.
+Hello Amitkumar Karwar,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Hm...  I probably should investigate this a bit more because the same
-code is copy and pasted all over the place.
+This is a semi-automatic email about new static checker warnings.
 
-diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index aabcb79..7c636c53 100644
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -440,7 +440,7 @@ static void k3_dma_fill_desc(struct k3_dma_desc_sw *ds, dma_addr_t dst,
- 	ds->desc_hw[num].config = ccfg;
- }
- 
--static struct k3_dma_desc_sw *k3_dma_alloc_desc_resource(int num,
-+static struct k3_dma_desc_sw *k3_dma_alloc_desc_resource(size_t num,
- 							struct dma_chan *chan)
- {
- 	struct k3_dma_chan *c = to_k3_chan(chan);
-@@ -449,7 +449,7 @@ static struct k3_dma_desc_sw *k3_dma_alloc_desc_resource(int num,
- 	int lli_limit = LLI_BLOCK_SIZE / sizeof(struct k3_desc_hw);
- 
- 	if (num > lli_limit) {
--		dev_dbg(chan->device->dev, "vch %p: sg num %d exceed max %d\n",
-+		dev_dbg(chan->device->dev, "vch %p: sg num %lu exceed max %d\n",
- 			&c->vc, num, lli_limit);
- 		return NULL;
- 	}
-@@ -476,7 +476,7 @@ static struct dma_async_tx_descriptor *k3_dma_prep_memcpy(
- 	struct k3_dma_chan *c = to_k3_chan(chan);
- 	struct k3_dma_desc_sw *ds;
- 	size_t copy = 0;
--	int num = 0;
-+	size_t num = 0;
- 
- 	if (!len)
- 		return NULL;
+The patch 4c5dae59d2e9: "mwifiex: add PCIe function level reset 
+support" from Jul 26, 2016, leads to the following Smatch complaint:
+
+drivers/net/wireless/marvell/mwifiex/pcie.c:3098 mwifiex_pcie_down_dev()
+	 warn: variable dereferenced before check 'card' (see line 3090)
+
+drivers/net/wireless/marvell/mwifiex/pcie.c
+  3089		struct pcie_service_card *card = adapter->card;
+  3090		const struct mwifiex_pcie_card_reg *reg = card->pcie.reg;
+                                                          ^^^^^^^^^^^^^^
+New dereference.
+
+  3091	
+  3092		if (mwifiex_write_reg(adapter, reg->drv_rdy, 0x00000000))
+  3093			mwifiex_dbg(adapter, ERROR, "Failed to write driver not-ready signature\n");
+  3094	
+  3095		adapter->seq_num = 0;
+  3096		adapter->tx_buf_size = MWIFIEX_TX_DATA_BUF_SIZE_4K;
+  3097	
+  3098		if (card) {
+                    ^^^^
+New check is too late.
+
+  3099			if (reg->sleep_cookie)
+  3100				mwifiex_pcie_delete_sleep_cookie_buf(adapter);
+
+regards,
+dan carpenter
