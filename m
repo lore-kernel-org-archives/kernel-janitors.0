@@ -1,86 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Oct 2016 17:00:14 +0000
-Subject: Re: [PATCH 04/18] [media] RedRat3: One function call less in redrat3_transmit_ir() after error detec
-Message-Id: <5f471774-ec63-c404-6ebb-2b20c0f2a20e@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Oct 2016 06:16:30 +0000
+Subject: [bug report] qed: Add RoCE ll2 & GSI support
+Message-Id: <20161012061629.GO12841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
- <7878868c-bc54-5577-b808-ed096bbf3759@users.sourceforge.net>
- <20161015133339.GB3393@gofer.mess.org>
-In-Reply-To: <20161015133339.GB3393@gofer.mess.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sean Young <sean@mess.org>
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
->> diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
->> index 7ae2ced..71e901d 100644
->> --- a/drivers/media/rc/redrat3.c
->> +++ b/drivers/media/rc/redrat3.c
->> @@ -723,10 +723,10 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
->>  {
->>  	struct redrat3_dev *rr3 = rcdev->priv;
->>  	struct device *dev = rr3->dev;
->> -	struct redrat3_irdata *irdata = NULL;
->> +	struct redrat3_irdata *irdata;
->>  	int ret, ret_len;
->>  	int lencheck, cur_sample_len, pipe;
->> -	int *sample_lens = NULL;
->> +	int *sample_lens;
->>  	u8 curlencheck;
->>  	unsigned i, sendbuf_len;
->>  
->> @@ -747,7 +747,7 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
->>  	irdata = kzalloc(sizeof(*irdata), GFP_KERNEL);
->>  	if (!irdata) {
->>  		ret = -ENOMEM;
->> -		goto out;
->> +		goto free_sample;
->>  	}
->>  
->>  	/* rr3 will disable rc detector on transmit */
->> @@ -776,7 +776,7 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
->>  				curlencheck++;
->>  			} else {
->>  				ret = -EINVAL;
->> -				goto out;
->> +				goto reset_member;
->>  			}
->>  		}
->>  		irdata->sigdata[i] = lencheck;
->> @@ -811,14 +811,12 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
->>  		dev_err(dev, "Error: control msg send failed, rc %d\n", ret);
->>  	else
->>  		ret = count;
->> -
->> -out:
->> -	kfree(irdata);
->> -	kfree(sample_lens);
->> -
->> +reset_member:
->>  	rr3->transmitting = false;
->>  	/* rr3 re-enables rc detector because it was enabled before */
->> -
->> +	kfree(irdata);
->> +free_sample:
->> +	kfree(sample_lens);
-> 
-> In this error path, rr3->transmitting is not set to false
+Hello Ram Amrani,
 
-Can it be that this reset is not needed because it should have still got this value already
-in the software refactoring I proposed here?
+This is a semi-automatic email about new static checker warnings.
 
+The patch abd49676c707: "qed: Add RoCE ll2 & GSI support" from Oct 1, 
+2016, leads to the following Smatch complaint:
 
-> so now the driver will never allow you transmit again.
+drivers/net/ethernet/qlogic/qed/qed_roce.c:2853 qed_roce_ll2_tx()
+	 warn: variable dereferenced before check 'cdev' (see line 2846)
 
-I have got an other impression.
+drivers/net/ethernet/qlogic/qed/qed_roce.c
+  2845	{
+  2846		struct qed_hwfn *hwfn = QED_LEADING_HWFN(cdev);
+                                                         ^^^^
+  2847		struct qed_roce_ll2_info *roce_ll2 = hwfn->ll2;
+                                                     ^^^^^^^^^
+  2848		enum qed_ll2_roce_flavor_type qed_roce_flavor;
+  2849		u8 flags = 0;
+  2850		int rc;
+  2851		int i;
+  2852	
+  2853		if (!cdev || !pkt || !params) {
+                     ^^^^
 
+This one also.
 
-> Also this patch does not apply against latest.
+  2854			DP_ERR(cdev,
+  2855			       "roce ll2 tx: failed tx because one of the following is NULL - drv=%p, pkt=%p, params=%p\n",
 
-Do you want that I rebase my update suggestion for this software module on a published commit
-that is more recent than 2016-09-22 (d6ae162bd13998a6511e5efbc7c19ab542ba1555 for example)?
-
-Regards,
-Markus
+regards,
+dan carpenter
