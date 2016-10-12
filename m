@@ -1,97 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Oct 2016 20:04:33 +0000
-Subject: Re: MD-RAID: Use seq_putc() in three status functions?
-Message-Id: <69acd529-fc75-bd74-17ae-bedd8796e706@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:47:25 +0000
+Subject: [PATCH 10/34] [media] DaVinci-VPBE: Check return value of a setup_if_config() call in vpbe_set_outpu
+Message-Id: <47590f2e-1cfa-582d-769e-502802171b66@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <688764a4-072d-2faf-37ba-a222b190a5d9@suse.de>
- <59d71170-c48d-a084-c748-b6ab74a2bee4@users.sourceforge.net>
- <1e151094-e228-5307-ae2f-b376b31f5628@suse.de>
- <83e720c6-9037-a3c1-6e83-27505805f37f@users.sourceforge.net>
- <2cc42b2f-1f1a-e95c-91fa-54e1dd3b6d49@suse.de>
- <653e60ee-f862-8828-3e4f-498c7cc34bdc@users.sourceforge.net>
- <c2500336-5848-66c3-ecf0-1ade04decf75@suse.de>
- <a0f96e19-fa24-8507-2b77-344a342113aa@users.sourceforge.net>
- <1476703920.2520.105.camel@petrovitsch.priv.at>
- <97f31b70-e3ff-f194-c753-54da1fe3e664@users.sourceforge.net>
- <57299b72-8e6b-0b92-4374-1b7a0907e810@suse.de>
- <cb9beadc-3ea2-c09c-f621-a54cd73e3647@users.sourceforge.net>
- <05d0cade-7922-9d8a-a974-34b2cc9150fb@suse.de>
- <bf6c54f1-7af4-747c-a58b-be13ab74563e@users.sourceforge.net>
- <665cd40a-4562-a015-78c6-12976c12b626@suse.de>
- <cc24736e-2227-2a49-e131-386775c942d9@users.sourceforge.net>
- <e264883f-d1b9-4bf3-aa9f-45fce5dab18e@users.sourceforge.net>
-In-Reply-To: <e264883f-d1b9-4bf3-aa9f-45fce5dab18e@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Hannes Reinecke <hare@suse.de>, linux-raid@vger.kernel.org
-Cc: Bernd Petrovitsch <bernd@petrovitsch.priv.at>, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Joe Perches <coupons@perches.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, kbuild-all@01.org, ltp@lists.linux.it
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->>> So back to the original task for you: Show me in the generated output where the benefits are.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 09:56:56 +0200
 
-I can offer another bit of information for this software development discussion.
+* A function was called over the pointer "setup_if_config" in the data
+  structure "venc_platform_data". But the return value was not used so far.
+  Thus assign it to the local variable "ret" which will be checked with
+  the next statement.
 
-The following build settings were active in my "Makefile" for this Linux test case.
+  Fixes: 9a7f95ad1c946efdd7a7a72df27db738260a0fd8 ("[media] davinci vpbe: add dm365 VPBE display driver changes")
 
-…
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O0 -fomit-frame-pointer -std=gnu89
-…
+* Pass a value to this function call without storing it in an intermediate
+  variable before.
 
+* Delete the local variable "if_params" which became unnecessary with
+  this refactoring.
 
-The afffected source files can be compiled for the processor architecture "x86_64"
-by a tool like "GCC 6.2.1+r239849-1.5" from the software distribution
-"openSUSE Tumbleweed" with the following command example.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/davinci/vpbe.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-my_original=${my_build_dir}unchanged/test/ \
-&& my_fixing=${my_build_dir}patched/test/ \
-&& mkdir -p ${my_original} ${my_fixing} \
-&& my_cc=/usr/bin/gcc-6 \
-&& my_module=drivers/md/raid1.s \
-&& git checkout next-20161014 \
-&& make -j6 O="${my_original}" CC="${my_cc}" HOSTCC="${my_cc}" allmodconfig "${my_module}" \
-&& git checkout next_usage_of_seq_putc_in_md_raid_1 \
-&& make -j6 O="${my_fixing}" CC="${my_cc}" HOSTCC="${my_cc}" allmodconfig "${my_module}" \
-&& diff -u "${my_original}${my_module}" "${my_fixing}${my_module}" > "${my_build_dir}assembler_code_comparison_$(date -I)_3.diff"
-
-
-The generated file got the size "25.4 KiB" this time. I guess that only
-the following two diff hunks are interesting then to show desired effects
-for the suggested software refactoring around data output of a single character
-(instead of a similar string).
-
-
-…
-@@ -4402,10 +4402,6 @@
- .LC19:
- 	.string	"%s"
- 	.zero	61
--	.align 32
--.LC20:
--	.string	"]"
--	.zero	62
- 	.text
- 	.p2align 4,,15
- 	.type	raid1_status, @function
-@@ -4564,8 +4560,8 @@
- 	movq	$rcu_lock_map, %rdi	#,
- 	call	lock_release	#
- 	movq	%r14, %rdi	# seq,
--	movq	$.LC20, %rsi	#,
--	call	seq_printf	#
-+	movl	$93, %esi	#,
-+	call	seq_putc	#
- 	addq	$16, %rsp	#,
- 	popq	%rbx	#
- 	popq	%r12	#
-…
-
-
-* Is this kind of assembler code comparison useful to clarify relevant
-  differences further?
-
-* Are any software development concerns left over for such a transformation?
-
-Regards,
-Markus
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 19611a2..6e7b0df 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -227,7 +227,6 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+ 			vpbe_current_encoder_info(vpbe_dev);
+ 	struct vpbe_config *cfg = vpbe_dev->cfg;
+ 	struct venc_platform_data *venc_device = vpbe_dev->venc_device;
+-	u32 if_params;
+ 	int enc_out_index;
+ 	int sd_index;
+ 	int ret = 0;
+@@ -257,8 +256,8 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+ 			goto out;
+ 		}
+ 
+-		if_params = cfg->outputs[index].if_params;
+-		venc_device->setup_if_config(if_params);
++		ret = venc_device->setup_if_config(cfg
++						   ->outputs[index].if_params);
+ 		if (ret)
+ 			goto out;
+ 	}
+-- 
+2.10.1
 
