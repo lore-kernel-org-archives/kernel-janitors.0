@@ -1,51 +1,50 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 14:43:27 +0000
-Subject: [PATCH 08/34] [media] DaVinci-VPBE: Return the success indication only as a constant in vpbe_set_mod
-Message-Id: <bcd9c829-4a3b-22d8-e5fa-c530615a8921@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Oct 2016 06:01:59 +0000
+Subject: [patch 2/2] k3dma: tighten range checking a bit
+Message-Id: <20161012060158.GB12841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 09:51:29 +0200
+My static checker complains that it's possible for "num" to be negative.
+I haven't investigated this completely, but it's more natural to make
+the type unsigned and that makes the static checker happy.
 
-* Return a success code without storing it in an intermediate variable.
-
-* Delete the local variable "ret" which became unnecessary with
-  this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/platform/davinci/vpbe.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Hm...  I probably should investigate this a bit more because the same
+code is copy and pasted all over the place.
 
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 9fdd8c0..d6a0221 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -509,7 +509,6 @@ static int vpbe_set_mode(struct vpbe_device *vpbe_dev,
- 	struct v4l2_dv_timings dv_timings;
- 	struct osd_state *osd_device;
- 	int out_index = vpbe_dev->current_out_index;
--	int ret = 0;
- 	int i;
- 
- 	if (!mode_info || !mode_info->name)
-@@ -549,8 +548,7 @@ static int vpbe_set_mode(struct vpbe_device *vpbe_dev,
- 		vpbe_dev->current_timings.upper_margin);
- 
- 	mutex_unlock(&vpbe_dev->lock);
--
--	return ret;
-+	return 0;
+diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
+index aabcb79..7c636c53 100644
+--- a/drivers/dma/k3dma.c
++++ b/drivers/dma/k3dma.c
+@@ -440,7 +440,7 @@ static void k3_dma_fill_desc(struct k3_dma_desc_sw *ds, dma_addr_t dst,
+ 	ds->desc_hw[num].config = ccfg;
  }
  
- static int vpbe_set_default_mode(struct vpbe_device *vpbe_dev)
--- 
-2.10.1
-
+-static struct k3_dma_desc_sw *k3_dma_alloc_desc_resource(int num,
++static struct k3_dma_desc_sw *k3_dma_alloc_desc_resource(size_t num,
+ 							struct dma_chan *chan)
+ {
+ 	struct k3_dma_chan *c = to_k3_chan(chan);
+@@ -449,7 +449,7 @@ static struct k3_dma_desc_sw *k3_dma_alloc_desc_resource(int num,
+ 	int lli_limit = LLI_BLOCK_SIZE / sizeof(struct k3_desc_hw);
+ 
+ 	if (num > lli_limit) {
+-		dev_dbg(chan->device->dev, "vch %p: sg num %d exceed max %d\n",
++		dev_dbg(chan->device->dev, "vch %p: sg num %lu exceed max %d\n",
+ 			&c->vc, num, lli_limit);
+ 		return NULL;
+ 	}
+@@ -476,7 +476,7 @@ static struct dma_async_tx_descriptor *k3_dma_prep_memcpy(
+ 	struct k3_dma_chan *c = to_k3_chan(chan);
+ 	struct k3_dma_desc_sw *ds;
+ 	size_t copy = 0;
+-	int num = 0;
++	size_t num = 0;
+ 
+ 	if (!len)
+ 		return NULL;
