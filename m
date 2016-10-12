@@ -1,66 +1,48 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Oct 2016 19:37:00 +0000
-Subject: [PATCH 06/15] thermal: int340x_thermal: use permission-specific DEVICE_ATTR variants
-Message-Id: <1477769829-22230-7-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 15:10:52 +0000
+Subject: [PATCH 30/34] [media] DaVinci-VPIF-Display: Use kcalloc() in vpif_probe()
+Message-Id: <e3ca4b5b-3bcb-26b0-d0a5-b5513dda92d8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 15:30:44 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kcalloc".
 
-// <smpl>
-@rw@
-declarer name DEVICE_ATTR;
-identifier x,x_show,x_store;
-@@
+  This issue was detected by using the Coccinelle software.
 
-DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-@script:ocaml@
-x << rw.x;
-x_show << rw.x_show;
-x_store << rw.x_store;
-@@
-
-if not (x^"_show" = x_show && x^"_store" = x_store)
-then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RW;
-identifier rw.x,rw.x_show,rw.x_store;
-@@
-
-- DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
-+ DEVICE_ATTR_RW(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/int340x_thermal/int3400_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/davinci/vpif_display.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/int340x_thermal/int3400_thermal.c
-index 5836e55..9413c4a 100644
---- a/drivers/thermal/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
-@@ -96,7 +96,7 @@ static ssize_t current_uuid_store(struct device *dev,
- 	return -EINVAL;
- }
- 
--static DEVICE_ATTR(current_uuid, 0644, current_uuid_show, current_uuid_store);
-+static DEVICE_ATTR_RW(current_uuid);
- static DEVICE_ATTR_RO(available_uuids);
- static struct attribute *uuid_attrs[] = {
- 	&dev_attr_available_uuids.attr,
+diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
+index 75b2723..80121e8 100644
+--- a/drivers/media/platform/davinci/vpif_display.c
++++ b/drivers/media/platform/davinci/vpif_display.c
+@@ -1279,8 +1279,7 @@ static __init int vpif_probe(struct platform_device *pdev)
+ 	vpif_obj.config = pdev->dev.platform_data;
+ 	subdev_count = vpif_obj.config->subdev_count;
+ 	subdevdata = vpif_obj.config->subdevinfo;
+-	vpif_obj.sd = kzalloc(sizeof(struct v4l2_subdev *) * subdev_count,
+-								GFP_KERNEL);
++	vpif_obj.sd = kcalloc(subdev_count, sizeof(*vpif_obj.sd), GFP_KERNEL);
+ 	if (vpif_obj.sd = NULL) {
+ 		vpif_err("unable to allocate memory for subdevice pointers\n");
+ 		err = -ENOMEM;
+-- 
+2.10.1
 
