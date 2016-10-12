@@ -1,134 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:10:17 +0000
-Subject: [PATCH 14/54] md/raid1: Move assignments for the variable "err" in setup_conf()
-Message-Id: <3af74de2-8347-4833-740e-2602f8f0f971@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Oct 2016 06:00:29 +0000
+Subject: [patch 1/2] k3dma: off by one in k3_of_dma_simple_xlate()
+Message-Id: <20161012060029.GA12841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 17:34:10 +0200
+The ->chans[] array has ->dma_requests elements so the check should be
+>= instead of >.  The ->chans[] array is allocated in k3_dma_probe()
 
-One local variable was set to an error code in a few cases before
-a concrete error situation was detected. Thus move the corresponding
-assignments into if branches to indicate a software failure there.
+Fixes: 8e6152bc660e ('dmaengine: Add hisilicon k3 DMA engine driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/raid1.c | 40 ++++++++++++++++++++++++++--------------
- 1 file changed, 26 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 74346f5..4d2fcbc 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2775,7 +2775,7 @@ static struct r1conf *setup_conf(struct mddev *mddev)
- 	int i;
- 	struct raid1_info *disk;
- 	struct md_rdev *rdev;
--	int err = -ENOMEM;
-+	int err;
+diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
+index 7c636c53..f17a8c0 100644
+--- a/drivers/dma/k3dma.c
++++ b/drivers/dma/k3dma.c
+@@ -792,7 +792,7 @@ static struct dma_chan *k3_of_dma_simple_xlate(struct of_phandle_args *dma_spec,
+ 	struct k3_dma_dev *d = ofdma->of_dma_data;
+ 	unsigned int request = dma_spec->args[0];
  
- 	conf = kzalloc(sizeof(struct r1conf), GFP_KERNEL);
- 	if (!conf)
-@@ -2784,26 +2784,33 @@ static struct r1conf *setup_conf(struct mddev *mddev)
- 	conf->mirrors = kcalloc(mddev->raid_disks * 2,
- 				sizeof(*conf->mirrors),
- 				GFP_KERNEL);
--	if (!conf->mirrors)
-+	if (!conf->mirrors) {
-+		err = -ENOMEM;
- 		goto abort;
-+	}
+-	if (request > d->dma_requests)
++	if (request >= d->dma_requests)
+ 		return NULL;
  
- 	conf->tmppage = alloc_page(GFP_KERNEL);
--	if (!conf->tmppage)
-+	if (!conf->tmppage) {
-+		err = -ENOMEM;
- 		goto abort;
-+	}
- 
- 	conf->poolinfo = kzalloc(sizeof(*conf->poolinfo), GFP_KERNEL);
--	if (!conf->poolinfo)
-+	if (!conf->poolinfo) {
-+		err = -ENOMEM;
- 		goto abort;
-+	}
-+
- 	conf->poolinfo->raid_disks = mddev->raid_disks * 2;
- 	conf->r1bio_pool = mempool_create(NR_RAID1_BIOS, r1bio_pool_alloc,
- 					  r1bio_pool_free,
- 					  conf->poolinfo);
--	if (!conf->r1bio_pool)
-+	if (!conf->r1bio_pool) {
-+		err = -ENOMEM;
- 		goto abort;
-+	}
- 
- 	conf->poolinfo->mddev = mddev;
--
--	err = -EINVAL;
- 	spin_lock_init(&conf->device_lock);
- 	rdev_for_each(rdev, mddev) {
- 		struct request_queue *q;
-@@ -2816,8 +2823,11 @@ static struct r1conf *setup_conf(struct mddev *mddev)
- 		else
- 			disk = conf->mirrors + disk_idx;
- 
--		if (disk->rdev)
-+		if (disk->rdev) {
-+			err = -EINVAL;
- 			goto abort;
-+		}
-+
- 		disk->rdev = rdev;
- 		q = bdev_get_queue(rdev->bdev);
- 
-@@ -2838,8 +2848,6 @@ static struct r1conf *setup_conf(struct mddev *mddev)
- 
- 	conf->start_next_window = MaxSector;
- 	conf->current_window_requests = conf->next_window_requests = 0;
--
--	err = -EIO;
- 	for (i = 0; i < conf->raid_disks * 2; i++) {
- 
- 		disk = conf->mirrors + i;
-@@ -2854,9 +2862,13 @@ static struct r1conf *setup_conf(struct mddev *mddev)
- 				disk->rdev  					disk[conf->raid_disks].rdev;
- 				disk[conf->raid_disks].rdev = NULL;
--			} else if (!test_bit(In_sync, &disk->rdev->flags))
--				/* Original is not in_sync - bad */
--				goto abort;
-+			} else {
-+				if (!test_bit(In_sync, &disk->rdev->flags)) {
-+					/* Original is not in_sync - bad */
-+					err = -EIO;
-+					goto abort;
-+				}
-+			}
- 		}
- 
- 		if (!disk->rdev ||
-@@ -2868,12 +2880,12 @@ static struct r1conf *setup_conf(struct mddev *mddev)
- 		}
- 	}
- 
--	err = -ENOMEM;
- 	conf->thread = md_register_thread(raid1d, mddev, "raid1");
- 	if (!conf->thread) {
- 		printk(KERN_ERR
- 		       "md/raid1:%s: couldn't allocate thread\n",
- 		       mdname(mddev));
-+		err = -ENOMEM;
- 		goto abort;
- 	}
- 
--- 
-2.10.1
-
+ 	return dma_get_slave_channel(&(d->chans[request].vc.chan));
