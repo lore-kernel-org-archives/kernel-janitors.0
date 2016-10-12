@@ -1,27 +1,32 @@
-From: Richard Weinberger <richard@nod.at>
-Date: Wed, 19 Oct 2016 08:24:59 +0000
-Subject: Re: [PATCH] um: remove hppfs MAINTAINERS entry
-Message-Id: <32d3af34-7977-7b9c-3f98-59749f1b09ff@nod.at>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Oct 2016 06:21:40 +0000
+Subject: [patch] ALSA: line6: fix a crash in line6_hwdep_write()
+Message-Id: <20161012062140.GT12841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161011055000.GA6961@mwanda>
- <bc7d3a05-4a82-7ded-248e-1a7725f1d2b7@nod.at> <20161019061637.GC4418@mwanda>
-In-Reply-To: <20161019061637.GC4418@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Andrej Krutak <dev@andree.sk>
+Cc: Takashi Iwai <tiwai@suse.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kbuild test robot <fengguang.wu@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On 19.10.2016 08:16, Dan Carpenter wrote:
-> On Tue, Oct 18, 2016 at 11:02:49PM +0200, Richard Weinberger wrote:
->>
->> Acked-by: Richard Weinberger <richard@nod.at>
->>
-> 
-> Oh, hm...  I was thinking you could take this through your git tree and
-> pass it on down the line.
+The error checking here is messed up so we could end up dereferencing
+-EFAULT.
 
-Works too. :-)
+Fixes: a16039cbf1a1 ('ALSA: line6: Add hwdep interface to access the POD control messages')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-//richard
+diff --git a/sound/usb/line6/driver.c b/sound/usb/line6/driver.c
+index 14e587e..90009c0 100644
+--- a/sound/usb/line6/driver.c
++++ b/sound/usb/line6/driver.c
+@@ -604,8 +604,8 @@ line6_hwdep_write(struct snd_hwdep *hwdep, const char __user *data, long count,
+ 	}
+ 
+ 	data_copy = memdup_user(data, count);
+-	if (IS_ERR(ERR_PTR))
+-		return -ENOMEM;
++	if (IS_ERR(data_copy))
++		return PTR_ERR(data_copy);
+ 
+ 	rv = line6_send_raw_message(line6, data_copy, count);
+ 
