@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2016 08:29:58 +0000
+From: David Howells <dhowells@redhat.com>
+Date: Wed, 12 Oct 2016 14:59:02 +0000
 Subject: Re: [bug report] rxrpc: Add some additional call tracing
-Message-Id: <20161012082958.GE5630@mwanda>
+Message-Id: <7164.1476284342@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161012061011.GH12841@mwanda>
 In-Reply-To: <20161012061011.GH12841@mwanda>
@@ -10,19 +10,12 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 12, 2016 at 08:25:08AM +0100, David Howells wrote:
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> >    278          trace_rxrpc_call(call, rxrpc_call_connected, atomic_read(&call->usage),
-> >    279                           here, ERR_PTR(ret));
-> >                                        ^^^^^^^^^^^^
-> > Pointless.
-> 
-> I guess I should just cast it instead.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-It's just zero or NULL always.  But if you want you can also ignore the
-static checker warning since it's obviously harmless.
+> It's just zero or NULL always.  But if you want you can also ignore the
+> static checker warning since it's obviously harmless.
 
-regards,
-dan carpenter
+Ah, yes.  The trace line used to be before the error check, but now there's a
+separate trace line for that.
 
+David
