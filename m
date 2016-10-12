@@ -1,59 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Oct 2016 07:37:34 +0000
-Subject: Re: Challenges around the usage of different "HOSTCFLAGS" for kernel build configuration and module 
-Message-Id: <80d31faa-b328-b8eb-4d19-d96aef1cc16a@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Oct 2016 06:11:18 +0000
+Subject: [bug report] rxrpc: Add IPv6 support
+Message-Id: <20161012061118.GI12841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4f2251fc-94ee-41d3-cc03-a39cee5a084c@users.sourceforge.net>
- <CA+r1ZhjmaXi+Nf8vNsMwzfuSkYOByC6D_F=GkehneqfnSO7iCQ@mail.gmail.com>
- <1238ba8e-a297-6de5-2e6a-50e6e72e77d3@users.sourceforge.net>
- <CA+r1ZhhqEBvV0ivz=MvaHhRquhFS2mxddJ-GOx81ZeSerKsD3g@mail.gmail.com>
- <ec3a7283-3c41-9879-49ae-8924b8daf65f@users.sourceforge.net>
- <CA+r1Zhj3AQAbL_Hu4w=gX8kaR0zKoYhTmAYyVcvBMPLXpfZ3gA@mail.gmail.com>
- <4fe8b518-6145-5322-a852-beeb61abd559@users.sourceforge.net>
- <CA+r1Zhiat4d8FqFcD1BBCxe5jyWOtSDZp99_CLV0qE1D3REquw@mail.gmail.com>
- <20161019220346.GA20054@gate.crashing.org>
-In-Reply-To: <20161019220346.GA20054@gate.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Jim Davis <jim.epost@gmail.com>, linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-> Don't forget -r when running objdump on an object file.
+Hello David Howells,
 
-Thanks for your reminder.
+The patch 75b54cb57ca3: "rxrpc: Add IPv6 support" from Sep 13, 2016,
+leads to the following static checker warning:
 
+	net/rxrpc/peer_object.c:196 rxrpc_assess_MTU_size()
+	warn: 'dst' isn't an ERR_PTR
 
-> But, you want to use  make drivers/md/whatever.s  if you want to see
-> the assembler code.
+net/rxrpc/peer_object.c
+   193                  fl6->fl6_dport = htons(7001);
+   194                  fl6->fl6_sport = htons(7000);
+   195                  dst = ip6_route_output(&init_net, NULL, fl6);
+   196                  if (IS_ERR(dst)) {
+                            ^^^^^^^^^^^
+Maybe you want to check dst->error?
 
-Thanks for your advice!
+   197                          _leave(" [route err %ld]", PTR_ERR(dst));
+   198                          return;
+   199                  }
+   200                  break;
 
-This is one kind of "generation convenience" I was looking for.
-
-Was my software development attention too limited for another moment
-so that I did not directly pick an opportunity up from the description
-like "dir/file.[ois]  - Build specified target only"
-(by the command "make help") that I can get assembler source files
-for Linux modules so easy on demand?
-
-Would you like to point any places out in the make scripts which
-show relevant commands for such build targets?
-
-
-> And that doesn't work for build-time tools,
-
-I got the impression that they can trigger further software development challenges.
-Should their source files (and corresponding make parameters) be improved anyhow?
-
-
-> which I think is what the original discussion was about.
-
-I see a few change possibilities there. Will it be useful to reconsider
-the generation parameters for build-time tools in comparison to components
-from other Linux software areas?
-
-Will a variable like "EXTRA_CFLAGS" achieve a desired effect at more places?
-
-Regards,
-Markus
+regards,
+dan carpenter
