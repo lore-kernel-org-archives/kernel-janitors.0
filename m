@@ -1,49 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 14:51:04 +0000
-Subject: [PATCH 06/15] md-cluster: Rename a jump label in recv_daemon()
-Message-Id: <fefc108f-ff73-9999-8c96-1a014804117a@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 15:01:27 +0000
+Subject: [PATCH 23/34] [media] DaVinci-VPFE-Capture: Delete unnecessary braces in vpfe_isr()
+Message-Id: <ba461e17-d7fe-b1bc-cd39-4f37ffd691bc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
-In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 12:36:30 +0200
+Date: Wed, 12 Oct 2016 14:54:21 +0200
 
-Adjust a jump label according to the Linux coding style convention.
+Do not use curly brackets at one source code place
+where a single statement should be sufficient.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/md-cluster.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/davinci/vpfe_capture.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index adf9555..94835b5 100644
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -620,7 +620,7 @@ static void recv_daemon(struct md_thread *thread)
- 	memcpy(&msg, message_lockres->lksb.sb_lvbptr, sizeof(msg));
- 	ret = process_recvd_msg(thread->mddev, &msg);
- 	if (ret)
--		goto out;
-+		goto unlock;
- 
- 	/*release CR on ack_lockres*/
- 	ret = dlm_unlock_sync(ack_lockres);
-@@ -634,7 +634,7 @@ static void recv_daemon(struct md_thread *thread)
- 	ret = dlm_lock_sync(ack_lockres, DLM_LOCK_CR);
- 	if (unlikely(ret != 0))
- 		pr_info("lock CR on ack failed return %d\n", ret);
--out:
-+unlock:
- 	/*release CR on message_lockres*/
- 	ret = dlm_unlock_sync(message_lockres);
- 	if (unlikely(ret != 0))
+diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
+index f0467fe..e264c90 100644
+--- a/drivers/media/platform/davinci/vpfe_capture.c
++++ b/drivers/media/platform/davinci/vpfe_capture.c
+@@ -615,9 +615,8 @@ static irqreturn_t vpfe_isr(int irq, void *dev_id)
+ 			 * interleavely or separately in memory, reconfigure
+ 			 * the CCDC memory address
+ 			 */
+-			if (field = V4L2_FIELD_SEQ_TB) {
++			if (field = V4L2_FIELD_SEQ_TB)
+ 				vpfe_schedule_bottom_field(vpfe_dev);
+-			}
+ 			goto clear_intr;
+ 		}
+ 		/*
 -- 
-2.10.0
+2.10.1
 
