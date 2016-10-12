@@ -1,30 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2016 09:11:11 +0000
-Subject: Re: [patch] serial: stm32: fix a type issue
-Message-Id: <20161012091111.GC5687@mwanda>
+Date: Wed, 12 Oct 2016 07:06:42 +0000
+Subject: [bug report] net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)
+Message-Id: <20161012070642.GA29314@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161012062103.GS12841@mwanda>
- <20161012085239.GD1041@n2100.armlinux.org.uk>
-In-Reply-To: <20161012085239.GD1041@n2100.armlinux.org.uk>
+References: <20160930095520.GA10045@mwanda>
+In-Reply-To: <20160930095520.GA10045@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 12, 2016 at 09:52:39AM +0100, Russell King - ARM Linux wrote:
-> On Wed, Oct 12, 2016 at 09:21:03AM +0300, Dan Carpenter wrote:
-> > We store UNDEF_REG in a u8.  It causes a problem in functions like
-> > stm32_tx_dma_complete() where we check "if (ofs->icr = UNDEF_REG)".
-> > 
-> > Fixes: 3489187204eb ('serial: stm32: adding dma support')
-> 
-> Correct form is:
-> 
-> Fixes: 12-digit-hash ("summary line")
+Hello Netanel Belgazal,
 
-When I originally created the Fixes tag format, I used single quotes.
-I don't remember why though and I can change with the times.  :)
+The patch 1738cd3ed342: "net: ena: Add a driver for Amazon Elastic
+Network Adapters (ENA)" from Aug 10, 2016, leads to the following
+static checker warning:
+
+	drivers/net/ethernet/amazon/ena/ena_com.c:1259 ena_com_destroy_io_cq()
+	warn: struct type mismatch 'ena_admin_aq_destroy_cq_cmd vs ena_admin_aq_destroy_sq_cmd'
+
+drivers/net/ethernet/amazon/ena/ena_com.c
+  1251  int ena_com_destroy_io_cq(struct ena_com_dev *ena_dev,
+  1252                            struct ena_com_io_cq *io_cq)
+  1253  {
+  1254          struct ena_com_admin_queue *admin_queue = &ena_dev->admin_queue;
+  1255          struct ena_admin_aq_destroy_cq_cmd destroy_cmd;
+                                            ^
+  1256          struct ena_admin_acq_destroy_cq_resp_desc destroy_resp;
+  1257          int ret;
+  1258  
+  1259          memset(&destroy_cmd, 0x0, sizeof(struct ena_admin_aq_destroy_sq_cmd));
+                                                                             ^
+These struct names are a million characters long but there is one
+character in the middle which is different.  See if you can spot which
+one it is.
+
+Presumably this is a cut and paste error because I really doubt that
+you are really basically transcribing the entire works of William
+Shakespear every time you declare a variable.  Why not just say:
+
+		memset(&destroy, 0, sizeof(destroy));
+
+That's better style and more future proof.
+
+  1260  
 
 regards,
 dan carpenter
-
