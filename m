@@ -1,109 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 20:24:52 +0000
-Subject: [PATCH 2/2] M32R-setup: Replace 16 seq_printf() calls by seq_puts() in show_cpuinfo()
-Message-Id: <85f08303-4584-ea4c-4977-2cb5f3e08d13@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:54:17 +0000
+Subject: [PATCH 16/34] [media] DaVinci-VPFE-Capture: Delete an unnecessary variable initialisation in vpfe_pr
+Message-Id: <e2e1411e-711d-97b3-8280-5caafbead30b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fef662e1-b5b4-127e-9427-a98ffb512a82@users.sourceforge.net>
-In-Reply-To: <fef662e1-b5b4-127e-9427-a98ffb512a82@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Toshi Kani <toshi.kani@hpe.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 22:04:34 +0200
+Date: Wed, 12 Oct 2016 10:30:28 +0200
 
-Strings which did not contain data format specifications should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+* Return an error code as a constant after a failed call of
+  the function "vpfe_initialize".
 
-This issue was detected by using the Coccinelle software.
+* The local variable "ret" will be set then to an appropriate value
+  a bit later. Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/m32r/kernel/setup.c | 50 +++++++++++++++++++++++++++---------------------
- 1 file changed, 28 insertions(+), 22 deletions(-)
+ drivers/media/platform/davinci/vpfe_capture.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/m32r/kernel/setup.c b/arch/m32r/kernel/setup.c
-index 92cbe92..2eac3b2 100644
---- a/arch/m32r/kernel/setup.c
-+++ b/arch/m32r/kernel/setup.c
-@@ -302,47 +302,53 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 	seq_printf(m, "processor\t: %ld\n", cpu);
+diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
+index 4db3212..8314c39 100644
+--- a/drivers/media/platform/davinci/vpfe_capture.c
++++ b/drivers/media/platform/davinci/vpfe_capture.c
+@@ -1819,7 +1819,7 @@ static int vpfe_probe(struct platform_device *pdev)
+ 	struct vpfe_device *vpfe_dev;
+ 	struct i2c_adapter *i2c_adap;
+ 	struct video_device *vfd;
+-	int ret = -ENOMEM, i, j;
++	int ret, i, j;
+ 	int num_subdevs = 0;
  
- #if defined(CONFIG_CHIP_VDEC2)
--	seq_printf(m, "cpu family\t: VDEC2\n"
--		"cache size\t: Unknown\n");
-+	seq_puts(m,
-+		 "cpu family\t: VDEC2\n"
-+		 "cache size\t: Unknown\n");
- #elif defined(CONFIG_CHIP_M32700)
--	seq_printf(m,"cpu family\t: M32700\n"
--		"cache size\t: I-8KB/D-8KB\n");
-+	seq_puts(m,
-+		 "cpu family\t: M32700\n"
-+		 "cache size\t: I-8KB/D-8KB\n");
- #elif defined(CONFIG_CHIP_M32102)
--	seq_printf(m,"cpu family\t: M32102\n"
--		"cache size\t: I-8KB\n");
-+	seq_puts(m,
-+		 "cpu family\t: M32102\n"
-+		 "cache size\t: I-8KB\n");
- #elif defined(CONFIG_CHIP_OPSP)
--	seq_printf(m,"cpu family\t: OPSP\n"
--		"cache size\t: I-8KB/D-8KB\n");
-+	seq_puts(m,
-+		 "cpu family\t: OPSP\n"
-+		 "cache size\t: I-8KB/D-8KB\n");
- #elif defined(CONFIG_CHIP_MP)
--	seq_printf(m, "cpu family\t: M32R-MP\n"
--		"cache size\t: I-xxKB/D-xxKB\n");
-+	seq_puts(m,
-+		 "cpu family\t: M32R-MP\n"
-+		 "cache size\t: I-xxKB/D-xxKB\n");
- #elif  defined(CONFIG_CHIP_M32104)
--	seq_printf(m,"cpu family\t: M32104\n"
--		"cache size\t: I-8KB/D-8KB\n");
-+	seq_puts(m,
-+		 "cpu family\t: M32104\n"
-+		 "cache size\t: I-8KB/D-8KB\n");
- #else
--	seq_printf(m, "cpu family\t: Unknown\n");
-+	seq_puts(m, "cpu family\t: Unknown\n");
- #endif
- 	seq_printf(m, "bogomips\t: %lu.%02lu\n",
- 		c->loops_per_jiffy/(500000/HZ),
- 		(c->loops_per_jiffy/(5000/HZ)) % 100);
- #if defined(CONFIG_PLAT_MAPPI)
--	seq_printf(m, "Machine\t\t: Mappi Evaluation board\n");
-+	seq_puts(m, "Machine\t\t: Mappi Evaluation board\n");
- #elif defined(CONFIG_PLAT_MAPPI2)
--	seq_printf(m, "Machine\t\t: Mappi-II Evaluation board\n");
-+	seq_puts(m, "Machine\t\t: Mappi-II Evaluation board\n");
- #elif defined(CONFIG_PLAT_MAPPI3)
--	seq_printf(m, "Machine\t\t: Mappi-III Evaluation board\n");
-+	seq_puts(m, "Machine\t\t: Mappi-III Evaluation board\n");
- #elif defined(CONFIG_PLAT_M32700UT)
--	seq_printf(m, "Machine\t\t: M32700UT Evaluation board\n");
-+	seq_puts(m, "Machine\t\t: M32700UT Evaluation board\n");
- #elif defined(CONFIG_PLAT_OPSPUT)
--	seq_printf(m, "Machine\t\t: OPSPUT Evaluation board\n");
-+	seq_puts(m, "Machine\t\t: OPSPUT Evaluation board\n");
- #elif defined(CONFIG_PLAT_USRV)
--	seq_printf(m, "Machine\t\t: uServer\n");
-+	seq_puts(m, "Machine\t\t: uServer\n");
- #elif defined(CONFIG_PLAT_OAKS32R)
--	seq_printf(m, "Machine\t\t: OAKS32R\n");
-+	seq_puts(m, "Machine\t\t: OAKS32R\n");
- #elif  defined(CONFIG_PLAT_M32104UT)
--	seq_printf(m, "Machine\t\t: M3T-M32104UT uT Engine board\n");
-+	seq_puts(m, "Machine\t\t: M3T-M32104UT uT Engine board\n");
- #else
--	seq_printf(m, "Machine\t\t: Unknown\n");
-+	seq_puts(m, "Machine\t\t: Unknown\n");
- #endif
+ 	/* Get the pointer to the device object */
+@@ -1828,7 +1828,7 @@ static int vpfe_probe(struct platform_device *pdev)
+ 	if (!vpfe_dev) {
+ 		v4l2_err(pdev->dev.driver,
+ 			"Failed to allocate memory for vpfe_dev\n");
+-		return ret;
++		return -ENOMEM;
+ 	}
  
- #define PRINT_CLOCK(name, value)				\
+ 	vpfe_dev->pdev = &pdev->dev;
 -- 
 2.10.1
 
