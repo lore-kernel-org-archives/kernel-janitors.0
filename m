@@ -1,56 +1,40 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 26 Oct 2016 12:23:07 +0000
-Subject: [PATCH 4.4 084/112] irqchip/gicv3: Handle loop timeout proper
-Message-Id: <20161026122308.317986261@linuxfoundation.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 15:08:32 +0000
+Subject: [PATCH 29/34] [media] DaVinci-VPIF-Capture: Delete an unnecessary variable initialisation in vpif_ch
+Message-Id: <9103b007-6abe-06e0-397b-28cf70c0885f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161026122304.797016625@linuxfoundation.org>
-In-Reply-To: <20161026122304.797016625@linuxfoundation.org>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Sudeep Holla <sudeep.holla@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 15:25:08 +0200
 
-------------------
+The local variable "channel_id" will be set to an appropriate value
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-
-commit d102eb5c1ac5e6743b1c6d145c06a25d98ad1375 upstream.
-
-The timeout loop terminates when the loop count is zero, but the decrement
-of the count variable is post check. So count is -1 when we check for the
-timeout and therefor the error message is supressed.
-
-Change it to predecrement, so the error message is emitted.
-
-[ tglx: Massaged changelog ]
-
-Fixes: a2c225101234 ("irqchip: gic-v3: Refactor gic_enable_redist to support both enabling and disabling")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>
-Link: http://lkml.kernel.org/r/20161014072534.GA15168@mwanda
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/irqchip/irq-gic-v3.c |    2 +-
+ drivers/media/platform/davinci/vpif_capture.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -142,7 +142,7 @@ static void gic_enable_redist(bool enabl
- 			return;	/* No PM support in this redistributor */
- 	}
+diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
+index 4197ca4..d3e2235 100644
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -375,7 +375,7 @@ static irqreturn_t vpif_channel_isr(int irq, void *dev_id)
+ 	struct vpif_device *dev = &vpif_obj;
+ 	struct common_obj *common;
+ 	struct channel_obj *ch;
+-	int channel_id = 0;
++	int channel_id;
+ 	int fid = -1, i;
  
--	while (count--) {
-+	while (--count) {
- 		val = readl_relaxed(rbase + GICR_WAKER);
- 		if (enable ^ (val & GICR_WAKER_ChildrenAsleep))
- 			break;
-
+ 	channel_id = *(int *)(dev_id);
+-- 
+2.10.1
 
