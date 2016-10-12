@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 14:58:39 +0000
-Subject: [PATCH 20/34] [media] DaVinci-VPFE-Capture: Adjust 13 checks for null pointers
-Message-Id: <111cbf0f-7fe6-63e7-6577-0724f3789226@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:34:05 +0000
+Subject: [PATCH 04/34] [media] DaVinci-VPBE: Combine substrings for four messages
+Message-Id: <8d486002-839c-bfd8-557c-04bb32f3b76f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
@@ -12,122 +12,67 @@ To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Pr
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 10:46:28 +0200
+Date: Tue, 11 Oct 2016 13:40:14 +0200
 
-Convert comparisons with the preprocessor symbol "NULL" to condition checks
-without it.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: quoted string split across lines
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/davinci/vpfe_capture.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ drivers/media/platform/davinci/vpbe.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
-index e370400..9da353b 100644
---- a/drivers/media/platform/davinci/vpfe_capture.c
-+++ b/drivers/media/platform/davinci/vpfe_capture.c
-@@ -229,7 +229,7 @@ int vpfe_register_ccdc_device(struct ccdc_hw_device *dev)
- 	BUG_ON(!dev->hw_ops.getfid);
- 
- 	mutex_lock(&ccdc_lock);
--	if (NULL = ccdc_cfg) {
-+	if (!ccdc_cfg) {
- 		/*
- 		 * TODO. Will this ever happen? if so, we need to fix it.
- 		 * Proabably we need to add the request to a linked list and
-@@ -265,7 +265,7 @@ EXPORT_SYMBOL(vpfe_register_ccdc_device);
-  */
- void vpfe_unregister_ccdc_device(struct ccdc_hw_device *dev)
- {
--	if (NULL = dev) {
-+	if (!dev) {
- 		printk(KERN_ERR "invalid ccdc device ptr\n");
- 		return;
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 496b27f..625bddf 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -702,15 +702,15 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 					  "v4l2 sub device %s registered\n",
+ 					  enc_info->module_name);
+ 			else {
+-				v4l2_err(&vpbe_dev->v4l2_dev, "encoder %s"
+-					 " failed to register",
++				v4l2_err(&vpbe_dev->v4l2_dev,
++					 "encoder %s failed to register",
+ 					 enc_info->module_name);
+ 				ret = -ENODEV;
+ 				goto fail_kfree_encoders;
+ 			}
+ 		} else
+-			v4l2_warn(&vpbe_dev->v4l2_dev, "non-i2c encoders"
+-				 " currently not supported");
++			v4l2_warn(&vpbe_dev->v4l2_dev,
++				 "non-i2c encoders currently not supported");
  	}
-@@ -469,7 +469,7 @@ static int vpfe_initialize_device(struct vpfe_device *vpfe_dev)
- 
- 	/* now open the ccdc device to initialize it */
- 	mutex_lock(&ccdc_lock);
--	if (NULL = ccdc_dev) {
-+	if (!ccdc_dev) {
- 		v4l2_err(&vpfe_dev->v4l2_dev, "ccdc device not registered\n");
- 		ret = -ENODEV;
- 		goto unlock;
-@@ -582,7 +582,7 @@ static irqreturn_t vpfe_isr(int irq, void *dev_id)
- 		goto clear_intr;
- 
- 	/* only for 6446 this will be applicable */
--	if (NULL != ccdc_dev->hw_ops.reset)
-+	if (ccdc_dev->hw_ops.reset)
- 		ccdc_dev->hw_ops.reset();
- 
- 	if (field = V4L2_FIELD_NONE) {
-@@ -822,7 +822,7 @@ static const struct vpfe_pixel_format *
- 	int temp, found;
- 
- 	vpfe_pix_fmt = vpfe_lookup_pix_format(pixfmt->pixelformat);
--	if (NULL = vpfe_pix_fmt) {
-+	if (!vpfe_pix_fmt) {
- 		/*
- 		 * use current pixel format in the vpfe device. We
- 		 * will find this pix format in the table
-@@ -965,7 +965,7 @@ static int vpfe_enum_fmt_vid_cap(struct file *file, void  *priv,
- 
- 	/* Fill in the information about format */
- 	pix_fmt = vpfe_lookup_pix_format(pix);
--	if (NULL != pix_fmt) {
-+	if (pix_fmt) {
- 		temp_index = fmt->index;
- 		*fmt = pix_fmt->fmtdesc;
- 		fmt->index = temp_index;
-@@ -991,8 +991,7 @@ static int vpfe_s_fmt_vid_cap(struct file *file, void *priv,
- 
- 	/* Check for valid frame format */
- 	pix_fmts = vpfe_check_format(vpfe_dev, &fmt->fmt.pix);
--
--	if (NULL = pix_fmts)
-+	if (!pix_fmts)
- 		return -EINVAL;
- 
- 	/* store the pixel format in the device  object */
-@@ -1018,7 +1017,7 @@ static int vpfe_try_fmt_vid_cap(struct file *file, void *priv,
- 	v4l2_dbg(1, debug, &vpfe_dev->v4l2_dev, "vpfe_try_fmt_vid_cap\n");
- 
- 	pix_fmts = vpfe_check_format(vpfe_dev, &f->fmt.pix);
--	if (NULL = pix_fmts)
-+	if (!pix_fmts)
- 		return -EINVAL;
- 	return 0;
- }
-@@ -1833,7 +1832,7 @@ static int vpfe_probe(struct platform_device *pdev)
- 
- 	vpfe_dev->pdev = &pdev->dev;
- 
--	if (NULL = pdev->dev.platform_data) {
-+	if (!pdev->dev.platform_data) {
- 		v4l2_err(pdev->dev.driver, "Unable to get vpfe config\n");
- 		ret = -ENODEV;
- 		goto probe_free_dev_mem;
-@@ -1841,9 +1840,7 @@ static int vpfe_probe(struct platform_device *pdev)
- 
- 	vpfe_cfg = pdev->dev.platform_data;
- 	vpfe_dev->cfg = vpfe_cfg;
--	if (NULL = vpfe_cfg->ccdc ||
--	    NULL = vpfe_cfg->card_name ||
--	    NULL = vpfe_cfg->sub_devs) {
-+	if (!vpfe_cfg->ccdc || !vpfe_cfg->card_name || !vpfe_cfg->sub_devs) {
- 		v4l2_err(pdev->dev.driver, "null ptr in vpfe_cfg\n");
- 		ret = -ENOENT;
- 		goto probe_free_dev_mem;
-@@ -1938,7 +1935,7 @@ static int vpfe_probe(struct platform_device *pdev)
- 	vpfe_dev->sd = kmalloc_array(num_subdevs,
- 				     sizeof(*vpfe_dev->sd),
- 				     GFP_KERNEL);
--	if (NULL = vpfe_dev->sd) {
-+	if (!vpfe_dev->sd) {
- 		ret = -ENOMEM;
- 		goto probe_out_video_unregister;
+ 	/* Add amplifier subdevice for dm365 */
+ 	if ((strcmp(vpbe_dev->cfg->module_name, "dm365-vpbe-display") = 0) &&
+@@ -731,9 +731,9 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 					  "v4l2 sub device %s registered\n",
+ 					  amp_info->module_name);
+ 		} else {
+-			    vpbe_dev->amp = NULL;
+-			    v4l2_warn(&vpbe_dev->v4l2_dev, "non-i2c amplifiers"
+-			    " currently not supported");
++			vpbe_dev->amp = NULL;
++			v4l2_warn(&vpbe_dev->v4l2_dev,
++				  "non-i2c amplifiers currently not supported");
+ 		}
+ 	} else {
+ 	    vpbe_dev->amp = NULL;
+@@ -832,8 +832,8 @@ static int vpbe_probe(struct platform_device *pdev)
+ 	if (!cfg->module_name[0] ||
+ 	    !cfg->osd.module_name[0] ||
+ 	    !cfg->venc.module_name[0]) {
+-		v4l2_err(pdev->dev.driver, "vpbe display module names not"
+-			 " defined\n");
++		v4l2_err(pdev->dev.driver,
++			 "vpbe display module names not defined\n");
+ 		return ret;
  	}
+ 
 -- 
 2.10.1
 
