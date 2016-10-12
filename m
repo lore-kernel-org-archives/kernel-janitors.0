@@ -1,27 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Oct 2016 19:55:15 +0000
-Subject: [PATCH 0/2] [media] blackfin-capture: Fine-tuning for two function implementations
-Message-Id: <ae9a008f-35e2-e4e0-be18-635050c8277e@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Oct 2016 06:24:02 +0000
+Subject: [patch 2/2] nbd: checking for NULL vs IS_ERR
+Message-Id: <20161012062402.GW12841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Scott Jiang <scott.jiang.linux@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Oct 2016 21:44:33 +0200
+blk_mq_alloc_request() returns error pointers on error, never NULLs.
+Same thing with blk_mq_init_queue(), and also we should set the error
+code there.
 
-A few update suggestions were taken into account
-from static source code analysis.
+Fixes: fd8383fd88a2 ('nbd: convert to blkmq')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Markus Elfring (2):
-  Use kcalloc() in bcap_init_sensor_formats()
-  Delete an error message for a failed memory allocation in bcap_probe()
-
- drivers/media/platform/blackfin/bfin_capture.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
--- 
-2.10.1
-
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index ba405b5..8c2599d 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -599,8 +599,8 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
+ 			return -EINVAL;
+ 
+ 		sreq = blk_mq_alloc_request(bdev_get_queue(bdev), WRITE, 0);
+-		if (!sreq)
+-			return -ENOMEM;
++		if (IS_ERR(sreq))
++			return PTR_ERR(sreq);
+ 
+ 		mutex_unlock(&nbd->tx_lock);
+ 		fsync_bdev(bdev);
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index ad62964..bb5f23b 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -955,9 +955,10 @@ static int __init nbd_init(void)
+ 		 * These structs are big so we dynamically allocate them.
+ 		 */
+ 		disk->queue = blk_mq_init_queue(&nbd_dev[i].tag_set);
+-		if (!disk->queue) {
++		if (IS_ERR(disk->queue)) {
+ 			blk_mq_free_tag_set(&nbd_dev[i].tag_set);
+ 			put_disk(disk);
++			err = PTR_ERR(disk->queue);
+ 			goto out;
+ 		}
+ 
