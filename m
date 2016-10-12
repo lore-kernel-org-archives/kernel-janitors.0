@@ -1,41 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 16:27:22 +0000
-Subject: [PATCH 06/18] [media] RedRat3: Delete an unnecessary variable initialisation in redrat3_get_firmware
-Message-Id: <4c2360b8-b4c7-f1b8-480f-d3002eb2155e@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:50:13 +0000
+Subject: [PATCH 12/34] [media] DaVinci-VPBE: Delete an unnecessary variable initialisation in vpbe_set_output
+Message-Id: <24adf0d8-1221-6c1e-f468-05a26d320a74@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
-In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 13:21:55 +0200
+Date: Wed, 12 Oct 2016 10:16:23 +0200
 
-The local variable "rc" will be set to an appropriate value a bit later.
+The local variable "ret" will be set to an appropriate value a bit later.
 Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/rc/redrat3.c | 2 +-
+ drivers/media/platform/davinci/vpbe.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-index 2e31c18..0ac96a4 100644
---- a/drivers/media/rc/redrat3.c
-+++ b/drivers/media/rc/redrat3.c
-@@ -542,7 +542,7 @@ static void redrat3_reset(struct redrat3_dev *rr3)
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index e68a792..b2c5d8f 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -229,7 +229,7 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+ 	struct venc_platform_data *venc_device = vpbe_dev->venc_device;
+ 	int enc_out_index;
+ 	int sd_index;
+-	int ret = 0;
++	int ret;
  
- static void redrat3_get_firmware_rev(struct redrat3_dev *rr3)
- {
--	int rc = 0;
-+	int rc;
- 	char *buffer;
- 
- 	buffer = kcalloc(RR3_FW_VERSION_LEN + 1, sizeof(*buffer), GFP_KERNEL);
+ 	if (index >= cfg->num_outputs)
+ 		return -EINVAL;
 -- 
 2.10.1
 
