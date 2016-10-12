@@ -1,98 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Oct 2016 14:55:50 +0000
-Subject: [PATCH 6/7] ASoC: constify snd_soc_ops structures
-Message-Id: <1476543351-17858-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Oct 2016 06:15:29 +0000
+Subject: [bug report] net: thunderx: Add RGMII interface type support
+Message-Id: <20161012061529.GN12841@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Timur Tabi <timur@tabi.org>
-Cc: kernel-janitors@vger.kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Check for snd_soc_ops structures that are only stored in the ops field of a
-snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
-structures that have this property can be declared as const also.
+Hello Sunil Goutham,
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+This is a semi-automatic email about new static checker warnings.
 
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_soc_ops i@p = { ... };
+The patch 6465859aba1e: "net: thunderx: Add RGMII interface type 
+support" from Aug 12, 2016, leads to the following Smatch complaint:
 
-@ok1@
-identifier r.i;
-struct snd_soc_dai_link e;
-position p;
-@@
-e.ops = &i@p;
+drivers/net/ethernet/cavium/thunder/thunder_xcv.c:119 xcv_setup_link()
+	 error: we previously assumed 'xcv' could be null (see line 118)
 
-@ok2@
-identifier r.i, e;
-position p;
-@@
-struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
+drivers/net/ethernet/cavium/thunder/thunder_xcv.c
+   117	
+   118		if (!xcv) {
+                     ^^^
+check.
 
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_soc_ops e;
-@@
-e@i@p
+   119			dev_err(&xcv->pdev->dev,
+                                 ^^^^^^^^^^^^^^
+dereference.
 
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_soc_ops i = { ... };
-// </smpl>
+   120				"XCV init not done, probe may have failed\n");
+   121			return;
 
-The effect on the layout of the .o files is shown by the following output of
-the size command, first before then after the transformation:
-
-  text    data     bss     dec     hex filename
-   8748    1024       0    9772    262c sound/soc/fsl/fsl-asoc-card.o
-   8812     952       0    9764    2624 sound/soc/fsl/fsl-asoc-card.o
-
-   text    data     bss     dec     hex filename
-   4165     264       8    4437    1155 sound/soc/fsl/imx-wm8962.o
-   4229     200       8    4437    1155 sound/soc/fsl/imx-wm8962.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/soc/fsl/fsl-asoc-card.c |    2 +-
- sound/soc/fsl/imx-wm8962.c    |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff -u -p a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
---- a/sound/soc/fsl/fsl-asoc-card.c
-+++ b/sound/soc/fsl/fsl-asoc-card.c
-@@ -183,7 +183,7 @@ static int fsl_asoc_card_hw_params(struc
- 	return 0;
- }
- 
--static struct snd_soc_ops fsl_asoc_card_ops = {
-+static const struct snd_soc_ops fsl_asoc_card_ops = {
- 	.hw_params = fsl_asoc_card_hw_params,
- };
- 
-diff -u -p a/sound/soc/fsl/imx-wm8962.c b/sound/soc/fsl/imx-wm8962.c
---- a/sound/soc/fsl/imx-wm8962.c
-+++ b/sound/soc/fsl/imx-wm8962.c
-@@ -61,7 +61,7 @@ static int imx_hifi_hw_params(struct snd
- 	return 0;
- }
- 
--static struct snd_soc_ops imx_hifi_ops = {
-+static const struct snd_soc_ops imx_hifi_ops = {
- 	.hw_params = imx_hifi_hw_params,
- };
- 
-
+regards,
+dan carpenter
