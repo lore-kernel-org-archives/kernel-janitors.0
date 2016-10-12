@@ -1,44 +1,63 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 14:40:22 +0000
-Subject: [PATCH 06/34] [media] DaVinci-VPBE: Return an error code only by a single variable in vpbe_initializ
-Message-Id: <31e1f827-3539-3bcf-e6c1-2b9df5fd3619@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:48:38 +0000
+Subject: [PATCH 11/34] [media] DaVinci-VPBE: Rename a jump label in vpbe_set_output()
+Message-Id: <0fb1a9a0-cf02-51a1-6fe7-6d7be501e0d9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Muralidharan Karicheri <m-karicheri2@ti.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 11 Oct 2016 14:15:57 +0200
+Date: Wed, 12 Oct 2016 10:10:19 +0200
 
-An error code was assigned to the local variable "err" in an if branch.
-But this variable was not used further then.
+Adjust jump labels according to the Linux coding style convention.
 
-Use the local variable "ret" instead like at other places in this function.
-
-Fixes: 66715cdc3224a4e241c1a92856b9a4af3b70e06d ("[media] davinci vpbe:
-VPBE display driver")
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/davinci/vpbe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/davinci/vpbe.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 4c4cd81..afa8ff7 100644
+index 6e7b0df..e68a792 100644
 --- a/drivers/media/platform/davinci/vpbe.c
 +++ b/drivers/media/platform/davinci/vpbe.c
-@@ -665,7 +665,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 		if (err) {
- 			v4l2_err(&vpbe_dev->v4l2_dev,
- 				 "unable to initialize the OSD device");
--			err = -ENOMEM;
-+			ret = -ENOMEM;
- 			goto fail_dev_unregister;
+@@ -253,20 +253,20 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+ 		sd_index = vpbe_find_encoder_sd_index(cfg, index);
+ 		if (sd_index < 0) {
+ 			ret = -EINVAL;
+-			goto out;
++			goto unlock;
  		}
+ 
+ 		ret = venc_device->setup_if_config(cfg
+ 						   ->outputs[index].if_params);
+ 		if (ret)
+-			goto out;
++			goto unlock;
  	}
+ 
+ 	/* Set output at the encoder */
+ 	ret = v4l2_subdev_call(vpbe_dev->encoders[sd_index], video,
+ 				       s_routing, 0, enc_out_index, 0);
+ 	if (ret)
+-		goto out;
++		goto unlock;
+ 
+ 	/*
+ 	 * It is assumed that venc or extenal encoder will set a default
+@@ -288,7 +288,7 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+ 		vpbe_dev->current_sd_index = sd_index;
+ 		vpbe_dev->current_out_index = index;
+ 	}
+-out:
++unlock:
+ 	mutex_unlock(&vpbe_dev->lock);
+ 	return ret;
+ }
 -- 
 2.10.1
 
