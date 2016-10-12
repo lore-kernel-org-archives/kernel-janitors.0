@@ -1,41 +1,24 @@
-From: Patrice Chotard <patrice.chotard@st.com>
-Date: Wed, 12 Oct 2016 07:10:03 +0000
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 12 Oct 2016 08:43:02 +0000
 Subject: Re: [patch] gpio: stmpe: || vs && typo
-Message-Id: <72f9aaa3-4efb-2173-ba6c-96d961898ab0@st.com>
+Message-Id: <CACRpkdbxemFszSPUceuMvpqcyzuuDCTYSA5uvA=sgyp==hw8oA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161012062520.GY12841@mwanda>
 In-Reply-To: <20161012062520.GY12841@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Patrice Chotard <patrice.chotard@st.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Dan
+On Wed, Oct 12, 2016 at 8:25 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-On 10/12/2016 08:25 AM, Dan Carpenter wrote:
 > && was obviously intended here.
-> 
+>
 > Fixes: 6936e1f88d23 ('gpio: stmpe: Write int status register only when needed')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-> index e7d422a..5b00427 100644
-> --- a/drivers/gpio/gpio-stmpe.c
-> +++ b/drivers/gpio/gpio-stmpe.c
-> @@ -409,7 +409,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->  		 * 801/1801/1600, bits are cleared when read.
->  		 * Edge detect register is not present on 801/1600/1801
->  		 */
-> -		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1600 ||
-> +		if (stmpe->partnum != STMPE801 && stmpe->partnum != STMPE1600 &&
->  		    stmpe->partnum != STMPE1801) {
->  			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
->  			stmpe_reg_write(stmpe,
-> 
 
-Well spotted ;-)
+Patch applied with Patrice's ACK.
 
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
-
-Thanks
+Yours,
+Linus Walleij
