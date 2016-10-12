@@ -1,49 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 07:44:40 +0000
-Subject: [PATCH 2/9] md/dm-table: Reduce the scope for a variable in dm_table_verify_integrity()
-Message-Id: <18a48c67-962d-2e61-7d24-dc145ec90935@users.sourceforge.net>
+Date: Wed, 12 Oct 2016 14:42:31 +0000
+Subject: [PATCH 07/34] [media] DaVinci-VPBE: Delete an unnecessary variable initialisation in vpbe_initialize
+Message-Id: <a0386b6e-ba8c-1fae-edb2-27dfd8e1b6bf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
-In-Reply-To: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 07:10:43 +0200
+Date: Wed, 12 Oct 2016 09:45:39 +0200
 
-Move the definition for the variable "template_disk" into an if branch
-so that an extra initialisation can be avoided at the beginning
-by this refactoring.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/dm-table.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/platform/davinci/vpbe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index f6b817c..73d38d0 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1391,14 +1391,13 @@ int dm_calculate_queue_limits(struct dm_table *table,
-  */
- static void dm_table_verify_integrity(struct dm_table *t)
- {
--	struct gendisk *template_disk = NULL;
--
- 	if (t->integrity_supported) {
- 		/*
- 		 * Verify that the original integrity profile
- 		 * matches all the devices in this table.
- 		 */
--		template_disk = dm_table_get_integrity_disk(t);
-+		struct gendisk *template_disk = dm_table_get_integrity_disk(t);
-+
- 		if (template_disk &&
- 		    blk_integrity_compare(dm_disk(t->md), template_disk) >= 0)
- 			return;
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index afa8ff7..9fdd8c0 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -597,7 +597,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	struct osd_state *osd_device;
+ 	struct i2c_adapter *i2c_adap;
+ 	int num_encoders;
+-	int ret = 0;
++	int ret;
+ 	int err;
+ 	int i;
+ 
 -- 
-2.10.0
+2.10.1
 
