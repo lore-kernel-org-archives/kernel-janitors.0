@@ -1,51 +1,32 @@
-From: Jean Christophe TROTIN <jean-christophe.trotin@st.com>
-Date: Mon, 24 Oct 2016 08:26:49 +0000
-Subject: Re: [patch] [media] st-hva: fix some error handling in hva_hw_probe()
-Message-Id: <9c07d71a-2d04-3733-4077-49838c23090c@st.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 08:53:21 +0000
+Subject: [patch] drm/imx: drm_dev_alloc() returns error pointers
+Message-Id: <20161013085321.GG16198@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161014072928.GB15168@mwanda>
-In-Reply-To: <20161014072928.GB15168@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>, Lucas Stach <l.stach@pengutronix.de>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Thanks,
+We are checking for NULL here, when we should be checking for error
+pointers.
 
-Acked-by: Jean-Christophe Trotin <jean-christophe.trotin@st.com>
+Fixes: 54db5decce17 ("drm/imx: drop deprecated load/unload drm_driver ops")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 10/14/2016 09:32 AM, Dan Carpenter wrote:
-> The devm_ioremap_resource() returns error pointers, never NULL.  The
-> platform_get_resource() returns NULL on error, never error pointers.
-> The error code needs to be set, as well.  The current code returns
-> PTR_ERR(NULL) which is success.
->
-> Fixes: 57b2c0628b60 ("[media] st-hva: multi-format video encoder V4L2 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/media/platform/sti/hva/hva-hw.c b/drivers/media/platform/sti/hva/hva-hw.c
-> index d341d49..cf2a8d8 100644
-> --- a/drivers/media/platform/sti/hva/hva-hw.c
-> +++ b/drivers/media/platform/sti/hva/hva-hw.c
-> @@ -305,16 +305,16 @@ int hva_hw_probe(struct platform_device *pdev, struct hva_dev *hva)
->  	/* get memory for registers */
->  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	hva->regs = devm_ioremap_resource(dev, regs);
-> -	if (IS_ERR_OR_NULL(hva->regs)) {
-> +	if (IS_ERR(hva->regs)) {
->  		dev_err(dev, "%s     failed to get regs\n", HVA_PREFIX);
->  		return PTR_ERR(hva->regs);
->  	}
->
->  	/* get memory for esram */
->  	esram = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -	if (IS_ERR_OR_NULL(esram)) {
-> +	if (!esram) {
->  		dev_err(dev, "%s     failed to get esram\n", HVA_PREFIX);
-> -		return PTR_ERR(esram);
-> +		return -ENODEV;
->  	}
->  	hva->esram_addr = esram->start;
->  	hva->esram_size = resource_size(esram);
->
+diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
+index 98df09c..3acc976 100644
+--- a/drivers/gpu/drm/imx/imx-drm-core.c
++++ b/drivers/gpu/drm/imx/imx-drm-core.c
+@@ -357,8 +357,8 @@ static int imx_drm_bind(struct device *dev)
+ 	int ret;
+ 
+ 	drm = drm_dev_alloc(&imx_drm_driver, dev);
+-	if (!drm)
+-		return -ENOMEM;
++	if (IS_ERR(drm))
++		return PTR_ERR(drm);
+ 
+ 	imxdrm = devm_kzalloc(dev, sizeof(*imxdrm), GFP_KERNEL);
+ 	if (!imxdrm) {
