@@ -1,59 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:32:04 +0000
-Subject: [PATCH 32/54] md/raid5: Move a brace for three designated initialisers
-Message-Id: <8840baf8-f954-0051-c082-26bcca99bb45@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:29:41 +0000
+Subject: [PATCH 08/18] [media] RedRat3: Improve another size determination in redrat3_send_cmd()
+Message-Id: <1bfa8542-0bcb-eea6-0dda-d1c7ffae89f1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Oct 2016 10:20:05 +0200
+Date: Thu, 13 Oct 2016 13:31:17 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
-
-ERROR: that open brace { should be on the previous line
+Replace the specification of a data type by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/raid5.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/media/rc/redrat3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index a37f1f9..f2473fa0 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -7868,8 +7868,7 @@ static void *raid6_takeover(struct mddev *mddev)
- 	return setup_conf(mddev);
- }
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index 5832e6f..f6c21a1 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -388,7 +388,7 @@ static int redrat3_send_cmd(int cmd, struct redrat3_dev *rr3)
+ 	u8 *data;
+ 	int res;
  
--static struct md_personality raid6_personality -{
-+static struct md_personality raid6_personality = {
- 	.name		= "raid6",
- 	.level		= 6,
- 	.owner		= THIS_MODULE,
-@@ -7891,8 +7890,7 @@ static struct md_personality raid6_personality  	.takeover	= raid6_takeover,
- 	.congested	= raid5_congested,
- };
--static struct md_personality raid5_personality -{
-+static struct md_personality raid5_personality = {
- 	.name		= "raid5",
- 	.level		= 5,
- 	.owner		= THIS_MODULE,
-@@ -7914,9 +7912,7 @@ static struct md_personality raid5_personality  	.takeover	= raid5_takeover,
- 	.congested	= raid5_congested,
- };
--
--static struct md_personality raid4_personality -{
-+static struct md_personality raid4_personality = {
- 	.name		= "raid4",
- 	.level		= 4,
- 	.owner		= THIS_MODULE,
+-	data = kzalloc(sizeof(u8), GFP_KERNEL);
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
 -- 
 2.10.1
 
