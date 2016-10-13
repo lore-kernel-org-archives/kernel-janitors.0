@@ -1,76 +1,88 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 14:56:27 +0000
-Subject: [PATCH 11/15] md-cluster: Delete four error messages for a failed memory allocation
-Message-Id: <26a5a1a8-3cbb-381e-1ed4-f6dcfc73d64b@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:48:10 +0000
+Subject: [PATCH 18/18] [media] RedRat3: Combine substrings for six messages
+Message-Id: <cdf5a033-1858-98c4-20a5-4a829d0fc483@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
-In-Reply-To: <3a03df66-92ce-20fb-17f3-fb79b9d43c8e@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 13:46:20 +0200
+Date: Thu, 13 Oct 2016 17:50:11 +0200
 
-Omit extra messages for a memory allocation failure in three functions.
+The script "checkpatch.pl" pointed information out like the following.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+WARNING: quoted string split across lines
+
+Thus fix the affected source code places.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/md-cluster.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ drivers/media/rc/redrat3.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index b91b552..7f82c6b 100644
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -200,17 +200,13 @@ static struct dlm_lock_resource *lockres_init(struct mddev *mddev,
- 	res->mode = DLM_LOCK_IV;
- 	namelen = strlen(name);
- 	res->name = kzalloc(namelen + 1, GFP_KERNEL);
--	if (!res->name) {
--		pr_err("md-cluster: Unable to allocate resource name for resource %s\n", name);
-+	if (!res->name)
- 		goto out_err;
--	}
- 	strlcpy(res->name, name, namelen + 1);
- 	if (with_lvb) {
- 		res->lksb.sb_lvbptr = kzalloc(LVB_SIZE, GFP_KERNEL);
--		if (!res->lksb.sb_lvbptr) {
--			pr_err("md-cluster: Unable to allocate LVB for resource %s\n", name);
-+		if (!res->lksb.sb_lvbptr)
- 			goto out_err;
--		}
- 		res->flags = DLM_LKF_VALBLK;
- 	}
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index a09d5cb..b8c4b98 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -233,8 +233,7 @@ static void redrat3_dump_fw_error(struct redrat3_dev *rr3, int code)
  
-@@ -852,10 +848,8 @@ static int join(struct mddev *mddev, int nodes)
- 	/* Initiate the communication resources */
- 	ret = -ENOMEM;
- 	cinfo->recv_thread = md_register_thread(recv_daemon, mddev, "cluster_recv");
--	if (!cinfo->recv_thread) {
--		pr_err("md-cluster: cannot allocate memory for recv_thread!\n");
-+	if (!cinfo->recv_thread)
- 		goto err;
--	}
- 	cinfo->message_lockres = lockres_init(mddev, "message", NULL, 1);
- 	if (!cinfo->message_lockres)
- 		goto err;
-@@ -1191,10 +1185,8 @@ static int lock_all_bitmaps(struct mddev *mddev)
- 					      sizeof(*cinfo
- 						     ->other_bitmap_lockres),
- 					      GFP_KERNEL);
--	if (!cinfo->other_bitmap_lockres) {
--		pr_err("md: can't alloc mem for other bitmap locks\n");
-+	if (!cinfo->other_bitmap_lockres)
- 		return 0;
--	}
+ 	/* Codes 0x20 through 0x2f are IR Firmware Errors */
+ 	case 0x20:
+-		pr_cont("Initial signal pulse not long enough "
+-			"to measure carrier frequency\n");
++		pr_cont("Initial signal pulse not long enough to measure carrier frequency\n");
+ 		break;
+ 	case 0x21:
+ 		pr_cont("Not enough length values allocated for signal\n");
+@@ -246,18 +245,15 @@ static void redrat3_dump_fw_error(struct redrat3_dev *rr3, int code)
+ 		pr_cont("Too many signal repeats\n");
+ 		break;
+ 	case 0x28:
+-		pr_cont("Insufficient memory available for IR signal "
+-			"data memory allocation\n");
++		pr_cont("Insufficient memory available for IR signal data memory allocation\n");
+ 		break;
+ 	case 0x29:
+-		pr_cont("Insufficient memory available "
+-			"for IrDa signal data memory allocation\n");
++		pr_cont("Insufficient memory available for IrDa signal data memory allocation\n");
+ 		break;
  
- 	my_slot = slot_number(mddev);
- 	for (slot = 0; slot < mddev->bitmap_info.nodes; slot++) {
+ 	/* Codes 0x30 through 0x3f are USB Firmware Errors */
+ 	case 0x30:
+-		pr_cont("Insufficient memory available for bulk "
+-			"transfer structure\n");
++		pr_cont("Insufficient memory available for bulk transfer structure\n");
+ 		break;
+ 
+ 	/*
+@@ -269,8 +265,7 @@ static void redrat3_dump_fw_error(struct redrat3_dev *rr3, int code)
+ 			pr_cont("Signal capture has been terminated\n");
+ 		break;
+ 	case 0x41:
+-		pr_cont("Attempt to set/get and unknown signal I/O "
+-			"algorithm parameter\n");
++		pr_cont("Attempt to set/get and unknown signal I/O algorithm parameter\n");
+ 		break;
+ 	case 0x42:
+ 		pr_cont("Signal capture already started\n");
+@@ -866,8 +861,8 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
+ 		return NULL;
+ 
+ 	prod = le16_to_cpu(rr3->udev->descriptor.idProduct);
+-	snprintf(rr3->name, sizeof(rr3->name), "RedRat3%s "
+-		 "Infrared Remote Transceiver (%04x:%04x)",
++	snprintf(rr3->name, sizeof(rr3->name),
++		 "RedRat3%s Infrared Remote Transceiver (%04x:%04x)",
+ 		 prod = USB_RR3IIUSB_PRODUCT_ID ? "-II" : "",
+ 		 le16_to_cpu(rr3->udev->descriptor.idVendor), prod);
+ 
 -- 
-2.10.0
+2.10.1
 
