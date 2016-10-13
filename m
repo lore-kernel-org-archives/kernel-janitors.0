@@ -1,53 +1,32 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Fri, 28 Oct 2016 00:19:08 +0000
-Subject: Re: [PATCH 3/3] clk: keystone: Fix missing iounmap calls in an error handling path
-Message-Id: <20161028001908.GL26139@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 08:51:37 +0000
+Subject: [patch] efi: fix an error code
+Message-Id: <20161013085137.GD16198@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7ed7c1abf1666f1e6eda240bb705940bc14bd186.1477339880.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7ed7c1abf1666f1e6eda240bb705940bc14bd186.1477339880.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matt Fleming <matt-mF/unelCI9GS6iBeEJttW/XRex20P6io@public.gmane.org>, Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 10/26, walter harms wrote:
-> 
-> 
-> Am 25.10.2016 22:35, schrieb Stephen Boyd:
-> > On 10/25, walter harms wrote:
-> >> Am 24.10.2016 22:43, schrieb Christophe JAILLET:
-> >>> @@ -220,6 +218,12 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
-> >>>  
-> >>>  out:
-> >>>  	pr_err("%s: error initializing pll %s\n", __func__, node->name);
-> >>> +	if (pll_data->pllm)
-> >>> +		iounmap(pll_data->pllm);
-> >>> +	if (pll_data->pll_ctl0)
-> >>> +		iounmap(pll_data->pll_ctl0);
-> >>> +	if (pll_data->pllod)
-> >>> +		iounmap(pll_data->pllod);
-> >>>  	kfree(pll_data);
-> >>>  }
-> >>>  
-> >>
-> >> IMHO calles the iounmap() need no check for NULL.
-> >>
-> > 
-> > ARM doesn't seem to check for NULL there though. So that would be
-> > a bug.
-> > 
-> > It would be nice to remove the checks though. Perhaps someone
-> > could do that by unifying ionumap into asm-generic with the NULL
-> > check and then have architecture specific functions for the rest
-> > of it?
-> > 
-> 
-> Is there a specific reason not to check ?
-> It seems not wise to have different behavior across architectures.
-> 
+We should return -ENOMEM here, instead of success.
 
-I have no idea. Patches welcome.
+Fixes: 475fb4e8b2f4 ('efi / ACPI: load SSTDs from EFI variables')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 1ac199c..a4944e2 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -259,8 +259,10 @@ static __init int efivar_ssdt_load(void)
+ 		}
+ 
+ 		data = kmalloc(size, GFP_KERNEL);
+-		if (!data)
++		if (!data) {
++			ret = -ENOMEM;
+ 			goto free_entry;
++		}
+ 
+ 		ret = efivar_entry_get(entry, NULL, &size, data);
+ 		if (ret) {
