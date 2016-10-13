@@ -1,58 +1,59 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 30 Oct 2016 11:53:02 +0000
-Subject: Re: [PATCH] drm/sun4i: Fix error handling
-Message-Id: <c15282b4-e88a-06b1-527d-96aedce8b7eb@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:18:57 +0000
+Subject: [PATCH 01/18] [media] RedRat3: Use kcalloc() in two functions
+Message-Id: <21c57b39-25ac-2df1-030d-11c243a11ebc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161030084926.15303-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161030084926.15303-1-christophe.jaillet@wanadoo.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: maxime.ripard@free-electrons.com, airlied@linux.ie, wens@csie.org
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 08:35:57 +0200
 
-BTW, memory allocation in 'sun4i_layers_init()' looks spurious,=20
-especially the use of 'layer' in the for loop.
-Just my 2 cents.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
 
+  This issue was detected by using the Coccinelle software.
 
-I also forgot to say that we could propagate the error code returned by=20
-sun4i_layers_init instead of returning -EINVAL unconditionally
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-CJ
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/rc/redrat3.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index 8d7df6d..d89958b 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -549,7 +549,7 @@ static void redrat3_get_firmware_rev(struct redrat3_dev *rr3)
+ 	int rc = 0;
+ 	char *buffer;
+ 
+-	buffer = kzalloc(sizeof(char) * (RR3_FW_VERSION_LEN + 1), GFP_KERNEL);
++	buffer = kcalloc(RR3_FW_VERSION_LEN + 1, sizeof(*buffer), GFP_KERNEL);
+ 	if (!buffer) {
+ 		dev_err(rr3->dev, "Memory allocation failure\n");
+ 		return;
+@@ -741,7 +741,9 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
+ 	/* rr3 will disable rc detector on transmit */
+ 	rr3->transmitting = true;
+ 
+-	sample_lens = kzalloc(sizeof(int) * RR3_DRIVER_MAXLENS, GFP_KERNEL);
++	sample_lens = kcalloc(RR3_DRIVER_MAXLENS,
++			      sizeof(*sample_lens),
++			      GFP_KERNEL);
+ 	if (!sample_lens) {
+ 		ret = -ENOMEM;
+ 		goto out;
+-- 
+2.10.1
 
-
-
-Le 30/10/2016 =E0 09:49, Christophe JAILLET a =E9crit :
-> 'sun4i_layers_init()' returns an error pointer in case of error, not
-> NULL. So test it with IS_ERR.
->
-> Signed-off-by: Christophe JAILLET<christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/gpu/drm/sun4i/sun4i_drv.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/su=
-n4i_drv.c
-> index 9776f0305834..628712e6edd6 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> @@ -143,7 +143,7 @@ static int sun4i_drv_bind(struct device *dev)
->  =20
->   	/* Create our layers */
->   	drv->layers =3D sun4i_layers_init(drm);
-> -	if (!drv->layers) {
-> +	if (IS_ERR(drv->layers)) {
->   		dev_err(drm->dev, "Couldn't create the planes\n");
->   		ret =3D -EINVAL;
->   		goto free_drm;
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
