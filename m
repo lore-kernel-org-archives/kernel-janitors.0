@@ -1,46 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 01 Oct 2016 19:46:27 +0000
-Subject: [PATCH 10/15] clk: keystone: improve function-level documentation
-Message-Id: <1475351192-27079-11-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:15:51 +0000
+Subject: [PATCH 00/18] [media] RedRat3: Fine-tuning for several function implementations
+Message-Id: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <566ABCD9.1060404@users.sourceforge.net>
+In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Adjust the documentation to use the actual function names.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 18:06:18 +0200
 
-Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
+Several update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Markus Elfring (18):
+  Use kcalloc() in two functions
+  Move two assignments in redrat3_transmit_ir()
+  Return directly after a failed kcalloc() in redrat3_transmit_ir()
+  One function call less in redrat3_transmit_ir() after error detection
+  Delete six messages for a failed memory allocation
+  Delete an unnecessary variable initialisation in redrat3_get_firmware_rev()
+  Improve another size determination in redrat3_reset()
+  Improve another size determination in redrat3_send_cmd()
+  Move a variable assignment in redrat3_dev_probe()
+  Delete an unnecessary variable initialisation in redrat3_init_rc_dev()
+  Delete the variable "dev" in redrat3_init_rc_dev()
+  Move a variable assignment in redrat3_init_rc_dev()
+  Return directly after a failed rc_allocate_device() in redrat3_init_rc_dev()
+  Rename a jump label in redrat3_init_rc_dev()
+  Delete two variables in redrat3_set_timeout()
+  Move a variable assignment in redrat3_set_timeout()
+  Adjust two checks for null pointers in redrat3_dev_probe()
+  Combine substrings for six messages
 
----
- drivers/clk/keystone/pll.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/rc/redrat3.c | 146 +++++++++++++++++++++------------------------
+ 1 file changed, 67 insertions(+), 79 deletions(-)
 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index a26ba21..185f19c 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -154,7 +154,7 @@ static struct clk *clk_register_pll(struct device *dev,
- }
- 
- /**
-- * _of_clk_init - PLL initialisation via DT
-+ * _of_pll_clk_init - PLL initialisation via DT
-  * @node: device tree node for this clock
-  * @pllctrl: If true, lower 6 bits of multiplier is in pllm register of
-  *		pll controller, else it is in the control register0(bit 11-6)
-@@ -235,7 +235,7 @@ static void __init of_keystone_pll_clk_init(struct device_node *node)
- 					of_keystone_pll_clk_init);
- 
- /**
-- * of_keystone_pll_main_clk_init - Main PLL initialisation DT wrapper
-+ * of_keystone_main_pll_clk_init - Main PLL initialisation DT wrapper
-  * @node: device tree node for this clock
-  */
- static void __init of_keystone_main_pll_clk_init(struct device_node *node)
+-- 
+2.10.1
 
