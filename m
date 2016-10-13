@@ -1,31 +1,46 @@
-From: Moritz Fischer <moritz.fischer@ettus.com>
-Date: Sat, 15 Oct 2016 22:09:02 +0000
-Subject: Re: [patch 2/2] mtd: spi-nor: Fix some error codes in cqspi_setup_flash()
-Message-Id: <CAAtXAHey9fxQJ12=xt8jd4ZYTsYLs8s-TJ=YS=ob8CB03mnXpA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:42:16 +0000
+Subject: [PATCH 14/18] [media] RedRat3: Rename a jump label in redrat3_init_rc_dev()
+Message-Id: <172b54fe-559b-44a4-9902-96abece75a7f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013080857.GC3389@mwanda>
- <3ebab16e-ddf8-0a4b-aaaf-d5b424720eb2@denx.de>
-In-Reply-To: <3ebab16e-ddf8-0a4b-aaaf-d5b424720eb2@denx.de>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marek Vasut <marex@denx.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, David Woodhouse <dwmw2@infradead.org>, Graham Moore <grmoore@opensource.altera.com>, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Oct 14, 2016 at 9:16 AM, Marek Vasut <marex@denx.de> wrote:
-> On 10/13/2016 10:30 AM, Dan Carpenter wrote:
->> We return success or possibly uninitialized values on these error paths
->> instead of proper error codes.
->>
->> Fixes: 140623410536 ("mtd: spi-nor: Add driver for Cadence Quad SPI Flash Controller")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->
-> Nice
->
-> Reviewed-by: Marek Vasut <marex@denx.de>
-Reviewed-by: Moritz Fischer <moritz.fischer@ettus.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 15:00:12 +0200
 
-Thanks,
+Adjust a jump label according to the Linux coding style convention.
 
-Moritz
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/rc/redrat3.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index 74d93dd..055f214 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -890,12 +890,11 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
+ 	ret = rc_register_device(rc);
+ 	if (ret < 0) {
+ 		dev_err(rr3->dev, "remote dev registration failed\n");
+-		goto out;
++		goto free_device;
+ 	}
+ 
+ 	return rc;
+-
+-out:
++free_device:
+ 	rc_free_device(rc);
+ 	return NULL;
+ }
+-- 
+2.10.1
+
