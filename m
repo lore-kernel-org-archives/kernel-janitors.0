@@ -1,76 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Oct 2016 18:10:27 +0000
-Subject: Re: Further software improvements around Linux sequence API?
-Message-Id: <47c7084e-21d8-4564-c237-84324dae17ab@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:43:58 +0000
+Subject: [PATCH 15/18] [media] RedRat3: Delete two variables in redrat3_set_timeout()
+Message-Id: <13722bff-ec67-0282-b779-52c78b5667f8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
- <4126c272-cdf6-677a-fe98-74e8034078d8@users.sourceforge.net>
- <20161024131311.ttwr2bblphg6vd2b@thunk.org>
- <e7ac4cba-bce1-edf5-a537-4c06a357bfb3@users.sourceforge.net>
- <20161024142037.rrslfxtimj44s5t6@thunk.org>
- <8592fa0c-e80a-77e2-fc44-4017f0988c8c@users.sourceforge.net>
- <20161024155112.ixdfi3ucs7sg2zgh@thunk.org>
-In-Reply-To: <20161024155112.ixdfi3ucs7sg2zgh@thunk.org>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Theodore Ts'o <tytso@mit.edu>, linux-mips@linux-mips.org
-Cc: Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> An experienced developer would be able to very easily spot that trying
-> to optimize seq_printf() versus seq_puts() is barely going to be measurab=
-le.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 15:40:33 +0200
 
-Would you like to offer any incentives to use a more appropriate function
-from this Linux programming interface for sequences?
+* Use the data structure members "dev" and "udev" directly
+  without assigning them to intermediate variables.
+  Thus delete the extra variable definitions at the beginning.
 
+* Fix indentation for the parameters of two function calls.
 
-> It's the sort of thing that a developer might fix while
-> making other, more useful changes to a source file.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/rc/redrat3.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-I get doubts when you expect that change possibilities with a higher
-priority should and will almost always picked up before update candidates
-with a lower impact.
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index 055f214..e46a92a 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -476,8 +476,6 @@ static u32 redrat3_get_timeout(struct redrat3_dev *rr3)
+ static int redrat3_set_timeout(struct rc_dev *rc_dev, unsigned int timeoutns)
+ {
+ 	struct redrat3_dev *rr3 = rc_dev->priv;
+-	struct usb_device *udev = rr3->udev;
+-	struct device *dev = rr3->dev;
+ 	__be32 *timeout;
+ 	int ret;
+ 
+@@ -486,13 +484,17 @@ static int redrat3_set_timeout(struct rc_dev *rc_dev, unsigned int timeoutns)
+ 		return -ENOMEM;
+ 
+ 	*timeout = cpu_to_be32(redrat3_us_to_len(timeoutns / 1000));
+-	ret = usb_control_msg(udev, usb_sndctrlpipe(udev, 0), RR3_SET_IR_PARAM,
+-		     USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_OUT,
+-		     RR3_IR_IO_SIG_TIMEOUT, 0, timeout, sizeof(*timeout),
+-		     HZ * 25);
+-	dev_dbg(dev, "set ir parm timeout %d ret 0x%02x\n",
+-						be32_to_cpu(*timeout), ret);
+-
++	ret = usb_control_msg(rr3->udev,
++			      usb_sndctrlpipe(rr3->udev, 0),
++			      RR3_SET_IR_PARAM,
++			      USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_OUT,
++			      RR3_IR_IO_SIG_TIMEOUT,
++			      0,
++			      timeout,
++			      sizeof(*timeout),
++			      HZ * 25);
++	dev_dbg(rr3->dev, "set ir parm timeout %d ret 0x%02x\n",
++		be32_to_cpu(*timeout), ret);
+ 	if (ret = sizeof(*timeout)) {
+ 		rr3->hw_timeout = timeoutns / 1000;
+ 		ret = 0;
+-- 
+2.10.1
 
-
-> Well, please note that having a reputation of someone who insists on
-> sending mostly junk patches (and like junk food, they may have some
-> nutritive value; but that doesn't change the effect that the net
-> benefit to person consuming them is marginal or negative), tends to
-> give you a bad reputation, and may in fact be a hinderance towards
-> your being able to attain "financial incentives".
-
-I can not offer the =93shiny gold nugget=94 or =93pure diamond=94 so far di=
-rectly
-which is often preferred.
-
-
-> If that is in fact your goal, I would gently suggest that you spend
-> more time improving your skills, and learning more about higher-value
-> ways you could contribute to the kernel, instead of spamming the
-> kernel list with lots of low value patches.
-
-* I could extend my source code search patterns in principle.
-  How many developers and software reviewers struggle with results
-  from existing code analysis tools?
-
-* Will your interest occasionally grow for collateral software evolution?
-
-
-> In the future if you are adding higher value improvements, and you want
-> to do various cleanups, such as fixing up seq_printf -> seq_puts changes,=
- sure.
-
-Is this kind of feedback a contradiction at the moment when you seem to give
-the impression that my software development reputation is so damaged in the
-=93junk food=94 sense that I could hardly achieve the software change mixtu=
-re
-which you would prefer?
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
