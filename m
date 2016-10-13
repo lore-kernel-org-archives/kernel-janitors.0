@@ -1,58 +1,37 @@
-From: "=?utf-8?B?RGF2aWQgSMOkcmRlbWFu?=" <david@hardeman.nu>
-Date: Wed, 19 Oct 2016 13:07:32 +0000
-Subject: Re: [PATCH 3/5] [media] winbond-cir: Move assignments for three variables in wbcir_shutdown()
-Message-Id: <327f6034db9ce0c0a72947e47daf344a@hardeman.nu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 08:30:39 +0000
+Subject: [patch 2/2] mtd: spi-nor: Fix some error codes in cqspi_setup_flash()
+Message-Id: <20161013080857.GC3389@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <285954ec-280f-8a5a-5189-eb2471b4339c@users.sourceforge.net>
- <566ABCD9.1060404@users.sourceforge.net>
- <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
-In-Reply-To: <285954ec-280f-8a5a-5189-eb2471b4339c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: David Woodhouse <dwmw2@infradead.org>, Graham Moore <grmoore@opensource.altera.com>
+Cc: Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marex@denx.de>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-October 14, 2016 1:43 PM, "SF Markus Elfring" <elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 14 Oct 2016 10:40:12 +0200
-> 
-> Move the setting for the local variables "mask", "match" and "rc6_csl"
-> behind the source code for a condition check by this function
-> at the beginning.
+We return success or possibly uninitialized values on these error paths
+instead of proper error codes.
+
+Fixes: 140623410536 ("mtd: spi-nor: Add driver for Cadence Quad SPI Flash Controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+index 944863b..d489fbd 100644
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -1077,12 +1077,14 @@ static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
  
-Again, I can't see what the point is?
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> drivers/media/rc/winbond-cir.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/rc/winbond-cir.c b/drivers/media/rc/winbond-cir.c
-> index fd997f0..9d05e17 100644
-> --- a/drivers/media/rc/winbond-cir.c
-> +++ b/drivers/media/rc/winbond-cir.c
-> @@ -702,17 +702,17 @@ wbcir_shutdown(struct pnp_dev *device)
-> bool do_wake = true;
-> u8 match[11];
-> u8 mask[11];
-> - u8 rc6_csl = 0;
-> + u8 rc6_csl;
-> int i;
-> 
-> - memset(match, 0, sizeof(match));
-> - memset(mask, 0, sizeof(mask));
-> -
-> if (wake_sc == INVALID_SCANCODE || !device_may_wakeup(dev)) {
-> do_wake = false;
-> goto finish;
-> }
-> 
-> + rc6_csl = 0;
-> + memset(match, 0, sizeof(match));
-> + memset(mask, 0, sizeof(mask));
-> switch (protocol) {
-> case IR_PROTOCOL_RC5:
-> if (wake_sc > 0xFFF) {
-> -- 
-> 2.10.1
+ 	/* Get flash device data */
+ 	for_each_available_child_of_node(dev->of_node, np) {
+-		if (of_property_read_u32(np, "reg", &cs)) {
++		ret = of_property_read_u32(np, "reg", &cs);
++		if (ret) {
+ 			dev_err(dev, "Couldn't determine chip select.\n");
+ 			goto err;
+ 		}
+ 
+ 		if (cs >= CQSPI_MAX_CHIPSELECT) {
++			ret = -EINVAL;
+ 			dev_err(dev, "Chip select %d out of range.\n", cs);
+ 			goto err;
+ 		}
