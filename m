@@ -1,23 +1,35 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 30 Oct 2016 15:17:22 +0000
-Subject: Re: scripts/basic/fixdep: Complete error handling in print_cmdline()
-Message-Id: <5e73f504-fae2-c1c9-0dea-c2860cc4a683@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 08:47:13 +0000
+Subject: [patch] ASoC: rt5663: fix a debug statement
+Message-Id: <20161013084712.GB16198@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
- <d4bd9a09-d413-a073-c2d5-67933d425b87@users.sourceforge.net>
- <CA+r1ZhhoPy4mNwEtLVMqpXqotKuWmUf-D50=XWpWghzdtzTfEQ@mail.gmail.com>
-In-Reply-To: <CA+r1ZhhoPy4mNwEtLVMqpXqotKuWmUf-D50=XWpWghzdtzTfEQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jim Davis <jim.epost@gmail.com>, linux-kbuild@vger.kernel.org
-Cc: Michal Marek <mmarek@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Bard Liao <bardliao@realtek.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> But what would you expect printf error checking to tell a user?
+We increment "i" before printing the debug statement.  That makes it
+the wrong sleep_time[] information and Smatch complains that the last
+increment could be beyond the end of the array.
 
-I wonder that the error detection and corresponding exception handling
-was not corrected for the affected source files of build-time tools so far.
-https://www.securecoding.cert.org/confluence/display/c/EXP12-C.+Do+not+ignore+values+returned+by+functions
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
+diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
+index 01a18d8..00ff278 100644
+--- a/sound/soc/codecs/rt5663.c
++++ b/sound/soc/codecs/rt5663.c
+@@ -1547,11 +1547,11 @@ static int rt5663_jack_detect(struct snd_soc_codec *codec, int jack_insert)
+ 			msleep(sleep_time[i]);
+ 			val = snd_soc_read(codec, RT5663_EM_JACK_TYPE_2) &
+ 				0x0003;
++			dev_dbg(codec->dev, "%s: MX-00e7 val=%x sleep %d\n",
++				__func__, val, sleep_time[i]);
+ 			i++;
+ 			if (val = 0x1 || val = 0x2 || val = 0x3)
+ 				break;
+-			dev_dbg(codec->dev, "%s: MX-00e7 val=%x sleep %d\n",
+-				__func__, val, sleep_time[i]);
+ 		}
+ 		dev_dbg(codec->dev, "%s val = %d\n", __func__, val);
+ 		switch (val) {
