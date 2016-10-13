@@ -1,42 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 21:12:20 +0000
-Subject: [PATCH 2/2] M68K-Atari: Use seq_puts() in atari_get_hardware_list()
-Message-Id: <bdb745b6-c78d-9fb5-906e-b41a9b2ef7a2@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:32:08 +0000
+Subject: [PATCH 10/18] [media] RedRat3: Delete an unnecessary variable initialisation in redrat3_init_rc_dev(
+Message-Id: <65fea9da-e1f5-ab90-65e4-9e5d78ee64d5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cc9b366d-4d5e-3ed6-4665-cbc577c69f74@users.sourceforge.net>
-In-Reply-To: <cc9b366d-4d5e-3ed6-4665-cbc577c69f74@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-m68k@lists.linux-m68k.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Arnd Bergmann <arnd@arndb.de>, Finn Thain <fthain@telegraphics.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 23:00:22 +0200
+Date: Thu, 13 Oct 2016 14:17:43 +0200
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
-
-This issue was detected by using the Coccinelle software.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/m68k/atari/config.c | 2 +-
+ drivers/media/rc/redrat3.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/m68k/atari/config.c b/arch/m68k/atari/config.c
-index 97a3c38..e328eaf 100644
---- a/arch/m68k/atari/config.c
-+++ b/arch/m68k/atari/config.c
-@@ -629,7 +629,7 @@ static void atari_get_hardware_list(struct seq_file *m)
- 	if (ATARIHW_PRESENT(name))			\
- 		seq_printf(m, "\t%s\n", str)
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index f85117b..c43f43b 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -856,7 +856,7 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
+ {
+ 	struct device *dev = rr3->dev;
+ 	struct rc_dev *rc;
+-	int ret = -ENODEV;
++	int ret;
+ 	u16 prod = le16_to_cpu(rr3->udev->descriptor.idProduct);
  
--	seq_printf(m, "Detected hardware:\n");
-+	seq_puts(m, "Detected hardware:\n");
- 	ATARIHW_ANNOUNCE(STND_SHIFTER, "ST Shifter");
- 	ATARIHW_ANNOUNCE(EXTD_SHIFTER, "STe Shifter");
- 	ATARIHW_ANNOUNCE(TT_SHIFTER, "TT Shifter");
+ 	rc = rc_allocate_device();
 -- 
 2.10.1
 
