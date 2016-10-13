@@ -1,50 +1,42 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Sun, 09 Oct 2016 23:30:24 +0000
-Subject: Re: [PATCH 4/4] virtio_blk: Rename a jump label in virtblk_get_id()
-Message-Id: <20161010022831-mutt-send-email-mst@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 08:54:31 +0000
+Subject: [patch] drm/vc4: Fix a couple error codes in vc4_cl_lookup_bos()
+Message-Id: <20161013085431.GI16198@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
- <a303f7a6-c675-5228-99bd-a03c9e9252e9@users.sourceforge.net>
-In-Reply-To: <a303f7a6-c675-5228-99bd-a03c9e9252e9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: virtualization@lists.linux-foundation.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Eric Anholt <eric@anholt.net>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Tue, Sep 13, 2016 at 02:15:20PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 13 Sep 2016 13:50:56 +0200
-> 
-> Adjust a jump label according to the current Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+If the allocation fails the current code returns success.  If
+copy_from_user() fails it returns the number of bytes remaining instead
+of -EFAULT.
 
-Please don't send me such patches, I'm not really
-interested in renaming labels unless it clearly adds
-to a significant improvement in readability.
+Fixes: d5b1a78a772f ("drm/vc4: Add support for drawing 3D frames.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  drivers/block/virtio_blk.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-> index 696f452..fef2bd0 100644
-> --- a/drivers/block/virtio_blk.c
-> +++ b/drivers/block/virtio_blk.c
-> @@ -247,10 +247,10 @@ static int virtblk_get_id(struct gendisk *disk, char *id_str)
->  
->  	err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES, GFP_KERNEL);
->  	if (err)
-> -		goto out;
-> +		goto put_request;
->  
->  	err = blk_execute_rq(vblk->disk->queue, vblk->disk, req, false);
-> -out:
-> + put_request:
->  	blk_put_request(req);
->  	return err;
->  }
-> -- 
-> 2.10.0
+diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
+index 47a095f..303f23c 100644
+--- a/drivers/gpu/drm/vc4/vc4_gem.c
++++ b/drivers/gpu/drm/vc4/vc4_gem.c
+@@ -544,14 +544,15 @@ vc4_cl_lookup_bos(struct drm_device *dev,
+ 
+ 	handles = drm_malloc_ab(exec->bo_count, sizeof(uint32_t));
+ 	if (!handles) {
++		ret = -ENOMEM;
+ 		DRM_ERROR("Failed to allocate incoming GEM handles\n");
+ 		goto fail;
+ 	}
+ 
+-	ret = copy_from_user(handles,
+-			     (void __user *)(uintptr_t)args->bo_handles,
+-			     exec->bo_count * sizeof(uint32_t));
+-	if (ret) {
++	if (copy_from_user(handles,
++			   (void __user *)(uintptr_t)args->bo_handles,
++			   exec->bo_count * sizeof(uint32_t))) {
++		ret = -EFAULT;
+ 		DRM_ERROR("Failed to copy in GEM handles\n");
+ 		goto fail;
+ 	}
