@@ -1,40 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 01 Oct 2016 07:45:37 +0000
-Subject: [PATCH 3/9] md/dm-table: Delete an unnecessary variable initialisation in dm_table_register_integrit
-Message-Id: <984c0dd4-b392-cf4b-c42a-93bc859cc00b@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:33:03 +0000
+Subject: [PATCH 11/18] [media] RedRat3: Delete the variable "dev" in redrat3_init_rc_dev()
+Message-Id: <8eee44d9-d8c3-c495-b3b0-0b5adfda71d5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
-In-Reply-To: <45984567-4421-5f8d-ddf3-eb2a769a1860@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 07:25:43 +0200
+Date: Thu, 13 Oct 2016 14:40:11 +0200
 
-The local variable "template_disk" is reassigned by a statement
-at the beginning. Thus omit the explicit initialisation.
+Use the data structure member "dev" directly without assigning it
+to an intermediate variable.
+Thus delete the extra variable definition at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/dm-table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/rc/redrat3.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 73d38d0..67cc635 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1165,7 +1165,7 @@ static struct gendisk * dm_table_get_integrity_disk(struct dm_table *t)
- static int dm_table_register_integrity(struct dm_table *t)
- {
- 	struct mapped_device *md = t->md;
--	struct gendisk *template_disk = NULL;
-+	struct gendisk *template_disk;
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index c43f43b..b23a8bb 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -854,7 +854,6 @@ static void redrat3_led_complete(struct urb *urb)
  
- 	template_disk = dm_table_get_integrity_disk(t);
- 	if (!template_disk)
+ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
+ {
+-	struct device *dev = rr3->dev;
+ 	struct rc_dev *rc;
+ 	int ret;
+ 	u16 prod = le16_to_cpu(rr3->udev->descriptor.idProduct);
+@@ -873,7 +872,7 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
+ 	rc->input_name = rr3->name;
+ 	rc->input_phys = rr3->phys;
+ 	usb_to_input_id(rr3->udev, &rc->input_id);
+-	rc->dev.parent = dev;
++	rc->dev.parent = rr3->dev;
+ 	rc->priv = rr3;
+ 	rc->driver_type = RC_DRIVER_IR_RAW;
+ 	rc->allowed_protocols = RC_BIT_ALL;
+@@ -889,7 +888,7 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
+ 
+ 	ret = rc_register_device(rc);
+ 	if (ret < 0) {
+-		dev_err(dev, "remote dev registration failed\n");
++		dev_err(rr3->dev, "remote dev registration failed\n");
+ 		goto out;
+ 	}
+ 
 -- 
-2.10.0
+2.10.1
 
