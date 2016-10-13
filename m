@@ -1,35 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Oct 2016 08:47:13 +0000
-Subject: [patch] ASoC: rt5663: fix a debug statement
-Message-Id: <20161013084712.GB16198@mwanda>
+From: Bard Liao <bardliao@realtek.com>
+Date: Thu, 13 Oct 2016 09:13:47 +0000
+Subject: RE: [patch] ASoC: rt5663: fix a debug statement
+Message-Id: <ABFD875FF5FB574BA706497D987D48D7011C77FF@RTITMBSV03.realtek.com.tw>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161013084712.GB16198@mwanda>
+In-Reply-To: <20161013084712.GB16198@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bard Liao <bardliao@realtek.com>
-Cc: Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We increment "i" before printing the debug statement.  That makes it
-the wrong sleep_time[] information and Smatch complains that the last
-increment could be beyond the end of the array.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
-index 01a18d8..00ff278 100644
---- a/sound/soc/codecs/rt5663.c
-+++ b/sound/soc/codecs/rt5663.c
-@@ -1547,11 +1547,11 @@ static int rt5663_jack_detect(struct snd_soc_codec *codec, int jack_insert)
- 			msleep(sleep_time[i]);
- 			val = snd_soc_read(codec, RT5663_EM_JACK_TYPE_2) &
- 				0x0003;
-+			dev_dbg(codec->dev, "%s: MX-00e7 val=%x sleep %d\n",
-+				__func__, val, sleep_time[i]);
- 			i++;
- 			if (val = 0x1 || val = 0x2 || val = 0x3)
- 				break;
--			dev_dbg(codec->dev, "%s: MX-00e7 val=%x sleep %d\n",
--				__func__, val, sleep_time[i]);
- 		}
- 		dev_dbg(codec->dev, "%s val = %d\n", __func__, val);
- 		switch (val) {
+> -----Original Message-----
+> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
+> Sent: Thursday, October 13, 2016 4:47 PM
+> To: Bard Liao
+> Cc: Oder Chiou; Liam Girdwood; Mark Brown; Jaroslav Kysela; Takashi Iwai;
+> alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org;
+> kernel-janitors@vger.kernel.org
+> Subject: [patch] ASoC: rt5663: fix a debug statement
+> 
+> We increment "i" before printing the debug statement.  That makes it the
+> wrong sleep_time[] information and Smatch complains that the last increment
+> could be beyond the end of the array.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+Acked-by: Bard Liao <bardliao@realtek.com>
