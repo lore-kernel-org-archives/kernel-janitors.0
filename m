@@ -1,39 +1,39 @@
-From: Michal Marek <mmarek@suse.com>
-Date: Tue, 11 Oct 2016 07:52:51 +0000
-Subject: Re: [PATCH] scripts/coccicheck: Update reference for the corresponding documentation
-Message-Id: <20161011075251.GA16035@sepie.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 08:06:06 +0000
+Subject: [patch] tipc: info leak in __tipc_nl_add_udp_addr()
+Message-Id: <20161013080606.GA3389@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea62a1ea-c566-65a0-e2fd-2ee96839cf48@users.sourceforge.net>
- <alpine.DEB.2.10.1610070749420.3074@hadrien>
- <76a6d8fa-03b9-5589-2885-fa62933dd391@users.sourceforge.net>
- <alpine.DEB.2.10.1610070803550.3074@hadrien>
- <8d36952c-1dbb-bb26-ee57-3e1540c042c0@users.sourceforge.net>
- <alpine.DEB.2.10.1610070824490.3074@hadrien>
- <8ecdc02a-1a22-951f-f3ac-2389dfbae02a@users.sourceforge.net>
- <alpine.DEB.2.10.1610072030300.3289@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1610072030300.3289@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Jon Maloy <jon.maloy@ericsson.com>, Richard Alpe <richard.alpe@ericsson.com>
+Cc: Ying Xue <ying.xue@windriver.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Oct 07, 2016 at 08:30:48PM +0200, Julia Lawall wrote:
-> 
-> 
-> On Fri, 7 Oct 2016, SF Markus Elfring wrote:
-> 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Fri, 7 Oct 2016 16:06:15 +0200
-> >
-> > Use the current name (in a comment at the beginning of this script) for
-> > the file which was converted to the documentation format "reStructuredText"
-> > in August 2016.
-> >
-> > Fixes: 4b9033a33494ec9154d63e706e9e47f7eb3fd59e ("docs: sphinxify coccinelle.txt and add it to dev-tools")
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> 
-> Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+We should clear out the padding and unused struct members so that we
+don't expose stack information to userspace.
 
-Applied to kbuild.git#misc, thanks.
+Fixes: fdb3accc2c15 ('tipc: add the ability to get UDP options via netlink')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This goes into the net tree.
 
-Michal
+diff --git a/net/tipc/udp_media.c b/net/tipc/udp_media.c
+index d80cd3f..78cab9c 100644
+--- a/net/tipc/udp_media.c
++++ b/net/tipc/udp_media.c
+@@ -407,6 +407,7 @@ static int __tipc_nl_add_udp_addr(struct sk_buff *skb,
+ 	if (ntohs(addr->proto) = ETH_P_IP) {
+ 		struct sockaddr_in ip4;
+ 
++		memset(&ip4, 0, sizeof(ip4));
+ 		ip4.sin_family = AF_INET;
+ 		ip4.sin_port = addr->port;
+ 		ip4.sin_addr.s_addr = addr->ipv4.s_addr;
+@@ -417,6 +418,7 @@ static int __tipc_nl_add_udp_addr(struct sk_buff *skb,
+ 	} else if (ntohs(addr->proto) = ETH_P_IPV6) {
+ 		struct sockaddr_in6 ip6;
+ 
++		memset(&ip6, 0, sizeof(ip6));
+ 		ip6.sin6_family = AF_INET6;
+ 		ip6.sin6_port  = addr->port;
+ 		memcpy(&ip6.sin6_addr, &addr->ipv6, sizeof(struct in6_addr));
