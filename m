@@ -1,26 +1,62 @@
-From: Thor Thayer <tthayer@opensource.altera.com>
-Date: Tue, 11 Oct 2016 14:12:59 +0000
-Subject: Re: MAINTAINERS entry
-Message-Id: <217ec497-a18d-52d4-0960-9c765bd7e17c@opensource.altera.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:20:34 +0000
+Subject: [PATCH 02/18] [media] RedRat3: Move two assignments in redrat3_transmit_ir()
+Message-Id: <c5297c05-df30-8296-a767-99791c64b5c6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161010135111.GA9230@mwanda>
-In-Reply-To: <20161010135111.GA9230@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 10:25:57 +0200
 
+Move the assignment for the data structure member "transmitting"
+and the local variable "curlencheck" behind the source code
+for memory allocations by this function.
 
-On 10/11/2016 12:51 AM, Dan Carpenter wrote:
-> The drivers/gpio/gpio-altera-a10sr.c file does not exist.
->
-> regards,
-> dan carpenter
->
-Yes, I'm working on fixing this now. It was acked but I didn't follow up 
-and I missed that it didn't get pulled in.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/rc/redrat3.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks,
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index d89958b..f5a6850 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -727,7 +727,7 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
+ 	int ret, ret_len;
+ 	int lencheck, cur_sample_len, pipe;
+ 	int *sample_lens = NULL;
+-	u8 curlencheck = 0;
++	u8 curlencheck;
+ 	unsigned i, sendbuf_len;
+ 
+ 	if (rr3->transmitting) {
+@@ -738,9 +738,6 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
+ 	if (count > RR3_MAX_SIG_SIZE - RR3_TX_TRAILER_LEN)
+ 		return -EINVAL;
+ 
+-	/* rr3 will disable rc detector on transmit */
+-	rr3->transmitting = true;
+-
+ 	sample_lens = kcalloc(RR3_DRIVER_MAXLENS,
+ 			      sizeof(*sample_lens),
+ 			      GFP_KERNEL);
+@@ -755,6 +752,9 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
+ 		goto out;
+ 	}
+ 
++	/* rr3 will disable rc detector on transmit */
++	rr3->transmitting = true;
++	curlencheck = 0;
+ 	for (i = 0; i < count; i++) {
+ 		cur_sample_len = redrat3_us_to_len(txbuf[i]);
+ 		if (cur_sample_len > 0xffff) {
+-- 
+2.10.1
 
-Thor
