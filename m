@@ -1,53 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:34:03 +0000
-Subject: [PATCH 34/54] md/raid5: Delete indentation for two jump labels
-Message-Id: <5d3faaa0-0f0b-c061-087e-9ba477f3d11d@users.sourceforge.net>
+Date: Thu, 13 Oct 2016 16:40:32 +0000
+Subject: [PATCH 13/18] [media] RedRat3: Return directly after a failed rc_allocate_device() in redrat3_init_r
+Message-Id: <85408b7a-bd13-ed8f-bbc1-1c07a2285f67@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Oct 2016 13:45:18 +0200
+Date: Thu, 13 Oct 2016 14:54:46 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: labels should not be indented
-
-Thus fix the affected source code places.
+Return directly after a call of the function "rc_allocate_device" failed
+at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/raid5.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/rc/redrat3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index b0a14a6..4debd86 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -5089,7 +5089,7 @@ static void make_discard_request(struct mddev *mddev, struct bio *bi)
- 	     logical_sector += STRIPE_SECTORS) {
- 		DEFINE_WAIT(w);
- 		int d;
--	again:
-+again:
- 		sh = raid5_get_active_stripe(conf, logical_sector, 0, 0, 0);
- 		prepare_to_wait(&conf->wait_for_overlap, &w,
- 				TASK_UNINTERRUPTIBLE);
-@@ -5204,7 +5204,7 @@ static void raid5_make_request(struct mddev *mddev, struct bio * bi)
- 		int seq;
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index 002030f..74d93dd 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -860,7 +860,7 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
  
- 		do_prepare = false;
--	retry:
-+retry:
- 		seq = read_seqcount_begin(&conf->gen_lock);
- 		previous = 0;
- 		if (do_prepare)
+ 	rc = rc_allocate_device();
+ 	if (!rc)
+-		goto out;
++		return NULL;
+ 
+ 	prod = le16_to_cpu(rr3->udev->descriptor.idProduct);
+ 	snprintf(rr3->name, sizeof(rr3->name), "RedRat3%s "
 -- 
 2.10.1
 
