@@ -1,60 +1,36 @@
-From: Dave Jiang <dave.jiang@intel.com>
-Date: Fri, 14 Oct 2016 17:07:13 +0000
-Subject: Re: [patch] ntb_perf: potential info leak in debugfs
-Message-Id: <2df67889-a7d5-2313-2828-3457115fbcfa@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 12:55:08 +0000
+Subject: [patch v2] staging: android: ion: Fix error handling in ion_query_heaps()
+Message-Id: <20161013125508.GA12868@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161014073418.GD15168@mwanda>
-In-Reply-To: <20161014073418.GD15168@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+If the copy_to_user() fails we should unlock and return directly without
+updating "cnt".  Also the return value should be -EFAULT instead of the
+number of bytes remaining.
 
+Fixes: 02b23803c6af ("staging: android: ion: Add ioctl to query available heaps")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: a more complete fix
 
-On 10/14/2016 12:34 AM, Dan Carpenter wrote:
-> This is a static checker warning, not something I'm desperately
-> concerned about.  But snprintf() returns the number of bytes that
-> would have been copied if there were space.  We really care about the
-> number of bytes that actually were copied so we should use scnprintf()
-> instead.
-> 
-> It probably won't overrun, and in that case we may as well just use
-> sprintf() but these sorts of things make static checkers and code
-> reviewers happier.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Dave Jiang <dave.jiang@intel.com>
-
-> 
-> diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
-> index 6a50f20..2d9ca58 100644
-> --- a/drivers/ntb/test/ntb_perf.c
-> +++ b/drivers/ntb/test/ntb_perf.c
-> @@ -589,7 +589,7 @@ static ssize_t debugfs_run_read(struct file *filp, char __user *ubuf,
->  		return -ENOMEM;
->  
->  	if (mutex_is_locked(&perf->run_mutex)) {
-> -		out_off = snprintf(buf, 64, "running\n");
-> +		out_off = scnprintf(buf, 64, "running\n");
->  		goto read_from_buf;
->  	}
->  
-> @@ -600,14 +600,14 @@ static ssize_t debugfs_run_read(struct file *filp, char __user *ubuf,
->  			break;
->  
->  		if (pctx->status) {
-> -			out_off += snprintf(buf + out_off, 1024 - out_off,
-> +			out_off += scnprintf(buf + out_off, 1024 - out_off,
->  					    "%d: error %d\n", i,
->  					    pctx->status);
->  			continue;
->  		}
->  
->  		rate = div64_u64(pctx->copied, pctx->diff_us);
-> -		out_off += snprintf(buf + out_off, 1024 - out_off,
-> +		out_off += scnprintf(buf + out_off, 1024 - out_off,
->  			"%d: copied %llu bytes in %llu usecs, %llu MBytes/s\n",
->  			i, pctx->copied, pctx->diff_us, rate);
->  	}
-> 
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index 396ded5..209a8f7 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -1187,8 +1187,10 @@ int ion_query_heaps(struct ion_client *client, struct ion_heap_query *query)
+ 		hdata.type = heap->type;
+ 		hdata.heap_id = heap->id;
+ 
+-		ret = copy_to_user(&buffer[cnt],
+-				   &hdata, sizeof(hdata));
++		if (copy_to_user(&buffer[cnt], &hdata, sizeof(hdata))) {
++			ret = -EFAULT;
++			goto out;
++		}
+ 
+ 		cnt++;
+ 		if (cnt >= max_cnt)
