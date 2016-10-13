@@ -1,32 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Oct 2016 08:51:37 +0000
-Subject: [patch] efi: fix an error code
-Message-Id: <20161013085137.GD16198@mwanda>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Thu, 13 Oct 2016 10:59:11 +0000
+Subject: Re: [patch] efi: fix an error code
+Message-Id: <CAKv+Gu9Bi36rAn1wFjitiQ4yrxDOvH3JmapBX63VFMUvmXEe5g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161013085137.GD16198@mwanda>
+In-Reply-To: <20161013085137.GD16198@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Fleming <matt-mF/unelCI9GS6iBeEJttW/XRex20P6io@public.gmane.org>, Octavian Purdila <octavian.purdila-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Octavian Purdila <octavian.purdila@intel.com>, "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We should return -ENOMEM here, instead of success.
+On 13 October 2016 at 09:51, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> We should return -ENOMEM here, instead of success.
+>
+> Fixes: 475fb4e8b2f4 ('efi / ACPI: load SSTDs from EFI variables')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index 1ac199c..a4944e2 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -259,8 +259,10 @@ static __init int efivar_ssdt_load(void)
+>                 }
+>
+>                 data = kmalloc(size, GFP_KERNEL);
+> -               if (!data)
+> +               if (!data) {
+> +                       ret = -ENOMEM;
+>                         goto free_entry;
+> +               }
+>
+>                 ret = efivar_entry_get(entry, NULL, &size, data);
+>                 if (ret) {
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Fixes: 475fb4e8b2f4 ('efi / ACPI: load SSTDs from EFI variables')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 1ac199c..a4944e2 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -259,8 +259,10 @@ static __init int efivar_ssdt_load(void)
- 		}
- 
- 		data = kmalloc(size, GFP_KERNEL);
--		if (!data)
-+		if (!data) {
-+			ret = -ENOMEM;
- 			goto free_entry;
-+		}
- 
- 		ret = efivar_entry_get(entry, NULL, &size, data);
- 		if (ret) {
+Applied, thanks.
