@@ -1,7 +1,7 @@
 From: Netanel Belgazal <netanel@annapurnalabs.com>
-Date: Thu, 13 Oct 2016 16:18:09 +0000
+Date: Thu, 13 Oct 2016 16:25:11 +0000
 Subject: Re: [bug report] net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)
-Message-Id: <aebd1137-73be-9101-a598-ccc2585fc132@annapurnalabs.com>
+Message-Id: <2ba18d40-1488-781c-d78e-f4036c2be23e@annapurnalabs.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20160930095520.GA10045@mwanda>
 In-Reply-To: <20160930095520.GA10045@mwanda>
@@ -10,23 +10,14 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Dan,
 
 
-Thank you for reporting this bug.
+Thank you for your report.
 
-I will submit a patch that switch all the memsets in the code to be
+The values of enum ena_admin_flow_hash_fileds should be power of two values and not consecutive integers.
 
-memset(&cmd, 0, sizeof(cmd));
-
-
-Note:
-
-ena_admin_aq_destroy_cq_cmd and ena_admin_aq_destroy_sq_cmd
-
-have the same size, so this bug does not suppose to create any memory corruption on
-
-platforms with the existing driver.
+I'll send a patch that fix the enum.
 
 
 Regards,
@@ -34,41 +25,43 @@ Regards,
 Netanel
 
 
-On 10/12/2016 10:06 AM, Dan Carpenter wrote:
+On 09/30/2016 12:55 PM, Dan Carpenter wrote:
 > Hello Netanel Belgazal,
 >
 > The patch 1738cd3ed342: "net: ena: Add a driver for Amazon Elastic
 > Network Adapters (ENA)" from Aug 10, 2016, leads to the following
 > static checker warning:
 >
-> 	drivers/net/ethernet/amazon/ena/ena_com.c:1259 ena_com_destroy_io_cq()
-> 	warn: struct type mismatch 'ena_admin_aq_destroy_cq_cmd vs ena_admin_aq_destroy_sq_cmd'
+> 	drivers/net/ethernet/amazon/ena/ena_ethtool.c:459 ena_flow_hash_to_flow_type()
+> 	warn: bitwise AND condition is false here
 >
-> drivers/net/ethernet/amazon/ena/ena_com.c
->   1251  int ena_com_destroy_io_cq(struct ena_com_dev *ena_dev,
->   1252                            struct ena_com_io_cq *io_cq)
->   1253  {
->   1254          struct ena_com_admin_queue *admin_queue = &ena_dev->admin_queue;
->   1255          struct ena_admin_aq_destroy_cq_cmd destroy_cmd;
->                                             ^
->   1256          struct ena_admin_acq_destroy_cq_resp_desc destroy_resp;
->   1257          int ret;
->   1258  
->   1259          memset(&destroy_cmd, 0x0, sizeof(struct ena_admin_aq_destroy_sq_cmd));
->                                                                              ^
-> These struct names are a million characters long but there is one
-> character in the middle which is different.  See if you can spot which
-> one it is.
+> drivers/net/ethernet/amazon/ena/ena_ethtool.c
+>    454  
+>    455  static u32 ena_flow_hash_to_flow_type(u16 hash_fields)
+>    456  {
+>    457          u32 data = 0;
+>    458  
+>    459          if (hash_fields & ENA_ADMIN_RSS_L2_DA)
+>                                   ^^^^^^^^^^^^^^^^^^^
+> This is zero.
 >
-> Presumably this is a cut and paste error because I really doubt that
-> you are really basically transcribing the entire works of William
-> Shakespear every time you declare a variable.  Why not just say:
+>    460                  data |= RXH_L2DA;
+>    461  
+>    462          if (hash_fields & ENA_ADMIN_RSS_L3_DA)
+>    463                  data |= RXH_IP_DST;
+>    464  
+>    465          if (hash_fields & ENA_ADMIN_RSS_L3_SA)
+>    466                  data |= RXH_IP_SRC;
+>    467  
+>    468          if (hash_fields & ENA_ADMIN_RSS_L4_DP)
+>    469                  data |= RXH_L4_B_2_3;
+>    470  
+>    471          if (hash_fields & ENA_ADMIN_RSS_L4_SP)
+>    472                  data |= RXH_L4_B_0_1;
+>    473  
+>    474          return data;
+>    475  }
 >
-> 		memset(&destroy, 0, sizeof(destroy));
->
-> That's better style and more future proof.
->
->   1260  
 >
 > regards,
 > dan carpenter
