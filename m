@@ -1,36 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Oct 2016 14:14:12 +0000
-Subject: Re: [media] winbond-cir: Move assignments for three variables in wbcir_shutdown()
-Message-Id: <213df5d7-1c5a-496d-9928-bdafefce8781@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 08:45:28 +0000
+Subject: [patch -next] net: rtnl: info leak in rtnl_fill_vfinfo()
+Message-Id: <20161013084528.GA16198@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3c96d0bf-62fa-6b02-2a2d-2a097709271a@users.sourceforge.net>
- <285954ec-280f-8a5a-5189-eb2471b4339c@users.sourceforge.net>
- <566ABCD9.1060404@users.sourceforge.net>
- <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
- <327f6034db9ce0c0a72947e47daf344a@hardeman.nu>
- <10715e71c46bda76f6c8654675062f61@hardeman.nu>
-In-Reply-To: <10715e71c46bda76f6c8654675062f61@hardeman.nu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: "David S. Miller" <davem@davemloft.net>, Moshe Shemesh <moshe@mellanox.com>
+Cc: Roopa Prabhu <roopa@cumulusnetworks.com>, Nicolas Dichtel <nicolas.dichtel@6wind.com>, Nikolay Aleksandrov <nikolay@cumulusnetworks.com>, Eric Dumazet <edumazet@google.com>, Hannes Frederic Sowa <hannes@stressinduktion.org>, Nogah Frankel <nogahf@mellanox.com>, Brenden Blanco <bblanco@plumgrid.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->>>> Move the setting for the local variables "mask", "match" and "rc6_csl"
->>>> behind the source code for a condition check by this function
->>>> at the beginning.
->>>
->>> Again, I can't see what the point is?
->>
->> * How do you think about to set these variables only after the initial
->> check succeded?
-> 
-> I prefer setting variables early so that no thinking about
-> whether they're initialized or not is necessary later.
+The "vf_vlan_info" struct ends with a 2 byte struct hole so we have to
+memset it to ensure that no stack information is revealed to user space.
 
-* How do you think about to reduce the scope for these variables then?
+Fixes: 79aab093a0b5 ('net: Update API for VF vlan protocol 802.1ad support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-* Would you dare to move the corresponding source code into a separate function?
-
-Regards,
-Markus
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index b06d2f4..fb7348f 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -1144,6 +1144,8 @@ static noinline_for_stack int rtnl_fill_vfinfo(struct sk_buff *skb,
+ 	if (dev->netdev_ops->ndo_get_vf_config(dev, vfs_num, &ivi))
+ 		return 0;
+ 
++	memset(&vf_vlan_info, 0, sizeof(vf_vlan_info));
++
+ 	vf_mac.vf  		vf_vlan.vf  		vf_vlan_info.vf 
