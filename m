@@ -1,57 +1,28 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 28 Sep 2016 15:44:14 +0000
-Subject: [PATCH 07/10] md/dm-crypt: Rename a jump label in crypt_iv_tcw_whitening()
-Message-Id: <0d5a2aa2-b713-4c2a-cfe4-9c72fe8ec44a@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Oct 2016 19:18:21 +0000
+Subject: [patch] greybus: fix a leak on error in gb_module_create()
+Message-Id: <20161014191639.GB21917@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
-In-Reply-To: <7c232017-e291-fd2d-5516-26e5150d90df@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-raid@vger.kernel.org, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 28 Sep 2016 15:32:15 +0200
+We should release ->interfaces[0] as well.
 
-Adjust jump labels according to the current Linux coding style convention.
+Fixes: b15d97d77017 ("greybus: core: add module abstraction")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/dm-crypt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index 3bc54c1..c457b5e 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -698,13 +698,13 @@ static int crypt_iv_tcw_whitening(struct crypt_config *cc,
- 	for (i = 0; i < 4; i++) {
- 		r = crypto_shash_init(desc);
- 		if (r)
--			goto out;
-+			goto zero_memory;
- 		r = crypto_shash_update(desc, &buf[i * 4], 4);
- 		if (r)
--			goto out;
-+			goto zero_memory;
- 		r = crypto_shash_final(desc, &buf[i * 4]);
- 		if (r)
--			goto out;
-+			goto zero_memory;
- 	}
- 	crypto_xor(&buf[0], &buf[12], 4);
- 	crypto_xor(&buf[4], &buf[8], 4);
-@@ -712,7 +712,7 @@ static int crypt_iv_tcw_whitening(struct crypt_config *cc,
- 	/* apply whitening (8 bytes) to whole sector */
- 	for (i = 0; i < ((1 << SECTOR_SHIFT) / 8); i++)
- 		crypto_xor(data + i * 8, buf, 8);
--out:
-+zero_memory:
- 	memzero_explicit(buf, sizeof(buf));
- 	return r;
- }
--- 
-2.10.0
-
+diff --git a/drivers/staging/greybus/module.c b/drivers/staging/greybus/module.c
+index 69f67dd..660b467 100644
+--- a/drivers/staging/greybus/module.c
++++ b/drivers/staging/greybus/module.c
+@@ -127,7 +127,7 @@ struct gb_module *gb_module_create(struct gb_host_device *hd, u8 module_id,
+ 	return module;
+ 
+ err_put_interfaces:
+-	for (--i; i > 0; --i)
++	for (--i; i >= 0; --i)
+ 		gb_interface_put(module->interfaces[i]);
+ 
+ 	put_device(&module->dev);
