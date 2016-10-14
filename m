@@ -1,27 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 31 Oct 2016 19:32:39 +0000
-Subject: Re: [PATCH 15/15] solos-pci: use permission-specific DEVICE_ATTR variants
-Message-Id: <20161031.153239.689239951085959593.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Oct 2016 07:28:37 +0000
+Subject: [patch 1/2] IB/hns: Fix a couple pointer math bugs
+Message-Id: <20161014072837.GA15238@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
-        <1477769829-22230-16-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1477769829-22230-16-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: 3chas3@gmail.com, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lijun Ou <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Cc: "Wei Hu(Xavier)" <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Oct 2016 21:37:09 +0200
+"wqe" is a void pointer so adding sizeof() works.  The original code
+adds sizeof() multiplied by sizeof() so it doesn't work at all.
 
-> Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
-> source code, improves readbility, and reduces the chance of
-> inconsistencies.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: 9a4435375cd1 ('IB/hns: Add driver files for hns RoCE driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to net-next.
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+index 399f5de..58b150e 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+@@ -205,8 +205,7 @@ int hns_roce_v1_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
+ 				      (wr->send_flags & IB_SEND_FENCE ?
+ 				      (cpu_to_le32(HNS_ROCE_WQE_FENCE)) : 0);
+ 
+-			wqe = (struct hns_roce_wqe_ctrl_seg *)wqe +
+-			       sizeof(struct hns_roce_wqe_ctrl_seg);
++			wqe = wqe + sizeof(struct hns_roce_wqe_ctrl_seg);
+ 
+ 			switch (wr->opcode) {
+ 			case IB_WR_RDMA_READ:
+@@ -235,8 +234,7 @@ int hns_roce_v1_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
+ 				break;
+ 			}
+ 			ctrl->flag |= cpu_to_le32(ps_opcode);
+-			wqe = (struct hns_roce_wqe_raddr_seg *)wqe +
+-			       sizeof(struct hns_roce_wqe_raddr_seg);
++			wqe = wqe + sizeof(struct hns_roce_wqe_raddr_seg);
+ 
+ 			dseg = wqe;
+ 			if (wr->send_flags & IB_SEND_INLINE && wr->num_sge) {
