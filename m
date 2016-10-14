@@ -1,31 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Oct 2016 07:26:21 +0000
-Subject: [patch] irqchip/gicv3: fix a loop timeout
-Message-Id: <20161014072534.GA15168@mwanda>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Date: Fri, 14 Oct 2016 09:43:05 +0000
+Subject: Re: [patch] irqchip/gicv3: fix a loop timeout
+Message-Id: <19e3e31c-aa5d-1386-4e76-cb79befe5361@arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161014072534.GA15168@mwanda>
+In-Reply-To: <20161014072534.GA15168@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Sudeep Holla <sudeep.holla@arm.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Sudeep Holla <sudeep.holla@arm.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We expect the loop to exit with "count" set to zero so let's switch it
-from a post-op to a pre-op count down.  Otherwise we don't see the error
-message when this times out.
 
-Fixes: a2c225101234 ("irqchip: gic-v3: Refactor gic_enable_redist to support both enabling and disabling")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 9b81bd8..19d642e 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -153,7 +153,7 @@ static void gic_enable_redist(bool enable)
- 			return;	/* No PM support in this redistributor */
- 	}
- 
--	while (count--) {
-+	while (--count) {
- 		val = readl_relaxed(rbase + GICR_WAKER);
- 		if (enable ^ (bool)(val & GICR_WAKER_ChildrenAsleep))
- 			break;
+On 14/10/16 08:26, Dan Carpenter wrote:
+> We expect the loop to exit with "count" set to zero so let's switch it
+> from a post-op to a pre-op count down.  Otherwise we don't see the error
+> message when this times out.
+>
+
+Nice catch.
+
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+
+-- 
+Regards,
+Sudeep
