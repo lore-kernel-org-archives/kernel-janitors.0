@@ -1,34 +1,30 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Tue, 25 Oct 2016 07:28:29 +0000
-Subject: Re: [patch] zfcp: spin_lock_irqsave() is not nestable
-Message-Id: <e926cd4a-ba76-36f0-9d1c-d039d9ca5d11@de.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Oct 2016 07:33:28 +0000
+Subject: [patch] power: supply: lp8788: remove an unneeded NULL check
+Message-Id: <20161014073328.GC15168@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013085358.GH16198@mwanda>
- <409dfaed-85eb-01ba-539d-df95f008a6bf@linux.vnet.ibm.com>
- <yq11szilm1d.fsf@sermon.lab.mkp.net>
- <63c024b9-8662-e521-62e0-e0ebe980b217@de.ibm.com>
-In-Reply-To: <63c024b9-8662-e521-62e0-e0ebe980b217@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, Steffen Maier <maier@linux.vnet.ibm.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-scsi@vger.kernel.org, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?Q?Hendrik_Br=c3=bcckner?= <brueckner@linux.vnet.ibm.com>, Gerald Schaefer <gerald.schaefer@de.ibm.com>
+To: Milo Kim <milo.kim@ti.com>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/24/2016 10:18 AM, Christian Borntraeger wrote:
-> On 10/14/2016 10:21 PM, Martin K. Petersen wrote:
->>>>>>> "Steffen" = Steffen Maier <maier@linux.vnet.ibm.com> writes:
->>
->> Steffen> could you please queue this as fix for one of my patches that
->> Steffen> went into the 4.9 merge window, so for 4.9-rc I guess?
->>
->> Applied to 4.9/scsi-fixes.
->>
-> 
-> FWIW, I do see rcu stall errors with 4.9-rc1 from time to time, so I assume
-> that this fix is not only theoretical but fixes a real life issue.
+We checked that "pdata->chg_params" is non-NULL earlier in this function
+so when we add "i" to it, it's still non-NULL.
 
-Yes, with that patch the rcu stalls are gone, I assume its already on a branch
-that does not rebase, otherwise feel free to add
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-
+diff --git a/drivers/power/supply/lp8788-charger.c b/drivers/power/supply/lp8788-charger.c
+index 7321b72..509e2b3 100644
+--- a/drivers/power/supply/lp8788-charger.c
++++ b/drivers/power/supply/lp8788-charger.c
+@@ -384,9 +384,6 @@ static int lp8788_update_charger_params(struct platform_device *pdev,
+ 	for (i = 0; i < pdata->num_chg_params; i++) {
+ 		param = pdata->chg_params + i;
+ 
+-		if (!param)
+-			continue;
+-
+ 		if (lp8788_is_valid_charger_register(param->addr)) {
+ 			ret = lp8788_write_byte(lp, param->addr, param->val);
+ 			if (ret)
