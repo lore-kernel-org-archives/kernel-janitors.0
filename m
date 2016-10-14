@@ -1,23 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 13 Oct 2016 16:12:29 +0000
-Subject: Re: [patch -next] net: rtnl: info leak in rtnl_fill_vfinfo()
-Message-Id: <20161013.121229.1557386309718710932.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Oct 2016 11:43:09 +0000
+Subject: [PATCH 3/5] [media] winbond-cir: Move assignments for three variables in wbcir_shutdown()
+Message-Id: <285954ec-280f-8a5a-5189-eb2471b4339c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013084528.GA16198@mwanda>
-In-Reply-To: <20161013084528.GA16198@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
+In-Reply-To: <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: moshe@mellanox.com, roopa@cumulusnetworks.com, nicolas.dichtel@6wind.com, nikolay@cumulusnetworks.com, edumazet@google.com, hannes@stressinduktion.org, nogahf@mellanox.com, bblanco@plumgrid.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Oct 2016 11:45:28 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Oct 2016 10:40:12 +0200
 
-> The "vf_vlan_info" struct ends with a 2 byte struct hole so we have to
-> memset it to ensure that no stack information is revealed to user space.
-> 
-> Fixes: 79aab093a0b5 ('net: Update API for VF vlan protocol 802.1ad support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Move the setting for the local variables "mask", "match" and "rc6_csl"
+behind the source code for a condition check by this function
+at the beginning.
 
-Applied, thanks Dan.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/rc/winbond-cir.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/rc/winbond-cir.c b/drivers/media/rc/winbond-cir.c
+index fd997f0..9d05e17 100644
+--- a/drivers/media/rc/winbond-cir.c
++++ b/drivers/media/rc/winbond-cir.c
+@@ -702,17 +702,17 @@ wbcir_shutdown(struct pnp_dev *device)
+ 	bool do_wake = true;
+ 	u8 match[11];
+ 	u8 mask[11];
+-	u8 rc6_csl = 0;
++	u8 rc6_csl;
+ 	int i;
+ 
+-	memset(match, 0, sizeof(match));
+-	memset(mask, 0, sizeof(mask));
+-
+ 	if (wake_sc = INVALID_SCANCODE || !device_may_wakeup(dev)) {
+ 		do_wake = false;
+ 		goto finish;
+ 	}
+ 
++	rc6_csl = 0;
++	memset(match, 0, sizeof(match));
++	memset(mask, 0, sizeof(mask));
+ 	switch (protocol) {
+ 	case IR_PROTOCOL_RC5:
+ 		if (wake_sc > 0xFFF) {
+-- 
+2.10.1
+
