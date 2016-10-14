@@ -1,35 +1,69 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 31 Oct 2016 06:35:50 +0000
-Subject: [PATCH] drm/nouveau/tegra: Fix error handling
-Message-Id: <20161031063550.2567-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Oct 2016 14:15:50 +0000
+Subject: [bug report] cxgb4: Add support for dynamic allocation of resources for ULD
+Message-Id: <20161014141550.GA10628@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+To: kernel-janitors@vger.kernel.org
 
-'iommu_domain_alloc()' returns NULL in case of error, not an error pointer.
-So test it accordingly.
+Hello Hariprasad Shenai,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 94cdb8bb993a: "cxgb4: Add support for dynamic allocation of
+resources for ULD" from Aug 17, 2016, leads to the following static
+checker warning:
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-index 9b638bd905ff..f2bc0b7d9b93 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-@@ -102,7 +102,7 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
- 
- 	if (iommu_present(&platform_bus_type)) {
- 		tdev->iommu.domain = iommu_domain_alloc(&platform_bus_type);
--		if (IS_ERR(tdev->iommu.domain))
-+		if (!tdev->iommu.domain)
- 			goto error;
- 
- 		/*
--- 
-2.9.3
+	drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c:176 alloc_uld_rxqs()
+	warn: loop skips 'i' = zero
 
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
+   153          for (i = 0; i < nq; i++, q++) {
+   154                  if (msi_idx >= 0) {
+   155                          bmap_idx = get_msix_idx_from_bmap(adap);
+   156                          msi_idx = adap->msix_info_ulds[bmap_idx].idx;
+   157                  }
+   158                  err = t4_sge_alloc_rxq(adap, &q->rspq, false,
+   159                                         adap->port[i / per_chan],
+   160                                         msi_idx,
+   161                                         q->fl.size ? &q->fl : NULL,
+   162                                         uldrx_handler,
+   163                                         lro ? uldrx_flush_handler : NULL,
+   164                                         0);
+   165                  if (err)
+   166                          goto freeout;
+   167                  if (msi_idx >= 0)
+   168                          rxq_info->msix_tbl[i + offset] = bmap_idx;
+   169                  memset(&q->stats, 0, sizeof(q->stats));
+   170                  if (ids)
+   171                          ids[i] = q->rspq.abs_id;
+   172          }
+   173          return 0;
+   174  freeout:
+   175          q = rxq_info->uldrxq + offset;
+   176          for ( ; i; i--, q++) {
+   177                  if (q->rspq.desc)
+   178                          free_rspq_fl(adap, &q->rspq,
+   179                                       q->fl.size ? &q->fl : NULL);
+   180          }
+   181  
+   182          /* We need to free rxq also in case of ciq allocation failure */
+   183          if (offset) {
+   184                  q = rxq_info->uldrxq + offset;
+   185                  for ( ; i; i--, q++) {
+
+
+We exit the previous loop with i = 0 so we will never enter this loop.
+This is the same loop as earlier as well...  I totally don't understand
+what we are trying to do here.
+
+   186                          if (q->rspq.desc)
+   187                                  free_rspq_fl(adap, &q->rspq,
+   188                                               q->fl.size ? &q->fl : NULL);
+   189                  }
+   190          }
+   191          return err;
+   192  }
+
+regards,
+dan carpenter
