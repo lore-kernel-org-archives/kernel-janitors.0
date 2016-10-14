@@ -1,68 +1,34 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Oct 2016 08:39:11 +0000
-Subject: [PATCH 08/10] scripts/basic/fixdep: Complete error handling in print_config()
-Message-Id: <11b02385-965b-c9ca-c564-0df7757f8145@users.sourceforge.net>
+Date: Fri, 14 Oct 2016 05:45:17 +0000
+Subject: Re: [media] RedRat3: Use kcalloc() in two functions?
+Message-Id: <e98cbba5-8254-af1e-5405-428f61c8433e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
-In-Reply-To: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
+ <21c57b39-25ac-2df1-030d-11c243a11ebc@users.sourceforge.net>
+ <1476376177.2164.10.camel@perches.com>
+In-Reply-To: <1476376177.2164.10.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Joe Perches <joe@perches.com>, linux-media@vger.kernel.org
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 27 Oct 2016 22:45:03 +0200
+> Markus, please stop being _so_ mechanical and use your
+> brain a little too.  By definition, sizeof(char) =3D 1.
+>=20
+> This _really_ should be kzalloc(RR3_FW_VERSION_LEN + 1,...)
 
-Return values were not checked from calls of the function "printf"
-and "putchar".
+Do you expect that function call examples like the following will be equiva=
+lent?
 
-This issue was detected also by using the Coccinelle software.
+	zbuffer =3D kzalloc(123, =85);
+	cbuffer =3D kcalloc(123, 1, =85);
 
-* Add a bit of exception handling there.
-
-* Optimise this function implementation a bit by replacing two output calls
-  with the functions "fputs" and "puts".
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- scripts/basic/fixdep.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
-index 2c4ec91..f5ff6eea 100644
---- a/scripts/basic/fixdep.c
-+++ b/scripts/basic/fixdep.c
-@@ -142,16 +142,26 @@ static void print_config(const char *m, int slen)
- {
- 	int c, i;
- 
--	printf("    $(wildcard include/config/");
-+	if (fputs("    $(wildcard include/config/", stdout) < 0)
-+		goto put_failure;
- 	for (i = 0; i < slen; i++) {
- 		c = m[i];
- 		if (c = '_')
- 			c = '/';
- 		else
- 			c = tolower(c);
--		putchar(c);
-+		if (putchar(c) = EOF)
-+			goto put_failure;
-+	}
-+	if (puts(".h) \\") < 0) {
-+put_failure:
-+		{
-+			int code = errno;
-+
-+			perror("fixdep: print_config");
-+			exit(code);
-+		}
- 	}
--	printf(".h) \\\n");
- }
- 
- static void do_extra_deps(void)
--- 
-2.10.1
-
+Regards,
+Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
