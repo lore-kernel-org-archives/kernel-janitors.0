@@ -1,50 +1,41 @@
-From: James Hogan <james.hogan@imgtec.com>
-Date: Sat, 01 Oct 2016 20:33:51 +0000
-Subject: Re: [PATCH 14/15] irqchip/metag-ext: improve function-level documentation
-Message-Id: <CAAG0J9-+nvBi0ZmEPMgGF-Bqj4Drq4j8rFyGK7Fq1Ji7LF5z2A@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Oct 2016 17:14:27 +0000
+Subject: [patch] [media] Input: synaptics-rmi4 - unlock on error
+Message-Id: <20161014171427.GA21917@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr> <1475351192-27079-15-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1475351192-27079-15-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, metag <linux-metag@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick@shmanahar.org>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+We should unlock before returning on this error path.
 
-On 1 October 2016 at 20:46, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> Drop the variable irq which ceased to be a parameter in bd0b9ac4.
+Fixes: 3a762dbd5347 ('[media] Input: synaptics-rmi4 - add support for F54 diagnostics')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I think 12 nibbles of the hash is recommended now due to collisions,
-as is quoting the subject line, e.g. commit bd0b9ac405e1 ("genirq:
-Remove irq argument from irq flow handlers").
-
->
-> Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Acked-by: James Hogan <james.hogan@imgtec.com>
-
-Thanks
-James
-
->
-> ---
->  drivers/irqchip/irq-metag-ext.c |    1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/irqchip/irq-metag-ext.c b/drivers/irqchip/irq-metag-ext.c
-> index 8c38b3d..0cdd923 100644
-> --- a/drivers/irqchip/irq-metag-ext.c
-> +++ b/drivers/irqchip/irq-metag-ext.c
-> @@ -436,7 +436,6 @@ static int meta_intc_irq_set_type(struct irq_data *data, unsigned int flow_type)
->
->  /**
->   * meta_intc_irq_demux() - external irq de-multiplexer
-> - * @irq:       the virtual interrupt number
->   * @desc:      the interrupt description structure for this irq
->   *
->   * The cpu receives an interrupt on TR2 when a SoC interrupt has occurred. It is
->
+diff --git a/drivers/input/rmi4/rmi_f54.c b/drivers/input/rmi4/rmi_f54.c
+index cf805b9..2e934ae 100644
+--- a/drivers/input/rmi4/rmi_f54.c
++++ b/drivers/input/rmi4/rmi_f54.c
+@@ -200,7 +200,7 @@ static int rmi_f54_request_report(struct rmi_function *fn, u8 report_type)
+ 
+ 	error = rmi_write(rmi_dev, fn->fd.command_base_addr, F54_GET_REPORT);
+ 	if (error < 0)
+-		return error;
++		goto unlock;
+ 
+ 	init_completion(&f54->cmd_done);
+ 
+@@ -209,9 +209,10 @@ static int rmi_f54_request_report(struct rmi_function *fn, u8 report_type)
+ 
+ 	queue_delayed_work(f54->workqueue, &f54->work, 0);
+ 
++unlock:
+ 	mutex_unlock(&f54->data_mutex);
+ 
+-	return 0;
++	return error;
+ }
+ 
+ static size_t rmi_f54_get_report_size(struct f54_data *f54)
