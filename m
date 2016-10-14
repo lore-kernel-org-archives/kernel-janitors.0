@@ -1,68 +1,49 @@
-From: Netanel Belgazal <netanel@annapurnalabs.com>
-Date: Thu, 13 Oct 2016 16:25:11 +0000
-Subject: Re: [bug report] net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)
-Message-Id: <2ba18d40-1488-781c-d78e-f4036c2be23e@annapurnalabs.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Oct 2016 11:42:16 +0000
+Subject: [PATCH 2/5] [media] winbond-cir: Move a variable assignment in wbcir_tx()
+Message-Id: <26ee4adb-2637-52c3-ac83-ae121bed5eff@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20160930095520.GA10045@mwanda>
-In-Reply-To: <20160930095520.GA10045@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
+In-Reply-To: <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Oct 2016 07:34:46 +0200
 
+Move the assignment for the local variable "data" behind the source code
+for a memory allocation by this function.
 
-Thank you for your report.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/rc/winbond-cir.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The values of enum ena_admin_flow_hash_fileds should be power of two values and not consecutive integers.
-
-I'll send a patch that fix the enum.
-
-
-Regards,
-
-Netanel
-
-
-On 09/30/2016 12:55 PM, Dan Carpenter wrote:
-> Hello Netanel Belgazal,
->
-> The patch 1738cd3ed342: "net: ena: Add a driver for Amazon Elastic
-> Network Adapters (ENA)" from Aug 10, 2016, leads to the following
-> static checker warning:
->
-> 	drivers/net/ethernet/amazon/ena/ena_ethtool.c:459 ena_flow_hash_to_flow_type()
-> 	warn: bitwise AND condition is false here
->
-> drivers/net/ethernet/amazon/ena/ena_ethtool.c
->    454  
->    455  static u32 ena_flow_hash_to_flow_type(u16 hash_fields)
->    456  {
->    457          u32 data = 0;
->    458  
->    459          if (hash_fields & ENA_ADMIN_RSS_L2_DA)
->                                   ^^^^^^^^^^^^^^^^^^^
-> This is zero.
->
->    460                  data |= RXH_L2DA;
->    461  
->    462          if (hash_fields & ENA_ADMIN_RSS_L3_DA)
->    463                  data |= RXH_IP_DST;
->    464  
->    465          if (hash_fields & ENA_ADMIN_RSS_L3_SA)
->    466                  data |= RXH_IP_SRC;
->    467  
->    468          if (hash_fields & ENA_ADMIN_RSS_L4_DP)
->    469                  data |= RXH_L4_B_2_3;
->    470  
->    471          if (hash_fields & ENA_ADMIN_RSS_L4_SP)
->    472                  data |= RXH_L4_B_0_1;
->    473  
->    474          return data;
->    475  }
->
->
-> regards,
-> dan carpenter
+diff --git a/drivers/media/rc/winbond-cir.c b/drivers/media/rc/winbond-cir.c
+index 59050f5..fd997f0 100644
+--- a/drivers/media/rc/winbond-cir.c
++++ b/drivers/media/rc/winbond-cir.c
+@@ -655,7 +655,7 @@ wbcir_txmask(struct rc_dev *dev, u32 mask)
+ static int
+ wbcir_tx(struct rc_dev *dev, unsigned *b, unsigned count)
+ {
+-	struct wbcir_data *data = dev->priv;
++	struct wbcir_data *data;
+ 	unsigned *buf;
+ 	unsigned i;
+ 	unsigned long flags;
+@@ -668,6 +668,7 @@ wbcir_tx(struct rc_dev *dev, unsigned *b, unsigned count)
+ 	for (i = 0; i < count; i++)
+ 		buf[i] = DIV_ROUND_CLOSEST(b[i], 10);
+ 
++	data = dev->priv;
+ 	/* Not sure if this is possible, but better safe than sorry */
+ 	spin_lock_irqsave(&data->spinlock, flags);
+ 	if (data->txstate != WBCIR_TXSTATE_INACTIVE) {
+-- 
+2.10.1
 
