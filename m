@@ -1,41 +1,186 @@
-From: Liping Zhang <zlpnobody@gmail.com>
-Date: Wed, 12 Oct 2016 07:27:19 +0000
-Subject: Re: [patch] netfilter: nf_tables: underflow in nft_parse_u32_check()
-Message-Id: <CAML_gOedjw6uJqp13YkGfXoLQTd_ikOC8OoUA4oXv15RYsgoUg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Oct 2016 11:44:02 +0000
+Subject: [PATCH 4/5] [media] winbond-cir: One variable and its check less in wbcir_shutdown() after error det
+Message-Id: <84757ae3-24d2-cf9b-2217-fd9793b86078@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161012060811.GE12841@mwanda>
-In-Reply-To: <20161012060811.GE12841@mwanda>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
+In-Reply-To: <1d7d6a2c-0f1e-3434-9023-9eab25bb913f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Laura Garcia Liebana <nevola@gmail.com>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, Netfilter Developer Mailing List <netfilter-devel@vger.kernel.org>, coreteam@netfilter.org, Linux Kernel Network Developers <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-2016-10-12 14:08 GMT+08:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> We don't want to allow negatives here.
->
-> Fixes: 36b701fae12a ('netfilter: nf_tables: validate maximum value of u32 netlink attributes')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-> index b70d3ea..dd55187 100644
-> --- a/net/netfilter/nf_tables_api.c
-> +++ b/net/netfilter/nf_tables_api.c
-> @@ -4423,7 +4423,7 @@ static int nf_tables_check_loops(const struct nft_ctx *ctx,
->   */
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 14 Oct 2016 12:48:41 +0200
 
-I think it's better if you can convert it to follows:
+The local variable "do_wake" was set to "false" after an invalid system
+setting was detected so that a bit of error handling was triggered.
 
->  unsigned int nft_parse_u32_check(const struct nlattr *attr, int max, u32 *dest)
+* Replace these assignments by direct jumps to the source code with the
+desired exception handling.
 
-int nft_parse_u32_check(const struct nlattr *attr, u32 max, u32 *dest)
+* Delete this status variable and a corresponding check which became
+  unnecessary with this refactoring.
 
->  {
-> -       int val;
-> +       uint val;
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/rc/winbond-cir.c | 78 ++++++++++++++++++------------------------
+ 1 file changed, 34 insertions(+), 44 deletions(-)
 
-            u32 val;
+diff --git a/drivers/media/rc/winbond-cir.c b/drivers/media/rc/winbond-cir.c
+index 9d05e17..3d286b9 100644
+--- a/drivers/media/rc/winbond-cir.c
++++ b/drivers/media/rc/winbond-cir.c
+@@ -699,16 +699,13 @@ wbcir_shutdown(struct pnp_dev *device)
+ {
+ 	struct device *dev = &device->dev;
+ 	struct wbcir_data *data = pnp_get_drvdata(device);
+-	bool do_wake = true;
+ 	u8 match[11];
+ 	u8 mask[11];
+ 	u8 rc6_csl;
+ 	int i;
+ 
+-	if (wake_sc = INVALID_SCANCODE || !device_may_wakeup(dev)) {
+-		do_wake = false;
+-		goto finish;
+-	}
++	if (wake_sc = INVALID_SCANCODE || !device_may_wakeup(dev))
++		goto clear_bits;
+ 
+ 	rc6_csl = 0;
+ 	memset(match, 0, sizeof(match));
+@@ -716,9 +713,8 @@ wbcir_shutdown(struct pnp_dev *device)
+ 	switch (protocol) {
+ 	case IR_PROTOCOL_RC5:
+ 		if (wake_sc > 0xFFF) {
+-			do_wake = false;
+ 			dev_err(dev, "RC5 - Invalid wake scancode\n");
+-			break;
++			goto clear_bits;
+ 		}
+ 
+ 		/* Mask = 13 bits, ex toggle */
+@@ -735,9 +731,8 @@ wbcir_shutdown(struct pnp_dev *device)
+ 
+ 	case IR_PROTOCOL_NEC:
+ 		if (wake_sc > 0xFFFFFF) {
+-			do_wake = false;
+ 			dev_err(dev, "NEC - Invalid wake scancode\n");
+-			break;
++			goto clear_bits;
+ 		}
+ 
+ 		mask[0] = mask[1] = mask[2] = mask[3] = 0xFF;
+@@ -757,9 +752,8 @@ wbcir_shutdown(struct pnp_dev *device)
+ 
+ 		if (wake_rc6mode = 0) {
+ 			if (wake_sc > 0xFFFF) {
+-				do_wake = false;
+ 				dev_err(dev, "RC6 - Invalid wake scancode\n");
+-				break;
++				goto clear_bits;
+ 			}
+ 
+ 			/* Command */
+@@ -813,9 +807,8 @@ wbcir_shutdown(struct pnp_dev *device)
+ 			} else if (wake_sc <= 0x007FFFFF) {
+ 				rc6_csl = 60;
+ 			} else {
+-				do_wake = false;
+ 				dev_err(dev, "RC6 - Invalid wake scancode\n");
+-				break;
++				goto clear_bits;
+ 			}
+ 
+ 			/* Header */
+@@ -825,49 +818,38 @@ wbcir_shutdown(struct pnp_dev *device)
+ 			mask[i++] = 0x0F;
+ 
+ 		} else {
+-			do_wake = false;
+ 			dev_err(dev, "RC6 - Invalid wake mode\n");
++			goto clear_bits;
+ 		}
+ 
+ 		break;
+ 
+ 	default:
+-		do_wake = false;
+-		break;
++		goto clear_bits;
+ 	}
+ 
+-finish:
+-	if (do_wake) {
+-		/* Set compare and compare mask */
+-		wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_INDEX,
+-			       WBCIR_REGSEL_COMPARE | WBCIR_REG_ADDR0,
+-			       0x3F);
+-		outsb(data->wbase + WBCIR_REG_WCEIR_DATA, match, 11);
+-		wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_INDEX,
+-			       WBCIR_REGSEL_MASK | WBCIR_REG_ADDR0,
+-			       0x3F);
+-		outsb(data->wbase + WBCIR_REG_WCEIR_DATA, mask, 11);
+-
+-		/* RC6 Compare String Len */
+-		outb(rc6_csl, data->wbase + WBCIR_REG_WCEIR_CSL);
+-
+-		/* Clear status bits NEC_REP, BUFF, MSG_END, MATCH */
+-		wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_STS, 0x17, 0x17);
++	/* Set compare and compare mask */
++	wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_INDEX,
++		       WBCIR_REGSEL_COMPARE | WBCIR_REG_ADDR0,
++		       0x3F);
++	outsb(data->wbase + WBCIR_REG_WCEIR_DATA, match, 11);
++	wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_INDEX,
++		       WBCIR_REGSEL_MASK | WBCIR_REG_ADDR0,
++		       0x3F);
++	outsb(data->wbase + WBCIR_REG_WCEIR_DATA, mask, 11);
+ 
+-		/* Clear BUFF_EN, Clear END_EN, Set MATCH_EN */
+-		wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_EV_EN, 0x01, 0x07);
++	/* RC6 Compare String Len */
++	outb(rc6_csl, data->wbase + WBCIR_REG_WCEIR_CSL);
+ 
+-		/* Set CEIR_EN */
+-		wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_CTL, 0x01, 0x01);
+-
+-	} else {
+-		/* Clear BUFF_EN, Clear END_EN, Clear MATCH_EN */
+-		wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_EV_EN, 0x00, 0x07);
++	/* Clear status bits NEC_REP, BUFF, MSG_END, MATCH */
++	wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_STS, 0x17, 0x17);
+ 
+-		/* Clear CEIR_EN */
+-		wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_CTL, 0x00, 0x01);
+-	}
++	/* Clear BUFF_EN, Clear END_EN, Set MATCH_EN */
++	wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_EV_EN, 0x01, 0x07);
+ 
++	/* Set CEIR_EN */
++	wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_CTL, 0x01, 0x01);
++set_irqmask:
+ 	/*
+ 	 * ACPI will set the HW disable bit for SP3 which means that the
+ 	 * output signals are left in an undefined state which may cause
+@@ -876,6 +858,14 @@ wbcir_shutdown(struct pnp_dev *device)
+ 	 */
+ 	wbcir_set_irqmask(data, WBCIR_IRQ_NONE);
+ 	disable_irq(data->irq);
++	return;
++clear_bits:
++	/* Clear BUFF_EN, Clear END_EN, Clear MATCH_EN */
++	wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_EV_EN, 0x00, 0x07);
++
++	/* Clear CEIR_EN */
++	wbcir_set_bits(data->wbase + WBCIR_REG_WCEIR_CTL, 0x00, 0x01);
++	goto set_irqmask;
+ }
+ 
+ static int
+-- 
+2.10.1
 
->
->         val = ntohl(nla_get_be32(attr));
->         if (val > max)
