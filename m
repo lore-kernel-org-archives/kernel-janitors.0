@@ -1,15 +1,59 @@
-From: Amine Aouled Hamed <amine.ahd@gmail.com>
-Date: Tue, 18 Oct 2016 16:25:07 +0000
-Subject: Open tasks
-Message-Id: <CAMXA6B01dXb2+gfbt+aLgBGMvG1eN+jU2n7ZaUMO=mRbWpkC8w@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 20:52:06 +0000
+Subject: [PATCH 1/3] ARM-OMAP2+: mux: Replace three seq_printf() calls by seq_puts()
+Message-Id: <42ffbac1-4edc-1afe-4b3b-8552a7fa8c47@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
+In-Reply-To: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi,
-Any idea where I can find open bugs or tasks.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 22:22:09 +0200
 
-Thanks,
-Amine.
+Strings which did not contain data format specification should be put into
+a sequence. Thus use the corresponding function "seq_puts".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/mux.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/mux.c b/arch/arm/mach-omap2/mux.c
+index 176eef6..4bdfa3d 100644
+--- a/arch/arm/mach-omap2/mux.c
++++ b/arch/arm/mach-omap2/mux.c
+@@ -561,7 +561,7 @@ static inline void omap_mux_decode(struct seq_file *s, u16 val)
+ 	do {
+ 		seq_printf(s, "%s", flags[i]);
+ 		if (i > 0)
+-			seq_printf(s, " | ");
++			seq_puts(s, " | ");
+ 	} while (i-- > 0);
+ }
+ 
+@@ -602,7 +602,7 @@ static int omap_mux_dbg_board_show(struct seq_file *s, void *unused)
+ 		 */
+ 		seq_printf(s, "OMAP%d_MUX(%s, ", omap_gen, m0_def);
+ 		omap_mux_decode(s, val);
+-		seq_printf(s, "),\n");
++		seq_puts(s, "),\n");
+ 	}
+ 
+ 	return 0;
+@@ -659,7 +659,7 @@ static int omap_mux_dbg_signal_show(struct seq_file *s, void *unused)
+ 			partition->phys + m->reg_offset, m->reg_offset, val,
+ 			m->balls[0] ? m->balls[0] : none,
+ 			m->balls[1] ? m->balls[1] : none);
+-	seq_printf(s, "mode: ");
++	seq_puts(s, "mode: ");
+ 	omap_mux_decode(s, val);
+ 	seq_printf(s, "\n");
+ 	seq_printf(s, "signals: %s | %s | %s | %s | %s | %s | %s | %s\n",
+-- 
+2.10.1
+
