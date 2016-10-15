@@ -1,62 +1,28 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 07 Oct 2016 13:08:53 +0000
-Subject: Re: docs: Fixing "sphinxify coccinelle.txt"?
-Message-Id: <09f3f798-5b9b-df84-e864-0593ee74e0cc@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 20:50:08 +0000
+Subject: [PATCH 0/3] ARM-OMAP2+: Fine-tuning for five function implementations
+Message-Id: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea62a1ea-c566-65a0-e2fd-2ee96839cf48@users.sourceforge.net>
- <alpine.DEB.2.10.1610070749420.3074@hadrien>
- <b17b77b4-9604-59c0-7808-09463a6a83f5@users.sourceforge.net>
-In-Reply-To: <b17b77b4-9604-59c0-7808-09463a6a83f5@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
->>> Information from a commit like "docs: sphinxify coccinelle.txt and add =
-it
->>> to dev-tools" caught also my software development attention.
->>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/=
-Documentation/coccinelle.txt?idK9033a33494ec9154d63e706e9e47f7eb3fd59e
->>>
->>> Did an other information from a comment become outdated in the script "=
-coccicheck"
->>> because of such changes for the documentation format?
->>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/s=
-cripts/coccicheck?id=C802e87fbe2d4dd58982d01b3c39bc5a781223aa#n4
->>
->> How about submitting a patch to fix the problem?
->=20
-> Is the published commit (from 2016-08-08 / 2016-08-18) generally question=
-able
-> as I see it by the interface "cgit" at the moment?
->=20
-> * Does this one contain only the deletion of the file "Documentation/cocc=
-inelle.txt"?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 22:44:22 +0200
 
-It seems that I got an inappropriate impression from this kind of
-data display alone.
+A few update suggestions were taken into account
+from static source code analysis.
 
+Markus Elfring (3):
+  mux: Replace three seq_printf() calls by seq_puts()
+  mux: Use seq_putc() in omap_mux_dbg_signal_show()
+  pm-debug: Use seq_putc() in two functions
 
-The display for the changed file name contains only the desired addition.
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/Docu=
-mentation/dev-tools/coccinelle.rst?idK9033a33494ec9154d63e706e9e47f7eb3fd59e
+ arch/arm/mach-omap2/mux.c      | 8 ++++----
+ arch/arm/mach-omap2/pm-debug.c | 5 ++---
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
+-- 
+2.10.1
 
-> I find another data display also interesting and more promising.
-> https://patchwork.kernel.org/patch/9269973/
->=20
-> * Should this patch about the desired file format conversion become avail=
-able
->   also by the other known interfaces?
-
-The interface "cgit v0.12" does not indicate the involved "renaming" (simil=
-arity index 56%)
-so far which can be better seen in the downloadable patch file.
-
-Regards,
-Markus
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
