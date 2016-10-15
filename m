@@ -1,62 +1,48 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 16:47:05 +0000
-Subject: [PATCH 17/18] [media] RedRat3: Adjust two checks for null pointers in redrat3_dev_probe()
-Message-Id: <810dec6f-8c5e-6784-bdc0-a9bed477b8c4@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Oct 2016 14:55:44 +0000
+Subject: [PATCH 0/7] constify snd_soc_ops structures
+Message-Id: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
-In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 17:40:34 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
+Constify snd_soc_ops structures.
 
-The script "checkpatch.pl" pointed information out like the following.
-
-Comparison to NULL could be written !=E2=80=A6
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/rc/redrat3.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-index 06c9eea..a09d5cb 100644
---- a/drivers/media/rc/redrat3.c
-+++ b/drivers/media/rc/redrat3.c
-@@ -923,8 +923,7 @@ static int redrat3_dev_probe(struct usb_interface *intf,
- 		ep =3D &uhi->endpoint[i].desc;
- 		addr =3D ep->bEndpointAddress;
- 		attrs =3D ep->bmAttributes;
--
--		if ((ep_in =3D NULL) &&
-+		if (!ep_in &&
- 		    ((addr & USB_ENDPOINT_DIR_MASK) =3D USB_DIR_IN) &&
- 		    ((attrs & USB_ENDPOINT_XFERTYPE_MASK) =3D
- 		     USB_ENDPOINT_XFER_BULK)) {
-@@ -935,7 +934,7 @@ static int redrat3_dev_probe(struct usb_interface *intf,
- 				ep_in =3D ep;
- 		}
-=20
--		if ((ep_out =3D NULL) &&
-+		if (!ep_out &&
- 		    ((addr & USB_ENDPOINT_DIR_MASK) =3D USB_DIR_OUT) &&
- 		    ((attrs & USB_ENDPOINT_XFERTYPE_MASK) =3D
- 		     USB_ENDPOINT_XFER_BULK)) {
---=20
-2.10.1
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ sound/soc/atmel/atmel_wm8904.c                  |    2 +-
+ sound/soc/fsl/fsl-asoc-card.c                   |    2 +-
+ sound/soc/fsl/imx-wm8962.c                      |    2 +-
+ sound/soc/generic/simple-card.c                 |    2 +-
+ sound/soc/generic/simple-scu-card.c             |    2 +-
+ sound/soc/intel/boards/bdw-rt5677.c             |    2 +-
+ sound/soc/intel/boards/broadwell.c              |    2 +-
+ sound/soc/intel/boards/bxt_da7219_max98357a.c   |    4 ++--
+ sound/soc/intel/boards/bxt_rt298.c              |    4 ++--
+ sound/soc/intel/boards/bytcr_rt5640.c           |    4 ++--
+ sound/soc/intel/boards/bytcr_rt5651.c           |    4 ++--
+ sound/soc/intel/boards/cht_bsw_max98090_ti.c    |    4 ++--
+ sound/soc/intel/boards/cht_bsw_rt5645.c         |    4 ++--
+ sound/soc/intel/boards/cht_bsw_rt5672.c         |    4 ++--
+ sound/soc/intel/boards/haswell.c                |    2 +-
+ sound/soc/intel/boards/skl_nau88l25_max98357a.c |    6 +++---
+ sound/soc/intel/boards/skl_nau88l25_ssm4567.c   |    6 +++---
+ sound/soc/intel/boards/skl_rt286.c              |    4 ++--
+ sound/soc/kirkwood/armada-370-db.c              |    2 +-
+ sound/soc/mxs/mxs-sgtl5000.c                    |    2 +-
+ sound/soc/qcom/storm.c                          |    2 +-
+ sound/soc/rockchip/rk3399_gru_sound.c           |    6 +++---
+ sound/soc/rockchip/rockchip_max98090.c          |    2 +-
+ sound/soc/rockchip/rockchip_rt5645.c            |    2 +-
+ sound/soc/tegra/tegra_alc5632.c                 |    2 +-
+ sound/soc/tegra/tegra_max98090.c                |    2 +-
+ sound/soc/tegra/tegra_rt5640.c                  |    2 +-
+ sound/soc/tegra/tegra_rt5677.c                  |    2 +-
+ sound/soc/tegra/tegra_sgtl5000.c                |    2 +-
+ sound/soc/tegra/tegra_wm8753.c                  |    2 +-
+ sound/soc/tegra/tegra_wm8903.c                  |    2 +-
+ sound/soc/tegra/trimslice.c                     |    2 +-
+ 32 files changed, 46 insertions(+), 46 deletions(-)
