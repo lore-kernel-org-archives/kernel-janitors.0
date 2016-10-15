@@ -1,29 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2016 06:00:29 +0000
-Subject: [patch 1/2] k3dma: off by one in k3_of_dma_simple_xlate()
-Message-Id: <20161012060029.GA12841@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 20:54:49 +0000
+Subject: [PATCH 3/3] ARM-OMAP2+: pm-debug: Use seq_putc() in two functions
+Message-Id: <3b54e75d-eeee-5cce-5733-89b2750ab8c7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
+In-Reply-To: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The ->chans[] array has ->dma_requests elements so the check should be
->= instead of >.  The ->chans[] array is allocated in k3_dma_probe()
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 22:30:44 +0200
 
-Fixes: 8e6152bc660e ('dmaengine: Add hisilicon k3 DMA engine driver')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A single character (line break) should be put into a sequence at the end.
+Thus use the corresponding function "seq_putc".
 
-diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index 7c636c53..f17a8c0 100644
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -792,7 +792,7 @@ static struct dma_chan *k3_of_dma_simple_xlate(struct of_phandle_args *dma_spec,
- 	struct k3_dma_dev *d = ofdma->of_dma_data;
- 	unsigned int request = dma_spec->args[0];
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/pm-debug.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/pm-debug.c b/arch/arm/mach-omap2/pm-debug.c
+index 0b33986..003a6cb 100644
+--- a/arch/arm/mach-omap2/pm-debug.c
++++ b/arch/arm/mach-omap2/pm-debug.c
+@@ -114,8 +114,7 @@ static int pwrdm_dbg_show_counter(struct powerdomain *pwrdm, void *user)
+ 		seq_printf(s, ",RET-MEMBANK%d-OFF:%d", i + 1,
+ 				pwrdm->ret_mem_off_counter[i]);
  
--	if (request > d->dma_requests)
-+	if (request >= d->dma_requests)
- 		return NULL;
+-	seq_printf(s, "\n");
+-
++	seq_putc(s, '\n');
+ 	return 0;
+ }
  
- 	return dma_get_slave_channel(&(d->chans[request].vc.chan));
+@@ -138,7 +137,7 @@ static int pwrdm_dbg_show_timer(struct powerdomain *pwrdm, void *user)
+ 		seq_printf(s, ",%s:%lld", pwrdm_state_names[i],
+ 			pwrdm->state_timer[i]);
+ 
+-	seq_printf(s, "\n");
++	seq_putc(s, '\n');
+ 	return 0;
+ }
+ 
+-- 
+2.10.1
+
