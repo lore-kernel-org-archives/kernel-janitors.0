@@ -1,73 +1,114 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Oct 2016 19:37:08 +0000
-Subject: [PATCH 14/15] tty: nozomi: use permission-specific DEVICE_ATTR variants
-Message-Id: <1477769829-22230-15-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 15 Oct 2016 17:32:02 +0000
+Subject: [PATCH 2/2] i2c: constify i2c_adapter_quirks structures
+Message-Id: <1476552722-12352-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1476552722-12352-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1476552722-12352-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use DEVICE_ATTR_RO for read only attributes.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+Check for i2c_adapter_quirks structures that are only stored in the
+quirks field of an i2c_adapter structure.  This field is declared
+const, so i2c_adapter_quirks structures that have this property can be
+declared as const also.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
+@r disable optional_qualifier@
+identifier i;
+position p;
 @@
+static struct i2c_adapter_quirks i@p = { ... };
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
+@ok@
+identifier r.i;
+struct i2c_adapter e;
+position p;
 @@
+e.quirks = &i@p;
 
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct i2c_adapter_quirks e;
 @@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
+e@i@p
 
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct i2c_adapter_quirks i = { ... };
 // </smpl>
+
+The effect on the layout of the .o files is shown by the following
+output of the size command, first before then after the
+transformation:
+
+   text    data     bss     dec     hex filename
+   3651     472       8    4131    1023 drivers/i2c/busses/i2c-axxia.o
+   3683     440       8    4131    1023 drivers/i2c/busses/i2c-axxia.o
+
+   text    data     bss     dec     hex filename
+   1069     216       0    1285     505 drivers/i2c/busses/i2c-dln2.o
+   1101     192       0    1293     50d drivers/i2c/busses/i2c-dln2.o
+
+   text    data     bss     dec     hex filename
+   3211     484       1    3696     e70 drivers/i2c/busses/i2c-viperboard.o
+   3243     460       1    3704     e78 drivers/i2c/busses/i2c-viperboard.o
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/tty/nozomi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-axxia.c      |    2 +-
+ drivers/i2c/busses/i2c-dln2.c       |    2 +-
+ drivers/i2c/busses/i2c-viperboard.c |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
-index d6fd0e8..e2020a6 100644
---- a/drivers/tty/nozomi.c
-+++ b/drivers/tty/nozomi.c
-@@ -1320,7 +1320,7 @@ static ssize_t card_type_show(struct device *dev, struct device_attribute *attr,
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
+index 4351a93..13f0748 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -489,7 +489,7 @@ static u32 axxia_i2c_func(struct i2c_adapter *adap)
+ 	.functionality = axxia_i2c_func,
+ };
  
- 	return sprintf(buf, "%d\n", dc->card_type);
- }
--static DEVICE_ATTR(card_type, S_IRUGO, card_type_show, NULL);
-+static DEVICE_ATTR_RO(card_type);
+-static struct i2c_adapter_quirks axxia_i2c_quirks = {
++static const struct i2c_adapter_quirks axxia_i2c_quirks = {
+ 	.max_read_len = 255,
+ 	.max_write_len = 255,
+ };
+diff --git a/drivers/i2c/busses/i2c-dln2.c b/drivers/i2c/busses/i2c-dln2.c
+index 8acda2a..69075a3 100644
+--- a/drivers/i2c/busses/i2c-dln2.c
++++ b/drivers/i2c/busses/i2c-dln2.c
+@@ -182,7 +182,7 @@ static u32 dln2_i2c_func(struct i2c_adapter *a)
+ 	.functionality = dln2_i2c_func,
+ };
  
- static ssize_t open_ttys_show(struct device *dev, struct device_attribute *attr,
- 			  char *buf)
-@@ -1329,7 +1329,7 @@ static ssize_t open_ttys_show(struct device *dev, struct device_attribute *attr,
+-static struct i2c_adapter_quirks dln2_i2c_quirks = {
++static const struct i2c_adapter_quirks dln2_i2c_quirks = {
+ 	.max_read_len = DLN2_I2C_MAX_XFER_SIZE,
+ 	.max_write_len = DLN2_I2C_MAX_XFER_SIZE,
+ };
+diff --git a/drivers/i2c/busses/i2c-viperboard.c b/drivers/i2c/busses/i2c-viperboard.c
+index 543456a..e4be86b 100644
+--- a/drivers/i2c/busses/i2c-viperboard.c
++++ b/drivers/i2c/busses/i2c-viperboard.c
+@@ -354,7 +354,7 @@ static u32 vprbrd_i2c_func(struct i2c_adapter *i2c)
+ 	.functionality	= vprbrd_i2c_func,
+ };
  
- 	return sprintf(buf, "%u\n", dc->open_ttys);
- }
--static DEVICE_ATTR(open_ttys, S_IRUGO, open_ttys_show, NULL);
-+static DEVICE_ATTR_RO(open_ttys);
- 
- static void make_sysfs_files(struct nozomi *dc)
- {
+-static struct i2c_adapter_quirks vprbrd_quirks = {
++static const struct i2c_adapter_quirks vprbrd_quirks = {
+ 	.max_read_len = 2048,
+ 	.max_write_len = 2048,
+ };
 
