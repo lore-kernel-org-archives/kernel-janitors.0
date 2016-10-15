@@ -1,49 +1,98 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 02 Oct 2016 11:56:33 +0000
-Subject: [PATCH 1/13] md/multipath: Use kcalloc() in multipath_run()
-Message-Id: <0383a635-6b6d-0e70-c3d5-99c05f2c72f7@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Oct 2016 14:55:50 +0000
+Subject: [PATCH 6/7] ASoC: constify snd_soc_ops structures
+Message-Id: <1476543351-17858-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
-In-Reply-To: <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
+References: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Jens Axboe <axboe@fb.com>, NeilBrown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Timur Tabi <timur@tabi.org>
+Cc: kernel-janitors@vger.kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 20:40:42 +0200
+Check for snd_soc_ops structures that are only stored in the ops field of a
+snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
+structures that have this property can be declared as const also.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus reuse the corresponding function "kcalloc".
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-  This issue was detected by using the Coccinelle software.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_soc_ops i@p = { ... };
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+@ok1@
+identifier r.i;
+struct snd_soc_dai_link e;
+position p;
+@@
+e.ops = &i@p;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok2@
+identifier r.i, e;
+position p;
+@@
+struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_soc_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_soc_ops i = { ... };
+// </smpl>
+
+The effect on the layout of the .o files is shown by the following output of
+the size command, first before then after the transformation:
+
+  text    data     bss     dec     hex filename
+   8748    1024       0    9772    262c sound/soc/fsl/fsl-asoc-card.o
+   8812     952       0    9764    2624 sound/soc/fsl/fsl-asoc-card.o
+
+   text    data     bss     dec     hex filename
+   4165     264       8    4437    1155 sound/soc/fsl/imx-wm8962.o
+   4229     200       8    4437    1155 sound/soc/fsl/imx-wm8962.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/md/multipath.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/fsl/fsl-asoc-card.c |    2 +-
+ sound/soc/fsl/imx-wm8962.c    |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/multipath.c b/drivers/md/multipath.c
-index 673efbd..bd53451 100644
---- a/drivers/md/multipath.c
-+++ b/drivers/md/multipath.c
-@@ -408,7 +408,8 @@ static int multipath_run (struct mddev *mddev)
- 		goto out;
- 	}
+diff -u -p a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
+--- a/sound/soc/fsl/fsl-asoc-card.c
++++ b/sound/soc/fsl/fsl-asoc-card.c
+@@ -183,7 +183,7 @@ static int fsl_asoc_card_hw_params(struc
+ 	return 0;
+ }
  
--	conf->multipaths = kzalloc(sizeof(struct multipath_info)*mddev->raid_disks,
-+	conf->multipaths = kcalloc(mddev->raid_disks,
-+				   sizeof(*conf->multipaths),
- 				   GFP_KERNEL);
- 	if (!conf->multipaths) {
- 		printk(KERN_ERR
--- 
-2.10.0
+-static struct snd_soc_ops fsl_asoc_card_ops = {
++static const struct snd_soc_ops fsl_asoc_card_ops = {
+ 	.hw_params = fsl_asoc_card_hw_params,
+ };
+ 
+diff -u -p a/sound/soc/fsl/imx-wm8962.c b/sound/soc/fsl/imx-wm8962.c
+--- a/sound/soc/fsl/imx-wm8962.c
++++ b/sound/soc/fsl/imx-wm8962.c
+@@ -61,7 +61,7 @@ static int imx_hifi_hw_params(struct snd
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops imx_hifi_ops = {
++static const struct snd_soc_ops imx_hifi_ops = {
+ 	.hw_params = imx_hifi_hw_params,
+ };
+ 
 
