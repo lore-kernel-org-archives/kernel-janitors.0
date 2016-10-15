@@ -1,31 +1,81 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Oct 2016 07:51:43 +0000
-Subject: Re: [PATCH 5/6] FRV-setup: Fix indentation in two lines
-Message-Id: <20161021075142.GS4469@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Oct 2016 14:55:46 +0000
+Subject: [PATCH 2/7] ASoC: atmel_wm8904: constify snd_soc_ops structures
+Message-Id: <1476543351-17858-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
- <81f557b2-40f3-0625-331d-c5b115f1971c@users.sourceforge.net>
- <alpine.LNX.2.00.1610210923330.31629@cbobk.fhfr.pm>
-In-Reply-To: <alpine.LNX.2.00.1610210923330.31629@cbobk.fhfr.pm>
+References: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jikos@kernel.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Geert Uytterhoeven <geert+renesas@glider.be>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-I don't think changing check_patch.pl or CodingStyle will help...
+Check for snd_soc_ops structures that are only stored in the ops field of a
+snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
+structures that have this property can be declared as const also.
 
-I've banned Markus from sending cleanups in parts of the kernel where I
-have a voice (drivers/staging).  Bugfixes are welcome, but cleanups are
-not.  I've done this before for other people who introduce a bunch of
-bugs in clean up patches.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-It's all about ratios...  Each clean up patch has chance of introducing
-a bug.  If you only send clean up patches then you only introduce bugs.
-We really don't want people sending patches if they introduce more bugs
-than they fix.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_soc_ops i@p = { ... };
 
-regards,
-dan carpenter
+@ok1@
+identifier r.i;
+struct snd_soc_dai_link e;
+position p;
+@@
+e.ops = &i@p;
 
+@ok2@
+identifier r.i, e;
+position p;
+@@
+struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_soc_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_soc_ops i = { ... };
+// </smpl>
+
+The effect on the layout of the .o file is shown by the following output of
+the size command, first before then after the transformation:
+
+   text    data     bss     dec     hex filename
+   2611    1536       0    4147    1033 sound/soc/atmel/atmel_wm8904.o
+   2675    1480       0    4155    103b sound/soc/atmel/atmel_wm8904.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/atmel/atmel_wm8904.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/sound/soc/atmel/atmel_wm8904.c b/sound/soc/atmel/atmel_wm8904.c
+--- a/sound/soc/atmel/atmel_wm8904.c
++++ b/sound/soc/atmel/atmel_wm8904.c
+@@ -53,7 +53,7 @@ static int atmel_asoc_wm8904_hw_params(s
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops atmel_asoc_wm8904_ops = {
++static const struct snd_soc_ops atmel_asoc_wm8904_ops = {
+ 	.hw_params = atmel_asoc_wm8904_hw_params,
+ };
+ 
 
