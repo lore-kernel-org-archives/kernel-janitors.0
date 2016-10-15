@@ -1,28 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Oct 2016 19:18:21 +0000
-Subject: [patch] greybus: fix a leak on error in gb_module_create()
-Message-Id: <20161014191639.GB21917@mwanda>
+From: Johan Hovold <johan@kernel.org>
+Date: Sat, 15 Oct 2016 09:15:36 +0000
+Subject: Re: [patch] greybus: fix a leak on error in gb_module_create()
+Message-Id: <20161015091536.GA13900@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161014191639.GB21917@mwanda>
+In-Reply-To: <20161014191639.GB21917@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We should release ->interfaces[0] as well.
+On Fri, Oct 14, 2016 at 10:18:21PM +0300, Dan Carpenter wrote:
+> We should release ->interfaces[0] as well.
 
-Fixes: b15d97d77017 ("greybus: core: add module abstraction")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Indeed. Thanks for the fix.
 
-diff --git a/drivers/staging/greybus/module.c b/drivers/staging/greybus/module.c
-index 69f67dd..660b467 100644
---- a/drivers/staging/greybus/module.c
-+++ b/drivers/staging/greybus/module.c
-@@ -127,7 +127,7 @@ struct gb_module *gb_module_create(struct gb_host_device *hd, u8 module_id,
- 	return module;
- 
- err_put_interfaces:
--	for (--i; i > 0; --i)
-+	for (--i; i >= 0; --i)
- 		gb_interface_put(module->interfaces[i]);
- 
- 	put_device(&module->dev);
+> Fixes: b15d97d77017 ("greybus: core: add module abstraction")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: Johan Hovold <johan@kernel.org>
+
+Johan
