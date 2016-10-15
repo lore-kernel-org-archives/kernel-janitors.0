@@ -1,105 +1,86 @@
-From: Sean Young <sean@mess.org>
-Date: Sat, 15 Oct 2016 13:33:39 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 17:00:14 +0000
 Subject: Re: [PATCH 04/18] [media] RedRat3: One function call less in redrat3_transmit_ir() after error detec
-Message-Id: <20161015133339.GB3393@gofer.mess.org>
+Message-Id: <5f471774-ec63-c404-6ebb-2b20c0f2a20e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
  <7878868c-bc54-5577-b808-ed096bbf3759@users.sourceforge.net>
-In-Reply-To: <7878868c-bc54-5577-b808-ed096bbf3759@users.sourceforge.net>
+ <20161015133339.GB3393@gofer.mess.org>
+In-Reply-To: <20161015133339.GB3393@gofer.mess.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
+To: Sean Young <sean@mess.org>
 Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Thu, Oct 13, 2016 at 06:24:46PM +0200, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 13 Oct 2016 10:50:24 +0200
+>> diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+>> index 7ae2ced..71e901d 100644
+>> --- a/drivers/media/rc/redrat3.c
+>> +++ b/drivers/media/rc/redrat3.c
+>> @@ -723,10 +723,10 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
+>>  {
+>>  	struct redrat3_dev *rr3 = rcdev->priv;
+>>  	struct device *dev = rr3->dev;
+>> -	struct redrat3_irdata *irdata = NULL;
+>> +	struct redrat3_irdata *irdata;
+>>  	int ret, ret_len;
+>>  	int lencheck, cur_sample_len, pipe;
+>> -	int *sample_lens = NULL;
+>> +	int *sample_lens;
+>>  	u8 curlencheck;
+>>  	unsigned i, sendbuf_len;
+>>  
+>> @@ -747,7 +747,7 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
+>>  	irdata = kzalloc(sizeof(*irdata), GFP_KERNEL);
+>>  	if (!irdata) {
+>>  		ret = -ENOMEM;
+>> -		goto out;
+>> +		goto free_sample;
+>>  	}
+>>  
+>>  	/* rr3 will disable rc detector on transmit */
+>> @@ -776,7 +776,7 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
+>>  				curlencheck++;
+>>  			} else {
+>>  				ret = -EINVAL;
+>> -				goto out;
+>> +				goto reset_member;
+>>  			}
+>>  		}
+>>  		irdata->sigdata[i] = lencheck;
+>> @@ -811,14 +811,12 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
+>>  		dev_err(dev, "Error: control msg send failed, rc %d\n", ret);
+>>  	else
+>>  		ret = count;
+>> -
+>> -out:
+>> -	kfree(irdata);
+>> -	kfree(sample_lens);
+>> -
+>> +reset_member:
+>>  	rr3->transmitting = false;
+>>  	/* rr3 re-enables rc detector because it was enabled before */
+>> -
+>> +	kfree(irdata);
+>> +free_sample:
+>> +	kfree(sample_lens);
 > 
-> The kfree() function was called in one case by the
-> redrat3_transmit_ir() function during error handling
-> even if the passed variable contained a null pointer.
-> 
-> * Adjust jump targets according to the Linux coding style convention.
-> 
-> * Move the resetting for the data structure member "transmitting"
->   at the end.
-> 
-> * Delete initialisations for the variables "irdata" and "sample_lens"
->   at the beginning which became unnecessary with this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/media/rc/redrat3.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-> index 7ae2ced..71e901d 100644
-> --- a/drivers/media/rc/redrat3.c
-> +++ b/drivers/media/rc/redrat3.c
-> @@ -723,10 +723,10 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
->  {
->  	struct redrat3_dev *rr3 = rcdev->priv;
->  	struct device *dev = rr3->dev;
-> -	struct redrat3_irdata *irdata = NULL;
-> +	struct redrat3_irdata *irdata;
->  	int ret, ret_len;
->  	int lencheck, cur_sample_len, pipe;
-> -	int *sample_lens = NULL;
-> +	int *sample_lens;
->  	u8 curlencheck;
->  	unsigned i, sendbuf_len;
->  
-> @@ -747,7 +747,7 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
->  	irdata = kzalloc(sizeof(*irdata), GFP_KERNEL);
->  	if (!irdata) {
->  		ret = -ENOMEM;
-> -		goto out;
-> +		goto free_sample;
->  	}
->  
->  	/* rr3 will disable rc detector on transmit */
-> @@ -776,7 +776,7 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
->  				curlencheck++;
->  			} else {
->  				ret = -EINVAL;
-> -				goto out;
-> +				goto reset_member;
->  			}
->  		}
->  		irdata->sigdata[i] = lencheck;
-> @@ -811,14 +811,12 @@ static int redrat3_transmit_ir(struct rc_dev *rcdev, unsigned *txbuf,
->  		dev_err(dev, "Error: control msg send failed, rc %d\n", ret);
->  	else
->  		ret = count;
-> -
-> -out:
-> -	kfree(irdata);
-> -	kfree(sample_lens);
-> -
-> +reset_member:
->  	rr3->transmitting = false;
->  	/* rr3 re-enables rc detector because it was enabled before */
-> -
-> +	kfree(irdata);
-> +free_sample:
-> +	kfree(sample_lens);
+> In this error path, rr3->transmitting is not set to false
 
-In this error path, rr3->transmitting is not set to false so now the driver
-will never allow you transmit again.
+Can it be that this reset is not needed because it should have still got this value already
+in the software refactoring I proposed here?
 
-Also this patch does not apply against latest.
 
-Sean
+> so now the driver will never allow you transmit again.
 
->  	return ret;
->  }
->  
-> -- 
-> 2.10.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I have got an other impression.
+
+
+> Also this patch does not apply against latest.
+
+Do you want that I rebase my update suggestion for this software module on a published commit
+that is more recent than 2016-09-22 (d6ae162bd13998a6511e5efbc7c19ab542ba1555 for example)?
+
+Regards,
+Markus
