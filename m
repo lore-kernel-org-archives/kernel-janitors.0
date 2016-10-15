@@ -1,41 +1,77 @@
-From: Marek Vasut <marex@denx.de>
-Date: Fri, 14 Oct 2016 07:19:05 +0000
-Subject: Re: [patch 1/2] mtd: spi-nor: Off by one in cqspi_setup_flash()
-Message-Id: <360bddfc-0495-8836-41ef-4121517011a3@denx.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Oct 2016 17:32:01 +0000
+Subject: [PATCH 1/2] i2c: bcm-iproc: constify i2c_adapter_quirks structures
+Message-Id: <1476552722-12352-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013080646.GB3389@mwanda>
-In-Reply-To: <20161013080646.GB3389@mwanda>
+References: <1476552722-12352-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1476552722-12352-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Woodhouse <dwmw2@infradead.org>, Graham Moore <grmoore@opensource.altera.com>
-Cc: Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 10/13/2016 10:06 AM, Dan Carpenter wrote:
-> There are CQSPI_MAX_CHIPSELECT elements in the ->f_pdata array so the >
-> should be >=.
-> 
-> Fixes: 140623410536 ('mtd: spi-nor: Add driver for Cadence Quad SPI Flash Controller')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Check for i2c_adapter_quirks structures that are only stored in the
+quirks field of an i2c_adapter structure.  This field is declared
+const, so i2c_adapter_quirks structures that have this property can be
+declared as const also.
 
-Reviewed-by: Marek Vasut <marex@denx.de>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-> index d403ba7..944863b 100644
-> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
-> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-> @@ -1082,7 +1082,7 @@ static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
->  			goto err;
->  		}
->  
-> -		if (cs > CQSPI_MAX_CHIPSELECT) {
-> +		if (cs >= CQSPI_MAX_CHIPSELECT) {
->  			dev_err(dev, "Chip select %d out of range.\n", cs);
->  			goto err;
->  		}
-> 
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct i2c_adapter_quirks i@p = { ... };
 
+@ok@
+identifier r.i;
+struct i2c_adapter e;
+position p;
+@@
+e.quirks = &i@p;
 
--- 
-Best regards,
-Marek Vasut
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct i2c_adapter_quirks e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct i2c_adapter_quirks i = { ... };
+// </smpl>
+
+The effect on the layout of the .o file is shown by the following
+output of the size command, first before then after the
+transformation:
+
+   text    data     bss     dec     hex filename
+   3458     744       8    4210    1072 drivers/i2c/busses/i2c-bcm-iproc.o
+   3490     720       8    4218    107a drivers/i2c/busses/i2c-bcm-iproc.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/i2c/busses/i2c-bcm-iproc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-bcm-iproc.c b/drivers/i2c/busses/i2c-bcm-iproc.c
+index 326b3db..318df55 100644
+--- a/drivers/i2c/busses/i2c-bcm-iproc.c
++++ b/drivers/i2c/busses/i2c-bcm-iproc.c
+@@ -395,7 +395,7 @@ static uint32_t bcm_iproc_i2c_functionality(struct i2c_adapter *adap)
+ 	.functionality = bcm_iproc_i2c_functionality,
+ };
+ 
+-static struct i2c_adapter_quirks bcm_iproc_i2c_quirks = {
++static const struct i2c_adapter_quirks bcm_iproc_i2c_quirks = {
+ 	/* need to reserve one byte in the FIFO for the slave address */
+ 	.max_read_len = M_TX_RX_FIFO_SIZE - 1,
+ };
+
