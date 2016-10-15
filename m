@@ -1,73 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 26 Oct 2016 10:15:42 +0000
-Subject: Applied "ASoC: Intel: Skylake: Fix a shift wrapping bug" to the asoc tree
-Message-Id: <E1bzLFG-0004S1-KS@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 20:53:27 +0000
+Subject: [PATCH 2/3] ARM-OMAP2+: mux: Use seq_putc() in omap_mux_dbg_signal_show()
+Message-Id: <88deac82-1339-330c-3561-abd30dbaf6b1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013085548.GK16198@mwanda>
-In-Reply-To: <20161013085548.GK16198@mwanda>
+References: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
+In-Reply-To: <e86a5ded-a6e9-1b40-be1a-98fffef0abb5@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, Kranthi G <gudishax.kranthikumar@intel.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Dharageswari R <dharageswari.r@intel.com>, alsa-devel@alsa-project.orgVinodKoulvinod.koul@intel.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Ramesh Babu <ramesh.babu@intel.com>, Colin Ian King <colin.king@canonical.com>Mark Brown <broonie@kernel.org>, Shreyas NC <shreyas.nc@intel.com>, Senthilnathan Veppur <senthilnathanx.veppur@intel.com>
+To: linux-arm-kernel@lists.infradead.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 15 Oct 2016 22:24:29 +0200
 
-   ASoC: Intel: Skylake: Fix a shift wrapping bug
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-has been applied to the asoc tree at
+This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From c8eabf821cac120afb78ca251b07cbf520406a7e Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Oct 2016 11:55:48 +0300
-Subject: [PATCH] ASoC: Intel: Skylake: Fix a shift wrapping bug
-
-"*val" is a u64.  It definitely looks like we intend to use the high 32
-bits as well.
-
-Fixes: 700a9a63f9c1 ("ASoC: Intel: Skylake: Add module instance id generation APIs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
-Tested-by: Kranthi G <gudishax.kranthikumar@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/soc/intel/skylake/skl-sst-utils.c | 2 +-
+ arch/arm/mach-omap2/mux.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/skylake/skl-sst-utils.c b/sound/soc/intel/skylake/skl-sst-utils.c
-index 8dc03039b311..ea162fbf68e5 100644
---- a/sound/soc/intel/skylake/skl-sst-utils.c
-+++ b/sound/soc/intel/skylake/skl-sst-utils.c
-@@ -179,7 +179,7 @@ static inline int skl_getid_32(struct uuid_module *module, u64 *val,
- 		index = ffz(mask_val);
- 		pvt_id = index + word1_mask + word2_mask;
- 		if (pvt_id <= (max_inst - 1)) {
--			*val |= 1 << (index + word1_mask);
-+			*val |= 1ULL << (index + word1_mask);
- 			return pvt_id;
- 		}
- 	}
+diff --git a/arch/arm/mach-omap2/mux.c b/arch/arm/mach-omap2/mux.c
+index 4bdfa3d..e1fa39e 100644
+--- a/arch/arm/mach-omap2/mux.c
++++ b/arch/arm/mach-omap2/mux.c
+@@ -661,7 +661,7 @@ static int omap_mux_dbg_signal_show(struct seq_file *s, void *unused)
+ 			m->balls[1] ? m->balls[1] : none);
+ 	seq_puts(s, "mode: ");
+ 	omap_mux_decode(s, val);
+-	seq_printf(s, "\n");
++	seq_putc(s, '\n');
+ 	seq_printf(s, "signals: %s | %s | %s | %s | %s | %s | %s | %s\n",
+ 			m->muxnames[0] ? m->muxnames[0] : none,
+ 			m->muxnames[1] ? m->muxnames[1] : none,
 -- 
-2.8.1
+2.10.1
 
