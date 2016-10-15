@@ -1,62 +1,200 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:20:37 +0000
-Subject: [PATCH 22/54] md/raid1: Delete three unwanted spaces before increment operators
-Message-Id: <bd57e346-3dea-02e9-7c6e-c6d44dff423b@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Oct 2016 14:55:51 +0000
+Subject: [PATCH 7/7] ASoC: tegra: constify snd_soc_ops structures
+Message-Id: <1476543351-17858-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+References: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 21:10:37 +0200
+Check for snd_soc_ops structures that are only stored in the ops field of a
+snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
+structures that have this property can be declared as const also.
 
-The script "checkpatch.pl" pointed information out like the following.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-ERROR: space prohibited before that '++' (ctx:WxO)
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_soc_ops i@p = { ... };
 
-Thus fix the affected source code places.
+@ok1@
+identifier r.i;
+struct snd_soc_dai_link e;
+position p;
+@@
+e.ops = &i@p;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@ok2@
+identifier r.i, e;
+position p;
+@@
+struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_soc_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_soc_ops i = { ... };
+// </smpl>
+
+The effect on the layout of the .o files is shown by the following output of
+the size command, first before then after the transformation:
+
+  text    data     bss     dec     hex filename
+   3143    1888     384    5415    1527 sound/soc/tegra/tegra_alc5632.o
+   3191    1840     384    5415    1527 sound/soc/tegra/tegra_alc5632.o
+
+   text    data     bss     dec     hex filename
+   3672    2176     768    6616    19d8 sound/soc/tegra/tegra_max98090.o
+   3720    2128     768    6616    19d8 sound/soc/tegra/tegra_max98090.o
+
+   text    data     bss     dec     hex filename
+   2770    1856     384    5010    1392 sound/soc/tegra/tegra_rt5640.o
+   2818    1808     384    5010    1392 sound/soc/tegra/tegra_rt5640.o
+
+   text    data     bss     dec     hex filename
+   4412    2176     768    7356    1cbc sound/soc/tegra/tegra_rt5677.o
+   4460    2128     768    7356    1cbc sound/soc/tegra/tegra_rt5677.o
+
+   text    data     bss     dec     hex filename
+   2442    1536       0    3978     f8a sound/soc/tegra/tegra_sgtl5000.o
+   2490    1480       0    3970     f82 sound/soc/tegra/tegra_sgtl5000.o
+
+   text    data     bss     dec     hex filename
+   2105    1536       0    3641     e39 sound/soc/tegra/tegra_wm8753.o
+   2153    1480       0    3633     e31 sound/soc/tegra/tegra_wm8753.o
+
+   text    data     bss     dec     hex filename
+   3755    1888     768    6411    190b sound/soc/tegra/tegra_wm8903.o
+   3803    1840     768    6411    190b sound/soc/tegra/tegra_wm8903.o
+
+   text    data     bss     dec     hex filename
+   2121    1536       0    3657     e49 sound/soc/tegra/trimslice.o
+   2169    1480       0    3649     e41 sound/soc/tegra/trimslice.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/md/raid1.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/tegra/tegra_alc5632.c  |    2 +-
+ sound/soc/tegra/tegra_max98090.c |    2 +-
+ sound/soc/tegra/tegra_rt5640.c   |    2 +-
+ sound/soc/tegra/tegra_rt5677.c   |    2 +-
+ sound/soc/tegra/tegra_sgtl5000.c |    2 +-
+ sound/soc/tegra/tegra_wm8753.c   |    2 +-
+ sound/soc/tegra/tegra_wm8903.c   |    2 +-
+ sound/soc/tegra/trimslice.c      |    2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index fc9d600..95f6098 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -220,7 +220,7 @@ static void reschedule_retry(struct r1bio *r1_bio)
+diff -u -p a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+--- a/sound/soc/tegra/tegra_alc5632.c
++++ b/sound/soc/tegra/tegra_alc5632.c
+@@ -65,7 +65,7 @@ static int tegra_alc5632_asoc_hw_params(
+ 	return 0;
+ }
  
- 	spin_lock_irqsave(&conf->device_lock, flags);
- 	list_add(&r1_bio->retry_list, &conf->retry_list);
--	conf->nr_queued ++;
-+	conf->nr_queued++;
- 	spin_unlock_irqrestore(&conf->device_lock, flags);
+-static struct snd_soc_ops tegra_alc5632_asoc_ops = {
++static const struct snd_soc_ops tegra_alc5632_asoc_ops = {
+ 	.hw_params = tegra_alc5632_asoc_hw_params,
+ };
  
- 	wake_up(&conf->wait_barrier);
-@@ -1878,7 +1878,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
- 		}
- 		sectors -= s;
- 		sect += s;
--		idx ++;
-+		idx++;
- 	}
- 	set_bit(R1BIO_Uptodate, &r1_bio->state);
- 	bio->bi_error = 0;
-@@ -2570,7 +2570,7 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
- 		} else if (!test_bit(In_sync, &rdev->flags)) {
- 			bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
- 			bio->bi_end_io = end_sync_write;
--			write_targets ++;
-+			write_targets++;
- 		} else {
- 			/* may need to read from here */
- 			sector_t first_bad = MaxSector;
--- 
-2.10.1
+diff -u -p a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -93,7 +93,7 @@ static int tegra_max98090_asoc_hw_params
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops tegra_max98090_ops = {
++static const struct snd_soc_ops tegra_max98090_ops = {
+ 	.hw_params = tegra_max98090_asoc_hw_params,
+ };
+ 
+diff -u -p a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
+--- a/sound/soc/tegra/tegra_rt5640.c
++++ b/sound/soc/tegra/tegra_rt5640.c
+@@ -76,7 +76,7 @@ static int tegra_rt5640_asoc_hw_params(s
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops tegra_rt5640_ops = {
++static const struct snd_soc_ops tegra_rt5640_ops = {
+ 	.hw_params = tegra_rt5640_asoc_hw_params,
+ };
+ 
+diff -u -p a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
+--- a/sound/soc/tegra/tegra_rt5677.c
++++ b/sound/soc/tegra/tegra_rt5677.c
+@@ -93,7 +93,7 @@ static int tegra_rt5677_event_hp(struct
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops tegra_rt5677_ops = {
++static const struct snd_soc_ops tegra_rt5677_ops = {
+ 	.hw_params = tegra_rt5677_asoc_hw_params,
+ };
+ 
+diff -u -p a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
+--- a/sound/soc/tegra/tegra_sgtl5000.c
++++ b/sound/soc/tegra/tegra_sgtl5000.c
+@@ -82,7 +82,7 @@ static int tegra_sgtl5000_hw_params(stru
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops tegra_sgtl5000_ops = {
++static const struct snd_soc_ops tegra_sgtl5000_ops = {
+ 	.hw_params = tegra_sgtl5000_hw_params,
+ };
+ 
+diff -u -p a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
+--- a/sound/soc/tegra/tegra_wm8753.c
++++ b/sound/soc/tegra/tegra_wm8753.c
+@@ -89,7 +89,7 @@ static int tegra_wm8753_hw_params(struct
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops tegra_wm8753_ops = {
++static const struct snd_soc_ops tegra_wm8753_ops = {
+ 	.hw_params = tegra_wm8753_hw_params,
+ };
+ 
+diff -u -p a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -96,7 +96,7 @@ static int tegra_wm8903_hw_params(struct
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops tegra_wm8903_ops = {
++static const struct snd_soc_ops tegra_wm8903_ops = {
+ 	.hw_params = tegra_wm8903_hw_params,
+ };
+ 
+diff -u -p a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+--- a/sound/soc/tegra/trimslice.c
++++ b/sound/soc/tegra/trimslice.c
+@@ -74,7 +74,7 @@ static int trimslice_asoc_hw_params(stru
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops trimslice_asoc_ops = {
++static const struct snd_soc_ops trimslice_asoc_ops = {
+ 	.hw_params = trimslice_asoc_hw_params,
+ };
+ 
 
