@@ -1,42 +1,54 @@
-From: Jim Davis <jim.epost@gmail.com>
-Date: Fri, 28 Oct 2016 22:32:32 +0000
-Subject: Re: [PATCH 01/10] scripts/basic/bin2c: Complete error handling in main()
-Message-Id: <CA+r1ZhjvZmDjuoroL-N6s1SU6+CQwBM0izjvP9kigGO7ThW5kQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 16 Oct 2016 19:03:52 +0000
+Subject: [PATCH] ARM64-cpuinfo: Combine six calls for sequence output into one seq_printf() call in c_show()
+Message-Id: <83d98772-8872-1b75-a9a5-5f08b8462e18@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net> <44402655-ef0d-1e2f-0587-f17295a08aa3@users.sourceforge.net>
-In-Reply-To: <44402655-ef0d-1e2f-0587-f17295a08aa3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Oct 28, 2016 at 1:31 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 27 Oct 2016 16:15:04 +0200
->
-> Return values were not checked from five calls of the function "printf".
->
-> This issue was detected also by using the Coccinelle software.
->
->
-> * Add a bit of exception handling there.
->
-> * Optimise this function implementation a bit.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 16 Oct 2016 20:48:28 +0200
 
-The most interesting thing about this patch was trying to figure out
-how to actually get bin2c to run at all.  Making a defconfig kernel
-didn't run it.  Making a kernel with the latest Ubuntu 16.10 config
-file didn't run it.  Setting CONFIG_IKCONFIG runs it (once), for the
-folks who want to use scripts/extract-ikconfig.  After that, if you
-dig about in the makefiles, it looks like you have to turn on the
-Tomoyo LSM -- which doesn't seem to be a common occurrence -- or else
-set CONFIG_KEXEC_FILE to generate the 'purgatory' thing it uses.
-Again, not the most frequent of events, as far as I can tell.
+Some data were printed into a sequence by six separate function calls.
+Print the same data by a single function call instead.
 
-Given how uncommon running bin2c seems to be, "optimizing" it may not
-be a useful project.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm64/kernel/cpuinfo.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+index b3d5b3e..f22687d 100644
+--- a/arch/arm64/kernel/cpuinfo.c
++++ b/arch/arm64/kernel/cpuinfo.c
+@@ -148,14 +148,17 @@ static int c_show(struct seq_file *m, void *v)
+ 				if (elf_hwcap & (1 << j))
+ 					seq_printf(m, " %s", hwcap_str[j]);
+ 		}
+-		seq_puts(m, "\n");
+-
+-		seq_printf(m, "CPU implementer\t: 0x%02x\n",
+-			   MIDR_IMPLEMENTOR(midr));
+-		seq_printf(m, "CPU architecture: 8\n");
+-		seq_printf(m, "CPU variant\t: 0x%x\n", MIDR_VARIANT(midr));
+-		seq_printf(m, "CPU part\t: 0x%03x\n", MIDR_PARTNUM(midr));
+-		seq_printf(m, "CPU revision\t: %d\n\n", MIDR_REVISION(midr));
++		seq_printf(m,
++			   "\n"
++			   "CPU implementer\t: 0x%02x\n"
++			   "CPU architecture: 8\n"
++			   "CPU variant\t: 0x%x\n"
++			   "CPU part\t: 0x%03x\n"
++			   "CPU revision\t: %d\n\n",
++			   MIDR_IMPLEMENTOR(midr),
++			   MIDR_VARIANT(midr),
++			   MIDR_PARTNUM(midr),
++			   MIDR_REVISION(midr));
+ 	}
+ 
+ 	return 0;
 -- 
-Jim
+2.10.1
+
