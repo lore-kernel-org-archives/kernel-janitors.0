@@ -1,56 +1,74 @@
-From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Date: Thu, 06 Oct 2016 18:33:28 +0000
-Subject: Re: [PATCH 37/54] md/raid5: Replace a seq_printf() call by seq_puts() in raid5_status()
-Message-Id: <1475778808.2520.10.camel@petrovitsch.priv.at>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 16 Oct 2016 08:20:10 +0000
+Subject: [PATCH] MD-RAID: Use seq_putc() in three status functions
+Message-Id: <77fb6fdc-7480-8607-0af1-42f73c125b9d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
-         <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-         <92c52f1d-d151-cea6-e9ac-31378e6862d0@users.sourceforge.net>
-         <1475771699.1914.10.camel@perches.com>
-         <d896b697-6735-e50d-00b0-2b3d9f371c99@users.sourceforge.net>
-         <1475775403.1914.13.camel@perches.com>
-         <c158cfe0-d8d8-e433-0cea-2ef1fc51e48b@users.sourceforge.net>
-In-Reply-To: <c158cfe0-d8d8-e433-0cea-2ef1fc51e48b@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+ <92c52f1d-d151-cea6-e9ac-31378e6862d0@users.sourceforge.net>
+ <1475771699.1914.10.camel@perches.com>
+In-Reply-To: <1475771699.1914.10.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Joe Perches <joe@perches.com>
-Cc: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Joe Perches <coupons@perches.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi all!
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 16 Oct 2016 10:10:28 +0200
 
-On Thu, 2016-10-06 at 19:49 +0200, SF Markus Elfring wrote:
-> > diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-> > > > []
-> > > > > 
-> > > > > @@ -7044,7 +7044,7 @@ static void raid5_status(struct
-> > > > > seq_file *seq, struct mddev *mddev)
-> > > > >  			   rdev && test_bit(In_sync, &rdev-
-> > > > > >flags) ? "U" : "_");
-> > > > >  	}
-> > > > >  	rcu_read_unlock();
-> > > > > -	seq_printf (seq, "]");
-> > > > > +	seq_puts(seq, "]");
-> > > > seq_putc
-> > > How do you think about the possibility that the script
-> > > "checkpatch.pl" can also point
-> > > such a source code transformation out directly?
-> > 
-> > Why don't _you_ try to implement that in checkpatch instead?
-> 
-> How are the chances that any other software developer would be
-> quicker (than me) for such
-> an addition because of more practical knowledge for the programming
-> language "Perl"?
+A single character (a closing square bracket) should be put into a sequence
+at the end in these functions.
+Thus use the corresponding function "seq_putc".
 
-The above is BTW a pretty simple thing and thus good for a learning
-experience for regular expressions and copy-pasting a few lines in that
-perl-script and editing them.
+This issue was detected also by using the Coccinelle software.
 
-MfG,
-	Bernd
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/raid1.c  | 2 +-
+ drivers/md/raid10.c | 2 +-
+ drivers/md/raid5.c  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-PS: Sry for the noise - it's somewhat OT here ....
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 1961d82..fd97f65 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1418,7 +1418,7 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+ 			   rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
+ 	}
+ 	rcu_read_unlock();
+-	seq_printf(seq, "]");
++	seq_putc(seq, ']');
+ }
+ 
+ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index be1a9fc..7490b28 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -1499,7 +1499,7 @@ static void raid10_status(struct seq_file *seq, struct mddev *mddev)
+ 		seq_printf(seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
+ 	}
+ 	rcu_read_unlock();
+-	seq_printf(seq, "]");
++	seq_putc(seq, ']');
+ }
+ 
+ /* check if there are enough drives for
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 92ac251..9eb45c4 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -7077,7 +7077,7 @@ static void raid5_status(struct seq_file *seq, struct mddev *mddev)
+ 		seq_printf (seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
+ 	}
+ 	rcu_read_unlock();
+-	seq_printf (seq, "]");
++	seq_putc(seq, ']');
+ }
+ 
+ static void print_raid5_conf (struct r5conf *conf)
 -- 
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-                     LUGA : http://www.luga.at
+2.10.1
+
