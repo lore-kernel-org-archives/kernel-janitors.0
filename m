@@ -1,42 +1,30 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 30 Oct 2016 11:50:12 +0000
-Subject: Re: [PATCH 10/15] ASoC: omap-mcbsp: use permission-specific DEVICE_ATTR variants
-Message-Id: <alpine.DEB.2.20.1610301246120.2074@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 16 Oct 2016 17:10:15 +0000
+Subject: Re: MD-RAID: Use seq_putc() in three status functions?
+Message-Id: <59d71170-c48d-a084-c748-b6ab74a2bee4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>        <1477769829-22230-11-git-send-email-Julia.Lawall@lip6.fr> <20161030125851.bd0e74854c52ce7d4ab3570c@bitmer.com>
-In-Reply-To: <20161030125851.bd0e74854c52ce7d4ab3570c@bitmer.com>
+References: <566ABCD9.1060404@users.sourceforge.net>
+ <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+ <92c52f1d-d151-cea6-e9ac-31378e6862d0@users.sourceforge.net>
+ <1475771699.1914.10.camel@perches.com>
+ <77fb6fdc-7480-8607-0af1-42f73c125b9d@users.sourceforge.net>
+ <688764a4-072d-2faf-37ba-a222b190a5d9@suse.de>
+In-Reply-To: <688764a4-072d-2faf-37ba-a222b190a5d9@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hannes Reinecke <hare@suse.de>
+Cc: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Joe Perches <coupons@perches.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+> Does it improve code? Does it improve anything?
 
+Yes. - I got such an impression.
 
-On Sun, 30 Oct 2016, Jarkko Nikula wrote:
+* Is it more efficient to call the function "seq_printf" for the desired data processing
+  for a single character than to pass it to the function "" in a string?
 
-> Hi
->
-> On Sat, 29 Oct 2016 21:37:04 +0200
-> Julia Lawall <Julia.Lawall@lip6.fr> wrote:
->
-> > Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
-> > source code, improves readbility, and reduces the chance of
-> > inconsistencies.
-> >
-> ...
-> >
-> > - DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
-> > + DEVICE_ATTR_RW(x);
->
-> I'm not so sure does this improve readability. 644 is pretty obvious but
-> for DEVICE_ATTR_RW() one has to dive into include/linux/device.h and
-> include/linux/sysfs.h to see for what users it grants the write access.
+* Will the required data transfer shrink a bit for the affected functions because of
+  such a change?
 
-OK, as you like.  It does help ensure that the functions that are supposed
-to be defined are available.  There were a couple of occurrences of 0644
-with no show or no store function.  Among the three declarers, there are
-currently in total over 800 uses in the kernel, so they are also not so
-obscure.
-
-julia
+Regards,
+Markus
