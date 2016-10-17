@@ -1,32 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Oct 2016 09:58:06 +0000
-Subject: Re: [Intel-gfx] [patch] drm/i915: fix a read size argument
-Message-Id: <20161013095806.GL5630@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Oct 2016 17:19:14 +0000
+Subject: Re: ARC-setup: Use seq_putc() in show_cpuinfo()
+Message-Id: <d8738585-21f3-8691-4c53-bfbafef925be@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013085508.GJ16198@mwanda>
- <20161013090103.GC32528@nuc-i3427.alporthouse.com>
-In-Reply-To: <20161013090103.GC32528@nuc-i3427.alporthouse.com>
+References: <164a402a-de20-645d-00af-9a414cf745c4@users.sourceforge.net>
+ <579aaf85-c22d-b680-5ce8-3c0e23ab6d7e@synopsys.com>
+In-Reply-To: <579aaf85-c22d-b680-5ce8-3c0e23ab6d7e@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@intel.com>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-snps-arc@lists.infradead.org
 
-On Thu, Oct 13, 2016 at 10:01:03AM +0100, Chris Wilson wrote:
-> On Thu, Oct 13, 2016 at 11:55:08AM +0300, Dan Carpenter wrote:
-> > We want to read 3 bytes here, but because the parenthesis are in the
-> > wrong place we instead read:
-> > 
-> > 	sizeof(intel_dp->edp_dpcd) = sizeof(intel_dp->edp_dpcd)
-> > 
-> > which is one byte.
-> > 
-> > Fixes: fe5a66f91c88 ("drm/i915: Read PSR caps/intermediate freqs/etc. only once on eDP")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> A single character (line break) should be put into a sequence.
+>> Thus use the corresponding function "seq_putc".
 > 
-> Oops, does smatch catch this?
+> Perhaps reword the changelog to say that seqc_putc is more efficient than
+> seqc_printf to output a single char.
+> I mean _printf is not wrong but not as efficient ?
 
-Yeah.  It does.
+I came along source files for a few other software modules with similar
+change possibilities.
+Unfortunately, the corresponding developers are not convinced yet
+to replace a call of the function "seq_printf" at the end by
+a "seq_putc" because of software efficiency reasons.
 
-regards,
-dan carpenter
+Do you find this update suggestion acceptable to some degree
+for the function "setup"?
 
+Regards,
+Markus
