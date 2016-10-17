@@ -1,7 +1,7 @@
-From: Hannes Reinecke <hare@suse.de>
-Date: Mon, 17 Oct 2016 14:01:46 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Oct 2016 14:30:43 +0000
 Subject: Re: MD-RAID: Use seq_putc() in three status functions?
-Message-Id: <57299b72-8e6b-0b92-4374-1b7a0907e810@suse.de>
+Message-Id: <cb9beadc-3ea2-c09c-f621-a54cd73e3647@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
@@ -18,42 +18,33 @@ References: <566ABCD9.1060404@users.sourceforge.net>
  <a0f96e19-fa24-8507-2b77-344a342113aa@users.sourceforge.net>
  <1476703920.2520.105.camel@petrovitsch.priv.at>
  <97f31b70-e3ff-f194-c753-54da1fe3e664@users.sourceforge.net>
-In-Reply-To: <97f31b70-e3ff-f194-c753-54da1fe3e664@users.sourceforge.net>
+ <57299b72-8e6b-0b92-4374-1b7a0907e810@suse.de>
+In-Reply-To: <57299b72-8e6b-0b92-4374-1b7a0907e810@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Bernd Petrovitsch <bernd@petrovitsch.priv.at>, linux-raid@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Joe Perches <coupons@perches.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, kbuild-all@01.org, ltp@lists.linux.it
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hannes Reinecke <hare@suse.de>, linux-raid@vger.kernel.org
+Cc: Bernd Petrovitsch <bernd@petrovitsch.priv.at>, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Joe Perches <coupons@perches.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, kbuild-all@01.org, ltp@lists.linux.it
 
-On 10/17/2016 01:43 PM, SF Markus Elfring wrote:
->>>> See above. At the moment _any_ test result from your side would do.
->>>
->>> I imagine that another single result might not be representative.
+>> Am I the only software developer so far who would dare to reconsider
+>> implementation details from three status functions?
 >>
->> Publish not only results but also everything (complete!) so that anyone
->> can *easily* follow it to check and reproduce the results - especially
->> if you want people with knowledge of other architectures to comment
->> (otherwise they probably won't bother).
->=20
-> Am I the only software developer so far who would dare to reconsider
-> implementation details from three status functions?
->=20
-No.
-But we're waiting for you showing is that it is an improvement.
-Which at the moment we don't see.
-Hence we're waiting from a proof or validation from your side.
+> No.
 
-Cheers,
+Thanks for this kind of promising feedback.
 
-Hannes
---=20
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: F. Imend=F6rffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
-HRB 21284 (AG N=FCrnberg)
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+> But we're waiting for you showing is that it is an improvement.
+
+Can this aspect also be clarified to some degree from a logical point of view?
+
+* Would you really like to know under which circumstances data processing
+  will be faster for a single character instead of using a string pointer
+  and corresponding two characters?
+
+* Do you care for a changed memory allocation characteristic?
+
+* Will it occasionally be useful to avoid the storage for another string literal?
+
+Regards,
+Markus
