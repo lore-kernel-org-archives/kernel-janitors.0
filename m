@@ -1,7 +1,7 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Date: Mon, 17 Oct 2016 09:37:56 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+Date: Mon, 17 Oct 2016 10:56:05 +0000
 Subject: Re: [PATCH] ARM64-cpuinfo: Combine six calls for sequence output into one seq_printf() call in c_sho
-Message-Id: <10543939-0baf-1057-2325-9ec5361e8b40@gmail.com>
+Message-Id: <20161017105605.GB29095@leverpostej>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <83d98772-8872-1b75-a9a5-5f08b8462e18@users.sourceforge.net>
 In-Reply-To: <83d98772-8872-1b75-a9a5-5f08b8462e18@users.sourceforge.net>
@@ -10,23 +10,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-
-
-On 16/10/16 21:03, SF Markus Elfring wrote:
+On Sun, Oct 16, 2016 at 09:03:52PM +0200, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Sun, 16 Oct 2016 20:48:28 +0200
->
+> 
 > Some data were printed into a sequence by six separate function calls.
 > Print the same data by a single function call instead.
->
+
+... why?
+
+Beyond simply having fewer function calls, is there an upside?
+
+This makes it harder to see the relationship between the format strings
+and their associated data, and makes the code longer.
+
+Thanks,
+Mark.
+
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
 >  arch/arm64/kernel/cpuinfo.c | 19 +++++++++++--------
 >  1 file changed, 11 insertions(+), 8 deletions(-)
->
+> 
 > diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
 > index b3d5b3e..f22687d 100644
 > --- a/arch/arm64/kernel/cpuinfo.c
@@ -55,6 +60,14 @@ Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 > +			   MIDR_PARTNUM(midr),
 > +			   MIDR_REVISION(midr));
 >  	}
->
+>  
 >  	return 0;
->
+> -- 
+> 2.10.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
