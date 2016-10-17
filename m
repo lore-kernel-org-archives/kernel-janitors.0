@@ -1,7 +1,7 @@
-From: "Altshul, Maxim" <maxim.altshul@ti.com>
-Date: Tue, 11 Oct 2016 07:58:52 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Oct 2016 10:59:37 +0000
 Subject: Re: [bug report] wlcore/wl18xx: Add functionality to accept TX rate per link
-Message-Id: <4rrd9e6o4mmk60ue32k5kbfi.1476172728283@email.android.com>
+Message-Id: <20161017104144.GA4469@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161011064722.GA7477@mwanda>
 In-Reply-To: <20161011064722.GA7477@mwanda>
@@ -10,14 +10,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-SGksIGlmIEkgYW0gbm90IG1pc3Rha2VuIHRoZW4gdGhlIHNrYiBnb2VzIHRocm91Z2ggdGhlIGZv
-bGxvd2luZyBwcm9jZXNzOiAxLiBJdCBpcyBjcmVhdGVkIGJ5IHRoZSBkcml2ZXIgYW5kIGEgaGxp
-ZCBpcyBhc3NpZ25lZC4gCjIuIEl0IGlzIHBhc3NlZCB0byB0aGUgRlcgZm9yIHRyYW5zbWlzc2lv
-bi4gCjMuIFRoZSBobGlkIGlzIGNoZWNrZWQgYnkgdGhlIEZXIGJlZm9yZSBhbnl0aGluZyBoYXBw
-ZW5zLiAKNC4gSXQgaXMgcmVsZWFzZWQgYnkgdGhlIEZXIGFmdGVyIHRyYW5zbWlzc2lvbi4gCjUu
-IFRoZSBobGlkIGlzIHRha2VuIHRvIGdldCB0aGUgcmF0ZSBmcm9tIGxpbmtzIGFycmF5LiAKCklu
-IG15IG9waW5pb24sIG5vdGhpbmcgYmFkIHNob3VsZCBoYXBwZW4sIGFzIHRoZSBobGlkIGlzIGNy
-ZWF0ZWQgYnkgdGhlIGRyaXZlciBpdHNlbGYgYW5kIGNoZWNrZWQgYnkgdGhlIEZXIGZvciBjb3Jy
-ZWN0bmVzcy4gSSBjb3VsZCBhZGQgYW5vdGhlciBjaGVjayB0byB2ZXJpZnkgdGhhdCBobGlkIGRv
-ZXMgbm90IGV4Y2VlZCB0aGUgc2l6ZSBvZiBsaW5rcyBhcnJheS4gCgpJIHdpbGwgdGFrZSBhIGxv
-b2sgYXQgdGhlIGNvZGUgYXMgc29vbiBhcyBwb3NzaWJsZS4gCgpSZWdhcmRzLCAKTWF4
+On Tue, Oct 11, 2016 at 07:58:52AM +0000, Altshul, Maxim wrote:
+> Hi, if I am not mistaken then the skb goes through the following process: 1. It is created by the driver and a hlid is assigned. 
+> 2. It is passed to the FW for transmission. 
+> 3. The hlid is checked by the FW before anything happens. 
+> 4. It is released by the FW after transmission. 
+> 5. The hlid is taken to get the rate from links array. 
+> 
+
+You're probably right, but it would be easier to follow along if there
+were function names here.
+
+regards,
+dan carpenter
+
+
