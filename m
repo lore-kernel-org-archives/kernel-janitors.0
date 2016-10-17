@@ -1,28 +1,31 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 10 Oct 2016 08:18:44 +0000
-Subject: Re: virtio_blk: Rename a jump label in virtblk_get_id()
-Message-Id: <32e3a56e-5cd3-febe-1020-921b5ecc9b47@users.sourceforge.net>
+Date: Mon, 17 Oct 2016 11:30:59 +0000
+Subject: Re: ARM64-cpuinfo: Combine six calls for sequence output into one seq_printf() call in c_show()
+Message-Id: <a09542e6-9851-45ef-583d-338205217cfc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <02054675-8395-ac81-6863-e3a5cbfc9032@users.sourceforge.net>
- <a303f7a6-c675-5228-99bd-a03c9e9252e9@users.sourceforge.net>
- <20161010022831-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20161010022831-mutt-send-email-mst@kernel.org>
+References: <83d98772-8872-1b75-a9a5-5f08b8462e18@users.sourceforge.net>
+ <20161017105605.GB29095@leverpostej>
+In-Reply-To: <20161017105605.GB29095@leverpostej>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: virtualization@lists.linux-foundation.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-> Please don't send me such patches, I'm not really interested in renaming labels
+>> Some data were printed into a sequence by six separate function calls.
+>> Print the same data by a single function call instead.
+> 
+> ... why?
+> 
+> Beyond simply having fewer function calls, is there an upside?
 
-Thanks for your feedback.
+Will it matter to improve run time characteristics at this source code place?
 
 
-> unless it clearly adds to a significant improvement in readability.
+> This makes it harder to see the relationship between the format strings
+> and their associated data, and makes the code longer.
 
-Have you got any more concrete conditions for the selection of appropriate
-identifiers in this use case according to your software development view?
+Do you prefer an other layout for the passed data so that the increase
+of line count in my update suggestion would look differently?
 
 Regards,
 Markus
