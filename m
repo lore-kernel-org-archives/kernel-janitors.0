@@ -1,7 +1,7 @@
 From: Eric Anholt <eric@anholt.net>
-Date: Thu, 13 Oct 2016 17:33:22 +0000
+Date: Mon, 17 Oct 2016 17:09:00 +0000
 Subject: Re: [patch] drm/vc4: Fix a couple error codes in vc4_cl_lookup_bos()
-Message-Id: <87h98g9msd.fsf@eliezer.anholt.net>
+Message-Id: <87oa2ikimr.fsf@eliezer.anholt.net>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="=-=-="
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -22,25 +22,25 @@ Dan Carpenter <dan.carpenter@oracle.com> writes:
 > Fixes: d5b1a78a772f ("drm/vc4: Add support for drawing 3D frames.")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Looks good.  Waiting for rc1 to show up to put together a -next.
+Reviewed and applied to drm-vc4-next.  Thanks!
 
 --=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCgAGBQJX/8ViAAoJELXWKTbR/J7oi2AQAKmO490tvlfUCCpNNe6YMvTf
-V1UQMzVc9yWfoTYG5Uy1JNGKiVLUQhY2FlOT8BIzkIFNpyAl3zr2/7DD1cHE6Bpi
-LTPUgjT5nwjJKjRryFlakq9ds5PfYtC0M3Ted6XuKi/Mw4T1k4//CRmoTIOzk6Ni
-V3pD4eSIpO1o1hOar2uzeoW/1SnC+BtlLsrS2BN6a164h2OmRriBYyS5H7ecRPxm
-TKClX4otGg2CsNId7Rm6fbxPZrDEk4m/n9Mq7NzKjHZYHMC2wFvUEiBzHbJzWQ7r
-ctM9MbXhNaFQMU2CaYomW4rxj2NyJeZeWhBRiUcS7qBgYtPp03YbH85V9VmU23SB
-pNc9ttHBAoYerK7C37V1yxygsHALmYCSbNANCX1m/h9OUj/E/eOO+6bgu8ebXOdl
-Lrj1ZNAT75IehloVwl26Jr8e3TZRs7NL7O21QDuYFMXo8zpovZCQVtKa51ZmWcHJ
-07O720P9c++nkinjchIM4CfX3KNiqKwbksFTFc3pzKpuasbbjzwGlz6ZY3da9LBV
-xRntYnvjeOJcVZwmHrpeN3xiwaRiQqxaHH7uG0Hp0f/ubnyC+LRlRh7tgIIiEWL0
-Py9ZRKhjaxDb8d42aQu5t6xj8EkHTsLXiVu2GO5FpLU+pvA5q3QzD3FE89chOg7b
-nFsZirBs2yQL5dXTuqNO
-=3eS/
+iQIcBAEBCgAGBQJYBQWsAAoJELXWKTbR/J7oykUQALn2psB7nSVwK4WJk8I6j2jS
+jqKJexVwwNQUFgocmK9NkIkyER/yDIuqKcVoIu6rKJJTeYs3s2ASQ5E8LVaNuld9
+sEJtpjIf/cxxyE1n7csG6j/GgW75VibOrPoyuCVXr7pljMHLo/l9jmKI0rrNIObj
+WQ9kqkQA7GUirMFezNSErpm7DADkV1LPwzhKOPSsU3JVLqpLNd9nQ+CAFj1YM5a7
+GWICvg5YfwN5/4rIDPldjggKWsIMioYVtPCU6koWc0N9k/BxJiB9cCdmKGD5W6bo
+rRl7pnCLZZZ+U9PtMmI4uLzlFIGzJMG4nxvj1R07mp0yXBXeKsABhSmg4CMoaBqg
+KhFGpexR1KmClh4lTv37wtQJHVN2uvt/kWW+18DpALSHjOCM0f4iQVqtw2btV79D
+uanz3W7LaMdBb8L2YCCR3cal6HL/fg3zOA3XNXMZSpymWMtP0IsSZuBsJi8q480s
++Aoix37uH2RSjl+KBAhF/PeesJ4oPbRUUcd1kuSlgdNNqnrDomlCcIhN6nSzsmLk
+z5I96DLWEeY7Jq2IaeqLBJceF8Az+6AKx5+Nu6p6HBCm+WPTbCMxzjTshF0WzTda
+r7gmwN0jOylQsu0N8N07m9SQtdWZjvgOnaDZUyroXqAYi3PzkA+1SzwHkqkZgrAC
+2DwTH/ygZyyUhMtWLB3S
+=AK+j
 -----END PGP SIGNATURE-----
 --=-=-=--
