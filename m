@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Oct 2016 11:43:14 +0000
+From: Hannes Reinecke <hare@suse.de>
+Date: Mon, 17 Oct 2016 14:00:14 +0000
 Subject: Re: MD-RAID: Use seq_putc() in three status functions?
-Message-Id: <97f31b70-e3ff-f194-c753-54da1fe3e664@users.sourceforge.net>
+Message-Id: <f0cdb05a-a1b7-8962-fb9c-cc4739178e8b@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <566ABCD9.1060404@users.sourceforge.net>
  <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
@@ -16,25 +16,90 @@ References: <566ABCD9.1060404@users.sourceforge.net>
  <653e60ee-f862-8828-3e4f-498c7cc34bdc@users.sourceforge.net>
  <c2500336-5848-66c3-ecf0-1ade04decf75@suse.de>
  <a0f96e19-fa24-8507-2b77-344a342113aa@users.sourceforge.net>
- <1476703920.2520.105.camel@petrovitsch.priv.at>
-In-Reply-To: <1476703920.2520.105.camel@petrovitsch.priv.at>
+In-Reply-To: <a0f96e19-fa24-8507-2b77-344a342113aa@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bernd Petrovitsch <bernd@petrovitsch.priv.at>, linux-raid@vger.kernel.org
-Cc: Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Joe Perches <coupons@perches.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, kbuild-all@01.org, ltp@lists.linux.it
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-raid@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Joe Perches <coupons@perches.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, kbuild-all@01.org, ltp@lists.linux.it
 
->>> See above. At the moment _any_ test result from your side would do.
->>
->> I imagine that another single result might not be representative.
-> 
-> Publish not only results but also everything (complete!) so that anyone
-> can *easily* follow it to check and reproduce the results - especially
-> if you want people with knowledge of other architectures to comment
-> (otherwise they probably won't bother).
+On 10/17/2016 01:10 PM, SF Markus Elfring wrote:
+>>> * Is a string pointer often longer than a byte?
+>>>
+>> Always.
+>=20
+> I have got doubts for this specific information.
+>=20
+>=20
+>> (Which up to now I thought was basic programming knowledge...)
+>=20
+> By the way:
+> Run time environments still exist where the size of a pointer can be also
+> just one byte, don't they?
+>=20
+Really? Name one.
+You can only fit a point in one byte if you are on an 8-bit system.
+Which I don't think linux is running on.
 
-Am I the only software developer so far who would dare to reconsider
-implementation details from three status functions?
+>>> How many results would we like to clarify from various hardware
+>>> and software combinations?
+>>>
+>> See above. At the moment _any_ test result from your side would do.
+>=20
+> I imagine that another single result might not be representative.
+> How many lessons from test statistics will usually be also relevant here?
+>=20
+>=20
+As said above, _any_ statistic will do at this point.
 
-Regards,
-Markus
+>>> How important are the mentioned functions for you within the Linux
+>>> programming interface so far?
+>>>
+>> Not very. The interface is only used in a slow path, and the execution
+>> time doesn't affect I/O performance in any way.
+>=20
+> Thanks for another interesting information.
+>=20
+>=20
+>>>> Case in point: with your patch the x86_64 compiler generates nearly
+>>>> identical code for driver/md/raid1.c, but with one instruction _more_
+>>>> after your patch has been applied.
+>>>
+>>> Which software versions and command parameters did you try out
+>>> for this information (from an unspecified run time environment)?
+>>>
+>> # gcc --version
+>> gcc (SUSE Linux) 4.8.5
+>=20
+> Thanks for this detail.
+>=20
+> * Did you choose any special optimisation settings for your quick check?
+>=20
+> * Will any compilation results matter if "optimisation" would be
+>   switched off there?
+>=20
+>=20
+These were the results when calling 'make' in the kernel source tree.
+With all applicable options.
+
+>> I'm still waiting from results from your side.
+>=20
+> Would any other software developers or testers dare to add related inform=
+ation?
+>=20
+No. It's your patch, _you_ have to do it.
+
+Cheers,
+
+Hannes
+--=20
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
+GF: F. Imend=F6rffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG N=FCrnberg)
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
