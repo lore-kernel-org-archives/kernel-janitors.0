@@ -1,42 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Oct 2016 19:53:00 +0000
-Subject: [PATCH 1/6] IA64-sba_iommu: Use seq_puts() in ioc_show()
-Message-Id: <1795798f-3dd4-d123-16c2-82bf223565e9@users.sourceforge.net>
+Date: Wed, 19 Oct 2016 20:47:46 +0000
+Subject: [PATCH 2/5] blackfin-irqchip: Combine two seq_printf() calls into one call in arch_show_interrupts()
+Message-Id: <a2f2180b-5507-92d9-49bc-74e010db6c5f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
-In-Reply-To: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
+References: <4cd6678e-ebf0-d2f4-0b79-ac33060a6752@users.sourceforge.net>
+In-Reply-To: <4cd6678e-ebf0-d2f4-0b79-ac33060a6752@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ia64@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Borislav Petkov <bp@suse.de>, Fenghua Yu <fenghua.yu@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, Ingo Molnar <mingo@kernel.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <jroedel@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>, Robert Richter <rrichter@cavium.com>, Robin Murphy <robin.murphy@arm.com>, Tony Luck <tony.luck@intel.com>, Toshi Kani <toshi.kani@hpe.com>, Vineet Gupta <vgupta@synopsys.com>
+To: adi-buildroot-devel@lists.sourceforge.net, Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Steven Miao <realmz6@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Oct 2016 20:20:24 +0200
+Date: Wed, 19 Oct 2016 21:19:50 +0200
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+Some data were printed into a sequence by two separate function calls.
+Print the same data by a single function call instead.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/ia64/hp/common/sba_iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/blackfin/kernel/irqchip.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/ia64/hp/common/sba_iommu.c b/arch/ia64/hp/common/sba_iommu.c
-index 630ee80..282f5c1 100644
---- a/arch/ia64/hp/common/sba_iommu.c
-+++ b/arch/ia64/hp/common/sba_iommu.c
-@@ -1930,7 +1930,7 @@ ioc_show(struct seq_file *s, void *v)
- 	}
- #endif
- #ifndef ALLOW_IOV_BYPASS
--	 seq_printf(s, "IOVA bypass disabled\n");
-+	seq_puts(s, "IOVA bypass disabled\n");
- #endif
+diff --git a/arch/blackfin/kernel/irqchip.c b/arch/blackfin/kernel/irqchip.c
+index 052cde5..b59ad4c 100644
+--- a/arch/blackfin/kernel/irqchip.c
++++ b/arch/blackfin/kernel/irqchip.c
+@@ -41,8 +41,10 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ 	seq_printf(p, "%*s: ", prec, "NMI");
+ 	for_each_online_cpu(j)
+ 		seq_printf(p, "%10u ", cpu_pda[j].__nmi_count);
+-	seq_printf(p, "  CORE  Non Maskable Interrupt\n");
+-	seq_printf(p, "%*s: %10u\n", prec, "ERR", atomic_read(&irq_err_count));
++	seq_printf(p,
++		   "  CORE  Non Maskable Interrupt\n"
++		   "%*s: %10u\n",
++		   prec, "ERR", atomic_read(&irq_err_count));
  	return 0;
  }
+ #endif
 -- 
 2.10.1
 
