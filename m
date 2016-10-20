@@ -1,56 +1,77 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Oct 2016 19:54:19 +0000
-Subject: [PATCH 2/6] IA64-sba_iommu: Combine four seq_printf() calls into two calls in ioc_show()
-Message-Id: <1ee34747-6015-17d0-0ab7-817b3eec8f78@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 20 Oct 2016 17:13:28 +0000
+Subject: Applied "ASoC: rt5663: fix a debug statement" to the asoc tree
+Message-Id: <E1bxGuG-0001TP-S1@finisterre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
-In-Reply-To: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
+References: <20161013084712.GB16198@mwanda>
+In-Reply-To: <20161013084712.GB16198@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ia64@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Borislav Petkov <bp@suse.de>, Fenghua Yu <fenghua.yu@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, Ingo Molnar <mingo@kernel.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <jroedel@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>, Robert Richter <rrichter@cavium.com>, Robin Murphy <robin.murphy@arm.com>, Tony Luck <tony.luck@intel.com>, Toshi Kani <toshi.kani@hpe.com>, Vineet Gupta <vgupta@synopsys.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Bard Liao <bardliao@realtek.com>, Mark Brown <broonie@kernel.org>Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>alsa-devel@alsa-project.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Oct 2016 20:22:46 +0200
+The patch
 
-Some data were printed into a sequence by four separate function calls.
-Print the same data by two function calls instead.
+   ASoC: rt5663: fix a debug statement
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c975e39ccadf6dc047356c60773a043a2293b8cd Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 11:47:13 +0300
+Subject: [PATCH] ASoC: rt5663: fix a debug statement
+
+We increment "i" before printing the debug statement.  That makes it
+the wrong sleep_time[] information and Smatch complains that the last
+increment could be beyond the end of the array.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Bard Liao <bardliao@realtek.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/ia64/hp/common/sba_iommu.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ sound/soc/codecs/rt5663.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/ia64/hp/common/sba_iommu.c b/arch/ia64/hp/common/sba_iommu.c
-index 282f5c1..0688441 100644
---- a/arch/ia64/hp/common/sba_iommu.c
-+++ b/arch/ia64/hp/common/sba_iommu.c
-@@ -1906,14 +1906,20 @@ ioc_show(struct seq_file *s, void *v)
- 	if (ioc->node != NUMA_NO_NODE)
- 		seq_printf(s, "NUMA node       : %d\n", ioc->node);
- #endif
--	seq_printf(s, "IOVA size       : %ld MB\n", ((ioc->pdir_size >> 3) * iovp_size)/(1024*1024));
--	seq_printf(s, "IOVA page size  : %ld kb\n", iovp_size/1024);
-+	seq_printf(s,
-+		   "IOVA size       : %ld MB\n"
-+		   "IOVA page size  : %ld kb\n",
-+		   ((ioc->pdir_size >> 3) * iovp_size) / (1024 * 1024)),
-+		   iovp_size / 1024);
- 
- 	for (i = 0; i < (ioc->res_size / sizeof(unsigned long)); ++i, ++res_ptr)
- 		used += hweight64(*res_ptr);
- 
--	seq_printf(s, "PDIR size       : %d entries\n", ioc->pdir_size >> 3);
--	seq_printf(s, "PDIR used       : %d entries\n", used);
-+	seq_printf(s,
-+		   "PDIR size       : %d entries\n"
-+		   "PDIR used       : %d entries\n",
-+		   ioc->pdir_size >> 3,
-+		   used);
- 
- #ifdef PDIR_SEARCH_TIMING
- 	{
+diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
+index 01a18d88f1eb..00ff2788879e 100644
+--- a/sound/soc/codecs/rt5663.c
++++ b/sound/soc/codecs/rt5663.c
+@@ -1547,11 +1547,11 @@ static int rt5663_jack_detect(struct snd_soc_codec *codec, int jack_insert)
+ 			msleep(sleep_time[i]);
+ 			val = snd_soc_read(codec, RT5663_EM_JACK_TYPE_2) &
+ 				0x0003;
++			dev_dbg(codec->dev, "%s: MX-00e7 val=%x sleep %d\n",
++				__func__, val, sleep_time[i]);
+ 			i++;
+ 			if (val = 0x1 || val = 0x2 || val = 0x3)
+ 				break;
+-			dev_dbg(codec->dev, "%s: MX-00e7 val=%x sleep %d\n",
+-				__func__, val, sleep_time[i]);
+ 		}
+ 		dev_dbg(codec->dev, "%s val = %d\n", __func__, val);
+ 		switch (val) {
 -- 
-2.10.1
+2.9.3
 
