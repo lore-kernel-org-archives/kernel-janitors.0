@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Oct 2016 06:33:00 +0000
+Date: Thu, 20 Oct 2016 07:37:34 +0000
 Subject: Re: Challenges around the usage of different "HOSTCFLAGS" for kernel build configuration and module 
-Message-Id: <2ff4dbf5-f9e5-9aa1-a93a-2e2bd81b43f7@users.sourceforge.net>
+Message-Id: <80d31faa-b328-b8eb-4d19-d96aef1cc16a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4f2251fc-94ee-41d3-cc03-a39cee5a084c@users.sourceforge.net>
  <CA+r1ZhjmaXi+Nf8vNsMwzfuSkYOByC6D_F=GkehneqfnSO7iCQ@mail.gmail.com>
@@ -11,27 +11,49 @@ References: <4f2251fc-94ee-41d3-cc03-a39cee5a084c@users.sourceforge.net>
  <CA+r1Zhj3AQAbL_Hu4w=gX8kaR0zKoYhTmAYyVcvBMPLXpfZ3gA@mail.gmail.com>
  <4fe8b518-6145-5322-a852-beeb61abd559@users.sourceforge.net>
  <CA+r1Zhiat4d8FqFcD1BBCxe5jyWOtSDZp99_CLV0qE1D3REquw@mail.gmail.com>
-In-Reply-To: <CA+r1Zhiat4d8FqFcD1BBCxe5jyWOtSDZp99_CLV0qE1D3REquw@mail.gmail.com>
+ <20161019220346.GA20054@gate.crashing.org>
+In-Reply-To: <20161019220346.GA20054@gate.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jim Davis <jim.epost@gmail.com>
-Cc: linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Jim Davis <jim.epost@gmail.com>, linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> make defconfig; make EXTRA_CFLAGS="-g" drivers/md/; objdump -S drivers/md/whatever.o
+> Don't forget -r when running objdump on an object file.
 
-Such a command looks promising.
-
-* I find it safer when double ampersand will be used as control operator
-  instead of semicolon there.
-
-* I get the impression from an other command like "find . -name '?akefile' -exec ack --with-filename EXTRA_CFLAGS '{}' \;"
-  that the suggested parameter "EXTRA_CFLAGS" will not achieve an effect
-  at places where I am interested in at the moment.
+Thanks for your reminder.
 
 
-It seems that further fine-tuning can become interesting and challenging
-for involved make variables.
+> But, you want to use  make drivers/md/whatever.s  if you want to see
+> the assembler code.
+
+Thanks for your advice!
+
+This is one kind of "generation convenience" I was looking for.
+
+Was my software development attention too limited for another moment
+so that I did not directly pick an opportunity up from the description
+like "dir/file.[ois]  - Build specified target only"
+(by the command "make help") that I can get assembler source files
+for Linux modules so easy on demand?
+
+Would you like to point any places out in the make scripts which
+show relevant commands for such build targets?
+
+
+> And that doesn't work for build-time tools,
+
+I got the impression that they can trigger further software development challenges.
+Should their source files (and corresponding make parameters) be improved anyhow?
+
+
+> which I think is what the original discussion was about.
+
+I see a few change possibilities there. Will it be useful to reconsider
+the generation parameters for build-time tools in comparison to components
+from other Linux software areas?
+
+Will a variable like "EXTRA_CFLAGS" achieve a desired effect at more places?
 
 Regards,
 Markus
