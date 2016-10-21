@@ -1,70 +1,42 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 07 Oct 2016 20:12:39 +0000
-Subject: [PATCH] usb: dwc3: Fix size used in dma_free_coherent()
-Message-Id: <1475871159-14362-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Oct 2016 05:05:45 +0000
+Subject: [PATCH 1/6] FRV-setup: Use seq_puts() in show_cpuinfo()
+Message-Id: <79b01048-028e-9375-373b-d5daed242586@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
+In-Reply-To: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: trivial@kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-In commit 2abd9d5fa60f9 ("usb: dwc3: ep0: Add chained TRB support"), the
-size of the memory allocated with 'dma_alloc_coherent()' has been modified
-but the corresponding calls to 'dma_free_coherent()' have not been updated
-accordingly.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Oct 2016 21:36:43 +0200
 
-This has been spotted with coccinelle, using the following script:
-////////////////////
-@r@
-expression x0, x1, y0, y1, z0, z1, t0, t1, ret;
-@@
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-*   ret = dma_alloc_coherent(x0, y0, z0, t0);
-    ...
-*   dma_free_coherent(x1, y1, ret, t1);
+This issue was detected by using the Coccinelle software.
 
-
-@script:python@
-y0 << r.y0;
-y1 << r.y1;
-
-@@
-if y1.find(y0) = -1:
- print "WARNING: sizes look different:  '%s'   vs   '%s'" % (y0, y1)
-////////////////////
-
-Fixes: 2abd9d5fa60f9 ("usb: dwc3: ep0: Add chained TRB support")
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Untested
----
- drivers/usb/dwc3/gadget.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/frv/kernel/setup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 07cc8929f271..01d388ea9115 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -2980,7 +2980,7 @@ int dwc3_gadget_init(struct dwc3 *dwc)
- 	kfree(dwc->setup_buf);
+diff --git a/arch/frv/kernel/setup.c b/arch/frv/kernel/setup.c
+index 9f4a9a6..de9311f 100644
+--- a/arch/frv/kernel/setup.c
++++ b/arch/frv/kernel/setup.c
+@@ -1053,7 +1053,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	seq_printf(m, "\n");
  
- err2:
--	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb),
-+	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb) * 2,
- 			dwc->ep0_trb, dwc->ep0_trb_addr);
+ #ifdef CONFIG_PM
+-	seq_printf(m, "PM-Controls:");
++	seq_puts(m, "PM-Controls:");
+ 	sep = "\t";
  
- err1:
-@@ -3005,7 +3005,7 @@ void dwc3_gadget_exit(struct dwc3 *dwc)
- 	kfree(dwc->setup_buf);
- 	kfree(dwc->zlp_buf);
- 
--	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb),
-+	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb) * 2,
- 			dwc->ep0_trb, dwc->ep0_trb_addr);
- 
- 	dma_free_coherent(dwc->dev, sizeof(*dwc->ctrl_req),
+ 	if (clock_bits_settable & CLOCK_BIT_CMODE) {
 -- 
-2.7.4
+2.10.1
 
