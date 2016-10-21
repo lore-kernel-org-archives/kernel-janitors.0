@@ -1,33 +1,31 @@
-From: Jiri Kosina <jikos@kernel.org>
-Date: Fri, 21 Oct 2016 07:24:05 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Oct 2016 07:51:43 +0000
 Subject: Re: [PATCH 5/6] FRV-setup: Fix indentation in two lines
-Message-Id: <alpine.LNX.2.00.1610210923330.31629@cbobk.fhfr.pm>
+Message-Id: <20161021075142.GS4469@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net> <81f557b2-40f3-0625-331d-c5b115f1971c@users.sourceforge.net>
-In-Reply-To: <81f557b2-40f3-0625-331d-c5b115f1971c@users.sourceforge.net>
+References: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
+ <81f557b2-40f3-0625-331d-c5b115f1971c@users.sourceforge.net>
+ <alpine.LNX.2.00.1610210923330.31629@cbobk.fhfr.pm>
+In-Reply-To: <alpine.LNX.2.00.1610210923330.31629@cbobk.fhfr.pm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Geert Uytterhoeven <geert+renesas@glider.be>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 21 Oct 2016, SF Markus Elfring wrote:
+I don't think changing check_patch.pl or CodingStyle will help...
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Oct 2016 22:25:18 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: please, no spaces at the start of a line
-> 
-> Thus fix the affected source code places.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+I've banned Markus from sending cleanups in parts of the kernel where I
+have a voice (drivers/staging).  Bugfixes are welcome, but cleanups are
+not.  I've done this before for other people who introduce a bunch of
+bugs in clean up patches.
 
-I think we really should update the documentation so that it states that 
-checkpatch should only be run on patches or code that's not merged yet.
+It's all about ratios...  Each clean up patch has chance of introducing
+a bug.  If you only send clean up patches then you only introduce bugs.
+We really don't want people sending patches if they introduce more bugs
+than they fix.
 
--- 
-Jiri Kosina
-SUSE Labs
+regards,
+dan carpenter
+
 
