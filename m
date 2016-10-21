@@ -1,38 +1,54 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 01 Oct 2016 20:48:33 +0000
-Subject: [PATCH 14/15 v2] irqchip/metag-ext: improve function-level documentation
-Message-Id: <alpine.DEB.2.10.1610012247240.3445@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Oct 2016 05:09:21 +0000
+Subject: [PATCH 4/6] FRV-setup: Move "else" closer to a brace
+Message-Id: <6fe73d13-1672-1dec-c300-391195a8b69d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
+In-Reply-To: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Hogan <james.hogan@imgtec.com>
-Cc: kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, metag <linux-metag@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: trivial@kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Drop the variable irq which ceased to be a parameter in commit bd0b9ac405e1
-("genirq: Remove irq argument from irq flow handlers")
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Oct 2016 22:12:27 +0200
 
-Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
+The script "checkpatch.pl" pointed information out like the following.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: James Hogan <james.hogan@imgtec.com>
+ERROR: else should follow close brace '}'
 
+Thus fix the affected source code places.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-v2: correct commit reference, independent of the rest of the series
+ arch/frv/kernel/setup.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- drivers/irqchip/irq-metag-ext.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-metag-ext.c b/drivers/irqchip/irq-metag-ext.c
-index 8c38b3d..0cdd923 100644
---- a/drivers/irqchip/irq-metag-ext.c
-+++ b/drivers/irqchip/irq-metag-ext.c
-@@ -436,7 +436,6 @@ static int meta_intc_irq_set_type(struct irq_data *data, unsigned int flow_type)
-
- /**
-  * meta_intc_irq_demux() - external irq de-multiplexer
-- * @irq:	the virtual interrupt number
-  * @desc:	the interrupt description structure for this irq
-  *
-  * The cpu receives an interrupt on TR2 when a SoC interrupt has occurred. It is
+diff --git a/arch/frv/kernel/setup.c b/arch/frv/kernel/setup.c
+index 577bcf5..35a23fc 100644
+--- a/arch/frv/kernel/setup.c
++++ b/arch/frv/kernel/setup.c
+@@ -902,8 +902,7 @@ static void __init setup_linux_memory(void)
+ #else
+ 		max_mapnr = physpages = low_top_pfn;
+ #endif
+-	}
+-	else {
++	} else {
+ 		low_top_pfn = physpages;
+ 	}
+ 
+@@ -934,8 +933,7 @@ static void __init setup_linux_memory(void)
+ 					BOOTMEM_DEFAULT);
+ 			initrd_start = INITRD_START + PAGE_OFFSET;
+ 			initrd_end = initrd_start + INITRD_SIZE;
+-		}
+-		else {
++		} else {
+ 			printk(KERN_ERR
+ 			       "initrd extends beyond end of memory (0x%08lx > 0x%08lx)\n"
+ 			       "disabling initrd\n",
+-- 
+2.10.1
 
