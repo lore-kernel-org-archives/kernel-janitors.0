@@ -1,29 +1,52 @@
-From: Jim Davis <jim.epost@gmail.com>
-Date: Fri, 28 Oct 2016 23:42:18 +0000
-Subject: Re: [PATCH 09/10] scripts/basic/fixdep: Complete error handling in print_cmdline()
-Message-Id: <CA+r1ZhhoPy4mNwEtLVMqpXqotKuWmUf-D50=XWpWghzdtzTfEQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Oct 2016 17:33:30 +0000
+Subject: Re: Hexagon-setup: Combine four seq_printf() calls into one call in show_cpuinfo()
+Message-Id: <48d54097-6be3-d39d-2af9-d4ad90c3c417@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net> <d4bd9a09-d413-a073-c2d5-67933d425b87@users.sourceforge.net>
-In-Reply-To: <d4bd9a09-d413-a073-c2d5-67933d425b87@users.sourceforge.net>
+References: <c19c69d5-600c-f08b-f448-0420e677db63@users.sourceforge.net>
+ <alpine.DEB.2.10.1610210918420.3212@hadrien>
+ <e9daa136-c6ab-2f96-3d20-6e143fa1170b@users.sourceforge.net>
+ <20161021154624.maiwbgjmzlzhin2l@thunk.org>
+In-Reply-To: <20161021154624.maiwbgjmzlzhin2l@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, linux-hexagon@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Richard Kuo <rkuo@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Oct 28, 2016 at 1:40 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+>> Is it really so difficult to interpret the suggested construction
+>> of a single (and relatively small) format string?
+> 
+> It's not so difficult, so much as it makes things worse.  It's easier
+> the way it originally was.
 
-> +       if (printf("cmd_%s := %s\n\n", target, cmdline) < 10) {
+Thanks for your view on this refactoring approach.
 
-Rather than scatter fragile magic numbers, like 10, throughout the
-code, if you're hell-bent on checking for printf errors you could
-write a little wrapper function that hid the magic number and bundled
-up the errno stuff.
 
-But what would you expect printf error checking to tell a user?
-Perhaps that he or she ran out of disk space, but that's going to be
-painfully obvious anyway in almost every case.
+> It might be interesting to see if the compiler could be taught
+> to collapse the function calls,
 
--- 
-Jim
+How does this wish fit to your previous rejection?
+
+
+> but (a) this isn't performance critical,
+
+This can be.
+
+
+> and (b) the number of bytes saved is really tiny.
+
+I imagine that the corresponding code and data size reduction could
+be occasionally useful, couldn't it?
+
+
+> But at least if the compiler was doing the work, it would at least deal with
+> it everywhere.
+
+I would find such an optimisation possibility also nice.
+
+Can it become acceptable to achieve a similar effect by the application
+of scripts for the semantic patch language in the meantime?
+
+Regards,
+Markus
