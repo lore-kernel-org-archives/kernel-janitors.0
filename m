@@ -1,46 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 16:42:16 +0000
-Subject: [PATCH 14/18] [media] RedRat3: Rename a jump label in redrat3_init_rc_dev()
-Message-Id: <172b54fe-559b-44a4-9902-96abece75a7f@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Oct 2016 08:06:01 +0000
+Subject: [patch] drm/i915/gvt: cleanup a type issue in submit_context()
+Message-Id: <20161021080601.GA28738@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
-In-Reply-To: <81cef537-4ad0-3a74-8bde-94707dcd03f4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Daniel Vetter <daniel.vetter@intel.com>
+Cc: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Yulei Zhang <yulei.zhang@intel.com>, Zhi Wang <zhi.a.wang@intel.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Oct 2016 15:00:12 +0200
+submit_context() should return negative error codes and zero on success
+but by mistake we made it a bool.  I've changed it to int.  Also I made
+it static because this isn't referenced in any other files.
 
-Adjust a jump label according to the Linux coding style convention.
+This doesn't affect runtime because the return is eventually propogated
+to elsp_mmio_write() where it is ignored.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/rc/redrat3.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-index 74d93dd..055f214 100644
---- a/drivers/media/rc/redrat3.c
-+++ b/drivers/media/rc/redrat3.c
-@@ -890,12 +890,11 @@ static struct rc_dev *redrat3_init_rc_dev(struct redrat3_dev *rr3)
- 	ret = rc_register_device(rc);
- 	if (ret < 0) {
- 		dev_err(rr3->dev, "remote dev registration failed\n");
--		goto out;
-+		goto free_device;
- 	}
+diff --git a/drivers/gpu/drm/i915/gvt/execlist.c b/drivers/gpu/drm/i915/gvt/execlist.c
+index c50a3d1a5131..bc69ba1842ea 100644
+--- a/drivers/gpu/drm/i915/gvt/execlist.c
++++ b/drivers/gpu/drm/i915/gvt/execlist.c
+@@ -616,7 +616,7 @@ static int prepare_mm(struct intel_vgpu_workload *workload)
+ 	(list_empty(q) ? NULL : container_of(q->prev, \
+ 	struct intel_vgpu_workload, list))
  
- 	return rc;
--
--out:
-+free_device:
- 	rc_free_device(rc);
- 	return NULL;
- }
--- 
-2.10.1
-
+-bool submit_context(struct intel_vgpu *vgpu, int ring_id,
++static int submit_context(struct intel_vgpu *vgpu, int ring_id,
+ 		struct execlist_ctx_descriptor_format *desc,
+ 		bool emulate_schedule_in)
+ {
