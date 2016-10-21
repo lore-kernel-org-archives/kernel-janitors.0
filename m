@@ -1,64 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Oct 2016 19:37:01 +0000
-Subject: [PATCH 07/15] thermal: hwmon: use permission-specific DEVICE_ATTR variants
-Message-Id: <1477769829-22230-8-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Oct 2016 05:07:17 +0000
+Subject: [PATCH 2/6] FRV-setup: Use seq_putc() in show_cpuinfo()
+Message-Id: <7bee4dff-08a8-b627-12dc-8a38fa0757c6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
+In-Reply-To: <1405b16a-c470-531d-458d-fb6042b93230@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: trivial@kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Use DEVICE_ATTR_RO for read only attributes.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Oct 2016 21:39:00 +0200
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+This issue was detected by using the Coccinelle software.
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
-
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/thermal_hwmon.c |    2 +-
+ arch/frv/kernel/setup.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_hwmon.c
-index c41c774..8c45de6 100644
---- a/drivers/thermal/thermal_hwmon.c
-+++ b/drivers/thermal/thermal_hwmon.c
-@@ -64,7 +64,7 @@ struct thermal_hwmon_temp {
- 	struct thermal_hwmon_device *hwmon = dev_get_drvdata(dev);
- 	return sprintf(buf, "%s\n", hwmon->type);
- }
--static DEVICE_ATTR(name, 0444, name_show, NULL);
-+static DEVICE_ATTR_RO(name);
+diff --git a/arch/frv/kernel/setup.c b/arch/frv/kernel/setup.c
+index de9311f..7570ff0 100644
+--- a/arch/frv/kernel/setup.c
++++ b/arch/frv/kernel/setup.c
+@@ -1050,7 +1050,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	if (cpu_board2)
+ 		seq_printf(m, ", %s", cpu_board2);
  
- static ssize_t
- temp_input_show(struct device *dev, struct device_attribute *attr, char *buf)
+-	seq_printf(m, "\n");
++	seq_putc(m, '\n');
+ 
+ #ifdef CONFIG_PM
+ 	seq_puts(m, "PM-Controls:");
+-- 
+2.10.1
 
