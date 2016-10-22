@@ -1,43 +1,50 @@
-From: Jes Sorensen <Jes.Sorensen@redhat.com>
-Date: Wed, 12 Oct 2016 12:18:37 +0000
-Subject: Re: [PATCH 24/54] md/raid1: Improve another size determination in setup_conf()
-Message-Id: <wrfjmvi9221u.fsf@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Oct 2016 19:58:51 +0000
+Subject: [PATCH 6/6] IA64-sn2_smp: Combine two seq_printf() calls into one call in sn2_ptc_seq_show()
+Message-Id: <c3e12189-6122-e806-6cb2-b2518e64e983@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-        <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-        <9831fce9-d689-89e4-dec8-50cadcd13fdd@users.sourceforge.net>
-        <CAFLxGvx0Fr-WNvKYACdvNiZwYzHW4ocna9HPH8J_WPSXWc+ngg@mail.gmail.com>
-        <20161007075345.GB6039@mwanda> <wrfjvax0bbb4.fsf@redhat.com>
-        <20161012074307.GB5687@mwanda>
-In-Reply-To: <20161012074307.GB5687@mwanda> (Dan Carpenter's message of "Wed,
-        12 Oct 2016 11:28:39 +0300")
+References: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
+In-Reply-To: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Richard Weinberger <richard.weinberger@gmail.com>, SF Markus Elfring <elfring@users.sourceforge.net>, "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-ia64@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Borislav Petkov <bp@suse.de>, Fenghua Yu <fenghua.yu@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, Ingo Molnar <mingo@kernel.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <jroedel@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>, Robert Richter <rrichter@cavium.com>, Robin Murphy <robin.murphy@arm.com>, Tony Luck <tony.luck@intel.com>, Toshi Kani <toshi.kani@hpe.com>, Vineet Gupta <vgupta@synopsys.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
-> Compare:
->
-> 	foo = kmalloc(sizeof(*foo), GFP_KERNEL);
->
-> This says you are allocating enough space for foo.  It can be reviewed
-> by looking at one line.  If you change the type of foo it will still
-> work.
->
-> 	foo = kmalloc(sizeof(struct whatever), GFP_KERNEL);
->
-> There isn't enough information to say if this is correct.  If you change
-> the type of foo then you have to update the allocation as well.
->
-> It's not a super common type of bug, but I see it occasionally.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Oct 2016 21:19:03 +0200
 
-I know what you are saying, but the latter in my book is easier to read
-and reminds you what the type is when you review the code.
+Some data were printed into a sequence by two separate function calls.
+Print the same data by a single function call instead.
 
-Point being this comes down to personal preference and stating that the
-former is the right way or making that a rule and using checkpatch to
-harrass people with patches to change it is bogus.
+This issue was detected by using the Coccinelle software.
 
-Jes
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/ia64/sn/kernel/sn2/sn2_smp.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/arch/ia64/sn/kernel/sn2/sn2_smp.c b/arch/ia64/sn/kernel/sn2/sn2_smp.c
+index c98dc96..1beac3c 100644
+--- a/arch/ia64/sn/kernel/sn2/sn2_smp.c
++++ b/arch/ia64/sn/kernel/sn2/sn2_smp.c
+@@ -494,12 +494,11 @@ static int sn2_ptc_seq_show(struct seq_file *file, void *data)
+ 	int cpu;
+ 
+ 	cpu = *(loff_t *) data;
+-
+-	if (!cpu) {
++	if (!cpu)
+ 		seq_printf(file,
+-			   "# cpu ptc_l newrid ptc_flushes nodes_flushed deadlocks lock_nsec shub_nsec shub_nsec_max not_my_mm deadlock2 ipi_fluches ipi_nsec\n");
+-		seq_printf(file, "# ptctest %d, flushopt %d\n", sn2_ptctest, sn2_flush_opt);
+-	}
++			   "# cpu ptc_l newrid ptc_flushes nodes_flushed deadlocks lock_nsec shub_nsec shub_nsec_max not_my_mm deadlock2 ipi_fluches ipi_nsec\n"
++			   "# ptctest %d, flushopt %d\n",
++			   sn2_ptctest, sn2_flush_opt);
+ 
+ 	if (cpu < nr_cpu_ids && cpu_online(cpu)) {
+ 		stat = &per_cpu(ptcstats, cpu);
+-- 
+2.10.1
+
