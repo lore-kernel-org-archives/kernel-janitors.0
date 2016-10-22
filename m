@@ -1,81 +1,42 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 02 Oct 2016 11:59:14 +0000
-Subject: [PATCH 3/13] md/multipath: Delete four error messages for a failed memory allocation
-Message-Id: <6726e88c-2ad0-fd5e-6ef4-4f5e796a68b9@users.sourceforge.net>
+Date: Sat, 22 Oct 2016 19:53:00 +0000
+Subject: [PATCH 1/6] IA64-sba_iommu: Use seq_puts() in ioc_show()
+Message-Id: <1795798f-3dd4-d123-16c2-82bf223565e9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
-In-Reply-To: <4a31d7a7-f70c-12f7-202f-963bd8706066@users.sourceforge.net>
+References: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
+In-Reply-To: <8daf03e1-5f6d-fc3b-c2db-397e6d4a9a1c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Jens Axboe <axboe@fb.com>, NeilBrown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: linux-ia64@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Borislav Petkov <bp@suse.de>, Fenghua Yu <fenghua.yu@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, Ingo Molnar <mingo@kernel.org>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <jroedel@suse.de>, Krzysztof Kozlowski <krzk@kernel.org>, Robert Richter <rrichter@cavium.com>, Robin Murphy <robin.murphy@arm.com>, Tony Luck <tony.luck@intel.com>, Toshi Kani <toshi.kani@hpe.com>, Vineet Gupta <vgupta@synopsys.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Oct 2016 21:15:45 +0200
+Date: Sat, 22 Oct 2016 20:20:24 +0200
 
-Omit extra messages for a memory allocation failure in this function.
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+This issue was detected by using the Coccinelle software.
+
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/md/multipath.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+ arch/ia64/hp/common/sba_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/multipath.c b/drivers/md/multipath.c
-index 7fdabb1..be7c0b9 100644
---- a/drivers/md/multipath.c
-+++ b/drivers/md/multipath.c
-@@ -401,22 +401,14 @@ static int multipath_run (struct mddev *mddev)
- 
- 	conf = kzalloc(sizeof(*conf), GFP_KERNEL);
- 	mddev->private = conf;
--	if (!conf) {
--		printk(KERN_ERR
--			"multipath: couldn't allocate memory for %s\n",
--			mdname(mddev));
-+	if (!conf)
- 		goto out;
--	}
- 
- 	conf->multipaths = kcalloc(mddev->raid_disks,
- 				   sizeof(*conf->multipaths),
- 				   GFP_KERNEL);
--	if (!conf->multipaths) {
--		printk(KERN_ERR
--			"multipath: couldn't allocate memory for %s\n",
--			mdname(mddev));
-+	if (!conf->multipaths)
- 		goto out_free_conf;
--	}
- 
- 	working_disks = 0;
- 	rdev_for_each(rdev, mddev) {
-@@ -448,21 +440,14 @@ static int multipath_run (struct mddev *mddev)
- 
- 	conf->pool = mempool_create_kmalloc_pool(NR_RESERVED_BUFS,
- 						 sizeof(struct multipath_bh));
--	if (conf->pool = NULL) {
--		printk(KERN_ERR
--			"multipath: couldn't allocate memory for %s\n",
--			mdname(mddev));
-+	if (!conf->pool)
- 		goto out_free_conf;
--	}
- 
- 	{
- 		mddev->thread = md_register_thread(multipathd, mddev,
- 						   "multipath");
--		if (!mddev->thread) {
--			printk(KERN_ERR "multipath: couldn't allocate thread"
--				" for %s\n", mdname(mddev));
-+		if (!mddev->thread)
- 			goto out_free_conf;
--		}
+diff --git a/arch/ia64/hp/common/sba_iommu.c b/arch/ia64/hp/common/sba_iommu.c
+index 630ee80..282f5c1 100644
+--- a/arch/ia64/hp/common/sba_iommu.c
++++ b/arch/ia64/hp/common/sba_iommu.c
+@@ -1930,7 +1930,7 @@ ioc_show(struct seq_file *s, void *v)
  	}
- 
- 	printk(KERN_INFO
+ #endif
+ #ifndef ALLOW_IOV_BYPASS
+-	 seq_printf(s, "IOVA bypass disabled\n");
++	seq_puts(s, "IOVA bypass disabled\n");
+ #endif
+ 	return 0;
+ }
 -- 
-2.10.0
+2.10.1
 
