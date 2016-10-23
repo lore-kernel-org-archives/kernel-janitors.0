@@ -1,28 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Oct 2016 11:52:47 +0000
-Subject: Re: [lustre-devel] [patch] Staging: lustre: indent an if statement
-Message-Id: <20161014115247.GG5687@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 23 Oct 2016 08:12:49 +0000
+Subject: [PATCH] clk: keystone: Fix an error checking
+Message-Id: <20161023081249.24668-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161013085202.GE16198@mwanda>
-	<alpine.LFD.2.20.1610132338200.18218@casper.infradead.org>
-	<3ea7f15f-4f53-c303-3c38-064432cb599c@hlrs.de>
-In-Reply-To: <3ea7f15f-4f53-c303-3c38-064432cb599c@hlrs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: ssantosh@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Oct 14, 2016 at 12:36:25PM +0200, Martin Hecht wrote:
-> On 10/14/2016 12:38 AM, James Simmons wrote:
-> >> This if statement wasn't intended.
-> just to be sure: in conjunction with the subject of the mail this should
-> read "indented" instead of "intended", right?
+clk_register_pll() can return ERR_PTR(-ENOMEM) so here the check against
+NULL only is not correct.
 
-Yes, yes.  I should just avoid both words from now on because my fingers
-constantly get mixed up.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Un-compiled and un-tested.
+---
+ drivers/clk/keystone/pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Greg already applied this so it's too late to send a v2.
-
-regards,
-dan carpenter
+diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+index a26ba2184454..b936029fa211 100644
+--- a/drivers/clk/keystone/pll.c
++++ b/drivers/clk/keystone/pll.c
+@@ -213,7 +213,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+ 	}
+ 
+ 	clk = clk_register_pll(NULL, node->name, parent_name, pll_data);
+-	if (clk) {
++	if (!IS_ERR_OR_NULL(clk)) {
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 		return;
+ 	}
+-- 
+2.9.3
 
