@@ -1,24 +1,28 @@
-From: Jens Axboe <axboe@fb.com>
-Date: Sun, 30 Oct 2016 15:02:45 +0000
-Subject: Re: [PATCH] nbd: Fix error handling
-Message-Id: <b1473dfa-2cb2-5cb6-762d-92a7967d0a6e@fb.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Oct 2016 21:10:14 +0000
+Subject: [PATCH 0/2] M68K: Fine-tuning for two function implementations
+Message-Id: <cc9b366d-4d5e-3ed6-4665-cbc577c69f74@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161030042827.10160-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161030042827.10160-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, mpa@pengutronix.de, jbacik@fb.com
-Cc: nbd-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-m68k@lists.linux-m68k.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Arnd Bergmann <arnd@arndb.de>, Finn Thain <fthain@telegraphics.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 10/29/2016 10:28 PM, Christophe JAILLET wrote:
-> 'blk_mq_alloc_request()' returns an error pointer in case of error, not
-> NULL. So test it with IS_ERR.
->
-> Fixes: 	fd8383fd88a2 ("nbd: convert to blkmq")
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Oct 2016 23:05:23 +0200
 
-Applied, thanks.
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (2):
+  Use seq_puts() in amiga_get_hardware_list()
+  Use seq_puts() in atari_get_hardware_list()
+
+ arch/m68k/amiga/config.c | 3 +--
+ arch/m68k/atari/config.c | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
 -- 
-Jens Axboe
+2.10.1
 
