@@ -1,63 +1,43 @@
-From: Sven Eckelmann <sven@narfation.org>
-Date: Tue, 18 Oct 2016 12:44:28 +0000
-Subject: Re: batman-adv: Less function calls in batadv_is_ap_isolated() after error detection
-Message-Id: <52744880.oyL8YSgqok@bentobox>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nextPart5042468.KILKRLk9tn"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Oct 2016 21:11:20 +0000
+Subject: [PATCH 1/2] M68K-Amiga: Use seq_puts() in amiga_get_hardware_list()
+Message-Id: <6d2b718d-392a-8a41-87cd-6cc1ef1dfb1c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <cc9b366d-4d5e-3ed6-4665-cbc577c69f74@users.sourceforge.net>
+In-Reply-To: <cc9b366d-4d5e-3ed6-4665-cbc577c69f74@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-m68k@lists.linux-m68k.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Arnd Bergmann <arnd@arndb.de>, Finn Thain <fthain@telegraphics.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
---nextPart5042468.KILKRLk9tn
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Oct 2016 22:55:03 +0200
 
-On Freitag, 11. M=E4rz 2016 13:40:56 CEST SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 11 Mar 2016 13:10:20 +0100
->=20
-> The variables "tt_local_entry" and "tt_global_entry" were eventually
-> checked again despite of a corresponding null pointer test before.
->=20
-> * Avoid this double check by reordering a function call sequence
->   and the better selection of jump targets.
->=20
-> * Omit the initialisation for these variables at the beginning then.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> Reviewed-by: Sven Eckelmann <sven@narfation.org>
-> ---
->  net/batman-adv/translation-table.c | 25 +++++++++++--------------
->  1 file changed, 11 insertions(+), 14 deletions(-)
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
-Applied in 58d8ef2dd0c9f7274f0473a1b1d1ffdacdd914f6 [1].
+This issue was detected by using the Coccinelle software.
 
-Kind regards,
-	Sven
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/m68k/amiga/config.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-[1] https://git.open-mesh.org/batman-adv.git/commit/58d8ef2dd0c9f7274f0473a=
-1b1d1ffdacdd914f6
-
---nextPart5042468.KILKRLk9tn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCgAGBQJYBhksAAoJEF2HCgfBJntGoV4P/REFBrOoH/fp5ExmVsnTx3k1
-UAUzQdd5/Fi+shvsQoO7BSNeGyFPM8VEDcbwC7Cngf2YPXAw5FLWlhPIwkO9ml64
-40QX834rsgNnK98ZYJnG49tGULYy2aCLt6gX0tNI59V3/UQRnzXFWnzoKL3+8ij8
-KumKP3gtCSLs++MM+qTMCAwD7h0w91hIUtugYo1o/fWK0R3NvV+WUHwLRGOj5dIW
-UP2aQJ1jHrjorVuDL/o0sw6HIqWHeE4RLJh+fwS8gaLWKNCdmwjPJPidsxR+7s89
-fVekDnOmT767ATknot9CsnN3jHdJv5ucpotvF+JCmrab6q+0oefsseL2NP6X0fu7
-FTg86XXOlZ8pF7lPK1Ble/DdHrFJkGqlELNkAq351CeqpMJkHvFsFPs4kLPRvauy
-HE70MeHhsLGQQ05rBtJH++cIncqTsd70nNq28DhhIgt95/fjRCHMfAtVN4QOT70U
-VrgSUpDq/v0EkLAYqeAKFuokSsSv4lFRuIfqgZ/8776R7b21KUtnhIWLoY3DBnow
-bhFFoP1oxwfw0lh49Z3IvfeHP/rb8JOzL4n3tqN2eXtv/GD4iK8mOXKlkOqS0wWd
-4+4gRnUH+Z0Zydgb177AaCB821CO03MOBMskLUL1p6i/mvwfBDgLUpXQZ7pQrac7
-Bz3tGWS/K1q7Htw8An9i
-=8w0G
------END PGP SIGNATURE-----
-
---nextPart5042468.KILKRLk9tn--
+diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
+index ddb8192..65f63a4 100644
+--- a/arch/m68k/amiga/config.c
++++ b/arch/m68k/amiga/config.c
+@@ -786,8 +786,7 @@ static void amiga_get_hardware_list(struct seq_file *m)
+ 	if (AMIGAHW_PRESENT(name))			\
+ 		seq_printf (m, "\t%s\n", str)
+ 
+-	seq_printf (m, "Detected hardware:\n");
+-
++	seq_puts(m, "Detected hardware:\n");
+ 	AMIGAHW_ANNOUNCE(AMI_VIDEO, "Amiga Video");
+ 	AMIGAHW_ANNOUNCE(AMI_BLITTER, "Blitter");
+ 	AMIGAHW_ANNOUNCE(AMBER_FF, "Amber Flicker Fixer");
+-- 
+2.10.1
 
