@@ -1,26 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 24 Oct 2016 10:36:14 +0000
+From: Lars-Peter Clausen <lars@metafoo.de>
+Date: Mon, 24 Oct 2016 10:41:57 +0000
 Subject: Re: [PATCH] clk: keystone: Fix an error checking
-Message-Id: <20161024103614.GW4469@mwanda>
+Message-Id: <04b36f2d-69d5-110c-9ad8-a869a00ed2c9@metafoo.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161023081249.24668-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161023081249.24668-1-christophe.jaillet@wanadoo.fr>
+ <20161024103614.GW4469@mwanda>
+In-Reply-To: <20161024103614.GW4469@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: ssantosh@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Oct 23, 2016 at 10:12:49AM +0200, Christophe JAILLET wrote:
-> clk_register_pll() can return ERR_PTR(-ENOMEM) so here the check against
-> NULL only is not correct.
+On 10/24/2016 12:36 PM, Dan Carpenter wrote:
+> On Sun, Oct 23, 2016 at 10:12:49AM +0200, Christophe JAILLET wrote:
+>> clk_register_pll() can return ERR_PTR(-ENOMEM) so here the check against
+>> NULL only is not correct.
+>>
 > 
+> Change the ERR_PTR(-ENOMEM) to a NULL instead.
 
-Change the ERR_PTR(-ENOMEM) to a NULL instead.  When we mix error
-pointers and NULL, what it means is that NULL should be treated as a
-success case.  That's not the case here, so we should just return NULL
-since we don't actually care about the error codes.
-
-regards,
-dan carpenter
+In this particular case propagate the error returned by clk_register().
 
