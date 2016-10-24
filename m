@@ -1,37 +1,26 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 23 Oct 2016 08:12:49 +0000
-Subject: [PATCH] clk: keystone: Fix an error checking
-Message-Id: <20161023081249.24668-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Oct 2016 10:36:14 +0000
+Subject: Re: [PATCH] clk: keystone: Fix an error checking
+Message-Id: <20161024103614.GW4469@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161023081249.24668-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161023081249.24668-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ssantosh@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: ssantosh@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-clk_register_pll() can return ERR_PTR(-ENOMEM) so here the check against
-NULL only is not correct.
+On Sun, Oct 23, 2016 at 10:12:49AM +0200, Christophe JAILLET wrote:
+> clk_register_pll() can return ERR_PTR(-ENOMEM) so here the check against
+> NULL only is not correct.
+> 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Un-compiled and un-tested.
----
- drivers/clk/keystone/pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Change the ERR_PTR(-ENOMEM) to a NULL instead.  When we mix error
+pointers and NULL, what it means is that NULL should be treated as a
+success case.  That's not the case here, so we should just return NULL
+since we don't actually care about the error codes.
 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index a26ba2184454..b936029fa211 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -213,7 +213,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
- 	}
- 
- 	clk = clk_register_pll(NULL, node->name, parent_name, pll_data);
--	if (clk) {
-+	if (!IS_ERR_OR_NULL(clk)) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 		return;
- 	}
--- 
-2.9.3
+regards,
+dan carpenter
 
