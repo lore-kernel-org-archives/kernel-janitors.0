@@ -1,63 +1,53 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 14:48:38 +0000
-Subject: [PATCH 11/34] [media] DaVinci-VPBE: Rename a jump label in vpbe_set_output()
-Message-Id: <0fb1a9a0-cf02-51a1-6fe7-6d7be501e0d9@users.sourceforge.net>
+Date: Mon, 24 Oct 2016 12:28:55 +0000
+Subject: [PATCH 2/4] MIPS/kernel/proc: Use seq_putc() in show_cpuinfo()
+Message-Id: <0c465554-d78d-2e2c-ae45-34d6f9f507fc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-In-Reply-To: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+References: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
+In-Reply-To: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-mips@linux-mips.org, Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Oct 2016 10:10:19 +0200
+Date: Mon, 24 Oct 2016 12:54:15 +0200
 
-Adjust jump labels according to the Linux coding style convention.
+A few single characters (line breaks) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/platform/davinci/vpbe.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/mips/kernel/proc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 6e7b0df..e68a792 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -253,20 +253,20 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
- 		sd_index = vpbe_find_encoder_sd_index(cfg, index);
- 		if (sd_index < 0) {
- 			ret = -EINVAL;
--			goto out;
-+			goto unlock;
- 		}
+diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
+index 4eff2ae..765489b 100644
+--- a/arch/mips/kernel/proc.c
++++ b/arch/mips/kernel/proc.c
+@@ -122,7 +122,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	if (cpu_has_eva)	seq_printf(m, "%s", " eva");
+ 	if (cpu_has_htw)	seq_printf(m, "%s", " htw");
+ 	if (cpu_has_xpa)	seq_printf(m, "%s", " xpa");
+-	seq_printf(m, "\n");
++	seq_putc(m, '\n');
  
- 		ret = venc_device->setup_if_config(cfg
- 						   ->outputs[index].if_params);
- 		if (ret)
--			goto out;
-+			goto unlock;
- 	}
+ 	if (cpu_has_mmips) {
+ 		seq_printf(m, "micromips kernel\t: %s\n",
+@@ -152,9 +152,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
  
- 	/* Set output at the encoder */
- 	ret = v4l2_subdev_call(vpbe_dev->encoders[sd_index], video,
- 				       s_routing, 0, enc_out_index, 0);
- 	if (ret)
--		goto out;
-+		goto unlock;
- 
- 	/*
- 	 * It is assumed that venc or extenal encoder will set a default
-@@ -288,7 +288,7 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
- 		vpbe_dev->current_sd_index = sd_index;
- 		vpbe_dev->current_out_index = index;
- 	}
--out:
-+unlock:
- 	mutex_unlock(&vpbe_dev->lock);
- 	return ret;
+ 	raw_notifier_call_chain(&proc_cpuinfo_chain, 0,
+ 				&proc_cpuinfo_notifier_args);
+-
+-	seq_printf(m, "\n");
+-
++	seq_putc(m, '\n');
+ 	return 0;
  }
+ 
 -- 
 2.10.1
 
