@@ -1,19 +1,19 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Mon, 24 Oct 2016 18:01:26 +0000
-Subject: Applied "ASoC: tegra: constify snd_soc_ops structures" to the asoc tree
-Message-Id: <E1byjYs-0000qp-0f@debutante>
+Date: Mon, 24 Oct 2016 18:01:35 +0000
+Subject: Applied "ASoC: atmel_wm8904: constify snd_soc_ops structures" to the asoc tree
+Message-Id: <E1byjZ1-0000tx-Ib@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1476543351-17858-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1476543351-17858-8-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+References: <1476543351-17858-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1476543351-17858-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.orgMarkBrownbroonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Mark Brown <broonie@kernel.org>Nicolas Ferre <nicolas.ferre@atmel.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>
 
 The patch
 
-   ASoC: tegra: constify snd_soc_ops structures
+   ASoC: atmel_wm8904: constify snd_soc_ops structures
 
 has been applied to the asoc tree at
 
@@ -38,10 +38,10 @@ to this mail.
 Thanks,
 Mark
 
-From 8a7a282b780154c2669ce7d4f47a15bf3d287d49 Mon Sep 17 00:00:00 2001
+From 28549313da65cc8711401ee5466c526bd67de5f1 Mon Sep 17 00:00:00 2001
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Oct 2016 16:55:51 +0200
-Subject: [PATCH] ASoC: tegra: constify snd_soc_ops structures
+Date: Sat, 15 Oct 2016 16:55:46 +0200
+Subject: [PATCH] ASoC: atmel_wm8904: constify snd_soc_ops structures
 
 Check for snd_soc_ops structures that are only stored in the ops field of a
 snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
@@ -85,156 +85,31 @@ static
  struct snd_soc_ops i = { ... };
 // </smpl>
 
-The effect on the layout of the .o files is shown by the following output of
+The effect on the layout of the .o file is shown by the following output of
 the size command, first before then after the transformation:
 
-  text    data     bss     dec     hex filename
-   3143    1888     384    5415    1527 sound/soc/tegra/tegra_alc5632.o
-   3191    1840     384    5415    1527 sound/soc/tegra/tegra_alc5632.o
-
    text    data     bss     dec     hex filename
-   3672    2176     768    6616    19d8 sound/soc/tegra/tegra_max98090.o
-   3720    2128     768    6616    19d8 sound/soc/tegra/tegra_max98090.o
-
-   text    data     bss     dec     hex filename
-   2770    1856     384    5010    1392 sound/soc/tegra/tegra_rt5640.o
-   2818    1808     384    5010    1392 sound/soc/tegra/tegra_rt5640.o
-
-   text    data     bss     dec     hex filename
-   4412    2176     768    7356    1cbc sound/soc/tegra/tegra_rt5677.o
-   4460    2128     768    7356    1cbc sound/soc/tegra/tegra_rt5677.o
-
-   text    data     bss     dec     hex filename
-   2442    1536       0    3978     f8a sound/soc/tegra/tegra_sgtl5000.o
-   2490    1480       0    3970     f82 sound/soc/tegra/tegra_sgtl5000.o
-
-   text    data     bss     dec     hex filename
-   2105    1536       0    3641     e39 sound/soc/tegra/tegra_wm8753.o
-   2153    1480       0    3633     e31 sound/soc/tegra/tegra_wm8753.o
-
-   text    data     bss     dec     hex filename
-   3755    1888     768    6411    190b sound/soc/tegra/tegra_wm8903.o
-   3803    1840     768    6411    190b sound/soc/tegra/tegra_wm8903.o
-
-   text    data     bss     dec     hex filename
-   2121    1536       0    3657     e49 sound/soc/tegra/trimslice.o
-   2169    1480       0    3649     e41 sound/soc/tegra/trimslice.o
+   2611    1536       0    4147    1033 sound/soc/atmel/atmel_wm8904.o
+   2675    1480       0    4155    103b sound/soc/atmel/atmel_wm8904.o
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/tegra/tegra_alc5632.c  | 2 +-
- sound/soc/tegra/tegra_max98090.c | 2 +-
- sound/soc/tegra/tegra_rt5640.c   | 2 +-
- sound/soc/tegra/tegra_rt5677.c   | 2 +-
- sound/soc/tegra/tegra_sgtl5000.c | 2 +-
- sound/soc/tegra/tegra_wm8753.c   | 2 +-
- sound/soc/tegra/tegra_wm8903.c   | 2 +-
- sound/soc/tegra/trimslice.c      | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+ sound/soc/atmel/atmel_wm8904.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-index deb597f7c302..eead6e7f205b 100644
---- a/sound/soc/tegra/tegra_alc5632.c
-+++ b/sound/soc/tegra/tegra_alc5632.c
-@@ -65,7 +65,7 @@ static int tegra_alc5632_asoc_hw_params(struct snd_pcm_substream *substream,
+diff --git a/sound/soc/atmel/atmel_wm8904.c b/sound/soc/atmel/atmel_wm8904.c
+index fdd28ed3e0b9..fbc10f61eb55 100644
+--- a/sound/soc/atmel/atmel_wm8904.c
++++ b/sound/soc/atmel/atmel_wm8904.c
+@@ -53,7 +53,7 @@ static int atmel_asoc_wm8904_hw_params(struct snd_pcm_substream *substream,
  	return 0;
  }
  
--static struct snd_soc_ops tegra_alc5632_asoc_ops = {
-+static const struct snd_soc_ops tegra_alc5632_asoc_ops = {
- 	.hw_params = tegra_alc5632_asoc_hw_params,
- };
- 
-diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
-index 902da36581d1..a403db6d563e 100644
---- a/sound/soc/tegra/tegra_max98090.c
-+++ b/sound/soc/tegra/tegra_max98090.c
-@@ -93,7 +93,7 @@ static int tegra_max98090_asoc_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_max98090_ops = {
-+static const struct snd_soc_ops tegra_max98090_ops = {
- 	.hw_params = tegra_max98090_asoc_hw_params,
- };
- 
-diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
-index e5ef4e9c4ac5..25b9fc03ba62 100644
---- a/sound/soc/tegra/tegra_rt5640.c
-+++ b/sound/soc/tegra/tegra_rt5640.c
-@@ -76,7 +76,7 @@ static int tegra_rt5640_asoc_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_rt5640_ops = {
-+static const struct snd_soc_ops tegra_rt5640_ops = {
- 	.hw_params = tegra_rt5640_asoc_hw_params,
- };
- 
-diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
-index 1470873ecde6..ebf58d0e0f10 100644
---- a/sound/soc/tegra/tegra_rt5677.c
-+++ b/sound/soc/tegra/tegra_rt5677.c
-@@ -93,7 +93,7 @@ static int tegra_rt5677_event_hp(struct snd_soc_dapm_widget *w,
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_rt5677_ops = {
-+static const struct snd_soc_ops tegra_rt5677_ops = {
- 	.hw_params = tegra_rt5677_asoc_hw_params,
- };
- 
-diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-index 1e76869dd488..4bbab098f50b 100644
---- a/sound/soc/tegra/tegra_sgtl5000.c
-+++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -82,7 +82,7 @@ static int tegra_sgtl5000_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_sgtl5000_ops = {
-+static const struct snd_soc_ops tegra_sgtl5000_ops = {
- 	.hw_params = tegra_sgtl5000_hw_params,
- };
- 
-diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
-index f0cd01dbfc38..bdedd1028569 100644
---- a/sound/soc/tegra/tegra_wm8753.c
-+++ b/sound/soc/tegra/tegra_wm8753.c
-@@ -89,7 +89,7 @@ static int tegra_wm8753_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_wm8753_ops = {
-+static const struct snd_soc_ops tegra_wm8753_ops = {
- 	.hw_params = tegra_wm8753_hw_params,
- };
- 
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index e485278e027a..2013e9c4bba0 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -96,7 +96,7 @@ static int tegra_wm8903_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_wm8903_ops = {
-+static const struct snd_soc_ops tegra_wm8903_ops = {
- 	.hw_params = tegra_wm8903_hw_params,
- };
- 
-diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
-index 2cea203c4f5f..870f84ab5005 100644
---- a/sound/soc/tegra/trimslice.c
-+++ b/sound/soc/tegra/trimslice.c
-@@ -74,7 +74,7 @@ static int trimslice_asoc_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static struct snd_soc_ops trimslice_asoc_ops = {
-+static const struct snd_soc_ops trimslice_asoc_ops = {
- 	.hw_params = trimslice_asoc_hw_params,
+-static struct snd_soc_ops atmel_asoc_wm8904_ops = {
++static const struct snd_soc_ops atmel_asoc_wm8904_ops = {
+ 	.hw_params = atmel_asoc_wm8904_hw_params,
  };
  
 -- 
