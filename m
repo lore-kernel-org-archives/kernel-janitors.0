@@ -1,128 +1,116 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Oct 2016 20:50:33 +0000
-Subject: [PATCH 5/5] blackfin-setup: Combine ten seq_printf() calls into three calls in show_cpuinfo()
-Message-Id: <f756e72a-a4f7-4457-27e1-e9df39d64abb@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 24 Oct 2016 18:01:29 +0000
+Subject: Applied "ASoC: qcom: storm: constify snd_soc_ops structures" to the asoc tree
+Message-Id: <E1byjYv-0000ro-8b@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4cd6678e-ebf0-d2f4-0b79-ac33060a6752@users.sourceforge.net>
-In-Reply-To: <4cd6678e-ebf0-d2f4-0b79-ac33060a6752@users.sourceforge.net>
+References: <1476543351-17858-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1476543351-17858-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Steven Miao <realmz6@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Mark Brown <broonie@kernel.org>, Patrick Lai <plai@codeaurora.org>, alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@codeaurora.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Oct 2016 22:11:32 +0200
+The patch
 
-Some data were printed into a sequence by ten separate function calls.
-Print the same data by three function calls instead.
+   ASoC: qcom: storm: constify snd_soc_ops structures
 
-This issue was detected by using the Coccinelle software.
+has been applied to the asoc tree at
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 251fc7a58eca13e4af385cc6458b5533596ddb10 Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Oct 2016 16:55:48 +0200
+Subject: [PATCH] ASoC: qcom: storm: constify snd_soc_ops structures
+
+Check for snd_soc_ops structures that are only stored in the ops field of a
+snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
+structures that have this property can be declared as const also.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct snd_soc_ops i@p = { ... };
+
+@ok1@
+identifier r.i;
+struct snd_soc_dai_link e;
+position p;
+@@
+e.ops = &i@p;
+
+@ok2@
+identifier r.i, e;
+position p;
+@@
+struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
+
+@bad@
+position p != {r.p,ok1.p,ok2.p};
+identifier r.i;
+struct snd_soc_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct snd_soc_ops i = { ... };
+// </smpl>
+
+The effect on the layout of the .o file is shown by the following output of
+the size command, first before then after the transformation:
+
+   text    data     bss     dec     hex filename
+   1420     512       0    1932     78c sound/soc/qcom/storm.o
+   1484     456       0    1940     794 sound/soc/qcom/storm.o
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/blackfin/kernel/setup.c | 64 +++++++++++++++++++++++++-------------------
- 1 file changed, 36 insertions(+), 28 deletions(-)
+ sound/soc/qcom/storm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/blackfin/kernel/setup.c b/arch/blackfin/kernel/setup.c
-index fdd9168..250e645 100644
---- a/arch/blackfin/kernel/setup.c
-+++ b/arch/blackfin/kernel/setup.c
-@@ -1360,26 +1360,29 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 	if ((cpudata->imemctl & (IMC | ENICPLB)) != (IMC | ENICPLB))
- 		icache_size = 0;
- 
--	seq_printf(m, "cache size\t: %d KB(L1 icache) "
--		"%d KB(L1 dcache) %d KB(L2 cache)\n",
--		icache_size, dcache_size, 0);
--	seq_printf(m, "%s\n", cache);
--	seq_printf(m, "external memory\t: "
-+	seq_printf(m,
-+		   "cache size\t: %d KB(L1 icache) %d KB(L1 dcache) %d KB(L2 cache)\n"
-+		   "%s\n"
-+		   "external memory\t: "
- #if defined(CONFIG_BFIN_EXTMEM_ICACHEABLE)
- 		   "cacheable"
- #else
- 		   "uncacheable"
- #endif
--		   " in instruction cache\n");
--	seq_printf(m, "external memory\t: "
-+		   " in instruction cache\n"
-+		   "external memory\t: "
- #if defined(CONFIG_BFIN_EXTMEM_WRITEBACK)
--		      "cacheable (write-back)"
-+		   "cacheable (write-back)"
- #elif defined(CONFIG_BFIN_EXTMEM_WRITETHROUGH)
--		      "cacheable (write-through)"
-+		   "cacheable (write-through)"
- #else
--		      "uncacheable"
-+		   "uncacheable"
- #endif
--		      " in data cache\n");
-+		   " in data cache\n",
-+		   icache_size,
-+		   dcache_size,
-+		   0,
-+		   cache);
- 
- 	if (icache_size)
- 		seq_printf(m, "icache setup\t: %d Sub-banks/%d Ways, %d Lines/Way\n",
-@@ -1403,31 +1406,36 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 		return 0;
- 
- 	if (L2_LENGTH) {
--		seq_printf(m, "L2 SRAM\t\t: %dKB\n", L2_LENGTH/0x400);
--		seq_printf(m, "L2 SRAM\t\t: "
-+		seq_printf(m,
-+			   "L2 SRAM\t\t: %dKB\n"
-+			   "L2 SRAM\t\t: "
- #if defined(CONFIG_BFIN_L2_ICACHEABLE)
--			      "cacheable"
-+			   "cacheable"
- #else
--			      "uncacheable"
-+			   "uncacheable"
- #endif
--			      " in instruction cache\n");
--		seq_printf(m, "L2 SRAM\t\t: "
-+			   " in instruction cache\n"
-+			   "L2 SRAM\t\t: "
- #if defined(CONFIG_BFIN_L2_WRITEBACK)
--			      "cacheable (write-back)"
-+			   "cacheable (write-back)"
- #elif defined(CONFIG_BFIN_L2_WRITETHROUGH)
--			      "cacheable (write-through)"
-+			   "cacheable (write-through)"
- #else
--			      "uncacheable"
-+			   "uncacheable"
- #endif
--			      " in data cache\n");
-+			   " in data cache\n",
-+			   L2_LENGTH / 0x400);
- 	}
--	seq_printf(m, "board name\t: %s\n", bfin_board_name);
--	seq_printf(m, "board memory\t: %ld kB (0x%08lx -> 0x%08lx)\n",
--		physical_mem_end >> 10, 0ul, physical_mem_end);
--	seq_printf(m, "kernel memory\t: %d kB (0x%08lx -> 0x%08lx)\n",
--		((int)memory_end - (int)_rambase) >> 10,
--		_rambase, memory_end);
--
-+	seq_printf(m,
-+		   "board name\t: %s\n"
-+		   "board memory\t: %ld kB (0x%08lx -> 0x%08lx)\n"
-+		   "kernel memory\t: %d kB (0x%08lx -> 0x%08lx)\n",
-+		   bfin_board_name,
-+		   physical_mem_end >> 10,
-+		   0ul,
-+		   physical_mem_end,
-+		   ((int)memory_end - (int)_rambase) >> 10,
-+		   _rambase, memory_end);
+diff --git a/sound/soc/qcom/storm.c b/sound/soc/qcom/storm.c
+index 2d833bffdba0..8fcac2ac3aa6 100644
+--- a/sound/soc/qcom/storm.c
++++ b/sound/soc/qcom/storm.c
+@@ -58,7 +58,7 @@ static int storm_ops_hw_params(struct snd_pcm_substream *substream,
  	return 0;
  }
  
+-static struct snd_soc_ops storm_soc_ops = {
++static const struct snd_soc_ops storm_soc_ops = {
+ 	.hw_params	= storm_ops_hw_params,
+ };
+ 
 -- 
-2.10.1
+2.8.1
 
