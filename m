@@ -1,15 +1,15 @@
 From: oulijun <oulijun@huawei.com>
-Date: Fri, 14 Oct 2016 08:31:58 +0000
+Date: Mon, 24 Oct 2016 12:29:36 +0000
 Subject: Re: [patch 2/2] IB/hns: Fix some error handling in hns_roce_v1_query_qp()
-Message-Id: <580097FE.3070102@huawei.com>
+Message-Id: <580DFEB0.20100@huawei.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161014073441.GB15238@mwanda>
 In-Reply-To: <20161014073441.GB15238@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: "Wei Hu(Xavier)" <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Wei Hu(Xavier)" <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 在 2016/10/14 15:34, Dan Carpenter 写道:
 > to_ib_qp_state() returns IB_QPS_ERR (6) on error, it doesn't return -1.
@@ -34,7 +34,32 @@ Cc: "Wei Hu(Xavier)" <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Dou
 > .
 > 
 Hi, Dan Carpenter
-  This is good for me.
+  After checking your modification, I think that it maybe fix this:
+  static enum ib_qp_state to_ib_qp_state(enum hns_roce_qp_state state)
+{
+	switch (state) {
+	case HNS_ROCE_QP_STATE_RST:
+		return IB_QPS_RESET;
+	case HNS_ROCE_QP_STATE_INIT:
+		return IB_QPS_INIT;
+	case HNS_ROCE_QP_STATE_RTR:
+		return IB_QPS_RTR;
+	case HNS_ROCE_QP_STATE_RTS:
+		return IB_QPS_RTS;
+	case HNS_ROCE_QP_STATE_SQD:
+		return IB_QPS_SQD;
+	case HNS_ROCE_QP_STATE_ERR:
+		return IB_QPS_ERR;
+	default:
+		return -1;
+	}
+}
 
-Thanks
+because the IB_QPS_ERR is legal state, but the tmp_qp_state should return a illegal state when
+the the to_ib_qp_state executed the default branch.
+
+thanks
+Lijun Ou
+
+
 
