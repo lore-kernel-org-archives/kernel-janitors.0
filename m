@@ -1,44 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 20:23:25 +0000
-Subject: [PATCH 1/2] M32R-setup: Use seq_putc() in show_cpuinfo()
-Message-Id: <45a00094-35dc-6f06-6a0a-bf20df5cb5a8@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 24 Oct 2016 20:43:23 +0000
+Subject: [PATCH 0/3] clk: keystone: Fix some error handling paths
+Message-Id: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fef662e1-b5b4-127e-9427-a98ffb512a82@users.sourceforge.net>
-In-Reply-To: <fef662e1-b5b4-127e-9427-a98ffb512a82@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Toshi Kani <toshi.kani@hpe.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Oct 2016 21:50:22 +0200
+The first of these 3 patches is a v2 of a patch posted earlier.
+The main change in this v2 is the propagation of the error returned by
+'clk_register_pll()'.
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+The 2nd one is completely un-related and fixes some typo in error messages
+spoted while looking at the file.
 
-This issue was detected by using the Coccinelle software.
+Finaly, the 3rd one refactors the '_of_pll_clk_init' function in order to
+factorize some cleanups in case of error and to add some missing 'iounmap()'
+calls if 'clk_register_pll()' fails.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/m32r/kernel/setup.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+These patches are un-compiled. I get some errors for some reasons in my build
+environment. I've not checked further the root cause of these build errors
+but I guess that my plateform is not what is expected to build this code.
 
-diff --git a/arch/m32r/kernel/setup.c b/arch/m32r/kernel/setup.c
-index 136c69f..92cbe92 100644
---- a/arch/m32r/kernel/setup.c
-+++ b/arch/m32r/kernel/setup.c
-@@ -351,9 +351,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 
- 	PRINT_CLOCK("CPU", (int)c->cpu_clock);
- 	PRINT_CLOCK("Bus", (int)c->bus_clock);
--
--	seq_printf(m, "\n");
--
-+	seq_putc(m, '\n');
- 	return 0;
- }
- 
+Christophe JAILLET (3):
+  clk: keystone: Fix an error checking
+  clk: keystone: Fix some error messages
+  clk: keystone: Fix missing iounmap calls in an error handling path
+
+ drivers/clk/keystone/pll.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
 -- 
-2.10.1
+2.9.3
 
