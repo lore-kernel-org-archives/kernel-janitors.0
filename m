@@ -1,40 +1,55 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Tue, 25 Oct 2016 09:08:22 +0000
-Subject: Re: [PATCH 4/4] MIPS/kernel/proc: Combine four seq_printf() calls into one call in show_cpuinfo()
-Message-Id: <20161025090822.GB4795@linux-mips.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Oct 2016 14:02:49 +0000
+Subject: Re: MIPS/kernel/r2-to-r6-emul: Use seq_puts() in mipsr2_stats_show()
+Message-Id: <e7ac4cba-bce1-edf5-a537-4c06a357bfb3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
- <61796ee0-b3b8-53a6-d29d-487c89145fc1@users.sourceforge.net>
- <CAMuHMdXn2gss2MRP7j1pAcmcXL_VivGQqMw1mAu-PUaRxGER0w@mail.gmail.com>
-In-Reply-To: <CAMuHMdXn2gss2MRP7j1pAcmcXL_VivGQqMw1mAu-PUaRxGER0w@mail.gmail.com>
+ <4126c272-cdf6-677a-fe98-74e8034078d8@users.sourceforge.net>
+ <20161024131311.ttwr2bblphg6vd2b@thunk.org>
+In-Reply-To: <20161024131311.ttwr2bblphg6vd2b@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>, linux-mips@linux-mips.org
+Cc: Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 25, 2016 at 10:55:42AM +0200, Geert Uytterhoeven wrote:
-
-> > -       seq_printf(m, "shadow register sets\t: %d\n",
-> > -                     cpu_data[n].srsets);
-> > -       seq_printf(m, "kscratch registers\t: %d\n",
-> > -                     hweight8(cpu_data[n].kscratch_mask));
-> > -       seq_printf(m, "package\t\t\t: %d\n", cpu_data[n].package);
-> > -       seq_printf(m, "core\t\t\t: %d\n", cpu_data[n].core);
-> > +       seq_printf(m,
-> > +                  "shadow register sets\t: %d\n"
-> > +                  "kscratch registers\t: %d\n"
-> > +                  "package\t\t\t: %d\n"
-> > +                  "core\t\t\t: %d\n",
-> > +                  cpu_data[n].srsets,
-> > +                  hweight8(cpu_data[n].kscratch_mask),
-> > +                  cpu_data[n].package,
-> > +                  cpu_data[n].core);
+>> A string which did not contain a data format specification should be put
+>> into a sequence.
 > 
-> I think the code is much easier to read with separate seq_printf()s for
-> each line printed.
+> This is not a correct description of what you are doing.  A better
+> description would be to say:
+> 
+> "Use seq_put[sc]() instead of seq_printf() since the string does not
+> contain a data format specifier".
 
-Which is why I originally implemented this as separate function calls.
-Code size and performance are hardly an argument for /proc/cpuinfo.
+Thanks for your suggestion about an other wording.
 
-  Ralf
+
+> You should fix this in all the patches.
+
+I am curious if a second approach will become acceptable in the near future.
+
+
+> Please also note this is really pointless patch,
+
+If you do not like the proposed changes for some subsystems so far,
+I would appreciate another clarification:
+
+* Could you tolerate them for any other software components?
+
+* May I continue to inform involved developers about similar change possibilities?
+
+
+> since reading from /proc isn't done in a tight loop, and even if it were,
+> the use of vsprintf is the tiniest part of the overhead.
+
+Thanks for your software development opinion.
+
+
+> It otherwise reduces the text space or the number of lines of code....
+
+Do other system testers and Linux users care a bit more for corresponding
+chances in improved software efficiency?
+
+Regards,
+Markus
