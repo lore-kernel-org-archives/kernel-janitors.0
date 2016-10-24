@@ -1,91 +1,94 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Oct 2016 14:53:32 +0000
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Mon, 24 Oct 2016 15:51:12 +0000
 Subject: Re: MIPS/kernel/r2-to-r6-emul: Use seq_puts() in mipsr2_stats_show()
-Message-Id: <8592fa0c-e80a-77e2-fc44-4017f0988c8c@users.sourceforge.net>
+Message-Id: <20161024155112.ixdfi3ucs7sg2zgh@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
  <4126c272-cdf6-677a-fe98-74e8034078d8@users.sourceforge.net>
  <20161024131311.ttwr2bblphg6vd2b@thunk.org>
  <e7ac4cba-bce1-edf5-a537-4c06a357bfb3@users.sourceforge.net>
  <20161024142037.rrslfxtimj44s5t6@thunk.org>
-In-Reply-To: <20161024142037.rrslfxtimj44s5t6@thunk.org>
+ <8592fa0c-e80a-77e2-fc44-4017f0988c8c@users.sourceforge.net>
+In-Reply-To: <8592fa0c-e80a-77e2-fc44-4017f0988c8c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>, linux-mips@linux-mips.org
-Cc: Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-mips@linux-mips.org, Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Ralf =?iso-8859-1?Q?B=E4chle?= <ralf@linux-mips.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> I am curious if a second approach will become acceptable in the near future.
+On Mon, Oct 24, 2016 at 04:53:32PM +0200, SF Markus Elfring wrote:
+> >>> since reading from /proc isn't done in a tight loop, and even if it were,
+> >>> the use of vsprintf is the tiniest part of the overhead.
+> >>
+> >> Thanks for your software development opinion.
+> > 
+> > It's a lot more than just an opinion.  I challenge you to demonstrate
+> > how much savings it would take.  Try learning how to use another tool
+> > --- say, perf.  Measure how many clock cycles it takes to read from a
+> > proc file that uses seq_printf().  Then measure how many clock cycles
+> > it takes to read from a proc file that uses seq_puts().  Try doing the
+> > experiment 3-5 times each way, to see if the difference is within
+> > measurement error, and then figure out what percentage of the total
+> > CPU time you have saved.
 > 
-> I don't know what you were asking.
+> Are there any more software developers interested in such system
+> performance analyses?
 
-I am trying to clarify the suggested software evolution again.
+Sure, of course.  This is why serious professionals take a huge amount
+of time doing benchmarking, and making sure that the benchmarks are
+reproducible, and accurately measure something that reflects real
+world usage.  This can often take as much time or more time than the
+actual optimization in some cases.
 
+> There are also some constraints around change resistance involved,
+> aren't there?
 
-> I was merely point out that the wording was factually incorrect
-> in all of the patches,
+To quote from the great Don Knuth:
 
-Thanks for this information.
+    Programmers waste enormous amounts of time thinking about, or
+    worrying about, the speed of noncritical parts of their programs,
+    and these attempts at efficiency actually have a strong negative
+    impact when debugging and maintenance are considered. We should
+    forget about small efficiencies, say about 97% of the time:
+    premature optimization is the root of all evil. Yet we should not
+    pass up our opportunities in that critical 3%.
 
+An experienced developer would be able to very easily spot that trying
+to optimize seq_printf() versus seq_puts() is barely going to be
+measurable.  It's the sort of thing that a developer might fix while
+making other, more useful changes to a source file.  But there are
+costs associated with processing a patch, in terms of developer time
+and attention, and those are externalities.  It's for the same reason
+that whitespace only or comment-only patches are controversial.  There
+is always the suspicion that there are people doing this because they
+hope to win some patch counting game, and that they don't care about
+the costs they might be introducing to the rest of the system.  And
+when the patches cause bugs, then it goes from outright marginal value
+to negative value.
 
-> and I didn't feel like replying five times to point out the same mistake.
-
-This is fine.
-
-
->>> since reading from /proc isn't done in a tight loop, and even if it were,
->>> the use of vsprintf is the tiniest part of the overhead.
->>
->> Thanks for your software development opinion.
+> > So trying to send more useful patches might be more helpful
+> > if your goal is to try to get gainful employment.
 > 
-> It's a lot more than just an opinion.  I challenge you to demonstrate
-> how much savings it would take.  Try learning how to use another tool
-> --- say, perf.  Measure how many clock cycles it takes to read from a
-> proc file that uses seq_printf().  Then measure how many clock cycles
-> it takes to read from a proc file that uses seq_puts().  Try doing the
-> experiment 3-5 times each way, to see if the difference is within
-> measurement error, and then figure out what percentage of the total
-> CPU time you have saved.
+> Financial incentives would be also nice as you seem to indicate here.
 
-Are there any more software developers interested in such system
-performance analyses?
+Well, please note that having a reputation of someone who insists on
+sending mostly junk patches (and like junk food, they may have some
+nutritive value; but that doesn't change the effect that the net
+benefit to person consuming them is marginal or negative), tends to
+give you a bad reputation, and may in fact be a hinderance towards
+your being able to attain "financial incentives".
 
+If that is in fact your goal, I would gently suggest that you spend
+more time improving your skills, and learning more about higher-value
+ways you could contribute to the kernel, instead of spamming the
+kernel list with lots of low value patches.  In the future if you are
+adding higher value improvements, and you want to do various cleanups,
+such as fixing up seq_printf -> seq_puts changes, sure.  But to the
+extent that dirties the history so it's harder to find who introduced
+a problem using tools such as "git blame", low-value cleanup patches
+do have some costs, so it's not enough to say, "but it improves the
+CPU time used by 0.000001%!"
 
-> If this sort of thing appeals to you, you might want to consider a
-> more productive line of work.  For example, you could do scalability
-> measurements.  Run various benchmarks with lockdep enabled, and
-> measure the average and max hold time on various locks.  Now see if
-> you can reduce the max hold time on those locks.  You may find that
-> you can improve performance for real work loads by orders of magnitude
-> more than you can by sending the sorts of patches you've sent up until now.
+Cheers,
 
-Thanks for your hints around other software development areas.
-
-
-> You'd also development more marketable kernel skills, if that has been
-> your goal by spamming the list with hundreds and thousands of mostly
-> pointless patches.
-
-You might categorise my update suggestions with a low value so far.
-
-
-> Note that if a hiring manager were to talk to developers and get
-> their opinion of the sorts of patches you have been sending, trust me,
-> it would _not_ be positive.
-
-There are also some constraints around change resistance involved,
-aren't there?
-
-* Do my suggestions show small improvements for Linux source files?
-
-* If you find some of them so awful, why should I attempt to improve
-  any commit messages in another patch series then?
-
-
-> So trying to send more useful patches might be more helpful
-> if your goal is to try to get gainful employment.
-
-Financial incentives would be also nice as you seem to indicate here.
-
-Regards,
-Markus
+						- Ted
