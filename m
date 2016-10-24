@@ -1,69 +1,133 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Oct 2016 14:15:50 +0000
-Subject: [bug report] cxgb4: Add support for dynamic allocation of resources for ULD
-Message-Id: <20161014141550.GA10628@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Oct 2016 12:29:57 +0000
+Subject: [PATCH 3/4] MIPS/kernel/proc: Replace 28 seq_printf() calls by seq_puts() in show_cpuinfo()
+Message-Id: <33b51bd8-7225-55a5-4be8-d062390e6f67@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
+In-Reply-To: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-mips@linux-mips.org, Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello Hariprasad Shenai,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Oct 2016 13:45:04 +0200
 
-The patch 94cdb8bb993a: "cxgb4: Add support for dynamic allocation of
-resources for ULD" from Aug 17, 2016, leads to the following static
-checker warning:
+Strings which did not contain data format specifications should be put
+into a sequence.
 
-	drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c:176 alloc_uld_rxqs()
-	warn: loop skips 'i' = zero
+* Thus use the corresponding function "seq_puts" so that the data output
+  will be a bit more efficient.
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-   153          for (i = 0; i < nq; i++, q++) {
-   154                  if (msi_idx >= 0) {
-   155                          bmap_idx = get_msix_idx_from_bmap(adap);
-   156                          msi_idx = adap->msix_info_ulds[bmap_idx].idx;
-   157                  }
-   158                  err = t4_sge_alloc_rxq(adap, &q->rspq, false,
-   159                                         adap->port[i / per_chan],
-   160                                         msi_idx,
-   161                                         q->fl.size ? &q->fl : NULL,
-   162                                         uldrx_handler,
-   163                                         lro ? uldrx_flush_handler : NULL,
-   164                                         0);
-   165                  if (err)
-   166                          goto freeout;
-   167                  if (msi_idx >= 0)
-   168                          rxq_info->msix_tbl[i + offset] = bmap_idx;
-   169                  memset(&q->stats, 0, sizeof(q->stats));
-   170                  if (ids)
-   171                          ids[i] = q->rspq.abs_id;
-   172          }
-   173          return 0;
-   174  freeout:
-   175          q = rxq_info->uldrxq + offset;
-   176          for ( ; i; i--, q++) {
-   177                  if (q->rspq.desc)
-   178                          free_rspq_fl(adap, &q->rspq,
-   179                                       q->fl.size ? &q->fl : NULL);
-   180          }
-   181  
-   182          /* We need to free rxq also in case of ciq allocation failure */
-   183          if (offset) {
-   184                  q = rxq_info->uldrxq + offset;
-   185                  for ( ; i; i--, q++) {
+* Omit the format string "%s" which became unnecessary with this refactoring.
 
 
-We exit the previous loop with i = 0 so we will never enter this loop.
-This is the same loop as earlier as well...  I totally don't understand
-what we are trying to do here.
+This issue was detected by using the Coccinelle software.
 
-   186                          if (q->rspq.desc)
-   187                                  free_rspq_fl(adap, &q->rspq,
-   188                                               q->fl.size ? &q->fl : NULL);
-   189                  }
-   190          }
-   191          return err;
-   192  }
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/mips/kernel/proc.c | 74 +++++++++++++++++++++++++++++--------------------
+ 1 file changed, 44 insertions(+), 30 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
+index 765489b..07480a9 100644
+--- a/arch/mips/kernel/proc.c
++++ b/arch/mips/kernel/proc.c
+@@ -79,49 +79,63 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 		for (i = 0; i < cpu_data[n].watch_reg_count; i++)
+ 			seq_printf(m, "%s0x%04x", i ? ", " : "" ,
+ 				cpu_data[n].watch_reg_masks[i]);
+-		seq_printf(m, "]\n");
++		seq_puts(m, "]\n");
+ 	}
+ 
+-	seq_printf(m, "isa\t\t\t:"); 
++	seq_puts(m, "isa\t\t\t:");
+ 	if (cpu_has_mips_r1)
+-		seq_printf(m, " mips1");
++		seq_puts(m, " mips1");
+ 	if (cpu_has_mips_2)
+-		seq_printf(m, "%s", " mips2");
++		seq_puts(m, " mips2");
+ 	if (cpu_has_mips_3)
+-		seq_printf(m, "%s", " mips3");
++		seq_puts(m, " mips3");
+ 	if (cpu_has_mips_4)
+-		seq_printf(m, "%s", " mips4");
++		seq_puts(m, " mips4");
+ 	if (cpu_has_mips_5)
+-		seq_printf(m, "%s", " mips5");
++		seq_puts(m, " mips5");
+ 	if (cpu_has_mips32r1)
+-		seq_printf(m, "%s", " mips32r1");
++		seq_puts(m, " mips32r1");
+ 	if (cpu_has_mips32r2)
+-		seq_printf(m, "%s", " mips32r2");
++		seq_puts(m, " mips32r2");
+ 	if (cpu_has_mips32r6)
+-		seq_printf(m, "%s", " mips32r6");
++		seq_puts(m, " mips32r6");
+ 	if (cpu_has_mips64r1)
+-		seq_printf(m, "%s", " mips64r1");
++		seq_puts(m, " mips64r1");
+ 	if (cpu_has_mips64r2)
+-		seq_printf(m, "%s", " mips64r2");
++		seq_puts(m, " mips64r2");
+ 	if (cpu_has_mips64r6)
+-		seq_printf(m, "%s", " mips64r6");
+-	seq_printf(m, "\n");
+-
+-	seq_printf(m, "ASEs implemented\t:");
+-	if (cpu_has_mips16)	seq_printf(m, "%s", " mips16");
+-	if (cpu_has_mdmx)	seq_printf(m, "%s", " mdmx");
+-	if (cpu_has_mips3d)	seq_printf(m, "%s", " mips3d");
+-	if (cpu_has_smartmips)	seq_printf(m, "%s", " smartmips");
+-	if (cpu_has_dsp)	seq_printf(m, "%s", " dsp");
+-	if (cpu_has_dsp2)	seq_printf(m, "%s", " dsp2");
+-	if (cpu_has_dsp3)	seq_printf(m, "%s", " dsp3");
+-	if (cpu_has_mipsmt)	seq_printf(m, "%s", " mt");
+-	if (cpu_has_mmips)	seq_printf(m, "%s", " micromips");
+-	if (cpu_has_vz)		seq_printf(m, "%s", " vz");
+-	if (cpu_has_msa)	seq_printf(m, "%s", " msa");
+-	if (cpu_has_eva)	seq_printf(m, "%s", " eva");
+-	if (cpu_has_htw)	seq_printf(m, "%s", " htw");
+-	if (cpu_has_xpa)	seq_printf(m, "%s", " xpa");
++		seq_puts(m, " mips64r6");
++	seq_puts(m,
++		 "\n"
++		 "ASEs implemented\t:");
++	if (cpu_has_mips16)
++		seq_puts(m, " mips16");
++	if (cpu_has_mdmx)
++		seq_puts(m, " mdmx");
++	if (cpu_has_mips3d)
++		seq_puts(m, " mips3d");
++	if (cpu_has_smartmips)
++		seq_puts(m, " smartmips");
++	if (cpu_has_dsp)
++		seq_puts(m, " dsp");
++	if (cpu_has_dsp2)
++		seq_puts(m, " dsp2");
++	if (cpu_has_dsp3)
++		seq_puts(m, " dsp3");
++	if (cpu_has_mipsmt)
++		seq_puts(m, " mt");
++	if (cpu_has_mmips)
++		seq_puts(m, " micromips");
++	if (cpu_has_vz)
++		seq_puts(m, " vz");
++	if (cpu_has_msa)
++		seq_puts(m, " msa");
++	if (cpu_has_eva)
++		seq_puts(m, " eva");
++	if (cpu_has_htw)
++		seq_puts(m, " htw");
++	if (cpu_has_xpa)
++		seq_puts(m, " xpa");
+ 	seq_putc(m, '\n');
+ 
+ 	if (cpu_has_mmips) {
+-- 
+2.10.1
+
