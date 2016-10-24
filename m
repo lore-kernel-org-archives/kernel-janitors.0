@@ -1,35 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Oct 2016 08:50:24 +0000
-Subject: [patch] relay: check array offset before using it
-Message-Id: <20161013084947.GC16198@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Oct 2016 12:26:24 +0000
+Subject: [PATCH 0/4] MIPS-kernel: Fine-tuning for two function implementations
+Message-Id: <3809e713-2f08-db60-92c1-21d735a4f35b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Akash Goel <akash.goel@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Al Viro <viro@zeniv.linux.org.uk>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Richard Weinberger <richard@nod.at>, Zhouyi Zhou <yizhouzhou@ict.ac.cn>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-mips@linux-mips.org, Andrea Gelmini <andrea.gelmini@gelma.net>, Andrew Morton <akpm@linux-foundation.org>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Smatch complains that we started using the array offset before we
-checked that it was valid.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Oct 2016 14:05:14 +0200
 
-Fixes: 017c59c042d0 ('relay: Use per CPU constructs for the relay channel buffer pointers')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A few update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/kernel/relay.c b/kernel/relay.c
-index da79a10..8f18d31 100644
---- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -809,11 +809,11 @@ void relay_subbufs_consumed(struct rchan *chan,
- {
- 	struct rchan_buf *buf;
- 
--	if (!chan)
-+	if (!chan || cpu >= NR_CPUS)
- 		return;
- 
- 	buf = *per_cpu_ptr(chan->buf, cpu);
--	if (cpu >= NR_CPUS || !buf || subbufs_consumed > chan->n_subbufs)
-+	if (!buf || subbufs_consumed > chan->n_subbufs)
- 		return;
- 
- 	if (subbufs_consumed > buf->subbufs_produced - buf->subbufs_consumed)
+Markus Elfring (4):
+  r2-to-r6-emul: Use seq_puts() in mipsr2_stats_show()
+  proc: Use seq_putc() in show_cpuinfo()
+  proc: Replace 28 seq_printf() calls by seq_puts() in show_cpuinfo()
+  proc: Combine four seq_printf() calls into one call in show_cpuinfo()
+
+ arch/mips/kernel/mips-r2-to-r6-emul.c |  7 +--
+ arch/mips/kernel/proc.c               | 95 ++++++++++++++++++++---------------
+ 2 files changed, 59 insertions(+), 43 deletions(-)
+
+-- 
+2.10.1
+
