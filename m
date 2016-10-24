@@ -1,19 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 24 Oct 2016 13:43:21 +0000
-Subject: Re: [patch 2/2] IB/hns: Fix some error handling in hns_roce_v1_query_qp()
-Message-Id: <20161024134321.GD4469@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Oct 2016 20:59:24 +0000
+Subject: [PATCH 1/3] [media] au0828-video: Use kcalloc() in au0828_init_isoc()
+Message-Id: <68ad1aaa-c029-04b9-805a-e859f6c2d2d5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161014073441.GB15238@mwanda>
- <580DFEB0.20100@huawei.com>
-In-Reply-To: <580DFEB0.20100-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+References: <c6a37822-c0f9-1f1e-6ebe-a1c88c6d9d0a@users.sourceforge.net>
+In-Reply-To: <c6a37822-c0f9-1f1e-6ebe-a1c88c6d9d0a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oulijun <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: "Wei Hu(Xavier)" <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, =?UTF-8?Q?Rafael_Louren=c3=a7o_de_Lima_Chehab?= <chehabrafael@gmail.com>, Shuah Khan <shuah@kernel.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Good catch.  Thanks for the review.  I will resend.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Oct 2016 22:08:47 +0200
 
-regards,
-dan carpenter
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/usb/au0828/au0828-video.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
+index 85dd9a8..85b13c1 100644
+--- a/drivers/media/usb/au0828/au0828-video.c
++++ b/drivers/media/usb/au0828/au0828-video.c
+@@ -221,15 +221,18 @@ static int au0828_init_isoc(struct au0828_dev *dev, int max_packets,
+ 
+ 	dev->isoc_ctl.isoc_copy = isoc_copy;
+ 	dev->isoc_ctl.num_bufs = num_bufs;
+-
+-	dev->isoc_ctl.urb = kzalloc(sizeof(void *)*num_bufs,  GFP_KERNEL);
++	dev->isoc_ctl.urb = kcalloc(num_bufs,
++				    sizeof(*dev->isoc_ctl.urb),
++				    GFP_KERNEL);
+ 	if (!dev->isoc_ctl.urb) {
+ 		au0828_isocdbg("cannot alloc memory for usb buffers\n");
+ 		return -ENOMEM;
+ 	}
+ 
+-	dev->isoc_ctl.transfer_buffer = kzalloc(sizeof(void *)*num_bufs,
+-					      GFP_KERNEL);
++	dev->isoc_ctl.transfer_buffer = kcalloc(num_bufs,
++						sizeof(*dev->isoc_ctl
++						       .transfer_buffer),
++						GFP_KERNEL);
+ 	if (!dev->isoc_ctl.transfer_buffer) {
+ 		au0828_isocdbg("cannot allocate memory for usb transfer\n");
+ 		kfree(dev->isoc_ctl.urb);
+-- 
+2.10.1
 
