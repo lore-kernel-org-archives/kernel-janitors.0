@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 24 Oct 2016 19:48:35 +0000
+Date: Tue, 25 Oct 2016 05:55:00 +0000
 Subject: Re: [PATCH 5/7] ASoC: constify snd_soc_ops structures
-Message-Id: <alpine.DEB.2.20.1610242147570.2115@hadrien>
+Message-Id: <alpine.DEB.2.20.1610250754220.2084@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr> <1476543351-17858-6-git-send-email-Julia.Lawall@lip6.fr> <20161024173423.GL17252@sirena.org.uk>
 In-Reply-To: <20161024173423.GL17252@sirena.org.uk>
@@ -39,7 +39,7 @@ On Mon, 24 Oct 2016, Mark Brown wrote:
 > You split out a few drivers as separate patches but not these ones -
 > what's special about these ones?
 
-They all have the same set of maintainers.  The split out drivers have
-some other set of maintainers.
+If it's preferred, I could send them all one file at a time, or when the
+maintainers are very similar just send one patch to all the maintainers.
 
 julia
