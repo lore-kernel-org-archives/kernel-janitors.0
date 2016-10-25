@@ -1,27 +1,44 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Date: Sat, 08 Oct 2016 14:01:20 +0000
-Subject: Re: [PATCH] watchdog: iTCO_wdt: constify iTCO_wdt_pm structure
-Message-Id: <20161008140120.GB23290@spo001.leaseweb.nl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Oct 2016 21:37:37 +0000
+Subject: [patch v3] fuse: clean up fuse_lookup_name()
+Message-Id: <20161025213737.GB30419@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1472415986-16035-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1472415986-16035-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+We check for !outarg->nodeid twice.  The first time we return success
+and the next time (which is dead code) we return -EIO.  The correct
+return is the current success return and we should delete the dead code.
 
-> iTCO_wdt_pm, of type struct dev_pm_ops, is never modified, so declare it as
-> const.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I sent this patch last year, but the first time I changed the function
+to return -EIO, then in the second patch I messed up so that if
+fuse_valid_type() was false then we still returned success.  But
+hopefully version 3 is correct.
 
-This patch and your constify watchdog_ops structures were added to linux-watchdog-next almost 2 weeks ago.
-
-Kind regards,
-Wim.
-
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index b3ebe512d64c..6277af3e9c45 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -321,13 +321,14 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 
+ 	fuse_lookup_init(fc, &args, nodeid, name, outarg);
+ 	err = fuse_simple_request(fc, &args);
+-	/* Zero nodeid is same as -ENOENT, but with valid timeout */
+-	if (err || !outarg->nodeid)
++	if (err)
+ 		goto out_put_forget;
+ 
+-	err = -EIO;
++	/* Zero nodeid is same as -ENOENT, but with valid timeout */
+ 	if (!outarg->nodeid)
+ 		goto out_put_forget;
++
++	err = -EIO;
+ 	if (!fuse_valid_type(outarg->attr.mode))
+ 		goto out_put_forget;
+ 
