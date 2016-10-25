@@ -1,68 +1,45 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 25 Oct 2016 07:08:09 +0000
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 25 Oct 2016 20:35:26 +0000
 Subject: Re: [PATCH 3/3] clk: keystone: Fix missing iounmap calls in an error handling path
-Message-Id: <580F04D9.108@bfs.de>
+Message-Id: <20161025203526.GA26139@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr> <7ed7c1abf1666f1e6eda240bb705940bc14bd186.1477339880.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7ed7c1abf1666f1e6eda240bb705940bc14bd186.1477339880.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+ <7ed7c1abf1666f1e6eda240bb705940bc14bd186.1477339880.git.christophe.jaillet@wanadoo.fr>
+ <580F04D9.108@bfs.de>
+In-Reply-To: <580F04D9.108@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: walter harms <wharms@bfs.de>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-Am 24.10.2016 22:43, schrieb Christophe JAILLET:
-> Factorize 'iounmap()' calls in the error handling path.
-> The main goal is to add these calls if 'clk_register_pll()' fails.
+On 10/25, walter harms wrote:
+> Am 24.10.2016 22:43, schrieb Christophe JAILLET:
+> > @@ -220,6 +218,12 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+> >  
+> >  out:
+> >  	pr_err("%s: error initializing pll %s\n", __func__, node->name);
+> > +	if (pll_data->pllm)
+> > +		iounmap(pll_data->pllm);
+> > +	if (pll_data->pll_ctl0)
+> > +		iounmap(pll_data->pll_ctl0);
+> > +	if (pll_data->pllod)
+> > +		iounmap(pll_data->pllod);
+> >  	kfree(pll_data);
+> >  }
+> >  
 > 
-> Add an error message if an 'of_iomap' call fails to be consistent.
+> IMHO calles the iounmap() need no check for NULL.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Un-compiled & un-tested
-> ---
->  drivers/clk/keystone/pll.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-> index 35c0e2b011d1..73a2558b29c0 100644
-> --- a/drivers/clk/keystone/pll.c
-> +++ b/drivers/clk/keystone/pll.c
-> @@ -191,7 +191,6 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
->  	pll_data->pll_ctl0 = of_iomap(node, i);
->  	if (!pll_data->pll_ctl0) {
->  		pr_err("%s: ioremap failed\n", __func__);
-> -		iounmap(pll_data->pllod);
->  		goto out;
->  	}
->  
-> @@ -206,8 +205,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
->  		i = of_property_match_string(node, "reg-names", "multiplier");
->  		pll_data->pllm = of_iomap(node, i);
->  		if (!pll_data->pllm) {
-> -			iounmap(pll_data->pll_ctl0);
-> -			iounmap(pll_data->pllod);
-> +			pr_err("%s: ioremap failed\n", __func__);
->  			goto out;
->  		}
->  	}
-> @@ -220,6 +218,12 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
->  
->  out:
->  	pr_err("%s: error initializing pll %s\n", __func__, node->name);
-> +	if (pll_data->pllm)
-> +		iounmap(pll_data->pllm);
-> +	if (pll_data->pll_ctl0)
-> +		iounmap(pll_data->pll_ctl0);
-> +	if (pll_data->pllod)
-> +		iounmap(pll_data->pllod);
->  	kfree(pll_data);
->  }
->  
 
-IMHO calles the iounmap() need no check for NULL.
+ARM doesn't seem to check for NULL there though. So that would be
+a bug.
 
-re,
- wh
+It would be nice to remove the checks though. Perhaps someone
+could do that by unifying ionumap into asm-generic with the NULL
+check and then have architecture specific functions for the rest
+of it?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
