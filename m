@@ -1,64 +1,73 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 29 Oct 2016 19:37:05 +0000
-Subject: [PATCH 11/15] ASoC: dapm: use permission-specific DEVICE_ATTR variants
-Message-Id: <1477769829-22230-12-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 26 Oct 2016 10:15:42 +0000
+Subject: Applied "ASoC: Intel: Skylake: Fix a shift wrapping bug" to the asoc tree
+Message-Id: <E1bzLFG-0004S1-KS@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20161013085548.GK16198@mwanda>
+In-Reply-To: <20161013085548.GK16198@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, Kranthi G <gudishax.kranthikumar@intel.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Dharageswari R <dharageswari.r@intel.com>, alsa-devel@alsa-project.orgVinodKoulvinod.koul@intel.com, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Ramesh Babu <ramesh.babu@intel.com>, Colin Ian King <colin.king@canonical.com>Mark Brown <broonie@kernel.org>, Shreyas NC <shreyas.nc@intel.com>, Senthilnathan Veppur <senthilnathanx.veppur@intel.com>
 
-Use DEVICE_ATTR_RO for read only attributes.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+The patch
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+   ASoC: Intel: Skylake: Fix a shift wrapping bug
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+has been applied to the asoc tree at
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-if not (x^"_show" = x_show) then Coccilib.include_match false
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Thanks,
+Mark
 
+From c8eabf821cac120afb78ca251b07cbf520406a7e Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Oct 2016 11:55:48 +0300
+Subject: [PATCH] ASoC: Intel: Skylake: Fix a shift wrapping bug
+
+"*val" is a u64.  It definitely looks like we intend to use the high 32
+bits as well.
+
+Fixes: 700a9a63f9c1 ("ASoC: Intel: Skylake: Add module instance id generation APIs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Vinod Koul <vinod.koul@intel.com>
+Tested-by: Kranthi G <gudishax.kranthikumar@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-dapm.c |    2 +-
+ sound/soc/intel/skylake/skl-sst-utils.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 3bbe32e..164b4d3 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -2297,7 +2297,7 @@ static ssize_t dapm_widget_show(struct device *dev,
- 	return count;
- }
- 
--static DEVICE_ATTR(dapm_widget, 0444, dapm_widget_show, NULL);
-+static DEVICE_ATTR_RO(dapm_widget);
- 
- struct attribute *soc_dapm_dev_attrs[] = {
- 	&dev_attr_dapm_widget.attr,
+diff --git a/sound/soc/intel/skylake/skl-sst-utils.c b/sound/soc/intel/skylake/skl-sst-utils.c
+index 8dc03039b311..ea162fbf68e5 100644
+--- a/sound/soc/intel/skylake/skl-sst-utils.c
++++ b/sound/soc/intel/skylake/skl-sst-utils.c
+@@ -179,7 +179,7 @@ static inline int skl_getid_32(struct uuid_module *module, u64 *val,
+ 		index = ffz(mask_val);
+ 		pvt_id = index + word1_mask + word2_mask;
+ 		if (pvt_id <= (max_inst - 1)) {
+-			*val |= 1 << (index + word1_mask);
++			*val |= 1ULL << (index + word1_mask);
+ 			return pvt_id;
+ 		}
+ 	}
+-- 
+2.8.1
 
