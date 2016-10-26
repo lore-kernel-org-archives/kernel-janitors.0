@@ -1,32 +1,40 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 26 Oct 2016 12:28:59 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Oct 2016 12:42:45 +0000
 Subject: Re: [PATCH 11/13] ALSA: Deletion of checks before the function call "iounmap"
-Message-Id: <1477484939.4059.35.camel@sipsolutions.net>
+Message-Id: <20161026124245.GR4418@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
+References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
  <530CF8FF.8080600@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
- <54A941C1.4020906@users.sourceforge.net> <20161026122605.GA3911@mwanda>
-In-Reply-To: <20161026122605.GA3911@mwanda>
+ <5317A59D.4@users.sourceforge.net>
+ <54A9355F.4050102@users.sourceforge.net>
+ <54A941C1.4020906@users.sourceforge.net>
+ <20161026122605.GA3911@mwanda>
+ <1477484939.4059.35.camel@sipsolutions.net>
+In-Reply-To: <1477484939.4059.35.camel@sipsolutions.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: alsa-devel@alsa-project.org, Russell King <linux@arm.linux.org.uk>, linux-parisc@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>, LKML <linux-kernel@vger.kernel.org>, Jaroslav Kysela <perex@perex.cz>, Julia Lawall <julia.lawall@lip6.fr>, Thibaut Varene <T-Bone@parisc-linux.org>, linuxppc-dev@lists.ozlabs.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Jaroslav Kysela <perex@perex.cz>, Clemens Ladisch <clemens@ladisch.de>, Russell King <linux@arm.linux.org.uk>, Takashi Iwai <tiwai@suse.de>, Thibaut Varene <T-Bone@parisc-linux.org>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-parisc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 2016-10-26 at 15:26 +0300, Dan Carpenter wrote:
-> Someone was just mentioning in another thread that removing the check
-> from iounmap() is not portable to other arches and then I remembered
-> that Markus removed a bunch of these.
+On Wed, Oct 26, 2016 at 02:28:59PM +0200, Johannes Berg wrote:
+> On Wed, 2016-10-26 at 15:26 +0300, Dan Carpenter wrote:
+> > Someone was just mentioning in another thread that removing the check
+> > from iounmap() is not portable to other arches and then I remembered
+> > that Markus removed a bunch of these.
+> > 
+> > We should consider reverting this, perhaps?
 > 
-> We should consider reverting this, perhaps?
+> Can't we teach all architectures? Not that reverting it would be a
+> problem.
 
-Can't we teach all architectures? Not that reverting it would be a
-problem.
+We probably should.  I just didn't want to suggest it, in case it sounds
+like volunteering...  I'm not going to be able to do it because I'm on
+the road for a bit.
 
-johannes
+regards,
+dan carpenter
+
