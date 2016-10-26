@@ -1,59 +1,56 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 07 Oct 2016 20:36:20 +0000
-Subject: [PATCH] crypto: crypto4xx - Fix size used in dma_free_coherent()
-Message-Id: <1475872580-14643-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 26 Oct 2016 12:23:07 +0000
+Subject: [PATCH 4.4 084/112] irqchip/gicv3: Handle loop timeout proper
+Message-Id: <20161026122308.317986261@linuxfoundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161026122304.797016625@linuxfoundation.org>
+In-Reply-To: <20161026122304.797016625@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Sudeep Holla <sudeep.holla@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, kernel-janitors@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>
 
-The size used in 'dma_free_coherent()' looks un-initialized here.
-ctx->sa_len is set a few lines below and is apparently not set by the
-caller.
-So use 'size' as in the corresponding 'dma_alloc_coherent()' a few lines
-above.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-This has been spotted with coccinelle, using the following script:
-////////////////////
-@r@
-expression x0, x1, y0, y1, z0, z1, t0, t1, ret;
-@@
+------------------
 
-*   ret = dma_alloc_coherent(x0, y0, z0, t0);
-    ...
-*   dma_free_coherent(x1, y1, ret, t1);
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
+commit d102eb5c1ac5e6743b1c6d145c06a25d98ad1375 upstream.
 
-@script:python@
-y0 << r.y0;
-y1 << r.y1;
+The timeout loop terminates when the loop count is zero, but the decrement
+of the count variable is post check. So count is -1 when we check for the
+timeout and therefor the error message is supressed.
 
-@@
-if y1.find(y0) = -1:
- print "WARNING: sizes look different:  '%s'   vs   '%s'" % (y0, y1)
-////////////////////
+Change it to predecrement, so the error message is emitted.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+[ tglx: Massaged changelog ]
+
+Fixes: a2c225101234 ("irqchip: gic-v3: Refactor gic_enable_redist to support both enabling and disabling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: kernel-janitors@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>
+Link: http://lkml.kernel.org/r/20161014072534.GA15168@mwanda
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/crypto/amcc/crypto4xx_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/irqchip/irq-gic-v3.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/amcc/crypto4xx_core.c b/drivers/crypto/amcc/crypto4xx_core.c
-index dae1e39139e9..d10b4ae5e0da 100644
---- a/drivers/crypto/amcc/crypto4xx_core.c
-+++ b/drivers/crypto/amcc/crypto4xx_core.c
-@@ -135,8 +135,7 @@ int crypto4xx_alloc_sa(struct crypto4xx_ctx *ctx, u32 size)
- 	ctx->sa_out = dma_alloc_coherent(ctx->dev->core_dev->device, size * 4,
- 					 &ctx->sa_out_dma_addr, GFP_ATOMIC);
- 	if (ctx->sa_out = NULL) {
--		dma_free_coherent(ctx->dev->core_dev->device,
--				  ctx->sa_len * 4,
-+		dma_free_coherent(ctx->dev->core_dev->device, size * 4,
- 				  ctx->sa_in, ctx->sa_in_dma_addr);
- 		return -ENOMEM;
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -142,7 +142,7 @@ static void gic_enable_redist(bool enabl
+ 			return;	/* No PM support in this redistributor */
  	}
--- 
-2.7.4
+ 
+-	while (count--) {
++	while (--count) {
+ 		val = readl_relaxed(rbase + GICR_WAKER);
+ 		if (enable ^ (val & GICR_WAKER_ChildrenAsleep))
+ 			break;
+
 
