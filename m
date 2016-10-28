@@ -1,8 +1,10 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Oct 2016 08:30:07 +0000
-Subject: [PATCH 00/10] scripts/basic: Fine-tuning for seven function implementations
-Message-Id: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
+Date: Fri, 28 Oct 2016 08:36:38 +0000
+Subject: [PATCH 06/10] scripts/basic/fixdep: Complete error handling in do_config_file()
+Message-Id: <c2024e45-97b5-3334-904f-c5cf0d00acf0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
+In-Reply-To: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,27 +12,69 @@ To: linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Oct 2016 10:18:10 +0200
+Date: Thu, 27 Oct 2016 22:02:42 +0200
 
-Some update suggestions were taken into account
-from static source code analysis.
+Return values were not checked from four calls of the function "close".
 
-Markus Elfring (10):
-  bin2c: Complete error handling in main()
-  fixdep: Complete error handling in print_deps()
-  fixdep: Use the symbol "MAP_FAILED" in print_deps()
-  fixdep: Fix error log output in print_deps()
-  fixdep: Complete error handling in parse_dep_file()
-  fixdep: Complete error handling in do_config_file()
-  fixdep: Fix error log output in do_config_file()
-  fixdep: Complete error handling in print_config()
-  fixdep: Complete error handling in print_cmdline()
-  fixdep: Combine two fprintf() calls into one fputs() call in usage()
+This issue was detected also by using the Coccinelle software.
 
- scripts/basic/bin2c.c  |  26 ++++++----
- scripts/basic/fixdep.c | 131 +++++++++++++++++++++++++++++++++----------------
- 2 files changed, 105 insertions(+), 52 deletions(-)
 
+Add a bit of exception handling there.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ scripts/basic/fixdep.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
+
+diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
+index 5f6a4f4..be0fdaa 100644
+--- a/scripts/basic/fixdep.c
++++ b/scripts/basic/fixdep.c
+@@ -284,27 +284,33 @@ static void do_config_file(const char *filename)
+ 		perror(filename);
+ 		exit(2);
+ 	}
+-	if (st.st_size = 0) {
+-		close(fd);
+-		return;
+-	}
++	if (st.st_size = 0)
++		goto close_fd;
+ 	map = malloc(st.st_size + 1);
+ 	if (!map) {
+ 		perror("fixdep: malloc");
+-		close(fd);
+-		return;
++		goto close_fd;
+ 	}
+ 	if (read(fd, map, st.st_size) != st.st_size) {
+ 		perror("fixdep: read");
+-		close(fd);
+-		return;
++		goto close_fd;
+ 	}
+ 	map[st.st_size] = '\0';
+-	close(fd);
+-
++	if (close(fd))
++		goto close_failure;
+ 	parse_config_file(map);
+-
+ 	free(map);
++	return;
++close_fd:
++	if (close(fd)) {
++close_failure:
++		{
++			int code = errno;
++
++			perror("fixdep: close");
++			exit(code);
++		}
++	}
+ }
+ 
+ /*
 -- 
 2.10.1
 
