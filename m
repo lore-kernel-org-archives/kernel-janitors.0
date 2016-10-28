@@ -1,42 +1,36 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:14:29 +0000
-Subject: [PATCH 17/54] md/raid1: Move a brace for a designated initialiser
-Message-Id: <431b46c0-06d4-646b-35cc-b0f24c7be4b0@users.sourceforge.net>
+Date: Fri, 28 Oct 2016 08:30:07 +0000
+Subject: [PATCH 00/10] scripts/basic: Fine-tuning for seven function implementations
+Message-Id: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 18:25:05 +0200
+Date: Fri, 28 Oct 2016 10:18:10 +0200
 
-The script "checkpatch.pl" pointed information out like the following.
+Some update suggestions were taken into account
+from static source code analysis.
 
-ERROR: that open brace { should be on the previous line
+Markus Elfring (10):
+  bin2c: Complete error handling in main()
+  fixdep: Complete error handling in print_deps()
+  fixdep: Use the symbol "MAP_FAILED" in print_deps()
+  fixdep: Fix error log output in print_deps()
+  fixdep: Complete error handling in parse_dep_file()
+  fixdep: Complete error handling in do_config_file()
+  fixdep: Fix error log output in do_config_file()
+  fixdep: Complete error handling in print_config()
+  fixdep: Complete error handling in print_cmdline()
+  fixdep: Combine two fprintf() calls into one fputs() call in usage()
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/md/raid1.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ scripts/basic/bin2c.c  |  26 ++++++----
+ scripts/basic/fixdep.c | 131 +++++++++++++++++++++++++++++++++----------------
+ 2 files changed, 105 insertions(+), 52 deletions(-)
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 15b9652..958bf41 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -3176,8 +3176,7 @@ static void *raid1_takeover(struct mddev *mddev)
- 	return ERR_PTR(-EINVAL);
- }
- 
--static struct md_personality raid1_personality -{
-+static struct md_personality raid1_personality = {
- 	.name		= "raid1",
- 	.level		= 1,
- 	.owner		= THIS_MODULE,
 -- 
 2.10.1
 
