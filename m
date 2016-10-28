@@ -1,44 +1,43 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 12 Oct 2016 18:11:16 +0000
-Subject: Re: [patch] ALSA: line6: fix a crash in line6_hwdep_write()
-Message-Id: <s5h37k1jv3v.wl-tiwai@suse.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 28 Oct 2016 09:09:45 +0000
+Subject: [PATCH] drm/tegra: dpaux: Fix error handling
+Message-Id: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161012062140.GT12841@mwanda>
-In-Reply-To: <20161012062140.GT12841@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrej Krutak <dev@andree.sk>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kbuild test robot <fengguang.wu@intel.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, kernel-janitors@vger.kernel.org
+To: thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com, jonathanh@nvidia.com, treding@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 12 Oct 2016 08:21:40 +0200,
-Dan Carpenter wrote:
-> 
-> The error checking here is messed up so we could end up dereferencing
-> -EFAULT.
-> 
-> Fixes: a16039cbf1a1 ('ALSA: line6: Add hwdep interface to access the POD control messages')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+'devm_pinctrl_register()' returns an error pointer or a valid handle. So
+checking for NULL here is pointless and can never trigger.
 
-Applied, thanks.
+Check the returned value with IS_ERR instead and propagate this value as
+done in the other functions which call 'devm_pinctrl_register()'
 
+Fixes: 0751bb5c44fe ("drm/tegra: dpaux: Add pinctrl support")
 
-Takashi
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/tegra/dpaux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> diff --git a/sound/usb/line6/driver.c b/sound/usb/line6/driver.c
-> index 14e587e..90009c0 100644
-> --- a/sound/usb/line6/driver.c
-> +++ b/sound/usb/line6/driver.c
-> @@ -604,8 +604,8 @@ line6_hwdep_write(struct snd_hwdep *hwdep, const char __user *data, long count,
->  	}
->  
->  	data_copy = memdup_user(data, count);
-> -	if (IS_ERR(ERR_PTR))
-> -		return -ENOMEM;
-> +	if (IS_ERR(data_copy))
-> +		return PTR_ERR(data_copy);
->  
->  	rv = line6_send_raw_message(line6, data_copy, count);
->  
-> 
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 059f409556d5..2fde44c3a1b3 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -539,9 +539,9 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	dpaux->desc.owner = THIS_MODULE;
+ 
+ 	dpaux->pinctrl = devm_pinctrl_register(&pdev->dev, &dpaux->desc, dpaux);
+-	if (!dpaux->pinctrl) {
++	if (IS_ERR(dpaux->pinctrl)) {
+ 		dev_err(&pdev->dev, "failed to register pincontrol\n");
+-		return -ENODEV;
++		return PTR_ERR(dpaux->pinctrl);
+ 	}
+ #endif
+ 	/* enable and clear all interrupts */
+-- 
+2.9.3
+
