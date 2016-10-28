@@ -1,200 +1,127 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Oct 2016 14:55:51 +0000
-Subject: [PATCH 7/7] ASoC: tegra: constify snd_soc_ops structures
-Message-Id: <1476543351-17858-8-git-send-email-Julia.Lawall@lip6.fr>
+From: <n1824031339@qq.com>
+Date: Fri, 28 Oct 2016 21:30:22 +0000
+Subject: 2914996719047 kernel-janitors
+Message-Id: <147769022251.2025.10754505583842253491@vnpt.vn>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1476543351-17858-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Check for snd_soc_ops structures that are only stored in the ops field of a
-snd_soc_dai_link structure.  This field is declared const, so snd_soc_ops
-structures that have this property can be declared as const also.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct snd_soc_ops i@p = { ... };
-
-@ok1@
-identifier r.i;
-struct snd_soc_dai_link e;
-position p;
-@@
-e.ops = &i@p;
-
-@ok2@
-identifier r.i, e;
-position p;
-@@
-struct snd_soc_dai_link e[] = { ..., { .ops = &i@p, }, ..., };
-
-@bad@
-position p != {r.p,ok1.p,ok2.p};
-identifier r.i;
-struct snd_soc_ops e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct snd_soc_ops i = { ... };
-// </smpl>
-
-The effect on the layout of the .o files is shown by the following output of
-the size command, first before then after the transformation:
-
-  text    data     bss     dec     hex filename
-   3143    1888     384    5415    1527 sound/soc/tegra/tegra_alc5632.o
-   3191    1840     384    5415    1527 sound/soc/tegra/tegra_alc5632.o
-
-   text    data     bss     dec     hex filename
-   3672    2176     768    6616    19d8 sound/soc/tegra/tegra_max98090.o
-   3720    2128     768    6616    19d8 sound/soc/tegra/tegra_max98090.o
-
-   text    data     bss     dec     hex filename
-   2770    1856     384    5010    1392 sound/soc/tegra/tegra_rt5640.o
-   2818    1808     384    5010    1392 sound/soc/tegra/tegra_rt5640.o
-
-   text    data     bss     dec     hex filename
-   4412    2176     768    7356    1cbc sound/soc/tegra/tegra_rt5677.o
-   4460    2128     768    7356    1cbc sound/soc/tegra/tegra_rt5677.o
-
-   text    data     bss     dec     hex filename
-   2442    1536       0    3978     f8a sound/soc/tegra/tegra_sgtl5000.o
-   2490    1480       0    3970     f82 sound/soc/tegra/tegra_sgtl5000.o
-
-   text    data     bss     dec     hex filename
-   2105    1536       0    3641     e39 sound/soc/tegra/tegra_wm8753.o
-   2153    1480       0    3633     e31 sound/soc/tegra/tegra_wm8753.o
-
-   text    data     bss     dec     hex filename
-   3755    1888     768    6411    190b sound/soc/tegra/tegra_wm8903.o
-   3803    1840     768    6411    190b sound/soc/tegra/tegra_wm8903.o
-
-   text    data     bss     dec     hex filename
-   2121    1536       0    3657     e49 sound/soc/tegra/trimslice.o
-   2169    1480       0    3649     e41 sound/soc/tegra/trimslice.o
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/soc/tegra/tegra_alc5632.c  |    2 +-
- sound/soc/tegra/tegra_max98090.c |    2 +-
- sound/soc/tegra/tegra_rt5640.c   |    2 +-
- sound/soc/tegra/tegra_rt5677.c   |    2 +-
- sound/soc/tegra/tegra_sgtl5000.c |    2 +-
- sound/soc/tegra/tegra_wm8753.c   |    2 +-
- sound/soc/tegra/tegra_wm8903.c   |    2 +-
- sound/soc/tegra/trimslice.c      |    2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
-
-diff -u -p a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
---- a/sound/soc/tegra/tegra_alc5632.c
-+++ b/sound/soc/tegra/tegra_alc5632.c
-@@ -65,7 +65,7 @@ static int tegra_alc5632_asoc_hw_params(
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_alc5632_asoc_ops = {
-+static const struct snd_soc_ops tegra_alc5632_asoc_ops = {
- 	.hw_params = tegra_alc5632_asoc_hw_params,
- };
- 
-diff -u -p a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
---- a/sound/soc/tegra/tegra_max98090.c
-+++ b/sound/soc/tegra/tegra_max98090.c
-@@ -93,7 +93,7 @@ static int tegra_max98090_asoc_hw_params
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_max98090_ops = {
-+static const struct snd_soc_ops tegra_max98090_ops = {
- 	.hw_params = tegra_max98090_asoc_hw_params,
- };
- 
-diff -u -p a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
---- a/sound/soc/tegra/tegra_rt5640.c
-+++ b/sound/soc/tegra/tegra_rt5640.c
-@@ -76,7 +76,7 @@ static int tegra_rt5640_asoc_hw_params(s
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_rt5640_ops = {
-+static const struct snd_soc_ops tegra_rt5640_ops = {
- 	.hw_params = tegra_rt5640_asoc_hw_params,
- };
- 
-diff -u -p a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
---- a/sound/soc/tegra/tegra_rt5677.c
-+++ b/sound/soc/tegra/tegra_rt5677.c
-@@ -93,7 +93,7 @@ static int tegra_rt5677_event_hp(struct
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_rt5677_ops = {
-+static const struct snd_soc_ops tegra_rt5677_ops = {
- 	.hw_params = tegra_rt5677_asoc_hw_params,
- };
- 
-diff -u -p a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
---- a/sound/soc/tegra/tegra_sgtl5000.c
-+++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -82,7 +82,7 @@ static int tegra_sgtl5000_hw_params(stru
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_sgtl5000_ops = {
-+static const struct snd_soc_ops tegra_sgtl5000_ops = {
- 	.hw_params = tegra_sgtl5000_hw_params,
- };
- 
-diff -u -p a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
---- a/sound/soc/tegra/tegra_wm8753.c
-+++ b/sound/soc/tegra/tegra_wm8753.c
-@@ -89,7 +89,7 @@ static int tegra_wm8753_hw_params(struct
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_wm8753_ops = {
-+static const struct snd_soc_ops tegra_wm8753_ops = {
- 	.hw_params = tegra_wm8753_hw_params,
- };
- 
-diff -u -p a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -96,7 +96,7 @@ static int tegra_wm8903_hw_params(struct
- 	return 0;
- }
- 
--static struct snd_soc_ops tegra_wm8903_ops = {
-+static const struct snd_soc_ops tegra_wm8903_ops = {
- 	.hw_params = tegra_wm8903_hw_params,
- };
- 
-diff -u -p a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
---- a/sound/soc/tegra/trimslice.c
-+++ b/sound/soc/tegra/trimslice.c
-@@ -74,7 +74,7 @@ static int trimslice_asoc_hw_params(stru
- 	return 0;
- }
- 
--static struct snd_soc_ops trimslice_asoc_ops = {
-+static const struct snd_soc_ops trimslice_asoc_ops = {
- 	.hw_params = trimslice_asoc_hw_params,
- };
- 
-
+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
+AAAAdBkAAAAA
