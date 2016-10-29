@@ -1,91 +1,105 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:46:15 +0000
-Subject: [PATCH 46/54] md/raid10: Less function calls in setup_conf() after error detection
-Message-Id: <fbf4bcd3-1505-d959-eaa2-f6688a0aec2c@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Oct 2016 19:36:56 +0000
+Subject: [PATCH 02/15] wusbcore: wusbhc: use permission-specific DEVICE_ATTR variants
+Message-Id: <1477769829-22230-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Oct 2016 18:32:30 +0200
+Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Resource release functions were called in up to three cases
-by the setup_conf() function during error handling even if
-the passed data structure members contained a null pointer.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Adjust jump targets according to the Linux coding style convention.
+// <smpl>
+@rw@
+declarer name DEVICE_ATTR;
+identifier x,x_show,x_store;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
+
+@script:ocaml@
+x << rw.x;
+x_show << rw.x_show;
+x_store << rw.x_store;
+@@
+
+if not (x^"_show" = x_show && x^"_store" = x_store)
+then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RW;
+identifier rw.x,rw.x_show,rw.x_store;
+@@
+
+- DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
++ DEVICE_ATTR_RW(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/md/raid10.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/usb/wusbcore/wusbhc.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 7e512d4..9b8d11f 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -3508,13 +3508,13 @@ static struct r10conf *setup_conf(struct mddev *mddev)
- 				GFP_KERNEL);
- 	if (!conf->mirrors) {
- 		err = -ENOMEM;
--		goto out;
-+		goto free_conf;
- 	}
- 
- 	conf->tmppage = alloc_page(GFP_KERNEL);
- 	if (!conf->tmppage) {
- 		err = -ENOMEM;
--		goto out;
-+		goto kfree_mirrors;
- 	}
- 
- 	conf->geo = geo;
-@@ -3523,7 +3523,7 @@ static struct r10conf *setup_conf(struct mddev *mddev)
- 					   r10bio_pool_free, conf);
- 	if (!conf->r10bio_pool) {
- 		err = -ENOMEM;
--		goto out;
-+		goto put_page;
- 	}
- 
- 	calc_sectors(conf, mddev->dev_sectors);
-@@ -3533,7 +3533,7 @@ static struct r10conf *setup_conf(struct mddev *mddev)
- 	} else {
- 		if (setup_geo(&conf->prev, mddev, geo_old) != conf->copies) {
- 			err = -EINVAL;
--			goto out;
-+			goto destroy_pool;
- 		}
- 		conf->reshape_progress = mddev->reshape_position;
- 		if (conf->prev.far_offset)
-@@ -3554,16 +3554,18 @@ static struct r10conf *setup_conf(struct mddev *mddev)
- 	conf->thread = md_register_thread(raid10d, mddev, "raid10");
- 	if (!conf->thread) {
- 		err = -ENOMEM;
--		goto out;
-+		goto destroy_pool;
- 	}
- 
- 	conf->mddev = mddev;
- 	return conf;
--
-- out:
-+destroy_pool:
- 	mempool_destroy(conf->r10bio_pool);
-+put_page:
- 	safe_put_page(conf->tmppage);
-+kfree_mirrors:
- 	kfree(conf->mirrors);
-+free_conf:
- 	kfree(conf);
- 	return ERR_PTR(err);
+diff --git a/drivers/usb/wusbcore/wusbhc.c b/drivers/usb/wusbcore/wusbhc.c
+index 94f401a..a273a91 100644
+--- a/drivers/usb/wusbcore/wusbhc.c
++++ b/drivers/usb/wusbcore/wusbhc.c
+@@ -84,8 +84,7 @@ static ssize_t wusb_trust_timeout_store(struct device *dev,
+ out:
+ 	return result < 0 ? result : size;
  }
--- 
-2.10.1
+-static DEVICE_ATTR(wusb_trust_timeout, 0644, wusb_trust_timeout_show,
+-					     wusb_trust_timeout_store);
++static DEVICE_ATTR_RW(wusb_trust_timeout);
+ 
+ /*
+  * Show the current WUSB CHID.
+@@ -145,7 +144,7 @@ static ssize_t wusb_chid_store(struct device *dev,
+ 	result = wusbhc_chid_set(wusbhc, &chid);
+ 	return result < 0 ? result : size;
+ }
+-static DEVICE_ATTR(wusb_chid, 0644, wusb_chid_show, wusb_chid_store);
++static DEVICE_ATTR_RW(wusb_chid);
+ 
+ 
+ static ssize_t wusb_phy_rate_show(struct device *dev,
+@@ -174,8 +173,7 @@ static ssize_t wusb_phy_rate_store(struct device *dev,
+ 	wusbhc->phy_rate = phy_rate;
+ 	return size;
+ }
+-static DEVICE_ATTR(wusb_phy_rate, 0644, wusb_phy_rate_show,
+-			wusb_phy_rate_store);
++static DEVICE_ATTR_RW(wusb_phy_rate);
+ 
+ static ssize_t wusb_dnts_show(struct device *dev,
+ 				  struct device_attribute *attr,
+@@ -205,7 +203,7 @@ static ssize_t wusb_dnts_store(struct device *dev,
+ 
+ 	return size;
+ }
+-static DEVICE_ATTR(wusb_dnts, 0644, wusb_dnts_show, wusb_dnts_store);
++static DEVICE_ATTR_RW(wusb_dnts);
+ 
+ static ssize_t wusb_retry_count_show(struct device *dev,
+ 				  struct device_attribute *attr,
+@@ -234,8 +232,7 @@ static ssize_t wusb_retry_count_store(struct device *dev,
+ 
+ 	return size;
+ }
+-static DEVICE_ATTR(wusb_retry_count, 0644, wusb_retry_count_show,
+-	wusb_retry_count_store);
++static DEVICE_ATTR_RW(wusb_retry_count);
+ 
+ /* Group all the WUSBHC attributes */
+ static struct attribute *wusbhc_attrs[] = {
 
