@@ -1,80 +1,107 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Oct 2016 08:36:38 +0000
-Subject: [PATCH 06/10] scripts/basic/fixdep: Complete error handling in do_config_file()
-Message-Id: <c2024e45-97b5-3334-904f-c5cf0d00acf0@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Oct 2016 19:36:54 +0000
+Subject: [PATCH 00/15] use permission-specific DEVICE_ATTR variants
+Message-Id: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
-In-Reply-To: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 27 Oct 2016 22:02:42 +0200
-
-Return values were not checked from four calls of the function "close".
-
-This issue was detected also by using the Coccinelle software.
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org, linux-pm@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-atm-general@lists.sourceforge.net
 
 
-Add a bit of exception handling there.
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The complete semantic patch is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@wo@
+declarer name DEVICE_ATTR;
+identifier x,x_store;
+@@
+
+DEVICE_ATTR(x, \(0200\|S_IWUSR\), NULL, x_store);
+
+@rw@
+declarer name DEVICE_ATTR;
+identifier x,x_show,x_store;
+@@
+
+DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@script:ocaml@
+x << wo.x;
+x_store << wo.x_store;
+@@
+
+if not (x^"_store" = x_store) then Coccilib.include_match false
+
+@script:ocaml@
+x << rw.x;
+x_show << rw.x_show;
+x_store << rw.x_store;
+@@
+
+if not (x^"_show" = x_show && x^"_store" = x_store)
+then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+
+@@
+declarer name DEVICE_ATTR_WO;
+identifier wo.x,wo.x_store;
+@@
+
+- DEVICE_ATTR(x, \(0200\|S_IWUSR\), NULL, x_store);
++ DEVICE_ATTR_WO(x);
+
+@@
+declarer name DEVICE_ATTR_RW;
+identifier rw.x,rw.x_show,rw.x_store;
+@@
+
+- DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
++ DEVICE_ATTR_RW(x);
+// </smpl>
+
 ---
- scripts/basic/fixdep.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
-index 5f6a4f4..be0fdaa 100644
---- a/scripts/basic/fixdep.c
-+++ b/scripts/basic/fixdep.c
-@@ -284,27 +284,33 @@ static void do_config_file(const char *filename)
- 		perror(filename);
- 		exit(2);
- 	}
--	if (st.st_size = 0) {
--		close(fd);
--		return;
--	}
-+	if (st.st_size = 0)
-+		goto close_fd;
- 	map = malloc(st.st_size + 1);
- 	if (!map) {
- 		perror("fixdep: malloc");
--		close(fd);
--		return;
-+		goto close_fd;
- 	}
- 	if (read(fd, map, st.st_size) != st.st_size) {
- 		perror("fixdep: read");
--		close(fd);
--		return;
-+		goto close_fd;
- 	}
- 	map[st.st_size] = '\0';
--	close(fd);
--
-+	if (close(fd))
-+		goto close_failure;
- 	parse_config_file(map);
--
- 	free(map);
-+	return;
-+close_fd:
-+	if (close(fd)) {
-+close_failure:
-+		{
-+			int code = errno;
-+
-+			perror("fixdep: close");
-+			exit(code);
-+		}
-+	}
- }
- 
- /*
--- 
-2.10.1
-
+ arch/mips/txx9/generic/7segled.c                  |    4 ++--
+ arch/powerpc/kernel/iommu.c                       |    3 +--
+ arch/tile/kernel/sysfs.c                          |   14 +++++++-------
+ drivers/atm/solos-pci.c                           |    2 +-
+ drivers/pci/pcie/aspm.c                           |    4 ++--
+ drivers/power/supply/wm8350_power.c               |    2 +-
+ drivers/ptp/ptp_sysfs.c                           |    2 +-
+ drivers/thermal/int340x_thermal/int3400_thermal.c |    2 +-
+ drivers/thermal/thermal_hwmon.c                   |    2 +-
+ drivers/tty/nozomi.c                              |    4 ++--
+ drivers/usb/wusbcore/dev-sysfs.c                  |    6 +++---
+ drivers/usb/wusbcore/wusbhc.c                     |   13 +++++--------
+ drivers/video/fbdev/wm8505fb.c                    |    2 +-
+ sound/soc/omap/mcbsp.c                            |    4 ++--
+ sound/soc/soc-dapm.c                              |    2 +-
+ 15 files changed, 31 insertions(+), 35 deletions(-)
