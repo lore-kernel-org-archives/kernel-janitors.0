@@ -1,35 +1,73 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 30 Oct 2016 08:25:46 +0000
-Subject: [PATCH] MIPS: ath79: Fix error handling
-Message-Id: <20161030082546.15019-1-christophe.jaillet@wanadoo.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Oct 2016 19:37:08 +0000
+Subject: [PATCH 14/15] tty: nozomi: use permission-specific DEVICE_ATTR variants
+Message-Id: <1477769829-22230-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ralf@linux-mips.org, antonynpavlov@gmail.com, albeu@free.fr, hackpascal@gmail.com, amitoj1606@gmail.com
-Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
 
-'clk_register_fixed_rate()' returns an error pointer in case of error, not
-NULL. So test it with IS_ERR.
+Use DEVICE_ATTR_RO for read only attributes.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/mips/ath79/clock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/nozomi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/ath79/clock.c b/arch/mips/ath79/clock.c
-index cc3a1e33a600..c1102cffe37d 100644
---- a/arch/mips/ath79/clock.c
-+++ b/arch/mips/ath79/clock.c
-@@ -45,7 +45,7 @@ static struct clk *__init ath79_add_sys_clkdev(
- 	int err;
+diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
+index d6fd0e8..e2020a6 100644
+--- a/drivers/tty/nozomi.c
++++ b/drivers/tty/nozomi.c
+@@ -1320,7 +1320,7 @@ static ssize_t card_type_show(struct device *dev, struct device_attribute *attr,
  
- 	clk = clk_register_fixed_rate(NULL, id, NULL, 0, rate);
--	if (!clk)
-+	if (IS_ERR(clk))
- 		panic("failed to allocate %s clock structure", id);
+ 	return sprintf(buf, "%d\n", dc->card_type);
+ }
+-static DEVICE_ATTR(card_type, S_IRUGO, card_type_show, NULL);
++static DEVICE_ATTR_RO(card_type);
  
- 	err = clk_register_clkdev(clk, id, NULL);
--- 
-2.9.3
+ static ssize_t open_ttys_show(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+@@ -1329,7 +1329,7 @@ static ssize_t open_ttys_show(struct device *dev, struct device_attribute *attr,
+ 
+ 	return sprintf(buf, "%u\n", dc->open_ttys);
+ }
+-static DEVICE_ATTR(open_ttys, S_IRUGO, open_ttys_show, NULL);
++static DEVICE_ATTR_RO(open_ttys);
+ 
+ static void make_sysfs_files(struct nozomi *dc)
+ {
 
