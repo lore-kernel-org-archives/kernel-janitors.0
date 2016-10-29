@@ -1,67 +1,64 @@
-From: Richard Kuo <rkuo@codeaurora.org>
-Date: Tue, 25 Oct 2016 21:37:35 +0000
-Subject: Re: Hexagon-setup: Combine four seq_printf() calls into one call in show_cpuinfo()
-Message-Id: <20161025213735.GA27715@codeaurora.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Oct 2016 19:37:06 +0000
+Subject: [PATCH 12/15] ptp: use permission-specific DEVICE_ATTR variants
+Message-Id: <1477769829-22230-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c19c69d5-600c-f08b-f448-0420e677db63@users.sourceforge.net>
- <alpine.DEB.2.10.1610210918420.3212@hadrien>
- <e9daa136-c6ab-2f96-3d20-6e143fa1170b@users.sourceforge.net>
- <20161021154624.maiwbgjmzlzhin2l@thunk.org>
- <48d54097-6be3-d39d-2af9-d4ad90c3c417@users.sourceforge.net>
- <20161021175317.nnb2keq7m3phwgbv@thunk.org>
- <20c77dde-a1a0-8383-f344-a6f788af68d9@users.sourceforge.net>
-In-Reply-To: <20c77dde-a1a0-8383-f344-a6f788af68d9@users.sourceforge.net>
+References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Theodore Ts'o <tytso@mit.edu>, Julia Lawall <julia.lawall@lip6.fr>, linux-hexagon@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I wrote it the original way precisely for readability; it's easier, at least
-to me, to read and modify the old way.
+Use DEVICE_ATTR_RO for read only attributes.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-However, in my development version I happen to be printing a lot more
-stuff.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-To test, I collapsed 18 of my seq_printf's into one call.  That reduced the
-function size by a couple hundred bytes.  (Didn't do anything for the final
-kernel size though.)
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-If it makes things better, even if only slightly, doesn't introduce bugs, 
-and doesn't otherwise violate any other rules (correct me if I'm wrong), I
-would personally accept the minor readability tradeoff in this case.
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
 
-Acked-by: Richard Kuo <rkuo@codeaurora.org>
+if not (x^"_show" = x_show) then Coccilib.include_match false
 
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
 
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
 
-On Fri, Oct 21, 2016 at 08:50:11PM +0200, SF Markus Elfring wrote:
-> > When the author of the semantic patch language is telling you to stand down,
-> 
-> The collaboration evolved between Julia and me during the years somehow.
-> Different software development opinions occur then as usual.
-> Further opinions from contributors like you can eventually show variations
-> between disagreement and acceptance.
-> 
-> 
-> > and you still want to try to argue for blind application of patches,
-> 
-> I guess that we have got different views about "blind" tries.
-> 
-> 
-> > we have a really big problem.
-> 
-> I hope that potential communication difficulties can still be resolved.
-> 
-> 
-> > Especially when some of your patches have actually introduced bugs.
-> 
-> I assume that these incidents could be clarified further, couldn't they?
-> 
-> Regards,
-> Markus
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-hexagon" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/ptp/ptp_sysfs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/ptp/ptp_sysfs.c b/drivers/ptp/ptp_sysfs.c
+index 302e626..53d4395 100644
+--- a/drivers/ptp/ptp_sysfs.c
++++ b/drivers/ptp/ptp_sysfs.c
+@@ -28,7 +28,7 @@ static ssize_t clock_name_show(struct device *dev,
+ 	struct ptp_clock *ptp = dev_get_drvdata(dev);
+ 	return snprintf(page, PAGE_SIZE-1, "%s\n", ptp->info->name);
+ }
+-static DEVICE_ATTR(clock_name, 0444, clock_name_show, NULL);
++static DEVICE_ATTR_RO(clock_name);
+ 
+ #define PTP_SHOW_INT(name, var)						\
+ static ssize_t var##_show(struct device *dev,				\
+
