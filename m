@@ -1,48 +1,64 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 09 Oct 2016 19:58:16 +0000
-Subject: [PATCH 2/2] [media] blackfin-capture: Delete an error message for a failed memory allocation
-Message-Id: <d38d82b8-a234-3fd6-01ec-d021e317f2de@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Oct 2016 19:37:05 +0000
+Subject: [PATCH 11/15] ASoC: dapm: use permission-specific DEVICE_ATTR variants
+Message-Id: <1477769829-22230-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ae9a008f-35e2-e4e0-be18-635050c8277e@users.sourceforge.net>
-In-Reply-To: <ae9a008f-35e2-e4e0-be18-635050c8277e@users.sourceforge.net>
+References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: adi-buildroot-devel@lists.sourceforge.net, linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Scott Jiang <scott.jiang.linux@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Wolfram Sang <wsa@the-dreams.de>
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 9 Oct 2016 21:30:18 +0200
+Use DEVICE_ATTR_RO for read only attributes.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-The script "checkpatch.pl" pointed information out like the following.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-WARNING: Possible unnecessary 'out of memory' message
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-Thus remove such a statement here.
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/platform/blackfin/bfin_capture.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/soc-dapm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/blackfin/bfin_capture.c b/drivers/media/platform/blackfin/bfin_capture.c
-index c5e1043..2e6edc0 100644
---- a/drivers/media/platform/blackfin/bfin_capture.c
-+++ b/drivers/media/platform/blackfin/bfin_capture.c
-@@ -802,10 +802,8 @@ static int bcap_probe(struct platform_device *pdev)
- 	}
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 3bbe32e..164b4d3 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -2297,7 +2297,7 @@ static ssize_t dapm_widget_show(struct device *dev,
+ 	return count;
+ }
  
- 	bcap_dev = kzalloc(sizeof(*bcap_dev), GFP_KERNEL);
--	if (!bcap_dev) {
--		v4l2_err(pdev->dev.driver, "Unable to alloc bcap_dev\n");
-+	if (!bcap_dev)
- 		return -ENOMEM;
--	}
+-static DEVICE_ATTR(dapm_widget, 0444, dapm_widget_show, NULL);
++static DEVICE_ATTR_RO(dapm_widget);
  
- 	bcap_dev->cfg = config;
- 
--- 
-2.10.1
+ struct attribute *soc_dapm_dev_attrs[] = {
+ 	&dev_attr_dapm_widget.attr,
 
