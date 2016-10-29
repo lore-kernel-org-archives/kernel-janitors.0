@@ -1,83 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:23:52 +0000
-Subject: [PATCH 25/54] md/raid5: Use kcalloc() in three functions
-Message-Id: <820e039e-c1bc-5586-f4f8-cf3d0ca71604@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Oct 2016 19:37:00 +0000
+Subject: [PATCH 06/15] thermal: int340x_thermal: use permission-specific DEVICE_ATTR variants
+Message-Id: <1477769829-22230-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
+References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Oct 2016 22:30:12 +0200
+Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kcalloc".
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-  This issue was detected by using the Coccinelle software.
+// <smpl>
+@rw@
+declarer name DEVICE_ATTR;
+identifier x,x_show,x_store;
+@@
 
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
 
-* Delete the local variable "size" which became unnecessary with
-  this refactoring.
+@script:ocaml@
+x << rw.x;
+x_show << rw.x_show;
+x_store << rw.x_store;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+if not (x^"_show" = x_show && x^"_store" = x_store)
+then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RW;
+identifier rw.x,rw.x_show,rw.x_store;
+@@
+
+- DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
++ DEVICE_ATTR_RW(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/md/raid5.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/thermal/int340x_thermal/int3400_thermal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 92ac251..9a43006 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -2243,7 +2243,7 @@ static int resize_stripes(struct r5conf *conf, int newsize)
- 	 * is completely stalled, so now is a good time to resize
- 	 * conf->disks and the scribble region
- 	 */
--	ndisks = kzalloc(newsize * sizeof(struct disk_info), GFP_NOIO);
-+	ndisks = kcalloc(newsize, sizeof(*ndisks), GFP_NOIO);
- 	if (ndisks) {
- 		for (i=0; i<conf->raid_disks; i++)
- 			ndisks[i] = conf->disks[i];
-@@ -6255,7 +6255,6 @@ static int alloc_thread_groups(struct r5conf *conf, int cnt,
- 			       struct r5worker_group **worker_groups)
- {
- 	int i, j, k;
--	ssize_t size;
- 	struct r5worker *workers;
+diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/int340x_thermal/int3400_thermal.c
+index 5836e55..9413c4a 100644
+--- a/drivers/thermal/int340x_thermal/int3400_thermal.c
++++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
+@@ -96,7 +96,7 @@ static ssize_t current_uuid_store(struct device *dev,
+ 	return -EINVAL;
+ }
  
- 	*worker_cnt_per_group = cnt;
-@@ -6265,10 +6264,8 @@ static int alloc_thread_groups(struct r5conf *conf, int cnt,
- 		return 0;
- 	}
- 	*group_cnt = num_possible_nodes();
--	size = sizeof(struct r5worker) * cnt;
--	workers = kzalloc(size * *group_cnt, GFP_NOIO);
--	*worker_groups = kzalloc(sizeof(struct r5worker_group) *
--				*group_cnt, GFP_NOIO);
-+	workers = kcalloc(cnt * *group_cnt, sizeof(*workers), GFP_NOIO);
-+	*worker_groups = kcalloc(*group_cnt, sizeof(**worker_groups), GFP_NOIO);
- 	if (!*worker_groups || !workers) {
- 		kfree(workers);
- 		kfree(*worker_groups);
-@@ -6519,9 +6516,7 @@ static struct r5conf *setup_conf(struct mddev *mddev)
- 	else
- 		conf->previous_raid_disks = mddev->raid_disks - mddev->delta_disks;
- 	max_disks = max(conf->raid_disks, conf->previous_raid_disks);
--
--	conf->disks = kzalloc(max_disks * sizeof(struct disk_info),
--			      GFP_KERNEL);
-+	conf->disks = kcalloc(max_disks, sizeof(*conf->disks), GFP_KERNEL);
- 	if (!conf->disks)
- 		goto abort;
- 
--- 
-2.10.1
+-static DEVICE_ATTR(current_uuid, 0644, current_uuid_show, current_uuid_store);
++static DEVICE_ATTR_RW(current_uuid);
+ static DEVICE_ATTR_RO(available_uuids);
+ static struct attribute *uuid_attrs[] = {
+ 	&dev_attr_available_uuids.attr,
 
