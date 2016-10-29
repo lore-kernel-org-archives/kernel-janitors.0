@@ -1,44 +1,63 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Date: Mon, 31 Oct 2016 16:18:20 +0000
-Subject: Re: [PATCH] ARM: spear: Fix error handling
-Message-Id: <20161031161820.GI1041@n2100.armlinux.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 29 Oct 2016 19:36:57 +0000
+Subject: [PATCH 03/15] wm8350_power: use permission-specific DEVICE_ATTR variants
+Message-Id: <1477769829-22230-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161029135839.6388-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161029135839.6388-1-christophe.jaillet@wanadoo.fr>
+References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-For the spear or arm-soc guys to deal with...
+Use DEVICE_ATTR_RO for read only attributes.  This simplifies the source
+code, improves readbility, and reduces the chance of inconsistencies.
 
-On Sat, Oct 29, 2016 at 03:58:39PM +0200, Christophe JAILLET wrote:
-> 'clk_get_sys()' returns an error pointer in case of error, not NULL. So
-> test it with IS_ERR.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  arch/arm/mach-spear/time.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-spear/time.c b/arch/arm/mach-spear/time.c
-> index 9ccffc1d0f28..4878ba90026d 100644
-> --- a/arch/arm/mach-spear/time.c
-> +++ b/arch/arm/mach-spear/time.c
-> @@ -233,7 +233,7 @@ void __init spear_setup_of_timer(void)
->  	}
->  
->  	gpt_clk = clk_get_sys("gpt0", NULL);
-> -	if (!gpt_clk) {
-> +	if (IS_ERR(gpt_clk)) {
->  		pr_err("%s:couldn't get clk for gpt\n", __func__);
->  		goto err_iomap;
->  	}
-> -- 
-> 2.9.3
-> 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/power/supply/wm8350_power.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/wm8350_power.c b/drivers/power/supply/wm8350_power.c
+index 5c58806..a2740cf 100644
+--- a/drivers/power/supply/wm8350_power.c
++++ b/drivers/power/supply/wm8350_power.c
+@@ -182,7 +182,7 @@ static ssize_t charger_state_show(struct device *dev,
+ 	return sprintf(buf, "%s\n", charge);
+ }
+ 
+-static DEVICE_ATTR(charger_state, 0444, charger_state_show, NULL);
++static DEVICE_ATTR_RO(charger_state);
+ 
+ static irqreturn_t wm8350_charger_handler(int irq, void *data)
+ {
+
