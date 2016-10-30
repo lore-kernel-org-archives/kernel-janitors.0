@@ -1,50 +1,37 @@
-From: "Amrani, Ram" <Ram.Amrani@cavium.com>
-Date: Thu, 13 Oct 2016 06:58:15 +0000
-Subject: RE: qed: Add RoCE ll2 & GSI support
-Message-Id: <SN1PR07MB2207BD073D5EC9E1B08484D8F8DC0@SN1PR07MB2207.namprd07.prod.outlook.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 30 Oct 2016 04:28:27 +0000
+Subject: [PATCH] nbd: Fix error handling
+Message-Id: <20161030042827.10160-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161011073305.GA19247@mwanda>
-In-Reply-To: <20161011073305.GA19247@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mpa@pengutronix.de, jbacik@fb.com, axboe@fb.com
+Cc: nbd-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-+Yuval
+'blk_mq_alloc_request()' returns an error pointer in case of error, not
+NULL. So test it with IS_ERR.
 
-Thank you Dan. We'll take care of this as well.
+Fixes: 	fd8383fd88a2 ("nbd: convert to blkmq")
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Tuesday, October 11, 2016 10:33 AM
-> To: Amrani, Ram <Ram.Amrani@cavium.com>
-> Cc: kernel-janitors@vger.kernel.org
-> Subject: re: qed: Add RoCE ll2 & GSI support
-> 
-> Hello Ram Amrani,
-> 
-> This is a semi-automatic email about new static checker warnings.
-> 
-> The patch abd49676c707: "qed: Add RoCE ll2 & GSI support" from Oct 1, 2016,
-> leads to the following Smatch complaint:
-> 
-> drivers/net/ethernet/qlogic/qed/qed_roce.c:2812 qed_roce_ll2_stop()
-> 	 warn: variable dereferenced before check 'cdev' (see line 2808)
-> 
-> drivers/net/ethernet/qlogic/qed/qed_roce.c
->   2807	{
->   2808		struct qed_hwfn *hwfn = QED_LEADING_HWFN(cdev);
->   2809		struct qed_roce_ll2_info *roce_ll2 = hwfn->ll2;
->                                                      ^^^^^^^^^ Deref.
-> 
->   2810		int rc;
->   2811
->   2812		if (!cdev) {
->                     ^^^^^
-> Checked too late.
-> 
->   2813			DP_ERR(cdev, "qed roce ll2 stop: invalid cdev\n");
->   2814			return -EINVAL;
-> 
-> regards,
-> dan carpenter
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/block/nbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 19a16b2dbb91..7a1048755914 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -599,7 +599,7 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
+ 			return -EINVAL;
+ 
+ 		sreq = blk_mq_alloc_request(bdev_get_queue(bdev), WRITE, 0);
+-		if (!sreq)
++		if (IS_ERR(sreq))
+ 			return -ENOMEM;
+ 
+ 		mutex_unlock(&nbd->tx_lock);
+-- 
+2.9.3
+
