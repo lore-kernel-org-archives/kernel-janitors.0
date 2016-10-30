@@ -1,29 +1,37 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 06 Oct 2016 17:39:06 +0000
-Subject: Re: [PATCH 49/54] md/raid10: Replace printk() calls by the usage of higher level interfaces
-Message-Id: <1475775546.1914.15.camel@perches.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 30 Oct 2016 08:10:10 +0000
+Subject: [PATCH] ARM: zx: Fix error handling
+Message-Id: <20161030081010.14735-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
-         <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-         <f9f16d1c-c50d-d4be-a6ba-2cb7081eb9b5@users.sourceforge.net>
-         <1475771616.1914.9.camel@perches.com>
-         <321cc4aa-679a-a2fe-be0b-96285b19e489@users.sourceforge.net>
-In-Reply-To: <321cc4aa-679a-a2fe-be0b-96285b19e489@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, 2016-10-06 at 19:20 +0200, SF Markus Elfring wrote:
-> How should a multiline log message be achieved as it was constructed
-> in the function "raid10_error" (for example)?
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/dri=
-vers/md/raid10.c?id=C802e87fbe2d4dd58982d01b3c39bc5a781223aa#n1589
+'devm_ioremap_resource()' returns an error pointer in case of error, not
+NULL. So test it with IS_ERR.
 
-As two individual calls to pr_alert
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+'return -EIO;' could also be turned into 'return PTR_ERR(pcubase);' in
+order to propagate the error value.
+---
+ arch/arm/mach-zx/zx296702-pm-domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-zx/zx296702-pm-domain.c b/arch/arm/mach-zx/zx296702-pm-domain.c
+index e08574d4e2ca..79dcf2549267 100644
+--- a/arch/arm/mach-zx/zx296702-pm-domain.c
++++ b/arch/arm/mach-zx/zx296702-pm-domain.c
+@@ -169,7 +169,7 @@ static int zx296702_pd_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	pcubase = devm_ioremap_resource(&pdev->dev, res);
+-	if (!pcubase) {
++	if (IS_ERR(pcubase)) {
+ 		dev_err(&pdev->dev, "ioremap fail.\n");
+ 		return -EIO;
+ 	}
+-- 
+2.9.3
+
