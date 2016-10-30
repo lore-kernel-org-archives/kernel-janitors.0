@@ -1,42 +1,41 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 06 Oct 2016 09:52:03 +0000
-Subject: [PATCH 52/54] md/raid10: Replace a seq_printf() call by seq_puts() in raid10_status()
-Message-Id: <69fc2ab2-ddde-068f-1aca-398aa4ce811e@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sun, 30 Oct 2016 15:38:42 +0000
+Subject: [PATCH] drm/armada: Remove some dead code
+Message-Id: <20161030153842.16745-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net>
- <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
-In-Reply-To: <786843ef-4b6f-eb04-7326-2f6f5b408826@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-raid@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Guoqing Jiang <gqjiang@suse.com>, Jens Axboe <axboe@fb.com>, Mike Christie <mchristi@redhat.com>, Neil Brown <neilb@suse.com>, Shaohua Li <shli@kernel.org>, Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: rmk+kernel@armlinux.org.uk, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Oct 2016 21:41:09 +0200
+'dma_buf_map_attachment()' can not return NULL, so there is no need to
+check for it.
 
-The script "checkpatch.pl" pointed information out like the following.
+Also add a space in order to improve layout.
 
-WARNING: Prefer seq_puts to seq_printf
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/md/raid10.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/armada/armada_gem.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 82d79f5..554b6d2 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -1502,7 +1502,7 @@ static void raid10_status(struct seq_file *seq, struct mddev *mddev)
- 		seq_printf(seq, "%s", rdev && test_bit(In_sync, &rdev->flags) ? "U" : "_");
- 	}
- 	rcu_read_unlock();
--	seq_printf(seq, "]");
-+	seq_puts(seq, "]");
- }
+diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/armada/armada_gem.c
+index 806791897304..17a77f22b497 100644
+--- a/drivers/gpu/drm/armada/armada_gem.c
++++ b/drivers/gpu/drm/armada/armada_gem.c
+@@ -594,11 +594,7 @@ int armada_gem_map_import(struct armada_gem_object *dobj)
+ 	int ret;
  
- /* check if there are enough drives for
+ 	dobj->sgt = dma_buf_map_attachment(dobj->obj.import_attach,
+-					  DMA_TO_DEVICE);
+-	if (!dobj->sgt) {
+-		DRM_ERROR("dma_buf_map_attachment() returned NULL\n");
+-		return -EINVAL;
+-	}
++					   DMA_TO_DEVICE);
+ 	if (IS_ERR(dobj->sgt)) {
+ 		ret = PTR_ERR(dobj->sgt);
+ 		dobj->sgt = NULL;
 -- 
-2.10.1
+2.9.3
 
