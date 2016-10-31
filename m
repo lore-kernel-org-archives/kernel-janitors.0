@@ -1,42 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2016 06:18:47 +0000
-Subject: [bug report] mwifiex: add PCIe function level reset support
-Message-Id: <20161012061847.GQ12841@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 31 Oct 2016 17:59:17 +0000
+Subject: [PATCH] drm/imx: Fix error handling
+Message-Id: <20161031175917.4053-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: p.zabel@pengutronix.de, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hello Amitkumar Karwar,
+'drm_dev_alloc()' returns an error pointer in case of error, not NULL
+So test it with IS_ERR.
 
-This is a semi-automatic email about new static checker warnings.
+This behavior has been introduced recently in	0f2886057be3. For some
+reason, this file has not been updated.
 
-The patch 4c5dae59d2e9: "mwifiex: add PCIe function level reset 
-support" from Jul 26, 2016, leads to the following Smatch complaint:
+Fixes: 0f2886057be3 ("drm: Don't swallow error codes in drm_dev_alloc()")
 
-drivers/net/wireless/marvell/mwifiex/pcie.c:3098 mwifiex_pcie_down_dev()
-	 warn: variable dereferenced before check 'card' (see line 3090)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/imx/imx-drm-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-drivers/net/wireless/marvell/mwifiex/pcie.c
-  3089		struct pcie_service_card *card = adapter->card;
-  3090		const struct mwifiex_pcie_card_reg *reg = card->pcie.reg;
-                                                          ^^^^^^^^^^^^^^
-New dereference.
+diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
+index 98df09c2b388..3acc976cc04e 100644
+--- a/drivers/gpu/drm/imx/imx-drm-core.c
++++ b/drivers/gpu/drm/imx/imx-drm-core.c
+@@ -357,8 +357,8 @@ static int imx_drm_bind(struct device *dev)
+ 	int ret;
+ 
+ 	drm = drm_dev_alloc(&imx_drm_driver, dev);
+-	if (!drm)
+-		return -ENOMEM;
++	if (IS_ERR(drm))
++		return PTR_ERR(drm);
+ 
+ 	imxdrm = devm_kzalloc(dev, sizeof(*imxdrm), GFP_KERNEL);
+ 	if (!imxdrm) {
+-- 
+2.9.3
 
-  3091	
-  3092		if (mwifiex_write_reg(adapter, reg->drv_rdy, 0x00000000))
-  3093			mwifiex_dbg(adapter, ERROR, "Failed to write driver not-ready signature\n");
-  3094	
-  3095		adapter->seq_num = 0;
-  3096		adapter->tx_buf_size = MWIFIEX_TX_DATA_BUF_SIZE_4K;
-  3097	
-  3098		if (card) {
-                    ^^^^
-New check is too late.
-
-  3099			if (reg->sleep_cookie)
-  3100				mwifiex_pcie_delete_sleep_cookie_buf(adapter);
-
-regards,
-dan carpenter
