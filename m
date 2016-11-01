@@ -1,9 +1,9 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 01 Nov 2016 19:32:04 +0000
+Date: Tue, 01 Nov 2016 19:34:29 +0000
 Subject: Re: [PATCH] UBIFS: Remove some dead code
-Message-Id: <alpine.DEB.2.10.1611012028530.6300@hadrien>
+Message-Id: <alpine.DEB.2.10.1611012033160.6300@hadrien>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1849458589-1478028727=:6300"
+Content-Type: multipart/mixed; boundary="8323329-2014439981-1478028872=:6300"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161101064525.11813-1-christophe.jaillet@wanadoo.fr>
  <a074d673-cf23-d7a1-7b1e-0e1f8f7b0ffe@nod.at>
@@ -15,7 +15,7 @@ Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel
   This message is in MIME format.  The first part should be readable text,
   while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323329-1849458589-1478028727=:6300
+--8323329-2014439981-1478028872=:6300
 Content-Type: TEXT/PLAIN; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
 
@@ -103,13 +103,6 @@ ned
 >    {
 >       ...
 >       return NULL;
-
-Do you want functions that always return NULL or that may return NULL?
-Currently you are getting those that always return NULL, except perhaps
-under ifs.  But if you want functions that may return NULL, it would be
-better to put exists in the rule header after find.  This will also likely
-be more efficient.
-
 >    }
 >
 > @script:python@
@@ -132,11 +125,6 @@ be more efficient.
 > |
 >    if (!x) S
 > )
-
-You might want to put ... after x =3D f(...);, or rather .... when !=3D x =
-=3D e
-for some expression metavariable e.
-
 >
 > @script:python@
 > f << find2.f;
@@ -158,11 +146,6 @@ for some expression metavariable e.
 > @@
 >
 >     x =3D f(...);
-
-Same here about the ...
-
-julia
-
 > (
 >     if (IS_ERR(x)) S
 > |
@@ -176,14 +159,14 @@ julia
 > @@
 >
 > print "%s" %(f)
->
->
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
-" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---8323329-1849458589-1478028727=:6300--
+
+Shouldn't there be a rule like the return NULL here too?
+
+You may also want to take into account the possibility of
+
+ret =3D NULL;
+... when !=3D ret =3D e
+return ret;
+
+julia
+--8323329-2014439981-1478028872=:6300--
