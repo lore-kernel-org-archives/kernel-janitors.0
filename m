@@ -1,65 +1,67 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 04 Nov 2016 05:43:59 +0000
-Subject: Re: [PATCH 1/3] clk: keystone: Fix an error checking
-Message-Id: <d2009738-ec07-8cad-10b3-4318f20b69b3@wanadoo.fr>
+From: Jon Mason <jdmason@kudzu.us>
+Date: Tue, 01 Nov 2016 20:35:37 +0000
+Subject: Re: [patch] ntb_perf: potential info leak in debugfs
+Message-Id: <20161101203536.GB25928@kudzu.us>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
- <ff1de6a7af60b4e3804162e553d7174e2ad1ea16.1477339880.git.christophe.jaillet@wanadoo.fr>
- <20161102002228.GC16026@codeaurora.org>
-In-Reply-To: <20161102002228.GC16026@codeaurora.org>
+References: <20161014073418.GD15168@mwanda>
+In-Reply-To: <20161014073418.GD15168@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Le 02/11/2016 =E0 01:22, Stephen Boyd a =E9crit :
-> On 10/24, Christophe JAILLET wrote:
->> clk_register_pll() can return ERR_PTR(-ENOMEM) so checking the return va=
-lue
->> against NULL only is not correct.
-> The code just doesn't propagate the error up to the caller.
-> Instead the caller treats NULL as an error and non-NULL as valid.
-> If the callee detects an error it hides it and returns NULL.
+On Fri, Oct 14, 2016 at 10:07:13AM -0700, Dave Jiang wrote:
+> 
+> 
+> On 10/14/2016 12:34 AM, Dan Carpenter wrote:
+> > This is a static checker warning, not something I'm desperately
+> > concerned about.  But snprintf() returns the number of bytes that
+> > would have been copied if there were space.  We really care about the
+> > number of bytes that actually were copied so we should use scnprintf()
+> > instead.
+> > 
+> > It probably won't overrun, and in that case we may as well just use
+> > sprintf() but these sorts of things make static checkers and code
+> > reviewers happier.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Dave Jiang <dave.jiang@intel.com>
 
-Could you please clarify?
-I thought that your point was that 'clk_register_pll()' was returning=20
-NULL when 'clk_register()' was returning an error.
-The proposed patch fixes it and now 'clk_register_pll()' returns:
-    - either  ERR_PTR(-ENOMEM) if zkalloc fails
-    - or clk if 'clk_register()' fails. In this case it is an error pointer
-    - or a valid, non NULL, pointer in case of success
+Sorry for the delay.  Pulled into my ntb branch.
 
-The caller, '_of_pll_clk_init()' has also been updated to test the=20
-return value using IS_ERR.
+Thanks,
+Jon
 
-
-So, which caller/callee do you refer to?
-Would you like '_of_pll_clk_init()' to also propagate the error?
-
-Or is it the phrasing of the log entry which is not clear enough and=20
-should be updated?
-
->
->> In order to fix it, update clk_register_pll() to always return an error
->> pointer in case of error and check the return value with IS_ERR.
->>
->> While at it, also fix a tab vs space in the surrounding code.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Un-compiled and un-tested.
-> Please at least compile test patches.
-Agreed, and I usually do.
-But in this particular case, I don't have the build environment to do it.
-
-I preferred to report what looks like a (small) bug to me and clearly=20
-state that I didn't even compile-tested it rather than just ignoring it.
-Hoping that this approach, in such a case, is acceptable.
-
-CJ
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> > 
+> > diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
+> > index 6a50f20..2d9ca58 100644
+> > --- a/drivers/ntb/test/ntb_perf.c
+> > +++ b/drivers/ntb/test/ntb_perf.c
+> > @@ -589,7 +589,7 @@ static ssize_t debugfs_run_read(struct file *filp, char __user *ubuf,
+> >  		return -ENOMEM;
+> >  
+> >  	if (mutex_is_locked(&perf->run_mutex)) {
+> > -		out_off = snprintf(buf, 64, "running\n");
+> > +		out_off = scnprintf(buf, 64, "running\n");
+> >  		goto read_from_buf;
+> >  	}
+> >  
+> > @@ -600,14 +600,14 @@ static ssize_t debugfs_run_read(struct file *filp, char __user *ubuf,
+> >  			break;
+> >  
+> >  		if (pctx->status) {
+> > -			out_off += snprintf(buf + out_off, 1024 - out_off,
+> > +			out_off += scnprintf(buf + out_off, 1024 - out_off,
+> >  					    "%d: error %d\n", i,
+> >  					    pctx->status);
+> >  			continue;
+> >  		}
+> >  
+> >  		rate = div64_u64(pctx->copied, pctx->diff_us);
+> > -		out_off += snprintf(buf + out_off, 1024 - out_off,
+> > +		out_off += scnprintf(buf + out_off, 1024 - out_off,
+> >  			"%d: copied %llu bytes in %llu usecs, %llu MBytes/s\n",
+> >  			i, pctx->copied, pctx->diff_us, rate);
+> >  	}
+> > 
