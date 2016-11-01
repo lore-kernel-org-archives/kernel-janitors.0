@@ -1,23 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 28 Nov 2016 01:30:25 +0000
-Subject: Re: [patch v2 net-next] sfc: remove unneeded variable
-Message-Id: <20161127.203025.1356720731286532574.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 01 Nov 2016 06:45:25 +0000
+Subject: [PATCH] UBIFS: Remove some dead code
+Message-Id: <20161101064525.11813-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <698affdd-d4e0-53c0-fff0-9b66252504a0@solarflare.com>
-        <20161125104304.GA5938@mwanda>
-In-Reply-To: <20161125104304.GA5938@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: linux-net-drivers@solarflare.com, ecree@solarflare.com, bkenward@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: richard@nod.at, dedekind1@gmail.com, adrian.hunter@intel.com
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Nov 2016 13:43:04 +0300
+'ubifs_fast_find_freeable()' can not return an error pointer, so this test
+can be removed.
 
-> We don't use ->heap_buf after commit 46d1efd852cc ("sfc: remove Software
-> TSO") so let's remove the last traces.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/ubifs/gc.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Applied, thanks Dan.
+diff --git a/fs/ubifs/gc.c b/fs/ubifs/gc.c
+index e845c64b6ce1..7b35e3d6cde7 100644
+--- a/fs/ubifs/gc.c
++++ b/fs/ubifs/gc.c
+@@ -846,10 +846,6 @@ int ubifs_gc_start_commit(struct ubifs_info *c)
+ 	 */
+ 	while (1) {
+ 		lp = ubifs_fast_find_freeable(c);
+-		if (IS_ERR(lp)) {
+-			err = PTR_ERR(lp);
+-			goto out;
+-		}
+ 		if (!lp)
+ 			break;
+ 		ubifs_assert(!(lp->flags & LPROPS_TAKEN));
+-- 
+2.9.3
+
