@@ -1,40 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 Nov 2016 14:12:41 +0000
-Subject: [bug report] bnx2x: Separate VF and PF logic
-Message-Id: <20161114141241.GA32626@mwanda>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Date: Tue, 01 Nov 2016 20:14:04 +0000
+Subject: Re: [PATCH] drm/armada: Remove some dead code
+Message-Id: <20161101201404.GU1041@n2100.armlinux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161030153842.16745-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161030153842.16745-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Ariel Elior,
+On Sun, Oct 30, 2016 at 04:38:42PM +0100, Christophe JAILLET wrote:
+> 'dma_buf_map_attachment()' can not return NULL, so there is no need to
+> check for it.
+> 
+> Also add a space in order to improve layout.
 
-The patch ad5afc89365e: "bnx2x: Separate VF and PF logic" from Jan 1,
-2013, leads to the following static checker warning:
+Thanks, applied.
 
-	drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2944 bnx2x_nic_load()
-	warn: 'rc' can be either negative or positive
-
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-  2797  
-  2798          /* setup rss */
-  2799          rc = bnx2x_init_rss(bp);
-  2800          if (rc) {
-  2801                  BNX2X_ERR("PF RSS init failed\n");
-  2802                  LOAD_ERROR_EXIT(bp, load_error3);
-  2803          }
-  2804  
-
-The warning heuristic here is to complain if negative and positive
-values are treated the same.  This code is very confusing.  For example,
-the comments for bnx2x_queue_state_change() says it returns a positive
-EBUSY but it does not.
-
-But my main concern is bnx2x_setup_rss(), it either returns a negative
-value or it returns 1.  My understanding is that both of those returns
-are treated as an error on line 2800 in the code above so it can't
-possibly work.
-
-regards,
-dan carpenter
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
