@@ -1,43 +1,35 @@
-From: John Garry <john.garry@huawei.com>
-Date: Mon, 21 Nov 2016 14:32:20 +0000
-Subject: Re: [PATCH] scsi: hisi_sas: Add a missing call to kfree
-Message-Id: <cab62656-badc-0efe-67e6-4df68e762ce1@huawei.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 01 Nov 2016 06:49:05 +0000
+Subject: [PATCH] mfd: bcm590xx: Simplify a test
+Message-Id: <20161101064905.11961-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161119174259.20344-1-lambert.quentin@gmail.com>
- <e1e060ba-a231-b4f3-4a41-f9fac9ca2d54@huawei.com>
- <0edd4edf-f7c8-053d-7eba-724757dc7d43@gmail.com>
- <aed62bfb-f26a-78de-8d8e-2b186b07d21f@huawei.com>
- <916d3638-f3a6-dedc-c89d-de368db0213b@gmail.com>
-In-Reply-To: <916d3638-f3a6-dedc-c89d-de368db0213b@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 21/11/2016 14:25, Quentin Lambert wrote:
->
-> On 11/21/2016 03:16 PM, John Garry wrote:
->> On 21/11/2016 13:20, Quentin Lambert wrote:
->>>
->>>
->>> On 11/21/2016 01:53 PM, John Garry wrote:
->>>> However I have noticed that we should do a call to hisi_sas_free() for
->>>> this failure, and later failures in the probe.
->>> I don't understand why, and would welcome the opportunity to learn
->>> something.
->>>
->>
->> We call hisi_sas_alloc() from hisi_sas_shost_alloc(); if we fail after
->> this in hisi_sas_probe(), then we should free the memmories and
->> workqueue got in hisi_sas_alloc(), which we don't.
-> Thanks.
-> Are you writing the patch or do you want me to do it?
->
+'i2c_new_dummy()' does not return an error pointer, so the test can be
+simplified to be more consistent.
 
-We can do it, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/mfd/bcm590xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Quentin
->
->
-
+diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
+index 0d76d690176b..c572a35a9341 100644
+--- a/drivers/mfd/bcm590xx.c
++++ b/drivers/mfd/bcm590xx.c
+@@ -67,7 +67,7 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri,
+ 	/* Secondary I2C slave address is the base address with A(2) asserted */
+ 	bcm590xx->i2c_sec = i2c_new_dummy(i2c_pri->adapter,
+ 					  i2c_pri->addr | BIT(2));
+-	if (IS_ERR_OR_NULL(bcm590xx->i2c_sec)) {
++	if (!bcm590xx->i2c_sec) {
+ 		dev_err(&i2c_pri->dev, "failed to add secondary I2C device\n");
+ 		return -ENODEV;
+ 	}
+-- 
+2.9.3
 
