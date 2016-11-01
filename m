@@ -1,9 +1,9 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 01 Nov 2016 19:28:21 +0000
+Date: Tue, 01 Nov 2016 19:32:04 +0000
 Subject: Re: [PATCH] UBIFS: Remove some dead code
-Message-Id: <alpine.DEB.2.10.1611012022000.6300@hadrien>
+Message-Id: <alpine.DEB.2.10.1611012028530.6300@hadrien>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-678310148-1478028505=:6300"
+Content-Type: multipart/mixed; boundary="8323329-1849458589-1478028727=:6300"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161101064525.11813-1-christophe.jaillet@wanadoo.fr>
  <a074d673-cf23-d7a1-7b1e-0e1f8f7b0ffe@nod.at>
@@ -15,7 +15,7 @@ Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel
   This message is in MIME format.  The first part should be readable text,
   while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323329-678310148-1478028505=:6300
+--8323329-1849458589-1478028727=:6300
 Content-Type: TEXT/PLAIN; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
 
@@ -86,17 +86,104 @@ ned
 >
 > Any ideas to improve or speed-up the coccinelle scripts are welcome.
 > Julia ?
+>
+>
+> Best regards,
+> CJ
+>
+>
+>
+> Coccinelle script n=B01:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> @find@
+> identifier f;
+> @@
+>
+>    f(...)
+>    {
+>       ...
+>       return NULL;
 
-I made a combination of an OCaml program and a Coccinelle script to
-collect the error codes (-ENOMEM, etc) that a function is returning, fully
-interprocedurally throughout the kernel.  I think it ran for 17 iterations
-until reaching a fixed point.  For the information I collected, it ran in
-a few hours on an 8 core machine.  I think it could be repurposed to address
-this NULL vs ERR_PTR problem.  I'm rolling through the Dutch countryside at
-the moment, but I could take a look tomorrow.  Without going to a full
-fixpoint iteration, the above strategy looks reasonable.  It could be
-interesting to compare the results.  My fixpoint strategy gives up on
-function pointers, so it is not completely accurate either.
+Do you want functions that always return NULL or that may return NULL?
+Currently you are getting those that always return NULL, except perhaps
+under ifs.  But if you want functions that may return NULL, it would be
+better to put exists in the rule header after find.  This will also likely
+be more efficient.
+
+>    }
+>
+> @script:python@
+> f << find.f;
+> @@
+>
+> print "%s" %(f)
+>
+>
+>
+> @find2@
+> identifier f;
+> expression x;
+> statement S;
+> @@
+>
+>    x =3D f(...);
+> (
+>    if (x) S
+> |
+>    if (!x) S
+> )
+
+You might want to put ... after x =3D f(...);, or rather .... when !=3D x =
+=3D e
+for some expression metavariable e.
+
+>
+> @script:python@
+> f << find2.f;
+> @@
+>
+> print "%s" %(f)
+>
+>
+>
+>
+>
+> Coccinelle script n=B02:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> @find@
+> statement S;
+> type t;
+> t *x;
+> identifier f;
+> @@
+>
+>     x =3D f(...);
+
+Same here about the ...
 
 julia
---8323329-678310148-1478028505=:6300--
+
+> (
+>     if (IS_ERR(x)) S
+> |
+>     if (!IS_ERR(x)) S
+> )
+>
+>
+>
+> @script:python@
+> f << find.f;
+> @@
+>
+> print "%s" %(f)
+>
+>
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
+" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+--8323329-1849458589-1478028727=:6300--
