@@ -1,83 +1,50 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 11 Nov 2016 08:22:36 +0000
-Subject: Re: [PATCH] drm/rockchip: return ERR_PTR instead of NULL
-Message-Id: <alpine.DEB.2.20.1611110921220.2074@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1593101839-1478852557=:2074"
+From: Jim Davis <jim.epost@gmail.com>
+Date: Tue, 01 Nov 2016 23:36:35 +0000
+Subject: Re: [PATCH] cxl: Fix error handling
+Message-Id: <CA+r1ZhiJW6xQ1VwgLudFzFBxkKzkURv7MZhWtmSevRHc9aUyxA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1478812256-26189-1-git-send-email-Julia.Lawall@lip6.fr> <5825229C.8080704@rock-chips.com> <58257DA7.4020603@bfs.de>
-In-Reply-To: <58257DA7.4020603@bfs.de>
-To: walter harms <wharms@bfs.de>
-Cc: Mark yao <mark.yao@rock-chips.com>, kernel-janitors@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20161030214047.25037-1-christophe.jaillet@wanadoo.fr>
+ <87wpgp13ki.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87wpgp13ki.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, imunsie@au1.ibm.com, fbarrat@linux.vnet.ibm.com, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel <linux-kernel@vger.kernel.org>
 
---8323329-1593101839-1478852557=:2074
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+On Sun, Oct 30, 2016 at 10:37 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+> Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+>
+>> 'cxl_dev_context_init()' returns an error pointer in case of error, not
+>> NULL. So test it with IS_ERR.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> un-compiled because I don't have the required  cross build environment.
+>
+> Do you run Ubuntu or Fedora? If so it's just a dnf/apt-get away:
+>
+> $ sudo dnf install gcc-c++-powerpc64-linux-gnu binutils-powerpc64-linux-gnu gcc-powerpc64-linux-gnu
+> or
+> $ sudo apt-get install gcc-powerpc64le-linux-gnu gcc-powerpc-linux-gnu libc-dev-powerpc-cross libc-dev-ppc64el-cross
+>
+> More here:
+>
+> https://github.com/linuxppc/linux/wiki/Building-powerpc-kernels
 
+Cool; the little-endian build worked fine, but
 
+jim@krebstar:~/linux-rc$ make ARCH=powerpc
+CROSS_COMPILE=powerpc64-linux-gnu- vmlinux
+make: powerpc64-linux-gnu-gcc: Command not found
+make: powerpc64-linux-gnu-gcc: Command not found
+scripts/kconfig/conf  --silentoldconfig Kconfig
+make: powerpc64-linux-gnu-gcc: Command not found
 
-On Fri, 11 Nov 2016, walter harms wrote:
+This is on Ubuntu 16.04; there's a /usr/bin/powerpc64le-linux-gnu-gcc
+from installing gcc-powerpc64le-linux-gnu, and a
+/usr/bin/powerpc-linux-gnu-gcc from installing gcc-powerpc-linux-gnu,
+but no /usr/bin/powerpc64-linux-gnu-gcc.
 
->
->
-> Am 11.11.2016 02:45, schrieb Mark yao:
-> > On 2016年11月11日 05:10, Julia Lawall wrote:
-> >> rockchip_drm_framebuffer_init is only used in one case, in
-> >> rockchip_drm_fbdev.c, where its return value is tested using IS_ERR.  To
-> >> enable propagating the reason for the error, change the definition so
-> >> that
-> >> it returns an ERR_PTR value.
-> >>
-> >> Problem found with the help of Coccinelle.
-> >>
-> >> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > Thanks for the fix.
-> >
-> > Applied to my drm-next.
->
-> Just for my curiosity.
->
-> can more go wrong that OOM ?
-
-Unfolding rockchip_fb_alloc suggests that a variety of error codes can be
-returned, notably from the function idr_alloc.
-
-julia
-
->
-> i did not see that.
->
-> re,
->  wh
->
->
-> >
-> >>
-> >> ---
-> >>   drivers/gpu/drm/rockchip/rockchip_drm_fb.c |    2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> >> b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> >> index 0f6eda0..01e11bf 100644
-> >> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> >> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> >> @@ -213,7 +213,7 @@ struct drm_framebuffer *
-> >>         rockchip_fb = rockchip_fb_alloc(dev, mode_cmd, &obj, 1);
-> >>       if (IS_ERR(rockchip_fb))
-> >> -        return NULL;
-> >> +        return ERR_CAST(rockchip_fb);
-> >>         return &rockchip_fb->fb;
-> >>   }
-> >>
-> >>
-> >>
-> >>
-> >
-> >
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---8323329-1593101839-1478852557=:2074--
+-- 
+Jim
