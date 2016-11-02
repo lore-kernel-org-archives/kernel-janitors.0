@@ -1,26 +1,34 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Mon, 14 Nov 2016 00:40:02 +0000
-Subject: Re: [patch] PM / Domains: Fix a warning message
-Message-Id: <4727600.gICFRe4IYi@vostro.rjw.lan>
+From: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Date: Wed, 02 Nov 2016 16:45:49 +0000
+Subject: Re: [PATCH] cxl: Fix memory allocation failure test
+Message-Id: <ca5aafc7-ae96-ad3b-dfc2-1e3b7413c259@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161110125215.GA18664@mwanda> <CAPDyKFouTue7DbDg0n136L_XO4UGX4_DiRh8Hr6zXy4a8_c5EA@mail.gmail.com>
-In-Reply-To: <CAPDyKFouTue7DbDg0n136L_XO4UGX4_DiRh8Hr6zXy4a8_c5EA@mail.gmail.com>
+References: <20161030193557.23862-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161030193557.23862-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ulf Hansson <ulf.hansson@linaro.org>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lina Iyer <lina.iyer@linaro.org>, Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, imunsie@au1.ibm.com
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-On Thursday, November 10, 2016 08:25:36 PM Ulf Hansson wrote:
-> On 10 November 2016 at 13:52, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > The first argument of WARN() is the condition, followed by the message.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Applied.
 
-Thanks,
-Rafael
+Le 30/10/2016 =E0 20:35, Christophe JAILLET a =E9crit :
+> 'cxl_context_alloc()' does not return an error pointer. It is just a
+> shortcut for a call to 'kzalloc' with 'sizeof(struct cxl_context)' as the
+> size parameter.
+>
+> So its return value should be compared with NULL.
+> While fixing it, simplify a bit the code.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
+
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
