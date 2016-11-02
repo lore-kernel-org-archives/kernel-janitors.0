@@ -1,21 +1,19 @@
 From: Stephen Boyd <sboyd@codeaurora.org>
-Date: Wed, 02 Nov 2016 00:38:52 +0000
-Subject: Re: [PATCH 12/15] clk: tegra: dfll: improve function-level documentation
-Message-Id: <20161102003852.GN16026@codeaurora.org>
+Date: Wed, 02 Nov 2016 00:38:05 +0000
+Subject: Re: [PATCH 10/15] clk: keystone: improve function-level documentation
+Message-Id: <20161102003805.GM16026@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
- <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
+ <1475351192-27079-11-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1475351192-27079-11-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, kernel-janitors@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, kernel-janitors@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 
 On 10/01, Julia Lawall wrote:
-> Adjust variables to correspond to the names used in the parameter list of
-> the function.  Move the struct device * variable up to the place where it
-> appears in the parameter list.
+> Adjust the documentation to use the actual function names.
 > 
 > Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
 > 
