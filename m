@@ -1,48 +1,86 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 30 Nov 2016 22:14:23 +0000
-Subject: Re: [patch] ACPI / CPPC: set an error code on probe error path
-Message-Id: <CAJZ5v0gNeD_gDKEBCoYcr52dFC=YFVZ7=ADF0WYUQt+hPhbNsA@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 02 Nov 2016 15:41:49 +0000
+Subject: Re: [PATCH 01/10] scripts/basic/bin2c: Complete error handling in main()
+Message-Id: <CAK7LNATU4VrN6wCo8vzETMJu6aX+SK+0un03ryzCg7-BW_LxqA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161130192254.GE28180@mwanda> <CAJZ5v0h06CXGzdAt=ZmB+pnWRumDGiic-eEpyLAojKVUVrJnnw@mail.gmail.com>
- <20161130215819.GN28558@mwanda>
-In-Reply-To: <20161130215819.GN28558@mwanda>
+References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net> <44402655-ef0d-1e2f-0587-f17295a08aa3@users.sourceforge.net>
+In-Reply-To: <44402655-ef0d-1e2f-0587-f17295a08aa3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ashwin Chaugule <ashwin.chaugule@linaro.org>, Len Brown <lenb@kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Michal Marek <mmarek@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Nov 30, 2016 at 11:03 PM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> On Wed, Nov 30, 2016 at 10:53:55PM +0100, Rafael J. Wysocki wrote:
->> On Wed, Nov 30, 2016 at 8:22 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> > We should return -EINVAL if get_cpu_device() fails.
->> >
->> > Fixes: 158c998ea44b ("ACPI / CPPC: add sysfs support to compute delivered performance")
->> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> >
->> > diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
->> > index d0d0504..e0ea8f5 100644
->> > --- a/drivers/acpi/cppc_acpi.c
->> > +++ b/drivers/acpi/cppc_acpi.c
->> > @@ -784,8 +784,10 @@ int acpi_cppc_processor_probe(struct acpi_processor *pr)
->> >
->> >         /* Add per logical CPU nodes for reading its feedback counters. */
->> >         cpu_dev = get_cpu_device(pr->id);
->> > -       if (!cpu_dev)
->> > +       if (!cpu_dev) {
->> > +               ret = -EINVAL;
->>
->> ret is initialized here AFAICS.
->>
->> Do you that its value is not the right one?
+2016-10-28 17:31 GMT+09:00 SF Markus Elfring <elfring@users.sourceforge.net>:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 27 Oct 2016 16:15:04 +0200
 >
-> I'm looking at linux-next.  It's set to zero but we presumably want to
-> return an error code.
+> Return values were not checked from five calls of the function "printf".
+>
+> This issue was detected also by using the Coccinelle software.
+>
+>
+> * Add a bit of exception handling there.
+>
+> * Optimise this function implementation a bit.
+>
+>   - Replace two output calls with the functions "fputs" and "puts".
+>
+>   - Use the preincrement operator for the variable "total".
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  scripts/basic/bin2c.c | 26 ++++++++++++++++----------
+>  1 file changed, 16 insertions(+), 10 deletions(-)
+>
+> diff --git a/scripts/basic/bin2c.c b/scripts/basic/bin2c.c
+> index c3d7eef..c6c8860 100644
+> --- a/scripts/basic/bin2c.c
+> +++ b/scripts/basic/bin2c.c
+> @@ -8,29 +8,35 @@
+>   */
+>
+>  #include <stdio.h>
+> +#include <errno.h>
+>
+>  int main(int argc, char *argv[])
+>  {
+>         int ch, total = 0;
+>
+>         if (argc > 1)
+> -               printf("const char %s[] %s=\n",
+> -                       argv[1], argc > 2 ? argv[2] : "");
+> +               if (printf("const char %s[] %s=\n",
+> +                          argv[1], argc > 2 ? argv[2] : "") < 16)
+> +                       return errno;
+>
+>         do {
+> -               printf("\t\"");
+> +               if (fputs("\t\"", stdout) < 0)
+> +                       return errno;
+> +
+>                 while ((ch = getchar()) != EOF) {
+> -                       total++;
+> -                       printf("\\x%02x", ch);
+> -                       if (total % 16 = 0)
+> +                       if (printf("\\x%02x", ch) < 4)
+> +                               return errno;
+> +                       if (++total % 16 = 0)
+>                                 break;
+>                 }
+> -               printf("\"\n");
+> +
+> +               if (puts("\"") < 0)
+> +                       return errno;
 
-OK
 
-It was slightly unclear what the bug was.
+Is replacing printf("\"\n") with puts("\"") optimization?
 
-Thanks,
-Rafael
+
+Frankly, the result of this patch
+seems extremely unreadable code.
+
+
+-- 
+Best Regards
+Masahiro Yamada
