@@ -1,63 +1,36 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Date: Mon, 14 Nov 2016 14:49:58 +0000
-Subject: Re: [patch] spi: atmel: fix indenting in atmel_spi_gpio_cs()
-Message-Id: <aa6d8d17-13f7-632c-babb-2a7c062155f1@atmel.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Wed, 02 Nov 2016 00:22:29 +0000
+Subject: Re: [PATCH 1/3] clk: keystone: Fix an error checking
+Message-Id: <20161102002228.GC16026@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161114142644.GA6179@mwanda>
-In-Reply-To: <20161114142644.GA6179@mwanda>
+References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
+ <ff1de6a7af60b4e3804162e553d7174e2ad1ea16.1477339880.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ff1de6a7af60b4e3804162e553d7174e2ad1ea16.1477339880.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le 14/11/2016 =E0 15:26, Dan Carpenter a =E9crit :
-> These lines were indented one extra tab.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 10/24, Christophe JAILLET wrote:
+> clk_register_pll() can return ERR_PTR(-ENOMEM) so checking the return value
+> against NULL only is not correct.
 
-Oh yes: sorry for that:
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+The code just doesn't propagate the error up to the caller.
+Instead the caller treats NULL as an error and non-NULL as valid.
+If the callee detects an error it hides it and returns NULL.
 
-Thanks, Dan. Best regards,
+> In order to fix it, update clk_register_pll() to always return an error
+> pointer in case of error and check the return value with IS_ERR.
+> 
+> While at it, also fix a tab vs space in the surrounding code.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Un-compiled and un-tested.
 
-> diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
-> index d3affa6..b293149 100644
-> --- a/drivers/spi/spi-atmel.c
-> +++ b/drivers/spi/spi-atmel.c
-> @@ -1510,15 +1510,15 @@ static int atmel_spi_gpio_cs(struct platform_devi=
-ce *pdev)
->  		int cs_gpio =3D of_get_named_gpio(pdev->dev.of_node,
->  						"cs-gpios", i);
-> =20
-> -			if (cs_gpio =3D -EPROBE_DEFER)
-> -				return cs_gpio;
-> -
-> -			if (gpio_is_valid(cs_gpio)) {
-> -				ret =3D devm_gpio_request(&pdev->dev, cs_gpio,
-> -							dev_name(&pdev->dev));
-> -				if (ret)
-> -					return ret;
-> -			}
-> +		if (cs_gpio =3D -EPROBE_DEFER)
-> +			return cs_gpio;
-> +
-> +		if (gpio_is_valid(cs_gpio)) {
-> +			ret =3D devm_gpio_request(&pdev->dev, cs_gpio,
-> +						dev_name(&pdev->dev));
-> +			if (ret)
-> +				return ret;
-> +		}
->  	}
-> =20
->  	return 0;
->=20
+Please at least compile test patches.
 
-
---=20
-Nicolas Ferre
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
