@@ -1,58 +1,63 @@
-From: "Amrani, Ram" <Ram.Amrani@cavium.com>
-Date: Tue, 15 Nov 2016 12:12:26 +0000
-Subject: RE: [bug report] qed: Add support for memory registeration verbs
-Message-Id: <SN1PR07MB22076F6B48393DE9E2989824F8BF0@SN1PR07MB2207.namprd07.prod.outlook.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Date: Thu, 03 Nov 2016 12:41:04 +0000
+Subject: Re: [PATCH 3/3] [media] au0828-video: Move two assignments in au0828_init_isoc()
+Message-Id: <4e6e77af-1b2c-33a6-1bc3-058ac5ecc038@xs4all.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161114124334.GA5661@mwanda>
-In-Reply-To: <20161114124334.GA5661@mwanda>
+References: <c6a37822-c0f9-1f1e-6ebe-a1c88c6d9d0a@users.sourceforge.net>
+ <1ab6b168-3c69-97c2-d02e-cd64b7fa222f@users.sourceforge.net>
+In-Reply-To: <1ab6b168-3c69-97c2-d02e-cd64b7fa222f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, =?UTF-8?Q?Rafael_Louren=c3=a7o_de_Lima_Chehab?= <chehabrafael@gmail.com>, Shuah Khan <shuah@kernel.org>, Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> The patch ee8eaea30b13: "qed: Add support for memory registeration verbs"
-> from Oct 1, 2016, leads to the following static checker
-> warning:
-> 
-> 	drivers/net/ethernet/qlogic/qed/qed_roce.c:2354
-> qed_rdma_register_tid()
-> 	error: uninitialized symbol 'fw_return_code'.
-> 
-> drivers/net/ethernet/qlogic/qed/qed_roce.c
->   2343          /* DIF */
->   2344          if (params->dif_enabled) {
->   2345                  SET_FIELD(p_ramrod->flags2,
->   2346
-> RDMA_REGISTER_TID_RAMROD_DATA_DIF_ON_HOST_FLG, 1);
->   2347                  DMA_REGPAIR_LE(p_ramrod->dif_error_addr,
->   2348                                 params->dif_error_addr);
->   2349                  DMA_REGPAIR_LE(p_ramrod->dif_runt_addr, params-
-> >dif_runt_addr);
->   2350          }
->   2351
->   2352          rc = qed_spq_post(p_hwfn, p_ent, &fw_return_code);
->   2353
->   2354          if (fw_return_code != RDMA_RETURN_OK) {
-> 
-> This basically works even when rc is a negative error code and fw_return_code is
-> uninitialized but hella nasty.
-> 
->   2355                  DP_NOTICE(p_hwfn, "fw_return_code = %d\n",
-> fw_return_code);
->   2356                  return -EINVAL;
->   2357          }
->   2358
->   2359          DP_VERBOSE(p_hwfn, QED_MSG_RDMA, "Register TID, rc = %d\n",
-> rc);
->   2360          return rc;
->   2361  }
-> 
-> regards,
-> dan carpenter
+On 24/10/16 23:01, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 24 Oct 2016 22:44:02 +0200
+>
+> Move the assignment for the data structure members "isoc_copy"
+> and "num_bufs" behind the source code for memory allocations
+> by this function.
 
-Hi Dan,
-While there's no bug in there the code is hard to understand and I will submit a change
-in the near future.
-Thanks,
-Ram
+I don't see the point, dropping this patch.
 
+	Hans
+
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/media/usb/au0828/au0828-video.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
+> index b5c88a7..5ebda64 100644
+> --- a/drivers/media/usb/au0828/au0828-video.c
+> +++ b/drivers/media/usb/au0828/au0828-video.c
+> @@ -218,9 +218,6 @@ static int au0828_init_isoc(struct au0828_dev *dev, int max_packets,
+>  	int rc;
+>
+>  	au0828_isocdbg("au0828: called au0828_prepare_isoc\n");
+> -
+> -	dev->isoc_ctl.isoc_copy = isoc_copy;
+> -	dev->isoc_ctl.num_bufs = num_bufs;
+>  	dev->isoc_ctl.urb = kcalloc(num_bufs,
+>  				    sizeof(*dev->isoc_ctl.urb),
+>  				    GFP_KERNEL);
+> @@ -240,6 +237,7 @@ static int au0828_init_isoc(struct au0828_dev *dev, int max_packets,
+>  	dev->isoc_ctl.buf = NULL;
+>
+>  	sb_size = max_packets * dev->isoc_ctl.max_pkt_size;
+> +	dev->isoc_ctl.num_bufs = num_bufs;
+>
+>  	/* allocate urbs and transfer buffers */
+>  	for (i = 0; i < dev->isoc_ctl.num_bufs; i++) {
+> @@ -276,6 +274,7 @@ static int au0828_init_isoc(struct au0828_dev *dev, int max_packets,
+>  			k += dev->isoc_ctl.max_pkt_size;
+>  		}
+>  	}
+> +	dev->isoc_ctl.isoc_copy = isoc_copy;
+>
+>  	/* submit urbs and enables IRQ */
+>  	for (i = 0; i < dev->isoc_ctl.num_bufs; i++) {
+>
