@@ -1,33 +1,52 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 03 Nov 2016 18:24:33 +0000
-Subject: Re: [PATCH] btrfs: Remove some dead code
-Message-Id: <db80cda8-0d26-48cb-7ca6-a61b91b0f3be@wanadoo.fr>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Date: Thu, 03 Nov 2016 12:22:24 +0000
+Subject: Re: [PATCH 17/34] [media] DaVinci-VPFE-Capture: Improve another size determination in vpfe_enum_inpu
+Message-Id: <f214edb8-0af3-e1f5-8b45-9cfa0537f8b5@xs4all.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161101102606.27006-1-christophe.jaillet@wanadoo.fr>
- <20161103124349.GA819@distanz.ch>
-In-Reply-To: <20161103124349.GA819@distanz.ch>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+ <88b3de4c-5f3f-9f70-736b-039dca6b8a2e@users.sourceforge.net>
+In-Reply-To: <88b3de4c-5f3f-9f70-736b-039dca6b8a2e@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: clm@fb.com, jbacik@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Le 03/11/2016 =E0 13:43, Tobias Klauser a =E9crit :
-> On 2016-11-01 at 11:26:06 +0100, Christophe JAILLET <christophe.jaillet@w=
-anadoo.fr> wrote:
->> 'btrfs_iget()' can not return an error pointer, so this test can be
->> removed.
-> This descrption does not match what the patch actually does. Shouldn't
-> it say "...can not return NULL, so this test can be removed."?
+On 12/10/16 16:55, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 12 Oct 2016 10:33:42 +0200
 >
-You are obviously correct. Cut'n'Paste error while sending other patches.
-I will send a V2 with an updated description.
+> Replace the specification of a data structure by a pointer dereference
+> as the parameter for the operator "sizeof" to make the corresponding size
+> determination a bit safer.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/media/platform/davinci/vpfe_capture.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
+> index 8314c39..87ee35d 100644
+> --- a/drivers/media/platform/davinci/vpfe_capture.c
+> +++ b/drivers/media/platform/davinci/vpfe_capture.c
+> @@ -1091,7 +1091,7 @@ static int vpfe_enum_input(struct file *file, void *priv,
+>  		return -EINVAL;
+>  	}
+>  	sdinfo = &vpfe_dev->cfg->sub_devs[subdev];
+> -	memcpy(inp, &sdinfo->inputs[index], sizeof(struct v4l2_input));
+> +	memcpy(inp, &sdinfo->inputs[index], sizeof(*inp));
 
-Thanks for the review.
+If I am not mistaken this can be written as:
 
-CJ
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	*inp = sdinfo->inputs[index];
+
+Much better.
+
+Regards,
+
+	Hans
+
+>  	return 0;
+>  }
+>
+>
