@@ -1,55 +1,69 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 12 Nov 2016 14:36:16 +0000
-Subject: Re: [patch] iio:adc: ad7766: testing the wrong variable in probe
-Message-Id: <7f4f838b-9861-f294-c7c1-32cf0edaa372@kernel.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Date: Thu, 03 Nov 2016 12:20:08 +0000
+Subject: Re: [PATCH 10/34] [media] DaVinci-VPBE: Check return value of a setup_if_config() call in vpbe_set_o
+Message-Id: <bc306a0e-d4ff-d90a-e07a-246ead409471@xs4all.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161110193018.GB32533@mwanda>
- <62d0bc7e-45ca-6106-ace7-d33193bf49cb@metafoo.de>
-In-Reply-To: <62d0bc7e-45ca-6106-ace7-d33193bf49cb@metafoo.de>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+ <47590f2e-1cfa-582d-769e-502802171b66@users.sourceforge.net>
+In-Reply-To: <47590f2e-1cfa-582d-769e-502802171b66@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 11/11/16 13:50, Lars-Peter Clausen wrote:
-> On 11/10/2016 08:30 PM, Dan Carpenter wrote:
->> We should be testing "ret" here.
->>
->> Fixes: aa16c6bd0e09 ("iio:adc: Add support for AD7766/AD7767")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-> 
-Applied to the togreg branch of iio.git. Will push out as testing
-later for the autobuilders to play with it.
+On 12/10/16 16:47, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 12 Oct 2016 09:56:56 +0200
+>
+> * A function was called over the pointer "setup_if_config" in the data
+>   structure "venc_platform_data". But the return value was not used so far.
+>   Thus assign it to the local variable "ret" which will be checked with
+>   the next statement.
+>
+>   Fixes: 9a7f95ad1c946efdd7a7a72df27db738260a0fd8 ("[media] davinci vpbe: add dm365 VPBE display driver changes")
+>
+> * Pass a value to this function call without storing it in an intermediate
+>   variable before.
+>
+> * Delete the local variable "if_params" which became unnecessary with
+>   this refactoring.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/media/platform/davinci/vpbe.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+> index 19611a2..6e7b0df 100644
+> --- a/drivers/media/platform/davinci/vpbe.c
+> +++ b/drivers/media/platform/davinci/vpbe.c
+> @@ -227,7 +227,6 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+>  			vpbe_current_encoder_info(vpbe_dev);
+>  	struct vpbe_config *cfg = vpbe_dev->cfg;
+>  	struct venc_platform_data *venc_device = vpbe_dev->venc_device;
+> -	u32 if_params;
+>  	int enc_out_index;
+>  	int sd_index;
+>  	int ret = 0;
+> @@ -257,8 +256,8 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+>  			goto out;
+>  		}
+>
+> -		if_params = cfg->outputs[index].if_params;
+> -		venc_device->setup_if_config(if_params);
+> +		ret = venc_device->setup_if_config(cfg
+> +						   ->outputs[index].if_params);
 
-Thanks,
+Either keep this as one line or keep the if_params temp variable. This 
+odd linebreak
+is ugly.
 
-Jonathan
-> Thanks.
-> 
->>
->> diff --git a/drivers/iio/adc/ad7766.c b/drivers/iio/adc/ad7766.c
->> index d906686..75cca42 100644
->> --- a/drivers/iio/adc/ad7766.c
->> +++ b/drivers/iio/adc/ad7766.c
->> @@ -239,8 +239,8 @@ static int ad7766_probe(struct spi_device *spi)
->>  
->>  	ret = devm_regulator_bulk_get(&spi->dev, ARRAY_SIZE(ad7766->reg),
->>  		ad7766->reg);
->> -	if (IS_ERR(ad7766->reg))
->> -		return PTR_ERR(ad7766->reg);
->> +	if (ret)
->> +		return ret;
->>  
->>  	ad7766->pd_gpio = devm_gpiod_get_optional(&spi->dev, "powerdown",
->>  		GPIOD_OUT_HIGH);
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Regards,
 
+	Hans
+
+>  		if (ret)
+>  			goto out;
+>  	}
+>
