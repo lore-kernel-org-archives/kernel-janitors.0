@@ -1,26 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 22 Nov 2016 08:56:18 +0000
-Subject: Re: [patch] pinctrl: sunxi: Testing the wrong variable
-Message-Id: <CACRpkdYLF0T1zbSAjLnzJt93uZ2-839bGbDTMfkRmS+ja2NC4Q@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 04 Nov 2016 07:02:35 +0000
+Subject: [PATCH V2] btrfs: Remove some dead code
+Message-Id: <20161104070235.12975-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161118113557.GA3281@mwanda>
-In-Reply-To: <20161118113557.GA3281@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Rob Herring <robh@kernel.org>, Krzysztof Adamski <krzysztof.adamski@tieto.com>, Laxman Dewangan <ldewangan@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: clm@fb.com, jbacik@fb.com, dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Fri, Nov 18, 2016 at 12:35 PM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
+'btrfs_iget()' can not return NULL, so this test can be removed.
 
-> Smatch complains that we dereference "map" before testing it for NULL
-> which is true.  We should be testing "*map" instead.  Also on the error
-> path, we should free *map and set it to NULL.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+V1 --> v2: fix the patch description
+---
+ fs/btrfs/free-space-cache.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Patch applied with Maxime's ACK.
+diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
+index e4b48f377d3a..afd8b0c10acd 100644
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -75,8 +75,6 @@ static struct inode *__lookup_free_space_inode(struct btrfs_root *root,
+ 	btrfs_release_path(path);
+ 
+ 	inode = btrfs_iget(root->fs_info->sb, &location, root, NULL);
+-	if (!inode)
+-		return ERR_PTR(-ENOENT);
+ 	if (IS_ERR(inode))
+ 		return inode;
+ 	if (is_bad_inode(inode)) {
+-- 
+2.9.3
 
-Yours,
-Linus Walleij
