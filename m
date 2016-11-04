@@ -1,48 +1,35 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Wed, 30 Nov 2016 18:39:45 +0000
-Subject: Re: [PATCH] vfio: Fix handling of error returned by 'vfio_group_get_from_dev()'
-Message-Id: <20161130113945.2debb209@t450s.home>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 04 Nov 2016 06:13:52 +0000
+Subject: [PATCH] drm/sun4i: Propagate error to the caller
+Message-Id: <20161104061352.12596-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161130070612.16073-1-christophe.jaillet@wanadoo.fr>
-        <20161130093646.0c68f7be@t450s.home>
-        <20161130182707.GV6266@mwanda>
-In-Reply-To: <20161130182707.GV6266@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Kirti Wankhede <kwankhede@nvidia.com>
+To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Wed, 30 Nov 2016 21:27:07 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+If 'sun4i_layers_init()' returns an error, propagate it instead of
+returning -EINVAL unconditionally.
 
-> On Wed, Nov 30, 2016 at 09:36:46AM -0700, Alex Williamson wrote:
-> > On Wed, 30 Nov 2016 08:06:12 +0100
-> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> >   
-> > > 'vfio_group_get_from_dev()' seems to return only NULL on error, not an error
-> > > pointer.
-> > > 
-> > > Fixes: 2169037dc322 ("vfio iommu: Added pin and unpin callback functions to vfio_iommu_driver_ops")
-> > > Fixes: c086de818dd8 ("vfio iommu: Add blocking notifier to notify DMA_UNMAP")
-> > > 
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---  
-> > 
-> > Dan Carpenter proposed a nearly identical patch:
-> > 
-> > http://www.spinics.net/lists/kvm/msg141468.html
-> > 
-> > The difference is you return -ENODEV while Dan returns -EINVAL.  I tend
-> > to prefer -ENODEV to distinguish this error case versus validation of
-> > the other parameters.  This patch also identifies both commits
-> > introducing these, so I'm inclined to take this one rather than Dan's
-> > version.  Dan & Kirti, I welcome any credits you'd like to apply to
-> > this patch for identifying and reviewing the same issue.  Thanks,
-> >   
-> 
-> Could I get a Reported-by?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sure thing, thanks,
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 628712e6edd6..ee4e5f987b6f 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -145,7 +145,7 @@ static int sun4i_drv_bind(struct device *dev)
+ 	drv->layers = sun4i_layers_init(drm);
+ 	if (IS_ERR(drv->layers)) {
+ 		dev_err(drm->dev, "Couldn't create the planes\n");
+-		ret = -EINVAL;
++		ret = PTR_ERR(drv->layers);
+ 		goto free_drm;
+ 	}
+ 
+-- 
+2.9.3
 
-Alex
