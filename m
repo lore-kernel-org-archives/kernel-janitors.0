@@ -1,23 +1,66 @@
-From: coral@hi-chem.co.nz
-Date: Mon, 28 Nov 2016 06:05:25 +0000
-Subject: RE: BALANCE PAYMENT
-Message-Id: <20161128190525.46866pilj2qv3sco@webmail.quickstart.net.nz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 06 Nov 2016 20:00:43 +0000
+Subject: [PATCH v2 10/34] [media] DaVinci-VPBE: Check return value of a setup_if_config() call in vpbe_set_ou
+Message-Id: <a09ef69f-6de9-2ff7-3f9e-918e72b8b859@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+ <47590f2e-1cfa-582d-769e-502802171b66@users.sourceforge.net>
+ <bc306a0e-d4ff-d90a-e07a-246ead409471@xs4all.nl>
+ <680a0feb-3748-da16-9b79-297e1ab9044d@users.sourceforge.net>
+ <c261629c-bf59-2037-3cff-ed415fc66e76@xs4all.nl>
+In-Reply-To: <c261629c-bf59-2037-3cff-ed415fc66e76@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Dear Sir/s,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 6 Nov 2016 20:40:20 +0100
 
-Please see attached.
+* A function was called over the pointer "setup_if_config" in the data
+  structure "venc_platform_data". But the return value was not used so far.
+  Thus assign it to the local variable "ret" which will be checked with
+  the next statement.
 
+  Fixes: 9a7f95ad1c946efdd7a7a72df27db738260a0fd8 ("[media] davinci vpbe: add dm365 VPBE display driver changes")
 
-Thanks and regards,
+* Pass a value to this function call without storing it in an intermediate
+  variable before.
 
-Accounts Department
-Al Omraniya Trading Co. LLC
-P.O. Box: 10757, Al Khabaisi Area,
-Deira 2, Dubai, U.A.E.
-Tel: +971 4 268 2730 / Fax: +971 4 268 4117
+* Delete the local variable "if_params" which became unnecessary with
+  this refactoring.
+
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+
+v2: Keep the assignment statement on one line despite of its length
+    of 82 characters.
+
+ drivers/media/platform/davinci/vpbe.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 19611a2..d04d6b7 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -227,7 +227,6 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+ 			vpbe_current_encoder_info(vpbe_dev);
+ 	struct vpbe_config *cfg = vpbe_dev->cfg;
+ 	struct venc_platform_data *venc_device = vpbe_dev->venc_device;
+-	u32 if_params;
+ 	int enc_out_index;
+ 	int sd_index;
+ 	int ret = 0;
+@@ -257,5 +257,4 @@ static int vpbe_set_output(struct vpbe_device *vpbe_dev, int index)
+ 		}
+ 
+-		if_params = cfg->outputs[index].if_params;
+-		venc_device->setup_if_config(if_params);
++		ret = venc_device->setup_if_config(cfg->outputs[index].if_params);
+ 		if (ret)
+-- 
+2.10.2
 
