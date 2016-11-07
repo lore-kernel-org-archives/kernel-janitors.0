@@ -1,52 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Nov 2016 14:45:22 +0000
-Subject: Re: [patch] [media] uvcvideo: freeing an error pointer
-Message-Id: <20161130144522.GJ28558@mwanda>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Mon, 07 Nov 2016 12:02:06 +0000
+Subject: Re: [PATCH] drm/tegra: fix error handling
+Message-Id: <20161107120206.GF28616@ulmo.ba.sec>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="vA66WO2vHvL/CRSR"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161125102835.GA5856@mwanda>
- <13737175.iVr8OcoHqv@avalon>
- <20161130123326.GH28558@mwanda>
- <3099994.m2oKJeJMud@avalon>
-In-Reply-To: <3099994.m2oKJeJMud@avalon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Sakari Alius <sakari.ailus@iki.fi>, wharms@bfs.de, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-On Wed, Nov 30, 2016 at 03:53:03PM +0200, Laurent Pinchart wrote:
-> But then you get the following patch (which, apart from being totally made up, 
-> probably shows what I've watched yesterday evening).
-> 
-> @@ ... @@
->  		return -ENOMEM;
->  	}
->  
-> +	ret = check_time_vortex();
-> +	if (ret < 0)
-> +		goto power_off_tardis;
-> +
-> 	matt_smith = alloc_regeneration();
-> 	if (math_smith->status != OK) {
-> 		ret = -E_NEEDS_FISH_FINGERS_AND_CUSTARD;
-> 
+References: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: gnurou@gmail.com, swarren@wwwdotorg.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 
 
-I don't get it.  Did we power on the tardis on the lines before?  That's
-all the state that you need to keep in your head is just the most
-recently allocated thing.
+--vA66WO2vHvL/CRSR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >From that code only you can't tell whether the jump label is the right one. If 
-> a single jump label is used with an unwinding code block that supports non-
-> allocated resources, you don't have to ask yourself any question.
-> 
+On Sun, Jul 03, 2016 at 08:18:57AM +0200, Christophe JAILLET wrote:
+> This is likely that checking 'gr3d->clk_secondary' instead of 'gr3d->clk'
+> is expected here.
+>=20
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-You absolutely do have to ask that question, you just can't answer it
-without jumping back and forth.  Doing everything at once is logically
-more complicated than doing them one thing at a time, and empirically
-just from looking at which code has the most bugs, then single exit
-labels are the most buggy.
+Applied, thanks. Sorry for not noticing this one earlier.
 
-regards,
-dan carpenter
+Thierry
 
+--vA66WO2vHvL/CRSR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJYIG0+AAoJEN0jrNd/PrOh1MwQAICV9rT3gdsMkI1DfQ63npKR
+UQyihlstcgVEghGon+KKdBCNXORvWtAQic8/F4Qr/hjoZCttWATGlWq2XL3vxaNz
+psNgE9PTFVFozDDthUrJoqKAaBvkK+osNn0+sqvnhNA6GYXT4KdYyBjT2MzO0BN2
+/aVJcsU0a+GKBgv1+2nwFI26fdqwYit2xCED0WSaj+z6a/XeamZZrg71FojVFIZ/
+cvHycEW67LbEDoOzw5c3dqE/IEECJ8zvtR3n7hTk4y8XctGUx6BDnFhP5pL/yM7K
+tdSJXCsmS+o2nvdYCtDwWH0ppJ/HEHiTvl0B8T5QdhU01btR5YRfxv0NVgLCKIAz
+AaTUYd7gmWVE4QFR7jmWFKxFCDUiOlmAV7k1YMrh1l5Oe17bdDWe0nTCoGTP6VEA
+N8Nlf9QG6drhksIDK0Dkc/I8YbL21GLP4fTBFSl6dfBCuZfFgFO2rkevHExavg3b
+HEXJVuZEdJ1CsIFlYO9vBXJHY56FDeubq2iSAOHIstW0ICkbLMeKvbRZKBKqIRtl
+0hmtb5qUm8vcsfLF7AztPetrnicKmMki4jNsXn8fXukGKLhB82G2JyZRe09sBZQr
+urLliYQpdb/HHZ7kcxpLSN2XE8all1Tebg1T7M35iSLa/64NJPJ5+g67DZLo2Ct1
+MDJYQDVXQToQ87kZ9u5m
+=4ctp
+-----END PGP SIGNATURE-----
+
+--vA66WO2vHvL/CRSR--
