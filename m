@@ -1,60 +1,57 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Date: Tue, 22 Nov 2016 15:49:01 +0000
-Subject: Re: [PATCH] drm/sun4i: Fix a return value in case of error
-Message-Id: <20161122154901.3bccughk6q6miu6w@lukather>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Mon, 07 Nov 2016 12:00:27 +0000
+Subject: Re: [PATCH] drm/tegra: dpaux: Fix error handling
+Message-Id: <20161107120027.GE28616@ulmo.ba.sec>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="3e655cg6hvdio2dt"
+Content-Type: multipart/mixed; boundary="so9zsI5B81VjUb/o"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161118181847.8436-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161118181847.8436-1-christophe.jaillet@wanadoo.fr>
+References: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, wens@csie.org, linux-arm-kernel@lists.infradead.org
+Cc: gnurou@gmail.com, swarren@wwwdotorg.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com
 
 
---3e655cg6hvdio2dt
+--so9zsI5B81VjUb/o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 18, 2016 at 07:18:47PM +0100, Christophe JAILLET wrote:
-> If 'sun4i_backend_drm_format_to_layer()' does not return 0, then 'val' is
-> left unmodified.
-> As it is not initialized either, the return value can be anything.
+On Fri, Oct 28, 2016 at 11:09:45AM +0200, Christophe JAILLET wrote:
+> 'devm_pinctrl_register()' returns an error pointer or a valid handle. So
+> checking for NULL here is pointless and can never trigger.
 >=20
-> It is likely that returning the error code was expected here.
+> Check the returned value with IS_ERR instead and propagate this value as
+> done in the other functions which call 'devm_pinctrl_register()'
 >=20
-> As the only caller of 'sun4i_backend_update_layer_formats()' does not che=
-ck
-> the return value, this fix is purely theorical.
+> Fixes: 0751bb5c44fe ("drm/tegra: dpaux: Add pinctrl support")
 >=20
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/gpu/drm/tegra/dpaux.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks!
-Maxime
+Applied, thanks.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Thierry
 
---3e655cg6hvdio2dt
+--so9zsI5B81VjUb/o
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJYNGjlAAoJEBx+YmzsjxAgvoEP/R6MpGtNLX59wtAY26djOih8
-3P0ZS+zNsDn/oNKNYwYJQhl+hDOj1D2bj5yoIK2hi0kdhKULiJgeo6cD/MxV0BYj
-TQ4xvbcrJQMeL4YNhCPuCsueNfU+W8mkcgV/wDx573rFo+5rAOsyltN2JCnP+ZPz
-gxLW8Xua1GjyvUwFSvqUZPEIn76xMMTWRrntB21BeX/9MjCzEZ8PdhCkquNigJPb
-v3VyZjQdQ/H3GNHQtdZdatjmtQWoqOgpUo2ULpQMG/HbTYhyqQkyxaB9RfTDVkLj
-pSxGACb8vWSImC7Oot0Oz4bkb7WAntUjUhWroRn43moLJGbcL2RcZLj31PAUJgCr
-jZ/q23LSwhhPDQ3uWiihV8kk6UGtMTQdgvWtXL4S/B5QE1c2DCauN0hZL1j1tdGU
-NufLL/KaYs4H71g7oRK3A5FOA/bUi3NU+WXuCQHVtnHOnG0+FhuGtf0G2mk+4H68
-g0pMxvgnDUFINp1gmMcyLxRlxiDUWXnXZaMDNXZVO5o6/kI2ipT6GWGmHx2UlTi+
-mkIOG7pY2mwwYSySnCdq02kGBnCiNma8DM7PE8hQdUSg7nOD/R+9eW1h+m93QpHI
-TJMXKw/r3gVyU8QJQgW204R1zdffzPyiF154h7U0/Sb3evWe4VtC1gxcmTm3bnSj
-0QD3LVas9VjNyGaJLuNA
-=HX80
+iQIcBAABCAAGBQJYIGzYAAoJEN0jrNd/PrOhI2UP/j4EmLh7ZP9DT1pWEL3CSTXI
+rAuy26S6W2+qoMMDfjcOspcVdbjZfN2jL+keiWY36cPuuEfsAWd8oeVVGYYypxzl
+syl0hgSnm3GgY8KpEnoZHTrylmJK4eiHrD+HrZfs7TOnl8OooF2/9jNDJQH/WVzQ
+twGe32xMxxTVowdgdDwFw5eevcziN+OUS1PanoVs35D0ndkPbc4ayiUveiDCoBZg
+NxRx/skn6hS4V2xkbAikM3BDxTY67KH2TrNly9tg9li0UHkx4J2pZag2Tik6yO5v
+5sWPHIYpqq/X5mdE2NuBRqanl1GXpXN9Qii0/aYfszdbYDHwKHSUm4Fjutk8+2si
+kwG5XhOxRSwmthwnbZ5k5C/iIt5J4fh7sS7n6myjKkBrqQuVAOwKrUTUyWKXUIvs
+hni2slNUJ1S+6Hr1mg4BmUJOffucf4m0nDJjm6VMG6PsuzRY2Ftjyrfby088rda3
+9Pm/QJPMKR5nNjZew9OlEyj/KsPgu9jf10c+2HYcYRQ+ytzrj0mTU+rAiN13uoEm
+HkzoHgoKCnb0+/YqEN1y80eAvddlFjgScwZ9WgTQn4/Nvea+CSLKJ9ltSRFfSMXI
+pwWLw2FBQQbcQfd+wSKFQciGbtygAuhraL4wKu+aOvm1Irx1Pjj46DW+GWpP6sik
+shCSNJVLzhw8Kb4g9rh/
+=sMnB
 -----END PGP SIGNATURE-----
 
---3e655cg6hvdio2dt--
+--so9zsI5B81VjUb/o--
