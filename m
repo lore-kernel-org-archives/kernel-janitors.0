@@ -1,46 +1,53 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Date: Mon, 14 Nov 2016 00:14:07 +0000
-Subject: [PATCH 3.2 036/152] MIPS: RM7000: Double locking bug in rm7k_tc_disable()
-Message-Id: <lsq.1479082447.908913967@decadent.org.uk>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Date: Tue, 08 Nov 2016 20:36:12 +0000
+Subject: Re: [PATCH] nfsd: constify reply_cache_stats_operations structure
+Message-Id: <20161108203612.GD26589@fieldses.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1479082446.271293126@decadent.org.uk>
+References: <1472416615-24079-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1472468267.2597.0.camel@poochiereds.net>
+In-Reply-To: <1472468267.2597.0.camel@poochiereds.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jeff Layton <jlayton@poochiereds.net>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-3.2.84-rc1 review patch.  If anyone has any objections, please let me know.
+On Mon, Aug 29, 2016 at 06:57:47AM -0400, Jeff Layton wrote:
+> On Sun, 2016-08-28 at 22:36 +0200, Julia Lawall wrote:
+> > reply_cache_stats_operations, of type struct file_operations, is
+> > never
+> > modified, so declare it as const.
+> > 
+> > Done with the help of Coccinelle.
+> > 
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> > 
+> > ---
+> >  fs/nfsd/nfsctl.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> > index 65ad016..3bc9693 100644
+> > --- a/fs/nfsd/nfsctl.c
+> > +++ b/fs/nfsd/nfsctl.c
+> > @@ -217,7 +217,7 @@ static const struct file_operations
+> > pool_stats_operations = {
+> >  	.release	= nfsd_pool_stats_release,
+> >  };
+> >  
+> > -static struct file_operations reply_cache_stats_operations = {
+> > +static const struct file_operations reply_cache_stats_operations = {
+> >  	.open		= nfsd_reply_cache_stats_open,
+> >  	.read		= seq_read,
+> >  	.llseek		= seq_lseek,
+> > 
+> 
+> I'm pretty sure Bruce will pick this up for v4.9:
 
-------------------
+Except, for some reason it's been languishing in my inbox.  Apologies,
+applying....
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+--b.
 
-commit 58a7e1c140f3ad61646bc0cd9a1f6a9cafc0b225 upstream.
-
-We obviously intended to enable IRQs again at the end.
-
-Fixes: 745aef5df1e2 ('MIPS: RM7000: Add support for tertiary cache')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/13815/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/mips/mm/sc-rm7k.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/mips/mm/sc-rm7k.c
-+++ b/arch/mips/mm/sc-rm7k.c
-@@ -162,7 +162,7 @@ static void rm7k_tc_disable(void)
- 	local_irq_save(flags);
- 	blast_rm7k_tcache();
- 	clear_c0_config(RM7K_CONF_TE);
--	local_irq_save(flags);
-+	local_irq_restore(flags);
- }
- 
- static void rm7k_sc_disable(void)
-
+> 
+> Reviewed-by: Jeff Layton <jlayton@poochiereds.net>
