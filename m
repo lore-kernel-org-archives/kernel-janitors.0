@@ -1,56 +1,38 @@
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Date: Tue, 15 Nov 2016 14:24:45 +0000
-Subject: Re: [bug report] amd-xgbe: Add PCI device support
-Message-Id: <6c58f8bb-2c53-d2d6-448f-a359e335fd66@amd.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 10 Nov 2016 21:10:56 +0000
+Subject: [PATCH] drm/rockchip: return ERR_PTR instead of NULL
+Message-Id: <1478812256-26189-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161115111102.GA23305@mwanda>
-In-Reply-To: <20161115111102.GA23305@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mark Yao <mark.yao@rock-chips.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 11/15/2016 5:11 AM, Dan Carpenter wrote:
-> Hello Lendacky, Thomas,
-> 
-> The patch 47f164deab22: "amd-xgbe: Add PCI device support" from Nov
-> 10, 2016, leads to the following static checker warning:
-> 
-> 	drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c:360 xprop_reg_value_write()
-> 	error: uninitialized symbol 'value'.
-> 
-> drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c
->    348  static ssize_t xprop_reg_value_write(struct file *filp,
->    349                                       const char __user *buffer,
->    350                                       size_t count, loff_t *ppos)
->    351  {
->    352          struct xgbe_prv_data *pdata = filp->private_data;
->    353          unsigned int value;
->    354          ssize_t len;
->    355  
->    356          len = xgbe_common_write(buffer, count, ppos, &value);
-> 
-> Assume "ppos" is non-zero then we are using uninitialized data.  I
-> suspect that xgbe_common_write() is buggy.
+rockchip_drm_framebuffer_init is only used in one case, in
+rockchip_drm_fbdev.c, where its return value is tested using IS_ERR.  To
+enable propagating the reason for the error, change the definition so that
+it returns an ERR_PTR value.
 
-Yes, looks like this has been present for a while. I'll submit a patch
-to update both xgbe_common_read()/write() to return an error when *ppos
-!= 0.
+Problem found with the help of Coccinelle.
 
-Thanks,
-Tom
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> 
->    357          if (len < 0)
->    358                  return len;
->    359  
->    360          XP_IOWRITE(pdata, pdata->debugfs_xprop_reg, value);
->    361  
->    362          return len;
->    363  }
-> 
-> 
-> 
-> regards,
-> dan carpenter
-> 
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+index 0f6eda0..01e11bf 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+@@ -213,7 +213,7 @@ struct drm_framebuffer *
+ 
+ 	rockchip_fb = rockchip_fb_alloc(dev, mode_cmd, &obj, 1);
+ 	if (IS_ERR(rockchip_fb))
+-		return NULL;
++		return ERR_CAST(rockchip_fb);
+ 
+ 	return &rockchip_fb->fb;
+ }
+
