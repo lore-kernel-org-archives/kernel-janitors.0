@@ -1,35 +1,34 @@
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Wed, 09 Nov 2016 22:43:34 +0000
-Subject: Re: [bug report] genetlink: fix error return code in genl_register_family()
-Message-Id: <CAM_iQpXySa6i6_Gtue1gbaHGZq5DG6SMvdO=ufGousUDKCGocw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Nov 2016 12:50:51 +0000
+Subject: [patch] staging/lustre/osc: indent an if statement
+Message-Id: <20161110125050.GA18577@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161109095613.GA24471@mwanda>
-In-Reply-To: <20161109095613.GA24471@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: weiyongjun1@huawei.com, kernel-janitors@vger.kernel.org, Linux Kernel Network Developers <netdev@vger.kernel.org>
+To: lustre-devel@lists.lustre.org
 
-Cc'ing netdev
+We accidentally removed a tab here.  Let's add it back, and some curly
+braces as well since this is a muti-line indent.
 
-On Wed, Nov 9, 2016 at 1:56 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Hello Wei Yongjun,
->
-> The patch 22ca904ad70a: "genetlink: fix error return code in
-> genl_register_family()" from Nov 1, 2016, leads to the following
-> static checker warning:
->
->         net/netlink/genetlink.c:365 genl_register_family()
->         warn: unsigned 'family->id' is never less than zero.
->
-> net/netlink/genetlink.c
->    362
->    363          family->id = idr_alloc(&genl_fam_idr, family,
->    364                                 start, end + 1, GFP_KERNEL);
->    365          if (family->id < 0) {
->                     ^^^^^^^^^^^^^^
-> Doesn't work for unsigned int.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-family->id should be signed int.
+diff --git a/drivers/staging/lustre/lustre/osc/osc_lock.c b/drivers/staging/lustre/lustre/osc/osc_lock.c
+index e337e87..bfc8d38 100644
+--- a/drivers/staging/lustre/lustre/osc/osc_lock.c
++++ b/drivers/staging/lustre/lustre/osc/osc_lock.c
+@@ -607,9 +607,11 @@ static int osc_ldlm_glimpse_ast(struct ldlm_lock *dlmlock, void *data)
+ 			lvb = req_capsule_server_get(cap, &RMF_DLM_LVB);
+ 			result = cl_object_glimpse(env, obj, lvb);
+ 		}
+-		if (!exp_connect_lvb_type(req->rq_export))
+-		req_capsule_shrink(&req->rq_pill, &RMF_DLM_LVB,
+-				   sizeof(struct ost_lvb_v1), RCL_SERVER);
++		if (!exp_connect_lvb_type(req->rq_export)) {
++			req_capsule_shrink(&req->rq_pill, &RMF_DLM_LVB,
++					   sizeof(struct ost_lvb_v1),
++					   RCL_SERVER);
++		}
+ 		cl_object_put(env, obj);
+ 	} else {
+ 		/*
