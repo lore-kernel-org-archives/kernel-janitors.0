@@ -1,104 +1,41 @@
-From: Daniel Hellstrom <daniel@gaisler.com>
-Date: Fri, 25 Nov 2016 11:33:47 +0000
-Subject: Re: [patch] sparc: leon: Fix a retry loop in leon_init_timers()
-Message-Id: <eb1256e4-6377-6cf5-b4c5-9019ffe96f8a@gaisler.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Nov 2016 19:39:57 +0000
+Subject: [patch] iio: cros_ec_sensors_core: signedness bug in cros_ec_sensors_read_lpc()
+Message-Id: <20161110193957.GA18347@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161125112554.GG5938@mwanda>
-In-Reply-To: <20161125112554.GG5938@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Gwendal Grignou <gwendal@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-It looks good.
+"status" is a u8 so checking for negatives doesn't work.  We can just
+use "ret" here instead.
 
-Thanks!
-/Daniel
+Fixes: 974e6f02e27e ("iio: cros_ec_sensors_core: Add common functions for the ChromeOS EC Sensor Hub.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-On 2016-11-25 12:25, Dan Carpenter wrote:
-> The original code causes a static checker warning because it has a
-> continue inside a do { } while (0); loop.  In that context, a continue
-> and a break are equivalent.  The intent was to go back to the start of
-> the loop so the continue was a bug.
->
-> I've added a retry label at the start and changed the continue to a goto
-> retry.  Then I removed the do { } while (0) loop and pulled the code in
-> one indent level.
->
-> Fixes: 2791c1a43900 ("SPARC/LEON: added support for selecting Timer Core and Timer within core")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Not tested.
->
-> diff --git a/arch/sparc/kernel/leon_kernel.c b/arch/sparc/kernel/leon_kernel.c
-> index 33cd171..afcdd5e 100644
-> --- a/arch/sparc/kernel/leon_kernel.c
-> +++ b/arch/sparc/kernel/leon_kernel.c
-> @@ -349,37 +349,37 @@ void __init leon_init_timers(void)
->   
->   	/* Find GPTIMER Timer Registers base address otherwise bail out. */
->   	nnp = rootnp;
-> -	do {
-> -		np = of_find_node_by_name(nnp, "GAISLER_GPTIMER");
-> -		if (!np) {
-> -			np = of_find_node_by_name(nnp, "01_011");
-> -			if (!np)
-> -				goto bad;
-> -		}
->   
-> -		ampopts = 0;
-> -		pp = of_find_property(np, "ampopts", &len);
-> -		if (pp) {
-> -			ampopts = *(int *)pp->value;
-> -			if (ampopts = 0) {
-> -				/* Skip this instance, resource already
-> -				 * allocated by other OS */
-> -				nnp = np;
-> -				continue;
-> -			}
-> +retry:
-> +	np = of_find_node_by_name(nnp, "GAISLER_GPTIMER");
-> +	if (!np) {
-> +		np = of_find_node_by_name(nnp, "01_011");
-> +		if (!np)
-> +			goto bad;
-> +	}
-> +
-> +	ampopts = 0;
-> +	pp = of_find_property(np, "ampopts", &len);
-> +	if (pp) {
-> +		ampopts = *(int *)pp->value;
-> +		if (ampopts = 0) {
-> +			/* Skip this instance, resource already
-> +			 * allocated by other OS */
-> +			nnp = np;
-> +			goto retry;
->   		}
-> +	}
-> +
-> +	/* Select Timer-Instance on Timer Core. Default is zero */
-> +	leon3_gptimer_idx = ampopts & 0x7;
->   
-> -		/* Select Timer-Instance on Timer Core. Default is zero */
-> -		leon3_gptimer_idx = ampopts & 0x7;
-> -
-> -		pp = of_find_property(np, "reg", &len);
-> -		if (pp)
-> -			leon3_gptimer_regs = *(struct leon3_gptimer_regs_map **)
-> -						pp->value;
-> -		pp = of_find_property(np, "interrupts", &len);
-> -		if (pp)
-> -			leon3_gptimer_irq = *(unsigned int *)pp->value;
-> -	} while (0);
-> +	pp = of_find_property(np, "reg", &len);
-> +	if (pp)
-> +		leon3_gptimer_regs = *(struct leon3_gptimer_regs_map **)
-> +					pp->value;
-> +	pp = of_find_property(np, "interrupts", &len);
-> +	if (pp)
-> +		leon3_gptimer_irq = *(unsigned int *)pp->value;
->   
->   	if (!(leon3_gptimer_regs && leon3_irqctrl_regs && leon3_gptimer_irq))
->   		goto bad;
-
+diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+index a3be799..416cae5 100644
+--- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
++++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+@@ -291,15 +291,15 @@ int cros_ec_sensors_read_lpc(struct iio_dev *indio_dev,
+ 			return -EIO;
+ 
+ 		/* Read status byte until EC is not busy. */
+-		status = cros_ec_sensors_read_until_not_busy(st);
+-		if (status < 0)
+-			return status;
++		ret = cros_ec_sensors_read_until_not_busy(st);
++		if (ret < 0)
++			return ret;
+ 
+ 		/*
+ 		 * Store the current sample id so that we can compare to the
+ 		 * sample id after reading the data.
+ 		 */
+-		samp_id = status & EC_MEMMAP_ACC_STATUS_SAMPLE_ID_MASK;
++		samp_id = ret & EC_MEMMAP_ACC_STATUS_SAMPLE_ID_MASK;
+ 
+ 		/* Read all EC data, format it, and store it into data. */
+ 		ret = cros_ec_sensors_read_data_unsafe(indio_dev, scan_mask,
