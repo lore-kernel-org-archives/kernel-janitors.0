@@ -1,37 +1,31 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Wed, 16 Nov 2016 15:36:31 +0000
-Subject: Re: [patch] tpm: uninitialized variable in read_log_of()
-Message-Id: <20161116153631.vgsoz4o2pwlphfmo@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Nov 2016 19:30:18 +0000
+Subject: [patch] iio:adc: ad7766: testing the wrong variable in probe
+Message-Id: <20161110193018.GB32533@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161116141221.GA28875@mwanda>
-In-Reply-To: <20161116141221.GA28875@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Nayna Jain <nayna@linux.vnet.ibm.com>, Marcel Selhorst <tpmdd@selhorst.net>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Nov 16, 2016 at 05:12:21PM +0300, Dan Carpenter wrote:
-> "np" is supposed to be set to NULL at the start.
-> 
-> Fixes: 4a45d9669ac1 ("tpm: replace of_find_node_by_name() with dev of_node propert")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We should be testing "ret" here.
 
-Colid King submitted a patch to fix this a couple of days ago so
-applied that. Anyway, thank you for noting this.
+Fixes: aa16c6bd0e09 ("iio:adc: Add support for AD7766/AD7767")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/char/tpm/tpm_of.c b/drivers/char/tpm/tpm_of.c
-> index 3af829f..904ed4a 100644
-> --- a/drivers/char/tpm/tpm_of.c
-> +++ b/drivers/char/tpm/tpm_of.c
-> @@ -23,7 +23,7 @@
->  
->  int read_log_of(struct tpm_chip *chip)
->  {
-> -	struct device_node *np;
-> +	struct device_node *np = NULL;
->  	const u32 *sizep;
->  	const u64 *basep;
->  	struct tpm_bios_log *log;
-
-/Jarkko
+diff --git a/drivers/iio/adc/ad7766.c b/drivers/iio/adc/ad7766.c
+index d906686..75cca42 100644
+--- a/drivers/iio/adc/ad7766.c
++++ b/drivers/iio/adc/ad7766.c
+@@ -239,8 +239,8 @@ static int ad7766_probe(struct spi_device *spi)
+ 
+ 	ret = devm_regulator_bulk_get(&spi->dev, ARRAY_SIZE(ad7766->reg),
+ 		ad7766->reg);
+-	if (IS_ERR(ad7766->reg))
+-		return PTR_ERR(ad7766->reg);
++	if (ret)
++		return ret;
+ 
+ 	ad7766->pd_gpio = devm_gpiod_get_optional(&spi->dev, "powerdown",
+ 		GPIOD_OUT_HIGH);
