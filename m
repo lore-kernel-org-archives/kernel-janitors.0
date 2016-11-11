@@ -1,24 +1,35 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Wed, 30 Nov 2016 20:18:03 +0000
-Subject: Re: [patch] scsi: dpt_i2o: double free on error path
-Message-Id: <7d0c3dba-bb98-4df0-8559-fc6d09000735@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Nov 2016 12:49:41 +0000
+Subject: [bug report] vxlan: keep flags and vni in network byte order
+Message-Id: <20161111124941.GA3991@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161130193648.GA24818@mwanda>
-In-Reply-To: <20161130193648.GA24818@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Adaptec OEM Raid Solutions <aacraid@adaptec.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Hello Jiri Benc,
 
+The patch 54bfd872bf16: "vxlan: keep flags and vni in network byte
+order" from Feb 16, 2016, leads to the following static checker
+warning:
 
-On 11/30/2016 08:36 PM, Dan Carpenter wrote:
-> We recently introduced a kfree() in the caller for this function.
-> That's where, logically, you would think the kfree() should be.
-> Unfortunately the code was just ugly and not buggy so the static
-> checker warning was a false postive and introduced a double free.
->
-oh, yes! Sorry I missed that.
+	./include/net/vxlan.h:340 vxlan_vni()
+	warn: potential shift truncation.  '0xffffff00 << 8'
 
-Quentin
+include/net/vxlan.h
+   335  static inline __be32 vxlan_vni(__be32 vni_field)
+   336  {
+   337  #if defined(__BIG_ENDIAN)
+   338          return (__force __be32)((__force u32)vni_field >> 8);
+   339  #else
+   340          return (__force __be32)((__force u32)(vni_field & VXLAN_VNI_MASK) << 8);
+
+Are you sure this is correct?  VXLAN_VNI_MASK already has an << 8 shift
+so this feels like maybe it is a double shift.
+
+   341  #endif
+   342  }
+
+regards,
+dan carpenter
