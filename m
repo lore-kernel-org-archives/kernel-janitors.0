@@ -1,63 +1,40 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Tue, 22 Nov 2016 17:21:24 +0000
-Subject: Re: [PATCH 1/2] uvc_v4l2: Use memdup_user() rather than duplicating its implementation
-Message-Id: <3466616.R2EqhFMbZP@avalon>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 11 Nov 2016 21:49:05 +0000
+Subject: [PATCH] clk: cdce925: Fix limit check
+Message-Id: <20161111214905.29481-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <566ABCD9.1060404@users.sourceforge.net> <95aa5fcd-8610-debc-70b0-30b2ed3302d2@users.sourceforge.net> <4181a4b7-3527-4ddf-4c7f-42fcd47977ca@users.sourceforge.net>
-In-Reply-To: <4181a4b7-3527-4ddf-4c7f-42fcd47977ca@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Markus,
+It is likely that instead of '1>64', 'q>64' was expected.
 
-Thank you for the patch.
+Moreover, according to datasheet,
+   http://www.ti.com/lit/ds/symlink/cdce925.pdf
+   SCAS847I - JULY 2007 - REVISED OCTOBER 2016
+PLL settings limits are: 16 <= q <= 63
+So change the upper limit check from 64 to 63.
 
-On Friday 19 Aug 2016 11:23:18 SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 19 Aug 2016 10:50:05 +0200
-> 
-> Reuse existing functionality from memdup_user() instead of keeping
-> duplicate source code.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clk/clk-cdce925.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
-> ---
->  drivers/media/usb/uvc/uvc_v4l2.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c
-> b/drivers/media/usb/uvc/uvc_v4l2.c index 05eed4b..a7e12fd 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -70,14 +70,9 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain
-> *chain, }
-> 
->  		size = xmap->menu_count * sizeof(*map->menu_info);
-> -		map->menu_info = kmalloc(size, GFP_KERNEL);
-> -		if (map->menu_info = NULL) {
-> -			ret = -ENOMEM;
-> -			goto done;
-> -		}
-> -
-> -		if (copy_from_user(map->menu_info, xmap->menu_info, size)) {
-> -			ret = -EFAULT;
-> +		map->menu_info = memdup_user(xmap->menu_info, size);
-> +		if (IS_ERR(map->menu_info)) {
-> +			ret = PTR_ERR(map->menu_info);
->  			goto done;
->  		}
-
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index b8459c14a1b7..f793b2d9238c 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -216,7 +216,7 @@ static int cdce925_pll_prepare(struct clk_hw *hw)
+ 		nn = n * BIT(p);
+ 		/* q = int(nn/m) */
+ 		q = nn / m;
+-		if ((q < 16) || (1 > 64)) {
++		if ((q < 16) || (q > 63)) {
+ 			pr_debug("%s invalid q=%d\n", __func__, q);
+ 			return -EINVAL;
+ 		}
 -- 
-Regards,
-
-Laurent Pinchart
+2.9.3
 
