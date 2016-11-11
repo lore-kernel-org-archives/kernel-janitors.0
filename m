@@ -1,7 +1,7 @@
 From: Jiri Benc <jbenc@redhat.com>
-Date: Fri, 11 Nov 2016 13:05:09 +0000
+Date: Fri, 11 Nov 2016 13:12:03 +0000
 Subject: Re: [bug report] vxlan: keep flags and vni in network byte order
-Message-Id: <20161111140509.288e2fd4@griffin>
+Message-Id: <20161111141203.1fbce460@griffin>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161111124941.GA3991@mwanda>
 In-Reply-To: <20161111124941.GA3991@mwanda>
@@ -10,32 +10,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 11 Nov 2016 15:49:41 +0300, Dan Carpenter wrote:
-> Hello Jiri Benc,
+On Fri, 11 Nov 2016 14:05:09 +0100, Jiri Benc wrote:
+> The static checker clearly can't understand endian conversion macros.
+> VXLAN_VNI_MASK is:
 > 
-> The patch 54bfd872bf16: "vxlan: keep flags and vni in network byte
-> order" from Feb 16, 2016, leads to the following static checker
-> warning:
+> cpu_to_be32(VXLAN_VID_MASK << 8)
 > 
-> 	./include/net/vxlan.h:340 vxlan_vni()
-> 	warn: potential shift truncation.  '0xffffff00 << 8'
-> 
-> include/net/vxlan.h
->    335  static inline __be32 vxlan_vni(__be32 vni_field)
->    336  {
->    337  #if defined(__BIG_ENDIAN)
->    338          return (__force __be32)((__force u32)vni_field >> 8);
->    339  #else
->    340          return (__force __be32)((__force u32)(vni_field & VXLAN_VNI_MASK) << 8);
-> 
-> Are you sure this is correct?  VXLAN_VNI_MASK already has an << 8 shift
-> so this feels like maybe it is a double shift.
+> Thus on little endian, it becomes 0x00ffffff.
 
-The static checker clearly can't understand endian conversion macros.
-VXLAN_VNI_MASK is:
-
-cpu_to_be32(VXLAN_VID_MASK << 8)
-
-Thus on little endian, it becomes 0x00ffffff.
+Btw, until the unspecified static checker you used is not fixed to
+resolve such macros correctly, it can't be really used to check the
+kernel source, yet alone to generate bug reports. It will trip over
+false positive in gazillion places.
 
  Jiri
