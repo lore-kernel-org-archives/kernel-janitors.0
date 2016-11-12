@@ -1,28 +1,48 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 22 Nov 2016 22:03:16 +0000
-Subject: Re: [PATCH] scsi: pmcraid: Add missing resource releases
-Message-Id: <yq1mvgrw4t7.fsf@sermon.lab.mkp.net>
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 12 Nov 2016 14:34:27 +0000
+Subject: Spurious code in commit 1bf40ada6290 ("amd-xgbe: Add support for clause 37 auto-negotiation"
+Message-Id: <80c6a7b3-4a03-e087-3638-7048adebbda8@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161119174318.20394-1-lambert.quentin@gmail.com>
-In-Reply-To: <20161119174318.20394-1-lambert.quentin@gmail.com> (Quentin
-        Lambert's message of "Sat, 19 Nov 2016 18:43:18 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: thomas.lendacky@amd.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Kernel Janitors <kernel-janitors@vger.kernel.org>
 
->>>>> "Quentin" = Quentin Lambert <lambert.quentin@gmail.com> writes:
+Hi,
 
-Quentin> Most error branches following the call to pmcraid_get_free_cmd
-Quentin> contain a call to pmcraid_return_cmd. This patch add these
-Quentin> calls where they are missing.
+in commit 1bf40ada6290 ("amd-xgbe: Add support for clause 37 
+auto-negotiation"), we can find:
 
-Quentin> Moreover, most error branches following the call to
-Quentin> class_create contain a call to class_destroy. This patch add
-Quentin> these calls where they are missing.
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-common.h 
+b/drivers/net/ethernet/amd/xgbe/xgbe-common.h
+index 695e982..8bcf4ef 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-common.h
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-common.h
+    [...]
+    #define XGBE_AN_CL37_PCS_MODE_MASK    0x06
+    #define XGBE_AN_CL37_PCS_MODE_BASEX    0x00
+    #define XGBE_AN_CL37_PCS_MODE_SGMII    0x04
+    #define XGBE_AN_CL37_TX_CONFIG_MASK    0x08
+    [...]
 
-Applied to 4.10/scsi-queue.
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c 
+b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
+index d5bfbe4..723eb90 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
+    [...]
+    /* Set up the Control register */
+    reg = XMDIO_READ(pdata, MDIO_MMD_VEND2, MDIO_VEND2_AN_CTRL);
+    reg &= XGBE_AN_CL37_TX_CONFIG_MASK;
+    reg &= XGBE_AN_CL37_PCS_MODE_MASK;
+    [...]
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+the "reg &=" statements look spurious. The 2 constants being 0x06 and 
+0x08, the current code is equivalent to "reg = 0"
+
+It is likely that "reg |=" (or "reg &= ~") was expected here.
+
+Best regards,
+CJ
+
