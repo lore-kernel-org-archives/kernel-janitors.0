@@ -1,37 +1,44 @@
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-Date: Sat, 26 Nov 2016 06:22:49 +0000
-Subject: Re: [patch] staging: lustre: lnet: memory corruption in selftest
-Message-Id: <D14C4EE2-8EB5-472C-B3EE-2486C0718F1C@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 Nov 2016 14:26:44 +0000
+Subject: [patch] spi: atmel: fix indenting in atmel_spi_gpio_cs()
+Message-Id: <20161114142644.GA6179@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161124110934.GG17225@mwanda>
-In-Reply-To: <20161124110934.GG17225@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Nov 24, 2016, at 04:10, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> We want sizeof(struct lstcon_node) but instead we're getting the sizeof
-> a pointer.
-> 
-> Fixes: 8d78f0f2ba76 ("staging: lustre: lnet: cleanup some of the > 80 line issues")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+These lines were indented one extra tab.
 
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> diff --git a/drivers/staging/lustre/lnet/selftest/console.c b/drivers/staging/lustre/lnet/selftest/console.c
-> index f2d11fa..f750b9c 100644
-> --- a/drivers/staging/lustre/lnet/selftest/console.c
-> +++ b/drivers/staging/lustre/lnet/selftest/console.c
-> @@ -86,7 +86,7 @@ lstcon_node_find(lnet_process_id_t id, struct lstcon_node **ndpp, int create)
-> 	if (!create)
-> 		return -ENOENT;
-> 
-> -	LIBCFS_ALLOC(*ndpp, sizeof(*ndpp) + sizeof(*ndl));
-> +	LIBCFS_ALLOC(*ndpp, sizeof(**ndpp) + sizeof(*ndl));
-> 	if (!*ndpp)
-> 		return -ENOMEM;
-> 
-
+diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
+index d3affa6..b293149 100644
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -1510,15 +1510,15 @@ static int atmel_spi_gpio_cs(struct platform_device *pdev)
+ 		int cs_gpio = of_get_named_gpio(pdev->dev.of_node,
+ 						"cs-gpios", i);
+ 
+-			if (cs_gpio = -EPROBE_DEFER)
+-				return cs_gpio;
+-
+-			if (gpio_is_valid(cs_gpio)) {
+-				ret = devm_gpio_request(&pdev->dev, cs_gpio,
+-							dev_name(&pdev->dev));
+-				if (ret)
+-					return ret;
+-			}
++		if (cs_gpio = -EPROBE_DEFER)
++			return cs_gpio;
++
++		if (gpio_is_valid(cs_gpio)) {
++			ret = devm_gpio_request(&pdev->dev, cs_gpio,
++						dev_name(&pdev->dev));
++			if (ret)
++				return ret;
++		}
+ 	}
+ 
+ 	return 0;
