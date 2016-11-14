@@ -1,28 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Nov 2016 11:34:07 +0000
-Subject: [patch] swim3: remove some dead code
-Message-Id: <20161124112817.GO17225@mwanda>
+From: Ben Hutchings <ben@decadent.org.uk>
+Date: Mon, 14 Nov 2016 00:14:20 +0000
+Subject: [PATCH 3.16 100/346] MIPS: RM7000: Double locking bug in rm7k_tc_disable()
+Message-Id: <lsq.1479082460.145186447@decadent.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <lsq.1479082458.755945576@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-block@vger.kernel.org, Jens Axboe <axboe@fb.com>
-Cc: kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: akpm@linux-foundation.org, kernel-janitors@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Dan Carpenter <dan.carpenter@oracle.com>
 
-The goto is correct.  "rc" is already set to -EBUSY so there is no need
-to do anything with that.
+3.16.39-rc1 review patch.  If anyone has any objections, please let me know.
 
+------------------
+
+From: Dan Carpenter <dan.carpenter@oracle.com>
+
+commit 58a7e1c140f3ad61646bc0cd9a1f6a9cafc0b225 upstream.
+
+We obviously intended to enable IRQs again at the end.
+
+Fixes: 745aef5df1e2 ('MIPS: RM7000: Add support for tertiary cache')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/13815/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/mips/mm/sc-rm7k.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
-index c264f2d..59b4a41 100644
---- a/drivers/block/swim3.c
-+++ b/drivers/block/swim3.c
-@@ -1179,7 +1179,6 @@ static int swim3_add_device(struct macio_dev *mdev, int index)
- 		swim3_err("%s", "Couldn't request interrupt\n");
- 		pmac_call_feature(PMAC_FTR_SWIM3_ENABLE, swim, 0, 0);
- 		goto out_unmap;
--		return -EBUSY;
- 	}
+--- a/arch/mips/mm/sc-rm7k.c
++++ b/arch/mips/mm/sc-rm7k.c
+@@ -161,7 +161,7 @@ static void rm7k_tc_disable(void)
+ 	local_irq_save(flags);
+ 	blast_rm7k_tcache();
+ 	clear_c0_config(RM7K_CONF_TE);
+-	local_irq_save(flags);
++	local_irq_restore(flags);
+ }
  
- 	init_timer(&fs->timeout);
+ static void rm7k_sc_disable(void)
+
