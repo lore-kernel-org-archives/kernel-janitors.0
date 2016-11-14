@@ -1,49 +1,58 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Fri, 25 Nov 2016 06:43:48 +0000
-Subject: Re: [patch] drm/hisilicon/hibmc: Checking for NULL instead of IS_ERR()
-Message-Id: <20161125064348.iqvmc5d3dwtom4aj@phenom.ffwll.local>
+From: Hans Verkuil <hansverk@cisco.com>
+Date: Mon, 14 Nov 2016 12:24:12 +0000
+Subject: Re: [patch] [media] Input: synaptics-rmi4 - unlock on error
+Message-Id: <0b9ecb27-505d-71be-35f7-ab262428ec34@cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161124113545.GP17225@mwanda>
-In-Reply-To: <20161124113545.GP17225@mwanda>
+References: <20161014171427.GA21917@mwanda>
+In-Reply-To: <20161014171427.GA21917@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>, Rongrong Zou <zourongrong@gmail.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Chen Feng <puck.chen@hisilicon.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick@shmanahar.org>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 24, 2016 at 02:35:45PM +0300, Dan Carpenter wrote:
-> The drm_dev_alloc() function returns error pointers.  It never returns
-> NULLs.
-> 
-> Fixes: 5e0df3a08f3d ("drm/hisilicon/hibmc: Add hisilicon hibmc drm master driver")
+On 10/14/2016 07:14 PM, Dan Carpenter wrote:
+> We should unlock before returning on this error path.
+>
+> Fixes: 3a762dbd5347 ('[media] Input: synaptics-rmi4 - add support for F54 diagnostics')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to drm-misc, thanks.
--Daniel
+Dmitry, will you pick this up? It probably should to in for 4.9.
 
-> 
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> index 73ba8b0..d94e349 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> @@ -377,9 +377,9 @@ static int hibmc_pci_probe(struct pci_dev *pdev,
->  	int ret;
->  
->  	dev = drm_dev_alloc(&hibmc_driver, &pdev->dev);
-> -	if (!dev) {
-> +	if (IS_ERR(dev)) {
->  		DRM_ERROR("failed to allocate drm_device\n");
-> -		return -ENOMEM;
-> +		return PTR_ERR(dev);
->  	}
->  
->  	dev->pdev = pdev;
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Even though it was prefixed with [media] it wasn't send to linux-media, so it never
+ended up in our patchwork.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+If you don't want to process this patch, then let me know and I'll take it.
+
+Regards,
+
+	Hans
+
+>
+> diff --git a/drivers/input/rmi4/rmi_f54.c b/drivers/input/rmi4/rmi_f54.c
+> index cf805b9..2e934ae 100644
+> --- a/drivers/input/rmi4/rmi_f54.c
+> +++ b/drivers/input/rmi4/rmi_f54.c
+> @@ -200,7 +200,7 @@ static int rmi_f54_request_report(struct rmi_function *fn, u8 report_type)
+>
+>  	error = rmi_write(rmi_dev, fn->fd.command_base_addr, F54_GET_REPORT);
+>  	if (error < 0)
+> -		return error;
+> +		goto unlock;
+>
+>  	init_completion(&f54->cmd_done);
+>
+> @@ -209,9 +209,10 @@ static int rmi_f54_request_report(struct rmi_function *fn, u8 report_type)
+>
+>  	queue_delayed_work(f54->workqueue, &f54->work, 0);
+>
+> +unlock:
+>  	mutex_unlock(&f54->data_mutex);
+>
+> -	return 0;
+> +	return error;
+>  }
+>
+>  static size_t rmi_f54_get_report_size(struct f54_data *f54)
+>
+
