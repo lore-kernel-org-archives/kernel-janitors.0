@@ -1,16 +1,16 @@
 From: Ben Hutchings <ben@decadent.org.uk>
-Date: Mon, 14 Nov 2016 00:14:20 +0000
-Subject: [PATCH 3.16 100/346] MIPS: RM7000: Double locking bug in rm7k_tc_disable()
-Message-Id: <lsq.1479082460.145186447@decadent.org.uk>
+Date: Mon, 14 Nov 2016 00:14:07 +0000
+Subject: [PATCH 3.2 036/152] MIPS: RM7000: Double locking bug in rm7k_tc_disable()
+Message-Id: <lsq.1479082447.908913967@decadent.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <lsq.1479082458.755945576@decadent.org.uk>
+In-Reply-To: <lsq.1479082446.271293126@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: akpm@linux-foundation.org, kernel-janitors@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: akpm@linux-foundation.org, kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>, Dan Carpenter <dan.carpenter@oracle.com>
 
-3.16.39-rc1 review patch.  If anyone has any objections, please let me know.
+3.2.84-rc1 review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -34,7 +34,7 @@ Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 
 --- a/arch/mips/mm/sc-rm7k.c
 +++ b/arch/mips/mm/sc-rm7k.c
-@@ -161,7 +161,7 @@ static void rm7k_tc_disable(void)
+@@ -162,7 +162,7 @@ static void rm7k_tc_disable(void)
  	local_irq_save(flags);
  	blast_rm7k_tcache();
  	clear_c0_config(RM7K_CONF_TE);
