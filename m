@@ -1,42 +1,40 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Nov 2016 11:18:52 +0000
-Subject: [patch] phy: rockchip-inno-usb2: remove an unneeded check
-Message-Id: <20161125111852.GF5938@mwanda>
+Date: Mon, 14 Nov 2016 14:12:41 +0000
+Subject: [bug report] bnx2x: Separate VF and PF logic
+Message-Id: <20161114141241.GA32626@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <81fc5933-7bee-2d83-f8ef-a951355c4248@rock-chips.com>
-In-Reply-To: <81fc5933-7bee-2d83-f8ef-a951355c4248-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, wlf <wulf-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+To: kernel-janitors@vger.kernel.org
 
-"rphy->edev" can't be an error pointer so we can remove the check and
-pull the code in an indent level.
+Hello Ariel Elior,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch ad5afc89365e: "bnx2x: Separate VF and PF logic" from Jan 1,
+2013, leads to the following static checker warning:
 
-diff --git a/drivers/phy/phy-rockchip-inno-usb2.c b/drivers/phy/phy-rockchip-inno-usb2.c
-index 2f99ec9..7494210 100644
---- a/drivers/phy/phy-rockchip-inno-usb2.c
-+++ b/drivers/phy/phy-rockchip-inno-usb2.c
-@@ -995,14 +995,11 @@ static int rockchip_usb2phy_otg_port_init(struct rockchip_usb2phy *rphy,
- 		goto out;
- 	}
- 
--	if (!IS_ERR(rphy->edev)) {
--		rport->event_nb.notifier_call = rockchip_otg_event;
--
--		ret = extcon_register_notifier(rphy->edev, EXTCON_USB_HOST,
--					       &rport->event_nb);
--		if (ret)
--			dev_err(rphy->dev, "register USB HOST notifier failed\n");
--	}
-+	rport->event_nb.notifier_call = rockchip_otg_event;
-+	ret = extcon_register_notifier(rphy->edev, EXTCON_USB_HOST,
-+				       &rport->event_nb);
-+	if (ret)
-+		dev_err(rphy->dev, "register USB HOST notifier failed\n");
- 
- out:
- 	return ret;
+	drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2944 bnx2x_nic_load()
+	warn: 'rc' can be either negative or positive
+
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+  2797  
+  2798          /* setup rss */
+  2799          rc = bnx2x_init_rss(bp);
+  2800          if (rc) {
+  2801                  BNX2X_ERR("PF RSS init failed\n");
+  2802                  LOAD_ERROR_EXIT(bp, load_error3);
+  2803          }
+  2804  
+
+The warning heuristic here is to complain if negative and positive
+values are treated the same.  This code is very confusing.  For example,
+the comments for bnx2x_queue_state_change() says it returns a positive
+EBUSY but it does not.
+
+But my main concern is bnx2x_setup_rss(), it either returns a negative
+value or it returns 1.  My understanding is that both of those returns
+are treated as an error on line 2800 in the code above so it can't
+possibly work.
+
+regards,
+dan carpenter
