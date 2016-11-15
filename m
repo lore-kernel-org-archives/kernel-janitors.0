@@ -1,45 +1,86 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 26 Nov 2016 10:20:58 +0000
-Subject: [patch] staging: sm750fb: fix a type issue in sm750_set_chip_type()
-Message-Id: <20161126102058.GA7640@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 15 Nov 2016 18:53:42 +0000
+Subject: Applied "spi: atmel: fix indenting in atmel_spi_gpio_cs()" to the spi tree
+Message-Id: <E1c6irW-0006I9-8T@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161114142644.GA6179@mwanda>
+In-Reply-To: <20161114142644.GA6179@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Mark Brown <broonie@kernel.org>Nicolas Ferre <nicolas.ferre@atmel.com>Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"revId" needs to be unsigned because we use it to test:
+The patch
 
-	if (revId = SM750LE_REVISION_ID) {
+   spi: atmel: fix indenting in atmel_spi_gpio_cs()
 
-and SM750LE_REVISION_ID is ((unsigned char )0xfe).
+has been applied to the spi tree at
 
-Fixes: 81dee67e215b ("staging: sm750fb: add sm750 to staging")
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From b52b3484eec593a4fe75a68e57f0ade52b55ed8f Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 Nov 2016 17:26:44 +0300
+Subject: [PATCH] spi: atmel: fix indenting in atmel_spi_gpio_cs()
+
+These lines were indented one extra tab.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-atmel.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/sm750fb/ddk750_chip.h b/drivers/staging/sm750fb/ddk750_chip.h
-index e97e859..e63b8b2 100644
---- a/drivers/staging/sm750fb/ddk750_chip.h
-+++ b/drivers/staging/sm750fb/ddk750_chip.h
-@@ -87,7 +87,7 @@ struct initchip_param {
- };
+diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
+index d3affa6afe7e..b2931493cab2 100644
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -1510,15 +1510,15 @@ static int atmel_spi_gpio_cs(struct platform_device *pdev)
+ 		int cs_gpio = of_get_named_gpio(pdev->dev.of_node,
+ 						"cs-gpios", i);
  
- logical_chip_type_t sm750_get_chip_type(void);
--void sm750_set_chip_type(unsigned short devId, char revId);
-+void sm750_set_chip_type(unsigned short devId, u8 revId);
- unsigned int sm750_calc_pll_value(unsigned int request, struct  pll_value *pll);
- unsigned int sm750_format_pll_reg(struct pll_value *pPLL);
- unsigned int ddk750_get_vm_size(void);
-diff --git a/drivers/staging/sm750fb/ddk750_chip.c b/drivers/staging/sm750fb/ddk750_chip.c
-index 94f59f4..f59ce5c 100644
---- a/drivers/staging/sm750fb/ddk750_chip.c
-+++ b/drivers/staging/sm750fb/ddk750_chip.c
-@@ -14,7 +14,7 @@ logical_chip_type_t sm750_get_chip_type(void)
- 	return chip;
- }
+-			if (cs_gpio = -EPROBE_DEFER)
+-				return cs_gpio;
+-
+-			if (gpio_is_valid(cs_gpio)) {
+-				ret = devm_gpio_request(&pdev->dev, cs_gpio,
+-							dev_name(&pdev->dev));
+-				if (ret)
+-					return ret;
+-			}
++		if (cs_gpio = -EPROBE_DEFER)
++			return cs_gpio;
++
++		if (gpio_is_valid(cs_gpio)) {
++			ret = devm_gpio_request(&pdev->dev, cs_gpio,
++						dev_name(&pdev->dev));
++			if (ret)
++				return ret;
++		}
+ 	}
  
--void sm750_set_chip_type(unsigned short devId, char revId)
-+void sm750_set_chip_type(unsigned short devId, u8 revId)
- {
- 	if (devId = 0x718)
- 		chip = SM718;
+ 	return 0;
+-- 
+2.10.2
+
