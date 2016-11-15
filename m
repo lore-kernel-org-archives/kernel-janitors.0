@@ -1,40 +1,32 @@
-From: Benoit Parrot <bparrot@ti.com>
-Date: Mon, 28 Nov 2016 16:51:37 +0000
-Subject: Re: [patch] [media] media: ti-vpe: vpdma: fix a timeout loop
-Message-Id: <20161128165137.GE5954@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Nov 2016 09:53:01 +0000
+Subject: [patch] drm: zte: checking for NULL instead of IS_ERR()
+Message-Id: <20161115095301.GC15424@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161125201957.GA30161@mwanda>
-In-Reply-To: <20161125201957.GA30161@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Nikhil Devshatwar <nikhil.nd@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-Dan,
+drm_dev_alloc() never returns NULL, it only returns error pointers on
+error.
 
-Thanks for the patch.
+Fixes: 0a886f59528a ("drm: zte: add initial vou drm driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Benoit Parrot <bparrot@ti.com>
-
-Dan Carpenter <dan.carpenter@oracle.com> wrote on Sat [2016-Nov-26 00:28:34 +0300]:
-> The check assumes that we end on zero but actually we end on -1.  Change
-> the post-op to a pre-op so that we do end on zero.  Techinically now we
-> only loop 499 times instead of 500 but that's fine.
-> 
-> Fixes: dc12b124353b ("[media] media: ti-vpe: vpdma: Add abort channel desc and cleanup APIs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/media/platform/ti-vpe/vpdma.c b/drivers/media/platform/ti-vpe/vpdma.c
-> index 13bfd71..23472e3 100644
-> --- a/drivers/media/platform/ti-vpe/vpdma.c
-> +++ b/drivers/media/platform/ti-vpe/vpdma.c
-> @@ -453,7 +453,7 @@ int vpdma_list_cleanup(struct vpdma_data *vpdma, int list_num,
->  	if (ret)
->  		return ret;
->  
-> -	while (vpdma_list_busy(vpdma, list_num) && timeout--)
-> +	while (vpdma_list_busy(vpdma, list_num) && --timeout)
->  		;
->  
->  	if (timeout = 0) {
+diff --git a/drivers/gpu/drm/zte/zx_drm_drv.c b/drivers/gpu/drm/zte/zx_drm_drv.c
+index abc8099..3e76f72 100644
+--- a/drivers/gpu/drm/zte/zx_drm_drv.c
++++ b/drivers/gpu/drm/zte/zx_drm_drv.c
+@@ -107,8 +107,8 @@ static int zx_drm_bind(struct device *dev)
+ 		return -ENOMEM;
+ 
+ 	drm = drm_dev_alloc(&zx_drm_driver, dev);
+-	if (!drm)
+-		return -ENOMEM;
++	if (IS_ERR(drm))
++		return PTR_ERR(drm);
+ 
+ 	drm->dev_private = priv;
+ 	dev_set_drvdata(dev, drm);
