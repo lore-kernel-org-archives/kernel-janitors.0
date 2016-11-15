@@ -1,20 +1,29 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Sun, 13 Nov 2016 21:27:07 +0000
-Subject: Re: [PATCH] netfilter: x_tables: simplify IS_ERR_OR_NULL to NULL test
-Message-Id: <20161113212707.GA30418@salvia>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 Nov 2016 09:54:34 +0000
+Subject: [patch] ARM: socfpga: checking the wrong variable
+Message-Id: <20161115095433.GD15424@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1478867558-21650-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1478867558-21650-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Florian Westphal <fw@strlen.de>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, coreteam@netfilter.org, netfilter-devel@vger.kernel.org, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, James Morris <jmorris@namei.org>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Patrick McHardy <kaber@trash.net>, christophe.jaillet@wanadoo.fr
+To: Alan Tull <atull@opensource.altera.com>
+Cc: Moritz Fischer <moritz.fischer@ettus.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 11, 2016 at 01:32:38PM +0100, Julia Lawall wrote:
-> Since commit 7926dbfa4bc1 ("netfilter: don't use
-> mutex_lock_interruptible()"), the function xt_find_table_lock can only
-> return NULL on an error.  Simplify the call sites and update the
-> comment before the function.
+This is a cut and paste bug.  We had intended to check "sysmgr".
 
-Applied, thanks Julia!
+Fixes: e5f8efa5c8bf ("ARM: socfpga: fpga bridge driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
+index 7ab358e..d4eeb74 100644
+--- a/drivers/fpga/altera-fpga2sdram.c
++++ b/drivers/fpga/altera-fpga2sdram.c
+@@ -123,7 +123,7 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	sysmgr = syscon_regmap_lookup_by_compatible("altr,sys-mgr");
+-	if (IS_ERR(priv->sdrctl)) {
++	if (IS_ERR(sysmgr)) {
+ 		dev_err(dev, "regmap for altr,sys-mgr lookup failed.\n");
+ 		return PTR_ERR(sysmgr);
+ 	}
