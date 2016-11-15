@@ -1,36 +1,44 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Nov 2016 19:26:21 +0000
-Subject: Re: [bug report] Add support of Cavium Liquidio ethernet adapters
-Message-Id: <20161130192621.GL28558@mwanda>
+Date: Tue, 15 Nov 2016 11:11:02 +0000
+Subject: [bug report] amd-xgbe: Add PCI device support
+Message-Id: <20161115111102.GA23305@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161130185754.GA8645@mwanda>
-In-Reply-To: <20161130185754.GA8645@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 30, 2016 at 07:02:09PM +0000, Vatsavayi, Raghu wrote:
-> >   1005                       oq_no++) {
-> >   1006                          if (!(oct->droq_intr & BIT_ULL(oq_no)))
-> >   1007                                  continue;
-> >   1008
-> >   1009                          droq = oct->droq[oq_no];
-> >   1010
-> >   1011                          if (droq->ops.poll_mode) {
-> >   1012                                  droq->ops.napi_fn(droq);
-> >   1013                                  oct_priv->napi_mask |= (1 << oq_no);
-> > 
-> > It should be 1ULL << oq_no.  But the other bug is tahte ->napi_mask is a long
-> > but that will break on 32 bit systems when
-> > MAX_OCTEON_OUTPUT_QUEUES() is 64.  Is that a possible combination?
-> > 
-> 
-> [Raghu]: These drivers are for 64 bit systems as mentioned in Kconfig.
-> 
+Hello Lendacky, Thomas,
 
-Ah...  Grand.  I see that now.  Can you send a patch for the others?
+The patch 47f164deab22: "amd-xgbe: Add PCI device support" from Nov
+10, 2016, leads to the following static checker warning:
+
+	drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c:360 xprop_reg_value_write()
+	error: uninitialized symbol 'value'.
+
+drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c
+   348  static ssize_t xprop_reg_value_write(struct file *filp,
+   349                                       const char __user *buffer,
+   350                                       size_t count, loff_t *ppos)
+   351  {
+   352          struct xgbe_prv_data *pdata = filp->private_data;
+   353          unsigned int value;
+   354          ssize_t len;
+   355  
+   356          len = xgbe_common_write(buffer, count, ppos, &value);
+
+Assume "ppos" is non-zero then we are using uninitialized data.  I
+suspect that xgbe_common_write() is buggy.
+
+   357          if (len < 0)
+   358                  return len;
+   359  
+   360          XP_IOWRITE(pdata, pdata->debugfs_xprop_reg, value);
+   361  
+   362          return len;
+   363  }
+
+
 
 regards,
 dan carpenter
-
