@@ -1,48 +1,43 @@
-From: Kirti Wankhede <kwankhede@nvidia.com>
-Date: Mon, 28 Nov 2016 12:12:35 +0000
-Subject: Re: [patch] vfio-mdev: fix some error codes in the sample code
-Message-Id: <968f7599-72c2-a073-4b8c-45fd1cb16998@nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Nov 2016 11:41:51 +0000
+Subject: [patch] pinctrl: single: Fix a couple error codes
+Message-Id: <20161116114151.GA31224@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161124112726.GN17225@mwanda>
-In-Reply-To: <20161124112726.GN17225@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We should return -ENOMEM instead of success if pcs_add_function() fails.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 11/24/2016 4:57 PM, Dan Carpenter wrote:
-> This is just sample code.  We forget to set the error codes in a couple
-> places.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-> index 6b633a4..40ed3c0 100644
-> --- a/samples/vfio-mdev/mtty.c
-> +++ b/samples/vfio-mdev/mtty.c
-> @@ -1447,6 +1447,7 @@ static int __init mtty_dev_init(void)
->  
->  	if (IS_ERR(mtty_dev.vd_class)) {
->  		pr_err("Error: failed to register mtty_dev class\n");
-> +		ret = PTR_ERR(mtty_dev.vd_class);
->  		goto failed1;
->  	}
->  
-> @@ -1458,7 +1459,8 @@ static int __init mtty_dev_init(void)
->  	if (ret)
->  		goto failed2;
->  
-> -	if (mdev_register_device(&mtty_dev.dev, &mdev_fops) != 0)
-> +	ret = mdev_register_device(&mtty_dev.dev, &mdev_fops);
-> +	if (ret)
->  		goto failed3;
->  
->  	mutex_init(&mdev_list_lock);
-> 
-
-Thanks for fixing this. Looks good to me.
-
-Reviewed-by: Kirti Wankhede <kwankhede@nvidia.com>
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index 2b196e5..a5a0392 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1181,8 +1181,10 @@ static int pcs_parse_one_pinctrl_entry(struct pcs_device *pcs,
+ 
+ 	pgnames[0] = np->name;
+ 	function = pcs_add_function(pcs, np, np->name, vals, found, pgnames, 1);
+-	if (!function)
++	if (!function) {
++		res = -ENOMEM;
+ 		goto free_pins;
++	}
+ 
+ 	res = pcs_add_pingroup(pcs, np, np->name, pins, found);
+ 	if (res < 0)
+@@ -1313,8 +1315,10 @@ static int pcs_parse_bits_in_pinctrl_entry(struct pcs_device *pcs,
+ 
+ 	pgnames[0] = np->name;
+ 	function = pcs_add_function(pcs, np, np->name, vals, found, pgnames, 1);
+-	if (!function)
++	if (!function) {
++		res = -ENOMEM;
+ 		goto free_pins;
++	}
+ 
+ 	res = pcs_add_pingroup(pcs, np, np->name, pins, found);
+ 	if (res < 0)
