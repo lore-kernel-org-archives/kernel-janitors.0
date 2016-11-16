@@ -1,40 +1,66 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 11 Nov 2016 21:49:05 +0000
-Subject: [PATCH] clk: cdce925: Fix limit check
-Message-Id: <20161111214905.29481-1-christophe.jaillet@wanadoo.fr>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Date: Wed, 16 Nov 2016 14:30:51 +0000
+Subject: Re: [PATCH 06/34] [media] DaVinci-VPBE: Return an error code only by a single variable in vpbe_initi
+Message-Id: <20161116123051.25f3a640@vento.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+        <31e1f827-3539-3bcf-e6c1-2b9df5fd3619@users.sourceforge.net>
+In-Reply-To: <31e1f827-3539-3bcf-e6c1-2b9df5fd3619@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Manjunath Hadli <manjunath.hadli@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Muralidharan Karicheri <m-karicheri2@ti.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-It is likely that instead of '1>64', 'q>64' was expected.
+Em Wed, 12 Oct 2016 16:40:22 +0200
+SF Markus Elfring <elfring@users.sourceforge.net> escreveu:
 
-Moreover, according to datasheet,
-   http://www.ti.com/lit/ds/symlink/cdce925.pdf
-   SCAS847I - JULY 2007 - REVISED OCTOBER 2016
-PLL settings limits are: 16 <= q <= 63
-So change the upper limit check from 64 to 63.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 11 Oct 2016 14:15:57 +0200
+> 
+> An error code was assigned to the local variable "err" in an if branch.
+> But this variable was not used further then.
+> 
+> Use the local variable "ret" instead like at other places in this function.
+> 
+> Fixes: 66715cdc3224a4e241c1a92856b9a4af3b70e06d ("[media] davinci vpbe:
+> VPBE display driver")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/media/platform/davinci/vpbe.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+> index 4c4cd81..afa8ff7 100644
+> --- a/drivers/media/platform/davinci/vpbe.c
+> +++ b/drivers/media/platform/davinci/vpbe.c
+> @@ -665,7 +665,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+>  		if (err) {
+>  			v4l2_err(&vpbe_dev->v4l2_dev,
+>  				 "unable to initialize the OSD device");
+> -			err = -ENOMEM;
+> +			ret = -ENOMEM;
+>  			goto fail_dev_unregister;
+>  		}
+>  	}
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/clk/clk-cdce925.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm... why are you keeping both "err" and "ret" variables here?
+Just one var is needed. Also, why not just return the error code?
 
-diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-index b8459c14a1b7..f793b2d9238c 100644
---- a/drivers/clk/clk-cdce925.c
-+++ b/drivers/clk/clk-cdce925.c
-@@ -216,7 +216,7 @@ static int cdce925_pll_prepare(struct clk_hw *hw)
- 		nn = n * BIT(p);
- 		/* q = int(nn/m) */
- 		q = nn / m;
--		if ((q < 16) || (1 > 64)) {
-+		if ((q < 16) || (q > 63)) {
- 			pr_debug("%s invalid q=%d\n", __func__, q);
- 			return -EINVAL;
- 		}
--- 
-2.9.3
+If you want to cleanup the code, please look at the entire function,
+and not to just this occurrence.
 
+I mean, IMHO, this code (and all similar occurrences), should be, instead:
+
+		ret = osd_device->ops.initialize(osd_device);
+                if (ret) {
+                        v4l2_err(&vpbe_dev->v4l2_dev,
+                                 "unable to initialize the OSD device");
+                        goto fail_dev_unregister;
+                }
+
+and the "err" var can probably be removed.
+
+
+Thanks,
+Mauro
