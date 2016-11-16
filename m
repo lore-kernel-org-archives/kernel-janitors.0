@@ -1,36 +1,17 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Nov 2016 11:01:32 +0000
-Subject: [patch] sparc64: move dereference after check for NULL
-Message-Id: <20161125105853.GB5938@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 16 Nov 2016 10:43:32 +0000
+Subject: [PATCH 0/2] replace IS_ERR_OR_NULL by IS_ERR
+Message-Id: <1479293014-18811-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-We shouldn't dereference "iommu" until after we have checked that it is
-non-NULL.
+Replace IS_ERR_OR_NULL by IS_ERR on knav_queue_open calls.
 
-Fixes: f08978b0fdbf ("sparc64: Enable sun4v dma ops to use IOMMU v2 APIs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Applies to sparc.git
 
-diff --git a/arch/sparc/kernel/pci_sun4v.c b/arch/sparc/kernel/pci_sun4v.c
-index 06981cc7..cabb609 100644
---- a/arch/sparc/kernel/pci_sun4v.c
-+++ b/arch/sparc/kernel/pci_sun4v.c
-@@ -478,11 +478,10 @@ static int dma_4v_map_sg(struct device *dev, struct scatterlist *sglist,
- 	BUG_ON(direction = DMA_NONE);
- 
- 	iommu = dev->archdata.iommu;
--	atu = iommu->atu;
--
- 	if (nelems = 0 || !iommu)
- 		return 0;
--	
-+	atu = iommu->atu;
-+
- 	prot = HV_PCI_MAP_ATTR_READ;
- 	if (direction != DMA_TO_DEVICE)
- 		prot |= HV_PCI_MAP_ATTR_WRITE;
+ drivers/net/ethernet/ti/netcp_core.c |    6 +++---
+ drivers/soc/ti/knav_qmss_queue.c     |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
