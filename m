@@ -1,52 +1,48 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Mon, 07 Nov 2016 12:07:11 +0000
-Subject: Re: [PATCH] drm/tegra: gem: Remove some dead code
-Message-Id: <20161107120711.GH28616@ulmo.ba.sec>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="xHbokkKX1kTiQeDC"
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Date: Wed, 16 Nov 2016 14:35:34 +0000
+Subject: Re: [PATCH 07/34] [media] DaVinci-VPBE: Delete an unnecessary variable initialisation in vpbe_initia
+Message-Id: <20161116123534.5fdbda6b@vento.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161030155029.17036-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161030155029.17036-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: gnurou@gmail.com, swarren@wwwdotorg.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
+        <a0386b6e-ba8c-1fae-edb2-27dfd8e1b6bf@users.sourceforge.net>
+In-Reply-To: <a0386b6e-ba8c-1fae-edb2-27dfd8e1b6bf@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+Em Wed, 12 Oct 2016 16:42:31 +0200
+SF Markus Elfring <elfring@users.sourceforge.net> escreveu:
 
---xHbokkKX1kTiQeDC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Oct 30, 2016 at 04:50:29PM +0100, Christophe JAILLET wrote:
-> 'dma_buf_map_attachment()' can not return NULL, so there is no need to
-> check for it.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 12 Oct 2016 09:45:39 +0200
+> 
+> The local variable "ret" will be set to an appropriate value a bit later.
+> Thus omit the explicit initialisation at the beginning.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/gpu/drm/tegra/gem.c | 5 -----
->  1 file changed, 5 deletions(-)
+>  drivers/media/platform/davinci/vpbe.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+> index afa8ff7..9fdd8c0 100644
+> --- a/drivers/media/platform/davinci/vpbe.c
+> +++ b/drivers/media/platform/davinci/vpbe.c
+> @@ -597,7 +597,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+>  	struct osd_state *osd_device;
+>  	struct i2c_adapter *i2c_adap;
+>  	int num_encoders;
+> -	int ret = 0;
+> +	int ret;
+>  	int err;
 
-Applied, thanks.
+Please fold this change to the patch where you'll be addressing the
+issues with "err" var, as per my previous email.
 
-Thierry
 
---xHbokkKX1kTiQeDC
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYIG5uAAoJEN0jrNd/PrOheDgQALWfUuisCHqnOc+WEDHq7g2D
-w4ixNgIFFXxqVYTUa/kWP6ITwjuvVbjhv8U7IFY+YGLREh6p5J0oaA0QSoay9XM1
-2P2dEj990mG864ta3pLukFFq8dCfocHSgzpx0Qu2ZcNp6AccWI/QFQjk9J7BAEtw
-rwiGlEt5NzYpViw54RZTWo1JZm5UxfSVmKq9CS1nlcrLlnQCb/UQNvGV1qjk17AN
-LT5astk4/NOxosQcRJZm1vrqpLKST96yZA0HtCnKYM4wfjOuNNqnJYJY2y0dQhIz
-DENx8gjGaDsg3pXKIpwsIGmMUJl759tZ+CBhpp2FYXELZxiPQwYoK9VR1nVi8g/w
-7AB1gQzqwXsH1R2jzxP8OOUsNGrNiHSNU8LkUqn3F70cBkRPF4QknHWl0/eVKzz8
-ok1LfCzxMrSMItYs0Iz55BR0HUwbDkqcUPcWfciCBRGQSnEQRFc0wpFxF1hYWkdb
-aC+NqfMK9yjs/6y/iChLHyBEt6FdFeCWeyIrkYKMLbLPzDC4AikL7kKnCZfySqQj
-NHcr+Z7BWjHip7eL1bf4d9cNbXEXITSoPnpvR9m+1BDo71S7d6sDezcIcTho3aRV
-WtdbEPLOIFeDrqIxiSNjW6DpW9o5dEHHNcQ2Yx5El3Ke5bnwq8xIRxrz3vFxAQVB
-N6WrAS9AhjWLh8sHG+9G
-=z8DY
------END PGP SIGNATURE-----
-
---xHbokkKX1kTiQeDC--
+Thanks,
+Mauro
