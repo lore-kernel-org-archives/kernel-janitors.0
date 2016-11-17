@@ -1,21 +1,30 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Tue, 29 Nov 2016 16:40:04 +0000
-Subject: Re: [patch] iommu/amd: Missing error code in amd_iommu_init_device()
-Message-Id: <20161129164004.GB13850@8bytes.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Nov 2016 10:59:32 +0000
+Subject: [patch] amd-xgbe: Signedness bug in xgbe_phy_link_status()
+Message-Id: <20161117105932.GA32143@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161124110544.GE17225@mwanda>
-In-Reply-To: <20161124110544.GE17225@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 24, 2016 at 02:05:44PM +0300, Dan Carpenter wrote:
-> We should set "ret" to -EINVAL if iommu_group_get() fails.
-> 
-> Fixes: 55c99a4dc50f ("iommu/amd: Use iommu_attach_group()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"ret" needs to be signed for the error handling to work.
 
-Applied, thanks.
+Fixes: abf0a1c2b26a ("amd-xgbe: Add support for SFP+ modules")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
+index 4ba4332..a2559c2 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
+@@ -2346,7 +2346,8 @@ static bool xgbe_phy_valid_speed(struct xgbe_prv_data *pdata, int speed)
+ static int xgbe_phy_link_status(struct xgbe_prv_data *pdata, int *an_restart)
+ {
+ 	struct xgbe_phy_data *phy_data = pdata->phy_data;
+-	unsigned int ret, reg;
++	unsigned int reg;
++	int ret;
+ 
+ 	*an_restart = 0;
+ 
