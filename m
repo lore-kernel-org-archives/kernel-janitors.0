@@ -1,91 +1,41 @@
-From: <arizona.shop.tet@gmail.com>
-Date: Sat, 12 Nov 2016 09:11:15 +0000
-Subject: 35452 kernel-janitors
-Message-Id: <147894187594.28087.11287505603876331355@redewsp.com.br>
+From: Alan Tull <atull@opensource.altera.com>
+Date: Thu, 17 Nov 2016 01:54:40 +0000
+Subject: [PATCH 1/1] ARM: socfpga: checking the wrong variable
+Message-Id: <20161117015440.3113-2-atull@opensource.altera.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161117015440.3113-1-atull@opensource.altera.com>
+In-Reply-To: <20161117015440.3113-1-atull@opensource.altera.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Moritz Fischer <moritz.fischer@ettus.com>, Dinh Nguyen <dinguyen@opensource.altera.com>, Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, delicious.quinoa@gmail.com
 
-UEsDBBQAAgAIAGF4bEna3kLuHxEAACYRAAAUABwAT05MSU5FXzIyODI0X1pJUC56aXBVVAkAA8Xa
-JljF2iZYdXgLAAEEAAAAAAQAAAAAdZhlVBOM28ZHt3RIim6kjJYYMJXOgdISoxtGSUoqNekUEZCB
-IDFpGEw6hEkowuhGAelu/s/z/r+973nvc67rvq8P9+frnJ++NhExE4AQQA6wCXTXZHRq9vChAwA0
-FQAAWgAnAKano6mnai0hISshBXb1NTKkABD1TvOZ/iv/QCoAATHgn/kf24a4Ja8+8inoby+aQ6q0
-LlqVjidveIo+esIAjCCw85jkAUeMEAjEp5WxHhcBX4rdKoYiXYfmO8mvllLEJx58Ljd9yFKRYAQM
-idgmVa/sez/CYa4q0MecoPRKEoF4o8xUx2vPuaZ42f93/nkcn2NV4QJfYMW953HaaerYSMBl9t/t
-QnGaKk0+tlWKu2qPjitVc2m4EEH8iquTbCxcF0dDMuJVXdzprtGEhrX52Nvq8wKvfPNfY40+vSHv
-BPeJycrWbxo8eGfGRTY0R1zrkfoCPfHLwASMLKxoLATXRb32+kHYXOPMQtjc7Sfx+kL/SCAnZg/r
-ZId8r28bzEpUkUAFXPLrFPwOh62YtKwboIPLLBAxg5yfMCruFj3fckn79lv+fOwVF2aOwsR9KpXT
-BGFfLj0sHRe2i1Z+epkBYlBmkaiBgCEUyZaBXZv0xmPmxuZND+9uFAZeB/0ISklX29hgZU3qT+0D
-JUnGU1oysdvkr5hImTI3f2RIYt2z79G9HmwWZi+qtXKjC7DAMGB9Oxl/faqhO1IafXRPNw4faqqi
-TZLEclD8YDNDqC1gSXAwWF7NjSPi/HE6ARrEbpOYzoBuSODn7DKR8vuieZMQA9eaDhWBLmXF1vl4
-sJexIRjEHbShzTkS0SAu+cad6PrABLwd1Q6Qx6V1J1o9gs/s/bNOJ6jAOJtSa1xzhPh3pPR9+MDj
-tLChhN677Ltahl4/1DUGc9CvspnulpvJoNUN0p6+U2srFLVLA9nrKnXGT7i1L3tOSiWEWvSlsRkB
-TQ9tovOj35zNGgbnovuR5pxzqbaHyVTelBNLlWYP4FFqWEfiXbE+18Ewy7cy90GGNaMBSyJvp4qJ
-Lzxc1OQobY0X8Fkfuvf18Gii7qzVLenoPPhCh39lHCOLnqyAFYdq70VDQ2HKyzH22VP7SrMPVVN7
-IL5P+8T4Q4QXght1fM+VQdeeS1Ezv5NJUBpE5dvzXL1Vmodp6Q76vCP3xRVKIfhdvTCnmDZ7Dl4M
-ziICNxEszAbB8bxwVm64CTs8i6UQzyAmyt1RydIBpu0wo40wA0Qw7kdS7Hf0+MGjZKsNONbFaAwt
-SPXukcofEDK6RiZWdZA+h6P4R5cYcs7I/R4TPyKMkluNlOsj4PoVkWj7OFYEvsJUHUkxqUHsvk7A
-NxEh1wxg1o2g4XncTwUnJK6mJyijA7wdIfq72hEsPepJ/XaBcKWsI5APYUHvvEDUNxVxDF5sZtS/
-IarvjphS7thi6DgDjKrRVmYS2U08nhEXi2n9tgjvJJykldIwZOfvBprIs+DsVZG2jR4kVvXDgWB2
-E+fmdIw0Xs+4ppYhiH+TMS8+Y2xPTKNTlYEMsW6QPqpzlo7vYljQTH32oaQ2zV6WBdyqy8/Q+drw
-7kwLxtUyLcKeZJhhnTpiJBCGJ0pZ7AVo5Y/9LqbesNYOcNjT+PbBm4zRIAh3wA0DucLrUkh8bwju
-wEeHi3oEVy0kWLodkrzkc/epMM3nY5VFkgWAft67KotHd0zyVyDy4wIPXLhrlOAWMNTPda4QdIq9
-vdGd1neSCYRdQzBinXBH18KYvx/sH9JJzfxdC1YU6VP8qcVG98IZ8Z4EWKLZIM2p9k3kMn8JbOlq
-+7v7fsbehY3FntwueKR05ZmcrjJy+J1Xln0Zc1eQwVOMhI86hNLptYCLtK0LrLQiXNqfQSafImHW
-ZaaoJYLXnDo5hhm92e7J3akSSz6vbuNXdMW7z3efV8RgnIelZJxtmXMkrfsOaQ5k4G+fTTXyRzoa
-xWwVh/puoUm4Qi5NkpgiHV7qslDLnTk8KyOeN/nYGG1Lh8x/Yd6VNsuFUvH//pvyJ3sxQNT8E4kO
-eyNbs6VK0y66iVHmM27NT/Gs7XYnWH4WfImD3IZ+ncu/9qKN7T4OVbjJDgoKaLMYdkpS+JAPy65z
-8exoCIcUnJauJO9e4W5etp5dzEjdns/tB7dajdw03axVLyygSQ2uCgVNFKEIMcXrqj9NpcLhefk8
-uX9HBmrHiEYRFzv17Xlg/tsQyRRR6IZMUYGavjvxBOckHkgxCTucTLocO3ZUagC3HZzLkDqTNnI6
-ORRXzfDYWShQX54K7dqwtH95+yrHipucO7Yw8zN0irbdF5yYGno7ut1danO6duqycx4qf65+i0Ml
-HaW8vRNGXatuJ75i7l8YO9JWFBubXz+iyNZ2c3VQVlECpmnIfDlwscD9tk5M8qwFEhpEd8T1J/Dk
-lGwGaXyGehF+vqRuNxYD7IMqiOGDT767T+sd1SldWtA3pd8R5Ktdz5+AgZ55yHsOIY3/oLq+B7jx
-lQxuVUtRfPYv/RXDP/PNz6n4yy3oZgu62Sv0RPJIabMmZDcpWzFg2El5//l1w6OTEM/9YPKTrS0F
-a9H+w6nguWmVjCjuKn2OExg0nUy4plySemhs+rQbHnYBpe3b0mMpfm9aTKkuid7uT3RqOVE6aNBC
-PlgyHuMYEYppt/6SjTNo81z4oBfqF4szxrrJqT738ExT4cgEcDSQg9W6o/p0sHCUrlmKG5KeaXrP
-Hhqcd2CZbIl1UxU2yKiVxhiOvZw/XPRXBzXsaR7V0l9BnkwjYcDXl0j+iPBzAUBq4LXeovr+Hxjh
-yZOOZ/vnVqE36c7PE6CQyDOyyDOvfX6m8MJteTUC/5/x4r3YiLBdXPESRf/70wXKBNoYz1vN6PFT
-J8noVkIjzYKwSWKRKMy9NIxeLD9G9+PnMOYqlRHYXNyl2Bz2y2jzOexDLRb/YobnDDr1ihxSv/Ei
-oW2FB+Z7UbQQZiS36pU2MCJwnvw57EvwVVnjFjT0V67RdRgdF9SMwPrslvAO4Db4HWMHxpZRmdyb
-tjdrLk/v1UUfudehEi+aaYIvY2FDETcpsvl6num1sKd2N8UjBMQt2GCKgkFOkFIU8+Yhx8dZxZPm
-moKvMNJUWvf7tnVj0C00y+BFzr6WtTuPKyHcVIOdbPc81LIlqOhk4jEOdL+zR+soRQSqeCy7SnLX
-s/dMD7IAFc4HafcwyTHTi6JoNqJW6yE8KrHLvlkYToPO1xo3Q4T0TUjIMMQSHD8QbDBtkfHzqUM/
-zkBQp6GbMXHN8/bc0Z3BhFcXDhzx1Y94kPVo2TAW1vl2z9aUxrSsG6D7NzW7x9R1a8v6Kt1pkX6b
-ffa1FF0zMo9YpAis6676oHTe2QdChRtwPSlzMCN1kuVBvMAmCOvDbGdj6lIVf6Q6NNNNLHbmrt31
-KMl42I6KlwoQT392t7qjJg4rSeju94K1Kh++omj9RX1AUJ1L1LA3vyJAkSdpxJiirBxB5Stw/LXV
-FMHUWRlhoHOffkXHF75BskT0Y5nR/ep6Z7B7u3Icw329lVE4/Iv27ueSq8Pv2fTu2r/iaJ5Fkzq2
-KntP1DxpqfVrk5EJ812RkbkJeWn3hQpO8SIjxKvt6jfuHzvdwj39MI3EGbAhHqsXIRl4I+sefAdV
-S64M0qUKZZYOh9+A3L3ndm8+HO7+SH4S03VzPfE4XNPAwB3anJkw983flfG29jBoSADH+Jkw5PXe
-VA01F/iXdHpKMvp16tQFHp6L8mFKP8KadMRnOa9rCMvsMDOsE0VKR45cG3Ma3E0pDhR/OlRK28Xx
-5o5lJKU8iSx8ufkicJorIxb3UjJGBkKe51Kah1JdUzk0onuWKHIirYrAtdNWRn5GFIq46KtFk3v6
-H5YKRh73RBkMjy05d2xqrCYp8y1mEfE0lcgUS74LIrIlbqrAIWdtPqQrqTSw9TSuEpAagaZapCrB
-3lp8S4X4ubXaDNB95ag1ZhZtUgu0ce67USp9rdKkeFnHjlyd4eyLy9qy55klX6cm3ydedz5yFMqX
-gYTU1UF/Dh9JoDMgPIi2cqt3Ba1OV1GD3SRa+jRfe4HGYr2qosyv5DYxJoMUGkDiRuIOTHvFBnVi
-cNTQD5eCvS1W+dhWFvoY90LL3lWW0oCvefmi+WpOvJWQn2PgFJnX0WylNDTs04mOek9/ZgOzzpHt
-Y59b9Cx6SbIoB3FuWZTunFl39g1TANKy3BN9l7bSZYzza0NIfK0Vytv/SbDZDtupJ9U0rOzJ0DNe
-LT/0ZzQwEktRWxJEacckoy3pTirFG4Q/DmxG0/StuvjTqhvwWXDJ5HdaNI45iF/LqvqT2Rmk5rEM
-6mhzHov1fQlsksd6IQS8zDjB+Ip2f/16Aczy7/VP66iMNY1Zv18ikZ/GpE6pnRROmf27Nxp9t+kC
-pLdMJ54GXRtaMv1BozZ0O8zozkOC+L9HcXpWCgXFJO7QJ6nMHpFOpOWGoLTT0tb11kTmo3eFSBaC
-hgy1vWSA8E79sRMBXl2t1eshXB3uY4XBMG6TIh4OSSc4fZnKZ50iz4MNc9HIDU6qaXOna5LhL0qX
-6E48KvynHRW8/hjF+El/kST5HTq7oMdul+7/yqbbNG6acvEw5LDtPVnqo+p+ikutyaZJE1QbNfWD
-KgPgbrVfzqmsqXK/2esYigXMNRXH/AvIonQw45Ma4/W+0GAuc+Ve1ol621rTAwnjapZ5RWSFNxvF
-x3OhxdZ8VQ4mWkSGuEXat2daB94DgR33KET4znFvZvbPGxEjtZ80NYl9MB09WL7WhWzw7XJl6qHi
-/aX3WFkmk7iszQRKJf532BG/lm/Ix5LgdThb9ROwHlm0BuJpYDx/8LhHJCj0TV8bITcCk2u28rDn
-J09f2qDw6rLOwL3ypONmZpnUq787WH1Don6mUlPZ5VBWGnc/KuXNNA8yU5IX3vSjAHy5uVVByHc7
-Q7xIUkqzquZaYptgBOjvzkTTeJdceqgV3VBePapa/KVtjl4xk6FOpvKXKCLrb0QWEO9f7i6JAnAf
-xpWXLVxYkIQDr05vGgJimcXWZrsGNOZ9/pxgCMfgepxTGjZZvyTuncM1Z7FTGx0IzED5e+I0HTZC
-fJLLN02fdhHy73cPfvolQe3srG+41GIScHDncirmeFcJ7q0ej1VrW0s6vorwQgyw7umhBbLnhsIb
-wSerhYG46xvg228AqEjDyqZqYkAIhCe5dPu2lLeVv+oA+rWhzs3l2Ip7Oqwe2nyxt8EMduO4NG8L
-XowqQPc3Da5XSVysCD2oiVRygj7FDI/QZ0sKaSdTONZn4F2rZsoXYvTzQ0okrsOUdr0uq1R1FdS3
-x1t2IWQMBIKuQfd9DgKaDlULyJjyXgELrbrMFXjcRlN6yxweKWrox9Za2ec00oip0BJznya0znbi
-xeL/TPlxoujmS5bReJzVtjO05l43o/UPVSWUBGHuSSj9nV6AI3BEViRWvVyE1kQBPrCgI1CIOeV9
-UOwrlzuWBMI3CUbb19iEpwme1tkM0Ez6fnBlo3C6J/xOBNam/ClRiNv5DSVwNyqWhMp0apH3zTwn
-uWkCh1lKnp4T2XSmbKyC6FsVejsMQNfz+rqXG0FNxOmD4uGtI7g+/A1rsxM5TTrBPtOFN/jYv/MY
-lfiIkVfco1W31tx8TNvffS7gqNf9m5HHBUn0e82DeG33tpFG8/s2Om5/afStkp8QKErByGPnwHTj
-vp9+LRvsqYMk6XrFCti4HeDSVZ5XrJDZKWHz6rfYT/XK5YsEDfNBw7XA1FLe2nJqdn/kRqhUO2yT
-Hpb5Rk50mkDXNdxwoIKGHqdKNm1nfcOqr01AyE30/8ELtn+hBIDgHxVH/nv9H5RB8l+U8b8whr42
-Cel/HwkARv/sVrp/038AUEsBAh4DFAACAAgAYXhsSdreQu4fEQAAJhEAABQAGAAAAAAAAAAAAKSB
-AAAAAE9OTElORV8yMjgyNF9aSVAuemlwVVQFAAPF2iZYdXgLAAEEAAAAAAQAAAAAUEsFBgAAAAAB
-AAEAWgAAAG0RAAAAAA=
+From: Dan Carpenter <dan.carpenter@oracle.com>
+
+This is a cut and paste bug.  We had intended to check "sysmgr".
+
+Fixes: e5f8efa5c8bf ("ARM: socfpga: fpga bridge driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
+Acked-by: Alan Tull <atull@opensource.altera.com>
+---
+ drivers/fpga/altera-fpga2sdram.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
+index 7ab358e..d4eeb74 100644
+--- a/drivers/fpga/altera-fpga2sdram.c
++++ b/drivers/fpga/altera-fpga2sdram.c
+@@ -123,7 +123,7 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	sysmgr = syscon_regmap_lookup_by_compatible("altr,sys-mgr");
+-	if (IS_ERR(priv->sdrctl)) {
++	if (IS_ERR(sysmgr)) {
+ 		dev_err(dev, "regmap for altr,sys-mgr lookup failed.\n");
+ 		return PTR_ERR(sysmgr);
+ 	}
+-- 
+2.7.4
+
