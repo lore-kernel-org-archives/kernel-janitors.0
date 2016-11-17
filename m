@@ -1,28 +1,27 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 22 Nov 2016 00:34:19 +0000
-Subject: Re: cxl: Fix error handling
-Message-Id: <3tN60q2VZNz9s3s@ozlabs.org>
+From: Alan Tull <atull@opensource.altera.com>
+Date: Thu, 17 Nov 2016 01:54:39 +0000
+Subject: [PATCH 0/1] One bug fix for FPGA
+Message-Id: <20161117015440.3113-1-atull@opensource.altera.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20161030214047.25037-1-christophe.jaillet@wanadoo.fr>
-References: <3tN60p71nwz9s5w@ozlabs.org>
-In-Reply-To: <3tN60p71nwz9s5w@ozlabs.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, imunsie@au1.ibm.com, fbarrat@linux.vnet.ibm.com
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Moritz Fischer <moritz.fischer@ettus.com>, Dinh Nguyen <dinguyen@opensource.altera.com>, Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, delicious.quinoa@gmail.com, Alan Tull <atull@opensource.altera.com>
 
-On Sun, 2016-10-30 at 21:40:47 UTC, Christophe Jaillet wrote:
-> 'cxl_dev_context_init()' returns an error pointer in case of error, not
-> NULL. So test it with IS_ERR.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-> Acked-by: Ian Munsie <imunsie@au1.ibm.com>
+Hi Greg,
 
-Applied to powerpc next, thanks.
+Can you take this patch?
 
-https://git.kernel.org/powerpc/c/bb81733de28c99e10b61dcaff15921
+Thanks,
+Alan
 
-cheers
+Dan Carpenter (1):
+  ARM: socfpga: checking the wrong variable
+
+ drivers/fpga/altera-fpga2sdram.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.7.4
+
