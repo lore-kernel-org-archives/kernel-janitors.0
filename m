@@ -1,23 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 22 Nov 2016 03:33:42 +0000
-Subject: Re: [patch] scsi: be2iscsi: allocate enough memory in beiscsi_boot_get_sinfo()
-Message-Id: <yq137ik1949.fsf@sermon.lab.mkp.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Nov 2016 11:00:46 +0000
+Subject: [patch] ASoC: sh: dma-sh7760: fix a debug printf
+Message-Id: <20161117110046.GC32143@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161118115339.GD3281@mwanda>
-In-Reply-To: <20161118115339.GD3281@mwanda> (Dan Carpenter's message of "Fri,
-        18 Nov 2016 14:53:39 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Subbu Seetharaman <subbu.seetharaman@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Manuel Lauss <mano@roarinelk.homelinux.net>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+We intended to print a hex here, but the code will print a base 10 with
+an x on the end.
 
-Dan> We accidentally allocate sizeof(u32) instead of sizeof(struct
-Dan> be_cmd_get_session_resp).
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 4.9/scsi-fixes.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/sound/soc/sh/dma-sh7760.c b/sound/soc/sh/dma-sh7760.c
+index 8fad444..c28ee1a 100644
+--- a/sound/soc/sh/dma-sh7760.c
++++ b/sound/soc/sh/dma-sh7760.c
+@@ -204,7 +204,7 @@ static int camelot_prepare(struct snd_pcm_substream *substream)
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct camelot_pcm *cam = &cam_pcm_data[rtd->cpu_dai->id];
+ 
+-	pr_debug("PCM data: addr 0x%08ulx len %d\n",
++	pr_debug("PCM data: addr 0x%08lx len %d\n",
+ 		 (u32)runtime->dma_addr, runtime->dma_bytes);
+  
+ 	if (substream->stream = SNDRV_PCM_STREAM_PLAYBACK) {
