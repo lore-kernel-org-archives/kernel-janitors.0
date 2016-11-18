@@ -1,43 +1,33 @@
-From: Yuval Shaia <yuval.shaia@oracle.com>
-Date: Thu, 17 Nov 2016 16:38:47 +0000
-Subject: Re: [patch] IB/rxe: Remove unneeded cast in rxe_srq_from_attr()
-Message-Id: <20161117163846.GA6436@yuval-lap>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Nov 2016 11:11:00 +0000
+Subject: [patch] s390/crypto: unlock on error in prng_tdes_read()
+Message-Id: <20161118105451.GA26523@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161117110005.GB32143@mwanda>
- <20161117121554.GA4292@yuval-lap.uk.oracle.com>
-In-Reply-To: <20161117121554.GA4292-Hxa29pjIrETlQW142y8m19+IiqhCXseY@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Moni Shoua <monis-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, Harald Freudenberger <freude@linux.vnet.ibm.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Besides the soft-aggressive commit message -:)
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+We added some new locking but forgot to unlock on error.
+
+Fixes: 57127645d79d ("s390/zcrypt: Introduce new SHA-512 based Pseudo Random Generator.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/arch/s390/crypto/prng.c b/arch/s390/crypto/prng.c
+index 9cc050f..1113389 100644
+--- a/arch/s390/crypto/prng.c
++++ b/arch/s390/crypto/prng.c
+@@ -507,8 +507,10 @@ static ssize_t prng_tdes_read(struct file *file, char __user *ubuf,
+ 		prng_data->prngws.byte_counter += n;
+ 		prng_data->prngws.reseed_counter += n;
  
-On Thu, Nov 17, 2016 at 02:00:05PM +0300, Dan Carpenter wrote:
-> It makes me nervous when we cast pointer parameters.  I would estimate
-> that around 50% of the time, it indicates a bug.  Here the cast is not
-> needed becaue u32 and and unsigned int are the same thing.  Removing the
-> cast makes the code more robust and future proof in case any of the
-> types change.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_srq.c b/drivers/infiniband/sw/rxe/rxe_srq.c
-> index 2a6e3cd..efc832a 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_srq.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_srq.c
-> @@ -169,7 +169,7 @@ int rxe_srq_from_attr(struct rxe_dev *rxe, struct rxe_srq *srq,
->  			}
->  		}
->  
-> -		err = rxe_queue_resize(q, (unsigned int *)&attr->max_wr,
-> +		err = rxe_queue_resize(q, &attr->max_wr,
->  				       rcv_wqe_size(srq->rq.max_sge),
->  				       srq->rq.queue->ip ?
->  						srq->rq.queue->ip->context :
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-		if (copy_to_user(ubuf, prng_data->buf, chunk))
+-			return -EFAULT;
++		if (copy_to_user(ubuf, prng_data->buf, chunk)) {
++			ret = -EFAULT;
++			break;
++		}
+ 
+ 		nbytes -= chunk;
+ 		ret += chunk;
