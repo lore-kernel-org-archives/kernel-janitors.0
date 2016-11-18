@@ -1,23 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Fri, 25 Nov 2016 15:07:23 +0000
-Subject: Re: [patch] scsi: libfc: Remove an unneeded condition
-Message-Id: <yq1h96vtx78.fsf@sermon.lab.mkp.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Nov 2016 11:47:35 +0000
+Subject: [patch net-next] liquidio CN23XX: bitwise vs logical AND typo
+Message-Id: <20161118114734.GB3281@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161124105238.GB17225@mwanda>
-In-Reply-To: <20161124105238.GB17225@mwanda> (Dan Carpenter's message of "Thu,
-        24 Nov 2016 13:52:38 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johannes Thumshirn <jth@kernel.org>, Hannes Reinecke <hare@suse.de>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Derek Chickles <derek.chickles@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>
+Cc: Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+We obviously intended a bitwise AND here, not a logical one.
 
-Dan> We verified that resp_code is FC_SPP_RESP_ACK earlier so we don't
-Dan> need to check again here.
+Fixes: 8c978d059224 ("liquidio CN23XX: Mailbox support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 4.10/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_mailbox.c b/drivers/net/ethernet/cavium/liquidio/octeon_mailbox.c
+index 5309384..73696b42 100644
+--- a/drivers/net/ethernet/cavium/liquidio/octeon_mailbox.c
++++ b/drivers/net/ethernet/cavium/liquidio/octeon_mailbox.c
+@@ -301,7 +301,7 @@ int octeon_mbox_process_message(struct octeon_mbox *mbox)
+ 		       sizeof(struct octeon_mbox_cmd));
+ 		if (!mbox_cmd.msg.s.resp_needed) {
+ 			mbox->state &= ~OCTEON_MBOX_STATE_REQUEST_RECEIVED;
+-			if (!(mbox->state &&
++			if (!(mbox->state &
+ 			      OCTEON_MBOX_STATE_RESPONSE_PENDING))
+ 				mbox->state = OCTEON_MBOX_STATE_IDLE;
+ 			writeq(OCTEON_PFVFSIG, mbox->mbox_read_reg);
