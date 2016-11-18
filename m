@@ -1,53 +1,30 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Mon, 07 Nov 2016 12:02:06 +0000
-Subject: Re: [PATCH] drm/tegra: fix error handling
-Message-Id: <20161107120206.GF28616@ulmo.ba.sec>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vA66WO2vHvL/CRSR"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Nov 2016 11:53:39 +0000
+Subject: [patch] scsi: be2iscsi: allocate enough memory in beiscsi_boot_get_sinfo()
+Message-Id: <20161118115339.GD3281@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: gnurou@gmail.com, swarren@wwwdotorg.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Subbu Seetharaman <subbu.seetharaman@broadcom.com>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Cc: Ketan Mukadam <ketan.mukadam@broadcom.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We accidentally allocate sizeof(u32) instead of sizeof(struct
+be_cmd_get_session_resp).
 
---vA66WO2vHvL/CRSR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 50a4b824be9e ("scsi: be2iscsi: Fix to make boot discovery non-blocking")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Sun, Jul 03, 2016 at 08:18:57AM +0200, Christophe JAILLET wrote:
-> This is likely that checking 'gr3d->clk_secondary' instead of 'gr3d->clk'
-> is expected here.
->=20
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Applied, thanks. Sorry for not noticing this one earlier.
-
-Thierry
-
---vA66WO2vHvL/CRSR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYIG0+AAoJEN0jrNd/PrOh1MwQAICV9rT3gdsMkI1DfQ63npKR
-UQyihlstcgVEghGon+KKdBCNXORvWtAQic8/F4Qr/hjoZCttWATGlWq2XL3vxaNz
-psNgE9PTFVFozDDthUrJoqKAaBvkK+osNn0+sqvnhNA6GYXT4KdYyBjT2MzO0BN2
-/aVJcsU0a+GKBgv1+2nwFI26fdqwYit2xCED0WSaj+z6a/XeamZZrg71FojVFIZ/
-cvHycEW67LbEDoOzw5c3dqE/IEECJ8zvtR3n7hTk4y8XctGUx6BDnFhP5pL/yM7K
-tdSJXCsmS+o2nvdYCtDwWH0ppJ/HEHiTvl0B8T5QdhU01btR5YRfxv0NVgLCKIAz
-AaTUYd7gmWVE4QFR7jmWFKxFCDUiOlmAV7k1YMrh1l5Oe17bdDWe0nTCoGTP6VEA
-N8Nlf9QG6drhksIDK0Dkc/I8YbL21GLP4fTBFSl6dfBCuZfFgFO2rkevHExavg3b
-HEXJVuZEdJ1CsIFlYO9vBXJHY56FDeubq2iSAOHIstW0ICkbLMeKvbRZKBKqIRtl
-0hmtb5qUm8vcsfLF7AztPetrnicKmMki4jNsXn8fXukGKLhB82G2JyZRe09sBZQr
-urLliYQpdb/HHZ7kcxpLSN2XE8all1Tebg1T7M35iSLa/64NJPJ5+g67DZLo2Ct1
-MDJYQDVXQToQ87kZ9u5m
-=4ctp
------END PGP SIGNATURE-----
-
---vA66WO2vHvL/CRSR--
+diff --git a/drivers/scsi/be2iscsi/be_mgmt.c b/drivers/scsi/be2iscsi/be_mgmt.c
+index aebc4dd..ac05317b 100644
+--- a/drivers/scsi/be2iscsi/be_mgmt.c
++++ b/drivers/scsi/be2iscsi/be_mgmt.c
+@@ -1083,7 +1083,7 @@ unsigned int beiscsi_boot_get_sinfo(struct beiscsi_hba *phba)
+ 	nonemb_cmd = &phba->boot_struct.nonemb_cmd;
+ 	nonemb_cmd->size = sizeof(*resp);
+ 	nonemb_cmd->va = pci_alloc_consistent(phba->ctrl.pdev,
+-					      sizeof(nonemb_cmd->size),
++					      nonemb_cmd->size,
+ 					      &nonemb_cmd->dma);
+ 	if (!nonemb_cmd->va) {
+ 		mutex_unlock(&ctrl->mbox_lock);
