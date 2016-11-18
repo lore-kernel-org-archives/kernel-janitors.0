@@ -1,52 +1,37 @@
-From: Guenter Roeck <groeck@google.com>
-Date: Thu, 10 Nov 2016 20:43:21 +0000
-Subject: Re: [patch] iio: cros_ec_sensors_core: signedness bug in cros_ec_sensors_read_lpc()
-Message-Id: <CABXOdTfXKmSFvH69hgCsONUZCmdOVrjSSpzO=Br2GcD-EVyPbA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Nov 2016 11:34:10 +0000
+Subject: [patch] mailbox/tegra-hsp: Use after free in tegra_hsp_remove_doorbells()
+Message-Id: <20161118113410.GC3150@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161110193957.GA18347@mwanda>
-In-Reply-To: <20161110193957.GA18347@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Gwendal Grignou <gwendal@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Hi Dan,
+We have to use the _safe version of list_for_each() because we're
+freeing the pointer as we go along.  (This might not show up testing
+depending on what config options you have enabled).
 
-On Thu, Nov 10, 2016 at 11:39 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> "status" is a u8 so checking for negatives doesn't work.  We can just
-> use "ret" here instead.
->
-> Fixes: 974e6f02e27e ("iio: cros_ec_sensors_core: Add common functions for the ChromeOS EC Sensor Hub.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+Fixes: ed65ee43e397 ("mailbox: Add Tegra HSP driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Also fixed with https://lkml.org/lkml/2016/11/9/807
-
-Guenter
-
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> index a3be799..416cae5 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> @@ -291,15 +291,15 @@ int cros_ec_sensors_read_lpc(struct iio_dev *indio_dev,
->                         return -EIO;
->
->                 /* Read status byte until EC is not busy. */
-> -               status = cros_ec_sensors_read_until_not_busy(st);
-> -               if (status < 0)
-> -                       return status;
-> +               ret = cros_ec_sensors_read_until_not_busy(st);
-> +               if (ret < 0)
-> +                       return ret;
->
->                 /*
->                  * Store the current sample id so that we can compare to the
->                  * sample id after reading the data.
->                  */
-> -               samp_id = status & EC_MEMMAP_ACC_STATUS_SAMPLE_ID_MASK;
-> +               samp_id = ret & EC_MEMMAP_ACC_STATUS_SAMPLE_ID_MASK;
->
->                 /* Read all EC data, format it, and store it into data. */
->                 ret = cros_ec_sensors_read_data_unsafe(indio_dev, scan_mask,
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 17b256a..87be8d3 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -397,12 +397,12 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
+ 
+ static void tegra_hsp_remove_doorbells(struct tegra_hsp *hsp)
+ {
+-	struct tegra_hsp_doorbell *db;
++	struct tegra_hsp_doorbell *db, *tmp;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&hsp->lock, flags);
+ 
+-	list_for_each_entry(db, &hsp->doorbells, list)
++	list_for_each_entry_safe(db, tmp, &hsp->doorbells, list)
+ 		__tegra_hsp_doorbell_destroy(db);
+ 
+ 	spin_unlock_irqrestore(&hsp->lock, flags);
