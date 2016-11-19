@@ -1,40 +1,33 @@
-From: James Simmons <jsimmons@infradead.org>
-Date: Thu, 10 Nov 2016 17:49:18 +0000
-Subject: Re: [patch] staging/lustre/osc: indent an if statement
-Message-Id: <alpine.LFD.2.20.1611101748270.31600@casper.infradead.org>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Sat, 19 Nov 2016 17:43:40 +0000
+Subject: [PATCH] isci: Add a missing call to pci_unmap_biosrom
+Message-Id: <20161119174340.20447-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161110125050.GA18577@mwanda>
-In-Reply-To: <20161110125050.GA18577@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: Intel SCU Linux support <intel-linux-scu@intel.com>, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
+Most error branches following the call to pci_map_biosrom contain
+a call to pci_unmap_biosrom. This patch add these calls where
+they are missing.
 
-> We accidentally removed a tab here.  Let's add it back, and some curly
-> braces as well since this is a muti-line indent.
+This issue was found with Hector.
 
-Reviewed-by: James Simmons <jsimmons@infradead.org>
- 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/lustre/lustre/osc/osc_lock.c b/drivers/staging/lustre/lustre/osc/osc_lock.c
-> index e337e87..bfc8d38 100644
-> --- a/drivers/staging/lustre/lustre/osc/osc_lock.c
-> +++ b/drivers/staging/lustre/lustre/osc/osc_lock.c
-> @@ -607,9 +607,11 @@ static int osc_ldlm_glimpse_ast(struct ldlm_lock *dlmlock, void *data)
->  			lvb = req_capsule_server_get(cap, &RMF_DLM_LVB);
->  			result = cl_object_glimpse(env, obj, lvb);
->  		}
-> -		if (!exp_connect_lvb_type(req->rq_export))
-> -		req_capsule_shrink(&req->rq_pill, &RMF_DLM_LVB,
-> -				   sizeof(struct ost_lvb_v1), RCL_SERVER);
-> +		if (!exp_connect_lvb_type(req->rq_export)) {
-> +			req_capsule_shrink(&req->rq_pill, &RMF_DLM_LVB,
-> +					   sizeof(struct ost_lvb_v1),
-> +					   RCL_SERVER);
-> +		}
->  		cl_object_put(env, obj);
->  	} else {
->  		/*
-> 
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+
+---
+ drivers/scsi/isci/probe_roms.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/scsi/isci/probe_roms.c
++++ b/drivers/scsi/isci/probe_roms.c
+@@ -54,6 +54,7 @@ struct isci_orom *isci_request_oprom(str
+ 	len = pci_biosrom_size(pdev);
+ 	rom = devm_kzalloc(&pdev->dev, sizeof(*rom), GFP_KERNEL);
+ 	if (!rom) {
++		pci_unmap_biosrom(oprom);
+ 		dev_warn(&pdev->dev,
+ 			 "Unable to allocate memory for orom\n");
+ 		return NULL;
