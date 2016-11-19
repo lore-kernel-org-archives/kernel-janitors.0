@@ -1,33 +1,36 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 19 Nov 2016 11:24:40 +0000
+From: Eva Rachel Retuya <eraretuya@gmail.com>
+Date: Sat, 19 Nov 2016 11:47:52 +0000
 Subject: Re: [PATCH] staging: iio: ad9832:
-Message-Id: <57c94e39-fbc5-d354-41a7-c1d1a747fc52@kernel.org>
+Message-Id: <20161119114751.GA443@Socrates-DK>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161119110834.25025-1-christophe.jaillet@wanadoo.fr>
 In-Reply-To: <20161119110834.25025-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org, eraretuya@gmail.com
-Cc: linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 19/11/16 11:08, Christophe JAILLET wrote:
+On Sat, Nov 19, 2016 at 12:08:34PM +0100, Christophe JAILLET wrote:
 > Commit a98461d79ba5 ("staging: iio: ad9832: add DVDD regulator") and
 > commit 43a07e48af44 ("staging: iio: ad9832: clean-up regulator 'reg'") add
 > some dereference of 'st' which is an un-initialized pointer at this point.
 > 
 > Re-order code and tweak error handling in order to allocate memory and have
 > 'st' be a valid pointer before using it.
+
+Hello,
+
+Thanks for the patch but this fix was already submitted and applied:
+https://git.kernel.org/cgit/linux/kernel/git/jic23/iio.git/commit/?h=testing&idh26fdbd2e207f8107e65c5a372ac616e7af11b4
+
+Eva
+
 > 
 > Fixes: a98461d79ba5 ("staging: iio: ad9832: add DVDD regulator")
 > Fixes: 43a07e48af44 ("staging: iio: ad9832: clean-up regulator 'reg'")
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Thanks but fixed already.
-6826fdbd2 "staging: iio: ad9832: allocate data before using
-Arnd Bergmann
-
-Jonathan  
 > ---
 > Compile tested only
 > ---
@@ -71,5 +74,6 @@ Jonathan
 >  	indio_dev->dev.parent = &spi->dev;
 >  	indio_dev->name = spi_get_device_id(spi)->name;
 >  	indio_dev->info = &ad9832_info;
+> -- 
+> 2.9.3
 > 
-
