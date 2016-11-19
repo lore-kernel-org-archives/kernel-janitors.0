@@ -1,17 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Nov 2016 21:28:16 +0000
-Subject: Re: [patch] sparc: indent an if statement
-Message-Id: <20161125212816.GD28558@mwanda>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Sat, 19 Nov 2016 17:41:48 +0000
+Subject: [PATCH] PCI Hotplug: cpqphp: Add missing call to pci_disable_device
+Message-Id: <20161119174148.20187-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161125110250.GC5938@mwanda>
-In-Reply-To: <20161125110250.GC5938@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-Yeah.  That's nicer...
+Most error branches following the call to pci_enable_device contain
+a call to pci_disable_device. This patch add these calls where they are
+missing.
 
-regards,
-dan carpenter
+This issue was found with Hector.
 
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+
+---
+ drivers/pci/hotplug/cpqphp_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/pci/hotplug/cpqphp_core.c
++++ b/drivers/pci/hotplug/cpqphp_core.c
+@@ -867,7 +867,8 @@ static int cpqhpc_probe(struct pci_dev *
+ 	 */
+ 	if ((pdev->revision <= 2) && (vendor_id != PCI_VENDOR_ID_INTEL)) {
+ 		err(msg_HPC_not_supported);
+-		return -ENODEV;
++		rc = -ENODEV;
++		goto err_disable_device;
+ 	}
+ 
+ 	/* TODO: This code can be made to support non-Compaq or Intel
