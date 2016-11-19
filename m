@@ -1,48 +1,37 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Fri, 18 Nov 2016 12:12:47 +0000
-Subject: Re: [patch] s390/crypto: unlock on error in prng_tdes_read()
-Message-Id: <20161118131247.44a52270@mschwide>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Sat, 19 Nov 2016 17:42:34 +0000
+Subject: [PATCH] [SCSI] dpt_i2o: Add a missing call to kfree
+Message-Id: <20161119174234.20292-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161118105451.GA26523@mwanda>
-In-Reply-To: <20161118105451.GA26523@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Harald Freudenberger <freude@linux.vnet.ibm.com>, "David S. Miller" <davem@davemloft.net>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-On Fri, 18 Nov 2016 14:11:00 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Most error branches following the call to kzalloc contain
+a call to kfree. This patch add these calls where they are
+missing.
 
-> We added some new locking but forgot to unlock on error.
-> 
-> Fixes: 57127645d79d ("s390/zcrypt: Introduce new SHA-512 based Pseudo Random Generator.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/arch/s390/crypto/prng.c b/arch/s390/crypto/prng.c
-> index 9cc050f..1113389 100644
-> --- a/arch/s390/crypto/prng.c
-> +++ b/arch/s390/crypto/prng.c
-> @@ -507,8 +507,10 @@ static ssize_t prng_tdes_read(struct file *file, char __user *ubuf,
->  		prng_data->prngws.byte_counter += n;
->  		prng_data->prngws.reseed_counter += n;
-> 
-> -		if (copy_to_user(ubuf, prng_data->buf, chunk))
-> -			return -EFAULT;
-> +		if (copy_to_user(ubuf, prng_data->buf, chunk)) {
-> +			ret = -EFAULT;
-> +			break;
-> +		}
-> 
->  		nbytes -= chunk;
->  		ret += chunk;
-> 
+This issue was found with Hector.
 
-Nice spotting, I will add this to my fixes tree. Thank you..
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 
--- 
-blue skies,
-   Martin.
+---
+ drivers/scsi/dpt_i2o.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-"Reality continues to ruin my life." - Calvin.
-
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -1754,8 +1754,10 @@ static int adpt_i2o_passthru(adpt_hba* p
+ 	sg_offset = (msg[0]>>4)&0xf;
+ 	msg[2] = 0x40000000; // IOCTL context
+ 	msg[3] = adpt_ioctl_to_context(pHba, reply);
+-	if (msg[3] = (u32)-1)
++	if (msg[3] = (u32)-1) {
++		kfree(reply);
+ 		return -EBUSY;
++	}
+ 
+ 	memset(sg_list,0, sizeof(sg_list[0])*pHba->sg_tablesize);
+ 	if(sg_offset) {
