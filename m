@@ -1,34 +1,37 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 02 Nov 2016 15:35:32 +0000
-Subject: Re: [PATCH 09/10] scripts/basic/fixdep: Complete error handling in print_cmdline()
-Message-Id: <CAK7LNASYQCokO7bL72gs6zLrMNx_Sos1So87=bGMCTX_4gowGw@mail.gmail.com>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Sat, 19 Nov 2016 17:40:38 +0000
+Subject: [PATCH] scsi: aic94xx: Add a missing call to kfree
+Message-Id: <20161119174038.20083-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <72e07814-56e9-505a-d660-91ff20b6efea@users.sourceforge.net>
- <d4bd9a09-d413-a073-c2d5-67933d425b87@users.sourceforge.net> <CA+r1ZhhoPy4mNwEtLVMqpXqotKuWmUf-D50=XWpWghzdtzTfEQ@mail.gmail.com>
-In-Reply-To: <CA+r1ZhhoPy4mNwEtLVMqpXqotKuWmUf-D50=XWpWghzdtzTfEQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jim Davis <jim.epost@gmail.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Michal Marek <mmarek@suse.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-2016-10-29 8:42 GMT+09:00 Jim Davis <jim.epost@gmail.com>:
-> On Fri, Oct 28, 2016 at 1:40 AM, SF Markus Elfring
-> <elfring@users.sourceforge.net> wrote:
->
->> +       if (printf("cmd_%s := %s\n\n", target, cmdline) < 10) {
->
-> Rather than scatter fragile magic numbers, like 10, throughout the
-> code, if you're hell-bent on checking for printf errors you could
-> write a little wrapper function that hid the magic number and bundled
-> up the errno stuff.
+Most error branches following the call to kzalloc contain
+a call to kfree. This patch add these calls where they are
+missing.
 
+This issue was found with Hector.
 
-BTW, how the magic number "10" was calculated?
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 
+---
+ drivers/scsi/aic94xx/aic94xx_hwi.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-
--- 
-Best Regards
-Masahiro Yamada
+--- a/drivers/scsi/aic94xx/aic94xx_hwi.c
++++ b/drivers/scsi/aic94xx/aic94xx_hwi.c
+@@ -228,8 +228,10 @@ static int asd_init_scbs(struct asd_ha_s
+ 	bitmap_bytes = (asd_ha->seq.tc_index_bitmap_bits+7)/8;
+ 	bitmap_bytes = BITS_TO_LONGS(bitmap_bytes*8)*sizeof(unsigned long);
+ 	asd_ha->seq.tc_index_bitmap = kzalloc(bitmap_bytes, GFP_KERNEL);
+-	if (!asd_ha->seq.tc_index_bitmap)
++	if (!asd_ha->seq.tc_index_bitmap) {
++		kfree(asd_ha->seq.tc_index_array);
+ 		return -ENOMEM;
++	}
+ 
+ 	spin_lock_init(&seq->tc_index_lock);
+ 
