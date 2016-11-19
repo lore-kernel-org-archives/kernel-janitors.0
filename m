@@ -1,40 +1,37 @@
-From: Lubomir Rintel <lkundrak@v3.sk>
-Date: Thu, 24 Nov 2016 10:48:01 +0000
-Subject: Re: [patch] char/pcmcia: add some error checking in scr24x_read()
-Message-Id: <1479984481.8204.0.camel@v3.sk>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Sat, 19 Nov 2016 18:22:41 +0000
+Subject: [PATCH] stm class: Add a missing call to put_device
+Message-Id: <20161119182241.9030-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161124104623.GA17225@mwanda>
-In-Reply-To: <20161124104623.GA17225@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-On Thu, 2016-11-24 at 13:46 +0300, Dan Carpenter wrote:
-> The "ret = " assignment seems to have accidentally been left off.
-> 
-> Fixes: f2ed287bcc90 ("char/pcmcia: add scr24x_cs chip card interface
-> driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/char/pcmcia/scr24x_cs.c
-> b/drivers/char/pcmcia/scr24x_cs.c
-> index 4f215ce..8523ec5 100644
-> --- a/drivers/char/pcmcia/scr24x_cs.c
-> +++ b/drivers/char/pcmcia/scr24x_cs.c
-> @@ -157,7 +157,7 @@ static ssize_t scr24x_read(struct file *filp,
-> char __user *buf, size_t count,
->  		ret = -EIO;
->  		goto out;
->  	}
-> -	read_chunk(dev, CCID_HEADER_SIZE, len);
-> +	ret = read_chunk(dev, CCID_HEADER_SIZE, len);
->  	if (ret < 0)
->  		goto out;
+Most error branches following the call to class_find_device contain
+a call to put_device. This patch add calls to put_device where
+they are missing.
 
+This issue was found with Hector.
 
-Acked-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 
-Thank you,
-Lubo
+---
+ drivers/hwtracing/stm/core.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -368,8 +368,10 @@ static int stm_char_open(struct inode *i
+ 		return -ENODEV;
+ 
+ 	stmf = kzalloc(sizeof(*stmf), GFP_KERNEL);
+-	if (!stmf)
++	if (!stmf) {
++		put_device(dev);
+ 		return -ENOMEM;
++	}
+ 
+ 	stm_output_init(&stmf->output);
+ 	stmf->stm = to_stm_device(dev);
