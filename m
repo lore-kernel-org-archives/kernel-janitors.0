@@ -1,51 +1,57 @@
-From: Tomas Henzl <thenzl@redhat.com>
-Date: Tue, 22 Nov 2016 15:51:25 +0000
-Subject: Re: [PATCH] scsi: aic94xx: Add a missing call to kfree
-Message-Id: <a98c4b93-2e49-0d99-18dd-ac00446f3ca7@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 21 Nov 2016 21:53:52 +0000
+Subject: [PATCH] SMB2: Fix share type handling
+Message-Id: <20161121215352.3183-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161119174038.20083-1-lambert.quentin@gmail.com>
-In-Reply-To: <20161119174038.20083-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: sfrench@samba.org
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 19.11.2016 18:40, Quentin Lambert wrote:
-> Most error branches following the call to kzalloc contain
-> a call to kfree. This patch add these calls where they are
-> missing.
->
-> This issue was found with Hector.
+In fs/cifs/smb2pdu.h, we have:
+#define SMB2_SHARE_TYPE_DISK    0x01
+#define SMB2_SHARE_TYPE_PIPE    0x02
+#define SMB2_SHARE_TYPE_PRINT   0x03
 
-Hi Quentin,
-most error branches also do set the freed pointer to NULL,
-please do the same.
+Knowing that, with the current code, the SMB2_SHARE_TYPE_PRINT case can
+never trigger and printer share would be interpreted as disk share.
 
-tomash
+So, test the ShareType value for equality instead.
 
-> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
->
-> ---
->  drivers/scsi/aic94xx/aic94xx_hwi.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> --- a/drivers/scsi/aic94xx/aic94xx_hwi.c
-> +++ b/drivers/scsi/aic94xx/aic94xx_hwi.c
-> @@ -228,8 +228,10 @@ static int asd_init_scbs(struct asd_ha_s
->  	bitmap_bytes = (asd_ha->seq.tc_index_bitmap_bits+7)/8;
->  	bitmap_bytes = BITS_TO_LONGS(bitmap_bytes*8)*sizeof(unsigned long);
->  	asd_ha->seq.tc_index_bitmap = kzalloc(bitmap_bytes, GFP_KERNEL);
-> -	if (!asd_ha->seq.tc_index_bitmap)
-> +	if (!asd_ha->seq.tc_index_bitmap) {
-> +		kfree(asd_ha->seq.tc_index_array);
->  		return -ENOMEM;
-> +	}
->  
->  	spin_lock_init(&seq->tc_index_lock);
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+While at it, add some { } to fix a small style issue.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile-tested only.
+
+The proposed patch changes a bit the semantic as no masking is performed
+anymore. If some upper bits in 'ShareType' are set, it would now be rejected
+instead of silently accepted.
+---
+ fs/cifs/smb2pdu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 5ca5ea4668a1..600f52994fd9 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1143,12 +1143,12 @@ SMB2_tcon(const unsigned int xid, struct cifs_ses *ses, const char *tree,
+ 		goto tcon_exit;
+ 	}
+ 
+-	if (rsp->ShareType & SMB2_SHARE_TYPE_DISK)
++	if (rsp->ShareType = SMB2_SHARE_TYPE_DISK) {
+ 		cifs_dbg(FYI, "connection to disk share\n");
+-	else if (rsp->ShareType & SMB2_SHARE_TYPE_PIPE) {
++	} else if (rsp->ShareType = SMB2_SHARE_TYPE_PIPE) {
+ 		tcon->ipc = true;
+ 		cifs_dbg(FYI, "connection to pipe share\n");
+-	} else if (rsp->ShareType & SMB2_SHARE_TYPE_PRINT) {
++	} else if (rsp->ShareType = SMB2_SHARE_TYPE_PRINT) {
+ 		tcon->print = true;
+ 		cifs_dbg(FYI, "connection to printer\n");
+ 	} else {
+-- 
+2.9.3
 
