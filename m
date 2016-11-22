@@ -1,108 +1,93 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Nov 2016 11:11:54 +0000
-Subject: [patch v2] [media] stk-webcam: fix an endian bug in stk_camera_read_reg()
-Message-Id: <20161116111154.GA27862@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 22 Nov 2016 17:27:01 +0000
+Subject: Applied "spi: spi-topcliff-pch: Remove some dead code" to the spi tree
+Message-Id: <E1c9EqT-00060I-CX@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20161115094808.GA15424@mwanda>
+References: <20161118224927.12889-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161118224927.12889-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Wolfram Sang <wsa-dev@sang-engineering.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We pass an int pointer to stk_camera_read_reg() but only write to the
-highest byte.  It's a bug on big endian systems and generally a nasty
-thing to do and doesn't match the write function either.
+The patch
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+   spi: spi-topcliff-pch: Remove some dead code
+
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9677e7dd1c799d1720d242d0aa0aee8490637eae Mon Sep 17 00:00:00 2001
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Fri, 18 Nov 2016 23:49:27 +0100
+Subject: [PATCH] spi: spi-topcliff-pch: Remove some dead code
+
+Since commit 0d35773979b9 ("spi: spi-topcliff-pch: Remove deprecated
+create_singlethread_workqueue"), 'retval' is no more used in this function.
+
+So some now dead code can be removed.
+Also axe a debug message which looks useless now.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-v2: I forgot to update stk-sensor.c in version 1.
+ drivers/spi/spi-topcliff-pch.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/media/usb/stkwebcam/stk-webcam.h b/drivers/media/usb/stkwebcam/stk-webcam.h
-index 9bbfa3d..92bb48e 100644
---- a/drivers/media/usb/stkwebcam/stk-webcam.h
-+++ b/drivers/media/usb/stkwebcam/stk-webcam.h
-@@ -129,7 +129,7 @@ struct stk_camera {
- #define vdev_to_camera(d) container_of(d, struct stk_camera, vdev)
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index c54ee6674471..fcb991034c3d 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -1268,11 +1268,8 @@ static void pch_spi_free_resources(struct pch_spi_board_data *board_dat,
+ static int pch_spi_get_resources(struct pch_spi_board_data *board_dat,
+ 				 struct pch_spi_data *data)
+ {
+-	int retval = 0;
+-
+ 	dev_dbg(&board_dat->pdev->dev, "%s ENTRY\n", __func__);
  
- int stk_camera_write_reg(struct stk_camera *, u16, u8);
--int stk_camera_read_reg(struct stk_camera *, u16, int *);
-+int stk_camera_read_reg(struct stk_camera *, u16, u8 *);
+-
+ 	/* reset PCH SPI h/w */
+ 	pch_spi_reset(data->master);
+ 	dev_dbg(&board_dat->pdev->dev,
+@@ -1280,15 +1277,7 @@ static int pch_spi_get_resources(struct pch_spi_board_data *board_dat,
  
- int stk_sensor_init(struct stk_camera *);
- int stk_sensor_configure(struct stk_camera *);
-diff --git a/drivers/media/usb/stkwebcam/stk-webcam.c b/drivers/media/usb/stkwebcam/stk-webcam.c
-index 22a9aae..1c48f2f 100644
---- a/drivers/media/usb/stkwebcam/stk-webcam.c
-+++ b/drivers/media/usb/stkwebcam/stk-webcam.c
-@@ -144,7 +144,7 @@ int stk_camera_write_reg(struct stk_camera *dev, u16 index, u8 value)
- 		return 0;
+ 	dev_dbg(&board_dat->pdev->dev, "%s data->irq_reg_sts=true\n", __func__);
+ 
+-	if (retval != 0) {
+-		dev_err(&board_dat->pdev->dev,
+-			"%s FAIL:invoking pch_spi_free_resources\n", __func__);
+-		pch_spi_free_resources(board_dat, data);
+-	}
+-
+-	dev_dbg(&board_dat->pdev->dev, "%s Return=%d\n", __func__, retval);
+-
+-	return retval;
++	return 0;
  }
  
--int stk_camera_read_reg(struct stk_camera *dev, u16 index, int *value)
-+int stk_camera_read_reg(struct stk_camera *dev, u16 index, u8 *value)
- {
- 	struct usb_device *udev = dev->udev;
- 	unsigned char *buf;
-@@ -163,7 +163,7 @@ int stk_camera_read_reg(struct stk_camera *dev, u16 index, int *value)
- 			sizeof(u8),
- 			500);
- 	if (ret >= 0)
--		memcpy(value, buf, sizeof(u8));
-+		*value = *buf;
- 
- 	kfree(buf);
- 	return ret;
-@@ -171,9 +171,10 @@ int stk_camera_read_reg(struct stk_camera *dev, u16 index, int *value)
- 
- static int stk_start_stream(struct stk_camera *dev)
- {
--	int value;
-+	u8 value;
- 	int i, ret;
--	int value_116, value_117;
-+	u8 value_116, value_117;
-+
- 
- 	if (!is_present(dev))
- 		return -ENODEV;
-@@ -213,7 +214,7 @@ static int stk_start_stream(struct stk_camera *dev)
- 
- static int stk_stop_stream(struct stk_camera *dev)
- {
--	int value;
-+	u8 value;
- 	int i;
- 	if (is_present(dev)) {
- 		stk_camera_read_reg(dev, 0x0100, &value);
-diff --git a/drivers/media/usb/stkwebcam/stk-sensor.c b/drivers/media/usb/stkwebcam/stk-sensor.c
-index e546b01..2dcc8d0 100644
---- a/drivers/media/usb/stkwebcam/stk-sensor.c
-+++ b/drivers/media/usb/stkwebcam/stk-sensor.c
-@@ -228,7 +228,7 @@
- static int stk_sensor_outb(struct stk_camera *dev, u8 reg, u8 val)
- {
- 	int i = 0;
--	int tmpval = 0;
-+	u8 tmpval = 0;
- 
- 	if (stk_camera_write_reg(dev, STK_IIC_TX_INDEX, reg))
- 		return 1;
-@@ -253,7 +253,7 @@ static int stk_sensor_outb(struct stk_camera *dev, u8 reg, u8 val)
- static int stk_sensor_inb(struct stk_camera *dev, u8 reg, u8 *val)
- {
- 	int i = 0;
--	int tmpval = 0;
-+	u8 tmpval = 0;
- 
- 	if (stk_camera_write_reg(dev, STK_IIC_RX_INDEX, reg))
- 		return 1;
-@@ -274,7 +274,7 @@ static int stk_sensor_inb(struct stk_camera *dev, u8 reg, u8 *val)
- 	if (stk_camera_read_reg(dev, STK_IIC_RX_VALUE, &tmpval))
- 		return 1;
- 
--	*val = (u8) tmpval;
-+	*val = tmpval;
- 	return 0;
- }
- 
+ static void pch_free_dma_buf(struct pch_spi_board_data *board_dat,
+-- 
+2.10.2
+
