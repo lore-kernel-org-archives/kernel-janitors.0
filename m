@@ -1,101 +1,39 @@
-From: Wolfram Sang <wsa-dev@sang-engineering.com>
-Date: Fri, 18 Nov 2016 01:00:08 +0000
-Subject: Re: [2/2] i2c: constify i2c_adapter_quirks structures
-Message-Id: <20161118010008.GA24025@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="uAKRQypu60I7Lcqm"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Nov 2016 22:42:00 +0000
+Subject: [bug report] mlxsw: core: Implement thermal zone
+Message-Id: <20161123224200.GA31108@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1476552722-12352-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1476552722-12352-3-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Wolfram Sang <wsa@the-dreams.de>, kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+Hello Ivan Vecera,
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The patch a50c1e35650b: "mlxsw: core: Implement thermal zone" from
+Nov 22, 2016, leads to the following static checker warning:
 
-On Sat, Oct 15, 2016 at 07:32:02PM +0200, Julia Lawall wrote:
-> Check for i2c_adapter_quirks structures that are only stored in the
-> quirks field of an i2c_adapter structure.  This field is declared
-> const, so i2c_adapter_quirks structures that have this property can be
-> declared as const also.
->=20
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct i2c_adapter_quirks i@p =3D { ... };
->=20
-> @ok@
-> identifier r.i;
-> struct i2c_adapter e;
-> position p;
-> @@
-> e.quirks =3D &i@p;
->=20
-> @bad@
-> position p !=3D {r.p,ok.p};
-> identifier r.i;
-> struct i2c_adapter_quirks e;
-> @@
-> e@i@p
->=20
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct i2c_adapter_quirks i =3D { ... };
-> // </smpl>
->=20
-> The effect on the layout of the .o files is shown by the following
-> output of the size command, first before then after the
-> transformation:
->=20
->    text    data     bss     dec     hex filename
->    3651     472       8    4131    1023 drivers/i2c/busses/i2c-axxia.o
->    3683     440       8    4131    1023 drivers/i2c/busses/i2c-axxia.o
->=20
->    text    data     bss     dec     hex filename
->    1069     216       0    1285     505 drivers/i2c/busses/i2c-dln2.o
->    1101     192       0    1293     50d drivers/i2c/busses/i2c-dln2.o
->=20
->    text    data     bss     dec     hex filename
->    3211     484       1    3696     e70 drivers/i2c/busses/i2c-viperboard=
-=2Eo
->    3243     460       1    3704     e78 drivers/i2c/busses/i2c-viperboard=
-=2Eo
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+	drivers/net/ethernet/mellanox/mlxsw/core_thermal.c:261 mlxsw_thermal_set_trip_temp()
+	warn: no lower bound on 'temp'
 
-Squashed with the other similar patch and applied to for-next, thanks!
+drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+   252  static int mlxsw_thermal_set_trip_temp(struct thermal_zone_device *tzdev,
+   253                                         int trip, int temp)
+   254  {
+   255          struct mlxsw_thermal *thermal = tzdev->devdata;
+   256  
+   257          if (trip < 0 || trip >= MLXSW_THERMAL_NUM_TRIPS ||
+   258              temp > MLXSW_THERMAL_MAX_TEMP)
+   259                  return -EINVAL;
+   260  
+   261          thermal->trips[trip].temp = temp;
 
+Did you allow negative numbers intentionally?  It feels like there
+should be some kind of min temp.
 
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
+   262          return 0;
+   263  }
+   264  
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYLlKYAAoJEBQN5MwUoCm22BEP/1ttdvtqMLobFL5slwsq3d2S
-V/D+79qsGfQrBmcBfJikAJq7kHQeYyBp8OAdO2Mp8TPN8T0vu7x4n44+/jmBLTQt
-jXvbYsvl8pFnyJzeyhl+CMR/7MhZoIHH39Ec6j7N5YkCB0sdH7nIe8OKJvzLx4g6
-oDZOCeJ60JoHwJOr7NYqpDrpWj7iUZe3iN5aFGRs/Aj5M8Gr8EQ6oiWiSnJ48q9o
-jqdm2rWzNXXZ0tjVj9pQD7/UAhg3OFfpoRA2XohwhBM+9qV4evVOMJgf5gXE1toG
-7TWMh8r8yIZyElT+1zI3ZQqKgsTfiu/ZcPHIxQJGGJ3uK3VtpxKTZTLvmUHndnbV
-CMUOrgmqjFTDTdETL9757m6XbXgThyEkmBphSZwRR+2JrekvSjQpc5xKHquob2nu
-+Tist0L5ZjzXTsEpfg3iFCv0dH10PjGNm20Wn2VNRAmEjU1Q9z+vUYcgXKFCMcv2
-Z/6nvsgLLvW2rDbwxFSJOTs4hAwyznx7/UGfDskodm8AQ9UtBaksYwH9NLZ1D4PF
-bT6mh+HJJ3XCOEwJ3ZlQsLMOKFpLqMrGqQwi5Jkv9IVC039wTQYjUXohmMTVGTut
-KNVgORXNe/8Xh1wWMBHYaxFcuFwAQbvhaJoz48+hPm+OsEHJV4vhJEk1h3qrSuXc
-9kyTTPYmxJFiY/1XIulV
-=qoJv
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
+regards,
+dan carpenter
