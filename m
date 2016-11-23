@@ -1,37 +1,39 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 18 Nov 2016 17:49:15 +0000
-Subject: [PATCH] [media] soc-camera: Fix a return value in case of error
-Message-Id: <20161118174915.8072-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Nov 2016 22:19:08 +0000
+Subject: [patch] x86/apic/uv: silence a shift wrapping warning
+Message-Id: <20161123221908.GA23997@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: g.liakhovetski@gmx.de, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Thomas Gleixner <tglx@linutronix.de>, Mike Travis <travis@sgi.com>
+Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Dimitri Sivanich <sivanich@sgi.com>, Nathan Zimmer <nzimmer@sgi.com>, Alex Thorlton <athorlton@sgi.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If 'ov9640_reg_read()' does not return 0, then 'val' is left unmodified.
-As it is not initialized either, the return value can be anything.
+m_io is stored in 6 bits so it's a number in the 0-63 range.  Static
+analysis tools complain that 1 << 63 will wrap so I have changed it to
+1ULL << m_io.
 
-It is likely that returning the error code was expected here.
+This code is over three years old so presumably the bug doesn't happen
+very frequently in real life or someone would have complained by now.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: b15cc4a12bed ("x86, uv, uv3: Update x2apic Support for SGI UV3")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/media/i2c/soc_camera/ov9640.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please review this one, carefully because I'm not positive about it.
 
-diff --git a/drivers/media/i2c/soc_camera/ov9640.c b/drivers/media/i2c/soc_camera/ov9640.c
-index 8c93c57af71c..65085a235128 100644
---- a/drivers/media/i2c/soc_camera/ov9640.c
-+++ b/drivers/media/i2c/soc_camera/ov9640.c
-@@ -233,7 +233,7 @@ static int ov9640_reg_rmw(struct i2c_client *client, u8 reg, u8 set, u8 unset)
- 	if (ret) {
- 		dev_err(&client->dev,
- 			"[Read]-Modify-Write of register %02x failed!\n", reg);
--		return val;
-+		return ret;
- 	}
- 
- 	val |= set;
--- 
-2.9.3
-
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index aeef53c..35690a1 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -815,9 +815,9 @@ static __init void map_mmioh_high_uv3(int index, int min_pnode, int max_pnode)
+ 				l = li;
+ 			}
+ 			addr1 = (base << shift) +
+-				f * (unsigned long)(1 << m_io);
++				f * (1ULL << m_io);
+ 			addr2 = (base << shift) +
+-				(l + 1) * (unsigned long)(1 << m_io);
++				(l + 1) * (1ULL << m_io);
+ 			pr_info("UV: %s[%03d..%03d] NASID 0x%04x ADDR 0x%016lx - 0x%016lx\n",
+ 				id, fi, li, lnasid, addr1, addr2);
+ 			if (max_io < l)
