@@ -1,58 +1,29 @@
-From: Brian Masney <masneyb@onstation.org>
-Date: Fri, 18 Nov 2016 14:03:26 +0000
-Subject: Re: [patch] iio: tsl2583: off by one in in_illuminance_lux_table_store()
-Message-Id: <20161118140326.GA20458@basecamp.onstation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2016 10:46:23 +0000
+Subject: [patch] char/pcmcia: add some error checking in scr24x_read()
+Message-Id: <20161124104623.GA17225@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161118115153.GC3281@mwanda>
-In-Reply-To: <20161118115153.GC3281@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Jon Brenner <jbrenner@taosinc.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Eva Rachel Retuya <eraretuya@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lubomir Rintel <lkundrak@v3.sk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Fri, Nov 18, 2016 at 02:51:54PM +0300, Dan Carpenter wrote:
-> The value[] array has "max_ints" elements so this should be >= instead
-> of >.
-> 
-> Fixes: ac4f6eee8fe8 ("staging: iio: TAOS tsl258x: Device driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/iio/light/tsl2583.c b/drivers/iio/light/tsl2583.c
-> index 0b87f6a..faef6bd 100644
-> --- a/drivers/iio/light/tsl2583.c
-> +++ b/drivers/iio/light/tsl2583.c
-> @@ -580,7 +580,7 @@ static ssize_t in_illuminance_lux_table_store(struct device *dev,
->  	 * and the last table entry is all 0.
->  	 */
->  	n = value[0];
-> -	if ((n % 3) || n < 6 || n > max_ints) {
-> +	if ((n % 3) || n < 6 || n >= max_ints) {
->  		dev_err(dev,
->  			"%s: The number of entries in the lux table must be a multiple of 3 and within the range [6, %d]\n",
->  			__func__, max_ints);
+The "ret = " assignment seems to have accidentally been left off.
 
-Hi Dan,
-   Good catch! I believe that this should use a different fix though.
-The definition of value in in_illuminance_lux_table_store() should be
-changed from:
+Fixes: f2ed287bcc90 ("char/pcmcia: add scr24x_cs chip card interface driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-int value[TSL2583_MAX_LUX_TABLE_ENTRIES * 3];
-
-to:
-
-int value[(TSL2583_MAX_LUX_TABLE_ENTRIES * 3) + 1];
-
-This will allow storing the extra integer from get_options() containing
-the integer count.
-
-Otherwise, with your propsed change, someone would only be able to use
-9 entries in the device lux table rather than the 10 that are set aside.
-
-Also, this may be (well is) nit picking, but I had [6, 33] in the error
-message to mark the range as inclusive on both ends. If it was exclusive
-on the upper end, then the error message should have also been changed
-to be [6, 33).
-
-Brian
-
+diff --git a/drivers/char/pcmcia/scr24x_cs.c b/drivers/char/pcmcia/scr24x_cs.c
+index 4f215ce..8523ec5 100644
+--- a/drivers/char/pcmcia/scr24x_cs.c
++++ b/drivers/char/pcmcia/scr24x_cs.c
+@@ -157,7 +157,7 @@ static ssize_t scr24x_read(struct file *filp, char __user *buf, size_t count,
+ 		ret = -EIO;
+ 		goto out;
+ 	}
+-	read_chunk(dev, CCID_HEADER_SIZE, len);
++	ret = read_chunk(dev, CCID_HEADER_SIZE, len);
+ 	if (ret < 0)
+ 		goto out;
+ 
