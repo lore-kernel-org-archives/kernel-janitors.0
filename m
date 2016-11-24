@@ -1,94 +1,38 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Fri, 04 Nov 2016 08:09:15 +0000
-Subject: Re: [PATCH 3/3] [media] au0828-video: Move two assignments in au0828_init_isoc()
-Message-Id: <82833c3a-0af0-a427-0e99-78ca5a6e9f68@xs4all.nl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2016 11:27:26 +0000
+Subject: [patch] vfio-mdev: fix some error codes in the sample code
+Message-Id: <20161124112726.GN17225@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c6a37822-c0f9-1f1e-6ebe-a1c88c6d9d0a@users.sourceforge.net>
- <1ab6b168-3c69-97c2-d02e-cd64b7fa222f@users.sourceforge.net>
- <4e6e77af-1b2c-33a6-1bc3-058ac5ecc038@xs4all.nl>
- <65b399e5-8c18-45a4-643d-527dd3bbff3d@users.sourceforge.net>
-In-Reply-To: <65b399e5-8c18-45a4-643d-527dd3bbff3d@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, =?UTF-8?Q?Rafael_Louren=c3=a7o_de_Lima_Chehab?= <chehabrafael@gmail.com>, Shuah Khan <shuah@kernel.org>, Wolfram Sang <wsa-dev@sang-engineering.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kirti Wankhede <kwankhede@nvidia.com>
+Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 03/11/16 20:56, SF Markus Elfring wrote:
->>> From: Markus Elfring <elfring@users.sourceforge.net>
->>> Date: Mon, 24 Oct 2016 22:44:02 +0200
->>>
->>> Move the assignment for the data structure members "isoc_copy"
->>> and "num_bufs" behind the source code for memory allocations
->>> by this function.
->>
->> I don't see the point,
->
-> Another explanation try =E2=80=A6
->
->
->> dropping this patch.
->
-> I proposed that these assignments should only be performed after the requ=
-ired
-> memory allocations succeeded. Is this detail worth for further considerat=
-ions?
+This is just sample code.  We forget to set the error codes in a couple
+places.
 
-I understand why you think it is better, but I disagree :-) I prefer the=20
-current
-approach, that way I know as a reviewer that these fields are correctly=20
-set and
-I can forget about them. Not worth spending more time on this.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-
-	Hans
-
->
->
->>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->>> ---
->>>  drivers/media/usb/au0828/au0828-video.c | 5 ++---
->>>  1 file changed, 2 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/us=
-b/au0828/au0828-video.c
->>> index b5c88a7..5ebda64 100644
->>> --- a/drivers/media/usb/au0828/au0828-video.c
->>> +++ b/drivers/media/usb/au0828/au0828-video.c
->>> @@ -218,9 +218,6 @@ static int au0828_init_isoc(struct au0828_dev *dev,=
- int max_packets,
->>>      int rc;
->>>
->>>      au0828_isocdbg("au0828: called au0828_prepare_isoc\n");
->>> -
->>> -    dev->isoc_ctl.isoc_copy =3D isoc_copy;
->>> -    dev->isoc_ctl.num_bufs =3D num_bufs;
->>>      dev->isoc_ctl.urb =3D kcalloc(num_bufs,
->>>                      sizeof(*dev->isoc_ctl.urb),
->>>                      GFP_KERNEL);
->>> @@ -240,6 +237,7 @@ static int au0828_init_isoc(struct au0828_dev *dev,=
- int max_packets,
->>>      dev->isoc_ctl.buf =3D NULL;
->>>
->>>      sb_size =3D max_packets * dev->isoc_ctl.max_pkt_size;
->>> +    dev->isoc_ctl.num_bufs =3D num_bufs;
->>>
->>>      /* allocate urbs and transfer buffers */
->>>      for (i =3D 0; i < dev->isoc_ctl.num_bufs; i++) {
->>> @@ -276,6 +274,7 @@ static int au0828_init_isoc(struct au0828_dev *dev,=
- int max_packets,
->>>              k +=3D dev->isoc_ctl.max_pkt_size;
->>>          }
->>>      }
->>> +    dev->isoc_ctl.isoc_copy =3D isoc_copy;
->>>
->>>      /* submit urbs and enables IRQ */
->>>      for (i =3D 0; i < dev->isoc_ctl.num_bufs; i++) {
->>>
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+index 6b633a4..40ed3c0 100644
+--- a/samples/vfio-mdev/mtty.c
++++ b/samples/vfio-mdev/mtty.c
+@@ -1447,6 +1447,7 @@ static int __init mtty_dev_init(void)
+ 
+ 	if (IS_ERR(mtty_dev.vd_class)) {
+ 		pr_err("Error: failed to register mtty_dev class\n");
++		ret = PTR_ERR(mtty_dev.vd_class);
+ 		goto failed1;
+ 	}
+ 
+@@ -1458,7 +1459,8 @@ static int __init mtty_dev_init(void)
+ 	if (ret)
+ 		goto failed2;
+ 
+-	if (mdev_register_device(&mtty_dev.dev, &mdev_fops) != 0)
++	ret = mdev_register_device(&mtty_dev.dev, &mdev_fops);
++	if (ret)
+ 		goto failed3;
+ 
+ 	mutex_init(&mdev_list_lock);
