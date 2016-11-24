@@ -1,48 +1,32 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 15 Nov 2016 10:00:53 +0000
-Subject: Re: [patch] drm: zte: checking for NULL instead of IS_ERR()
-Message-Id: <20161115100053.cz3ikoojsuhi33kc@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2016 13:38:07 +0000
+Subject: [patch] iio: tsl2583: make array large enough
+Message-Id: <20161124133807.GA32255@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161115095301.GC15424@mwanda>
-In-Reply-To: <20161115095301.GC15424@mwanda>
+In-Reply-To: <20161118140326.GA20458@basecamp.onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Brian Masney <masneyb@onstation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Eva Rachel Retuya <eraretuya@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Nov 15, 2016 at 12:53:01PM +0300, Dan Carpenter wrote:
-> drm_dev_alloc() never returns NULL, it only returns error pointers on
-> error.
-> 
-> Fixes: 0a886f59528a ("drm: zte: add initial vou drm driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This array is supposed to have 10 elements.  Smatch complains that with
+the current code we can have n = max_ints and read beyond the end of
+the array.
 
-Applied, thx.
--Daniel
+Fixes: ac4f6eee8fe8 ("staging: iio: TAOS tsl258x: Device driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> diff --git a/drivers/gpu/drm/zte/zx_drm_drv.c b/drivers/gpu/drm/zte/zx_drm_drv.c
-> index abc8099..3e76f72 100644
-> --- a/drivers/gpu/drm/zte/zx_drm_drv.c
-> +++ b/drivers/gpu/drm/zte/zx_drm_drv.c
-> @@ -107,8 +107,8 @@ static int zx_drm_bind(struct device *dev)
->  		return -ENOMEM;
->  
->  	drm = drm_dev_alloc(&zx_drm_driver, dev);
-> -	if (!drm)
-> -		return -ENOMEM;
-> +	if (IS_ERR(drm))
-> +		return PTR_ERR(drm);
->  
->  	drm->dev_private = priv;
->  	dev_set_drvdata(dev, drm);
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+diff --git a/drivers/iio/light/tsl2583.c b/drivers/iio/light/tsl2583.c
+index 0b87f6a..a78b602 100644
+--- a/drivers/iio/light/tsl2583.c
++++ b/drivers/iio/light/tsl2583.c
+@@ -565,7 +565,7 @@ static ssize_t in_illuminance_lux_table_store(struct device *dev,
+ 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+ 	struct tsl2583_chip *chip = iio_priv(indio_dev);
+ 	const unsigned int max_ints = TSL2583_MAX_LUX_TABLE_ENTRIES * 3;
+-	int value[TSL2583_MAX_LUX_TABLE_ENTRIES * 3];
++	int value[TSL2583_MAX_LUX_TABLE_ENTRIES * 3 + 1];
+ 	int ret = -EINVAL;
+ 	unsigned int n;
+ 
