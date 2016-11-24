@@ -1,40 +1,32 @@
-From: =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-Date: Tue, 22 Nov 2016 12:18:25 +0000
-Subject: Re: [PATCH] SMB2: Fix share type handling
-Message-Id: <mpspolnn1wu.fsf@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2016 11:03:45 +0000
+Subject: [patch] net/mlx5: remove a duplicate condition
+Message-Id: <20161124110345.GC17225@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161121215352.3183-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161121215352.3183-1-christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>, sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org
-Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Saeed Mahameed <saeedm-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Leon Romanovsky <leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
-> Knowing that, with the current code, the SMB2_SHARE_TYPE_PRINT case can
-> never trigger and printer share would be interpreted as disk share.
+We verified that MLX5_FLOW_CONTEXT_ACTION_COUNT was set on the first
+line of the function so we don't need to check again here.
 
-I've checked the SMB2 specs ([MS-SMB2] 3.2.5.5), I can confirm these are
-the 3 only options. No upper bits are supposed to be set.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not a bugfix so it would go into -next
 
-> So, test the ShareType value for equality instead.
->
-> While at it, add some { } to fix a small style issue.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile-tested only.
->
-> The proposed patch changes a bit the semantic as no masking is performed
-> anymore. If some upper bits in 'ShareType' are set, it would now be rejected
-> instead of silently accepted.
-
-The semantic change is correct. I also think a switch would be more
-appropriate. Beside this, Looks Good To Me.
-
--- 
-Aurélien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+index 68ec4ea..a263d89 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -1307,8 +1307,7 @@ static bool counter_is_valid(struct mlx5_fc *counter, u32 action)
+ 		return false;
+ 
+ 	return (action & (MLX5_FLOW_CONTEXT_ACTION_DROP |
+-			  MLX5_FLOW_CONTEXT_ACTION_FWD_DEST)) &&
+-		(action & MLX5_FLOW_CONTEXT_ACTION_COUNT);
++			  MLX5_FLOW_CONTEXT_ACTION_FWD_DEST));
+ }
+ 
+ static bool dest_is_valid(struct mlx5_flow_destination *dest,
