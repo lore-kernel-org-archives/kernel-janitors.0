@@ -1,53 +1,32 @@
-From: atull <atull@opensource.altera.com>
-Date: Tue, 15 Nov 2016 16:01:47 +0000
-Subject: Re: [patch] ARM: socfpga: checking the wrong variable
-Message-Id: <alpine.DEB.2.20.1611151000280.3634@atull-VirtualBox2>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2016 11:05:44 +0000
+Subject: [patch] iommu/amd: Missing error code in amd_iommu_init_device()
+Message-Id: <20161124110544.GE17225@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161115095433.GD15424@mwanda> <CAAtXAHc9zFhGm-BNWX-wSzZWujD7fpgnd7s2gr88Hm5B5613wQ@mail.gmail.com>
-In-Reply-To: <CAAtXAHc9zFhGm-BNWX-wSzZWujD7fpgnd7s2gr88Hm5B5613wQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Moritz Fischer <moritz.fischer@ettus.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+We should set "ret" to -EINVAL if iommu_group_get() fails.
 
+Fixes: 55c99a4dc50f ("iommu/amd: Use iommu_attach_group()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Tue, 15 Nov 2016, Moritz Fischer wrote:
-
-> Hi Dan,
-> On Tue, Nov 15, 2016 at 1:54 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > This is a cut and paste bug.  We had intended to check "sysmgr".
-> >
-> > Fixes: e5f8efa5c8bf ("ARM: socfpga: fpga bridge driver support")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
-
-Hi Dan,
-
-Acked-by: Alan Tull <atull@opensource.altera.com>
-
-Thanks for catching this!
-
-Alan
-
-> 
-> >
-> > diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
-> > index 7ab358e..d4eeb74 100644
-> > --- a/drivers/fpga/altera-fpga2sdram.c
-> > +++ b/drivers/fpga/altera-fpga2sdram.c
-> > @@ -123,7 +123,7 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
-> >         }
-> >
-> >         sysmgr = syscon_regmap_lookup_by_compatible("altr,sys-mgr");
-> > -       if (IS_ERR(priv->sdrctl)) {
-> > +       if (IS_ERR(sysmgr)) {
-> >                 dev_err(dev, "regmap for altr,sys-mgr lookup failed.\n");
-> >                 return PTR_ERR(sysmgr);
-> >         }
-> 
-> Thanks,
-> 
-> Moritz
-> 
+diff --git a/drivers/iommu/amd_iommu_v2.c b/drivers/iommu/amd_iommu_v2.c
+index 594849a..f8ed8c9 100644
+--- a/drivers/iommu/amd_iommu_v2.c
++++ b/drivers/iommu/amd_iommu_v2.c
+@@ -805,8 +805,10 @@ int amd_iommu_init_device(struct pci_dev *pdev, int pasids)
+ 		goto out_free_domain;
+ 
+ 	group = iommu_group_get(&pdev->dev);
+-	if (!group)
++	if (!group) {
++		ret = -EINVAL;
+ 		goto out_free_domain;
++	}
+ 
+ 	ret = iommu_attach_group(dev_state->domain, group);
+ 	if (ret != 0)
