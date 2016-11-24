@@ -1,48 +1,28 @@
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Date: Wed, 16 Nov 2016 14:35:34 +0000
-Subject: Re: [PATCH 07/34] [media] DaVinci-VPBE: Delete an unnecessary variable initialisation in vpbe_initia
-Message-Id: <20161116123534.5fdbda6b@vento.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2016 11:34:07 +0000
+Subject: [patch] swim3: remove some dead code
+Message-Id: <20161124112817.GO17225@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a99f89f2-a3be-9b5f-95c1-e0912a7d78f3@users.sourceforge.net>
-        <a0386b6e-ba8c-1fae-edb2-27dfd8e1b6bf@users.sourceforge.net>
-In-Reply-To: <a0386b6e-ba8c-1fae-edb2-27dfd8e1b6bf@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-block@vger.kernel.org, Jens Axboe <axboe@fb.com>
+Cc: kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-Em Wed, 12 Oct 2016 16:42:31 +0200
-SF Markus Elfring <elfring@users.sourceforge.net> escreveu:
+The goto is correct.  "rc" is already set to -EBUSY so there is no need
+to do anything with that.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 12 Oct 2016 09:45:39 +0200
-> 
-> The local variable "ret" will be set to an appropriate value a bit later.
-> Thus omit the explicit initialisation at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/media/platform/davinci/vpbe.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-> index afa8ff7..9fdd8c0 100644
-> --- a/drivers/media/platform/davinci/vpbe.c
-> +++ b/drivers/media/platform/davinci/vpbe.c
-> @@ -597,7 +597,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
->  	struct osd_state *osd_device;
->  	struct i2c_adapter *i2c_adap;
->  	int num_encoders;
-> -	int ret = 0;
-> +	int ret;
->  	int err;
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Please fold this change to the patch where you'll be addressing the
-issues with "err" var, as per my previous email.
-
-
-
-
-Thanks,
-Mauro
+diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
+index c264f2d..59b4a41 100644
+--- a/drivers/block/swim3.c
++++ b/drivers/block/swim3.c
+@@ -1179,7 +1179,6 @@ static int swim3_add_device(struct macio_dev *mdev, int index)
+ 		swim3_err("%s", "Couldn't request interrupt\n");
+ 		pmac_call_feature(PMAC_FTR_SWIM3_ENABLE, swim, 0, 0);
+ 		goto out_unmap;
+-		return -EBUSY;
+ 	}
+ 
+ 	init_timer(&fs->timeout);
