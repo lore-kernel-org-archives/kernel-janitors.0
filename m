@@ -1,67 +1,35 @@
-From: Jon Mason <jdmason@kudzu.us>
-Date: Tue, 01 Nov 2016 20:35:37 +0000
-Subject: Re: [patch] ntb_perf: potential info leak in debugfs
-Message-Id: <20161101203536.GB25928@kudzu.us>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Nov 2016 21:15:37 +0000
+Subject: [patch] sparc64: restore irq in error paths in iommu
+Message-Id: <20161125211537.GA4131@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161014073418.GD15168@mwanda>
-In-Reply-To: <20161014073418.GD15168@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 14, 2016 at 10:07:13AM -0700, Dave Jiang wrote:
-> 
-> 
-> On 10/14/2016 12:34 AM, Dan Carpenter wrote:
-> > This is a static checker warning, not something I'm desperately
-> > concerned about.  But snprintf() returns the number of bytes that
-> > would have been copied if there were space.  We really care about the
-> > number of bytes that actually were copied so we should use scnprintf()
-> > instead.
-> > 
-> > It probably won't overrun, and in that case we may as well just use
-> > sprintf() but these sorts of things make static checkers and code
-> > reviewers happier.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Dave Jiang <dave.jiang@intel.com>
+There are some error paths where we should restore IRQs but we don't.
 
-Sorry for the delay.  Pulled into my ntb branch.
+Fixes: bb620c3d3925 ("sparc: Make sparc64 use scalable lib/iommu-common.c functions")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Jon
-
-> 
-> > 
-> > diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
-> > index 6a50f20..2d9ca58 100644
-> > --- a/drivers/ntb/test/ntb_perf.c
-> > +++ b/drivers/ntb/test/ntb_perf.c
-> > @@ -589,7 +589,7 @@ static ssize_t debugfs_run_read(struct file *filp, char __user *ubuf,
-> >  		return -ENOMEM;
-> >  
-> >  	if (mutex_is_locked(&perf->run_mutex)) {
-> > -		out_off = snprintf(buf, 64, "running\n");
-> > +		out_off = scnprintf(buf, 64, "running\n");
-> >  		goto read_from_buf;
-> >  	}
-> >  
-> > @@ -600,14 +600,14 @@ static ssize_t debugfs_run_read(struct file *filp, char __user *ubuf,
-> >  			break;
-> >  
-> >  		if (pctx->status) {
-> > -			out_off += snprintf(buf + out_off, 1024 - out_off,
-> > +			out_off += scnprintf(buf + out_off, 1024 - out_off,
-> >  					    "%d: error %d\n", i,
-> >  					    pctx->status);
-> >  			continue;
-> >  		}
-> >  
-> >  		rate = div64_u64(pctx->copied, pctx->diff_us);
-> > -		out_off += snprintf(buf + out_off, 1024 - out_off,
-> > +		out_off += scnprintf(buf + out_off, 1024 - out_off,
-> >  			"%d: copied %llu bytes in %llu usecs, %llu MBytes/s\n",
-> >  			i, pctx->copied, pctx->diff_us, rate);
-> >  	}
-> > 
+diff --git a/arch/sparc/kernel/pci_sun4v.c b/arch/sparc/kernel/pci_sun4v.c
+index 06981cc7..7d23cad 100644
+--- a/arch/sparc/kernel/pci_sun4v.c
++++ b/arch/sparc/kernel/pci_sun4v.c
+@@ -242,6 +242,7 @@ static void *dma_4v_alloc_coherent(struct device *dev, size_t size,
+ 	return ret;
+ 
+ iommu_map_fail:
++	local_irq_restore(flags);
+ 	iommu_tbl_range_free(tbl, *dma_addrp, npages, IOMMU_ERROR_CODE);
+ 
+ range_alloc_fail:
+@@ -414,6 +415,7 @@ static dma_addr_t dma_4v_map_page(struct device *dev, struct page *page,
+ 	return DMA_ERROR_CODE;
+ 
+ iommu_map_fail:
++	local_irq_restore(flags);
+ 	iommu_tbl_range_free(tbl, bus_addr, npages, IOMMU_ERROR_CODE);
+ 	return DMA_ERROR_CODE;
+ }
