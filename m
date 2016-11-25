@@ -1,20 +1,19 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 24 Nov 2016 20:12:52 +0000
+From: walter harms <wharms@bfs.de>
+Date: Fri, 25 Nov 2016 08:53:29 +0000
 Subject: Re: [patch] iio: tsl2583: make array large enough
-Message-Id: <5b562702-483c-5400-5586-145005817d27@kernel.org>
+Message-Id: <5837FC09.7010902@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161118140326.GA20458@basecamp.onstation.org>
- <20161124133807.GA32255@mwanda>
- <20161124154833.GB2118@basecamp.onstation.org> <58371B39.30503@bfs.de>
- <20161124175126.GA3088@basecamp.onstation.org>
+References: <20161118140326.GA20458@basecamp.onstation.org> <20161124133807.GA32255@mwanda> <20161124154833.GB2118@basecamp.onstation.org> <58371B39.30503@bfs.de> <20161124175126.GA3088@basecamp.onstation.org>
 In-Reply-To: <20161124175126.GA3088@basecamp.onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Masney <masneyb@onstation.org>, walter harms <wharms@bfs.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Eva Rachel Retuya <eraretuya@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Eva Rachel Retuya <eraretuya@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 24/11/16 17:51, Brian Masney wrote:
+
+
+Am 24.11.2016 18:51, schrieb Brian Masney:
 > On Thu, Nov 24, 2016 at 05:54:17PM +0100, walter harms wrote:
 >>
 >>
@@ -71,13 +70,15 @@ On 24/11/16 17:51, Brian Masney wrote:
 > 
 > Brian
 > 
-I'm taking this as is, because it'll just squeeze into my last
-pull request to Greg.  Sorry for not waiting for this discussion
-to finish first!
 
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to very briefly play with it.
 
-Thanks,
+Hello Brian, thanks for the replay,
 
-Jonathan
+i have no problem when people so such things intentional but some times
+people do this unintentional. When i review code, i see it as part of my
+job to challenge constructs where i get a strange feeling.
+
+re,
+ wh
+
+
