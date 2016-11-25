@@ -1,41 +1,94 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 18 Nov 2016 12:01:23 +0000
-Subject: Re: [patch] ASoC: rt5665: Unlock on error in rt5665_calibrate()
-Message-Id: <20161118120123.jlqb2eglhwbpwzfa@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="7vvxkr23su6lyhrq"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Nov 2016 11:25:54 +0000
+Subject: [patch] sparc: leon: Fix a retry loop in leon_init_timers()
+Message-Id: <20161125112554.GG5938@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161118115611.GA3784@mwanda>
-In-Reply-To: <20161118115611.GA3784@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+The original code causes a static checker warning because it has a
+continue inside a do { } while (0); loop.  In that context, a continue
+and a break are equivalent.  The intent was to go back to the start of
+the loop so the continue was a bug.
 
---7vvxkr23su6lyhrq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've added a retry label at the start and changed the continue to a goto
+retry.  Then I removed the do { } while (0) loop and pulled the code in
+one indent level.
 
-On Fri, Nov 18, 2016 at 02:56:11PM +0300, Dan Carpenter wrote:
-> We should probably unlock before returning here.
->=20
-> Fixes: 33ada14a26c8 ("ASoC: add rt5665 codec driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 2791c1a43900 ("SPARC/LEON: added support for selecting Timer Core and Timer within core")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
-This doesn't apply against current code, please check and resend.
-
---7vvxkr23su6lyhrq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAABCAAGBQJYLu2SAAoJECTWi3JdVIfQOjAH/iwdEr6VzhNcYEa0Caw7OmWo
-uB7VEb5XxXrnY82wqAxmLL/U5V0xDZ2sMgq1VUeG1jRLb4jPiRzr4cOZdAXiXkP+
-az0Gmvb9ao58ZPvAaEluzMpY5EFHtGbMTofk4AHDTlHRFzftdKKC63Wb1r7/inUV
-YYFOETIeFYyabW6OjLNxQpt/g8Sc08MCVi4j+w4IWhbp2/nOMFjsQlSUPzy7T1SZ
-iOKi/BhgUSHHPDyNVTF5M4S37yM65ZE27yF83p1Oup2C+UbnH3zuGNSHtF329gyz
-HXOlF1fc7XHdunziTUyLd9jsS3zYe6O7i5jfww8deVn+3AzKBR2fcp4VQzg/Cqg=
-=SPMh
------END PGP SIGNATURE-----
-
---7vvxkr23su6lyhrq--
+diff --git a/arch/sparc/kernel/leon_kernel.c b/arch/sparc/kernel/leon_kernel.c
+index 33cd171..afcdd5e 100644
+--- a/arch/sparc/kernel/leon_kernel.c
++++ b/arch/sparc/kernel/leon_kernel.c
+@@ -349,37 +349,37 @@ void __init leon_init_timers(void)
+ 
+ 	/* Find GPTIMER Timer Registers base address otherwise bail out. */
+ 	nnp = rootnp;
+-	do {
+-		np = of_find_node_by_name(nnp, "GAISLER_GPTIMER");
+-		if (!np) {
+-			np = of_find_node_by_name(nnp, "01_011");
+-			if (!np)
+-				goto bad;
+-		}
+ 
+-		ampopts = 0;
+-		pp = of_find_property(np, "ampopts", &len);
+-		if (pp) {
+-			ampopts = *(int *)pp->value;
+-			if (ampopts = 0) {
+-				/* Skip this instance, resource already
+-				 * allocated by other OS */
+-				nnp = np;
+-				continue;
+-			}
++retry:
++	np = of_find_node_by_name(nnp, "GAISLER_GPTIMER");
++	if (!np) {
++		np = of_find_node_by_name(nnp, "01_011");
++		if (!np)
++			goto bad;
++	}
++
++	ampopts = 0;
++	pp = of_find_property(np, "ampopts", &len);
++	if (pp) {
++		ampopts = *(int *)pp->value;
++		if (ampopts = 0) {
++			/* Skip this instance, resource already
++			 * allocated by other OS */
++			nnp = np;
++			goto retry;
+ 		}
++	}
++
++	/* Select Timer-Instance on Timer Core. Default is zero */
++	leon3_gptimer_idx = ampopts & 0x7;
+ 
+-		/* Select Timer-Instance on Timer Core. Default is zero */
+-		leon3_gptimer_idx = ampopts & 0x7;
+-
+-		pp = of_find_property(np, "reg", &len);
+-		if (pp)
+-			leon3_gptimer_regs = *(struct leon3_gptimer_regs_map **)
+-						pp->value;
+-		pp = of_find_property(np, "interrupts", &len);
+-		if (pp)
+-			leon3_gptimer_irq = *(unsigned int *)pp->value;
+-	} while (0);
++	pp = of_find_property(np, "reg", &len);
++	if (pp)
++		leon3_gptimer_regs = *(struct leon3_gptimer_regs_map **)
++					pp->value;
++	pp = of_find_property(np, "interrupts", &len);
++	if (pp)
++		leon3_gptimer_irq = *(unsigned int *)pp->value;
+ 
+ 	if (!(leon3_gptimer_regs && leon3_irqctrl_regs && leon3_gptimer_irq))
+ 		goto bad;
