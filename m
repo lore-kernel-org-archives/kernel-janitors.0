@@ -1,25 +1,39 @@
-From: Olof Johansson <olof@lixom.net>
-Date: Mon, 07 Nov 2016 21:18:49 +0000
-Subject: Re: [PATCH] ARM: zx: Fix error handling
-Message-Id: <20161107211849.GB2106@localhost>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 25 Nov 2016 12:23:51 +0000
+Subject: [PATCH v2] scsi: aic94xx: Add a missing call to kfree
+Message-Id: <20161125122351.8226-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161030081010.14735-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161030081010.14735-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, thenzl@redhat.com
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-On Sun, Oct 30, 2016 at 09:10:10AM +0100, Christophe JAILLET wrote:
-> 'devm_ioremap_resource()' returns an error pointer in case of error, not
-> NULL. So test it with IS_ERR.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> 'return -EIO;' could also be turned into 'return PTR_ERR(pcubase);' in
-> order to propagate the error value.
+Most error branches following the call to kzalloc contain
+a call to kfree. This patch add these calls where they are
+missing and set the relevant pointers to NULL.
 
-Applied to fixes-non-critical. Thanks!
+This issue was found with Hector.
 
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 
--Olof
+---
+ v2: set the point to NULL after having freed it
+ drivers/scsi/aic94xx/aic94xx_hwi.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/scsi/aic94xx/aic94xx_hwi.c
++++ b/drivers/scsi/aic94xx/aic94xx_hwi.c
+@@ -228,8 +228,11 @@ static int asd_init_scbs(struct asd_ha_s
+ 	bitmap_bytes = (asd_ha->seq.tc_index_bitmap_bits+7)/8;
+ 	bitmap_bytes = BITS_TO_LONGS(bitmap_bytes*8)*sizeof(unsigned long);
+ 	asd_ha->seq.tc_index_bitmap = kzalloc(bitmap_bytes, GFP_KERNEL);
+-	if (!asd_ha->seq.tc_index_bitmap)
++	if (!asd_ha->seq.tc_index_bitmap) {
++		kfree(asd_ha->seq.tc_index_array);
++		asd_ha->seq.tc_index_array = NULL;
+ 		return -ENOMEM;
++	}
+ 
+ 	spin_lock_init(&seq->tc_index_lock);
+ 
