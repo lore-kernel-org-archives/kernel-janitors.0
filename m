@@ -1,55 +1,72 @@
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-Date: Fri, 25 Nov 2016 23:16:48 +0000
-Subject: Re: [lustre-devel] [patch] staging: lustre/ptlrpc: small leak on allocation failure
-Message-Id: <F7C31145-1846-4DD3-8140-79E3D8249545@intel.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 25 Nov 2016 13:09:58 +0000
+Subject: Applied "ASoC: sunxi: Uninitialized variable in probe()" to the asoc tree
+Message-Id: <E1cAGGM-00054x-Q1@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161124111204.GH17225@mwanda>
-In-Reply-To: <20161124111204.GH17225@mwanda>
+References: <20161123222906.GA27895@mwanda>
+In-Reply-To: <20161123222906.GA27895@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Drokin, Oleg" <oleg.drokin@intel.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Sebastien Buisson <sebastien.buisson@bull.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vitaly Fertman <vitaly_fertman@xyratex.com>, frank zago <fzago@cray.com>, "Shehata, Amir" <amir.shehata@intel.com>, "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Chen-Yu Tsai <wens@csie.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>Mark Brown <broonie@kernel.org>Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Nov 24, 2016, at 04:12, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> We should free "desc" before returning NULL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch
 
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+   ASoC: sunxi: Uninitialized variable in probe()
 
-> diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
-> index ac959ef..8047413 100644
-> --- a/drivers/staging/lustre/lustre/ptlrpc/client.c
-> +++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
-> @@ -128,12 +128,12 @@ struct ptlrpc_bulk_desc *ptlrpc_new_bulk(unsigned int nfrags,
-> 		GET_KIOV(desc) = kcalloc(nfrags, sizeof(*GET_KIOV(desc)),
-> 					 GFP_NOFS);
-> 		if (!GET_KIOV(desc))
-> -			goto out;
-> +			goto free_desc;
-> 	} else {
-> 		GET_KVEC(desc) = kcalloc(nfrags, sizeof(*GET_KVEC(desc)),
-> 					 GFP_NOFS);
-> 		if (!GET_KVEC(desc))
-> -			goto out;
-> +			goto free_desc;
-> 	}
-> 
-> 	spin_lock_init(&desc->bd_lock);
-> @@ -154,7 +154,8 @@ struct ptlrpc_bulk_desc *ptlrpc_new_bulk(unsigned int nfrags,
-> 		LNetInvalidateHandle(&desc->bd_mds[i]);
-> 
-> 	return desc;
-> -out:
-> +free_desc:
-> +	kfree(desc);
-> 	return NULL;
-> }
-> 
-> _______________________________________________
-> lustre-devel mailing list
-> lustre-devel@lists.lustre.org
-> http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 999982ef7c7f8aa131d32ef551897804443a40a1 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2016 01:29:06 +0300
+Subject: [PATCH] ASoC: sunxi: Uninitialized variable in probe()
+
+Oddly enough, my version of GCC misses this uninitialized variable.
+
+Fixes: ba2ff3027b5a ("ASoC: sunxi: Add support for A23/A33/H3 codec's analog path controls")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sunxi/sun8i-codec-analog.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sunxi/sun8i-codec-analog.c b/sound/soc/sunxi/sun8i-codec-analog.c
+index 222bbd440b1e..af02290ebe49 100644
+--- a/sound/soc/sunxi/sun8i-codec-analog.c
++++ b/sound/soc/sunxi/sun8i-codec-analog.c
+@@ -589,7 +589,7 @@ static int sun8i_codec_analog_cmpnt_probe(struct snd_soc_component *cmpnt)
+ 	}
+ 
+ 	if (quirks->has_hmic) {
+-		sun8i_codec_add_hmic(cmpnt);
++		ret = sun8i_codec_add_hmic(cmpnt);
+ 		if (ret)
+ 			return ret;
+ 	}
+-- 
+2.10.2
 
