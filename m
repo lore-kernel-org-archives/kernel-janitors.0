@@ -1,29 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Nov 2016 11:26:49 +0000
-Subject: [patch -next] cxgb4: leak on error path in setup_sge_txq_uld()
-Message-Id: <20161124112649.GM17225@mwanda>
+From: "Dilger, Andreas" <andreas.dilger@intel.com>
+Date: Fri, 25 Nov 2016 23:16:48 +0000
+Subject: Re: [lustre-devel] [patch] staging: lustre/ptlrpc: small leak on allocation failure
+Message-Id: <F7C31145-1846-4DD3-8140-79E3D8249545@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161124111204.GH17225@mwanda>
+In-Reply-To: <20161124111204.GH17225@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hariprasad S <hariprasad@chelsio.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Drokin, Oleg" <oleg.drokin@intel.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Sebastien Buisson <sebastien.buisson@bull.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vitaly Fertman <vitaly_fertman@xyratex.com>, frank zago <fzago@cray.com>, "Shehata, Amir" <amir.shehata@intel.com>, "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>
 
-Freeing "txq_info->uldtxq" is a no-op.  We intended to free "txq_info".
+On Nov 24, 2016, at 04:12, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> 
+> We should free "desc" before returning NULL.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: ab677ff4ad15 ("cxgb4: Allocate Tx queues dynamically")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-index 565a6c6..8098902 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
-@@ -532,7 +532,7 @@ setup_sge_txq_uld(struct adapter *adap, unsigned int uld_type,
- 	txq_info->uldtxq = kcalloc(txq_info->ntxq, sizeof(struct sge_uld_txq),
- 				   GFP_KERNEL);
- 	if (!txq_info->uldtxq) {
--		kfree(txq_info->uldtxq);
-+		kfree(txq_info);
- 		return -ENOMEM;
- 	}
- 
+> diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
+> index ac959ef..8047413 100644
+> --- a/drivers/staging/lustre/lustre/ptlrpc/client.c
+> +++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
+> @@ -128,12 +128,12 @@ struct ptlrpc_bulk_desc *ptlrpc_new_bulk(unsigned int nfrags,
+> 		GET_KIOV(desc) = kcalloc(nfrags, sizeof(*GET_KIOV(desc)),
+> 					 GFP_NOFS);
+> 		if (!GET_KIOV(desc))
+> -			goto out;
+> +			goto free_desc;
+> 	} else {
+> 		GET_KVEC(desc) = kcalloc(nfrags, sizeof(*GET_KVEC(desc)),
+> 					 GFP_NOFS);
+> 		if (!GET_KVEC(desc))
+> -			goto out;
+> +			goto free_desc;
+> 	}
+> 
+> 	spin_lock_init(&desc->bd_lock);
+> @@ -154,7 +154,8 @@ struct ptlrpc_bulk_desc *ptlrpc_new_bulk(unsigned int nfrags,
+> 		LNetInvalidateHandle(&desc->bd_mds[i]);
+> 
+> 	return desc;
+> -out:
+> +free_desc:
+> +	kfree(desc);
+> 	return NULL;
+> }
+> 
+> _______________________________________________
+> lustre-devel mailing list
+> lustre-devel@lists.lustre.org
+> http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org
+
