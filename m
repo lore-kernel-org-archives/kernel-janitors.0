@@ -1,84 +1,42 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 25 Nov 2016 08:53:29 +0000
-Subject: Re: [patch] iio: tsl2583: make array large enough
-Message-Id: <5837FC09.7010902@bfs.de>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 26 Nov 2016 18:36:29 +0000
+Subject: [PATCH] bnx2fc: shift wrapping bug in bnx2fc_process_unsol_compl()
+Message-Id: <20161126183629.9969-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161118140326.GA20458@basecamp.onstation.org> <20161124133807.GA32255@mwanda> <20161124154833.GB2118@basecamp.onstation.org> <58371B39.30503@bfs.de> <20161124175126.GA3088@basecamp.onstation.org>
-In-Reply-To: <20161124175126.GA3088@basecamp.onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Masney <masneyb@onstation.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Eva Rachel Retuya <eraretuya@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@qlogic.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+BNX2FC_NUM_ERR_BITS is 63. err_warn_bit_map is a u64. So, to make sure that
+no shift wrapping will occur, we need need additionnal casting.
 
+The same test is already done a few lines above and '(u64)1' is already
+used there. So just do the same here.
 
-Am 24.11.2016 18:51, schrieb Brian Masney:
-> On Thu, Nov 24, 2016 at 05:54:17PM +0100, walter harms wrote:
->>
->>
->> Am 24.11.2016 16:48, schrieb Brian Masney:
->>> On Thu, Nov 24, 2016 at 04:38:07PM +0300, Dan Carpenter wrote:
->>>> This array is supposed to have 10 elements.  Smatch complains that with
->>>> the current code we can have n = max_ints and read beyond the end of
->>>> the array.
->>>>
->>>> Fixes: ac4f6eee8fe8 ("staging: iio: TAOS tsl258x: Device driver")
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>
->>>> diff --git a/drivers/iio/light/tsl2583.c b/drivers/iio/light/tsl2583.c
->>>> index 0b87f6a..a78b602 100644
->>>> --- a/drivers/iio/light/tsl2583.c
->>>> +++ b/drivers/iio/light/tsl2583.c
->>>> @@ -565,7 +565,7 @@ static ssize_t in_illuminance_lux_table_store(struct device *dev,
->>>>  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
->>>>  	struct tsl2583_chip *chip = iio_priv(indio_dev);
->>>>  	const unsigned int max_ints = TSL2583_MAX_LUX_TABLE_ENTRIES * 3;
->>>> -	int value[TSL2583_MAX_LUX_TABLE_ENTRIES * 3];
->>>> +	int value[TSL2583_MAX_LUX_TABLE_ENTRIES * 3 + 1];
->>>>  	int ret = -EINVAL;
->>>>  	unsigned int n;
->>>>  
->>>
->>
->> sorry i did not notice that bevor ..
->> there is a
->>   max_ints = TSL2583_MAX_LUX_TABLE_ENTRIES * 3
->>
->> IMHO this should read either:
->>    int value[max_ints+1];
-> 
-> I originally went this route when I refactored the function, however
-> running make C=1 yields the following warnings:
-> 
-> drivers/iio/light/tsl2583.c:568:19: warning: Variable length array is
-> used.
-> drivers/iio/light/tsl2583.c:574:26: error: cannot size expression
-> 
-> That is why I went with the current implementation.
-> 
->> or
->>   max_ints=ARRAY_SIZE(value)-1;
->>
->> (my personal favorite is dropping max_ints completely).
-> 
-> The max_ints value is also shown in the error message if the user passes
-> in too many or too few entries in the per device lux table. I wanted the
-> user to see the maximum allowable number without having to dig through
-> the kernel source code. Without it, I would have had to duplicate the
-> TSL2583_MAX_LUX_TABLE_ENTRIES * 3 statement a third time.
-> 
-> Brian
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I guess that this could also be written with a '1ULL << i' which would be
+cleaner and less verbose IMHO, but apparently this driver does not use
+such things yet. So keep the current style with casting.
+---
+ drivers/scsi/bnx2fc/bnx2fc_hwi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Hello Brian, thanks for the replay,
-
-i have no problem when people so such things intentional but some times
-people do this unintentional. When i review code, i see it as part of my
-job to challenge constructs where i get a strange feeling.
-
-re,
- wh
-
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_hwi.c b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+index 5ff9f89c17c7..a9dccb3b49cc 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_hwi.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+@@ -829,7 +829,7 @@ static void bnx2fc_process_unsol_compl(struct bnx2fc_rport *tgt, u16 wqe)
+ 			((u64)err_entry->data.err_warn_bitmap_hi << 32) |
+ 			(u64)err_entry->data.err_warn_bitmap_lo;
+ 		for (i = 0; i < BNX2FC_NUM_ERR_BITS; i++) {
+-			if (err_warn_bit_map & (u64) (1 << i)) {
++			if (err_warn_bit_map & (u64)((u64)1 << i)) {
+ 				err_warn = i;
+ 				break;
+ 			}
+-- 
+2.9.3
 
