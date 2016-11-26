@@ -1,37 +1,45 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 06 Nov 2016 17:11:10 +0000
-Subject: [PATCH 1/2] staging: lustre: obdclass: Fix error handling
-Message-Id: <20161106171110.24881-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 26 Nov 2016 10:20:58 +0000
+Subject: [patch] staging: sm750fb: fix a type issue in sm750_set_chip_type()
+Message-Id: <20161126102058.GA7640@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oleg.drokin@intel.com, andreas.dilger@intel.com, jsimmons@infradead.org, gregkh@linuxfoundation.org, emoly.liu@intel.com
-Cc: lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-fbdev@vger.kernel.org
 
-'lustre_cfg_new()' does not return NULL but ERR_PTR(-ENOMEM)
-So IS_ERR should be used to check the return value.
+"revId" needs to be unsigned because we use it to test:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/staging/lustre/lustre/obdclass/obd_config.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+	if (revId = SM750LE_REVISION_ID) {
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/obd_config.c b/drivers/staging/lustre/lustre/obdclass/obd_config.c
-index bbed1b72d52e..0e922c5f8b33 100644
---- a/drivers/staging/lustre/lustre/obdclass/obd_config.c
-+++ b/drivers/staging/lustre/lustre/obdclass/obd_config.c
-@@ -1382,8 +1382,8 @@ int class_manual_cleanup(struct obd_device *obd)
- 	lustre_cfg_bufs_reset(&bufs, obd->obd_name);
- 	lustre_cfg_bufs_set_string(&bufs, 1, flags);
- 	lcfg = lustre_cfg_new(LCFG_CLEANUP, &bufs);
--	if (!lcfg)
--		return -ENOMEM;
-+	if (IS_ERR(lcfg))
-+		return PTR_ERR(lcfg);
+and SM750LE_REVISION_ID is ((unsigned char )0xfe).
+
+Fixes: 81dee67e215b ("staging: sm750fb: add sm750 to staging")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/sm750fb/ddk750_chip.h b/drivers/staging/sm750fb/ddk750_chip.h
+index e97e859..e63b8b2 100644
+--- a/drivers/staging/sm750fb/ddk750_chip.h
++++ b/drivers/staging/sm750fb/ddk750_chip.h
+@@ -87,7 +87,7 @@ struct initchip_param {
+ };
  
- 	rc = class_process_config(lcfg);
- 	if (rc) {
--- 
-2.9.3
-
+ logical_chip_type_t sm750_get_chip_type(void);
+-void sm750_set_chip_type(unsigned short devId, char revId);
++void sm750_set_chip_type(unsigned short devId, u8 revId);
+ unsigned int sm750_calc_pll_value(unsigned int request, struct  pll_value *pll);
+ unsigned int sm750_format_pll_reg(struct pll_value *pPLL);
+ unsigned int ddk750_get_vm_size(void);
+diff --git a/drivers/staging/sm750fb/ddk750_chip.c b/drivers/staging/sm750fb/ddk750_chip.c
+index 94f59f4..f59ce5c 100644
+--- a/drivers/staging/sm750fb/ddk750_chip.c
++++ b/drivers/staging/sm750fb/ddk750_chip.c
+@@ -14,7 +14,7 @@ logical_chip_type_t sm750_get_chip_type(void)
+ 	return chip;
+ }
+ 
+-void sm750_set_chip_type(unsigned short devId, char revId)
++void sm750_set_chip_type(unsigned short devId, u8 revId)
+ {
+ 	if (devId = 0x718)
+ 		chip = SM718;
