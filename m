@@ -1,51 +1,23 @@
-From: Madalin-Cristian Bucur <madalin.bucur@nxp.com>
-Date: Thu, 24 Nov 2016 12:01:22 +0000
-Subject: RE: [patch] fsl/fman: fix a leak in tgec_free()
-Message-Id: <AM4PR04MB1604B06C5FB986CCF241D411ECB60@AM4PR04MB1604.eurprd04.prod.outlook.com>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 26 Nov 2016 01:30:26 +0000
+Subject: Re: [patch] fsl/fman: fix a leak in tgec_free()
+Message-Id: <20161125.203026.453934005279145007.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161124111931.GK17225@mwanda>
 In-Reply-To: <20161124111931.GK17225@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: dan.carpenter@oracle.com
+Cc: madalin.bucur@nxp.com, igal.liberman@freescale.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Thursday, November 24, 2016 1:21 PM
-> To: Madalin-Cristian Bucur <madalin.bucur@nxp.com>; Igal Liberman
-> <igal.liberman@freescale.com>
-> Cc: netdev@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch] fsl/fman: fix a leak in tgec_free()
-> 
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2016 14:20:43 +0300
+
 > We set "tgec->cfg" to NULL before passing it to kfree().  There is no
 > need to set it to NULL at all.  Let's just delete it.
-
-Agree, thanks.
-
- 
+> 
 > Fixes: 57ba4c9b56d8 ("fsl/fman: Add FMan MAC support")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I haven't tested this.  It occurs to me that this code might be
-> something to paper over a use after free bug by changing it to a leak
-> instead.
-> 
-> It applies to net-master.
-> 
-> diff --git a/drivers/net/ethernet/freescale/fman/fman_tgec.c
-> b/drivers/net/ethernet/freescale/fman/fman_tgec.c
-> index efabb04..4b0f3a5 100644
-> --- a/drivers/net/ethernet/freescale/fman/fman_tgec.c
-> +++ b/drivers/net/ethernet/freescale/fman/fman_tgec.c
-> @@ -722,9 +722,6 @@ int tgec_free(struct fman_mac *tgec)
->  {
->  	free_init_resources(tgec);
-> 
-> -	if (tgec->cfg)
-> -		tgec->cfg = NULL;
-> -
->  	kfree(tgec->cfg);
->  	kfree(tgec);
-> 
+
+Applied.
