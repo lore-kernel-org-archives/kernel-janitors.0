@@ -1,43 +1,49 @@
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Date: Thu, 17 Nov 2016 14:40:29 +0000
-Subject: Re: [patch] amd-xgbe: Signedness bug in xgbe_phy_link_status()
-Message-Id: <e7d2e620-9eb0-0fee-1d6f-33062fd8bcc7@amd.com>
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Date: Mon, 28 Nov 2016 08:20:38 +0000
+Subject: Re: [patch 2/2] mtd: spi-nor: Fix some error codes in cqspi_setup_flash()
+Message-Id: <1368be77-903a-6fa2-e3e6-2724998c7599@atmel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161117105932.GA32143@mwanda>
-In-Reply-To: <20161117105932.GA32143@mwanda>
+References: <20161013080857.GC3389@mwanda>
+ <3ebab16e-ddf8-0a4b-aaaf-d5b424720eb2@denx.de>
+ <CAAtXAHey9fxQJ12=xt8jd4ZYTsYLs8s-TJ=YS=ob8CB03mnXpA@mail.gmail.com>
+In-Reply-To: <CAAtXAHey9fxQJ12=xt8jd4ZYTsYLs8s-TJ=YS=ob8CB03mnXpA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Moritz Fischer <moritz.fischer@ettus.com>, Marek Vasut <marex@denx.de>
+Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>, Graham Moore <grmoore@opensource.altera.com>
 
-On 11/17/2016 4:59 AM, Dan Carpenter wrote:
-> "ret" needs to be signed for the error handling to work.
-> 
-> Fixes: abf0a1c2b26a ("amd-xgbe: Add support for SFP+ modules")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+Le 16/10/2016 =E0 00:09, Moritz Fischer a =E9crit :
+> On Fri, Oct 14, 2016 at 9:16 AM, Marek Vasut <marex@denx.de> wrote:
+>> On 10/13/2016 10:30 AM, Dan Carpenter wrote:
+>>> We return success or possibly uninitialized values on these error paths
+>>> instead of proper error codes.
+>>>
+>>> Fixes: 140623410536 ("mtd: spi-nor: Add driver for Cadence Quad SPI Fla=
+sh Controller")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>>
+>>
+>> Nice
+>>
+>> Reviewed-by: Marek Vasut <marex@denx.de>
+> Reviewed-by: Moritz Fischer <moritz.fischer@ettus.com>
+Applied to git://github.com/spi-nor/linux.git
 
-Hi Dan,
+Thanks!
 
-This was already identified and patched:
-8c5385cbb036 ("amd-xgbe: Fix up some coccinelle identified warnings")
+>=20
+> Thanks,
+>=20
+> Moritz
+>=20
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+>=20
 
-Thanks,
-Tom
-
-> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
-> index 4ba4332..a2559c2 100644
-> --- a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
-> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
-> @@ -2346,7 +2346,8 @@ static bool xgbe_phy_valid_speed(struct xgbe_prv_data *pdata, int speed)
->  static int xgbe_phy_link_status(struct xgbe_prv_data *pdata, int *an_restart)
->  {
->  	struct xgbe_phy_data *phy_data = pdata->phy_data;
-> -	unsigned int ret, reg;
-> +	unsigned int reg;
-> +	int ret;
->  
->  	*an_restart = 0;
->  
-> 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
