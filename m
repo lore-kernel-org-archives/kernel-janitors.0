@@ -1,31 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Nov 2016 21:28:34 +0000
-Subject: [patch] [media] media: ti-vpe: vpdma: fix a timeout loop
-Message-Id: <20161125201957.GA30161@mwanda>
+From: Benoit Parrot <bparrot@ti.com>
+Date: Mon, 28 Nov 2016 16:51:37 +0000
+Subject: Re: [patch] [media] media: ti-vpe: vpdma: fix a timeout loop
+Message-Id: <20161128165137.GE5954@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161125201957.GA30161@mwanda>
+In-Reply-To: <20161125201957.GA30161@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benoit Parrot <bparrot@ti.com>, Nikhil Devshatwar <nikhil.nd@ti.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Nikhil Devshatwar <nikhil.nd@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The check assumes that we end on zero but actually we end on -1.  Change
-the post-op to a pre-op so that we do end on zero.  Techinically now we
-only loop 499 times instead of 500 but that's fine.
+Dan,
 
-Fixes: dc12b124353b ("[media] media: ti-vpe: vpdma: Add abort channel desc and cleanup APIs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks for the patch.
 
-diff --git a/drivers/media/platform/ti-vpe/vpdma.c b/drivers/media/platform/ti-vpe/vpdma.c
-index 13bfd71..23472e3 100644
---- a/drivers/media/platform/ti-vpe/vpdma.c
-+++ b/drivers/media/platform/ti-vpe/vpdma.c
-@@ -453,7 +453,7 @@ int vpdma_list_cleanup(struct vpdma_data *vpdma, int list_num,
- 	if (ret)
- 		return ret;
- 
--	while (vpdma_list_busy(vpdma, list_num) && timeout--)
-+	while (vpdma_list_busy(vpdma, list_num) && --timeout)
- 		;
- 
- 	if (timeout = 0) {
+Acked-by: Benoit Parrot <bparrot@ti.com>
+
+Dan Carpenter <dan.carpenter@oracle.com> wrote on Sat [2016-Nov-26 00:28:34 +0300]:
+> The check assumes that we end on zero but actually we end on -1.  Change
+> the post-op to a pre-op so that we do end on zero.  Techinically now we
+> only loop 499 times instead of 500 but that's fine.
+> 
+> Fixes: dc12b124353b ("[media] media: ti-vpe: vpdma: Add abort channel desc and cleanup APIs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/media/platform/ti-vpe/vpdma.c b/drivers/media/platform/ti-vpe/vpdma.c
+> index 13bfd71..23472e3 100644
+> --- a/drivers/media/platform/ti-vpe/vpdma.c
+> +++ b/drivers/media/platform/ti-vpe/vpdma.c
+> @@ -453,7 +453,7 @@ int vpdma_list_cleanup(struct vpdma_data *vpdma, int list_num,
+>  	if (ret)
+>  		return ret;
+>  
+> -	while (vpdma_list_busy(vpdma, list_num) && timeout--)
+> +	while (vpdma_list_busy(vpdma, list_num) && --timeout)
+>  		;
+>  
+>  	if (timeout = 0) {
