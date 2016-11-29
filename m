@@ -1,30 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Nov 2016 19:21:56 +0000
-Subject: [patch] mwifiex: clean up some messy indenting
-Message-Id: <20161130192156.GD28180@mwanda>
+From: <asistentka@gastroart.cz>
+Date: Tue, 29 Nov 2016 04:12:26 +0000
+Subject: 
+Message-Id: <148039274620.10161.2357966022132677407@numericable.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <akarwar@marvell.com>, Karthik D A <karthida@marvell.com>
-Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-These lines were indented one tab extra.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-index f5dffdf..fdc6cc2 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-@@ -1937,8 +1937,8 @@ int mwifiex_sta_prepare_cmd(struct mwifiex_private *priv, uint16_t cmd_no,
- 		mwifiex_dbg(priv->adapter, ERROR,
- 			    "0x%x command not supported by firmware\n",
- 			    cmd_no);
--			return -EOPNOTSUPP;
--		}
-+		return -EOPNOTSUPP;
-+	}
- 
- 	/* Prepare command */
- 	switch (cmd_no) {
+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
+AFBLBQYAAAAAAQABAEsAAABlCAAAAAA
