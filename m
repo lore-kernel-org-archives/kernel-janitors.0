@@ -1,65 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Nov 2016 19:18:30 +0000
-Subject: [patch] [patch] amd64_edac: fix some indenting
-Message-Id: <20161130191830.GA22025@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 29 Nov 2016 06:49:19 +0000
+Subject: [PATCH] drm/vmwgfx: Fix handling of errors returned by 'vmw_cotable_alloc()'
+Message-Id: <20161129064919.11416-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-graphics-maintainer@vmware.com, syeh@vmware.com, thellstrom@vmware.com, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Four printks weren't indented far enough and a return -ENODEV was
-indented too far.  It's confusing to look at.
+'vmw_cotable_alloc()' returns an error pointer on error, not NULL.
+Propagate the error code, instead of returning -ENOMEM unconditionally
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_context.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index df6d650..fd32afa 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -2528,8 +2528,8 @@ reserve_mc_sibling_devs(struct amd64_pvt *pvt, u16 pci_id1, u16 pci_id2)
- 	if (pvt->umc) {
- 		pvt->F0 = pci_get_related_function(pvt->F3->vendor, pci_id1, pvt->F3);
- 		if (!pvt->F0) {
--		amd64_err("error F0 device not found: vendor %x device 0x%x (broken BIOS?)\n",
--			  PCI_VENDOR_ID_AMD, pci_id1);
-+			amd64_err("error F0 device not found: vendor %x device 0x%x (broken BIOS?)\n",
-+				  PCI_VENDOR_ID_AMD, pci_id1);
- 			return -ENODEV;
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_context.c b/drivers/gpu/drm/vmwgfx/vmwgfx_context.c
+index 443d1ed00de7..d1aee9860033 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_context.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_context.c
+@@ -209,8 +209,8 @@ static int vmw_gb_context_init(struct vmw_private *dev_priv,
+ 		for (i = 0; i < SVGA_COTABLE_DX10_MAX; ++i) {
+ 			uctx->cotables[i] = vmw_cotable_alloc(dev_priv,
+ 							      &uctx->res, i);
+-			if (unlikely(uctx->cotables[i] = NULL)) {
+-				ret = -ENOMEM;
++			if (unlikely(IS_ERR(uctx->cotables[i]))) {
++				ret = PTR_ERR(uctx->cotables[i]);
+ 				goto out_cotables;
+ 			}
  		}
- 
-@@ -2538,8 +2538,8 @@ reserve_mc_sibling_devs(struct amd64_pvt *pvt, u16 pci_id1, u16 pci_id2)
- 			pci_dev_put(pvt->F0);
- 			pvt->F0 = NULL;
- 
--		amd64_err("error F6 device not found: vendor %x device 0x%x (broken BIOS?)\n",
--			  PCI_VENDOR_ID_AMD, pci_id2);
-+			amd64_err("error F6 device not found: vendor %x device 0x%x (broken BIOS?)\n",
-+				  PCI_VENDOR_ID_AMD, pci_id2);
- 
- 			return -ENODEV;
- 		}
-@@ -2553,8 +2553,8 @@ reserve_mc_sibling_devs(struct amd64_pvt *pvt, u16 pci_id1, u16 pci_id2)
- 	/* Reserve the ADDRESS MAP Device */
- 	pvt->F1 = pci_get_related_function(pvt->F3->vendor, pci_id1, pvt->F3);
- 	if (!pvt->F1) {
--	amd64_err("error address map device not found: vendor %x device 0x%x (broken BIOS?)\n",
--		  PCI_VENDOR_ID_AMD, pci_id1);
-+		amd64_err("error address map device not found: vendor %x device 0x%x (broken BIOS?)\n",
-+			  PCI_VENDOR_ID_AMD, pci_id1);
- 		return -ENODEV;
- 	}
- 
-@@ -2564,9 +2564,9 @@ reserve_mc_sibling_devs(struct amd64_pvt *pvt, u16 pci_id1, u16 pci_id2)
- 		pci_dev_put(pvt->F1);
- 		pvt->F1 = NULL;
- 
--	amd64_err("error F2 device not found: vendor %x device 0x%x (broken BIOS?)\n",
--		  PCI_VENDOR_ID_AMD, pci_id2);
--			return -ENODEV;
-+		amd64_err("error F2 device not found: vendor %x device 0x%x (broken BIOS?)\n",
-+			  PCI_VENDOR_ID_AMD, pci_id2);
-+		return -ENODEV;
- 	}
- 
- 	edac_dbg(1, "F1: %s\n", pci_name(pvt->F1));
+-- 
+2.9.3
+
