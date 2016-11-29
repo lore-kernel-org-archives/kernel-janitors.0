@@ -1,40 +1,19 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 28 Nov 2016 14:49:36 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Tue, 29 Nov 2016 06:48:40 +0000
 Subject: Re: [patch] [media] uvcvideo: freeing an error pointer
-Message-Id: <13737175.iVr8OcoHqv@avalon>
+Message-Id: <alpine.DEB.2.20.1611290747060.2180@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161125102835.GA5856@mwanda> <20161128134358.GS6266@mwanda> <alpine.DEB.2.10.1611281453100.2967@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1611281453100.2967@hadrien>
+References: <20161125102835.GA5856@mwanda> <2064794.XNX8XhaLMu@avalon> <58384F15.4040207@bfs.de> <11316049.HORSOXRmDr@avalon>
+In-Reply-To: <11316049.HORSOXRmDr@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Sakari Alius <sakari.ailus@iki.fi>, wharms@bfs.de, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: wharms@bfs.de, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Sakari Alius <sakari.ailus@iki.fi>
 
-Hi Julia and Dan,
+To put it another way, tools can figure out what is missing if they have
+access to good exmples of what should be there.
 
-On Monday 28 Nov 2016 14:54:58 Julia Lawall wrote:
-> On Mon, 28 Nov 2016, Dan Carpenter wrote:
-> > I understand the comparison, but I just think it's better if people
-> > always keep track of what has been allocated and what has not.  I tried
-> > so hard to get Markus to stop sending those hundreds of patches where
-> > he's like "this function has a sanity check so we can pass pointers
-> > that weren't allocated"...  It's garbage code.
-> > 
-> > But I understand that other people don't agree.
-> 
-> In my opinion, it is good for code understanding to only do what is useful
-> to do.  It's not a hard and fast rule, but I think it is something to take
-> into account.
+To be clear, I can see both points of view.
 
-On the other hand it complicates the error handling code by increasing the 
-number of goto labels, and it then becomes pretty easy when reworking code to 
-goto the wrong label. This is even more of an issue when the rework doesn't 
-touch the error handling code, in which case the reviewers can easily miss the 
-issue if they don't open the original source file to check the goto labels.
-
--- 
-Regards,
-
-Laurent Pinchart
-
+julia
