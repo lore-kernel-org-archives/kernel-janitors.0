@@ -1,33 +1,24 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Sat, 19 Nov 2016 17:43:40 +0000
-Subject: [PATCH] isci: Add a missing call to pci_unmap_biosrom
-Message-Id: <20161119174340.20447-1-lambert.quentin@gmail.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 29 Nov 2016 16:50:40 +0000
+Subject: Re: [PATCH] isci: Add a missing call to pci_unmap_biosrom
+Message-Id: <yq1eg1unsbj.fsf@sermon.lab.mkp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161119174340.20447-1-lambert.quentin@gmail.com>
+In-Reply-To: <20161119174340.20447-1-lambert.quentin@gmail.com> (Quentin
+        Lambert's message of "Sat, 19 Nov 2016 18:43:40 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Intel SCU Linux support <intel-linux-scu@intel.com>, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Quentin Lambert <lambert.quentin@gmail.com>
+To: Quentin Lambert <lambert.quentin@gmail.com>
+Cc: Intel SCU Linux support <intel-linux-scu@intel.com>, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Most error branches following the call to pci_map_biosrom contain
-a call to pci_unmap_biosrom. This patch add these calls where
-they are missing.
+>>>>> "Quentin" = Quentin Lambert <lambert.quentin@gmail.com> writes:
 
-This issue was found with Hector.
+Quentin> Most error branches following the call to pci_map_biosrom
+Quentin> contain a call to pci_unmap_biosrom. This patch add these calls
+Quentin> where they are missing.
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+Applied to 4.10/scsi-queue.
 
----
- drivers/scsi/isci/probe_roms.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/scsi/isci/probe_roms.c
-+++ b/drivers/scsi/isci/probe_roms.c
-@@ -54,6 +54,7 @@ struct isci_orom *isci_request_oprom(str
- 	len = pci_biosrom_size(pdev);
- 	rom = devm_kzalloc(&pdev->dev, sizeof(*rom), GFP_KERNEL);
- 	if (!rom) {
-+		pci_unmap_biosrom(oprom);
- 		dev_warn(&pdev->dev,
- 			 "Unable to allocate memory for orom\n");
- 		return NULL;
+-- 
+Martin K. Petersen	Oracle Linux Engineering
