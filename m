@@ -1,34 +1,24 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Sat, 19 Nov 2016 17:42:14 +0000
-Subject: [PATCH] cxgb4i: Add a missing call to neigh_release
-Message-Id: <20161119174214.20241-1-lambert.quentin@gmail.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 29 Nov 2016 16:48:09 +0000
+Subject: Re: [PATCH] cxgb4i: Add a missing call to neigh_release
+Message-Id: <yq1inr6nsfq.fsf@sermon.lab.mkp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161119174214.20241-1-lambert.quentin@gmail.com>
+In-Reply-To: <20161119174214.20241-1-lambert.quentin@gmail.com> (Quentin
+        Lambert's message of "Sat, 19 Nov 2016 18:42:14 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karen Xie <kxie@chelsio.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Quentin Lambert <lambert.quentin@gmail.com>
+To: Varun Prakash <varun@chelsio.com>
+Cc: Quentin Lambert <lambert.quentin@gmail.com>, Karen Xie <kxie@chelsio.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Most error branches following the call to dst_neigh_lookup contain
-a call to neigh_release. This patch add these calls where they are
-missing.
+>>>>> "Quentin" = Quentin Lambert <lambert.quentin@gmail.com> writes:
 
-This issue was found with Hector.
+Quentin> Most error branches following the call to dst_neigh_lookup
+Quentin> contain a call to neigh_release. This patch add these calls
+Quentin> where they are missing.
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+Varun: Please review!
 
----
- drivers/scsi/cxgbi/cxgb4i/cxgb4i.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-+++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-@@ -1410,7 +1410,7 @@ static int init_act_open(struct cxgbi_so
- 	csk->atid = cxgb4_alloc_atid(lldi->tids, csk);
- 	if (csk->atid < 0) {
- 		pr_err("%s, NO atid available.\n", ndev->name);
--		return -EINVAL;
-+		goto rel_resource_without_clip;
- 	}
- 	cxgbi_sock_set_flag(csk, CTPF_HAS_ATID);
- 	cxgbi_sock_get(csk);
+-- 
+Martin K. Petersen	Oracle Linux Engineering
