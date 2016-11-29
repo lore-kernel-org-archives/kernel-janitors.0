@@ -1,37 +1,24 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Sat, 19 Nov 2016 17:42:34 +0000
-Subject: [PATCH] [SCSI] dpt_i2o: Add a missing call to kfree
-Message-Id: <20161119174234.20292-1-lambert.quentin@gmail.com>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 29 Nov 2016 16:55:02 +0000
+Subject: Re: [PATCH] [SCSI] dpt_i2o: Add a missing call to kfree
+Message-Id: <yq1a8cins49.fsf@sermon.lab.mkp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161119174234.20292-1-lambert.quentin@gmail.com>
+In-Reply-To: <20161119174234.20292-1-lambert.quentin@gmail.com> (Quentin
+        Lambert's message of "Sat, 19 Nov 2016 18:42:34 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Quentin Lambert <lambert.quentin@gmail.com>
+To: Quentin Lambert <lambert.quentin@gmail.com>
+Cc: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Most error branches following the call to kzalloc contain
-a call to kfree. This patch add these calls where they are
-missing.
+>>>>> "Quentin" = Quentin Lambert <lambert.quentin@gmail.com> writes:
 
-This issue was found with Hector.
+Quentin> Most error branches following the call to kzalloc contain a
+Quentin> call to kfree. This patch add these calls where they are
+Quentin> missing.
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+Applied to 4.10/scsi-queue.
 
----
- drivers/scsi/dpt_i2o.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -1754,8 +1754,10 @@ static int adpt_i2o_passthru(adpt_hba* p
- 	sg_offset = (msg[0]>>4)&0xf;
- 	msg[2] = 0x40000000; // IOCTL context
- 	msg[3] = adpt_ioctl_to_context(pHba, reply);
--	if (msg[3] = (u32)-1)
-+	if (msg[3] = (u32)-1) {
-+		kfree(reply);
- 		return -EBUSY;
-+	}
- 
- 	memset(sg_list,0, sizeof(sg_list[0])*pHba->sg_tablesize);
- 	if(sg_offset) {
+-- 
+Martin K. Petersen	Oracle Linux Engineering
