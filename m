@@ -1,30 +1,30 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Date: Tue, 22 Nov 2016 00:34:19 +0000
-Subject: Re: cxl: Fix memory allocation failure test
-Message-Id: <3tN60q61rdz9t17@ozlabs.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Nov 2016 19:21:56 +0000
+Subject: [patch] mwifiex: clean up some messy indenting
+Message-Id: <20161130192156.GD28180@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20161030193557.23862-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>, imunsie@au1.ibm.com, fbarrat@linux.vnet.ibm.com
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>, Karthik D A <karthida@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2016-10-30 at 19:35:57 UTC, Christophe Jaillet wrote:
-> 'cxl_context_alloc()' does not return an error pointer. It is just a
-> shortcut for a call to 'kzalloc' with 'sizeof(struct cxl_context)' as the
-> size parameter.
-> 
-> So its return value should be compared with NULL.
-> While fixing it, simplify a bit the code.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-> Acked-by: Ian Munsie <imunsie@au1.ibm.com>
+These lines were indented one tab extra.
 
-Applied to powerpc next, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-https://git.kernel.org/powerpc/c/5cd4f5cec2374d2c09299211d2b357
-
-cheers
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+index f5dffdf..fdc6cc2 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+@@ -1937,8 +1937,8 @@ int mwifiex_sta_prepare_cmd(struct mwifiex_private *priv, uint16_t cmd_no,
+ 		mwifiex_dbg(priv->adapter, ERROR,
+ 			    "0x%x command not supported by firmware\n",
+ 			    cmd_no);
+-			return -EOPNOTSUPP;
+-		}
++		return -EOPNOTSUPP;
++	}
+ 
+ 	/* Prepare command */
+ 	switch (cmd_no) {
