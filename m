@@ -1,49 +1,76 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 01 Nov 2016 18:12:49 +0000
-Subject: Re: [PATCH] net/mlx5: Simplify a test
-Message-Id: <20161101.141249.1579276311119537608.davem@davemloft.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 30 Nov 2016 07:06:12 +0000
+Subject: [PATCH] vfio: Fix handling of error returned by 'vfio_group_get_from_dev()'
+Message-Id: <20161130070612.16073-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161101071053.12486-1-christophe.jaillet@wanadoo.fr>
-        <025cb4e1-f5e8-8bc9-0d4f-3ee8f8d1bb5d@mellanox.com>
-In-Reply-To: <025cb4e1-f5e8-8bc9-0d4f-3ee8f8d1bb5d-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org
-Cc: christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org, leonro-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: alex.williamson@redhat.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Matan Barak <matanb@mellanox.com>
-Date: Tue, 1 Nov 2016 11:38:18 +0200
+'vfio_group_get_from_dev()' seems to return only NULL on error, not an error
+pointer.
 
-> On 01/11/2016 09:10, Christophe JAILLET wrote:
->> 'create_root_ns()' does not return an error pointer, so the test can
->> be
->> simplified to be more consistent.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>  drivers/net/ethernet/mellanox/mlx5/core/fs_core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
->> b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
->> index 904853f9cf7a..330955f6badc 100644
->> --- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
->> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
->> @@ -1833,7 +1833,7 @@ static int init_root_ns(struct
->> mlx5_flow_steering *steering)
->>  {
->>
->>  	steering->root_ns = create_root_ns(steering, FS_FT_NIC_RX);
->> -	if (IS_ERR_OR_NULL(steering->root_ns))
->> +	if (!steering->root_ns)
->>  		goto cleanup;
->>
->>  	if (init_root_tree(steering, &root_fs, &steering->root_ns->ns.node))
->>
-> 
-> Thanks.
-> Acked-by: Matan Barak <matanb@mellanox.com>
-> 
+Fixes: 2169037dc322 ("vfio iommu: Added pin and unpin callback functions to vfio_iommu_driver_ops")
+Fixes: c086de818dd8 ("vfio iommu: Add blocking notifier to notify DMA_UNMAP")
 
-Applied.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This could be split in 2 patches in order to have only one Fixes tag in
+each
+---
+ drivers/vfio/vfio.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index 0aac3ca54a53..7b39313abf0d 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -1933,8 +1933,8 @@ int vfio_pin_pages(struct device *dev, unsigned long *user_pfn, int npage,
+ 		return -E2BIG;
+ 
+ 	group = vfio_group_get_from_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
++	if (!group)
++		return -ENODEV;
+ 
+ 	ret = vfio_group_add_container_user(group);
+ 	if (ret)
+@@ -1982,8 +1982,8 @@ int vfio_unpin_pages(struct device *dev, unsigned long *user_pfn, int npage)
+ 		return -E2BIG;
+ 
+ 	group = vfio_group_get_from_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
++	if (!group)
++		return -ENODEV;
+ 
+ 	ret = vfio_group_add_container_user(group);
+ 	if (ret)
+@@ -2019,8 +2019,8 @@ int vfio_register_notifier(struct device *dev, struct notifier_block *nb)
+ 		return -EINVAL;
+ 
+ 	group = vfio_group_get_from_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
++	if (!group)
++		return -ENODEV;
+ 
+ 	ret = vfio_group_add_container_user(group);
+ 	if (ret)
+@@ -2055,8 +2055,8 @@ int vfio_unregister_notifier(struct device *dev, struct notifier_block *nb)
+ 		return -EINVAL;
+ 
+ 	group = vfio_group_get_from_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
++	if (!group)
++		return -ENODEV;
+ 
+ 	ret = vfio_group_add_container_user(group);
+ 	if (ret)
+-- 
+2.9.3
+
