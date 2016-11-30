@@ -1,36 +1,33 @@
-From: James Simmons <jsimmons@infradead.org>
-Date: Thu, 10 Nov 2016 19:44:57 +0000
-Subject: Re: [patch] staging: lustre: lov: crash in error handling
-Message-Id: <alpine.LFD.2.20.1611101944280.31600@casper.infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Nov 2016 19:36:48 +0000
+Subject: [patch] scsi: dpt_i2o: double free on error path
+Message-Id: <20161130193648.GA24818@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161110194105.GB18347@mwanda>
-In-Reply-To: <20161110194105.GB18347@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Oleg Drokin <oleg.drokin@intel.com>, "John L. Hammond" <john.hammond@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Amitoj Kaur Chawla <amitoj1606@gmail.com>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, Quentin Lambert <lambert.quentin@gmail.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We recently introduced a kfree() in the caller for this function.
+That's where, logically, you would think the kfree() should be.
+Unfortunately the code was just ugly and not buggy so the static
+checker warning was a false postive and introduced a double free.
 
-> We accidentally made this unsigned so now the error handling will loop
-> until it crashes.
-> 
-> Fixes: 55051039fdad ('staging: lustre: lov: remove LSM from struct lustre_md')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I've removed the old kfree() and left the new one.
 
-Yep. I just sent a patch to fix that. 
+Fixes: 021e2927586d ("scsi: dpt_i2o: Add a missing call to kfree")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/staging/lustre/lustre/lov/lov_ea.c b/drivers/staging/lustre/lustre/lov/lov_ea.c
-> index 53db170..2e2abed 100644
-> --- a/drivers/staging/lustre/lustre/lov/lov_ea.c
-> +++ b/drivers/staging/lustre/lustre/lov/lov_ea.c
-> @@ -81,7 +81,7 @@ struct lov_stripe_md *lsm_alloc_plain(u16 stripe_count)
->  	size_t oinfo_ptrs_size, lsm_size;
->  	struct lov_stripe_md *lsm;
->  	struct lov_oinfo     *loi;
-> -	unsigned int i;
-> +	int i;
->  
->  	LASSERT(stripe_count <= LOV_MAX_STRIPE_COUNT);
->  
-> 
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index f88b3d2..27c0dce 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -651,7 +651,6 @@ static u32 adpt_ioctl_to_context(adpt_hba * pHba, void *reply)
+ 	}
+ 	spin_unlock_irqrestore(pHba->host->host_lock, flags);
+ 	if (i >= nr) {
+-		kfree (reply);
+ 		printk(KERN_WARNING"%s: Too many outstanding "
+ 				"ioctl commands\n", pHba->name);
+ 		return (u32)-1;
