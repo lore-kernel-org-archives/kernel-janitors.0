@@ -1,57 +1,34 @@
-From: Helge Deller <deller@gmx.de>
-Date: Sat, 10 Dec 2016 20:40:56 +0000
-Subject: Re: [patch v2] parisc: perf: return -EFAULT on error
-Message-Id: <f37281cb-ccf8-27df-259c-69e7b7f5e808@gmx.de>
+From: David Hildenbrand <david@redhat.com>
+Date: Thu, 01 Dec 2016 12:20:08 +0000
+Subject: Re: [patch] KVM: use after free in kvm_ioctl_create_device()
+Message-Id: <77cc0648-ec4d-99d6-b95d-53576ea31617@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161210090625.GA12892@elgon.mountain>
-In-Reply-To: <20161210090625.GA12892@elgon.mountain>
+References: <20161130192105.GC28180@mwanda>
+In-Reply-To: <20161130192105.GC28180@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <jejb@parisc-linux.org>
-Cc: linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Paolo Bonzini <pbonzini@redhat.com>, Christoffer Dall <christoffer.dall@linaro.org>
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10.12.2016 10:06, Dan Carpenter wrote:
-> The copy_from_user() returns the number of bytes remaining to be copied
-> but we want to return -EFAULT if it's non-zero.
-> 
+Am 30.11.2016 um 20:21 schrieb Dan Carpenter:
+> We should move the ops->destroy(dev) after the list_del(&dev->vm_node)
+> so that we don't use "dev" after freeing it.
+>
+> Fixes: a28ebea2adc4 ("KVM: Protect device ops->create and list_add with kvm->lock")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 69a1247..de102ca 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2899,10 +2899,10 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
 
-Thanks Dan!
-I'll add it to my next push request for the parisc architecture.
+Looks sane to me! This also matches kvm_destroy_devices().
 
-Helge
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 
-> ---
-> v2: Fix unused variable warning.  Thanks, Bojan.
-> 
-> diff --git a/arch/parisc/kernel/perf.c b/arch/parisc/kernel/perf.c
-> index 518f4f5f1f43..6eabce62463b 100644
-> --- a/arch/parisc/kernel/perf.c
-> +++ b/arch/parisc/kernel/perf.c
-> @@ -301,7 +301,6 @@ static ssize_t perf_read(struct file *file, char __user *buf, size_t cnt, loff_t
->  static ssize_t perf_write(struct file *file, const char __user *buf, size_t count, 
->  	loff_t *ppos)
->  {
-> -	int err;
->  	size_t image_size;
->  	uint32_t image_type;
->  	uint32_t interface_type;
-> @@ -320,8 +319,8 @@ static ssize_t perf_write(struct file *file, const char __user *buf, size_t coun
->  	if (count != sizeof(uint32_t))
->  		return -EIO;
->  
-> -	if ((err = copy_from_user(&image_type, buf, sizeof(uint32_t))) != 0) 
-> -		return err;
-> +	if (copy_from_user(&image_type, buf, sizeof(uint32_t)))
-> +		return -EFAULT;
->  
->  	/* Get the interface type and test type */
->     	interface_type = (image_type >> 16) & 0xffff;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-parisc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+-- 
 
+David
