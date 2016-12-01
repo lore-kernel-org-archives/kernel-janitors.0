@@ -1,51 +1,40 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Thu, 01 Dec 2016 14:14:55 +0000
-Subject: Re: [patch] ACPI / CPPC: set an error code on probe error path
-Message-Id: <3515049.TAodqepTBT@aspire.rjw.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 01 Dec 2016 05:48:30 +0000
+Subject: [patch] dbri: move dereference after check for NULL
+Message-Id: <20161201054830.GA20077@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161130192254.GE28180@mwanda> <20161130215819.GN28558@mwanda> <CAJZ5v0gNeD_gDKEBCoYcr52dFC=YFVZ7=ADF0WYUQt+hPhbNsA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gNeD_gDKEBCoYcr52dFC=YFVZ7=ADF0WYUQt+hPhbNsA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Ashwin Chaugule <ashwin.chaugule@linaro.org>, Len Brown <lenb@kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Tushar Dave <tushar.n.dave@oracle.com>
+Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, thomas tai <thomas.tai@oracle.com>, alsa-devel@alsa-project.org, sparclinux@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wednesday, November 30, 2016 11:14:23 PM Rafael J. Wysocki wrote:
-> On Wed, Nov 30, 2016 at 11:03 PM, Dan Carpenter
-> <dan.carpenter@oracle.com> wrote:
-> > On Wed, Nov 30, 2016 at 10:53:55PM +0100, Rafael J. Wysocki wrote:
-> >> On Wed, Nov 30, 2016 at 8:22 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >> > We should return -EINVAL if get_cpu_device() fails.
-> >> >
-> >> > Fixes: 158c998ea44b ("ACPI / CPPC: add sysfs support to compute delivered performance")
-> >> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >> >
-> >> > diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> >> > index d0d0504..e0ea8f5 100644
-> >> > --- a/drivers/acpi/cppc_acpi.c
-> >> > +++ b/drivers/acpi/cppc_acpi.c
-> >> > @@ -784,8 +784,10 @@ int acpi_cppc_processor_probe(struct acpi_processor *pr)
-> >> >
-> >> >         /* Add per logical CPU nodes for reading its feedback counters. */
-> >> >         cpu_dev = get_cpu_device(pr->id);
-> >> > -       if (!cpu_dev)
-> >> > +       if (!cpu_dev) {
-> >> > +               ret = -EINVAL;
-> >>
-> >> ret is initialized here AFAICS.
-> >>
-> >> Do you that its value is not the right one?
-> >
-> > I'm looking at linux-next.  It's set to zero but we presumably want to
-> > return an error code.
-> 
-> OK
-> 
-> It was slightly unclear what the bug was.
+We accidentally introduced a dereference before the NULL check in
+xmit_descs() as part of silencing a GCC warning.
 
-Applied now.
+Fixes: 16f46050e709 ("dbri: Fix compiler warning")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Goes into the sparc tree.
 
-Thanks,
-Rafael
-
+diff --git a/sound/sparc/dbri.c b/sound/sparc/dbri.c
+index 3fe4468..52063b2 100644
+--- a/sound/sparc/dbri.c
++++ b/sound/sparc/dbri.c
+@@ -1702,7 +1702,7 @@ interrupts are disabled.
+ static void xmit_descs(struct snd_dbri *dbri)
+ {
+ 	struct dbri_streaminfo *info;
+-	u32 dvma_addr = (u32)dbri->dma_dvma;
++	u32 dvma_addr;
+ 	s32 *cmd;
+ 	unsigned long flags;
+ 	int first_td;
+@@ -1710,6 +1710,7 @@ static void xmit_descs(struct snd_dbri *dbri)
+ 	if (dbri = NULL)
+ 		return;		/* Disabled */
+ 
++	dvma_addr = (u32)dbri->dma_dvma;
+ 	info = &dbri->stream_info[DBRI_REC];
+ 	spin_lock_irqsave(&dbri->lock, flags);
+ 
