@@ -1,35 +1,51 @@
-From: Bart Van Assche <bart.vanassche@gmail.com>
-Date: Fri, 16 Dec 2016 10:14:12 +0000
-Subject: Re: [patch] target/iscsi: double free in lio_target_tiqn_addtpg()
-Message-Id: <05d1645d-9618-1702-7b57-3a5f95b54196@acm.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Date: Thu, 01 Dec 2016 14:14:55 +0000
+Subject: Re: [patch] ACPI / CPPC: set an error code on probe error path
+Message-Id: <3515049.TAodqepTBT@aspire.rjw.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161213122703.GB7519@elgon.mountain>
-In-Reply-To: <20161213122703.GB7519@elgon.mountain>
+References: <20161130192254.GE28180@mwanda> <20161130215819.GN28558@mwanda> <CAJZ5v0gNeD_gDKEBCoYcr52dFC=YFVZ7=ADF0WYUQt+hPhbNsA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gNeD_gDKEBCoYcr52dFC=YFVZ7=ADF0WYUQt+hPhbNsA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Ashwin Chaugule <ashwin.chaugule@linaro.org>, Len Brown <lenb@kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 12/15/2016 09:31 PM, Dan Carpenter wrote:
-> On Thu, Dec 15, 2016 at 04:43:55PM +0100, Bart Van Assche wrote:
->> On 12/13/2016 01:27 PM, Dan Carpenter wrote:
->>> This iscsit_tpg_add_portal_group() function is only called from
->>> lio_target_tiqn_addtpg().  Both functions free the "tpg" pointer on
->>> error so it's a double free bug.  The memory is allocated in the caller
->>> so it should be freed in the caller and not here.
->>>
->>> Fixes: e48354ce078c ("iscsi-target: Add iSCSI fabric support for target v4.1")
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> Do you think a "Cc: stable" tag should be added to this patch?
+On Wednesday, November 30, 2016 11:14:23 PM Rafael J. Wysocki wrote:
+> On Wed, Nov 30, 2016 at 11:03 PM, Dan Carpenter
+> <dan.carpenter@oracle.com> wrote:
+> > On Wed, Nov 30, 2016 at 10:53:55PM +0100, Rafael J. Wysocki wrote:
+> >> On Wed, Nov 30, 2016 at 8:22 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >> > We should return -EINVAL if get_cpu_device() fails.
+> >> >
+> >> > Fixes: 158c998ea44b ("ACPI / CPPC: add sysfs support to compute delivered performance")
+> >> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >> >
+> >> > diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> >> > index d0d0504..e0ea8f5 100644
+> >> > --- a/drivers/acpi/cppc_acpi.c
+> >> > +++ b/drivers/acpi/cppc_acpi.c
+> >> > @@ -784,8 +784,10 @@ int acpi_cppc_processor_probe(struct acpi_processor *pr)
+> >> >
+> >> >         /* Add per logical CPU nodes for reading its feedback counters. */
+> >> >         cpu_dev = get_cpu_device(pr->id);
+> >> > -       if (!cpu_dev)
+> >> > +       if (!cpu_dev) {
+> >> > +               ret = -EINVAL;
+> >>
+> >> ret is initialized here AFAICS.
+> >>
+> >> Do you that its value is not the right one?
+> >
+> > I'm looking at linux-next.  It's set to zero but we presumably want to
+> > return an error code.
 > 
-> It will basically only fail for allocation errors.  It's probably not
-> super likely.  These are static checker fixes, not something I
-> encountered in real life.
+> OK
+> 
+> It was slightly unclear what the bug was.
 
-Hello Dan,
+Applied now.
 
-Thanks for the patch and for the additional clarification. I have queued
-your patch for kernel version v4.10.
+Thanks,
+Rafael
 
-Bart.
