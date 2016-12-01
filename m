@@ -1,23 +1,66 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Tue, 27 Dec 2016 17:34:49 +0000
-Subject: Re: [PATCH] ARM: OMAP2+: PRM: Delete an error message for a failed memory allocation
-Message-Id: <20161227173449.GR4920@atomide.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 01 Dec 2016 20:49:37 +0000
+Subject: [patch] crypto: chcr - checking for IS_ERR() instead of NULL
+Message-Id: <20161201204937.GA10701@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6212b730-8e09-bf87-2a6b-23df9bc43e2d@users.sourceforge.net>
-In-Reply-To: <6212b730-8e09-bf87-2a6b-23df9bc43e2d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, Harsh Jain <harsh@chelsio.com>, Jitendra Lulla <JLULLA@chelsio.com>, Atul Gupta <atul.gupta@chelsio.com>, Hariprasad Shenai <hariprasad@chelsio.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-* SF Markus Elfring <elfring@users.sourceforge.net> [161203 12:58]:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 3 Dec 2016 21:46:02 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
+The create_hash_wr() function never returns error pointers.  It returns
+NULL on error.
 
-Applying into omap-for-v4.10/fixes.
+Fixes: 358961d1cd1e ("crypto: chcr - Added new structure chcr_wr")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-
-Tony
+diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
+index 32361dd..2ed1e24 100644
+--- a/drivers/crypto/chelsio/chcr_algo.c
++++ b/drivers/crypto/chelsio/chcr_algo.c
+@@ -958,9 +958,8 @@ static int chcr_ahash_update(struct ahash_request *req)
+ 	req_ctx->result = 0;
+ 	req_ctx->data_len += params.sg_len + params.bfr_len;
+ 	skb = create_hash_wr(req, &params);
+-
+-	if (IS_ERR(skb))
+-		return PTR_ERR(skb);
++	if (!skb)
++		return -ENOMEM;
+ 
+ 	if (remainder) {
+ 		u8 *temp;
+@@ -1023,8 +1022,8 @@ static int chcr_ahash_final(struct ahash_request *req)
+ 		params.more = 0;
+ 	}
+ 	skb = create_hash_wr(req, &params);
+-	if (IS_ERR(skb))
+-		return PTR_ERR(skb);
++	if (!skb)
++		return -ENOMEM;
+ 
+ 	skb->dev = u_ctx->lldi.ports[0];
+ 	set_wr_txq(skb, CPL_PRIORITY_DATA, ctx->tx_channel_id);
+@@ -1074,8 +1073,8 @@ static int chcr_ahash_finup(struct ahash_request *req)
+ 	}
+ 
+ 	skb = create_hash_wr(req, &params);
+-	if (IS_ERR(skb))
+-		return PTR_ERR(skb);
++	if (!skb)
++		return -ENOMEM;
+ 
+ 	skb->dev = u_ctx->lldi.ports[0];
+ 	set_wr_txq(skb, CPL_PRIORITY_DATA, ctx->tx_channel_id);
+@@ -1125,8 +1124,8 @@ static int chcr_ahash_digest(struct ahash_request *req)
+ 	}
+ 
+ 	skb = create_hash_wr(req, &params);
+-	if (IS_ERR(skb))
+-		return PTR_ERR(skb);
++	if (!skb)
++		return -ENOMEM;
+ 
+ 	skb->dev = u_ctx->lldi.ports[0];
+ 	set_wr_txq(skb, CPL_PRIORITY_DATA, ctx->tx_channel_id);
