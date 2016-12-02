@@ -1,52 +1,38 @@
-From: Romain Perier <romain.perier@free-electrons.com>
-Date: Fri, 16 Dec 2016 10:30:22 +0000
-Subject: Re: [patch 3/3] spi: armada-3700: Remove unnecessary condition
-Message-Id: <2fe5a622-4071-d44a-22c5-521d263e0e5a@free-electrons.com>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 02 Dec 2016 17:33:32 +0000
+Subject: [PATCH] staging: lustre: Fix a spatch warning due to an assignment from kernel to user space
+Message-Id: <20161202173332.5100-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161216093359.GB13942@elgon.mountain>
-In-Reply-To: <20161216093359.GB13942-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-Hello,
+lnet_ipif_enumerate was assigning a pointer from kernel space to user
+space. This patch uses copy_to_user to properly do that assignment.
 
-Le 16/12/2016 =E0 10:33, Dan Carpenter a =E9crit :
-> We checked that "a3700_spi->wait_mask & cause" was set at the beginning
-> of the function so we don't need to check again here.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
-> index 5c7508dc6f0b..e98d464b3ff0 100644
-> --- a/drivers/spi/spi-armada-3700.c
-> +++ b/drivers/spi/spi-armada-3700.c
-> @@ -340,8 +340,7 @@ static irqreturn_t a3700_spi_interrupt(int irq, void =
-*dev_id)
->  	spireg_write(a3700_spi, A3700_SPI_INT_STAT_REG, cause);
->
->  	/* Wake up the transfer */
-> -	if (a3700_spi->wait_mask & cause)
-> -		complete(&a3700_spi->done);
-> +	complete(&a3700_spi->done);
->
->  	return IRQ_HANDLED;
->  }
->
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ shouldn't we be using ifc_req instead of ifc_buf?
 
+ drivers/staging/lustre/lnet/lnet/lib-socket.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Good catch,
-
-Acked-by: Romain Perier <romain.perier@free-electrons.com>
-
-
-Thanks,
-Romain
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--- a/drivers/staging/lustre/lnet/lnet/lib-socket.c
++++ b/drivers/staging/lustre/lnet/lnet/lib-socket.c
+@@ -181,7 +181,13 @@ lnet_ipif_enumerate(char ***namesp)
+ 			goto out0;
+ 		}
+ 
+-		ifc.ifc_buf = (char *)ifr;
++		rc = copy_to_user(ifc.ifc_buf, (char *)ifr,
++				  nalloc * sizeof(*ifr));
++		if (rc) {
++			rc = -ENOMEM;
++			goto out1;
++		}
++
+ 		ifc.ifc_len = nalloc * sizeof(*ifr);
+ 
+ 		rc = lnet_sock_ioctl(SIOCGIFCONF, (unsigned long)&ifc);
