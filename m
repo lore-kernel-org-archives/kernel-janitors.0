@@ -1,49 +1,40 @@
-From: Romain Perier <romain.perier@free-electrons.com>
-Date: Fri, 16 Dec 2016 10:30:01 +0000
-Subject: Re: [patch 2/3] spi: armada-3700: Set mode bits correctly
-Message-Id: <aacbdfad-e29f-9af0-215c-93ee026db570@free-electrons.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Dec 2016 20:56:48 +0000
+Subject: [PATCH] ARM: OMAP2+: PRM: Delete an error message for a failed memory allocation
+Message-Id: <6212b730-8e09-bf87-2a6b-23df9bc43e2d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161216093325.GA13942@elgon.mountain>
-In-Reply-To: <20161216093325.GA13942-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-Hello,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Dec 2016 21:46:02 +0100
 
-Le 16/12/2016 =E0 10:33, Dan Carpenter a =E9crit :
-> We set SPI_RX_DUAL twice instead of setting SPI_TX_DUAL.
->
-> Fixes: 5762ab71eb24 ("spi: Add support for Armada 3700 SPI Controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
-> index 5c7508dc6f0b..40491be3365f 100644
-> --- a/drivers/spi/spi-armada-3700.c
-> +++ b/drivers/spi/spi-armada-3700.c
-> @@ -825,7 +825,7 @@ static int a3700_spi_probe(struct platform_device *pd=
-ev)
->  	master->unprepare_message =3D a3700_spi_unprepare_message;
->  	master->set_cs =3D a3700_spi_set_cs;
->  	master->flags =3D SPI_MASTER_HALF_DUPLEX;
-> -	master->mode_bits |=3D (SPI_RX_DUAL | SPI_RX_DUAL |
-> +	master->mode_bits |=3D (SPI_RX_DUAL | SPI_TX_DUAL |
->  			      SPI_RX_QUAD | SPI_TX_QUAD);
->
->  	platform_set_drvdata(pdev, master);
->
+Omit an extra message for a memory allocation failure in this function.
 
-Good catch,
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/arm/mach-omap2/prm_common.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Acked-by: Romain Perier <romain.perier@free-electrons.com>
+diff --git a/arch/arm/mach-omap2/prm_common.c b/arch/arm/mach-omap2/prm_common.c
+index 5b2f5138d938..2b138b65129a 100644
+--- a/arch/arm/mach-omap2/prm_common.c
++++ b/arch/arm/mach-omap2/prm_common.c
+@@ -295,10 +295,8 @@ int omap_prcm_register_chain_handler(struct omap_prcm_irq_setup *irq_setup)
+ 		GFP_KERNEL);
+ 
+ 	if (!prcm_irq_chips || !prcm_irq_setup->saved_mask ||
+-	    !prcm_irq_setup->priority_mask) {
+-		pr_err("PRCM: kzalloc failed\n");
++	    !prcm_irq_setup->priority_mask)
+ 		goto err;
+-	}
+ 
+ 	memset(mask, 0, sizeof(mask));
+ 
+-- 
+2.11.0
 
-
-Thanks,
-Romain
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
