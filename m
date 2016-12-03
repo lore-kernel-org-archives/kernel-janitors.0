@@ -1,101 +1,22 @@
-From: Doug Ledford <dledford@redhat.com>
-Date: Wed, 14 Dec 2016 17:58:51 +0000
-Subject: Re: [PATCH] IB/usnic: simplify IS_ERR_OR_NULL to IS_ERR
-Message-Id: <2c990f6c-d9a6-9887-c6df-bfc45c5ce6cc@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ppNVTKRtDhlFVTjEsgpVKu3XMGXdAlGhN"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 03 Dec 2016 14:00:12 +0000
+Subject: ARM: topology: Checking for a failed kcalloc() in parse_dt_topology()?
+Message-Id: <d28439db-9915-e0d9-9bfc-3436c943cbd4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1478891066-16093-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1478891066-16093-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Christian Benvenuti <benve@cisco.com>
-Cc: kernel-janitors@vger.kernel.org, Dave Goodell <dgoodell@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: linux-arm-kernel@lists.infradead.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---ppNVTKRtDhlFVTjEsgpVKu3XMGXdAlGhN
-Content-Type: multipart/mixed; boundary="IuPRPrwKBh1iJJJpPlxqagHrqOmWP7AJi";
- protected-headers="v1"
-From: Doug Ledford <dledford@redhat.com>
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Christian Benvenuti <benve@cisco.com>
-Cc: kernel-janitors@vger.kernel.org, Dave Goodell <dgoodell@cisco.com>,
- Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock
- <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <2c990f6c-d9a6-9887-c6df-bfc45c5ce6cc@redhat.com>
-Subject: Re: [PATCH] IB/usnic: simplify IS_ERR_OR_NULL to IS_ERR
-References: <1478891066-16093-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1478891066-16093-1-git-send-email-Julia.Lawall@lip6.fr>
-
---IuPRPrwKBh1iJJJpPlxqagHrqOmWP7AJi
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
-
-On 11/11/2016 2:04 PM, Julia Lawall wrote:
-> The function usnic_ib_qp_grp_get_chunk only returns an ERR_PTR value or=
- a
-> valid pointer, never NULL.  The same is true of get_qp_res_chunk, which=
-
-> just returns the result of calling usnic_ib_qp_grp_get_chunk.  Simplify=
-
-> IS_ERR_OR_NULL to IS_ERR in both cases.
->=20
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @@
-> expression t,e;
-> @@
->=20
-> t =3D \(usnic_ib_qp_grp_get_chunk(...)\|get_qp_res_chunk(...)\)
-> ... when !=3D t=3De
-> - IS_ERR_OR_NULL(t)
-> + IS_ERR(t)
->=20
-> @@
-> expression t,e,e1;
-> @@
->=20
-> t =3D \(usnic_ib_qp_grp_get_chunk(...)\|get_qp_res_chunk(...)\)
-> ... when !=3D t=3De
-> ?- t ? PTR_ERR(t) : e1
-> + PTR_ERR(t)
-> ... when any
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Thanks, applied.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG Key ID: 0E572FDD
-
-
---IuPRPrwKBh1iJJJpPlxqagHrqOmWP7AJi--
-
---ppNVTKRtDhlFVTjEsgpVKu3XMGXdAlGhN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBCAAGBQJYUYhbAAoJELgmozMOVy/dWJMP/iE914NLyc9MuLy9TP2kjBhN
-K0VQ/5NAGjjqkwIvOct17Xqesr4kv8HU7NmBbssKXzF7CTwiERz3EGarRlWqSjBn
-vKUw/LqTmsqgwyiYJrE215VGdO/8Rkm1Pw2qoB6v4rQEMQPeAnZnTJmJupHp6bmj
-p2uvsCw1nSIo+E0qktdyc2Myj1cWqWhOHzfxOj1e5oOnnnrTZGW7EF06Kcu5tZv6
-lste2c867nkOgqM5kNhK+DI/Wi8Ra98KcOxbIO54TBNH7sbMik3URvMQWJcaq0aR
-+uZ6q8BnrMyqSvFnmmd4rP4c2Kc2KtS4UmCJwLigbjIzyj6WLrG2VumP92lOKxoC
-AH5EstpVOtVMRi6bwUyhn879j9eSPkqHNTVOc0Jzwgk50zdYO+eRR2cki0okpUAN
-E2uMDQmDixPNIfrkOfowo1R1IXj4BJ6ZEE9QkIJ/1Mpu5RWEvoXLhzuQ9Z5PVgx+
-ceG/T2cTfQOsFMSTj8/bhcLD4g3tl/WdVKw3+tWn1CCqHfjthVbb0xIL2Kyzlpjz
-ob+r04kHGVr3cv9vULPVNXwsQByZBZAUhy4wFb/pR9gzfETnrYVoapolIxoiLeLP
-B8C9ty9slKafvTUhPeEZih8KmqsG4iVNtHPERzxY7g+g8MNW97n/u0efK3tVyB6r
-DuEf+NnXw4QzQfxHfKQG
-=brsx
------END PGP SIGNATURE-----
-
---ppNVTKRtDhlFVTjEsgpVKu3XMGXdAlGhN--
+SGVsbG8sCgpBbm90aGVyIHJ1biBvZiBhIHNtYWxsIHNjcmlwdCBmb3IgdGhlIHNlbWFudGljIHBh
+dGNoIGxhbmd1YWdlIChDb2NjaW5lbGxlKQpwb2ludGVkIHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0
+aGUgZnVuY3Rpb24g4oCccGFyc2VfZHRfdG9wb2xvZ3nigJ0gb3V0IGZvcgpmdXJ0aGVyIGNvbnNp
+ZGVyYXRpb25zLgpodHRwczovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9u
+ZXh0L2xpbnV4LW5leHQuZ2l0L3RyZWUvYXJjaC9hcm0va2VybmVsL3RvcG9sb2d5LmM/aWTgNWY1
+NzRhMGJiMWY0NTAyYTRiMjI2NGZkYjBlZjY0MTljZjM3NzIjbjI4NQoKV291bGQgaXQgYmUgdXNl
+ZnVsIHRvIGNoZWNrIHRoZSByZXR1cm4gdmFsdWUgZnJvbSBhIGNhbGwgb2YgdGhlCmZ1bmN0aW9u
+IOKAnGtjYWxsb2PigJ0gYWxzbyB0aGVyZT8KClJlZ2FyZHMsCk1hcmt1cwotLQpUbyB1bnN1YnNj
+cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWph
+bml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
+Lm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
+ZG9tby1pbmZvLmh0bWw=
