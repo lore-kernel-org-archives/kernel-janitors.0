@@ -1,42 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Dec 2016 20:52:23 +0000
-Subject: [PATCH 7/8] [media] videobuf-dma-sg: Delete an unnecessary return statement in videobuf_vm_close()
-Message-Id: <23eb1fd5-696e-aed0-eb26-f5ae46b6e62e@users.sourceforge.net>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Mon, 05 Dec 2016 11:10:24 +0000
+Subject: Re: mwifiex: clean up some messy indenting
+Message-Id: <20161205111024.B1520615FF@smtp.codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
-In-Reply-To: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+References: <20161130192156.GD28180@mwanda>
+In-Reply-To: <20161130192156.GD28180@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Amitkumar Karwar <akarwar@marvell.com>, Karthik D A <karthida@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Dec 2016 21:09:01 +0100
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> These lines were indented one tab extra.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> index f5dffdf..fdc6cc2 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> @@ -1937,8 +1937,8 @@ int mwifiex_sta_prepare_cmd(struct mwifiex_private *priv, uint16_t cmd_no,
+>  		mwifiex_dbg(priv->adapter, ERROR,
+>  			    "0x%x command not supported by firmware\n",
+>  			    cmd_no);
+> -			return -EOPNOTSUPP;
+> -		}
+> +		return -EOPNOTSUPP;
+> +	}
+>  
+>  	/* Prepare command */
+>  	switch (cmd_no) {
 
-The script "checkpatch.pl" pointed information out like the following.
+Patch applied to wireless-drivers-next.git, thanks.
 
-WARNING: void function return statements are not generally useful
+e54a8c4b5753 mwifiex: clean up some messy indenting
 
-Thus remove such a statement here.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/v4l2-core/videobuf-dma-sg.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-index 070ba10bbdbc..c8658530da57 100644
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -427,7 +427,6 @@ static void videobuf_vm_close(struct vm_area_struct *vma)
- 		videobuf_queue_unlock(q);
- 		kfree(map);
- 	}
--	return;
- }
- 
- /*
 -- 
-2.11.0
+https://patchwork.kernel.org/patch/9454717/
+
+Documentation about submitting wireless patches and checking status
+from patchwork:
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
