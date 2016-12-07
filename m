@@ -1,44 +1,31 @@
-From: James Simmons <jsimmons@infradead.org>
-Date: Mon, 19 Dec 2016 16:38:44 +0000
-Subject: Re: [PATCH v2] staging: lustre: Fix variable type declaration after refactoring
-Message-Id: <alpine.LFD.2.20.1612191638270.25173@casper.infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Dec 2016 11:21:22 +0000
+Subject: [patch] adm80211: return an error if adm8211_alloc_rings() fails
+Message-Id: <20161207112122.GA5686@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161208203827.20561-1-lambert.quentin@gmail.com>
-In-Reply-To: <20161208203827.20561-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Michael Wu <flamingice@sourmilk.net>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We accidentally return success when adm8211_alloc_rings() fails but we
+should preserve the error code.
 
-> A recent clean-up declared och_flags as a int rather than fmode_t. This
-> lead to the following sparse warning:
-> 
-> drivers/staging/lustre/lustre/llite/file.c:106:30: warning: restricted
-> fmode_t degrades to integer
-> 
-> This patch fixes this issue.
+Fixes: cc0b88cf5ecf ("[PATCH] Add adm8211 802.11b wireless driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: James Simmons <jsimmons@infradead.org>
+diff --git a/drivers/net/wireless/admtek/adm8211.c b/drivers/net/wireless/admtek/adm8211.c
+index 2b4a3eb38dfa..098c814e22c8 100644
+--- a/drivers/net/wireless/admtek/adm8211.c
++++ b/drivers/net/wireless/admtek/adm8211.c
+@@ -1863,7 +1863,8 @@ static int adm8211_probe(struct pci_dev *pdev,
+ 	priv->rx_ring_size = rx_ring_size;
+ 	priv->tx_ring_size = tx_ring_size;
  
-> Fixes: 0a1200991234f7 ("staging: lustre: cleanup lustre_lib.h")
-> Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
-> ---
->  v2: fixes the referenced sha
-> 
->  drivers/staging/lustre/lustre/include/obd.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- a/drivers/staging/lustre/lustre/include/obd.h
-> +++ b/drivers/staging/lustre/lustre/include/obd.h
-> @@ -889,7 +889,7 @@ struct obd_client_handle {
->  	struct md_open_data	*och_mod;
->  	struct lustre_handle	 och_lease_handle; /* open lock for lease */
->  	__u32			 och_magic;
-> -	int			 och_flags;
-> +	fmode_t			 och_flags;
->  };
->  
->  #define OBD_CLIENT_HANDLE_MAGIC 0xd15ea5ed
-> 
+-	if (adm8211_alloc_rings(dev)) {
++	err = adm8211_alloc_rings(dev);
++	if (err) {
+ 		printk(KERN_ERR "%s (adm8211): Cannot allocate TX/RX ring\n",
+ 		       pci_name(pdev));
+ 		goto err_iounmap;
