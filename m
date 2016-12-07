@@ -1,21 +1,35 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 09 Dec 2016 14:53:00 +0000
-Subject: Re: [PATCH 0/4] staging-greybus: Fine-tuning for four functions
-Message-Id: <20161209145300.GA4592@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Dec 2016 11:22:03 +0000
+Subject: [patch] ser_gigaset: return -ENOMEM on error instead of success
+Message-Id: <20161207112203.GC5507@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
-In-Reply-To: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, Johan Hovold <johan@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Paul Bolle <pebolle@tiscali.nl>, Tilman Schmidt <tilman@imap.cc>
+Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 09, 2016 at 03:32:38PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 9 Dec 2016 15:25:35 +0100
-> 
-> A few update suggestions were taken into account
-> from static source code analysis.
+If we can't allocate the resources in gigaset_initdriver() then we
+should return -ENOMEM instead of zero.
 
-Again, nope, sorry, not going to even look at these...
+Fixes: 2869b23e4b95 ("[PATCH] drivers/isdn/gigaset: new M101 driver (v2)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Ancient code.
+
+diff --git a/drivers/isdn/gigaset/ser-gigaset.c b/drivers/isdn/gigaset/ser-gigaset.c
+index d1f8ab915b15..b90776ef56ec 100644
+--- a/drivers/isdn/gigaset/ser-gigaset.c
++++ b/drivers/isdn/gigaset/ser-gigaset.c
+@@ -755,8 +755,10 @@ static int __init ser_gigaset_init(void)
+ 	driver = gigaset_initdriver(GIGASET_MINOR, GIGASET_MINORS,
+ 				    GIGASET_MODULENAME, GIGASET_DEVNAME,
+ 				    &ops, THIS_MODULE);
+-	if (!driver)
++	if (!driver) {
++		rc = -ENOMEM;
+ 		goto error;
++	}
+ 
+ 	rc = tty_register_ldisc(N_GIGASET_M101, &gigaset_ldisc);
+ 	if (rc != 0) {
