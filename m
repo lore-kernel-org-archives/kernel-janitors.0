@@ -1,51 +1,31 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Date: Tue, 27 Dec 2016 09:52:29 +0000
-Subject: Re: [PATCH 1/8] [media] v4l2-async: Use kmalloc_array() in v4l2_async_notifier_unregister()
-Message-Id: <20161227095229.GL16630@valkosipuli.retiisi.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Dec 2016 11:14:24 +0000
+Subject: [patch] drivers: net: xgene: uninitialized variable in xgene_enet_free_pagepool()
+Message-Id: <20161207111424.GA5507@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
- <442a32b4-6952-3b2a-44a3-46254c5976f2@users.sourceforge.net>
-In-Reply-To: <442a32b4-6952-3b2a-44a3-46254c5976f2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Iyappan Subramanian <isubramanian@apm.com>
+Cc: Keyur Chudgar <kchudgar@apm.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks!
+We never set "slots" in this function.
 
-On Mon, Dec 26, 2016 at 09:43:23PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 26 Dec 2016 18:14:33 +0100
-> 
-> A multiplication for the size determination of a memory allocation
-> indicated that an array data structure should be processed.
-> Thus use the corresponding function "kmalloc_array".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: a9380b0f7be8 ("drivers: net: xgene: Add support for Jumbo frame")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I copied how slots gets set in xgene_enet_rx_frame().  Static analysis.
+Not tested.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-> ---
->  drivers/media/v4l2-core/v4l2-async.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> index 5bada202b2d3..277183f2d514 100644
-> --- a/drivers/media/v4l2-core/v4l2-async.c
-> +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -202,7 +202,7 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
->  	if (!notifier->v4l2_dev)
->  		return;
->  
-> -	dev = kmalloc(n_subdev * sizeof(*dev), GFP_KERNEL);
-> +	dev = kmalloc_array(n_subdev, sizeof(*dev), GFP_KERNEL);
->  	if (!dev) {
->  		dev_err(notifier->v4l2_dev->dev,
->  			"Failed to allocate device cache!\n");
-
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+index 6c7eea8b36af..884a334e82d0 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+@@ -635,6 +635,7 @@ static void xgene_enet_free_pagepool(struct xgene_enet_desc_ring *buf_pool,
+ 		return;
+ 
+ 	dev = ndev_to_dev(buf_pool->ndev);
++	slots = buf_pool->slots - 1;
+ 	head = buf_pool->head;
+ 
+ 	for (i = 0; i < 4; i++) {
