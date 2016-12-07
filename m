@@ -1,19 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 08 Dec 2016 12:22:06 +0000
-Subject: Re: [PATCH 1/5] staging: comedi: serial2002: Combine four kcalloc() calls into one in serial2002_set
-Message-Id: <20161208122206.GS8176@mwanda>
+Date: Wed, 07 Dec 2016 11:22:50 +0000
+Subject: [patch] ALSA: cs46xx: add a new line
+Message-Id: <20161207112250.GD5507@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
- <011f1cb9-481c-9d9c-bcf5-8373f1796a0a@users.sourceforge.net>
-In-Reply-To: <011f1cb9-481c-9d9c-bcf5-8373f1796a0a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@driverdev.osuosl.org, Chris Cesare <chris.cesare@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, H Hartley Sweeten <hsweeten@visionengravers.com>, Ian Abbott <abbotti@mev.co.uk>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-The original code was simpler.
+We accidentally deleted a newline so now the "nreallocated++;" statement
+is hanging out way off to the right of the screen.
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/sound/pci/cs46xx/dsp_spos.c b/sound/pci/cs46xx/dsp_spos.c
+index 4a0cbd2241d8..aa61615288ff 100644
+--- a/sound/pci/cs46xx/dsp_spos.c
++++ b/sound/pci/cs46xx/dsp_spos.c
+@@ -107,7 +107,8 @@ static int shadow_and_reallocate_code (struct snd_cs46xx * chip, u32 * data, u32
+             
+ 						dev_dbg(chip->card->dev,
+ 							"handle_wideop:[2] %05x:%05x addr %04x\n",
+-							hival, loval, address);						nreallocated++;
++							hival, loval, address);
++						nreallocated++;
+ 					} /* wide_opcodes[j] = wide_op */
+ 				} /* for */
+ 			} /* mod_type = 0 ... */
