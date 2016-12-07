@@ -1,37 +1,39 @@
-From: Oleg Drokin <oleg.drokin@intel.com>
-Date: Wed, 07 Dec 2016 17:22:41 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Dec 2016 19:22:37 +0000
 Subject: Re: [lustre-devel] [PATCH] staging: lustre: Fix a spatch warning due to an assignment from kernel to
-Message-Id: <92C79E56-E447-46CB-9D4C-ECC862F2B43E@intel.com>
+Message-Id: <20161207192237.GP8176@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161202173332.5100-1-lambert.quentin@gmail.com> <306D1D4D-A949-44F6-BAFE-44F08F609D9B@intel.com> <81821426-c32c-c45a-e9a3-82f9818fc986@gmail.com> <33d23121-e5ca-0e14-bfbb-632f883e0948@gmail.com>
-In-Reply-To: <33d23121-e5ca-0e14-bfbb-632f883e0948@gmail.com>
+References: <20161202173332.5100-1-lambert.quentin@gmail.com>
+ <306D1D4D-A949-44F6-BAFE-44F08F609D9B@intel.com>
+ <81821426-c32c-c45a-e9a3-82f9818fc986@gmail.com>
+ <33d23121-e5ca-0e14-bfbb-632f883e0948@gmail.com>
+ <20161207153317.GO8176@mwanda>
+ <46ee428d-016f-e532-9824-4ddbe8a0cc8b@gmail.com>
+In-Reply-To: <46ee428d-016f-e532-9824-4ddbe8a0cc8b@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org
 
+On Wed, Dec 07, 2016 at 04:42:30PM +0100, Quentin Lambert wrote:
+> 
+> 
+> On 12/07/2016 04:33 PM, Dan Carpenter wrote:
+> >Lustre is kind of a mess with regards to keeping user and kernel
+> >pointers separate.  It's not going to be easy to fix.
+> Fair enough.
+> I am trying to make a contribution to drivers/staging using sparse.
+> With that in mind, do you still fill I should keep clear of lustre?
+> I feel that actually doing the work properly could be a meaningful
+> learning experience.
 
-On Dec 7, 2016, at 10:20 AM, Quentin Lambert wrote:
+It's just that you're the fifth person to look at lustre __user
+annotations and it doesn't end well.  You need to be a lustre expert
+who can test things.
 
-> Hi all,
-> 
-> I am looking at the drivers/staging/lustre/lustre/llite/dir.c:
-> 
-> 1469                 /* Call mdc_iocontrol */
-> 1470                 rc = obd_iocontrol(LL_IOC_FID2MDTIDX, exp, sizeof(fid), &fid,
-> 1471                                    &index);
-> 1472                 if (rc)
-> 
-> and sparse says:
-> 
-> drivers/staging/lustre/lustre/llite/dir.c:1471:37: warning: incorrect type in argument 5 (different address spaces)
-> 
-> I was wondering if there was any value to add a cast to fix the warning?
+But for other lustre things, feel free.
 
-These's a sister warning to this one, btw, in
-drivers/staging/lustre/lustre/lmv/lmv_obd.c:996:19: warning: cast removes address space of expression
-
-It is an ugly kludge and I guess needs to just be reworked somehow instead to avoid
-these ugly games.
+regards,
+dan carpenter
 
