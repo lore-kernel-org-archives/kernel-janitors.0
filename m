@@ -1,24 +1,34 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 20 Dec 2016 22:46:55 +0000
-Subject: Re: [patch] scsi: dpt_i2o: double free if adpt_i2o_online_hba() fails
-Message-Id: <yq11sx22p7k.fsf@sermon.lab.mkp.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Dec 2016 11:32:17 +0000
+Subject: [patch net-next] net: mvneta: Indent some statements
+Message-Id: <20161207113217.GE5507@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161216093539.GC13942@elgon.mountain>
-In-Reply-To: <20161216093539.GC13942@elgon.mountain> (Dan Carpenter's message
-        of "Fri, 16 Dec 2016 12:35:39 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Marcin Wojtas <mw@semihalf.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->>>>> "Dan" = Dan Carpenter <dan.carpenter@oracle.com> writes:
+These two statements were not indented correctly so it's sort of
+confusing.
 
-Dan> There are two places where adpt_i2o_online_hba() is called.  Both
-Dan> callers call adpt_i2o_delete_hba(pHba) if adpt_i2o_online_hba()
-Dan> fails and since we also free it here that causes a double free bug.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 4.11/scsi-queue.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 5e5b259dd2cc..e05e22705cf7 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -3578,9 +3578,10 @@ static int mvneta_stop(struct net_device *dev)
+ 		mvneta_stop_dev(pp);
+ 		mvneta_mdio_remove(pp);
+ 
+-	cpuhp_state_remove_instance_nocalls(online_hpstate, &pp->node_online);
+-	cpuhp_state_remove_instance_nocalls(CPUHP_NET_MVNETA_DEAD,
+-					    &pp->node_dead);
++		cpuhp_state_remove_instance_nocalls(online_hpstate,
++						    &pp->node_online);
++		cpuhp_state_remove_instance_nocalls(CPUHP_NET_MVNETA_DEAD,
++						    &pp->node_dead);
+ 		on_each_cpu(mvneta_percpu_disable, pp, true);
+ 		free_percpu_irq(dev->irq, pp->ports);
+ 	} else {
