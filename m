@@ -1,28 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 12 Dec 2016 02:18:50 +0000
-Subject: Re: [patch] sparc: leon: Fix a retry loop in leon_init_timers()
-Message-Id: <20161211.211850.1804813212925215809.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 08 Dec 2016 11:30:20 +0000
+Subject: [PATCH 0/5] staging-COMEDI: Fine-tuning for three functions
+Message-Id: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161125112554.GG5938@mwanda>
-In-Reply-To: <20161125112554.GG5938@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: devel@driverdev.osuosl.org, Chris Cesare <chris.cesare@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, H Hartley Sweeten <hsweeten@visionengravers.com>, Ian Abbott <abbotti@mev.co.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Nov 2016 14:25:54 +0300
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Dec 2016 11:37:37 +0100
 
-> The original code causes a static checker warning because it has a
-> continue inside a do { } while (0); loop.  In that context, a continue
-> and a break are equivalent.  The intent was to go back to the start of
-> the loop so the continue was a bug.
-> 
-> I've added a retry label at the start and changed the continue to a goto
-> retry.  Then I removed the do { } while (0) loop and pulled the code in
-> one indent level.
-> 
-> Fixes: 2791c1a43900 ("SPARC/LEON: added support for selecting Timer Core and Timer within core")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Some update suggestions were taken into account
+from static source code analysis.
 
-Applied.
+Markus Elfring (5):
+  Combine four kcalloc() calls into one in serial2002_setup_subdevs()
+  Split a condition check in usbdux_alloc_usb_buffers()
+  Move an assignment in usbdux_alloc_usb_buffers()
+  Split a condition check in usbduxsigma_alloc_usb_buffers()
+  Move an assignment in usbduxsigma_alloc_usb_buffers()
+
+ drivers/staging/comedi/drivers/serial2002.c  | 22 +++++-----
+ drivers/staging/comedi/drivers/usbdux.c      | 56 ++++++++++++++++++-----
+ drivers/staging/comedi/drivers/usbduxsigma.c | 66 ++++++++++++++++++++++------
+ 3 files changed, 108 insertions(+), 36 deletions(-)
+
+-- 
+2.11.0
+
