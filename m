@@ -1,38 +1,22 @@
-From: Iyappan Subramanian <isubramanian@apm.com>
-Date: Wed, 07 Dec 2016 20:46:51 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 08 Dec 2016 16:30:53 +0000
 Subject: Re: [patch] drivers: net: xgene: uninitialized variable in xgene_enet_free_pagepool()
-Message-Id: <CAKh23F=PWFz9v8XgEXyjSZpUjUxn=W3UUMBokqiL-74eZTeuow@mail.gmail.com>
+Message-Id: <20161208.113053.539814359496613991.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161207111424.GA5507@elgon.mountain>
 In-Reply-To: <20161207111424.GA5507@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Keyur Chudgar <kchudgar@apm.com>, netdev <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: isubramanian@apm.com, kchudgar@apm.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Dec 7, 2016 at 3:14 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 7 Dec 2016 14:14:24 +0300
+
 > We never set "slots" in this function.
->
+> 
 > Fixes: a9380b0f7be8 ("drivers: net: xgene: Add support for Jumbo frame")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I copied how slots gets set in xgene_enet_rx_frame().  Static analysis.
-> Not tested.
->
-> diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
-> index 6c7eea8b36af..884a334e82d0 100644
-> --- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
-> +++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
-> @@ -635,6 +635,7 @@ static void xgene_enet_free_pagepool(struct xgene_enet_desc_ring *buf_pool,
->                 return;
->
->         dev = ndev_to_dev(buf_pool->ndev);
-> +       slots = buf_pool->slots - 1;
->         head = buf_pool->head;
->
->         for (i = 0; i < 4; i++) {
 
-Thanks.
-
-Acked-by: Iyappan Subramanian <isubramanian@apm.com>
+Applied.
