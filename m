@@ -1,76 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:46 +0000
-Subject: [PATCH 17/66] hwmon: (i5500_temp) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-18-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 08 Dec 2016 15:26:45 +0000
+Subject: Re: staging-COMEDI: Fine-tuning for three functions
+Message-Id: <fa604c2d-f950-7c24-800a-302f115fe8b2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
+ <20161208133019.GA30859@kroah.com>
+In-Reply-To: <20161208133019.GA30859@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, Chris Cesare <chris.cesare@gmail.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Ian Abbott <abbotti@mev.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+> You do realize that I no longer take patches from you for any of the
+> subsystems I maintain, right?
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+Not so far.
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+It seems that you would like to present new information for our
+challenging collaboration.
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
+> This patch series is one reason why...
 
-if not (x^"_show" = x_show) then Coccilib.include_match false
+I hope that corresponding disagreements around shown change possibilities
+can still be clarified somehow.
+Would you like to check further improvements for the affected
+source code here?
 
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/hwmon/i5500_temp.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/hwmon/i5500_temp.c b/drivers/hwmon/i5500_temp.c
-index 3e3ccbf..400e067 100644
---- a/drivers/hwmon/i5500_temp.c
-+++ b/drivers/hwmon/i5500_temp.c
-@@ -43,8 +43,8 @@
-  */
- 
- /* Sensor resolution : 0.5 degree C */
--static ssize_t show_temp(struct device *dev,
--			 struct device_attribute *devattr, char *buf)
-+static ssize_t temp1_input_show(struct device *dev,
-+				struct device_attribute *devattr, char *buf)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev->parent);
- 	long temp;
-@@ -83,7 +83,7 @@ static ssize_t show_alarm(struct device *dev,
- 	return sprintf(buf, "%u\n", (unsigned int)ctsts & (1 << nr));
- }
- 
--static DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL);
-+static DEVICE_ATTR_RO(temp1_input);
- static SENSOR_DEVICE_ATTR(temp1_crit, S_IRUGO, show_thresh, NULL, 0xE2);
- static SENSOR_DEVICE_ATTR(temp1_max_hyst, S_IRUGO, show_thresh, NULL, 0xEC);
- static SENSOR_DEVICE_ATTR(temp1_max, S_IRUGO, show_thresh, NULL, 0xEE);
-
+Regards,
+Markus
