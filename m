@@ -1,41 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:50:23 +0000
-Subject: [PATCH 17/19] [media] uvc_video: Fix a typo in a comment line
-Message-Id: <29689504-fa08-b8c2-436b-22668123a5bb@users.sourceforge.net>
+Date: Thu, 08 Dec 2016 11:38:21 +0000
+Subject: [PATCH 5/5] staging: comedi: usbduxsigma: Move an assignment in usbduxsigma_alloc_usb_buffers()
+Message-Id: <e3bc68d0-b2ed-2070-18fb-1afe854f672d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
+In-Reply-To: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: devel@driverdev.osuosl.org, Chris Cesare <chris.cesare@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, H Hartley Sweeten <hsweeten@visionengravers.com>, Ian Abbott <abbotti@mev.co.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:42:58 +0100
+Date: Thu, 8 Dec 2016 11:20:38 +0100
 
-The script "checkpatch.pl" pointed out that a word may be misspelled.
-
-Add a missing character there.
+Move one assignment for the local variable "usb" so that its setting
+will only be performed after some memory allocations succeeded
+by this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/uvc/uvc_video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/comedi/drivers/usbduxsigma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index 617f2090aa55..61320ef82553 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -1794,7 +1794,7 @@ int uvc_video_init(struct uvc_streaming *stream)
- 	usb_set_interface(stream->dev->udev, stream->intfnum, 0);
+diff --git a/drivers/staging/comedi/drivers/usbduxsigma.c b/drivers/staging/comedi/drivers/usbduxsigma.c
+index 8c04aa5339f3..7c1f9198447a 100644
+--- a/drivers/staging/comedi/drivers/usbduxsigma.c
++++ b/drivers/staging/comedi/drivers/usbduxsigma.c
+@@ -1338,7 +1338,7 @@ static int usbduxsigma_firmware_upload(struct comedi_device *dev,
  
- 	/* Set the streaming probe control with default streaming parameters
--	 * retrieved from the device. Webcams that don't suport GET_DEF
-+	 * retrieved from the device. Webcams that don't support GET_DEF
- 	 * requests on the probe control will just keep their current streaming
- 	 * parameters.
- 	 */
+ static int usbduxsigma_alloc_usb_buffers(struct comedi_device *dev)
+ {
+-	struct usb_device *usb = comedi_to_usb_dev(dev);
++	struct usb_device *usb;
+ 	struct usbduxsigma_private *devpriv = dev->private;
+ 	struct urb *urb;
+ 	int i, x;
+@@ -1367,6 +1367,7 @@ static int usbduxsigma_alloc_usb_buffers(struct comedi_device *dev)
+ 	if (!devpriv->ao_urbs)
+ 		goto free_ai_urbs;
+ 
++	usb = comedi_to_usb_dev(dev);
+ 	for (i = 0; i < devpriv->n_ai_urbs; i++) {
+ 		/* one frame: 1ms */
+ 		urb = usb_alloc_urb(1, GFP_KERNEL);
 -- 
 2.11.0
 
