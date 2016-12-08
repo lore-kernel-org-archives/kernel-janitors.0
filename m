@@ -1,25 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 20 Dec 2016 09:16:39 +0000
-Subject: Re: [patch] nvme-fabrics: correct some printk information
-Message-Id: <20161220091639.GF8244@mwanda>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Thu, 08 Dec 2016 20:38:27 +0000
+Subject: [PATCH v2] staging: lustre: Fix variable type declaration after refactoring
+Message-Id: <20161208203827.20561-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161210090618.GA11680@elgon.mountain>
- <c73d9cb3-89f4-54d3-50b3-90b6b2f3df23@broadcom.com>
-In-Reply-To: <c73d9cb3-89f4-54d3-50b3-90b6b2f3df23@broadcom.com>
+In-Reply-To: <20161208160759.19649-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-On Mon, Dec 19, 2016 at 04:40:30PM -0800, James Smart wrote:
-> Dan,
-> 
-> Mind if I solve this a different way ?
+A recent clean-up declared och_flags as a int rather than fmode_t. This
+lead to the following sparse warning:
 
-Not at all.
+drivers/staging/lustre/lustre/llite/file.c:106:30: warning: restricted
+fmode_t degrades to integer
 
-Could you give me a Reported-by tag?
+This patch fixes this issue.
 
-regards,
-dan carpenter
+Fixes: 0a1200991234f7 ("staging: lustre: cleanup lustre_lib.h")
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ v2: fixes the referenced sha
 
+ drivers/staging/lustre/lustre/include/obd.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/staging/lustre/lustre/include/obd.h
++++ b/drivers/staging/lustre/lustre/include/obd.h
+@@ -889,7 +889,7 @@ struct obd_client_handle {
+ 	struct md_open_data	*och_mod;
+ 	struct lustre_handle	 och_lease_handle; /* open lock for lease */
+ 	__u32			 och_magic;
+-	int			 och_flags;
++	fmode_t			 och_flags;
+ };
+ 
+ #define OBD_CLIENT_HANDLE_MAGIC 0xd15ea5ed
