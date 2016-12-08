@@ -1,23 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 30 Dec 2016 08:15:26 +0000
-Subject: Re: [PATCH 2/2] pinctrl: sirf: atlas7: Improve code layout
-Message-Id: <CACRpkdaJvm6c1uGs34tWz3-6uzN_sX++O3dWN-_pvVpMQqkAUg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Dec 2016 11:32:00 +0000
+Subject: [patch] parisc: perf: return -EFAULT on error
+Message-Id: <20161208113200.GC11382@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161220054122.25508-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20161220054122.25508-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "James E.J. Bottomley" <jejb@parisc-linux.org>
+Cc: Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 20, 2016 at 6:41 AM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+The copy_from_user() returns the number of bytes remaining to be copied
+but we want to return -EFAULT if it's non-zero.
 
-> Add some tab in order to improve indentation.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/arch/parisc/kernel/perf.c b/arch/parisc/kernel/perf.c
+index 518f4f5f1f43..76c96a53fc71 100644
+--- a/arch/parisc/kernel/perf.c
++++ b/arch/parisc/kernel/perf.c
+@@ -320,8 +320,8 @@ static ssize_t perf_write(struct file *file, const char __user *buf, size_t coun
+ 	if (count != sizeof(uint32_t))
+ 		return -EIO;
+ 
+-	if ((err = copy_from_user(&image_type, buf, sizeof(uint32_t))) != 0) 
+-		return err;
++	if (copy_from_user(&image_type, buf, sizeof(uint32_t)))
++		return -EFAULT;
+ 
+ 	/* Get the interface type and test type */
+    	interface_type = (image_type >> 16) & 0xffff;
