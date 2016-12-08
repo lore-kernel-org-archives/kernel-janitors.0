@@ -1,30 +1,36 @@
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Date: Fri, 09 Dec 2016 22:04:55 +0000
-Subject: Re: md: Combine two kmalloc() calls into one in sb_equal()
-Message-Id: <a1325b45-8917-43a1-8b67-b66162ea4fc5@fastmail.fm>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Dec 2016 10:59:36 +0000
+Subject: [patch] ia64: pci: Fix a condition in pcibr_dmamap_ate32()
+Message-Id: <20161208105936.GB11382@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f4df733d-8e06-8ba1-c4c3-800d8c5615ba@users.sourceforge.net>
- <71044708-c5e4-3a14-b162-dfc600311a60@fastmail.fm>
- <a7693826-b1d1-882a-44ce-5dca9d2fe851@users.sourceforge.net>
- <a33e87c6-9b47-96e2-a877-b86bc8949eb6@fastmail.fm>
- <b992386f-bf20-8483-d7dd-ee4c29625ecb@users.sourceforge.net>
-In-Reply-To: <b992386f-bf20-8483-d7dd-ee4c29625ecb@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Smatch complains that probably this condition isn't correct because it
+first does a comparison and then a mask.  Judging from the surrounding
+code probably the parenthesis are in the wrong place.
 
+The original code is equivalent to:
 
-On 09.12.2016 22:58, SF Markus Elfring wrote:
->> Irrelevant, the variable is not used before checking it.
->
-> * Will it be more appropriate to attempt another memory allocation only if
->   the previous one succeeded already?
->
-> * Can it be a bit more efficient to duplicate only the required data
->   in a single function call before?
+	if (dma_flags = SN_DMA_ADDR_PHYS)
 
-How many memory allocations do you expect to fail?
+And it's probably going to be true less often than my corrected version.
 
+Fixes: 83821d3f558d ("[PATCH] PCI: altix: msi support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/arch/ia64/sn/pci/pcibr/pcibr_dma.c b/arch/ia64/sn/pci/pcibr/pcibr_dma.c
+index 1e863b277ac9..71c9bf308adf 100644
+--- a/arch/ia64/sn/pci/pcibr/pcibr_dma.c
++++ b/arch/ia64/sn/pci/pcibr/pcibr_dma.c
+@@ -82,7 +82,7 @@
+ 	if (IS_PCIX(pcibus_info))
+ 		ate_flags &= ~(PCI32_ATE_PREF);
+ 
+-	if (SN_DMA_ADDRTYPE(dma_flags = SN_DMA_ADDR_PHYS))
++	if (SN_DMA_ADDRTYPE(dma_flags) = SN_DMA_ADDR_PHYS)
+ 		xio_addr = IS_PIC_SOFT(pcibus_info) ? PHYS_TO_DMA(paddr) :
+ 	    					      PHYS_TO_TIODMA(paddr);
+ 	else
