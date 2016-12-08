@@ -1,22 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 08 Dec 2016 16:30:53 +0000
-Subject: Re: [patch] drivers: net: xgene: uninitialized variable in xgene_enet_free_pagepool()
-Message-Id: <20161208.113053.539814359496613991.davem@davemloft.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Thu, 08 Dec 2016 16:07:59 +0000
+Subject: [PATCH] staging: lustre: Fix variable type declaration after refactoring
+Message-Id: <20161208160759.19649-1-lambert.quentin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161207111424.GA5507@elgon.mountain>
-In-Reply-To: <20161207111424.GA5507@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: isubramanian@apm.com, kchudgar@apm.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Quentin Lambert <lambert.quentin@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 7 Dec 2016 14:14:24 +0300
+A recent clean-up declared och_flags as a int rather than fmode_t. This
+lead to the following sparse warning:
 
-> We never set "slots" in this function.
-> 
-> Fixes: a9380b0f7be8 ("drivers: net: xgene: Add support for Jumbo frame")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/staging/lustre/lustre/llite/file.c:106:30: warning: restricted
+fmode_t degrades to integer
 
-Applied.
+This patch fixes this issue.
+
+Fixes: 1200991234f7 ("staging: lustre: cleanup lustre_lib.h")
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/staging/lustre/lustre/include/obd.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/staging/lustre/lustre/include/obd.h
++++ b/drivers/staging/lustre/lustre/include/obd.h
+@@ -889,7 +889,7 @@ struct obd_client_handle {
+ 	struct md_open_data	*och_mod;
+ 	struct lustre_handle	 och_lease_handle; /* open lock for lease */
+ 	__u32			 och_magic;
+-	int			 och_flags;
++	fmode_t			 och_flags;
+ };
+ 
+ #define OBD_CLIENT_HANDLE_MAGIC 0xd15ea5ed
