@@ -1,20 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 12 Dec 2016 02:18:24 +0000
-Subject: Re: [patch] sparc64: move dereference after check for NULL
-Message-Id: <20161211.211824.143836509582059585.davem@davemloft.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Thu, 08 Dec 2016 23:14:44 +0000
+Subject: Re: [PATCH] clk: cdce925: Fix limit check
+Message-Id: <20161208231444.GX5423@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161111214905.29481-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161111214905.29481-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Nov 2016 14:01:32 +0300
-
-> We shouldn't dereference "iommu" until after we have checked that it is
-> non-NULL.
+On 11/11, Christophe JAILLET wrote:
+> It is likely that instead of '1>64', 'q>64' was expected.
 > 
-> Fixes: f08978b0fdbf ("sparc64: Enable sun4v dma ops to use IOMMU v2 APIs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Moreover, according to datasheet,
+>    http://www.ti.com/lit/ds/symlink/cdce925.pdf
+>    SCAS847I - JULY 2007 - REVISED OCTOBER 2016
+> PLL settings limits are: 16 <= q <= 63
+> So change the upper limit check from 64 to 63.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Applied.
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
