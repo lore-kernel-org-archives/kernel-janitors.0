@@ -1,40 +1,45 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:41:41 +0000
-Subject: [PATCH 10/19] [media] uvc_driver: Return -ENOMEM after a failed kzalloc() call in uvc_parse_streamin
-Message-Id: <cca09ee1-dc30-b3e6-41fb-63c1443bf91b@users.sourceforge.net>
+Date: Fri, 09 Dec 2016 14:37:56 +0000
+Subject: [PATCH 3/4] staging: greybus: light: Check return value of a kstrndup() call in gb_lights_light_conf
+Message-Id: <f6479c52-4dd1-fec4-f659-2fe64d5024fd@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
+In-Reply-To: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 16:00:17 +0100
+Date: Fri, 9 Dec 2016 14:36:16 +0100
 
-Use the return code "-ENOMEM" (instead of "-EINVAL") after a call of
-the function "kzalloc" failed here.
+A return value was not checked after a call of the function "kstrndup".
+This issue was detected by using the Coccinelle software.
+
+Add a bit of exception handling.
+
+Fixes: 2870b52bae4c81823ffcb3ed2b0626fb39d64f48 ("greybus: lights: add lights implementation")
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/uvc/uvc_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/greybus/light.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index b0833902fde2..5736f8b26f92 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -663,7 +663,7 @@ static int uvc_parse_streaming(struct uvc_device *dev,
- 	streaming = kzalloc(sizeof(*streaming), GFP_KERNEL);
- 	if (!streaming) {
- 		usb_driver_release_interface(&uvc_driver.driver, intf);
--		return -EINVAL;
-+		return -ENOMEM;
- 	}
+diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
+index 27bfc20eb9a5..c9c377f40f56 100644
+--- a/drivers/staging/greybus/light.c
++++ b/drivers/staging/greybus/light.c
+@@ -1030,6 +1030,9 @@ static int gb_lights_light_config(struct gb_lights *glights, u8 id)
  
- 	mutex_init(&streaming->mutex);
+ 	light->channels_count = conf.channel_count;
+ 	light->name = kstrndup(conf.name, NAMES_MAX, GFP_KERNEL);
++	if (!light->name)
++		return -ENOMEM;
++
+ 	light->channels = kcalloc(light->channels_count,
+ 				  sizeof(*light->channels),
+ 				  GFP_KERNEL);
 -- 
 2.11.0
 
