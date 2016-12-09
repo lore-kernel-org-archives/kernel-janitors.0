@@ -1,28 +1,65 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 08 Dec 2016 15:10:15 +0000
-Subject: Re: [patch] parisc: perf: return -EFAULT on error
-Message-Id: <20161208151014.GW8176@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Dec 2016 18:30:05 +0000
+Subject: [PATCH] md: Combine two kmalloc() calls into one in sb_equal()
+Message-Id: <f4df733d-8e06-8ba1-c4c3-800d8c5615ba@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161208113200.GC11382@elgon.mountain>
- <CAOmT4fTi+7r=1OJsumVC_+ET-NXcGjsZ5+t5ppm0eZZ2VeuF-A@mail.gmail.com>
-In-Reply-To: <CAOmT4fTi+7r=1OJsumVC_+ET-NXcGjsZ5+t5ppm0eZZ2VeuF-A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bojan prtvar <prtvar.b@gmail.com>
-Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-raid@vger.kernel.org, Shaohua Li <shli@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 08, 2016 at 03:53:42PM +0100, bojan prtvar wrote:
-> Hi Dan,
-> 
-> On Thu, Dec 8, 2016 at 12:32 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > -       if ((err = copy_from_user(&image_type, buf, sizeof(uint32_t))) != 0)
-> > -               return err;
-> 
-> Why not delete err?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 9 Dec 2016 19:09:13 +0100
 
-Gar... I'm sorry.  I'll resend.
+The function "kmalloc" was called in one case by the function "sb_equal"
+without checking immediately if it failed.
+This issue was detected by using the Coccinelle software.
 
-regards,
-dan carpenter
+Perform the desired memory allocation (and release at the end)
+by a single function call instead.
+
+Fixes: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 ("Linux-2.6.12-rc2")
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/md/md.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index b088668269b0..86caf2536255 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -843,15 +843,12 @@ static int sb_equal(mdp_super_t *sb1, mdp_super_t *sb2)
+ 	int ret;
+ 	mdp_super_t *tmp1, *tmp2;
+ 
+-	tmp1 = kmalloc(sizeof(*tmp1),GFP_KERNEL);
+-	tmp2 = kmalloc(sizeof(*tmp2),GFP_KERNEL);
+-
+-	if (!tmp1 || !tmp2) {
+-		ret = 0;
+-		goto abort;
+-	}
++	tmp1 = kmalloc(2 * sizeof(*tmp1), GFP_KERNEL);
++	if (!tmp1)
++		return 0;
+ 
+ 	*tmp1 = *sb1;
++	tmp2 = tmp1 + 1;
+ 	*tmp2 = *sb2;
+ 
+ 	/*
+@@ -861,9 +858,7 @@ static int sb_equal(mdp_super_t *sb1, mdp_super_t *sb2)
+ 	tmp2->nr_disks = 0;
+ 
+ 	ret = (memcmp(tmp1, tmp2, MD_SB_GENERIC_CONSTANT_WORDS * 4) = 0);
+-abort:
+ 	kfree(tmp1);
+-	kfree(tmp2);
+ 	return ret;
+ }
+ 
+-- 
+2.11.0
 
