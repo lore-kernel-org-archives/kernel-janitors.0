@@ -1,23 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 08 Dec 2016 19:19:50 +0000
+From: Paul Bolle <pebolle@tiscali.nl>
+Date: Fri, 09 Dec 2016 09:03:23 +0000
 Subject: Re: [patch] ser_gigaset: return -ENOMEM on error instead of success
-Message-Id: <20161208.141950.834129897171154805.davem@davemloft.net>
+Message-Id: <1481274203.13252.26.camel@tiscali.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161207112203.GC5507@elgon.mountain>
-In-Reply-To: <20161207112203.GC5507@elgon.mountain>
+         <1481137583.12596.19.camel@tiscali.nl>
+         <d8eb1f69-e68e-7792-00de-b14e6bac1606@imap.cc>
+         <1481144894.11167.7.camel@tiscali.nl>
+         <59908d9c-1716-14cb-41aa-8a9538f53412@imap.cc>
+In-Reply-To: <59908d9c-1716-14cb-41aa-8a9538f53412@imap.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: pebolle@tiscali.nl, tilman@imap.cc, isdn@linux-pingi.de, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tilman Schmidt <tilman@imap.cc>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 7 Dec 2016 14:22:03 +0300
+On Wed, 2016-12-07 at 23:04 +0100, Tilman Schmidt wrote:
+> Not sure how much evil that does beyond the WARN, but I agree it's
+> worth investigating.
 
-> If we can't allocate the resources in gigaset_initdriver() then we
-> should return -ENOMEM instead of zero.
-> 
-> Fixes: 2869b23e4b95 ("[PATCH] drivers/isdn/gigaset: new M101 driver (v2)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+For the record: NULL pointer dereference in tty_unregister_ldisc() on module
+unload. rmmod got killed, module refcount set -1, etc. My test box locked up
+twice some random period after all that. So quite a bit of a mess, all in all.
 
-Applied and queued up for -stable, thanks.
+
+Paul Bolle
