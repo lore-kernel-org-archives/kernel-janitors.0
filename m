@@ -1,83 +1,71 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:39 +0000
-Subject: [PATCH 10/66] hwmon: (f71882fg) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-11-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Dec 2016 14:34:49 +0000
+Subject: [PATCH 1/4] staging: greybus: camera: One function call less in gb_camera_configure_streams() after 
+Message-Id: <4e76f717-9382-f48f-afa4-b8b6982e327d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
+In-Reply-To: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Dec 2016 18:25:13 +0100
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+The kfree() function was called in one case by the
+gb_camera_configure_streams() function during error handling
+even if the passed variable contained a null pointer.
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+This issue was detected by using the Coccinelle software.
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+Adjust a jump target according to the Linux coding style convention.
 
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
+Fixes: 3265edaf0d70433699eece915fcca6509332c0e8 ("greybus: Add driver for the camera class protocol")
 
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwmon/f71882fg.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/greybus/camera.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/hwmon/f71882fg.c b/drivers/hwmon/f71882fg.c
-index cb28e4b..ca54ce5 100644
---- a/drivers/hwmon/f71882fg.c
-+++ b/drivers/hwmon/f71882fg.c
-@@ -390,7 +390,7 @@ static ssize_t show_pwm_auto_point_temp(struct device *dev,
- static ssize_t store_pwm_auto_point_temp(struct device *dev,
- 	struct device_attribute *devattr, const char *buf, size_t count);
- /* Sysfs misc */
--static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
-+static ssize_t name_show(struct device *dev, struct device_attribute *devattr,
- 	char *buf);
+diff --git a/drivers/staging/greybus/camera.c b/drivers/staging/greybus/camera.c
+index 1c5b41ae6774..4479caed81bd 100644
+--- a/drivers/staging/greybus/camera.c
++++ b/drivers/staging/greybus/camera.c
+@@ -537,14 +537,15 @@ static int gb_camera_configure_streams(struct gb_camera *gcam,
+ 		return -EINVAL;
  
- static int f71882fg_probe(struct platform_device *pdev);
-@@ -404,7 +404,7 @@ static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
- 	.remove		= f71882fg_remove,
- };
+ 	req_size = sizeof(*req) + nstreams * sizeof(req->config[0]);
+-	resp_size = sizeof(*resp) + nstreams * sizeof(resp->config[0]);
+-
+ 	req = kmalloc(req_size, GFP_KERNEL);
+-	resp = kmalloc(resp_size, GFP_KERNEL);
+-	if (!req || !resp) {
+-		kfree(req);
+-		kfree(resp);
++	if (!req)
+ 		return -ENOMEM;
++
++	resp_size = sizeof(*resp) + nstreams * sizeof(resp->config[0]);
++	resp = kmalloc(resp_size, GFP_KERNEL);
++	if (!resp) {
++		ret = -ENOMEM;
++		goto free_request;
+ 	}
  
--static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
-+static DEVICE_ATTR_RO(name);
+ 	req->num_streams = nstreams;
+@@ -647,8 +648,9 @@ static int gb_camera_configure_streams(struct gb_camera *gcam,
  
- /*
-  * Temp attr for the f71858fg, the f71858fg is special as it has its
-@@ -2212,7 +2212,7 @@ static ssize_t store_pwm_auto_point_temp(struct device *dev,
- 	return count;
+ done_skip_pm_put:
+ 	mutex_unlock(&gcam->mutex);
+-	kfree(req);
+ 	kfree(resp);
++free_request:
++	kfree(req);
+ 	return ret;
  }
  
--static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
-+static ssize_t name_show(struct device *dev, struct device_attribute *devattr,
- 	char *buf)
- {
- 	struct f71882fg_data *data = dev_get_drvdata(dev);
+-- 
+2.11.0
 
