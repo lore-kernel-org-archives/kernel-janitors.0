@@ -1,95 +1,65 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:07 +0000
-Subject: [PATCH 38/66] hwmon: (smsc47m192) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-39-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 09 Dec 2016 14:36:12 +0000
+Subject: [PATCH 2/4] staging: greybus: light: Use kcalloc() in two functions
+Message-Id: <112064ca-41b3-6936-090a-3c229a251af7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
+In-Reply-To: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 9 Dec 2016 13:46:25 +0100
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+  This issue was detected by using the Coccinelle software.
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
+Fixes: 2870b52bae4c81823ffcb3ed2b0626fb39d64f48 ("greybus: lights: add lights implementation")
 
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwmon/smsc47m192.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/greybus/light.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwmon/smsc47m192.c b/drivers/hwmon/smsc47m192.c
-index 15650f2..6989408 100644
---- a/drivers/hwmon/smsc47m192.c
-+++ b/drivers/hwmon/smsc47m192.c
-@@ -400,23 +400,23 @@ static SENSOR_DEVICE_ATTR(temp##index##_offset, S_IRUGO | S_IWUSR,	\
- show_temp_index(3)
+diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
+index 8dffd8a7e762..27bfc20eb9a5 100644
+--- a/drivers/staging/greybus/light.c
++++ b/drivers/staging/greybus/light.c
+@@ -1030,9 +1030,9 @@ static int gb_lights_light_config(struct gb_lights *glights, u8 id)
  
- /* VID */
--static ssize_t show_vid(struct device *dev, struct device_attribute *attr,
--		char *buf)
-+static ssize_t cpu0_vid_show(struct device *dev,
-+			     struct device_attribute *attr, char *buf)
- {
- 	struct smsc47m192_data *data = smsc47m192_update_device(dev);
- 	return sprintf(buf, "%d\n", vid_from_reg(data->vid, data->vrm));
- }
--static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid, NULL);
-+static DEVICE_ATTR_RO(cpu0_vid);
+ 	light->channels_count = conf.channel_count;
+ 	light->name = kstrndup(conf.name, NAMES_MAX, GFP_KERNEL);
+-
+-	light->channels = kzalloc(light->channels_count *
+-				  sizeof(struct gb_channel), GFP_KERNEL);
++	light->channels = kcalloc(light->channels_count,
++				  sizeof(*light->channels),
++				  GFP_KERNEL);
+ 	if (!light->channels)
+ 		return -ENOMEM;
  
--static ssize_t show_vrm(struct device *dev, struct device_attribute *attr,
-+static ssize_t vrm_show(struct device *dev, struct device_attribute *attr,
- 		char *buf)
- {
- 	struct smsc47m192_data *data = dev_get_drvdata(dev);
- 	return sprintf(buf, "%d\n", data->vrm);
- }
+@@ -1168,8 +1168,9 @@ static int gb_lights_create_all(struct gb_lights *glights)
+ 	if (ret < 0)
+ 		goto out;
  
--static ssize_t set_vrm(struct device *dev, struct device_attribute *attr,
--		const char *buf, size_t count)
-+static ssize_t vrm_store(struct device *dev, struct device_attribute *attr,
-+			 const char *buf, size_t count)
- {
- 	struct smsc47m192_data *data = dev_get_drvdata(dev);
- 	unsigned long val;
-@@ -431,7 +431,7 @@ static ssize_t set_vrm(struct device *dev, struct device_attribute *attr,
- 	data->vrm = val;
- 	return count;
- }
--static DEVICE_ATTR(vrm, S_IRUGO | S_IWUSR, show_vrm, set_vrm);
-+static DEVICE_ATTR_RW(vrm);
- 
- /* Alarms */
- static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
+-	glights->lights = kzalloc(glights->lights_count *
+-				  sizeof(struct gb_light), GFP_KERNEL);
++	glights->lights = kcalloc(glights->lights_count,
++				  sizeof(*glights->lights),
++				  GFP_KERNEL);
+ 	if (!glights->lights) {
+ 		ret = -ENOMEM;
+ 		goto out;
+-- 
+2.11.0
 
