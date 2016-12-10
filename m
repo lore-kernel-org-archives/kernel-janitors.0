@@ -1,81 +1,63 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 20:48:06 +0000
-Subject: [PATCH 1/4] [media] bt8xx: One function call less in bttv_input_init() after error detection
-Message-Id: <e20a6835-a404-e894-d0d0-a408bfcd7fb6@users.sourceforge.net>
+From: Daniele Nicolodi <daniele@grinta.net>
+Date: Sat, 10 Dec 2016 21:29:55 +0000
+Subject: Re: [PATCH 1/4] [media] bt8xx: One function call less in bttv_input_init() after error detection
+Message-Id: <ecf01283-e2eb-ecef-313f-123ba41c0336@grinta.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
-In-Reply-To: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
+ <e20a6835-a404-e894-d0d0-a408bfcd7fb6@users.sourceforge.net>
+In-Reply-To: <e20a6835-a404-e894-d0d0-a408bfcd7fb6@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 09:29:24 +0100
+On 10/12/16 13:48, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 10 Dec 2016 09:29:24 +0100
+> 
+> The kfree() function was called in one case by the
+> bttv_input_init() function during error handling
+> even if the passed variable contained a null pointer.
 
-The kfree() function was called in one case by the
-bttv_input_init() function during error handling
-even if the passed variable contained a null pointer.
+kfree() is safe to call on a NULL pointer.
 
-This issue was detected by using the Coccinelle software.
+Despite that, you have found several instances of similar constructs:
 
-* Split a condition check for resource allocation failures so that
-  each pointer from these function calls will be checked immediately.
+{
+	a = kmalloc(...)
+	b = kmalloc(...)
 
-  See also background information:
-  Topic "CWE-754: Improper check for unusual or exceptional conditions"
-  Link: https://cwe.mitre.org/data/definitions/754.html
+	if (!a || !b)
+		goto out;
 
-  Fixes: d8b4b5822f51e2142b731b42c81e3f03eec475b2 ("[media] ir-core: make struct rc_dev the primary interface")
+	...
 
-* Adjust a jump target according to the Linux coding style convention.
+out:
+	kfree(a);
+	kfree(b);
+}
 
-* Delete an initialisation for the variable "err" at the beginning
-  which became unnecessary with this refactoring.
+and similar patches you submitted to change those construct to something
+different have been rejected because they are seen as unnecessary
+changes that make the code harder to read.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/pci/bt8xx/bttv-input.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Didn't it occur to you that maybe those constructs are fine the way they
+are and this is the idiomatic way to write that kind of code? Why are
+you submitting patches implementing changes that have already been rejected?
 
-diff --git a/drivers/media/pci/bt8xx/bttv-input.c b/drivers/media/pci/bt8xx/bttv-input.c
-index 4da720e4867e..9187993d23ea 100644
---- a/drivers/media/pci/bt8xx/bttv-input.c
-+++ b/drivers/media/pci/bt8xx/bttv-input.c
-@@ -418,15 +418,20 @@ int bttv_input_init(struct bttv *btv)
- 	struct bttv_ir *ir;
- 	char *ir_codes = NULL;
- 	struct rc_dev *rc;
--	int err = -ENOMEM;
-+	int err;
- 
- 	if (!btv->has_remote)
- 		return -ENODEV;
- 
--	ir = kzalloc(sizeof(*ir),GFP_KERNEL);
-+	ir = kzalloc(sizeof(*ir), GFP_KERNEL);
-+	if (!ir)
-+		return -ENOMEM;
-+
- 	rc = rc_allocate_device();
--	if (!ir || !rc)
--		goto err_out_free;
-+	if (!rc) {
-+		err = -ENOMEM;
-+		goto free_ir;
-+	}
- 
- 	/* detect & configure */
- 	switch (btv->c.type) {
-@@ -569,6 +574,7 @@ int bttv_input_init(struct bttv *btv)
- 	btv->remote = NULL;
-  err_out_free:
- 	rc_free_device(rc);
-+free_ir:
- 	kfree(ir);
- 	return err;
- }
--- 
-2.11.0
+Submitting mechanical patches that fix trivial style issues (existing
+and widely acknowledged ones) is a fine way to learn how to work on
+kernel development. They constitute additional work load on the
+maintainers that need to review and merge them. Thus, hopefully, they
+are only a way for new developers to familiarize themselves with the
+process and then move to some more constructive contributions.
+
+Judging from your recent submissions, it seems that this process is not
+working well for you. I'm probably not the only one that is wonderign
+what are you trying to obtain with your patch submissions, other than
+having your name in the git log.
+
+Cheers,
+Daniele
 
