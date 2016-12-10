@@ -1,41 +1,39 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 19 Dec 2016 05:33:51 +0000
-Subject: [PATCH] dmaengine: ti-dma-crossbar: Add some 'of_node_put()' in error path.
-Message-Id: <20161219053351.21156-1-christophe.jaillet@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Dec 2016 09:06:03 +0000
+Subject: [patch v2] x86/ldt: make a size variable unsigned
+Message-Id: <20161210090603.GA10995@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vinod.koul@intel.com, dan.j.williams@intel.com
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-Add some missing 'of_node_put()' in early exit error path.
+My static checker complains that we put an upper bound on the "size"
+variable but not a lower bound.  The checker is not smart enough to know
+the possible ranges of "old_mm->context.ldt->size" from
+init_new_context_ldt() so it thinks maybe it could be negative.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Let's make it unsigned to silence the warning and future proof the code
+a bit.  Also make alloc_size unsigned as well to match.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/dma/ti-dma-crossbar.c | 2 ++
- 1 file changed, 2 insertions(+)
+v2: change alloc_size
 
-diff --git a/drivers/dma/ti-dma-crossbar.c b/drivers/dma/ti-dma-crossbar.c
-index 3f24aeb48c0e..2403475a37cf 100644
---- a/drivers/dma/ti-dma-crossbar.c
-+++ b/drivers/dma/ti-dma-crossbar.c
-@@ -149,6 +149,7 @@ static int ti_am335x_xbar_probe(struct platform_device *pdev)
- 	match = of_match_node(ti_am335x_master_match, dma_node);
- 	if (!match) {
- 		dev_err(&pdev->dev, "DMA master is not supported\n");
-+		of_node_put(dma_node);
- 		return -EINVAL;
- 	}
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 4d12cdf2b453..62ccc27428e4 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -34,10 +34,10 @@ static void flush_ldt(void *current_mm)
+ }
  
-@@ -339,6 +340,7 @@ static int ti_dra7_xbar_probe(struct platform_device *pdev)
- 	match = of_match_node(ti_dra7_master_match, dma_node);
- 	if (!match) {
- 		dev_err(&pdev->dev, "DMA master is not supported\n");
-+		of_node_put(dma_node);
- 		return -EINVAL;
- 	}
+ /* The caller must call finalize_ldt_struct on the result. LDT starts zeroed. */
+-static struct ldt_struct *alloc_ldt_struct(int size)
++static struct ldt_struct *alloc_ldt_struct(unsigned int size)
+ {
+ 	struct ldt_struct *new_ldt;
+-	int alloc_size;
++	unsigned int alloc_size;
  
--- 
-2.9.3
-
+ 	if (size > LDT_ENTRIES)
+ 		return NULL;
