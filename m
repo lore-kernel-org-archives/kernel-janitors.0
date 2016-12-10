@@ -1,32 +1,43 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 10 Dec 2016 11:27:50 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Dec 2016 18:55:29 +0000
 Subject: Re: [patch] nvme-fabrics: correct some printk information
-Message-Id: <1481369270.5946.51.camel@perches.com>
+Message-Id: <20161210184029.GY8176@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161210090618.GA11680@elgon.mountain>
-In-Reply-To: <20161210090618.GA11680@elgon.mountain>
+ <1481369270.5946.51.camel@perches.com>
+In-Reply-To: <1481369270.5946.51.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 2016-12-10 at 12:06 +0300, Dan Carpenter wrote:
-> We really don't care where "ctrl" is on the stack since we're just
-> returning soon what we want is the actual ctrl pointer itself.
+On Sat, Dec 10, 2016 at 03:27:50AM -0800, Joe Perches wrote:
+> On Sat, 2016-12-10 at 12:06 +0300, Dan Carpenter wrote:
+> > We really don't care where "ctrl" is on the stack since we're just
+> > returning soon what we want is the actual ctrl pointer itself.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > 
+> > diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+> []
+> > @@ -2402,7 +2402,7 @@ enum blk_eh_timer_return
+> >  
+> >  	dev_info(ctrl->ctrl.device,
+> >  		"NVME-FC{%d}: new ctrl: NQN \"%s\" (%p)\n",
+> > -		ctrl->cnum, ctrl->ctrl.opts->subsysnqn, &ctrl);
+> > +		ctrl->cnum, ctrl->ctrl.opts->subsysnqn, ctrl);
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Found by script or inspection?
 > 
-> diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-[]
-> @@ -2402,7 +2402,7 @@ enum blk_eh_timer_return
->  
->  	dev_info(ctrl->ctrl.device,
->  		"NVME-FC{%d}: new ctrl: NQN \"%s\" (%p)\n",
-> -		ctrl->cnum, ctrl->ctrl.opts->subsysnqn, &ctrl);
-> +		ctrl->cnum, ctrl->ctrl.opts->subsysnqn, ctrl);
+> If by script, it seems unlikely there's only 1 instance
+> where an address of an automatic pointer type is used
+> incorrectly.
 
-Found by script or inspection?
+Script.  But it's using a pretty specific heuristic where we kmalloc a
+pointer and then pass the address.  It prints few warnings.  Probably
+40% false positives, but the remaining examples of course are 100% false
+positives.
 
-If by script, it seems unlikely there's only 1 instance
-where an address of an automatic pointer type is used
-incorrectly.
+regards,
+dan carpenter
+
