@@ -1,90 +1,163 @@
-From: Samuel Bernardo <samuelbernardo.mail@gmail.com>
-Date: Thu, 01 Dec 2016 15:57:52 +0000
-Subject: linux kernel support for logitech g502 proteus
-Message-Id: <2916ca4f-c4cf-06c9-3189-e33635ca621f@gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="oiOHFVip8rC8c60iVWvXg9lCg8JwiEbpm"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Dec 2016 20:53:09 +0000
+Subject: [PATCH 4/4] [media] bt8xx: Less function calls in dst_ca_ioctl() after error detection
+Message-Id: <eee59395-e2aa-fdce-68f0-1a3e630f08d0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, linux-newbie@vger.kernel.org, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
+In-Reply-To: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---oiOHFVip8rC8c60iVWvXg9lCg8JwiEbpm
-Content-Type: multipart/mixed; boundary="cLa1dKfbBRdqHo9g9icsWrtm4NtEuDpPE"
-From: Samuel Bernardo <samuelbernardo.mail@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-newbie@vger.kernel.org, linux-efi@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Message-ID: <2916ca4f-c4cf-06c9-3189-e33635ca621f@gmail.com>
-Subject: linux kernel support for logitech g502 proteus
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Dec 2016 21:30:10 +0100
 
---cLa1dKfbBRdqHo9g9icsWrtm4NtEuDpPE
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+The kfree() function was called in up to three cases
+by the dst_ca_ioctl() function during error handling
+even if the passed variable contained a null pointer.
 
-Hello,
+This issue was detected by using the Coccinelle software.
 
-I'm sorry if I'm spamming some lists with this help request, but I don't
-know exactly what's the right mailing list.
+* Split a condition check for memory allocation failures so that
+  each pointer from these function calls will be checked immediately.
 
-I would like to use Logitech G502 RGB gaming mouse with programmed
-profiles from their software, but I realized that generic driver in
-linux didn't support it. Logitech discards any support for Linux OS.
-This is the only reason I need a dual boot with Windows for programming
-the mouse or generate the xml template for the key bindings.
+  See also background information:
+  Topic "CWE-754: Improper check for unusual or exceptional conditions"
+  Link: https://cwe.mitre.org/data/definitions/754.html
 
-In Windows key mapping for mouse can be loaded from a xml file that
-stores profiles or programmed directly into the mouse, but limited to
-the keys available in keyboard or software.The following guides explains
-the setup:
+  Fixes: b57e5578f913a304e97cb66aa0044a894ca47f2f ("Fixes some sync issues between V4L/DVB development and GIT")
 
-http://support.logitech.com/en_us/article/26855
+* Replace the specification of data structures by pointer dereferences
+  to make the corresponding size determination a bit safer.
 
-http://support.logitech.com/en_us/article/26862?product=3Da0q31000009u2F9=
-AAI
+* Adjust jump targets according to the Linux coding style convention.
 
-With xml template is also possible to configure additional keys like F13
-that are usefull to map macros for example in an IDE software. The guide
-explaining how to change xml file is below:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/pci/bt8xx/dst_ca.c | 51 +++++++++++++++++++++++++---------------
+ 1 file changed, 32 insertions(+), 19 deletions(-)
 
-http://i.imgur.com/NbmjWCS.png
+diff --git a/drivers/media/pci/bt8xx/dst_ca.c b/drivers/media/pci/bt8xx/dst_ca.c
+index 04d06c564602..50cdb53c9e8a 100644
+--- a/drivers/media/pci/bt8xx/dst_ca.c
++++ b/drivers/media/pci/bt8xx/dst_ca.c
+@@ -559,16 +559,27 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+ 	int result = 0;
+ 
+ 	mutex_lock(&dst_ca_mutex);
+-	dvbdev = file->private_data;
+-	state = (struct dst_state *)dvbdev->priv;
+-	p_ca_message = kmalloc(sizeof (struct ca_msg), GFP_KERNEL);
+-	p_ca_slot_info = kmalloc(sizeof (struct ca_slot_info), GFP_KERNEL);
+-	p_ca_caps = kmalloc(sizeof (struct ca_caps), GFP_KERNEL);
+-	if (!p_ca_message || !p_ca_slot_info || !p_ca_caps) {
++	p_ca_message = kmalloc(sizeof(*p_ca_message), GFP_KERNEL);
++	if (!p_ca_message) {
+ 		result = -ENOMEM;
+-		goto free_mem_and_exit;
++		goto unlock;
++	}
++
++	p_ca_slot_info = kmalloc(sizeof(*p_ca_slot_info), GFP_KERNEL);
++	if (!p_ca_slot_info) {
++		result = -ENOMEM;
++		goto free_message;
+ 	}
+ 
++	p_ca_caps = kmalloc(sizeof(*p_ca_caps), GFP_KERNEL);
++	if (!p_ca_caps) {
++		result = -ENOMEM;
++		goto free_slot_info;
++	}
++
++	dvbdev = file->private_data;
++	state = (struct dst_state *)dvbdev->priv;
++
+ 	/*	We have now only the standard ioctl's, the driver is upposed to handle internals.	*/
+ 	switch (cmd) {
+ 	case CA_SEND_MSG:
+@@ -576,7 +587,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+ 		if ((ca_send_message(state, p_ca_message, arg)) < 0) {
+ 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_SEND_MSG Failed !");
+ 			result = -1;
+-			goto free_mem_and_exit;
++			goto free_caps;
+ 		}
+ 		break;
+ 	case CA_GET_MSG:
+@@ -584,7 +595,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+ 		if ((ca_get_message(state, p_ca_message, arg)) < 0) {
+ 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_GET_MSG Failed !");
+ 			result = -1;
+-			goto free_mem_and_exit;
++			goto free_caps;
+ 		}
+ 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_GET_MSG Success !");
+ 		break;
+@@ -598,7 +609,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+ 		if ((ca_get_slot_info(state, p_ca_slot_info, arg)) < 0) {
+ 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_GET_SLOT_INFO Failed !");
+ 			result = -1;
+-			goto free_mem_and_exit;
++			goto free_caps;
+ 		}
+ 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_GET_SLOT_INFO Success !");
+ 		break;
+@@ -607,7 +618,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+ 		if ((ca_get_slot_caps(state, p_ca_caps, arg)) < 0) {
+ 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_GET_CAP Failed !");
+ 			result = -1;
+-			goto free_mem_and_exit;
++			goto free_caps;
+ 		}
+ 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_GET_CAP Success !");
+ 		break;
+@@ -616,7 +627,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+ 		if ((ca_get_slot_descr(state, p_ca_message, arg)) < 0) {
+ 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_GET_DESCR_INFO Failed !");
+ 			result = -1;
+-			goto free_mem_and_exit;
++			goto free_caps;
+ 		}
+ 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_GET_DESCR_INFO Success !");
+ 		break;
+@@ -625,7 +636,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+ 		if ((ca_set_slot_descr()) < 0) {
+ 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_SET_DESCR Failed !");
+ 			result = -1;
+-			goto free_mem_and_exit;
++			goto free_caps;
+ 		}
+ 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_SET_DESCR Success !");
+ 		break;
+@@ -634,17 +645,19 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
+ 		if ((ca_set_pid()) < 0) {
+ 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_SET_PID Failed !");
+ 			result = -1;
+-			goto free_mem_and_exit;
++			goto free_caps;
+ 		}
+ 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_SET_PID Success !");
+ 	default:
+ 		result = -EOPNOTSUPP;
+ 	}
+- free_mem_and_exit:
+-	kfree (p_ca_message);
+-	kfree (p_ca_slot_info);
+-	kfree (p_ca_caps);
+-
++free_caps:
++	kfree(p_ca_caps);
++free_slot_info:
++	kfree(p_ca_slot_info);
++free_message:
++	kfree(p_ca_message);
++unlock:
+ 	mutex_unlock(&dst_ca_mutex);
+ 	return result;
+ }
+-- 
+2.11.0
 
-This mouse has many programmable keys that I would like to use in linux.
-
-I suspect that xml configuration is loaded with the windows driver for
-g502. Since with actual generic driver in linux 4.8 the profile could
-not be loaded, I ask if I you could help giving additional support for
-it in linux kernel?
-
-Thanks,
-
-Samuel
-
-
-
-
-
---cLa1dKfbBRdqHo9g9icsWrtm4NtEuDpPE--
-
---oiOHFVip8rC8c60iVWvXg9lCg8JwiEbpm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYQEiBAAoJEO2Nqc2/qzs5ad4P/2HV35dLocPYbz38qVnmy06A
-KGNcvyUDJpJWEyB0mkmztWneqGZkWWP5gx2srLkokSrcUOjmM45xjjYVPlHAAYBR
-FCYgmQWna34Rxs6NZiucD6mfQTyw/77eeLZxWda4K0ZxnjTL8taAzvmoMZyB/gwC
-g+peSlEN2NzXgTyLNEujPbykKh19W8ZihSpkDxuJeEiu9NCp9aXfIW4cmM5UHNM+
-sjVqDKPxNLuukQC3IHZCOIUXIT39PtzErc7On5YdD4BXIRSy9PE8IjCBvfvFnyVT
-MY2AuoGoh/rDmiZnCfBPWaWP8r9lrAiy8aT3oqIbuCbKeIeGfHvV9gcJiO4fdybR
-PHeFEF6o68sIVd+7Kkl5IVOZBHxNp9iCOOpXrgYDtrVMFOCG9aZKoer6nN5jTNcq
-JnpTorAVWgJeJRorzy5guMHSPsiZE/0PUyid7P2jS0tav6e91I4wEVVN5jlI//xV
-rRN5TIJD9nOfZltGYLzKsjdcV1uhF15H5Ov+iFEvzY9uxT/WaCpuhEEyHSQ7ATp/
-OaF+9izIzQp9uBlDfvfe1jIvG2ELim8lZSI5q9jqQuKFSSb44BfJ2jCXk1wtevDC
-AFTC2zNoxlSbyB8L/pQ8s1Pu1eavE1aMZy7rg58W0Mq2xG0QsB0DbQgPx/TSj9/K
-IOYEVBVmJ5OmycR9jdcb
-=IXxD
------END PGP SIGNATURE-----
-
---oiOHFVip8rC8c60iVWvXg9lCg8JwiEbpm--
