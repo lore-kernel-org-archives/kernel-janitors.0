@@ -1,43 +1,19 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sun, 18 Dec 2016 06:38:11 +0000
-Subject: [PATCH] serial: pic32_uart: Fix 'request_irq' and 'free_irq' inconsistancy
-Message-Id: <20161218063811.17307-1-christophe.jaillet@wanadoo.fr>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 12 Dec 2016 02:19:05 +0000
+Subject: Re: [patch] sparc64: restore irq in error paths in iommu
+Message-Id: <20161211.211905.982846821674091118.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: kernel-janitors@vger.kernel.org
 
-'request_irq' and 'free_irq' should have the same 'dev_id'.
-Here one uses 'port', and the other one uses 'sport'.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 26 Nov 2016 00:15:37 +0300
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/tty/serial/pic32_uart.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> There are some error paths where we should restore IRQs but we don't.
+> 
+> Fixes: bb620c3d3925 ("sparc: Make sparc64 use scalable lib/iommu-common.c functions")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
-index 7f8e99bbcb73..00a33eb859d3 100644
---- a/drivers/tty/serial/pic32_uart.c
-+++ b/drivers/tty/serial/pic32_uart.c
-@@ -495,13 +495,13 @@ static int pic32_uart_startup(struct uart_port *port)
- 
- out_t:
- 	kfree(sport->irq_tx_name);
--	free_irq(sport->irq_tx, sport);
-+	free_irq(sport->irq_tx, port);
- out_r:
- 	kfree(sport->irq_rx_name);
--	free_irq(sport->irq_rx, sport);
-+	free_irq(sport->irq_rx, port);
- out_f:
- 	kfree(sport->irq_fault_name);
--	free_irq(sport->irq_fault, sport);
-+	free_irq(sport->irq_fault, port);
- out_done:
- 	return ret;
- }
--- 
-2.9.3
-
+Applied.
