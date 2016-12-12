@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Dec 2016 18:03:21 +0000
+From: Daniele Nicolodi <daniele@grinta.net>
+Date: Mon, 12 Dec 2016 21:02:24 +0000
 Subject: Re: Clarification for acceptance statistics?
-Message-Id: <3d09590c-9a10-f756-1b71-536ea37d8524@users.sourceforge.net>
+Message-Id: <a694926d-eedd-5d51-54d0-7ba88775c42e@grinta.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
  <e20a6835-a404-e894-d0d0-a408bfcd7fb6@users.sourceforge.net>
@@ -10,22 +10,56 @@ References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
  <5560ffc2-e17d-5750-24e5-3150aba5d8aa@grinta.net>
  <ce612b15-0dff-ce33-6b22-3a2775bed4cd@users.sourceforge.net>
  <581046dd-0a4a-acea-a6a8-8d2469594881@grinta.net>
-In-Reply-To: <581046dd-0a4a-acea-a6a8-8d2469594881@grinta.net>
+ <3d09590c-9a10-f756-1b71-536ea37d8524@users.sourceforge.net>
+In-Reply-To: <3d09590c-9a10-f756-1b71-536ea37d8524@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniele Nicolodi <daniele@grinta.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> Have you proposed a similar patch that was accepted?
+On 12/12/16 11:03 AM, SF Markus Elfring wrote:
+>> Have you proposed a similar patch that was accepted?
+> 
+> Yes. - It happened a few times.
 
-Yes. - It happened a few times.
+The question was: have you ever had a patch changing code in the form
 
+{
+	a = kmalloc(...);
+	b = kmalloc(...);
 
-> I don't find record of it, but I may be wrong.
+	if (!a || !b)
+		goto out;
 
-It is really needed to clarify the corresponding software development
-history any further?
+	...
 
-Regards,
-Markus
+out:
+	kfree(a);
+	kfree(b);
+}
+
+to something else, accepted?
+
+I went checking and I haven't found such a patch.
+
+Did you understand my question?
+
+> It is really needed to clarify the corresponding software development
+> history any further?
+
+It is relevant because you are submitting a patch and your changelog
+implies that it makes the code follow some code structure rule that
+needs to be applied to the kernel. As the above is a recurring pattern
+in kernel code, it is legitimate to ask if such a rule exist, and has
+been enforced before, or you are making it up.
+
+My conclusion is that you are making it up.
+
+As a proposer of a new pattern, what is the evidence you can bring to
+the discussion that supports that your solution is better? What is the
+metric you are using to define "better"?
+
+Cheers,
+Daniele
+
