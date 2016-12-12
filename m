@@ -1,28 +1,33 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date: Thu, 15 Dec 2016 21:13:50 +0000
-Subject: Re: [bug report] ppdev: fix memory leak
-Message-Id: <5853078E.90001@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 12 Dec 2016 11:21:34 +0000
+Subject: [patch net-next] irda: w83977af_ir: cleanup an indent issue
+Message-Id: <20161212112134.GA10035@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161215210843.GA28981@elgon.mountain>
-In-Reply-To: <20161215210843.GA28981@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Samuel Ortiz <samuel@sortiz.org>, Joe Perches <joe@perches.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thursday 15 December 2016 09:08 PM, Dan Carpenter wrote:
-> Hello Sudip Mukherjee,
->
-> The patch 2bd362d5f45c: "ppdev: fix memory leak" from Nov 10, 2016,
-> leads to the following static checker warning:
->
-> 	drivers/char/ppdev.c:314 register_device()
-> 	warn: passing freed memory 'name'
+In commit 99d8d2159d7c ("irda: w83977af_ir: Neaten logging"), we
+accidentally added an extra tab to these lines.
 
-It is already done.
-https://lkml.org/lkml/2016/12/2/400
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
---
-Regards
-Sudip
+diff --git a/drivers/net/irda/w83977af_ir.c b/drivers/net/irda/w83977af_ir.c
+index f293d33fb28f..8d5b903d1d9d 100644
+--- a/drivers/net/irda/w83977af_ir.c
++++ b/drivers/net/irda/w83977af_ir.c
+@@ -517,9 +517,9 @@ static netdev_tx_t w83977af_hard_xmit(struct sk_buff *skb,
+ 
+ 		mtt = irda_get_mtt(skb);
+ 		pr_debug("%s: %ld, mtt=%d\n", __func__, jiffies, mtt);
+-			if (mtt > 1000)
+-				mdelay(mtt / 1000);
+-			else if (mtt)
++		if (mtt > 1000)
++			mdelay(mtt / 1000);
++		else if (mtt)
+ 			udelay(mtt);
+ 
+ 		/* Enable DMA interrupt */
