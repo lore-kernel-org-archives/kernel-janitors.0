@@ -1,27 +1,28 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Date: Fri, 09 Dec 2016 09:03:23 +0000
-Subject: Re: [patch] ser_gigaset: return -ENOMEM on error instead of success
-Message-Id: <1481274203.13252.26.camel@tiscali.nl>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 12 Dec 2016 02:18:50 +0000
+Subject: Re: [patch] sparc: leon: Fix a retry loop in leon_init_timers()
+Message-Id: <20161211.211850.1804813212925215809.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161207112203.GC5507@elgon.mountain>
-         <1481137583.12596.19.camel@tiscali.nl>
-         <d8eb1f69-e68e-7792-00de-b14e6bac1606@imap.cc>
-         <1481144894.11167.7.camel@tiscali.nl>
-         <59908d9c-1716-14cb-41aa-8a9538f53412@imap.cc>
-In-Reply-To: <59908d9c-1716-14cb-41aa-8a9538f53412@imap.cc>
+References: <20161125112554.GG5938@mwanda>
+In-Reply-To: <20161125112554.GG5938@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tilman Schmidt <tilman@imap.cc>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 2016-12-07 at 23:04 +0100, Tilman Schmidt wrote:
-> Not sure how much evil that does beyond the WARN, but I agree it's
-> worth investigating.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Nov 2016 14:25:54 +0300
 
-For the record: NULL pointer dereference in tty_unregister_ldisc() on module
-unload. rmmod got killed, module refcount set -1, etc. My test box locked up
-twice some random period after all that. So quite a bit of a mess, all in all.
+> The original code causes a static checker warning because it has a
+> continue inside a do { } while (0); loop.  In that context, a continue
+> and a break are equivalent.  The intent was to go back to the start of
+> the loop so the continue was a bug.
+> 
+> I've added a retry label at the start and changed the continue to a goto
+> retry.  Then I removed the do { } while (0) loop and pulled the code in
+> one indent level.
+> 
+> Fixes: 2791c1a43900 ("SPARC/LEON: added support for selecting Timer Core and Timer within core")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Paul Bolle
+Applied.
