@@ -1,23 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Dec 2016 10:34:44 +0000
-Subject: Re: [patch 1/3] spi: armada-3700: Signedness bug in probe
-Message-Id: <20161216103444.GC8244@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Dec 2016 18:03:21 +0000
+Subject: Re: Clarification for acceptance statistics?
+Message-Id: <3d09590c-9a10-f756-1b71-536ea37d8524@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161216082443.GA7031@elgon.mountain>
- <e1c6a534-6b6c-a83f-390f-b65654ff2bcf@free-electrons.com>
- <20161216095655.GB8244@mwanda>
- <9e5f6a38-6177-4026-7930-150c6b281a99@free-electrons.com>
-In-Reply-To: <9e5f6a38-6177-4026-7930-150c6b281a99-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
+ <e20a6835-a404-e894-d0d0-a408bfcd7fb6@users.sourceforge.net>
+ <ecf01283-e2eb-ecef-313f-123ba41c0336@grinta.net>
+ <d3ab238e-02f0-2511-9be1-a1447e7639bc@users.sourceforge.net>
+ <5560ffc2-e17d-5750-24e5-3150aba5d8aa@grinta.net>
+ <ce612b15-0dff-ce33-6b22-3a2775bed4cd@users.sourceforge.net>
+ <581046dd-0a4a-acea-a6a8-8d2469594881@grinta.net>
+In-Reply-To: <581046dd-0a4a-acea-a6a8-8d2469594881@grinta.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Romain Perier <romain.perier-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniele Nicolodi <daniele@grinta.net>
+Cc: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We really should make it int consistently through out.  But it doesn't
-matter because request_irq() rarely fails and static checkers are good
-at catching the bugs...
+> Have you proposed a similar patch that was accepted?
 
-regards,
-dan carpenter
+Yes. - It happened a few times.
 
+
+> I don't find record of it, but I may be wrong.
+
+It is really needed to clarify the corresponding software development
+history any further?
+
+Regards,
+Markus
