@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Dec 2016 17:15:45 +0000
+From: Daniele Nicolodi <daniele@grinta.net>
+Date: Mon, 12 Dec 2016 17:56:16 +0000
 Subject: Re: [media] bt8xx: One function call less in bttv_input_init() after error detection
-Message-Id: <baf6a24e-6a4e-f1ea-1b4d-7a3211964e4b@users.sourceforge.net>
+Message-Id: <480128e5-f309-d787-0c37-d6475aeabbdd@grinta.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
  <e20a6835-a404-e894-d0d0-a408bfcd7fb6@users.sourceforge.net>
@@ -10,28 +10,50 @@ References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
  <5560ffc2-e17d-5750-24e5-3150aba5d8aa@grinta.net>
  <ce612b15-0dff-ce33-6b22-3a2775bed4cd@users.sourceforge.net>
  <581046dd-0a4a-acea-a6a8-8d2469594881@grinta.net>
-In-Reply-To: <581046dd-0a4a-acea-a6a8-8d2469594881@grinta.net>
+ <baf6a24e-6a4e-f1ea-1b4d-7a3211964e4b@users.sourceforge.net>
+In-Reply-To: <baf6a24e-6a4e-f1ea-1b4d-7a3211964e4b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniele Nicolodi <daniele@grinta.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
 Cc: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> I suggest to check return values immediately after each function call.
->> An error situation can be detected earlier then and only the required
->> clean-up functionality will be executed at the end.
+On 12/12/16 10:15 AM, SF Markus Elfring wrote:
+>>> I suggest to check return values immediately after each function call.
+>>> An error situation can be detected earlier then and only the required
+>>> clean-up functionality will be executed at the end.
+>>
+>> Which improvement does this bring?
 > 
-> Which improvement does this bring?
+> * How do you think about to avoid requesting additional system resources
+>   when it was determined that a previously required memory allocation failed?
 
-* How do you think about to avoid requesting additional system resources
-  when it was determined that a previously required memory allocation failed?
+I think it is an irrelevant problem in the case at hand.
 
-* Can the corresponding exception handling become a bit more efficient?
+> * Can the corresponding exception handling become a bit more efficient?
 
+Where more efficient merely means sparing one function call? I think it
+is completely irrelevant in the case at hand and code clarity must be
+preferred to pointless optimization.
 
-> Why?
+>> Why?
+> 
+> Do you care for any results from static source code analysis?
 
-Do you care for any results from static source code analysis?
+Static source code analysis, in the form you are doing with Coccinelle,
+may help in identifying problems in a code base when a specific pattern
+has been identified to be problematic. In the static code analysis
+results you present, it is not clear what the problematic pattern is.
+Independently of how you identified the code section you propose to
+change, there is no problem to fix.
 
-Regards,
-Markus
+As a general advise, Markus, replying to questions with other questions
+is a a bad debate form. Questions, as opposed to statements, cannot be
+confuted. Also, every time you receive an answer to one of your
+questions, you reply with another question broadening the span of the
+discussion. However, you do not present evidence supporting your initial
+statement that some changes in the code are beneficial.
+
+Cheers,
+Daniele
+
