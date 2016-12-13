@@ -1,7 +1,7 @@
-From: Marek Vasut <marex@denx.de>
-Date: Tue, 13 Dec 2016 12:36:22 +0000
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Tue, 13 Dec 2016 21:25:20 +0000
 Subject: Re: [patch] drm: mxsfb: drm_dev_alloc() returns error pointers
-Message-Id: <e3c352b4-a2cf-030d-cfef-4a540e3eac3b@denx.de>
+Message-Id: <20161213212520.65btpa6a5535puln@phenom.ffwll.local>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20161213122332.GA7519@elgon.mountain>
 In-Reply-To: <20161213122332.GA7519@elgon.mountain>
@@ -9,19 +9,22 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Cc: Marek Vasut <marex@denx.de>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 12/13/2016 01:23 PM, Dan Carpenter wrote:
+On Tue, Dec 13, 2016 at 03:23:32PM +0300, Dan Carpenter wrote:
 > We should be checking for IS_ERR() instead of NULL because
 > drm_dev_alloc() returns error pointers.
 > 
 > Fixes: 45d59d704080 ("drm: Add new driver for MXSFB controller")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
+Queued up in drm-misc for 4.11 (since drm_dev_alloc doesn't fail due to
+the small allocs guarantee anyway), will show up in linux-next as soon as
+-rc1 hits the door.
 
-Reviewed-by: Marek Vasut <marex@denx.de>
+Thanks, Daniel
 
+> 
 > diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
 > index 79a18bf48b54..955441f71500 100644
 > --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
@@ -37,9 +40,12 @@ Reviewed-by: Marek Vasut <marex@denx.de>
 >  
 >  	ret = mxsfb_load(drm, 0);
 >  	if (ret)
-> 
-
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Best regards,
-Marek Vasut
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
