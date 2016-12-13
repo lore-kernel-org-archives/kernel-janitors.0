@@ -1,27 +1,30 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 20 Dec 2016 05:44:04 +0000
-Subject: Re: [RFC] Question about freeing of resource in 'atlas7_pinmux_probe()', in file 'drivers/pinctrl/si
-Message-Id: <24932cf3-0fe2-c71f-231c-c2f05c96a3c9@wanadoo.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Dec 2016 12:27:04 +0000
+Subject: [patch]  target/iscsi: double free in lio_target_tiqn_addtpg()
+Message-Id: <20161213122703.GB7519@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <612eedc5-0f28-7a38-abad-4b9573208875@wanadoo.fr>
- <7123e174-cc22-4a76-337c-661ee87994df@mentor.com>
-In-Reply-To: <7123e174-cc22-4a76-337c-661ee87994df@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Le 19/12/2016 à 14:54, Vladimir Zapolskiy a écrit :
-> Functionally it looks good, I have two comments though.
-> 1) you don't need to revert 151b8c5ba1eb, the commit is a proper fix
->     per se but incomplete, please add your change on top of it,
->
-> 2) minimizing the lines of code by removing duplicates is always good,
->     so here a better and complete fix will be like the following one:
->
-Hi,
+This iscsit_tpg_add_portal_group() function is only called from
+lio_target_tiqn_addtpg().  Both functions free the "tpg" pointer on
+error so it's a double free bug.  The memory is allocated in the caller
+so it should be freed in the caller and not here.
 
-thanks for the feedback and comments.
-Patch submitted.
+Fixes: e48354ce078c ("iscsi-target: Add iSCSI fabric support for target v4.1")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-CJ
+diff --git a/drivers/target/iscsi/iscsi_target_tpg.c b/drivers/target/iscsi/iscsi_target_tpg.c
+index 0814e5894a96..205a509b0dfb 100644
+--- a/drivers/target/iscsi/iscsi_target_tpg.c
++++ b/drivers/target/iscsi/iscsi_target_tpg.c
+@@ -260,7 +260,6 @@ int iscsit_tpg_add_portal_group(struct iscsi_tiqn *tiqn, struct iscsi_portal_gro
+ 		iscsi_release_param_list(tpg->param_list);
+ 		tpg->param_list = NULL;
+ 	}
+-	kfree(tpg);
+ 	return -ENOMEM;
+ }
+ 
