@@ -1,22 +1,30 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Sat, 10 Dec 2016 14:58:34 +0000
-Subject: Re: [patch] ext4: return -ENOMEM instead of success
-Message-Id: <20161210145834.i6uizxma4625kb2p@thunk.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Dec 2016 09:33:05 +0000
+Subject: [patch 1/3] spi: armada-3700: Signedness bug in probe
+Message-Id: <20161216082443.GA7031@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161207112106.GB5507@elgon.mountain>
-In-Reply-To: <20161207112106.GB5507@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tao Ma <boyu.mt@taobao.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Romain Perier <romain.perier@free-electrons.com>
+Cc: linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Dec 07, 2016 at 02:21:06PM +0300, Dan Carpenter wrote:
-> We should set the error code if kzalloc() fails.
-> 
-> Fixes: 67cf5b09a46f ("ext4: add the basic function for inline data support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We need "irq" to be an int because platform_get_irq() returns negative
+error codes.
 
-Thanks, applied.
+Fixes: 5762ab71eb24 ("spi: Add support for Armada 3700 SPI Controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-					- Ted
+diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
+index e89da0af45d2..5c7508dc6f0b 100644
+--- a/drivers/spi/spi-armada-3700.c
++++ b/drivers/spi/spi-armada-3700.c
+@@ -108,7 +108,7 @@ struct a3700_spi {
+ 	struct spi_master *master;
+ 	void __iomem *base;
+ 	struct clk *clk;
+-	unsigned int irq;
++	int irq;
+ 	unsigned int flags;
+ 	bool xmit_data;
+ 	const u8 *tx_buf;
