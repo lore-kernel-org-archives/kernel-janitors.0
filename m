@@ -1,73 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:15 +0000
-Subject: [PATCH 46/66] hwmon: (pc87427) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-47-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Dec 2016 09:14:10 +0000
+Subject: [patch] KEYS: Use memzero_explicit() for secret data
+Message-Id: <20161216091410.GB7285@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+I don't think GCC has figured out how to optimize the memset() away, but
+they might eventually so let's future proof this code a bit.
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
-
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
-
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/hwmon/pc87427.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hwmon/pc87427.c b/drivers/hwmon/pc87427.c
-index cb9fdd3..dc5a9d5 100644
---- a/drivers/hwmon/pc87427.c
-+++ b/drivers/hwmon/pc87427.c
-@@ -943,14 +943,14 @@ static SENSOR_DEVICE_ATTR(temp6_crit_alarm, S_IRUGO,
- 	{ .attrs = pc87427_attributes_temp[5] },
- };
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index d7a4969b2dd3..4fb315cddf5b 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -985,7 +985,7 @@ static void encrypted_destroy(struct key *key)
+ 	if (!epayload)
+ 		return;
  
--static ssize_t show_name(struct device *dev, struct device_attribute
-+static ssize_t name_show(struct device *dev, struct device_attribute
- 			 *devattr, char *buf)
- {
- 	struct pc87427_data *data = dev_get_drvdata(dev);
- 
- 	return sprintf(buf, "%s\n", data->name);
+-	memset(epayload->decrypted_data, 0, epayload->decrypted_datalen);
++	memzero_explicit(epayload->decrypted_data, epayload->decrypted_datalen);
+ 	kfree(key->payload.data[0]);
  }
--static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
-+static DEVICE_ATTR_RO(name);
  
- 
- /*
-
