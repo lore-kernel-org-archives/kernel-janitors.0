@@ -1,30 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Dec 2016 09:33:59 +0000
-Subject: [patch 3/3] spi: armada-3700: Remove unnecessary condition
-Message-Id: <20161216093359.GB13942@elgon.mountain>
+From: Romain Perier <romain.perier@free-electrons.com>
+Date: Fri, 16 Dec 2016 10:30:22 +0000
+Subject: Re: [patch 3/3] spi: armada-3700: Remove unnecessary condition
+Message-Id: <2fe5a622-4071-d44a-22c5-521d263e0e5a@free-electrons.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161216093359.GB13942@elgon.mountain>
+In-Reply-To: <20161216093359.GB13942-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>, Romain Perier <romain.perier@free-electrons.com>
-Cc: linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-We checked that "a3700_spi->wait_mask & cause" was set at the beginning
-of the function so we don't need to check again here.
+Hello,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Le 16/12/2016 =E0 10:33, Dan Carpenter a =E9crit :
+> We checked that "a3700_spi->wait_mask & cause" was set at the beginning
+> of the function so we don't need to check again here.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
+> index 5c7508dc6f0b..e98d464b3ff0 100644
+> --- a/drivers/spi/spi-armada-3700.c
+> +++ b/drivers/spi/spi-armada-3700.c
+> @@ -340,8 +340,7 @@ static irqreturn_t a3700_spi_interrupt(int irq, void =
+*dev_id)
+>  	spireg_write(a3700_spi, A3700_SPI_INT_STAT_REG, cause);
+>
+>  	/* Wake up the transfer */
+> -	if (a3700_spi->wait_mask & cause)
+> -		complete(&a3700_spi->done);
+> +	complete(&a3700_spi->done);
+>
+>  	return IRQ_HANDLED;
+>  }
+>
 
-diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
-index 5c7508dc6f0b..e98d464b3ff0 100644
---- a/drivers/spi/spi-armada-3700.c
-+++ b/drivers/spi/spi-armada-3700.c
-@@ -340,8 +340,7 @@ static irqreturn_t a3700_spi_interrupt(int irq, void *dev_id)
- 	spireg_write(a3700_spi, A3700_SPI_INT_STAT_REG, cause);
- 
- 	/* Wake up the transfer */
--	if (a3700_spi->wait_mask & cause)
--		complete(&a3700_spi->done);
-+	complete(&a3700_spi->done);
- 
- 	return IRQ_HANDLED;
- }
+
+Good catch,
+
+Acked-by: Romain Perier <romain.perier@free-electrons.com>
+
+
+Thanks,
+Romain
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
