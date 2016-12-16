@@ -1,42 +1,34 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Date: Tue, 27 Dec 2016 11:51:11 +0000
-Subject: Re: [PATCH 0/8] [media] v4l2-core: Fine-tuning for some function implementations
-Message-Id: <20161227115111.GN16630@valkosipuli.retiisi.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Dec 2016 09:08:27 +0000
+Subject: [patch] KEYS: Fix an error code in request_master_key()
+Message-Id: <20161216090827.GA7285@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
-In-Reply-To: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, hverkuil@xs4all.nl
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: David Safford <safford@us.ibm.com>, David Howells <dhowells@redhat.com>, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+This function has two callers and neither are able to handle a NULL
+return.  Really, -EINVAL is the correct thing return here anyway.  This
+fixes some static checker warnings like:
 
-On Mon, Dec 26, 2016 at 09:41:19PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 26 Dec 2016 21:30:12 +0100
-> 
-> Some update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (8):
->   v4l2-async: Use kmalloc_array() in v4l2_async_notifier_unregister()
->   v4l2-async: Delete an error message for a failed memory allocation in v4l2_async_notifier_unregister()
->   videobuf-dma-sg: Use kmalloc_array() in videobuf_dma_init_user_locked()
->   videobuf-dma-sg: Adjust 24 checks for null values
->   videobuf-dma-sg: Move two assignments for error codes in __videobuf_mmap_mapper()
->   videobuf-dma-sg: Improve a size determination in __videobuf_mmap_mapper()
->   videobuf-dma-sg: Delete an unnecessary return statement in videobuf_vm_close()
->   videobuf-dma-sg: Add some spaces for better code readability in videobuf_dma_init_user_locked()
+	security/keys/encrypted-keys/encrypted.c:709 encrypted_key_decrypt()
+	error: uninitialized symbol 'master_key'.
 
-I don't really disagree with the videobuf changes as such --- the original
-code sure seems quite odd, but I wonder whether we want to do this kind of
-cleanups in videobuf. Videobuf will be removed likely in not too distant
-future; when exactly, Hans can guesstimate better than me. Cc him.
+Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 17a06105ccb6..d7a4969b2dd3 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -437,7 +437,7 @@ static struct skcipher_request *init_skcipher_req(const u8 *key,
+ static struct key *request_master_key(struct encrypted_key_payload *epayload,
+ 				      const u8 **master_key, size_t *master_keylen)
+ {
+-	struct key *mkey = NULL;
++	struct key *mkey = ERR_PTR(-EINVAL);
+ 
+ 	if (!strncmp(epayload->master_desc, KEY_TRUSTED_PREFIX,
+ 		     KEY_TRUSTED_PREFIX_LEN)) {
