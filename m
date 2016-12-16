@@ -1,21 +1,30 @@
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Date: Thu, 01 Dec 2016 15:14:33 +0000
-Subject: Re: [patch] KVM: use after free in kvm_ioctl_create_device()
-Message-Id: <20161201151432.GH1682@potion>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Dec 2016 09:33:59 +0000
+Subject: [patch 3/3] spi: armada-3700: Remove unnecessary condition
+Message-Id: <20161216093359.GB13942@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161130192105.GC28180@mwanda>
-In-Reply-To: <20161130192105.GC28180@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christoffer Dall <christoffer.dall@linaro.org>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Romain Perier <romain.perier@free-electrons.com>
+Cc: linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2016-11-30 22:21+0300, Dan Carpenter:
-> We should move the ops->destroy(dev) after the list_del(&dev->vm_node)
-> so that we don't use "dev" after freeing it.
-> 
-> Fixes: a28ebea2adc4 ("KVM: Protect device ops->create and list_add with kvm->lock")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We checked that "a3700_spi->wait_mask & cause" was set at the beginning
+of the function so we don't need to check again here.
 
-Applied to kvm/master, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
+index 5c7508dc6f0b..e98d464b3ff0 100644
+--- a/drivers/spi/spi-armada-3700.c
++++ b/drivers/spi/spi-armada-3700.c
+@@ -340,8 +340,7 @@ static irqreturn_t a3700_spi_interrupt(int irq, void *dev_id)
+ 	spireg_write(a3700_spi, A3700_SPI_INT_STAT_REG, cause);
+ 
+ 	/* Wake up the transfer */
+-	if (a3700_spi->wait_mask & cause)
+-		complete(&a3700_spi->done);
++	complete(&a3700_spi->done);
+ 
+ 	return IRQ_HANDLED;
+ }
