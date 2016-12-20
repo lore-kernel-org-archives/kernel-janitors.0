@@ -1,30 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 08 Dec 2016 19:36:21 +0000
-Subject: Re: [PATCH] staging: lustre: Fix variable type declaration after refactoring
-Message-Id: <20161208193620.GX8176@mwanda>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 20 Dec 2016 05:41:22 +0000
+Subject: [PATCH 2/2] pinctrl: sirf: atlas7: Improve code layout
+Message-Id: <20161220054122.25508-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161208160759.19649-1-lambert.quentin@gmail.com>
-In-Reply-To: <20161208160759.19649-1-lambert.quentin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Dec 08, 2016 at 05:07:59PM +0100, Quentin Lambert wrote:
-> A recent clean-up declared och_flags as a int rather than fmode_t. This
-> lead to the following sparse warning:
-> 
-> drivers/staging/lustre/lustre/llite/file.c:106:30: warning: restricted
-> fmode_t degrades to integer
-> 
-> This patch fixes this issue.
-> 
-> Fixes: 1200991234f7 ("staging: lustre: cleanup lustre_lib.h")
-       0a1200991234f7
+Add some tab in order to improve indentation.
 
-Fixes hash is wrong.  It should start with "0a".
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index f714f67c4b64..76df538fa814 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -5444,7 +5444,7 @@ static int atlas7_pinmux_probe(struct platform_device *pdev)
+ 		pmx->regs[idx] = of_iomap(np, idx);
+ 		if (!pmx->regs[idx]) {
+ 			dev_err(&pdev->dev,
+-			"can't map ioc bank#%d registers\n", idx);
++				"can't map ioc bank#%d registers\n", idx);
+ 			ret = -ENOMEM;
+ 			goto unmap_io;
+ 		}
+@@ -6057,8 +6057,8 @@ static int atlas7_gpio_probe(struct platform_device *pdev)
+ 	ret = gpiochip_add_data(chip, a7gc);
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+-		"%s: error in probe function with status %d\n",
+-		np->name, ret);
++			"%s: error in probe function with status %d\n",
++			np->name, ret);
+ 		goto failed;
+ 	}
+ 
+-- 
+2.9.3
 
