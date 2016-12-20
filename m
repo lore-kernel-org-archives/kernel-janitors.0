@@ -1,40 +1,44 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 08 Dec 2016 13:30:19 +0000
-Subject: Re: [PATCH 0/5] staging-COMEDI: Fine-tuning for three functions
-Message-Id: <20161208133019.GA30859@kroah.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Tue, 20 Dec 2016 05:40:43 +0000
+Subject: [PATCH 1/2] pinctrl: sirf: atlas7: Add missing 'of_node_put()'
+Message-Id: <20161220054043.25417-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
-In-Reply-To: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: devel@driverdev.osuosl.org, Chris Cesare <chris.cesare@gmail.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Ian Abbott <abbotti@mev.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Dec 08, 2016 at 12:30:20PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 8 Dec 2016 11:37:37 +0100
-> 
-> Some update suggestions were taken into account
-> from static source code analysis.
-> 
-> Markus Elfring (5):
->   Combine four kcalloc() calls into one in serial2002_setup_subdevs()
->   Split a condition check in usbdux_alloc_usb_buffers()
->   Move an assignment in usbdux_alloc_usb_buffers()
->   Split a condition check in usbduxsigma_alloc_usb_buffers()
->   Move an assignment in usbduxsigma_alloc_usb_buffers()
-> 
->  drivers/staging/comedi/drivers/serial2002.c  | 22 +++++-----
->  drivers/staging/comedi/drivers/usbdux.c      | 56 ++++++++++++++++++-----
->  drivers/staging/comedi/drivers/usbduxsigma.c | 66 ++++++++++++++++++++++------
->  3 files changed, 108 insertions(+), 36 deletions(-)
+Reference to 'sys2pci_np' should be dropped in all cases here, not only in
+error handling path.
 
-You do realize that I no longer take patches from you for any of the
-subsystems I maintain, right?  This patch series is one reason why...
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-I suggest working on other projects to learn C better first.
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index 7f3041697813..f714f67c4b64 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -5420,14 +5420,15 @@ static int atlas7_pinmux_probe(struct platform_device *pdev)
+ 	sys2pci_np = of_find_node_by_name(NULL, "sys2pci");
+ 	if (!sys2pci_np)
+ 		return -EINVAL;
++
+ 	ret = of_address_to_resource(sys2pci_np, 0, &res);
++	of_node_put(sys2pci_np);
+ 	if (ret)
+ 		return ret;
++
+ 	pmx->sys2pci_base = devm_ioremap_resource(&pdev->dev, &res);
+-	if (IS_ERR(pmx->sys2pci_base)) {
+-		of_node_put(sys2pci_np);
++	if (IS_ERR(pmx->sys2pci_base))
+ 		return -ENOMEM;
+-	}
+ 
+ 	pmx->dev = &pdev->dev;
+ 
+-- 
+2.9.3
 
-best of luck,
-
-greg k-h
