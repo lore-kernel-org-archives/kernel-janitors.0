@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:22 +0000
-Subject: [PATCH 53/66] hwmon: (lm90) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-54-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:10 +0000
+Subject: [PATCH 41/66] hwmon: (w83627ehf) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-42-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,40 +46,43 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/lm90.c |    8 ++++----
+ drivers/hwmon/w83627ehf.c |    8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-index 322ed92..de1d61a 100644
---- a/drivers/hwmon/lm90.c
-+++ b/drivers/hwmon/lm90.c
-@@ -830,7 +830,7 @@ static u16 temp_to_u16_adt7461(struct lm90_data *data, long val)
- }
+diff --git a/drivers/hwmon/w83627ehf.c b/drivers/hwmon/w83627ehf.c
+index 697007a..ab346ed 100644
+--- a/drivers/hwmon/w83627ehf.c
++++ b/drivers/hwmon/w83627ehf.c
+@@ -1687,14 +1687,14 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
  
- /* pec used for ADM1032 only */
--static ssize_t show_pec(struct device *dev, struct device_attribute *dummy,
-+static ssize_t pec_show(struct device *dev, struct device_attribute *dummy,
- 			char *buf)
+ fan_time_functions(fan_stop_time, FAN_STOP_TIME)
+ 
+-static ssize_t show_name(struct device *dev, struct device_attribute *attr,
++static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+ 			 char *buf)
  {
- 	struct i2c_client *client = to_i2c_client(dev);
-@@ -838,8 +838,8 @@ static ssize_t show_pec(struct device *dev, struct device_attribute *dummy,
- 	return sprintf(buf, "%d\n", !!(client->flags & I2C_CLIENT_PEC));
+ 	struct w83627ehf_data *data = dev_get_drvdata(dev);
+ 
+ 	return sprintf(buf, "%s\n", data->name);
  }
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
  
--static ssize_t set_pec(struct device *dev, struct device_attribute *dummy,
--		       const char *buf, size_t count)
-+static ssize_t pec_store(struct device *dev, struct device_attribute *dummy,
-+			 const char *buf, size_t count)
+ static struct sensor_device_attribute sda_sf3_arrays_fan4[] = {
+ 	SENSOR_ATTR(pwm4_stop_time, S_IWUSR | S_IRUGO, show_fan_stop_time,
+@@ -1754,12 +1754,12 @@ static ssize_t show_name(struct device *dev, struct device_attribute *attr,
+ };
+ 
+ static ssize_t
+-show_vid(struct device *dev, struct device_attribute *attr, char *buf)
++cpu0_vid_show(struct device *dev, struct device_attribute *attr, char *buf)
  {
- 	struct i2c_client *client = to_i2c_client(dev);
- 	long val;
-@@ -863,7 +863,7 @@ static ssize_t set_pec(struct device *dev, struct device_attribute *dummy,
- 	return count;
+ 	struct w83627ehf_data *data = dev_get_drvdata(dev);
+ 	return sprintf(buf, "%d\n", vid_from_reg(data->vid, data->vrm));
  }
+-static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid, NULL);
++static DEVICE_ATTR_RO(cpu0_vid);
  
--static DEVICE_ATTR(pec, S_IWUSR | S_IRUGO, show_pec, set_pec);
-+static DEVICE_ATTR_RW(pec);
  
- static int lm90_get_temp11(struct lm90_data *data, int index)
- {
+ /* Case open detection */
 
