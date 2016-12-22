@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:26 +0000
-Subject: [PATCH 57/66] hwmon: (sch5627) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-58-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:52 +0000
+Subject: [PATCH 23/66] hwmon: (lm85) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-24-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
 source code, improves readbility, and reduces the chance of
@@ -46,29 +46,66 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/sch5627.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hwmon/lm85.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/hwmon/sch5627.c b/drivers/hwmon/sch5627.c
-index 19f85c0..91544f2 100644
---- a/drivers/hwmon/sch5627.c
-+++ b/drivers/hwmon/sch5627.c
-@@ -205,7 +205,7 @@ static int reg_to_rpm(u16 reg)
- 	return 5400540 / reg;
- }
+diff --git a/drivers/hwmon/lm85.c b/drivers/hwmon/lm85.c
+index 29c8136..691469f 100644
+--- a/drivers/hwmon/lm85.c
++++ b/drivers/hwmon/lm85.c
+@@ -604,8 +604,8 @@ static SENSOR_DEVICE_ATTR(fan##offset##_min, S_IRUGO | S_IWUSR,		\
  
--static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
-+static ssize_t name_show(struct device *dev, struct device_attribute *devattr,
- 	char *buf)
+ /* vid, vrm, alarms */
+ 
+-static ssize_t show_vid_reg(struct device *dev, struct device_attribute *attr,
+-		char *buf)
++static ssize_t cpu0_vid_show(struct device *dev,
++			     struct device_attribute *attr, char *buf)
  {
- 	return snprintf(buf, PAGE_SIZE, "%s\n", DEVNAME);
-@@ -326,7 +326,7 @@ static ssize_t show_in_label(struct device *dev, struct device_attribute
- 			SCH5627_IN_LABELS[attr->index]);
+ 	struct lm85_data *data = lm85_update_device(dev);
+ 	int vid;
+@@ -621,17 +621,17 @@ static ssize_t show_vid_reg(struct device *dev, struct device_attribute *attr,
+ 	return sprintf(buf, "%d\n", vid);
  }
  
--static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
-+static DEVICE_ATTR_RO(name);
- static SENSOR_DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL, 0);
- static SENSOR_DEVICE_ATTR(temp2_input, S_IRUGO, show_temp, NULL, 1);
- static SENSOR_DEVICE_ATTR(temp3_input, S_IRUGO, show_temp, NULL, 2);
+-static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid_reg, NULL);
++static DEVICE_ATTR_RO(cpu0_vid);
+ 
+-static ssize_t show_vrm_reg(struct device *dev, struct device_attribute *attr,
+-		char *buf)
++static ssize_t vrm_show(struct device *dev, struct device_attribute *attr,
++			char *buf)
+ {
+ 	struct lm85_data *data = dev_get_drvdata(dev);
+ 	return sprintf(buf, "%ld\n", (long) data->vrm);
+ }
+ 
+-static ssize_t store_vrm_reg(struct device *dev, struct device_attribute *attr,
+-		const char *buf, size_t count)
++static ssize_t vrm_store(struct device *dev, struct device_attribute *attr,
++			 const char *buf, size_t count)
+ {
+ 	struct lm85_data *data = dev_get_drvdata(dev);
+ 	unsigned long val;
+@@ -648,16 +648,16 @@ static ssize_t store_vrm_reg(struct device *dev, struct device_attribute *attr,
+ 	return count;
+ }
+ 
+-static DEVICE_ATTR(vrm, S_IRUGO | S_IWUSR, show_vrm_reg, store_vrm_reg);
++static DEVICE_ATTR_RW(vrm);
+ 
+-static ssize_t show_alarms_reg(struct device *dev, struct device_attribute
+-		*attr, char *buf)
++static ssize_t alarms_show(struct device *dev, struct device_attribute *attr,
++			   char *buf)
+ {
+ 	struct lm85_data *data = lm85_update_device(dev);
+ 	return sprintf(buf, "%u\n", data->alarms);
+ }
+ 
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms_reg, NULL);
++static DEVICE_ATTR_RO(alarms);
+ 
+ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
+ 		char *buf)
 
