@@ -1,43 +1,159 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:29:46 +0000
-Subject: [PATCH 01/19] [media] uvc_driver: Use kmalloc_array() in uvc_simplify_fraction()
-Message-Id: <67e337ba-f2e0-48ac-f6b9-e7e392eb92d7@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:36 +0000
+Subject: [PATCH 07/66] hwmon: (asb100) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Dec 2016 21:10:16 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/usb/uvc/uvc_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/asb100.c |   36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 04bf35063c4c..a64b5029f262 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -253,7 +253,7 @@ void uvc_simplify_fraction(uint32_t *numerator, uint32_t *denominator,
- 	uint32_t x, y, r;
- 	unsigned int i, n;
+diff --git a/drivers/hwmon/asb100.c b/drivers/hwmon/asb100.c
+index 272fcc8..62e1913 100644
+--- a/drivers/hwmon/asb100.c
++++ b/drivers/hwmon/asb100.c
+@@ -483,25 +483,25 @@ static SENSOR_DEVICE_ATTR(temp##num##_max_hyst, S_IRUGO | S_IWUSR, \
+ sysfs_temp(4);
  
--	an = kmalloc(n_terms * sizeof *an, GFP_KERNEL);
-+	an = kmalloc_array(n_terms, sizeof(*an), GFP_KERNEL);
- 	if (an = NULL)
- 		return;
+ /* VID */
+-static ssize_t show_vid(struct device *dev, struct device_attribute *attr,
+-		char *buf)
++static ssize_t cpu0_vid_show(struct device *dev,
++			     struct device_attribute *attr, char *buf)
+ {
+ 	struct asb100_data *data = asb100_update_device(dev);
+ 	return sprintf(buf, "%d\n", vid_from_reg(data->vid, data->vrm));
+ }
  
--- 
-2.11.0
+-static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid, NULL);
++static DEVICE_ATTR_RO(cpu0_vid);
+ 
+ /* VRM */
+-static ssize_t show_vrm(struct device *dev, struct device_attribute *attr,
++static ssize_t vrm_show(struct device *dev, struct device_attribute *attr,
+ 		char *buf)
+ {
+ 	struct asb100_data *data = dev_get_drvdata(dev);
+ 	return sprintf(buf, "%d\n", data->vrm);
+ }
+ 
+-static ssize_t set_vrm(struct device *dev, struct device_attribute *attr,
+-		const char *buf, size_t count)
++static ssize_t vrm_store(struct device *dev, struct device_attribute *attr,
++			 const char *buf, size_t count)
+ {
+ 	struct asb100_data *data = dev_get_drvdata(dev);
+ 	unsigned long val;
+@@ -519,16 +519,16 @@ static ssize_t set_vrm(struct device *dev, struct device_attribute *attr,
+ }
+ 
+ /* Alarms */
+-static DEVICE_ATTR(vrm, S_IRUGO | S_IWUSR, show_vrm, set_vrm);
++static DEVICE_ATTR_RW(vrm);
+ 
+-static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
++static ssize_t alarms_show(struct device *dev, struct device_attribute *attr,
+ 		char *buf)
+ {
+ 	struct asb100_data *data = asb100_update_device(dev);
+ 	return sprintf(buf, "%u\n", data->alarms);
+ }
+ 
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
+ 
+ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
+ 		char *buf)
+@@ -550,15 +550,15 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
+ static SENSOR_DEVICE_ATTR(temp3_alarm, S_IRUGO, show_alarm, NULL, 13);
+ 
+ /* 1 PWM */
+-static ssize_t show_pwm1(struct device *dev, struct device_attribute *attr,
++static ssize_t pwm1_show(struct device *dev, struct device_attribute *attr,
+ 		char *buf)
+ {
+ 	struct asb100_data *data = asb100_update_device(dev);
+ 	return sprintf(buf, "%d\n", ASB100_PWM_FROM_REG(data->pwm & 0x0f));
+ }
+ 
+-static ssize_t set_pwm1(struct device *dev, struct device_attribute *attr,
+-		const char *buf, size_t count)
++static ssize_t pwm1_store(struct device *dev, struct device_attribute *attr,
++			  const char *buf, size_t count)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct asb100_data *data = i2c_get_clientdata(client);
+@@ -577,15 +577,16 @@ static ssize_t set_pwm1(struct device *dev, struct device_attribute *attr,
+ 	return count;
+ }
+ 
+-static ssize_t show_pwm_enable1(struct device *dev,
++static ssize_t pwm1_enable_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct asb100_data *data = asb100_update_device(dev);
+ 	return sprintf(buf, "%d\n", (data->pwm & 0x80) ? 1 : 0);
+ }
+ 
+-static ssize_t set_pwm_enable1(struct device *dev,
+-		struct device_attribute *attr, const char *buf, size_t count)
++static ssize_t pwm1_enable_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf, size_t count)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct asb100_data *data = i2c_get_clientdata(client);
+@@ -604,9 +605,8 @@ static ssize_t set_pwm_enable1(struct device *dev,
+ 	return count;
+ }
+ 
+-static DEVICE_ATTR(pwm1, S_IRUGO | S_IWUSR, show_pwm1, set_pwm1);
+-static DEVICE_ATTR(pwm1_enable, S_IRUGO | S_IWUSR,
+-		show_pwm_enable1, set_pwm_enable1);
++static DEVICE_ATTR_RW(pwm1);
++static DEVICE_ATTR_RW(pwm1_enable);
+ 
+ static struct attribute *asb100_attributes[] = {
+ 	&sensor_dev_attr_in0_input.dev_attr.attr,
 
