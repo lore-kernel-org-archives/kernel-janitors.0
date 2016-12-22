@@ -1,163 +1,90 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 20:53:09 +0000
-Subject: [PATCH 4/4] [media] bt8xx: Less function calls in dst_ca_ioctl() after error detection
-Message-Id: <eee59395-e2aa-fdce-68f0-1a3e630f08d0@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:54 +0000
+Subject: [PATCH 25/66] hwmon: (lm92) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-26-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
-In-Reply-To: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 21:30:10 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-The kfree() function was called in up to three cases
-by the dst_ca_ioctl() function during error handling
-even if the passed variable contained a null pointer.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-* Split a condition check for memory allocation failures so that
-  each pointer from these function calls will be checked immediately.
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-  See also background information:
-  Topic "CWE-754: Improper check for unusual or exceptional conditions"
-  Link: https://cwe.mitre.org/data/definitions/754.html
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
 
-  Fixes: b57e5578f913a304e97cb66aa0044a894ca47f2f ("Fixes some sync issues between V4L/DVB development and GIT")
+if not (x^"_show" = x_show) then Coccilib.include_match false
 
-* Replace the specification of data structures by pointer dereferences
-  to make the corresponding size determination a bit safer.
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
 
-* Adjust jump targets according to the Linux coding style convention.
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/pci/bt8xx/dst_ca.c | 51 +++++++++++++++++++++++++---------------
- 1 file changed, 32 insertions(+), 19 deletions(-)
+ drivers/hwmon/lm92.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/pci/bt8xx/dst_ca.c b/drivers/media/pci/bt8xx/dst_ca.c
-index 04d06c564602..50cdb53c9e8a 100644
---- a/drivers/media/pci/bt8xx/dst_ca.c
-+++ b/drivers/media/pci/bt8xx/dst_ca.c
-@@ -559,16 +559,27 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 	int result = 0;
- 
- 	mutex_lock(&dst_ca_mutex);
--	dvbdev = file->private_data;
--	state = (struct dst_state *)dvbdev->priv;
--	p_ca_message = kmalloc(sizeof (struct ca_msg), GFP_KERNEL);
--	p_ca_slot_info = kmalloc(sizeof (struct ca_slot_info), GFP_KERNEL);
--	p_ca_caps = kmalloc(sizeof (struct ca_caps), GFP_KERNEL);
--	if (!p_ca_message || !p_ca_slot_info || !p_ca_caps) {
-+	p_ca_message = kmalloc(sizeof(*p_ca_message), GFP_KERNEL);
-+	if (!p_ca_message) {
- 		result = -ENOMEM;
--		goto free_mem_and_exit;
-+		goto unlock;
-+	}
-+
-+	p_ca_slot_info = kmalloc(sizeof(*p_ca_slot_info), GFP_KERNEL);
-+	if (!p_ca_slot_info) {
-+		result = -ENOMEM;
-+		goto free_message;
- 	}
- 
-+	p_ca_caps = kmalloc(sizeof(*p_ca_caps), GFP_KERNEL);
-+	if (!p_ca_caps) {
-+		result = -ENOMEM;
-+		goto free_slot_info;
-+	}
-+
-+	dvbdev = file->private_data;
-+	state = (struct dst_state *)dvbdev->priv;
-+
- 	/*	We have now only the standard ioctl's, the driver is upposed to handle internals.	*/
- 	switch (cmd) {
- 	case CA_SEND_MSG:
-@@ -576,7 +587,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 		if ((ca_send_message(state, p_ca_message, arg)) < 0) {
- 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_SEND_MSG Failed !");
- 			result = -1;
--			goto free_mem_and_exit;
-+			goto free_caps;
- 		}
- 		break;
- 	case CA_GET_MSG:
-@@ -584,7 +595,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 		if ((ca_get_message(state, p_ca_message, arg)) < 0) {
- 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_GET_MSG Failed !");
- 			result = -1;
--			goto free_mem_and_exit;
-+			goto free_caps;
- 		}
- 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_GET_MSG Success !");
- 		break;
-@@ -598,7 +609,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 		if ((ca_get_slot_info(state, p_ca_slot_info, arg)) < 0) {
- 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_GET_SLOT_INFO Failed !");
- 			result = -1;
--			goto free_mem_and_exit;
-+			goto free_caps;
- 		}
- 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_GET_SLOT_INFO Success !");
- 		break;
-@@ -607,7 +618,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 		if ((ca_get_slot_caps(state, p_ca_caps, arg)) < 0) {
- 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_GET_CAP Failed !");
- 			result = -1;
--			goto free_mem_and_exit;
-+			goto free_caps;
- 		}
- 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_GET_CAP Success !");
- 		break;
-@@ -616,7 +627,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 		if ((ca_get_slot_descr(state, p_ca_message, arg)) < 0) {
- 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_GET_DESCR_INFO Failed !");
- 			result = -1;
--			goto free_mem_and_exit;
-+			goto free_caps;
- 		}
- 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_GET_DESCR_INFO Success !");
- 		break;
-@@ -625,7 +636,7 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 		if ((ca_set_slot_descr()) < 0) {
- 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_SET_DESCR Failed !");
- 			result = -1;
--			goto free_mem_and_exit;
-+			goto free_caps;
- 		}
- 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_SET_DESCR Success !");
- 		break;
-@@ -634,17 +645,19 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 		if ((ca_set_pid()) < 0) {
- 			dprintk(verbose, DST_CA_ERROR, 1, " -->CA_SET_PID Failed !");
- 			result = -1;
--			goto free_mem_and_exit;
-+			goto free_caps;
- 		}
- 		dprintk(verbose, DST_CA_INFO, 1, " -->CA_SET_PID Success !");
- 	default:
- 		result = -EOPNOTSUPP;
- 	}
-- free_mem_and_exit:
--	kfree (p_ca_message);
--	kfree (p_ca_slot_info);
--	kfree (p_ca_caps);
--
-+free_caps:
-+	kfree(p_ca_caps);
-+free_slot_info:
-+	kfree(p_ca_slot_info);
-+free_message:
-+	kfree(p_ca_message);
-+unlock:
- 	mutex_unlock(&dst_ca_mutex);
- 	return result;
+diff --git a/drivers/hwmon/lm92.c b/drivers/hwmon/lm92.c
+index cfaf70b..2a91974 100644
+--- a/drivers/hwmon/lm92.c
++++ b/drivers/hwmon/lm92.c
+@@ -181,8 +181,8 @@ static ssize_t show_temp_hyst(struct device *dev,
+ 		       - TEMP_FROM_REG(data->temp[t_hyst]));
  }
--- 
-2.11.0
+ 
+-static ssize_t show_temp_min_hyst(struct device *dev,
+-				  struct device_attribute *attr, char *buf)
++static ssize_t temp1_min_hyst_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
+ {
+ 	struct lm92_data *data = lm92_update_device(dev);
+ 	return sprintf(buf, "%d\n", TEMP_FROM_REG(data->temp[t_min])
+@@ -213,7 +213,7 @@ static ssize_t set_temp_hyst(struct device *dev,
+ 	return count;
+ }
+ 
+-static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
++static ssize_t alarms_show(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
+ {
+ 	struct lm92_data *data = lm92_update_device(dev);
+@@ -235,11 +235,11 @@ static SENSOR_DEVICE_ATTR(temp1_crit_hyst, S_IWUSR | S_IRUGO, show_temp_hyst,
+ 			  set_temp_hyst, t_crit);
+ static SENSOR_DEVICE_ATTR(temp1_min, S_IWUSR | S_IRUGO, show_temp, set_temp,
+ 			  t_min);
+-static DEVICE_ATTR(temp1_min_hyst, S_IRUGO, show_temp_min_hyst, NULL);
++static DEVICE_ATTR_RO(temp1_min_hyst);
+ static SENSOR_DEVICE_ATTR(temp1_max, S_IWUSR | S_IRUGO, show_temp, set_temp,
+ 			  t_max);
+ static SENSOR_DEVICE_ATTR(temp1_max_hyst, S_IRUGO, show_temp_hyst, NULL, t_max);
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
+ static SENSOR_DEVICE_ATTR(temp1_crit_alarm, S_IRUGO, show_alarm, NULL, 2);
+ static SENSOR_DEVICE_ATTR(temp1_min_alarm, S_IRUGO, show_alarm, NULL, 0);
+ static SENSOR_DEVICE_ATTR(temp1_max_alarm, S_IRUGO, show_alarm, NULL, 1);
 
