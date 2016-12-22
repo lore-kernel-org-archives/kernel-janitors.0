@@ -1,29 +1,73 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 24 Dec 2016 11:02:11 +0000
-Subject: =?UTF-8?Q?[media]_tm6000:_Addition_of_an_asterisk_to_the_data_type_?= =?UTF-8?B?Zm9yIOKAnHVyYl9kbWHi
-Message-Id: <b0c2e4b7-5c04-afd8-dc0f-a66c1bd47308@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:47 +0000
+Subject: [PATCH 18/66] hwmon: (i5k_amb) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-19-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGVsbG8sCgpJIGhhdmUgbG9va2VkIGF0IHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgZnVuY3Rp
-b24g4oCcdG02MDAwX2FsbG9jX3VyYl9idWZmZXJz4oCdCm9uY2UgbW9yZS4KaHR0cHM6Ly9naXQu
-a2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvbmV4dC9saW51eC1uZXh0LmdpdC90cmVl
-L2RyaXZlcnMvbWVkaWEvdXNiL3RtNjAwMC90bTYwMDAtdmlkZW8uYz9pZIRlZGU1MGI2MjNmYjQ1
-YzRjMDI2YzgwZDBhYmY4Y2M1MTkzZjA0MSNuNDY5CgpBIHBvaW50ZXIgZm9yIGFuIGFycmF5IGlz
-IGFsc28gYXNzaWduZWQgdG8gdGhlIG1lbWJlciDigJx1cmJfZG1h4oCdIG9mIHRoZSBkYXRhCnN0
-cnVjdHVyZSDigJx0bTYwMDBfY29yZeKAnSB0aGVyZS4gSSB3b3VsZCBpbnRlcnByZXQgdGhlIGNv
-cnJlc3BvbmRpbmcgZGF0YSB0eXBlCnNwZWNpZmljYXRpb24gaW4gdGhlIHdheSB0aGF0IG9ubHkg
-YSBzaW5nbGUgZWxlbWVudCBzaG91bGQgYmUgbWFuYWdlZCBieQp0aGlzIGZpZWxkIHNvIGZhci4K
-aHR0cDovL2x4ci5mcmVlLWVsZWN0cm9ucy5jb20vc291cmNlL2RyaXZlcnMvbWVkaWEvdXNiL3Rt
-NjAwMC90bTYwMDAuaD92PTQuOSNMMjcxCgpIb3cgZG8geW91IHRoaW5rIGFib3V0IHRvIGFkZCBh
-bm90aGVyIGFzdGVyaXNrIHRvIHRoaXMgZGF0YSB0eXBlIHNwZWNpZmljYXRpb24Kc28gdGhhdCB0
-aGUgZGVzaXJlZCBhcnJheSBtYW5hZ2VtZW50IHdvdWxkIGJlY29tZSBiaXQgY2xlYXJlciBmb3Ig
-c3VjaCBhIGZpZWxkCihzaW1pbGFyIHRvIHRoZSBtZW1iZXIg4oCcdXJiX2J1ZmZlcuKAnSk/CgpS
-ZWdhcmRzLApNYXJrdXMKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhl
-IGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNz
-YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAg
-aHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
+
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/hwmon/i5k_amb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/i5k_amb.c b/drivers/hwmon/i5k_amb.c
+index 6b3d197..a5a9f45 100644
+--- a/drivers/hwmon/i5k_amb.c
++++ b/drivers/hwmon/i5k_amb.c
+@@ -114,14 +114,14 @@ struct i5k_amb_data {
+ 	unsigned int num_attrs;
+ };
+ 
+-static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
++static ssize_t name_show(struct device *dev, struct device_attribute *devattr,
+ 			 char *buf)
+ {
+ 	return sprintf(buf, "%s\n", DRVNAME);
+ }
+ 
+ 
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
+ 
+ static struct platform_device *amb_pdev;
+ 
+
