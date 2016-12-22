@@ -1,54 +1,83 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Dec 2016 14:40:24 +0000
-Subject: [PATCH 4/4] staging: greybus: power_supply: Use kcalloc() in gb_power_supplies_setup()
-Message-Id: <3d6e0e13-b74d-f022-3edc-1bf1ae6ef9ac@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:17 +0000
+Subject: [PATCH 48/66] hwmon: (w83793) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-49-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
-In-Reply-To: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Rudolf Marek <r.marek@assembler.cz>
+Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 9 Dec 2016 15:04:24 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-  This issue was detected by using the Coccinelle software.
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-Fixes: ffe2e2487a388cf01ec44439346363aa8d654cd4 ("greybus: power_supply: rework and operation changes")
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/greybus/power_supply.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/hwmon/w83793.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/greybus/power_supply.c b/drivers/staging/greybus/power_supply.c
-index e85c988b7034..19080c7f1491 100644
---- a/drivers/staging/greybus/power_supply.c
-+++ b/drivers/staging/greybus/power_supply.c
-@@ -944,10 +944,9 @@ static int gb_power_supplies_setup(struct gb_power_supplies *supplies)
- 	if (ret < 0)
- 		goto out;
+diff --git a/drivers/hwmon/w83793.c b/drivers/hwmon/w83793.c
+index 816aa6c..dab5c51 100644
+--- a/drivers/hwmon/w83793.c
++++ b/drivers/hwmon/w83793.c
+@@ -324,7 +324,7 @@ static int w83793_detect(struct i2c_client *client,
+ };
  
--	supplies->supply = kzalloc(supplies->supplies_count *
--				     sizeof(struct gb_power_supply),
--				     GFP_KERNEL);
--
-+	supplies->supply = kcalloc(supplies->supplies_count,
-+				   sizeof(*supplies->supply),
-+				   GFP_KERNEL);
- 	if (!supplies->supply) {
- 		ret = -ENOMEM;
- 		goto out;
--- 
-2.11.0
+ static ssize_t
+-show_vrm(struct device *dev, struct device_attribute *attr, char *buf)
++vrm_show(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	struct w83793_data *data = dev_get_drvdata(dev);
+ 	return sprintf(buf, "%d\n", data->vrm);
+@@ -342,7 +342,7 @@ static int w83793_detect(struct i2c_client *client,
+ }
+ 
+ static ssize_t
+-store_vrm(struct device *dev, struct device_attribute *attr,
++vrm_store(struct device *dev, struct device_attribute *attr,
+ 	  const char *buf, size_t count)
+ {
+ 	struct w83793_data *data = dev_get_drvdata(dev);
+@@ -1169,7 +1169,7 @@ static int w83793_detect(struct i2c_client *client,
+ 	SENSOR_ATTR_2(cpu0_vid, S_IRUGO, show_vid, NULL, NOT_USED, 0),
+ 	SENSOR_ATTR_2(cpu1_vid, S_IRUGO, show_vid, NULL, NOT_USED, 1),
+ };
+-static DEVICE_ATTR(vrm, S_IWUSR | S_IRUGO, show_vrm, store_vrm);
++static DEVICE_ATTR_RW(vrm);
+ 
+ static struct sensor_device_attribute_2 sda_single_files[] = {
+ 	SENSOR_ATTR_2(intrusion0_alarm, S_IWUSR | S_IRUGO, show_alarm_beep,
 
