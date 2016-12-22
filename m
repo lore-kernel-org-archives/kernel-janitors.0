@@ -1,44 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 31 Dec 2016 22:03:16 +0000
-Subject: [PATCH 4/6] staging: vchiq_arm: Delete an error message for a failed memory allocation in dump_phys_
-Message-Id: <20128727-5313-ad6d-7938-ca9c303331a7@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:46 +0000
+Subject: [PATCH 17/66] hwmon: (i5500_temp) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-18-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
-In-Reply-To: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 31 Dec 2016 21:30:31 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Omit an extra message for a memory allocation failure in this function.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/hwmon/i5500_temp.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index a316cf9ac626..3b7a0c87954d 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -1559,12 +1559,8 @@ dump_phys_mem(void *virt_addr, uint32_t num_bytes)
+diff --git a/drivers/hwmon/i5500_temp.c b/drivers/hwmon/i5500_temp.c
+index 3e3ccbf..400e067 100644
+--- a/drivers/hwmon/i5500_temp.c
++++ b/drivers/hwmon/i5500_temp.c
+@@ -43,8 +43,8 @@
+  */
  
- 	num_pages = (offset + num_bytes + PAGE_SIZE - 1) / PAGE_SIZE;
- 	pages = kmalloc_array(num_pages, sizeof(*pages), GFP_KERNEL);
--	if (!pages) {
--		vchiq_log_error(vchiq_arm_log_level,
--			"Unable to allocation memory for %d pages\n",
--			num_pages);
-+	if (!pages)
- 		return;
--	}
+ /* Sensor resolution : 0.5 degree C */
+-static ssize_t show_temp(struct device *dev,
+-			 struct device_attribute *devattr, char *buf)
++static ssize_t temp1_input_show(struct device *dev,
++				struct device_attribute *devattr, char *buf)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev->parent);
+ 	long temp;
+@@ -83,7 +83,7 @@ static ssize_t show_alarm(struct device *dev,
+ 	return sprintf(buf, "%u\n", (unsigned int)ctsts & (1 << nr));
+ }
  
- 	down_read(&current->mm->mmap_sem);
- 	rc = get_user_pages(
--- 
-2.11.0
+-static DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL);
++static DEVICE_ATTR_RO(temp1_input);
+ static SENSOR_DEVICE_ATTR(temp1_crit, S_IRUGO, show_thresh, NULL, 0xE2);
+ static SENSOR_DEVICE_ATTR(temp1_max_hyst, S_IRUGO, show_thresh, NULL, 0xEC);
+ static SENSOR_DEVICE_ATTR(temp1_max, S_IRUGO, show_thresh, NULL, 0xEE);
 
