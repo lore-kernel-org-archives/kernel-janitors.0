@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:08 +0000
-Subject: [PATCH 39/66] hwmon: (via-cputemp) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-40-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:16 +0000
+Subject: [PATCH 47/66] hwmon: (f71805f) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-48-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,31 +46,63 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/via-cputemp.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hwmon/f71805f.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/hwmon/via-cputemp.c b/drivers/hwmon/via-cputemp.c
-index d1f209a..07a0cb0 100644
---- a/drivers/hwmon/via-cputemp.c
-+++ b/drivers/hwmon/via-cputemp.c
-@@ -88,8 +88,8 @@ static ssize_t show_temp(struct device *dev,
- 	return sprintf(buf, "%lu\n", ((unsigned long)eax & 0xffffff) * 1000);
+diff --git a/drivers/hwmon/f71805f.c b/drivers/hwmon/f71805f.c
+index facd05c..73c6811 100644
+--- a/drivers/hwmon/f71805f.c
++++ b/drivers/hwmon/f71805f.c
+@@ -946,7 +946,7 @@ static ssize_t set_temp_hyst(struct device *dev, struct device_attribute
+ 	return count;
  }
  
--static ssize_t show_cpu_vid(struct device *dev,
--			    struct device_attribute *devattr, char *buf)
-+static ssize_t cpu0_vid_show(struct device *dev,
-+			     struct device_attribute *devattr, char *buf)
+-static ssize_t show_alarms_in(struct device *dev, struct device_attribute
++static ssize_t alarms_in_show(struct device *dev, struct device_attribute
+ 			      *devattr, char *buf)
  {
- 	struct via_cputemp_data *data = dev_get_drvdata(dev);
- 	u32 eax, edx;
-@@ -119,7 +119,7 @@ static SENSOR_DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL,
- };
+ 	struct f71805f_data *data = f71805f_update_device(dev);
+@@ -954,7 +954,7 @@ static ssize_t show_alarms_in(struct device *dev, struct device_attribute
+ 	return sprintf(buf, "%lu\n", data->alarms & 0x7ff);
+ }
  
- /* Optional attributes */
--static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_cpu_vid, NULL);
-+static DEVICE_ATTR_RO(cpu0_vid);
- 
- static int via_cputemp_probe(struct platform_device *pdev)
+-static ssize_t show_alarms_fan(struct device *dev, struct device_attribute
++static ssize_t alarms_fan_show(struct device *dev, struct device_attribute
+ 			       *devattr, char *buf)
  {
+ 	struct f71805f_data *data = f71805f_update_device(dev);
+@@ -962,7 +962,7 @@ static ssize_t show_alarms_fan(struct device *dev, struct device_attribute
+ 	return sprintf(buf, "%lu\n", (data->alarms >> 16) & 0x07);
+ }
+ 
+-static ssize_t show_alarms_temp(struct device *dev, struct device_attribute
++static ssize_t alarms_temp_show(struct device *dev, struct device_attribute
+ 				*devattr, char *buf)
+ {
+ 	struct f71805f_data *data = f71805f_update_device(dev);
+@@ -980,7 +980,7 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute
+ 	return sprintf(buf, "%lu\n", (data->alarms >> bitnr) & 1);
+ }
+ 
+-static ssize_t show_name(struct device *dev, struct device_attribute
++static ssize_t name_show(struct device *dev, struct device_attribute
+ 			 *devattr, char *buf)
+ {
+ 	struct f71805f_data *data = dev_get_drvdata(dev);
+@@ -1176,11 +1176,11 @@ static SENSOR_DEVICE_ATTR_2(pwm3_auto_point3_fan, S_IRUGO | S_IWUSR,
+ static SENSOR_DEVICE_ATTR(fan1_alarm, S_IRUGO, show_alarm, NULL, 16);
+ static SENSOR_DEVICE_ATTR(fan2_alarm, S_IRUGO, show_alarm, NULL, 17);
+ static SENSOR_DEVICE_ATTR(fan3_alarm, S_IRUGO, show_alarm, NULL, 18);
+-static DEVICE_ATTR(alarms_in, S_IRUGO, show_alarms_in, NULL);
+-static DEVICE_ATTR(alarms_fan, S_IRUGO, show_alarms_fan, NULL);
+-static DEVICE_ATTR(alarms_temp, S_IRUGO, show_alarms_temp, NULL);
++static DEVICE_ATTR_RO(alarms_in);
++static DEVICE_ATTR_RO(alarms_fan);
++static DEVICE_ATTR_RO(alarms_temp);
+ 
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
+ 
+ static struct attribute *f71805f_attributes[] = {
+ 	&sensor_dev_attr_in0_input.dev_attr.attr,
 
