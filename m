@@ -1,79 +1,74 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:37:59 +0000
-Subject: [PATCH 07/19] [media] uvc_driver: Rename a jump label in uvc_probe()
-Message-Id: <c30dc00f-467b-decc-6984-e504daba4128@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:57 +0000
+Subject: [PATCH 28/66] hwmon: (max1619) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-29-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 10:54:15 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Adjust jump labels according to the Linux coding style convention.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/usb/uvc/uvc_driver.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/hwmon/max1619.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 563b51d0b398..f91965d0da97 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -2060,7 +2060,7 @@ static int uvc_probe(struct usb_interface *intf,
- 	if (uvc_parse_control(dev) < 0) {
- 		uvc_trace(UVC_TRACE_PROBE,
- 			  "Unable to parse UVC descriptors.\n");
--		goto error;
-+		goto unregister_video;
- 	}
- 
- 	uvc_printk(KERN_INFO, "Found UVC %u.%02x device %s (%04x:%04x)\n",
-@@ -2092,24 +2092,24 @@ static int uvc_probe(struct usb_interface *intf,
- 	dev->vdev.mdev = &dev->mdev;
- #endif
- 	if (v4l2_device_register(&intf->dev, &dev->vdev) < 0)
--		goto error;
-+		goto unregister_video;
- 
- 	/* Initialize controls. */
- 	if (uvc_ctrl_init_device(dev) < 0)
--		goto error;
-+		goto unregister_video;
- 
- 	/* Scan the device for video chains. */
- 	if (uvc_scan_device(dev) < 0)
--		goto error;
-+		goto unregister_video;
- 
- 	/* Register video device nodes. */
- 	if (uvc_register_chains(dev) < 0)
--		goto error;
-+		goto unregister_video;
- 
- #ifdef CONFIG_MEDIA_CONTROLLER
- 	/* Register the media device node */
- 	if (media_device_register(&dev->mdev) < 0)
--		goto error;
-+		goto unregister_video;
- #endif
- 	/* Save our data pointer in the interface data. */
- 	usb_set_intfdata(intf, dev);
-@@ -2124,8 +2124,7 @@ static int uvc_probe(struct usb_interface *intf,
- 	uvc_trace(UVC_TRACE_PROBE, "UVC device initialized.\n");
- 	usb_enable_autosuspend(udev);
- 	return 0;
--
--error:
-+unregister_video:
- 	uvc_unregister_video(dev);
- 	return -ENODEV;
+diff --git a/drivers/hwmon/max1619.c b/drivers/hwmon/max1619.c
+index eda9cf5..a182789 100644
+--- a/drivers/hwmon/max1619.c
++++ b/drivers/hwmon/max1619.c
+@@ -173,7 +173,7 @@ static ssize_t set_temp(struct device *dev, struct device_attribute *devattr,
+ 	return count;
  }
--- 
-2.11.0
+ 
+-static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
++static ssize_t alarms_show(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
+ {
+ 	struct max1619_data *data = max1619_update_device(dev);
+@@ -199,7 +199,7 @@ static SENSOR_DEVICE_ATTR(temp2_crit, S_IWUSR | S_IRUGO, show_temp, set_temp,
+ static SENSOR_DEVICE_ATTR(temp2_crit_hyst, S_IWUSR | S_IRUGO, show_temp,
+ 			  set_temp, t_hyst2);
+ 
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
+ static SENSOR_DEVICE_ATTR(temp2_crit_alarm, S_IRUGO, show_alarm, NULL, 1);
+ static SENSOR_DEVICE_ATTR(temp2_fault, S_IRUGO, show_alarm, NULL, 2);
+ static SENSOR_DEVICE_ATTR(temp2_min_alarm, S_IRUGO, show_alarm, NULL, 3);
 
