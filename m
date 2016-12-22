@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:38 +0000
-Subject: [PATCH 09/66] hwmon: (ds1621) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-10-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:58 +0000
+Subject: [PATCH 29/66] hwmon: (max197) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-30-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,53 +46,31 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/ds1621.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/hwmon/max197.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwmon/ds1621.c b/drivers/hwmon/ds1621.c
-index 8890870..5c317fc 100644
---- a/drivers/hwmon/ds1621.c
-+++ b/drivers/hwmon/ds1621.c
-@@ -263,7 +263,7 @@ static ssize_t set_temp(struct device *dev, struct device_attribute *da,
- 	return count;
+diff --git a/drivers/hwmon/max197.c b/drivers/hwmon/max197.c
+index 0762856..638567f 100644
+--- a/drivers/hwmon/max197.c
++++ b/drivers/hwmon/max197.c
+@@ -207,8 +207,8 @@ static ssize_t max197_show_input(struct device *dev,
+ 	return ret;
  }
  
--static ssize_t show_alarms(struct device *dev, struct device_attribute *da,
-+static ssize_t alarms_show(struct device *dev, struct device_attribute *da,
- 			   char *buf)
+-static ssize_t max197_show_name(struct device *dev,
+-				struct device_attribute *attr, char *buf)
++static ssize_t name_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
  {
- 	struct ds1621_data *data = ds1621_update_client(dev);
-@@ -278,15 +278,16 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute *da,
- 	return sprintf(buf, "%d\n", !!(data->conf & attr->index));
- }
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	return sprintf(buf, "%s\n", pdev->name);
+@@ -231,7 +231,7 @@ static ssize_t max197_show_name(struct device *dev,
+ 	&sensor_dev_attr_in##chan##_max.dev_attr.attr,			\
+ 	&sensor_dev_attr_in##chan##_min.dev_attr.attr
  
--static ssize_t show_convrate(struct device *dev, struct device_attribute *da,
--			  char *buf)
-+static ssize_t update_interval_show(struct device *dev,
-+				    struct device_attribute *da, char *buf)
- {
- 	struct ds1621_data *data = dev_get_drvdata(dev);
- 	return scnprintf(buf, PAGE_SIZE, "%hu\n", data->update_interval);
- }
+-static DEVICE_ATTR(name, S_IRUGO, max197_show_name, NULL);
++static DEVICE_ATTR_RO(name);
  
--static ssize_t set_convrate(struct device *dev, struct device_attribute *da,
--			    const char *buf, size_t count)
-+static ssize_t update_interval_store(struct device *dev,
-+				     struct device_attribute *da,
-+				     const char *buf, size_t count)
- {
- 	struct ds1621_data *data = dev_get_drvdata(dev);
- 	struct i2c_client *client = data->client;
-@@ -315,9 +316,8 @@ static ssize_t set_convrate(struct device *dev, struct device_attribute *da,
- 	return count;
- }
- 
--static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
--static DEVICE_ATTR(update_interval, S_IWUSR | S_IRUGO, show_convrate,
--		   set_convrate);
-+static DEVICE_ATTR_RO(alarms);
-+static DEVICE_ATTR_RW(update_interval);
- 
- static SENSOR_DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL, 0);
- static SENSOR_DEVICE_ATTR(temp1_min, S_IWUSR | S_IRUGO, show_temp, set_temp, 1);
+ MAX197_SENSOR_DEVICE_ATTR_CH(0);
+ MAX197_SENSOR_DEVICE_ATTR_CH(1);
 
