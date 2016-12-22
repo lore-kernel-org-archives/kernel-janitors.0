@@ -1,49 +1,88 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:54:05 +0000
-Subject: [PATCH 19/19] [media] uvc_video: Add some spaces for better code readability
-Message-Id: <f79cea5b-ed9a-b1a1-e9bb-e4518a95e2f1@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:35 +0000
+Subject: [PATCH 66/66] hwmon: (tmp401) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-67-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 19:00:29 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Use space characters at some source code places according to
-the Linux coding style convention.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/usb/uvc/uvc_video.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hwmon/tmp401.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index aba21e0abf02..9c0b8b325157 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -1814,7 +1814,7 @@ int uvc_video_init(struct uvc_streaming *stream)
- 	 * available format otherwise.
- 	 */
- 	for (i = stream->nformats; i > 0; --i) {
--		format = &stream->format[i-1];
-+		format = &stream->format[i - 1];
- 		if (format->index = probe->bFormatIndex)
- 			break;
- 	}
-@@ -1831,7 +1831,7 @@ int uvc_video_init(struct uvc_streaming *stream)
- 	 * descriptor is not found, use the first available frame.
- 	 */
- 	for (i = format->nframes; i > 0; --i) {
--		frame = &format->frame[i-1];
-+		frame = &format->frame[i - 1];
- 		if (frame->bFrameIndex = probe->bFrameIndex)
- 			break;
- 	}
--- 
-2.11.0
+diff --git a/drivers/hwmon/tmp401.c b/drivers/hwmon/tmp401.c
+index eeeed2c..6276003 100644
+--- a/drivers/hwmon/tmp401.c
++++ b/drivers/hwmon/tmp401.c
+@@ -449,7 +449,7 @@ static ssize_t reset_temp_history(struct device *dev,
+ 	return count;
+ }
+ 
+-static ssize_t show_update_interval(struct device *dev,
++static ssize_t update_interval_show(struct device *dev,
+ 				    struct device_attribute *attr, char *buf)
+ {
+ 	struct tmp401_data *data = dev_get_drvdata(dev);
+@@ -457,9 +457,9 @@ static ssize_t show_update_interval(struct device *dev,
+ 	return sprintf(buf, "%u\n", data->update_interval);
+ }
+ 
+-static ssize_t set_update_interval(struct device *dev,
+-				   struct device_attribute *attr,
+-				   const char *buf, size_t count)
++static ssize_t update_interval_store(struct device *dev,
++				     struct device_attribute *attr,
++				     const char *buf, size_t count)
+ {
+ 	struct tmp401_data *data = dev_get_drvdata(dev);
+ 	struct i2c_client *client = data->client;
+@@ -521,8 +521,7 @@ static SENSOR_DEVICE_ATTR_2(temp2_max_alarm, S_IRUGO, show_status, NULL,
+ static SENSOR_DEVICE_ATTR_2(temp2_crit_alarm, S_IRUGO, show_status, NULL,
+ 			    3, TMP432_STATUS_REMOTE1);
+ 
+-static DEVICE_ATTR(update_interval, S_IRUGO | S_IWUSR, show_update_interval,
+-		   set_update_interval);
++static DEVICE_ATTR_RW(update_interval);
+ 
+ static struct attribute *tmp401_attributes[] = {
+ 	&sensor_dev_attr_temp1_input.dev_attr.attr,
 
