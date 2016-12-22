@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:45 +0000
-Subject: [PATCH 16/66] hwmon: (core) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-17-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:22 +0000
+Subject: [PATCH 53/66] hwmon: (lm90) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-54-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,25 +46,40 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/hwmon.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hwmon/lm90.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index 3932f92..0c5660c 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -63,11 +63,11 @@ struct hwmon_thermal_data {
- };
- 
- static ssize_t
--show_name(struct device *dev, struct device_attribute *attr, char *buf)
-+name_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	return sprintf(buf, "%s\n", to_hwmon_device(dev)->name);
+diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+index 322ed92..de1d61a 100644
+--- a/drivers/hwmon/lm90.c
++++ b/drivers/hwmon/lm90.c
+@@ -830,7 +830,7 @@ static u16 temp_to_u16_adt7461(struct lm90_data *data, long val)
  }
--static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
-+static DEVICE_ATTR_RO(name);
  
- static struct attribute *hwmon_dev_attrs[] = {
- 	&dev_attr_name.attr,
+ /* pec used for ADM1032 only */
+-static ssize_t show_pec(struct device *dev, struct device_attribute *dummy,
++static ssize_t pec_show(struct device *dev, struct device_attribute *dummy,
+ 			char *buf)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+@@ -838,8 +838,8 @@ static ssize_t show_pec(struct device *dev, struct device_attribute *dummy,
+ 	return sprintf(buf, "%d\n", !!(client->flags & I2C_CLIENT_PEC));
+ }
+ 
+-static ssize_t set_pec(struct device *dev, struct device_attribute *dummy,
+-		       const char *buf, size_t count)
++static ssize_t pec_store(struct device *dev, struct device_attribute *dummy,
++			 const char *buf, size_t count)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	long val;
+@@ -863,7 +863,7 @@ static ssize_t set_pec(struct device *dev, struct device_attribute *dummy,
+ 	return count;
+ }
+ 
+-static DEVICE_ATTR(pec, S_IWUSR | S_IRUGO, show_pec, set_pec);
++static DEVICE_ATTR_RW(pec);
+ 
+ static int lm90_get_temp11(struct lm90_data *data, int index)
+ {
 
