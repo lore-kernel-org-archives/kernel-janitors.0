@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:30 +0000
-Subject: [PATCH 01/66] hwmon: (adm1021) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:33 +0000
+Subject: [PATCH 04/66] hwmon: (adm9240) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,52 +46,90 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/adm1021.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/hwmon/adm9240.c |   28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/hwmon/adm1021.c b/drivers/hwmon/adm1021.c
-index 1fdcc3e..eacf10f 100644
---- a/drivers/hwmon/adm1021.c
-+++ b/drivers/hwmon/adm1021.c
-@@ -191,7 +191,7 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
- 	return sprintf(buf, "%u\n", (data->alarms >> index) & 1);
- }
+diff --git a/drivers/hwmon/adm9240.c b/drivers/hwmon/adm9240.c
+index 72bf248..255413f 100644
+--- a/drivers/hwmon/adm9240.c
++++ b/drivers/hwmon/adm9240.c
+@@ -262,8 +262,8 @@ static struct adm9240_data *adm9240_update_device(struct device *dev)
+ /*** sysfs accessors ***/
  
--static ssize_t show_alarms(struct device *dev,
-+static ssize_t alarms_show(struct device *dev,
- 			   struct device_attribute *attr,
- 			   char *buf)
+ /* temperature */
+-static ssize_t show_temp(struct device *dev, struct device_attribute *dummy,
+-		char *buf)
++static ssize_t temp1_input_show(struct device *dev,
++				struct device_attribute *dummy, char *buf)
  {
-@@ -251,16 +251,16 @@ static ssize_t set_temp_min(struct device *dev,
+ 	struct adm9240_data *data = adm9240_update_device(dev);
+ 	return sprintf(buf, "%d\n", data->temp / 128 * 500); /* 9-bit value */
+@@ -298,7 +298,7 @@ static ssize_t set_max(struct device *dev, struct device_attribute *devattr,
  	return count;
  }
  
--static ssize_t show_low_power(struct device *dev,
-+static ssize_t low_power_show(struct device *dev,
- 			      struct device_attribute *devattr, char *buf)
+-static DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL);
++static DEVICE_ATTR_RO(temp1_input);
+ static SENSOR_DEVICE_ATTR(temp1_max, S_IWUSR | S_IRUGO,
+ 		show_max, set_max, 0);
+ static SENSOR_DEVICE_ATTR(temp1_max_hyst, S_IWUSR | S_IRUGO,
+@@ -501,13 +501,13 @@ static SENSOR_DEVICE_ATTR(fan##nr##_min, S_IRUGO | S_IWUSR,	\
+ fan(2);
+ 
+ /* alarms */
+-static ssize_t show_alarms(struct device *dev,
++static ssize_t alarms_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
  {
- 	struct adm1021_data *data = adm1021_update_device(dev);
- 	return sprintf(buf, "%d\n", data->low_power);
+ 	struct adm9240_data *data = adm9240_update_device(dev);
+ 	return sprintf(buf, "%u\n", data->alarms);
+ }
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
+ 
+ static ssize_t show_alarm(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+@@ -527,25 +527,25 @@ static ssize_t show_alarm(struct device *dev,
+ static SENSOR_DEVICE_ATTR(fan2_alarm, S_IRUGO, show_alarm, NULL, 7);
+ 
+ /* vid */
+-static ssize_t show_vid(struct device *dev,
+-		struct device_attribute *attr, char *buf)
++static ssize_t cpu0_vid_show(struct device *dev,
++			     struct device_attribute *attr, char *buf)
+ {
+ 	struct adm9240_data *data = adm9240_update_device(dev);
+ 	return sprintf(buf, "%d\n", vid_from_reg(data->vid, data->vrm));
+ }
+-static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid, NULL);
++static DEVICE_ATTR_RO(cpu0_vid);
+ 
+ /* analog output */
+-static ssize_t show_aout(struct device *dev,
+-		struct device_attribute *attr, char *buf)
++static ssize_t aout_output_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
+ {
+ 	struct adm9240_data *data = adm9240_update_device(dev);
+ 	return sprintf(buf, "%d\n", AOUT_FROM_REG(data->aout));
  }
  
--static ssize_t set_low_power(struct device *dev,
--			     struct device_attribute *devattr,
--			     const char *buf, size_t count)
-+static ssize_t low_power_store(struct device *dev,
-+			       struct device_attribute *devattr,
-+			       const char *buf, size_t count)
+-static ssize_t set_aout(struct device *dev,
+-		struct device_attribute *attr,
+-		const char *buf, size_t count)
++static ssize_t aout_output_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf, size_t count)
  {
- 	struct adm1021_data *data = dev_get_drvdata(dev);
+ 	struct adm9240_data *data = dev_get_drvdata(dev);
  	struct i2c_client *client = data->client;
-@@ -303,8 +303,8 @@ static SENSOR_DEVICE_ATTR(temp2_min, S_IWUSR | S_IRUGO, show_temp_min,
- static SENSOR_DEVICE_ATTR(temp2_min_alarm, S_IRUGO, show_alarm, NULL, 3);
- static SENSOR_DEVICE_ATTR(temp2_fault, S_IRUGO, show_alarm, NULL, 2);
+@@ -562,7 +562,7 @@ static ssize_t set_aout(struct device *dev,
+ 	mutex_unlock(&data->update_lock);
+ 	return count;
+ }
+-static DEVICE_ATTR(aout_output, S_IRUGO | S_IWUSR, show_aout, set_aout);
++static DEVICE_ATTR_RW(aout_output);
  
--static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
--static DEVICE_ATTR(low_power, S_IWUSR | S_IRUGO, show_low_power, set_low_power);
-+static DEVICE_ATTR_RO(alarms);
-+static DEVICE_ATTR_RW(low_power);
- 
- static struct attribute *adm1021_attributes[] = {
- 	&sensor_dev_attr_temp1_max.dev_attr.attr,
+ static ssize_t chassis_clear(struct device *dev,
+ 		struct device_attribute *attr,
 
