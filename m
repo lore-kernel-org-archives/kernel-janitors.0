@@ -1,68 +1,74 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:32:12 +0000
-Subject: [PATCH 03/19] [media] uvc_driver: Adjust three function calls together with a variable assignment
-Message-Id: <5d6e7fac-d464-687b-ef87-d813d707911f@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:56 +0000
+Subject: [PATCH 27/66] hwmon: (max1111) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-28-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 08:05:58 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-The script "checkpatch.pl" pointed information out like the following.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-ERROR: do not use assignment in if condition
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-Thus fix the affected source code places.
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/usb/uvc/uvc_driver.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/hwmon/max1111.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 7c42be2414ea..bddaf98ef828 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1275,7 +1275,8 @@ static int uvc_parse_control(struct uvc_device *dev)
- 		    buffer[1] != USB_DT_CS_INTERFACE)
- 			goto next_descriptor;
+diff --git a/drivers/hwmon/max1111.c b/drivers/hwmon/max1111.c
+index 303d0c9..8ddd4d6 100644
+--- a/drivers/hwmon/max1111.c
++++ b/drivers/hwmon/max1111.c
+@@ -98,7 +98,7 @@ int max1111_read_channel(int channel)
+  * likely to be used by hwmon applications to distinguish between
+  * different devices, explicitly add a name attribute here.
+  */
+-static ssize_t show_name(struct device *dev,
++static ssize_t name_show(struct device *dev,
+ 			 struct device_attribute *attr, char *buf)
+ {
+ 	return sprintf(buf, "%s\n", to_spi_device(dev)->modalias);
+@@ -125,7 +125,7 @@ static ssize_t show_adc(struct device *dev,
+ #define MAX1111_ADC_ATTR(_id)		\
+ 	SENSOR_DEVICE_ATTR(in##_id##_input, S_IRUGO, show_adc, NULL, _id)
  
--		if ((ret = uvc_parse_standard_control(dev, buffer, buflen)) < 0)
-+		ret = uvc_parse_standard_control(dev, buffer, buflen);
-+		if (ret < 0)
- 			return ret;
- 
- next_descriptor:
-@@ -2030,7 +2031,8 @@ static int uvc_probe(struct usb_interface *intf,
- 				udev->devpath);
- 
- 	/* Allocate memory for the device and initialize it. */
--	if ((dev = kzalloc(sizeof *dev, GFP_KERNEL)) = NULL)
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+	if (!dev)
- 		return -ENOMEM;
- 
- 	INIT_LIST_HEAD(&dev->entities);
-@@ -2113,11 +2115,11 @@ static int uvc_probe(struct usb_interface *intf,
- 	usb_set_intfdata(intf, dev);
- 
- 	/* Initialize the interrupt URB. */
--	if ((ret = uvc_status_init(dev)) < 0) {
-+	ret = uvc_status_init(dev);
-+	if (ret < 0)
- 		uvc_printk(KERN_INFO,
- 			   "Unable to initialize the status endpoint (%d), status interrupt will not be supported.\n",
- 			   ret);
--	}
- 
- 	uvc_trace(UVC_TRACE_PROBE, "UVC device initialized.\n");
- 	usb_enable_autosuspend(udev);
--- 
-2.11.0
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
+ static MAX1111_ADC_ATTR(0);
+ static MAX1111_ADC_ATTR(1);
+ static MAX1111_ADC_ATTR(2);
 
