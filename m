@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:35 +0000
-Subject: [PATCH 66/66] hwmon: (tmp401) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-67-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:18 +0000
+Subject: [PATCH 49/66] hwmon: (vt8231) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-50-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Roger Lucas <vt8231@hiddenengine.co.uk>
+Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
 source code, improves readbility, and reduces the chance of
@@ -46,43 +46,168 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/tmp401.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/hwmon/vt8231.c |   59 +++++++++++++++++++++++++------------------------
+ 1 file changed, 31 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/hwmon/tmp401.c b/drivers/hwmon/tmp401.c
-index eeeed2c..6276003 100644
---- a/drivers/hwmon/tmp401.c
-+++ b/drivers/hwmon/tmp401.c
-@@ -449,7 +449,7 @@ static ssize_t reset_temp_history(struct device *dev,
+diff --git a/drivers/hwmon/vt8231.c b/drivers/hwmon/vt8231.c
+index cb69a8c..367b5eb5 100644
+--- a/drivers/hwmon/vt8231.c
++++ b/drivers/hwmon/vt8231.c
+@@ -263,8 +263,8 @@ static ssize_t set_in_max(struct device *dev, struct device_attribute *attr,
+ }
+ 
+ /* Special case for input 5 as this has 3.3V scaling built into the chip */
+-static ssize_t show_in5(struct device *dev, struct device_attribute *attr,
+-		char *buf)
++static ssize_t in5_input_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
+ {
+ 	struct vt8231_data *data = vt8231_update_device(dev);
+ 
+@@ -272,7 +272,7 @@ static ssize_t show_in5(struct device *dev, struct device_attribute *attr,
+ 		(((data->in[5] - 3) * 10000 * 54) / (958 * 34)));
+ }
+ 
+-static ssize_t show_in5_min(struct device *dev, struct device_attribute *attr,
++static ssize_t in5_min_show(struct device *dev, struct device_attribute *attr,
+ 		char *buf)
+ {
+ 	struct vt8231_data *data = vt8231_update_device(dev);
+@@ -281,7 +281,7 @@ static ssize_t show_in5_min(struct device *dev, struct device_attribute *attr,
+ 		(((data->in_min[5] - 3) * 10000 * 54) / (958 * 34)));
+ }
+ 
+-static ssize_t show_in5_max(struct device *dev, struct device_attribute *attr,
++static ssize_t in5_max_show(struct device *dev, struct device_attribute *attr,
+ 		char *buf)
+ {
+ 	struct vt8231_data *data = vt8231_update_device(dev);
+@@ -290,8 +290,9 @@ static ssize_t show_in5_max(struct device *dev, struct device_attribute *attr,
+ 		(((data->in_max[5] - 3) * 10000 * 54) / (958 * 34)));
+ }
+ 
+-static ssize_t set_in5_min(struct device *dev, struct device_attribute *attr,
+-		const char *buf, size_t count)
++static ssize_t in5_min_store(struct device *dev,
++			     struct device_attribute *attr, const char *buf,
++			     size_t count)
+ {
+ 	struct vt8231_data *data = dev_get_drvdata(dev);
+ 	unsigned long val;
+@@ -309,8 +310,9 @@ static ssize_t set_in5_min(struct device *dev, struct device_attribute *attr,
  	return count;
  }
  
--static ssize_t show_update_interval(struct device *dev,
-+static ssize_t update_interval_show(struct device *dev,
- 				    struct device_attribute *attr, char *buf)
+-static ssize_t set_in5_max(struct device *dev, struct device_attribute *attr,
+-		const char *buf, size_t count)
++static ssize_t in5_max_store(struct device *dev,
++			     struct device_attribute *attr, const char *buf,
++			     size_t count)
  {
- 	struct tmp401_data *data = dev_get_drvdata(dev);
-@@ -457,9 +457,9 @@ static ssize_t show_update_interval(struct device *dev,
- 	return sprintf(buf, "%u\n", data->update_interval);
+ 	struct vt8231_data *data = dev_get_drvdata(dev);
+ 	unsigned long val;
+@@ -342,34 +344,35 @@ static SENSOR_DEVICE_ATTR(in##offset##_max, S_IRUGO | S_IWUSR,	\
+ define_voltage_sysfs(3);
+ define_voltage_sysfs(4);
+ 
+-static DEVICE_ATTR(in5_input, S_IRUGO, show_in5, NULL);
+-static DEVICE_ATTR(in5_min, S_IRUGO | S_IWUSR, show_in5_min, set_in5_min);
+-static DEVICE_ATTR(in5_max, S_IRUGO | S_IWUSR, show_in5_max, set_in5_max);
++static DEVICE_ATTR_RO(in5_input);
++static DEVICE_ATTR_RW(in5_min);
++static DEVICE_ATTR_RW(in5_max);
+ 
+ /* Temperatures */
+-static ssize_t show_temp0(struct device *dev, struct device_attribute *attr,
+-		char *buf)
++static ssize_t temp1_input_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
+ {
+ 	struct vt8231_data *data = vt8231_update_device(dev);
+ 	return sprintf(buf, "%d\n", data->temp[0] * 250);
  }
  
--static ssize_t set_update_interval(struct device *dev,
--				   struct device_attribute *attr,
--				   const char *buf, size_t count)
-+static ssize_t update_interval_store(struct device *dev,
-+				     struct device_attribute *attr,
-+				     const char *buf, size_t count)
+-static ssize_t show_temp0_max(struct device *dev, struct device_attribute *attr,
++static ssize_t temp1_max_show(struct device *dev, struct device_attribute *attr,
+ 		char *buf)
  {
- 	struct tmp401_data *data = dev_get_drvdata(dev);
- 	struct i2c_client *client = data->client;
-@@ -521,8 +521,7 @@ static SENSOR_DEVICE_ATTR_2(temp2_max_alarm, S_IRUGO, show_status, NULL,
- static SENSOR_DEVICE_ATTR_2(temp2_crit_alarm, S_IRUGO, show_status, NULL,
- 			    3, TMP432_STATUS_REMOTE1);
+ 	struct vt8231_data *data = vt8231_update_device(dev);
+ 	return sprintf(buf, "%d\n", data->temp_max[0] * 1000);
+ }
  
--static DEVICE_ATTR(update_interval, S_IRUGO | S_IWUSR, show_update_interval,
--		   set_update_interval);
-+static DEVICE_ATTR_RW(update_interval);
+-static ssize_t show_temp0_min(struct device *dev, struct device_attribute *attr,
+-		char *buf)
++static ssize_t temp1_max_hyst_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
+ {
+ 	struct vt8231_data *data = vt8231_update_device(dev);
+ 	return sprintf(buf, "%d\n", data->temp_min[0] * 1000);
+ }
  
- static struct attribute *tmp401_attributes[] = {
- 	&sensor_dev_attr_temp1_input.dev_attr.attr,
+-static ssize_t set_temp0_max(struct device *dev, struct device_attribute *attr,
+-		const char *buf, size_t count)
++static ssize_t temp1_max_store(struct device *dev,
++			       struct device_attribute *attr, const char *buf,
++			       size_t count)
+ {
+ 	struct vt8231_data *data = dev_get_drvdata(dev);
+ 	long val;
+@@ -385,8 +388,9 @@ static ssize_t set_temp0_max(struct device *dev, struct device_attribute *attr,
+ 	mutex_unlock(&data->update_lock);
+ 	return count;
+ }
+-static ssize_t set_temp0_min(struct device *dev, struct device_attribute *attr,
+-		const char *buf, size_t count)
++static ssize_t temp1_max_hyst_store(struct device *dev,
++				    struct device_attribute *attr,
++				    const char *buf, size_t count)
+ {
+ 	struct vt8231_data *data = dev_get_drvdata(dev);
+ 	long val;
+@@ -481,10 +485,9 @@ static SENSOR_DEVICE_ATTR(temp##offset##_max, S_IRUGO | S_IWUSR,	\
+ static SENSOR_DEVICE_ATTR(temp##offset##_max_hyst, S_IRUGO | S_IWUSR,	\
+ 		show_temp_min, set_temp_min, offset - 1)
+ 
+-static DEVICE_ATTR(temp1_input, S_IRUGO, show_temp0, NULL);
+-static DEVICE_ATTR(temp1_max, S_IRUGO | S_IWUSR, show_temp0_max, set_temp0_max);
+-static DEVICE_ATTR(temp1_max_hyst, S_IRUGO | S_IWUSR, show_temp0_min,
+-		   set_temp0_min);
++static DEVICE_ATTR_RO(temp1_input);
++static DEVICE_ATTR_RW(temp1_max);
++static DEVICE_ATTR_RW(temp1_max_hyst);
+ 
+ define_temperature_sysfs(2);
+ define_temperature_sysfs(3);
+@@ -603,13 +606,13 @@ static SENSOR_DEVICE_ATTR(fan##offset##_min, S_IRUGO | S_IWUSR,		\
+ define_fan_sysfs(2);
+ 
+ /* Alarms */
+-static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
++static ssize_t alarms_show(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
+ {
+ 	struct vt8231_data *data = vt8231_update_device(dev);
+ 	return sprintf(buf, "%d\n", data->alarms);
+ }
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
+ 
+ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+@@ -633,13 +636,13 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
+ static SENSOR_DEVICE_ATTR(fan1_alarm, S_IRUGO, show_alarm, NULL, 6);
+ static SENSOR_DEVICE_ATTR(fan2_alarm, S_IRUGO, show_alarm, NULL, 7);
+ 
+-static ssize_t show_name(struct device *dev, struct device_attribute
++static ssize_t name_show(struct device *dev, struct device_attribute
+ 			 *devattr, char *buf)
+ {
+ 	struct vt8231_data *data = dev_get_drvdata(dev);
+ 	return sprintf(buf, "%s\n", data->name);
+ }
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
+ 
+ static struct attribute *vt8231_attributes_temps[6][5] = {
+ 	{
 
