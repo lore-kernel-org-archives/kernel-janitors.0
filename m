@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:10 +0000
-Subject: [PATCH 41/66] hwmon: (w83627ehf) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-42-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:49 +0000
+Subject: [PATCH 20/66] hwmon: (lm63) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-21-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,43 +46,143 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/w83627ehf.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/hwmon/lm63.c |   48 +++++++++++++++++++++++-------------------------
+ 1 file changed, 23 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/hwmon/w83627ehf.c b/drivers/hwmon/w83627ehf.c
-index 697007a..ab346ed 100644
---- a/drivers/hwmon/w83627ehf.c
-+++ b/drivers/hwmon/w83627ehf.c
-@@ -1687,14 +1687,14 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
- 
- fan_time_functions(fan_stop_time, FAN_STOP_TIME)
- 
--static ssize_t show_name(struct device *dev, struct device_attribute *attr,
-+static ssize_t name_show(struct device *dev, struct device_attribute *attr,
- 			 char *buf)
- {
- 	struct w83627ehf_data *data = dev_get_drvdata(dev);
- 
- 	return sprintf(buf, "%s\n", data->name);
+diff --git a/drivers/hwmon/lm63.c b/drivers/hwmon/lm63.c
+index 33bfdb4..2e19486 100644
+--- a/drivers/hwmon/lm63.c
++++ b/drivers/hwmon/lm63.c
+@@ -417,16 +417,16 @@ static ssize_t set_pwm1(struct device *dev, struct device_attribute *devattr,
+ 	return count;
  }
--static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
-+static DEVICE_ATTR_RO(name);
  
- static struct sensor_device_attribute sda_sf3_arrays_fan4[] = {
- 	SENSOR_ATTR(pwm4_stop_time, S_IWUSR | S_IRUGO, show_fan_stop_time,
-@@ -1754,12 +1754,12 @@ static ssize_t show_name(struct device *dev, struct device_attribute *attr,
- };
- 
- static ssize_t
--show_vid(struct device *dev, struct device_attribute *attr, char *buf)
-+cpu0_vid_show(struct device *dev, struct device_attribute *attr, char *buf)
+-static ssize_t show_pwm1_enable(struct device *dev,
++static ssize_t pwm1_enable_show(struct device *dev,
+ 				struct device_attribute *dummy, char *buf)
  {
- 	struct w83627ehf_data *data = dev_get_drvdata(dev);
- 	return sprintf(buf, "%d\n", vid_from_reg(data->vid, data->vrm));
+ 	struct lm63_data *data = lm63_update_device(dev);
+ 	return sprintf(buf, "%d\n", data->config_fan & 0x20 ? 1 : 2);
  }
--static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid, NULL);
-+static DEVICE_ATTR_RO(cpu0_vid);
  
+-static ssize_t set_pwm1_enable(struct device *dev,
+-			       struct device_attribute *dummy,
+-			       const char *buf, size_t count)
++static ssize_t pwm1_enable_store(struct device *dev,
++				 struct device_attribute *dummy,
++				 const char *buf, size_t count)
+ {
+ 	struct lm63_data *data = dev_get_drvdata(dev);
+ 	struct i2c_client *client = data->client;
+@@ -600,7 +600,7 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
+  * Hysteresis register holds a relative value, while we want to present
+  * an absolute to user-space
+  */
+-static ssize_t show_temp2_crit_hyst(struct device *dev,
++static ssize_t temp2_crit_hyst_show(struct device *dev,
+ 				    struct device_attribute *dummy, char *buf)
+ {
+ 	struct lm63_data *data = lm63_update_device(dev);
+@@ -624,9 +624,9 @@ static ssize_t show_lut_temp_hyst(struct device *dev,
+  * And now the other way around, user-space provides an absolute
+  * hysteresis value and we have to store a relative one
+  */
+-static ssize_t set_temp2_crit_hyst(struct device *dev,
+-				   struct device_attribute *dummy,
+-				   const char *buf, size_t count)
++static ssize_t temp2_crit_hyst_store(struct device *dev,
++				     struct device_attribute *dummy,
++				     const char *buf, size_t count)
+ {
+ 	struct lm63_data *data = dev_get_drvdata(dev);
+ 	struct i2c_client *client = data->client;
+@@ -670,7 +670,7 @@ static void lm63_set_convrate(struct lm63_data *data, unsigned int interval)
+ 	data->update_interval = UPDATE_INTERVAL(data->max_convrate_hz, i);
+ }
  
- /* Case open detection */
+-static ssize_t show_update_interval(struct device *dev,
++static ssize_t update_interval_show(struct device *dev,
+ 				    struct device_attribute *attr, char *buf)
+ {
+ 	struct lm63_data *data = dev_get_drvdata(dev);
+@@ -678,9 +678,9 @@ static ssize_t show_update_interval(struct device *dev,
+ 	return sprintf(buf, "%u\n", data->update_interval);
+ }
+ 
+-static ssize_t set_update_interval(struct device *dev,
+-				   struct device_attribute *attr,
+-				   const char *buf, size_t count)
++static ssize_t update_interval_store(struct device *dev,
++				     struct device_attribute *attr,
++				     const char *buf, size_t count)
+ {
+ 	struct lm63_data *data = dev_get_drvdata(dev);
+ 	unsigned long val;
+@@ -697,16 +697,17 @@ static ssize_t set_update_interval(struct device *dev,
+ 	return count;
+ }
+ 
+-static ssize_t show_type(struct device *dev, struct device_attribute *attr,
+-			 char *buf)
++static ssize_t temp2_type_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
+ {
+ 	struct lm63_data *data = dev_get_drvdata(dev);
+ 
+ 	return sprintf(buf, data->trutherm ? "1\n" : "2\n");
+ }
+ 
+-static ssize_t set_type(struct device *dev, struct device_attribute *attr,
+-			const char *buf, size_t count)
++static ssize_t temp2_type_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf, size_t count)
+ {
+ 	struct lm63_data *data = dev_get_drvdata(dev);
+ 	struct i2c_client *client = data->client;
+@@ -731,7 +732,7 @@ static ssize_t set_type(struct device *dev, struct device_attribute *attr,
+ 	return count;
+ }
+ 
+-static ssize_t show_alarms(struct device *dev, struct device_attribute *dummy,
++static ssize_t alarms_show(struct device *dev, struct device_attribute *dummy,
+ 			   char *buf)
+ {
+ 	struct lm63_data *data = lm63_update_device(dev);
+@@ -753,8 +754,7 @@ static SENSOR_DEVICE_ATTR(fan1_min, S_IWUSR | S_IRUGO, show_fan,
+ 	set_fan, 1);
+ 
+ static SENSOR_DEVICE_ATTR(pwm1, S_IWUSR | S_IRUGO, show_pwm1, set_pwm1, 0);
+-static DEVICE_ATTR(pwm1_enable, S_IWUSR | S_IRUGO,
+-	show_pwm1_enable, set_pwm1_enable);
++static DEVICE_ATTR_RW(pwm1_enable);
+ static SENSOR_DEVICE_ATTR(pwm1_auto_point1_pwm, S_IWUSR | S_IRUGO,
+ 	show_pwm1, set_pwm1, 1);
+ static SENSOR_DEVICE_ATTR(pwm1_auto_point1_temp, S_IWUSR | S_IRUGO,
+@@ -841,10 +841,9 @@ static SENSOR_DEVICE_ATTR(temp2_offset, S_IWUSR | S_IRUGO, show_temp11,
+ 	set_temp11, 3);
+ static SENSOR_DEVICE_ATTR(temp2_crit, S_IRUGO, show_remote_temp8,
+ 	set_temp8, 2);
+-static DEVICE_ATTR(temp2_crit_hyst, S_IWUSR | S_IRUGO, show_temp2_crit_hyst,
+-	set_temp2_crit_hyst);
++static DEVICE_ATTR_RW(temp2_crit_hyst);
+ 
+-static DEVICE_ATTR(temp2_type, S_IWUSR | S_IRUGO, show_type, set_type);
++static DEVICE_ATTR_RW(temp2_type);
+ 
+ /* Individual alarm files */
+ static SENSOR_DEVICE_ATTR(fan1_min_alarm, S_IRUGO, show_alarm, NULL, 0);
+@@ -854,10 +853,9 @@ static DEVICE_ATTR(temp2_crit_hyst, S_IWUSR | S_IRUGO, show_temp2_crit_hyst,
+ static SENSOR_DEVICE_ATTR(temp2_max_alarm, S_IRUGO, show_alarm, NULL, 4);
+ static SENSOR_DEVICE_ATTR(temp1_max_alarm, S_IRUGO, show_alarm, NULL, 6);
+ /* Raw alarm file for compatibility */
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
+ 
+-static DEVICE_ATTR(update_interval, S_IRUGO | S_IWUSR, show_update_interval,
+-		   set_update_interval);
++static DEVICE_ATTR_RW(update_interval);
+ 
+ static struct attribute *lm63_attributes[] = {
+ 	&sensor_dev_attr_pwm1.dev_attr.attr,
 
