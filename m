@@ -1,40 +1,107 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:43:13 +0000
-Subject: [PATCH 11/19] [media] uvc_driver: Delete an unnecessary variable initialisation in uvc_parse_streami
-Message-Id: <268fc54b-9e81-dead-2ee4-3cd8f2caef4b@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:28 +0000
+Subject: [PATCH 59/66] hwmon: (adm1025) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-60-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 16:02:46 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-The local variable "streaming" will be set to an appropriate pointer
-a bit later. Thus omit the explicit initialisation at the beginning.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/usb/uvc/uvc_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/adm1025.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 5736f8b26f92..5bb18a5f7d9f 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -631,7 +631,7 @@ static int uvc_parse_format(struct uvc_device *dev,
- static int uvc_parse_streaming(struct uvc_device *dev,
- 	struct usb_interface *intf)
+diff --git a/drivers/hwmon/adm1025.c b/drivers/hwmon/adm1025.c
+index 1abb460..1e4dad3 100644
+--- a/drivers/hwmon/adm1025.c
++++ b/drivers/hwmon/adm1025.c
+@@ -333,12 +333,12 @@ static SENSOR_DEVICE_ATTR(temp##offset##_max, S_IWUSR | S_IRUGO, \
+ set_temp(2);
+ 
+ static ssize_t
+-show_alarms(struct device *dev, struct device_attribute *attr, char *buf)
++alarms_show(struct device *dev, struct device_attribute *attr, char *buf)
  {
--	struct uvc_streaming *streaming = NULL;
-+	struct uvc_streaming *streaming;
- 	struct uvc_format *format;
- 	struct uvc_frame *frame;
- 	struct usb_host_interface *alts = &intf->altsetting[0];
--- 
-2.11.0
+ 	struct adm1025_data *data = adm1025_update_device(dev);
+ 	return sprintf(buf, "%u\n", data->alarms);
+ }
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
+ 
+ static ssize_t
+ show_alarm(struct device *dev, struct device_attribute *attr, char *buf)
+@@ -358,21 +358,21 @@ static SENSOR_DEVICE_ATTR(temp##offset##_max, S_IWUSR | S_IRUGO, \
+ static SENSOR_DEVICE_ATTR(temp1_fault, S_IRUGO, show_alarm, NULL, 14);
+ 
+ static ssize_t
+-show_vid(struct device *dev, struct device_attribute *attr, char *buf)
++cpu0_vid_show(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	struct adm1025_data *data = adm1025_update_device(dev);
+ 	return sprintf(buf, "%u\n", vid_from_reg(data->vid, data->vrm));
+ }
+-static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid, NULL);
++static DEVICE_ATTR_RO(cpu0_vid);
+ 
+ static ssize_t
+-show_vrm(struct device *dev, struct device_attribute *attr, char *buf)
++vrm_show(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	struct adm1025_data *data = dev_get_drvdata(dev);
+ 	return sprintf(buf, "%u\n", data->vrm);
+ }
+-static ssize_t set_vrm(struct device *dev, struct device_attribute *attr,
+-		       const char *buf, size_t count)
++static ssize_t vrm_store(struct device *dev, struct device_attribute *attr,
++			 const char *buf, size_t count)
+ {
+ 	struct adm1025_data *data = dev_get_drvdata(dev);
+ 	unsigned long val;
+@@ -388,7 +388,7 @@ static ssize_t set_vrm(struct device *dev, struct device_attribute *attr,
+ 	data->vrm = val;
+ 	return count;
+ }
+-static DEVICE_ATTR(vrm, S_IRUGO | S_IWUSR, show_vrm, set_vrm);
++static DEVICE_ATTR_RW(vrm);
+ 
+ /*
+  * Real code
 
