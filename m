@@ -1,30 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 20:45:55 +0000
-Subject: [PATCH 0/4] [media] bt8xx: Fine-tuning for three functions
-Message-Id: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:00 +0000
+Subject: [PATCH 31/66] hwmon: (mcp3021) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-32-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 21:40:12 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-A few update suggestions were taken into account
-from static source code analysis.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-Markus Elfring (4):
-  One function call less in bttv_input_init() after error detection
-  Delete two error messages for a failed memory allocation
-  Delete unnecessary variable initialisations in ca_send_message()
-  Less function calls in dst_ca_ioctl() after error detection
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
- drivers/media/pci/bt8xx/bttv-input.c | 14 +++++---
- drivers/media/pci/bt8xx/dst_ca.c     | 62 +++++++++++++++++++++---------------
- 2 files changed, 46 insertions(+), 30 deletions(-)
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
--- 
-2.11.0
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/hwmon/mcp3021.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/hwmon/mcp3021.c b/drivers/hwmon/mcp3021.c
+index 1929734..de886f8 100644
+--- a/drivers/hwmon/mcp3021.c
++++ b/drivers/hwmon/mcp3021.c
+@@ -86,8 +86,8 @@ static inline u16 volts_from_reg(struct mcp3021_data *data, u16 val)
+ 	return DIV_ROUND_CLOSEST(data->vdd * val, 1 << data->output_res);
+ }
+ 
+-static ssize_t show_in_input(struct device *dev, struct device_attribute *attr,
+-		char *buf)
++static ssize_t in0_input_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct mcp3021_data *data = i2c_get_clientdata(client);
+@@ -102,7 +102,7 @@ static ssize_t show_in_input(struct device *dev, struct device_attribute *attr,
+ 	return sprintf(buf, "%d\n", in_input);
+ }
+ 
+-static DEVICE_ATTR(in0_input, 0444, show_in_input, NULL);
++static DEVICE_ATTR_RO(in0_input);
+ 
+ static int mcp3021_probe(struct i2c_client *client,
+ 				const struct i2c_device_id *id)
 
