@@ -1,32 +1,76 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 08 Dec 2016 15:26:45 +0000
-Subject: Re: staging-COMEDI: Fine-tuning for three functions
-Message-Id: <fa604c2d-f950-7c24-800a-302f115fe8b2@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:59 +0000
+Subject: [PATCH 30/66] hwmon: (mc13783-adc) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-31-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
- <20161208133019.GA30859@kroah.com>
-In-Reply-To: <20161208133019.GA30859@kroah.com>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, Chris Cesare <chris.cesare@gmail.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Ian Abbott <abbotti@mev.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> You do realize that I no longer take patches from you for any of the
-> subsystems I maintain, right?
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Not so far.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-It seems that you would like to present new information for our
-challenging collaboration.
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-> This patch series is one reason why...
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
 
-I hope that corresponding disagreements around shown change possibilities
-can still be clarified somehow.
-Would you like to check further improvements for the affected
-source code here?
+if not (x^"_show" = x_show) then Coccilib.include_match false
 
-Regards,
-Markus
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/hwmon/mc13783-adc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/hwmon/mc13783-adc.c b/drivers/hwmon/mc13783-adc.c
+index 0c02f40..960a1db 100644
+--- a/drivers/hwmon/mc13783-adc.c
++++ b/drivers/hwmon/mc13783-adc.c
+@@ -40,8 +40,8 @@ struct mc13783_adc_priv {
+ 	char name[PLATFORM_NAME_SIZE];
+ };
+ 
+-static ssize_t mc13783_adc_show_name(struct device *dev, struct device_attribute
+-			      *devattr, char *buf)
++static ssize_t name_show(struct device *dev, struct device_attribute *devattr,
++			 char *buf)
+ {
+ 	struct mc13783_adc_priv *priv = dev_get_drvdata(dev);
+ 
+@@ -111,7 +111,7 @@ static ssize_t mc13783_adc_read_gp(struct device *dev,
+ 	return sprintf(buf, "%u\n", val);
+ }
+ 
+-static DEVICE_ATTR(name, S_IRUGO, mc13783_adc_show_name, NULL);
++static DEVICE_ATTR_RO(name);
+ static SENSOR_DEVICE_ATTR(in2_input, S_IRUGO, mc13783_adc_read_bp, NULL, 2);
+ static SENSOR_DEVICE_ATTR(in5_input, S_IRUGO, mc13783_adc_read_gp, NULL, 5);
+ static SENSOR_DEVICE_ATTR(in6_input, S_IRUGO, mc13783_adc_read_gp, NULL, 6);
+
