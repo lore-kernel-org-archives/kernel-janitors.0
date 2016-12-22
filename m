@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:48 +0000
-Subject: [PATCH 19/66] hwmon: (jz4740) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-20-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:21 +0000
+Subject: [PATCH 52/66] hwmon: (it87) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-53-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,31 +46,70 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/jz4740-hwmon.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hwmon/it87.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/hwmon/jz4740-hwmon.c b/drivers/hwmon/jz4740-hwmon.c
-index 0621ee1..2d40a2e 100644
---- a/drivers/hwmon/jz4740-hwmon.c
-+++ b/drivers/hwmon/jz4740-hwmon.c
-@@ -44,8 +44,8 @@ static irqreturn_t jz4740_hwmon_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
+diff --git a/drivers/hwmon/it87.c b/drivers/hwmon/it87.c
+index ad82cb2..ef4e052 100644
+--- a/drivers/hwmon/it87.c
++++ b/drivers/hwmon/it87.c
+@@ -1762,14 +1762,14 @@ static SENSOR_DEVICE_ATTR(pwm6_auto_slope, S_IRUGO | S_IWUSR,
+ 			  show_auto_pwm_slope, set_auto_pwm_slope, 5);
  
--static ssize_t jz4740_hwmon_read_adcin(struct device *dev,
--	struct device_attribute *dev_attr, char *buf)
-+static ssize_t in0_input_show(struct device *dev,
-+			      struct device_attribute *dev_attr, char *buf)
+ /* Alarms */
+-static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
++static ssize_t alarms_show(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
  {
- 	struct jz4740_hwmon *hwmon = dev_get_drvdata(dev);
- 	struct platform_device *pdev = hwmon->pdev;
-@@ -79,7 +79,7 @@ static ssize_t jz4740_hwmon_read_adcin(struct device *dev,
- 	return ret;
+ 	struct it87_data *data = it87_update_device(dev);
+ 
+ 	return sprintf(buf, "%u\n", data->alarms);
+ }
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
+ 
+ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+@@ -1877,16 +1877,16 @@ static SENSOR_DEVICE_ATTR(temp1_beep, S_IRUGO | S_IWUSR,
+ static SENSOR_DEVICE_ATTR(temp2_beep, S_IRUGO, show_beep, NULL, 2);
+ static SENSOR_DEVICE_ATTR(temp3_beep, S_IRUGO, show_beep, NULL, 2);
+ 
+-static ssize_t show_vrm_reg(struct device *dev, struct device_attribute *attr,
+-			    char *buf)
++static ssize_t vrm_show(struct device *dev, struct device_attribute *attr,
++			char *buf)
+ {
+ 	struct it87_data *data = dev_get_drvdata(dev);
+ 
+ 	return sprintf(buf, "%u\n", data->vrm);
  }
  
--static DEVICE_ATTR(in0_input, S_IRUGO, jz4740_hwmon_read_adcin, NULL);
-+static DEVICE_ATTR_RO(in0_input);
+-static ssize_t store_vrm_reg(struct device *dev, struct device_attribute *attr,
+-			     const char *buf, size_t count)
++static ssize_t vrm_store(struct device *dev, struct device_attribute *attr,
++			 const char *buf, size_t count)
+ {
+ 	struct it87_data *data = dev_get_drvdata(dev);
+ 	unsigned long val;
+@@ -1898,16 +1898,16 @@ static ssize_t store_vrm_reg(struct device *dev, struct device_attribute *attr,
  
- static struct attribute *jz4740_attrs[] = {
- 	&dev_attr_in0_input.attr,
+ 	return count;
+ }
+-static DEVICE_ATTR(vrm, S_IRUGO | S_IWUSR, show_vrm_reg, store_vrm_reg);
++static DEVICE_ATTR_RW(vrm);
+ 
+-static ssize_t show_vid_reg(struct device *dev, struct device_attribute *attr,
+-			    char *buf)
++static ssize_t cpu0_vid_show(struct device *dev,
++			     struct device_attribute *attr, char *buf)
+ {
+ 	struct it87_data *data = it87_update_device(dev);
+ 
+ 	return sprintf(buf, "%ld\n", (long)vid_from_reg(data->vid, data->vrm));
+ }
+-static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid_reg, NULL);
++static DEVICE_ATTR_RO(cpu0_vid);
+ 
+ static ssize_t show_label(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
 
