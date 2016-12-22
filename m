@@ -1,49 +1,73 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Dec 2016 20:47:17 +0000
-Subject: [PATCH 3/8] [media] videobuf-dma-sg: Use kmalloc_array() in videobuf_dma_init_user_locked()
-Message-Id: <f02ed3c0-60f5-300c-c767-b3d96816b5ad@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:15 +0000
+Subject: [PATCH 46/66] hwmon: (pc87427) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-47-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
-In-Reply-To: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Dec 2016 19:46:56 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-  This issue was detected by using the Coccinelle software.
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/v4l2-core/videobuf-dma-sg.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/hwmon/pc87427.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-index ba63ca57ed7e..ab3c1f6a2ca1 100644
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -175,7 +175,9 @@ static int videobuf_dma_init_user_locked(struct videobuf_dmabuf *dma,
- 	dma->offset = data & ~PAGE_MASK;
- 	dma->size = size;
- 	dma->nr_pages = last-first+1;
--	dma->pages = kmalloc(dma->nr_pages * sizeof(struct page *), GFP_KERNEL);
-+	dma->pages = kmalloc_array(dma->nr_pages,
-+				   sizeof(*dma->pages),
-+				   GFP_KERNEL);
- 	if (NULL = dma->pages)
- 		return -ENOMEM;
+diff --git a/drivers/hwmon/pc87427.c b/drivers/hwmon/pc87427.c
+index cb9fdd3..dc5a9d5 100644
+--- a/drivers/hwmon/pc87427.c
++++ b/drivers/hwmon/pc87427.c
+@@ -943,14 +943,14 @@ static SENSOR_DEVICE_ATTR(temp6_crit_alarm, S_IRUGO,
+ 	{ .attrs = pc87427_attributes_temp[5] },
+ };
  
--- 
-2.11.0
+-static ssize_t show_name(struct device *dev, struct device_attribute
++static ssize_t name_show(struct device *dev, struct device_attribute
+ 			 *devattr, char *buf)
+ {
+ 	struct pc87427_data *data = dev_get_drvdata(dev);
+ 
+ 	return sprintf(buf, "%s\n", data->name);
+ }
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
+ 
+ 
+ /*
 
