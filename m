@@ -1,52 +1,27 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 31 Dec 2016 22:01:27 +0000
-Subject: [PATCH 3/6] staging: vchiq_arm: One check less in dump_phys_mem() after error detection
-Message-Id: <7b97ce90-64c9-7327-9e03-1e22bf7d7f53@users.sourceforge.net>
+Date: Thu, 22 Dec 2016 19:57:02 +0000
+Subject: [PATCH 0/2] [media] pvrusb2-io: Fine-tuning for some function implementations
+Message-Id: <e08ae52b-3db5-4f9a-bc8b-c5abf7700856@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
-In-Reply-To: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 31 Dec 2016 21:26:09 +0100
+Date: Thu, 22 Dec 2016 20:48:04 +0100
 
-Adjust a jump target according to the Linux coding style convention
-so that a redundant check for a null pointer can be avoided
-in this function.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Markus Elfring (2):
+  Use kmalloc_array()
+  Add some spaces for better code readability
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 2a260034189d..a316cf9ac626 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -1581,7 +1581,7 @@ dump_phys_mem(void *virt_addr, uint32_t num_bytes)
- 	if (rc < 0) {
- 		vchiq_log_error(vchiq_arm_log_level,
- 				"Failed to get user pages: %d\n", rc);
--		goto out;
-+		goto put_pages;
- 	}
- 
- 	while (offset < end_offset) {
-@@ -1607,10 +1607,9 @@ dump_phys_mem(void *virt_addr, uint32_t num_bytes)
- 		offset += 16;
- 	}
- 
--out:
- 	if (page)
- 		kunmap(page);
--
-+put_pages:
- 	for (page_idx = 0; page_idx < num_pages; page_idx++)
- 		put_page(pages[page_idx]);
- 
+ drivers/media/usb/pvrusb2/pvrusb2-io.c | 123 +++++++++++++++++----------------
+ 1 file changed, 62 insertions(+), 61 deletions(-)
+
 -- 
 2.11.0
 
