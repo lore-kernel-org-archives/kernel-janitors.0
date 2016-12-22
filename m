@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:41 +0000
-Subject: [PATCH 12/66] hwmon: (g760a) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-13-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:45 +0000
+Subject: [PATCH 16/66] hwmon: (core) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-17-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,67 +46,25 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/g760a.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/hwmon/hwmon.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/g760a.c b/drivers/hwmon/g760a.c
-index ec6a77d..7be1371 100644
---- a/drivers/hwmon/g760a.c
-+++ b/drivers/hwmon/g760a.c
-@@ -107,8 +107,8 @@ static struct g760a_data *g760a_update_client(struct device *dev)
- 	return data;
- }
+diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+index 3932f92..0c5660c 100644
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -63,11 +63,11 @@ struct hwmon_thermal_data {
+ };
  
--static ssize_t show_fan(struct device *dev, struct device_attribute *da,
--			char *buf)
-+static ssize_t fan1_input_show(struct device *dev,
-+			       struct device_attribute *da, char *buf)
+ static ssize_t
+-show_name(struct device *dev, struct device_attribute *attr, char *buf)
++name_show(struct device *dev, struct device_attribute *attr, char *buf)
  {
- 	struct g760a_data *data = g760a_update_client(dev);
- 	unsigned int rpm = 0;
-@@ -121,8 +121,8 @@ static ssize_t show_fan(struct device *dev, struct device_attribute *da,
- 	return sprintf(buf, "%d\n", rpm);
+ 	return sprintf(buf, "%s\n", to_hwmon_device(dev)->name);
  }
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
  
--static ssize_t show_fan_alarm(struct device *dev, struct device_attribute *da,
--			      char *buf)
-+static ssize_t fan1_alarm_show(struct device *dev,
-+			       struct device_attribute *da, char *buf)
- {
- 	struct g760a_data *data = g760a_update_client(dev);
- 
-@@ -131,16 +131,16 @@ static ssize_t show_fan_alarm(struct device *dev, struct device_attribute *da,
- 	return sprintf(buf, "%d\n", fan_alarm);
- }
- 
--static ssize_t get_pwm(struct device *dev, struct device_attribute *da,
--		       char *buf)
-+static ssize_t pwm1_show(struct device *dev, struct device_attribute *da,
-+			 char *buf)
- {
- 	struct g760a_data *data = g760a_update_client(dev);
- 
- 	return sprintf(buf, "%d\n", PWM_FROM_CNT(data->set_cnt));
- }
- 
--static ssize_t set_pwm(struct device *dev, struct device_attribute *da,
--		       const char *buf, size_t count)
-+static ssize_t pwm1_store(struct device *dev, struct device_attribute *da,
-+			  const char *buf, size_t count)
- {
- 	struct g760a_data *data = g760a_update_client(dev);
- 	struct i2c_client *client = data->client;
-@@ -157,9 +157,9 @@ static ssize_t set_pwm(struct device *dev, struct device_attribute *da,
- 	return count;
- }
- 
--static DEVICE_ATTR(pwm1, S_IWUSR | S_IRUGO, get_pwm, set_pwm);
--static DEVICE_ATTR(fan1_input, S_IRUGO, show_fan, NULL);
--static DEVICE_ATTR(fan1_alarm, S_IRUGO, show_fan_alarm, NULL);
-+static DEVICE_ATTR_RW(pwm1);
-+static DEVICE_ATTR_RO(fan1_input);
-+static DEVICE_ATTR_RO(fan1_alarm);
- 
- static struct attribute *g760a_attrs[] = {
- 	&dev_attr_pwm1.attr,
+ static struct attribute *hwmon_dev_attrs[] = {
+ 	&dev_attr_name.attr,
 
