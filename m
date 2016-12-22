@@ -1,43 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 20:51:23 +0000
-Subject: [PATCH 3/4] [media] bt8xx: Delete unnecessary variable initialisations in ca_send_message()
-Message-Id: <f0c92913-f55f-5415-64c3-237d940b645e@users.sourceforge.net>
+Date: Thu, 22 Dec 2016 19:58:51 +0000
+Subject: [PATCH 1/2] [media] pvrusb2-io: Use kmalloc_array() in pvr2_stream_buffer_count()
+Message-Id: <ed4b30cc-fbef-f540-3b38-562ae9fa5842@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
-In-Reply-To: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
+References: <e08ae52b-3db5-4f9a-bc8b-c5abf7700856@users.sourceforge.net>
+In-Reply-To: <e08ae52b-3db5-4f9a-bc8b-c5abf7700856@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, Mike Isely <isely@pobox.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 20:56:04 +0100
+Date: Thu, 22 Dec 2016 19:26:52 +0100
 
-Two local variables will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/bt8xx/dst_ca.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/usb/pvrusb2/pvrusb2-io.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/bt8xx/dst_ca.c b/drivers/media/pci/bt8xx/dst_ca.c
-index 54e656ddd588..04d06c564602 100644
---- a/drivers/media/pci/bt8xx/dst_ca.c
-+++ b/drivers/media/pci/bt8xx/dst_ca.c
-@@ -475,9 +475,8 @@ static int dst_check_ca_pmt(struct dst_state *state, struct ca_msg *p_ca_message
- 
- static int ca_send_message(struct dst_state *state, struct ca_msg *p_ca_message, void __user *arg)
- {
--	int i = 0;
--
--	u32 command = 0;
-+	int i;
-+	u32 command;
- 	struct ca_msg *hw_buffer;
- 	int result = 0;
- 
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-io.c b/drivers/media/usb/pvrusb2/pvrusb2-io.c
+index e3103ecd4828..a01510bfc84f 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-io.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-io.c
+@@ -312,7 +312,8 @@ static int pvr2_stream_buffer_count(struct pvr2_stream *sp,unsigned int cnt)
+ 	if (cnt > sp->buffer_total_count) {
+ 		if (scnt > sp->buffer_slot_count) {
+ 			struct pvr2_buffer **nb;
+-			nb = kmalloc(scnt * sizeof(*nb),GFP_KERNEL);
++
++			nb = kmalloc_array(scnt, sizeof(*nb), GFP_KERNEL);
+ 			if (!nb) return -ENOMEM;
+ 			if (sp->buffer_slot_count) {
+ 				memcpy(nb,sp->buffers,
 -- 
 2.11.0
 
