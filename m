@@ -1,39 +1,77 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 03 Dec 2016 17:02:31 +0000
-Subject: [PATCH 2/2] ARM: mmp: Delete an unnecessary variable initialisation in sram_probe()
-Message-Id: <d5679f55-fbed-5987-9daf-a8acb5be797f@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:35 +0000
+Subject: [PATCH 06/66] hwmon: (adt7x10) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b687577b-e664-6aa1-a85c-438e96216171@users.sourceforge.net>
-In-Reply-To: <b687577b-e664-6aa1-a85c-438e96216171@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 3 Dec 2016 17:38:21 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-The local variable "ret" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/arm/mach-mmp/sram.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/adt7x10.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-mmp/sram.c b/arch/arm/mach-mmp/sram.c
-index 0fbfc2a42ab3..260e8309dfd3 100644
---- a/arch/arm/mach-mmp/sram.c
-+++ b/arch/arm/mach-mmp/sram.c
-@@ -66,7 +66,7 @@ static int sram_probe(struct platform_device *pdev)
- 	struct sram_platdata *pdata = pdev->dev.platform_data;
- 	struct sram_bank_info *info;
- 	struct resource *res;
--	int ret = 0;
-+	int ret;
+diff --git a/drivers/hwmon/adt7x10.c b/drivers/hwmon/adt7x10.c
+index 98141f4..0f538f8 100644
+--- a/drivers/hwmon/adt7x10.c
++++ b/drivers/hwmon/adt7x10.c
+@@ -331,9 +331,8 @@ static ssize_t adt7x10_show_alarm(struct device *dev,
+ 	return sprintf(buf, "%d\n", !!(ret & attr->index));
+ }
  
- 	if (!pdata || !pdata->pool_name)
- 		return -ENODEV;
--- 
-2.11.0
+-static ssize_t adt7x10_show_name(struct device *dev,
+-				 struct device_attribute *da,
+-				 char *buf)
++static ssize_t name_show(struct device *dev, struct device_attribute *da,
++			 char *buf)
+ {
+ 	struct adt7x10_data *data = dev_get_drvdata(dev);
+ 
+@@ -359,7 +358,7 @@ static SENSOR_DEVICE_ATTR(temp1_max_alarm, S_IRUGO, adt7x10_show_alarm,
+ 			  NULL, ADT7X10_STAT_T_HIGH);
+ static SENSOR_DEVICE_ATTR(temp1_crit_alarm, S_IRUGO, adt7x10_show_alarm,
+ 			  NULL, ADT7X10_STAT_T_CRIT);
+-static DEVICE_ATTR(name, S_IRUGO, adt7x10_show_name, NULL);
++static DEVICE_ATTR_RO(name);
+ 
+ static struct attribute *adt7x10_attributes[] = {
+ 	&sensor_dev_attr_temp1_input.dev_attr.attr,
 
