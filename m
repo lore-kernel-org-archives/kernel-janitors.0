@@ -1,28 +1,113 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Dec 2016 09:14:10 +0000
-Subject: [patch] KEYS: Use memzero_explicit() for secret data
-Message-Id: <20161216091410.GB7285@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:03 +0000
+Subject: [PATCH 34/66] hwmon: (pcf8591) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-35-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I don't think GCC has figured out how to optimize the memset() away, but
-they might eventually so let's future proof this code a bit.
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index d7a4969b2dd3..4fb315cddf5b 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -985,7 +985,7 @@ static void encrypted_destroy(struct key *key)
- 	if (!epayload)
- 		return;
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/hwmon/pcf8591.c |   24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/hwmon/pcf8591.c b/drivers/hwmon/pcf8591.c
+index 5740888..60e25c8 100644
+--- a/drivers/hwmon/pcf8591.c
++++ b/drivers/hwmon/pcf8591.c
+@@ -103,16 +103,16 @@ static DEVICE_ATTR(in##channel##_input, S_IRUGO,			\
+ show_in_channel(2);
+ show_in_channel(3);
  
--	memset(epayload->decrypted_data, 0, epayload->decrypted_datalen);
-+	memzero_explicit(epayload->decrypted_data, epayload->decrypted_datalen);
- 	kfree(key->payload.data[0]);
+-static ssize_t show_out0_ouput(struct device *dev,
+-			       struct device_attribute *attr, char *buf)
++static ssize_t out0_output_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
+ {
+ 	struct pcf8591_data *data = i2c_get_clientdata(to_i2c_client(dev));
+ 	return sprintf(buf, "%d\n", data->aout * 10);
  }
  
+-static ssize_t set_out0_output(struct device *dev,
+-			       struct device_attribute *attr,
+-			       const char *buf, size_t count)
++static ssize_t out0_output_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf, size_t count)
+ {
+ 	unsigned long val;
+ 	struct i2c_client *client = to_i2c_client(dev);
+@@ -132,19 +132,18 @@ static ssize_t set_out0_output(struct device *dev,
+ 	return count;
+ }
+ 
+-static DEVICE_ATTR(out0_output, S_IWUSR | S_IRUGO,
+-		   show_out0_ouput, set_out0_output);
++static DEVICE_ATTR_RW(out0_output);
+ 
+-static ssize_t show_out0_enable(struct device *dev,
++static ssize_t out0_enable_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+ 	struct pcf8591_data *data = i2c_get_clientdata(to_i2c_client(dev));
+ 	return sprintf(buf, "%u\n", !(!(data->control & PCF8591_CONTROL_AOEF)));
+ }
+ 
+-static ssize_t set_out0_enable(struct device *dev,
+-			       struct device_attribute *attr,
+-			       const char *buf, size_t count)
++static ssize_t out0_enable_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf, size_t count)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct pcf8591_data *data = i2c_get_clientdata(client);
+@@ -165,8 +164,7 @@ static ssize_t set_out0_enable(struct device *dev,
+ 	return count;
+ }
+ 
+-static DEVICE_ATTR(out0_enable, S_IWUSR | S_IRUGO,
+-		   show_out0_enable, set_out0_enable);
++static DEVICE_ATTR_RW(out0_enable);
+ 
+ static struct attribute *pcf8591_attributes[] = {
+ 	&dev_attr_out0_enable.attr,
+
