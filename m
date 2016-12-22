@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:27 +0000
-Subject: [PATCH 58/66] hwmon: (k8temp) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-59-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:08 +0000
+Subject: [PATCH 39/66] hwmon: (via-cputemp) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-40-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rudolf Marek <r.marek@assembler.cz>
-Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
 source code, improves readbility, and reduces the chance of
@@ -46,29 +46,31 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/k8temp.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hwmon/via-cputemp.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwmon/k8temp.c b/drivers/hwmon/k8temp.c
-index 734d55d..5a632bc 100644
---- a/drivers/hwmon/k8temp.c
-+++ b/drivers/hwmon/k8temp.c
-@@ -100,7 +100,7 @@ static struct k8temp_data *k8temp_update_device(struct device *dev)
-  * Sysfs stuff
-  */
+diff --git a/drivers/hwmon/via-cputemp.c b/drivers/hwmon/via-cputemp.c
+index d1f209a..07a0cb0 100644
+--- a/drivers/hwmon/via-cputemp.c
++++ b/drivers/hwmon/via-cputemp.c
+@@ -88,8 +88,8 @@ static ssize_t show_temp(struct device *dev,
+ 	return sprintf(buf, "%lu\n", ((unsigned long)eax & 0xffffff) * 1000);
+ }
  
--static ssize_t show_name(struct device *dev, struct device_attribute
-+static ssize_t name_show(struct device *dev, struct device_attribute
- 			 *devattr, char *buf)
+-static ssize_t show_cpu_vid(struct device *dev,
+-			    struct device_attribute *devattr, char *buf)
++static ssize_t cpu0_vid_show(struct device *dev,
++			     struct device_attribute *devattr, char *buf)
  {
- 	struct k8temp_data *data = dev_get_drvdata(dev);
-@@ -133,7 +133,7 @@ static ssize_t show_temp(struct device *dev,
- static SENSOR_DEVICE_ATTR_2(temp2_input, S_IRUGO, show_temp, NULL, 0, 1);
- static SENSOR_DEVICE_ATTR_2(temp3_input, S_IRUGO, show_temp, NULL, 1, 0);
- static SENSOR_DEVICE_ATTR_2(temp4_input, S_IRUGO, show_temp, NULL, 1, 1);
--static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
-+static DEVICE_ATTR_RO(name);
+ 	struct via_cputemp_data *data = dev_get_drvdata(dev);
+ 	u32 eax, edx;
+@@ -119,7 +119,7 @@ static SENSOR_DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL,
+ };
  
- static const struct pci_device_id k8temp_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_K8_NB_MISC) },
+ /* Optional attributes */
+-static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_cpu_vid, NULL);
++static DEVICE_ATTR_RO(cpu0_vid);
+ 
+ static int via_cputemp_probe(struct platform_device *pdev)
+ {
 
