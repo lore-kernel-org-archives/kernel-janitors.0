@@ -1,61 +1,83 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Dec 2016 20:50:05 +0000
-Subject: [PATCH 5/8] [media] videobuf-dma-sg: Move two assignments for error codes in __videobuf_mmap_mapper(
-Message-Id: <acfaf0af-0104-1b47-322e-452900318c0a@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:39 +0000
+Subject: [PATCH 10/66] hwmon: (f71882fg) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
-In-Reply-To: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 26 Dec 2016 20:48:50 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-Move two assignments for the local variable "retval" so that these statements
-will only be executed if a previous action failed in this function.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/v4l2-core/videobuf-dma-sg.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/hwmon/f71882fg.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-index 9ccdc11aa016..d09ddf2e56fe 100644
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -596,8 +596,6 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
- 	unsigned int first, last, size = 0, i;
- 	int retval;
+diff --git a/drivers/hwmon/f71882fg.c b/drivers/hwmon/f71882fg.c
+index cb28e4b..ca54ce5 100644
+--- a/drivers/hwmon/f71882fg.c
++++ b/drivers/hwmon/f71882fg.c
+@@ -390,7 +390,7 @@ static ssize_t show_pwm_auto_point_temp(struct device *dev,
+ static ssize_t store_pwm_auto_point_temp(struct device *dev,
+ 	struct device_attribute *devattr, const char *buf, size_t count);
+ /* Sysfs misc */
+-static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
++static ssize_t name_show(struct device *dev, struct device_attribute *devattr,
+ 	char *buf);
  
--	retval = -EINVAL;
--
- 	BUG_ON(!mem);
- 	MAGIC_CHECK(mem->magic, MAGIC_SG_MEM);
+ static int f71882fg_probe(struct platform_device *pdev);
+@@ -404,7 +404,7 @@ static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
+ 	.remove		= f71882fg_remove,
+ };
  
-@@ -613,16 +611,18 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
- 	if (!size) {
- 		dprintk(1, "mmap app bug: offset invalid [offset=0x%lx]\n",
- 				(vma->vm_pgoff << PAGE_SHIFT));
-+		retval = -EINVAL;
- 		goto done;
- 	}
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
  
- 	last = first;
+ /*
+  * Temp attr for the f71858fg, the f71858fg is special as it has its
+@@ -2212,7 +2212,7 @@ static ssize_t store_pwm_auto_point_temp(struct device *dev,
+ 	return count;
+ }
  
- 	/* create mapping + update buffer list */
--	retval = -ENOMEM;
- 	map = kmalloc(sizeof(struct videobuf_mapping), GFP_KERNEL);
--	if (!map)
-+	if (!map) {
-+		retval = -ENOMEM;
- 		goto done;
-+	}
- 
- 	size = 0;
- 	for (i = first; i <= last; i++) {
--- 
-2.11.0
+-static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
++static ssize_t name_show(struct device *dev, struct device_attribute *devattr,
+ 	char *buf)
+ {
+ 	struct f71882fg_data *data = dev_get_drvdata(dev);
 
