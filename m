@@ -1,48 +1,74 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 30 Dec 2016 20:56:12 +0000
-Subject: [PATCH] staging: r8192U_core: Use kmalloc_array() in rtl8192_usb_initendpoints()
-Message-Id: <1dda87f1-8c49-ef2a-fa1c-0ebec5bca92c@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:26 +0000
+Subject: [PATCH 57/66] hwmon: (sch5627) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-58-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Baoyou Xie <baoyou.xie@linaro.org>, Bhumika Goyal <bhumirks@gmail.com>, Binoy Jayan <binoy.jayan@linaro.org>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>, Nicholas Sim <nicholassimws@gmail.com>, Salah Triki <salah.triki@acm.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 30 Dec 2016 21:43:22 +0100
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-  This issue was detected by using the Coccinelle software.
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/rtl8192u/r8192U_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/hwmon/sch5627.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index fdb03dccb449..e0791d357259 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -1682,8 +1682,9 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
+diff --git a/drivers/hwmon/sch5627.c b/drivers/hwmon/sch5627.c
+index 19f85c0..91544f2 100644
+--- a/drivers/hwmon/sch5627.c
++++ b/drivers/hwmon/sch5627.c
+@@ -205,7 +205,7 @@ static int reg_to_rpm(u16 reg)
+ 	return 5400540 / reg;
+ }
+ 
+-static ssize_t show_name(struct device *dev, struct device_attribute *devattr,
++static ssize_t name_show(struct device *dev, struct device_attribute *devattr,
+ 	char *buf)
  {
- 	struct r8192_priv *priv = ieee80211_priv(dev);
+ 	return snprintf(buf, PAGE_SIZE, "%s\n", DEVNAME);
+@@ -326,7 +326,7 @@ static ssize_t show_in_label(struct device *dev, struct device_attribute
+ 			SCH5627_IN_LABELS[attr->index]);
+ }
  
--	priv->rx_urb = kmalloc(sizeof(struct urb *) * (MAX_RX_URB + 1),
--			       GFP_KERNEL);
-+	priv->rx_urb = kmalloc_array(MAX_RX_URB + 1,
-+				     sizeof(*priv->rx_urb),
-+				     GFP_KERNEL);
- 	if (!priv->rx_urb)
- 		return -ENOMEM;
- 
--- 
-2.11.0
+-static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
++static DEVICE_ATTR_RO(name);
+ static SENSOR_DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL, 0);
+ static SENSOR_DEVICE_ATTR(temp2_input, S_IRUGO, show_temp, NULL, 1);
+ static SENSOR_DEVICE_ATTR(temp3_input, S_IRUGO, show_temp, NULL, 2);
 
