@@ -1,217 +1,186 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:35:03 +0000
-Subject: [PATCH 05/19] [media] uvc_driver: Enclose 24 expressions for the sizeof operator by parentheses
-Message-Id: <1d99b8a4-9bba-8914-1bbc-311a0b71bd55@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:04:55 +0000
+Subject: [PATCH 26/66] hwmon: (lm93) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-27-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jean Delvare <jdelvare@suse.com>
+Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 10:05:05 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-The script "checkpatch.pl" pointed information out like the following.
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-WARNING: sizeof … should be sizeof(…)
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
 
-Thus fix the affected source code places.
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/usb/uvc/uvc_driver.c | 48 +++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ drivers/hwmon/lm93.c |   39 ++++++++++++++++-----------------------
+ 1 file changed, 16 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 32d39404c1cb..c05ba4bdec2d 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -402,7 +402,7 @@ static int uvc_parse_format(struct uvc_device *dev,
+diff --git a/drivers/hwmon/lm93.c b/drivers/hwmon/lm93.c
+index 90bb048..77a0a83 100644
+--- a/drivers/hwmon/lm93.c
++++ b/drivers/hwmon/lm93.c
+@@ -2156,7 +2156,7 @@ static SENSOR_DEVICE_ATTR(pwm2_auto_spinup_time, S_IWUSR | S_IRUGO,
+ 			  show_pwm_auto_spinup_time,
+ 			  store_pwm_auto_spinup_time, 1);
  
- 		if (fmtdesc) {
- 			strlcpy(format->name, fmtdesc->name,
--				sizeof format->name);
-+				sizeof(format->name));
- 			format->fcc = fmtdesc->fcc;
- 		} else {
- 			uvc_printk(KERN_INFO, "Unknown video format %pUl\n",
-@@ -445,7 +445,7 @@ static int uvc_parse_format(struct uvc_device *dev,
- 			return -EINVAL;
- 		}
+-static ssize_t show_pwm_auto_prochot_ramp(struct device *dev,
++static ssize_t pwm_auto_prochot_ramp_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+ 	struct lm93_data *data = lm93_update_device(dev);
+@@ -2164,7 +2164,7 @@ static ssize_t show_pwm_auto_prochot_ramp(struct device *dev,
+ 		       LM93_RAMP_FROM_REG(data->pwm_ramp_ctl >> 4 & 0x0f));
+ }
  
--		strlcpy(format->name, "MJPEG", sizeof format->name);
-+		strlcpy(format->name, "MJPEG", sizeof(format->name));
- 		format->fcc = V4L2_PIX_FMT_MJPEG;
- 		format->flags = UVC_FMT_FLAG_COMPRESSED;
- 		format->bpp = 0;
-@@ -463,13 +463,13 @@ static int uvc_parse_format(struct uvc_device *dev,
+-static ssize_t store_pwm_auto_prochot_ramp(struct device *dev,
++static ssize_t pwm_auto_prochot_ramp_store(struct device *dev,
+ 						struct device_attribute *attr,
+ 						const char *buf, size_t count)
+ {
+@@ -2186,11 +2186,9 @@ static ssize_t store_pwm_auto_prochot_ramp(struct device *dev,
+ 	return count;
+ }
  
- 		switch (buffer[8] & 0x7f) {
- 		case 0:
--			strlcpy(format->name, "SD-DV", sizeof format->name);
-+			strlcpy(format->name, "SD-DV", sizeof(format->name));
- 			break;
- 		case 1:
--			strlcpy(format->name, "SDL-DV", sizeof format->name);
-+			strlcpy(format->name, "SDL-DV", sizeof(format->name));
- 			break;
- 		case 2:
--			strlcpy(format->name, "HD-DV", sizeof format->name);
-+			strlcpy(format->name, "HD-DV", sizeof(format->name));
- 			break;
- 		default:
- 			uvc_trace(UVC_TRACE_DESCR,
-@@ -480,7 +480,7 @@ static int uvc_parse_format(struct uvc_device *dev,
- 		}
+-static DEVICE_ATTR(pwm_auto_prochot_ramp, S_IRUGO | S_IWUSR,
+-			show_pwm_auto_prochot_ramp,
+-			store_pwm_auto_prochot_ramp);
++static DEVICE_ATTR_RW(pwm_auto_prochot_ramp);
  
- 		strlcat(format->name, buffer[8] & (1 << 7) ? " 60Hz" : " 50Hz",
--			sizeof format->name);
-+			sizeof(format->name));
+-static ssize_t show_pwm_auto_vrdhot_ramp(struct device *dev,
++static ssize_t pwm_auto_vrdhot_ramp_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+ 	struct lm93_data *data = lm93_update_device(dev);
+@@ -2198,7 +2196,7 @@ static ssize_t show_pwm_auto_vrdhot_ramp(struct device *dev,
+ 		       LM93_RAMP_FROM_REG(data->pwm_ramp_ctl & 0x0f));
+ }
  
- 		format->fcc = V4L2_PIX_FMT_DV;
- 		format->flags = UVC_FMT_FLAG_COMPRESSED | UVC_FMT_FLAG_STREAM;
-@@ -489,7 +489,7 @@ static int uvc_parse_format(struct uvc_device *dev,
+-static ssize_t store_pwm_auto_vrdhot_ramp(struct device *dev,
++static ssize_t pwm_auto_vrdhot_ramp_store(struct device *dev,
+ 						struct device_attribute *attr,
+ 						const char *buf, size_t count)
+ {
+@@ -2220,9 +2218,7 @@ static ssize_t store_pwm_auto_vrdhot_ramp(struct device *dev,
+ 	return 0;
+ }
  
- 		/* Create a dummy frame descriptor. */
- 		frame = &format->frame[0];
--		memset(&format->frame[0], 0, sizeof format->frame[0]);
-+		memset(&format->frame[0], 0, sizeof(format->frame[0]));
- 		frame->bFrameIntervalType = 1;
- 		frame->dwDefaultFrameInterval = 1;
- 		frame->dwFrameInterval = *intervals;
-@@ -660,7 +660,7 @@ static int uvc_parse_streaming(struct uvc_device *dev,
- 		return -EINVAL;
- 	}
+-static DEVICE_ATTR(pwm_auto_vrdhot_ramp, S_IRUGO | S_IWUSR,
+-			show_pwm_auto_vrdhot_ramp,
+-			store_pwm_auto_vrdhot_ramp);
++static DEVICE_ATTR_RW(pwm_auto_vrdhot_ramp);
  
--	streaming = kzalloc(sizeof *streaming, GFP_KERNEL);
-+	streaming = kzalloc(sizeof(*streaming), GFP_KERNEL);
- 	if (!streaming) {
- 		usb_driver_release_interface(&uvc_driver.driver, intf);
- 		return -EINVAL;
-@@ -812,8 +812,8 @@ static int uvc_parse_streaming(struct uvc_device *dev,
- 		goto error;
- 	}
+ static ssize_t show_vid(struct device *dev, struct device_attribute *attr,
+ 			char *buf)
+@@ -2378,7 +2374,7 @@ static SENSOR_DEVICE_ATTR(prochot1_interval, S_IWUSR | S_IRUGO,
+ static SENSOR_DEVICE_ATTR(prochot2_interval, S_IWUSR | S_IRUGO,
+ 			  show_prochot_interval, store_prochot_interval, 1);
  
--	size = nformats * sizeof *format + nframes * sizeof *frame
--	     + nintervals * sizeof *interval;
-+	size = nformats * sizeof(*format) + nframes * sizeof(*frame)
-+	       + nintervals * sizeof(*interval);
- 	format = kzalloc(size, GFP_KERNEL);
- 	if (!format) {
- 		ret = -ENOMEM;
-@@ -989,7 +989,7 @@ static int uvc_parse_vendor_control(struct uvc_device *dev,
+-static ssize_t show_prochot_override_duty_cycle(struct device *dev,
++static ssize_t prochot_override_duty_cycle_show(struct device *dev,
+ 						struct device_attribute *attr,
+ 						char *buf)
+ {
+@@ -2386,7 +2382,7 @@ static ssize_t show_prochot_override_duty_cycle(struct device *dev,
+ 	return sprintf(buf, "%d\n", data->prochot_override & 0x0f);
+ }
  
- 		if (buffer[24+p+2*n] != 0)
- 			usb_string(udev, buffer[24+p+2*n], unit->name,
--				   sizeof unit->name);
-+				   sizeof(unit->name));
- 		else
- 			sprintf(unit->name, "Extension %u", buffer[3]);
+-static ssize_t store_prochot_override_duty_cycle(struct device *dev,
++static ssize_t prochot_override_duty_cycle_store(struct device *dev,
+ 						struct device_attribute *attr,
+ 						const char *buf, size_t count)
+ {
+@@ -2408,18 +2404,16 @@ static ssize_t store_prochot_override_duty_cycle(struct device *dev,
+ 	return count;
+ }
  
-@@ -1089,7 +1089,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+-static DEVICE_ATTR(prochot_override_duty_cycle, S_IRUGO | S_IWUSR,
+-			show_prochot_override_duty_cycle,
+-			store_prochot_override_duty_cycle);
++static DEVICE_ATTR_RW(prochot_override_duty_cycle);
  
- 		if (UVC_ENTITY_TYPE(term) = UVC_ITT_CAMERA) {
- 			term->camera.bControlSize = n;
--			term->camera.bmControls = (__u8 *)term + sizeof *term;
-+			term->camera.bmControls = (__u8 *)term + sizeof(*term);
- 			term->camera.wObjectiveFocalLengthMin  				get_unaligned_le16(&buffer[8]);
- 			term->camera.wObjectiveFocalLengthMax @@ -1100,17 +1100,17 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
- 		} else if (UVC_ENTITY_TYPE(term) =
- 			   UVC_ITT_MEDIA_TRANSPORT_INPUT) {
- 			term->media.bControlSize = n;
--			term->media.bmControls = (__u8 *)term + sizeof *term;
-+			term->media.bmControls = (__u8 *)term + sizeof(*term);
- 			term->media.bTransportModeSize = p;
- 			term->media.bmTransportModes = (__u8 *)term
--						     + sizeof *term + n;
-+						       + sizeof(*term) + n;
- 			memcpy(term->media.bmControls, &buffer[9], n);
- 			memcpy(term->media.bmTransportModes, &buffer[10+n], p);
- 		}
+-static ssize_t show_prochot_short(struct device *dev,
++static ssize_t prochot_short_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+ 	struct lm93_data *data = lm93_update_device(dev);
+ 	return sprintf(buf, "%d\n", (data->config & 0x10) ? 1 : 0);
+ }
  
- 		if (buffer[7] != 0)
- 			usb_string(udev, buffer[7], term->name,
--				   sizeof term->name);
-+				   sizeof(term->name));
- 		else if (UVC_ENTITY_TYPE(term) = UVC_ITT_CAMERA)
- 			sprintf(term->name, "Camera %u", buffer[3]);
- 		else if (UVC_ENTITY_TYPE(term) = UVC_ITT_MEDIA_TRANSPORT_INPUT)
-@@ -1152,7 +1152,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+-static ssize_t store_prochot_short(struct device *dev,
++static ssize_t prochot_short_store(struct device *dev,
+ 					struct device_attribute *attr,
+ 					const char *buf, size_t count)
+ {
+@@ -2442,8 +2436,7 @@ static ssize_t store_prochot_short(struct device *dev,
+ 	return count;
+ }
  
- 		if (buffer[8] != 0)
- 			usb_string(udev, buffer[8], term->name,
--				   sizeof term->name);
-+				   sizeof(term->name));
- 		else
- 			sprintf(term->name, "Output %u", buffer[3]);
+-static DEVICE_ATTR(prochot_short, S_IRUGO | S_IWUSR,
+-		   show_prochot_short, store_prochot_short);
++static DEVICE_ATTR_RW(prochot_short);
  
-@@ -1177,7 +1177,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+ static ssize_t show_vrdhot(struct device *dev, struct device_attribute *attr,
+ 				char *buf)
+@@ -2457,23 +2450,23 @@ static ssize_t show_vrdhot(struct device *dev, struct device_attribute *attr,
+ static SENSOR_DEVICE_ATTR(vrdhot1, S_IRUGO, show_vrdhot, NULL, 0);
+ static SENSOR_DEVICE_ATTR(vrdhot2, S_IRUGO, show_vrdhot, NULL, 1);
  
- 		if (buffer[5+p] != 0)
- 			usb_string(udev, buffer[5+p], unit->name,
--				   sizeof unit->name);
-+				   sizeof(unit->name));
- 		else
- 			sprintf(unit->name, "Selector %u", buffer[3]);
+-static ssize_t show_gpio(struct device *dev, struct device_attribute *attr,
++static ssize_t gpio_show(struct device *dev, struct device_attribute *attr,
+ 				char *buf)
+ {
+ 	struct lm93_data *data = lm93_update_device(dev);
+ 	return sprintf(buf, "%d\n", LM93_GPI_FROM_REG(data->gpi));
+ }
  
-@@ -1203,14 +1203,14 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
- 		unit->processing.wMaxMultiplier  			get_unaligned_le16(&buffer[5]);
- 		unit->processing.bControlSize = buffer[7];
--		unit->processing.bmControls = (__u8 *)unit + sizeof *unit;
-+		unit->processing.bmControls = (__u8 *)unit + sizeof(*unit);
- 		memcpy(unit->processing.bmControls, &buffer[8], n);
- 		if (dev->uvc_version >= 0x0110)
- 			unit->processing.bmVideoStandards = buffer[9+n];
+-static DEVICE_ATTR(gpio, S_IRUGO, show_gpio, NULL);
++static DEVICE_ATTR_RO(gpio);
  
- 		if (buffer[8+n] != 0)
- 			usb_string(udev, buffer[8+n], unit->name,
--				   sizeof unit->name);
-+				   sizeof(unit->name));
- 		else
- 			sprintf(unit->name, "Processing %u", buffer[3]);
+-static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
++static ssize_t alarms_show(struct device *dev, struct device_attribute *attr,
+ 				char *buf)
+ {
+ 	struct lm93_data *data = lm93_update_device(dev);
+ 	return sprintf(buf, "%d\n", LM93_ALARMS_FROM_REG(data->block1));
+ }
  
-@@ -1236,12 +1236,12 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
- 		unit->extension.bNumControls = buffer[20];
- 		memcpy(unit->baSourceID, &buffer[22], p);
- 		unit->extension.bControlSize = buffer[22+p];
--		unit->extension.bmControls = (__u8 *)unit + sizeof *unit;
-+		unit->extension.bmControls = (__u8 *)unit + sizeof(*unit);
- 		memcpy(unit->extension.bmControls, &buffer[23+p], n);
+-static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
++static DEVICE_ATTR_RO(alarms);
  
- 		if (buffer[23+p+n] != 0)
- 			usb_string(udev, buffer[23+p+n], unit->name,
--				   sizeof unit->name);
-+				   sizeof(unit->name));
- 		else
- 			sprintf(unit->name, "Extension %u", buffer[3]);
- 
-@@ -1932,7 +1932,7 @@ static int uvc_register_video(struct uvc_device *dev,
- 	vdev->prio = &stream->chain->prio;
- 	if (stream->type = V4L2_BUF_TYPE_VIDEO_OUTPUT)
- 		vdev->vfl_dir = VFL_DIR_TX;
--	strlcpy(vdev->name, dev->name, sizeof vdev->name);
-+	strlcpy(vdev->name, dev->name, sizeof(vdev->name));
- 
- 	/* Set the driver data before calling video_register_device, otherwise
- 	 * uvc_v4l2_open might race us.
-@@ -2049,9 +2049,9 @@ static int uvc_probe(struct usb_interface *intf,
- 		    ? id->driver_info : uvc_quirks_param;
- 
- 	if (udev->product)
--		strlcpy(dev->name, udev->product, sizeof dev->name);
-+		strlcpy(dev->name, udev->product, sizeof(dev->name));
- 	else
--		snprintf(dev->name, sizeof dev->name,
-+		snprintf(dev->name, sizeof(dev->name),
- 			"UVC Camera (%04x:%04x)",
- 			le16_to_cpu(udev->descriptor.idVendor),
- 			le16_to_cpu(udev->descriptor.idProduct));
--- 
-2.11.0
+ static struct attribute *lm93_attrs[] = {
+ 	&sensor_dev_attr_in1_input.dev_attr.attr,
 
