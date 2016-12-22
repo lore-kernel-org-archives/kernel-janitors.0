@@ -1,20 +1,89 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 12 Dec 2016 02:18:35 +0000
-Subject: Re: [patch] sparc64: make string buffers large enough
-Message-Id: <20161211.211835.269565767787847661.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:19 +0000
+Subject: [PATCH 50/66] hwmon: (k10temp) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-51-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Nov 2016 14:03:55 +0300
+Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
+source code, improves readbility, and reduces the chance of
+inconsistencies.
 
-> My static checker complains that if "lvl" is ULONG_MAX (this is 64 bit)
-> then some of the strings will overflow.  I don't know if that's possible
-> but it seems simple enough to make the buffers slightly larger.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch for the RO case, in the case where the show function
+already has the expected name, is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied.
+// <smpl>
+@ro@
+declarer name DEVICE_ATTR;
+identifier x,x_show;
+@@
+
+DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+
+@script:ocaml@
+x << ro.x;
+x_show << ro.x_show;
+@@
+
+if not (x^"_show" = x_show) then Coccilib.include_match false
+
+@@
+declarer name DEVICE_ATTR_RO;
+identifier ro.x,ro.x_show;
+@@
+
+- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
++ DEVICE_ATTR_RO(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/hwmon/k10temp.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+index 9cdfde6..ce3b91f 100644
+--- a/drivers/hwmon/k10temp.c
++++ b/drivers/hwmon/k10temp.c
+@@ -72,8 +72,8 @@ static void amd_nb_smu_index_read(struct pci_dev *pdev, unsigned int devfn,
+ 	mutex_unlock(&nb_smu_ind_mutex);
+ }
+ 
+-static ssize_t show_temp(struct device *dev,
+-			 struct device_attribute *attr, char *buf)
++static ssize_t temp1_input_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
+ {
+ 	u32 regval;
+ 	struct pci_dev *pdev = dev_get_drvdata(dev);
+@@ -88,8 +88,8 @@ static ssize_t show_temp(struct device *dev,
+ 	return sprintf(buf, "%u\n", (regval >> 21) * 125);
+ }
+ 
+-static ssize_t show_temp_max(struct device *dev,
+-			     struct device_attribute *attr, char *buf)
++static ssize_t temp1_max_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
+ {
+ 	return sprintf(buf, "%d\n", 70 * 1000);
+ }
+@@ -110,8 +110,8 @@ static ssize_t show_temp_crit(struct device *dev,
+ 	return sprintf(buf, "%d\n", value);
+ }
+ 
+-static DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL);
+-static DEVICE_ATTR(temp1_max, S_IRUGO, show_temp_max, NULL);
++static DEVICE_ATTR_RO(temp1_input);
++static DEVICE_ATTR_RO(temp1_max);
+ static SENSOR_DEVICE_ATTR(temp1_crit, S_IRUGO, show_temp_crit, NULL, 0);
+ static SENSOR_DEVICE_ATTR(temp1_crit_hyst, S_IRUGO, show_temp_crit, NULL, 1);
+ 
+
