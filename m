@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:28 +0000
-Subject: [PATCH 59/66] hwmon: (adm1025) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-60-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 22 Dec 2016 12:05:02 +0000
+Subject: [PATCH 33/66] hwmon: (nsa320) use permission-specific DEVICE_ATTR variants
+Message-Id: <1482408335-3435-34-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -46,62 +46,45 @@ identifier ro.x,ro.x_show;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hwmon/adm1025.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/hwmon/nsa320-hwmon.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hwmon/adm1025.c b/drivers/hwmon/adm1025.c
-index 1abb460..1e4dad3 100644
---- a/drivers/hwmon/adm1025.c
-+++ b/drivers/hwmon/adm1025.c
-@@ -333,12 +333,12 @@ static SENSOR_DEVICE_ATTR(temp##offset##_max, S_IWUSR | S_IRUGO, \
- set_temp(2);
- 
- static ssize_t
--show_alarms(struct device *dev, struct device_attribute *attr, char *buf)
-+alarms_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	struct adm1025_data *data = adm1025_update_device(dev);
- 	return sprintf(buf, "%u\n", data->alarms);
+diff --git a/drivers/hwmon/nsa320-hwmon.c b/drivers/hwmon/nsa320-hwmon.c
+index 0517a2657..5a16109 100644
+--- a/drivers/hwmon/nsa320-hwmon.c
++++ b/drivers/hwmon/nsa320-hwmon.c
+@@ -122,8 +122,8 @@ static ssize_t show_label(struct device *dev,
+ 	return sprintf(buf, "%s\n", nsa320_input_names[channel]);
  }
--static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
-+static DEVICE_ATTR_RO(alarms);
  
- static ssize_t
- show_alarm(struct device *dev, struct device_attribute *attr, char *buf)
-@@ -358,21 +358,21 @@ static SENSOR_DEVICE_ATTR(temp##offset##_max, S_IWUSR | S_IRUGO, \
- static SENSOR_DEVICE_ATTR(temp1_fault, S_IRUGO, show_alarm, NULL, 14);
- 
- static ssize_t
--show_vid(struct device *dev, struct device_attribute *attr, char *buf)
-+cpu0_vid_show(struct device *dev, struct device_attribute *attr, char *buf)
+-static ssize_t show_temp(struct device *dev, struct device_attribute *attr,
+-			 char *buf)
++static ssize_t temp1_input_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
  {
- 	struct adm1025_data *data = adm1025_update_device(dev);
- 	return sprintf(buf, "%u\n", vid_from_reg(data->vid, data->vrm));
- }
--static DEVICE_ATTR(cpu0_vid, S_IRUGO, show_vid, NULL);
-+static DEVICE_ATTR_RO(cpu0_vid);
+ 	s32 mcu_data = nsa320_hwmon_update(dev);
  
- static ssize_t
--show_vrm(struct device *dev, struct device_attribute *attr, char *buf)
-+vrm_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	struct adm1025_data *data = dev_get_drvdata(dev);
- 	return sprintf(buf, "%u\n", data->vrm);
+@@ -133,8 +133,8 @@ static ssize_t show_temp(struct device *dev, struct device_attribute *attr,
+ 	return sprintf(buf, "%d\n", (mcu_data & 0xffff) * 100);
  }
--static ssize_t set_vrm(struct device *dev, struct device_attribute *attr,
--		       const char *buf, size_t count)
-+static ssize_t vrm_store(struct device *dev, struct device_attribute *attr,
-+			 const char *buf, size_t count)
- {
- 	struct adm1025_data *data = dev_get_drvdata(dev);
- 	unsigned long val;
-@@ -388,7 +388,7 @@ static ssize_t set_vrm(struct device *dev, struct device_attribute *attr,
- 	data->vrm = val;
- 	return count;
- }
--static DEVICE_ATTR(vrm, S_IRUGO | S_IWUSR, show_vrm, set_vrm);
-+static DEVICE_ATTR_RW(vrm);
  
- /*
-  * Real code
+-static ssize_t show_fan(struct device *dev, struct device_attribute *attr,
+-			char *buf)
++static ssize_t fan1_input_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
+ {
+ 	s32 mcu_data = nsa320_hwmon_update(dev);
+ 
+@@ -145,9 +145,9 @@ static ssize_t show_fan(struct device *dev, struct device_attribute *attr,
+ }
+ 
+ static SENSOR_DEVICE_ATTR(temp1_label, S_IRUGO, show_label, NULL, NSA320_TEMP);
+-static DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL);
++static DEVICE_ATTR_RO(temp1_input);
+ static SENSOR_DEVICE_ATTR(fan1_label, S_IRUGO, show_label, NULL, NSA320_FAN);
+-static DEVICE_ATTR(fan1_input, S_IRUGO, show_fan, NULL);
++static DEVICE_ATTR_RO(fan1_input);
+ 
+ static struct attribute *nsa320_attrs[] = {
+ 	&sensor_dev_attr_temp1_label.dev_attr.attr,
 
