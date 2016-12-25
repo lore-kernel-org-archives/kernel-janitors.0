@@ -1,83 +1,68 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:17 +0000
-Subject: [PATCH 48/66] hwmon: (w83793) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-49-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 25 Dec 2016 18:32:12 +0000
+Subject: [PATCH 03/19] [media] uvc_driver: Adjust three function calls together with a variable assignment
+Message-Id: <5d6e7fac-d464-687b-ef87-d813d707911f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rudolf Marek <r.marek@assembler.cz>
-Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 25 Dec 2016 08:05:58 +0100
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+The script "checkpatch.pl" pointed information out like the following.
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+ERROR: do not use assignment in if condition
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+Thus fix the affected source code places.
 
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
-
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwmon/w83793.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwmon/w83793.c b/drivers/hwmon/w83793.c
-index 816aa6c..dab5c51 100644
---- a/drivers/hwmon/w83793.c
-+++ b/drivers/hwmon/w83793.c
-@@ -324,7 +324,7 @@ static int w83793_detect(struct i2c_client *client,
- };
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index 7c42be2414ea..bddaf98ef828 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1275,7 +1275,8 @@ static int uvc_parse_control(struct uvc_device *dev)
+ 		    buffer[1] != USB_DT_CS_INTERFACE)
+ 			goto next_descriptor;
  
- static ssize_t
--show_vrm(struct device *dev, struct device_attribute *attr, char *buf)
-+vrm_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	struct w83793_data *data = dev_get_drvdata(dev);
- 	return sprintf(buf, "%d\n", data->vrm);
-@@ -342,7 +342,7 @@ static int w83793_detect(struct i2c_client *client,
- }
+-		if ((ret = uvc_parse_standard_control(dev, buffer, buflen)) < 0)
++		ret = uvc_parse_standard_control(dev, buffer, buflen);
++		if (ret < 0)
+ 			return ret;
  
- static ssize_t
--store_vrm(struct device *dev, struct device_attribute *attr,
-+vrm_store(struct device *dev, struct device_attribute *attr,
- 	  const char *buf, size_t count)
- {
- 	struct w83793_data *data = dev_get_drvdata(dev);
-@@ -1169,7 +1169,7 @@ static int w83793_detect(struct i2c_client *client,
- 	SENSOR_ATTR_2(cpu0_vid, S_IRUGO, show_vid, NULL, NOT_USED, 0),
- 	SENSOR_ATTR_2(cpu1_vid, S_IRUGO, show_vid, NULL, NOT_USED, 1),
- };
--static DEVICE_ATTR(vrm, S_IWUSR | S_IRUGO, show_vrm, store_vrm);
-+static DEVICE_ATTR_RW(vrm);
+ next_descriptor:
+@@ -2030,7 +2031,8 @@ static int uvc_probe(struct usb_interface *intf,
+ 				udev->devpath);
  
- static struct sensor_device_attribute_2 sda_single_files[] = {
- 	SENSOR_ATTR_2(intrusion0_alarm, S_IWUSR | S_IRUGO, show_alarm_beep,
+ 	/* Allocate memory for the device and initialize it. */
+-	if ((dev = kzalloc(sizeof *dev, GFP_KERNEL)) = NULL)
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
++	if (!dev)
+ 		return -ENOMEM;
+ 
+ 	INIT_LIST_HEAD(&dev->entities);
+@@ -2113,11 +2115,11 @@ static int uvc_probe(struct usb_interface *intf,
+ 	usb_set_intfdata(intf, dev);
+ 
+ 	/* Initialize the interrupt URB. */
+-	if ((ret = uvc_status_init(dev)) < 0) {
++	ret = uvc_status_init(dev);
++	if (ret < 0)
+ 		uvc_printk(KERN_INFO,
+ 			   "Unable to initialize the status endpoint (%d), status interrupt will not be supported.\n",
+ 			   ret);
+-	}
+ 
+ 	uvc_trace(UVC_TRACE_PROBE, "UVC device initialized.\n");
+ 	usb_enable_autosuspend(udev);
+-- 
+2.11.0
 
