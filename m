@@ -1,52 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 20:50:03 +0000
-Subject: [PATCH 2/4] [media] bt8xx: Delete two error messages for a failed memory allocation
-Message-Id: <e14ec555-7299-75e7-5fd0-9b38448aab84@users.sourceforge.net>
+Date: Sun, 25 Dec 2016 18:41:41 +0000
+Subject: [PATCH 10/19] [media] uvc_driver: Return -ENOMEM after a failed kzalloc() call in uvc_parse_streamin
+Message-Id: <cca09ee1-dc30-b3e6-41fb-63c1443bf91b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
-In-Reply-To: <d9a0777b-8ea7-3f7d-4fa2-b16468c4a1a4@users.sourceforge.net>
+References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, Hans Verkuil <hans.verkuil@cisco.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Dec 2016 20:50:58 +0100
+Date: Sun, 25 Dec 2016 16:00:17 +0100
 
-Omit extra messages for a memory allocation failure in two functions.
+Use the return code "-ENOMEM" (instead of "-EINVAL") after a call of
+the function "kzalloc" failed here.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/pci/bt8xx/dst_ca.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/bt8xx/dst_ca.c b/drivers/media/pci/bt8xx/dst_ca.c
-index 8681b9143a35..54e656ddd588 100644
---- a/drivers/media/pci/bt8xx/dst_ca.c
-+++ b/drivers/media/pci/bt8xx/dst_ca.c
-@@ -481,10 +481,9 @@ static int ca_send_message(struct dst_state *state, struct ca_msg *p_ca_message,
- 	struct ca_msg *hw_buffer;
- 	int result = 0;
- 
--	if ((hw_buffer = kmalloc(sizeof (struct ca_msg), GFP_KERNEL)) = NULL) {
--		dprintk(verbose, DST_CA_ERROR, 1, " Memory allocation failure");
-+	hw_buffer = kmalloc(sizeof(*hw_buffer), GFP_KERNEL);
-+	if (!hw_buffer)
- 		return -ENOMEM;
--	}
- 	dprintk(verbose, DST_CA_DEBUG, 1, " ");
- 
- 	if (copy_from_user(p_ca_message, arg, sizeof (struct ca_msg))) {
-@@ -567,7 +566,6 @@ static long dst_ca_ioctl(struct file *file, unsigned int cmd, unsigned long ioct
- 	p_ca_slot_info = kmalloc(sizeof (struct ca_slot_info), GFP_KERNEL);
- 	p_ca_caps = kmalloc(sizeof (struct ca_caps), GFP_KERNEL);
- 	if (!p_ca_message || !p_ca_slot_info || !p_ca_caps) {
--		dprintk(verbose, DST_CA_ERROR, 1, " Memory allocation failure");
- 		result = -ENOMEM;
- 		goto free_mem_and_exit;
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index b0833902fde2..5736f8b26f92 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -663,7 +663,7 @@ static int uvc_parse_streaming(struct uvc_device *dev,
+ 	streaming = kzalloc(sizeof(*streaming), GFP_KERNEL);
+ 	if (!streaming) {
+ 		usb_driver_release_interface(&uvc_driver.driver, intf);
+-		return -EINVAL;
++		return -ENOMEM;
  	}
+ 
+ 	mutex_init(&streaming->mutex);
 -- 
 2.11.0
 
