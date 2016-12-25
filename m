@@ -1,45 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 09 Dec 2016 14:37:56 +0000
-Subject: [PATCH 3/4] staging: greybus: light: Check return value of a kstrndup() call in gb_lights_light_conf
-Message-Id: <f6479c52-4dd1-fec4-f659-2fe64d5024fd@users.sourceforge.net>
+Date: Sun, 25 Dec 2016 18:54:05 +0000
+Subject: [PATCH 19/19] [media] uvc_video: Add some spaces for better code readability
+Message-Id: <f79cea5b-ed9a-b1a1-e9bb-e4518a95e2f1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
-In-Reply-To: <a2db1eee-eb2c-07b6-2144-3e262facbef9@users.sourceforge.net>
+References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 9 Dec 2016 14:36:16 +0100
+Date: Sun, 25 Dec 2016 19:00:29 +0100
 
-A return value was not checked after a call of the function "kstrndup".
-This issue was detected by using the Coccinelle software.
-
-Add a bit of exception handling.
-
-Fixes: 2870b52bae4c81823ffcb3ed2b0626fb39d64f48 ("greybus: lights: add lights implementation")
+Use space characters at some source code places according to
+the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/greybus/light.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/usb/uvc/uvc_video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
-index 27bfc20eb9a5..c9c377f40f56 100644
---- a/drivers/staging/greybus/light.c
-+++ b/drivers/staging/greybus/light.c
-@@ -1030,6 +1030,9 @@ static int gb_lights_light_config(struct gb_lights *glights, u8 id)
- 
- 	light->channels_count = conf.channel_count;
- 	light->name = kstrndup(conf.name, NAMES_MAX, GFP_KERNEL);
-+	if (!light->name)
-+		return -ENOMEM;
-+
- 	light->channels = kcalloc(light->channels_count,
- 				  sizeof(*light->channels),
- 				  GFP_KERNEL);
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index aba21e0abf02..9c0b8b325157 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -1814,7 +1814,7 @@ int uvc_video_init(struct uvc_streaming *stream)
+ 	 * available format otherwise.
+ 	 */
+ 	for (i = stream->nformats; i > 0; --i) {
+-		format = &stream->format[i-1];
++		format = &stream->format[i - 1];
+ 		if (format->index = probe->bFormatIndex)
+ 			break;
+ 	}
+@@ -1831,7 +1831,7 @@ int uvc_video_init(struct uvc_streaming *stream)
+ 	 * descriptor is not found, use the first available frame.
+ 	 */
+ 	for (i = format->nframes; i > 0; --i) {
+-		frame = &format->frame[i-1];
++		frame = &format->frame[i - 1];
+ 		if (frame->bFrameIndex = probe->bFrameIndex)
+ 			break;
+ 	}
 -- 
 2.11.0
 
