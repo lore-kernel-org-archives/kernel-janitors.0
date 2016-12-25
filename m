@@ -1,186 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:55 +0000
-Subject: [PATCH 26/66] hwmon: (lm93) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-27-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 25 Dec 2016 18:43:13 +0000
+Subject: [PATCH 11/19] [media] uvc_driver: Delete an unnecessary variable initialisation in uvc_parse_streami
+Message-Id: <268fc54b-9e81-dead-2ee4-3cd8f2caef4b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 25 Dec 2016 16:02:46 +0100
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+The local variable "streaming" will be set to an appropriate pointer
+a bit later. Thus omit the explicit initialisation at the beginning.
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
-
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
-
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwmon/lm93.c |   39 ++++++++++++++++-----------------------
- 1 file changed, 16 insertions(+), 23 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/lm93.c b/drivers/hwmon/lm93.c
-index 90bb048..77a0a83 100644
---- a/drivers/hwmon/lm93.c
-+++ b/drivers/hwmon/lm93.c
-@@ -2156,7 +2156,7 @@ static SENSOR_DEVICE_ATTR(pwm2_auto_spinup_time, S_IWUSR | S_IRUGO,
- 			  show_pwm_auto_spinup_time,
- 			  store_pwm_auto_spinup_time, 1);
- 
--static ssize_t show_pwm_auto_prochot_ramp(struct device *dev,
-+static ssize_t pwm_auto_prochot_ramp_show(struct device *dev,
- 				struct device_attribute *attr, char *buf)
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index 5736f8b26f92..5bb18a5f7d9f 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -631,7 +631,7 @@ static int uvc_parse_format(struct uvc_device *dev,
+ static int uvc_parse_streaming(struct uvc_device *dev,
+ 	struct usb_interface *intf)
  {
- 	struct lm93_data *data = lm93_update_device(dev);
-@@ -2164,7 +2164,7 @@ static ssize_t show_pwm_auto_prochot_ramp(struct device *dev,
- 		       LM93_RAMP_FROM_REG(data->pwm_ramp_ctl >> 4 & 0x0f));
- }
- 
--static ssize_t store_pwm_auto_prochot_ramp(struct device *dev,
-+static ssize_t pwm_auto_prochot_ramp_store(struct device *dev,
- 						struct device_attribute *attr,
- 						const char *buf, size_t count)
- {
-@@ -2186,11 +2186,9 @@ static ssize_t store_pwm_auto_prochot_ramp(struct device *dev,
- 	return count;
- }
- 
--static DEVICE_ATTR(pwm_auto_prochot_ramp, S_IRUGO | S_IWUSR,
--			show_pwm_auto_prochot_ramp,
--			store_pwm_auto_prochot_ramp);
-+static DEVICE_ATTR_RW(pwm_auto_prochot_ramp);
- 
--static ssize_t show_pwm_auto_vrdhot_ramp(struct device *dev,
-+static ssize_t pwm_auto_vrdhot_ramp_show(struct device *dev,
- 				struct device_attribute *attr, char *buf)
- {
- 	struct lm93_data *data = lm93_update_device(dev);
-@@ -2198,7 +2196,7 @@ static ssize_t show_pwm_auto_vrdhot_ramp(struct device *dev,
- 		       LM93_RAMP_FROM_REG(data->pwm_ramp_ctl & 0x0f));
- }
- 
--static ssize_t store_pwm_auto_vrdhot_ramp(struct device *dev,
-+static ssize_t pwm_auto_vrdhot_ramp_store(struct device *dev,
- 						struct device_attribute *attr,
- 						const char *buf, size_t count)
- {
-@@ -2220,9 +2218,7 @@ static ssize_t store_pwm_auto_vrdhot_ramp(struct device *dev,
- 	return 0;
- }
- 
--static DEVICE_ATTR(pwm_auto_vrdhot_ramp, S_IRUGO | S_IWUSR,
--			show_pwm_auto_vrdhot_ramp,
--			store_pwm_auto_vrdhot_ramp);
-+static DEVICE_ATTR_RW(pwm_auto_vrdhot_ramp);
- 
- static ssize_t show_vid(struct device *dev, struct device_attribute *attr,
- 			char *buf)
-@@ -2378,7 +2374,7 @@ static SENSOR_DEVICE_ATTR(prochot1_interval, S_IWUSR | S_IRUGO,
- static SENSOR_DEVICE_ATTR(prochot2_interval, S_IWUSR | S_IRUGO,
- 			  show_prochot_interval, store_prochot_interval, 1);
- 
--static ssize_t show_prochot_override_duty_cycle(struct device *dev,
-+static ssize_t prochot_override_duty_cycle_show(struct device *dev,
- 						struct device_attribute *attr,
- 						char *buf)
- {
-@@ -2386,7 +2382,7 @@ static ssize_t show_prochot_override_duty_cycle(struct device *dev,
- 	return sprintf(buf, "%d\n", data->prochot_override & 0x0f);
- }
- 
--static ssize_t store_prochot_override_duty_cycle(struct device *dev,
-+static ssize_t prochot_override_duty_cycle_store(struct device *dev,
- 						struct device_attribute *attr,
- 						const char *buf, size_t count)
- {
-@@ -2408,18 +2404,16 @@ static ssize_t store_prochot_override_duty_cycle(struct device *dev,
- 	return count;
- }
- 
--static DEVICE_ATTR(prochot_override_duty_cycle, S_IRUGO | S_IWUSR,
--			show_prochot_override_duty_cycle,
--			store_prochot_override_duty_cycle);
-+static DEVICE_ATTR_RW(prochot_override_duty_cycle);
- 
--static ssize_t show_prochot_short(struct device *dev,
-+static ssize_t prochot_short_show(struct device *dev,
- 				struct device_attribute *attr, char *buf)
- {
- 	struct lm93_data *data = lm93_update_device(dev);
- 	return sprintf(buf, "%d\n", (data->config & 0x10) ? 1 : 0);
- }
- 
--static ssize_t store_prochot_short(struct device *dev,
-+static ssize_t prochot_short_store(struct device *dev,
- 					struct device_attribute *attr,
- 					const char *buf, size_t count)
- {
-@@ -2442,8 +2436,7 @@ static ssize_t store_prochot_short(struct device *dev,
- 	return count;
- }
- 
--static DEVICE_ATTR(prochot_short, S_IRUGO | S_IWUSR,
--		   show_prochot_short, store_prochot_short);
-+static DEVICE_ATTR_RW(prochot_short);
- 
- static ssize_t show_vrdhot(struct device *dev, struct device_attribute *attr,
- 				char *buf)
-@@ -2457,23 +2450,23 @@ static ssize_t show_vrdhot(struct device *dev, struct device_attribute *attr,
- static SENSOR_DEVICE_ATTR(vrdhot1, S_IRUGO, show_vrdhot, NULL, 0);
- static SENSOR_DEVICE_ATTR(vrdhot2, S_IRUGO, show_vrdhot, NULL, 1);
- 
--static ssize_t show_gpio(struct device *dev, struct device_attribute *attr,
-+static ssize_t gpio_show(struct device *dev, struct device_attribute *attr,
- 				char *buf)
- {
- 	struct lm93_data *data = lm93_update_device(dev);
- 	return sprintf(buf, "%d\n", LM93_GPI_FROM_REG(data->gpi));
- }
- 
--static DEVICE_ATTR(gpio, S_IRUGO, show_gpio, NULL);
-+static DEVICE_ATTR_RO(gpio);
- 
--static ssize_t show_alarms(struct device *dev, struct device_attribute *attr,
-+static ssize_t alarms_show(struct device *dev, struct device_attribute *attr,
- 				char *buf)
- {
- 	struct lm93_data *data = lm93_update_device(dev);
- 	return sprintf(buf, "%d\n", LM93_ALARMS_FROM_REG(data->block1));
- }
- 
--static DEVICE_ATTR(alarms, S_IRUGO, show_alarms, NULL);
-+static DEVICE_ATTR_RO(alarms);
- 
- static struct attribute *lm93_attrs[] = {
- 	&sensor_dev_attr_in1_input.dev_attr.attr,
+-	struct uvc_streaming *streaming = NULL;
++	struct uvc_streaming *streaming;
+ 	struct uvc_format *format;
+ 	struct uvc_frame *frame;
+ 	struct usb_host_interface *alts = &intf->altsetting[0];
+-- 
+2.11.0
 
