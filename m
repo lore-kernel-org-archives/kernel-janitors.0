@@ -1,71 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 16 Dec 2016 12:31:53 +0000
-Subject: Applied "spi: armada-3700: Set mode bits correctly" to the spi tree
-Message-Id: <E1cHrg1-0006LK-I7@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 20:47:17 +0000
+Subject: [PATCH 3/8] [media] videobuf-dma-sg: Use kmalloc_array() in videobuf_dma_init_user_locked()
+Message-Id: <f02ed3c0-60f5-300c-c767-b3d96816b5ad@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161216093325.GA13942@elgon.mountain>
-In-Reply-To: <20161216093325.GA13942@elgon.mountain>
+References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+In-Reply-To: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Romain Perier <romain.perier@free-electrons.com>, Mark Brown <broonie@kernel.org>Mark Brown <broonie@kernel.org>Romain Perier <romain.perier@free-electrons.com>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 19:46:56 +0100
 
-   spi: armada-3700: Set mode bits correctly
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-has been applied to the spi tree at
+  This issue was detected by using the Coccinelle software.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 42cd4ed888393b2bc8ddfd277aa2d0ec0c7e0259 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Dec 2016 12:33:25 +0300
-Subject: [PATCH] spi: armada-3700: Set mode bits correctly
-
-We set SPI_RX_DUAL twice instead of setting SPI_TX_DUAL.
-
-Fixes: 5762ab71eb24 ("spi: Add support for Armada 3700 SPI Controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Romain Perier <romain.perier@free-electrons.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/spi/spi-armada-3700.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/v4l2-core/videobuf-dma-sg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
-index 4e921782652f..0314c6b9e044 100644
---- a/drivers/spi/spi-armada-3700.c
-+++ b/drivers/spi/spi-armada-3700.c
-@@ -825,7 +825,7 @@ static int a3700_spi_probe(struct platform_device *pdev)
- 	master->unprepare_message = a3700_spi_unprepare_message;
- 	master->set_cs = a3700_spi_set_cs;
- 	master->flags = SPI_MASTER_HALF_DUPLEX;
--	master->mode_bits |= (SPI_RX_DUAL | SPI_RX_DUAL |
-+	master->mode_bits |= (SPI_RX_DUAL | SPI_TX_DUAL |
- 			      SPI_RX_QUAD | SPI_TX_QUAD);
+diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
+index ba63ca57ed7e..ab3c1f6a2ca1 100644
+--- a/drivers/media/v4l2-core/videobuf-dma-sg.c
++++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
+@@ -175,7 +175,9 @@ static int videobuf_dma_init_user_locked(struct videobuf_dmabuf *dma,
+ 	dma->offset = data & ~PAGE_MASK;
+ 	dma->size = size;
+ 	dma->nr_pages = last-first+1;
+-	dma->pages = kmalloc(dma->nr_pages * sizeof(struct page *), GFP_KERNEL);
++	dma->pages = kmalloc_array(dma->nr_pages,
++				   sizeof(*dma->pages),
++				   GFP_KERNEL);
+ 	if (NULL = dma->pages)
+ 		return -ENOMEM;
  
- 	platform_set_drvdata(pdev, master);
 -- 
 2.11.0
 
