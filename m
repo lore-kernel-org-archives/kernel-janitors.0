@@ -1,74 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:56 +0000
-Subject: [PATCH 27/66] hwmon: (max1111) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-28-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 20:52:23 +0000
+Subject: [PATCH 7/8] [media] videobuf-dma-sg: Delete an unnecessary return statement in videobuf_vm_close()
+Message-Id: <23eb1fd5-696e-aed0-eb26-f5ae46b6e62e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+In-Reply-To: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 21:09:01 +0100
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+The script "checkpatch.pl" pointed information out like the following.
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+WARNING: void function return statements are not generally useful
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+Thus remove such a statement here.
 
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
-
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwmon/max1111.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/v4l2-core/videobuf-dma-sg.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/hwmon/max1111.c b/drivers/hwmon/max1111.c
-index 303d0c9..8ddd4d6 100644
---- a/drivers/hwmon/max1111.c
-+++ b/drivers/hwmon/max1111.c
-@@ -98,7 +98,7 @@ int max1111_read_channel(int channel)
-  * likely to be used by hwmon applications to distinguish between
-  * different devices, explicitly add a name attribute here.
-  */
--static ssize_t show_name(struct device *dev,
-+static ssize_t name_show(struct device *dev,
- 			 struct device_attribute *attr, char *buf)
- {
- 	return sprintf(buf, "%s\n", to_spi_device(dev)->modalias);
-@@ -125,7 +125,7 @@ static ssize_t show_adc(struct device *dev,
- #define MAX1111_ADC_ATTR(_id)		\
- 	SENSOR_DEVICE_ATTR(in##_id##_input, S_IRUGO, show_adc, NULL, _id)
+diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
+index 070ba10bbdbc..c8658530da57 100644
+--- a/drivers/media/v4l2-core/videobuf-dma-sg.c
++++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
+@@ -427,7 +427,6 @@ static void videobuf_vm_close(struct vm_area_struct *vma)
+ 		videobuf_queue_unlock(q);
+ 		kfree(map);
+ 	}
+-	return;
+ }
  
--static DEVICE_ATTR(name, S_IRUGO, show_name, NULL);
-+static DEVICE_ATTR_RO(name);
- static MAX1111_ADC_ATTR(0);
- static MAX1111_ADC_ATTR(1);
- static MAX1111_ADC_ATTR(2);
+ /*
+-- 
+2.11.0
 
