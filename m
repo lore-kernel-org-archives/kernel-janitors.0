@@ -1,34 +1,34 @@
-From: James Simmons <jsimmons@infradead.org>
-Date: Wed, 07 Dec 2016 19:52:39 +0000
-Subject: Re: [lustre-devel] [PATCH] staging: lustre: Fix a spatch warning due to an assignment from kernel to
-Message-Id: <alpine.LFD.2.20.1612071950340.1427@casper.infradead.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 20:41:19 +0000
+Subject: [PATCH 0/8] [media] v4l2-core: Fine-tuning for some function implementations
+Message-Id: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161202173332.5100-1-lambert.quentin@gmail.com> <306D1D4D-A949-44F6-BAFE-44F08F609D9B@intel.com> <81821426-c32c-c45a-e9a3-82f9818fc986@gmail.com> <33d23121-e5ca-0e14-bfbb-632f883e0948@gmail.com> <20161207153317.GO8176@mwanda>
- <46ee428d-016f-e532-9824-4ddbe8a0cc8b@gmail.com> <20161207192237.GP8176@mwanda>
-In-Reply-To: <20161207192237.GP8176@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Quentin Lambert <lambert.quentin@gmail.com>, devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Drokin <oleg.drokin@intel.com>, lustre-devel@lists.lustre.org
+To: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 21:30:12 +0100
 
-> > On 12/07/2016 04:33 PM, Dan Carpenter wrote:
-> > >Lustre is kind of a mess with regards to keeping user and kernel
-> > >pointers separate.  It's not going to be easy to fix.
-> > Fair enough.
-> > I am trying to make a contribution to drivers/staging using sparse.
-> > With that in mind, do you still fill I should keep clear of lustre?
-> > I feel that actually doing the work properly could be a meaningful
-> > learning experience.
-> 
-> It's just that you're the fifth person to look at lustre __user
-> annotations and it doesn't end well.  You need to be a lustre expert
-> who can test things.
-> 
-> But for other lustre things, feel free.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Actually we are working to fix this issue. We are working on a 
-process that lustre patch posted here get sucked up and put
-into our test harness automatically. It needs more love but its
-coming along.
+Markus Elfring (8):
+  v4l2-async: Use kmalloc_array() in v4l2_async_notifier_unregister()
+  v4l2-async: Delete an error message for a failed memory allocation in v4l2_async_notifier_unregister()
+  videobuf-dma-sg: Use kmalloc_array() in videobuf_dma_init_user_locked()
+  videobuf-dma-sg: Adjust 24 checks for null values
+  videobuf-dma-sg: Move two assignments for error codes in __videobuf_mmap_mapper()
+  videobuf-dma-sg: Improve a size determination in __videobuf_mmap_mapper()
+  videobuf-dma-sg: Delete an unnecessary return statement in videobuf_vm_close()
+  videobuf-dma-sg: Add some spaces for better code readability in videobuf_dma_init_user_locked()
+
+ drivers/media/v4l2-core/v4l2-async.c      |  7 +---
+ drivers/media/v4l2-core/videobuf-dma-sg.c | 65 ++++++++++++++++---------------
+ 2 files changed, 34 insertions(+), 38 deletions(-)
+
+-- 
+2.11.0
+
