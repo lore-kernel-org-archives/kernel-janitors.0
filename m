@@ -1,47 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 18:45:29 +0000
-Subject: [PATCH 13/19] [media] uvc_video: Use kmalloc_array() in uvc_video_clock_init()
-Message-Id: <47b935d9-e063-503a-47e5-2aee2ffe149c@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 20:50:05 +0000
+Subject: [PATCH 5/8] [media] videobuf-dma-sg: Move two assignments for error codes in __videobuf_mmap_mapper(
+Message-Id: <acfaf0af-0104-1b47-322e-452900318c0a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
-In-Reply-To: <47aa4314-74ec-b2bf-ee3b-aad4d6e9f0a2@users.sourceforge.net>
+References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+In-Reply-To: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 25 Dec 2016 16:45:21 +0100
+Date: Mon, 26 Dec 2016 20:48:50 +0100
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus use the corresponding function "kmalloc_array".
-
-This issue was detected by using the Coccinelle software.
+Move two assignments for the local variable "retval" so that these statements
+will only be executed if a previous action failed in this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/uvc/uvc_video.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/v4l2-core/videobuf-dma-sg.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index f3c1c852e401..05b396f033ca 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -500,9 +500,9 @@ static int uvc_video_clock_init(struct uvc_streaming *stream)
+diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
+index 9ccdc11aa016..d09ddf2e56fe 100644
+--- a/drivers/media/v4l2-core/videobuf-dma-sg.c
++++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
+@@ -596,8 +596,6 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
+ 	unsigned int first, last, size = 0, i;
+ 	int retval;
  
- 	spin_lock_init(&clock->lock);
- 	clock->size = 32;
+-	retval = -EINVAL;
 -
--	clock->samples = kmalloc(clock->size * sizeof(*clock->samples),
--				 GFP_KERNEL);
-+	clock->samples = kmalloc_array(clock->size,
-+				       sizeof(*clock->samples),
-+				       GFP_KERNEL);
- 	if (clock->samples = NULL)
- 		return -ENOMEM;
+ 	BUG_ON(!mem);
+ 	MAGIC_CHECK(mem->magic, MAGIC_SG_MEM);
  
+@@ -613,16 +611,18 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
+ 	if (!size) {
+ 		dprintk(1, "mmap app bug: offset invalid [offset=0x%lx]\n",
+ 				(vma->vm_pgoff << PAGE_SHIFT));
++		retval = -EINVAL;
+ 		goto done;
+ 	}
+ 
+ 	last = first;
+ 
+ 	/* create mapping + update buffer list */
+-	retval = -ENOMEM;
+ 	map = kmalloc(sizeof(struct videobuf_mapping), GFP_KERNEL);
+-	if (!map)
++	if (!map) {
++		retval = -ENOMEM;
+ 		goto done;
++	}
+ 
+ 	size = 0;
+ 	for (i = first; i <= last; i++) {
 -- 
 2.11.0
 
