@@ -1,46 +1,43 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date: Fri, 16 Dec 2016 16:50:33 +0000
-Subject: Re: [patch] KEYS: Fix an error code in request_master_key()
-Message-Id: <1481907033.17553.78.camel@linux.vnet.ibm.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 20:43:23 +0000
+Subject: [PATCH 1/8] [media] v4l2-async: Use kmalloc_array() in v4l2_async_notifier_unregister()
+Message-Id: <442a32b4-6952-3b2a-44a3-46254c5976f2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161216090827.GA7285@elgon.mountain>
-In-Reply-To: <20161216090827.GA7285@elgon.mountain>
+References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+In-Reply-To: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Safford <safford@us.ibm.com>, David Howells <dhowells@redhat.com>, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 26 Dec 2016 18:14:33 +0100
 
-On Fri, 2016-12-16 at 12:08 +0300, Dan Carpenter wrote:
-> This function has two callers and neither are able to handle a NULL
-> return.  Really, -EINVAL is the correct thing return here anyway.  This
-> fixes some static checker warnings like:
-> 
-> 	security/keys/encrypted-keys/encrypted.c:709 encrypted_key_decrypt()
-> 	error: uninitialized symbol 'master_key'.
-> 
-> Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-Thanks!
+This issue was detected by using the Coccinelle software.
 
-Mimi
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/v4l2-core/v4l2-async.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-> index 17a06105ccb6..d7a4969b2dd3 100644
-> --- a/security/keys/encrypted-keys/encrypted.c
-> +++ b/security/keys/encrypted-keys/encrypted.c
-> @@ -437,7 +437,7 @@ static struct skcipher_request *init_skcipher_req(const u8 *key,
->  static struct key *request_master_key(struct encrypted_key_payload *epayload,
->  				      const u8 **master_key, size_t *master_keylen)
->  {
-> -	struct key *mkey = NULL;
-> +	struct key *mkey = ERR_PTR(-EINVAL);
-> 
->  	if (!strncmp(epayload->master_desc, KEY_TRUSTED_PREFIX,
->  		     KEY_TRUSTED_PREFIX_LEN)) {
-> 
-
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 5bada202b2d3..277183f2d514 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -202,7 +202,7 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+ 	if (!notifier->v4l2_dev)
+ 		return;
+ 
+-	dev = kmalloc(n_subdev * sizeof(*dev), GFP_KERNEL);
++	dev = kmalloc_array(n_subdev, sizeof(*dev), GFP_KERNEL);
+ 	if (!dev) {
+ 		dev_err(notifier->v4l2_dev->dev,
+ 			"Failed to allocate device cache!\n");
+-- 
+2.11.0
 
