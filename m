@@ -1,44 +1,24 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 20 Dec 2016 05:40:43 +0000
-Subject: [PATCH 1/2] pinctrl: sirf: atlas7: Add missing 'of_node_put()'
-Message-Id: <20161220054043.25417-1-christophe.jaillet@wanadoo.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 30 Dec 2016 08:13:42 +0000
+Subject: Re: [PATCH 1/2] pinctrl: sirf: atlas7: Add missing 'of_node_put()'
+Message-Id: <CACRpkdZP1E6Br=oiqxR1hOxSacUBDCkKW5dhuiXBvxrERXpx0g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20161220054043.25417-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161220054043.25417-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Reference to 'sys2pci_np' should be dropped in all cases here, not only in
-error handling path.
+On Tue, Dec 20, 2016 at 6:40 AM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/pinctrl/sirf/pinctrl-atlas7.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> Reference to 'sys2pci_np' should be dropped in all cases here, not only in
+> error handling path.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-index 7f3041697813..f714f67c4b64 100644
---- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
-+++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-@@ -5420,14 +5420,15 @@ static int atlas7_pinmux_probe(struct platform_device *pdev)
- 	sys2pci_np = of_find_node_by_name(NULL, "sys2pci");
- 	if (!sys2pci_np)
- 		return -EINVAL;
-+
- 	ret = of_address_to_resource(sys2pci_np, 0, &res);
-+	of_node_put(sys2pci_np);
- 	if (ret)
- 		return ret;
-+
- 	pmx->sys2pci_base = devm_ioremap_resource(&pdev->dev, &res);
--	if (IS_ERR(pmx->sys2pci_base)) {
--		of_node_put(sys2pci_np);
-+	if (IS_ERR(pmx->sys2pci_base))
- 		return -ENOMEM;
--	}
- 
- 	pmx->dev = &pdev->dev;
- 
--- 
-2.9.3
+Patch applied.
 
+Yours,
+Linus Walleij
