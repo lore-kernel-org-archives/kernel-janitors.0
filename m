@@ -1,77 +1,47 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:04:35 +0000
-Subject: [PATCH 06/66] hwmon: (adt7x10) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-7-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Dec 2016 21:58:09 +0000
+Subject: [PATCH 1/6] staging: vchiq_arm: Use kmalloc_array() in dump_phys_mem()
+Message-Id: <79db6271-a752-579e-df68-d9c917b9006a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
+In-Reply-To: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <jdelvare@suse.com>
-Cc: kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Dec 2016 17:50:25 +0100
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+  This issue was detected by using the Coccinelle software.
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
-
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwmon/adt7x10.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/adt7x10.c b/drivers/hwmon/adt7x10.c
-index 98141f4..0f538f8 100644
---- a/drivers/hwmon/adt7x10.c
-+++ b/drivers/hwmon/adt7x10.c
-@@ -331,9 +331,8 @@ static ssize_t adt7x10_show_alarm(struct device *dev,
- 	return sprintf(buf, "%d\n", !!(ret & attr->index));
- }
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 610e0d6d93bb..4af77d790ae0 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -1558,8 +1558,7 @@ dump_phys_mem(void *virt_addr, uint32_t num_bytes)
+ 	end_offset = (int)(long)end_virt_addr & (PAGE_SIZE - 1);
  
--static ssize_t adt7x10_show_name(struct device *dev,
--				 struct device_attribute *da,
--				 char *buf)
-+static ssize_t name_show(struct device *dev, struct device_attribute *da,
-+			 char *buf)
- {
- 	struct adt7x10_data *data = dev_get_drvdata(dev);
- 
-@@ -359,7 +358,7 @@ static SENSOR_DEVICE_ATTR(temp1_max_alarm, S_IRUGO, adt7x10_show_alarm,
- 			  NULL, ADT7X10_STAT_T_HIGH);
- static SENSOR_DEVICE_ATTR(temp1_crit_alarm, S_IRUGO, adt7x10_show_alarm,
- 			  NULL, ADT7X10_STAT_T_CRIT);
--static DEVICE_ATTR(name, S_IRUGO, adt7x10_show_name, NULL);
-+static DEVICE_ATTR_RO(name);
- 
- static struct attribute *adt7x10_attributes[] = {
- 	&sensor_dev_attr_temp1_input.dev_attr.attr,
+ 	num_pages = (offset + num_bytes + PAGE_SIZE - 1) / PAGE_SIZE;
+-
+-	pages = kmalloc(sizeof(struct page *) * num_pages, GFP_KERNEL);
++	pages = kmalloc_array(num_pages, sizeof(*pages), GFP_KERNEL);
+ 	if (pages = NULL) {
+ 		vchiq_log_error(vchiq_arm_log_level,
+ 			"Unable to allocation memory for %d pages\n",
+-- 
+2.11.0
 
