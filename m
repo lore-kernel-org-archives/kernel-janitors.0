@@ -1,46 +1,44 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Thu, 08 Dec 2016 12:51:40 +0000
-Subject: Re: [PATCH 4/5] staging: comedi: usbduxsigma: Split a condition check in usbduxsigma_alloc_usb_buffe
-Message-Id: <45ac6168-19a8-0864-3b69-2d2409e2b44f@mev.co.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Dec 2016 22:03:16 +0000
+Subject: [PATCH 4/6] staging: vchiq_arm: Delete an error message for a failed memory allocation in dump_phys_
+Message-Id: <20128727-5313-ad6d-7938-ca9c303331a7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8cddc37d-4529-ada4-ac21-20e09e888d0d@users.sourceforge.net>
- <b50256ca-37c4-622a-fe69-d7419bdda0d4@users.sourceforge.net>
-In-Reply-To: <b50256ca-37c4-622a-fe69-d7419bdda0d4@users.sourceforge.net>
+References: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
+In-Reply-To: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, devel@driverdev.osuosl.org, Chris Cesare <chris.cesare@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 08/12/16 11:37, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 8 Dec 2016 11:15:40 +0100
->
-> The functions "kcalloc" and "kzalloc" were called in four cases by the
-> function "usbduxsigma_alloc_usb_buffers" without checking immediately
-> if they succeded.
-> This issue was detected by using the Coccinelle software.
->
-> Allocated memory was also not released if one of these function
-> calls failed.
->
-> * Reduce memory allocation sizes for two function calls.
->
-> * Split a condition check for memory allocation failures.
->
-> * Add more exception handling.
->
-> Fixes: 65989c030bbca96be45ed137f6384dbd46030d10 ("staging: comedi: usbduxsigma: factor usb buffer allocation out of (*probe)")
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/staging/comedi/drivers/usbduxsigma.c | 61 ++++++++++++++++++++++------
->  1 file changed, 49 insertions(+), 12 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Dec 2016 21:30:31 +0100
 
-My comments on PATCH 2/5 about how comedi drivers handle clean-up apply 
-to this patch too.  So this patch will cause an Oops in the unlikely 
-event of running out of memory during buffer allocation.
+Omit an extra message for a memory allocation failure in this function.
 
+Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index a316cf9ac626..3b7a0c87954d 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -1559,12 +1559,8 @@ dump_phys_mem(void *virt_addr, uint32_t num_bytes)
+ 
+ 	num_pages = (offset + num_bytes + PAGE_SIZE - 1) / PAGE_SIZE;
+ 	pages = kmalloc_array(num_pages, sizeof(*pages), GFP_KERNEL);
+-	if (!pages) {
+-		vchiq_log_error(vchiq_arm_log_level,
+-			"Unable to allocation memory for %d pages\n",
+-			num_pages);
++	if (!pages)
+ 		return;
+-	}
+ 
+ 	down_read(&current->mm->mmap_sem);
+ 	rc = get_user_pages(
 -- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk> )=-
--=(                          Web: http://www.mev.co.uk/  )=-
+2.11.0
+
