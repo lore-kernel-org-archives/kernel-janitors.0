@@ -1,89 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 22 Dec 2016 12:05:19 +0000
-Subject: [PATCH 50/66] hwmon: (k10temp) use permission-specific DEVICE_ATTR variants
-Message-Id: <1482408335-3435-51-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Dec 2016 22:06:17 +0000
+Subject: [PATCH 6/6] staging: vchiq_arm: Delete an unnecessary return statement in two functions
+Message-Id: <c504d800-d04f-525d-7d0a-1969c69d9a22@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1482408335-3435-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
+In-Reply-To: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>
-Cc: kernel-janitors@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Use DEVICE_ATTR_RO etc. for read only attributes etc.  This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 31 Dec 2016 22:05:19 +0100
 
-The semantic patch for the RO case, in the case where the show function
-already has the expected name, is as follows:
-(http://coccinelle.lip6.fr/)
+The script "checkpatch.pl" pointed information out like the following.
 
-// <smpl>
-@ro@
-declarer name DEVICE_ATTR;
-identifier x,x_show;
-@@
+WARNING: void function return statements are not generally useful
 
-DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
+Thus remove such a statement in affected functions.
 
-@script:ocaml@
-x << ro.x;
-x_show << ro.x_show;
-@@
-
-if not (x^"_show" = x_show) then Coccilib.include_match false
-
-@@
-declarer name DEVICE_ATTR_RO;
-identifier ro.x,ro.x_show;
-@@
-
-- DEVICE_ATTR(x, \(0444\|S_IRUGO\), x_show, NULL);
-+ DEVICE_ATTR_RO(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/hwmon/k10temp.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index 9cdfde6..ce3b91f 100644
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -72,8 +72,8 @@ static void amd_nb_smu_index_read(struct pci_dev *pdev, unsigned int devfn,
- 	mutex_unlock(&nb_smu_ind_mutex);
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 05a00914dba0..6fe0c72246a2 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -2121,7 +2121,6 @@ vchiq_platform_check_suspend(VCHIQ_STATE_T *state)
+ 
+ out:
+ 	vchiq_log_trace(vchiq_susp_log_level, "%s exit", __func__);
+-	return;
  }
  
--static ssize_t show_temp(struct device *dev,
--			 struct device_attribute *attr, char *buf)
-+static ssize_t temp1_input_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
- {
- 	u32 regval;
- 	struct pci_dev *pdev = dev_get_drvdata(dev);
-@@ -88,8 +88,8 @@ static ssize_t show_temp(struct device *dev,
- 	return sprintf(buf, "%u\n", (regval >> 21) * 125);
+ 
+@@ -2306,7 +2305,6 @@ vchiq_check_suspend(VCHIQ_STATE_T *state)
+ 
+ out:
+ 	vchiq_log_trace(vchiq_susp_log_level, "%s exit", __func__);
+-	return;
  }
  
--static ssize_t show_temp_max(struct device *dev,
--			     struct device_attribute *attr, char *buf)
-+static ssize_t temp1_max_show(struct device *dev,
-+			      struct device_attribute *attr, char *buf)
- {
- 	return sprintf(buf, "%d\n", 70 * 1000);
- }
-@@ -110,8 +110,8 @@ static ssize_t show_temp_crit(struct device *dev,
- 	return sprintf(buf, "%d\n", value);
- }
  
--static DEVICE_ATTR(temp1_input, S_IRUGO, show_temp, NULL);
--static DEVICE_ATTR(temp1_max, S_IRUGO, show_temp_max, NULL);
-+static DEVICE_ATTR_RO(temp1_input);
-+static DEVICE_ATTR_RO(temp1_max);
- static SENSOR_DEVICE_ATTR(temp1_crit, S_IRUGO, show_temp_crit, NULL, 0);
- static SENSOR_DEVICE_ATTR(temp1_crit_hyst, S_IRUGO, show_temp_crit, NULL, 1);
- 
+-- 
+2.11.0
 
