@@ -1,86 +1,84 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:45:48 +0000
-Subject: Applied "spi/topcliff-pch: Use kcalloc() in pch_spi_handle_dma()" to the spi tree
-Message-Id: <E1cTYlQ-0000Jh-Rl@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 01 Jan 2017 16:40:05 +0000
+Subject: [PATCH 5/5] staging/lustre/obdclass: Use seq_puts() in three functions
+Message-Id: <8d8a448c-4648-2b52-ab88-d3145f6be804@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c46b68f-192e-2982-6a0e-2017da26f83d@users.sourceforge.net>
-In-Reply-To: <5c46b68f-192e-2982-6a0e-2017da26f83d-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
+In-Reply-To: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.orgMark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Ben Evans <bevans@cray.com>, Bobi Jam <bobijam.xu@intel.com>, Emoly Liu <emoly.liu@intel.com>, Fan Yong <fan.yong@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gregoire Pichon <gregoire.pichon@bull.net>, Henri Doreau <henri.doreau@cea.fr>, James Simmons <jsimmons@infradead.org>, Jinshan Xiong <jinshan.xiong@intel.com>, "John L. Hammond" <john.hammond@intel.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lai Siyao <lai.siyao@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, Sebastien Buisson <sbuisson@ddn.com>, Stephen Champion <schamp@sgi.com>, wang di <di.wang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   spi/topcliff-pch: Use kcalloc() in pch_spi_handle_dma()
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 84aa0ba12442fa46f461c491c42efdadf6995c96 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 15:25:22 +0100
-Subject: [PATCH] spi/topcliff-pch: Use kcalloc() in pch_spi_handle_dma()
+Date: Sun, 1 Jan 2017 16:45:32 +0100
 
-* Multiplications for the size determination of memory allocations
-  indicated that array data structures should be processed.
-  Thus use the corresponding function "kcalloc".
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts"
+so that the data output will be a bit more efficient in these functions.
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data structure by pointer dereferences
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-topcliff-pch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/obdclass/cl_object.c      |  4 ++--
+ drivers/staging/lustre/lustre/obdclass/lprocfs_status.c | 15 +++++++--------
+ 2 files changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 250452a6eead..1beeb16e836a 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1007,7 +1007,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 	spin_unlock_irqrestore(&data->lock, flags);
+diff --git a/drivers/staging/lustre/lustre/obdclass/cl_object.c b/drivers/staging/lustre/lustre/obdclass/cl_object.c
+index 277908d66a89..3e00aa4747b8 100644
+--- a/drivers/staging/lustre/lustre/obdclass/cl_object.c
++++ b/drivers/staging/lustre/lustre/obdclass/cl_object.c
+@@ -510,11 +510,11 @@ locks: ...... ...... ...... ...... ...... [...... ...... ...... ...... ......]
+  */
+ 	lu_site_stats_print(&site->cs_lu, m);
+ 	cache_stats_print(&site->cs_pages, m, 1);
+-	seq_printf(m, " [");
++	seq_puts(m, " [");
+ 	for (i = 0; i < ARRAY_SIZE(site->cs_pages_state); ++i)
+ 		seq_printf(m, "%s: %u ", pstate[i],
+ 			   atomic_read(&site->cs_pages_state[i]));
+-	seq_printf(m, "]\n");
++	seq_puts(m, "]\n");
+ 	cache_stats_print(&cl_env_stats, m, 0);
+ 	seq_putc(m, '\n');
+ 	return 0;
+diff --git a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
+index a167cbe8a50e..3ce590cdd957 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
++++ b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
+@@ -649,7 +649,7 @@ static int obd_import_flags2str(struct obd_import *imp, struct seq_file *m)
+ 	bool first = true;
  
- 	/* RX */
--	dma->sg_rx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
-+	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
- 	sg_init_table(dma->sg_rx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_rx_p;
-@@ -1067,7 +1067,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 		head = 0;
+ 	if (imp->imp_obd->obd_no_recov) {
+-		seq_printf(m, "no_recov");
++		seq_puts(m, "no_recov");
+ 		first = false;
  	}
  
--	dma->sg_tx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
-+	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
- 	sg_init_table(dma->sg_tx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_tx_p;
+@@ -715,15 +715,14 @@ int lprocfs_rd_import(struct seq_file *m, void *data)
+ 		   imp->imp_connect_data.ocd_instance);
+ 	obd_connect_seq_flags2str(m, imp->imp_connect_data.ocd_connect_flags,
+ 				  ", ");
+-	seq_printf(m, " ]\n");
++	seq_puts(m, " ]\n");
+ 	obd_connect_data_seqprint(m, ocd);
+-	seq_printf(m, "    import_flags: [ ");
++	seq_puts(m, "    import_flags: [ ");
+ 	obd_import_flags2str(imp, m);
+-
+-	seq_printf(m,
+-		   " ]\n"
+-		   "    connection:\n"
+-		   "       failover_nids: [ ");
++	seq_puts(m,
++		 " ]\n"
++		 "    connection:\n"
++		 "       failover_nids: [ ");
+ 	spin_lock(&imp->imp_lock);
+ 	j = 0;
+ 	list_for_each_entry(conn, &imp->imp_conn_list, oic_item) {
 -- 
 2.11.0
 
