@@ -1,55 +1,90 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 16:53:57 +0000
-Subject: [PATCH 1/8] powerpc/nvram: Return directly after a failed parameter validation in dev_nvram_write()
-Message-Id: <5a23fa96-5227-3bcd-414d-65b2ae1f2f52@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 01 Jan 2017 15:40:30 +0000
+Subject: [PATCH] coccinelle: check that dmi_system_id structures are null terminated
+Message-Id: <1483285230-4214-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
-In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 15:22:56 +0100
+Add dmi_system_id to the list of types for which top-level arrays are
+checked to be null terminated.
 
-* Return directly after an inappropriate input parameter was detected.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-* Delete an initialisation for the variable "tmp" at the beginning
-  and an assignment for the variable "ret" which became unnecessary
-  with this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kernel/nvram_64.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ scripts/coccinelle/misc/of_table.cocci |   21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index 34d2c595de23..37d08b95c3f0 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -790,17 +790,15 @@ static ssize_t dev_nvram_write(struct file *file, const char __user *buf,
- 			  size_t count, loff_t *ppos)
- {
- 	ssize_t ret;
--	char *tmp = NULL;
-+	char *tmp;
- 	ssize_t size;
- 
--	ret = -ENODEV;
- 	if (!ppc_md.nvram_size)
--		goto out;
-+		return -ENODEV;
- 
--	ret = 0;
- 	size = ppc_md.nvram_size();
- 	if (*ppos >= size || size < 0)
--		goto out;
-+		return 0;
- 
- 	count = min_t(size_t, count, size - *ppos);
- 	count = min(count, PAGE_SIZE);
--- 
-2.11.0
+diff --git a/scripts/coccinelle/misc/of_table.cocci b/scripts/coccinelle/misc/of_table.cocci
+index 2294915..d1b666f 100644
+--- a/scripts/coccinelle/misc/of_table.cocci
++++ b/scripts/coccinelle/misc/of_table.cocci
+@@ -1,4 +1,5 @@
+-/// Make sure (of/i2c/platform)_device_id tables are NULL terminated
++/// Make sure (of/i2c/platform)_device_id and dmi_system_id tables are
++/// NULL terminated
+ //
+ // Keywords: of_table i2c_table platform_table
+ // Confidence: Medium
+@@ -14,14 +15,16 @@ identifier var, arr;
+ expression E;
+ @@
+ (
+-struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
++struct
++  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
+ 	...,
+ 	{
+ 	.var = E,
+ *	}
+ };
+ |
+-struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
++struct
++  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
+ 	...,
+ *	{ ..., E, ... },
+ };
+@@ -32,7 +35,8 @@ identifier var, arr;
+ expression E;
+ @@
+ (
+-struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
++struct
++  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
+ 	...,
+ 	{
+ 	.var = E,
+@@ -41,7 +45,8 @@ struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
+ +	{ }
+ };
+ |
+-struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
++struct
++  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
+ 	...,
+ 	{ ..., E, ... },
+ +	{ },
+@@ -54,7 +59,8 @@ identifier var, arr;
+ expression E;
+ @@
+ (
+-struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
++struct
++  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
+ 	...,
+ 	{
+ 	.var = E,
+@@ -62,7 +68,8 @@ struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
+ 	@p1
+ };
+ |
+-struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
++struct
++  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
+ 	...,
+ 	{ ..., E, ... }
+ 	@p1
 
