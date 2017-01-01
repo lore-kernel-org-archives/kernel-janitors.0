@@ -1,46 +1,67 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:27:08 +0000
-Subject: [PATCH 27/46] selinux: Move an assignment for the variable "rc" in sens_read()
-Message-Id: <6b93ee88-d4c0-b5e3-6f7e-fc74acfddd43@users.sourceforge.net>
+Date: Sun, 01 Jan 2017 16:33:51 +0000
+Subject: [PATCH 1/5] staging/lustre/llite: Use seq_puts() in three functions
+Message-Id: <6980a3a8-be35-e9a3-fc89-8394d503b80f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
+In-Reply-To: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Ben Evans <bevans@cray.com>, Bobi Jam <bobijam.xu@intel.com>, Emoly Liu <emoly.liu@intel.com>, Fan Yong <fan.yong@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gregoire Pichon <gregoire.pichon@bull.net>, Henri Doreau <henri.doreau@cea.fr>, James Simmons <jsimmons@infradead.org>, Jinshan Xiong <jinshan.xiong@intel.com>, "John L. Hammond" <john.hammond@intel.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lai Siyao <lai.siyao@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, Sebastien Buisson <sbuisson@ddn.com>, Stephen Champion <schamp@sgi.com>, wang di <di.wang@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 22:02:14 +0100
+Date: Sun, 1 Jan 2017 15:30:45 +0100
 
-A local variable was set to an error code in one case before a concrete
-error situation was detected. Thus move the corresponding assignment into
-an if branch to indicate a software failure there.
+A string which did not contain a data format specification should be put
+into a sequence. Thus use the corresponding function "seq_puts"
+so that the data output will be a bit more efficient in these functions.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/staging/lustre/lustre/llite/lproc_llite.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index edfcfd3bbc60..3e43556e67b8 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1608,10 +1608,11 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
- 	if (rc)
- 		goto bad;
+diff --git a/drivers/staging/lustre/lustre/llite/lproc_llite.c b/drivers/staging/lustre/lustre/llite/lproc_llite.c
+index 03682c10fc9e..b195b7eb2883 100644
+--- a/drivers/staging/lustre/lustre/llite/lproc_llite.c
++++ b/drivers/staging/lustre/lustre/llite/lproc_llite.c
+@@ -1325,8 +1325,8 @@ static int ll_rw_extents_stats_pp_seq_show(struct seq_file *seq, void *v)
+ 	ktime_get_real_ts64(&now);
  
--	rc = -ENOMEM;
- 	levdatum->level = kmalloc(sizeof(*levdatum->level), GFP_ATOMIC);
--	if (!levdatum->level)
-+	if (!levdatum->level) {
-+		rc = -ENOMEM;
- 		goto bad;
-+	}
+ 	if (!sbi->ll_rw_stats_on) {
+-		seq_printf(seq, "disabled\n"
+-			   "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
++		seq_puts(seq, "disabled\n"
++			 "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
+ 		return 0;
+ 	}
+ 	seq_printf(seq, "snapshot_time:	 %llu.%09lu (secs.usecs)\n",
+@@ -1403,8 +1403,8 @@ static int ll_rw_extents_stats_seq_show(struct seq_file *seq, void *v)
+ 	ktime_get_real_ts64(&now);
  
- 	rc = mls_read_level(levdatum->level, fp);
- 	if (rc)
+ 	if (!sbi->ll_rw_stats_on) {
+-		seq_printf(seq, "disabled\n"
+-			   "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
++		seq_puts(seq, "disabled\n"
++			 "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
+ 		return 0;
+ 	}
+ 	seq_printf(seq, "snapshot_time:	 %llu.%09lu (secs.usecs)\n",
+@@ -1583,8 +1583,8 @@ static int ll_rw_offset_stats_seq_show(struct seq_file *seq, void *v)
+ 	ktime_get_real_ts64(&now);
+ 
+ 	if (!sbi->ll_rw_stats_on) {
+-		seq_printf(seq, "disabled\n"
+-			   "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
++		seq_puts(seq, "disabled\n"
++			 "write anything in this file to activate, then 0 or \"[D/d]isabled\" to deactivate\n");
+ 		return 0;
+ 	}
+ 	spin_lock(&sbi->ll_process_lock);
 -- 
 2.11.0
 
