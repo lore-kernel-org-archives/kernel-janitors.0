@@ -1,56 +1,33 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date: Wed, 25 Jan 2017 13:53:40 +0000
-Subject: [PATCH 13/23] perf probe: Delete an unnecessary assignment in try_to_find_absolute_address()
-Message-Id: <20170125135350.22983-14-acme@kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 01 Jan 2017 16:30:59 +0000
+Subject: [PATCH 0/5] staging-Lustre: Fine-tuning for some function implementations
+Message-Id: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170125135350.22983-1-acme@kernel.org>
-In-Reply-To: <20170125135350.22983-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, He Kuang <hekuang@huawei.com>, Jiri Olsa <jolsa@kernel.org>, Milian Wolff <milian.wolff@kdab.com>, Peter Zijlstra <peterz@infradead.org>, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, Wang Nan <wangnan0@huawei.com>, kernel-janitors@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Ben Evans <bevans@cray.com>, Bobi Jam <bobijam.xu@intel.com>, Emoly Liu <emoly.liu@intel.com>, Fan Yong <fan.yong@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gregoire Pichon <gregoire.pichon@bull.net>, Henri Doreau <henri.doreau@cea.fr>, James Simmons <jsimmons@infradead.org>, Jinshan Xiong <jinshan.xiong@intel.com>, "John L. Hammond" <john.hammond@intel.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lai Siyao <lai.siyao@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, Sebastien Buisson <sbuisson@ddn.com>, Stephen Champion <schamp@sgi.com>, wang di <di.wang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 1 Jan 2017 17:10:10 +0100
 
-Remove an error code assignment which is redundant in an if branch for
-the handling of a memory allocation failure because the same value was
-set for the local variable "err" before.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: He Kuang <hekuang@huawei.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Milian Wolff <milian.wolff@kdab.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/0ede09ec-79b6-c8bd-5b20-02c63ed98aab@users.sourceforge.net
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/probe-event.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Markus Elfring (5):
+  llite: Use seq_puts() in three functions
+  mgc: Combine two seq_printf() calls into one call in lprocfs_mgc_rd_ir_state()
+  obdclass: Use seq_putc() in four functions
+  obdclass: Combine two seq_printf() calls into one call in lprocfs_rd_state()
+  obdclass: Use seq_puts() in three functions
 
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index cdfc468d4d5f..ded1e7d88874 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2994,10 +2994,9 @@ static int try_to_find_absolute_address(struct perf_probe_event *pev,
- 
- 	tev->nargs = pev->nargs;
- 	tev->args = zalloc(sizeof(struct probe_trace_arg) * tev->nargs);
--	if (!tev->args) {
--		err = -ENOMEM;
-+	if (!tev->args)
- 		goto errout;
--	}
-+
- 	for (i = 0; i < tev->nargs; i++)
- 		copy_to_probe_trace_arg(&tev->args[i], &pev->args[i]);
- 
+ drivers/staging/lustre/lustre/llite/lproc_llite.c  | 12 +++++------
+ drivers/staging/lustre/lustre/mgc/mgc_request.c    |  5 +----
+ drivers/staging/lustre/lustre/obdclass/cl_object.c |  8 ++++----
+ .../lustre/lustre/obdclass/lprocfs_status.c        | 23 ++++++++++------------
+ 4 files changed, 21 insertions(+), 27 deletions(-)
+
 -- 
-2.9.3
+2.11.0
 
