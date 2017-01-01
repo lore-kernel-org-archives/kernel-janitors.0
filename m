@@ -1,105 +1,44 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Date: Tue, 17 Jan 2017 16:27:38 +0000
-Subject: Re: [PATCH 07/46] selinux: Delete unnecessary variable assignments in policydb_index()
-Message-Id: <16b4fb1b-a6b4-a84c-3541-ca6a156d651e@schaufler-ca.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 01 Jan 2017 16:38:21 +0000
+Subject: [PATCH 4/5] staging/lustre/obdclass: Combine two seq_printf() calls into one call in lprocfs_rd_stat
+Message-Id: <92ca443f-4791-f291-e2ea-5e67e3a846ac@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
- <247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
-In-Reply-To: <247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
+References: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
+In-Reply-To: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Ben Evans <bevans@cray.com>, Bobi Jam <bobijam.xu@intel.com>, Emoly Liu <emoly.liu@intel.com>, Fan Yong <fan.yong@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gregoire Pichon <gregoire.pichon@bull.net>, Henri Doreau <henri.doreau@cea.fr>, James Simmons <jsimmons@infradead.org>, Jinshan Xiong <jinshan.xiong@intel.com>, "John L. Hammond" <john.hammond@intel.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lai Siyao <lai.siyao@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, Sebastien Buisson <sbuisson@ddn.com>, Stephen Champion <schamp@sgi.com>, wang di <di.wang@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 1/15/2017 7:04 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 14 Jan 2017 13:40:25 +0100
->
-> The local variable "rc" was reset with an error code up to five times
-> before a memory allocation failure was detected.
->
-> Add a jump target so that this assignment will only be performed after
-> a concrete software failure.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 1 Jan 2017 16:26:36 +0100
 
-Of course the maintainers get the call on this,
-but I see this as an example of the kind of code
-that led to the "gotos considered harmful" mindset.
-What value does it add? All I see is unnecessary
-code churn. And a backwards goto.
+Some data were printed into a sequence by two separate function calls.
+Print the same data by a single function call instead.
 
+This issue was detected by using the Coccinelle software.
 
-> ---
->  security/selinux/ss/policydb.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
->
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index 21869b622c0c..4d4ba1ad910d 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -539,34 +539,30 @@ static int policydb_index(struct policydb *p)
->  	symtab_hash_eval(p->symtab);
->  #endif
->  
-> -	rc = -ENOMEM;
->  	p->class_val_to_struct = kcalloc(p->p_classes.nprim,
->  					 sizeof(*p->class_val_to_struct),
->  					 GFP_KERNEL);
->  	if (!p->class_val_to_struct)
-> -		goto out;
-> +		goto failure_indication;
->  
-> -	rc = -ENOMEM;
->  	p->role_val_to_struct = kcalloc(p->p_roles.nprim,
->  					sizeof(*p->role_val_to_struct),
->  					GFP_KERNEL);
->  	if (!p->role_val_to_struct)
-> -		goto out;
-> +		goto failure_indication;
->  
-> -	rc = -ENOMEM;
->  	p->user_val_to_struct = kcalloc(p->p_users.nprim,
->  					sizeof(*p->user_val_to_struct),
->  					GFP_KERNEL);
->  	if (!p->user_val_to_struct)
-> -		goto out;
-> +		goto failure_indication;
->  
->  	/* Yes, I want the sizeof the pointer, not the structure */
-> -	rc = -ENOMEM;
->  	p->type_val_to_struct_array = flex_array_alloc(sizeof(struct type_datum *),
->  						       p->p_types.nprim,
->  						       GFP_KERNEL | __GFP_ZERO);
->  	if (!p->type_val_to_struct_array)
-> -		goto out;
-> +		goto failure_indication;
->  
->  	rc = flex_array_prealloc(p->type_val_to_struct_array, 0,
->  				 p->p_types.nprim, GFP_KERNEL | __GFP_ZERO);
-> @@ -578,12 +574,11 @@ static int policydb_index(struct policydb *p)
->  		goto out;
->  
->  	for (i = 0; i < SYM_NUM; i++) {
-> -		rc = -ENOMEM;
->  		p->sym_val_to_name[i] = flex_array_alloc(sizeof(char *),
->  							 p->symtab[i].nprim,
->  							 GFP_KERNEL | __GFP_ZERO);
->  		if (!p->sym_val_to_name[i])
-> -			goto out;
-> +			goto failure_indication;
->  
->  		rc = flex_array_prealloc(p->sym_val_to_name[i],
->  					 0, p->symtab[i].nprim,
-> @@ -598,6 +593,9 @@ static int policydb_index(struct policydb *p)
->  	rc = 0;
->  out:
->  	return rc;
-> +failure_indication:
-> +	rc = -ENOMEM;
-> +	goto out;
->  }
->  
->  /*
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/lustre/lustre/obdclass/lprocfs_status.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
+index 3f6fcab5a1fc..a167cbe8a50e 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
++++ b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
+@@ -853,10 +853,8 @@ int lprocfs_rd_state(struct seq_file *m, void *data)
+ 		return rc;
+ 
+ 	imp = obd->u.cli.cl_import;
+-
+-	seq_printf(m, "current_state: %s\n",
++	seq_printf(m, "current_state: %s\nstate_history:\n",
+ 		   ptlrpc_import_state_name(imp->imp_state));
+-	seq_printf(m, "state_history:\n");
+ 	k = imp->imp_state_hist_idx;
+ 	for (j = 0; j < IMP_STATE_HIST_LEN; j++) {
+ 		struct import_state_hist *ish -- 
+2.11.0
 
