@@ -1,44 +1,46 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Date: Tue, 17 Jan 2017 17:53:27 +0000
-Subject: Re: [PATCH 15/46] selinux: One check and function call less in genfs_read() after error detection
-Message-Id: <55f62ee9-9e98-f5e0-67eb-fc7aa5cbe8f8@schaufler-ca.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 01 Jan 2017 16:35:25 +0000
+Subject: [PATCH 2/5] staging/lustre/mgc: Combine two seq_printf() calls into one call in lprocfs_mgc_rd_ir_st
+Message-Id: <25b07069-c624-cdd4-ca7b-85aaae51e79e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
- <dbd8e89d-45a1-5785-f2dd-673389ac01a3@users.sourceforge.net>
- <a9983d7d-e1f7-8f85-f696-107cf32160ef@schaufler-ca.com>
- <60ed4f02-4ff8-2ef2-bcc3-ae62bc61cda9@users.sourceforge.net>
-In-Reply-To: <60ed4f02-4ff8-2ef2-bcc3-ae62bc61cda9@users.sourceforge.net>
+References: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
+In-Reply-To: <45ae8939-a775-865b-ade0-9e38a7ff2b5d@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov
-Cc: Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: devel@driverdev.osuosl.org, lustre-devel@lists.lustre.org, Andreas Dilger <andreas.dilger@intel.com>, Ben Evans <bevans@cray.com>, Bobi Jam <bobijam.xu@intel.com>, Emoly Liu <emoly.liu@intel.com>, Fan Yong <fan.yong@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gregoire Pichon <gregoire.pichon@bull.net>, Henri Doreau <henri.doreau@cea.fr>, James Simmons <jsimmons@infradead.org>, Jinshan Xiong <jinshan.xiong@intel.com>, "John L. Hammond" <john.hammond@intel.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lai Siyao <lai.siyao@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, Sebastien Buisson <sbuisson@ddn.com>, Stephen Champion <schamp@sgi.com>, wang di <di.wang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 1/17/2017 8:37 AM, SF Markus Elfring wrote:
->>> @@ -2015,7 +2015,7 @@ static int genfs_read(struct policydb *p, void *fp)
->>>  		newgenfs = kzalloc(sizeof(*newgenfs), GFP_KERNEL);
->>>  		if (!newgenfs) {
->>>  			rc = -ENOMEM;
->>> -			goto out;
->>> +			goto exit;
->>>  		}
->>>  
->>>  		rc = str_read(&newgenfs->fstype, GFP_KERNEL, fp, len);
->>> @@ -2101,7 +2101,7 @@ static int genfs_read(struct policydb *p, void *fp)
->>>  		kfree(newgenfs);
->>>  	}
->>>  	ocontext_destroy(newc, OCON_FSUSE);
->>> -
->>> +exit:
->>>  	return rc;
->> Why not replace the "goto out" with "return rc" rather
->> than add a target?
-> Would you accept to use the statement "return -ENOMEM;" there instead?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 1 Jan 2017 15:40:29 +0100
 
-That would be even better.
+Some data were printed into a sequence by two separate function calls.
+Print the same data by a single function call instead.
 
->
-> Regards,
-> Markus
->
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/lustre/lustre/mgc/mgc_request.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/mgc/mgc_request.c b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+index b9c522a3c7a4..a6ca48d7e96b 100644
+--- a/drivers/staging/lustre/lustre/mgc/mgc_request.c
++++ b/drivers/staging/lustre/lustre/mgc/mgc_request.c
+@@ -460,11 +460,8 @@ int lprocfs_mgc_rd_ir_state(struct seq_file *m, void *data)
+ 
+ 	imp = obd->u.cli.cl_import;
+ 	ocd = &imp->imp_connect_data;
+-
+-	seq_printf(m, "imperative_recovery: %s\n",
++	seq_printf(m, "imperative_recovery: %s\nclient_state:\n",
+ 		   OCD_HAS_FLAG(ocd, IMP_RECOV) ? "ENABLED" : "DISABLED");
+-	seq_printf(m, "client_state:\n");
+-
+ 	spin_lock(&config_list_lock);
+ 	list_for_each_entry(cld, &config_llog_list, cld_list_chain) {
+ 		if (!cld->cld_recover)
+-- 
+2.11.0
 
