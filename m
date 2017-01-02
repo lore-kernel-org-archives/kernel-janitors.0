@@ -1,48 +1,20 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Jan 2017 10:22:16 +0000
-Subject: [PATCH 5/5] gtp: Rename jump labels in gtp_hashtable_new()
-Message-Id: <f87c0637-ca8f-63e9-ebe0-6d58b0ecc035@users.sourceforge.net>
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Mon, 02 Jan 2017 05:20:16 +0000
+Subject: Re: [PATCH] dmaengine: ti-dma-crossbar: Add some 'of_node_put()' in error path.
+Message-Id: <20170102050816.GO3573@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <698070a4-e08e-78e5-0214-df69783cce22@users.sourceforge.net>
-In-Reply-To: <698070a4-e08e-78e5-0214-df69783cce22@users.sourceforge.net>
+References: <20161219053351.21156-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161219053351.21156-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" <davem@davemloft.net>, Harald Welte <laforge@gnumonks.org>, Johannes Berg <johannes.berg@intel.com>, Pablo Neira <pablo@netfilter.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: dan.j.williams@intel.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Jan 2017 10:54:20 +0100
+On Mon, Dec 19, 2016 at 06:33:51AM +0100, Christophe JAILLET wrote:
+> Add some missing 'of_node_put()' in early exit error path.
 
-Adjust a jump label according to the Linux coding style convention.
+Applied, Thanks
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/gtp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
-index 2d4ddc000919..1571d6c7fe81 100644
---- a/drivers/net/gtp.c
-+++ b/drivers/net/gtp.c
-@@ -791,7 +791,7 @@ static int gtp_hashtable_new(struct gtp_dev *gtp, int hsize)
- 	gtp->tid_hash = kmalloc_array(hsize, sizeof(*gtp->tid_hash),
- 				      GFP_KERNEL);
- 	if (!gtp->tid_hash)
--		goto err1;
-+		goto free_hash;
- 
- 	gtp->hash_size = hsize;
- 
-@@ -800,7 +800,7 @@ static int gtp_hashtable_new(struct gtp_dev *gtp, int hsize)
- 		INIT_HLIST_HEAD(&gtp->tid_hash[i]);
- 	}
- 	return 0;
--err1:
-+free_hash:
- 	kfree(gtp->addr_hash);
- 	return -ENOMEM;
- }
 -- 
-2.11.0
-
+~Vinod
