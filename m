@@ -1,41 +1,50 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Date: Mon, 23 Jan 2017 09:21:24 +0000
-Subject: Re: [PATCH 5/5] cfq-iosched: Adjust one function call together with a variable assignment
-Message-Id: <20170123092124.GD3517@linux-x5ow.site>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Date: Mon, 02 Jan 2017 14:54:21 +0000
+Subject: Re: [PATCH 0/8] [media] v4l2-core: Fine-tuning for some function implementations
+Message-Id: <b804f4dd-392e-ae8e-41de-a02260fef550@xs4all.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
- <f28c7ce0-ae89-4eb5-8270-4ab300caa98b@users.sourceforge.net>
-In-Reply-To: <f28c7ce0-ae89-4eb5-8270-4ab300caa98b@users.sourceforge.net>
+References: <9268b60d-08ba-c64e-1848-f84679d64f80@users.sourceforge.net>
+ <20161227115111.GN16630@valkosipuli.retiisi.org.uk>
+In-Reply-To: <20161227115111.GN16630@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sakari Ailus <sakari.ailus@iki.fi>, SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-media@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Jan Kara <jack@suse.cz>, Javier Martinez Canillas <javier@osg.samsung.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michal Hocko <mhocko@suse.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, Jan 22, 2017 at 09:35:13AM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 21 Jan 2017 22:44:07 +0100
->=20
-> The script "checkpatch.pl" pointed information out like the following.
->=20
-> ERROR: do not use assignment in if condition
->=20
-> Thus fix the affected source code place.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+On 12/27/16 12:51, Sakari Ailus wrote:
+> Hi Markus,
+>
+> On Mon, Dec 26, 2016 at 09:41:19PM +0100, SF Markus Elfring wrote:
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Mon, 26 Dec 2016 21:30:12 +0100
+>>
+>> Some update suggestions were taken into account
+>> from static source code analysis.
+>>
+>> Markus Elfring (8):
+>>   v4l2-async: Use kmalloc_array() in v4l2_async_notifier_unregister()
+>>   v4l2-async: Delete an error message for a failed memory allocation in v4l2_async_notifier_unregister()
+>>   videobuf-dma-sg: Use kmalloc_array() in videobuf_dma_init_user_locked()
+>>   videobuf-dma-sg: Adjust 24 checks for null values
+>>   videobuf-dma-sg: Move two assignments for error codes in __videobuf_mmap_mapper()
+>>   videobuf-dma-sg: Improve a size determination in __videobuf_mmap_mapper()
+>>   videobuf-dma-sg: Delete an unnecessary return statement in videobuf_vm_close()
+>>   videobuf-dma-sg: Add some spaces for better code readability in videobuf_dma_init_user_locked()
+>
+> I don't really disagree with the videobuf changes as such --- the original
+> code sure seems quite odd, but I wonder whether we want to do this kind of
+> cleanups in videobuf. Videobuf will be removed likely in not too distant
+> future; when exactly, Hans can guesstimate better than me. Cc him.
+>
 
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+The videobuf code is frozen as far as I am concerned, and I won't pick up
+these cleanup patches. While they look perfectly reasonable, I don't want
+to risk any breakage there. The last thing I want to do is to have to debug
+in the videobuf code.
 
---=20
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=FCrnberg)
-Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sorry Markus, just stay away from the videobuf-* sources.
+
+Regards,
+
+	Hans
