@@ -1,15 +1,16 @@
 From: Emil Gedda <emil.gedda@emilgedda.se>
-Date: Tue, 03 Jan 2017 20:10:02 +0000
+Date: Tue, 03 Jan 2017 20:25:20 +0000
 Subject: [PATCH] staging: gdm724x: cleanup long lines to conform to kernel coding style
-Message-Id: <20170103201002.GA18938@emilgedda.se>
+Message-Id: <20170103202520.GA20568@emilgedda.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20161228124917.GA8330@emilgedda.se>
-In-Reply-To: <20161228124917.GA8330@emilgedda.se>
+References: <20170103201002.GA18938@emilgedda.se>
+In-Reply-To: <20170103201002.GA18938@emilgedda.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+
+Refactor code to remove multi-line derefs and code duplication
 
 Signed-off-by: Emil Gedda <emil.gedda@emilgedda.se>
 ---
@@ -17,7 +18,7 @@ Signed-off-by: Emil Gedda <emil.gedda@emilgedda.se>
 Tried contacting the mentioned people in the relevant TODO, but after 2
 weeks I still haven't received a response, thus sending this to you
 directly. Error messages still need to be changed to use netdev_err, but
-that's for another patch.
+that's for another patch. Sorry for the spam, still new to this.
 
  drivers/staging/gdm724x/gdm_lte.c | 27 ++++++++++-----------------
  1 file changed, 10 insertions(+), 17 deletions(-)
