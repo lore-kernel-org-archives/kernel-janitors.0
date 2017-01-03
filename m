@@ -1,59 +1,46 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Wed, 18 Jan 2017 17:43:20 +0000
-Subject: Re: alpha: Checking source code positions for the setting of error codes
-Message-Id: <20170118174320.GE1555@ZenIV.linux.org.uk>
+From: Eric Anholt <eric@anholt.net>
+Date: Tue, 03 Jan 2017 17:46:51 +0000
+Subject: Re: [PATCH 0/6] staging: vchiq_arm: Fine-tuning for some function implementations
+Message-Id: <87r34kniic.fsf@eliezer.anholt.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-=-="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
- <986573fa-e636-f864-14dc-5e65a31b454e@users.sourceforge.net>
- <20170118141103.GD1555@ZenIV.linux.org.uk>
- <a8237856-6926-57d3-69ba-cff4006406b3@users.sourceforge.net>
-In-Reply-To: <a8237856-6926-57d3-69ba-cff4006406b3@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-alpha@vger.kernel.org, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Matt Turner <mattst88@gmail.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Richard Cochran <richardcochran@gmail.com>, Richard Henderson <rth@twiddle.net>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
+In-Reply-To: <5acd65e7-0b5d-0972-5e1a-6e87d71dc1a4@users.sourceforge.net>
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Jan 18, 2017 at 04:41:10PM +0100, SF Markus Elfring wrote:
-> >> A local variable was set to an error code in two cases before a concrete
-> >> error situation was detected. Thus move the corresponding assignment into
-> >> an if branch to indicate a software failure there.
-> >>
-> >> This issue was detected by using the Coccinelle software.
-> > 
-> > Why the hell is that an issue?
-> 
-> * Can misplaced variable assignments result in unwanted run time consequences
->   because of the previous approach for a control flow specification?
+--=-=-=
+Content-Type: text/plain
 
-More like the opposite.
-	load constant to register
-	test
-	branch usually not taken
-is considerably cheaper than
-	test
-	branch usually taken
+SF Markus Elfring <elfring@users.sourceforge.net> writes:
 
-Something like
-	if (unlikely(foo)) {
-		err = -ESOMETHING;
-		goto sod_off;
-	}
-would be more or less on par (and quite possibly would be compiled into
-the same code - depends upon the scheduling details for processor,
-but speculative load of constant can be an optimization).  However, that
-has an effect of splattering the source with tons of those unlikely() *and*
-visually cluttering the common path.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 31 Dec 2016 22:42:34 +0100
+>
+> Some update suggestions were taken into account
+> from static source code analysis.
 
-> * How do you think about to achieve that error codes will only be set
->   after a specific software failure was detected?
+This series is:
 
-Sounds like an arbitrary requirement, TBH...
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
-Again, loading a constant into register tends to be cheap and easy to
-combine with other instructions at CPU pipeline level.  If anything, this
-pattern is a microoptimization, often in spots that are not on hotpaths
-by any stretch of imagination.  But estimating whether a given place is
-on a hot path takes a lot more delicate analysis than feasible for
-cocci scripts.  And visual cluttering of the common execution path remains -
-it doesn't matter for compiler, but it can matter a lot for human readers.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlhr44sACgkQtdYpNtH8
+nuhdWA/+J0/t9yUXdgeKfin4NTu/1iKdU7Oebbdex6kMnBXWkE6NqLkF+T9M1lFq
+N9nA7mxU7llc+mbR2VTObZhnqSqUvNpDhfKNOqdsLiKqgrIqrxYu7x95MbvX2iq2
+lBlDWE8uhTMSYFxOLM3CzhdBlwL/lnW06KjhEQmrjXwMBdxQe87VYhqS3ax0+uBY
+itdewQQw04nYY2q4UHhoWTQzUbBwfJfBrmBfJan/6JydTqhcdA7i0GyIOqHS7Vum
+GQZ64Lit+7aZK3xPYkFq0ZePmdGB5Ex/IOz7kBOccUoBZBqNF4MuYR0INp9ONnk/
+GtMQsRGKfXXF5b1qRxYbDX0oEd4e/pFV8apgTw103MjkX+sbnuMe97jddYj35Tgf
+U04YxNfxlMzT9H7cipamfbgfmKblU6L452Okke+iEdS10Fs3RFKuQUv6KyyrfyzK
+LVbMyCW3vvsJFhPgZnftPS0kVyXr09Qs6ludYb3wP+SaDWID+mHE/Q8jj/fNXbM9
+LrbfVF6DfE4aLUiLepN7M0Zf3DmI2z1itcxz+aO5kMs0J8MImmJNo42k3dh1MfxI
+LiiTHpkYd2VnUTf4/rnat1rj61a7GpxBDbQmdB74ATVmdPrcrRhyOzuAKAAElo2+
++JiZ1MmbYQgXTHGU6tySQ4Xh2FAopzSTMGxN3bSC8ikafXcuuog=
+=paZJ
+-----END PGP SIGNATURE-----
+--=-=-=--
