@@ -1,58 +1,53 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Date: Wed, 11 Jan 2017 21:59:52 +0000
-Subject: Re: [PATCH 01/18] mtd-cfi_cmdset_0001: Use kmalloc_array() in cfi_intelext_partition_fixup()
-Message-Id: <31f8448f-aba7-965a-e924-e1ec63eecbaf@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 04 Jan 2017 07:13:24 +0000
+Subject: [PATCH] memory: tegra: Add a missing 'of_node_put()' call
+Message-Id: <20170104071324.32721-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
- <f74ef6ca-7159-ba15-b7a3-0a45e522729f@users.sourceforge.net>
-In-Reply-To: <f74ef6ca-7159-ba15-b7a3-0a45e522729f@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 
-On 01/11/2017 09:35 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 10 Jan 2017 18:48:34 +0100
-> 
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "kmalloc_array".
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Replace the specification of a data structure by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mtd/chips/cfi_cmdset_0001.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
-> index 5e1b68cbcd0a..68227aa74d22 100644
-> --- a/drivers/mtd/chips/cfi_cmdset_0001.c
-> +++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-> @@ -746,7 +746,9 @@ static int cfi_intelext_partition_fixup(struct mtd_info *mtd,
->  		newcfi = kmalloc(sizeof(struct cfi_private) + numvirtchips * sizeof(struct flchip), GFP_KERNEL);
->  		if (!newcfi)
->  			return -ENOMEM;
-> -		shared = kmalloc(sizeof(struct flchip_shared) * cfi->numchips, GFP_KERNEL);
-> +		shared = kmalloc_array(cfi->numchips,
-> +				       sizeof(*shared),
-> +				       GFP_KERNEL);
+If 'of_find_device_by_node()' fails, an 'of_node_put()' call is missing in
+the error handling path.
+Fix it by reordering the code.
 
-You can keep this on a single line, no need for the linebreak. It
-doesn't violate the 80-chars per line rule IMO.
+While at it, remove some empty lines in a more or less similar construction
+a few lines below.
 
->  		if (!shared) {
->  			kfree(newcfi);
->  			return -ENOMEM;
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/memory/tegra/tegra124-emc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-
+diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
+index 06cc781ebac1..392dc8dd481f 100644
+--- a/drivers/memory/tegra/tegra124-emc.c
++++ b/drivers/memory/tegra/tegra124-emc.c
+@@ -1115,11 +1115,10 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	mc = of_find_device_by_node(np);
++	of_node_put(np);
+ 	if (!mc)
+ 		return -ENOENT;
+ 
+-	of_node_put(np);
+-
+ 	emc->mc = platform_get_drvdata(mc);
+ 	if (!emc->mc)
+ 		return -EPROBE_DEFER;
+@@ -1135,9 +1134,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	err = tegra_emc_load_timings_from_dt(emc, np);
+-
+ 	of_node_put(np);
+-
+ 	if (err)
+ 		return err;
+ 
 -- 
-Best regards,
-Marek Vasut
+2.9.3
+
