@@ -1,52 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 31 Jan 2017 20:41:42 +0000
-Subject: Re: [patch] sound: oss/ad1848: remove some dead code
-Message-Id: <s5hzii7j721.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jan 2017 06:41:11 +0000
+Subject: [patch] IB: vmw_pvrdma: info leak in pvrdma_alloc_ucontext()
+Message-Id: <20170104064110.GA8957@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170131113331.GA3434@mwanda>
-In-Reply-To: <20170131113331.GA3434@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Amitoj Kaur Chawla <amitoj1606@gmail.com>
+To: Adit Ranadive <aditr@vmware.com>
+Cc: VMware PV-Drivers <pv-drivers@vmware.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 31 Jan 2017 12:33:31 +0100,
-Dan Carpenter wrote:
-> 
-> We never use the irq2dev[] array so we can remove this assignment.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We need to clear out the ->reserved member so we don't disclose
+uninitialized stack information.
 
-Thanks, applied now.
+Fixes: 29c8d9eba550 ("IB: Add vmw_pvrdma driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+There are a bunch of ways to fix this...  I just the most mindless one
+because I can never guess what IB prefers.  Feel free to fix it however
+you feel is appropriate and give me a Reported-by tag.
 
-
-Takashi
-
-> 
-> diff --git a/sound/oss/ad1848.c b/sound/oss/ad1848.c
-> index 6368e5c7d0ba..f6156d8169d0 100644
-> --- a/sound/oss/ad1848.c
-> +++ b/sound/oss/ad1848.c
-> @@ -121,11 +121,6 @@ static bool deskpro_xl;
->  static bool deskpro_m;
->  static bool soundpro;
->  
-> -static volatile signed char irq2dev[17] = {
-> -	-1, -1, -1, -1, -1, -1, -1, -1,
-> -	-1, -1, -1, -1, -1, -1, -1, -1, -1
-> -};
-> -
->  #ifndef EXCLUDE_TIMERS
->  static int timer_installed = -1;
->  #endif
-> @@ -2060,7 +2055,7 @@ int ad1848_init (char *name, struct resource *ports, int irq, int dma_playback,
->  		else
->  			devc->irq_ok = 1;	/* Couldn't test. assume it's OK */
->  	} else if (irq < 0)
-> -		irq2dev[-irq] = devc->dev_no = my_dev;
-> +		devc->dev_no = my_dev;
->  
->  #ifndef EXCLUDE_TIMERS
->  	if ((capabilities[devc->model].flags & CAP_F_TIMER) &&
-> 
+diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
+index 54891370d18a..c00c27f48f46 100644
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
+@@ -339,6 +339,7 @@ struct ib_ucontext *pvrdma_alloc_ucontext(struct ib_device *ibdev,
+ 	context->ctx_handle = resp->ctx_handle;
+ 
+ 	/* copy back to user */
++	memset(&uresp, 0, sizeof(uresp));
+ 	uresp.qp_tab_size = vdev->dsr->caps.max_qp;
+ 	ret = ib_copy_to_udata(udata, &uresp, sizeof(uresp));
+ 	if (ret) {
