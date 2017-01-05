@@ -1,65 +1,39 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 16:57:37 +0000
-Subject: [PATCH 4/8] powerpc/nvram: Return directly after a failed parameter validation in dev_nvram_read()
-Message-Id: <b5dc24f8-4b74-9dfe-fb18-7dc0699b87ec@users.sourceforge.net>
+From: "Anurag Raghavan (RBEI/ETW11)" <Raghavan.Anurag@in.bosch.com>
+Date: Thu, 05 Jan 2017 13:24:45 +0000
+Subject: ubi_io_read: error -74 (ECC error)
+Message-Id: <c94b83bade834f249fffc9903a75fba3@SGPMBX1023.APAC.bosch.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
-In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>, Dan Carpenter <dan.carpenter@oracle.com>, David Gstir <david@sigma-star.at>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Adrian
+ Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 16:12:48 +0100
 
-* Return directly after an inappropriate input parameter was detected.
 
-* Delete an initialisation for the variable "tmp" at the beginning
-  which became unnecessary with this refactoring.
+> Hi All,
+> 
+> My appdata partition could not be mounted or where the partition was not able to be used. Anyone can help me to find out the root cause of this. What are the possibilities of this ubifs corruption. Any patched are available to fix this issue.
+> 
+> Error logs:
+> 
+> [    1.797141] UBI error: ubi_io_read: error -74 (ECC error) while reading 253952 bytes from PEB 445:8192, read 253952 bytes
+> [    1.808274] UBIFS error (pid 491): ubifs_scan: corrupt empty space at LEB 489:233760
+> [    1.816037] UBIFS error (pid 491): ubifs_scanned_corruption: corruption at LEB 489:233760
+> [    1.828660] UBIFS error (pid 491): ubifs_scan: LEB 489 scanning failed
+> [    1.835215] UBIFS warning (pid 491): ubifs_ro_mode: switched to read-only mode, error -117
+> [    1.843502] UBIFS error (pid 491): make_reservation: cannot reserve 58 bytes in jhead 2, error -117
+> [    1.852569] UBIFS error (pid 491): do_writepage: cannot write page 0 of inode 76584, error -117
+> dpkg: error: unable to sync new file '/var/lib/dpkg/arch-new': 
+> Structure needs cleaning
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/powerpc/kernel/nvram_64.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index dc90a0e9ad65..463551589b97 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -745,24 +745,18 @@ static ssize_t dev_nvram_read(struct file *file, char __user *buf,
- 			  size_t count, loff_t *ppos)
- {
- 	ssize_t ret;
--	char *tmp = NULL;
-+	char *tmp;
- 	ssize_t size;
- 
--	if (!ppc_md.nvram_size) {
--		ret = -ENODEV;
--		goto out;
--	}
-+	if (!ppc_md.nvram_size)
-+		return -ENODEV;
- 
- 	size = ppc_md.nvram_size();
--	if (size < 0) {
--		ret = size;
--		goto out;
--	}
-+	if (size < 0)
-+		return size;
- 
--	if (*ppos >= size) {
--		ret = 0;
--		goto out;
--	}
-+	if (*ppos >= size)
-+		return 0;
- 
- 	count = min_t(size_t, count, size - *ppos);
- 	count = min(count, PAGE_SIZE);
--- 
-2.11.0
 
+
+
+Best regards
+
+Raghavan Anurag
+RBEI/ETW1  
+
+Tel. +91(422)667-4001 | Mobil 9986968950
