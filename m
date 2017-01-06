@@ -1,7 +1,7 @@
 From: "Anurag Raghavan (RBEI/ETW11)" <Raghavan.Anurag@in.bosch.com>
-Date: Thu, 05 Jan 2017 13:22:51 +0000
+Date: Fri, 06 Jan 2017 05:18:12 +0000
 Subject: RE: [patch] ubifs: potential uninitialized variable in truncate_data_node()
-Message-Id: <62c47e72561e472da08a7ccfed5cf3d9@SGPMBX1023.APAC.bosch.com>
+Message-Id: <6139ebf22df34767873e7fce48ab5b54@SGPMBX1023.APAC.bosch.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170105124635.GA8525@elgon.mountain>
  <787dbd07f1ed419ca37f3bb0c6f6c84a@SGPMBX1023.APAC.bosch.com>
@@ -10,10 +10,35 @@ In-Reply-To: <5f927d38-c92c-55eb-f2a7-bba3b5f0ebd8@nod.at>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Weinberger <richard@nod.at>, Dan Carpenter <dan.carpenter@oracle.com>, David Gstir <david@sigma-star.at>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Adrian
+To: Richard Weinberger <richard@nod.at>, Dan Carpenter <dan.carpenter@oracle.com>, David Gstir <david@sigma-star.at>
+Cc: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Adrian
  Hunter <adrian.hunter@intel.com>, Artem Bityutskiy <dedekind1@gmail.com>
 
+Hi Richard,
 
+I am using the kernel version-30.3.5
+
+Is there any patches available to fix this issue...???
+
+Best regards
+
+Raghavan Anurag
+RBEI/ETW1  
+
+Tel. +91(422)667-4001 | Mobil 9986968950
+
+
+
+-----Original Message-----
+From: linux-mtd [mailto:linux-mtd-bounces@lists.infradead.org] On Behalf Of Richard Weinberger
+Sent: Thursday, January 05, 2017 6:42 PM
+To: Anurag Raghavan (RBEI/ETW11) <Raghavan.Anurag@in.bosch.com>; Dan Carpenter <dan.carpenter@oracle.com>; David Gstir <david@sigma-star.at>
+Cc: linux-mtd@lists.infradead.org; kernel-janitors@vger.kernel.org; Adrian Hunter <adrian.hunter@intel.com>; Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [patch] ubifs: potential uninitialized variable in truncate_data_node()
+
+Raghavan Anurag,
+
+Am 05.01.2017 um 13:54 schrieb Anurag Raghavan (RBEI/ETW11):
 > Hi All,
 > 
 > My appdata partition could not be mounted or where the partition was not able to be used. Anyone can help me to find out the root cause of this. What are the possibilities of this ubifs corruption. Any patched are available to fix this issue.
@@ -30,13 +55,15 @@ To: Richard Weinberger <richard@nod.at>, Dan Carpenter <dan.carpenter@oracle.com
 > dpkg: error: unable to sync new file '/var/lib/dpkg/arch-new': 
 > Structure needs cleaning
 
+Why are you hijacking this mail thread?
 
+In your case UBIFS fails because of an ECC error in 0xFF bytes.
+UBIFS does not expect this and the MTD driver has to make sure that it does not happen.
+Is this a recent kernel?
 
+Thanks,
+//richard
 
-
-Best regards
-
-Raghavan Anurag
-RBEI/ETW1  
-
-Tel. +91(422)667-4001 | Mobil 9986968950
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
