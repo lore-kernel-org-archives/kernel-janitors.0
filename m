@@ -1,35 +1,44 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Wed, 04 Jan 2017 05:30:16 +0000
-Subject: [PATCH] usb: gadget: composite: Fix function used to free memory
-Message-Id: <20170104053016.2153-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 07 Jan 2017 20:04:54 +0000
+Subject: [PATCH 9/9] memstick: Delete an unnecessary check in msb_update_block()
+Message-Id: <44ade3ec-9c63-d08b-4544-b0a48ac13594@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: balbi@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-'cdev->os_desc_req' has been allocated with 'usb_ep_alloc_request()' so
-'usb_ep_free_request()' should be used to free it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 7 Jan 2017 20:21:02 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Further exception handling will only be performed after an error code
+was set. Thus remove a redundant check for a local variable at the end.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/gadget/composite.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memstick/core/ms_block.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-index 002822d98fda..49d685ad0da9 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -2147,7 +2147,7 @@ int composite_os_desc_req_prepare(struct usb_composite_dev *cdev,
- 	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
- 	if (!cdev->os_desc_req->buf) {
- 		ret = -ENOMEM;
--		kfree(cdev->os_desc_req);
-+		usb_ep_free_request(ep0, cdev->os_desc_req);
- 		goto end;
+diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+index 861f6a76136d..013f317d566b 100644
+--- a/drivers/memstick/core/ms_block.c
++++ b/drivers/memstick/core/ms_block.c
+@@ -1154,10 +1154,8 @@ static int msb_update_block(struct msb_data *msb, u16 lba,
+ 		return 0;
  	}
- 	cdev->os_desc_req->context = cdev;
+ out:
+-	if (error) {
+-		pr_err("block update error after %d tries,  switching to r/o mode", try);
+-		msb->read_only = true;
+-	}
++	pr_err("block update error after %d tries, switching to r/o mode", try);
++	msb->read_only = true;
+ 	return error;
+ }
+ 
 -- 
-2.9.3
+2.11.0
 
