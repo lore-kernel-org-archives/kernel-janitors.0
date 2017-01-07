@@ -1,14 +1,14 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sat, 07 Jan 2017 19:59:45 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 07 Jan 2017 20:01:38 +0000
 Subject: [PATCH 7/9] memstick: Improve another size determination in msb_read_boot_blocks()
-Message-Id: <acf8f865-4c41-00b5-12d3-26b9d9b4ee34@web.de>
+Message-Id: <67fecf0a-9e26-c150-d123-ee5cf33c0397@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
 In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
