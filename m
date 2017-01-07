@@ -1,61 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 11:46:52 +0000
-Subject: [PATCH 2/4] alpha: Move two assignments for the variable "error" in osf_utsname()
-Message-Id: <5649cb94-620c-7b60-f150-a6838cafbfc6@users.sourceforge.net>
+Date: Sat, 07 Jan 2017 19:58:50 +0000
+Subject: [PATCH 6/9] memstick: Improve a size determination in msb_probe()
+Message-Id: <f7ef764b-3885-e83e-254d-883709764734@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
-In-Reply-To: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
+References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-alpha@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Matt Turner <mattst88@gmail.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Richard Cochran <richardcochran@gmail.com>, Richard Henderson <rth@twiddle.net>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 11:10:03 +0100
+Date: Sat, 7 Jan 2017 19:36:21 +0100
 
-A local variable was set to an error code in one case before a concrete
-error situation was detected. Thus move the corresponding assignment into
-an if branch to indicate a software failure there.
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/alpha/kernel/osf_sys.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ drivers/memstick/core/ms_block.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-index 41174156a676..73ff5d698591 100644
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -528,20 +528,14 @@ SYSCALL_DEFINE1(osf_utsname, char __user *, name)
- 	int error;
+diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+index 818c8f8de553..a30c0ae95ae5 100644
+--- a/drivers/memstick/core/ms_block.c
++++ b/drivers/memstick/core/ms_block.c
+@@ -2188,7 +2188,7 @@ static int msb_probe(struct memstick_dev *card)
+ 	struct msb_data *msb;
+ 	int rc = 0;
  
- 	down_read(&uts_sem);
--	error = -EFAULT;
--	if (copy_to_user(name + 0, utsname()->sysname, 32))
--		goto out;
--	if (copy_to_user(name + 32, utsname()->nodename, 32))
--		goto out;
--	if (copy_to_user(name + 64, utsname()->release, 32))
--		goto out;
--	if (copy_to_user(name + 96, utsname()->version, 32))
--		goto out;
--	if (copy_to_user(name + 128, utsname()->machine, 32))
--		goto out;
--
--	error = 0;
-- out:
-+	if (copy_to_user(name + 0, utsname()->sysname, 32) ||
-+	    copy_to_user(name + 32, utsname()->nodename, 32) ||
-+	    copy_to_user(name + 64, utsname()->release, 32) ||
-+	    copy_to_user(name + 96, utsname()->version, 32) ||
-+	    copy_to_user(name + 128, utsname()->machine, 32))
-+		error = -EFAULT;
-+	else
-+		error = 0;
- 	up_read(&uts_sem);	
- 	return error;
- }
+-	msb = kzalloc(sizeof(struct msb_data), GFP_KERNEL);
++	msb = kzalloc(sizeof(*msb), GFP_KERNEL);
+ 	if (!msb)
+ 		return -ENOMEM;
+ 	memstick_set_drvdata(card, msb);
 -- 
 2.11.0
 
