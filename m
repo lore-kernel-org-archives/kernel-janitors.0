@@ -1,26 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 31 Jan 2017 14:44:43 +0000
-Subject: Re: [PATCH] gpiolib: Fix a WARN_ON that can never trigger
-Message-Id: <CACRpkdY+ng2YvWpd_WxDVtKcN6H3nU8BZ0isUeCvhfKw+mjKpw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 07 Jan 2017 06:30:42 +0000
+Subject: [patch] i40iw: fix some indenting in i40iw_sc_vsi_init()
+Message-Id: <20170107063042.GD26959@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170127115642.19174-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170127115642.19174-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chien Tin Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Shiraz Saleem <shiraz.saleem-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Fri, Jan 27, 2017 at 12:56 PM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+The debug printk was indented more than it should have been and we
+can remove an unnecessary line break.
 
-> "if (!x) WARN_ON(x)" can never trigger.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Good catch.
-
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
+index 98923a8cf86d..b9dc2c540946 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
+@@ -4498,9 +4498,9 @@ void i40iw_sc_vsi_init(struct i40iw_sc_vsi *vsi, struct i40iw_vsi_init_info *inf
+ 	i40iw_fill_qos_list(info->params->qs_handle_list);
+ 
+ 	for (i = 0; i < I40IW_MAX_USER_PRIORITY; i++) {
+-		vsi->qos[i].qs_handle -			info->params->qs_handle_list[i];
+-			i40iw_debug(vsi->dev, I40IW_DEBUG_DCB, "qset[%d]: %d\n", i, vsi->qos[i].qs_handle);
++		vsi->qos[i].qs_handle =	info->params->qs_handle_list[i];
++		i40iw_debug(vsi->dev, I40IW_DEBUG_DCB, "qset[%d]: %d\n", i,
++			    vsi->qos[i].qs_handle);
+ 		spin_lock_init(&vsi->qos[i].lock);
+ 		INIT_LIST_HEAD(&vsi->qos[i].qplist);
+ 	}
