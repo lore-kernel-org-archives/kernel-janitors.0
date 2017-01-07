@@ -1,82 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:52:27 +0000
-Subject: [PATCH 17/18] mtd-cfi_cmdset_0020: Use common error handling code in cfi_staa_setup()
-Message-Id: <128b121d-9b5e-8c71-6265-96110d6ca833@users.sourceforge.net>
+Date: Sat, 07 Jan 2017 19:57:46 +0000
+Subject: [PATCH 5/9] memstick: Delete an unnecessary variable initialisation in msb_resume()
+Message-Id: <bb2a9f55-c3e4-7f25-babd-2b77898277af@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:02:40 +0100
+Date: Sat, 7 Jan 2017 19:29:17 +0100
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of this function.
+The local variable "new_msb" will eventually be set to an appropriate
+pointer a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/chips/cfi_cmdset_0020.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ drivers/memstick/core/ms_block.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0020.c b/drivers/mtd/chips/cfi_cmdset_0020.c
-index 9cd7b1c6faba..60de9d58dcc6 100644
---- a/drivers/mtd/chips/cfi_cmdset_0020.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0020.c
-@@ -173,11 +173,8 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
+diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+index fd3d9f78bcba..818c8f8de553 100644
+--- a/drivers/memstick/core/ms_block.c
++++ b/drivers/memstick/core/ms_block.c
+@@ -2253,7 +2253,7 @@ static int msb_suspend(struct memstick_dev *card, pm_message_t state)
+ static int msb_resume(struct memstick_dev *card)
+ {
+ 	struct msb_data *msb = memstick_get_drvdata(card);
+-	struct msb_data *new_msb = NULL;
++	struct msb_data *new_msb;
+ 	bool card_dead = true;
  
- 	mtd = kzalloc(sizeof(*mtd), GFP_KERNEL);
- 	//printk(KERN_DEBUG "number of CFI chips: %d\n", cfi->numchips);
--
--	if (!mtd) {
--		kfree(cfi->cmdset_priv);
--		return NULL;
--	}
-+	if (!mtd)
-+		goto free_priv;
- 
- 	mtd->priv = map;
- 	mtd->type = MTD_NORFLASH;
-@@ -187,11 +184,8 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
- 	mtd->eraseregions = kmalloc_array(mtd->numeraseregions,
- 					  sizeof(*mtd->eraseregions),
- 					  GFP_KERNEL);
--	if (!mtd->eraseregions) {
--		kfree(cfi->cmdset_priv);
--		kfree(mtd);
--		return NULL;
--	}
-+	if (!mtd->eraseregions)
-+		goto free_mtd;
- 
- 	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
- 		unsigned long ernum, ersize;
-@@ -213,9 +207,7 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
- 		/* Argh */
- 		printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
- 		kfree(mtd->eraseregions);
--		kfree(cfi->cmdset_priv);
--		kfree(mtd);
--		return NULL;
-+		goto free_mtd;
- 	}
- 
- 	for (i=0; i<mtd->numeraseregions;i++){
-@@ -242,6 +234,11 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
- 	__module_get(THIS_MODULE);
- 	mtd->name = map->name;
- 	return mtd;
-+free_mtd:
-+	kfree(mtd);
-+free_priv:
-+	kfree(cfi->cmdset_priv);
-+	return NULL;
- }
- 
- 
+ #ifndef CONFIG_MEMSTICK_UNSAFE_RESUME
 -- 
 2.11.0
 
