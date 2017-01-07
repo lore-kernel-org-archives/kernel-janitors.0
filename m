@@ -1,73 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:46:10 +0000
-Subject: Applied "spi: fsl: Use kcalloc() in of_fsl_spi_get_chipselects()" to the spi tree
-Message-Id: <E1cTYlm-0000QM-Ke@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 07 Jan 2017 19:54:14 +0000
+Subject: [PATCH 2/9] memstick: Use kmalloc_array() in msb_ftl_initialize()
+Message-Id: <9ec869d3-00f2-494f-850a-d22f344e8abb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <0b7517f1-5f9f-a002-ac59-c5921fec1eeb@users.sourceforge.net>
-In-Reply-To: <0b7517f1-5f9f-a002-ac59-c5921fec1eeb-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.orgMark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-The patch
-
-   spi: fsl: Use kcalloc() in of_fsl_spi_get_chipselects()
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 5223db0b10c7917d7c6b4f7d8e2c0af0eb1158f5 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 13:33:02 +0100
-Subject: [PATCH] spi: fsl: Use kcalloc() in of_fsl_spi_get_chipselects()
+Date: Sat, 7 Jan 2017 09:15:27 +0100
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus reuse the corresponding function "kcalloc".
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-This issue was detected by using the Coccinelle software.
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-fsl-spi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memstick/core/ms_block.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-fsl-spi.c b/drivers/spi/spi-fsl-spi.c
-index 9873d39d1a95..cdee556037f9 100644
---- a/drivers/spi/spi-fsl-spi.c
-+++ b/drivers/spi/spi-fsl-spi.c
-@@ -733,7 +733,7 @@ static int of_fsl_spi_get_chipselects(struct device *dev)
- 		return -ENOMEM;
- 	memset(pinfo->gpios, -1, ngpios * sizeof(*pinfo->gpios));
+diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+index fd8b1697a5a2..ec17885a5956 100644
+--- a/drivers/memstick/core/ms_block.c
++++ b/drivers/memstick/core/ms_block.c
+@@ -1346,8 +1346,9 @@ static int msb_ftl_initialize(struct msb_data *msb)
+ 	if (!msb->erased_blocks_bitmap)
+ 		goto free_used_bitmap;
  
--	pinfo->alow_flags = kzalloc(ngpios * sizeof(*pinfo->alow_flags),
-+	pinfo->alow_flags = kcalloc(ngpios, sizeof(*pinfo->alow_flags),
- 				    GFP_KERNEL);
- 	if (!pinfo->alow_flags) {
- 		ret = -ENOMEM;
+-	msb->lba_to_pba_table -		kmalloc(msb->logical_block_count * sizeof(u16), GFP_KERNEL);
++	msb->lba_to_pba_table = kmalloc_array(msb->logical_block_count,
++					      sizeof(*msb->lba_to_pba_table),
++					      GFP_KERNEL);
+ 	if (!msb->lba_to_pba_table)
+ 		goto free_erased_bitmap;
+ 
 -- 
 2.11.0
 
