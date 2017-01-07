@@ -1,32 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 31 Jan 2017 17:26:02 +0000
-Subject: Re: [PATCH][net-next] sfc: fix an off-by-one compare on an array size
-Message-Id: <20170131.122602.1280692272369236886.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 07 Jan 2017 06:32:15 +0000
+Subject: [patch] pinctrl/amd: white space cleanups in amd_gpio_dbg_show()
+Message-Id: <20170107063214.GE26959@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170131163002.20882-1-colin.king@canonical.com>
-        <0a30579a-b0e4-11cd-8613-735c143061e1@solarflare.com>
-In-Reply-To: <0a30579a-b0e4-11cd-8613-735c143061e1@solarflare.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ecree@solarflare.com
-Cc: colin.king@canonical.com, linux-net-drivers@solarflare.com, bkenward@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Shah@elgon.mountain, Nehal-bakulchandra <Nehal-Bakulchandra.shah@amd.com>, Ken Xue <Ken.Xue@amd.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Edward Cree <ecree@solarflare.com>
-Date: Tue, 31 Jan 2017 16:37:10 +0000
+We accidentally deleted two tabs from the first line, but even with that
+fixed the conditions were not really kernel style.  Put the && at the
+end of the line so we can align the condition clauses.  Also add spaces
+around the "+" operator.
 
-> On 31/01/17 16:30, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> encap_type should be checked to see if it is greater or equal to
->> the size of array map to fix an off-by-one array size check. This
->> fixes an array overrun read as detected by static analysis by
->> CoverityScan, CID#1398883 ("Out-of-bounds-read")
->>
->> Fixes: 9b41080125176841e ("sfc: insert catch-all filters for encapsulated traffic")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Good catch.
-> 
-> Acked-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks everyone.
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 7b95c1886f7b..249aa5e83419 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -216,14 +216,14 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 			if (pin_reg & BIT(INTERRUPT_ENABLE_OFF)) {
+ 				interrupt_enable = "interrupt is enabled|";
+ 
+-		if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF))
+-				&& !(pin_reg & BIT(ACTIVE_LEVEL_OFF+1)))
++				if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF)) &&
++				    !(pin_reg & BIT(ACTIVE_LEVEL_OFF + 1)))
+ 					active_level = "Active low|";
+-				else if (pin_reg & BIT(ACTIVE_LEVEL_OFF)
+-				&& !(pin_reg & BIT(ACTIVE_LEVEL_OFF+1)))
++				else if (pin_reg & BIT(ACTIVE_LEVEL_OFF) &&
++					 !(pin_reg & BIT(ACTIVE_LEVEL_OFF + 1)))
+ 					active_level = "Active high|";
+-				else if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF))
+-					&& pin_reg & BIT(ACTIVE_LEVEL_OFF+1))
++				else if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF)) &&
++					 pin_reg & BIT(ACTIVE_LEVEL_OFF + 1))
+ 					active_level = "Active on both|";
+ 				else
+ 					active_level = "Unknow Active level|";
