@@ -1,28 +1,33 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Jan 2017 21:44:44 +0000
-Subject: [PATCH 0/3] Virtio: Fine-tuning for two function implementations
-Message-Id: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
+Date: Sat, 07 Jan 2017 19:50:15 +0000
+Subject: [PATCH 0/9] memstick: Fine-tuning for some function implementations
+Message-Id: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Jan 2017 22:40:02 +0100
+Date: Sat, 7 Jan 2017 20:44:20 +0100
 
-A few update suggestions were taken into account
+Some update suggestions were taken into account
 from static source code analysis.
 
-Markus Elfring (3):
-  virtio_pci: Use kcalloc() in vp_request_msix_vectors()
-  virtio_pci: Use kmalloc_array() in vp_request_msix_vectors()
-  virtio_ring: Use kmalloc_array() in alloc_indirect()
+Markus Elfring (9):
+  Split a condition check in msb_ftl_initialize()
+  Use kmalloc_array() in msb_ftl_initialize()
+  Delete unwanted spaces behind three function parameters
+  Improve two size determinations in msb_resume()
+  Delete an unnecessary variable initialisation in msb_resume()
+  Improve a size determination in msb_probe()
+  Improve another size determination in msb_read_boot_blocks()
+  Delete an unnecessary variable initialisation in msb_read_boot_blocks()
+  Delete an unnecessary check in msb_update_block()
 
- drivers/virtio/virtio_pci_common.c | 8 ++++----
- drivers/virtio/virtio_ring.c       | 3 +--
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/memstick/core/ms_block.c | 57 ++++++++++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 25 deletions(-)
 
 -- 
 2.11.0
