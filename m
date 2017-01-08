@@ -1,57 +1,80 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Wed, 25 Jan 2017 06:57:39 +0000
-Subject: Re: [PATCH] memory: tegra: Add a missing 'of_node_put()' call
-Message-Id: <20170125065739.GB13025@ulmo.ba.sec>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="+pHx0qQiF2pBVqBT"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 08 Jan 2017 21:47:58 +0000
+Subject: [PATCH 5/8] mmc/core/mmc_test: Combine substrings for 5 messages
+Message-Id: <2841f26b-325f-bf13-a91c-5bbc125b0f8c@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170104071324.32721-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170104071324.32721-1-christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: swarren@wwwdotorg.org, gnurou@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
+In-Reply-To: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Harjani Ritesh <riteshh@codeaurora.org>, Jens Axboe <axboe@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 8 Jan 2017 20:56:48 +0100
 
---+pHx0qQiF2pBVqBT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The script "checkpatch.pl" pointed information out like the following.
 
-On Wed, Jan 04, 2017 at 08:13:24AM +0100, Christophe JAILLET wrote:
-> If 'of_find_device_by_node()' fails, an 'of_node_put()' call is missing in
-> the error handling path.
-> Fix it by reordering the code.
->=20
-> While at it, remove some empty lines in a more or less similar constructi=
-on
-> a few lines below.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/memory/tegra/tegra124-emc.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+WARNING: quoted string split across lines
 
-Applied, thanks.
+Thus fix affected source code places.
 
-Thierry
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/core/mmc_test.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
---+pHx0qQiF2pBVqBT
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+index 42aefd3df09b..bb9f569a5dd5 100644
+--- a/drivers/mmc/core/mmc_test.c
++++ b/drivers/mmc/core/mmc_test.c
+@@ -277,8 +277,7 @@ static int mmc_test_wait_busy(struct mmc_test_card *test)
+ 		if (!busy && mmc_test_busy(&cmd)) {
+ 			busy = 1;
+ 			if (test->card->host->caps & MMC_CAP_WAIT_WHILE_BUSY)
+-				pr_info("%s: Warning: Host did not "
+-					"wait for busy state to end.\n",
++				pr_info("%s: Warning: Host did not wait for busy state to end.\n",
+ 					mmc_hostname(test->card->host));
+ 		}
+ 	} while (mmc_test_busy(&cmd));
+@@ -2967,8 +2966,7 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
+ 		if (mmc_test_cases[i].prepare) {
+ 			ret = mmc_test_cases[i].prepare(test);
+ 			if (ret) {
+-				pr_info("%s: Result: Prepare "
+-					"stage failed! (%d)\n",
++				pr_info("%s: Result: Prepare stage failed! (%d)\n",
+ 					mmc_hostname(test->card->host),
+ 					ret);
+ 				continue;
+@@ -3005,13 +3003,11 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
+ 				mmc_hostname(test->card->host));
+ 			break;
+ 		case RESULT_UNSUP_HOST:
+-			pr_info("%s: Result: UNSUPPORTED "
+-				"(by host)\n",
++			pr_info("%s: Result: UNSUPPORTED (by host)\n",
+ 				mmc_hostname(test->card->host));
+ 			break;
+ 		case RESULT_UNSUP_CARD:
+-			pr_info("%s: Result: UNSUPPORTED "
+-				"(by card)\n",
++			pr_info("%s: Result: UNSUPPORTED (by card)\n",
+ 				mmc_hostname(test->card->host));
+ 			break;
+ 		default:
+@@ -3026,8 +3022,7 @@ static void mmc_test_run(struct mmc_test_card *test, int testcase)
+ 		if (mmc_test_cases[i].cleanup) {
+ 			ret = mmc_test_cases[i].cleanup(test);
+ 			if (ret) {
+-				pr_info("%s: Warning: Cleanup "
+-					"stage failed! (%d)\n",
++				pr_info("%s: Warning: Cleanup stage failed! (%d)\n",
+ 					mmc_hostname(test->card->host),
+ 					ret);
+ 			}
+-- 
+2.11.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliITGMACgkQ3SOs138+
-s6HJ7g//Z03O7iVkxi6hETHYW26D2lMTwe7jtMMQueKCzm1POxlU7d6BctXNiXCG
-Y36zA2AyWdrhtNsApyAW/8/ggfnae7CTMUHHg6lRyN7tXiljFSX9C9CrRMUADhnV
-+yokZ4G+taSlkXUhIhLlKlq9Za2M6jyEDvCn2nR22OzeF51/9kvCMS2bxxZjAxAW
-UrewFE3vhDxvRxBW1Asq8on2gM++ChvtLjlODuxXnygLtl9bHtvB2Ui7h77sJFTo
-x3VPIyMQ3u+N7ASB3lR+vvg/4g40IapKqN/qbRkEp2X21DCpls5Gr/ShrTOSHWsl
-6/YgWLr9Q0z9bfonx8v41LULYjPYeZXuVbvYuV5SDD/m0QujeXnKt5RCH9I5LWiO
-UKuYRnpM9kaizhnM9G3d5J5DuaJYooZS4ZOEaW3668qBafoFDtKuCnzEJJCpt5yH
-aCX4WUVz7zMgRP3ShCBGXn9OCT51VKH+ix3d2kbhoC+Gelq7C5teW1Zs8BnULcdx
-el+nipr3ZJOk8DAwLek8W1A+ufIkSorPqfX7+D5gQOhKQkO0tVLrUUYa54sRzGZ8
-duPSw/Gu073DDORwWs8qzb9oST1dW+LT1f2JLR5FReradQkX1xPbap0zU7CHyEVA
-k0O1CWWkWecYYXyW1cBlEMYgSeeqSwN0NfvntFof4GTGtaSSDsM=
-=4zo7
------END PGP SIGNATURE-----
-
---+pHx0qQiF2pBVqBT--
