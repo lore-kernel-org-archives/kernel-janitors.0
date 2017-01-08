@@ -1,43 +1,43 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 23 Jan 2017 15:14:38 +0000
-Subject: Re: [PATCH 3/5] blk-throttle: Adjust two function calls together with a variable assignment
-Message-Id: <bdd7466c-2f35-3279-1287-b08ba9eb373b@kernel.dk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 08 Jan 2017 21:45:22 +0000
+Subject: [PATCH 3/8] mmc-core: Use seq_puts() in mtf_testlist_show()
+Message-Id: <5b8afe3b-0dee-0d95-c855-f0b93a95a072@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e734cafa-eec0-9d5b-b368-2de496a96c80@users.sourceforge.net>
- <7d68f93d-c14c-60aa-2b02-5005a0a62cad@users.sourceforge.net>
- <20170123091821.GC3517@linux-x5ow.site>
-In-Reply-To: <20170123091821.GC3517@linux-x5ow.site>
+References: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
+In-Reply-To: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Thumshirn <jthumshirn@suse.de>, SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Harjani Ritesh <riteshh@codeaurora.org>, Jens Axboe <axboe@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 01/23/2017 02:20 AM, Johannes Thumshirn wrote:
-> On Sun, Jan 22, 2017 at 09:33:08AM +0100, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Sat, 21 Jan 2017 22:15:33 +0100
->>
->> The script "checkpatch.pl" pointed information out like the following.
->>
->> ERROR: do not use assignment in if condition
->>
->> Thus fix the affected source code places.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
-> 
-> Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-> if Jens wants doesn't mind.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 8 Jan 2017 19:48:28 +0100
 
-I don't mind these, but I completely agree on the patches for moving the
-'error' assignment. What ends up happening for those cases is that
-someone adds a new section and forgets to set 'error', and then all hell
-breaks lose.
+The script "checkpatch.pl" pointed information out like the following.
 
-So Markus, don't bother sending those patches again for the block layer
-or drivers, I'm not going to take them.
+WARNING: Prefer seq_puts to seq_printf
 
+Thus fix the affected source code place.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/core/mmc_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+index 2f838a13a904..848f4f30e343 100644
+--- a/drivers/mmc/core/mmc_test.c
++++ b/drivers/mmc/core/mmc_test.c
+@@ -3163,7 +3163,7 @@ static int mtf_testlist_show(struct seq_file *sf, void *data)
+ 
+ 	mutex_lock(&mmc_test_lock);
+ 
+-	seq_printf(sf, "0:\tRun all tests\n");
++	seq_puts(sf, "0:\tRun all tests\n");
+ 	for (i = 0; i < ARRAY_SIZE(mmc_test_cases); i++)
+ 		seq_printf(sf, "%d:\t%s\n", i+1, mmc_test_cases[i].name);
+ 
 -- 
-Jens Axboe
+2.11.0
 
