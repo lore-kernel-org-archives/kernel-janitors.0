@@ -1,55 +1,39 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 16 Jan 2017 16:40:59 +0000
-Subject: Re: [PATCH 00/46] SELinux: Fine-tuning for several function implementations
-Message-Id: <CAHC9VhTxe0+TXagRfBqjWqvNuNrET+zg_72EbRzDDj4Q4oBBhQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 08 Jan 2017 21:43:33 +0000
+Subject: [PATCH 2/8] mmc-core: Fix a typo in a comment line
+Message-Id: <8d856fe0-76cd-b226-9ef3-51b07af47223@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net> <1484580399.19104.6.camel@redhat.com>
-In-Reply-To: <1484580399.19104.6.camel@redhat.com>
+References: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
+In-Reply-To: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Eric Paris <eparis@redhat.com>, linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Harjani Ritesh <riteshh@codeaurora.org>, Jens Axboe <axboe@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-On Mon, Jan 16, 2017 at 10:26 AM, Eric Paris <eparis@redhat.com> wrote:
-> <opinion from irrelevant person>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 8 Jan 2017 19:05:37 +0100
 
-Well, not totally irrelevant, I just reserve the right to ignore Eric
-if I disagree with him ;)
+Add a missing character in the function description.
 
-> All of the patches look good to me except most of those which change
-> the handling of `rc=`. I have a personal style preference for
->
-> rc = -ENOMEM;
-> val = kalloc();
-> if (!val)
->   goto err;
->
-> vs
->
-> val = kalloc();
-> if (!val) {
->   rc = -ENOMEM;
->   goto err;
-> }
->
-> because it saves 1 line and I think the compiler does the right/same
-> thing. If there is preference among the people active in selinux
-> developers (like I said, I'm now irrelevant) I guess they win.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/core/mmc_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My preference tends to be the other way around; I think putting the rc
-assignment in the if block makes the code more readable and that is
-how I tend to write things.  That said, I don't recall ever requiring
-someone to redo a patch only because of this style nit ... if I did,
-shame on me.
-
-> But certainly a big +1 from me for the array allocation and sizeof()
-> changes.
-
-I do appreciate all the patches, thank you!  However, a bit of a
-warning that it may take me a little bit of time to work my way
-through reviewing and merging all of them.
-
+diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+index e85ef503d7ce..2f838a13a904 100644
+--- a/drivers/mmc/core/mmc_test.c
++++ b/drivers/mmc/core/mmc_test.c
+@@ -1533,7 +1533,7 @@ static int mmc_test_area_cleanup(struct mmc_test_card *test)
+ 
+ /*
+  * Initialize an area for testing large transfers.  The test area is set to the
+- * middle of the card because cards may have different charateristics at the
++ * middle of the card because cards may have different characteristics at the
+  * front (for FAT file system optimization).  Optionally, the area is erased
+  * (if the card supports it) which may improve write performance.  Optionally,
+  * the area is filled with data for subsequent read tests.
 -- 
-paul moore
-www.paul-moore.com
+2.11.0
+
