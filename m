@@ -1,87 +1,48 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Jan 2017 18:16:56 +0000
-Subject: Re: [PATCH 17/17] spi/topcliff-pch: One check less in pch_spi_set_tx()
-Message-Id: <CAMuHMdXuh4gUSoZxJpp-KYJQHTOzn9Cey04MM9C6n6a-B5CR2Q@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 08 Jan 2017 21:50:25 +0000
+Subject: [PATCH 7/8] mmc-core: Use kcalloc() in mmc_test_alloc_mem()
+Message-Id: <304ae7a7-bc51-83d7-2a6b-844cdf4c346f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net> <bdf5a12c-39cb-398a-f6c8-58142c7abd8d@users.sourceforge.net>
-In-Reply-To: <bdf5a12c-39cb-398a-f6c8-58142c7abd8d@users.sourceforge.net>
+References: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
+In-Reply-To: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-spi <linux-spi@vger.kernel.org>, Mark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Harjani Ritesh <riteshh@codeaurora.org>, Jens Axboe <axboe@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 8 Jan 2017 21:43:12 +0100
 
-On Fri, Jan 13, 2017 at 6:28 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 13 Jan 2017 17:30:46 +0100
->
-> Delete a duplicate check after a bit of exception handling was moved into
-> a previous if branch of this function.
+* The script "checkpatch.pl" pointed information out like the following.
 
-This is not equivalent: if data->pkt_tx_buff = NULL, the queue is no longer
-flushed.
+  WARNING: Prefer kcalloc over kzalloc with multiply
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/spi/spi-topcliff-pch.c | 25 ++++++++++++++-----------
->  1 file changed, 14 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-> index 97fd1ea9826b..33043a830032 100644
-> --- a/drivers/spi/spi-topcliff-pch.c
-> +++ b/drivers/spi/spi-topcliff-pch.c
-> @@ -584,22 +584,25 @@ static void pch_spi_set_tx(struct pch_spi_data *data, int *bpw)
->         data->pkt_tx_buff = kzalloc(size, GFP_KERNEL);
->         if (data->pkt_tx_buff) {
->                 data->pkt_rx_buff = kzalloc(size, GFP_KERNEL);
-> -               if (!data->pkt_rx_buff)
-> +               if (!data->pkt_rx_buff) {
->                         kfree(data->pkt_tx_buff);
-> -       }
->
-> -       if (!data->pkt_rx_buff) {
-> -               /* flush queue and set status of all transfers to -ENOMEM */
-> -               list_for_each_entry_safe(pmsg, tmp, data->queue.next, queue) {
-> -                       pmsg->status = -ENOMEM;
-> +                       /*
-> +                        * Flush queue and set status of all transfers
-> +                        * to -ENOMEM.
-> +                        */
-> +                       list_for_each_entry_safe(pmsg, tmp, data->queue.next,
-> +                                                queue) {
-> +                               pmsg->status = -ENOMEM;
->
-> -                       if (pmsg->complete)
-> -                               pmsg->complete(pmsg->context);
-> +                               if (pmsg->complete)
-> +                                       pmsg->complete(pmsg->context);
->
-> -                       /* delete from queue */
-> -                       list_del_init(&pmsg->queue);
-> +                               /* delete from queue */
-> +                               list_del_init(&pmsg->queue);
-> +                       }
-> +                       return;
->                 }
-> -               return;
->         }
->
->         /* copy Tx Data */
+  Thus fix the affected source code place.
 
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mmc/core/mmc_test.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-
+diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+index 294d3c675734..cb4750de2720 100644
+--- a/drivers/mmc/core/mmc_test.c
++++ b/drivers/mmc/core/mmc_test.c
+@@ -360,8 +360,7 @@ static struct mmc_test_mem *mmc_test_alloc_mem(unsigned long min_sz,
+ 	if (!mem)
+ 		return NULL;
+ 
+-	mem->arr = kzalloc(sizeof(struct mmc_test_pages) * max_segs,
+-			   GFP_KERNEL);
++	mem->arr = kcalloc(max_segs, sizeof(*mem->arr), GFP_KERNEL);
+ 	if (!mem->arr)
+ 		goto out_free;
+ 
 -- 
-Gr{oetje,eeting}s,
+2.11.0
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
