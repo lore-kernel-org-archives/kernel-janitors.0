@@ -1,45 +1,72 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 17:05:00 +0000
-Subject: [PATCH 8/8] powerpc/nvram: Move an assignment for the variable "err" in nvram_scan_partitions()
-Message-Id: <e8e419d4-cbf2-78e6-fb76-ec65a63bf5f6@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 09 Jan 2017 20:02:08 +0000
+Subject: Applied "spi: spi-axi: Free resources on error path" to the spi tree
+Message-Id: <E1cQg8u-00076L-2w@debutante>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
-In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+References: <20170109000247.3215-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170109000247.3215-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Mark Brown <broonie@kernel.org>broonie@kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 17:27:37 +0100
+The patch
 
-A local variable was set to an error code before a concrete error situation
-was detected. Thus move the corresponding assignment into an if branch
-to indicate a software failure there.
+   spi: spi-axi: Free resources on error path
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+has been applied to the spi tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9620ca90115d4bd700f05862d3b210a266a66efe Mon Sep 17 00:00:00 2001
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 9 Jan 2017 01:02:47 +0100
+Subject: [PATCH] spi: spi-axi: Free resources on error path
+
+We should go to 'err_put_master' here instead of returning directly.
+Otherwise a call to 'spi_master_put' is missing.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/powerpc/kernel/nvram_64.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/spi/spi-axi-spi-engine.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index ed54147e3c60..5172115c4ef1 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -1173,9 +1173,10 @@ int __init nvram_scan_partitions(void)
- 			goto out;
- 		}
- 		tmp_part = kmalloc(sizeof(*tmp_part), GFP_KERNEL);
--		err = -ENOMEM;
--		if (!tmp_part)
-+		if (!tmp_part) {
-+			err = -ENOMEM;
- 			goto out;
-+		}
- 		
- 		memcpy(&tmp_part->header, &phead, NVRAM_HEADER_LEN);
- 		tmp_part->index = cur_index;
+diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
+index 319225d7e761..6ab4c7700228 100644
+--- a/drivers/spi/spi-axi-spi-engine.c
++++ b/drivers/spi/spi-axi-spi-engine.c
+@@ -494,7 +494,8 @@ static int spi_engine_probe(struct platform_device *pdev)
+ 			SPI_ENGINE_VERSION_MAJOR(version),
+ 			SPI_ENGINE_VERSION_MINOR(version),
+ 			SPI_ENGINE_VERSION_PATCH(version));
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_put_master;
+ 	}
+ 
+ 	spi_engine->clk = devm_clk_get(&pdev->dev, "s_axi_aclk");
 -- 
 2.11.0
 
