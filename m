@@ -1,58 +1,36 @@
-From: Kirti Wankhede <kwankhede@nvidia.com>
-Date: Mon, 09 Jan 2017 18:51:36 +0000
-Subject: Re: [patch 2/3] vfio-mdev: buffer overflow in ioctl()
-Message-Id: <f81db85d-6122-93ea-bcfd-bc899e9eea68@nvidia.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 09 Jan 2017 00:02:47 +0000
+Subject: [PATCH] spi: spi-axi: Free resources on error path
+Message-Id: <20170109000247.3215-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170107062840.GB26959@elgon.mountain>
-In-Reply-To: <20170107062840.GB26959@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>
+To: broonie@kernel.org
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+We should go to 'err_put_master' here instead of returning directly.
+Otherwise a call to 'spi_master_put' is missing.
 
-CC+= Alex
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/spi/spi-axi-spi-engine.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks Dan for fixing.
+diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
+index 319225d7e761..6ab4c7700228 100644
+--- a/drivers/spi/spi-axi-spi-engine.c
++++ b/drivers/spi/spi-axi-spi-engine.c
+@@ -494,7 +494,8 @@ static int spi_engine_probe(struct platform_device *pdev)
+ 			SPI_ENGINE_VERSION_MAJOR(version),
+ 			SPI_ENGINE_VERSION_MINOR(version),
+ 			SPI_ENGINE_VERSION_PATCH(version));
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_put_master;
+ 	}
+ 
+ 	spi_engine->clk = devm_clk_get(&pdev->dev, "s_axi_aclk");
+-- 
+2.9.3
 
-Reviewed by: Kirti Wankhede <kwankhede@nvidia.com>
-
-Thanks,
-Kirti
-
-On 1/7/2017 11:58 AM, Dan Carpenter wrote:
-> This is a sample driver for documentation so the impact is probably
-> pretty low.  But we should check that bar_index is valid so we
-> don't write beyond the end of the mdev_state->region_info[] array.
-> 
-> Fixes: 9d1a546c53b4 ("docs: Sample driver to demonstrate how to use Mediated device framework.")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-> index d2656ff569c1..353666d68207 100644
-> --- a/samples/vfio-mdev/mtty.c
-> +++ b/samples/vfio-mdev/mtty.c
-> @@ -1073,7 +1073,7 @@ int mtty_get_region_info(struct mdev_device *mdev,
->  {
->  	unsigned int size = 0;
->  	struct mdev_state *mdev_state;
-> -	int bar_index;
-> +	u32 bar_index;
->  
->  	if (!mdev)
->  		return -EINVAL;
-> @@ -1082,8 +1082,11 @@ int mtty_get_region_info(struct mdev_device *mdev,
->  	if (!mdev_state)
->  		return -EINVAL;
->  
-> -	mutex_lock(&mdev_state->ops_lock);
->  	bar_index = region_info->index;
-> +	if (bar_index >= VFIO_PCI_NUM_REGIONS)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&mdev_state->ops_lock);
->  
->  	switch (bar_index) {
->  	case VFIO_PCI_CONFIG_REGION_INDEX:
-> 
