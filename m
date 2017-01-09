@@ -1,39 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 17:27:23 +0000
-Subject: [PATCH 16/17] spi/topcliff-pch: Delete an error message for a failed memory allocation in pch_spi_se
-Message-Id: <b72c78dc-32b2-0f8f-8d3d-575ce4bff02f@users.sourceforge.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Mon, 09 Jan 2017 00:26:37 +0000
+Subject: [PATCH] tty: goldfish: Fix a parameter of a call to free_irq
+Message-Id: <20170109002637.9212-1-christophe.jaillet@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
-In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 17:00:08 +0100
+'request_irq()' and 'free_irq()' should be called with the same dev_id.
 
-Omit an extra message for a memory allocation failure in this function.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/spi/spi-topcliff-pch.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/tty/goldfish.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index d36d42653087..97fd1ea9826b 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -590,7 +590,6 @@ static void pch_spi_set_tx(struct pch_spi_data *data, int *bpw)
+diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
+index 3fc912373adf..996bd473dd03 100644
+--- a/drivers/tty/goldfish.c
++++ b/drivers/tty/goldfish.c
+@@ -300,7 +300,7 @@ static int goldfish_tty_probe(struct platform_device *pdev)
+ 	return 0;
  
- 	if (!data->pkt_rx_buff) {
- 		/* flush queue and set status of all transfers to -ENOMEM */
--		dev_err(&data->master->dev, "%s :kzalloc failed\n", __func__);
- 		list_for_each_entry_safe(pmsg, tmp, data->queue.next, queue) {
- 			pmsg->status = -ENOMEM;
- 
+ err_tty_register_device_failed:
+-	free_irq(irq, pdev);
++	free_irq(irq, qtty);
+ err_request_irq_failed:
+ 	goldfish_tty_current_line_count--;
+ 	if (goldfish_tty_current_line_count = 0)
 -- 
-2.11.0
+2.9.3
 
