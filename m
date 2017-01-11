@@ -1,43 +1,82 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 09:50:29 +0000
-Subject: [PATCH 3/3] sh/intc: Add a space character for better code readability in register_intc_controller()
-Message-Id: <c23fefa5-cd69-3ae7-0064-82933707e0a1@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:52:27 +0000
+Subject: [PATCH 17/18] mtd-cfi_cmdset_0020: Use common error handling code in cfi_staa_setup()
+Message-Id: <128b121d-9b5e-8c71-6265-96110d6ca833@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4d37c4d8-d28b-bd98-968b-f544d6a213eb@users.sourceforge.net>
-In-Reply-To: <4d37c4d8-d28b-bd98-968b-f544d6a213eb@users.sourceforge.net>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sh@vger.kernel.org, Rich Felker <dalias@libc.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 10:32:04 +0100
+Date: Wed, 11 Jan 2017 20:02:40 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
-
-ERROR: spaces required around that '+=' (ctx:VxW)
-
-Thus fix the affected source code place.
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/sh/intc/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/chips/cfi_cmdset_0020.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/sh/intc/core.c b/drivers/sh/intc/core.c
-index 95fb29d69ab7..e7f5aeeb1cee 100644
---- a/drivers/sh/intc/core.c
-+++ b/drivers/sh/intc/core.c
-@@ -286,7 +286,7 @@ int __init register_intc_controller(struct intc_desc *desc)
- 	if (hw->subgroups)
- 		for (i = 0; i < hw->nr_subgroups; i++)
- 			if (hw->subgroups[i].reg)
--				k+= save_reg(d, k, hw->subgroups[i].reg, 0);
-+				k += save_reg(d, k, hw->subgroups[i].reg, 0);
+diff --git a/drivers/mtd/chips/cfi_cmdset_0020.c b/drivers/mtd/chips/cfi_cmdset_0020.c
+index 9cd7b1c6faba..60de9d58dcc6 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0020.c
++++ b/drivers/mtd/chips/cfi_cmdset_0020.c
+@@ -173,11 +173,8 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
  
- 	memcpy(&d->chip, &intc_irq_chip, sizeof(struct irq_chip));
- 	d->chip.name = desc->name;
+ 	mtd = kzalloc(sizeof(*mtd), GFP_KERNEL);
+ 	//printk(KERN_DEBUG "number of CFI chips: %d\n", cfi->numchips);
+-
+-	if (!mtd) {
+-		kfree(cfi->cmdset_priv);
+-		return NULL;
+-	}
++	if (!mtd)
++		goto free_priv;
+ 
+ 	mtd->priv = map;
+ 	mtd->type = MTD_NORFLASH;
+@@ -187,11 +184,8 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
+ 	mtd->eraseregions = kmalloc_array(mtd->numeraseregions,
+ 					  sizeof(*mtd->eraseregions),
+ 					  GFP_KERNEL);
+-	if (!mtd->eraseregions) {
+-		kfree(cfi->cmdset_priv);
+-		kfree(mtd);
+-		return NULL;
+-	}
++	if (!mtd->eraseregions)
++		goto free_mtd;
+ 
+ 	for (i=0; i<cfi->cfiq->NumEraseRegions; i++) {
+ 		unsigned long ernum, ersize;
+@@ -213,9 +207,7 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
+ 		/* Argh */
+ 		printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
+ 		kfree(mtd->eraseregions);
+-		kfree(cfi->cmdset_priv);
+-		kfree(mtd);
+-		return NULL;
++		goto free_mtd;
+ 	}
+ 
+ 	for (i=0; i<mtd->numeraseregions;i++){
+@@ -242,6 +234,11 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
+ 	__module_get(THIS_MODULE);
+ 	mtd->name = map->name;
+ 	return mtd;
++free_mtd:
++	kfree(mtd);
++free_priv:
++	kfree(cfi->cmdset_priv);
++	return NULL;
+ }
+ 
+ 
 -- 
 2.11.0
 
