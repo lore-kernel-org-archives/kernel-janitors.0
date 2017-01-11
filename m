@@ -1,41 +1,47 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:26:04 +0000
-Subject: [PATCH 26/46] selinux: Improve another size determination in sens_read()
-Message-Id: <6aec69ea-27e6-da3f-8a54-e1f12c78cc2e@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:46:14 +0000
+Subject: [PATCH 11/18] mtd-cfi_cmdset_0002: Rename a jump label in cfi_amdstd_setup()
+Message-Id: <cc726e7b-7453-cd36-3207-93769c38f5fb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 21:52:55 +0100
+Date: Wed, 11 Jan 2017 18:34:03 +0100
 
-Replace the specification of a data type by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust a jump label according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 5caa1fa5ea80..edfcfd3bbc60 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1609,7 +1609,7 @@ static int sens_read(struct policydb *p, struct hashtab *h, void *fp)
- 		goto bad;
+diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+index 25d485f6d2ff..dc02d99bd7dc 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -712,14 +712,13 @@ static struct mtd_info *cfi_amdstd_setup(struct mtd_info *mtd)
+ 	if (offset != devsize) {
+ 		/* Argh */
+ 		printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
+-		goto setup_err;
++		goto free_regions;
+ 	}
  
- 	rc = -ENOMEM;
--	levdatum->level = kmalloc(sizeof(struct mls_level), GFP_ATOMIC);
-+	levdatum->level = kmalloc(sizeof(*levdatum->level), GFP_ATOMIC);
- 	if (!levdatum->level)
- 		goto bad;
- 
+ 	__module_get(THIS_MODULE);
+ 	register_reboot_notifier(&mtd->reboot_notifier);
+ 	return mtd;
+-
+- setup_err:
++free_regions:
+ 	kfree(mtd->eraseregions);
+ free_priv:
+ 	kfree(cfi->cmdset_priv);
 -- 
 2.11.0
 
