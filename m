@@ -1,50 +1,49 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 09:38:37 +0000
-Subject: Re: [PATCH 2/5] um: port: Delete three error messages for a failed memory allocation
-Message-Id: <11675f60-3f56-d3a7-e8f8-1544c7a8567d@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:35:55 +0000
+Subject: [PATCH 01/18] mtd-cfi_cmdset_0001: Use kmalloc_array() in cfi_intelext_partition_fixup()
+Message-Id: <f74ef6ca-7159-ba15-b7a3-0a45e522729f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
- <651ecf90-9c68-aec1-58d7-d11e7671ed4c@users.sourceforge.net>
- <20170119000748.GB12052@parts.user-mode-linux.org>
-In-Reply-To: <20170119000748.GB12052@parts.user-mode-linux.org>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Dike <jdike@addtoit.com>, user-mode-linux-devel@lists.sourceforge.net
-Cc: user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> +++ b/arch/um/drivers/port_kern.c
->> @@ -87,11 +87,8 @@ static int port_accept(struct port_list *port)
->>  	}
->>  
->>  	conn = kmalloc(sizeof(*conn), GFP_ATOMIC);
->> -	if (conn = NULL) {
->> -		printk(KERN_ERR "port_accept : failed to allocate "
->> -		       "connection\n");
->> +	if (!conn)
->>  		goto out_close;
->> -	}
->>  	*conn = ((struct connection)
->>  		{ .list 	= LIST_HEAD_INIT(conn->list),
->>  		  .fd 		= fd,
-> 
-> I don't see how this eliminates a possible error.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 10 Jan 2017 18:48:34 +0100
 
-The suggested change affects three coding style issues at this place.
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-* Repetition of an out-of-memory message
+  This issue was detected by using the Coccinelle software.
 
-  See also:
-  http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-* Unwanted splitting of a message string
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/chips/cfi_cmdset_0001.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-* Usage of a specific preprocessor symbol
+diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
+index 5e1b68cbcd0a..68227aa74d22 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -746,7 +746,9 @@ static int cfi_intelext_partition_fixup(struct mtd_info *mtd,
+ 		newcfi = kmalloc(sizeof(struct cfi_private) + numvirtchips * sizeof(struct flchip), GFP_KERNEL);
+ 		if (!newcfi)
+ 			return -ENOMEM;
+-		shared = kmalloc(sizeof(struct flchip_shared) * cfi->numchips, GFP_KERNEL);
++		shared = kmalloc_array(cfi->numchips,
++				       sizeof(*shared),
++				       GFP_KERNEL);
+ 		if (!shared) {
+ 			kfree(newcfi);
+ 			return -ENOMEM;
+-- 
+2.11.0
 
-
-> !x is something you use with something that is conceptually a Boolean.
-
-Pointers can be also treated in this way, can't they?
-
-Regards,
-Markus
