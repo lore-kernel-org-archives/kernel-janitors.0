@@ -1,43 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 16:59:00 +0000
-Subject: [PATCH 5/8] powerpc/nvram: Return directly after a failed kmalloc() in dev_nvram_read()
-Message-Id: <60b730d9-c683-a6ee-42fb-1c874ad86205@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:48:18 +0000
+Subject: [PATCH 13/18] mtd-cfi_cmdset_0002: Delete an unnecessary variable initialisation in do_write_oneword
+Message-Id: <badee3bc-5755-1e12-87dd-47ac23f918a1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
-In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 16:50:31 +0100
+Date: Wed, 11 Jan 2017 19:00:30 +0100
 
-Return directly after a call of the function "kmalloc" failed here.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kernel/nvram_64.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index 463551589b97..68b970bcf2fc 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -762,10 +762,8 @@ static ssize_t dev_nvram_read(struct file *file, char __user *buf,
- 	count = min(count, PAGE_SIZE);
+diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+index 7d4d4a144631..05d740e8eb51 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -1569,7 +1569,7 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
+ 	 * timeout of 0 jiffies if HZ is smaller than 1000.
+ 	 */
+ 	unsigned long uWriteTimeout = ( HZ / 1000 ) + 1;
+-	int ret = 0;
++	int ret;
+ 	map_word oldd;
+ 	int retry_cnt = 0;
  
- 	tmp = kmalloc(count, GFP_KERNEL);
--	if (!tmp) {
--		ret = -ENOMEM;
--		goto out;
--	}
-+	if (!tmp)
-+		return -ENOMEM;
- 
- 	ret = ppc_md.nvram_read(tmp, count, ppos);
- 	if (ret <= 0)
 -- 
 2.11.0
 
