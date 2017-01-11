@@ -1,43 +1,50 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 18:26:58 +0000
-Subject: [PATCH 08/11] KVM: PPC: Book3S: Use seq_puts() in xics_debug_show()
-Message-Id: <10e0dc46-5eec-bafc-e191-98df6a724b98@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:51:25 +0000
+Subject: [PATCH 16/18] mtd-cfi_cmdset_0020: Use kmalloc_array() in cfi_staa_setup()
+Message-Id: <927b2449-3de4-83aa-8d23-ef0a6461ecfe@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
-In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 16:26:51 +0100
+Date: Wed, 11 Jan 2017 19:33:48 +0100
 
-A string which did not contain data format specifications should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-This issue was detected by using the Coccinelle software.
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kvm/book3s_xics.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0020.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_xics.c b/arch/powerpc/kvm/book3s_xics.c
-index 3bdc639157c1..3740f9efcf06 100644
---- a/arch/powerpc/kvm/book3s_xics.c
-+++ b/arch/powerpc/kvm/book3s_xics.c
-@@ -934,8 +934,7 @@ static int xics_debug_show(struct seq_file *m, void *private)
- 	t_reject = 0;
+diff --git a/drivers/mtd/chips/cfi_cmdset_0020.c b/drivers/mtd/chips/cfi_cmdset_0020.c
+index 94d3eb42c4d5..9cd7b1c6faba 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0020.c
++++ b/drivers/mtd/chips/cfi_cmdset_0020.c
+@@ -184,8 +184,9 @@ static struct mtd_info *cfi_staa_setup(struct map_info *map)
+ 	mtd->size = devsize * cfi->numchips;
  
- 	xics_debugfs_irqmap(m, kvm->arch.pimap);
--
--	seq_printf(m, "=====\nICP state\n=====\n");
-+	seq_puts(m, "=====\nICP state\n=====\n");
- 
- 	kvm_for_each_vcpu(i, vcpu, kvm) {
- 		struct kvmppc_icp *icp = vcpu->arch.icp;
+ 	mtd->numeraseregions = cfi->cfiq->NumEraseRegions * cfi->numchips;
+-	mtd->eraseregions = kmalloc(sizeof(struct mtd_erase_region_info)
+-			* mtd->numeraseregions, GFP_KERNEL);
++	mtd->eraseregions = kmalloc_array(mtd->numeraseregions,
++					  sizeof(*mtd->eraseregions),
++					  GFP_KERNEL);
+ 	if (!mtd->eraseregions) {
+ 		kfree(cfi->cmdset_priv);
+ 		kfree(mtd);
 -- 
 2.11.0
 
