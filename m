@@ -1,47 +1,41 @@
-From: Vadim Pasternak <vadimp@mellanox.com>
-Date: Sat, 07 Jan 2017 08:02:14 +0000
-Subject: RE: [patch] platform/x86: mlx-platform: free first dev on error
-Message-Id: <AM5PR0501MB20972BB870D9EEE2139C5B99A2620@AM5PR0501MB2097.eurprd05.prod.outlook.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:37:03 +0000
+Subject: [PATCH 02/18] mtd-cfi_cmdset_0001: Improve another size determination in cfi_intelext_partition_fixu
+Message-Id: <6bc5e888-47e2-270c-10b7-9198513f1ca1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170107063334.GF26959@elgon.mountain>
-In-Reply-To: <20170107063334.GF26959@elgon.mountain>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Darren Hart <dvhart@infradead.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 10 Jan 2017 19:09:58 +0100
 
+Replace the specification of a data structure by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Saturday, January 07, 2017 8:34 AM
-> To: Vadim Pasternak <vadimp@mellanox.com>
-> Cc: Darren Hart <dvhart@infradead.org>; platform-driver-
-> x86@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch] platform/x86: mlx-platform: free first dev on error
-> 
-> There is an off-by-one error so we don't unregister priv->pdev_mux[0].
-> Also it's slightly simpler as a while loop instead of a for loop.
-> 
-> Fixes: 58cbbee2391c ("x86/platform/mellanox: Introduce support for
-> Mellanox systems platform")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/chips/cfi_cmdset_0001.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Vadim Pasternak <vadimp@mellanox.com>
+diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
+index 68227aa74d22..0d7c2ef533d1 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -753,7 +753,7 @@ static int cfi_intelext_partition_fixup(struct mtd_info *mtd,
+ 			kfree(newcfi);
+ 			return -ENOMEM;
+ 		}
+-		memcpy(newcfi, cfi, sizeof(struct cfi_private));
++		memcpy(newcfi, cfi, sizeof(*cfi));
+ 		newcfi->numchips = numvirtchips;
+ 		newcfi->chipshift = partshift;
+ 
+-- 
+2.11.0
 
-> diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-
-> platform.c
-> index 04e1f2b30fa6..8f98c211b440 100644
-> --- a/drivers/platform/x86/mlx-platform.c
-> +++ b/drivers/platform/x86/mlx-platform.c
-> @@ -342,7 +342,7 @@ static int __init mlxplat_init(void)
->  	return 0;
-> 
->  fail_platform_mux_register:
-> -	for (i--; i > 0 ; i--)
-> +	while (--i >= 0)
->  		platform_device_unregister(priv->pdev_mux[i]);
->  	platform_device_unregister(priv->pdev_i2c);
->  fail_alloc:
