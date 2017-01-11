@@ -1,42 +1,52 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 13:46:24 +0000
-Subject: [PATCH 1/3] AVR32: Return directly after a failed access_ok() in setup_rt_frame()
-Message-Id: <59733f4e-18e2-9d71-31c8-dbf654c191f0@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:49:27 +0000
+Subject: [PATCH 14/18] mtd-cfi_cmdset_0002: Use common error handling code in do_write_oneword()
+Message-Id: <63f5abca-b47b-75b5-ee7c-7430f589ced0@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
-In-Reply-To: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 13:50:38 +0100
+Date: Wed, 11 Jan 2017 19:08:01 +0100
 
-Return directly after a call of the function "access_ok" failed
-at the beginning.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/avr32/kernel/signal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/avr32/kernel/signal.c b/arch/avr32/kernel/signal.c
-index 8f1c63b9b983..13c31a7b9ae4 100644
---- a/arch/avr32/kernel/signal.c
-+++ b/arch/avr32/kernel/signal.c
-@@ -141,9 +141,8 @@ setup_rt_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
- 	int err = 0;
+diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+index 05d740e8eb51..0c4751eb6efe 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -1577,10 +1577,8 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
  
- 	frame = get_sigframe(ksig, regs, sizeof(*frame));
--	err = -EFAULT;
- 	if (!access_ok(VERIFY_WRITE, frame, sizeof (*frame)))
--		goto out;
-+		return -EFAULT;
+ 	mutex_lock(&chip->mutex);
+ 	ret = get_chip(map, chip, adr, mode);
+-	if (ret) {
+-		mutex_unlock(&chip->mutex);
+-		return ret;
+-	}
++	if (ret)
++		goto unlock;
  
- 	/*
- 	 * Set up the return code:
+ 	pr_debug("MTD %s(): WRITE 0x%.8lx(0x%.8lx)\n",
+ 	       __func__, adr, datum.x[0] );
+@@ -1664,6 +1662,7 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
+ 	chip->state = FL_READY;
+ 	DISABLE_VPP(map);
+ 	put_chip(map, chip, adr);
++unlock:
+ 	mutex_unlock(&chip->mutex);
+ 
+ 	return ret;
 -- 
 2.11.0
 
