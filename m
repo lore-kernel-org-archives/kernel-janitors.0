@@ -1,52 +1,79 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 22:00:08 +0000
-Subject: [PATCH 5/5] um: ubd: Improve size determinations in do_ubd_request()
-Message-Id: <8a539d85-ff17-296c-75be-913731c2febc@users.sourceforge.net>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Wed, 11 Jan 2017 16:06:49 +0000
+Subject: Re: [PATCH 04/15] video: fbdev: use permission-specific DEVICE_ATTR variants
+Message-Id: <13619076.BMdhC73baQ@amdc3058>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
-In-Reply-To: <c10b7f33-f573-aa9f-239e-ccca5540f264@users.sourceforge.net>
+References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1477769829-22230-5-git-send-email-Julia.Lawall@lip6.fr>
+ <CGME20170111160652epcas5p3f1a8c0858a669910b51ece8cfe654a96@epcas5p3.samsung.com>
+In-Reply-To: <1477769829-22230-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, Anton Ivanov <aivanov@kot-begemot.co.uk>, Dan Williams <dan.j.williams@intel.com>, Hannes Reinecke <hare@suse.com>, Jeff Dike <jdike@addtoit.com>, Jens Axboe <axboe@fb.com>, Richard Weinberger <richard@nod.at>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 22:38:04 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer.
+Hi,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/um/drivers/ubd_kern.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+On Saturday, October 29, 2016 09:36:58 PM Julia Lawall wrote:
+> Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
+> source code, improves readbility, and reduces the chance of
+> inconsistencies.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @rw@
+> declarer name DEVICE_ATTR;
+> identifier x,x_show,x_store;
+> @@
+> 
+> DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
+> 
+> @script:ocaml@
+> x << rw.x;
+> x_show << rw.x_show;
+> x_store << rw.x_store;
+> @@
+> 
+> if not (x^"_show" = x_show && x^"_store" = x_store)
+> then Coccilib.include_match false
+> 
+> @@
+> declarer name DEVICE_ATTR_RW;
+> identifier rw.x,rw.x_show,rw.x_store;
+> @@
+> 
+> - DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
+> + DEVICE_ATTR_RW(x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index 6d686f735538..50327d5a9a01 100644
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -1386,8 +1386,7 @@ static void do_ubd_request(struct request_queue *q)
- 		req = dev->request;
- 
- 		if (req_op(req) = REQ_OP_FLUSH) {
--			io_req = kmalloc(sizeof(struct io_thread_req),
--					 GFP_ATOMIC);
-+			io_req = kmalloc(sizeof(*io_req), GFP_ATOMIC);
- 			if (io_req = NULL) {
- 				if (list_empty(&dev->restart))
- 					list_add(&dev->restart, &restart);
-@@ -1401,8 +1400,7 @@ static void do_ubd_request(struct request_queue *q)
- 		while(dev->start_sg < dev->end_sg){
- 			struct scatterlist *sg = &dev->sg[dev->start_sg];
- 
--			io_req = kmalloc(sizeof(struct io_thread_req),
--					 GFP_ATOMIC);
-+			io_req = kmalloc(sizeof(*io_req), GFP_ATOMIC);
- 			if(io_req = NULL){
- 				if(list_empty(&dev->restart))
- 					list_add(&dev->restart, &restart);
--- 
-2.11.0
+Thanks, patch queued for 4.11.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> ---
+>  drivers/video/fbdev/wm8505fb.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/video/fbdev/wm8505fb.c b/drivers/video/fbdev/wm8505fb.c
+> index e925619..253ffe9 100644
+> --- a/drivers/video/fbdev/wm8505fb.c
+> +++ b/drivers/video/fbdev/wm8505fb.c
+> @@ -182,7 +182,7 @@ static ssize_t contrast_store(struct device *dev,
+>  	return count;
+>  }
+>  
+> -static DEVICE_ATTR(contrast, 0644, contrast_show, contrast_store);
+> +static DEVICE_ATTR_RW(contrast);
+>  
+>  static inline u_int chan_to_field(u_int chan, struct fb_bitfield *bf)
+>  {
 
