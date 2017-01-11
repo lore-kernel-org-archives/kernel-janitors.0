@@ -1,87 +1,64 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:46:25 +0000
-Subject: Applied "spi: s3c64xx: potential oops on probe error" to the spi tree
-Message-Id: <E1cTYm1-0000XD-FR@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:43:41 +0000
+Subject: [PATCH 08/18] mtd-cfi_cmdset_0001: Rename a jump label in cfi_intelext_setup()
+Message-Id: <6550d4b3-b024-247f-9954-c2bb67e3352a@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170113074253.GA30524@mwanda>
-In-Reply-To: <20170113074253.GA30524@mwanda>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andi Shyti <andi.shyti@samsung.com>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>Andi Shyti <andi.shyti@samsung.com>Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org@vger.kernel.org
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 17:49:05 +0100
 
-   spi: s3c64xx: potential oops on probe error
+Adjust a jump label according to the Linux coding style convention.
 
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 72bc7ae0633e2b580217d254114ac6650380b7f6 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Jan 2017 10:42:53 +0300
-Subject: [PATCH] spi: s3c64xx: potential oops on probe error
-
-We accidentally mixed up freeing the rx and tx channels which would a
-leak and an oops.
-
-Fixes: 3d63a47a380a ("spi: s3c64xx: Don't request/release DMA channels for each SPI transfer")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Andi Shyti <andi.shyti@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/spi/spi-s3c64xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0001.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 849ee82483e4..b8cd356d8d10 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1147,7 +1147,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		if (IS_ERR(sdd->tx_dma.ch)) {
- 			dev_err(&pdev->dev, "Failed to get TX DMA channel\n");
- 			ret = PTR_ERR(sdd->tx_dma.ch);
--			goto err_release_tx_dma;
-+			goto err_release_rx_dma;
+diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
+index 7f6ed7293e40..97329484555d 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -620,7 +620,7 @@ static struct mtd_info *cfi_intelext_setup(struct mtd_info *mtd)
+ 			mtd->eraseregions[x].numblocks = ernum;
+ 			mtd->eraseregions[x].lockmap = kmalloc(ernum / 8 + 1, GFP_KERNEL);
+ 			if (!mtd->eraseregions[x].lockmap)
+-				goto setup_err;
++				goto free_regions;
  		}
+ 		offset += (ersize * ernum);
+ 	}
+@@ -628,7 +628,7 @@ static struct mtd_info *cfi_intelext_setup(struct mtd_info *mtd)
+ 	if (offset != devsize) {
+ 		/* Argh */
+ 		printk(KERN_WARNING "Sum of regions (%lx) != total size of set of interleaved chips (%lx)\n", offset, devsize);
+-		goto setup_err;
++		goto free_regions;
  	}
  
-@@ -1197,10 +1197,10 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	pm_runtime_set_suspended(&pdev->dev);
+ 	for (i = 0; i < mtd->numeraseregions; i++) {
+@@ -650,13 +650,12 @@ static struct mtd_info *cfi_intelext_setup(struct mtd_info *mtd)
+ 	/* This function has the potential to distort the reality
+ 	   a bit and therefore should be called last. */
+ 	if (cfi_intelext_partition_fixup(mtd, &cfi) != 0)
+-		goto setup_err;
++		goto free_regions;
  
- 	if (!is_polling(sdd))
--		dma_release_channel(sdd->rx_dma.ch);
--err_release_tx_dma:
--	if (!is_polling(sdd))
- 		dma_release_channel(sdd->tx_dma.ch);
-+err_release_rx_dma:
-+	if (!is_polling(sdd))
-+		dma_release_channel(sdd->rx_dma.ch);
- err_disable_io_clk:
- 	clk_disable_unprepare(sdd->ioclk);
- err_disable_src_clk:
+ 	__module_get(THIS_MODULE);
+ 	register_reboot_notifier(&mtd->reboot_notifier);
+ 	return mtd;
+-
+- setup_err:
++free_regions:
+ 	for (i = 0; i < cfi->cfiq->NumEraseRegions; i++)
+ 		for (j = 0; j < cfi->numchips; j++)
+ 			kfree(mtd->eraseregions[j * cfi->cfiq->NumEraseRegions
 -- 
 2.11.0
 
