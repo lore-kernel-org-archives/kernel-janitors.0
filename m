@@ -1,62 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 17:03:54 +0000
-Subject: [PATCH 7/8] powerpc/nvram: Improve size determinations in three functions
-Message-Id: <ccc156b4-26ff-02b2-c50a-91d9502d0db3@users.sourceforge.net>
+Date: Wed, 11 Jan 2017 20:39:21 +0000
+Subject: [PATCH 04/18] mtd-cfi_cmdset_0001: Delete an unnecessary variable initialisation in do_write_oneword
+Message-Id: <c9c2f1a9-59da-2459-bfcb-559731fcfd07@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
-In-Reply-To: <53545d97-6ed5-ff17-384f-82e72b3592f9@users.sourceforge.net>
+References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@lists.ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Daniel Axtens <dja@axtens.net>, Geliang Tang <geliangtang@163.com>, Michael Ellerman <mpe@ellerman.id.au>, Nathan Fontenot <nfont@linux.vnet.ibm.com>, Pan Xinhui <xinhui.pan@linux.vnet.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mackerras <paulus@samba.org>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Jan 2017 17:15:30 +0100
+Date: Wed, 11 Jan 2017 16:36:18 +0100
 
-Replace the specification of data structures by references for local
-variables as the parameter for the operator "sizeof" to make
-the corresponding size determination a bit safer.
+The local variable "ret" will be set to an appropriate value a bit later.
+Thus omit the explicit initialisation at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kernel/nvram_64.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0001.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index 7af1baaaf01b..ed54147e3c60 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -207,8 +207,7 @@ int nvram_write_os_partition(struct nvram_os_partition *part,
+diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
+index 0bcb785305d6..0c0fa918c9ff 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -1535,7 +1535,7 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
+ {
+ 	struct cfi_private *cfi = map->fldrv_priv;
+ 	map_word status, write_cmd;
+-	int ret=0;
++	int ret;
  
- 	tmp_index = part->index;
+ 	adr += chip->start;
  
--	rc = ppc_md.nvram_write((char *)&info, sizeof(struct err_log_info),
--				&tmp_index);
-+	rc = ppc_md.nvram_write((char *)&info, sizeof(info), &tmp_index);
- 	if (rc <= 0) {
- 		pr_err("%s: Failed nvram_write (%d)\n", __func__, rc);
- 		return rc;
-@@ -244,9 +243,7 @@ int nvram_read_partition(struct nvram_os_partition *part, char *buff,
- 	tmp_index = part->index;
- 
- 	if (part->os_partition) {
--		rc = ppc_md.nvram_read((char *)&info,
--					sizeof(struct err_log_info),
--					&tmp_index);
-+		rc = ppc_md.nvram_read((char *)&info, sizeof(info), &tmp_index);
- 		if (rc <= 0) {
- 			pr_err("%s: Failed nvram_read (%d)\n", __func__, rc);
- 			return rc;
-@@ -1175,7 +1172,7 @@ int __init nvram_scan_partitions(void)
- 			       "detected: 0-length partition\n");
- 			goto out;
- 		}
--		tmp_part = kmalloc(sizeof(struct nvram_partition), GFP_KERNEL);
-+		tmp_part = kmalloc(sizeof(*tmp_part), GFP_KERNEL);
- 		err = -ENOMEM;
- 		if (!tmp_part)
- 			goto out;
 -- 
 2.11.0
 
