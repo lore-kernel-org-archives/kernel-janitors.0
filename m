@@ -1,27 +1,26 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Wed, 11 Jan 2017 21:56:40 +0000
+From: Marek Vasut <marek.vasut@gmail.com>
+Date: Wed, 11 Jan 2017 21:58:27 +0000
 Subject: Re: [PATCH 00/18] MTD-CFI: Fine-tuning for several function implementations
-Message-Id: <20170111225640.14e5d962@bbrezillon>
+Message-Id: <f256de56-1815-2959-917d-7051319a65ac@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Richard Weinberger <richard@nod.at>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Markus,
-
-On Wed, 11 Jan 2017 21:34:13 +0100
-SF Markus Elfring <elfring@users.sourceforge.net> wrote:
-
+On 01/11/2017 09:34 PM, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
 > Date: Wed, 11 Jan 2017 21:21:12 +0100
 > 
 > Several update suggestions were taken into account
 > from static source code analysis.
-> 
+
+The patch listing doesn't seem to match the content of the patchset ?
+The $subject are different ...
+
 > Markus Elfring (18):
 >   Use kmalloc_array() in cfi_intelext_partition_fixup()
 >   Improve another size determination in cfi_intelext_partition_fixup()
@@ -41,31 +40,6 @@ SF Markus Elfring <elfring@users.sourceforge.net> wrote:
 >   Use kmalloc_array() in cfi_staa_setup()
 >   Use common error handling code in cfi_staa_setup()
 >   cfi_cmdset_0020: Add some spaces for better code readability
-
-You know what, I almost considered reviewing this series, but I had a
-look at the commit titles (and the sort of things you're
-'fixing/improving') and decided to google your name instead.
-
-It seems that you've already sent quite a lot of so-called
-'cleanup/improvement' patches, and most of the time you don't understand
-what you're doing.
-Maybe it's time for you to stop using static analysis tools and start
-spending time on real stuff.
-
-Note that I'm usually not against cleanup/coding-style patches, but it
-really seems that you're only interested in getting as much patches as
-you can in mainline, no matter what they do.
-
-Sorry, that's a NACK on my side. Let's see of other MTD maintainers are
-willing to take the time to review your patches. And BTW, when you
-submit something, you could at least have a look at previous commits
-touching the same files/directories and try to match the subsystem
-prefix ("mtd: cfi_cmdset: ", "mtd: cfi: " or "mtd: chips: cfi: ").
-
-Regards,
-
-Boris
-
 > 
 >  drivers/mtd/chips/cfi_cmdset_0001.c | 165 +++++++++++++++++++-----------------
 >  drivers/mtd/chips/cfi_cmdset_0002.c | 110 +++++++++++++-----------
@@ -73,3 +47,7 @@ Boris
 >  3 files changed, 214 insertions(+), 188 deletions(-)
 > 
 
+
+-- 
+Best regards,
+Marek Vasut
