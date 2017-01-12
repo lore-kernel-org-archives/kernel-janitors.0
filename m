@@ -1,26 +1,31 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 24 Jan 2017 17:53:34 +0000
-Subject: Re: [PATCH] bpf: don't kfree an uninitialized im_node
-Message-Id: <CAADnVQLZ-uAcDehoWb5ev9pHhkDy9XoEOyKQPg0qSUXw=dzOYw@mail.gmail.com>
+From: David Howells <dhowells@redhat.com>
+Date: Thu, 12 Jan 2017 13:08:33 +0000
+Subject: Re: [patch] KEYS: Fix an error code in request_master_key()
+Message-Id: <11899.1484226513@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170124141629.9200-1-colin.king@canonical.com>
-In-Reply-To: <20170124141629.9200-1-colin.king@canonical.com>
+References: <1481907033.17553.78.camel@linux.vnet.ibm.com> <20161216090827.GA7285@elgon.mountain>
+In-Reply-To: <1481907033.17553.78.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Colin King <colin.king@canonical.com>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>
-Cc: Alexei Starovoitov <ast@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: dhowells@redhat.com, Dan Carpenter <dan.carpenter@oracle.com>, David Safford <safford@us.ibm.com>, James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 24, 2017 at 6:16 AM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There are some error exit paths to the label 'out' that end up
-> kfree'ing an uninitialized im_node.  Fix this by inititializing
-> im_node to NULL to avoid kfree'ing a garbage address.
+Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
-this fix already landed. See:
-commit d140199af510 ("bpf, lpm: fix kfree of im_node in trie_update_elem")
+> On Fri, 2016-12-16 at 12:08 +0300, Dan Carpenter wrote:
+> > This function has two callers and neither are able to handle a NULL
+> > return.  Really, -EINVAL is the correct thing return here anyway.  This
+> > fixes some static checker warnings like:
+> > 
+> > 	security/keys/encrypted-keys/encrypted.c:709 encrypted_key_decrypt()
+> > 	error: uninitialized symbol 'master_key'.
+> > 
+> > Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Thanks!
 
-> Issue found by CoverityScan, CID#1398022 ("Uninitialized pointer read")
+Can I put that down as an Acked-by or Reviewed-by?
 
-Nice. Good to know that static analysis can do such checks.
+David
