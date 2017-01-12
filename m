@@ -1,19 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Jan 2017 08:58:58 +0000
-Subject: Re: [PATCH 4/5] s390/pci: Move an assignment for the variable "ret" in s390_pci_mmio_write()
-Message-Id: <20170123085858.GL4454@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 10:35:19 +0000
+Subject: [PATCH 1/3] mtd/ftl: Use kmalloc_array() in build_maps()
+Message-Id: <b379ba57-d926-2572-17ec-5bbe166b0e37@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <f2233afd-bc54-0697-0709-9577e96fc6a6@users.sourceforge.net>
- <ba783658-2c08-8e92-7f6a-16696c89b476@users.sourceforge.net>
-In-Reply-To: <ba783658-2c08-8e92-7f6a-16696c89b476@users.sourceforge.net>
+References: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
+In-Reply-To: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-s390@vger.kernel.org, Gerald =?iso-8859-1?Q?Sch=E4fer?= <gerald.schaefer@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Sebastian Ott <sebott@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The original was more readable.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 10:42:25 +0100
 
-regards,
-dan carpenter
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kmalloc_array".
+
+  This issue was detected by using the Coccinelle software.
+
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/mtd/ftl.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/mtd/ftl.c b/drivers/mtd/ftl.c
+index 9fb3b0dcdac2..ef2f38b6a837 100644
+--- a/drivers/mtd/ftl.c
++++ b/drivers/mtd/ftl.c
+@@ -207,15 +207,14 @@ static int build_maps(partition_t *part)
+     /* Set up erase unit maps */
+     part->DataUnits = le16_to_cpu(part->header.NumEraseUnits) -
+ 	part->header.NumTransferUnits;
+-    part->EUNInfo = kmalloc(part->DataUnits * sizeof(struct eun_info_t),
+-			    GFP_KERNEL);
++	part->EUNInfo = kmalloc_array(part->DataUnits, sizeof(*part->EUNInfo),
++				      GFP_KERNEL);
+     if (!part->EUNInfo)
+ 	    goto out;
+     for (i = 0; i < part->DataUnits; i++)
+ 	part->EUNInfo[i].Offset = 0xffffffff;
+-    part->XferInfo -	kmalloc(part->header.NumTransferUnits * sizeof(struct xfer_info_t),
+-		GFP_KERNEL);
++	part->XferInfo = kmalloc_array(part->header.NumTransferUnits,
++				       sizeof(*part->XferInfo), GFP_KERNEL);
+     if (!part->XferInfo)
+ 	    goto out_EUNInfo;
+ 
+@@ -275,8 +274,8 @@ static int build_maps(partition_t *part)
+     memset(part->VirtualBlockMap, 0xff, blocks * sizeof(uint32_t));
+     part->BlocksPerUnit = (1 << header.EraseUnitSize) >> header.BlockSize;
+ 
+-    part->bam_cache = kmalloc(part->BlocksPerUnit * sizeof(uint32_t),
+-			      GFP_KERNEL);
++	part->bam_cache = kmalloc_array(part->BlocksPerUnit,
++					sizeof(*part->bam_cache), GFP_KERNEL);
+     if (!part->bam_cache)
+ 	    goto out_VirtualBlockMap;
+ 
+-- 
+2.11.0
 
