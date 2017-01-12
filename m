@@ -1,34 +1,67 @@
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Date: Tue, 24 Jan 2017 13:00:41 +0000
-Subject: Re: [patch net-next] sctp: fix some debug output
-Message-Id: <20170124130041.GF3781@localhost.localdomain>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 16:37:48 +0000
+Subject: [PATCH 5/5] pinctrl: mvebu: Use seq_putc() in mvebu_pinconf_group_dbg_show()
+Message-Id: <c35b1329-a197-c20c-dc3a-2fa8af2e2f35@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170124090540.GA27652@mwanda>
- <20170124091411.GE3781@localhost.localdomain>
- <20170124105007.GF4201@mwanda>
-In-Reply-To: <20170124105007.GF4201@mwanda>
+References: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net>
+In-Reply-To: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vlad Yasevich <vyasevich@gmail.com>, Xin Long <lucien.xin@gmail.com>, Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Colin King <colin.king@canonical.com>
+To: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 24, 2017 at 01:50:07PM +0300, Dan Carpenter wrote:
-> On Tue, Jan 24, 2017 at 07:14:11AM -0200, Marcelo Ricardo Leitner wrote:
-> > On Tue, Jan 24, 2017 at 12:05:40PM +0300, Dan Carpenter wrote:
-> > > We added SCTP_EVENT_TIMEOUT_RECONF but we didn't update this array so
-> > > it causes an off-by-one read overflow.
-> > > 
-> > > Fixes: 7b9438de0cd4 ("sctp: add stream reconf timer")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Weird, seems your patch is missing the --- marker here.
-> 
-> Are there tools that require the --- marker?  I normally leave it out
-> when it's not required.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 17:12:30 +0100
 
-Yeah I don't think it's required. It's usually there to split it between
-changelog and non-changelog stuff like the diffstat output, which is not
-there too, so it should be okay.
+Single characters should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-  Marcelo
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+index 5dc29ba128c4..ff314aa823e7 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
++++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+@@ -188,12 +188,12 @@ static void mvebu_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 		if (curr->subname)
+ 			seq_printf(s, "(%s)", curr->subname);
+ 		if (curr->flags & (MVEBU_SETTING_GPO | MVEBU_SETTING_GPI)) {
+-			seq_printf(s, "(");
++			seq_putc(s, '(');
+ 			if (curr->flags & MVEBU_SETTING_GPI)
+-				seq_printf(s, "i");
++				seq_putc(s, 'i');
+ 			if (curr->flags & MVEBU_SETTING_GPO)
+-				seq_printf(s, "o");
+-			seq_printf(s, ")");
++				seq_putc(s, 'o');
++			seq_putc(s, ')');
+ 		}
+ 	} else {
+ 		seq_puts(s, "current: UNKNOWN");
+@@ -215,12 +215,12 @@ static void mvebu_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 				seq_printf(s, "(%s)", grp->settings[n].subname);
+ 			if (grp->settings[n].flags &
+ 				(MVEBU_SETTING_GPO | MVEBU_SETTING_GPI)) {
+-				seq_printf(s, "(");
++				seq_putc(s, '(');
+ 				if (grp->settings[n].flags & MVEBU_SETTING_GPI)
+-					seq_printf(s, "i");
++					seq_putc(s, 'i');
+ 				if (grp->settings[n].flags & MVEBU_SETTING_GPO)
+-					seq_printf(s, "o");
+-				seq_printf(s, ")");
++					seq_putc(s, 'o');
++				seq_putc(s, ')');
+ 			}
+ 		}
+ 		seq_puts(s, " ]");
+-- 
+2.11.0
+
