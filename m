@@ -1,45 +1,72 @@
-From: Oleg Drokin <oleg.drokin@intel.com>
-Date: Mon, 16 Jan 2017 03:33:47 +0000
-Subject: Re: [lustre-devel] [patch] staging: lustre: ptlrpc: silence a shift wrapping warning
-Message-Id: <DB46033C-BD85-41DA-B9EF-EA02020BFF86@intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 16:33:32 +0000
+Subject: [PATCH 2/5] pinctrl: mvebu: Delete an error message for a failed memory allocation in three function
+Message-Id: <556cc243-6bd0-8da1-8c17-c1d6d6206735@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170115081407.GA29823@mwanda>
-In-Reply-To: <20170115081407.GA29823@mwanda>
+References: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net>
+In-Reply-To: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lustre-devel@lists.lustre.org
+To: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 16:15:34 +0100
 
-On Jan 15, 2017, at 3:14 AM, Dan Carpenter wrote:
+The script "checkpatch.pl" pointed information out like the following.
 
-> "svcpt->scp_hist_seq" is a u64 so static checkers complain that 1U
-> should be 1ULL.  I looked at REQS_SEQ_SHIFT() a little and it seems to
-> be capped by the number of CPUs online and the amount of memory, but I
-> think it could go above 32 possibly.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+WARNING: Possible unnecessary 'out of memory' message
 
-Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Thus fix the affected source code places.
 
-> ---
-> I have not tested this change.
-> 
-> diff --git a/drivers/staging/lustre/lustre/ptlrpc/events.c b/drivers/staging/lustre/lustre/ptlrpc/events.c
-> index 49f3e63..ae1650d 100644
-> --- a/drivers/staging/lustre/lustre/ptlrpc/events.c
-> +++ b/drivers/staging/lustre/lustre/ptlrpc/events.c
-> @@ -277,7 +277,7 @@ static void ptlrpc_req_add_history(struct ptlrpc_service_part *svcpt,
-> 		 * then we hope there will be less RPCs per bucket at some
-> 		 * point, and sequence will catch up again
-> 		 */
-> -		svcpt->scp_hist_seq += (1U << REQS_SEQ_SHIFT(svcpt));
-> +		svcpt->scp_hist_seq += (1ULL << REQS_SEQ_SHIFT(svcpt));
-> 		new_seq = svcpt->scp_hist_seq;
-> 	}
-> 
-> _______________________________________________
-> lustre-devel mailing list
-> lustre-devel@lists.lustre.org
-> http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+index c2f74572ac01..0618311e75dc 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
++++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+@@ -399,12 +399,8 @@ static int mvebu_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	}
+ 
+ 	*map = kmalloc_array(nmaps, sizeof(**map), GFP_KERNEL);
+-	if (*map = NULL) {
+-		dev_err(pctl->dev,
+-			"cannot allocate pinctrl_map memory for %s\n",
+-			np->name);
++	if (!*map)
+ 		return -ENOMEM;
+-	}
+ 
+ 	n = 0;
+ 	of_property_for_each_string(np, "marvell,pins", prop, group) {
+@@ -563,10 +559,8 @@ int mvebu_pinctrl_probe(struct platform_device *pdev)
+ 
+ 	pctl = devm_kzalloc(&pdev->dev, sizeof(struct mvebu_pinctrl),
+ 			GFP_KERNEL);
+-	if (!pctl) {
+-		dev_err(&pdev->dev, "unable to alloc driver\n");
++	if (!pctl)
+ 		return -ENOMEM;
+-	}
+ 
+ 	pctl->desc.name = dev_name(&pdev->dev);
+ 	pctl->desc.owner = THIS_MODULE;
+@@ -604,10 +598,8 @@ int mvebu_pinctrl_probe(struct platform_device *pdev)
+ 
+ 	pdesc = devm_kzalloc(&pdev->dev, pctl->desc.npins *
+ 			     sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
+-	if (!pdesc) {
+-		dev_err(&pdev->dev, "failed to alloc pinctrl pins\n");
++	if (!pdesc)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (n = 0; n < pctl->desc.npins; n++)
+ 		pdesc[n].number = n;
+-- 
+2.11.0
 
