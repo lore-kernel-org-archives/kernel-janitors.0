@@ -1,20 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 14 Jan 2017 06:56:31 +0000
-Subject: Re: [patch v2 linux-next] userfaultfd: hugetlbfs: unmap the correct pointer
-Message-Id: <20170114065631.GF15314@mwanda>
+Date: Thu, 12 Jan 2017 18:46:32 +0000
+Subject: [patch net-next] stmmac: indent an if statement
+Message-Id: <20170112184631.GA12157@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170113082608.GA3548@mwanda>
- <alpine.LSU.2.11.1701131559360.2443@eggly.anvils>
- <20170113161334.54b60e832af9fb0c51307806@linux-foundation.org>
-In-Reply-To: <20170113161334.54b60e832af9fb0c51307806@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Hugh Dickins <hughd@google.com>, Mike Kravetz <mike.kravetz@oracle.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Jan Kara <jack@suse.cz>, Ross Zwisler <ross.zwisler@linux.intel.com>, Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Dan Williams <dan.j.williams@intel.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>, jpinto <Joao.Pinto@synopsys.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks, Andrew.
+The break statement should be indented one more tab.
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index ac32f9e..4daa8a3 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -191,7 +191,7 @@ static int stmmac_dt_phy(struct plat_stmmacenet_data *plat,
+ 		for_each_child_of_node(np, plat->mdio_node) {
+ 			if (of_device_is_compatible(plat->mdio_node,
+ 						    "snps,dwmac-mdio"))
+-			break;
++				break;
+ 		}
+ 	}
+ 
