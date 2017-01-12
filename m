@@ -1,43 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Jan 2017 21:46:00 +0000
-Subject: [PATCH 1/3] virtio_pci: Use kcalloc() in vp_request_msix_vectors()
-Message-Id: <57a18132-3b9d-0e5b-5372-efe525f83100@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 10:36:54 +0000
+Subject: [PATCH 2/3] mtd/ftl: Delete an error message for a failed memory allocation in ftl_add_mtd()
+Message-Id: <189c05bd-f0b2-6501-c24b-55f4eef76dc1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
-In-Reply-To: <61829748-a13d-42e4-8f6c-103ee5ca2c88@users.sourceforge.net>
+References: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
+In-Reply-To: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: virtualization@lists.linux-foundation.org, Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Wolfram Sang <wsa@the-dreams.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Jan 2017 22:10:18 +0100
+Date: Thu, 12 Jan 2017 11:11:47 +0100
 
-A multiplication for the size determination of a memory allocation
-indicated that an array data structure should be processed.
-Thus reuse the corresponding function "kcalloc".
+The script "checkpatch.pl" pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+WARNING: Possible unnecessary 'out of memory' message
+
+Thus fix the affected source code place.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/virtio/virtio_pci_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/ftl.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index 186cbab327b8..559a2b706093 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -117,7 +117,7 @@ static int vp_request_msix_vectors(struct virtio_device *vdev, int nvectors,
- 	if (!vp_dev->msix_names)
- 		goto error;
- 	vp_dev->msix_affinity_masks
--		= kzalloc(nvectors * sizeof *vp_dev->msix_affinity_masks,
-+		= kcalloc(nvectors, sizeof(*vp_dev->msix_affinity_masks),
- 			  GFP_KERNEL);
- 	if (!vp_dev->msix_affinity_masks)
- 		goto error;
+diff --git a/drivers/mtd/ftl.c b/drivers/mtd/ftl.c
+index ef2f38b6a837..7af23110be6e 100644
+--- a/drivers/mtd/ftl.c
++++ b/drivers/mtd/ftl.c
+@@ -1042,12 +1042,8 @@ static void ftl_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
+ 	partition_t *partition;
+ 
+ 	partition = kzalloc(sizeof(partition_t), GFP_KERNEL);
+-
+-	if (!partition) {
+-		printk(KERN_WARNING "No memory to scan for FTL on %s\n",
+-		       mtd->name);
++	if (!partition)
+ 		return;
+-	}
+ 
+ 	partition->mbd.mtd = mtd;
+ 
 -- 
 2.11.0
 
