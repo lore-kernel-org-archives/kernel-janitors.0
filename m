@@ -1,25 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 29 Jan 2017 23:24:27 +0000
-Subject: Re: [PATCH][next-next] net: ethernet: aquantia: return -ETIME in macro AQ_HW_WAIT_FOR
-Message-Id: <20170129.182427.1212745842603180686.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Jan 2017 19:20:52 +0000
+Subject: [patch linux-next] userfaultfd: hugetlbfs: unmap the correct pointer
+Message-Id: <20170112192052.GB12157@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170127150646.19181-1-colin.king@canonical.com>
-In-Reply-To: <20170127150646.19181-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: colin.king@canonical.com
-Cc: Pavel.Belous@aquantia.com, Alexander.Loktionov@aquantia.com, Dmitry.Bezrukov@aquantia.com, vomlehn@texas.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Mike Kravetz <mike.kravetz@oracle.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Jan Kara <jack@suse.cz>, Ross Zwisler <ross.zwisler@linux.intel.com>, Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lstoakes@gmail.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 27 Jan 2017 15:06:46 +0000
+kunmap_atomic() and kunmap() take different pointers.  People often get
+these mixed up.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The macro is returning ETIME which means various checks to see if
-> the returned err is less than zero never work. I believe a -ETIME
-> should be returned instead.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 16374db2e9a0 ("userfaultfd: hugetlbfs: fix __mcopy_atomic_hugetlb retry/error processing")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/mm/memory.c b/mm/memory.c
+index 6012a05..dfd3604 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4172,7 +4172,7 @@ long copy_huge_page_from_user(struct page *dst_page,
+ 				(const void __user *)(src + i * PAGE_SIZE),
+ 				PAGE_SIZE);
+ 		if (allow_pagefault)
+-			kunmap(page_kaddr);
++			kunmap(dst_page + 1);
+ 		else
+ 			kunmap_atomic(page_kaddr);
+ 
