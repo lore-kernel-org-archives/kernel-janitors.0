@@ -1,114 +1,47 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 23 Jan 2017 14:12:55 +0000
-Subject: Re: [PATCH 01/11] KVM: PPC: Book3S HV: Move assignments for the variable "err" in kvm_htab_write()
-Message-Id: <7e09721f-2785-4c34-cfe8-593acafc455e@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 16:31:44 +0000
+Subject: [PATCH 1/5] pinctrl: mvebu: Use kmalloc_array() in mvebu_pinctrl_dt_node_to_map()
+Message-Id: <c4b535ba-be93-5b61-43e0-dcf5018609ee@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
- <51bcdd72-467c-8afb-94cb-fd756b3d63a7@users.sourceforge.net>
-In-Reply-To: <51bcdd72-467c-8afb-94cb-fd756b3d63a7@users.sourceforge.net>
+References: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net>
+In-Reply-To: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 16:00:15 +0100
 
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "kmalloc_array".
 
-On 20/01/2017 19:19, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 19 Jan 2017 22:45:56 +0100
-> 
-> * A local variable was set to an error code in five cases
->   before a concrete error situation was detected.
->   Thus move the corresponding assignments into
->   if branches to indicate a software failure there.
-> 
->   This issue was detected by using the Coccinelle software.
-> 
-> * Delete two zero assignments which became unnecessary with
->   this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+  This issue was detected by using the Coccinelle software.
 
-NACK, current code uses consistent style.
+* Replace the specification of a data structure by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-> ---
->  arch/powerpc/kvm/book3s_64_mmu_hv.c | 24 +++++++++++++-----------
->  1 file changed, 13 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-> index b795dd1ac2ef..dc34729e4ad0 100644
-> --- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-> +++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-> @@ -1399,22 +1399,23 @@ static ssize_t kvm_htab_write(struct file *file, const char __user *buf,
->  
->  	err = 0;
->  	for (nb = 0; nb + sizeof(hdr) <= count; ) {
-> -		err = -EFAULT;
-> -		if (__copy_from_user(&hdr, buf, sizeof(hdr)))
-> +		if (__copy_from_user(&hdr, buf, sizeof(hdr))) {
-> +			err = -EFAULT;
->  			break;
-> +		}
->  
-> -		err = 0;
->  		if (nb + hdr.n_valid * HPTE_SIZE > count)
->  			break;
->  
->  		nb += sizeof(hdr);
->  		buf += sizeof(hdr);
->  
-> -		err = -EINVAL;
->  		i = hdr.index;
->  		if (i >= kvm->arch.hpt_npte ||
-> -		    i + hdr.n_valid + hdr.n_invalid > kvm->arch.hpt_npte)
-> +		    i + hdr.n_valid + hdr.n_invalid > kvm->arch.hpt_npte) {
-> +			err = -EINVAL;
->  			break;
-> +		}
->  
->  		hptp = (__be64 *)(kvm->arch.hpt_virt + (i * HPTE_SIZE));
->  		lbuf = (unsigned long __user *)buf;
-> @@ -1422,26 +1423,28 @@ static ssize_t kvm_htab_write(struct file *file, const char __user *buf,
->  			__be64 hpte_v;
->  			__be64 hpte_r;
->  
-> -			err = -EFAULT;
->  			if (__get_user(hpte_v, lbuf) ||
-> -			    __get_user(hpte_r, lbuf + 1))
-> +			    __get_user(hpte_r, lbuf + 1)) {
-> +				err = -EFAULT;
->  				goto out;
-> +			}
->  			v = be64_to_cpu(hpte_v);
->  			r = be64_to_cpu(hpte_r);
-> -			err = -EINVAL;
-> -			if (!(v & HPTE_V_VALID))
-> +			if (!(v & HPTE_V_VALID)) {
-> +				err = -EINVAL;
->  				goto out;
-> +			}
->  			lbuf += 2;
->  			nb += HPTE_SIZE;
->  
->  			if (be64_to_cpu(hptp[0]) & (HPTE_V_VALID | HPTE_V_ABSENT))
->  				kvmppc_do_h_remove(kvm, 0, i, 0, tmp);
-> -			err = -EIO;
->  			ret = kvmppc_virtmode_do_h_enter(kvm, H_EXACT, i, v, r,
->  							 tmp);
->  			if (ret != H_SUCCESS) {
->  				pr_err("kvm_htab_write ret %ld i=%ld v=%lx "
->  				       "r=%lx\n", ret, i, v, r);
-> +				err = -EIO;
->  				goto out;
->  			}
->  			if (!hpte_setup && is_vrma_hpte(v)) {
-> @@ -1465,7 +1468,6 @@ static ssize_t kvm_htab_write(struct file *file, const char __user *buf,
->  			++i;
->  			hptp += 2;
->  		}
-> -		err = 0;
->  	}
->  
->   out:
-> 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+index b6ec6db78351..c2f74572ac01 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
++++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+@@ -398,7 +398,7 @@ static int mvebu_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		return 0;
+ 	}
+ 
+-	*map = kmalloc(nmaps * sizeof(struct pinctrl_map), GFP_KERNEL);
++	*map = kmalloc_array(nmaps, sizeof(**map), GFP_KERNEL);
+ 	if (*map = NULL) {
+ 		dev_err(pctl->dev,
+ 			"cannot allocate pinctrl_map memory for %s\n",
+-- 
+2.11.0
+
