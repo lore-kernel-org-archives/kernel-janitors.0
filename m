@@ -1,70 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:42:13 +0000
-Subject: [PATCH 42/46] selinux: One function call less in roles_init() after error detection
-Message-Id: <e26b4b88-b04f-0a82-0396-8b53a80d03a9@users.sourceforge.net>
+Date: Thu, 12 Jan 2017 10:38:06 +0000
+Subject: [PATCH 3/3] mtd/ftl: Improve another size determination in ftl_add_mtd()
+Message-Id: <24ba7545-98a6-7afa-b85c-7d6a41500627@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
+In-Reply-To: <4a5a265e-96c8-5fe6-487a-92a0d47a91da@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 12:56:54 +0100
+Date: Thu, 12 Jan 2017 11:18:59 +0100
 
-The kfree() function was called in up to two cases by the
-roles_init() function during error handling even if the passed variable
-contained a null pointer.
-
-* Adjust a jump target according to the Linux coding style convention.
-
-* Delete an initialisation for the variable "key" at the beginning
-  which became unnecessary with this refactoring.
+Replace the specification of a data type by a pointer dereference
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/mtd/ftl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index be445abf047b..7dd5c6f7786f 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -174,7 +174,7 @@ static struct policydb_compat_info *policydb_lookup_compat(int version)
-  */
- static int roles_init(struct policydb *p)
+diff --git a/drivers/mtd/ftl.c b/drivers/mtd/ftl.c
+index 7af23110be6e..70d583aa44ad 100644
+--- a/drivers/mtd/ftl.c
++++ b/drivers/mtd/ftl.c
+@@ -1041,7 +1041,7 @@ static void ftl_add_mtd(struct mtd_blktrans_ops *tr, struct mtd_info *mtd)
  {
--	char *key = NULL;
-+	char *key;
- 	int rc;
- 	struct role_datum *role;
+ 	partition_t *partition;
  
-@@ -185,13 +185,13 @@ static int roles_init(struct policydb *p)
- 	role->value = ++p->p_roles.nprim;
- 	if (role->value != OBJECT_R_VAL) {
- 		rc = -EINVAL;
--		goto out;
-+		goto free_role;
- 	}
+-	partition = kzalloc(sizeof(partition_t), GFP_KERNEL);
++	partition = kzalloc(sizeof(*partition), GFP_KERNEL);
+ 	if (!partition)
+ 		return;
  
- 	key = kstrdup(OBJECT_R, GFP_KERNEL);
- 	if (!key) {
- 		rc = -ENOMEM;
--		goto out;
-+		goto free_role;
- 	}
- 
- 	rc = hashtab_insert(p->p_roles.table, key, role);
-@@ -201,6 +201,7 @@ static int roles_init(struct policydb *p)
- 	return 0;
- out:
- 	kfree(key);
-+free_role:
- 	kfree(role);
- 	return rc;
- }
 -- 
 2.11.0
 
