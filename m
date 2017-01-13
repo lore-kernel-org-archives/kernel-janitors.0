@@ -1,34 +1,43 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 09 Jan 2017 00:26:37 +0000
-Subject: [PATCH] tty: goldfish: Fix a parameter of a call to free_irq
-Message-Id: <20170109002637.9212-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:07:36 +0000
+Subject: [PATCH 01/17] spi: Use kcalloc() in spi_register_board_info()
+Message-Id: <26b9015b-7ba2-3e26-5075-9a78f3884392@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, jslaby@suse.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-'request_irq()' and 'free_irq()' should be called with the same dev_id.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 12:28:04 +0100
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus reuse the corresponding function "kcalloc".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/goldfish.c | 2 +-
+ drivers/spi/spi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
-index 3fc912373adf..996bd473dd03 100644
---- a/drivers/tty/goldfish.c
-+++ b/drivers/tty/goldfish.c
-@@ -300,7 +300,7 @@ static int goldfish_tty_probe(struct platform_device *pdev)
- 	return 0;
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 656dd3e3220c..8c05f27bf642 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -672,7 +672,7 @@ int spi_register_board_info(struct spi_board_info const *info, unsigned n)
+ 	if (!n)
+ 		return -EINVAL;
  
- err_tty_register_device_failed:
--	free_irq(irq, pdev);
-+	free_irq(irq, qtty);
- err_request_irq_failed:
- 	goldfish_tty_current_line_count--;
- 	if (goldfish_tty_current_line_count = 0)
+-	bi = kzalloc(n * sizeof(*bi), GFP_KERNEL);
++	bi = kcalloc(n, sizeof(*bi), GFP_KERNEL);
+ 	if (!bi)
+ 		return -ENOMEM;
+ 
 -- 
-2.9.3
+2.11.0
 
