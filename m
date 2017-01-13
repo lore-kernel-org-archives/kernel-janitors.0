@@ -1,55 +1,79 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Jan 2017 08:40:08 +0000
-Subject: Re: [patch linux-next] userfaultfd: hugetlbfs: unmap the correct pointer
-Message-Id: <20170113084008.GD4188@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:19:35 +0000
+Subject: [PATCH 10/17] spi/ppc4xx: Adjust checks for null pointers in two functions
+Message-Id: <d9bd24b0-d4d5-233c-756d-71aaed63c5ef@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170112192052.GB12157@mwanda>
- <20170112193327.GB8558@dhcp22.suse.cz>
- <20170113081610.GC4188@mwanda>
- <20170113082607.GA25212@dhcp22.suse.cz>
-In-Reply-To: <20170113082607.GA25212@dhcp22.suse.cz>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Kravetz <mike.kravetz@oracle.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Jan Kara <jack@suse.cz>, Ross Zwisler <ross.zwisler@linux.intel.com>, Lorenzo Stoakes <lstoakes@gmail.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 13, 2017 at 09:26:08AM +0100, Michal Hocko wrote:
-> On Fri 13-01-17 11:16:10, Dan Carpenter wrote:
-> > On Thu, Jan 12, 2017 at 08:33:27PM +0100, Michal Hocko wrote:
-> > > On Thu 12-01-17 22:20:52, Dan Carpenter wrote:
-> > > > kunmap_atomic() and kunmap() take different pointers.  People often get
-> > > > these mixed up.
-> > > > 
-> > > > Fixes: 16374db2e9a0 ("userfaultfd: hugetlbfs: fix __mcopy_atomic_hugetlb retry/error processing")
-> > > 
-> > > This looks like a linux-next sha1. This is not stable and will change...
-> > > 
-> > 
-> > Yeah.  But probably Andrew is just going to fold it into the original
-> > anyway.  Probably most of linux-next trees don't rebase so the hash is
-> > good and the people who rebase fold it in so it doesn't show up in the
-> > released code.  It basically never hurts to have the Fixes tag.
-> 
-> Yeah, I have a vague recollection that some of those sha1 leaked to
-> Linus. Do not have any examples handy though. It is true that Andrew
-> folds those fixes into the original patch so it might be helpful to
-> have
-> Fixes: mmotm-patch-file-name.patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 14:56:10 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-I have no idea how to do that.  I'm always just working on linux-next
-and not the individual trees...  I'm interested to hear from Andrew
-what's easiest because I don't know at all how quilt works.
+The script "checkpatch.pl" pointed information out like the following.
 
-My work flow is that I have scripts to generate patches from within vim.
-Most of the time I'm just working on one file but occasionally I will
-combine two patches together in mutt.
+Comparison to NULL could be written !=E2=80=A6
 
-For Dave's networking patches I have a separate git tree where I try to
-apply them to net and then net-next to see which tree it should go into.
-Otherwise, I generally assume the maintainer knows which tree they
-belong in.
+Thus fix the affected source code places.
 
-regards,
-dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/spi/spi-ppc4xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
+index 967d94844b30..048794f043a0 100644
+--- a/drivers/spi/spi-ppc4xx.c
++++ b/drivers/spi/spi-ppc4xx.c
+@@ -229,7 +229,7 @@ static int spi_ppc4xx_setup(struct spi_device *spi)
+ 		return -EINVAL;
+ 	}
+=20
+-	if (cs =3D NULL) {
++	if (!cs) {
+ 		cs =3D kzalloc(sizeof *cs, GFP_KERNEL);
+ 		if (!cs)
+ 			return -ENOMEM;
+@@ -392,7 +392,7 @@ static int spi_ppc4xx_of_probe(struct platform_device *=
+op)
+ 	const unsigned int *clk;
+=20
+ 	master =3D spi_alloc_master(dev, sizeof *hw);
+-	if (master =3D NULL)
++	if (!master)
+ 		return -ENOMEM;
+ 	master->dev.of_node =3D np;
+ 	platform_set_drvdata(op, master);
+@@ -466,14 +466,14 @@ static int spi_ppc4xx_of_probe(struct platform_device=
+ *op)
+=20
+ 	/* Get the clock for the OPB */
+ 	opbnp =3D of_find_compatible_node(NULL, NULL, "ibm,opb");
+-	if (opbnp =3D NULL) {
++	if (!opbnp) {
+ 		dev_err(dev, "OPB: cannot find node\n");
+ 		ret =3D -ENODEV;
+ 		goto free_gpios;
+ 	}
+ 	/* Get the clock (Hz) for the OPB */
+ 	clk =3D of_get_property(opbnp, "clock-frequency", NULL);
+-	if (clk =3D NULL) {
++	if (!clk) {
+ 		dev_err(dev, "OPB: no clock-frequency property set\n");
+ 		of_node_put(opbnp);
+ 		ret =3D -ENODEV;
+--=20
+2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
