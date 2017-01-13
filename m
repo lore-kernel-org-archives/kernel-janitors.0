@@ -1,49 +1,46 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 07 Jan 2017 19:54:14 +0000
-Subject: [PATCH 2/9] memstick: Use kmalloc_array() in msb_ftl_initialize()
-Message-Id: <9ec869d3-00f2-494f-850a-d22f344e8abb@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:21:55 +0000
+Subject: [PATCH 12/17] spi/topcliff-pch: Improve size determinations in pch_spi_probe()
+Message-Id: <d2471abf-1eca-037f-3d10-ba03d8e987af@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
-In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 7 Jan 2017 09:15:27 +0100
+Date: Fri, 13 Jan 2017 15:46:35 +0100
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kmalloc_array".
-
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/memstick/core/ms_block.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/spi/spi-topcliff-pch.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index fd8b1697a5a2..ec17885a5956 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -1346,8 +1346,9 @@ static int msb_ftl_initialize(struct msb_data *msb)
- 	if (!msb->erased_blocks_bitmap)
- 		goto free_used_bitmap;
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index 0488b7c7cc19..4bba39e70c7b 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -1541,11 +1541,11 @@ static int pch_spi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	int i;
+ 	struct pch_pd_dev_save *pd_dev_save;
  
--	msb->lba_to_pba_table -		kmalloc(msb->logical_block_count * sizeof(u16), GFP_KERNEL);
-+	msb->lba_to_pba_table = kmalloc_array(msb->logical_block_count,
-+					      sizeof(*msb->lba_to_pba_table),
-+					      GFP_KERNEL);
- 	if (!msb->lba_to_pba_table)
- 		goto free_erased_bitmap;
+-	pd_dev_save = kzalloc(sizeof(struct pch_pd_dev_save), GFP_KERNEL);
++	pd_dev_save = kzalloc(sizeof(*pd_dev_save), GFP_KERNEL);
+ 	if (!pd_dev_save)
+ 		return -ENOMEM;
  
+-	board_dat = kzalloc(sizeof(struct pch_spi_board_data), GFP_KERNEL);
++	board_dat = kzalloc(sizeof(*board_dat), GFP_KERNEL);
+ 	if (!board_dat) {
+ 		retval = -ENOMEM;
+ 		goto err_no_mem;
 -- 
 2.11.0
 
