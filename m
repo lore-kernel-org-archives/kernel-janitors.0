@@ -1,57 +1,55 @@
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Date: Tue, 10 Jan 2017 08:28:35 +0000
-Subject: Re: [PATCH 7/8] mmc-core: Use kcalloc() in mmc_test_alloc_mem()
-Message-Id: <f115b5c6-9dc2-acb2-1ed8-a0271f8d39cc@rock-chips.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:15:54 +0000
+Subject: [PATCH 07/17] spi/mpc52xx: Combine substrings for two messages
+Message-Id: <5c12cdac-8887-e5d0-ce80-ca4795354956@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
- <304ae7a7-bc51-83d7-2a6b-844cdf4c346f@users.sourceforge.net>
-In-Reply-To: <304ae7a7-bc51-83d7-2a6b-844cdf4c346f@users.sourceforge.net>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Harjani Ritesh <riteshh@codeaurora.org>, Jens Axboe <axboe@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Christie <mchristi@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: shawn.lin@rock-chips.com, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 2017/1/9 5:50, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 8 Jan 2017 21:43:12 +0100
->
-> * The script "checkpatch.pl" pointed information out like the following.
->
->   WARNING: Prefer kcalloc over kzalloc with multiply
->
->   Thus fix the affected source code place.
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 14:14:45 +0100
 
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+The script "checkpatch.pl" pointed information out like the following.
 
-> * Replace the specification of a data structure by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mmc/core/mmc_test.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-> index 294d3c675734..cb4750de2720 100644
-> --- a/drivers/mmc/core/mmc_test.c
-> +++ b/drivers/mmc/core/mmc_test.c
-> @@ -360,8 +360,7 @@ static struct mmc_test_mem *mmc_test_alloc_mem(unsigned long min_sz,
->  	if (!mem)
->  		return NULL;
->
-> -	mem->arr = kzalloc(sizeof(struct mmc_test_pages) * max_segs,
-> -			   GFP_KERNEL);
-> +	mem->arr = kcalloc(max_segs, sizeof(*mem->arr), GFP_KERNEL);
->  	if (!mem->arr)
->  		goto out_free;
->
->
+WARNING: quoted string split across lines
 
+Thus fix the affected source code places.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/spi/spi-mpc52xx.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
+index 8cc129efe7ba..e8b59ce4dc3a 100644
+--- a/drivers/spi/spi-mpc52xx.c
++++ b/drivers/spi/spi-mpc52xx.c
+@@ -449,8 +449,7 @@ static int mpc52xx_spi_probe(struct platform_device *op)
+ 			gpio_cs = of_get_gpio(op->dev.of_node, i);
+ 			if (gpio_cs < 0) {
+ 				dev_err(&op->dev,
+-					"could not parse the gpio field "
+-					"in oftree\n");
++					"could not parse the gpio field in oftree\n");
+ 				rc = -ENODEV;
+ 				goto err_gpio;
+ 			}
+@@ -458,8 +457,8 @@ static int mpc52xx_spi_probe(struct platform_device *op)
+ 			rc = gpio_request(gpio_cs, dev_name(&op->dev));
+ 			if (rc) {
+ 				dev_err(&op->dev,
+-					"can't request spi cs gpio #%d "
+-					"on gpio line %d\n", i, gpio_cs);
++					"can't request spi cs gpio #%d on gpio line %d\n",
++					i, gpio_cs);
+ 				goto err_gpio;
+ 			}
+ 
 -- 
-Best Regards
-Shawn Lin
+2.11.0
 
