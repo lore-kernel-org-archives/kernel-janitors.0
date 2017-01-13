@@ -1,40 +1,50 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Fri, 27 Jan 2017 15:14:53 +0000
-Subject: [PATCH] PCI/MSI: Return error code if memory allocation fails
-Message-Id: <20170127151453.27571-1-christophe.jaillet@wanadoo.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:23:15 +0000
+Subject: [PATCH 13/17] spi/topcliff-pch: Delete an unnecessary return statement in two functions
+Message-Id: <64b7bf49-57fc-32a9-17e4-1b26b99bff13@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bhelgaas@google.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-If 'alloc_msi_entry()' fails, a few lines above, we free resources and set
-'ret = -ENOMEM'.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 15:57:03 +0100
 
-However, the function returns 0, inconditionaly.
-Returns the error code instead.
+The script "checkpatch.pl" pointed information out like the following.
 
-Fixes: e75eafb9b039 ("genirq/msi: Switch to new irq spreading infrastructure")
+WARNING: void function return statements are not generally useful
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Thus remove such statements here.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pci/msi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-topcliff-pch.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index b6785c8be44d..0f77b38f03dd 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -731,7 +731,7 @@ static int msix_setup_entries(struct pci_dev *dev, void __iomem *base,
- 	ret = 0;
- out:
- 	kfree(masks);
--	return 0;
-+	return ret;
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index 4bba39e70c7b..0a876311b67b 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -915,7 +915,6 @@ static void pch_spi_release_dma(struct pch_spi_data *data)
+ 		dma_release_channel(dma->chan_rx);
+ 		dma->chan_rx = NULL;
+ 	}
+-	return;
  }
  
- static void msix_program_entries(struct pci_dev *dev,
+ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+@@ -1292,7 +1291,6 @@ static void pch_free_dma_buf(struct pch_spi_board_data *board_dat,
+ 	if (dma->rx_buf_dma)
+ 		dma_free_coherent(&board_dat->pdev->dev, PCH_BUF_SIZE,
+ 				  dma->rx_buf_virt, dma->rx_buf_dma);
+-	return;
+ }
+ 
+ static void pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
 -- 
-2.9.3
+2.11.0
 
