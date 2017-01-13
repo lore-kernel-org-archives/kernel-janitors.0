@@ -1,24 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jan 2017 09:27:44 +0000
-Subject: Re: [PATCH 18/18] mtd-cfi_cmdset_0020: Add some spaces for better code readability
-Message-Id: <20170112092744.GB15314@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:28:17 +0000
+Subject: [PATCH 17/17] spi/topcliff-pch: One check less in pch_spi_set_tx()
+Message-Id: <bdf5a12c-39cb-398a-f6c8-58142c7abd8d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
- <0e5ee358-fb62-5d0b-81cf-d73a1a47f6d4@users.sourceforge.net>
-In-Reply-To: <0e5ee358-fb62-5d0b-81cf-d73a1a47f6d4@users.sourceforge.net>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 11, 2017 at 09:55:20PM +0100, SF Markus Elfring wrote:
-> -	timeo = jiffies + (HZ*2);
-> +	timeo = jiffies + HZ * 2;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:30:46 +0100
 
-You've done this a couple times already, but these parenthesis are there
-to make the code more readable don't delete them.
+Delete a duplicate check after a bit of exception handling was moved into
+a previous if branch of this function.
 
-regards,
-dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/spi/spi-topcliff-pch.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index 97fd1ea9826b..33043a830032 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -584,22 +584,25 @@ static void pch_spi_set_tx(struct pch_spi_data *data, int *bpw)
+ 	data->pkt_tx_buff = kzalloc(size, GFP_KERNEL);
+ 	if (data->pkt_tx_buff) {
+ 		data->pkt_rx_buff = kzalloc(size, GFP_KERNEL);
+-		if (!data->pkt_rx_buff)
++		if (!data->pkt_rx_buff) {
+ 			kfree(data->pkt_tx_buff);
+-	}
+ 
+-	if (!data->pkt_rx_buff) {
+-		/* flush queue and set status of all transfers to -ENOMEM */
+-		list_for_each_entry_safe(pmsg, tmp, data->queue.next, queue) {
+-			pmsg->status = -ENOMEM;
++			/*
++			 * Flush queue and set status of all transfers
++			 * to -ENOMEM.
++			 */
++			list_for_each_entry_safe(pmsg, tmp, data->queue.next,
++						 queue) {
++				pmsg->status = -ENOMEM;
+ 
+-			if (pmsg->complete)
+-				pmsg->complete(pmsg->context);
++				if (pmsg->complete)
++					pmsg->complete(pmsg->context);
+ 
+-			/* delete from queue */
+-			list_del_init(&pmsg->queue);
++				/* delete from queue */
++				list_del_init(&pmsg->queue);
++			}
++			return;
+ 		}
+-		return;
+ 	}
+ 
+ 	/* copy Tx Data */
+-- 
+2.11.0
 
