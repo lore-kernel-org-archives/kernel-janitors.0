@@ -1,62 +1,77 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 18:24:59 +0000
-Subject: [PATCH 06/11] KVM: PPC: Book3S HV: Use kcalloc() in kvmppc_alloc_host_rm_ops()
-Message-Id: <62a8df66-ab16-8f93-8acd-20fb461fd7de@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:25:42 +0000
+Subject: [PATCH 15/17] spi/topcliff-pch: Combine substrings for four messages
+Message-Id: <e349e57e-ba9c-6f01-74c8-75f84cf8f4c8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
-In-Reply-To: <fc2c36e6-a453-ae09-89bf-98b3d74113a4@users.sourceforge.net>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alexander Graf <agraf@suse.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Jan 2017 16:20:43 +0100
+Date: Fri, 13 Jan 2017 16:36:09 +0100
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+The script "checkpatch.pl" pointed information out like the following.
 
-  This issue was detected by using the Coccinelle software.
+WARNING: quoted string split across lines
 
-* Delete the local variable "size" which became unnecessary
-  with this refactoring.
-
-* Replace the specification of a data structure by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/powerpc/kvm/book3s_hv.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/spi/spi-topcliff-pch.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-index 3122998f6a32..596201b3f22e 100644
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -3199,7 +3199,6 @@ void kvmppc_alloc_host_rm_ops(void)
- 	struct kvmppc_host_rm_ops *ops;
- 	unsigned long l_ops;
- 	int cpu, core;
--	int size;
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index e4f1f66b751b..d36d42653087 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -621,8 +621,9 @@ static void pch_spi_set_tx(struct pch_spi_data *data, int *bpw)
+ 	if (n_writes > PCH_MAX_FIFO_DEPTH)
+ 		n_writes = PCH_MAX_FIFO_DEPTH;
  
- 	/* Not the first time here ? */
- 	if (kvmppc_host_rm_ops_hv)
-@@ -3209,9 +3208,9 @@ void kvmppc_alloc_host_rm_ops(void)
- 	if (!ops)
- 		return;
+-	dev_dbg(&data->master->dev, "\n%s:Pulling down SSN low - writing "
+-		"0x2 to SSNXCR\n", __func__);
++	dev_dbg(&data->master->dev,
++		"\n%s:Pulling down SSN low - writing 0x2 to SSNXCR\n",
++		__func__);
+ 	pch_spi_writereg(data->master, PCH_SSNXCR, SSN_LOW);
  
--	size = cpu_nr_cores() * sizeof(struct kvmppc_host_rm_core);
--	ops->rm_core = kzalloc(size, GFP_KERNEL);
--
-+	ops->rm_core = kcalloc(cpu_nr_cores(),
-+			       sizeof(*ops->rm_core),
-+			       GFP_KERNEL);
- 	if (!ops->rm_core) {
- 		kfree(ops);
- 		return;
+ 	for (j = 0; j < n_writes; j++)
+@@ -1179,14 +1180,16 @@ static void pch_spi_process_messages(struct work_struct *pwork)
+ 			data->cur_trans  				list_entry(data->current_msg->transfers.next,
+ 					   struct spi_transfer, transfer_list);
+-			dev_dbg(&data->master->dev, "%s "
+-				":Getting 1st transfer message\n", __func__);
++			dev_dbg(&data->master->dev,
++				"%s :Getting 1st transfer message\n",
++				__func__);
+ 		} else {
+ 			data->cur_trans  				list_entry(data->cur_trans->transfer_list.next,
+ 					   struct spi_transfer, transfer_list);
+-			dev_dbg(&data->master->dev, "%s "
+-				":Getting next transfer message\n", __func__);
++			dev_dbg(&data->master->dev,
++				"%s :Getting next transfer message\n",
++				__func__);
+ 		}
+ 		spin_unlock(&data->lock);
+ 
+@@ -1231,9 +1234,8 @@ static void pch_spi_process_messages(struct work_struct *pwork)
+ 
+ 		/* check for delay */
+ 		if (data->cur_trans->delay_usecs) {
+-			dev_dbg(&data->master->dev, "%s:"
+-				"delay in usec=%d\n", __func__,
+-				data->cur_trans->delay_usecs);
++			dev_dbg(&data->master->dev, "%s:delay in usec=%d\n",
++				__func__, data->cur_trans->delay_usecs);
+ 			udelay(data->cur_trans->delay_usecs);
+ 		}
+ 
 -- 
 2.11.0
 
