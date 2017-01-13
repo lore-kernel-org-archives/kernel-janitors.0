@@ -1,44 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:31:10 +0000
-Subject: [PATCH 31/46] selinux: Move an assignment for the variable "rc" in role_read()
-Message-Id: <6df4c468-0b12-d053-6768-6f3245652427@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:11:12 +0000
+Subject: [PATCH 03/17] spi: fsl: Use kcalloc() in of_fsl_spi_get_chipselects()
+Message-Id: <0b7517f1-5f9f-a002-ac59-c5921fec1eeb@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
-In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 22:25:20 +0100
+Date: Fri, 13 Jan 2017 13:33:02 +0100
 
-A local variable was set to an error code in one case before a concrete
-error situation was detected. Thus move the corresponding assignment into
-an if branch to indicate a software failure there.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus reuse the corresponding function "kcalloc".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 2 +-
+ drivers/spi/spi-fsl-spi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 34b670227c4d..49fc5d8990e9 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1439,10 +1439,10 @@ static int role_read(struct policydb *p, struct hashtab *h, void *fp)
- 		goto bad;
+diff --git a/drivers/spi/spi-fsl-spi.c b/drivers/spi/spi-fsl-spi.c
+index 8b290d9d7935..d1b26c9fe950 100644
+--- a/drivers/spi/spi-fsl-spi.c
++++ b/drivers/spi/spi-fsl-spi.c
+@@ -732,7 +732,7 @@ static int of_fsl_spi_get_chipselects(struct device *dev)
+ 		return -ENOMEM;
+ 	memset(pinfo->gpios, -1, ngpios * sizeof(*pinfo->gpios));
  
- 	if (strcmp(key, OBJECT_R) = 0) {
--		rc = -EINVAL;
- 		if (role->value != OBJECT_R_VAL) {
- 			printk(KERN_ERR "SELinux: Role %s has wrong value %d\n",
- 			       OBJECT_R, role->value);
-+			rc = -EINVAL;
- 			goto bad;
- 		}
- 		rc = 0;
+-	pinfo->alow_flags = kzalloc(ngpios * sizeof(*pinfo->alow_flags),
++	pinfo->alow_flags = kcalloc(ngpios, sizeof(*pinfo->alow_flags),
+ 				    GFP_KERNEL);
+ 	if (!pinfo->alow_flags) {
+ 		ret = -ENOMEM;
 -- 
 2.11.0
 
