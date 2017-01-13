@@ -1,35 +1,80 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jan 2017 12:47:26 +0000
-Subject: Re: KVM: s390: Move two error code assignments in kvm_vm_ioctl_get_dirty_log()
-Message-Id: <02eaa91d-55d7-ce02-3db8-a7db5d1ff679@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 09:48:08 +0000
+Subject: [PATCH 1/3] sh/intc: Use kcalloc() in register_intc_controller()
+Message-Id: <6f6f99f6-26f0-d002-ca85-d974d71aa518@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <70f41e59-d8a4-de42-6064-80ecf6acc065@users.sourceforge.net>
- <35411200-2bd6-1c65-7d7f-21a6353875ea@de.ibm.com>
- <01d581bb-9db6-cba1-e476-49c814c3ebf0@users.sourceforge.net>
- <50ae2ba4-572d-8524-fc31-acc1a8d1ad99@de.ibm.com>
- <75c6315c-8947-2816-64da-947f6a29ac57@users.sourceforge.net>
- <64b94d75-6bad-1ebc-c35e-c036202bab01@redhat.com>
- <bfd4c8a3-4246-b8c5-ca3d-429d6f1f13f7@users.sourceforge.net>
- <d9f8f874-9c90-12cd-bf21-1270890041b4@de.ibm.com>
-In-Reply-To: <d9f8f874-9c90-12cd-bf21-1270890041b4@de.ibm.com>
+References: <4d37c4d8-d28b-bd98-968b-f544d6a213eb@users.sourceforge.net>
+In-Reply-To: <4d37c4d8-d28b-bd98-968b-f544d6a213eb@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Christian_Borntr=c3=a4ger?= <borntraeger@de.ibm.com>, kvm@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-sh@vger.kernel.org, Rich Felker <dalias@libc.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->> I am curious if other update suggestions will be picked up
->> in a constructive way.
-> 
-> There is only one person on this list that is not constructive,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 10:04:38 +0100
 
-You could accept a few patches from my selection of change possibilities already.
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kcalloc".
 
+This issue was detected by using the Coccinelle software.
 
-> and that person is you.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/sh/intc/core.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-I assume that some dialogue steps would be needed to find a “common wave length” again
-so that the communication might become useful also in your view.
+diff --git a/drivers/sh/intc/core.c b/drivers/sh/intc/core.c
+index 8e72bcbd3d6d..27817a8466f1 100644
+--- a/drivers/sh/intc/core.c
++++ b/drivers/sh/intc/core.c
+@@ -203,7 +203,8 @@ int __init register_intc_controller(struct intc_desc *desc)
+ 
+ 	if (desc->num_resources) {
+ 		d->nr_windows = desc->num_resources;
+-		d->window = kzalloc(d->nr_windows * sizeof(*d->window),
++		d->window = kcalloc(d->nr_windows,
++				    sizeof(*d->window),
+ 				    GFP_NOWAIT);
+ 		if (!d->window)
+ 			goto err1;
+@@ -229,13 +230,12 @@ int __init register_intc_controller(struct intc_desc *desc)
+ 	d->nr_reg += hw->sense_regs ? hw->nr_sense_regs : 0;
+ 	d->nr_reg += hw->ack_regs ? hw->nr_ack_regs : 0;
+ 	d->nr_reg += hw->subgroups ? hw->nr_subgroups : 0;
+-
+-	d->reg = kzalloc(d->nr_reg * sizeof(*d->reg), GFP_NOWAIT);
++	d->reg = kcalloc(d->nr_reg, sizeof(*d->reg), GFP_NOWAIT);
+ 	if (!d->reg)
+ 		goto err2;
+ 
+ #ifdef CONFIG_SMP
+-	d->smp = kzalloc(d->nr_reg * sizeof(*d->smp), GFP_NOWAIT);
++	d->smp = kcalloc(d->nr_reg, sizeof(*d->smp), GFP_NOWAIT);
+ 	if (!d->smp)
+ 		goto err3;
+ #endif
+@@ -253,7 +253,8 @@ int __init register_intc_controller(struct intc_desc *desc)
+ 	}
+ 
+ 	if (hw->prio_regs) {
+-		d->prio = kzalloc(hw->nr_vectors * sizeof(*d->prio),
++		d->prio = kcalloc(hw->nr_vectors,
++				  sizeof(*d->prio),
+ 				  GFP_NOWAIT);
+ 		if (!d->prio)
+ 			goto err4;
+@@ -269,7 +270,8 @@ int __init register_intc_controller(struct intc_desc *desc)
+ 	}
+ 
+ 	if (hw->sense_regs) {
+-		d->sense = kzalloc(hw->nr_vectors * sizeof(*d->sense),
++		d->sense = kcalloc(hw->nr_vectors,
++				   sizeof(*d->sense),
+ 				   GFP_NOWAIT);
+ 		if (!d->sense)
+ 			goto err5;
+-- 
+2.11.0
 
-Regards,
-Markus
