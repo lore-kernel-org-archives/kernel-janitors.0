@@ -1,50 +1,46 @@
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 30 Jan 2017 12:08:08 +0000
-Subject: [PATCH][V2] acpi: nfit: use %u format string specifier for unsigned ints
-Message-Id: <20170130120808.27691-1-colin.king@canonical.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:05:20 +0000
+Subject: [PATCH 00/17] SPI: Fine-tuning for several function implementations
+Message-Id: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, joeyli.kernel@gmail.com, Toshi Kani <toshi.kani@hpe.com>, linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:50:23 +0100
 
-scrub_mode and scrub_count are both unsigned ints, however, the %d
-format string specifier is being used instead of %u. Trivial fix,
-use %u.  Also move the \n into the format string rather in both
-literal strings.
+Several update suggestions were taken into account
+from static source code analysis.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/acpi/nfit/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Markus Elfring (17):
+  Use kcalloc() in spi_register_board_info()
+  Adjust checks for null pointers in two functions
+  fsl: Use kcalloc() in of_fsl_spi_get_chipselects()
+  fsl: Use kmalloc_array() in of_fsl_spi_get_chipselects()
+  fsl: Combine substrings for two messages
+  mpc52xx: Use kmalloc_array() in mpc52xx_spi_probe()
+  mpc52xx: Combine substrings for two messages
+  ppc4xx: Use kcalloc() in spi_ppc4xx_of_probe()
+  ppc4xx: Combine substrings for a message in spi_ppc4xx_of_probe()
+  ppc4xx: Adjust checks for null pointers in two functions
+  topcliff-pch: Use kcalloc() in pch_spi_handle_dma()
+  topcliff-pch: Improve size determinations in pch_spi_probe()
+  topcliff-pch: Delete an unnecessary return statement in two functions
+  topcliff-pch: Adjust six checks for null pointers
+  topcliff-pch: Combine substrings for four messages
+  topcliff-pch: Delete an error message for a failed memory allocation in pch_spi_set_tx()
+  topcliff-pch: One check less in pch_spi_set_tx()
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 2f82b8e..5193b03 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -906,7 +906,7 @@ static ssize_t hw_error_scrub_show(struct device *dev,
- 	struct nvdimm_bus_descriptor *nd_desc = to_nd_desc(nvdimm_bus);
- 	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
- 
--	return sprintf(buf, "%d\n", acpi_desc->scrub_mode);
-+	return sprintf(buf, "%u\n", acpi_desc->scrub_mode);
- }
- 
- /*
-@@ -967,8 +967,8 @@ static ssize_t scrub_show(struct device *dev,
- 	if (nd_desc) {
- 		struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
- 
--		rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
--				(work_busy(&acpi_desc->work)) ? "+\n" : "\n");
-+		rc = sprintf(buf, "%u%s\n", acpi_desc->scrub_count,
-+				(work_busy(&acpi_desc->work)) ? "+" : "");
- 	}
- 	device_unlock(dev);
- 	return rc;
+ drivers/spi/spi-fsl-spi.c      | 17 +++++-----
+ drivers/spi/spi-mpc52xx.c      | 12 +++----
+ drivers/spi/spi-ppc4xx.c       | 15 ++++-----
+ drivers/spi/spi-topcliff-pch.c | 71 +++++++++++++++++++++---------------------
+ drivers/spi/spi.c              | 10 +++---
+ 5 files changed, 63 insertions(+), 62 deletions(-)
+
 -- 
-2.10.2
+2.11.0
 
