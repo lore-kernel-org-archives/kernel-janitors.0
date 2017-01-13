@@ -1,107 +1,56 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:45:40 +0000
-Subject: Applied "spi/topcliff-pch: Combine substrings for four messages" to the spi tree
-Message-Id: <E1cTYlI-0000HR-Hw@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 13 Jan 2017 17:20:52 +0000
+Subject: [PATCH 11/17] spi/topcliff-pch: Use kcalloc() in pch_spi_handle_dma()
+Message-Id: <5c46b68f-192e-2982-6a0e-2017da26f83d@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e349e57e-ba9c-6f01-74c8-75f84cf8f4c8@users.sourceforge.net>
-In-Reply-To: <e349e57e-ba9c-6f01-74c8-75f84cf8f4c8@users.sourceforge.net>
+References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
+In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+To: linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   spi/topcliff-pch: Combine substrings for four messages
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b996356d305fd311eaa652890b255a0ff4d13de4 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 16:36:09 +0100
-Subject: [PATCH] spi/topcliff-pch: Combine substrings for four messages
+Date: Fri, 13 Jan 2017 15:25:22 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
 
-WARNING: quoted string split across lines
+  This issue was detected by using the Coccinelle software.
 
-Thus fix the affected source code places.
+* Replace the specification of a data structure by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-topcliff-pch.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ drivers/spi/spi-topcliff-pch.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 0a876311b67b..2b9405819075 100644
+index fcb991034c3d..0488b7c7cc19 100644
 --- a/drivers/spi/spi-topcliff-pch.c
 +++ b/drivers/spi/spi-topcliff-pch.c
-@@ -622,8 +622,9 @@ static void pch_spi_set_tx(struct pch_spi_data *data, int *bpw)
- 	if (n_writes > PCH_MAX_FIFO_DEPTH)
- 		n_writes = PCH_MAX_FIFO_DEPTH;
+@@ -1008,7 +1008,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+ 	spin_unlock_irqrestore(&data->lock, flags);
  
--	dev_dbg(&data->master->dev, "\n%s:Pulling down SSN low - writing "
--		"0x2 to SSNXCR\n", __func__);
-+	dev_dbg(&data->master->dev,
-+		"\n%s:Pulling down SSN low - writing 0x2 to SSNXCR\n",
-+		__func__);
- 	pch_spi_writereg(data->master, PCH_SSNXCR, SSN_LOW);
+ 	/* RX */
+-	dma->sg_rx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
++	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
+ 	sg_init_table(dma->sg_rx_p, num); /* Initialize SG table */
+ 	/* offset, length setting */
+ 	sg = dma->sg_rx_p;
+@@ -1068,7 +1068,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+ 		head = 0;
+ 	}
  
- 	for (j = 0; j < n_writes; j++)
-@@ -1180,14 +1181,16 @@ static void pch_spi_process_messages(struct work_struct *pwork)
- 			data->cur_trans  				list_entry(data->current_msg->transfers.next,
- 					   struct spi_transfer, transfer_list);
--			dev_dbg(&data->master->dev, "%s "
--				":Getting 1st transfer message\n", __func__);
-+			dev_dbg(&data->master->dev,
-+				"%s :Getting 1st transfer message\n",
-+				__func__);
- 		} else {
- 			data->cur_trans  				list_entry(data->cur_trans->transfer_list.next,
- 					   struct spi_transfer, transfer_list);
--			dev_dbg(&data->master->dev, "%s "
--				":Getting next transfer message\n", __func__);
-+			dev_dbg(&data->master->dev,
-+				"%s :Getting next transfer message\n",
-+				__func__);
- 		}
- 		spin_unlock(&data->lock);
- 
-@@ -1232,9 +1235,8 @@ static void pch_spi_process_messages(struct work_struct *pwork)
- 
- 		/* check for delay */
- 		if (data->cur_trans->delay_usecs) {
--			dev_dbg(&data->master->dev, "%s:"
--				"delay in usec=%d\n", __func__,
--				data->cur_trans->delay_usecs);
-+			dev_dbg(&data->master->dev, "%s:delay in usec=%d\n",
-+				__func__, data->cur_trans->delay_usecs);
- 			udelay(data->cur_trans->delay_usecs);
- 		}
- 
+-	dma->sg_tx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
++	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
+ 	sg_init_table(dma->sg_tx_p, num); /* Initialize SG table */
+ 	/* offset, length setting */
+ 	sg = dma->sg_tx_p;
 -- 
 2.11.0
 
