@@ -1,50 +1,31 @@
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Date: Tue, 10 Jan 2017 08:43:55 +0000
-Subject: Re: [PATCH 2/8] mmc-core: Fix a typo in a comment line
-Message-Id: <0813e0b2-a9fa-2066-b572-5875848b556c@rock-chips.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Jan 2017 07:49:00 +0000
+Subject: [patch] drm/vc4: fix a bounds check
+Message-Id: <20170113074900.GB30524@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net>
- <8d856fe0-76cd-b226-9ef3-51b07af47223@users.sourceforge.net>
-In-Reply-To: <8d856fe0-76cd-b226-9ef3-51b07af47223@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, Harjani Ritesh <riteshh@codeaurora.org>, Jens Axboe <axboe@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Christie <mchristi@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: shawn.lin@rock-chips.com, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: Eric Anholt <eric@anholt.net>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 2017/1/9 5:43, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 8 Jan 2017 19:05:37 +0100
->
-> Add a missing character in the function description.
->
+We accidentally return success even if vc4_full_res_bounds_check() fails.
 
-Good catch!
+Fixes: d5b1a78a772f ("drm/vc4: Add support for drawing 3D frames.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mmc/core/mmc_test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-> index e85ef503d7ce..2f838a13a904 100644
-> --- a/drivers/mmc/core/mmc_test.c
-> +++ b/drivers/mmc/core/mmc_test.c
-> @@ -1533,7 +1533,7 @@ static int mmc_test_area_cleanup(struct mmc_test_card *test)
->
->  /*
->   * Initialize an area for testing large transfers.  The test area is set to the
-> - * middle of the card because cards may have different charateristics at the
-> + * middle of the card because cards may have different characteristics at the
->   * front (for FAT file system optimization).  Optionally, the area is erased
->   * (if the card supports it) which may improve write performance.  Optionally,
->   * the area is filled with data for subsequent read tests.
->
-
-
--- 
-Best Regards
-Shawn Lin
-
+diff --git a/drivers/gpu/drm/vc4/vc4_render_cl.c b/drivers/gpu/drm/vc4/vc4_render_cl.c
+index 08886a3..5cdd003 100644
+--- a/drivers/gpu/drm/vc4/vc4_render_cl.c
++++ b/drivers/gpu/drm/vc4/vc4_render_cl.c
+@@ -461,7 +461,7 @@ static int vc4_rcl_surface_setup(struct vc4_exec_info *exec,
+ 		}
+ 
+ 		ret = vc4_full_res_bounds_check(exec, *obj, surf);
+-		if (!ret)
++		if (ret)
+ 			return ret;
+ 
+ 		return 0;
