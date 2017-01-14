@@ -1,19 +1,18 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Sat, 14 Jan 2017 00:13:34 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 14 Jan 2017 06:55:29 +0000
 Subject: Re: [patch v2 linux-next] userfaultfd: hugetlbfs: unmap the correct pointer
-Message-Id: <20170113161334.54b60e832af9fb0c51307806@linux-foundation.org>
+Message-Id: <20170114065529.GE15314@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20170113082608.GA3548@mwanda>
-	<alpine.LSU.2.11.1701131559360.2443@eggly.anvils>
+ <alpine.LSU.2.11.1701131559360.2443@eggly.anvils>
 In-Reply-To: <alpine.LSU.2.11.1701131559360.2443@eggly.anvils>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Hugh Dickins <hughd@google.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Mike Kravetz <mike.kravetz@oracle.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Jan Kara <jack@suse.cz>, Ross Zwisler <ross.zwisler@linux.intel.com>, Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Dan Williams <dan.j.williams@intel.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Kravetz <mike.kravetz@oracle.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Jan Kara <jack@suse.cz>, Ross Zwisler <ross.zwisler@linux.intel.com>, Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lstoakes@gmail.com>, Dan Williams <dan.j.williams@intel.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-On Fri, 13 Jan 2017 16:02:37 -0800 (PST) Hugh Dickins <hughd@google.com> wrote:
-
+On Fri, Jan 13, 2017 at 04:02:37PM -0800, Hugh Dickins wrote:
 > On Fri, 13 Jan 2017, Dan Carpenter wrote:
 > 
 > > kunmap_atomic() and kunmap() take different pointers.  People often get
@@ -38,20 +37,10 @@ On Fri, 13 Jan 2017 16:02:37 -0800 (PST) Hugh Dickins <hughd@google.com> wrote:
 > >  			kunmap_atomic(page_kaddr);
 > 
 > I think you need to look at that again.
-> 
 
-um, yup.
+Oh wow...  What absolute heck!  I can't believe how badly I'm messing
+up on this.
 
---- a/mm/memory.c~userfaultfd-hugetlbfs-fix-__mcopy_atomic_hugetlb-retry-error-processing-fix-fix
-+++ a/mm/memory.c
-@@ -4172,7 +4172,7 @@ long copy_huge_page_from_user(struct pag
- 				(const void __user *)(src + i * PAGE_SIZE),
- 				PAGE_SIZE);
- 		if (allow_pagefault)
--			kunmap(page_kaddr + i);
-+			kunmap(dst_page + i);
- 		else
- 			kunmap_atomic(page_kaddr);
- 
-_
+regards,
+dan carpenter
 
