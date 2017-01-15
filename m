@@ -1,40 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Jan 2017 11:24:59 +0000
-Subject: [bug report] net: ethernet: ti: davinci_cpdma: add set rate for a channel
-Message-Id: <20170116112459.GA10004@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:00:04 +0000
+Subject: [PATCH 03/46] selinux: Improve size determinations in four functions
+Message-Id: <f36c8dc9-0d90-6eee-9229-fb02d6b27708@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hello Ivan Khoronzhuk,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 11:22:12 +0100
 
-This is a semi-automatic email about new static checker warnings.
+Replace the specification of data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer.
 
-The patch 8f32b90981dc: "net: ethernet: ti: davinci_cpdma: add set 
-rate for a channel" from Nov 29, 2016, leads to the following Smatch 
-complaint:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/conditional.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-drivers/net/ethernet/ti/davinci_cpdma.c:843 cpdma_chan_set_rate()
-	 warn: variable dereferenced before check 'ch' (see line 838)
+diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+index 4a3bf29f7565..771c96afe1d5 100644
+--- a/security/selinux/ss/conditional.c
++++ b/security/selinux/ss/conditional.c
+@@ -227,7 +227,7 @@ int cond_read_bool(struct policydb *p, struct hashtab *h, void *fp)
+ 	u32 len;
+ 	int rc;
+ 
+-	booldatum = kzalloc(sizeof(struct cond_bool_datum), GFP_KERNEL);
++	booldatum = kzalloc(sizeof(*booldatum), GFP_KERNEL);
+ 	if (!booldatum)
+ 		return -ENOMEM;
+ 
+@@ -332,7 +332,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+ 		goto err;
+ 	}
+ 
+-	list = kzalloc(sizeof(struct cond_av_list), GFP_KERNEL);
++	list = kzalloc(sizeof(*list), GFP_KERNEL);
+ 	if (!list) {
+ 		rc = -ENOMEM;
+ 		goto err;
+@@ -421,7 +421,7 @@ static int cond_read_node(struct policydb *p, struct cond_node *node, void *fp)
+ 			goto err;
+ 
+ 		rc = -ENOMEM;
+-		expr = kzalloc(sizeof(struct cond_expr), GFP_KERNEL);
++		expr = kzalloc(sizeof(*expr), GFP_KERNEL);
+ 		if (!expr)
+ 			goto err;
+ 
+@@ -472,7 +472,7 @@ int cond_read_list(struct policydb *p, void *fp)
+ 
+ 	for (i = 0; i < len; i++) {
+ 		rc = -ENOMEM;
+-		node = kzalloc(sizeof(struct cond_node), GFP_KERNEL);
++		node = kzalloc(sizeof(*node), GFP_KERNEL);
+ 		if (!node)
+ 			goto err;
+ 
+-- 
+2.11.0
 
-drivers/net/ethernet/ti/davinci_cpdma.c
-   837	{
-   838		struct cpdma_ctlr *ctlr = ch->ctlr;
-                                          ^^^^
-New NULL check?
-
-   839		unsigned long flags, ch_flags;
-   840		int ret, prio_mode;
-   841		u32 rmask;
-   842	
-   843		if (!ch || !is_tx_chan(ch))
-                    ^^^
-Too late.
-
-   844			return -EINVAL;
-   845	
-
-regards,
-dan carpenter
