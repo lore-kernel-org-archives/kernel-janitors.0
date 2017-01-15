@@ -1,40 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 13:48:12 +0000
-Subject: [PATCH 2/3] AVR32: Delete an unnecessary variable initialisation in setup_rt_frame()
-Message-Id: <e5f590b7-b7bf-740b-62b6-8fc7d7def05c@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:06:10 +0000
+Subject: [PATCH 08/46] selinux: Delete an unnecessary return statement in policydb_destroy()
+Message-Id: <1370e095-265d-9ca5-8184-b975fc75ead7@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
-In-Reply-To: <308dc151-c874-dfe7-64f9-24a63fc66883@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 14:03:10 +0100
+Date: Sat, 14 Jan 2017 14:00:02 +0100
 
-The local variable "err" will be set to an appropriate value a bit later.
-Thus omit the explicit initialisation at the beginning.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/avr32/kernel/signal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/selinux/ss/policydb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/avr32/kernel/signal.c b/arch/avr32/kernel/signal.c
-index 13c31a7b9ae4..0c46d3618694 100644
---- a/arch/avr32/kernel/signal.c
-+++ b/arch/avr32/kernel/signal.c
-@@ -138,7 +138,7 @@ static int
- setup_rt_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
- {
- 	struct rt_sigframe __user *frame;
--	int err = 0;
-+	int err;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 4d4ba1ad910d..fe8992382a71 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -878,8 +878,6 @@ void policydb_destroy(struct policydb *p)
+ 	ebitmap_destroy(&p->filename_trans_ttypes);
+ 	ebitmap_destroy(&p->policycaps);
+ 	ebitmap_destroy(&p->permissive_map);
+-
+-	return;
+ }
  
- 	frame = get_sigframe(ksig, regs, sizeof(*frame));
- 	if (!access_ok(VERIFY_WRITE, frame, sizeof (*frame)))
+ /*
 -- 
 2.11.0
 
