@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:06:10 +0000
-Subject: [PATCH 08/46] selinux: Delete an unnecessary return statement in policydb_destroy()
-Message-Id: <1370e095-265d-9ca5-8184-b975fc75ead7@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:14:04 +0000
+Subject: [PATCH 14/46] selinux: One function call less in genfs_read() after null pointer detection
+Message-Id: <202d7312-b266-ce9d-8f7a-3e8282c7b0c5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
@@ -12,32 +12,33 @@ To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <ep
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 14 Jan 2017 14:00:02 +0100
+Date: Sat, 14 Jan 2017 17:43:47 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: void function return statements are not generally useful
-
-Thus remove such a statement in the affected function.
+Call the function "kfree" at the end only after it was determined
+that the local variable "newgenfs" contained a non-null pointer.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 2 --
- 1 file changed, 2 deletions(-)
+ security/selinux/ss/policydb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 4d4ba1ad910d..fe8992382a71 100644
+index a12d9166f0e4..5dc31faa601f 100644
 --- a/security/selinux/ss/policydb.c
 +++ b/security/selinux/ss/policydb.c
-@@ -878,8 +878,6 @@ void policydb_destroy(struct policydb *p)
- 	ebitmap_destroy(&p->filename_trans_ttypes);
- 	ebitmap_destroy(&p->policycaps);
- 	ebitmap_destroy(&p->permissive_map);
--
--	return;
- }
+@@ -2096,9 +2096,10 @@ static int genfs_read(struct policydb *p, void *fp)
+ 	}
+ 	rc = 0;
+ out:
+-	if (newgenfs)
++	if (newgenfs) {
+ 		kfree(newgenfs->fstype);
+-	kfree(newgenfs);
++		kfree(newgenfs);
++	}
+ 	ocontext_destroy(newc, OCON_FSUSE);
  
- /*
+ 	return rc;
 -- 
 2.11.0
 
