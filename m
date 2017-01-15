@@ -1,75 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 11:45:13 +0000
-Subject: [PATCH 1/4] alpha: Return an error code only as a constant in osf_sigstack()
-Message-Id: <95ac67c7-6a80-6d58-a8c2-43701e76ecdc@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:28:03 +0000
+Subject: [PATCH 28/46] selinux: Return directly after a failed kzalloc() in user_read()
+Message-Id: <3582dff5-b96a-dde7-2d1c-bca7ab4aeb0e@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
-In-Reply-To: <de76a580-c693-f422-ad78-d87bafd42bf3@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-alpha@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Jan-Benedict Glaw <jbglaw@lug-owl.de>, Matt Turner <mattst88@gmail.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Richard Cochran <richardcochran@gmail.com>, Richard Henderson <rth@twiddle.net>, Thomas Gleixner <tglx@linutronix.de>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 10:40:51 +0100
+Date: Sat, 14 Jan 2017 22:08:22 +0100
 
-* Return an error code without storing it in an intermediate variable.
-
-* Delete the local variable "error" which became unnecessary with
-  this refactoring.
+Return directly after a call of the function "kzalloc" failed
+at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/alpha/kernel/osf_sys.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ security/selinux/ss/policydb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-index 56e427c7aa3c..41174156a676 100644
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -691,20 +691,17 @@ SYSCALL_DEFINE2(osf_sigstack, struct sigstack __user *, uss,
- 	unsigned long usp = rdusp();
- 	unsigned long oss_sp = current->sas_ss_sp + current->sas_ss_size;
- 	unsigned long oss_os = on_sig_stack(usp);
--	int error;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 3e43556e67b8..1c046d39e2a7 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1542,10 +1542,9 @@ static int user_read(struct policydb *p, struct hashtab *h, void *fp)
+ 	__le32 buf[3];
+ 	u32 len;
  
- 	if (uss) {
- 		void __user *ss_sp;
+-	rc = -ENOMEM;
+ 	usrdatum = kzalloc(sizeof(*usrdatum), GFP_KERNEL);
+ 	if (!usrdatum)
+-		goto bad;
++		return -ENOMEM;
  
--		error = -EFAULT;
- 		if (get_user(ss_sp, &uss->ss_sp))
--			goto out;
-+			return -EFAULT;
- 
- 		/* If the current stack was set with sigaltstack, don't
- 		   swap stacks while we are on it.  */
--		error = -EPERM;
- 		if (current->sas_ss_sp && on_sig_stack(usp))
--			goto out;
-+			return -EPERM;
- 
- 		/* Since we don't know the extent of the stack, and we don't
- 		   track onstack-ness, but rather calculate it, we must 
-@@ -714,16 +711,12 @@ SYSCALL_DEFINE2(osf_sigstack, struct sigstack __user *, uss,
- 	}
- 
- 	if (uoss) {
--		error = -EFAULT;
- 		if (! access_ok(VERIFY_WRITE, uoss, sizeof(*uoss))
- 		    || __put_user(oss_sp, &uoss->ss_sp)
- 		    || __put_user(oss_os, &uoss->ss_onstack))
--			goto out;
-+			return -EFAULT;
- 	}
--
--	error = 0;
-- out:
--	return error;
-+	return 0;
- }
- 
- SYSCALL_DEFINE3(osf_sysinfo, int, command, char __user *, buf, long, count)
+ 	if (p->policyvers >= POLICYDB_VERSION_BOUNDARY)
+ 		to_read = 3;
 -- 
 2.11.0
 
