@@ -1,90 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 01 Jan 2017 15:40:30 +0000
-Subject: [PATCH] coccinelle: check that dmi_system_id structures are null terminated
-Message-Id: <1483285230-4214-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:11:15 +0000
+Subject: [PATCH 11/46] selinux: Return directly after a failed next_entry() in genfs_read()
+Message-Id: <767b0ef6-2693-2de3-897f-c1989870676f@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Add dmi_system_id to the list of types for which top-level arrays are
-checked to be null terminated.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 16:34:25 +0100
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Return directly after a call of the function "next_entry" failed
+at the beginning.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- scripts/coccinelle/misc/of_table.cocci |   21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ security/selinux/ss/policydb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/misc/of_table.cocci b/scripts/coccinelle/misc/of_table.cocci
-index 2294915..d1b666f 100644
---- a/scripts/coccinelle/misc/of_table.cocci
-+++ b/scripts/coccinelle/misc/of_table.cocci
-@@ -1,4 +1,5 @@
--/// Make sure (of/i2c/platform)_device_id tables are NULL terminated
-+/// Make sure (of/i2c/platform)_device_id and dmi_system_id tables are
-+/// NULL terminated
- //
- // Keywords: of_table i2c_table platform_table
- // Confidence: Medium
-@@ -14,14 +15,16 @@ identifier var, arr;
- expression E;
- @@
- (
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct
-+  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
- 	...,
- 	{
- 	.var = E,
- *	}
- };
- |
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct
-+  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
- 	...,
- *	{ ..., E, ... },
- };
-@@ -32,7 +35,8 @@ identifier var, arr;
- expression E;
- @@
- (
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct
-+  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
- 	...,
- 	{
- 	.var = E,
-@@ -41,7 +45,8 @@ struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
- +	{ }
- };
- |
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct
-+  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
- 	...,
- 	{ ..., E, ... },
- +	{ },
-@@ -54,7 +59,8 @@ identifier var, arr;
- expression E;
- @@
- (
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct
-+  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
- 	...,
- 	{
- 	.var = E,
-@@ -62,7 +68,8 @@ struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
- 	@p1
- };
- |
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct
-+  \(of_device_id\|i2c_device_id\|platform_device_id\|dmi_system_id\) arr[] = {
- 	...,
- 	{ ..., E, ... }
- 	@p1
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 506b0228d1f1..754f829d2027 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -2004,7 +2004,7 @@ static int genfs_read(struct policydb *p, void *fp)
+ 
+ 	rc = next_entry(buf, fp, sizeof(u32));
+ 	if (rc)
+-		goto out;
++		return rc;
+ 	nel = le32_to_cpu(buf[0]);
+ 
+ 	for (i = 0; i < nel; i++) {
+-- 
+2.11.0
 
