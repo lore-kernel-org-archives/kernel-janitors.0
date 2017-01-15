@@ -1,40 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 07 Jan 2017 20:01:38 +0000
-Subject: [PATCH 7/9] memstick: Improve another size determination in msb_read_boot_blocks()
-Message-Id: <67fecf0a-9e26-c150-d123-ee5cf33c0397@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:15:06 +0000
+Subject: [PATCH 15/46] selinux: One check and function call less in genfs_read() after error detection
+Message-Id: <dbd8e89d-45a1-5785-f2dd-673389ac01a3@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
-In-Reply-To: <64dfa775-4e4a-bdb0-7b55-41f43ccdf11a@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 7 Jan 2017 20:00:16 +0100
+Date: Sat, 14 Jan 2017 18:29:20 +0100
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+Adjust a jump target to avoid a check repetition at the end after a memory
+allocation failed for the local variable "newgenfs".
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/memstick/core/ms_block.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/selinux/ss/policydb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index a30c0ae95ae5..98ab5764050b 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -1202,7 +1202,7 @@ static int msb_read_boot_blocks(struct msb_data *msb)
- 	dbg_verbose("Start of a scan for the boot blocks");
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 5dc31faa601f..e7b882251da8 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -2015,7 +2015,7 @@ static int genfs_read(struct policydb *p, void *fp)
+ 		newgenfs = kzalloc(sizeof(*newgenfs), GFP_KERNEL);
+ 		if (!newgenfs) {
+ 			rc = -ENOMEM;
+-			goto out;
++			goto exit;
+ 		}
  
- 	if (!msb->boot_page) {
--		page = kmalloc(sizeof(struct ms_boot_page)*2, GFP_KERNEL);
-+		page = kmalloc(sizeof(*page) * 2, GFP_KERNEL);
- 		if (!page)
- 			return -ENOMEM;
+ 		rc = str_read(&newgenfs->fstype, GFP_KERNEL, fp, len);
+@@ -2101,7 +2101,7 @@ static int genfs_read(struct policydb *p, void *fp)
+ 		kfree(newgenfs);
+ 	}
+ 	ocontext_destroy(newc, OCON_FSUSE);
+-
++exit:
+ 	return rc;
+ }
  
 -- 
 2.11.0
