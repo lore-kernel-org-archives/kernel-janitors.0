@@ -1,57 +1,41 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 18:11:48 +0000
-Subject: [PATCH 1/9] KVM: Return directly after a failed copy_from_user() in kvm_vm_compat_ioctl()
-Message-Id: <45c0ff89-7f60-a58a-3ba7-a938709aaf00@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:22:11 +0000
+Subject: [PATCH 22/46] selinux: Delete an unnecessary variable initialisation in range_read()
+Message-Id: <d5af857a-d19d-265a-2378-3e98b176c5ec@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
-In-Reply-To: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 11:30:21 +0100
+Date: Sat, 14 Jan 2017 20:40:12 +0100
 
-* Return directly after a call of the function "copy_from_user" failed
-  in a case block.
-
-  This issue was detected by using the Coccinelle software.
-
-* Delete the jump label "out" which became unnecessary with
-  this refactoring.
+The local variable "rt" will be set to an appropriate pointer a bit later.
+Thus omit the explicit initialisation at the beginning which became
+unnecessary with a previous update step.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- virt/kvm/kvm_main.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ security/selinux/ss/policydb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index de102cae7125..eeb340708d97 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -3133,10 +3133,9 @@ static long kvm_vm_compat_ioctl(struct file *filp,
- 		struct compat_kvm_dirty_log compat_log;
- 		struct kvm_dirty_log log;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 0d2f64558c0a..6121a26ada64 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1839,7 +1839,7 @@ u32 string_to_av_perm(struct policydb *p, u16 tclass, const char *name)
  
--		r = -EFAULT;
- 		if (copy_from_user(&compat_log, (void __user *)arg,
- 				   sizeof(compat_log)))
--			goto out;
-+			return -EFAULT;
- 		log.slot	 = compat_log.slot;
- 		log.padding1	 = compat_log.padding1;
- 		log.padding2	 = compat_log.padding2;
-@@ -3148,8 +3147,6 @@ static long kvm_vm_compat_ioctl(struct file *filp,
- 	default:
- 		r = kvm_vm_ioctl(filp, ioctl, arg);
- 	}
--
--out:
- 	return r;
- }
- #endif
+ static int range_read(struct policydb *p, void *fp)
+ {
+-	struct range_trans *rt = NULL;
++	struct range_trans *rt;
+ 	struct mls_range *r = NULL;
+ 	int i, rc;
+ 	__le32 buf[2];
 -- 
 2.11.0
 
