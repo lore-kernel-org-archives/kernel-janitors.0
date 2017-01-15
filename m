@@ -1,53 +1,44 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 18:54:29 +0000
-Subject: [PATCH 1/3] MIPS: Return directly in 32_mmap2()
-Message-Id: <82853b63-432d-a012-5791-139fee51a0a5@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:36:01 +0000
+Subject: [PATCH 36/46] selinux: Move an assignment for the variable "rc" in mls_read_range_helper()
+Message-Id: <02c3392e-3507-4d91-a8c0-6d933a034058@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <bb402413-83e5-9b34-304c-9f4bca6037d9@users.sourceforge.net>
-In-Reply-To: <bb402413-83e5-9b34-304c-9f4bca6037d9@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mips@linux-mips.org, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?Q?Ralf_B=c3=a4chle?= <ralf@linux-mips.org>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Jan 2017 19:00:05 +0100
+Date: Sun, 15 Jan 2017 11:22:23 +0100
 
-* Return a failure indication without storing it
-  in an intermediate variable.
-
-* Delete the local variable "error" which became unnecessary
-  with this refactoring.
+A local variable was set to an error code in one case before a concrete
+error situation was detected. Thus move the corresponding assignment into
+an if branch to indicate a software failure there.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/mips/kernel/linux32.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ security/selinux/ss/policydb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/kernel/linux32.c b/arch/mips/kernel/linux32.c
-index 50fb62544df7..6fa6cdfa6e22 100644
---- a/arch/mips/kernel/linux32.c
-+++ b/arch/mips/kernel/linux32.c
-@@ -64,15 +64,10 @@ SYSCALL_DEFINE6(32_mmap2, unsigned long, addr, unsigned long, len,
- 	unsigned long, prot, unsigned long, flags, unsigned long, fd,
- 	unsigned long, pgoff)
- {
--	unsigned long error;
--
--	error = -EINVAL;
- 	if (pgoff & (~PAGE_MASK >> 12))
--		goto out;
--	error = sys_mmap_pgoff(addr, len, prot, flags, fd,
--			       pgoff >> (PAGE_SHIFT-12));
--out:
--	return error;
-+		return -EINVAL;
-+	return sys_mmap_pgoff(addr, len, prot, flags, fd,
-+			      pgoff >> (PAGE_SHIFT-12));
- }
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 9b595f2e0d9f..7cf635c650dc 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -996,10 +996,10 @@ static int mls_read_range_helper(struct mls_range *r, void *fp)
+ 	if (rc)
+ 		goto out;
  
- #define RLIM_INFINITY32 0x7fffffff
+-	rc = -EINVAL;
+ 	items = le32_to_cpu(buf[0]);
+ 	if (items > ARRAY_SIZE(buf)) {
+ 		printk(KERN_ERR "SELinux: mls:  range overflow\n");
++		rc = -EINVAL;
+ 		goto out;
+ 	}
+ 
 -- 
 2.11.0
 
