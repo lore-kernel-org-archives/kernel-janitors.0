@@ -1,54 +1,48 @@
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 31 Jan 2017 14:22:56 +0000
-Subject: Re: [bug report] ipv6: fix ip6_tnl_parse_tlv_enc_lim()
-Message-Id: <CANn89iJzDEP2aMqSmT5uv_Eg2VqzM5LuZ3T0LYqxEKeyq06ghQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:21:15 +0000
+Subject: [PATCH 21/46] selinux: Two function calls less in range_read() after error detection
+Message-Id: <1e37fe86-2e83-c1f0-f43b-69ed2fb5c7aa@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170131111256.GA31319@mwanda>
-In-Reply-To: <20170131111256.GA31319@mwanda>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Dan
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 20:20:15 +0100
 
-Please send an official patch, thanks !
+Adjust a jump target to avoid two calls of the function "kfree" at the end
+after a memory allocation failed for the local variable "rt".
 
-On Tue, Jan 31, 2017 at 3:12 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Hello Eric Dumazet,
->
-> The patch fbfa743a9d2a: "ipv6: fix ip6_tnl_parse_tlv_enc_lim()" from
-> Jan 23, 2017, leads to the following static checker warning:
->
->         net/ipv6/ip6_tunnel.c:444 ip6_tnl_parse_tlv_enc_lim()
->         warn: potential pointer math issue ('skb->data' is a 24 bit pointer)
->
-> net/ipv6/ip6_tunnel.c
->    437                          while (1) {
->    438                                  struct ipv6_tlv_tnl_enc_lim *tel;
->    439
->    440                                  /* No more room for encapsulation limit */
->    441                                  if (i + sizeof(*tel) > optlen)
->    442                                          break;
->    443
->    444                                  tel = (struct ipv6_tlv_tnl_enc_lim *) skb->data + off + i;
->
-> This should be:
->                                         tel = (struct ipv6_tlv_tnl_enc_lim *)(skb->data + off + i);
->
->
-> Someone probably already reported this?
->
->    445                                  /* return index of option if found and valid */
->    446                                  if (tel->type = IPV6_TLV_TNL_ENCAP_LIMIT &&
->    447                                      tel->length = 1)
->    448                                          return i + off - nhoff;
->    449                                  /* else jump to next option */
->    450                                  if (tel->type)
->    451                                          i += tel->length + 2;
->    452                                  else
->    453                                          i++;
->    454                          }
->
-> regards,
-> dan carpenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/policydb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 4cd96ce51322..0d2f64558c0a 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1857,7 +1857,7 @@ static int range_read(struct policydb *p, void *fp)
+ 		rt = kzalloc(sizeof(*rt), GFP_KERNEL);
+ 		if (!rt) {
+ 			rc = -ENOMEM;
+-			goto out;
++			goto exit;
+ 		}
+ 
+ 		rc = next_entry(buf, fp, (sizeof(u32) * 2));
+@@ -1909,6 +1909,7 @@ static int range_read(struct policydb *p, void *fp)
+ out:
+ 	kfree(rt);
+ 	kfree(r);
++exit:
+ 	return rc;
+ }
+ 
+-- 
+2.11.0
+
