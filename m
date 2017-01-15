@@ -1,77 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Jan 2017 18:45:43 +0000
-Subject: Applied "spi/topcliff-pch: Improve size determinations in pch_spi_probe()" to the spi tree
-Message-Id: <E1cTYlL-0000Ik-HB@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:12:03 +0000
+Subject: [PATCH 12/46] selinux: Move assignments for two pointers in genfs_read()
+Message-Id: <05e70901-776f-8f3c-f0f3-014a42712dc6@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d2471abf-1eca-037f-3d10-ba03d8e987af@users.sourceforge.net>
-In-Reply-To: <d2471abf-1eca-037f-3d10-ba03d8e987af@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.orgMark Brown <broonie@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orglinux-spi@vger.kernel.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
-
-   spi/topcliff-pch: Improve size determinations in pch_spi_probe()
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From baa35f5734aa1c0207e4e6b8e15079475b1fa252 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 15:46:35 +0100
-Subject: [PATCH] spi/topcliff-pch: Improve size determinations in
- pch_spi_probe()
+Date: Sat, 14 Jan 2017 16:56:51 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer.
+Move the assignment for the local variables "newc" and "newgenfs" behind
+a call of the function "next_entry" at the beginning so that they will
+only be set after a successful call.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-topcliff-pch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/selinux/ss/policydb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 1beeb16e836a..0a876311b67b 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1539,11 +1539,11 @@ static int pch_spi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	int i;
- 	struct pch_pd_dev_save *pd_dev_save;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 754f829d2027..7544e374dec9 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1997,14 +1997,14 @@ static int genfs_read(struct policydb *p, void *fp)
+ 	int i, j, rc;
+ 	u32 nel, nel2, len, len2;
+ 	__le32 buf[1];
+-	struct ocontext *l, *c;
+-	struct ocontext *newc = NULL;
+-	struct genfs *genfs_p, *genfs;
+-	struct genfs *newgenfs = NULL;
++	struct ocontext *l, *c, *newc;
++	struct genfs *genfs_p, *genfs, *newgenfs;
  
--	pd_dev_save = kzalloc(sizeof(struct pch_pd_dev_save), GFP_KERNEL);
-+	pd_dev_save = kzalloc(sizeof(*pd_dev_save), GFP_KERNEL);
- 	if (!pd_dev_save)
- 		return -ENOMEM;
+ 	rc = next_entry(buf, fp, sizeof(u32));
+ 	if (rc)
+ 		return rc;
++	newc = NULL;
++	newgenfs = NULL;
+ 	nel = le32_to_cpu(buf[0]);
  
--	board_dat = kzalloc(sizeof(struct pch_spi_board_data), GFP_KERNEL);
-+	board_dat = kzalloc(sizeof(*board_dat), GFP_KERNEL);
- 	if (!board_dat) {
- 		retval = -ENOMEM;
- 		goto err_no_mem;
+ 	for (i = 0; i < nel; i++) {
 -- 
 2.11.0
 
