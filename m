@@ -1,30 +1,97 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 17 Jan 2017 14:56:25 +0000
-Subject: Re: [PATCH 4/5] pinctrl: mvebu: Use seq_puts() in mvebu_pinconf_group_dbg_show()
-Message-Id: <CACRpkdbHpVmCsYi33MvfwWG8NTKeKQREOrcVLqznE2F=kLqxhQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:04:48 +0000
+Subject: [PATCH 07/46] selinux: Delete unnecessary variable assignments in policydb_index()
+Message-Id: <247c0e27-c442-3408-4f92-492629d61fbf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net> <43337b05-dc83-da07-f4a0-030bf2cae63a@users.sourceforge.net>
-In-Reply-To: <43337b05-dc83-da07-f4a0-030bf2cae63a@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 12, 2017 at 5:36 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 13:40:25 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 12 Jan 2017 16:51:00 +0100
->
-> Strings which did not contain data format specifications should be put
-> into a sequence. Thus use the corresponding function "seq_puts".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The local variable "rc" was reset with an error code up to five times
+before a memory allocation failure was detected.
 
-Patch applied.
+Add a jump target so that this assignment will only be performed after
+a concrete software failure.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/policydb.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 21869b622c0c..4d4ba1ad910d 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -539,34 +539,30 @@ static int policydb_index(struct policydb *p)
+ 	symtab_hash_eval(p->symtab);
+ #endif
+ 
+-	rc = -ENOMEM;
+ 	p->class_val_to_struct = kcalloc(p->p_classes.nprim,
+ 					 sizeof(*p->class_val_to_struct),
+ 					 GFP_KERNEL);
+ 	if (!p->class_val_to_struct)
+-		goto out;
++		goto failure_indication;
+ 
+-	rc = -ENOMEM;
+ 	p->role_val_to_struct = kcalloc(p->p_roles.nprim,
+ 					sizeof(*p->role_val_to_struct),
+ 					GFP_KERNEL);
+ 	if (!p->role_val_to_struct)
+-		goto out;
++		goto failure_indication;
+ 
+-	rc = -ENOMEM;
+ 	p->user_val_to_struct = kcalloc(p->p_users.nprim,
+ 					sizeof(*p->user_val_to_struct),
+ 					GFP_KERNEL);
+ 	if (!p->user_val_to_struct)
+-		goto out;
++		goto failure_indication;
+ 
+ 	/* Yes, I want the sizeof the pointer, not the structure */
+-	rc = -ENOMEM;
+ 	p->type_val_to_struct_array = flex_array_alloc(sizeof(struct type_datum *),
+ 						       p->p_types.nprim,
+ 						       GFP_KERNEL | __GFP_ZERO);
+ 	if (!p->type_val_to_struct_array)
+-		goto out;
++		goto failure_indication;
+ 
+ 	rc = flex_array_prealloc(p->type_val_to_struct_array, 0,
+ 				 p->p_types.nprim, GFP_KERNEL | __GFP_ZERO);
+@@ -578,12 +574,11 @@ static int policydb_index(struct policydb *p)
+ 		goto out;
+ 
+ 	for (i = 0; i < SYM_NUM; i++) {
+-		rc = -ENOMEM;
+ 		p->sym_val_to_name[i] = flex_array_alloc(sizeof(char *),
+ 							 p->symtab[i].nprim,
+ 							 GFP_KERNEL | __GFP_ZERO);
+ 		if (!p->sym_val_to_name[i])
+-			goto out;
++			goto failure_indication;
+ 
+ 		rc = flex_array_prealloc(p->sym_val_to_name[i],
+ 					 0, p->symtab[i].nprim,
+@@ -598,6 +593,9 @@ static int policydb_index(struct policydb *p)
+ 	rc = 0;
+ out:
+ 	return rc;
++failure_indication:
++	rc = -ENOMEM;
++	goto out;
+ }
+ 
+ /*
+-- 
+2.11.0
+
