@@ -1,58 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Jan 2017 11:58:08 +0000
-Subject: [patch] drm/msm: return -EFAULT if copy_from_user() fails
-Message-Id: <20170116115808.GA12766@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:41:25 +0000
+Subject: [PATCH 41/46] selinux: Move two assignments for the variable "rc" in roles_init()
+Message-Id: <aa7a9b62-1016-2e22-6104-d992d6b556bf@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jordan Crouse <jcrouse-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-copy_from_user_inatomic() is actually a local function that returns
--EFAULT or positive values on error.  Otherwise copy_from_user() returns
-the number of bytes remaining to be copied.  We want to return -EFAULT
-here.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 12:40:35 +0100
 
-I removed an unlikely() because we just did a copy_from_user()
-so I don't think it can possibly make a difference.
+One local variable was set to an error code in two cases before
+a concrete error situation was detected. Thus move the corresponding
+assignments into if branches to indicate a software failure there.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Not compiled.
+ security/selinux/ss/policydb.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm_gem_submit.c
-index 4896765..1172fe7 100644
---- a/drivers/gpu/drm/msm/msm_gem_submit.c
-+++ b/drivers/gpu/drm/msm/msm_gem_submit.c
-@@ -95,13 +95,13 @@ static int submit_lookup_objects(struct msm_gem_submit *submit,
- 		 */
- 		submit->bos[i].flags = 0;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index ccc146bfd4c2..be445abf047b 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -182,15 +182,17 @@ static int roles_init(struct policydb *p)
+ 	if (!role)
+ 		return -ENOMEM;
  
--		ret = copy_from_user_inatomic(&submit_bo, userptr, sizeof(submit_bo));
--		if (unlikely(ret)) {
-+		if (copy_from_user_inatomic(&submit_bo, userptr, sizeof(submit_bo))) {
- 			pagefault_enable();
- 			spin_unlock(&file->table_lock);
--			ret = copy_from_user(&submit_bo, userptr, sizeof(submit_bo));
--			if (ret)
-+			if (copy_from_user(&submit_bo, userptr, sizeof(submit_bo))) {
-+				ret = -EFAULT;
- 				goto out;
-+			}
- 			spin_lock(&file->table_lock);
- 			pagefault_disable();
- 		}
-@@ -317,9 +317,10 @@ static int submit_reloc(struct msm_gem_submit *submit, struct msm_gem_object *ob
- 		uint64_t iova;
- 		bool valid;
+-	rc = -EINVAL;
+ 	role->value = ++p->p_roles.nprim;
+-	if (role->value != OBJECT_R_VAL)
++	if (role->value != OBJECT_R_VAL) {
++		rc = -EINVAL;
+ 		goto out;
++	}
  
--		ret = copy_from_user(&submit_reloc, userptr, sizeof(submit_reloc));
--		if (ret)
-+		if (copy_from_user(&submit_reloc, userptr, sizeof(submit_reloc))) {
-+			ret = -EFAULT;
- 			goto out;
-+		}
+-	rc = -ENOMEM;
+ 	key = kstrdup(OBJECT_R, GFP_KERNEL);
+-	if (!key)
++	if (!key) {
++		rc = -ENOMEM;
+ 		goto out;
++	}
  
- 		if (submit_reloc.submit_offset % 4) {
- 			DRM_ERROR("non-aligned reloc offset: %u\n",
+ 	rc = hashtab_insert(p->p_roles.table, key, role);
+ 	if (rc)
+-- 
+2.11.0
+
