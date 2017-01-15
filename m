@@ -1,70 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 18:13:30 +0000
-Subject: [PATCH 3/9] KVM: Move error code settings in kvm_vcpu_compat_ioctl()
-Message-Id: <0fa315b6-2fc7-3833-32eb-4e58671ac776@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:35:03 +0000
+Subject: [PATCH 35/46] selinux: Return directly after a failed kzalloc() in perm_read()
+Message-Id: <b7648542-fcd6-6852-ddcd-0b88b842e1a8@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
-In-Reply-To: <a2fb541a-7a7d-1f78-b587-1191b9832088@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Jan 2017 13:57:40 +0100
+Date: Sun, 15 Jan 2017 11:20:13 +0100
 
-* A local variable was set to an error code before a concrete error
-  situation was detected. Thus move the corresponding settings
-  into if branches to indicate a software failure there.
-
-  This issue was detected by using the Coccinelle software.
-
-* Return directly after a call of the function "copy_from_user"
-  (or an other check) failed in a case block.
-
-* Delete the jump label "out" which became unnecessary with
-  this refactoring.
+Return directly after a call of the function "kzalloc" failed
+at the beginning.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- virt/kvm/kvm_main.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ security/selinux/ss/policydb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 2773e5012948..62f24d8eaaa2 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2743,17 +2743,14 @@ static long kvm_vcpu_compat_ioctl(struct file *filp,
- 		sigset_t sigset;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 551685283399..9b595f2e0d9f 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1116,10 +1116,9 @@ static int perm_read(struct policydb *p, struct hashtab *h, void *fp)
+ 	__le32 buf[2];
+ 	u32 len;
  
- 		if (argp) {
--			r = -EFAULT;
- 			if (copy_from_user(&kvm_sigmask, argp,
- 					   sizeof(kvm_sigmask)))
--				goto out;
--			r = -EINVAL;
-+				return -EFAULT;
- 			if (kvm_sigmask.len != sizeof(csigset))
--				goto out;
--			r = -EFAULT;
-+				return -EINVAL;
- 			if (copy_from_user(&csigset, sigmask_arg->sigset,
- 					   sizeof(csigset)))
--				goto out;
-+				return -EFAULT;
- 			sigset_from_compat(&sigset, &csigset);
- 			r = kvm_vcpu_ioctl_set_sigmask(vcpu, &sigset);
- 		} else
-@@ -2763,8 +2760,6 @@ static long kvm_vcpu_compat_ioctl(struct file *filp,
- 	default:
- 		r = kvm_vcpu_ioctl(filp, ioctl, arg);
- 	}
--
--out:
- 	return r;
- }
- #endif
+-	rc = -ENOMEM;
+ 	perdatum = kzalloc(sizeof(*perdatum), GFP_KERNEL);
+ 	if (!perdatum)
+-		goto bad;
++		return -ENOMEM;
+ 
+ 	rc = next_entry(buf, fp, sizeof buf);
+ 	if (rc)
 -- 
 2.11.0
 
