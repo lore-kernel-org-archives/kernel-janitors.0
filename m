@@ -1,31 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 21 Jan 2017 04:48:19 +0000
-Subject: [patch] fs/affs: affs_bread() doesn't return ERR_PTRs
-Message-Id: <20170121044819.GA15269@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:01:11 +0000
+Subject: [PATCH 04/46] selinux: Use kmalloc_array() in hashtab_create()
+Message-Id: <66451d7e-f9ff-1d53-e919-d237a24ca8a2@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Fabian Frederick <fabf@skynet.be>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boaz Harrosh <ooo@electrozaur.com>, Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We're checking IS_ERR() here, but we should be checking for NULL.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 12:06:13 +0100
 
-Fixes: e393e82a7d09 ("fs/affs: make export work with cold dcache")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "kmalloc_array".
 
-diff --git a/fs/affs/namei.c b/fs/affs/namei.c
-index a3df8a6..706dd06 100644
---- a/fs/affs/namei.c
-+++ b/fs/affs/namei.c
-@@ -453,8 +453,8 @@ static struct dentry *affs_get_parent(struct dentry *child)
- 	struct buffer_head *bh;
- 
- 	bh = affs_bread(child->d_sb, d_inode(child)->i_ino);
--	if (IS_ERR(bh))
--		return ERR_CAST(bh);
-+	if (bh)
-+		return ERR_PTR(-EIO);
- 
- 	parent = affs_iget(child->d_sb,
- 			   be32_to_cpu(AFFS_TAIL(child->d_sb, bh)->parent));
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/hashtab.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/selinux/ss/hashtab.c b/security/selinux/ss/hashtab.c
+index 2cc496149842..dc99fff64ecb 100644
+--- a/security/selinux/ss/hashtab.c
++++ b/security/selinux/ss/hashtab.c
+@@ -24,7 +24,7 @@ struct hashtab *hashtab_create(u32 (*hash_value)(struct hashtab *h, const void *
+ 	p->nel = 0;
+ 	p->hash_value = hash_value;
+ 	p->keycmp = keycmp;
+-	p->htable = kmalloc(sizeof(*(p->htable)) * size, GFP_KERNEL);
++	p->htable = kmalloc_array(size, sizeof(*p->htable), GFP_KERNEL);
+ 	if (p->htable = NULL) {
+ 		kfree(p);
+ 		return NULL;
+-- 
+2.11.0
+
