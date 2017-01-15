@@ -1,52 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 20:49:27 +0000
-Subject: [PATCH 14/18] mtd-cfi_cmdset_0002: Use common error handling code in do_write_oneword()
-Message-Id: <63f5abca-b47b-75b5-ee7c-7430f589ced0@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:18:06 +0000
+Subject: [PATCH 18/46] selinux: One function call less in filename_trans_read() after error detection
+Message-Id: <358b5114-aeb3-d5fa-bcf9-239bd383d3b5@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
-In-Reply-To: <71189baa-8780-b80a-0b4d-9dae74763ba3@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, David Woodhouse <dwmw2@infradead.org>, Denys Vlasenko <dvlasenk@redhat.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 11 Jan 2017 19:08:01 +0100
+Date: Sat, 14 Jan 2017 19:19:42 +0100
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+Adjust a jump target to avoid a function call at the end after a memory
+allocation failed for the local variable "ft".
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ security/selinux/ss/policydb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
-index 05d740e8eb51..0c4751eb6efe 100644
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -1577,10 +1577,8 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 2be5b18eb149..5f122e846332 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1932,7 +1932,7 @@ static int filename_trans_read(struct policydb *p, void *fp)
+ 		ft = kzalloc(sizeof(*ft), GFP_KERNEL);
+ 		if (!ft) {
+ 			rc = -ENOMEM;
+-			goto out;
++			goto free_name;
+ 		}
  
- 	mutex_lock(&chip->mutex);
- 	ret = get_chip(map, chip, adr, mode);
--	if (ret) {
--		mutex_unlock(&chip->mutex);
--		return ret;
--	}
-+	if (ret)
-+		goto unlock;
+ 		otype = kmalloc(sizeof(*otype), GFP_KERNEL);
+@@ -1986,6 +1986,7 @@ static int filename_trans_read(struct policydb *p, void *fp)
+ 	return 0;
+ out:
+ 	kfree(ft);
++free_name:
+ 	kfree(name);
+ 	kfree(otype);
  
- 	pr_debug("MTD %s(): WRITE 0x%.8lx(0x%.8lx)\n",
- 	       __func__, adr, datum.x[0] );
-@@ -1664,6 +1662,7 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
- 	chip->state = FL_READY;
- 	DISABLE_VPP(map);
- 	put_chip(map, chip, adr);
-+unlock:
- 	mutex_unlock(&chip->mutex);
- 
- 	return ret;
 -- 
 2.11.0
 
