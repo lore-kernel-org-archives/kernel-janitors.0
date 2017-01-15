@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:34:03 +0000
-Subject: [PATCH 34/46] selinux: Return directly after a failed kzalloc() in common_read()
-Message-Id: <caec05bb-b2ae-eda6-f052-32ed1d7c8c47@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 14:58:16 +0000
+Subject: [PATCH 02/46] selinux: Delete an unnecessary return statement in cond_compute_av()
+Message-Id: <86979267-24ac-ce16-a150-43677ac78a0b@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
@@ -12,32 +12,29 @@ To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <ep
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 11:15:19 +0100
+Date: Sat, 14 Jan 2017 11:00:23 +0100
 
-Return directly after a call of the function "kzalloc" failed
-at the beginning.
+The script "checkpatch.pl" pointed information out like the following.
+
+WARNING: void function return statements are not generally useful
+
+Thus remove such a statement in the affected function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ security/selinux/ss/conditional.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 9035e5329ceb..551685283399 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -1150,10 +1150,9 @@ static int common_read(struct policydb *p, struct hashtab *h, void *fp)
- 	u32 len, nel;
- 	int i, rc;
- 
--	rc = -ENOMEM;
- 	comdatum = kzalloc(sizeof(*comdatum), GFP_KERNEL);
- 	if (!comdatum)
--		goto bad;
-+		return -ENOMEM;
- 
- 	rc = next_entry(buf, fp, sizeof buf);
- 	if (rc)
+diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+index fcfab2635c11..4a3bf29f7565 100644
+--- a/security/selinux/ss/conditional.c
++++ b/security/selinux/ss/conditional.c
+@@ -664,5 +664,4 @@ void cond_compute_av(struct avtab *ctab, struct avtab_key *key,
+ 				(node->key.specified & AVTAB_XPERMS))
+ 			services_compute_xperms_drivers(xperms, node);
+ 	}
+-	return;
+ }
 -- 
 2.11.0
 
