@@ -1,41 +1,73 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Thu, 26 Jan 2017 13:11:08 +0000
-Subject: Re: [PATCH 2/5] gtp: Improve another size determination in ipv4_pdp_add()
-Message-Id: <CACVxJT9k-O3A_Uj9=qCX_s8jV=kcZz7c0THNxGjO74mapBPZoQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:45:05 +0000
+Subject: [PATCH 45/46] selinux: Use common error handling code in sidtab_insert()
+Message-Id: <36f95c73-4ae1-efbf-393c-6f4239a91478@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <698070a4-e08e-78e5-0214-df69783cce22@users.sourceforge.net> <91f31650-3052-507c-8006-96874107f981@users.sourceforge.net>
-In-Reply-To: <91f31650-3052-507c-8006-96874107f981@users.sourceforge.net>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: netdev <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Harald Welte <laforge@gnumonks.org>, Johannes Berg <johannes.berg@intel.com>, Pablo Neira <pablo@netfilter.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 26, 2017 at 1:18 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 13:45:45 +0100
 
-> -       pctx = kmalloc(sizeof(struct pdp_ctx), GFP_KERNEL);
-> +       pctx = kmalloc(sizeof(*pctx), GFP_KERNEL);
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-The rule about "sizeof(*p)" style of allocation is bogus and should be
-abolished.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/sidtab.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-Rationale says that
+diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+index f6915f257486..4130f882808c 100644
+--- a/security/selinux/ss/sidtab.c
++++ b/security/selinux/ss/sidtab.c
+@@ -35,10 +35,8 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
+ 	int hvalue, rc = 0;
+ 	struct sidtab_node *prev, *cur, *newnode;
+ 
+-	if (!s) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
++	if (!s)
++		goto failure_indication;
+ 
+ 	hvalue = SIDTAB_HASH(sid);
+ 	prev = NULL;
+@@ -54,15 +52,12 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
+ 	}
+ 
+ 	newnode = kmalloc(sizeof(*newnode), GFP_ATOMIC);
+-	if (!newnode) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
++	if (!newnode)
++		goto failure_indication;
+ 	newnode->sid = sid;
+ 	if (context_cpy(&newnode->context, context)) {
+ 		kfree(newnode);
+-		rc = -ENOMEM;
+-		goto out;
++		goto failure_indication;
+ 	}
+ 
+ 	if (prev) {
+@@ -80,6 +75,9 @@ int sidtab_insert(struct sidtab *s, u32 sid, struct context *context)
+ 		s->next_sid = sid + 1;
+ out:
+ 	return rc;
++failure_indication:
++	rc = -ENOMEM;
++	goto out;
+ }
+ 
+ static struct context *sidtab_search_core(struct sidtab *s, u32 sid, int force)
+-- 
+2.11.0
 
-    > The alternative form where struct name is spelled out hurts readability
-
-In terms of line length, yes, "sizeof(*p)" wins most of the time.
-However, the former variant clearly show the type of data, so you don't need
-to look it up and makes it readily available to follow with tags or equivalent.
-
-    > and introduces an opportunity for a bug when the pointer variable type
-    > is changed but the corresponding sizeof that is passed to a memory
-    > allocator is not.
-
-The correct way to prevent this kind of mistake is to not return "void
-*" pointer
-(at least most of the uses use typed allocation)
-
-    #define lmalloc(T, gfp) (T*)_kmalloc(sizeof(T), (gfp))
-
-Bacause of a cast changing type of pointer will be noticed,
