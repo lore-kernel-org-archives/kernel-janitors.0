@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 15:39:11 +0000
-Subject: [PATCH 39/46] selinux: Move two assignments for the variable "rc" in ocontext_read()
-Message-Id: <1f2cc0bf-0904-0c9d-22f2-ee851214252e@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:13:06 +0000
+Subject: [PATCH 13/46] selinux: Move four assignments for the variable "rc" in genfs_read()
+Message-Id: <99ebe15e-c30f-d129-82a0-a809769aa5dc@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
@@ -12,53 +12,77 @@ To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <ep
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 15 Jan 2017 11:30:12 +0100
+Date: Sat, 14 Jan 2017 17:21:59 +0100
 
-One local variable was set to an error code in two cases before
+One local variable was set to an error code in four cases before
 a concrete error situation was detected. Thus move the corresponding
 assignments into if branches to indicate a software failure there.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- security/selinux/ss/policydb.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ security/selinux/ss/policydb.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 88730b372277..8b9ed3f1b132 100644
+index 7544e374dec9..a12d9166f0e4 100644
 --- a/security/selinux/ss/policydb.c
 +++ b/security/selinux/ss/policydb.c
-@@ -2121,10 +2121,11 @@ static int ocontext_read(struct policydb *p, struct policydb_compat_info *info,
+@@ -2012,11 +2012,11 @@ static int genfs_read(struct policydb *p, void *fp)
+ 		if (rc)
+ 			goto out;
+ 		len = le32_to_cpu(buf[0]);
+-
+-		rc = -ENOMEM;
+ 		newgenfs = kzalloc(sizeof(*newgenfs), GFP_KERNEL);
+-		if (!newgenfs)
++		if (!newgenfs) {
++			rc = -ENOMEM;
+ 			goto out;
++		}
  
- 		l = NULL;
- 		for (j = 0; j < nel; j++) {
+ 		rc = str_read(&newgenfs->fstype, GFP_KERNEL, fp, len);
+ 		if (rc)
+@@ -2024,10 +2024,10 @@ static int genfs_read(struct policydb *p, void *fp)
+ 
+ 		for (genfs_p = NULL, genfs = p->genfs; genfs;
+ 		     genfs_p = genfs, genfs = genfs->next) {
+-			rc = -EINVAL;
+ 			if (strcmp(newgenfs->fstype, genfs->fstype) = 0) {
+ 				printk(KERN_ERR "SELinux:  dup genfs fstype %s\n",
+ 				       newgenfs->fstype);
++				rc = -EINVAL;
+ 				goto out;
+ 			}
+ 			if (strcmp(newgenfs->fstype, genfs->fstype) < 0)
+@@ -2051,11 +2051,11 @@ static int genfs_read(struct policydb *p, void *fp)
+ 			if (rc)
+ 				goto out;
+ 			len = le32_to_cpu(buf[0]);
+-
 -			rc = -ENOMEM;
- 			c = kzalloc(sizeof(*c), GFP_KERNEL);
--			if (!c)
-+			if (!c) {
+ 			newc = kzalloc(sizeof(*newc), GFP_KERNEL);
+-			if (!newc)
++			if (!newc) {
 +				rc = -ENOMEM;
  				goto out;
 +			}
- 			if (l)
- 				l->next = c;
- 			else
-@@ -2186,13 +2187,13 @@ static int ocontext_read(struct policydb *p, struct policydb_compat_info *info,
- 				if (rc)
- 					goto out;
  
+ 			rc = str_read(&newc->u.name, GFP_KERNEL, fp, len);
+ 			if (rc)
+@@ -2072,12 +2072,12 @@ static int genfs_read(struct policydb *p, void *fp)
+ 
+ 			for (l = NULL, c = genfs->head; c;
+ 			     l = c, c = c->next) {
 -				rc = -EINVAL;
- 				c->v.behavior = le32_to_cpu(buf[0]);
- 				/* Determined at runtime, not in policy DB. */
--				if (c->v.behavior = SECURITY_FS_USE_MNTPOINT)
--					goto out;
--				if (c->v.behavior > SECURITY_FS_USE_MAX)
-+				if (c->v.behavior = SECURITY_FS_USE_MNTPOINT ||
-+				    c->v.behavior > SECURITY_FS_USE_MAX) {
+ 				if (!strcmp(newc->u.name, c->u.name) &&
+ 				    (!c->v.sclass || !newc->v.sclass ||
+ 				     newc->v.sclass = c->v.sclass)) {
+ 					printk(KERN_ERR "SELinux:  dup genfs entry (%s,%s)\n",
+ 					       genfs->fstype, c->u.name);
 +					rc = -EINVAL;
  					goto out;
-+				}
- 
- 				len = le32_to_cpu(buf[1]);
- 				rc = str_read(&c->u.name, GFP_KERNEL, fp, len);
+ 				}
+ 				len = strlen(newc->u.name);
 -- 
 2.11.0
 
