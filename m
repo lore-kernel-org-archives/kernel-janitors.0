@@ -1,63 +1,75 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 11 Jan 2017 01:59:20 +0000
-Subject: Re: [PATCH 1/8] mmc-core: Use kmalloc_array() in mmc_test_area_init()
-Message-Id: <CAHp75Vfd_OEUcJacRGi5m1fkNiiGuu9HQv0zb6turiDMkpiNxA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 14:55:00 +0000
+Subject: [PATCH 00/46] SELinux: Fine-tuning for several function implementations
+Message-Id: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8e2accf5-90b3-6bd0-2abd-699927bc459b@users.sourceforge.net> <a9b14d1d-de5c-5a22-fcd0-021d7b01cb36@users.sourceforge.net>
-In-Reply-To: <a9b14d1d-de5c-5a22-fcd0-021d7b01cb36@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Harjani Ritesh <riteshh@codeaurora.org>, Jens Axboe <axboe@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Christie <mchristi@redhat.com>, Shawn Lin <shawn.lin@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, Jan 8, 2017 at 11:42 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 8 Jan 2017 18:44:26 +0100
->
-> * A multiplication for the size determination of a memory allocation
->   indicated that an array data structure should be processed.
->   Thus use the corresponding function "kmalloc_array".
->
->   This issue was detected by using the Coccinelle software.
->
-> * Replace the specification of a data structure by a pointer dereference
->   to make the corresponding size determination a bit safer according to
->   the Linux coding style convention.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:15:14 +0100
 
-For the whole series FWIW:
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Several update suggestions were taken into account
+from static source code analysis.
 
+Markus Elfring (46):
+  Use kmalloc_array() in cond_init_bool_indexes()
+  Delete an unnecessary return statement in cond_compute_av()
+  Improve size determinations in four functions
+  Use kmalloc_array() in hashtab_create()
+  Adjust four checks for null pointers
+  Use kcalloc() in policydb_index()
+  Delete unnecessary variable assignments in policydb_index()
+  Delete an unnecessary return statement in policydb_destroy()
+  Delete an error message for a failed memory allocation in policydb_read()
+  Move some assignments for the variable "rc" in policydb_read()
+  Return directly after a failed next_entry() in genfs_read()
+  Move assignments for two pointers in genfs_read()
+  Move four assignments for the variable "rc" in genfs_read()
+  One function call less in genfs_read() after null pointer detection
+  One check and function call less in genfs_read() after error detection
+  Move two assignments for the variable "rc" in filename_trans_read()
+  Delete an unnecessary variable assignment in filename_trans_read()
+  One function call less in filename_trans_read() after error detection
+  Return directly after a failed next_entry() in range_read()
+  Move four assignments for the variable "rc" in range_read()
+  Two function calls less in range_read() after error detection
+  Delete an unnecessary variable initialisation in range_read()
+  Move an assignment for a pointer in range_read()
+  Return directly after a failed kzalloc() in cat_read()
+  Return directly after a failed kzalloc() in sens_read()
+  Improve another size determination in sens_read()
+  Move an assignment for the variable "rc" in sens_read()
+  Return directly after a failed kzalloc() in user_read()
+  Return directly after a failed kzalloc() in type_read()
+  Return directly after a failed kzalloc() in role_read()
+  Move an assignment for the variable "rc" in role_read()
+  Return directly after a failed kzalloc() in class_read()
+  Move an assignment for the variable "rc" in class_read()
+  Return directly after a failed kzalloc() in common_read()
+  Return directly after a failed kzalloc() in perm_read()
+  Move an assignment for the variable "rc" in mls_read_range_helper()
+  Move an assignment for the variable "rc" in policydb_load_isids()
+  One function call less in five functions after null pointer detection
+  Move two assignments for the variable "rc" in ocontext_read()
+  Return directly after a failed kzalloc() in roles_init()
+  Move two assignments for the variable "rc" in roles_init()
+  One function call less in roles_init() after error detection
+  Use kmalloc_array() in sidtab_init()
+  Adjust two checks for null pointers
+  Use common error handling code in sidtab_insert()
+  Use seq_puts() in sel_avc_stats_seq_show()
 
-P.S. Few years back I run those tests a lot, even did some
-modifications, but now Nokia Mobile just gone :-)
-
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/mmc/core/mmc_test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-> index 3ab6e52d106c..e85ef503d7ce 100644
-> --- a/drivers/mmc/core/mmc_test.c
-> +++ b/drivers/mmc/core/mmc_test.c
-> @@ -1579,7 +1579,7 @@ static int mmc_test_area_init(struct mmc_test_card *test, int erase, int fill)
->         if (!t->mem)
->                 return -ENOMEM;
->
-> -       t->sg = kmalloc(sizeof(struct scatterlist) * t->max_segs, GFP_KERNEL);
-> +       t->sg = kmalloc_array(t->max_segs, sizeof(*t->sg), GFP_KERNEL);
->         if (!t->sg) {
->                 ret = -ENOMEM;
->                 goto out_free;
-> --
-> 2.11.0
->
-
-
+ security/selinux/selinuxfs.c      |   8 +-
+ security/selinux/ss/conditional.c |  14 +--
+ security/selinux/ss/hashtab.c     |  10 +-
+ security/selinux/ss/policydb.c    | 255 ++++++++++++++++++++------------------
+ security/selinux/ss/sidtab.c      |  22 ++--
+ 5 files changed, 157 insertions(+), 152 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
