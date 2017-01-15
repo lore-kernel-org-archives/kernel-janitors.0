@@ -1,72 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 09 Jan 2017 20:02:08 +0000
-Subject: Applied "spi: spi-axi: Free resources on error path" to the spi tree
-Message-Id: <E1cQg8u-00076L-2w@debutante>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:16:02 +0000
+Subject: [PATCH 16/46] selinux: Move two assignments for the variable "rc" in filename_trans_read()
+Message-Id: <d7e6f9c9-c6dc-5fd5-5537-85fe1617abb1@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20170109000247.3215-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20170109000247.3215-1-christophe.jaillet@wanadoo.fr>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Mark Brown <broonie@kernel.org>broonie@kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The patch
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 18:50:52 +0100
 
-   spi: spi-axi: Free resources on error path
+One local variable was set to an error code in two cases before
+a concrete error situation was detected. Thus move the corresponding
+assignments into if branches to indicate a software failure there.
 
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 9620ca90115d4bd700f05862d3b210a266a66efe Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Mon, 9 Jan 2017 01:02:47 +0100
-Subject: [PATCH] spi: spi-axi: Free resources on error path
-
-We should go to 'err_put_master' here instead of returning directly.
-Otherwise a call to 'spi_master_put' is missing.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/spi/spi-axi-spi-engine.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ security/selinux/ss/policydb.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-index 319225d7e761..6ab4c7700228 100644
---- a/drivers/spi/spi-axi-spi-engine.c
-+++ b/drivers/spi/spi-axi-spi-engine.c
-@@ -494,7 +494,8 @@ static int spi_engine_probe(struct platform_device *pdev)
- 			SPI_ENGINE_VERSION_MAJOR(version),
- 			SPI_ENGINE_VERSION_MINOR(version),
- 			SPI_ENGINE_VERSION_PATCH(version));
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_put_master;
- 	}
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index e7b882251da8..106a1da1d68a 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1930,16 +1930,17 @@ static int filename_trans_read(struct policydb *p, void *fp)
+ 		ft = NULL;
+ 		otype = NULL;
+ 		name = NULL;
+-
+-		rc = -ENOMEM;
+ 		ft = kzalloc(sizeof(*ft), GFP_KERNEL);
+-		if (!ft)
++		if (!ft) {
++			rc = -ENOMEM;
+ 			goto out;
++		}
  
- 	spi_engine->clk = devm_clk_get(&pdev->dev, "s_axi_aclk");
+-		rc = -ENOMEM;
+ 		otype = kmalloc(sizeof(*otype), GFP_KERNEL);
+-		if (!otype)
++		if (!otype) {
++			rc = -ENOMEM;
+ 			goto out;
++		}
+ 
+ 		/* length of the path component string */
+ 		rc = next_entry(buf, fp, sizeof(u32));
 -- 
 2.11.0
 
