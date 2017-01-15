@@ -1,79 +1,49 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Wed, 11 Jan 2017 16:06:49 +0000
-Subject: Re: [PATCH 04/15] video: fbdev: use permission-specific DEVICE_ATTR variants
-Message-Id: <13619076.BMdhC73baQ@amdc3058>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:23:08 +0000
+Subject: [PATCH 23/46] selinux: Move an assignment for a pointer in range_read()
+Message-Id: <668d71a5-d55c-449e-9de8-b5d70d7e11c9@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1477769829-22230-1-git-send-email-Julia.Lawall@lip6.fr>
- <1477769829-22230-5-git-send-email-Julia.Lawall@lip6.fr>
- <CGME20170111160652epcas5p3f1a8c0858a669910b51ece8cfe654a96@epcas5p3.samsung.com>
-In-Reply-To: <1477769829-22230-5-git-send-email-Julia.Lawall@lip6.fr>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 21:00:45 +0100
 
-Hi,
+Move the assignment for the local variable "r" behind a call of the
+function "next_entry" at the beginning so that it will only be set
+after a successful call.
 
-On Saturday, October 29, 2016 09:36:58 PM Julia Lawall wrote:
-> Use DEVICE_ATTR_RW for read-write attributes.  This simplifies the
-> source code, improves readbility, and reduces the chance of
-> inconsistencies.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @rw@
-> declarer name DEVICE_ATTR;
-> identifier x,x_show,x_store;
-> @@
-> 
-> DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
-> 
-> @script:ocaml@
-> x << rw.x;
-> x_show << rw.x_show;
-> x_store << rw.x_store;
-> @@
-> 
-> if not (x^"_show" = x_show && x^"_store" = x_store)
-> then Coccilib.include_match false
-> 
-> @@
-> declarer name DEVICE_ATTR_RW;
-> identifier rw.x,rw.x_show,rw.x_store;
-> @@
-> 
-> - DEVICE_ATTR(x, \(0644\|S_IRUGO|S_IWUSR\), x_show, x_store);
-> + DEVICE_ATTR_RW(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/selinux/ss/policydb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks, patch queued for 4.11.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> ---
->  drivers/video/fbdev/wm8505fb.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/video/fbdev/wm8505fb.c b/drivers/video/fbdev/wm8505fb.c
-> index e925619..253ffe9 100644
-> --- a/drivers/video/fbdev/wm8505fb.c
-> +++ b/drivers/video/fbdev/wm8505fb.c
-> @@ -182,7 +182,7 @@ static ssize_t contrast_store(struct device *dev,
->  	return count;
->  }
->  
-> -static DEVICE_ATTR(contrast, 0644, contrast_show, contrast_store);
-> +static DEVICE_ATTR_RW(contrast);
->  
->  static inline u_int chan_to_field(u_int chan, struct fb_bitfield *bf)
->  {
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 6121a26ada64..5101592ae172 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1840,7 +1840,7 @@ u32 string_to_av_perm(struct policydb *p, u16 tclass, const char *name)
+ static int range_read(struct policydb *p, void *fp)
+ {
+ 	struct range_trans *rt;
+-	struct mls_range *r = NULL;
++	struct mls_range *r;
+ 	int i, rc;
+ 	__le32 buf[2];
+ 	u32 nel;
+@@ -1852,6 +1852,7 @@ static int range_read(struct policydb *p, void *fp)
+ 	if (rc)
+ 		return rc;
+ 
++	r = NULL;
+ 	nel = le32_to_cpu(buf[0]);
+ 	for (i = 0; i < nel; i++) {
+ 		rt = kzalloc(sizeof(*rt), GFP_KERNEL);
+-- 
+2.11.0
 
