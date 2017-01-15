@@ -1,50 +1,78 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 17:23:15 +0000
-Subject: [PATCH 13/17] spi/topcliff-pch: Delete an unnecessary return statement in two functions
-Message-Id: <64b7bf49-57fc-32a9-17e4-1b26b99bff13@users.sourceforge.net>
+Date: Sun, 15 Jan 2017 15:20:03 +0000
+Subject: [PATCH 20/46] selinux: Move four assignments for the variable "rc" in range_read()
+Message-Id: <196aacb8-6aab-841b-3301-71da75628954@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1413e173-dbac-7a6e-09cb-2287300a335e@users.sourceforge.net>
-In-Reply-To: <1413e173-dbac-7a6e-09cb-2287300a335e-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
+In-Reply-To: <ca34123f-ced6-d2bc-363b-690858618827@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <sds@tycho.nsa.gov>, William Roberts <william.c.roberts@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 13 Jan 2017 15:57:03 +0100
+Date: Sat, 14 Jan 2017 19:55:00 +0100
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: void function return statements are not generally useful
-
-Thus remove such statements here.
+One local variable was set to an error code in four cases before
+a concrete error situation was detected. Thus move the corresponding
+assignments into if branches to indicate a software failure there.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/spi/spi-topcliff-pch.c | 2 --
- 1 file changed, 2 deletions(-)
+ security/selinux/ss/policydb.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 4bba39e70c7b..0a876311b67b 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -915,7 +915,6 @@ static void pch_spi_release_dma(struct pch_spi_data *data)
- 		dma_release_channel(dma->chan_rx);
- 		dma->chan_rx = NULL;
- 	}
--	return;
- }
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index a696876fc327..4cd96ce51322 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -1854,10 +1854,11 @@ static int range_read(struct policydb *p, void *fp)
  
- static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
-@@ -1292,7 +1291,6 @@ static void pch_free_dma_buf(struct pch_spi_board_data *board_dat,
- 	if (dma->rx_buf_dma)
- 		dma_free_coherent(&board_dat->pdev->dev, PCH_BUF_SIZE,
- 				  dma->rx_buf_virt, dma->rx_buf_dma);
--	return;
- }
+ 	nel = le32_to_cpu(buf[0]);
+ 	for (i = 0; i < nel; i++) {
+-		rc = -ENOMEM;
+ 		rt = kzalloc(sizeof(*rt), GFP_KERNEL);
+-		if (!rt)
++		if (!rt) {
++			rc = -ENOMEM;
+ 			goto out;
++		}
  
- static void pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
+ 		rc = next_entry(buf, fp, (sizeof(u32) * 2));
+ 		if (rc)
+@@ -1873,24 +1874,26 @@ static int range_read(struct policydb *p, void *fp)
+ 		} else
+ 			rt->target_class = p->process_class;
+ 
+-		rc = -EINVAL;
+ 		if (!policydb_type_isvalid(p, rt->source_type) ||
+ 		    !policydb_type_isvalid(p, rt->target_type) ||
+-		    !policydb_class_isvalid(p, rt->target_class))
++		    !policydb_class_isvalid(p, rt->target_class)) {
++			rc = -EINVAL;
+ 			goto out;
++		}
+ 
+-		rc = -ENOMEM;
+ 		r = kzalloc(sizeof(*r), GFP_KERNEL);
+-		if (!r)
++		if (!r) {
++			rc = -ENOMEM;
+ 			goto out;
++		}
+ 
+ 		rc = mls_read_range_helper(r, fp);
+ 		if (rc)
+ 			goto out;
+ 
+-		rc = -EINVAL;
+ 		if (!mls_range_isvalid(p, r)) {
+ 			printk(KERN_WARNING "SELinux:  rangetrans:  invalid range\n");
++			rc = -EINVAL;
+ 			goto out;
+ 		}
+ 
 -- 
 2.11.0
 
